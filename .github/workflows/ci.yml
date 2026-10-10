@@ -42,6 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: docker build -t agent-canary:ci .
+      - run: docker run --rm agent-canary:ci --help
 
   sponsor-smoke:
     runs-on: ubuntu-latest
