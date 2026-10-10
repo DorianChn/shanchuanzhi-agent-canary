@@ -20,6 +20,7 @@ import { runSelfTest } from "./self-test.js";
 import { validateWebhookUrl } from "./webhook.js";
 import { walkFiles } from "./file-walk.js";
 import http from "node:http";
+import { registerAICommands } from './ai/cli.js';
 
 const program = new Command();
 program
@@ -481,6 +482,7 @@ program
     console.log("\n提示：收款服务栈由 vmq-stack\\public-link.mjs 守护进程管理（启动收款系统.cmd）");
   });
 
+registerAICommands(program);
 program.parseAsync(process.argv).catch((err: unknown) => {
   console.error("error:", safeDisplayText(err instanceof Error ? err.message : String(err)));
   process.exit(1);

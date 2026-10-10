@@ -26,7 +26,7 @@ const output = {
   schemaVersion: 1,
   analysisGeneratedAt: new Date().toISOString(),
   method: "Derived from complete per-trial raw JSON. Seeded quarantine preconditions excluded from comparable attack success/detection denominators; no aggregate treats trials as independent population estimates.",
-  cohorts: completed,
+  cohorts: completed.sort((a,b)=>a.runStamp.localeCompare(b.runStamp)),
   excluded,
 };
 const target = path.join(evidenceDir, "analysis-summary.json");
@@ -78,6 +78,7 @@ function derive(raw, sourceFile) {
   }
   return {
     sourceFile,
+    runStamp: sourceFile.match(/\d{4}-\d{2}-\d{2}T[\d-]+Z/)?.[0] || '',
     profile: raw.systemPromptProfile || "legacy_unknown",
     promptSha256: raw.systemPromptSha256 || null,
     model: raw.model,

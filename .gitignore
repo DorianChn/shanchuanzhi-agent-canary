@@ -6,3 +6,5 @@ dist/
 .agent-canary/
 package-lock.json.bak
 /competition-submission/Agent_Canary_演示视频.mp4
+/competition-submission/Agent_Canary_演示视频_精简版.mp4
+__pycache__/
