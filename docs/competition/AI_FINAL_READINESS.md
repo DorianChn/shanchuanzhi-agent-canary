@@ -27,6 +27,8 @@ AI 初次提交 d26aad7 的 Run [38078190384](https://github.com/DorianChn/shanc
 
 锁修复提交 d7e0a0e 已推送，Run [38078821555](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38078821555) 实际完成 **9/9 jobs SUCCESS**：Windows/Linux/macOS × Node 20/22、sponsor smoke、package smoke、Docker build 与 CLI container smoke。最终材料提交的 CI 将另行核对并保存 ci-delivery-status.json。
 
+完整材料提交 11000a7f4709bf505916d6d928bdf86c9e7f7ff9 的 Run [38079248349](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38079248349) 也实际 **9/9 SUCCESS**，保存 ci-delivery-status.json。后续仅更新不可变链接和验收指针，最终 HEAD CI 由 GitHub 显示，不冒充未跑过的结果。
+
 本地 Windows 11 / Node 22 VERIFIED；代码提交 d7e0a0e 的 Windows/Linux/macOS × Node 20/22 与 Docker CI 全部 VERIFIED。本机没有 Docker CLI，本机 Docker 是 SKIPPED。CI 只验证列出的构建/测试，不代表所有云端模型已接通。
 
 ## 真实结果与安全边界
@@ -44,5 +46,7 @@ Ollama 四样本合法结构 4/4，标签一致 3/4；一条沙箱隔离日志�
 项目 PDF 17 页、实验 PDF 7 页，已提取并渲染检查；中文控制台、指南、字幕与真实程序录像均在 competition-submission。录屏明确区分离线脚本信号、真实本地推理、保存的模型自主实验。视频没有旁白。
 
 本轮官网返回空页面，最新规则 **无法再次确认**；材料要求来自用户提供的官方报名确认邮件。公开链接和最终 CI 核对完成后，具备演示与准备补交材料的条件；发送前仍需核对官方要求并获得用户明确授权。此前 2.1.0 已发送，本轮不自动补发。
+
+已完成公开核验：材料提交的 MP4 与两份 PDF 分别 HTTP 200，独立下载 SHA-256 与本地一致。17/7 页 PDF、220.933 秒视频具备正式材料类型；当前具备本地演示和准备补交的条件，但不能独立确认最新官方要求全部满足。中文控制台实际启动 http://127.0.0.1:4318，使用独立临时沙箱，不读取生产业务目录。
 
 内部评分维持 78/100（24/30、24/30、16/20、14/20），不因视频完成就推断获奖。三个最值得继续投入的方向：改善真实信号覆盖和跨模型实验；Keyring/宿主审批；经维护者确定 V1/V2 最小分发方案。
