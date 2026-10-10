@@ -15,7 +15,9 @@ let stdout = "";
 let stderr = "";
 
 before(async () => {
-  fs.copyFileSync(path.join(sponsorDir, "server.mjs"), path.join(sandbox, "server.mjs"));
+  for (const file of ["server.mjs", "state-store.mjs", "payment-security.mjs"]) {
+    fs.copyFileSync(path.join(sponsorDir, file), path.join(sandbox, file));
+  }
   const probe = http.createServer();
   await new Promise((resolve, reject) => {
     probe.once("error", reject);

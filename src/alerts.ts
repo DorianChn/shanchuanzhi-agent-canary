@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { loadConfig, type CanaryConfig } from "./config.js";
+import { postJsonWebhook } from "./webhook.js";
 
 export type EventKind =
   | "decoy_called"
@@ -44,6 +45,8 @@ export interface AlertTestStatus {
 }
 
 const MAX_EVENT_BYTES = 5 * 1024 * 1024; // ~5 MB, keeps roughly the last few thousand events
+const MAX_EVENT_LINE_BYTES = 256 * 1024;
+const MAX_EVENT_COUNT = 10_000;
 const KEEP_LINES = 1500;
 const MAX_TEXT_LENGTH = 240;
 const SENSITIVE_FIELD = /(pass(word)?|secret|token|key|credential|authorization|cookie|bearer|private)/i;
@@ -121,7 +124,7 @@ export function logEvent(ev: CanaryEvent, eventsFile?: string): void {
   // retention: rotate when the audit log grows past the cap (keep recent lines)
   try {
     if (fs.existsSync(file) && fs.statSync(file).size > MAX_EVENT_BYTES) {
-      const lines = fs.readFileSync(file, "utf8").trim().split("\n");
+      const lines = readBoundedTail(file, MAX_EVENT_BYTES).trim().split("\n");
       fs.writeFileSync(file, lines.slice(-KEEP_LINES).join("\n") + "\n");
     }
   } catch {
@@ -132,15 +135,21 @@ export function logEvent(ev: CanaryEvent, eventsFile?: string): void {
 
 export function readEvents(eventsFile?: string, tail = 100): CanaryEvent[] {
   const file = eventsFile ?? loadConfig().eventsFile;
-  let raw = "";
+  let raw: string;
   try {
-    raw = fs.readFileSync(file, "utf8");
-  } catch {
-    return [];
+    raw = readBoundedTail(file, MAX_EVENT_BYTES);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw new Error("Could not read the event log; the report may be incomplete.", { cause: error });
   }
+
+  const requested = Number.isFinite(tail) ? Math.max(0, Math.floor(tail)) : MAX_EVENT_COUNT;
+  const maxEvents = Math.min(requested, MAX_EVENT_COUNT);
+  if (maxEvents === 0) return [];
   const events: CanaryEvent[] = [];
   for (const line of raw.split("\n")) {
     if (!line.trim()) continue;
+    if (Buffer.byteLength(line, "utf8") > MAX_EVENT_LINE_BYTES) continue;
     try {
       // Older installations may contain events written before centralized
       // redaction. Sanitize on read so reports and dashboards never replay
@@ -150,7 +159,33 @@ export function readEvents(eventsFile?: string, tail = 100): CanaryEvent[] {
       /* skip corrupted lines */
     }
   }
-  return events.slice(-tail);
+  return events.slice(-maxEvents);
+}
+
+/** Read at most `limit` bytes from the end of a JSONL file and drop a partial first line. */
+function readBoundedTail(file: string, limit: number): string {
+  const descriptor = fs.openSync(file, fs.constants.O_RDONLY);
+  try {
+    const size = fs.fstatSync(descriptor).size;
+    const length = Math.min(size, limit);
+    if (!length) return "";
+    const buffer = Buffer.allocUnsafe(length);
+    let offset = 0;
+    const position = size - length;
+    while (offset < length) {
+      const count = fs.readSync(descriptor, buffer, offset, length - offset, position + offset);
+      if (count === 0) break;
+      offset += count;
+    }
+    let start = 0;
+    if (position > 0) {
+      const newline = buffer.indexOf(0x0a);
+      start = newline < 0 ? offset : newline + 1;
+    }
+    return buffer.toString("utf8", start, offset);
+  } finally {
+    fs.closeSync(descriptor);
+  }
 }
 
 /**
@@ -206,21 +241,7 @@ function summarize(ev: CanaryEvent): string {
 }
 
 async function postWebhook(url: string, ev: CanaryEvent): Promise<boolean> {
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      // The configured endpoint is the only intended recipient. Never follow
-      // a response-controlled Location header to another host or network.
-      redirect: "manual",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(ev),
-      signal: AbortSignal.timeout(3000),
-    });
-    return response.ok;
-  } catch {
-    /* alerts are best-effort */
-    return false;
-  }
+  return postJsonWebhook(url, ev);
 }
 
 function psEscape(s: string): string {

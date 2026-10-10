@@ -8,6 +8,8 @@
 
 项目已有可工作的 MCP stdio 诱饵服务、公开 SDK、同步会话守卫、令牌生成/扫描、CLI、离线自检和打包检查。基线构建、74 项原有测试、包检查和 `verify` 均通过；但基线测试没有覆盖跨进程/存储回滚、隐藏及大文件扫描、MCP 进程握手、赞助 smoke 的真实数据隔离等关键场景。此次增加回归和合成攻击模拟，并修复了其中可在当前许可范围内修改的问题。
 
+第二轮后，当前分支 Windows/Node 22 的根测试为 121 项（117 通过、0 失败、4 项平台跳过），sponsor 测试为 23 项（22 通过、0 失败、1 项平台跳过）。支付回调字段绑定、重复通知履约、损坏 JSON/密钥 fail-closed、Token 并发写入、JSONL 上限、watcher 资源上限、Webhook DNS pinning、配置损坏和 Actions 固定均已补回归并验证。V2 商业实现仍随公共 `dist` 和 Docker 镜像构建进入交付物，是唯一未关闭的遗留 P1；未删除许可校验或迁移商业交付架构。
+
 **防护范围：**诱饵只产生合成响应。拦截仅作用于集成方实际交给 `createGuardedToolRouter()`、`guard.executeToolCall()` 或 `guard.beforeToolCall()` 的调用。独立 MCP 诱饵服务不是通用 MCP 代理，也不是全局 Agent 防火墙；未被检测到的首次危险调用、绕过守卫的宿主回调、真实模型是否触碰诱饵均未由本次测试证明。
 
 ## 架构与数据流
@@ -48,6 +50,24 @@ flowchart LR
 
 MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真实回调都经过 Guard；如果首个真实操作在检测前开始，守卫不会回滚已开始的外部副作用。
 
+## 第二轮复审与九项遗留问题
+
+下表状态覆盖第一轮记录中的支付回调、状态存储、商业包边界及六项 P2；它优先于下方历史基线表中仍标为“未修复”的旧状态。
+
+| ID | 处理结果 | 代码与验证依据 |
+|---|---|---|
+| P1-1 支付回调 | 已修复并通过合成端到端验证；真实商户仍未连接。 | `sponsor/payment-security.mjs`, `sponsor/server.mjs`; RSA2/WeChat RSA+AES-GCM/Epay/VMQ callback tests 覆盖身份、App、订单、金额、CNY、渠道、支付状态、过期 WeChat timestamp、重复与 20 路并发。VMQ 基础 `price` 精确绑定订单，`reallyPrice` 依上游避碰协议最多允许 9 分调整。 |
+| P1-2 业务状态损坏 | 已修复并通过临时目录回归。 | `sponsor/state-store.mjs`, `sponsor/server.mjs`, `sponsor/grant.mjs`; 仅 ENOENT 可用首跑默认值；JSON 与记录结构错误、权限错误、symlink、坏密钥 fail closed；原子写、锁和重启履约恢复已测。 |
+| P1-3 V1/V2 分发边界 | 未关闭，P1 保留。 | `npm pack --dry-run --json` 实际包含 `dist/eval/*`, `dist/dashboard.js`, `dist/export.js`, `dist/license.js`; Dockerfile 复制全部 `/app/dist`。按要求未擅自拆包、删许可校验或迁移付费产品。 |
+| P2-1 Token 并发写入 | 已修复。 | `src/tokens.ts`; 跨进程锁、读改写重载、原子写、陈旧本机死进程锁处理；16 个 CLI 子进程回归。 |
+| P2-2 JSONL 无界读取 | 已修复。 | `src/alerts.ts`; 读取/轮转尾部最多 5 MiB、单行 256 KiB、最多 10,000 条；超大/截断/坏行回归。 |
+| P2-3 Watcher 长期增长 | 已修复并做 15,000 个合成事件压力回归。 | `src/watch.ts`; 告警键 4,096、错误键 1,024、待处理路径 2,048 上限；显式 `close()` 与 `stats()`。这是短时模拟，不等于数周生产资源曲线。 |
+| P2-4 Webhook 私网/DNS | 已修复并测 loopback DNS pin / 重绑定模拟。 | `src/webhook.ts`; remote 仅 HTTPS；解析结果全为公网才允许；请求固定到已检地址，不跟随重定向；本地 loopback HTTP 用于开发。未发外网请求。 |
+| P2-5 配置 JSON 静默回退 | 已修复。 | `src/config.ts`; 只有缺失文件使用首次默认值，空/截断/错误类型/权限错误拒绝读取并且不覆盖。 |
+| P2-6 CI 供应链固定 | 已修复并静态核对。 | 工作流 actions 固定完整 Commit SHA；MCP publisher 固定版本与 SHA-256；未触发任何 publish job。 |
+
+支付格式依据：微信官方文档要求以原始请求体构造 RSA 验签串、校验序列号与时间窗口，并以 AES-256-GCM 解密资源；支付宝通知需验签后绑定本地 `out_trade_no`、`total_amount`、`seller_id` 并筛选成功状态。Epay 属于多实现兼容协议，未找到适用于所有部署商户的统一官方规范；VMQ 字段/签名格式以其上游项目实现核对。真实 provider 账号、订单和网络均未访问。
+
 ## 原始完成度分级
 
 - **已实现且有测试证明：**诱饵工具处理、MCP stdio 基本互通、CLI 离线自检、免费 SDK Router、同步隔离、令牌生成/埋放/扫描、基本事件脱敏、安装配置备份、固定载荷 mock eval、包安装 smoke。
@@ -58,7 +78,7 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 
 ## 发现项与修复状态
 
-按一次性根因归类，共发现 P1 7 项、P2 17 项、P0 0 项；本分支修复 P1 4 项、P2 11 项。没有修改 MIT 许可、公开 SDK 签名、商业授权规则或真实用户数据。
+第一轮归类基线：共发现 P1 7 项、P2 17 项、P0 0 项；第一轮修复 P1 4 项、P2 11 项。第二轮状态以本文前面的“九项遗留”表为准；累计 P1 修复 6 项、P2 修复 17 项，仍有 1 项商业分发 P1 未关闭。没有修改 MIT 许可、公开 SDK 签名、商业授权规则或真实用户数据。
 
 | ID | 级别 | 发现与证据 | 状态 |
 |---|---|---|---|
@@ -66,9 +86,9 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 | P1-2 | P1 | Token 检查可漏掉 dotfile、旧 5 MiB 上限之外内容、损坏注册表、不可读目录、超深目录或不存在的扫描路径，并仍显示 clean。 | 已修复：流式扫描、纳入隐藏文件、损坏注册表/权限/深度/路径错误均失败闭合。 |
 | P1-3 | P1 | 原 `sponsor/smoke.mjs` 会先删除真实目录的订单/订阅/激活 JSON；隔离回归在临时 sentinel 文件上复现。 | 已修复：smoke 只在临时副本和临时端口运行。 |
 | P1-4 | P1 | eval 接受 `maxTurns=0` 等无效值，可能在没有模型调用时把 payload 计为抵抗；回归已先复现。 | 已修复：拒绝非正安全整数。 |
-| P1-5 | P1 | 微信/支付宝回调验签后未逐项比对本商户、App ID、金额、币种和订单渠道；验证微信平台签名并不等于绑定本地订单所有字段。官方通知字段说明见[微信支付成功回调文档](https://pay.wechatpay.cn/doc/v3/merchant/4012791861)。 | 未修复：涉及付费授权规则，等待维护者明确授权；无真实支付模拟。 |
-| P1-6 | P1 | sponsor 的通用 JSON reader 对损坏订单/订阅/激活数据回退空对象，签名密钥损坏会尝试生成新密钥；可能丢状态或使已有许可失效。 | 未修复：涉及商业许可/客户数据行为，等待授权；未读取真实数据。 |
-| P1-7 | P1 | README/付款页声称付费 V2 源码不在公共仓库，但 main 跟踪了 eval/dashboard/export/license 等实现，`files: ["dist"]` 的打包规则把编译目录整体收入包。 | 未修复：没有改商业许可或包边界；需维护者决定拆分或更正商业交付政策。 |
+| P1-5 | P1 | 微信/支付宝回调验签后未逐项比对本商户、App ID、金额、币种和订单渠道；验证微信平台签名并不等于绑定本地订单所有字段。 | 第二轮已修复；合成端到端验证，真实支付仍未连接。 |
+| P1-6 | P1 | sponsor 的通用 JSON reader 对损坏订单/订阅/激活数据回退空对象，签名密钥损坏会尝试生成新密钥；可能丢状态或使已有许可失效。 | 第二轮已修复；临时数据、坏密钥、语义损坏及重启恢复回归通过。 |
+| P1-7 | P1 | README/付款页声称付费 V2 源码不在公共仓库，但 main 跟踪了 eval/dashboard/export/license 等实现，`files: ["dist"]` 的打包规则把编译目录整体收入包。 | 未修复：实测 npm 包和 Docker build context 包含许可门控实现；需要维护者批准最小拆分方案。 |
 | P2-1 | P2 | Webhook 会跟随 HTTP 重定向到第二目标。 | 已修复：`redirect: "manual"`；直接配置的私网/回环地址及 DNS pinning 仍是信任边界。 |
 | P2-2 | P2 | OpenAI-compatible/Anthropic 评测请求可能跟随重定向携带请求头。 | 已修复：`redirect: "error"`；未连真实 provider。 |
 | P2-3 | P2 | sponsor 请求体超过 1 MB 时仍继续拼接，并返回 500。 | 已修复：按字节限额、超限停止缓存并返回 413。 |
@@ -79,12 +99,12 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 | P2-8 | P2 | 基线 lockfile 中 npm audit 报告 4 个依赖漏洞。 | 已修复：兼容范围内更新锁文件；本分支 root 与 sponsor audit 均为 0。 |
 | P2-9 | P2 | CI 未声明最小 workflow 权限；V1 发布 workflow_dispatch 可在非 main ref 启动。 | 已修复：CI `contents: read`，包发布 job 限定 main；未触发发布。 |
 | P2-10 | P2 | watch 对不存在或非目录输入会静默提示正在监控。 | 已修复：启动 watcher 前验证目录并拒绝符号链接根。 |
-| P2-11 | P2 | 配置文件 JSON 错误会静默退回默认值，可能隐藏 webhook/日志配置失效。 | 未修复：改变配置加载行为需兼容性审查。 |
-| P2-12 | P2 | 多进程并发 `generateTokens` 是 read-modify-write，原子 rename 不能避免丢失另一个进程写入。 | 未修复：需决定锁格式/陈旧锁恢复与跨平台语义。 |
-| P2-13 | P2 | JSONL 读取/轮转按全文载入，异常大的历史日志会占用大量内存。 | 未修复：需单独设计有界读取/迁移，未做大日志基准。 |
-| P2-14 | P2 | 长时间 watcher 的已告警路径 Set 无清理策略，且没有显式 stop handle。 | 未修复：当前仅作 best-effort 本地 watch；未运行长时压测。 |
-| P2-15 | P2 | Webhook 允许用户配置任意 HTTPS host；本次仅禁重定向，未解析/固定 DNS 或拒绝私网目的地。 | 未修复：只应配置可信端点；不能描述成完整 SSRF 防护。 |
-| P2-16 | P2 | GitHub Actions 使用可变 tag；MCP Registry workflow 下载 `latest` publisher 二进制且无固定 checksum。 | 未修复：需维护者选择版本和可验证 hash。 |
+| P2-11 | P2 | 配置文件 JSON 错误会静默退回默认值，可能隐藏 webhook/日志配置失效。 | 第二轮已修复；损坏与权限场景 fail closed，不覆盖原配置。 |
+| P2-12 | P2 | 多进程并发 `generateTokens` 是 read-modify-write，原子 rename 不能避免丢失另一个进程写入。 | 第二轮已修复；16 个并发子进程回归通过。 |
+| P2-13 | P2 | JSONL 读取/轮转按全文载入，异常大的历史日志会占用大量内存。 | 第二轮已修复；固定读取、单行和事件数上限，并覆盖大文件/损坏行。 |
+| P2-14 | P2 | 长时间 watcher 的已告警路径 Set 无清理策略，且没有显式 stop handle。 | 第二轮已修复；集合/队列有上限并暴露关闭接口；超长生产运行未做。 |
+| P2-15 | P2 | Webhook 允许用户配置任意 HTTPS host；本次仅禁重定向，未解析/固定 DNS 或拒绝私网目的地。 | 第二轮已修复；请求前解析并固定公网地址；外网交付未请求。 |
+| P2-16 | P2 | GitHub Actions 使用可变 tag；MCP Registry workflow 下载 `latest` publisher 二进制且无固定 checksum。 | 第二轮已修复；Actions SHA 和 publisher archive checksum 固定，未执行发布。 |
 | P2-17 | P2 | 产品文案曾将诱饵描述为完全无副作用、告警“零误报”；实际调用会建立本地 Token 状态/审计记录并可触发告警，误调用也可能触发信号。 | 已修复：MCP instructions、工具说明、安全策略、双语 README、站点、CLI/package 描述和 dashboard 均说明实际副作用与信号边界；独立 MCP server 与 SDK Guard 的隔离边界也明确了。 |
 
 ## 兼容性与边界

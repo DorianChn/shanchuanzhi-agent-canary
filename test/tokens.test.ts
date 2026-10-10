@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 
 // Point the whole module tree at a throwaway home before importing.
@@ -114,6 +114,32 @@ test("saveTokens writes a complete registry without leaving a temporary file", (
     .readdirSync(process.env.AGENT_CANARY_HOME!)
     .filter((name) => name.endsWith(".tmp"));
   assert.deepEqual(temporaryFiles, []);
+});
+
+test("parallel CLI processes do not lose token registry updates", async () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-token-concurrency-"));
+  const moduleUrl = new URL("../src/tokens.ts", import.meta.url).href;
+  const worker = `import { addTokens, mintToken } from ${JSON.stringify(moduleUrl)}; addTokens([mintToken("parallel-writer")]);`;
+  try {
+    await Promise.all(Array.from({ length: 16 }, () => new Promise<void>((resolve, reject) => {
+      const child = spawn(process.execPath, ["--import", "tsx", "--input-type=module", "-e", worker], {
+        cwd: process.cwd(),
+        env: { ...process.env, AGENT_CANARY_HOME: home },
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+      let stderr = "";
+      child.stderr.setEncoding("utf8").on("data", (chunk: string) => { stderr += chunk; });
+      child.once("error", reject);
+      child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`token worker exited ${code}: ${stderr}`)));
+    })));
+
+    const records = JSON.parse(fs.readFileSync(path.join(home, "tokens.json"), "utf8")) as unknown[];
+    assert.equal(records.length, 16);
+    assert.equal(new Set(records.map((record) => (record as { token: string }).token)).size, 16);
+    assert.equal(fs.existsSync(path.join(home, "tokens.json.lock")), false);
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true });
+  }
 });
 
 test("token registry is owner-readable on POSIX systems", { skip: process.platform === "win32" }, () => {

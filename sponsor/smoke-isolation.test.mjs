@@ -14,7 +14,7 @@ const protectedFiles = new Map([
 ]);
 
 try {
-  for (const file of ["server.mjs", "smoke.mjs"]) {
+  for (const file of ["server.mjs", "state-store.mjs", "payment-security.mjs", "smoke.mjs"]) {
     fs.copyFileSync(path.join(sponsorDir, file), path.join(sandbox, file));
   }
   for (const [name, contents] of protectedFiles) {

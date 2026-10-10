@@ -37,6 +37,8 @@
 - 误报率：未测量。CTRL-01 只有一个正常样例，不能据此给出统计误报率。
 - 真实 LLM/API、生产 MCP host、真实支付、外部 webhook、Shell 命令均未参与。
 
+第二轮完整验证统计：根项目 121 项（117 通过、0 失败、4 跳过）；sponsor 25 项（24 通过、0 失败、1 跳过）；合计 146 项（141 通过、0 失败、5 跳过）。5 项跳过均是 Windows 上不适用的 POSIX 权限或符号链接断言。另运行 sponsor smoke 12/12 检查通过、SDK containment demo 通过。测试用例数不代表真实攻击检测率。
+
 ## 其他安全回归
 
 | 回归 | 复现方法 | 结果 |
@@ -48,13 +50,29 @@
 | 超大请求与演示页 HTML | 临时 demo server 发送 1.1 MB 请求和带 HTML 的虚拟 handle。 | 分别返回 413、输出 HTML 转义；后续合法请求仍成功。 |
 | Token 覆盖率 | `.env` dotfile、>5 MiB 二进制且 Token 跨 64 KiB 读取边界、损坏 registry、深度/缺失路径。 | 目标 Token 被命中；不完整扫描不再输出 clean。 |
 
+## 第二轮支付、状态与资源安全测试
+
+| 范围 | 合成步骤 | 观察结果 |
+|---|---|---|
+| WeChat Pay | 本地 RSA 私钥签名原始 HTTP 回调；AES-256-GCM 加密虚拟交易；固定平台公钥/序列号验签。 | 错商户、错 App、未知本地订单、错金额、错币种、未支付状态、错证书序列、超过 5 分钟时间戳均拒绝且订单文件原文不变；20 个相同有效通知只履约一次。 |
+| Alipay | 使用临时 RSA2 测试密钥生成官方通知格式；验证本地订单与回调字段。 | 错 app/auth_app/seller/order/amount/currency/status/channel、重复表单字段拒绝且不改订单；20 路有效重复通知只延长一次。 |
+| Epay / VMQ | 虚拟商户密钥生成协议签名与回调字段。 | 错 PID/基础金额/渠道拒绝；VMQ 上游最多 9 分的签名 `reallyPrice` 避碰调整可通过，超出范围拒绝。生产供应商未连接，Epay 协议实现存在差异，需按实际服务商文档核对。 |
+| sponsor JSON/密钥 | 临时目录放置空、截断、非法 JSON、错根结构、非法到期时间、坏激活 hash、模拟 EACCES、损坏/不匹配/缺失密钥；模拟履约中断并重启。 | 状态错误不被替换为空对象，不写新签名身份；坏密钥不再生成；只有 ENOENT 允许首次初始化；履约重启后幂等恢复。Windows ACL 未验证。 |
+| Token registry | 16 个本地子进程同时生成、登记并保存。 | 所有更新保留；不可取得锁时失败，不覆盖已有记录。 |
+| JSONL | >6 MiB 文件、超长行、损坏/截断记录和旋转。 | 读取尾部受 5 MiB、256 KiB 每行、10,000 条限制；损坏行跳过，读取错误不会伪装为空报告。 |
+| Watcher | 注入 15,000 个合成文件变更事件。 | pending path、告警缓存和错误缓存保持在固定上限；`close()` 两次调用后队列清空。该模拟约 13 秒，不构成长期生产内存曲线。 |
+| Webhook | resolver 注入公网/私网/混合地址并让结果在下一次解析时变化；本地 server 发 302。 | 私网、混合解析与跳转目标拒绝；公网地址在一次 DNS 检查后固定到 socket；重绑定测试确认没有二次解析。未访问公网。 |
+| 配置 | 首次缺少 config、空/截断/错误 JSON/错误根结构/权限错误/字段类型错误。 | 仅 ENOENT 用默认配置；其他错误报错并保留原文件。 |
+
+微信支付核验依据官方回调验签文档：回调需要检查证书序列、基于时间戳/nonce/原始报文验签并建议拒绝超过 5 分钟偏差；成功 payload 需对 `resource` 进行 AES-256-GCM 解密。[微信支付验签说明](https://pay.wechatpay.cn/doc/v3/merchant/4013053420)、[支付成功回调字段](https://pay.wechatpay.cn/doc/v3/merchant/4013070368)。支付宝官方异步通知文档要求 RSA 验签并核验 `out_trade_no`、`total_amount`、`seller_id` 和 `TRADE_SUCCESS`/`TRADE_FINISHED`；本项目还绑定本地 App ID、订单币种与渠道。[支付宝异步通知处理](https://developer.alibaba.com/docs/doc.htm?articleId=103296&docType=1&treeId=346)。VMQ 的 `payId/param/type/price/reallyPrice` 和拼接 MD5 以其上游实现为准：[szvone/vmqphp](https://github.com/szvone/vmqphp/blob/master/application/index/controller/Index.php)。
+
 ## 残余风险
 
-1. 微信/支付宝通知虽然验签，当前代码仍未把商户、App ID、金额、币种和渠道与本地订单完整绑定。本报告未使用真实凭据或伪造有效商户签名；支付回调修复需要维护者批准后做合成验签测试。微信官方回调字段包含 `appid`、`mchid`、`out_trade_no`、交易状态及金额对象，参见[支付成功回调通知文档](https://pay.wechatpay.cn/doc/v3/merchant/4012791861)。
-2. 赞助数据文件损坏时的恢复语义可能丢订单/订阅状态，签名密钥重建会影响既有许可；本次未访问真实 JSON 或私钥，等待单独授权。
-3. Webhook 禁止自动重定向，但允许配置的目标本身仍可能是回环/私网地址；没有 DNS 解析固定，不能称为完整 SSRF 防护。
-4. `tokens generate` 跨进程并发写入可能丢更新；JSONL 全文读取、大量 watcher 去重键和超长运行资源表现未验证。
-5. 真实模型是否会调用诱饵，或是否会在触发前直接使用宿主危险工具，完全无法从本报告推断。
+1. **P1 未关闭：V2 分发边界。** 本地 `npm pack --dry-run --json` 显示公开包包含 `dist/eval/*`、dashboard、export、license 模块；Dockerfile 把全部 `dist` 复制进镜像。许可校验仍保留，但商业实现仍被分发。需维护者批准最小交付架构方案后再改；当前不得称为商业源码隔离完成。
+2. **真实支付未验证。** 本轮只用临时密钥和虚拟订单，未读取真实 `.env`、订单/客户资料、签名密钥，也未连接真实支付平台。此前版本订单可能没有新增 `currency` 字段；这类待处理旧订单会 fail closed，升级前要由维护者用备份和真实供应商记录核对/迁移。
+3. **攻击验证是程序化信号。** 14 个场景不是 LLM 读取恶意 README/网页后的模型评测。SIM-12/13/14 仍证明首次危险 callback、绕过 Guard 的 callback、已开始的外部副作用不受完整保护。
+4. **环境矩阵未完整。** 本轮仅 Windows x64 / Node 22.23.1 本地实际运行；Node 20、Linux、macOS 是 CI 配置项，尚无本次 workflow 结果。Docker CLI 缺失，未构建或运行镜像。
+5. **宿主责任仍存在。** Shared State Store 的跨进程/分布式事务、Agent 身份绑定、每个危险回调均接入 Router、远端公开 Webhook 服务可信度均需部署方保证。Webhook 本身不请求私网地址或跟随跳转，但“公网 HTTPS 目标本身安全”不是本代码能证明的。
 
 ## 可复现命令
 

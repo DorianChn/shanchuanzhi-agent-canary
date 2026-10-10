@@ -174,7 +174,9 @@ program
   .command("watch")
   .argument("<paths...>", "Directories to watch for canary token leaks")
   .description("Watch directories and alert the moment a canary token appears in any file")
-  .action((paths: string[]) => watch(paths));
+  .action((paths: string[]) => {
+    watch(paths);
+  });
 
 program
   .command("events")

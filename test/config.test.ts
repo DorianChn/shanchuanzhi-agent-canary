@@ -7,7 +7,7 @@ import crypto from "node:crypto";
 
 const agentHome = path.join(os.tmpdir(), `agent-canary-config-${process.pid}-${crypto.randomUUID()}`);
 process.env.AGENT_CANARY_HOME = agentHome;
-const { writeFileAtomically, saveConfig, defaultConfig, ensureDirs, CONFIG_PATH } = await import("../src/config.js");
+const { writeFileAtomically, saveConfig, defaultConfig, ensureDirs, loadConfig, CONFIG_PATH } = await import("../src/config.js");
 
 after(() => fs.rmSync(agentHome, { recursive: true, force: true }));
 
@@ -55,4 +55,38 @@ test("private Agent Canary files and directories use owner-only POSIX permission
   fs.chmodSync(file, 0o640);
   writeFileAtomically(file, "{\"updated\":true}\n");
   assert.equal(fs.statSync(file).mode & 0o777, 0o640);
+});
+
+test("first run uses defaults without writing a config file", () => {
+  fs.rmSync(CONFIG_PATH, { force: true });
+  assert.deepEqual(loadConfig(), defaultConfig());
+  assert.equal(fs.existsSync(CONFIG_PATH), false);
+});
+
+test("empty, truncated, malformed, and non-object config files fail closed without overwrite", () => {
+  for (const contents of ["", "{", "{\"notify\":", "[]", "null"]) {
+    fs.writeFileSync(CONFIG_PATH, contents);
+    assert.throws(() => loadConfig(), /invalid JSON|JSON object/i);
+    assert.equal(fs.readFileSync(CONFIG_PATH, "utf8"), contents);
+  }
+  fs.rmSync(CONFIG_PATH, { force: true });
+});
+
+test("unreadable config path fails closed instead of returning defaults", () => {
+  fs.rmSync(CONFIG_PATH, { force: true });
+  fs.mkdirSync(CONFIG_PATH);
+  try {
+    assert.throws(() => loadConfig(), /could not read/i);
+    assert.equal(fs.statSync(CONFIG_PATH).isDirectory(), true);
+  } finally {
+    fs.rmdirSync(CONFIG_PATH);
+  }
+});
+
+test("invalid known config fields are rejected while omitted fields receive defaults", () => {
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify({ notify: "yes" }));
+  assert.throws(() => loadConfig(), /invalid notify/i);
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify({ notify: false }));
+  assert.deepEqual(loadConfig(), { ...defaultConfig(), notify: false });
+  fs.rmSync(CONFIG_PATH, { force: true });
 });

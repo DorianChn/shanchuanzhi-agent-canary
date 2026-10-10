@@ -26,6 +26,8 @@ const BASE = `http://127.0.0.1:${PORT}`;
 // Run a copied server with an empty directory and a credential-free env. The
 // smoke test must never read or modify real orders, subscribers, keys, or .env.
 fs.copyFileSync(path.join(__dirname, "server.mjs"), path.join(sandbox, "server.mjs"));
+fs.copyFileSync(path.join(__dirname, "state-store.mjs"), path.join(sandbox, "state-store.mjs"));
+fs.copyFileSync(path.join(__dirname, "payment-security.mjs"), path.join(sandbox, "payment-security.mjs"));
 const server = spawn(process.execPath, ["server.mjs"], {
   cwd: sandbox,
   env: {

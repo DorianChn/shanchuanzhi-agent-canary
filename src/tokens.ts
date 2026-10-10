@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { TOKENS_PATH, ensureDirs, writeFileAtomically } from "./config.js";
 
@@ -101,12 +102,11 @@ export function loadTokens(): CanaryToken[] {
 
 export function saveTokens(tokens: CanaryToken[]): void {
   ensureDirs();
-  writeFileAtomically(TOKENS_PATH, JSON.stringify(tokens, null, 2) + "\n", 0o600);
+  withTokenRegistryLock(() => writeTokens(tokens));
 }
 
 export function addTokens(added: CanaryToken[]): CanaryToken[] {
-  const all = [...loadTokens(), ...added];
-  saveTokens(all);
+  withTokenRegistryLock(() => writeTokens([...loadTokens(), ...added]));
   return added;
 }
 
@@ -115,10 +115,95 @@ export function generateTokens(label: string, count: number): CanaryToken[] {
 }
 
 export function recordPlanted(token: CanaryToken, ref: PlantedRef): void {
-  const all = loadTokens();
-  const hit = all.find((t) => t.token === token.token);
-  if (hit) hit.planted.push(ref);
-  saveTokens(all);
+  withTokenRegistryLock(() => {
+    const all = loadTokens();
+    const hit = all.find((t) => t.token === token.token);
+    if (hit && !hit.planted.some((existing) => existing.path === ref.path && existing.line === ref.line)) {
+      hit.planted.push(ref);
+      writeTokens(all);
+    }
+  });
+}
+
+const LOCK_TIMEOUT_MS = 10_000;
+const LOCK_STALE_MS = 30_000;
+const WAIT_CELL = new Int32Array(new SharedArrayBuffer(4));
+
+function writeTokens(tokens: CanaryToken[]): void {
+  ensureDirs();
+  writeFileAtomically(TOKENS_PATH, JSON.stringify(tokens, null, 2) + "\n", 0o600);
+}
+
+function staleLockCanBeRemoved(lockPath: string): boolean {
+  let initial: string;
+  try {
+    initial = fs.readFileSync(lockPath, "utf8");
+  } catch {
+    return false;
+  }
+  let owner: { pid?: number; hostname?: string; createdAt?: number };
+  try {
+    owner = JSON.parse(initial) as typeof owner;
+  } catch {
+    return false;
+  }
+  if (
+    owner.hostname !== os.hostname() ||
+    !Number.isInteger(owner.pid) ||
+    typeof owner.createdAt !== "number" ||
+    Date.now() - owner.createdAt < LOCK_STALE_MS
+  ) return false;
+  try {
+    process.kill(owner.pid!, 0);
+    return false;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ESRCH") return false;
+  }
+  try {
+    if (fs.readFileSync(lockPath, "utf8") !== initial) return false;
+    fs.unlinkSync(lockPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Serialize registry read-modify-write operations across CLI processes. */
+function withTokenRegistryLock<T>(operation: () => T): T {
+  ensureDirs();
+  const lockPath = `${TOKENS_PATH}.lock`;
+  const deadline = Date.now() + LOCK_TIMEOUT_MS;
+  let descriptor: number | undefined;
+  while (descriptor === undefined) {
+    try {
+      descriptor = fs.openSync(lockPath, "wx", 0o600);
+      fs.writeFileSync(descriptor, JSON.stringify({ pid: process.pid, hostname: os.hostname(), createdAt: Date.now() }));
+      fs.fsyncSync(descriptor);
+    } catch (error) {
+      if (descriptor !== undefined) {
+        try { fs.closeSync(descriptor); } catch {}
+        descriptor = undefined;
+        try { fs.unlinkSync(lockPath); } catch {}
+      }
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
+        throw new Error("Could not create the canary token registry lock; token updates were not written.", { cause: error });
+      }
+      if (staleLockCanBeRemoved(lockPath)) continue;
+      if (Date.now() >= deadline) {
+        throw new Error("The canary token registry is locked by another process; no token update was written.");
+      }
+      Atomics.wait(WAIT_CELL, 0, 0, 10);
+    }
+  }
+
+  try {
+    return operation();
+  } finally {
+    try { fs.closeSync(descriptor); } catch {}
+    try { fs.unlinkSync(lockPath); } catch (error) {
+      throw new Error("The canary token registry lock could not be released; inspect it before retrying.", { cause: error });
+    }
+  }
 }
 
 /**

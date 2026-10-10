@@ -127,17 +127,22 @@ function makeEventLogPath(): string {
 
 test("sendAlertTest reports event log success and webhook success without desktop notification", async () => {
   const eventsFile = makeEventLogPath();
-  const originalFetch = globalThis.fetch;
   let requestBody = "";
-  globalThis.fetch = (async (_input, init) => {
-    requestBody = String(init?.body ?? "");
-    return new Response(null, { status: 204 });
-  }) as typeof fetch;
-
+  const server = http.createServer((request, response) => {
+    const chunks: Buffer[] = [];
+    request.on("data", (chunk: Buffer) => chunks.push(chunk));
+    request.on("end", () => {
+      requestBody = Buffer.concat(chunks).toString("utf8");
+      response.writeHead(204).end();
+    });
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
   try {
     const status = await sendAlertTest(
       { ts: "2026-09-21T00:00:00.000Z", kind: "test", note: "manual test" },
-      { webhook: "https://hooks.example.test/alert", notify: false, eventsFile }
+      { webhook: `http://127.0.0.1:${address.port}/alert`, notify: false, eventsFile }
     );
     assert.deepEqual(status, {
       eventLog: "success",
@@ -147,40 +152,44 @@ test("sendAlertTest reports event log success and webhook success without deskto
     assert.match(requestBody, /manual test/);
     assert.equal(fs.readFileSync(eventsFile, "utf8").split("\n").filter(Boolean).length, 1);
   } finally {
-    globalThis.fetch = originalFetch;
+    await new Promise<void>((resolve) => server.close(() => resolve()));
   }
 });
 
 test("sendAlertTest reports webhook failures and does not throw", async () => {
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = (async () => {
-    throw new Error("simulated network failure");
-  }) as typeof fetch;
-
+  const server = http.createServer((_request, response) => response.writeHead(503).end());
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
   try {
     const status = await sendAlertTest(
       { ts: "2026-09-21T00:00:00.000Z", kind: "test" },
-      { webhook: "https://hooks.example.test/alert", notify: false, eventsFile: makeEventLogPath() }
+      { webhook: `http://127.0.0.1:${address.port}/alert`, notify: false, eventsFile: makeEventLogPath() }
     );
     assert.equal(status.webhook, "failed");
     assert.equal(status.eventLog, "success");
     assert.equal(status.desktop, "disabled");
   } finally {
-    globalThis.fetch = originalFetch;
+    await new Promise<void>((resolve) => server.close(() => resolve()));
   }
 });
 
 test("sendAlertTest sanitizes its webhook payload", async () => {
-  const originalFetch = globalThis.fetch;
   let requestBody = "";
-  globalThis.fetch = (async (_input, init) => {
-    requestBody = String(init?.body ?? "");
-    return new Response(null, { status: 204 });
-  }) as typeof fetch;
-
+  const server = http.createServer((request, response) => {
+    const chunks: Buffer[] = [];
+    request.on("data", (chunk: Buffer) => chunks.push(chunk));
+    request.on("end", () => {
+      requestBody = Buffer.concat(chunks).toString("utf8");
+      response.writeHead(204).end();
+    });
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
   try {
     const status = await sendAlertTest(unsafeEvent(), {
-      webhook: "https://hooks.example.test/alert",
+      webhook: `http://127.0.0.1:${address.port}/alert`,
       notify: false,
       eventsFile: makeEventLogPath(),
     });
@@ -189,7 +198,7 @@ test("sendAlertTest sanitizes its webhook payload", async () => {
     assert.equal(requestBody.includes("cnry_secret_value"), false);
     assert.equal(requestBody.includes('"args"'), false);
   } finally {
-    globalThis.fetch = originalFetch;
+    await new Promise<void>((resolve) => server.close(() => resolve()));
   }
 });
 
@@ -240,5 +249,26 @@ test("webhook delivery does not follow redirects to a second destination", async
     await Promise.all(
       [redirector, destination].map((server) => new Promise<void>((resolve) => server.close(() => resolve())))
     );
+  }
+});
+
+test("event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL", () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-large-jsonl-"));
+  const eventsFile = path.join(home, "events.jsonl");
+  const valid = (note: string) => JSON.stringify({ ts: new Date().toISOString(), kind: "test", note });
+  try {
+    fs.writeFileSync(
+      eventsFile,
+      `${"x".repeat(6 * 1024 * 1024)}\n${valid("kept-1")}\n{"note":"${"z".repeat(300 * 1024)}"}\nnot-json\n${valid("kept-2")}`
+    );
+    assert.deepEqual(readEvents(eventsFile, 100).map((event) => event.note), ["kept-1", "kept-2"]);
+    assert.deepEqual(readEvents(eventsFile, 1).map((event) => event.note), ["kept-2"]);
+    assert.deepEqual(readEvents(eventsFile, -1), []);
+
+    logEvent({ ts: new Date().toISOString(), kind: "test", note: "after-rotation" }, eventsFile);
+    assert.ok(fs.statSync(eventsFile).size < 6 * 1024 * 1024);
+    assert.equal(readEvents(eventsFile, 1)[0].note, "after-rotation");
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true });
   }
 });
