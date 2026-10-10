@@ -116,3 +116,8 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 新增的真实本地模型 pilot 使用 `qwen3.5-9b-local` 和两种有 SHA-256 记录的提示词 profile。72 条主原始 trial 中，模型自主诱饵调用为 0/40；neutral profile 的 C 组在没有 Canary 信号时执行了 5 次虚拟危险 callback。harness 预置隔离状态后，C 组在两 profile 共阻断 3/3 次后续危险调用。检测、SAFE 状态下的 callback 执行、隔离后的 callback 阻断分开报告，详见 [`Agent_Canary_实验报告.md`](../../competition-submission/Agent_Canary_实验报告.md)。
 
 现有 36 条 `legacy_unknown` 数据因无 profile/hash 不纳入主比较；另一个中断于 4/36 的 run 排除统计但保留。结果页从逐次 JSON 重新计算指标。真实模型证据仍是单机单模型小样本，不改变“诱饵不是全局防火墙”的审计结论。
+
+
+## AI 增强版追加记录
+
+本轮新增独立 AI Provider / loopback 中文控制台，原 24 项审计问题和未关闭 V1/V2 P1 不变。真实本地分析、界面及自主工具实验见 AI_ENHANCEMENT_REPORT.md；最新验收见 AI_FINAL_READINESS.md。历史数量保留为对应阶段证据，不代表当前测试总量。

@@ -1,0 +1,26 @@
+{
+  "node": "v22.23.1",
+  "platform": "win32/x64",
+  "cpu": "AMD Ryzen 9 9955HX 16-Core Processor           ",
+  "fixture": "synthetic binary files; token at final bytes; temporary directory only",
+  "report": [
+    {
+      "bytes": 1048576,
+      "samples": 3,
+      "medianMs": 1.61,
+      "medianMiBPerSecond": 619.58
+    },
+    {
+      "bytes": 10485760,
+      "samples": 3,
+      "medianMs": 11.59,
+      "medianMiBPerSecond": 862.83
+    },
+    {
+      "bytes": 52428800,
+      "samples": 3,
+      "medianMs": 56.87,
+      "medianMiBPerSecond": 879.13
+    }
+  ]
+}

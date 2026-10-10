@@ -51,3 +51,12 @@ Using canary tripwires to entrap or frame a third party is not an intended use.
 
 Open a private security advisory via GitHub ("Security" tab) or contact the
 maintainer directly. Please do not open public issues for exploitable bugs.
+## Optional AI analysis boundary
+
+AI adapters are advisory only and cannot reset Guard, change policy or execute tools.
+Cloud requests require explicit minimized-input consent; redaction is best effort,
+not a DLP guarantee. Keys stay in the host process. The local console binds only
+loopback and checks Host, Origin and CSRF; do not reverse-proxy it publicly.
+Report provider schema, evidence grounding, key disclosure, destination validation
+and console authorization issues through the private disclosure process below.
+Real cloud account behavior has not been verified by the local protocol fixtures.

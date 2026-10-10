@@ -1,22 +1,22 @@
-# 参赛邮件草稿（未发送）
+# AI 增强参赛材料补充邮件草稿（本轮未发送）
 
 **收件人：** oscc@oschina.cn<br>
-**主题：** 2026 上海开源软件应用创新大赛｜开源 AI 工具赛道｜Agent Canary 作品材料提交
+**主题：** 2026 上海开源软件应用创新大赛｜开源 AI 工具赛道｜Agent Canary 更新材料补充
 
 尊敬的组委会老师：
 
 您好！
 
-我是 Agent Canary 项目负责人唐林博豪，来自闽江大学。现提交 2026 上海开源软件应用创新大赛开源 AI 工具赛道自主选题作品材料。
+我是 Agent Canary 项目负责人唐林博豪，来自闽江大学，报名审核已通过。现补充 2026 上海开源软件应用创新大赛开源 AI 工具赛道自主选题作品的最新 AI 增强材料，请与此前提交材料一并审阅。
 
 - 项目名称：Agent Canary
 - 代码仓库：https://github.com/DorianChn/shanchuanzhi-agent-canary
-- 参赛代码与材料版本：`dad03c747d514d121a5487c51fde58ece548a490`（https://github.com/DorianChn/shanchuanzhi-agent-canary/commit/dad03c747d514d121a5487c51fde58ece548a490；竞赛分支 `competition/agent-canary-hardening`，PR #22 为 Draft，尚未合并至 main）
+- 可复现代码提交：https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/d7e0a0ec812162bf51631dbd3c893d682e55435f （竞赛分支 `competition/agent-canary-hardening`，PR #22 为 Draft，尚未合并 main；最新材料的精确提交与哈希见 DELIVERY_VERSION.md）
 - 项目介绍：随邮件附《Agent Canary 项目介绍.pdf》
 - 实验报告：随邮件附《Agent Canary 实验报告.pdf》
-- 演示视频：`[回填实际公开可访问的视频链接，不可使用占位链接]`
+- 演示视频：https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/competition/agent-canary-hardening/competition-submission/Agent_Canary_AI_Demo.mp4
 
-项目提供 MCP 诱饵信号、Canary Token 检查、会话隔离及受守卫工具路由示例，重点验证 Agent 触发信号后，后续经守卫的工具回调能否被拒绝。作品说明和实验报告同时列出模型试验的样本范围及防护边界。
+项目提供 MCP 诱饵、Canary Token、会话隔离与受守卫路由，并新增可选多协议 AI 辅助分析和中文本地控制台。模型仅解释证据，确定性策略负责执行。视频展示实际本地 Ollama 分析及明确区分的离线 Guard 演示；全部工具作用为虚拟。真实 Agent 对照实验和失败记录同时公开，作品不声称全面阻止 Prompt Injection。
 
 感谢审阅。烦请查收。
 
@@ -29,4 +29,4 @@ Agent Canary 项目负责人
 
 ---
 
-**内部状态：仅草稿，未发送。** 视频链接尚未由本轮创建；发送前请先检查邮箱已发送记录，避免重复提交。
+**内部状态：仅草稿，未发送。** 上述新视频必须通过公开 HTTP 与文件哈希核验后才能发件，核验记录见 evidence/ai-video-verification.json。此前 2.1.0 邮件已发送，不能重复称首次投稿。本轮材料先在 GitHub 交付；发件需用户明确确认。附件：17 页项目介绍 PDF、7 页实验报告 PDF；可选技术创新及开源治理说明。

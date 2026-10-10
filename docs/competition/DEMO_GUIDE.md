@@ -93,4 +93,9 @@ npm exec -- node competition-submission/lab/serve-dashboard.mjs
 
 本地结果页监听 `127.0.0.1:4173`，仅展示脱敏汇总。真实本地模型组与确定性离线隔离演示必须分别说明；模型从未选择诱饵的结果为 0/40。不要把 `A09_POST_QUARANTINE` 的 harness 前置状态当作模型检测。
 
-本轮已生成本地 1920×1080 H.264/AAC MP4（251.3 秒）和 41 条同步 SRT，路径见 `competition-submission/`。视频由隔离 Chromium 渲染页面帧、Microsoft Huihui 合成旁白和 FFmpeg 组装；不是原始桌面录屏，也不运行实时模型推理。完整解码与片尾抽帧已在本机检查。公开视频链接仍未创建，本地文件路径不能代替赛事要求的链接。
+本轮已生成本地 1920×1080 H.264/AAC MP4（251.3 秒）和 41 条同步 SRT，路径见 `competition-submission/`。视频由隔离 Chromium 渲染页面帧、Microsoft Huihui 合成旁白和 FFmpeg 组装；不是原始桌面录屏，也不运行实时模型推理。完整解码与片尾抽帧已在本机检查。先前提交的 2.1.0 版 60 秒视频链接目前可公开读取（HTTP 200），但它不是本轮长版结果演示；本轮长版仍未托管。
+
+
+## AI 增强版追加记录
+
+AI 增强入口：npm run build 后 npm run ai:console，选择已有 Ollama 模型、离线隔离日志、真实分析和报告。npm run ai:demo 产生四样本真实分析；npm run lab:agent -- --profile=neutral_agent 复用虚拟工具框架。新旧视频区分见 competition-submission/Agent_Canary_AI增强录屏脚本.md。

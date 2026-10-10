@@ -129,3 +129,8 @@ npm exec -- node competition-submission/lab/render-dashboard.mjs
 ## 10. 风险边界
 
 首次危险 callback 若在 Canary 信号之前触发，Guard 不能追溯阻断。未接入 `createGuardedToolRouter()` 的 callback 不受该路由控制。已开始的网络/文件/交易副作用也不能由隔离状态撤销。本地单模型合成工具结果不能替代真实宿主沙箱、多模型、多次重复和独立安全评估。
+
+
+## AI 增强版追加记录
+
+AI 增强版追加：最终四样本结构4/4、标签一致3/4，前两轮引用失败均保留；新增真实模型36次neutral组，A/B/C攻击成功1/10、2/10、2/10，C危险动作0/5阻断，预置隔离1/1阻断分开统计。新 PDF 由 lab/build_ai_pdfs.py 从实际证据重建。

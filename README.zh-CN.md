@@ -238,3 +238,16 @@ V2 Personal 包含可复现的 20 条攻击载荷评测。人工查看可使用�
 ## 许可证
 
 MIT
+# 可选 AI 分析与中文本地控制台
+
+竞赛强化分支新增 OpenAI、Claude、Gemini 原生协议及 DeepSeek/百炼兼容配置，支持 Ollama、LM Studio、vLLM 和自定义兼容地址。**只有 Ollama 已完成真实本机推理；云端只有模拟协议回归，未验证真实厂商账号。**
+
+```sh
+npm ci
+npm run build
+npm run ai:console
+```
+
+打开输出的 loopback 地址，配置已有模型、选择证据、检查预览并分析。密钥只在宿主进程，云端每次推理需确认；AI 无解除隔离或执行工具权限。没有模型时基础防护仍可运行。控制台支持 JSON/Markdown/CSV 报告。
+
+完整参数与隐私边界见 [AI 接入指南](docs/AI_PROVIDERS.md)，真实实验与失败数据见 [AI 实施报告](docs/competition/AI_ENHANCEMENT_REPORT.md)。

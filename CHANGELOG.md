@@ -70,3 +70,10 @@
   action, and human reset events.
 - Update the public documentation to separate the free V1.x line from paid
   V2.x delivery.
+## Unreleased — competition AI enhancement
+
+- Optional advisory providers: OpenAI-compatible, native Ollama, Anthropic Messages and Gemini generateContent.
+- Chinese loopback console, evidence preview/consent, origin-bound backend key injection, model lookup, sandbox demos and bounded JSON/Markdown/CSV reports.
+- Strict schema/evidence-ID validation, pinned DNS, redirect refusal, cancellation/deadlines and bounded retries; no changes to Guard authority.
+- Real local Qwen analysis and repeated A/B/C tool-selection pilot, including failed references and label disagreement.
+- Additional AI security regression tests and reproducible PDF/material generation. Not an npm release; cloud account verification and V1/V2 distribution boundary remain open.

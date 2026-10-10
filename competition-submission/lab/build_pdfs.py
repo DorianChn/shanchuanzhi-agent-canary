@@ -633,6 +633,7 @@ def build_experiment_pdf():
     doc.build(story)
 
 
-build_project_pdf()
-build_experiment_pdf()
-print("Generated 2 PDF files")
+if __name__ == '__main__':
+    build_project_pdf()
+    build_experiment_pdf()
+    print("Generated 2 baseline PDF files; use build_ai_pdfs.py for the AI enhancement submission")

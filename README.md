@@ -294,3 +294,22 @@ Run `agent-canary --help` for details.
 ## License
 
 MIT
+# Optional AI analysis and Chinese local console
+
+The competition branch adds advisory-only adapters for OpenAI, Claude, Gemini,
+OpenAI-compatible services (DeepSeek/Qwen), Ollama, LM Studio and vLLM.
+Ollama was exercised with real local inference; cloud providers have protocol
+fixture tests and are **not verified against real vendor accounts**.
+
+```sh
+npm ci
+npm run build
+npm run ai:console
+```
+
+Open the printed loopback address, configure an installed model, inspect selected
+evidence and request analysis. API keys stay in the host process; cloud inference
+requires preview and consent. AI has no Guard reset or execution authority.
+Offline containment continues without a model. JSON/Markdown/CSV reports are
+available. See [provider documentation](docs/AI_PROVIDERS.md) and
+[implementation and evidence](docs/competition/AI_ENHANCEMENT_REPORT.md).

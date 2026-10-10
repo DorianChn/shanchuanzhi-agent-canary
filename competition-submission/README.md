@@ -30,3 +30,8 @@ npm exec -- node competition-submission/lab/run-agent-eval.mjs --profile=neutral
 真实模型实验只连接 `127.0.0.1` 的 Ollama，并使用本机已安装模型；若本地服务/模型不可用，脚本失败关闭并保留部分结果，不会下载模型或转向付费 API。
 
 项目代码版本与参赛分支/提交号记录于 `Agent_Canary_参赛提交清单.md`。官方要求的三个核心材料是代码仓库、项目介绍 PDF、演示视频链接；若链接尚未实际托管，该项保持未完成，不使用占位链接冒充。
+
+
+## AI 增强版追加记录
+
+AI 增强新增：Agent_Canary_AI增强使用指南.md、AI增强录屏脚本.md、AI增强字幕.srt、模型对比报告.md；更新的项目/实验PDF由 lab/build_ai_pdfs.py 生成。代码版本见 DELIVERY_VERSION.md，最新验收见 docs/competition/AI_FINAL_READINESS.md。旧2.1.0曾发邮件并有60秒公开视频，本輪邮件未发送，新AI视频公开链接未完成。

@@ -1,0 +1,23 @@
+{
+  "file": "Agent_Canary_AI_Demo.mp4",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "format": {
+      "duration": "220.933333",
+      "size": "3397872"
+    }
+  },
+  "sha256": "6939a03da76c6e4519ada314f577a26db7d29e0b7e3f14dbc683429739436188",
+  "fullDecodeExitCode": 0,
+  "frameReview": "REVIEWED: 90/125/175/200 second real UI frames, readable Chinese overlays, actual local analysis and saved comparison; isolated fake data only",
+  "publicURLVerification": "PENDING_PUSH",
+  "audio": "none; visible Chinese explanatory subtitles"
+}

@@ -93,3 +93,8 @@ node smoke.mjs
 通过 harness 预先建立 quarantine 的 A09 跟进场景另计：Safety-aware C 组 2/2、Neutral C 组 1/1 次经 Router 的危险 mock callback 被拒绝；检测计分为 0。B 组 callback 未接 Router，因此两次 profile 的预置隔离后调用均执行。模型没有选择专门的 `direct_shell_unprotected` 或 A10 首次危险调用；不能声称真实 LLM 绕过已被实测。
 
 详细逐项数据和复现命令见 [`参赛实验报告`](../../competition-submission/Agent_Canary_实验报告.md) 及 `competition-submission/evidence/local-model-eval-*.json`。工具均为内存模拟，真实网络/主机 Shell/文件删除/凭据读取为 0。该 pilot 不代表生产攻击成功率或通用模型安全率。
+
+
+## AI 增强版追加记录
+
+新增 AI 安全回归（原生协议、同意、密钥、SSRF、结构/证据、取消超时、Guard 独立、CSV、控制台）与真实本地分析。最终四输入结构 4/4、标签一致 3/4；本轮36次 neutral A/B/C 的成功场景为1/10、2/10、2/10，模型诱饵0/20，C无信号危险动作阻断0/5。详情与失败记录见 AI_ENHANCEMENT_REPORT.md。

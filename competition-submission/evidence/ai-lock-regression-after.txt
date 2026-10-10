@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: token format and registry roundtrip
+ok 1 - token format and registry roundtrip
+  ---
+  duration_ms: 11.6139
+  type: 'test'
+  ...
+# Subtest: plantIntoFile creates honeypot and records planted refs
+ok 2 - plantIntoFile creates honeypot and records planted refs
+  ---
+  duration_ms: 19.0127
+  type: 'test'
+  ...
+# Subtest: scanFile flags leaked tokens but ignores the honeypot file itself
+ok 3 - scanFile flags leaked tokens but ignores the honeypot file itself
+  ---
+  duration_ms: 14.7239
+  type: 'test'
+  ...
+# Subtest: scanFile detects a binary token beyond the old size limit and across a read boundary
+ok 4 - scanFile detects a binary token beyond the old size limit and across a read boundary
+  ---
+  duration_ms: 19.1312
+  type: 'test'
+  ...
+# Subtest: decoy call returns fake success with embedded trace token and logs an event
+ok 5 - decoy call returns fake success with embedded trace token and logs an event
+  ---
+  duration_ms: 24.2616
+  type: 'test'
+  ...
+# Subtest: decoys leave represented real actions inert while returning a fake response
+ok 6 - decoys leave represented real actions inert while returning a fake response
+  ---
+  duration_ms: 22.4516
+  type: 'test'
+  ...
+# Subtest: loadTokens skips corrupt records without losing valid tokens
+ok 7 - loadTokens skips corrupt records without losing valid tokens
+  ---
+  duration_ms: 1.8926
+  type: 'test'
+  ...
+# Subtest: saveTokens writes a complete registry without leaving a temporary file
+ok 8 - saveTokens writes a complete registry without leaving a temporary file
+  ---
+  duration_ms: 8.3192
+  type: 'test'
+  ...
+# Subtest: parallel CLI processes do not lose token registry updates
+ok 9 - parallel CLI processes do not lose token registry updates
+  ---
+  duration_ms: 1072.367
+  type: 'test'
+  ...
+# Subtest: Windows transient EPERM lock-open contention retries without losing registry records
+ok 10 - Windows transient EPERM lock-open contention retries without losing registry records
+  ---
+  duration_ms: 28.6646
+  type: 'test'
+  ...
+# Subtest: Windows lock permission failures remain bounded and never overwrite token records
+ok 11 - Windows lock permission failures remain bounded and never overwrite token records
+  ---
+  duration_ms: 3.0019
+  type: 'test'
+  ...
+# Subtest: token registry is owner-readable on POSIX systems
+ok 12 - token registry is owner-readable on POSIX systems # SKIP
+  ---
+  duration_ms: 0.1045
+  type: 'test'
+  ...
+# Subtest: CLI recursive check detects a token in a hidden .env file
+ok 13 - CLI recursive check detects a token in a hidden .env file
+  ---
+  duration_ms: 916.8385
+  type: 'test'
+  ...
+# Subtest: CLI recursive check fails closed for a missing path or an over-depth tree
+ok 14 - CLI recursive check fails closed for a missing path or an over-depth tree
+  ---
+  duration_ms: 1816.4367
+  type: 'test'
+  ...
+# Subtest: recursive walker includes hidden files but skips dependency and Git internals
+ok 15 - recursive walker includes hidden files but skips dependency and Git internals
+  ---
+  duration_ms: 18.8121
+  type: 'test'
+  ...
+# Subtest: a corrupt token registry raises an error and is not overwritten by token generation
+ok 16 - a corrupt token registry raises an error and is not overwritten by token generation
+  ---
+  duration_ms: 7.1596
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 4519.3677
