@@ -6,7 +6,7 @@ import { spawn } from "node:child_process";
 import { VERSION, loadConfig, saveConfig, defaultConfig, ensureDirs, CONFIG_PATH } from "./config.js";
 import { serve } from "./server.js";
 import { generateTokens, loadTokens, plantIntoFile, findTokensInText, scanFile } from "./tokens.js";
-import { readEvents, sendAlertTest, type CanaryEvent } from "./alerts.js";
+import { readEvents, safeDisplayText, sendAlertTest, type CanaryEvent } from "./alerts.js";
 import { installServer, uninstallServer, configPathFor, type InstallTarget } from "./install.js";
 import { watch } from "./watch.js";
 import { EVAL_PAYLOADS, EVAL_SUITE_VERSION } from "./eval/payloads.js";
@@ -18,27 +18,28 @@ import { activate, ensureLicensedAsync, licenseServer, UPSELL, cachedLicense } f
 import { DECOY_TOOLS } from "./decoys.js";
 import { runSelfTest } from "./self-test.js";
 import { validateWebhookUrl } from "./webhook.js";
+import { walkFiles } from "./file-walk.js";
 import http from "node:http";
 
 const program = new Command();
 program
   .name("agent-canary")
-  .description("Zero-false-positive tripwires for AI agents: decoy MCP tools + leak-tracing canary tokens.")
+  .description("Event-triggered AI-agent containment: inert MCP decoys, canary tokens, and guarded tool routing.")
   .version(VERSION);
 
 function eventDetail(ev: CanaryEvent): string {
-  if (ev.kind === "decoy_called") return `tool=${ev.toolName ?? ev.tool ?? "?"}`;
-  if (ev.kind === "token_found") return `label=${ev.label ?? "?"} path=${ev.path ?? "?"}`;
+  if (ev.kind === "decoy_called") return `tool=${safeDisplayText(ev.toolName ?? ev.tool ?? "?")}`;
+  if (ev.kind === "token_found") return `label=${safeDisplayText(ev.label ?? "?")} path=${safeDisplayText(ev.path ?? "?")}`;
   if (ev.kind === "session_tripped" || ev.kind === "session_quarantined") {
-    return `session=${ev.sessionId ?? "?"} reason=${ev.reason ?? "?"} tool=${ev.toolName ?? "?"} risk=${ev.riskLevel ?? "?"}`;
+    return `session=${safeDisplayText(ev.sessionId ?? "?")} reason=${safeDisplayText(ev.reason ?? "?")} tool=${safeDisplayText(ev.toolName ?? "?")} risk=${safeDisplayText(ev.riskLevel ?? "?")}`;
   }
   if (ev.kind === "action_blocked") {
-    return `session=${ev.sessionId ?? "?"} tool=${ev.toolName ?? ev.tool ?? "?"} risk=${ev.riskLevel ?? "?"} reason=${ev.reason ?? "?"}`;
+    return `session=${safeDisplayText(ev.sessionId ?? "?")} tool=${safeDisplayText(ev.toolName ?? ev.tool ?? "?")} risk=${safeDisplayText(ev.riskLevel ?? "?")} reason=${safeDisplayText(ev.reason ?? "?")}`;
   }
   if (ev.kind === "session_reset") {
-    return `session=${ev.sessionId ?? "?"} by=${ev.metadata?.acknowledgedBy ?? "human"}`;
+    return `session=${safeDisplayText(ev.sessionId ?? "?")} by=${safeDisplayText(String(ev.metadata?.acknowledgedBy ?? "human"))}`;
   }
-  return ev.note ?? "test";
+  return safeDisplayText(ev.note ?? "test");
 }
 
 program
@@ -52,7 +53,7 @@ program
   .action(() => {
     ensureDirs();
     if (!fs.existsSync(CONFIG_PATH)) saveConfig(defaultConfig());
-    console.log(`Initialized ${CONFIG_PATH}`);
+    console.log(`Initialized ${safeDisplayText(CONFIG_PATH)}`);
     console.log(`
 Next steps:
   1. agent-canary tokens plant .env.canary --label honeypot
@@ -73,12 +74,12 @@ program
   .description("Register the decoy MCP server in Claude Code or Cursor config (creates a backup first)")
   .action((target: string) => {
     if (!isInstallTarget(target)) {
-      console.error(`Unknown target "${target}". Supported: claude, cursor`);
+      console.error(`Unknown target "${safeDisplayText(target, 80)}". Supported: claude, cursor`);
       process.exit(1);
     }
     const { configPath, backupPath } = installServer(target);
-    console.log(`Registered agent-canary in ${configPath}`);
-    if (backupPath) console.log(`Backup of previous config: ${backupPath}`);
+    console.log(`Registered agent-canary in ${safeDisplayText(configPath)}`);
+    if (backupPath) console.log(`Backup of previous config: ${safeDisplayText(backupPath)}`);
     console.log("Restart your editor/agent to load the decoy tools.");
   });
 
@@ -88,7 +89,7 @@ program
   .description("Remove the decoy MCP server registration")
   .action((target: string) => {
     if (!isInstallTarget(target)) {
-      console.error(`Unknown target "${target}". Supported: claude, cursor`);
+      console.error(`Unknown target "${safeDisplayText(target, 80)}". Supported: claude, cursor`);
       process.exit(1);
     }
     console.log(uninstallServer(target) ? "Removed." : "Nothing to remove.");
@@ -102,7 +103,7 @@ tokens
   .option("-c, --count <n>", "How many tokens", (v) => parseInt(v, 10), 1)
   .action((opts) => {
     const created = generateTokens(opts.label, opts.count);
-    for (const t of created) console.log(`${t.token}   # ${t.label}`);
+    for (const t of created) console.log(`${t.token}   # ${safeDisplayText(t.label, 128)}`);
     console.error(`\n${created.length} token(s) saved to registry. Place one anywhere worth watching; scan with: agent-canary tokens check <file>`);
   });
 
@@ -113,8 +114,8 @@ tokens
     const all = loadTokens();
     if (all.length === 0) return console.log("No tokens yet. Try: agent-canary tokens generate --label my-first");
     for (const t of all) {
-      const planted = t.planted.length ? ` planted: ${t.planted.map((r) => `${r.path}:${r.line}`).join(", ")}` : "";
-      console.log(`${t.token}  ${t.label}${planted}`);
+      const planted = t.planted.length ? ` planted: ${t.planted.map((r) => `${safeDisplayText(r.path)}:${r.line}`).join(", ")}` : "";
+      console.log(`${t.token}  ${safeDisplayText(t.label, 128)}${planted}`);
     }
   });
 
@@ -125,7 +126,7 @@ tokens
   .option("-c, --count <n>", "How many tokens", (v) => parseInt(v, 10), 3)
   .action((file, opts) => {
     const created = plantIntoFile(file, opts.label, opts.count);
-    console.log(`Planted ${created.length} canary token(s) into ${fs.existsSync(file) ? fs.realpathSync(file) : file}`);
+    console.log(`Planted ${created.length} canary token(s) into ${safeDisplayText(fs.existsSync(file) ? fs.realpathSync(file) : file)}`);
     console.log("Run `agent-canary watch .` or wire `tokens check` into CI to detect leaks.");
   });
 
@@ -140,30 +141,19 @@ tokens
       const text = fs.readFileSync(0, "utf8");
       hits = findTokensInText(text).map((t) => ({ label: t.label, token: t.token, where: "<stdin>" }));
     } else {
+      if (!paths?.length) throw new Error("Provide at least one file or directory, or use --stdin.");
       const files: string[] = [];
-      const walkDir = (dir: string, depth = 0) => {
-        if (depth > 4) return;
-        let entries: fs.Dirent[] = [];
-        try {
-          entries = fs.readdirSync(dir, { withFileTypes: true });
-        } catch {
-          return;
-        }
-        for (const e of entries) {
-          if (e.name.startsWith(".") || e.name === "node_modules") continue;
-          const p = path.join(dir, e.name);
-          if (e.isDirectory()) walkDir(p, depth + 1);
-          else files.push(p);
-        }
-      };
       for (const p of paths) {
-        const stat = fs.statSync(p, { throwIfNoEntry: false });
-        if (!stat) {
-          console.error(`skip (not found): ${p}`);
-          continue;
+        let stat: fs.Stats;
+        try {
+          stat = fs.lstatSync(p);
+        } catch (error) {
+          throw new Error(`Cannot inspect ${JSON.stringify(p)}; the scan is incomplete.`, { cause: error });
         }
-        if (stat.isDirectory()) walkDir(p);
-        else files.push(p);
+        if (stat.isSymbolicLink()) throw new Error(`Refusing to follow symbolic link ${JSON.stringify(p)}; scan the target explicitly.`);
+        if (stat.isDirectory()) files.push(...walkFiles(p));
+        else if (stat.isFile()) files.push(p);
+        else throw new Error(`Unsupported scan target ${JSON.stringify(p)}; expected a regular file or directory.`);
       }
       for (const f of files) {
         for (const t of scanFile(f)) {
@@ -176,7 +166,7 @@ tokens
       console.log("clean: no canary tokens found");
       return;
     }
-    for (const h of hits) console.log(`LEAK  ${h.label}  ${h.token.slice(0, 14)}…  in ${h.where}`);
+    for (const h of hits) console.log(`LEAK  ${safeDisplayText(h.label, 128)}  ${h.token.slice(0, 14)}…  in ${safeDisplayText(h.where)}`);
     process.exit(1);
   });
 
@@ -270,7 +260,7 @@ program
     try {
       cfg.webhook = validateWebhookUrl(url);
     } catch (error) {
-      console.error(`Invalid webhook URL: ${(error as Error).message}`);
+      console.error(`Invalid webhook URL: ${safeDisplayText((error as Error).message)}`);
       process.exitCode = 1;
       return;
     }
@@ -330,18 +320,18 @@ program
     }
     if (opts.format === "text") {
       console.log(
-        `agent-canary eval · suite ${EVAL_SUITE_VERSION} · ${EVAL_PAYLOADS.length} payloads · model ${opts.model}`
+        `agent-canary eval · suite ${EVAL_SUITE_VERSION} · ${EVAL_PAYLOADS.length} payloads · model ${safeDisplayText(opts.model, 128)}`
       );
     }
     const report = await runEval(provider, opts.model, {
       maxTurns: opts.maxTurns,
-      onProgress: opts.format === "text" ? (line) => console.log("  " + line) : undefined,
+      onProgress: opts.format === "text" ? (line) => console.log("  " + safeDisplayText(line)) : undefined,
     });
 
     if (opts.out) {
       const content = opts.format === "json" ? JSON.stringify(report, null, 2) + "\n" : renderMarkdownReport(report);
       fs.writeFileSync(opts.out, content);
-      if (opts.format === "text") console.log(`\n${opts.format === "json" ? "JSON" : "Markdown"} report written to ${opts.out}`);
+      if (opts.format === "text") console.log(`\n${opts.format === "json" ? "JSON" : "Markdown"} report written to ${safeDisplayText(opts.out)}`);
     }
     if (opts.format === "json") {
       if (!opts.out) console.log(JSON.stringify(report, null, 2));
@@ -367,7 +357,7 @@ program
     const events = readEvents(undefined, 1_000_000);
     const html = renderDashboard(events, { generatedAt: new Date().toISOString(), version: VERSION });
     fs.writeFileSync(opts.out, html);
-    console.log(`Dashboard written: ${path.resolve(opts.out)} (${events.length} events)`);
+    console.log(`Dashboard written: ${safeDisplayText(path.resolve(opts.out))} (${events.length} events)`);
     if (opts.open) {
       const opener =
         process.platform === "win32"
@@ -394,7 +384,7 @@ program
       opts.format === "json" ? exportJson(events) : opts.format === "csv" ? exportCsv(events) : exportCef(events);
     if (opts.out) {
       fs.writeFileSync(opts.out, out);
-      console.log(`Exported ${events.length} events (${opts.format}) to ${path.resolve(opts.out)}`);
+      console.log(`Exported ${events.length} events (${safeDisplayText(opts.format, 32)}) to ${safeDisplayText(path.resolve(opts.out))}`);
     } else {
       process.stdout.write(out);
     }
@@ -406,13 +396,13 @@ program
   .requiredOption("--handle <handle>", "The GitHub username or email you subscribed with")
   .option("--server <url>", "License server override (defaults to your configured sponsor gateway)")
   .action(async (opts) => {
-    console.log(`Checking subscription at ${licenseServer(opts.server)} …`);
+    console.log(`Checking subscription at ${safeDisplayText(licenseServer(opts.server))} …`);
     const r = await activate(opts.handle, opts.server);
     if (r.ok) {
       console.log(`✓ 个人版已激活，有效期至 ${r.expiresAt}${r.offline ? "（使用本地缓存，离线宽限）" : ""}`);
       console.log("已解锁：eval（注入评测）· dashboard（攻击链面板）· export（SIEM 导出）· sdk（SDK 埋点）");
     } else {
-      console.error(`✗ 激活失败：${r.message}`);
+      console.error(`✗ 激活失败：${safeDisplayText(r.message ?? "unknown error")}`);
       console.error(UPSELL);
       process.exit(1);
     }
@@ -432,8 +422,8 @@ program
     console.log(`  诱饵工具    ${DECOY_TOOLS.length} 个已注册`);
     console.log(`  金丝雀令牌  ${tokens.length} 个（${tokens.filter((t) => t.planted.length).length} 个已埋放）`);
     console.log(`  事件        ${events.length} 条（${real} 条真实告警）`);
-    console.log(`  许可服务器  ${licenseServer()}`);
-    console.log(`  事件日志    ${cfg.eventsFile}`);
+    console.log(`  许可服务器  ${safeDisplayText(licenseServer())}`);
+    console.log(`  事件日志    ${safeDisplayText(cfg.eventsFile)}`);
   });
 
 program
@@ -452,16 +442,16 @@ program
     console.log("  环境");
     if (lic) ok(`授权：个人版 Personal，有效期至 ${lic.expiresAt.slice(0, 10)}`);
     else info("授权：免费版 Free（eval/dashboard/export 需个人版；SDK containment 免费）");
-    info(`配置文件：${fs.existsSync(CONFIG_PATH) ? CONFIG_PATH : "未创建（agent-canary init）"}`);
+    info(`配置文件：${safeDisplayText(fs.existsSync(CONFIG_PATH) ? CONFIG_PATH : "未创建（agent-canary init）")}`);
     info(`诱饵工具：${DECOY_TOOLS.length} 个 · 令牌：${tokens.length} 个（${tokens.filter((t) => t.planted.length).length} 已埋放）`);
-    info(`事件：${events.length} 条 · 日志 ${cfg.eventsFile}`);
+    info(`事件：${events.length} 条 · 日志 ${safeDisplayText(cfg.eventsFile)}`);
 
     console.log("  许可服务器");
     const ls = licenseServer();
     try {
       const r = await fetch(`${ls}/api/subscription/__probe`, { signal: AbortSignal.timeout(3000) });
-      if (r.status < 500) ok(`${ls} 可达 (HTTP ${r.status})`);
-      else bad(`${ls} 异常 (HTTP ${r.status})`);
+      if (r.status < 500) ok(`${safeDisplayText(ls)} 可达 (HTTP ${r.status})`);
+      else bad(`${safeDisplayText(ls)} 异常 (HTTP ${r.status})`);
     } catch {
       bad(`${ls} 不可达（本地收款场景可忽略）`);
     }
@@ -490,6 +480,6 @@ program
   });
 
 program.parseAsync(process.argv).catch((err: unknown) => {
-  console.error("error:", err instanceof Error ? err.message : err);
+  console.error("error:", safeDisplayText(err instanceof Error ? err.message : String(err)));
   process.exit(1);
 });

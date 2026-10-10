@@ -134,7 +134,7 @@ export function createGuardedToolRouter<T>(options: GuardedToolRouterOptions<T>)
   };
 }
 
-/** Scan any text for planted canary tokens. Zero false positives by design. */
+/** Find exact matches for registered tokens in inspected text. A match alone does not prove malicious intent. */
 export function scanCanary(text: string): CanaryToken[] {
   return findTokensInText(text);
 }

@@ -5,24 +5,39 @@
  */
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import http from "node:http";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-process.env.AGENT_CANARY_HOME_DUMMY = "1"; // no-op, keeps intent obvious
-
-const PORT = 8189;
+const sandbox = fs.mkdtempSync(path.join(__dirname, ".smoke-run-"));
+const portProbe = http.createServer();
+await new Promise((resolve, reject) => {
+  portProbe.once("error", reject);
+  portProbe.listen(0, "127.0.0.1", resolve);
+});
+const address = portProbe.address();
+if (!address || typeof address === "string") throw new Error("could not reserve a local smoke-test port");
+const PORT = address.port;
+await new Promise((resolve, reject) => portProbe.close((error) => error ? reject(error) : resolve()));
 const BASE = `http://127.0.0.1:${PORT}`;
 
-// 隔离数据文件，避免污染真实 orders/subscribers
-for (const f of ["orders.json", "subscribers.json", "activations.json"]) {
-  try { fs.rmSync(path.join(__dirname, f)); } catch {}
-}
-
-const SUBS_BACKUP = fs.existsSync(path.join(__dirname,"subscribers.json")) ? fs.readFileSync(path.join(__dirname,"subscribers.json"),"utf8") : null;
+// Run a copied server with an empty directory and a credential-free env. The
+// smoke test must never read or modify real orders, subscribers, keys, or .env.
+fs.copyFileSync(path.join(__dirname, "server.mjs"), path.join(sandbox, "server.mjs"));
 const server = spawn(process.execPath, ["server.mjs"], {
-  cwd: __dirname,
-  env: { ...process.env, PORT: String(PORT), DEMO: "1", PUBLIC_BASE_URL: BASE },
+  cwd: sandbox,
+  env: {
+    PATH: process.env.PATH ?? "",
+    SystemRoot: process.env.SystemRoot ?? "",
+    TEMP: process.env.TEMP ?? os.tmpdir(),
+    TMP: process.env.TMP ?? os.tmpdir(),
+    PORT: String(PORT),
+    HOST: "127.0.0.1",
+    DEMO: "1",
+    PUBLIC_BASE_URL: BASE,
+  },
   stdio: ["ignore", "pipe", "pipe"],
 });
 server.stderr.on("data", (d) => process.stderr.write(`[sponsor] ${d}`));
@@ -86,7 +101,7 @@ try {
 
   // license activation: machine binding + limit (LICENSE_MAX_MACHINES default 3)
   const crypto = await import("node:crypto");
-  fs.writeFileSync(path.join(__dirname, "subscribers.json"),
+  fs.writeFileSync(path.join(sandbox, "subscribers.json"),
     JSON.stringify({ "LH": { handle: "LH", expiresAt: new Date(Date.now() + 864e5).toISOString() } }));
   const act = (h) => fetch(BASE + "/api/activate", {
     method: "POST", headers: { "content-type": "application/json" },
@@ -100,22 +115,16 @@ try {
   check("activation 1-3 accepted", r1.ok && r2.ok && r3.ok);
   const r4body = await r4.json();
   check("4th machine rejected (machine_limit)", r4.status === 403 && r4body.code === "machine_limit");
-  fs.rmSync(path.join(__dirname, "subscribers.json"), { force: true });
+  fs.rmSync(path.join(sandbox, "subscribers.json"), { force: true });
 } catch (err) {
   failures++;
   console.log("FAIL - unexpected error:", err.message);
 } finally {
-  // 恢复原始订阅文件，但保留运行期间真实授予的订阅（去掉测试句柄）
-  const SUBS_PATH = path.join(__dirname, "subscribers.json");
-  let finalSubs = SUBS_BACKUP !== null ? JSON.parse(SUBS_BACKUP) : {};
-  try {
-    const during = JSON.parse(fs.readFileSync(SUBS_PATH, "utf8"));
-    for (const [k, v] of Object.entries(during)) {
-      if (!["smoke-test", "manual-test", "limit-test", "LH"].includes(k)) finalSubs[k] = v;
-    }
-  } catch {}
-  fs.writeFileSync(SUBS_PATH, JSON.stringify(finalSubs, null, 2) + "\n");
-  server.kill();
+  if (server.exitCode === null && server.signalCode === null) {
+    server.kill();
+    await new Promise((resolve) => server.once("exit", resolve));
+  }
+  fs.rmSync(sandbox, { recursive: true, force: true });
 }
 
 process.exit(failures ? 1 : 0);

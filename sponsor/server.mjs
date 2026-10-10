@@ -32,6 +32,12 @@ import QRCode from "qrcode";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+function safeLogText(value, maxLength = 240) {
+  return String(value ?? "")
+    .replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ")
+    .slice(0, maxLength);
+}
+
 // ---------- config ----------
 function loadDotEnv() {
   try {
@@ -230,7 +236,7 @@ function extendSubscription(handle, orderId) {
   const expiresAt = new Date(Math.max(now, current) + PLAN.personal.days * 864e5).toISOString();
   subs[handle] = { handle, expiresAt, lastOrderId: orderId, updatedAt: new Date().toISOString() };
   writeJson(SUBS_FILE, subs);
-  console.log(`[sponsor] personal edition for "${handle}" active until ${expiresAt}`);
+  console.log(`[sponsor] personal edition active until ${expiresAt}`);
   return expiresAt;
 }
 
@@ -481,15 +487,40 @@ function send(res, status, body, type = "text/plain; charset=utf-8") {
   res.writeHead(status, { "Content-Type": type });
   res.end(body);
 }
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+}
 function readBody(req) {
   return new Promise((resolve, reject) => {
-    let data = "";
-    req.on("data", (c) => {
-      data += c;
-      if (data.length > 1e6) reject(new Error("body too large"));
+    const chunks = [];
+    let size = 0;
+    let settled = false;
+    req.on("data", (chunk) => {
+      if (settled) return;
+      size += chunk.length;
+      if (size > 1_000_000) {
+        settled = true;
+        chunks.length = 0;
+        const error = new Error("request body too large");
+        error.code = "BODY_TOO_LARGE";
+        reject(error);
+        req.resume();
+        return;
+      }
+      chunks.push(chunk);
     });
-    req.on("end", () => resolve(data));
-    req.on("error", reject);
+    req.on("end", () => {
+      if (!settled) resolve(Buffer.concat(chunks, size).toString("utf8"));
+    });
+    req.on("error", (error) => {
+      if (!settled) reject(error);
+    });
   });
 }
 
@@ -572,7 +603,7 @@ const server = http.createServer(async (req, res) => {
         : newOrder(channel, amount, input.note);
       order.status = "pending_manual";
       saveOrders();
-      console.log(`[sponsor] manual claim: ${handle} ¥${order.amount} (${channel}${plan ? ", personal" : ""})`);
+      console.log(`[sponsor] manual claim: handle=[redacted] ¥${order.amount} (${channel}${plan ? ", personal" : ""})`);
       return send(res, 200, JSON.stringify({ ok: true, orderId: order.id }), "application/json");
     }
 
@@ -688,7 +719,7 @@ const server = http.createServer(async (req, res) => {
       writeJson(ACTIVATIONS_FILE, acts);
       const expiresAt = new Date(Math.min(new Date(sub.expiresAt).getTime(), Date.now() + LICENSE_TTL_DAYS * 864e5)).toISOString();
       const license = signLicensePayload({ handle, machineHash, expiresAt, iat: Date.now() });
-      console.log(`[sponsor] activated "${handle}" machine ${machineHash.slice(0, 12)}… until ${expiresAt}`);
+      console.log(`[sponsor] activated handle=[redacted] machine ${machineHash.slice(0, 12)}… until ${expiresAt}`);
       return send(res, 200, JSON.stringify({ ok: true, license, revalidateAfter: Date.now() + 3 * 864e5 }), "application/json");
     }
 
@@ -702,7 +733,7 @@ const server = http.createServer(async (req, res) => {
         200,
         `<body style="font-family:sans-serif;background:#0d1117;color:#c9d1d9;text-align:center;padding-top:60px">
           <h2>演示模式 — 模拟${o.channel === "wechat" ? "微信支付" : "支付宝"} · ${what}</h2>
-          <p>订单 ${o.id.slice(0, 8)}… · ¥${o.amount.toFixed(2)}${o.handle ? ` · ${o.handle}` : ""}</p>
+          <p>订单 ${o.id.slice(0, 8)}… · ¥${o.amount.toFixed(2)}${o.handle ? ` · ${escapeHtml(o.handle)}` : ""}</p>
           <a href="/demo/confirm/${o.id}" style="display:inline-block;margin-top:20px;padding:12px 28px;background:#3fb950;color:#0d1117;border-radius:8px;text-decoration:none;font-weight:700">确认支付（模拟回调）</a>
         </body>`,
         "text/html; charset=utf-8"
@@ -720,7 +751,8 @@ const server = http.createServer(async (req, res) => {
 
     send(res, 404, "not found");
   } catch (err) {
-    console.error("[sponsor]", err);
+    console.error("[sponsor]", safeLogText(err instanceof Error ? err.message : err));
+    if (err?.code === "BODY_TOO_LARGE") return send(res, 413, "request body too large");
     send(res, 500, "internal error");
   }
 });

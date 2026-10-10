@@ -78,21 +78,30 @@ export function mintToken(label: string): CanaryToken {
 }
 
 export function loadTokens(): CanaryToken[] {
+  let text: string;
   try {
-    const raw: unknown = JSON.parse(fs.readFileSync(TOKENS_PATH, "utf8"));
-    if (!Array.isArray(raw)) return [];
-    return raw.flatMap((entry) => {
-      const token = parseCanaryToken(entry);
-      return token ? [token] : [];
-    });
-  } catch {
-    return [];
+    text = fs.readFileSync(TOKENS_PATH, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw new Error("Could not read the canary token registry; scanning and token updates are unavailable.", { cause: error });
   }
+
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch (error) {
+    throw new Error("The canary token registry is invalid JSON; it was left unchanged.", { cause: error });
+  }
+  if (!Array.isArray(raw)) throw new Error("The canary token registry must contain a JSON array; it was left unchanged.");
+  return raw.flatMap((entry) => {
+    const token = parseCanaryToken(entry);
+    return token ? [token] : [];
+  });
 }
 
 export function saveTokens(tokens: CanaryToken[]): void {
   ensureDirs();
-  writeFileAtomically(TOKENS_PATH, JSON.stringify(tokens, null, 2) + "\n");
+  writeFileAtomically(TOKENS_PATH, JSON.stringify(tokens, null, 2) + "\n", 0o600);
 }
 
 export function addTokens(added: CanaryToken[]): CanaryToken[] {
@@ -156,15 +165,42 @@ export function findTokensInText(text: string): CanaryToken[] {
 }
 
 export function scanFile(p: string): CanaryToken[] {
+  let descriptor: number | undefined;
   try {
-    const stat = fs.statSync(p);
-    if (!stat.isFile() || stat.size > 5 * 1024 * 1024) return [];
+    const noFollow = typeof fs.constants.O_NOFOLLOW === "number" ? fs.constants.O_NOFOLLOW : 0;
+    descriptor = fs.openSync(p, fs.constants.O_RDONLY | noFollow);
+    if (!fs.fstatSync(descriptor).isFile()) return [];
+
     const abs = path.resolve(p);
-    const text = fs.readFileSync(p, "utf8");
     // A token sitting in the exact file where we planted it is legitimate;
     // anywhere else it is a leak.
-    return findTokensInText(text).filter((t) => !t.planted.some((r) => r.path === abs));
-  } catch {
-    return [];
+    const tokens = loadTokens().filter((t) => !t.planted.some((r) => r.path === abs));
+    if (!tokens.length) return [];
+
+    const needles = tokens.map((token) => ({ token, bytes: Buffer.from(token.token, "utf8") }));
+    const overlap = Math.max(...needles.map((needle) => needle.bytes.length)) - 1;
+    const buffer = Buffer.allocUnsafe(64 * 1024);
+    let carry = Buffer.alloc(0);
+    const found = new Set<string>();
+
+    while (true) {
+      const bytesRead = fs.readSync(descriptor, buffer, 0, buffer.length, null);
+      if (bytesRead === 0) break;
+      const chunk = buffer.subarray(0, bytesRead);
+      const sample = carry.length ? Buffer.concat([carry, chunk]) : chunk;
+      for (const needle of needles) {
+        if (!found.has(needle.token.token) && sample.includes(needle.bytes)) found.add(needle.token.token);
+      }
+      if (found.size === needles.length) break;
+      carry = Buffer.from(sample.subarray(Math.max(0, sample.length - overlap)));
+    }
+
+    return tokens.filter((token) => found.has(token.token));
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || code === "ENOTDIR") return [];
+    throw new Error(`Could not scan file ${JSON.stringify(p)}; the scan is incomplete.`, { cause: error });
+  } finally {
+    if (descriptor !== undefined) fs.closeSync(descriptor);
   }
 }

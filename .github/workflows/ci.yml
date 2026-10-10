@@ -4,6 +4,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -34,6 +37,12 @@ jobs:
       - run: npm run build
       - run: npm run pack:check
 
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t agent-canary:ci .
+
   sponsor-smoke:
     runs-on: ubuntu-latest
     steps:
@@ -47,4 +56,4 @@ jobs:
             sponsor/package-lock.json
       - run: npm ci
       - run: npm run build
-      - run: cd sponsor && npm ci && node smoke.mjs
+      - run: cd sponsor && npm ci && node --test smoke-isolation.test.mjs security-regression.test.mjs && node smoke.mjs

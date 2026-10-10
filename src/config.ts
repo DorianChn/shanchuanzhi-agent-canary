@@ -25,7 +25,7 @@ export function defaultConfig(): CanaryConfig {
 }
 
 export function ensureDirs(): void {
-  fs.mkdirSync(ROOT, { recursive: true });
+  fs.mkdirSync(ROOT, { recursive: true, mode: 0o700 });
 }
 
 export function loadConfig(): CanaryConfig {
@@ -43,8 +43,16 @@ export function loadConfig(): CanaryConfig {
  * temporary file is fsynced before rename so an interrupted write cannot leave
  * a partially written JSON document at the destination.
  */
-export function writeFileAtomically(filePath: string, contents: string): void {
+export function writeFileAtomically(filePath: string, contents: string, mode?: number): void {
   const directory = path.dirname(filePath);
+  let fileMode = mode ?? 0o600;
+  if (mode === undefined) {
+    try {
+      fileMode = fs.statSync(filePath).mode & 0o777;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    }
+  }
   const temporaryPath = path.join(
     directory,
     `.${path.basename(filePath)}.${process.pid}.${Date.now()}.${Math.random().toString(16).slice(2)}.tmp`
@@ -53,7 +61,7 @@ export function writeFileAtomically(filePath: string, contents: string): void {
 
   fs.mkdirSync(directory, { recursive: true });
   try {
-    descriptor = fs.openSync(temporaryPath, "wx");
+    descriptor = fs.openSync(temporaryPath, "wx", fileMode);
     fs.writeFileSync(descriptor, contents, "utf8");
     fs.fsyncSync(descriptor);
     fs.closeSync(descriptor);
@@ -78,5 +86,5 @@ export function writeFileAtomically(filePath: string, contents: string): void {
 
 export function saveConfig(cfg: CanaryConfig): void {
   ensureDirs();
-  writeFileAtomically(CONFIG_PATH, JSON.stringify(cfg, null, 2) + "\n");
+  writeFileAtomically(CONFIG_PATH, JSON.stringify(cfg, null, 2) + "\n", 0o600);
 }

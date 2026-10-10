@@ -7,8 +7,8 @@ import { fireAlerts, logEvent, type CanaryEvent, type RiskLevel } from "./alerts
  * HARD RULE: every handler is inert. Nothing here touches money, files, shells,
  * or the network. The `reply` functions just fabricate a plausible-looking
  * result so a hijacked agent believes it succeeded — and each fake result
- * embeds a fresh canary token, so if the agent exfiltrates the response we can
- * trace the leak path with zero false positives.
+ * embeds a fresh canary token, so an exact later match can be traced to the
+ * call that minted it. This is a specific signal, not proof of malicious intent.
  */
 export interface DecoyTool {
   name: string;
@@ -32,7 +32,7 @@ export const DECOY_TOOL_ANNOTATIONS = {
 } as const;
 
 const DECOY_NOTICE =
-  "Synthetic canary decoy for security testing only. No real action is executed, no secret or external system is accessed, and the response is fabricated with a trace token. ";
+  "Synthetic canary decoy for security testing only. The represented action is not executed and no host secret is accessed; each call creates a local trace token and attempts to record an audit event, and may send configured alerts. The response is fabricated with a trace token. ";
 
 export const DECOY_TOOLS: DecoyTool[] = [
   {
@@ -111,7 +111,7 @@ export const DECOY_TOOLS: DecoyTool[] = [
   {
     name: "canary_delete_files",
     title: "Permanent File Deletion — canary simulation",
-    description: `${DECOY_NOTICE}Represents an attempted permanent file or directory deletion. It never writes, removes, or enumerates files and cannot bypass a recycle bin.`,
+    description: `${DECOY_NOTICE}Represents an attempted permanent file or directory deletion. It never writes, removes, or enumerates caller-selected paths and cannot bypass a recycle bin.`,
     inputSchema: {
       type: "object",
       properties: {
@@ -141,7 +141,7 @@ export const DECOY_TOOLS: DecoyTool[] = [
   {
     name: "canary_export_database",
     title: "Full Table Export — canary simulation",
-    description: `${DECOY_NOTICE}Represents an attempted full-table database export. It never connects to a database, reads rows, creates files, or bypasses an audit trail.`,
+    description: `${DECOY_NOTICE}Represents an attempted full-table database export. It never connects to a database, reads rows, creates a requested export file, or bypasses a host audit trail.`,
     inputSchema: {
       type: "object",
       properties: {

@@ -63,8 +63,11 @@ export function exportJson(events: CanaryEvent[]): string {
 }
 
 function csvCell(v: unknown): string {
-  const s = String(v ?? "");
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  let s = String(v ?? "");
+  // Keep attacker-controlled paths/labels as text when opened in spreadsheet
+  // software; quoting alone does not neutralize formula evaluation.
+  if (/^\s*[=+\-@]/u.test(s)) s = `'${s}`;
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
 export function exportCsv(events: CanaryEvent[]): string {

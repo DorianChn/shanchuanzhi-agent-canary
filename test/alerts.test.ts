@@ -5,7 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const { fireAlerts, logEvent, readEvents, sendAlertTest } = await import("../src/alerts.js");
+const { fireAlerts, logEvent, readEvents, safeDisplayText, sanitizeEvent, sendAlertTest } = await import("../src/alerts.js");
 
 function unsafeEvent() {
   return {
@@ -37,6 +37,54 @@ test("audit log omits raw arguments and redacts canary and secret values", () =>
     const [legacyEvent] = readEvents(eventsFile);
     assert.equal(legacyEvent.args, undefined);
     assert.equal(legacyEvent.token, "[CANARY_REDACTED]");
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true });
+  }
+});
+
+test("audit fields cannot inject terminal control sequences or forged log lines", () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-log-injection-"));
+  const eventsFile = path.join(home, "events.jsonl");
+  try {
+    logEvent({
+      ts: "2026-09-21T00:00:00.000Z",
+      kind: "session_tripped",
+      reason: "synthetic\nforged event\u001b[2J",
+      metadata: { acknowledgedBy: "operator\r\nforged" },
+    }, eventsFile);
+
+    const rawLines = fs.readFileSync(eventsFile, "utf8").trimEnd().split("\n");
+    const [event] = readEvents(eventsFile);
+    assert.equal(rawLines.length, 1);
+    assert.ok(!/[\u0000-\u001f\u007f-\u009f]/.test(event.reason ?? ""));
+    assert.ok(!/[\u0000-\u001f\u007f-\u009f]/.test(String(event.metadata?.acknowledgedBy ?? "")));
+    assert.match(event.reason ?? "", /forged event/);
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true });
+  }
+});
+
+test("legacy event headers and CLI display values cannot inject terminal controls", () => {
+  const poisoned = sanitizeEvent({
+    ts: "2026-09-21\u001b[2J\nforged",
+    kind: "action_blocked\u001b[31m" as never,
+    eventType: "\nforged-event" as never,
+    riskLevel: "SECRET\u001b[0m" as never,
+    reason: "token=cnry_attacker\r\nforged",
+  });
+
+  assert.equal(poisoned.kind, "test");
+  assert.equal(poisoned.eventType, "test");
+  assert.ok(!/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/.test(poisoned.ts));
+  assert.equal(safeDisplayText("label\u001b[2J\nforged token=cnry_attacker"), "label [2J forged token=[REDACTED]");
+});
+
+test("new audit logs are owner-readable on POSIX systems", { skip: process.platform === "win32" }, () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-log-permissions-"));
+  const eventsFile = path.join(home, "events.jsonl");
+  try {
+    logEvent({ ts: new Date().toISOString(), kind: "test" }, eventsFile);
+    assert.equal(fs.statSync(eventsFile).mode & 0o777, 0o600);
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
   }
@@ -158,4 +206,39 @@ test("sendAlertTest reports an unconfigured webhook and event-log failure", asyn
     webhook: "not configured",
   });
   fs.rmSync(eventsDirectory, { recursive: true, force: true });
+});
+
+test("webhook delivery does not follow redirects to a second destination", async () => {
+  let redirectedRequests = 0;
+  const destination = http.createServer((_request, response) => {
+    redirectedRequests++;
+    response.writeHead(204).end();
+  });
+  await new Promise<void>((resolve) => destination.listen(0, "127.0.0.1", resolve));
+  const destinationAddress = destination.address();
+  assert.ok(destinationAddress && typeof destinationAddress !== "string");
+
+  const redirector = http.createServer((_request, response) => {
+    response.writeHead(302, { Location: `http://127.0.0.1:${destinationAddress.port}/redirected` }).end();
+  });
+  await new Promise<void>((resolve) => redirector.listen(0, "127.0.0.1", resolve));
+  const redirectorAddress = redirector.address();
+  assert.ok(redirectorAddress && typeof redirectorAddress !== "string");
+
+  try {
+    const status = await sendAlertTest(
+      { ts: new Date().toISOString(), kind: "test" },
+      {
+        webhook: `http://127.0.0.1:${redirectorAddress.port}/redirect`,
+        notify: false,
+        eventsFile: makeEventLogPath(),
+      }
+    );
+    assert.equal(status.webhook, "failed");
+    assert.equal(redirectedRequests, 0);
+  } finally {
+    await Promise.all(
+      [redirector, destination].map((server) => new Promise<void>((resolve) => server.close(() => resolve())))
+    );
+  }
 });

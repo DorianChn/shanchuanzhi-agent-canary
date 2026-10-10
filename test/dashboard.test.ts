@@ -29,6 +29,8 @@ test("dashboard renders summary cards and timeline", () => {
   assert.match(html, /诱饵触发/);
   assert.match(html, /令牌泄露/);
   assert.match(html, /canary_read_secrets/);
+  assert.match(html, /请结合上下文核查/);
+  assert.ok(!html.includes("零误报"));
   assert.match(html, /2026-09-13T10:00:00Z/);
   assert.ok(html.indexOf("10:01:00Z") < html.indexOf("10:00:00Z"), "newest first ordering");
 });
@@ -68,4 +70,10 @@ test("CSV export: header + quoted cells", () => {
   assert.equal(lines.length, 4);
   assert.equal(lines[0], "timestamp,kind,tool,label,path,token_masked,note");
   assert.match(lines[1], /decoy_called/);
+});
+
+test("CSV export neutralizes spreadsheet formula cells from event fields", () => {
+  const csv = exportCsv([{ ts: "2026-09-13T10:00:00Z", kind: "token_found", path: "=1+1" }]);
+  const row = csv.trim().split("\n")[1].split(",");
+  assert.equal(row[4], "'=1+1");
 });

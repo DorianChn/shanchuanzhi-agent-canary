@@ -67,14 +67,14 @@
 </div></section>
 
 <section class="wrap"><div class="grid">
-  <div class="card"><h3>12 inert decoy tools</h3><p>Fake wire transfer, fake prod-secrets reader, fake sudo shell, fake Kubernetes exec, fake cloud-console credentials — tempting, admin-grade, and completely inert. A healthy agent never calls them; a hijacked one can't resist.</p></div>
-  <div class="card"><h3>Canary tokens</h3><p>Unique, worthless <code>cnry_…</code> strings planted in honeypot files. The moment one appears anywhere it shouldn't — agent output, an outbound request, CI — a secret was stolen.</p></div>
+  <div class="card"><h3>12 inert decoy tools</h3><p>Synthetic transfer, secrets, shell, Kubernetes and cloud-console tools. They do not perform the represented actions; calls update local trace-token/audit state and can send configured alerts. The stdio server does not control other MCP tools. An accidental call can also trigger a signal.</p></div>
+  <div class="card"><h3>Canary tokens</h3><p>Random, worthless <code>cnry_…</code> strings planted in honeypot files. The scanner finds registered tokens only in files and output the host asks it to inspect; a match needs context review.</p></div>
   <div class="card"><h3>Session circuit breaker</h3><p>For SDK integrations, a decoy or canary hit synchronously trips and quarantines one session. Later guarded dangerous calls are blocked and audited.</p></div>
 </div></section>
 
 <section class="wrap" id="plans" style="padding-bottom:24px">
   <h2 id="plans-title" style="color:#fff;font-size:28px;text-align:center">Free V1.2.7 / V2 unlocked by subscription</h2>
-  <p id="plans-sub" style="color:var(--dim);text-align:center;margin:10px 0 28px">The public repository provides V1; V2 benefits are shown here without publishing private source.</p>
+  <p id="plans-sub" style="color:var(--dim);text-align:center;margin:10px 0 28px">The current main branch tracks license-gated V2 implementations; a runtime license gate does not separate their source from this public tree.</p>
   <div class="grid" style="grid-template-columns:1fr 1fr">
     <div class="card price">
       <h3 id="v1-title">V1.2.7 Basic · Free</h3>
@@ -102,7 +102,7 @@
 
 <section class="howto"><div class="wrap">
   <h2 id="how-title">One command to arm</h2>
-  <p id="how-sub" class="center">Works with Claude Code, Cursor, Cline, Windsurf — any MCP client. The token scanner works with any agent.</p>
+  <p id="how-sub" class="center">For MCP hosts that support stdio. Host setup and model behavior vary; SDK containment applies only to calls routed through its guard.</p>
 <pre class="term"><span class="c">$</span> Node.js 20+ required
 <span class="c">$</span> curl -L https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-personal/agent-canary-2.0.0.tgz -o agent-canary-2.0.0.tgz
 <span class="c">$</span> npm install -g ./agent-canary-2.0.0.tgz
@@ -117,7 +117,7 @@
 </div></section>
 
 <footer><div class="wrap" style="display:flex;justify-content:space-between;width:100%">
-  <span>agent-canary — the alarm that never cries wolf.</span>
+  <span>agent-canary — detect signals, contain the next guarded action.</span>
   <span><a href="pay.html">♥ Payment options</a> · <a href="https://github.com/DorianChn/shanchuanzhi-agent-canary">GitHub</a></span>
 </div></footer>
 <script>
@@ -129,13 +129,13 @@
       "hero-title": "Detect compromise.<br><em>Contain</em> the next action.",
       "hero-sub": "Free V1.2.7 adds shared identity quarantine and an optional secret-free credential revoker to the guarded SDK containment path.",
       "hero-download": "Download free V1.2.7 →", "plans-title": "Free V1.2.7 / V2 unlocked by subscription",
-      "plans-sub": "The public repository provides V1; V2 benefits are shown here without publishing private source.",
+      "plans-sub": "The current main branch tracks license-gated V2 implementations; a runtime license gate does not separate their source from this public tree.",
       "v1-title": "V1.2.7 Basic · Free", "v1-price": "<strong>Free forever</strong>",
       "v1-features": "Decoys · canary tokens · leak scanning · local alerts · MCP install · guarded circuit breaker · shared identity quarantine", "v1-download": "Download V1.2.7",
       "v2-title": "V2 Personal · Paid", "v2-price": "<strong>Activate after subscription</strong>",
       "v2-features": "Advanced eval · attack-chain dashboard · SIEM export · signed license", "v2-download": "Download software →",
       "v2-subscribe": "View payment options →", "how-title": "One command to arm",
-      "how-sub": "Works with Claude Code, Cursor, Cline, Windsurf — any MCP client. The token scanner works with any agent.",
+      "how-sub": "For MCP hosts that support stdio. Host setup and model behavior vary; SDK containment applies only to calls routed through its guard.",
       "cooperation-title": "Cooperation &amp; integration", "cooperation-sub": "For MCP clients, AI-agent teams, security researchers, and DevSecOps pilots: integration, reproducible evaluation, private deployment, and custom support.", "cooperation-link": "Start a collaboration →"
     },
     zh: {
@@ -143,13 +143,13 @@
       "hero-title": "检测 Agent 失陷。<br><em>阻断</em>下一步操作。",
       "hero-sub": "免费 V1.2.7 为受守卫的 SDK 隔离路径加入共享身份隔离，以及可选的无密钥凭据吊销钩子。",
       "hero-download": "免费下载 V1.2.7 →", "plans-title": "V1.2.7 免费 / V2 订阅解锁",
-      "plans-sub": "公开仓库提供 V1；V2 仅展示权益，不公开私有源码。",
+      "plans-sub": "当前 main 分支跟踪了受许可门控的 V2 实现；运行时许可门控并没有把源码从公开代码树中隔离。",
       "v1-title": "V1.2.7 基础版 · 免费", "v1-price": "<strong>永久免费</strong>",
       "v1-features": "诱饵工具 · 金丝雀令牌 · 泄露扫描 · 本地告警 · MCP 安装 · 受守卫熔断器 · 共享身份隔离", "v1-download": "下载 V1.2.7",
       "v2-title": "V2 Personal · 付费", "v2-price": "<strong>订阅后激活</strong>",
       "v2-features": "进阶评测 · 攻击链面板 · SIEM 导出 · 签名许可证", "v2-download": "下载软件 →",
       "v2-subscribe": "查看付款方式 →", "how-title": "一条命令完成部署",
-      "how-sub": "支持 Claude Code、Cursor、Cline、Windsurf 等 MCP 客户端；令牌扫描器可用于任何 Agent。",
+      "how-sub": "面向支持 stdio 的 MCP 宿主。宿主配置和模型行为各不相同；SDK 隔离只覆盖经过 Guard 的调用。",
       "cooperation-title": "合作与集成", "cooperation-sub": "面向 MCP 客户端、AI Agent 团队、安全研究者和 DevSecOps 试点，支持集成、可复现评测、私有部署与定制支持。", "cooperation-link": "发起合作讨论 →"
     }
   };

@@ -49,6 +49,12 @@ const MAX_TEXT_LENGTH = 240;
 const SENSITIVE_FIELD = /(pass(word)?|secret|token|key|credential|authorization|cookie|bearer|private)/i;
 const INLINE_SECRET = /(\b(?:pass(?:word)?|secret|token|api[_-]?key|credential|authorization|cookie|bearer|private[_-]?key)\b\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s,;]+)/gi;
 const CANARY_VALUE = /\bcnry_[a-zA-Z0-9_-]+\b/g;
+const EVENT_KINDS = new Set<EventKind>([
+  "decoy_called", "token_found", "session_tripped", "session_quarantined",
+  "credential_revocation_requested", "credential_revocation_failed",
+  "action_blocked", "session_reset", "test",
+]);
+const RISK_LEVELS = new Set<RiskLevel>(["SAFE", "READ", "WRITE", "NETWORK", "EXECUTE", "SECRET", "DESTRUCTIVE"]);
 
 /**
  * Produce an audit-safe copy for both disk and outbound alerts.
@@ -61,6 +67,10 @@ export function sanitizeEvent(ev: CanaryEvent): CanaryEvent {
   const { args: _args, ...event } = ev;
   return {
     ...event,
+    ts: typeof event.ts === "string" ? safeDisplayText(event.ts, 64) : "unknown",
+    kind: safeEventKind(event.kind),
+    eventType: event.eventType === undefined ? undefined : safeEventKind(event.eventType),
+    riskLevel: event.riskLevel === undefined || RISK_LEVELS.has(event.riskLevel) ? event.riskLevel : undefined,
     sessionId: safeText(event.sessionId, 128),
     reason: safeText(event.reason),
     toolName: safeText(event.toolName, 128),
@@ -74,21 +84,32 @@ export function sanitizeEvent(ev: CanaryEvent): CanaryEvent {
   };
 }
 
+function safeEventKind(value: unknown): EventKind {
+  return typeof value === "string" && EVENT_KINDS.has(value as EventKind) ? value as EventKind : "test";
+}
+
 function sanitizeMetadata(metadata: CanaryEvent["metadata"]): CanaryEvent["metadata"] {
   if (!metadata) return undefined;
   const safe: NonNullable<CanaryEvent["metadata"]> = {};
   for (const [key, value] of Object.entries(metadata).slice(0, 16)) {
-    safe[key.slice(0, 80)] = SENSITIVE_FIELD.test(key) ? "[REDACTED]" : typeof value === "string" ? redactText(value) : value;
+    const safeKey = key.replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ").slice(0, 80);
+    safe[safeKey] = SENSITIVE_FIELD.test(key) ? "[REDACTED]" : typeof value === "string" ? redactText(value) : value;
   }
   return Object.keys(safe).length ? safe : undefined;
 }
 
 function safeText(value: string | undefined, maxLength = MAX_TEXT_LENGTH): string | undefined {
-  return value === undefined ? undefined : redactText(value, maxLength);
+  return value === undefined ? undefined : safeDisplayText(value, maxLength);
+}
+
+/** Sanitize untrusted text before printing it to a terminal or log line. */
+export function safeDisplayText(value: string, maxLength = MAX_TEXT_LENGTH): string {
+  return redactText(String(value ?? ""), maxLength);
 }
 
 function redactText(value: string, maxLength = MAX_TEXT_LENGTH): string {
   return value
+    .replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ")
     .replace(CANARY_VALUE, "[CANARY_REDACTED]")
     .replace(INLINE_SECRET, "$1[REDACTED]")
     .slice(0, maxLength);
@@ -106,7 +127,7 @@ export function logEvent(ev: CanaryEvent, eventsFile?: string): void {
   } catch {
     /* rotation is best-effort */
   }
-  fs.appendFileSync(file, JSON.stringify(sanitizeEvent(ev)) + "\n");
+  fs.appendFileSync(file, JSON.stringify(sanitizeEvent(ev)) + "\n", { encoding: "utf8", mode: 0o600 });
 }
 
 export function readEvents(eventsFile?: string, tail = 100): CanaryEvent[] {
@@ -188,6 +209,9 @@ async function postWebhook(url: string, ev: CanaryEvent): Promise<boolean> {
   try {
     const response = await fetch(url, {
       method: "POST",
+      // The configured endpoint is the only intended recipient. Never follow
+      // a response-controlled Location header to another host or network.
+      redirect: "manual",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(ev),
       signal: AbortSignal.timeout(3000),
