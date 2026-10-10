@@ -68,7 +68,10 @@ Cursor 可运行 agent-canary install cursor。重启客户端后，它会看到
     agent-canary export --format cef --out events.cef
     agent-canary export --format json --out events.jsonl
     agent-canary export --format csv --out events.csv
+    agent-canary watch . --poll-interval 2000
     agent-canary doctor
+
+`watch` 在文件系统事件到达时快速扫描，并每 2 秒做一次指纹扫描以补漏；目录遍历和文件内容读取采用异步流。指纹扫描只重读新增或变更文件；原生事件正常时每 30 秒全量读一次，原生监控不可用时仍每 3 秒全量读一次。事件回调通常在约 100ms 防抖后开始扫描，实际时间取决于操作系统、文件大小和目录规模。可用 `--poll-interval 500` 至 `60000` 调整指纹扫描间隔。监控负责发现令牌暴露并告警，不会自动终止任意进程或撤销外部凭证。
 
 tokens check 可用于本地或 CI：
 
@@ -115,11 +118,12 @@ import {
 const guard = createAgentGuard({
   sessionId: "support-chat-42",
   quarantineAllow: ["read_file", "git_status"],
+  denyRiskLevels: ["DESTRUCTIVE", "SECRET"],
 });
 
 const router = createGuardedToolRouter({
   guard,
-  executeRealTool: realToolCallback,
+  executeRealTool: (call, signal) => realToolCallback(call, signal),
 });
 
 await router.dispatch({ name: "git_status", args: {} });
@@ -136,6 +140,10 @@ const tools = [...myRealToolSchemas, ...decoyToolDefs("openai")];
 ```
 
 也可使用 createTokenGuard() 检查 Agent 输出、工具参数或工具结果中的已登记令牌。宿主必须把每条真实工具调用都接到同一 guard；未经过 guard 的调用无法被拦截。共享身份隔离和可选 credentialRevoker 接口说明见 containment 文档。
+
+会话被隔离时，guard 会同步中止 `signal`。宿主应把它继续传给支持取消的模型请求和工具 API（例如 `fetch(url, { signal })`），让正在执行的请求尽快停止；不支持取消或没有接收此 signal 的操作只能被后续调用拦截。需要撤销短期凭证时，另行接入宿主自己的 `credentialRevoker`。
+
+`denyRiskLevels` 可在会话正常时就按风险分类拒绝工具，并在宿主回调开始前抛出 `CanaryBlockedError`。示例拦截 `DESTRUCTIVE` 和 `SECRET`。默认分类依赖工具名，属于粗粒度策略；请按宿主工具清单复核分类，必要时提供 `classifyRisk`。该拒绝不会自动隔离整个会话。
 
 ## 报告与数据边界
 

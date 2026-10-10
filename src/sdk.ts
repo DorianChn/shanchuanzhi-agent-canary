@@ -91,7 +91,8 @@ export function createAgentGuard(options: AgentGuardOptions = {}): AgentGuard {
 
 export type DecoyToolResult = Awaited<ReturnType<typeof handleDecoyCall>>;
 
-export type RealToolExecutor<T> = (call: ToolCall) => T | Promise<T>;
+/** The signal is aborted as soon as the guard trips; pass it to cancellable APIs. */
+export type RealToolExecutor<T> = (call: ToolCall, signal: AbortSignal) => T | Promise<T>;
 
 export interface GuardedToolRouterOptions<T> {
   /** One guard per agent session. Do not share it across independent sessions. */
@@ -127,7 +128,7 @@ export function createGuardedToolRouter<T>(options: GuardedToolRouterOptions<T>)
     async dispatch(call: ToolCall): Promise<T | DecoyToolResult> {
       const name = typeof call.name === "string" ? call.name.trim().toLowerCase() : "";
       if (isDecoy(name)) return guard.runDecoy(name, call.args);
-      return guard.executeToolCall(call, () => executeRealTool(call));
+      return guard.executeToolCall(call, (signal) => executeRealTool(call, signal));
     },
   };
 }

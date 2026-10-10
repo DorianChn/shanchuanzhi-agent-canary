@@ -7,7 +7,7 @@ tool callback.
 ```text
 Agent loop
   ├─ decoy name      → guard.runDecoy() → inert reply + QUARANTINED
-  └─ real tool name  → guard.executeToolCall() → allow or block → host callback
+  └─ real tool name  → guard.executeToolCall() → policy + signal → host callback
 ```
 
 ## States and events
@@ -23,13 +23,48 @@ trace ID, and small redacted operational metadata. They deliberately do not
 record the real callback arguments. Common credential-bearing decoy argument
 keys are redacted before JSONL storage.
 
+## Stop in-flight work
+
+Quarantine aborts the guard's `signal` synchronously before alert delivery.
+`createGuardedToolRouter()` passes that signal as the second argument to the
+host's `executeRealTool` callback. Forward it to APIs that support cancellation:
+
+```ts
+const router = createGuardedToolRouter({
+  guard,
+  executeRealTool: (call, signal) => fetchToolResource(call, { signal }),
+});
+```
+
+The host also has access to `guard.signal` for a cancellable provider request.
+On a human reset, the previous signal remains aborted and the guard exposes a
+fresh signal for the new session generation. Cancellation only reaches work
+that the host forwards the signal to; non-cancellable operations may continue,
+although later guarded calls remain blocked.
+
 ## Policy
 
 The default classifier labels tool names as `SAFE`, `READ`, `WRITE`, `NETWORK`,
-`EXECUTE`, `SECRET`, or `DESTRUCTIVE`. It is audit context, not a permission
-grant: after quarantine the default exact allowlist is empty, so calls fail
-closed. A host can provide a stricter classifier or exact reviewed names such as
-`read_file` / `git_status` through `quarantineAllow`.
+`EXECUTE`, `SECRET`, or `DESTRUCTIVE`. By default, those labels are audit
+context; they do not grant or deny access. After quarantine the default exact
+allowlist is empty, so calls fail closed. A host can provide a stricter
+classifier or exact reviewed names such as `read_file` / `git_status` through
+`quarantineAllow`.
+
+Hosts can also set `denyRiskLevels` to block selected classes before a real
+callback starts, including before any compromise signal:
+
+```ts
+const guard = createAgentGuard({
+  denyRiskLevels: ["DESTRUCTIVE", "SECRET"],
+});
+```
+
+The blocked call produces `action_blocked` with reason `risk_policy_denied` and
+throws `CanaryBlockedError`; it does not quarantine the whole session. This
+policy is opt-in for compatibility. The built-in classifier uses tool names,
+so hosts should review its matches and supply `classifyRisk` based on their
+actual tool catalog. A deny rule takes precedence over `quarantineAllow`.
 
 ## Optional short-lived credential containment
 
@@ -55,6 +90,11 @@ fail-closed. A failed adapter is recorded as `credential_revocation_failed`,
 sent through the normal alert path, and never resets the session. Keep external tokens short-lived and scoped so that
 revocation complements, rather than replaces, the guarded tool boundary.
 
+This is defensive containment: the SDK can cancel integrated work, block later
+guarded calls, request host-owned revocation, and alert. It does not retaliate
+against a suspected source, and no process or credential control is claimed
+unless the host explicitly wires that integration.
+
 ## Identity scope across retries
 
 The default remains one isolated guard per session. If a host issues a new
@@ -76,6 +116,11 @@ or distributed deployments must supply a host-owned store with atomic,
 monotonic quarantine semantics and a fail-closed outage policy. `principalId`
 without a `stateStore` is rejected so callers cannot assume retries are covered
 when they are not.
+
+A shared store makes later calls observe quarantine. It does not by itself send
+an abort notification to a different guard's already-running operation; a
+distributed host must also fan out its own cancellation signal or revoke the
+session reference.
 
 ## Why there is no MCP proxy yet
 

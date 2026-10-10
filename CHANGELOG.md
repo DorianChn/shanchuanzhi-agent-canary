@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.1.0 - responsive monitoring and containment (2026-10-10)
+
+- Abort in-flight guarded work synchronously on quarantine and pass the signal
+  to router callbacks so hosts can cancel provider and tool requests.
+- Add an opt-in risk deny policy that blocks configured tool-risk classes before
+  host callbacks start, including while the session is still healthy.
+- Reduce watch response latency with 100 ms event debounce, asynchronous
+  directory traversal and streaming reads, and a configurable 2 second default
+  fingerprint scan; full content scans retain the existing 30 second native
+  watcher / 3 second fallback cadence, and unreadable paths are surfaced
+  instead of treated as clean.
+- Document cancellation, host-owned credential revocation, and the limits of
+  defensive containment and filesystem monitoring.
+
 ## 2.0.0 — all features free and public
 
 - Open the former paid evaluation, dashboard, SIEM export and SDK features

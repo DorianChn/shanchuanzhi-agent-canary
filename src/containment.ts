@@ -111,6 +111,8 @@ export interface AgentGuardOptions {
   quarantineAllow?: string[];
   /** Override only when the host has a stricter, reviewed policy. */
   classifyRisk?: (call: ToolCall) => RiskLevel;
+  /** Risk classes to block before their host callback starts. Default: none. */
+  denyRiskLevels?: RiskLevel[];
   /** Optional JSONL destination, useful for an isolated service or test. */
   eventsFile?: string;
   /** Disable outbound/desktop notifications while retaining local audit events. */
@@ -122,8 +124,10 @@ export interface AgentGuardOptions {
 export interface AgentGuard {
   readonly sessionId: string;
   readonly state: CircuitState;
+  /** Aborted immediately when this session is quarantined; pass it to cancellable host operations. */
+  readonly signal: AbortSignal;
   beforeToolCall(call: ToolCall): ToolDecision;
-  executeToolCall<T>(call: ToolCall, operation: () => T | Promise<T>): Promise<T>;
+  executeToolCall<T>(call: ToolCall, operation: (signal: AbortSignal) => T | Promise<T>): Promise<T>;
   /** Safely answer a decoy call while tripping this session before its fake reply is created. */
   runDecoy(name: string, args?: Record<string, unknown>): ReturnType<typeof handleDecoyCall>;
   /** Detect canary tokens in agent output, tool output, or outbound payloads. */
@@ -170,8 +174,10 @@ export function createAgentGuard(options: AgentGuardOptions = {}): AgentGuard {
 
 class SessionCircuitBreaker implements AgentGuard {
   readonly sessionId: string;
+  private abortController = new AbortController();
   private currentState: CircuitState = "SAFE";
   private readonly allowAfterQuarantine: Set<string>;
+  private readonly deniedRiskLevels: Set<RiskLevel>;
   private readonly classify: (call: ToolCall) => RiskLevel;
   private readonly eventsFile?: string;
   private readonly alertsEnabled: boolean;
@@ -186,6 +192,7 @@ class SessionCircuitBreaker implements AgentGuard {
     }
     this.scopeKey = options.principalId ? `principal:${checkedScopeId(options.principalId)}` : `session:${this.sessionId}`;
     this.allowAfterQuarantine = new Set((options.quarantineAllow ?? []).map(normalizeToolName));
+    this.deniedRiskLevels = new Set(options.denyRiskLevels ?? []);
     this.classify = options.classifyRisk ?? classifyToolRisk;
     this.eventsFile = options.eventsFile;
     this.alertsEnabled = options.alert !== false;
@@ -201,6 +208,10 @@ class SessionCircuitBreaker implements AgentGuard {
       // A shared-store outage must not create a new allow path.
       return "QUARANTINED";
     }
+  }
+
+  get signal(): AbortSignal {
+    return this.abortController.signal;
   }
 
   beforeToolCall(call: ToolCall): ToolDecision {
@@ -219,19 +230,23 @@ class SessionCircuitBreaker implements AgentGuard {
       return this.block(name, riskLevel, "decoy_called", trip.traceId);
     }
 
-    if (this.state === "SAFE" || this.allowAfterQuarantine.has(name)) {
-      return { allowed: true, sessionId: this.sessionId, state: this.state, riskLevel };
+    const state = this.state;
+    if (this.deniedRiskLevels.has(riskLevel)) {
+      return this.block(name, riskLevel, "risk_policy_denied", call.traceId ?? randomUUID());
+    }
+    if (state === "SAFE" || this.allowAfterQuarantine.has(name)) {
+      return { allowed: true, sessionId: this.sessionId, state, riskLevel };
     }
 
     return this.block(name, riskLevel, "session_quarantined", call.traceId ?? randomUUID());
   }
 
-  async executeToolCall<T>(call: ToolCall, operation: () => T | Promise<T>): Promise<T> {
+  async executeToolCall<T>(call: ToolCall, operation: (signal: AbortSignal) => T | Promise<T>): Promise<T> {
     const decision = this.beforeToolCall(call);
     if (!decision.allowed) throw new CanaryBlockedError(decision);
     // No await occurs before the decision, so a later tool call cannot slip
     // through a trip/quarantine race before this callback is checked.
-    return await operation();
+    return await operation(this.signal);
   }
 
   async runDecoy(name: string, args: Record<string, unknown> = {}) {
@@ -299,6 +314,10 @@ class SessionCircuitBreaker implements AgentGuard {
       }
     }
     this.currentState = "SAFE";
+    // Retire the old session generation so callbacks holding its signal cannot
+    // keep running after an operator explicitly resets the guard.
+    this.abortController.abort(new Error("Agent Canary session generation ended."));
+    this.abortController = new AbortController();
     this.emit({
       kind: "session_reset",
       eventType: "session_reset",
@@ -320,6 +339,9 @@ class SessionCircuitBreaker implements AgentGuard {
     // delivery are best-effort side effects and can never delay quarantine.
     this.currentState = "TRIPPED";
     this.currentState = "QUARANTINED";
+    // Cancellation is synchronous and local. Hosts must forward this signal
+    // to cancellable provider/tool APIs for in-flight work to stop.
+    this.abortController.abort(new Error("Agent Canary quarantined this session."));
     if (this.stateStore) {
       try {
         if (!this.stateStore.quarantine(this.scopeKey)) {

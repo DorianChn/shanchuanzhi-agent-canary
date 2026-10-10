@@ -68,7 +68,10 @@ A decoy is a detection signal; it cannot stop a real action that bypasses the gu
     agent-canary export --format cef --out events.cef
     agent-canary export --format json --out events.jsonl
     agent-canary export --format csv --out events.csv
+    agent-canary watch . --poll-interval 2000
     agent-canary doctor
+
+`watch` scans promptly on filesystem notifications and runs a fingerprinted scan every 2 seconds to catch missed events; directory traversal and file reads use asynchronous streaming. Changed paths alone are reread between full content scans, which retain the existing 30 second cadence with native watchers and 3 second cadence in polling fallback. Event callbacks are debounced for about 100 ms before scanning. Actual latency depends on the operating system, file size, and directory size. Set `--poll-interval` from 500 to 60000 ms. Monitoring detects token exposure and alerts; it does not terminate arbitrary processes or revoke external credentials.
 
 Use tokens check locally or in CI:
 
@@ -115,11 +118,12 @@ import {
 const guard = createAgentGuard({
   sessionId: "support-chat-42",
   quarantineAllow: ["read_file", "git_status"],
+  denyRiskLevels: ["DESTRUCTIVE", "SECRET"],
 });
 
 const router = createGuardedToolRouter({
   guard,
-  executeRealTool: realToolCallback,
+  executeRealTool: (call, signal) => realToolCallback(call, signal),
 });
 
 await router.dispatch({ name: "git_status", args: {} });
@@ -136,6 +140,10 @@ const tools = [...myRealToolSchemas, ...decoyToolDefs("openai")];
 ```
 
 Use createTokenGuard() to inspect agent output, tool arguments or tool results for registered token values. The host must connect every real tool callback to the same guard; calls outside that path cannot be blocked. See the containment document for shared-identity quarantine and the optional credentialRevoker hook.
+
+When the session is quarantined, the guard synchronously aborts `signal`. Forward it to cancellable model requests and tool APIs (for example, `fetch(url, { signal })`) to stop in-flight work promptly. Operations that do not accept the signal can only be prevented on later calls. Revoking short-lived credentials requires the host-owned `credentialRevoker` adapter.
+
+`denyRiskLevels` can reject selected risk classes before any host callback starts, even while the session is healthy; the example blocks `DESTRUCTIVE` and `SECRET` calls with `CanaryBlockedError`. The default name-based classifier is coarse, so review it against the host's tool catalog or provide a stricter `classifyRisk`. A denied call does not quarantine the entire session.
 
 ## Reports and data boundaries
 

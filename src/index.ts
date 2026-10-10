@@ -217,8 +217,9 @@ tokens
 program
   .command("watch")
   .argument("<paths...>", "Directories to watch for canary token leaks")
-  .description("Watch directories and alert the moment a canary token appears in any file")
-  .action((paths: string[]) => watch(paths));
+  .option("--poll-interval <ms>", "Safety-scan interval in milliseconds (500–60000; default 2000)", (v) => parseBoundedInteger(v, 500, 60_000, "poll interval"), 2_000)
+  .description("Watch directories and alert on canary token leaks (event driven with a polling safety scan)")
+  .action((paths: string[], opts) => watch(paths, { pollIntervalMs: opts.pollInterval }));
 
 program
   .command("events")

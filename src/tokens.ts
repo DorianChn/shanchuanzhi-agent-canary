@@ -219,6 +219,29 @@ export function scanFileStrict(p: string, registry: CanaryToken[] = loadTokens()
   return [...found.values()];
 }
 
+/** Async streaming variant for long-running watchers so large reads do not block file-event handling. */
+export async function scanFileStrictAsync(p: string, registry: CanaryToken[] = loadTokens()): Promise<CanaryToken[]> {
+  const stat = await fs.promises.stat(p);
+  if (!stat.isFile()) return [];
+
+  const abs = path.resolve(p);
+  const candidates = registry.filter((token) => !token.planted.some((ref) => pathsMatch(ref.path, abs)));
+  if (candidates.length === 0) return [];
+
+  const maxTokenLength = candidates.reduce((longest, token) => Math.max(longest, token.token.length), 0);
+  const found = new Map<string, CanaryToken>();
+  let overlap = "";
+  const stream = fs.createReadStream(p, { highWaterMark: 64 * 1024 });
+  for await (const chunk of stream) {
+    const text = overlap + chunk.toString("utf8");
+    for (const token of candidates) {
+      if (!found.has(token.token) && text.includes(token.token)) found.set(token.token, token);
+    }
+    overlap = maxTokenLength > 1 ? text.slice(-(maxTokenLength - 1)) : "";
+  }
+  return [...found.values()];
+}
+
 export function scanFile(p: string, registry: CanaryToken[] = loadTokens()): CanaryToken[] {
   try {
     return scanFileStrict(p, registry);

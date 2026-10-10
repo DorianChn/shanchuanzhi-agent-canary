@@ -1,6 +1,6 @@
 {
   "name": "@dorianchn/agent-canary",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Free and open-source AI-agent security tripwires with local evaluation, guarded tool routing, and redacted audit events.",
   "license": "MIT",
   "author": "DorianChn",
