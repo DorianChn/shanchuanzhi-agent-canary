@@ -6,7 +6,7 @@ This Draft PR preserves the second-round security fixes and adds reproducible 20
 
 - Add a real local-model tool-selection harness with isolated synthetic callbacks and three comparison arms: no Canary, decoy signal without callback enforcement, and decoy plus `createGuardedToolRouter()`.
 - Save per-trial redacted JSON, separate model-triggered detection from a harness-seeded quarantine follow-up, derive summary metrics from the raw trials, and render a Chinese local results dashboard bound only to loopback.
-- Add Chinese technical, evaluation, governance, demo, video-script/SRT, checklist, and unsent email materials; generate a 17-page project introduction PDF and a 7-page experiment report PDF.
+- Add Chinese technical, evaluation, governance, demo, video, checklist, and unsent email materials; generate a 17-page project introduction PDF, a 7-page experiment report PDF, and a locally rendered narrated MP4 with aligned SRT.
 - Add GitHub issue forms, PR template, and an honest maintenance roadmap.
 - Keep experiment tooling outside the published package; the package smoke check remains 23 files.
 
@@ -31,7 +31,7 @@ One completed 36-trial legacy run has no serialized prompt profile/hash and is e
 - Local PDFs: project introduction 17 pages, experiment report 7 pages; page count, Chinese font, tables, and rendered pages were visually checked. Text extraction was not independently run because Poppler/pypdf is unavailable in this environment.
 - Local dashboard: opened in Chrome from a loopback-only server, screenshot-checked, tab closed, server stopped.
 - Scan benchmark: 1 MiB 1.01 ms, 10 MiB 10.04 ms, 50 MiB 45.1 ms on this Windows machine; three samples per size. Guard medians/p95 are in the report and are in-process microbenchmarks only.
-- GitHub Actions Run 38072020061 passed **9/9 jobs** for the substantive materials commit `dad03c747d514d121a5487c51fde58ece548a490`: Node 20/22 on Ubuntu/Windows/macOS, sponsor smoke, package smoke, and Docker build/container CLI smoke. The subsequent docs-only pointer update is checked separately before final handoff.
+- GitHub Actions Runs 38072020061 (`dad03c747d514d121a5487c51fde58ece548a490`) and 38072418051 (`fd1813c5b08dd16aa55dcedee4a445f9edea4193`) each passed **9/9 jobs**: Node 20/22 on Ubuntu, Windows, and macOS, sponsor smoke, package smoke, and Docker build/container CLI smoke. The current video-source/materials changes still need a run check on their final pushed HEAD.
 
 ## Known risks and limits
 
@@ -40,7 +40,7 @@ One completed 36-trial legacy run has no serialized prompt profile/hash and is e
 - A dangerous first call before a signal, a host callback that bypasses Guard/Router, and an external action already in progress are outside full protection.
 - The direct router-bypass attack was not observed in the LLM pilot. The programmatic security regression suite demonstrates the boundary, not an LLM bypass rate.
 - Only Windows x64 / Node 22 was run locally this sprint. Cross-platform CI and Docker smoke must be assessed against the workflow run for the final pushed HEAD; local Docker CLI is unavailable.
-- No new MP4 or public video link was created. A 4:45 script and SRT are provided. Official submission materials therefore still need a current hosted video link.
+- A local 1920×1080, 251.3-second H.264/AAC MP4 and 41-cue SRT were generated from isolated Chromium-rendered frames and a synthetic Windows voice. This is not a raw desktop capture or live-model run. The MP4 is intentionally gitignored; no public host URL or anonymous-access check exists yet, so the official video-link requirement remains incomplete.
 - The contest score in the material is an internal estimate only. No award or official evaluation is claimed.
 
 ## Demo

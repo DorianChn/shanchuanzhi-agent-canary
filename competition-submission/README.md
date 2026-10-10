@@ -8,7 +8,8 @@
 - `Agent_Canary_技术创新说明.md`：核心机制与 Promptfoo/PyRIT 的客观比较。
 - `Agent_Canary_实验报告.md`、`Agent_Canary_实验报告.pdf`：真实本地模型工具调用、A/B/C 对照、离线安全回归和性能数据。
 - `Agent_Canary_演示指南.md`：真实本地模型与确定性离线模式的复现步骤。
-- `Agent_Canary_演示视频脚本.md`、`Agent_Canary_演示字幕.srt`：真实桌面录制的镜头、旁白和字幕；本地 MP4 或公开视频链接仅在实际生成/上传后填入。
+- `Agent_Canary_演示视频.mp4`：本地生成的 1920×1080、251.3 秒 H.264/AAC 合成旁白展示视频，配 41 条 SRT；由隔离 Chromium 画面帧和保存的实测结果组装，不是原始桌面即时录屏，播放中不运行模型。该大文件已忽略、不纳入 Git；公开可访问的视频链接尚未创建。
+- `Agent_Canary_演示视频脚本.md`、`Agent_Canary_演示字幕.srt`：旁白、分镜和字幕；视频录制方式及边界如实注明。
 - `evidence/index.html`：从本地原始 JSON 汇总的中文展示页；通过 loopback-only `lab/serve-dashboard.mjs` 查看。
 - `Agent_Canary_开源治理说明.md`：许可、贡献、安全披露、CI 与版本规划。
 - `Agent_Canary_参赛提交清单.md`：按官网材料要求核对状态和阻塞项。

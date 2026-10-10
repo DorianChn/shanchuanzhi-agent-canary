@@ -93,4 +93,4 @@ npm exec -- node competition-submission/lab/serve-dashboard.mjs
 
 本地结果页监听 `127.0.0.1:4173`，仅展示脱敏汇总。真实本地模型组与确定性离线隔离演示必须分别说明；模型从未选择诱饵的结果为 0/40。不要把 `A09_POST_QUARANTINE` 的 harness 前置状态当作模型检测。
 
-本轮提供 4 分 45 秒录制脚本和 SRT，但没有生成新的 MP4 或视频托管链接。工作目录中存在的 60 秒历史视频不是本轮提交版，不应作为最新演示使用。
+本轮已生成本地 1920×1080 H.264/AAC MP4（251.3 秒）和 41 条同步 SRT，路径见 `competition-submission/`。视频由隔离 Chromium 渲染页面帧、Microsoft Huihui 合成旁白和 FFmpeg 组装；不是原始桌面录屏，也不运行实时模型推理。完整解码与片尾抽帧已在本机检查。公开视频链接仍未创建，本地文件路径不能代替赛事要求的链接。

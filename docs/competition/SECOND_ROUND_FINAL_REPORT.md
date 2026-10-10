@@ -104,13 +104,21 @@ Draft PR #22 已创建：[Security hardening and competition readiness for Agent
 ### 参赛材料状态
 
 - 项目介绍 PDF 17 页、实验报告 PDF 7 页；渲染页面已检查。没有独立 PDF 文本提取验证器；不能把该步骤描述成通过。
-- 新增 4:45 录制脚本与 20 条 SRT 字幕；本轮没有 MP4，也没有公开视频 URL。因此大赛要求中的“演示视频链接”仍未完成，尚不具备无需人工补件的完整正式邮件提交条件。
+- 首次记录时新增了 4:45 录制脚本与 20 条 SRT 字幕，尚无 MP4；本日后续已生成本地 MP4，详见“视频制作续记”。赛事要求的公开视频 URL 仍未创建，因此正式材料仍需补链。
 - 参赛邮件只保存草稿，未发送；发送前应检查邮箱已发送记录并回填真实视频 URL 和本轮公开 commit。
-- 最新本地验证：根项目 121 项，117 passed、0 failed、4 skipped；sponsor 25 项，24 passed、0 failed、1 skipped；合计 146 项、141 passed、0 failed、5 skipped。根与 sponsor `npm audit` 均为 0 vulnerabilities。Docker 本地不可用；本轮 HEAD 的跨平台 CI 需推送后核对。
-- 内部竞赛维度评分：技术创新 **22/30**、场景落地 **22/30**、开源治理 **15/20**、长期发展 **13/20**，合计 **72/100**。这是基于当前证据的内部估分，不是官方评分。扣分集中在 0/40 模型诱饵触发、小样本单模型、视频缺失、公开分发包仍包含许可门控 V2 编译模块，以及真实宿主集成范围有限。
+- 本地验证：根项目 121 项，117 passed、0 failed、4 skipped；sponsor 25 项，24 passed、0 failed、1 skipped；合计 146 项、141 passed、0 failed、5 skipped。根与 sponsor `npm audit` 均为 0 vulnerabilities。Docker CLI 本地不可用；竞赛材料基线与指针提交的跨平台 CI 分别见 Run 38072020061 和 38072418051；本轮视频源续更的 HEAD 仍待 CI 核对。
+- 内部竞赛维度评分：技术创新 **22/30**、场景落地 **22/30**、开源治理 **15/20**、长期发展 **13/20**，合计 **72/100**。这是基于当前证据的内部估分，不是官方评分。扣分集中在 0/40 模型诱饵触发、小样本单模型、公开视频链接缺失、公开分发包仍包含许可门控 V2 编译模块，以及真实宿主集成范围有限。
 
 ### 当前交付状态
 
-- 代码、实验 JSON、dashboard、指南及 PDF 已在本地竞赛分支推送。提交 `dad03c747d514d121a5487c51fde58ece548a490` 对应 GitHub Actions Run 38072020061 通过 9/9 jobs；后续仅修改邮件/清单等指针文档时，其触发的 CI 需另核验。
+- 代码、实验 JSON、dashboard、指南及 PDF 已推送至本地竞赛分支。提交 `dad03c747d514d121a5487c51fde58ece548a490` 的 Run 38072020061、指针提交 `fd1813c5b08dd16aa55dcedee4a445f9edea4193` 的 Run 38072418051 均通过 9/9 jobs；视频生成源与材料续更后的 HEAD 仍待 CI 核验。
 - P1 V1/V2 公开分发边界仍未解决，本轮不发布 npm/Docker、不迁移商业架构。项目不满足稳定发布标准。
 - 具备可复现的离线隔离演示和本地模型实验材料；尚未满足官网要求的可访问演示视频链接，因此整体参赛材料为**部分就绪**。
+
+### 2026-10-11 视频制作续记
+
+- `competition-submission/Agent_Canary_演示视频.mp4` 已生成：H.264 1920×1080 视频流 251.300 秒、AAC 单声道音轨 251.199 秒；41 条 SRT。FFmpeg 全片解码退出码为 0，片尾抽帧可读。
+- 制作方式：Windows Microsoft Huihui 本地合成旁白；隔离 Chrome profile 渲染本地 HTML 后逐帧截取，FFmpeg 组装。不是原始桌面录屏，不是一次实时模型推理；播放过程不连接 Ollama 或外部服务。
+- 视频文件由 `.gitignore` 排除、未推入 Git；尚无公开托管链接及匿名访问验证。最终材料仍须由负责人上传视频并检查公开访问。
+- `competition-submission/lab/record-presentation.mjs` 经 `node --check` 并完整运行，输出 41 张 Chromium 页面帧、41 条 SRT 和上述 MP4。实验数字来自已保存的本地 pilot；视频播放期间不重新运行 Agent。
+- 视频生成不改变原模型评测结果、72/100 内部评分或 P1 V1/V2 分发问题。项目仍不满足稳定发布标准；参赛材料由于缺视频 URL 仍为**部分就绪**。

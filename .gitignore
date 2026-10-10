@@ -5,3 +5,4 @@ dist/
 .env
 .agent-canary/
 package-lock.json.bak
+/competition-submission/Agent_Canary_演示视频.mp4

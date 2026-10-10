@@ -70,7 +70,7 @@
 - 遗留证据：一组无 prompt hash 的 36 次试验保留但不纳入主比较；一组 4/36 中断记录保留并从统计排除。
 - 中文展示页：由逐次原始 JSON 生成，loopback-only 服务已在真实 Chrome 中渲染检查并关闭；不请求外部脚本。
 - PDF：项目介绍渲染为 17 页，实验报告 7 页；中文字体、结构图、表格和关键结果页已渲染查看。PDF 生成与视觉 QA 的结果文件在 `competition-submission/`。
-- 视频：仅有脚本与 SRT；没有本轮 MP4 或公开链接。已存在的旧 60 秒文件未作为本轮材料。
+- 视频：本地生成 `competition-submission/Agent_Canary_演示视频.mp4`，1920×1080 H.264/AAC，视频流 251.300 秒、音轨 251.199 秒，41 条 SRT；FFmpeg 全片解码退出码为 0，片尾最后一帧已抽检。它是隔离 Chromium 渲染帧加合成旁白的结果展示视频，不是桌面实录或实时模型推理。MP4 已被 `.gitignore` 排除；公开视频链接和匿名访问尚未验证。
 - 邮件：只形成未发送草稿。提交清单提示发送前先核对已发送邮件，避免重复发送。
 - 商业分发：V1/V2 包边界 P1 风险仍未关闭；本轮没有迁移商业架构或发布包。
-- 参赛材料提交 `dad03c747d514d121a5487c51fde58ece548a490` 的 GitHub Actions Run 38072020061 已通过 9/9 jobs（Node 20/22 × Ubuntu/Windows/macOS、sponsor smoke、package smoke、Docker build/container CLI smoke）：[运行记录](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38072020061)。后续若有纯文档提交，其 Actions 结果需另核验。
+- 材料提交 `dad03c747d514d121a5487c51fde58ece548a490` 的 Run 38072020061 和指针提交 `fd1813c5b08dd16aa55dcedee4a445f9edea4193` 的 Run 38072418051 均通过 9/9 jobs（Node 20/22 × Ubuntu/Windows/macOS、sponsor smoke、package smoke、Docker build/container CLI smoke）。本轮视频源与材料提交后的最终 HEAD CI 需另核验。
