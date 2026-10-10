@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible Agent Canary defect
+title: "bug: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include real credentials, customer data, payment records, private logs, or security exploit details. Use synthetic values and redact local paths.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What failed, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Minimal commands and synthetic input needed to reproduce the issue.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Agent Canary version or commit
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: OS and Node.js version
+    validations:
+      required: true
+  - type: textarea
+    id: sanitized_doctor
+    attributes:
+      label: Sanitized doctor output
+      description: Remove usernames, private paths, tokens, URLs with credentials, and customer identifiers.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed real secrets and personal/customer data.
+          required: true
+        - label: I tested only systems I own or am authorized to test.
+          required: true

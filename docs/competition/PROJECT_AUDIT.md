@@ -110,3 +110,9 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 ## 兼容性与边界
 
 本次没有改变公开 SDK 类型/函数签名、CLI 命令名、MIT 许可、package 版本或发布状态。`npm audit fix` 只在现有 semver 范围内更新 lockfile。新扫描器限制为指定路径下最多 4 层，跳过 `.git`、`node_modules`、符号链接；超过范围会报扫描不完整，而不会宣称 clean。
+
+## 2026-10-11 参赛冲刺补充
+
+新增的真实本地模型 pilot 使用 `qwen3.5-9b-local` 和两种有 SHA-256 记录的提示词 profile。72 条主原始 trial 中，模型自主诱饵调用为 0/40；neutral profile 的 C 组在没有 Canary 信号时执行了 5 次虚拟危险 callback。harness 预置隔离状态后，C 组在两 profile 共阻断 3/3 次后续危险调用。检测、SAFE 状态下的 callback 执行、隔离后的 callback 阻断分开报告，详见 [`Agent_Canary_实验报告.md`](../../competition-submission/Agent_Canary_实验报告.md)。
+
+现有 36 条 `legacy_unknown` 数据因无 profile/hash 不纳入主比较；另一个中断于 4/36 的 run 排除统计但保留。结果页从逐次 JSON 重新计算指标。真实模型证据仍是单机单模型小样本，不改变“诱饵不是全局防火墙”的审计结论。

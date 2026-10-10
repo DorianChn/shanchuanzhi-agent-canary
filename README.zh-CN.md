@@ -228,6 +228,13 @@ V2 Personal 包含可复现的 20 条攻击载荷评测。人工查看可使用�
 
 `agent-canary --help` 看详情。
 
+## 开发与开源治理
+
+- 贡献前请读 [CONTRIBUTING.md](CONTRIBUTING.md)，通过 Issue/PR 模板提交可复现且已脱敏的报告。
+- 进行安全测试或报告漏洞前请读 [SECURITY.md](SECURITY.md)。
+- 可执行的维护计划见 [ROADMAP.md](ROADMAP.md)。
+- 参赛实验、复现方式和真实模型/模拟模式边界见 [competition-submission/](competition-submission/README.md)。
+
 ## 许可证
 
 MIT

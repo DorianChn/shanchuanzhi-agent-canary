@@ -284,6 +284,13 @@ casual copying; it is not DRM.
 
 Run `agent-canary --help` for details.
 
+## Development and governance
+
+- Start with [CONTRIBUTING.md](CONTRIBUTING.md); use the issue and pull request templates for reproducible, sanitized reports.
+- Read [SECURITY.md](SECURITY.md) before testing agents or reporting vulnerabilities.
+- The proposed maintenance plan is in [ROADMAP.md](ROADMAP.md).
+- Current competition experiments and their explicit model/simulation boundaries are in [competition-submission/](competition-submission/README.md).
+
 ## License
 
 MIT

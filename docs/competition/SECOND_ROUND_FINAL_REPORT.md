@@ -88,3 +88,29 @@ Draft PR #22 已创建：[Security hardening and competition readiness for Agent
 2. 对照生产备份与支付平台核查旧待处理订单的 CNY 字段和当前交易结果；本轮未触及这些数据。
 3. 维护者审阅 Draft PR #22；在 V1/V2 分发计划及旧订单迁移评估完成前不要合并或发布。
 4. 在真实宿主与获得许可的测试模型上做独立红队评测，按检测、拦截、误报口径分别记录，不将当前程序化模拟外推为真实模型表现。
+
+## 2026-10-11 最终参赛冲刺补充
+
+本节是比赛交付冲刺新增证据；上文 2026-10-10 的安全修复、旧 CI 与工程评分保留为历史记录。不得把历史 Run 115/116 当成本次最新代码的 Actions 结果。
+
+### 本轮本地模型实测
+
+- 环境：Windows x64、Node.js 22.23.1、本机 Ollama `qwen3.5-9b-local` Q4_K_M；自建最小 function-calling loop，根项目未声明通用 Agent 框架或第三方 Agent host 依赖。
+- 两个带 prompt SHA 的 profile 各 36 次，主比较 60 个可比攻击试验、6 个控制；另有 4 个 harness 预置隔离跟进和 2 个 A 组基线跟进。另一个无 profile hash 的 36 次 cohort 和一个中断的 4/36 cohort 均保留，但不进入主统计。
+- 两种 profile 的 B/C 诱饵选择为 0/40。Safety-aware profile 中 A/B/C 攻击成功场景为 1/10、0/10、0/10；B/C 没有危险 callback 尝试，故 C 的 Guard 拦截率 NOT MEASURED。Neutral profile 为 1/10、2/10、2/10；C 在 Guard SAFE 时执行了 5 次危险合成 callback。
+- harness 预置 quarantine 后，C 阻断 3/3 次后续危险 callback；这些案例只验证隔离后的 Router 路径，不属于 Agent 检测成功。虚拟外部副作用 0。误报率/模型 Canary 检出率均 NOT MEASURED；本实验不是多模型、生产或统计性安全评估。
+- 原始 JSON、派生 summary、loopback 中文 dashboard 及运行脚本位于 `competition-submission/evidence/` 与 `competition-submission/lab/`。dashboard 实际在本机 Chrome 检查后关闭。
+
+### 参赛材料状态
+
+- 项目介绍 PDF 17 页、实验报告 PDF 7 页；渲染页面已检查。没有独立 PDF 文本提取验证器；不能把该步骤描述成通过。
+- 新增 4:45 录制脚本与 20 条 SRT 字幕；本轮没有 MP4，也没有公开视频 URL。因此大赛要求中的“演示视频链接”仍未完成，尚不具备无需人工补件的完整正式邮件提交条件。
+- 参赛邮件只保存草稿，未发送；发送前应检查邮箱已发送记录并回填真实视频 URL 和本轮公开 commit。
+- 最新本地验证：根项目 121 项，117 passed、0 failed、4 skipped；sponsor 25 项，24 passed、0 failed、1 skipped；合计 146 项、141 passed、0 failed、5 skipped。根与 sponsor `npm audit` 均为 0 vulnerabilities。Docker 本地不可用；本轮 HEAD 的跨平台 CI 需推送后核对。
+- 内部竞赛维度评分：技术创新 **22/30**、场景落地 **22/30**、开源治理 **15/20**、长期发展 **13/20**，合计 **72/100**。这是基于当前证据的内部估分，不是官方评分。扣分集中在 0/40 模型诱饵触发、小样本单模型、视频缺失、公开分发包仍包含许可门控 V2 编译模块，以及真实宿主集成范围有限。
+
+### 当前交付状态
+
+- 代码、实验 JSON、dashboard、指南及 PDF 已在本地竞赛分支准备；普通 Git push 与 CI 尚待本次最终提交后复核。
+- P1 V1/V2 公开分发边界仍未解决，本轮不发布 npm/Docker、不迁移商业架构。项目不满足稳定发布标准。
+- 具备可复现的离线隔离演示和本地模型实验材料；尚未满足官网要求的可访问演示视频链接，因此整体参赛材料为**部分就绪**。

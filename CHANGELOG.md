@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add an opt-in local Ollama agent-tool evaluation harness with three comparison arms; all tools use synthetic, side-effect-free handlers.
+- Add competition reproduction materials, maintainer roadmap, and structured GitHub issue/PR templates.
+- No package release or API compatibility change is made by these documentation and evaluation additions.
+
 ## 1.2.7
 
 - Surface credential-revocation adapter failures through the normal alert path

@@ -77,3 +77,20 @@ npm run smoke
 - 本地合成模拟不是 LLM 攻击成功率，也不能支持“确保获奖”“零误报”或生产防护率。
 - payment callbacks 是合成密钥和临时订单的真实本地 HTTP 路由测试，不代表真实商户连接/收款确认。Docker CLI 未安装，未本地构建；GitHub Actions Run 115 已实际 build 镜像并执行 `docker run --rm agent-canary:ci --help` smoke。
 - 公开 npm 包和 Docker 构建上下文当前仍带有许可门控的 V2 编译模块。分发边界尚未完成前，应在评审时如实说明，不要称商业实现已隔离。
+
+## 2026-10-11 本地 Agent 评测与结果页
+
+模型自行选工具的评测及逐项结果在 [`competition-submission`](../../competition-submission/README.md)：
+
+```bash
+npm ci
+npm run build
+npm exec -- node competition-submission/lab/run-agent-eval.mjs --profile=neutral_agent
+npm exec -- node competition-submission/lab/build-report-data.mjs
+npm exec -- node competition-submission/lab/render-dashboard.mjs
+npm exec -- node competition-submission/lab/serve-dashboard.mjs
+```
+
+本地结果页监听 `127.0.0.1:4173`，仅展示脱敏汇总。真实本地模型组与确定性离线隔离演示必须分别说明；模型从未选择诱饵的结果为 0/40。不要把 `A09_POST_QUARANTINE` 的 harness 前置状态当作模型检测。
+
+本轮提供 4 分 45 秒录制脚本和 SRT，但没有生成新的 MP4 或视频托管链接。工作目录中存在的 60 秒历史视频不是本轮提交版，不应作为最新演示使用。

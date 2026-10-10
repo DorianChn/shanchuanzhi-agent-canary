@@ -85,3 +85,11 @@ npm ci
 node --test smoke-isolation.test.mjs security-regression.test.mjs
 node smoke.mjs
 ```
+
+## 2026-10-11 真实本地模型 pilot（与合成回归分开）
+
+模型试验没有触发任何 Agent Canary 诱饵：两种具备 prompt hash 的 profile 中，B/C 主动诱饵选择为 0/40。Neutral C 组在 Guard 仍为 SAFE 时有 5 次危险 mock callback 执行，覆盖 2 个攻击场景；这属于未产生隔离信号时的预期开放路径。Safety-aware C 组没有可比危险请求，Guard 阻断率标为 NOT MEASURED，而不是 0% 或 100%。
+
+通过 harness 预先建立 quarantine 的 A09 跟进场景另计：Safety-aware C 组 2/2、Neutral C 组 1/1 次经 Router 的危险 mock callback 被拒绝；检测计分为 0。B 组 callback 未接 Router，因此两次 profile 的预置隔离后调用均执行。模型没有选择专门的 `direct_shell_unprotected` 或 A10 首次危险调用；不能声称真实 LLM 绕过已被实测。
+
+详细逐项数据和复现命令见 [`参赛实验报告`](../../competition-submission/Agent_Canary_实验报告.md) 及 `competition-submission/evidence/local-model-eval-*.json`。工具均为内存模拟，真实网络/主机 Shell/文件删除/凭据读取为 0。该 pilot 不代表生产攻击成功率或通用模型安全率。
