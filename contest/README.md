@@ -1,7 +1,10 @@
-# 2026 Shanghai Open Source AI Tools Demo
+# 2026 Shanghai Open Source AI Tools Contest
 
-- Demo video: [Agent Canary 2.0.0 (54 seconds)](Agent-Canary-2.0.0-Demo-54s.mp4)
-- The video runs the built CLI in an isolated directory: it plants two synthetic canary values, scans a copied file, and reports the label and path without printing token values. The following status and doctor output uses the same demo state.
-- The SDK, containment, and Ollama slides explain the documented interfaces and boundaries. This video does not claim a live Ollama evaluation, a security certification, or protection for calls that bypass the guard.
-- Source branch: [shanchuanzhi/v2-free-open-20261010](https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/shanchuanzhi/v2-free-open-20261010). Core feature commit: `8b7f39c`.
-- Video format: H.264, 1280x720, 25 fps.
+- Project: Agent Canary 2.1.0, open source AI tools track.
+- Source branch: [shanchuanzhi/v2-free-open-20261010](https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/shanchuanzhi/v2-free-open-20261010); code commit: 69900c3.
+- Project introduction: [Agent Canary 2.1.0 PDF](Agent-Canary-2026-Shanghai-Open-Source-AI-Tools-v2.1.0.pdf).
+- Demo video: [Agent Canary 2.1.0 (60 seconds)](Agent-Canary-2.1.0-Demo-60s.mp4), H.264, 1280x720, 25 fps.
+- The video explains the 2.1.0 containment and monitoring interfaces and includes a captured CLI token workflow from 2.0.0, which remains compatible. It does not claim a runtime demonstration of the new 2.1.0 behavior, a security certification, or a measured performance gain.
+- The 2.1.0 TypeScript build and git diff --check passed on 2026-10-10. Automated regression tests and a performance benchmark were not run for this update.
+
+Agent Canary uses inert MCP decoys, local canary-token scanning, guarded tool routing, and redacted audit events. Decoys return synthetic data only. Guard coverage applies only to calls routed through the integration; hosts must pass AbortSignal to cancellable downstream APIs for in-flight cancellation. The optional risk deny policy is off by default and uses coarse tool-name classification unless the host supplies its own classifier.
