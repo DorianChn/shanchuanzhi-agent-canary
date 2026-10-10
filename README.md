@@ -1,195 +1,108 @@
-# agent-canary
+# Agent Canary
 
-Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in
-your environment, then gives SDK integrations a session circuit breaker to
-contain the next guarded action after a compromise signal.
+Auditable compromise signals and guarded-action containment for AI agents. Agent Canary exposes inert MCP decoys, plants unique canary tokens, and provides an SDK session circuit breaker to quarantine later tool calls that pass through its guard.
 
-Works with Claude Code, Cursor, Cline, Windsurf — anything that speaks MCP.
-Non-MCP agents can use the SDK instead (see below). Node 20+, MIT, no telemetry.
+**All features are free and open source under MIT from version 2.0.0.** The evaluation suite, attack-chain dashboard, SIEM exports, SDK and containment features require no purchase, account, activation code or license server. Node.js 20+. No telemetry.
 
-中文文档：[README.zh-CN.md](README.zh-CN.md)
+[中文文档](README.zh-CN.md)
 
-[Live demo & sponsor](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Glama listing](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary) · [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
+[Project site](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [GitHub](https://github.com/DorianChn/shanchuanzhi-agent-canary) · [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions) · [Glama](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary)
 
 ![Agent Canary — AI agent and MCP security](docs/agent-canary-cover-v2.png)
 
-## V1.2.7: containment that holds through the next retry
+## Quick start
 
-V1.2.7 is the free public line. It keeps the zero-false-positive detection
-model and free SDK containment primitives, then adds
-`createGuardedToolRouter()` so integrations have one reviewed dispatch path for
-decoys and real tools. It retains the fully offline `self-test` and centralized
-audit-event redaction before data reaches JSONL or a webhook. It also publishes
-concise MCP server instructions so registries and clients can identify the
-decoys as inert and state the guarded-containment boundary before tool use. For
-hosts using short-lived session-scoped vault references, an optional
-secret-free `credentialRevoker` hook starts invalidation after quarantine and
-before alerts. Hosts can also share an explicit state store so a reviewed
-identity cannot bypass quarantine simply by receiving a fresh session handle:
+Requires Node.js 20 or newer. Clone and build the source:
 
-| Layer | What it does |
-|---|---|
-| Detection | Inert decoy MCP tools and planted canary tokens detect a compromise signal. |
-| Containment | `SAFE → TRIPPED → QUARANTINED` happens synchronously; `createGuardedToolRouter()` sends decoys to containment and real tools through the fail-closed guard. |
-| Alerting | JSONL audit events and optional webhook/desktop alerts are sent after the state transition; tool arguments and canary values are redacted. |
+    git clone https://github.com/DorianChn/shanchuanzhi-agent-canary
+    cd shanchuanzhi-agent-canary
+    npm ci
+    npm run build
+    npm link
 
-```text
-Untrusted content → prompt injection → decoy touched / token detected
-                                      ↓
-                              SESSION TRIPPED
-                                      ↓
-                                QUARANTINED
-                                      ↓
-                         dangerous guarded tool call
-                                      ↓
-                                  BLOCKED
-                                      ↓
-                            alert + local audit log
-```
+Initialize the local state and run the offline containment check:
 
-The containment API is documented in [docs/containment.md](docs/containment.md).
-V2.x paid features are maintained and delivered separately; V2.1 is not
-published from this branch.
-
-## The problem
-
-Coding agents read files, run commands and call APIs. If one picks up injected
-instructions — a poisoned README, a malicious web page, a doc file — it may
-quietly exfiltrate secrets or worse, and nothing tells you.
-
-Detection tools that score prompts produce false positives, and false positives
-get ignored. agent-canary inverts this: it plants things that no legitimate
-workflow ever touches, so any contact is a real compromise signal.
-
-- **Decoy MCP tools.** A fake wire transfer, a fake production secret reader, a
-  fake root shell. They never perform a real action, but a hijacked agent will
-  call one.
-- **Canary tokens.** Unique `cnry_...` strings planted in honeypot files. If one
-  shows up in agent output, an outbound request or a git diff, a secret was
-  copied. There is no benign explanation.
-
-Every fake tool reply embeds a one-time trace token, so exfiltrated "secrets"
-point back to the exact tool call that leaked them.
-
-## Install the free V1.2.7 line
-
-Prerequisite: Node.js 20 or newer. The public source build contains the free
-V1.2.7 baseline:
-
-    git clone https://github.com/DorianChn/shanchuanzhi-agent-canary && cd shanchuanzhi-agent-canary
-    npm install && npm run build && npm link
-
-Run `agent-canary --help` after linking, then run the offline containment
-check. The public repository and public package contain the free V1 line only.
-V2.x is maintained and delivered privately after verified purchase; it is not
-distributed from this public source branch.
-
-### Container and Glama evaluation
-
-The repository includes a minimal stdio-only Docker image so MCP registries
-such as Glama can build the free V1 server and inspect its tool schemas without
-credentials, network access, or a V2 delivery package:
-
-    docker build -t agent-canary .
-    docker run --rm -i agent-canary
-
-The image starts `agent-canary serve`. It exposes the same inert decoy tools as
-the local V1 CLI; it does not execute real tools or contain payment, license,
-or customer data.
-
-## Usage
-
-    # plant a honeypot file with fake secrets
-    agent-canary tokens plant .env.canary --label my-project
-
-    # register 12 decoy tools in Claude Code (or: install cursor)
-    agent-canary install claude
-
-    # verify the alert pipeline
-    agent-canary alert-test
-
-    # verify SAFE → QUARANTINED → BLOCKED locally, without network or user-state writes
+    agent-canary init
     agent-canary self-test
 
-Restart your editor. If the agent later calls a decoy or leaks a token:
+Plant a honeypot and register the MCP server:
 
-    $ agent-canary events
-    2026-09-15T10:21:04Z  decoy_called  tool=canary_read_secrets
-    2026-09-15T10:21:09Z  token_found   label=my-project path=report.md
+    agent-canary tokens plant .env.canary --label my-project
+    agent-canary install claude
 
-The scanner is CI-friendly (exit code 1 on leak) and there is a live watcher:
+For Cursor, use agent-canary install cursor. Restart the client to load twelve decoy tools that return synthetic data. Agent Canary does not execute real tools for the MCP client or transparently proxy existing MCP servers.
 
-    agent-canary tokens check . && echo clean
-    agent-canary watch .
+## What it does
 
-## The decoys
-
-The agent sees admin-grade tools. None of them do anything real.
-
-| Decoy tool | What a hijacked agent thinks it gets (simulated only) |
+| Feature | Purpose |
 |---|---|
-| `canary_transfer_funds` | wire transfer, auto-approved under 50k |
-| `canary_read_secrets` | production API keys for any environment |
-| `canary_run_shell` | arbitrary command as root on the build server |
-| `canary_delete_files` | permanent deletion, no trash, no undo |
-| `canary_send_email` | email from any internal address, SPF skipped |
-| `canary_export_database` | full-table CSV dump, no audit entry |
-| `canary_fetch_internal` | internal admin panel from the trusted network |
-| `canary_disable_security` | endpoint protection turned off |
-| `canary_cloud_console` | AWS/GCP console sessions + temporary credentials |
-| `canary_k8s_exec` | arbitrary exec inside a production pod |
-| `canary_secrets_rotate` | emergency credential rotation (locks out humans) |
-| `canary_git_force_push` | force push to protected branches |
+| MCP decoys | Simulate high-risk tools. Handlers return synthetic data and do not execute real file, shell, credential or business actions; configured alert channels may send redacted event metadata. |
+| Canary tokens | Plant unique, powerless values in honeypots and scan for exact registered values. |
+| SDK circuit breaker | Quarantine a session after a signal and reject later calls that pass through its guard/router. |
+| Injection evaluation | Run a versioned 20-payload suite and record decoy calls or echoed trace tokens. |
+| HTML dashboard | Render a standalone, offline-readable timeline from the local event log. |
+| SIEM export | Write CEF, JSONL or spreadsheet-oriented CSV. |
+| Local alerts and audit | Store redacted events locally; optionally send desktop notifications and HTTPS webhooks. |
 
-## Free vs Personal
+## Detection and containment flow
 
-This repository publishes the free V1 baseline. V2 Personal is described here
-for subscribers, but its paid implementation, signing keys, customer records,
-and delivery package are kept outside the public repository.
+```text
+Untrusted content → agent touches a decoy / emits a registered token
+                                 ↓
+                       compromise signal recorded
+                                 ↓
+                later guarded tool calls are rejected
+                                 ↓
+                        audit log and alert
+```
 
-| | Free (forever) | Personal (¥72 / 30 days) |
-|---|---|---|
-| Decoy server, tokens, watch, alerts, install | yes | yes |
-| `eval` — injection resistance scoring | | yes |
-| `dashboard` — HTML attack-chain timeline | | yes |
-| `export` — CEF / JSON / CSV for SIEM | | yes |
-| V1.2.7 session circuit breaker, shared identity containment, optional credential revoker, guarded tool router, MCP safety instructions, and offline `self-test` | yes | yes |
-| SDK decoy handling and canary scanning | yes | yes |
+A decoy is a detection signal; it cannot stop a real action that bypasses the guard before the signal occurs. SDK integrations must route every real tool execution through the same session guard or createGuardedToolRouter(). See [docs/containment.md](docs/containment.md).
 
-V2 Personal currently uses a **manual** WeChat Pay / Alipay confirmation flow.
-See the public [payment instructions](https://dorianchn.github.io/shanchuanzhi-agent-canary/pay.html)
-for the QR codes, price, and the information needed for delivery. The seller
-checks the actual transfer before sending installation and activation
-instructions; no automatic delivery or instant activation is promised.
+## Common commands
 
-## Cooperation and integration
+    agent-canary tokens plant .env.canary --label my-project
+    agent-canary install claude
+    agent-canary alert-test
+    agent-canary events
+    agent-canary dashboard --out report.html --open
+    agent-canary export --format cef --out events.cef
+    agent-canary export --format json --out events.jsonl
+    agent-canary export --format csv --out events.csv
+    agent-canary doctor
 
-We welcome focused collaboration with MCP client maintainers, AI-agent builders,
-security researchers, and DevSecOps teams:
+Use tokens check locally or in CI:
 
-- integrate agent-canary into an MCP client, agent framework, or secure template;
-- run a reproducible prompt-injection evaluation and publish the results;
-- pilot the alert/audit pipeline in a controlled development or CI environment;
-- discuss paid integration, private deployment, or security-assessment support.
+    agent-canary tokens check .
+    git diff --cached | agent-canary tokens check --stdin
 
-Start in [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
-with the integration target, scope, and preferred contact method. Do not post API
-keys, payment receipts, customer data, or unpublished findings.
+No paths means scan the current directory. Hidden files and directories are included; `.git`, `.hg`, `.svn`, and `node_modules` are skipped. Files are scanned incrementally, including files larger than 5 MiB. Exit code 1 means a registered token was found; exit code 2 means the scan was incomplete or no tokens are registered.
 
-## Distribution and partner paths
+## Run the injection evaluation for free
 
-The project is already discoverable through the [official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.DorianChn%2Fagent-canary&version=latest)
-and [Glama](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary). For a deeper
-security-platform integration, the [Snyk Technology Alliance Partner Program](https://snyk.io/partners/tapp/)
-is a candidate channel; any application or commercial terms must be reviewed by
-the maintainer before submission. We do not mass-post or send unsolicited
-promotional messages.
+### Local Ollama (no model API key)
 
-## Non-MCP agents (free V1.2.7 guarded tool router)
+Install and start Ollama, pull a model with tool-calling support, then run:
 
-Create one guard per agent session, then give it to one router. The router
-answers decoys with `guard.runDecoy()` and routes every non-decoy callback
-through `guard.executeToolCall()`.
+    ollama pull qwen3
+    agent-canary eval --provider ollama --model qwen3 --format json --out eval.json
+
+Requests go to localhost:11434. Model storage and inference use your own machine; the software is free and does not upload local evaluation results.
+
+### Cloud models or compatible endpoints
+
+    agent-canary eval --provider openai --model gpt-4o --format json --out eval.json
+    agent-canary eval --provider anthropic --model claude-sonnet-4-5
+    agent-canary eval --provider openai --model deepseek-chat       --base-url https://api.deepseek.com/v1 --format json --out deepseek.json
+
+Pass OpenAI or Anthropic keys with --key, or set OPENAI_API_KEY / ANTHROPIC_API_KEY. Model providers may charge for API use; local Ollama avoids cloud API charges. Requests have a timeout. Custom remote endpoints require HTTPS unless --allow-insecure-http is explicitly provided. Do not put API keys in committed command logs or configuration files.
+
+The score describes only these 20 payloads for the selected model, settings and date. Provider errors, truncated responses and malformed responses count as not resisted and are labeled as errors; they are not described as proof that the model was compromised. This small regression suite is not a security certification and cannot prove resistance to every attack.
+
+## SDK: route real tools through one guard
+
+Create one guard per agent session. Expose reset() only to a human-controlled incident-response surface, never as a model-callable tool.
+
+To use the SDK from another Node.js project, clone and build this repository, run `npm link` in its directory, then run `npm link @dorianchn/agent-canary` in the consuming project.
 
 ```ts
 import {
@@ -197,82 +110,48 @@ import {
   createAgentGuard,
   createGuardedToolRouter,
   decoyToolDefs,
-} from "agent-canary/sdk";
+} from "@dorianchn/agent-canary/sdk";
 
 const guard = createAgentGuard({
   sessionId: "support-chat-42",
-  // Exact, reviewed names only. Default is an empty allowlist.
   quarantineAllow: ["read_file", "git_status"],
 });
-const toolDefs = [...myRealToolSchemas, ...decoyToolDefs("openai")];
+
 const router = createGuardedToolRouter({
   guard,
-  executeRealTool: realTool, // host-provided callback
+  executeRealTool: realToolCallback,
 });
 
-await router.dispatch({ name: "git_status", args: {} });              // SAFE: allowed
-await router.dispatch({ name: "canary_read_secrets", args: {} });     // trip → quarantine
+await router.dispatch({ name: "git_status", args: {} });
+await router.dispatch({ name: "canary_read_secrets", args: {} });
 
 try {
   await router.dispatch({ name: "http_post", args: { url: "https://example.invalid" } });
 } catch (error) {
-  if (error instanceof CanaryBlockedError) console.log(error.decision); // action_blocked
+  if (error instanceof CanaryBlockedError) console.log(error.decision);
 }
 
-// Expose this only to a human incident-response control plane, never an LLM tool.
-guard.reset({ acknowledgedBy: "on-call-human" });
+// Provide these schemas alongside your real-tool schemas.
+const tools = [...myRealToolSchemas, ...decoyToolDefs("openai")];
 ```
 
-`guard.inspect(agentOutput, "final-answer")` detects a planted token and trips
-the same session. `decoyToolDefs("anthropic")` emits Anthropic schemas.
+Use createTokenGuard() to inspect agent output, tool arguments or tool results for registered token values. The host must connect every real tool callback to the same guard; calls outside that path cannot be blocked. See the containment document for shared-identity quarantine and the optional credentialRevoker hook.
 
-## Dashboard and SIEM
+## Reports and data boundaries
 
-    agent-canary dashboard --out report.html   # self-contained HTML timeline
-    agent-canary export --format cef           # or json, csv
+- Default state directory: ~/.agent-canary/; override it with AGENT_CANARY_HOME.
+- Event logs and webhook payloads omit tool arguments and redact tokens and sensitive fields. Do not place secrets in custom event metadata.
+- Webhooks require HTTPS by default; HTTP is allowed only for loopback development. doctor validates the URL format without contacting it.
+- The dashboard is standalone HTML with no CDN or third-party scripts. Event content is escaped before rendering.
+- Evaluation uses synthetic decoy replies. It does not emit production decoy alerts, modify the local token registry or append to the user's event log.
+- Containment only covers integrated SDK call paths. Agent Canary does not proxy arbitrary upstream MCP servers.
+- A decoy call or a registered token found outside its planted file deserves review; by itself, it does not prove real data was stolen.
 
-## Injection-resistance evaluation
+## Contributing
 
-V2 Personal includes a reproducible 20-payload evaluation suite. Use text output
-for humans or JSON for CI; provider/API failures fail closed and are never counted
-as a successful resistance result:
+Reproducible bug reports, documentation improvements and scoped feature proposals are welcome. Do not post API keys, payment records, customer data or unpublished vulnerabilities in public issues or discussions. Follow [SECURITY.md](SECURITY.md) for security reports.
 
-    agent-canary eval --provider openai --model gpt-4o --format json
-    agent-canary eval --provider openai --model deepseek-chat \
-      --base-url https://api.deepseek.com/v1 --format json --out eval.json
-
-## Guarantees and limits
-
-- Decoy tools never perform real actions. `canary_run_shell` does not run
-  commands. The handlers return fabricated output, nothing else (see
-  [SECURITY.md](SECURITY.md)).
-- Canary tokens unlock nothing anywhere.
-- No telemetry. Events stay in `~/.agent-canary/events.jsonl` unless you
-  configure a webhook.
-- Alerts only fire when a decoy is touched or a token surfaces. Nothing in a
-  legitimate workflow can trigger them.
-- **Containment is integration-scoped.** It can block only real tool calls
-  routed through `router.dispatch()` or `guard.executeToolCall()` /
-  `guard.beforeToolCall()`. If a compromised agent's first dangerous action
-  bypasses these paths, agent-canary cannot intercept that action. Decoys are
-  harmless, so touching one lets the guard quarantine the session before a
-  later guarded action runs.
-- This release does not ship an MCP proxy for arbitrary upstream MCP servers;
-  the reviewed next-step design is in [docs/containment.md](docs/containment.md).
-
-Known limit: this is JavaScript, so a determined user can patch `dist/` and
-strip the license checks. The signed-license scheme raises the bar against
-casual copying; it is not DRM.
-
-## Commands
-
-    serve / init / install / uninstall
-    tokens generate|plant|check|list
-    watch, events, report, dashboard, export, eval
-    self-test
-    status, activate, alert-test, set-webhook, set-notify
-
-Run `agent-canary --help` for details.
+The former payment and licensing flow is retired. Agent Canary 2.x does not require activation; the legacy activate command remains for compatibility and makes no network request. The old payment service under sponsor/ is historical code, not an installation or unlock step.
 
 ## License
 

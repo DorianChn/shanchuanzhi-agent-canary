@@ -5,11 +5,12 @@
  *  - csv  : generic spreadsheet
  */
 import type { CanaryEvent } from "./alerts.js";
+import { sanitizeEvent } from "./alerts.js";
 import { VERSION } from "./config.js";
 
 /** CEF extension values escape backslash, = and \n */
 function cefEsc(s: string): string {
-  return s.replace(/\\/g, "\\\\").replace(/=/g, "\\=").replace(/\r?\n/g, "\\n");
+  return s.replace(/\\/g, "\\\\").replace(/=/g, "\\=").replace(/\r\n|\r|\n/g, "\\n");
 }
 
 const SEVERITY: Record<string, string> = {
@@ -25,7 +26,8 @@ const SEVERITY: Record<string, string> = {
 export function exportCef(events: CanaryEvent[]): string {
   return (
     events
-      .map((ev) => {
+      .map((source) => {
+        const ev = sanitizeEvent(source);
         const name =
           ev.kind === "decoy_called"
             ? "Decoy tool invoked"
@@ -52,25 +54,27 @@ export function exportCef(events: CanaryEvent[]): string {
         ]
           .filter(Boolean)
           .join(" ");
-        return `CEF:0|agent-canary|agent-canary|${VERSION}|${ev.kind}|${cefEsc(name)}|${SEVERITY[ev.kind] ?? "5"}|${ext}`;
+        return `CEF:0|agent-canary|agent-canary|${VERSION}|${ev.kind.replace(/[^A-Za-z0-9_.-]/g, "_")}|${cefEsc(name)}|${SEVERITY[ev.kind] ?? "5"}|${ext}`;
       })
       .join("\n") + (events.length ? "\n" : "")
   );
 }
 
 export function exportJson(events: CanaryEvent[]): string {
-  return events.map((ev) => JSON.stringify(ev)).join("\n") + (events.length ? "\n" : "");
+  return events.map((ev) => JSON.stringify(sanitizeEvent(ev))).join("\n") + (events.length ? "\n" : "");
 }
 
 function csvCell(v: unknown): string {
-  const s = String(v ?? "");
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  const raw = String(v ?? "");
+  const safe = /^[\t\r ]*[=+@-]/.test(raw) ? "'" + raw : raw;
+  return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
 
 export function exportCsv(events: CanaryEvent[]): string {
   const head = "timestamp,kind,tool,label,path,token_masked,note";
-  const rows = events.map((ev) =>
-    [
+  const rows = events.map((source) => {
+    const ev = sanitizeEvent(source);
+    return [
       ev.ts,
       ev.kind,
       ev.tool ?? "",
@@ -80,7 +84,7 @@ export function exportCsv(events: CanaryEvent[]): string {
       ev.note ?? "",
     ]
       .map(csvCell)
-      .join(",")
-  );
+      .join(",");
+  });
   return [head, ...rows].join("\n") + "\n";
 }

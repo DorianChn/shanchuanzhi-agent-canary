@@ -1,6 +1,6 @@
-# V1.1 containment layer
+# SDK session containment
 
-The V1.1 SDK adds a small per-session circuit breaker. It is designed for hosts
+The SDK provides a per-session circuit breaker. It is designed for hosts
 that own the agent loop and can place one guard immediately before every real
 tool callback.
 
@@ -82,7 +82,7 @@ when they are not.
 The project currently serves only inert decoy MCP tools. A transparent proxy for
 arbitrary upstream MCP servers needs transport forwarding, upstream lifecycle
 management, authentication/credential boundaries, cancellation semantics, and
-conformance tests. Shipping a partial proxy in V1.1 would make the security
+conformance tests. Shipping a partial proxy would make the security
 claim weaker, not stronger.
 
 The next-stage proxy design is:

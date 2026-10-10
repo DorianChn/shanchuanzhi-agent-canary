@@ -102,7 +102,17 @@ export function addTokens(added: CanaryToken[]): CanaryToken[] {
 }
 
 export function generateTokens(label: string, count: number): CanaryToken[] {
+  validateTokenRequest(label, count);
   return addTokens(Array.from({ length: count }, () => mintToken(label)));
+}
+
+function validateTokenRequest(label: string, count: number): void {
+  if (typeof label !== "string" || label.trim() === "" || label.length > 128 || /[\u0000-\u001f\u007f]/.test(label)) {
+    throw new TypeError("label must be 1–128 characters and contain no control characters.");
+  }
+  if (!Number.isInteger(count) || count < 1 || count > 1000) {
+    throw new RangeError("count must be an integer from 1 to 1000.");
+  }
 }
 
 export function recordPlanted(token: CanaryToken, ref: PlantedRef): void {
@@ -118,16 +128,18 @@ export function recordPlanted(token: CanaryToken, ref: PlantedRef): void {
  * - If it does not exist, a honeypot file full of fake secrets is created.
  */
 export function plantIntoFile(target: string, label: string, count: number): CanaryToken[] {
-  const created = generateTokens(label, count);
+  validateTokenRequest(label, count);
+  const created = Array.from({ length: count }, () => mintToken(label));
   const abs = path.resolve(target);
   const exists = fs.existsSync(abs);
+  const originalSize = exists ? fs.statSync(abs).size : 0;
   const lines: string[] = [];
 
   if (!exists) {
     lines.push(
       "# WARNING: honeypot file planted by agent-canary.",
       "# The 'secrets' below are worthless tripwires. If any cnry_* value ever",
-      "# shows up outside this file, something read and exfiltrated it.",
+      "# appears outside its planted location, review where it was copied.",
       ""
     );
   } else {
@@ -140,30 +152,76 @@ export function plantIntoFile(target: string, label: string, count: number): Can
   });
 
   fs.mkdirSync(path.dirname(abs), { recursive: true });
-  fs.appendFileSync(abs, lines.join("\n") + "\n");
-
-  // Figure out the line number each token landed on so events can point at it.
-  const fileLines = fs.readFileSync(abs, "utf8").split("\n");
-  for (const t of created) {
-    const line = fileLines.findIndex((l) => l.includes(t.token));
-    if (line >= 0) recordPlanted(t, { path: abs, line: line + 1 });
+  const block = lines.join("\n") + "\n";
+  try {
+    fs.appendFileSync(abs, block);
+    // Register all planted tokens in one atomic write. This avoids an O(n²)
+    // read/write loop for larger honeypots and avoids orphaning tokens when
+    // writing the target file fails.
+    const fileLines = fs.readFileSync(abs, "utf8").split("\n");
+    const planted = created.map((token) => {
+      const line = fileLines.findIndex((entry) => entry.includes(token.token));
+      return {
+        ...token,
+        planted: line >= 0 ? [{ path: abs, line: line + 1 }] : [],
+      };
+    });
+    saveTokens([...loadTokens(), ...planted]);
+    return planted;
+  } catch (error) {
+    // If registry persistence fails, do not leave an untracked honeypot block.
+    try {
+      if (exists) fs.truncateSync(abs, originalSize);
+      else fs.rmSync(abs, { force: true });
+    } catch {
+      /* preserve the registry/write error */
+    }
+    throw error;
   }
-  return created;
 }
 
 export function findTokensInText(text: string): CanaryToken[] {
   return loadTokens().filter((t) => text.includes(t.token));
 }
 
-export function scanFile(p: string): CanaryToken[] {
+function pathsMatch(left: string, right: string): boolean {
+  const a = path.resolve(left);
+  const b = path.resolve(right);
+  return process.platform === "win32" ? a.toLowerCase() === b.toLowerCase() : a === b;
+}
+
+/** Scan a file incrementally so large logs and archives do not consume unbounded memory. */
+export function scanFileStrict(p: string, registry: CanaryToken[] = loadTokens()): CanaryToken[] {
+  const stat = fs.statSync(p);
+  if (!stat.isFile()) return [];
+
+  const abs = path.resolve(p);
+  const candidates = registry.filter((token) => !token.planted.some((ref) => pathsMatch(ref.path, abs)));
+  if (candidates.length === 0) return [];
+
+  const maxTokenLength = candidates.reduce((longest, token) => Math.max(longest, token.token.length), 0);
+  const chunk = Buffer.allocUnsafe(64 * 1024);
+  const found = new Map<string, CanaryToken>();
+  let overlap = "";
+  const descriptor = fs.openSync(p, "r");
   try {
-    const stat = fs.statSync(p);
-    if (!stat.isFile() || stat.size > 5 * 1024 * 1024) return [];
-    const abs = path.resolve(p);
-    const text = fs.readFileSync(p, "utf8");
-    // A token sitting in the exact file where we planted it is legitimate;
-    // anywhere else it is a leak.
-    return findTokensInText(text).filter((t) => !t.planted.some((r) => r.path === abs));
+    let bytesRead: number;
+    while ((bytesRead = fs.readSync(descriptor, chunk, 0, chunk.length, null)) > 0) {
+      const text = overlap + chunk.toString("utf8", 0, bytesRead);
+      for (const token of candidates) {
+        if (!found.has(token.token) && text.includes(token.token)) found.set(token.token, token);
+      }
+      overlap = text.slice(-(maxTokenLength - 1));
+    }
+  } finally {
+    fs.closeSync(descriptor);
+  }
+  return [...found.values()];
+}
+
+export function scanFile(p: string, registry: CanaryToken[] = loadTokens()): CanaryToken[] {
+  try {
+    return scanFileStrict(p, registry);
   } catch {
     return [];
   }

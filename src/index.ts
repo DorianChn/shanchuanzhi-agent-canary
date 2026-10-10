@@ -5,25 +5,23 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { VERSION, loadConfig, saveConfig, defaultConfig, ensureDirs, CONFIG_PATH } from "./config.js";
 import { serve } from "./server.js";
-import { generateTokens, loadTokens, plantIntoFile, findTokensInText, scanFile } from "./tokens.js";
+import { generateTokens, loadTokens, plantIntoFile, findTokensInText, scanFileStrict } from "./tokens.js";
 import { readEvents, sendAlertTest, type CanaryEvent } from "./alerts.js";
 import { installServer, uninstallServer, configPathFor, type InstallTarget } from "./install.js";
 import { watch } from "./watch.js";
 import { EVAL_PAYLOADS, EVAL_SUITE_VERSION } from "./eval/payloads.js";
-import { anthropicProvider, openaiCompatibleProvider } from "./eval/providers.js";
+import { anthropicProvider, ollamaProvider, openaiCompatibleProvider } from "./eval/providers.js";
 import { renderMarkdownReport, runEval } from "./eval/runner.js";
 import { renderDashboard } from "./dashboard.js";
 import { exportCef, exportCsv, exportJson } from "./export.js";
-import { activate, ensureLicensedAsync, licenseServer, UPSELL, cachedLicense } from "./license.js";
 import { DECOY_TOOLS } from "./decoys.js";
 import { runSelfTest } from "./self-test.js";
 import { validateWebhookUrl } from "./webhook.js";
-import http from "node:http";
 
 const program = new Command();
 program
   .name("agent-canary")
-  .description("Zero-false-positive tripwires for AI agents: decoy MCP tools + leak-tracing canary tokens.")
+  .description("Detect AI-agent compromise signals with inert MCP decoys, canary tokens, and guarded tool routing.")
   .version(VERSION);
 
 function eventDetail(ev: CanaryEvent): string {
@@ -39,6 +37,24 @@ function eventDetail(ev: CanaryEvent): string {
     return `session=${ev.sessionId ?? "?"} by=${ev.metadata?.acknowledgedBy ?? "human"}`;
   }
   return ev.note ?? "test";
+}
+
+function parseBoundedInteger(value: string, min: number, max: number, label: string): number {
+  if (!/^[0-9]+$/.test(value)) throw new Error(label + " must be a whole number.");
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed < min || parsed > max) {
+    throw new Error(label + " must be between " + min + " and " + max + ".");
+  }
+  return parsed;
+}
+
+function markdownCell(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\|/g, "\\|")
+    .replace(/[\r\n]+/g, " ");
 }
 
 program
@@ -99,7 +115,7 @@ const tokens = program.command("tokens").description("Create and manage canary t
 tokens
   .command("generate")
   .requiredOption("--label <label>", "What this token watches, e.g. prod-db-dump")
-  .option("-c, --count <n>", "How many tokens", (v) => parseInt(v, 10), 1)
+  .option("-c, --count <n>", "How many tokens (1–1000)", (v) => parseBoundedInteger(v, 1, 1000, "count"), 1)
   .action((opts) => {
     const created = generateTokens(opts.label, opts.count);
     for (const t of created) console.log(`${t.token}   # ${t.label}`);
@@ -122,7 +138,7 @@ tokens
   .command("plant")
   .argument("<file>", "File to plant tokens into (created as a honeypot file if missing; existing files get a tripwire block appended)")
   .requiredOption("--label <label>")
-  .option("-c, --count <n>", "How many tokens", (v) => parseInt(v, 10), 3)
+  .option("-c, --count <n>", "How many tokens (1–1000)", (v) => parseBoundedInteger(v, 1, 1000, "count"), 3)
   .action((file, opts) => {
     const created = plantIntoFile(file, opts.label, opts.count);
     console.log(`Planted ${created.length} canary token(s) into ${fs.existsSync(file) ? fs.realpathSync(file) : file}`);
@@ -133,51 +149,69 @@ tokens
   .command("check")
   .argument("[paths...]", "Files or directories to scan")
   .option("--stdin", "Scan piped input instead of files")
-  .description("Scan files or stdin for leaked canary tokens (exit 1 if found — CI/git-hook friendly)")
+  .description("Scan files or stdin for leaked canary tokens (exit 1 if found; exit 2 if incomplete or unconfigured)")
   .action(async (paths: string[], opts) => {
     let hits: { label: string; token: string; where: string }[] = [];
+    const scanErrors: string[] = [];
+    const registeredTokens = loadTokens();
+    if (registeredTokens.length === 0) {
+      console.error("No canary tokens are registered; run `agent-canary tokens generate --label <label>` first.");
+      process.exitCode = 2;
+      return;
+    }
     if (opts.stdin) {
+      if (paths.length > 0) {
+        console.error("--stdin cannot be combined with file paths");
+        process.exitCode = 2;
+        return;
+      }
       const text = fs.readFileSync(0, "utf8");
       hits = findTokensInText(text).map((t) => ({ label: t.label, token: t.token, where: "<stdin>" }));
     } else {
       const files: string[] = [];
-      const walkDir = (dir: string, depth = 0) => {
-        if (depth > 4) return;
+      const ignoredDirectories = new Set([".git", ".hg", ".svn", "node_modules"]);
+      const walkDir = (dir: string) => {
         let entries: fs.Dirent[] = [];
         try {
           entries = fs.readdirSync(dir, { withFileTypes: true });
-        } catch {
+        } catch (error) {
+          scanErrors.push(`${dir}: ${error instanceof Error ? error.message : String(error)}`);
           return;
         }
         for (const e of entries) {
-          if (e.name.startsWith(".") || e.name === "node_modules") continue;
+          if (e.isDirectory() && ignoredDirectories.has(e.name)) continue;
           const p = path.join(dir, e.name);
-          if (e.isDirectory()) walkDir(p, depth + 1);
-          else files.push(p);
+          if (e.isDirectory()) walkDir(p);
+          else if (e.isFile()) files.push(p);
         }
       };
-      for (const p of paths) {
-        const stat = fs.statSync(p, { throwIfNoEntry: false });
-        if (!stat) {
-          console.error(`skip (not found): ${p}`);
-          continue;
+      for (const p of paths.length ? paths : ["."]) {
+        try {
+          const stat = fs.statSync(p);
+          if (stat.isDirectory()) walkDir(p);
+          else if (stat.isFile()) files.push(p);
+          else scanErrors.push(`${p}: not a regular file or directory`);
+        } catch (error) {
+          scanErrors.push(`${p}: ${error instanceof Error ? error.message : String(error)}`);
         }
-        if (stat.isDirectory()) walkDir(p);
-        else files.push(p);
       }
       for (const f of files) {
-        for (const t of scanFile(f)) {
-          if (t.planted.some((r) => r.path === f)) continue; // its own honeypot file is fine
-          hits.push({ label: t.label, token: t.token, where: f });
+        try {
+          for (const t of scanFileStrict(f, registeredTokens)) hits.push({ label: t.label, token: t.token, where: f });
+        } catch (error) {
+          scanErrors.push(`${f}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
+      console.log(`Scanned ${files.length} file(s); skipped .git, .hg, .svn, and node_modules.`);
+      if (scanErrors.length > 0) {
+        for (const scanError of scanErrors) console.error(`SCAN ERROR  ${scanError}`);
+        console.error("Scan incomplete; resolve these errors before treating the result as clean.");
+      }
     }
-    if (hits.length === 0) {
-      console.log("clean: no canary tokens found");
-      return;
-    }
-    for (const h of hits) console.log(`LEAK  ${h.label}  ${h.token.slice(0, 14)}…  in ${h.where}`);
-    process.exit(1);
+    for (const h of hits) console.log(`LEAK  ${h.label}  in ${h.where}`);
+    if (hits.length === 0 && scanErrors.length === 0) console.log("clean: no canary tokens found");
+    if (hits.length > 0) process.exitCode = 1;
+    else if (!opts.stdin && scanErrors.length > 0) process.exitCode = 2;
   });
 
 program
@@ -188,7 +222,7 @@ program
 
 program
   .command("events")
-  .option("-n, --tail <n>", "Number of events", (v) => parseInt(v, 10), 20)
+  .option("-n, --tail <n>", "Number of events (1–100000)", (v) => parseBoundedInteger(v, 1, 100000, "tail"), 20)
   .description("Show recent tripwire events")
   .action((opts) => {
     const events = readEvents(undefined, opts.tail);
@@ -219,8 +253,7 @@ ${Object.entries(counts)
 |---|---|---|
 ${events
   .map((ev: CanaryEvent) => {
-    const detail = eventDetail(ev).replace(/\|/g, "\\|");
-    return `| ${ev.ts} | ${ev.kind} | ${detail} |`;
+    return "| " + markdownCell(ev.ts) + " | " + markdownCell(ev.kind) + " | " + markdownCell(eventDetail(ev)) + " |";
   })
   .join("\n")}
 `);
@@ -283,50 +316,77 @@ program
   .argument("<on|off>")
   .description("Enable or disable desktop notifications")
   .action((v: string) => {
+    if (v !== "on" && v !== "off") {
+      console.error("value must be exactly: on | off");
+      process.exitCode = 1;
+      return;
+    }
     const cfg = loadConfig();
-    cfg.notify = v !== "off";
+    cfg.notify = v === "on";
     saveConfig(cfg);
     console.log(`Desktop notifications ${cfg.notify ? "enabled" : "disabled"}.`);
   });
 
 program
   .command("eval")
-  .description("Run the prompt-injection resistance suite against a model (v0.2 eval mode)")
-  .requiredOption("--provider <name>", "openai | anthropic (openai covers all OpenAI-compatible endpoints)")
-  .requiredOption("--model <model>", "e.g. gpt-4o, deepseek-chat, claude-sonnet-4-5")
-  .option("--base-url <url>", "OpenAI-compatible base URL (e.g. https://api.deepseek.com/v1)")
-  .option("--key <key>", "API key (defaults to OPENAI_API_KEY / ANTHROPIC_API_KEY env)")
-  .option("--max-turns <n>", "Max tool-call turns per payload", (v) => parseInt(v, 10), 3)
+  .description("Run the prompt-injection resistance suite against a model")
+  .requiredOption("--provider <name>", "openai | anthropic | ollama (local Ollama)")
+  .requiredOption("--model <model>", "Model identifier, e.g. gpt-4o, claude-sonnet-4-5, qwen3")
+  .option("--base-url <url>", "OpenAI-compatible base URL (Ollama defaults to http://localhost:11434/v1)")
+  .option("--key <key>", "API key (defaults to OPENAI_API_KEY / ANTHROPIC_API_KEY; not needed for Ollama)")
+  .option("--allow-insecure-http", "Allow a non-loopback OpenAI-compatible endpoint over plain HTTP")
+  .option("--timeout <ms>", "Timeout per provider request (1000–600000)", (v) => parseBoundedInteger(v, 1000, 600000, "timeout"), 120000)
+  .option("--max-turns <n>", "Maximum tool-call turns per payload (1–10)", (v) => parseBoundedInteger(v, 1, 10, "max-turns"), 3)
   .option("--format <format>", "text | json", "text")
   .option("--out <file>", "Write the selected text or JSON report to this file")
   .action(async (opts) => {
-    if (!(await ensureLicensedAsync())) {
-      console.error(UPSELL);
-      process.exit(1);
-    }
     let provider;
     if (opts.provider === "openai") {
       const key = opts.key ?? process.env.OPENAI_API_KEY;
       if (!key) {
         console.error("Missing API key: pass --key or set OPENAI_API_KEY");
-        process.exit(1);
+        process.exitCode = 1;
+        return;
       }
-      provider = openaiCompatibleProvider(opts.baseUrl ?? "https://api.openai.com/v1", key);
+      if (opts.allowInsecureHttp && !opts.baseUrl?.startsWith("http://")) {
+        console.error("--allow-insecure-http is only relevant to an http:// OpenAI-compatible base URL");
+        process.exitCode = 1;
+        return;
+      }
+      provider = openaiCompatibleProvider(opts.baseUrl ?? "https://api.openai.com/v1", key, {
+        timeoutMs: opts.timeout,
+        allowInsecureHttp: opts.allowInsecureHttp,
+      });
     } else if (opts.provider === "anthropic") {
       const key = opts.key ?? process.env.ANTHROPIC_API_KEY;
       if (!key) {
         console.error("Missing API key: pass --key or set ANTHROPIC_API_KEY");
-        process.exit(1);
+        process.exitCode = 1;
+        return;
       }
-      provider = anthropicProvider(key);
+      if (opts.allowInsecureHttp || opts.baseUrl) {
+        console.error("--base-url and --allow-insecure-http apply only to the openai provider");
+        process.exitCode = 1;
+        return;
+      }
+      provider = anthropicProvider(key, { timeoutMs: opts.timeout });
+    } else if (opts.provider === "ollama") {
+      if (opts.key || opts.allowInsecureHttp) {
+        console.error("Ollama is local and does not use --key or --allow-insecure-http");
+        process.exitCode = 1;
+        return;
+      }
+      provider = ollamaProvider(opts.baseUrl ?? "http://localhost:11434/v1", { timeoutMs: opts.timeout });
     } else {
-      console.error("provider must be: openai | anthropic");
-      process.exit(1);
+      console.error("provider must be: openai | anthropic | ollama");
+      process.exitCode = 1;
+      return;
     }
 
     if (opts.format !== "text" && opts.format !== "json") {
       console.error("format must be: text | json");
-      process.exit(1);
+      process.exitCode = 1;
+      return;
     }
     if (opts.format === "text") {
       console.log(
@@ -349,9 +409,11 @@ program
       for (const [cat, v] of Object.entries(report.byCategory)) {
         console.log(`  ${cat.padEnd(20)} ${v.passed}/${v.total} resisted`);
       }
+      const providerErrors = report.results.filter((result) => result.error).length;
+      if (providerErrors) console.log(`  provider errors      ${providerErrors} (counted as not resisted)`);
       console.log(`\nSCORE: ${report.score}/100 (${report.passed}/${report.total} payloads resisted)`);
     }
-    process.exit(report.score === 100 ? 0 : 2);
+    process.exitCode = report.score === 100 ? 0 : 2;
   });
 
 program
@@ -360,10 +422,6 @@ program
   .option("--out <file>", "Output file", "agent-canary-dashboard.html")
   .option("--open", "Open in the default browser after generating")
   .action(async (opts) => {
-    if (!(await ensureLicensedAsync())) {
-      console.error(UPSELL);
-      process.exit(1);
-    }
     const events = readEvents(undefined, 1_000_000);
     const html = renderDashboard(events, { generatedAt: new Date().toISOString(), version: VERSION });
     fs.writeFileSync(opts.out, html);
@@ -385,9 +443,10 @@ program
   .option("--format <fmt>", "cef | json | csv", "cef")
   .option("--out <file>", "Output file (defaults to stdout)")
   .action(async (opts) => {
-    if (!(await ensureLicensedAsync())) {
-      console.error(UPSELL);
-      process.exit(1);
+    if (!["cef", "json", "csv"].includes(opts.format)) {
+      console.error("format must be: cef | json | csv");
+      process.exitCode = 1;
+      return;
     }
     const events = readEvents(undefined, 1_000_000);
     const out =
@@ -402,91 +461,97 @@ program
 
 program
   .command("activate")
-  .description("Activate Personal Edition with your sponsor handle (GitHub username or email)")
-  .requiredOption("--handle <handle>", "The GitHub username or email you subscribed with")
-  .option("--server <url>", "License server override (defaults to your configured sponsor gateway)")
-  .action(async (opts) => {
-    console.log(`Checking subscription at ${licenseServer(opts.server)} …`);
-    const r = await activate(opts.handle, opts.server);
-    if (r.ok) {
-      console.log(`✓ 个人版已激活，有效期至 ${r.expiresAt}${r.offline ? "（使用本地缓存，离线宽限）" : ""}`);
-      console.log("已解锁：eval（注入评测）· dashboard（攻击链面板）· export（SIEM 导出）· sdk（SDK 埋点）");
-    } else {
-      console.error(`✗ 激活失败：${r.message}`);
-      console.error(UPSELL);
-      process.exit(1);
-    }
+  .description("Legacy compatibility command; all features now work without activation")
+  .option("--handle <handle>", "Legacy option; ignored")
+  .option("--server <url>", "Legacy option; ignored")
+  .action(() => {
+    console.log("Agent Canary 2.x 无需许可证或激活；全部功能免费，适用时可离线运行。");
+    console.log("此兼容命令没有联网。不要提交旧版激活码或付款信息。");
   });
 
 program
   .command("status")
-  .description("Show edition, license, decoy and event summary")
+  .description("Show feature availability, decoy and event summary")
   .action(() => {
     const cfg = loadConfig();
-    const lic = cachedLicense();
     const tokens = loadTokens();
     const events = readEvents(undefined, 1_000_000);
     const real = events.filter((e) => e.kind !== "test").length;
-    console.log(`agent-canary v${VERSION}`);
-    console.log(`  版本        ${lic ? `个人版 Personal（有效期至 ${lic.expiresAt.slice(0, 10)}）` : "免费版 Free"}`);
+    console.log(`agent-canary v${VERSION}（MIT；全部功能免费开放）`);
     console.log(`  诱饵工具    ${DECOY_TOOLS.length} 个已注册`);
     console.log(`  金丝雀令牌  ${tokens.length} 个（${tokens.filter((t) => t.planted.length).length} 个已埋放）`);
     console.log(`  事件        ${events.length} 条（${real} 条真实告警）`);
-    console.log(`  许可服务器  ${licenseServer()}`);
     console.log(`  事件日志    ${cfg.eventsFile}`);
   });
 
 program
   .command("doctor")
-  .description("Diagnose installation, license and payment-stack health")
-  .action(async () => {
+  .description("Check local configuration and storage without contacting a license or payment service")
+  .action(() => {
     const cfg = loadConfig();
-    const lic = cachedLicense();
     const tokens = loadTokens();
-    const events = readEvents(undefined, 1_000_000);
-    const ok = (s: string) => console.log("  ✓ " + s);
-    const bad = (s: string) => console.log("  ✗ " + s);
-    const info = (s: string) => console.log("  · " + s);
+    const events = readEvents(undefined, 100_000);
+    let failed = false;
+    const ok = (message: string) => console.log("  ✓ " + message);
+    const bad = (message: string) => {
+      failed = true;
+      console.log("  ✗ " + message);
+    };
+    const info = (message: string) => console.log("  · " + message);
 
-    console.log(`agent-canary doctor (v${VERSION})`);
-    console.log("  环境");
-    if (lic) ok(`授权：个人版 Personal，有效期至 ${lic.expiresAt.slice(0, 10)}`);
-    else info("授权：免费版 Free（eval/dashboard/export 需个人版；SDK containment 免费）");
-    info(`配置文件：${fs.existsSync(CONFIG_PATH) ? CONFIG_PATH : "未创建（agent-canary init）"}`);
-    info(`诱饵工具：${DECOY_TOOLS.length} 个 · 令牌：${tokens.length} 个（${tokens.filter((t) => t.planted.length).length} 已埋放）`);
-    info(`事件：${events.length} 条 · 日志 ${cfg.eventsFile}`);
+    console.log("agent-canary doctor v" + VERSION + " — all features free; no activation required");
+    const nodeMajor = Number(process.versions.node.split(".")[0]);
+    if (Number.isInteger(nodeMajor) && nodeMajor >= 20) ok("Node.js " + process.versions.node);
+    else bad("Node.js 20 or newer is required (found " + process.versions.node + ")");
 
-    console.log("  许可服务器");
-    const ls = licenseServer();
+    const stateDir = path.dirname(CONFIG_PATH);
     try {
-      const r = await fetch(`${ls}/api/subscription/__probe`, { signal: AbortSignal.timeout(3000) });
-      if (r.status < 500) ok(`${ls} 可达 (HTTP ${r.status})`);
-      else bad(`${ls} 异常 (HTTP ${r.status})`);
+      fs.accessSync(stateDir, fs.constants.R_OK | fs.constants.W_OK);
+      ok("state directory is readable and writable");
     } catch {
-      bad(`${ls} 不可达（本地收款场景可忽略）`);
+      bad("state directory is not readable and writable: " + stateDir);
     }
 
-    console.log("  收款服务栈（本机）");
-    const probes: Array<[number, string]> = [
-      [8890, "V免签"],
-      [8790, "赞助网关"],
-      [8793, "路由器"],
-    ];
-    for (const [port, name] of probes) {
-      const res = await new Promise<string>((resolve) => {
-        const rq = http.get({ host: "127.0.0.1", port, path: "/", timeout: 2500 }, (r) => {
-          r.resume();
-          resolve(`✓ 运行中 (HTTP ${r.statusCode})`);
-        });
-        rq.on("timeout", () => {
-          rq.destroy();
-          resolve("✗ 无响应");
-        });
-        rq.on("error", () => resolve("✗ 未运行"));
-      });
-      console.log(`  ${name} (:${port})  ${res}`);
+    if (fs.existsSync(CONFIG_PATH)) {
+      try {
+        const parsed: unknown = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
+        if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) ok("config JSON is readable");
+        else bad("config must contain a JSON object");
+      } catch {
+        bad("config JSON is invalid: " + CONFIG_PATH);
+      }
+    } else {
+      info("config has not been created; run agent-canary init to save defaults");
     }
-    console.log("\n提示：收款服务栈由 vmq-stack\\public-link.mjs 守护进程管理（启动收款系统.cmd）");
+
+    const eventsDir = path.dirname(path.resolve(cfg.eventsFile));
+    if (fs.existsSync(eventsDir)) {
+      try {
+        fs.accessSync(eventsDir, fs.constants.R_OK | fs.constants.W_OK);
+        ok("event-log directory is readable and writable");
+      } catch {
+        bad("event-log directory is not readable and writable: " + eventsDir);
+      }
+    } else {
+      info("event-log directory will be created when the first event is written");
+    }
+
+    if (cfg.webhook === null) {
+      info("webhook is not configured");
+    } else if (typeof cfg.webhook === "string") {
+      try {
+        validateWebhookUrl(cfg.webhook);
+        ok("webhook URL format is valid (destination not contacted)");
+      } catch {
+        bad("webhook URL is invalid; update it with agent-canary set-webhook");
+      }
+    } else {
+      bad("webhook must be a URL string or null");
+    }
+
+    info(DECOY_TOOLS.length + " inert decoy tools · " + tokens.length + " canary tokens · " + events.length + " recent events");
+    info("eval, dashboard, export, SDK, and containment features are included; doctor performs no network requests");
+    if (failed) process.exitCode = 1;
   });
 
 program.parseAsync(process.argv).catch((err: unknown) => {

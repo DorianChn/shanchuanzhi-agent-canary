@@ -13,7 +13,7 @@ const TEST_KEYS = crypto.generateKeyPairSync("ed25519");
 const TEST_PUB_PEM = TEST_KEYS.publicKey.export({ type: "spki", format: "pem" }).toString();
 const WRONG_KEYS = crypto.generateKeyPairSync("ed25519");
 
-const { __setTrustedPublicKeyForTesting } = await import("../src/license.js");
+const { __setTrustedPublicKeyForTesting } = await import("../legacy/license.js");
 __setTrustedPublicKeyForTesting(TEST_PUB_PEM);
 
 // mock gateway: POST /api/activate
@@ -54,7 +54,7 @@ server.unref();
 const licPort = (server.address() as { port: number }).port;
 process.env.AGENT_CANARY_LICENSE_SERVER = `http://127.0.0.1:${licPort}`;
 
-const { activate, cachedLicense, ensureLicensed, LicenseError, UPSELL } = await import("../src/license.js");
+const { activate, cachedLicense, ensureLicensed, LicenseError, UPSELL } = await import("../legacy/license.js");
 const sdk = await import("../src/sdk.js");
 
 test("activate with valid gateway signature → licensed", async () => {

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.0.0 — all features free and public
+
+- Open the former paid evaluation, dashboard, SIEM export and SDK features
+  under the existing MIT license; remove CLI activation gates and retire the
+  payment/activation page.
+- Add local Ollama evaluation without a cloud API key, request timeouts, HTTPS
+  checks for remote OpenAI-compatible endpoints, and strict response validation.
+- Keep evaluation runs isolated from the user's token registry, audit log and
+  alert channels; distinguish provider failures from model compromise.
+- Escape unknown dashboard event labels, sanitize exported events, neutralize
+  spreadsheet formulas in CSV, and harden Markdown reports.
+- Validate token counts and config shapes; batch honeypot token registration
+  into one atomic registry write.
+- Replace V1/V2 sales copy with one free-feature guide and document the actual
+  SDK, scanner, evaluation, and data-handling boundaries.
+
 ## 1.2.7
 
 - Surface credential-revocation adapter failures through the normal alert path

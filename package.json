@@ -1,7 +1,7 @@
 {
   "name": "@dorianchn/agent-canary",
-  "version": "1.2.7",
-  "description": "Free AI-agent tripwires with a guarded tool router, offline containment self-tests, and redacted audit events.",
+  "version": "2.0.0",
+  "description": "Free and open-source AI-agent security tripwires with local evaluation, guarded tool routing, and redacted audit events.",
   "license": "MIT",
   "author": "DorianChn",
   "repository": {
@@ -22,7 +22,10 @@
     "ai-agents",
     "llm",
     "agent-security",
-    "devtools"
+    "devtools",
+    "ollama",
+    "evaluation",
+    "siem"
   ],
   "type": "module",
   "engines": {

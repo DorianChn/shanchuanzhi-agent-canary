@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { loadConfig, type CanaryConfig } from "./config.js";
+import { validateWebhookUrl } from "./webhook.js";
 
 export type EventKind =
   | "decoy_called"
@@ -49,6 +50,18 @@ const MAX_TEXT_LENGTH = 240;
 const SENSITIVE_FIELD = /(pass(word)?|secret|token|key|credential|authorization|cookie|bearer|private)/i;
 const INLINE_SECRET = /(\b(?:pass(?:word)?|secret|token|api[_-]?key|credential|authorization|cookie|bearer|private[_-]?key)\b\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s,;]+)/gi;
 const CANARY_VALUE = /\bcnry_[a-zA-Z0-9_-]+\b/g;
+const EVENT_KINDS = new Set<EventKind>([
+  "decoy_called",
+  "token_found",
+  "session_tripped",
+  "session_quarantined",
+  "credential_revocation_requested",
+  "credential_revocation_failed",
+  "action_blocked",
+  "session_reset",
+  "test",
+]);
+const RISK_LEVELS = new Set<RiskLevel>(["SAFE", "READ", "WRITE", "NETWORK", "EXECUTE", "SECRET", "DESTRUCTIVE"]);
 
 /**
  * Produce an audit-safe copy for both disk and outbound alerts.
@@ -58,39 +71,59 @@ const CANARY_VALUE = /\bcnry_[a-zA-Z0-9_-]+\b/g;
  * values are also never persisted outside the local token registry.
  */
 export function sanitizeEvent(ev: CanaryEvent): CanaryEvent {
-  const { args: _args, ...event } = ev;
-  return {
-    ...event,
-    sessionId: safeText(event.sessionId, 128),
-    reason: safeText(event.reason),
-    toolName: safeText(event.toolName, 128),
-    traceId: safeText(event.traceId, 128),
-    tool: safeText(event.tool, 128),
-    label: safeText(event.label, 128),
-    path: safeText(event.path),
-    note: safeText(event.note),
-    token: event.token === undefined ? undefined : "[CANARY_REDACTED]",
-    metadata: sanitizeMetadata(event.metadata),
+  if (!ev || typeof ev !== "object" || !EVENT_KINDS.has(ev.kind)) {
+    throw new TypeError("event must have a supported kind.");
+  }
+  if (typeof ev.ts !== "string" || Number.isNaN(Date.parse(ev.ts))) {
+    throw new TypeError("event timestamp must be a valid date string.");
+  }
+
+  // Copy known fields only. An unexpected property must not bypass redaction
+  // and end up in the JSONL log, webhook, dashboard, or SIEM export.
+  const safe: CanaryEvent = {
+    ts: safeText(ev.ts, 64) ?? "",
+    kind: ev.kind,
   };
+  if (ev.eventType && EVENT_KINDS.has(ev.eventType)) safe.eventType = ev.eventType;
+  if (ev.sessionId !== undefined) safe.sessionId = safeText(ev.sessionId, 128);
+  if (ev.reason !== undefined) safe.reason = safeText(ev.reason);
+  if (ev.toolName !== undefined) safe.toolName = safeText(ev.toolName, 128);
+  if (ev.riskLevel !== undefined && RISK_LEVELS.has(ev.riskLevel)) safe.riskLevel = ev.riskLevel;
+  if (ev.traceId !== undefined) safe.traceId = safeText(ev.traceId, 128);
+  if (ev.metadata !== undefined) safe.metadata = sanitizeMetadata(ev.metadata);
+  if (ev.tool !== undefined) safe.tool = safeText(ev.tool, 128);
+  if (ev.label !== undefined) safe.label = safeText(ev.label, 128);
+  if (ev.path !== undefined) safe.path = safeText(ev.path);
+  if (ev.token !== undefined) safe.token = "[CANARY_REDACTED]";
+  if (ev.note !== undefined) safe.note = safeText(ev.note);
+  return safe;
 }
 
 function sanitizeMetadata(metadata: CanaryEvent["metadata"]): CanaryEvent["metadata"] {
-  if (!metadata) return undefined;
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return undefined;
   const safe: NonNullable<CanaryEvent["metadata"]> = {};
   for (const [key, value] of Object.entries(metadata).slice(0, 16)) {
-    safe[key.slice(0, 80)] = SENSITIVE_FIELD.test(key) ? "[REDACTED]" : typeof value === "string" ? redactText(value) : value;
+    const safeValue =
+      SENSITIVE_FIELD.test(key) ||
+      (typeof value !== "string" && typeof value !== "boolean" && (typeof value !== "number" || !Number.isFinite(value)))
+        ? "[REDACTED]"
+        : typeof value === "string"
+          ? redactText(value)
+          : value;
+    safe[key.replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, 80)] = safeValue;
   }
   return Object.keys(safe).length ? safe : undefined;
 }
 
-function safeText(value: string | undefined, maxLength = MAX_TEXT_LENGTH): string | undefined {
-  return value === undefined ? undefined : redactText(value, maxLength);
+function safeText(value: unknown, maxLength = MAX_TEXT_LENGTH): string | undefined {
+  return typeof value === "string" ? redactText(value, maxLength) : undefined;
 }
 
 function redactText(value: string, maxLength = MAX_TEXT_LENGTH): string {
   return value
     .replace(CANARY_VALUE, "[CANARY_REDACTED]")
     .replace(INLINE_SECRET, "$1[REDACTED]")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
     .slice(0, maxLength);
 }
 
@@ -110,6 +143,9 @@ export function logEvent(ev: CanaryEvent, eventsFile?: string): void {
 }
 
 export function readEvents(eventsFile?: string, tail = 100): CanaryEvent[] {
+  if (!Number.isInteger(tail) || tail < 1 || tail > 1_000_000) {
+    throw new RangeError("event tail must be an integer from 1 to 1000000.");
+  }
   const file = eventsFile ?? loadConfig().eventsFile;
   let raw = "";
   try {
@@ -186,10 +222,12 @@ function summarize(ev: CanaryEvent): string {
 
 async function postWebhook(url: string, ev: CanaryEvent): Promise<boolean> {
   try {
-    const response = await fetch(url, {
+    const destination = validateWebhookUrl(url);
+    const response = await fetch(destination, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(ev),
+      redirect: "error",
       signal: AbortSignal.timeout(3000),
     });
     return response.ok;

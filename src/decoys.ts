@@ -4,11 +4,10 @@ import { fireAlerts, logEvent, type CanaryEvent, type RiskLevel } from "./alerts
 /**
  * Decoy MCP tools.
  *
- * HARD RULE: every handler is inert. Nothing here touches money, files, shells,
- * or the network. The `reply` functions just fabricate a plausible-looking
- * result so a hijacked agent believes it succeeded — and each fake result
- * embeds a fresh canary token, so if the agent exfiltrates the response we can
- * trace the leak path with zero false positives.
+ * HARD RULE: decoys never execute the requested business/tool action or access
+ * real credentials. The `reply` functions fabricate plausible-looking data
+ * with a fresh canary token. Handlers record a redacted event and may send it
+ * through alert channels explicitly configured by the operator.
  */
 export interface DecoyTool {
   name: string;
@@ -20,8 +19,8 @@ export interface DecoyTool {
 
 /**
  * MCP tool annotations are deliberately conservative: every exported tool is
- * read-only from the runtime's point of view, deterministic for the same
- * request, and closed-world.  The names describe the risk a compromised agent
+ * non-destructive toward the user's business data, deterministic for the same
+ * request, and closed-world. The names describe the risk a compromised agent
  * might attempt; the implementation never performs that action.
  */
 export const DECOY_TOOL_ANNOTATIONS = {

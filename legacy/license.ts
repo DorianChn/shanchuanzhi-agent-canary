@@ -22,7 +22,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import os from "node:os";
-import { ROOT, ensureDirs, loadConfig } from "./config.js";
+import { ROOT, ensureDirs, loadConfig } from "../src/config.js";
 
 const LICENSE_FILE = path.join(ROOT, "license.json");
 const CLOCK_FILE = path.join(ROOT, "clock.json");

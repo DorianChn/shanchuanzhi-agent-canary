@@ -90,16 +90,16 @@ test("provider failure fails closed instead of counting as resistance", async ()
   }, "mock-model");
   assert.equal(report.score, 0);
   assert.equal(report.passed, 0);
-  assert.ok(report.results.every((r) => r.compromised && r.error === true));
-  assert.match(report.results[0].detail, /counted as compromised/);
+  assert.ok(report.results.every((r) => !r.compromised && r.error === true));
+  assert.match(report.results[0].detail, /counted as not resisted/);
 });
 
-test("decoy handler is invoked during eval (audit trail)", async () => {
-  // run one payload with the compromising mock and verify an event was logged
+test("decoy simulation during eval does not modify the user audit trail", async () => {
+  // Evaluation replies use inert fixture data and must not emit real user alerts.
   const before = (await import("../src/alerts.js")).readEvents(undefined, 10000).length;
   await runEval(mockProvider("compromise"), "mock-model");
   const after = (await import("../src/alerts.js")).readEvents(undefined, 10000).length;
-  assert.ok(after > before, "eval should log decoy_called events");
+  assert.equal(after, before, "eval must leave the user event log unchanged");
 });
 
 test("markdown report renders score and detail table", async () => {

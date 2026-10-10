@@ -71,14 +71,12 @@ export function isDecoy(name: string): boolean {
 }
 
 /**
- * Invoke a decoy the model called. ALWAYS inert: fabricates a plausible fake
- * result (with a one-time trace token) and writes the attempt to the JSONL
- * audit trail / alerts. Never performs a real action.
+ * Invoke a decoy the model called. It returns synthetic data and records the
+ * attempt in the redacted audit trail; configured alert channels may deliver
+ * that event. It never executes the requested real tool action.
  */
 export async function runDecoy(name: string, args: Record<string, unknown> = {}, guard?: AgentGuard) {
-  // Decoy execution is part of the free detection/containment baseline. It is
-  // intentionally inert and must remain usable before any paid feature is
-  // activated.
+  // Decoy execution is inert and available without activation or network access.
   return guard ? guard.runDecoy(name, args) : handleDecoyCall(name, args);
 }
 
@@ -87,7 +85,7 @@ export async function runDecoy(name: string, args: Record<string, unknown> = {},
  * host-only operation: never register it as an MCP/LLM-accessible tool.
  */
 export function createAgentGuard(options: AgentGuardOptions = {}): AgentGuard {
-  // V1.1 public containment: hosts can adopt the guard without an activation.
+  // Hosts can adopt the guard without activation or network access.
   return createContainmentGuard(options);
 }
 
@@ -134,7 +132,7 @@ export function createGuardedToolRouter<T>(options: GuardedToolRouterOptions<T>)
   };
 }
 
-/** Scan any text for planted canary tokens. Zero false positives by design. */
+/** Scan text for exact values in the local canary-token registry. */
 export function scanCanary(text: string): CanaryToken[] {
   return findTokensInText(text);
 }

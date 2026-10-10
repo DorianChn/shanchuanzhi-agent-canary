@@ -55,7 +55,7 @@ export function renderDashboard(events: CanaryEvent[], meta: { generatedAt: stri
   const sorted = [...events].sort((a, b) => (a.ts < b.ts ? 1 : -1)); // newest first
   const decoys = events.filter((e) => e.kind === "decoy_called").length;
   const leaks = events.filter((e) => e.kind === "token_found").length;
-  const last = events.length ? events[events.length - 1].ts : "—";
+  const last = sorted.length ? sorted[0].ts : "—";
 
   const cards = `
   <div class="cards">
@@ -73,7 +73,7 @@ export function renderDashboard(events: CanaryEvent[], meta: { generatedAt: stri
     <div class="ev">
       <div class="dot" style="background:${km.color}"></div>
       <div class="body">
-        <div class="head"><span class="badge" style="border-color:${km.color};color:${km.color}">${km.label}</span>
+        <div class="head"><span class="badge" style="border-color:${km.color};color:${km.color}">${esc(km.label)}</span>
         <span class="ts">${esc(ev.ts)}</span></div>
         <div class="detail">${eventDetail(ev)}</div>
         ${args}
@@ -120,6 +120,6 @@ pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:10
 <div class="meta">生成时间 ${esc(meta.generatedAt)} · agent-canary v${esc(meta.version)} · 数据源 ~/.agent-canary/events.jsonl</div>
 ${cards}
 <div class="tl">${timeline || empty}</div>
-<div class="foot">零误报：事件只在诱饵被触碰或金丝雀令牌外泄时产生 · github.com/DorianChn/shanchuanzhi-agent-canary</div>
+<div class="foot">事件表示诱饵调用或已登记令牌在埋放文件以外被发现；它是需要核查的信号，不单独证明攻击成功 · github.com/DorianChn/shanchuanzhi-agent-canary</div>
 </div></body></html>`;
 }

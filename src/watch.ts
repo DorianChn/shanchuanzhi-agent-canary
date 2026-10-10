@@ -22,16 +22,16 @@ function alertOnce(t: CanaryToken, p: string): void {
   console.error(`[agent-canary] ALERT: canary token "${t.label}" surfaced in ${p}`);
 }
 
-function scanAndAlert(p: string): void {
-  for (const t of scanFile(p)) {
-    // The honeypot file we planted ourselves is allowed to contain its tokens.
-    if (t.planted.some((r) => r.path === p)) continue;
-    alertOnce(t, p);
+function scanAndAlert(p: string, registry: CanaryToken[] = loadTokens()): void {
+  const hits = scanFile(p, registry);
+  const hitTokens = new Set(hits.map((token) => token.token));
+  for (const t of registry) {
+    if (!hitTokens.has(t.token)) alerted.delete(`${t.token}:${p}`);
   }
+  for (const t of hits) alertOnce(t, p);
 }
 
-function* walk(dir: string, depth = 0): Generator<string> {
-  if (depth > 4) return;
+function* walk(dir: string): Generator<string> {
   let entries: fs.Dirent[];
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -39,9 +39,9 @@ function* walk(dir: string, depth = 0): Generator<string> {
     return;
   }
   for (const e of entries) {
-    if (e.name.startsWith(".") || e.name === "node_modules") continue;
+    if (e.isDirectory() && [".git", ".hg", ".svn", "node_modules"].includes(e.name)) continue;
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) yield* walk(p, depth + 1);
+    if (e.isDirectory()) yield* walk(p);
     else if (e.isFile()) yield p;
   }
 }
@@ -66,22 +66,39 @@ export function watch(roots: string[]): void {
   };
 
   let watched = 0;
+  let validRoots = 0;
   for (const root of roots) {
     try {
+      if (!fs.statSync(root).isDirectory()) {
+        console.error(`[agent-canary] cannot watch ${root}: expected a directory`);
+        continue;
+      }
+      validRoots++;
       fs.watch(root, { recursive: true }, (_event, file) => {
         if (file) queue(path.join(root, file));
       });
       watched++;
-    } catch {
-      /* recursive watch unsupported on this platform/root */
+    } catch (error) {
+      console.error(`[agent-canary] native watch unavailable for ${root}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
+  if (validRoots === 0) {
+    console.error("[agent-canary] no readable directory was provided");
+    process.exitCode = 1;
+    return;
+  }
 
-  // Safety net: full sweep. Frequent if the native watch failed, rare otherwise.
+  // Catch tokens already present when monitoring starts; continue with polling as a safety net.
+  const sweep = () => {
+    const registry = loadTokens();
+    for (const root of roots) for (const p of walk(root)) scanAndAlert(p, registry);
+  };
+  sweep();
+
+  // Frequent polling is the fallback when native recursive watch is unavailable.
   const sweepMs = watched === roots.length ? 30_000 : 3_000;
-  setInterval(() => {
-    for (const root of roots) for (const p of walk(root)) scanAndAlert(p);
-  }, sweepMs).unref();
+  const sweepTimer = setInterval(sweep, sweepMs);
+  if (watched > 0) sweepTimer.unref();
 
-  console.error(`[agent-canary] watching ${roots.join(", ")} — Ctrl+C to stop`);
+  console.error(`[agent-canary] watching ${roots.join(", ")} (${watched === roots.length ? "native watch + 30s scan" : "3s polling fallback"}) — Ctrl+C to stop`);
 }

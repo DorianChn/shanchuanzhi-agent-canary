@@ -2,7 +2,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import fs from "node:fs";
 
-export const VERSION = "1.2.7";
+export const VERSION = "2.0.0";
 
 // Overridable for tests; real installs live in ~/.agent-canary
 export const ROOT = process.env.AGENT_CANARY_HOME ?? path.join(homedir(), ".agent-canary");
@@ -16,8 +16,6 @@ export interface CanaryConfig {
   webhook: string | null;
   notify: boolean;
   eventsFile: string;
-  /** Personal Edition license server (sponsor gateway) */
-  licenseServer?: string;
 }
 
 export function defaultConfig(): CanaryConfig {
@@ -31,8 +29,17 @@ export function ensureDirs(): void {
 export function loadConfig(): CanaryConfig {
   ensureDirs();
   try {
-    const raw = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8")) as Partial<CanaryConfig>;
-    return { ...defaultConfig(), ...raw };
+    const value: unknown = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return defaultConfig();
+    const raw = value as Record<string, unknown>;
+    return {
+      webhook: raw.webhook === null || typeof raw.webhook === "string" ? raw.webhook : null,
+      notify: typeof raw.notify === "boolean" ? raw.notify : true,
+      eventsFile:
+        typeof raw.eventsFile === "string" && raw.eventsFile.trim() !== ""
+          ? raw.eventsFile
+          : EVENTS_PATH,
+    };
   } catch {
     return defaultConfig();
   }
