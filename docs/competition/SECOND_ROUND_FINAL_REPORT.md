@@ -59,7 +59,7 @@ PR：尚未创建。一次普通非交互 push 失败：`fatal: could not read U
 
 ## 依赖、版本边界与发布
 
-根 npm 依赖与 sponsor 依赖审计都为 0 vulnerabilities。包 smoke 通过，但其文件列表同时确认商业模块处于交付包。Dockerfile 从 build stage 复制整个 `dist`，同样没有 V1/V2 文件隔离。MIT 许可、公开 SDK、CLI 和 MCP 功能仍在；免费 V1 可在当前代码树 build 和运行，但公开包与商业实现之间的产品边界未解决。没有 npm publish、Docker push、PR merge 或 main 写入。
+根 npm 依赖与 sponsor 依赖审计都为 0 vulnerabilities。推送后 GitHub API 报告 `origin/main` 有 1 项 medium Dependabot 告警：runtime `ip-address` `<=10.7.0`（修复版 `10.7.1` 起）；本分支 `package-lock.json` 和 `npm ls` 均确认解析至 `10.7.3`。该告警仍属于尚未合并的 main 状态。包 smoke 通过，但其文件列表同时确认商业模块处于交付包。Dockerfile 从 build stage 复制整个 `dist`，同样没有 V1/V2 文件隔离。MIT 许可、公开 SDK、CLI 和 MCP 功能仍在；免费 V1 可在当前代码树 build 和运行，但公开包与商业实现之间的产品边界未解决。没有 npm publish、Docker push、PR merge 或 main 写入。
 
 ## GitHub 推送与 Draft PR
 
@@ -72,7 +72,7 @@ git push -u origin competition/agent-canary-hardening
 gh pr create --draft --base main --head competition/agent-canary-hardening --title "Security hardening and competition readiness for Agent Canary" --body-file docs/competition/PR_DRAFT_BODY.md
 ```
 
-当前 PR/Actions 状态均为 **未创建/未运行**。本地正文列明测试数据、真实限制、V2 商业包 P1、旧待处理订单字段迁移风险、平台状态及演示步骤。不得自动合并。
+当前分支已推送；Draft PR/Actions 状态仍为 **未创建/未运行**。推送回执提示 main 有 1 项 medium `ip-address` Dependabot 告警；PR 分支锁定 10.7.3（修复版为 10.7.1 起），本地 npm audit 为 0。正文列明测试数据、真实限制、V2 商业包 P1、旧待处理订单字段迁移风险、平台状态及演示步骤。不得自动合并。
 
 ## 跨平台验收状态
 

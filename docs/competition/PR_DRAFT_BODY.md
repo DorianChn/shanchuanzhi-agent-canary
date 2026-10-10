@@ -9,6 +9,7 @@ This PR records the second-round hardening and competition audit for Agent Canar
 - Serialize concurrent token registry updates; bound JSONL reads; cap watcher memory and expose `close()`; pin Webhook DNS results and reject private/mixed destinations and redirects; fail closed for damaged config.
 - Pin third-party GitHub Actions to immutable SHAs and pin/checksum the MCP publisher release.
 - Add security test reports, technical highlights, demo instructions, and final verification evidence under `docs/competition/`.
+- Update the locked `ip-address` dependency to 10.7.3. GitHub currently reports a medium Dependabot alert on `main` for versions `<=10.7.0` (patched in `10.7.1`); this PR branch resolves 10.7.3 and local `npm audit` reports zero vulnerabilities. The base-branch alert remains open until the fix is merged.
 
 ## Verification
 

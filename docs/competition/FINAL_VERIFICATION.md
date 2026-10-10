@@ -14,6 +14,7 @@
 | `npm run pack:check` | PASS；23 个文件的安装包 smoke check。 | 不表示 V2 已隔离；见分发边界。 |
 | `npm run verify` | PASS；build、完整测试及 package smoke check 均成功。 | Windows / Node 22.23.1。 |
 | `npm audit` | PASS；0 vulnerabilities。 | 未发布。 |
+| GitHub Dependabot 提醒 | `origin/main` 有 1 项 medium：`ip-address` `<=10.7.0`，修复版从 `10.7.1` 起。 | 本地 PR 分支锁文件为 `10.7.3`，`npm ls ip-address` 确认当前安装树也为 `10.7.3`；main 告警尚未因本分支合并而关闭。 |
 | `npm pack --dry-run --json` | PASS 运行检查；确认包含 `dist/eval/*`、`dist/dashboard.js`、`dist/export.js`、`dist/license.js`。 | 此结果揭示尚未解决的 P1 商业分发边界。 |
 | `npm run demo:containment` | PASS；Guard 最终为 `QUARANTINED`，日志含 trip/quarantine/blocked，危险 callback 未执行。 | 仅临时目录与脚本内虚拟 callback。 |
 | `npm run bench:scan` | PASS；1/10/50 MiB 中位数 1.54/12.62/58.30 ms；约 647.84/792.20/857.66 MiB/s。 | Windows x64 / Node 22.23.1 / Ryzen 9 9955HX；每种 3 次、合成文件、Token 在尾部、文件缓存热读。 |
