@@ -41,8 +41,14 @@
 - 微信/支付宝回调尚未跨核商户、App、金额、币种和订单渠道；赞助 JSON 文件损坏语义也未改。这两项需维护者确认商业规则后再修复。没有使用真实凭据或真实支付。
 - Webhook 仅拒绝跟随重定向；对明确配置的内网目标与 DNS 重绑定没有完整防护。
 - GitHub Actions action 引用仍有可变 tag，MCP publisher 下载 `latest` 且未校验固定 checksum。
-- 此分支尚未提交、推送或建立 PR。待提交后，在此补上 commit、PR 和 Actions 检查状态。
+- 本地分支已提交：`8de78e6fc429d73a2be6354a2f6a3169709d4225`。远端未推送、PR 未建立：GitHub 连接对 Git blobs 写入返回 403 `Resource not accessible by integration`；本地 Git 非交互 push 返回 `unable to get password from user`。没有创建空分支或空 PR。
 
 ## PR 状态
 
-等待工作树最终复查与提交；本文件会在分支提交/PR 创建之后更新远端链接和 CI 状态。没有推送 `main`、合并 PR、发布 npm 版本或触发 release workflow。
+PR 尚未创建，GitHub Actions 因此没有运行。具备 Git 凭据的环境可从仓库目录执行：
+
+```bash
+git push -u origin competition/agent-canary-hardening
+```
+
+随后打开 [GitHub compare 页面](https://github.com/DorianChn/shanchuanzhi-agent-canary/compare/main...competition%2Fagent-canary-hardening?expand=1)，以 `main` 为 base 创建 PR；PR 正文应保留本审计报告中的未解决支付回调、商业包边界、Webhook SSRF、配置并发与跨平台验证限制。没有推送 `main`、合并 PR、发布 npm 版本或触发 release workflow。
