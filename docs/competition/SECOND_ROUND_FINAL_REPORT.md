@@ -43,8 +43,8 @@
 
 第二轮实现与首版交付文档提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`。
 
-本报告的最终验证状态随后以独立 docs-only 本地提交更新；其 SHA 由分支后续 Git history 记录。代码修复未在该文档提交中改变。
-PR：尚未创建。远端分支尚未推送。
+最终验证元数据以 docs-only 提交 `40ef934a72d9670a0c65d03f4c3ab7b66ef78c77` 更新；GitHub push 状态与 Draft 正文随后另作 docs-only 更新。代码修复未在这些文档提交中改变。Draft 正文保存在 `docs/competition/PR_DRAFT_BODY.md`。
+PR：尚未创建。一次普通非交互 push 失败：`fatal: could not read Username for 'https://github.com': terminal prompts disabled`。远端分支尚未推送。
 
 ## 测试和攻击模拟结果
 
@@ -63,16 +63,16 @@ PR：尚未创建。远端分支尚未推送。
 
 ## GitHub 推送与 Draft PR
 
-已核对远端 URL 和只读 HEAD。GitHub MCP 报告登录身份 `DorianChn`；协作者权限读取接口返回 HTTP 403 `Resource not accessible by integration`。本地无 `gh`、Git Credential Manager，且 `git config --show-origin --get credential.helper` 无结果。此次诊断阶段只读；最终本地 commit 后会尝试一次正常分支 push，不会强推。
+已核对远端 URL 和只读 HEAD。GitHub MCP 报告登录身份 `DorianChn`；协作者权限读取接口返回 HTTP 403 `Resource not accessible by integration`。本地无 `gh`、Git Credential Manager，且 `git config --show-origin --get credential.helper` 无结果。一次普通非交互分支 push 实际失败，错误为 `fatal: could not read Username for 'https://github.com': terminal prompts disabled`。没有执行强推或通过其他集成绕过权限；本地分支和 commits 保留。
 
-如果 push 被拒绝，本地分支和 commit 保留。可在有 GitHub 桌面会话的终端运行 `gh auth login --web` 完成浏览器授权，随后验证 `gh auth status`，再执行：
+完成 GitHub CLI 浏览器 OAuth 后，可按以下步骤创建 Draft PR；PR 正文文件已就绪：
 
 ```bash
 git push -u origin competition/agent-canary-hardening
-gh pr create --draft --base main --head competition/agent-canary-hardening --title "Security hardening and competition readiness for Agent Canary"
+gh pr create --draft --base main --head competition/agent-canary-hardening --title "Security hardening and competition readiness for Agent Canary" --body-file docs/competition/PR_DRAFT_BODY.md
 ```
 
-PR 正文应包括本报告测试数据、真实限制、V2 商业包 P1、旧待处理订单字段迁移风险、平台状态及演示步骤。不得自动合并。当前 PR/Actions 状态均为 **未创建/未运行**。
+当前 PR/Actions 状态均为 **未创建/未运行**。本地正文列明测试数据、真实限制、V2 商业包 P1、旧待处理订单字段迁移风险、平台状态及演示步骤。不得自动合并。
 
 ## 跨平台验收状态
 

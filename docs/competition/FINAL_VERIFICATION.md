@@ -54,8 +54,8 @@
 
 - 远端：`https://github.com/DorianChn/shanchuanzhi-agent-canary.git`；只读 `git ls-remote origin HEAD` 成功，远端 main 指向基线 SHA。
 - GitHub MCP 当前身份为 `DorianChn`；读取仓库协作者权限的 API 返回 403 `Resource not accessible by integration`。
-- 本地没有 `gh` CLI、Git Credential Manager 或已配置 `credential.helper`；因此还未确认 Git push 写权限。之前的集成 blob 写也返回 403。
-- Draft PR 尚未创建；没有推送分支、修改远端 main、合并、发布 npm 或推送 Docker 镜像。完成本地提交后可在具备 GitHub 写凭据的终端执行 `gh auth login --web`，完成浏览器 OAuth，再 `gh auth status`、`git push -u origin competition/agent-canary-hardening`，最后用 `gh pr create --draft --base main --head competition/agent-canary-hardening ...` 创建 Draft。不要把 PAT 写入命令、代码或日志。
+- 本地没有 `gh` CLI、Git Credential Manager 或已配置 `credential.helper`；`gh auth status` 无法运行。一次普通非交互 push 已实际尝试，失败为 `fatal: could not read Username for 'https://github.com': terminal prompts disabled`。之前 GitHub 集成 blob 写和协作者权限读取也返回 403；当前不能确认 push 写权限。
+- Draft PR 尚未创建，远端分支尚未推送。没有修改远端 main、合并、发布 npm 或推送 Docker 镜像。可直接复用本地 [`PR_DRAFT_BODY.md`](PR_DRAFT_BODY.md)：安装 GitHub CLI 后运行 `gh auth login --web` 完成浏览器 OAuth，再 `gh auth status`，随后执行 `git push -u origin competition/agent-canary-hardening` 和 `gh pr create --draft --base main --head competition/agent-canary-hardening --title "Security hardening and competition readiness for Agent Canary" --body-file docs/competition/PR_DRAFT_BODY.md`。不要把 PAT 写入命令、代码或日志。
 
 ## 交付门槛
 
