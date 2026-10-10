@@ -41,9 +41,9 @@
 
 代码变更涉及 `.github/workflows/{ci,publish-mcp,publish-v1-package}.yml`、`src/{alerts,config,index,tokens,watch,webhook}.ts`、`test/{alerts,config,tokens,watch,webhook}.test.ts`、`sponsor/{.env.example,grant.mjs,package.json,server.mjs,smoke.mjs,security-regression.test.mjs,smoke-isolation.test.mjs}`，新增 `sponsor/{grant-state.test.mjs,payment-callback.test.mjs,payment-security.mjs,payment-security.test.mjs,state-fail-closed.test.mjs,state-store.mjs,state-store.test.mjs}`。
 
-第二轮实现提交 SHA：**待本地提交后填入**。
+第二轮实现与首版交付文档提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`。
 
-第二轮文档/报告提交 SHA：**待本地提交后填入**。
+本报告的最终验证状态随后以独立 docs-only 本地提交更新；其 SHA 由分支后续 Git history 记录。代码修复未在该文档提交中改变。
 PR：尚未创建。远端分支尚未推送。
 
 ## 测试和攻击模拟结果

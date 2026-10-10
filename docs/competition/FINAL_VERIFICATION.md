@@ -2,6 +2,8 @@
 
 审计基线：`origin/main` / `5049815c8549b0455976bea5bc8131656a5f02a4`。本地工作分支：`competition/agent-canary-hardening`。所有本地验证均在 Windows x64、Node v22.23.1 上执行；未触碰真实支付、用户业务数据、生产密钥、发布渠道或 main。
 
+本轮实现及验证提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`。之后仅更新最终报告/交付元数据，未改动代码。
+
 ## 命令与结果
 
 | 命令/检查 | 结果 | 限制 |
