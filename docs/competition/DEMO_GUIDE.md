@@ -75,5 +75,5 @@ npm run smoke
 - Agent Canary 不是全局 Agent 防火墙，也不分析任意 prompt 是否注入。
 - 第一次危险调用若先于信号，或调用路径不经过 Guard，仍可能执行。
 - 本地合成模拟不是 LLM 攻击成功率，也不能支持“确保获奖”“零误报”或生产防护率。
-- payment callbacks 是合成密钥和临时订单的真实本地 HTTP 路由测试，不代表真实商户连接/收款确认；Docker CLI 未安装，因此未本地构建镜像。
+- payment callbacks 是合成密钥和临时订单的真实本地 HTTP 路由测试，不代表真实商户连接/收款确认。Docker CLI 未安装，未本地构建；GitHub Actions Run 115 已实际 build 镜像并执行 `docker run --rm agent-canary:ci --help` smoke。
 - 公开 npm 包和 Docker 构建上下文当前仍带有许可门控的 V2 编译模块。分发边界尚未完成前，应在评审时如实说明，不要称商业实现已隔离。

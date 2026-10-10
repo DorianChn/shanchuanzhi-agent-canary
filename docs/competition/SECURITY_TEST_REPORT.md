@@ -71,7 +71,7 @@
 1. **P1 未关闭：V2 分发边界。** 本地 `npm pack --dry-run --json` 显示公开包包含 `dist/eval/*`、dashboard、export、license 模块；Dockerfile 把全部 `dist` 复制进镜像。许可校验仍保留，但商业实现仍被分发。需维护者批准最小交付架构方案后再改；当前不得称为商业源码隔离完成。
 2. **真实支付未验证。** 本轮只用临时密钥和虚拟订单，未读取真实 `.env`、订单/客户资料、签名密钥，也未连接真实支付平台。此前版本订单可能没有新增 `currency` 字段；这类待处理旧订单会 fail closed，升级前要由维护者用备份和真实供应商记录核对/迁移。
 3. **攻击验证是程序化信号。** 14 个场景不是 LLM 读取恶意 README/网页后的模型评测。SIM-12/13/14 仍证明首次危险 callback、绕过 Guard 的 callback、已开始的外部副作用不受完整保护。
-4. **环境矩阵未完整。** 本轮仅 Windows x64 / Node 22.23.1 本地实际运行；Node 20、Linux、macOS 是 CI 配置项，尚无本次 workflow 结果。Docker CLI 缺失，未构建或运行镜像。
+4. **环境证据分层。** 本机实测 Windows x64 / Node 22.23.1；PR #22 的 GitHub Actions Run 115 又实际通过 Node 20/22 × Ubuntu/Windows/macOS 六个 job，并通过 Docker build 与 `docker run --rm agent-canary:ci --help` 容器 smoke。Docker CLI 本机缺失，因此容器执行证据来自 GitHub Actions，而非本机。
 5. **宿主责任仍存在。** Shared State Store 的跨进程/分布式事务、Agent 身份绑定、每个危险回调均接入 Router、远端公开 Webhook 服务可信度均需部署方保证。Webhook 本身不请求私网地址或跟随跳转，但“公网 HTTPS 目标本身安全”不是本代码能证明的。
 
 ## 可复现命令

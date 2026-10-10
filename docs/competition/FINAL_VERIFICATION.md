@@ -2,7 +2,7 @@
 
 审计基线：`origin/main` / `5049815c8549b0455976bea5bc8131656a5f02a4`。本地工作分支：`competition/agent-canary-hardening`。所有本地验证均在 Windows x64、Node v22.23.1 上执行；未触碰真实支付、用户业务数据、生产密钥、发布渠道或 main。
 
-本轮实现及验证提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`。之后仅更新最终报告/交付元数据，未改动代码。
+本轮实现提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`；CI Docker 容器 smoke 改动：`4e0ccedcd02dc53b7fef46ca33274a25ecc87a47`。其后报告提交仅改文档。GitHub Actions Run 115 在上述实现/工作流提交上完成 9/9 job。
 
 ## 命令与结果
 
@@ -22,7 +22,7 @@
 | sponsor `npm test` | PASS；25 项：24 通过、0 失败、1 跳过。包含 `node --check grant.mjs` 与隔离的人工授权 CLI 回归。 | 1 个 symlink 权限测试在 Windows 跳过。 |
 | sponsor `npm run smoke` | PASS；12/12 检查通过。 | DEMO、临时目录、随机 loopback 端口、虚拟订单/订阅。 |
 | sponsor `npm audit` | PASS；0 vulnerabilities。 | 未连接支付商户。 |
-| `docker --version` | BLOCKED；本环境找不到 Docker CLI。 | 未构建镜像或运行容器。 |
+| 本地 `docker --version` | BLOCKED；本环境找不到 Docker CLI。 | 本地未构建镜像；GitHub Actions Docker build 与容器 CLI smoke 通过，见下方。 |
 
 汇总 Node 测试：146 项（根目录 121 + sponsor 25），141 通过、0 失败、5 跳过。另 sponsor smoke 的 12 个输出检查与 `demo:containment` 单命令演示均通过；这些不计入 `node:test` 汇总。
 
@@ -36,7 +36,7 @@
 6. **P2-3 Watcher 长期增长：限定模拟通过。** 15,000 个合成变更事件维持有界缓存/队列，可关闭并释放定时器和句柄。没有数周生产运行曲线。
 7. **P2-4 Webhook SSRF/DNS：本地模拟通过。** remote HTTPS 只接受公网 DNS 答案，混合/私网拒绝；请求固定到已校验 IP，不跟随 302，DNS 重绑定模拟只解析一次。未请求互联网 Webhook。
 8. **P2-5 Config：通过。** 只有 ENOENT 使用初次默认值；空/截断/坏 JSON/字段类型和读取权限错误均拒绝并保留原文件。
-9. **P2-6 CI 供应链：静态检查通过。** checkout 与 setup-node 已固定完整 Commit SHA；MCP publisher 固定 v1.8.1 及 SHA-256；最小权限和发布 job 边界已审阅。没有运行 GitHub workflow 或发布。
+9. **P2-6 CI 供应链：静态检查与 PR workflow 通过。** checkout 与 setup-node 已固定完整 Commit SHA；MCP publisher 固定 v1.8.1 及 SHA-256；最小权限和发布 job 边界已审阅。GitHub Actions Run 115 的 9/9 CI job 通过；未运行任何发布 job。
 
 合成攻击回归仍为 14 个攻击场景 + 1 个正常控制。12 个明确送入 decoy/Token 信号的路径进入隔离并阻止之后经过 Guard 的 callback；SIM-12/13/14 仍复现无先前信号的首次操作、绕过 Router 的 callback 和已启动副作用的边界。这不是任何 LLM 的检测率或拦截率。
 
@@ -45,21 +45,21 @@
 | 环境 | 状态 | 证据 |
 |---|---|---|
 | Windows x64 / Node 22.23.1 | VERIFIED | 本机完成完整 build/test/package/sponsor/audit/demo。 |
-| Windows / Node 20 | SKIPPED | 仅在 GitHub Actions matrix 配置，当前 PR/CI 未运行。 |
-| Linux / Node 20、22 | SKIPPED | 仅在 GitHub Actions matrix 配置，当前 PR/CI 未运行。 |
-| macOS / Node 20、22 | SKIPPED | 仅在 GitHub Actions matrix 配置，当前 PR/CI 未运行。 |
-| Docker build / smoke | BLOCKED | Docker CLI 不存在；workflow 中有 Docker build job，但未触发。 |
-| GitHub Actions | BLOCKED | 未创建 PR；未声称 CI 运行通过。 |
+| Windows / Node 20、22 | VERIFIED | PR #22 / GitHub Actions Run 115 的两个 matrix job 均成功。 |
+| Linux / Node 20、22 | VERIFIED | PR #22 / GitHub Actions Run 115 的两个 matrix job 均成功。 |
+| macOS / Node 20、22 | VERIFIED | PR #22 / GitHub Actions Run 115 的两个 matrix job 均成功。 |
+| Docker build / container CLI smoke | VERIFIED | Ubuntu job 成功执行 `docker build -t agent-canary:ci .` 和 `docker run --rm agent-canary:ci --help`。本机 Docker CLI 仍不可用。 |
+| GitHub Actions | VERIFIED | Run 115：9/9 jobs 成功（Node matrix 6、sponsor smoke、Docker build+smoke、package smoke）。[运行记录](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38061277109)。 |
 
 ## GitHub 交付状态
 
 - 远端：`https://github.com/DorianChn/shanchuanzhi-agent-canary.git`；只读 `git ls-remote origin HEAD` 成功，远端 main 指向基线 SHA。
-- GitHub MCP 当前身份为 `DorianChn`；读取仓库协作者权限的 API 返回 403 `Resource not accessible by integration`。
-- 本地没有 `gh` CLI、Git Credential Manager 或已配置 `credential.helper`；`gh auth status` 无法运行。一次普通非交互 push 已实际尝试，失败为 `fatal: could not read Username for 'https://github.com': terminal prompts disabled`。之前 GitHub 集成 blob 写和协作者权限读取也返回 403；当前不能确认 push 写权限。
-- Draft PR 尚未创建，远端分支尚未推送。没有修改远端 main、合并、发布 npm 或推送 Docker 镜像。可直接复用本地 [`PR_DRAFT_BODY.md`](PR_DRAFT_BODY.md)：安装 GitHub CLI 后运行 `gh auth login --web` 完成浏览器 OAuth，再 `gh auth status`，随后执行 `git push -u origin competition/agent-canary-hardening` 和 `gh pr create --draft --base main --head competition/agent-canary-hardening --title "Security hardening and competition readiness for Agent Canary" --body-file docs/competition/PR_DRAFT_BODY.md`。不要把 PAT 写入命令、代码或日志。
+- GitHub CLI 已认证为 `DorianChn` 并通过命令级 helper 完成普通 push；GitHub MCP 写入接口仍返回 403，因此未用该集成绕过权限。
+- 分支 `competition/agent-canary-hardening` 已推送；Draft PR **#22** 已创建，base=`main`，head=`competition/agent-canary-hardening`：[PR 链接](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/22)。GitHub Actions Run 115 对实现/工作流提交完成 9/9 jobs；后续仅文档更新，未改代码或工作流。
+- 未修改远端 main、合并、发布 npm 或推送 Docker 镜像。PR 正文文件为 [`PR_DRAFT_BODY.md`](PR_DRAFT_BODY.md)。
 
 ## 交付门槛
 
-- 稳定发布标准：**未达到**。P1 V2 分发边界尚未解决，Docker 和多平台 matrix 未本地或远端实测，真实商户及旧待处理订单迁移未确认。
+- 稳定发布标准：**未达到**。P1 V2 分发边界尚未解决；真实商户及旧待处理订单迁移未确认。跨平台 CI 与 Docker build/container smoke 已在 GitHub Actions 验证。
 - 参赛演示条件：**具备离线机制演示条件**。建议用 `npm run demo:containment` 展示恶意诱饵信号、Session 隔离、后续守卫回调阻止和 JSONL 证据；必须同时讲清首次危险调用、绕过 Guard 和已开始外部操作的边界。
-- 人工后续事项：批准 V1/V2 最小包拆分方案；复核旧订单的币种/状态迁移策略；在可用 Docker 与完整 CI 矩阵的环境取得真实结果；完成 GitHub OAuth 写授权后推送并创建 Draft PR。
+- 人工后续事项：审阅 Draft PR #22；批准 V1/V2 最小包拆分方案；复核旧订单的币种/状态迁移策略；在真实商户沙箱和授权模型环境补做集成/红队评测。PR 不自动合并。

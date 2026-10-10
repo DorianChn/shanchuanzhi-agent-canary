@@ -13,9 +13,9 @@
 
 本轮处理 9 项遗留：8 项修复并由本地回归验证，1 项 P1（V1/V2 商业分发边界）仍未解决。根目录和 sponsor 共实际运行 146 项 Node 测试：141 通过、0 失败、5 因 Windows 平台限制跳过。另 sponsor smoke 12/12 检查与离线 containment demo 通过。根包和 sponsor `npm audit` 均报告 0 vulnerabilities。
 
-按第一轮根因归类，P0=0，P1 共 7（6 已修复、1 未解决），P2 共 17（17 已修复），P3=0；第二轮针对剩余 9 项的处理为 P1 2/3 已修复、P2 6/6 已修复。原 111 项根测试未回归失败，本轮新增 31 项测试。
+按第一轮根因归类，P0=0，P1 共 7（6 已修复、1 未解决），P2 共 17（17 已修复），P3=0；第二轮针对剩余 9 项的处理为 P1 2/3 已修复、P2 6/6 已修复。原 111 项根测试未回归失败，本轮新增 31 项测试。Draft PR #22 的 GitHub Actions Run 115 完成 9/9 jobs，含 Node 20/22 × Ubuntu/Windows/macOS、sponsor/package smoke 以及 Docker build 和容器 CLI smoke。
 
-**稳定发布：未达到。** 实测 npm 包和 Docker 构建过程会分发 V2 许可门控编译模块。Docker、多系统/Node CI、本地以外真实商户支付均未验证。本项目有可复现的离线参赛演示条件，但没有真实 LLM 抵抗率、误报率或获奖保证。
+**稳定发布：未达到。** 实测 npm 包和 Docker 构建过程会分发 V2 许可门控编译模块；真实商户支付及旧订单迁移仍未验证。跨平台/Node CI 与 Docker build/container CLI smoke 已在 GitHub Actions 通过。本项目有可复现的离线参赛演示条件，但没有真实 LLM 抵抗率、误报率或获奖保证。
 
 ## 第二轮修复前状态
 
@@ -33,7 +33,7 @@
 | P2-3 Watcher 长期增长 | **有界模拟 PASS** | `src/watch.ts` 将去重键 4,096、失败键 1,024、待处理路径 2,048 封顶，返回可关闭句柄；15,000 个合成变更压力回归通过。没有数周生产运行曲线。 |
 | P2-4 Webhook 私网/DNS | **本地模拟 PASS** | `src/webhook.ts` 限制 HTTPS、禁止凭据和 fragment；DNS 解析拒绝私网/特殊/混合地址并把公网结果 pin 到连接，不跟随 redirect；允许 loopback HTTP 做本机开发。重绑定、重定向使用本地 server/resolver，无公网请求。 |
 | P2-5 配置 JSON 回退 | **PASS** | `src/config.ts` 只有 ENOENT 走首次默认值；坏 JSON、空文件、错 schema、字段类型或读错误均报错并保留文件。 |
-| P2-6 CI 供应链 | **静态核对 PASS；CI workflow 未运行** | `actions/checkout`、`actions/setup-node` 固定完整 commit SHA；MCP publisher 固定版本与 SHA-256；权限按 job 最小化。没有触发 npm、Docker 或 MCP 发布。 |
+| P2-6 CI 供应链 | **静态核对与 PR CI PASS；发布未运行** | `actions/checkout`、`actions/setup-node` 固定完整 commit SHA；MCP publisher 固定版本与 SHA-256；权限按 job 最小化。Run 115 的 Node 矩阵、sponsor/package smoke、Docker build+container CLI smoke 共 9/9 成功；没有触发 npm、Docker 镜像或 MCP 发布。 |
 
 支付协议依据：[微信成功回调文档](https://pay.wechatpay.cn/doc/v3/merchant/4013070368)、[微信平台证书验签与时间窗口](https://pay.wechatpay.cn/doc/v3/merchant/4013053420)、[支付宝异步通知处理文档](https://developer.alibaba.com/docs/doc.htm?articleId=103296&docType=1&treeId=346)、[VMQ 上游通知实现](https://github.com/szvone/vmqphp/blob/master/application/index/controller/Index.php)。没有适用于所有 Epay 部署的统一官方规范；各 Epay 服务商上线前仍应以其实际商户文档核对。
 
@@ -41,10 +41,10 @@
 
 代码变更涉及 `.github/workflows/{ci,publish-mcp,publish-v1-package}.yml`、`src/{alerts,config,index,tokens,watch,webhook}.ts`、`test/{alerts,config,tokens,watch,webhook}.test.ts`、`sponsor/{.env.example,grant.mjs,package.json,server.mjs,smoke.mjs,security-regression.test.mjs,smoke-isolation.test.mjs}`，新增 `sponsor/{grant-state.test.mjs,payment-callback.test.mjs,payment-security.mjs,payment-security.test.mjs,state-fail-closed.test.mjs,state-store.mjs,state-store.test.mjs}`。
 
-第二轮实现与首版交付文档提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`。
+第二轮实现与首版交付文档提交：`7f4e2efcdcac5859492b8504e0ac3e97ff72d50a`。CI 增加 Docker 容器 CLI smoke：`4e0ccedcd02dc53b7fef46ca33274a25ecc87a47`。
 
 最终验证元数据以 docs-only 提交 `40ef934a72d9670a0c65d03f4c3ab7b66ef78c77` 更新；GitHub push 状态与 Draft 正文随后另作 docs-only 更新。代码修复未在这些文档提交中改变。Draft 正文保存在 `docs/competition/PR_DRAFT_BODY.md`。
-PR：尚未创建。一次普通非交互 push 失败：`fatal: could not read Username for 'https://github.com': terminal prompts disabled`。远端分支尚未推送。
+Draft PR #22 已创建：[Security hardening and competition readiness for Agent Canary](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/22)。分支已推送，PR 当前为 Draft，未合并。
 
 ## 测试和攻击模拟结果
 
@@ -55,7 +55,7 @@ PR：尚未创建。一次普通非交互 push 失败：`fatal: could not read U
 - containment：`npm run demo:containment` 输出 `QUARANTINED`，危险 callback 被拦，真实 callback 仅安全 `git_status` mock 运行；文件尾事件包含 `session_tripped`、`session_quarantined`、`action_blocked`。
 - 既有安全模拟：14 攻击 + 1 控制；12/12 明确输入 decoy/token 信号的路径触发隔离并阻止之后经过 Guard 的 callback。SIM-12/13/14 仍复现首次危险操作可先行、绕过 Guard 不可拦、已开始的外部动作不能回滚。这不是 LLM 攻击检测率。
 - 扫描基准：Windows x64、Node 22.23.1、Ryzen 9 9955HX，本地临时合成 1/10/50 MiB 文件每种 3 次，中位 1.54/12.62/58.30 ms。仅热缓存顺序扫描，不代表生产并发。
-- Docker：**BLOCKED**（本机没有 Docker CLI）；未声称镜像构建或 smoke 通过。
+- Docker 本地：**BLOCKED**（本机没有 Docker CLI）；GitHub Actions Run 115 的 Docker job 已成功构建镜像并运行 `docker run --rm agent-canary:ci --help`。
 
 ## 依赖、版本边界与发布
 
@@ -63,31 +63,22 @@ PR：尚未创建。一次普通非交互 push 失败：`fatal: could not read U
 
 ## GitHub 推送与 Draft PR
 
-已核对远端 URL 和只读 HEAD。GitHub MCP 报告登录身份 `DorianChn`；协作者权限读取接口返回 HTTP 403 `Resource not accessible by integration`。本地无 `gh`、Git Credential Manager，且 `git config --show-origin --get credential.helper` 无结果。一次普通非交互分支 push 实际失败，错误为 `fatal: could not read Username for 'https://github.com': terminal prompts disabled`。没有执行强推或通过其他集成绕过权限；本地分支和 commits 保留。
-
-完成 GitHub CLI 浏览器 OAuth 后，可按以下步骤创建 Draft PR；PR 正文文件已就绪：
-
-```bash
-git push -u origin competition/agent-canary-hardening
-gh pr create --draft --base main --head competition/agent-canary-hardening --title "Security hardening and competition readiness for Agent Canary" --body-file docs/competition/PR_DRAFT_BODY.md
-```
-
-当前分支已推送；Draft PR/Actions 状态仍为 **未创建/未运行**。推送回执提示 main 有 1 项 medium `ip-address` Dependabot 告警；PR 分支锁定 10.7.3（修复版为 10.7.1 起），本地 npm audit 为 0。正文列明测试数据、真实限制、V2 商业包 P1、旧待处理订单字段迁移风险、平台状态及演示步骤。不得自动合并。
+本地 GitHub CLI 已认证为 `DorianChn`；GitHub Connector 的权限查询和 PR 创建接口返回 403，但未阻止本地 CLI 完成操作。通过普通 push 创建远端分支，Draft PR #22 已创建（base `main`），没有修改 main 或自动合并。PR 正文来自 `docs/competition/PR_DRAFT_BODY.md`。GitHub Actions Run 115（commit `4e0ccedcd02dc53b7fef46ca33274a25ecc87a47`）9/9 jobs 成功：[运行记录](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38061277109)。
 
 ## 跨平台验收状态
 
 | 组合 | 状态 |
 |---|---|
 | Windows x64 + Node 22.23.1 | VERIFIED |
-| Windows + Node 20 | SKIPPED（仅 CI 配置） |
-| Linux + Node 20/22 | SKIPPED（仅 CI 配置） |
-| macOS + Node 20/22 | SKIPPED（仅 CI 配置） |
-| Docker build + smoke | BLOCKED（本机无 Docker CLI） |
-| GitHub Actions | SKIPPED/BLOCKED（PR 未创建） |
+| Windows + Node 20/22 | VERIFIED（Run 115） |
+| Linux + Node 20/22 | VERIFIED（Run 115） |
+| macOS + Node 20/22 | VERIFIED（Run 115） |
+| Docker build + container CLI smoke | VERIFIED（Run 115；本机无 Docker CLI） |
+| GitHub Actions | VERIFIED（Run 115，9/9 jobs） |
 
 ## 参赛验收与评分
 
-内部工程评估 **71/100**，不是官方赛分：技术创新 8、工程完整 8、安全 6、开源质量 7、易用性 7、实际价值 7、演示 9、方案差异 7、部署成熟 5、扩展潜力 7。安全与部署分数受 P1 V2 分发边界、宿主必须完整接入 Guard、真实支付/跨平台/Docker 未验证影响；不预测获奖。
+内部工程评估 **73/100**，不是官方赛分：技术创新 8、工程完整 9、安全 6、开源质量 7、易用性 7、实际价值 7、演示 9、方案差异 7、部署成熟 6、扩展潜力 7。跨平台 CI 与 Docker smoke 已验证；安全与部署分数仍受 P1 V2 分发边界、宿主必须完整接入 Guard、真实支付和旧订单迁移未验证影响；不预测获奖。
 
 参赛离线流程：安全工具 mock → 恶意内容触发 canary decoy → guard 状态进入 `QUARANTINED` → 后续受 Guard 保护的危险 mock callback 拒绝 → 检查脱敏 JSONL。无 LLM、生产凭据、网络写入或真实危险工具。讲解中需指出首次危险调用、绕过 Router 的调用以及已开始的外部操作不受完整保护。
 
@@ -95,5 +86,5 @@ gh pr create --draft --base main --head competition/agent-canary-hardening --tit
 
 1. 批准一个保留现有许可证兼容性的 V1/V2 最小分发修复方案；在完成前不宜宣称稳定公开发布。
 2. 对照生产备份与支付平台核查旧待处理订单的 CNY 字段和当前交易结果；本轮未触及这些数据。
-3. 完成 GitHub 浏览器 OAuth 写授权并推送分支，创建 Draft PR；运行真实 CI 矩阵和 Docker build 后更新验证状态。
+3. 维护者审阅 Draft PR #22；在 V1/V2 分发计划及旧订单迁移评估完成前不要合并或发布。
 4. 在真实宿主与获得许可的测试模型上做独立红队评测，按检测、拦截、误报口径分别记录，不将当前程序化模拟外推为真实模型表现。

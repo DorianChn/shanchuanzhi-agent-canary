@@ -16,6 +16,7 @@ This PR records the second-round hardening and competition audit for Agent Canar
 - Root: `npm ci`, `npm run build`, `npm test`, `npm run pack:check`, `npm run verify`, `npm audit` passed. Root suite: 121 tests, 117 passed, 0 failed, 4 skipped on Windows.
 - Sponsor: `npm ci`, `npm test`, `npm run smoke`, `npm audit` passed. Sponsor suite: 25 tests, 24 passed, 0 failed, 1 Windows-specific skip; demo smoke checks: 12/12.
 - Combined Node tests: 146 total, 141 passed, 0 failed, 5 platform skips. `npm run demo:containment` reached `QUARANTINED` and blocked the subsequent guarded callback.
+- GitHub Actions [Run 115](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38061277109) passed all 9 jobs: Node 20/22 on Ubuntu/Windows/macOS, sponsor smoke, package smoke, and Docker build plus `docker run --rm agent-canary:ci --help`.
 - Payment tests use synthetic keys, fake orders, and local HTTP only. No real payment API, account, business data, or production secret was accessed.
 
 ## Known risks and boundaries
@@ -24,7 +25,7 @@ This PR records the second-round hardening and competition audit for Agent Canar
 - Existing pending sponsor orders from earlier versions may lack the new `currency` field and will fail closed. Review/approve any migration against backups and actual provider records before deployment; this PR did not read or change production records.
 - Payment-provider behavior was verified with synthetic callbacks, not a live merchant account. Epay deployments differ; confirm the provider's current contract before enabling it. VMQ signed `reallyPrice` allows only the upstream collision-adjustment range of 9 fen.
 - The 14 attack scenarios are programmatic signal simulations, not LLM red-team results. A dangerous first call before a signal, a call bypassing the Guard, and an already-started external action remain outside full protection.
-- Local environment: Windows x64 / Node 22.23.1 only. Docker CLI is unavailable. Node 20, Linux, macOS, Docker, and GitHub Actions results remain unverified/skipped pending CI.
+- Local tests ran on Windows x64 / Node 22.23.1; Docker CLI is unavailable locally. Cross-platform Node 20/22, Docker build/container smoke, and package/sponsor smoke were verified in GitHub Actions Run 115. No real payment provider or LLM red-team run was used.
 
 ## Demo
 

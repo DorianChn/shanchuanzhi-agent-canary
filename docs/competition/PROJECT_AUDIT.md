@@ -8,7 +8,7 @@
 
 项目已有可工作的 MCP stdio 诱饵服务、公开 SDK、同步会话守卫、令牌生成/扫描、CLI、离线自检和打包检查。基线构建、74 项原有测试、包检查和 `verify` 均通过；但基线测试没有覆盖跨进程/存储回滚、隐藏及大文件扫描、MCP 进程握手、赞助 smoke 的真实数据隔离等关键场景。此次增加回归和合成攻击模拟，并修复了其中可在当前许可范围内修改的问题。
 
-第二轮后，当前分支 Windows/Node 22 的根测试为 121 项（117 通过、0 失败、4 项平台跳过），sponsor 测试为 23 项（22 通过、0 失败、1 项平台跳过）。支付回调字段绑定、重复通知履约、损坏 JSON/密钥 fail-closed、Token 并发写入、JSONL 上限、watcher 资源上限、Webhook DNS pinning、配置损坏和 Actions 固定均已补回归并验证。V2 商业实现仍随公共 `dist` 和 Docker 镜像构建进入交付物，是唯一未关闭的遗留 P1；未删除许可校验或迁移商业交付架构。
+第二轮后，当前分支 Windows/Node 22 的根测试为 121 项（117 通过、0 失败、4 项平台跳过），sponsor 测试为 25 项（24 通过、0 失败、1 项平台跳过）。支付回调字段绑定、重复通知履约、损坏 JSON/密钥 fail-closed、Token 并发写入、JSONL 上限、watcher 资源上限、Webhook DNS pinning、配置损坏和 Actions 固定均已补回归并验证。PR #22 的 GitHub Actions Run 115 覆盖 Node 20/22 × Ubuntu/Windows/macOS，Docker build/container CLI smoke、package smoke 与 sponsor smoke，共 9/9 jobs 成功。V2 商业实现仍随公共 `dist` 和 Docker 镜像构建进入交付物，是唯一未关闭的遗留 P1；未删除许可校验或迁移商业交付架构。
 
 **防护范围：**诱饵只产生合成响应。拦截仅作用于集成方实际交给 `createGuardedToolRouter()`、`guard.executeToolCall()` 或 `guard.beforeToolCall()` 的调用。独立 MCP 诱饵服务不是通用 MCP 代理，也不是全局 Agent 防火墙；未被检测到的首次危险调用、绕过守卫的宿主回调、真实模型是否触碰诱饵均未由本次测试证明。
 
@@ -40,7 +40,7 @@ flowchart LR
 | `src/index.ts`, `src/install.ts`, `src/config.ts`, `src/self-test.ts` | CLI 初始化、MCP 配置安装、Token、watch、事件、报告、自检和诊断。 | 构建包的 CLI help 与离线 self-test 已测；doctor 用临时 HOME 和 loopback 端口完成。 |
 | `src/eval/` | 20 条固定载荷的 provider runner；当前评测以工具调用名/令牌等规则判断。 | mock provider 和参数边界已测；没有真实 LLM、真实 API 或模型行为数据。 |
 | `src/license.ts`, `sponsor/server.mjs`, `sponsor/grant.mjs` | 本地许可校验以及分离的赞助、支付回调、订阅和机器激活。 | 本次不运行真实支付。demo smoke 与数据隔离已测；实时支付、真实商户凭据和许可签发未测。 |
-| `Dockerfile`, `.github/workflows/` | Node 20 Alpine stdio 镜像；CI 声明 Node 20/22 × Ubuntu/Windows/macOS，并新增 PR Docker build job。 | Docker CLI 不在本机，未本地构建镜像；GitHub CI 尚待 PR 运行。 |
+| `Dockerfile`, `.github/workflows/` | Node 20 Alpine stdio 镜像；CI 声明 Node 20/22 × Ubuntu/Windows/macOS，并执行 Docker build 与 CLI smoke。 | GitHub Actions Run 115 的 9/9 jobs 成功；本机没有 Docker CLI，未做本地构建。 |
 
 ## 状态机与集成边界
 
@@ -71,7 +71,7 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 ## 原始完成度分级
 
 - **已实现且有测试证明：**诱饵工具处理、MCP stdio 基本互通、CLI 离线自检、免费 SDK Router、同步隔离、令牌生成/埋放/扫描、基本事件脱敏、安装配置备份、固定载荷 mock eval、包安装 smoke。
-- **已实现但缺乏本次真实环境证据：**macOS/Linux/Windows 全矩阵（只配置在 CI）、原生文件 watcher 的各平台实时表现、桌面通知、外部 Webhook、真实支付回调、真实许可签发、Docker build。
+- **已实现但缺乏真实服务证据：**真实商户支付、真实许可签发、桌面通知和外部 Webhook；原生文件 watcher 的长期/各平台实时表现也未以生产负载验证。Node 20/22 跨平台 CI 与 Docker build/container CLI smoke 已在 Run 115 实际通过。
 - **仅文档描述或范围外：**生产 Agent/真实 LLM 的抵抗率、用户案例、真实误报率、跨进程共享 Store 的事务保证、可取消已开始工具执行的能力。
 - **尚未实现：**通用上游 MCP 代理/自动包裹任意宿主工具、无需宿主集成的全局 Agent 防火墙。
 - **无法确认：**大赛评审结果、云上容器表现、真实模型对诱饵的触发倾向、外部支付商户回调在真实账户上的实际行为。
