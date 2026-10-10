@@ -73,4 +73,4 @@
 - 视频：仅有脚本与 SRT；没有本轮 MP4 或公开链接。已存在的旧 60 秒文件未作为本轮材料。
 - 邮件：只形成未发送草稿。提交清单提示发送前先核对已发送邮件，避免重复发送。
 - 商业分发：V1/V2 包边界 P1 风险仍未关闭；本轮没有迁移商业架构或发布包。
-- 最新 CI 与本轮最终提交号：推送后以 PR #22 的实际 Actions run 与分支 HEAD 复核；此前 Run 116 是历史 HEAD 证据，不替代本轮 CI。
+- 参赛材料提交 `dad03c747d514d121a5487c51fde58ece548a490` 的 GitHub Actions Run 38072020061 已通过 9/9 jobs（Node 20/22 × Ubuntu/Windows/macOS、sponsor smoke、package smoke、Docker build/container CLI smoke）：[运行记录](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38072020061)。后续若有纯文档提交，其 Actions 结果需另核验。

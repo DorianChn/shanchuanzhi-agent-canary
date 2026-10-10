@@ -111,6 +111,6 @@ Draft PR #22 已创建：[Security hardening and competition readiness for Agent
 
 ### 当前交付状态
 
-- 代码、实验 JSON、dashboard、指南及 PDF 已在本地竞赛分支准备；普通 Git push 与 CI 尚待本次最终提交后复核。
+- 代码、实验 JSON、dashboard、指南及 PDF 已在本地竞赛分支推送。提交 `dad03c747d514d121a5487c51fde58ece548a490` 对应 GitHub Actions Run 38072020061 通过 9/9 jobs；后续仅修改邮件/清单等指针文档时，其触发的 CI 需另核验。
 - P1 V1/V2 公开分发边界仍未解决，本轮不发布 npm/Docker、不迁移商业架构。项目不满足稳定发布标准。
 - 具备可复现的离线隔离演示和本地模型实验材料；尚未满足官网要求的可访问演示视频链接，因此整体参赛材料为**部分就绪**。

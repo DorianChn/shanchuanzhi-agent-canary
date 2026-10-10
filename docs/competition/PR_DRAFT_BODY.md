@@ -31,7 +31,7 @@ One completed 36-trial legacy run has no serialized prompt profile/hash and is e
 - Local PDFs: project introduction 17 pages, experiment report 7 pages; page count, Chinese font, tables, and rendered pages were visually checked. Text extraction was not independently run because Poppler/pypdf is unavailable in this environment.
 - Local dashboard: opened in Chrome from a loopback-only server, screenshot-checked, tab closed, server stopped.
 - Scan benchmark: 1 MiB 1.01 ms, 10 MiB 10.04 ms, 50 MiB 45.1 ms on this Windows machine; three samples per size. Guard medians/p95 are in the report and are in-process microbenchmarks only.
-- Previous branch CI Run 116 passed 9/9 jobs on the predecessor HEAD. The run triggered by this push must be checked before calling the updated branch CI verified.
+- GitHub Actions Run 38072020061 passed **9/9 jobs** for the substantive materials commit `dad03c747d514d121a5487c51fde58ece548a490`: Node 20/22 on Ubuntu/Windows/macOS, sponsor smoke, package smoke, and Docker build/container CLI smoke. The subsequent docs-only pointer update is checked separately before final handoff.
 
 ## Known risks and limits
 
