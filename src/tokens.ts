@@ -180,15 +180,21 @@ function withTokenRegistryLock<T>(operation: () => T): T {
       fs.writeFileSync(descriptor, JSON.stringify({ pid: process.pid, hostname: os.hostname(), createdAt: Date.now() }));
       fs.fsyncSync(descriptor);
     } catch (error) {
+      // Windows can report EPERM while another process's lock deletion is
+      // pending. Only retry lock creation, never run an unlocked write or
+      // remove someone else's lock on a permission error. Persistent failures
+      // retain the same bounded timeout and fail closed.
+      const retryWindowsOpen = descriptor === undefined && process.platform === "win32" &&
+        (error as NodeJS.ErrnoException).code === "EPERM";
       if (descriptor !== undefined) {
         try { fs.closeSync(descriptor); } catch {}
         descriptor = undefined;
         try { fs.unlinkSync(lockPath); } catch {}
       }
-      if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST" && !retryWindowsOpen) {
         throw new Error("Could not create the canary token registry lock; token updates were not written.", { cause: error });
       }
-      if (staleLockCanBeRemoved(lockPath)) continue;
+      if (!retryWindowsOpen && staleLockCanBeRemoved(lockPath)) continue;
       if (Date.now() >= deadline) {
         throw new Error("The canary token registry is locked by another process; no token update was written.");
       }

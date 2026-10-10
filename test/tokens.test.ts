@@ -1,4 +1,4 @@
-import { test } from "node:test";
+import { test, mock } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
@@ -140,6 +140,52 @@ test("parallel CLI processes do not lose token registry updates", async () => {
   } finally {
     fs.rmSync(home, { recursive: true, force: true });
   }
+});
+
+test("Windows transient EPERM lock-open contention retries without losing registry records", () => {
+  const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
+  const originalOpen = fs.openSync;
+  const before = loadTokens();
+  let failures = 0;
+  Object.defineProperty(process, "platform", { value: "win32", configurable: true });
+  const stub = mock.method(fs, "openSync", (...args: Parameters<typeof fs.openSync>) => {
+    if (String(args[0]).endsWith("tokens.json.lock") && failures++ === 0) {
+      throw Object.assign(new Error("simulated Windows pending-delete contention"), { code: "EPERM" });
+    }
+    return originalOpen(...args);
+  });
+  try {
+    const created = generateTokens("windows-lock-retry", 1);
+    assert.ok(failures >= 2);
+    assert.deepEqual(loadTokens(), [...before, ...created]);
+    assert.equal(fs.existsSync(path.join(process.env.AGENT_CANARY_HOME!, "tokens.json.lock")), false);
+  } finally {
+    stub.mock.restore();
+    Object.defineProperty(process, "platform", originalPlatform);
+  }
+});
+
+test("Windows lock permission failures remain bounded and never overwrite token records", () => {
+  const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
+  const originalOpen = fs.openSync;
+  const before = loadTokens();
+  Object.defineProperty(process, "platform", { value: "win32", configurable: true });
+  try {
+    for (const code of ["EACCES", "EPERM"]) {
+      const stub = mock.method(fs, "openSync", (...args: Parameters<typeof fs.openSync>) => {
+        if (String(args[0]).endsWith("tokens.json.lock")) {
+          throw Object.assign(new Error("simulated persistent permission denial"), { code });
+        }
+        return originalOpen(...args);
+      });
+      let tick = 0;
+      const clock = mock.method(Date, "now", () => tick++ === 0 ? 0 : 10_001);
+      try {
+        assert.throws(() => generateTokens("must-not-write", 1), /registry lock|locked by another process/i);
+        assert.deepEqual(loadTokens(), before);
+      } finally { stub.mock.restore(); clock.mock.restore(); }
+    }
+  } finally { Object.defineProperty(process, "platform", originalPlatform); }
 });
 
 test("token registry is owner-readable on POSIX systems", { skip: process.platform === "win32" }, () => {
