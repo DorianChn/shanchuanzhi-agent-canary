@@ -2,6 +2,8 @@
 
 日期：2026-10-11。结论：**READY_WITH_LIMITATIONS**，限于“受控SDK Agent的可验证执行前防护”免费竞赛候选；不是第三方宿主全局安全认证、稳定npm/Docker版或E4独立证明。提交/Release实际完成状态在交付核对文件记录，不由本报告预先宣称成功。
 
+**交付核对更新**：候选Release已实际公开，Tag指向99660b3；原12个附件匿名HTTP200且逐一哈希匹配，公开ZIP的125项清单及中文/空格路径ci/build/self-test再次通过。新版邮件已于2026-10-11 23:29:05（上海时间）发到oscc@oschina.cn；Sent Items实际单条、附件取回SHA256与本地相同、ZIP CRC通过。组委会收悉未确认。公开脱敏记录见 [DELIVERY_STATUS.json](../../competition-submission/3.0-final/DELIVERY_STATUS.json)，原始邮箱ID只保存在未进入Git的local-only目录。没有重复发送。
+
 ## 冻结与证据
 
 - 代码冻结：99660b36db9d5b1121eea6fe06b026c5f1e36bcf。
