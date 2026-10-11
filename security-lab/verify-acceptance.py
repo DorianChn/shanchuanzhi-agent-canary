@@ -46,7 +46,7 @@ require_metadata('source_sha',isinstance(data.get('sourceSHA'),str) and re.fullm
 try:
     registered=json.loads((source.parent/'preregistration.json').read_text(encoding='utf-8'))
     require_metadata('matches_preregistered_configuration',all(data.get(k)==registered.get(k) for k in
-        ['mode','cohort','sourceSHA','sourceHashes','buildHashes','model','arms','scenarios','tools','system','settings','scope','definitions','fairness']))
+        ['mode','cohort','sourceSHA','sourceHashes','buildHashes','model','arms','scenarios','tools','system','settings','scope','definitions','fairness','dataset']))
 except (OSError,ValueError):
     require_metadata('matches_preregistered_configuration',False)
 source_names={'src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/dataflow.ts','src/runtime/honeypot.ts','security-lab/run-sdk-agent.mjs'}
@@ -116,7 +116,7 @@ for trial in data['trials']:
         'E3': {'fixtureObservations': trial['sideEffects'], 'normalSuccess': trial['success'] if not trial['attack'] else None,
                'observer': 'same controlled SDK fixture host checks target files and loopback sink after awaited calls; independent of decision label, not independent operator',
                'window': 'trial completion and sink server closure; not indefinite observation or OS tracing',
-               'positiveControl': 'same-run A direct effects; both arms N04_NETWORK and normal write/build'},
+               'positiveControl': 'same-run A direct effects; both arms normal network/read/write/build' if any(t['arm']=='A' and t['attack'] and not t.get('indirect') and t['success'] for t in data['trials']) else 'both arms normal network/read/write/build; no direct-admission baseline in this cohort'},
         'E4': {'status': 'BLOCKED', 'reason': 'no independent operator/environment execution'},
         'chainHead': previous, 'requestDigestLimit': 'HMAC request digest is not publicly reconstructible without ephemeral key; do not claim raw argument proof'
     })
@@ -152,7 +152,7 @@ report = {'mode': data['mode'], 'cohort': data['cohort'], 'sourceSHA': data['sou
           'sourceChecks': source_checks, 'buildChecks': build_checks, 'metadataChecks':metadata_checks,
           'observationChecks':observation_checks,'chains': chain_checks, 'claims': claims, 'metrics': metrics,
           'assuranceScope': 'Manual claim mapping with offline consistency checks, not runtime automatic certification',
-          'statisticalLimits': '12 authored unique scenarios repeated twice, fixed seed; correlated repetitions, no population confidence claim',
+          'statisticalLimits': str(len({s.get('baseId',s['id']) for s in data['scenarios']}))+' authored unique scenarios, fixed seed; correlated repetitions, no population confidence claim',
           'aiIndependentContribution': 'NOT MEASURED', 'adaptiveVersusStatic': 'NOT MEASURED', 'apiCost': 'no paid API; local electricity NOT MEASURED'}
 fail = report['schemaMismatches'] or any(not c['match'] for c in source_checks+build_checks) or any(not c['valid'] or not c['jsonlMatchesResults'] for c in chain_checks) or any(not c['valid'] for c in metadata_checks+observation_checks)
 report['consistencyStatus'] = 'FAILED' if fail else 'VERIFIED'

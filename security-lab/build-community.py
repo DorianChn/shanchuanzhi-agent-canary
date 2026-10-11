@@ -1,7 +1,7 @@
 """Independent positive-list 3.0 candidate. Never modifies the legacy npm/Docker package."""
 import argparse, hashlib, json, subprocess, tempfile, zipfile, sys
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);p.add_argument('--output-dir',default='competition-submission/3.0');a=p.parse_args()
 sys.stdout.reconfigure(encoding='utf-8')
 root=Path(__file__).resolve().parent.parent
 if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise SystemExit('Exact source SHA required')
@@ -15,7 +15,7 @@ with zipfile.ZipFile(seed) as z:
   relative=Path(*parts[1:])
   if relative.parts and relative.parts[0]=='dist':continue
   dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(z.read(info))
-for relative in ['src/file-state-store.ts','src/ai/console.ts','src/ai/console-page.ts','src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/file-state-store.test.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','test/evidence-conformance.test.ts','test/evidence-vectors.json','test/gateway-acceptance.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs']:
+for relative in ['src/file-state-store.ts','src/ai/console.ts','src/ai/console-page.ts','src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/file-state-store.test.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','test/evidence-conformance.test.ts','test/evidence-vectors.json','test/gateway-acceptance.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs','security-lab/holdout-v1.json','security-lab/holdout-protocol.md']:
  dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes((root/relative).read_bytes())
 for f in (root/'docs/3.0').glob('*.md'):
  if f.name=='PR_BODY.md':continue
@@ -41,7 +41,9 @@ logs={}
 for cmd in [['ci'],['run','build'],['test'],['run','self-test'],['audit','--json']]:
  r=subprocess.run([a.node,a.npm_cli,*cmd],cwd=stage,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,encoding='utf-8',errors='replace');logs[' '.join(cmd)]={'exitCode':r.returncode,'output':r.stdout}
  if r.returncode:break
-out=root/'competition-submission/3.0';out.mkdir(exist_ok=True)
+out=(root/a.output_dir).resolve()
+if not out.is_relative_to(root/'competition-submission'):raise SystemExit('Output must stay within competition-submission')
+out.mkdir(parents=True,exist_ok=True)
 logfile=out/('community-build-'+a.sha[:8]+'.json')
 with logfile.open('x',encoding='utf-8')as f:json.dump({'version':version,'temporaryBuild':str(stage),'steps':logs},f,ensure_ascii=False,indent=2)
 if any(v['exitCode']for v in logs.values()):raise SystemExit('Community validation failed; logs preserved')
