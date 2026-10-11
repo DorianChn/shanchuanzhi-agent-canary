@@ -32,7 +32,15 @@ export function createFileContainmentStateStore(file:string,options:{initialize?
     const code=(error as NodeJS.ErrnoException).code;
     if(code==='EEXIST')throw Error('STATE_STORE_BUSY');
     // Windows may report sharing contention as EPERM rather than EEXIST.
-    if(process.platform==='win32'&&(code==='EPERM'||code==='EACCES')){try{fs.lstatSync(lock);}catch{throw Error('STATE_STORE_IO');}throw Error('STATE_STORE_BUSY');}
+    if(process.platform==='win32'&&(code==='EPERM'||code==='EACCES')){
+     try{fs.lstatSync(lock);}catch(statError){
+      // Another writer may remove its lock after the failed exclusive open.
+      // Still refuse this transaction; caller can retry a NEW exclusive open.
+      if((statError as NodeJS.ErrnoException).code==='ENOENT')throw Error('STATE_STORE_BUSY');
+      throw Error('STATE_STORE_IO');
+     }
+     throw Error('STATE_STORE_BUSY');
+    }
     throw Error('STATE_STORE_IO');
    }
    const data=read(),changed=change(data);if(!changed)return false;
