@@ -482,5 +482,6 @@
         }
       ]
     }
-  ]
+  ],
+  "provenanceNote": "Initial drafting snapshot, not final PPT source. See FINAL_DECK_CONTENT.json and PRESENTATION_VALIDATION.json."
 }
