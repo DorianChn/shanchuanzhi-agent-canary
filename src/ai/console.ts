@@ -11,6 +11,8 @@ import { CONSOLE_PAGE } from './console-page.js';
 import { runAdvisoryDemo } from './demo.js';
 import { renderAIReport } from './report.js';
 import {createPolicySandbox} from './policy-demo.js';
+import os from 'node:os';
+import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient} from '../agent-integrations.js';
 
 export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string } = {}) {
   const port = options.port ?? 4318;
@@ -26,6 +28,9 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   const operatorCode=options.operatorApprovalCode;
   const secrets = [...(options.apiKey?[options.apiKey]:[]),...(operatorCode?[operatorCode]:[])];
   const sandbox=createPolicySandbox();
+  const integrationProject=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-integration-'));
+  const integrationRecords=new Map<string,ReturnType<typeof installAgentIntegration>>();
+  const integrationEntry={command:process.execPath,args:[path.join(root,'dist/competition.js'),'serve']};
   const server = http.createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -51,6 +56,8 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       }
       if (req.method === 'GET' && req.url === '/api/job') { reply(job); return; }
       if (req.method === 'GET' && req.url === '/api/policy/state') { reply(sandbox.state()); return; }
+      if(req.method==='GET'&&req.url==='/api/agents'){reply({agents:detectAgents(),scope:'Configuration demonstration in an isolated temporary project. Does not change your live client config.',installed:[...integrationRecords.values()].map(r=>({agent:r.agent,status:r.status,coverage:r.coverage})),project:integrationProject});return;}
+      if(req.method==='GET'&&req.url==='/api/v2'){const p=path.join(root,'competition-submission/evidence/v2-summary.json');reply(fs.existsSync(p)&&fs.statSync(p).size<512_000?JSON.parse(fs.readFileSync(p,'utf8')):{complete:false,status:'NOT COMPLETED'});return;}
       if (req.method === 'GET' && req.url === '/api/round4') {
         const p=path.join(root,'competition-submission/evidence/round4-summary.json');
         reply(fs.existsSync(p)&&fs.statSync(p).size<512_000?JSON.parse(fs.readFileSync(p,'utf8')):{complete:false,status:'NOT COMPLETED'});return;
@@ -67,14 +74,18 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       const chunks: Buffer[] = [];
       for await (const chunk of req) { size += chunk.length; if (size > 32_000) { reply({ error: 'AI_INPUT_TOO_LARGE' }, 413); return; } chunks.push(chunk); }
       const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      if(req.url==='/api/agents/preview'){const p=previewAgentIntegration(body.agent as AgentClient,integrationProject,integrationEntry);reply({agent:p.agent,configPath:p.configPath,entry:p.entry,baseHash:p.baseHash,status:p.status,coverage:p.coverage});return;}
+      if(req.url==='/api/agents/install'){const r=installAgentIntegration(body.agent,integrationProject,integrationEntry,body.baseHash);integrationRecords.set(body.agent,r);reply({agent:r.agent,status:r.status,coverage:r.coverage});return;}
+      if(req.url==='/api/agents/restore'){const r=integrationRecords.get(body.agent);if(!r)throw new Error('INTEGRATION_NOT_INSTALLED');reply(restoreAgentIntegration(r));integrationRecords.delete(body.agent);return;}
+      if(req.url==='/api/policy/review'){if(typeof body.enabled!=='boolean')throw new Error('PRE_REVIEW_BOOLEAN_REQUIRED');reply(sandbox.setReview(body.enabled,provider));return;}
       if (req.url === '/api/policy/mode') { reply(sandbox.setMode(body.mode)); return; }
       if (req.url === '/api/policy/action') { reply(await sandbox.action(body.action)); return; }
-      if (req.url === '/api/policy/approve') {
+      if (req.url === '/api/policy/approve'||req.url==='/api/policy/deny') {
         if(body.confirm!==true)throw new Error('POLICY_HUMAN_CONFIRMATION_REQUIRED');
         const supplied=Buffer.from(typeof body.operatorCode==='string'?body.operatorCode:'');
         const expected=Buffer.from(operatorCode??'');
         if(!operatorCode||supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){reply({error:'POLICY_OPERATOR_AUTH_REQUIRED'},403);return;}
-        reply(await sandbox.approve(body.requestId));return;
+        reply(req.url==='/api/policy/deny'?sandbox.deny(body.requestId):await sandbox.approve(body.requestId));return;
       }
       if (req.url === '/api/preview') { reply(previewAnalysis(body.events, secrets)); return; }
       if (req.url === '/api/demo') { const demo = await runAdvisoryDemo(); reply({ ...demo, analysisEvents: demo.events.map((e,i)=>({id:'sandbox-'+i,text:formatAnalysisEvent(e as unknown as Record<string,unknown>)})) }); return; }
@@ -96,7 +107,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         const env: NodeJS.ProcessEnv = { ...process.env, OLLAMA_BASE_URL: config.baseUrl, OLLAMA_MODEL: config.model };
         delete env.AGENT_CANARY_AI_KEY;
         job = { status: 'running', progress: [] };
-        child = spawn(process.execPath, [script, '--profile=neutral_agent',...(body.round4===true?['--round4']:[])], { cwd: root, env, stdio: ['ignore','pipe','pipe'], windowsHide: true });
+        child = spawn(process.execPath, [script, '--profile=neutral_agent',...(body.v2===true?['--v2']:body.round4===true?['--round4']:[])], { cwd: root, env, stdio: ['ignore','pipe','pipe'], windowsHide: true });
         const capture = (chunk: Buffer) => { job.progress.push(redactAnalysisText(chunk.toString('utf8'), secrets).slice(0, 1000)); if (job.progress.length > 12) job.progress.shift(); };
         child.stdout?.on('data', capture); child.stderr?.on('data', capture);
         child.once('error', () => { job.status = 'failed'; child = undefined; });

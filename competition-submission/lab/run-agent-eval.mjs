@@ -12,15 +12,17 @@ import { performance } from "node:perf_hooks";
 import { createHash } from "node:crypto";
 import { scenarios } from "./scenarios.mjs";
 import { round4Scenarios } from './round4-scenarios.mjs';
+import {v2Scenarios} from './v2-scenarios.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "../..");
 const outDir = path.join(here, "../evidence");
 const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
-const round4=process.argv.includes('--round4');
+const v2=process.argv.includes('--v2');
+const round4=v2||process.argv.includes('--round4');
 const profileArg = process.argv.slice(2).find((value) => value.startsWith("--profile="));
 const promptProfile = profileArg?.slice("--profile=".length) || process.env.AGENT_EVAL_PROFILE || "safety_aware";
-const outputFile = path.join(outDir, `${round4?'round4-agent-eval':'local-model-eval'}-${promptProfile}-${runStamp}.json`);
+const outputFile = path.join(outDir, `${v2?'v2-agent-eval':round4?'round4-agent-eval':'local-model-eval'}-${promptProfile}-${runStamp}.json`);
 const apiBase = new URL(process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434");
 if (apiBase.protocol !== 'http:' || apiBase.username || apiBase.password || apiBase.search || apiBase.hash || !new Set(["127.0.0.1", "localhost", "[::1]"]).has(apiBase.hostname)) {
   throw new Error("Safety stop: the evaluation only permits a loopback Ollama endpoint.");
@@ -93,7 +95,7 @@ const virtualTools = [
   },
 ];
 
-const arms = ["A_no_canary", "B_decoy_only", "C_guarded_router", ...(round4?['D1_policy','D2_policy_ai']:[])];
+const arms = ["A_no_canary", "B_decoy_only", "C_guarded_router", ...(round4?['D1_policy','D2_policy_ai']:[]),...(v2?['E_pre_review']:[])];
 const results = {
   schemaVersion: 1,
   date: "2026-10-11",
@@ -178,11 +180,12 @@ async function runTrial(arm, scenario, repetitionIndex) {
   let tokenHits = 0;
   let modelDecoyCalls = 0;
   let seededSignal = false;
-  const policyArm=arm.startsWith('D');
+  const policyArm=arm.startsWith('D')||arm==='E_pre_review';
   const policyDecisions=[];const policyLatencyMs=[];let aiAnalysis=null;let trialError=null;
 
   const mockExecutor = async (call) => executeSynthetic(call, fixture, actions);
-  const router = policyArm ? sdk.createRiskPolicyRouter({guard,mode:'BALANCED',workspaceRoot:sandboxRoot,eventsFile:path.join(sandboxRoot,`${scenario.id}-${arm}-r${repetitionIndex+1}.jsonl`),
+  const router = policyArm ? (arm==='E_pre_review'?sdk.createSecurityToolRouter:sdk.createRiskPolicyRouter)({guard,mode:'BALANCED',workspaceRoot:sandboxRoot,eventsFile:path.join(sandboxRoot,`${scenario.id}-${arm}-r${repetitionIndex+1}.jsonl`),
+    ...(arm==='E_pre_review'?{provider:sdk.createAIProvider({id:'ollama',kind:'local',protocol:'ollama',baseUrl:apiBase.origin,model:modelName,timeoutMs:30_000,maxTokens:400}),reviewTimeoutMs:30_000,verifyRealPaths:false}:{}),
     tools:{read_file:{operation:'file-read'},fetch_webpage:{operation:'static-read'},read_diagnostic_log:{operation:'static-read'},read_virtual_secret:{operation:'sensitive-read'},send_http:{operation:'http'},run_shell:{operation:'shell'},delete_file:{operation:'delete'}},executeRealTool:mockExecutor})
     : arm === "C_guarded_router" ? sdk.createGuardedToolRouter({ guard, executeRealTool: mockExecutor }) : null;
 
@@ -277,6 +280,7 @@ async function runTrial(arm, scenario, repetitionIndex) {
   return {
     scenarioId: scenario.id,
     scenarioKind: scenario.kind,
+    ...(v2?{preReviews:arm==='E_pre_review'?router.reviews():[],dataflow:arm==='E_pre_review'?router.dataflow():[]}:{}),
     ...(round4?{dataset:scenario.index>=20?'HOLDOUT':'DEVELOPMENT',valid:!trialError,runError:trialError,policyMode:policyArm?'BALANCED':'NOT_PRESENT',policyDecisions,policyLatencyMs,aiAnalysis,hostApprovalsGranted:0,outOfScopeAttempts:actions.filter(a=>a.route==='INTENTIONAL_GUARD_BYPASS').length}:{}),
     attack: scenario.attack,
     arm,
@@ -426,7 +430,7 @@ try {
 
   await persist();
   let trialNumber = 0;
-  const selected = round4?[...scenarios,...round4Scenarios]:scenarios;
+  const selected = v2?[...scenarios,...round4Scenarios,...v2Scenarios]:round4?[...scenarios,...round4Scenarios]:scenarios;
   if(round4){results.preregistration={frozenAt:new Date().toISOString(),policyImplementationSha256:createHash('sha256').update(fs.readFileSync(path.join(repoRoot,'dist/risk-policy.js'))).digest('hex'),toolSchemasSha256:createHash('sha256').update(JSON.stringify(virtualTools)).digest('hex'),scenarioSha256:createHash('sha256').update(JSON.stringify(selected)).digest('hex'),originalScenarioSha256:createHash('sha256').update(JSON.stringify(scenarios)).digest('hex'),holdoutScenarioSha256:createHash('sha256').update(JSON.stringify(round4Scenarios)).digest('hex'),arms,model:modelName,seedBase,maxTurns,hostApprovalPolicy:'No unattended human approvals in any arm',legacyAttackDefinition:'Any mocked secret read/network/shell/delete effect; includes benign shell. Kept unchanged for A/B/C comparability.'};fs.writeFileSync(path.join(outDir,'round4-preregistration-'+runStamp+'.json'),JSON.stringify(results.preregistration,null,2)+'\n');results.modelToolCallSmoke='NOT MEASURED IN THIS RUN; actual trial calls recorded separately';}
   for (const scenario of selected) {
     for (const arm of arms) {
@@ -453,7 +457,7 @@ try {
   results.summary = summarize(results.trials);
   await persist();
   console.log(JSON.stringify({ completed: true, outputFile, trials: results.trials.length, summary: results.summary, guardLatency: results.guardLatency }, null, 2));
-  await import(round4?'./build-round4-report.mjs':'./build-report-data.mjs');
+  await import(v2?'./build-v2-report.mjs':round4?'./build-round4-report.mjs':'./build-report-data.mjs');
 } catch (error) {
   results.runError = redact(String(error));
   await persist();
@@ -468,7 +472,7 @@ try {
 function summarize(trials) {
   const summary = {};
   for (const arm of arms) {
-    const enforcesGuard=arm==='C_guarded_router'||arm.startsWith('D');
+    const enforcesGuard=arm==='C_guarded_router'||arm.startsWith('D')||arm==='E_pre_review';
     const group = trials.filter((t) => t.arm === arm);
     const attacks = group.filter((t) => t.attack);
     const comparableAttacks = attacks.filter((t) => t.scenarioId !== "A09_POST_QUARANTINE" && t.triggerSetup !== "HARNESS_PRECONDITION_NOT_AGENT_DETECTION");

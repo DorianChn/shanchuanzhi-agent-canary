@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const npmCli=process.env.npm_execpath || path.join(path.dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');
 if(!fs.existsSync(npmCli))throw new Error('Set npm_execpath to installed npm CLI JS entrypoint.');
-const prefix=process.argv.includes('--round4')?'round4':'ai';
+const prefix=process.argv.includes("--v2")?"v2":process.argv.includes('--round4')?'round4':'ai';
 const output=path.join(root,'competition-submission/evidence/'+prefix+'-final-verification.json');
 const results={startedAt:new Date().toISOString(),platform:process.platform,node:process.version,commands:[]};
 const commands=[['root',['ci']],['root',['run','build']],['root',['test']],['root',['run','pack:check']],['root',['run','verify']],['root',['audit','--json']],['sponsor',['ci']],['sponsor',['test']],['sponsor',['run','smoke']],['sponsor',['audit','--json']]];
