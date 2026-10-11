@@ -1,7 +1,8 @@
 """Independent positive-list 3.0 candidate. Never modifies the legacy npm/Docker package."""
-import argparse, hashlib, json, subprocess, tempfile, zipfile
+import argparse, hashlib, json, subprocess, tempfile, zipfile, sys
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);a=p.parse_args()
+sys.stdout.reconfigure(encoding='utf-8')
 root=Path(__file__).resolve().parent.parent
 if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise SystemExit('Exact source SHA required')
 seed=root/'competition-submission/Agent_Canary_Competition_2_0_Readiness.zip'
@@ -33,7 +34,7 @@ lock=json.loads((stage/'package-lock.json').read_text());lock['version']=pkg['ve
 version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True}
 (stage/'FREE_BUILD_VERSION.json').write_text(json.dumps(version,indent=2)+'\n')
 for readme in ['README.md','README.zh-CN.md']:
- f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(),encoding='utf-8')
+ f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(encoding='utf-8'),encoding='utf-8')
 logs={}
 for cmd in [['ci'],['run','build'],['test'],['run','self-test'],['audit','--json']]:
  r=subprocess.run([a.node,a.npm_cli,*cmd],cwd=stage,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,encoding='utf-8',errors='replace');logs[' '.join(cmd)]={'exitCode':r.returncode,'output':r.stdout}
