@@ -46,7 +46,7 @@ export function validateEvidence(event: unknown): event is SecurityEvidenceEvent
     for (const key of ['request_digest','event_digest']) if (typeof e[key] !== 'string' || !/^[a-f0-9]{64}$/.test(e[key])) return false;
     if (e.previous_event_digest !== null && (typeof e.previous_event_digest !== 'string' || !/^[a-f0-9]{64}$/.test(e.previous_event_digest))) return false;
     if (e.approval_reference !== null && (typeof e.approval_reference !== 'string' || !/^[a-f0-9]{64}$/.test(e.approval_reference))) return false;
-    return typeof e.timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(e.timestamp) && Number.isFinite(Date.parse(e.timestamp));
+    return typeof e.timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(e.timestamp) && Number.isFinite(Date.parse(e.timestamp)) && new Date(e.timestamp).toISOString() === e.timestamp;
   } catch {return false;}
 }
 export function verifyEvidenceChain(events: unknown[], expectedHead?: string): {valid: boolean; reason: string; head: string|null} {
