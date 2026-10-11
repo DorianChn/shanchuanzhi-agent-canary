@@ -1,0 +1,8 @@
+{
+  "scope": "new roadshow materials only, no production or full Git history scan",
+  "files": 76,
+  "sensitiveFindings": [],
+  "brokenLocalLinks": [],
+  "qACount": 40,
+  "status": "VERIFIED_NEW_MATERIALS_ONLY"
+}

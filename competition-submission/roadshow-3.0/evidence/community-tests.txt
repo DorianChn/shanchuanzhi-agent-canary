@@ -1,0 +1,118 @@
+
+> @dorianchn/agent-canary@3.0.0-engineering-preview.1 test
+> node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts
+
+✔ OSEP identifier references resolve, including request_id (2.8158ms)
+✔ OSEP strict field conformance: request_id-0 (2.6806ms)
+✔ OSEP strict field conformance: request_id-1 (0.3353ms)
+✔ OSEP strict field conformance: request_id-2 (0.1742ms)
+✔ OSEP strict field conformance: request_id-3 (0.3241ms)
+✔ OSEP strict field conformance: request_id-4 (0.1509ms)
+✔ OSEP strict field conformance: request_id-5 (0.1329ms)
+✔ OSEP strict field conformance: request_id-6 (0.1752ms)
+✔ OSEP strict field conformance: request_id-7 (0.1696ms)
+✔ OSEP strict field conformance: evidence_id-array (0.2175ms)
+✔ OSEP strict field conformance: evidence_id-object (0.2328ms)
+✔ OSEP strict field conformance: evidence_id-boolean (0.1178ms)
+✔ OSEP strict field conformance: evidence_id-valid (0.3697ms)
+✔ OSEP strict field conformance: evidence_id-null (0.1837ms)
+✔ OSEP strict field conformance: request_digest-array (0.2466ms)
+✔ OSEP strict field conformance: request_digest-object (0.1683ms)
+✔ OSEP strict field conformance: request_digest-boolean (0.1118ms)
+✔ OSEP strict field conformance: request_digest-valid (0.1331ms)
+✔ OSEP strict field conformance: request_digest-null (0.0783ms)
+✔ OSEP strict field conformance: event_digest-array (0.0686ms)
+✔ OSEP strict field conformance: event_digest-object (0.0736ms)
+✔ OSEP strict field conformance: event_digest-boolean (0.0584ms)
+✔ OSEP strict field conformance: event_digest-valid (0.0839ms)
+✔ OSEP strict field conformance: event_digest-null (0.0823ms)
+✔ OSEP strict field conformance: approval_reference-array (0.0915ms)
+✔ OSEP strict field conformance: approval_reference-object (0.0863ms)
+✔ OSEP strict field conformance: approval_reference-boolean (0.0808ms)
+✔ OSEP strict field conformance: approval_reference-valid (0.0933ms)
+✔ OSEP strict field conformance: approval_reference-null (0.0824ms)
+✔ OSEP strict field conformance: previous_event_digest-array (0.0998ms)
+✔ OSEP strict field conformance: previous_event_digest-object (0.0803ms)
+✔ OSEP strict field conformance: previous_event_digest-boolean (0.1272ms)
+✔ OSEP strict field conformance: previous_event_digest-valid (0.0976ms)
+✔ OSEP strict field conformance: previous_event_digest-null (0.1092ms)
+✔ OSEP strict field conformance: timestamp-0 (0.1231ms)
+✔ OSEP strict field conformance: timestamp-1 (0.1177ms)
+✔ OSEP strict field conformance: timestamp-2 (0.1153ms)
+✔ OSEP strict field conformance: timestamp-3 (0.1033ms)
+✔ strict AJV2020 and enabled formats match all runtime field vectors (71.5798ms)
+✔ historical missing reference affects consumers, not gateway authorization (75.9744ms)
+✔ actual Recorder intent/outcome export passes strict standard schema and chain (23.5042ms)
+✔ memory store boundary: separate stores do not preserve quarantine (1.3603ms)
+✔ file store requires explicit bootstrap and never overwrites existing state (37.8347ms)
+✔ file store survives process restart and same principal gets quarantine (974.0236ms)
+✔ corruption empty truncation and schema errors reject without rewriting (41.5374ms)
+✔ missing state after bootstrap latches guard fail-closed without regeneration (14.3131ms)
+✔ concurrent store instances preserve different scopes and enforce one quarantine (37.224ms)
+✔ busy lock, excessive file and scope capacity never permit sensitive callback (29.6313ms)
+✔ symlink/junction redirected state and parent are rejected (9.7486ms)
+✔ trusted reset removes only one scope and invalid scopes are redacted errors (39.6494ms)
+✔ active writer lock causes guard reads to latch fail-closed (13.7113ms)
+✔ prototype-looking scopes are data and cannot return inherited state (46.5355ms)
+✔ string bootstrap flags cannot recreate missing state (3.3207ms)
+✔ four concurrent processes preserve every quarantine without lost writes (1523.6495ms)
+✔ Windows transient rename sharing failures retry without losing quarantine (41.1907ms)
+✔ persistent rename failure never replaces the existing state or leaks details (214.4841ms)
+✔ Windows lock EPERM with an existing writer is BUSY, not a data reset (11.1875ms)
+✔ Windows writer lock removed between EPERM and lstat remains fail-closed BUSY (21.4892ms)
+FIXTURE_SINK_REQUESTS 0
+✔ sensitive provenance expiry must not silently re-authorize egress (28.1295ms)
+FIXTURE_SINK_REQUESTS 0
+FIXTURE_SINK_REQUESTS 0
+✔ two gateways sharing one Guard must not race source collection and egress (17.4847ms)
+FIXTURE_SINK_REQUESTS 0
+FIXTURE_SINK_REQUESTS 0
+✔ concurrent duplicate approval executes a real callback exactly once (10.1451ms)
+✔ approval at the exact expiry boundary cannot execute (7.5296ms)
+✔ resource replacement in the check/use window cannot write the replacement inode (44.5494ms)
+FIXTURE_SINK_REQUESTS 0
+✔ an executor ignoring cancellation may cause a late side effect, which is not verified safe (41.0553ms)
+FIXTURE_SINK_REQUESTS 0
+FIXTURE_SINK_REQUESTS 0
+✔ AI review timeout preserves pending approval and performs no callback (14.1564ms)
+FIXTURE_SINK_REQUESTS 0
+FIXTURE_SINK_REQUESTS 0
+✔ benign AI cannot self-approve or execute after quarantine during review (15.2303ms)
+✔ MCP unknown and explicitly destructive capabilities cannot be approved by arguments (8.7615ms)
+✔ HTTPS origin permission does not bypass transport loopback rejection (13.5073ms)
+✔ gateway uses real held handles for authorized read and write and verifies bytes (37.7317ms)
+✔ first unauthorized credential read rejected before real content is returned (23.4449ms)
+✔ path traversal and forged grant cannot write outside capability (15.0323ms)
+✔ replacement after gateway initialization never writes replacement inode (19.4202ms)
+✔ symlink or Windows junction resource escape rejected at registration (9.9727ms)
+✔ quarantine prevents actual file write and queued command process (24.3795ms)
+✔ fixed argv process really executes normal task; arbitrary shell does not run (185.3798ms)
+✔ denied network request has zero actual loopback HTTP side effects (25.0979ms)
+✔ host-only approval consumes once and model has no approve or reset entry point (14.0342ms)
+✔ approval expires with no actual callback (32.3978ms)
+✔ AI benign cannot grant permission or execute callback (14.6017ms)
+✔ AI timeout cannot grant permission or execute callback (17.1998ms)
+✔ AI invalid cannot grant permission or execute callback (12.9797ms)
+✔ AI suspicious only tightens a decision and guard remains authoritative (13.9652ms)
+✔ pre-cancelled call and full evidence cannot change actual file (16.5797ms)
+✔ serialized concurrent writes leave a complete value and continuous evidence chain (136.5495ms)
+✔ evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor (1.0091ms)
+✔ invalid suspicious AI output stays pending instead of being accepted as a valid review (13.836ms)
+✔ sensitive MCP output blocks later registered network capability before its callback (14.9482ms)
+✔ deadline aborts registered callback, quarantines and refuses queued real file effect (27.6417ms)
+✔ replacing gateway for same Guard cannot erase prior sensitive tool history (16.1883ms)
+✔ five isolated decoy kinds have unique IDs and deployed is not touched (30.1893ms)
+✔ database, internal API and MCP interaction is virtual and records only actual calls (10.7051ms)
+✔ adaptive metadata produces bounded selection without invented efficacy (1.2578ms)
+✔ real honeypot file read quarantines before next actual write (33.3307ms)
+✔ bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage (1.971ms)
+✔ dataflow bounded eviction, TTL and session separation (12.4958ms)
+✔ 3.0 console API preserves CSRF, operator identity, replay control and real quarantine (185.1258ms)
+ℹ tests 96
+ℹ suites 0
+ℹ pass 96
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4438.7253

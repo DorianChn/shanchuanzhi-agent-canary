@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-11T17:19:48.855Z",
+  "mode": "DOCUMENTATION_COMPARISON_NOT_LEGAL_ADVICE",
+  "sources": [
+    {
+      "repo": "NVIDIA-NeMo/Guardrails",
+      "apiLicense": "NOASSERTION",
+      "actualLicenseDeclaration": "Apache-2.0",
+      "url": "https://github.com/NVIDIA-NeMo/Guardrails/blob/develop/LICENSE.md"
+    },
+    {
+      "repo": "thinkst/canarytokens",
+      "apiLicense": "NOASSERTION",
+      "actualLicenseDeclaration": "GPL Version 3 with clarifications and exceptions; inspect full terms",
+      "url": "https://github.com/thinkst/canarytokens/blob/master/LICENSE"
+    }
+  ],
+  "copiedSourceCode": false
+}
