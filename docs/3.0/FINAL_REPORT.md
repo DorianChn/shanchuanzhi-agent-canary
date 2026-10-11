@@ -1,5 +1,7 @@
 # Agent Canary 3.0 工程主线交付报告
 
+本文件保存9f00b6b历史冻结的材料/视频状态。后续核心验收发现并修复的问题、当前证据与限制见 [CORE_CAPABILITY_ACCEPTANCE.md](CORE_CAPABILITY_ACCEPTANCE.md)，不能将本文件旧数据当最新结果。
+
 日期：2026-10-11。运行时代码冻结 `9f00b6ba7475e8bccc5410e1484ed74a7806b7d1`。后续交付提交仅更新录屏工具、派生报告和材料；不改冻结的安全核心。完整 3.0 状态：**NOT_READY**；当前可交付的是明确限定范围的工程候选。
 
 ## 现场与 GitHub

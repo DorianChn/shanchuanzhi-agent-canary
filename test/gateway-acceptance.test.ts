@@ -62,3 +62,29 @@ test('an executor ignoring cancellation may cause a late side effect, which is n
   assert.equal(fs.existsSync(path.join(s.root,'late')),true);assert.equal(runtime.evidence().at(-1)!.side_effect_verification,'NOT_VERIFIED');assert.equal(s.guard.state,'QUARANTINED');
  }finally{await runtime.close();await s.close();}
 });
+test('AI review timeout preserves pending approval and performs no callback',async()=>{
+ const s=await sinkFixture();let calls=0,signal:AbortSignal|undefined;
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),reviewTimeoutMs:5,provider:{analyze:async(request:any)=>{signal=request.signal;return new Promise(()=>{});}} as any,mcpTools:{action:{approvalRequired:true,execute:async()=>++calls}}});
+ try{await assert.rejects(runtime.agent.dispatch({name:'mcp_tool',args:{tool:'action',arguments:{}}}),/REQUIRE_APPROVAL/);assert.equal(signal!.aborted,true);assert.equal(calls,0);assert.equal(runtime.operator.pending().length,1);
+ }finally{await runtime.close();await s.close();}
+});
+test('benign AI cannot self-approve or execute after quarantine during review',async()=>{
+ const s=await sinkFixture();let calls=0;
+ const provider={analyze:async()=>{s.guard.trip({reason:'during_review'});return{status:'ok',advisoryOnly:true,verdict:'benign',severity:'low',confidence:null,summary:'review',reasoningSummary:'input evidence',recommendedActions:['inspect'],evidence:[{eventId:'proposed-call',quote:'tool'}]};}};
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),provider:provider as any,mcpTools:{action:{approvalRequired:true,execute:async()=>++calls}}});
+ try{await assert.rejects(runtime.agent.dispatch({name:'mcp_tool',args:{tool:'action',arguments:{}}}));for(const pending of runtime.operator.pending())await assert.rejects(runtime.operator.approve(pending.requestId),/guard_quarantined/);assert.equal(calls,0);assert.equal(s.guard.state,'QUARANTINED');
+ }finally{await runtime.close();await s.close();}
+});
+test('MCP unknown and explicitly destructive capabilities cannot be approved by arguments',async()=>{
+ const s=await sinkFixture();let calls=0;
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),mcpTools:{danger:{risk:'DESTRUCTIVE',approvalRequired:false,execute:async()=>++calls}}});
+ try{for(const tool of ['missing','danger'])await assert.rejects(runtime.agent.dispatch({name:'mcp_tool',args:{tool,arguments:{approved:true,operator:'trusted'}}}));assert.equal(calls,0);assert.equal(runtime.operator.pending().length,0);
+ }finally{await runtime.close();await s.close();}
+});
+test('HTTPS origin permission does not bypass transport loopback rejection',async()=>{
+ const s=await sinkFixture(),origin=s.url.replace('http:','https:');
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),readOrigins:[origin]});
+ try{for(const url of [origin+'/path?secret=fixture',origin+'/path#fragment',origin.replace('https://','https://user:pass@')+'/path'])await assert.rejects(runtime.agent.dispatch({name:'http_request',args:{url}}),/network_capability_denied/);
+  await assert.rejects(runtime.agent.dispatch({name:'http_request',args:{url:origin+'/path'}}));assert.equal(s.received(),0);assert.equal(runtime.evidence().at(-1)!.execution_status,'FAILED');
+ }finally{await runtime.close();await s.close();}
+});

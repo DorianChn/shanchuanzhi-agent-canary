@@ -12,3 +12,9 @@
 | 自定义 MCP Agent | 现有 protected-mcp 与 stdio SDK probe | VERIFIED：基线虚拟回调握手及隔离；3.0 真实 OS 网关还需宿主桥接 | 仅自有服务登记工具，不能继承其他服务权限 |
 
 未改动上述桌面客户端的真实配置、进程或内部文件。选择受控 SDK Agent 避免把未经验证的原生 hook 覆盖误报为全局保护。
+
+## 2026-10-11 核心验收更新
+
+实际限定探测见 `security-lab/acceptance/host-discovery.json`：Codex executable 位于PATH；Claude/Cursor/Cline不在PATH，不据此认定桌面程序/插件未安装。没有访问账号文件、生产密钥或改动客户端配置。
+
+SDK Agent在核心334b2c8上完成48次真实Ollama/Qwen工具自主选择，直接受限操作A12/12产生效果、F0/12，正常两组8/8；只支持本机临时文件/固定测试进程/loopback网络的受控SDK执行边界。配置fixtures、hook判断测试和MCP握手均不替代上述原生客户端执行前覆盖验证。详细范围与迟到副作用限制见 CORE_CAPABILITY_ACCEPTANCE.md。
