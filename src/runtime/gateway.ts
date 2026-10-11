@@ -31,12 +31,15 @@ const filePath=(v:string)=>v.replaceAll('\\','/');
 const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
+// Host reconfiguration cannot reset provenance while retaining the same Guard identity.
+const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker}>();
 
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
   const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
-  const key=randomBytes(32),flow=new SessionDataFlow(),provenance=new DataFlowTracker();
+  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker()};
+  sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
   const mcp=new Map(Object.entries(options.mcpTools??{}).map(([name,t])=>[name,Object.freeze({...t})]));
   const origins=new Set((options.readOrigins??[]).map(o=>{const u=new URL(o);if(u.protocol!=='https:'||o!==u.origin||u.username||u.password)throw Error('GATEWAY_ORIGIN_INVALID');return o;}));
