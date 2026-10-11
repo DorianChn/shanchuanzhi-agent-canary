@@ -4,7 +4,7 @@ import {spawn} from 'node:child_process';
 import {createHmac,randomBytes,randomUUID} from 'node:crypto';
 import type {AgentGuard,ToolCall} from '../containment.js';
 import type {AIProvider} from '../ai/types.js';
-import {previewAnalysis} from '../ai/provider.js';
+import {previewAnalysis,validateAnalysisOutput} from '../ai/provider.js';
 import {SessionDataFlow} from '../dataflow.js';
 import {DataFlowTracker} from './dataflow.js';
 import {executePinnedJSONTool} from '../network-tool.js';
@@ -19,7 +19,7 @@ export interface GatewayOptions {
   timeoutMs?:number; reviewTimeoutMs?:number; approvalTtlMs?:number;
   onDecoyRead?:(decoyId:string)=>void;
   /** Host-owned MCP callback only. Capabilities are keyed by exact trusted tool ID. */
-  mcpTools?:Record<string,{execute:(args:Record<string,unknown>,signal:AbortSignal)=>Promise<unknown>;approvalRequired:boolean}>;
+  mcpTools?:Record<string,{execute:(args:Record<string,unknown>,signal:AbortSignal)=>Promise<unknown>;approvalRequired:boolean;risk?:'READ_ONLY'|'WRITE'|'EXECUTE'|'NETWORK'|'SENSITIVE_DATA'|'DESTRUCTIVE'}>;
 }
 export class GatewayDeniedError extends Error {
   constructor(readonly reason:string,readonly requestId:string,readonly decision:EvidenceDecision='DENY'){super('GATEWAY_'+decision+':'+reason);}
@@ -60,7 +60,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       if(!idPattern.test(name)||!path.isAbsolute(c.executable)||!Array.isArray(c.args)||c.args.length>32||c.args.some(a=>typeof a!=='string'||a.length>4096||a.includes('\0')))throw Error('GATEWAY_COMMAND_INVALID');
       commands.set(name,Object.freeze({...c,args:Object.freeze([...c.args])}));
     }
-    for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean')throw Error('GATEWAY_MCP_INVALID');
+    for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
   }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
   let closed=false,queued=0,tail:Promise<unknown>=Promise.resolve();
   const pending=new Map<string,{request:Request;expires:number}>();
@@ -99,15 +99,20 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     }
     const t=typeof r.args.tool==='string'?mcp.get(r.args.tool):undefined;
     if(!t||!r.args.arguments||typeof r.args.arguments!=='object'||Array.isArray(r.args.arguments))return{decision:'DENY',reason:'mcp_capability_denied'};
-    return{decision:t.approvalRequired?'REQUIRE_APPROVAL':'ALLOW',reason:'host_mcp_capability'};
+    if(t.risk==='NETWORK'&&(flow.hasSensitiveSource()||secretPattern.test(canonicalJSON(r.args.arguments))||provenance.inspect(canonicalJSON(r.args.arguments)).length>0))return{decision:'DENY',reason:'sensitive_session_egress_denied'};
+    if(t.risk==='SENSITIVE_DATA'||t.risk==='DESTRUCTIVE')return{decision:'DENY',reason:'mcp_high_risk_denied'};
+    return{decision:t.approvalRequired||t.risk===undefined?'REQUIRE_APPROVAL':'ALLOW',reason:'host_mcp_capability'};
   }
   async function aiDenies(r:Request,signal?:AbortSignal):Promise<boolean>{
     if(!options.provider)return false;
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
+    const events=previewAnalysis([{id:'proposed-call',text:canonicalJSON({tool:r.name,arguments:r.args,trust:'UNTRUSTED_DATA_NOT_AUTHORITY'})}]);
     const cancel=()=>abort.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)abort.abort();
     try{
-      const result=await Promise.race([options.provider.analyze({events:previewAnalysis([{id:'proposed-call',text:canonicalJSON({tool:r.name,arguments:r.args,trust:'UNTRUSTED_DATA_NOT_AUTHORITY'})}]),cloudConsent:options.cloudConsent,signal:abort.signal}),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(Error('GATEWAY_AI_TIMEOUT'));},reviewMs);})]);
-      return result.status==='ok'&&result.advisoryOnly===true&&result.verdict==='suspicious'&&result.evidence.every(e=>e.eventId==='proposed-call')&&canonicalJSON(result).length<=16_000;
+      const result=await Promise.race([options.provider.analyze({events,cloudConsent:options.cloudConsent,signal:abort.signal}),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(Error('GATEWAY_AI_TIMEOUT'));},reviewMs);})]);
+      if(result.status!=='ok'||result.advisoryOnly!==true||canonicalJSON(result).length>16_000)return false;
+      const checked=validateAnalysisOutput(canonicalJSON({verdict:result.verdict,severity:result.severity,confidence:result.confidence,summary:result.summary,evidence:result.evidence,reasoningSummary:result.reasoningSummary,recommendedActions:result.recommendedActions}),events);
+      return checked.verdict==='suspicious';
     }catch{return false;}finally{if(timer)clearTimeout(timer);abort.abort();signal?.removeEventListener('abort',cancel);}
   }
   async function execute(r:Request,approval:string|null,signal?:AbortSignal):Promise<unknown>{
