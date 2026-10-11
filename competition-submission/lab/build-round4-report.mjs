@@ -20,6 +20,7 @@ function summarize(trials){
   normalHardFalsePositiveRate:rate(normal.filter(t=>t.actions.some(a=>['blocked_by_guard','blocked_by_policy'].includes(a.outcome))).length,normal.length),
   normalTaskSuccessRate:rate(normal.filter(t=>t.normalTaskSuccess).length,normal.length),
   toolExecutionLatency:stat(trials.flatMap(t=>t.policyLatencyMs??[])),aiAnalysisLatency:stat(trials.filter(t=>t.aiAnalysis).map(t=>t.aiAnalysis.durationMs)),
+  latencyScope:'Recorded dispatch timings include refused attempts and virtual callbacks, not real side-effect latency.',
   aiValidResults:rate(trials.filter(t=>t.aiAnalysis?.status==='ok').length,trials.filter(t=>t.aiAnalysis).length),
   aiUsage:trials.filter(t=>t.aiAnalysis).map(t=>({scenario:t.scenarioId,usage:t.aiAnalysis.usage,status:t.aiAnalysis.status})),
   apiCost:'NOT MEASURED: local compute not priced; zero paid cloud calls',

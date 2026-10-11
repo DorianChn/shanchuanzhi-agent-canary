@@ -1,0 +1,165 @@
+
+> agent-canary-sponsor@0.1.0 test
+> node --check grant.mjs && node --test smoke-isolation.test.mjs security-regression.test.mjs payment-security.test.mjs payment-callback.test.mjs state-store.test.mjs state-fail-closed.test.mjs grant-state.test.mjs
+
+TAP version 13
+# Subtest: manual grant refuses corrupted state and leaves both business files unchanged
+ok 1 - manual grant refuses corrupted state and leaves both business files unchanged
+  ---
+  duration_ms: 174.298
+  type: 'test'
+  ...
+# Subtest: manual grant atomically confirms only matching synthetic orders
+ok 2 - manual grant atomically confirms only matching synthetic orders
+  ---
+  duration_ms: 221.9304
+  type: 'test'
+  ...
+# Subtest: invalid RSA2-signed Alipay notices cannot change a local order or grant an entitlement
+ok 3 - invalid RSA2-signed Alipay notices cannot change a local order or grant an entitlement
+  ---
+  duration_ms: 590.6258
+  type: 'test'
+  ...
+# Subtest: valid and concurrent duplicate Alipay notifications fulfill exactly once
+ok 4 - valid and concurrent duplicate Alipay notifications fulfill exactly once
+  ---
+  duration_ms: 146.5205
+  type: 'test'
+  ...
+# Subtest: WeChat verifies signed encrypted callbacks and rejects local-order or certificate-pin mismatches
+ok 5 - WeChat verifies signed encrypted callbacks and rejects local-order or certificate-pin mismatches
+  ---
+  duration_ms: 254.9894
+  type: 'test'
+  ...
+# Subtest: Epay verifies configured merchant and binds its signed amount and channel
+ok 6 - Epay verifies configured merchant and binds its signed amount and channel
+  ---
+  duration_ms: 37.8376
+  type: 'test'
+  ...
+# Subtest: VMQ settlement binds the base order amount and allows only the upstream nine-fen collision range
+ok 7 - VMQ settlement binds the base order amount and allows only the upstream nine-fen collision range
+  ---
+  duration_ms: 44.2085
+  type: 'test'
+  ...
+# Subtest: WeChat settlement binds signed merchant, app, order, state, currency, amount, and channel
+ok 8 - WeChat settlement binds signed merchant, app, order, state, currency, amount, and channel
+  ---
+  duration_ms: 1.6489
+  type: 'test'
+  ...
+# Subtest: Alipay settlement binds signed app, seller, order, paid status, currency, and exact amount
+ok 9 - Alipay settlement binds signed app, seller, order, paid status, currency, and exact amount
+  ---
+  duration_ms: 0.4769
+  type: 'test'
+  ...
+# Subtest: Epay and VMQ callbacks bind the configured merchant, local order, channel, amount, and paid state
+ok 10 - Epay and VMQ callbacks bind the configured merchant, local order, channel, amount, and paid state
+  ---
+  duration_ms: 1.6742
+  type: 'test'
+  ...
+# Subtest: decimal conversion rejects rounded, scientific, negative, and malformed amounts
+ok 11 - decimal conversion rejects rounded, scientific, negative, and malformed amounts
+  ---
+  duration_ms: 0.2508
+  type: 'test'
+  ...
+# Subtest: callback form parser rejects ambiguous duplicate fields
+ok 12 - callback form parser rejects ambiguous duplicate fields
+  ---
+  duration_ms: 0.9794
+  type: 'test'
+  ...
+# Subtest: oversized request bodies get 413 without retaining the oversized body
+ok 13 - oversized request bodies get 413 without retaining the oversized body
+  ---
+  duration_ms: 497.6182
+  type: 'test'
+  ...
+# Subtest: demo payment page escapes an untrusted subscription handle
+ok 14 - demo payment page escapes an untrusted subscription handle
+  ---
+  duration_ms: 24.823
+  type: 'test'
+  ...
+# Subtest: manual claim input cannot forge sponsor log lines or terminal colors
+ok 15 - manual claim input cannot forge sponsor log lines or terminal colors
+  ---
+  duration_ms: 19.2552
+  type: 'test'
+  ...
+# sponsor smoke isolation passed; pre-existing order, subscription, and activation files were preserved
+# Subtest: smoke-isolation.test.mjs
+ok 5 - smoke-isolation.test.mjs
+  ---
+  duration_ms: 1093.7815
+  type: 'test'
+  ...
+# Subtest: malformed, empty, truncated, unreadable, or wrong-shape stores refuse startup without rewriting data
+ok 17 - malformed, empty, truncated, unreadable, or wrong-shape stores refuse startup without rewriting data
+  ---
+  duration_ms: 2206.0162
+  type: 'test'
+  ...
+# Subtest: damaged or mismatched signing keys are never silently regenerated
+ok 18 - damaged or mismatched signing keys are never silently regenerated
+  ---
+  duration_ms: 839.4703
+  type: 'test'
+  ...
+# Subtest: missing signing key is initialized once and survives restart unchanged
+ok 19 - missing signing key is initialized once and survives restart unchanged
+  ---
+  duration_ms: 730.8205
+  type: 'test'
+  ...
+# Subtest: startup recovers interrupted fulfillment idempotently across restarts
+ok 20 - startup recovers interrupted fulfillment idempotently across restarts
+  ---
+  duration_ms: 698.4304
+  type: 'test'
+  ...
+# Subtest: only ENOENT uses the first-run fallback; empty, truncated, and invalid JSON remain untouched
+ok 21 - only ENOENT uses the first-run fallback; empty, truncated, and invalid JSON remain untouched
+  ---
+  duration_ms: 10.5052
+  type: 'test'
+  ...
+# Subtest: permission errors and non-regular paths fail instead of using empty business data
+ok 22 - permission errors and non-regular paths fail instead of using empty business data
+  ---
+  duration_ms: 2.1952
+  type: 'test'
+  ...
+# Subtest: atomic writes preserve valid JSON and never replace a symlink destination
+ok 23 - atomic writes preserve valid JSON and never replace a symlink destination # SKIP
+  ---
+  duration_ms: 0.1422
+  type: 'test'
+  ...
+# Subtest: concurrent sponsor processes serialize state read-modify-write transactions
+ok 24 - concurrent sponsor processes serialize state read-modify-write transactions
+  ---
+  duration_ms: 850.3663
+  type: 'test'
+  ...
+# Subtest: active state locks time out without deleting another process lock
+ok 25 - active state locks time out without deleting another process lock
+  ---
+  duration_ms: 51.2712
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 8329.3386

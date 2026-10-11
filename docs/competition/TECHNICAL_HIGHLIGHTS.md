@@ -75,3 +75,17 @@ Agent Canary 为由宿主控制的 AI Agent 工具调用链提供**事件触发�
 ## AI 增强版追加记录
 
 新增亮点：AI 建议与确定性执行分离、多协议本地/云端 Adapter、输入预览/同意、来源 ID 绑定、中文可运行控制台。接口兼容是工程价值，不宣称首创。真实云端和多模型比较未验证。参见 docs/AI_PROVIDERS.md 及 AI_ENHANCEMENT_REPORT.md。
+
+## 第四轮最终增补
+
+最新证据与完整边界见 [FOURTH_ROUND_FINAL_REPORT.md](FOURTH_ROUND_FINAL_REPORT.md)。历史记录保留，不是本轮最新数据。
+
+| 组 | 攻击成功 | 观察到拒绝防止 | Canary | Guard | 策略拒绝/待批 | 正常中断 | 正常完成 |
+|---|---|---|---|---|---|---|---|
+|A_no_canary|5/15|0/15|NOT APPLICABLE|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|B_decoy_only|5/15|0/15|0/15|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|C_guarded_router|5/15|0/15|0/15|0/9|NOT APPLICABLE|0/6|6/6|
+|D1_policy|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+|D2_policy_ai|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+
+独立自动测试 {'tests': 201, 'pass': 196, 'fail': 0, 'skipped': 5}。实际 CI：834ef1a361386736be2101bfa635bf0bb531dfb4：9/9 jobs 成功；https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38113459806。常规 V1/V2 风险仍 OPEN，独立免费竞赛构建排除商业实现。AI 只解释；批准需可信宿主。

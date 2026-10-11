@@ -1,0 +1,13 @@
+flowchart LR
+ U[不可信输入] --> A[宿主Agent选工具]
+ A --> P[可信工具描述与参数策略]
+ P --> G[Guard最终检查]
+ G --> T[受保护callback]
+ A --> C[诱饵/Token信号]
+ C --> Q[同步QUARANTINED]
+ Q --> G
+ P --> L[脱敏审计]
+ G --> L
+ L --> AI[事后AI分析建议]
+ H[已认证宿主人工批准] --> P
+ O[绕过Router的调用 OUT_OF_SCOPE]

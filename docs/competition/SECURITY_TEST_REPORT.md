@@ -98,3 +98,17 @@ node smoke.mjs
 ## AI 增强版追加记录
 
 新增 AI 安全回归（原生协议、同意、密钥、SSRF、结构/证据、取消超时、Guard 独立、CSV、控制台）与真实本地分析。最终四输入结构 4/4、标签一致 3/4；本轮36次 neutral A/B/C 的成功场景为1/10、2/10、2/10，模型诱饵0/20，C无信号危险动作阻断0/5。详情与失败记录见 AI_ENHANCEMENT_REPORT.md。
+
+## 第四轮最终增补
+
+最新证据与完整边界见 [FOURTH_ROUND_FINAL_REPORT.md](FOURTH_ROUND_FINAL_REPORT.md)。历史记录保留，不是本轮最新数据。
+
+| 组 | 攻击成功 | 观察到拒绝防止 | Canary | Guard | 策略拒绝/待批 | 正常中断 | 正常完成 |
+|---|---|---|---|---|---|---|---|
+|A_no_canary|5/15|0/15|NOT APPLICABLE|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|B_decoy_only|5/15|0/15|0/15|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|C_guarded_router|5/15|0/15|0/15|0/9|NOT APPLICABLE|0/6|6/6|
+|D1_policy|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+|D2_policy_ai|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+
+独立自动测试 {'tests': 201, 'pass': 196, 'fail': 0, 'skipped': 5}。实际 CI：834ef1a361386736be2101bfa635bf0bb531dfb4：9/9 jobs 成功；https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38113459806。常规 V1/V2 风险仍 OPEN，独立免费竞赛构建排除商业实现。AI 只解释；批准需可信宿主。

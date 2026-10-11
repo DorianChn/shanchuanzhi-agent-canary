@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+ok 1 - multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+  ---
+  duration_ms: 16.8174
+  type: 'test'
+  ...
+# Subtest: OBSERVE permits public read and reviewed shell/HTTPS GET
+ok 2 - OBSERVE permits public read and reviewed shell/HTTPS GET
+  ---
+  duration_ms: 8.5005
+  type: 'test'
+  ...
+# Subtest: OBSERVE treats explicit secret shell by declared mode
+ok 3 - OBSERVE treats explicit secret shell by declared mode
+  ---
+  duration_ms: 2.6573
+  type: 'test'
+  ...
+# Subtest: OBSERVE never overrides quarantined Guard
+ok 4 - OBSERVE never overrides quarantined Guard
+  ---
+  duration_ms: 5.5534
+  type: 'test'
+  ...
+# Subtest: BALANCED permits public read and reviewed shell/HTTPS GET
+ok 5 - BALANCED permits public read and reviewed shell/HTTPS GET
+  ---
+  duration_ms: 5.9314
+  type: 'test'
+  ...
+# Subtest: BALANCED treats explicit secret shell by declared mode
+ok 6 - BALANCED treats explicit secret shell by declared mode
+  ---
+  duration_ms: 1.872
+  type: 'test'
+  ...
+# Subtest: BALANCED never overrides quarantined Guard
+ok 7 - BALANCED never overrides quarantined Guard
+  ---
+  duration_ms: 4.6743
+  type: 'test'
+  ...
+# Subtest: STRICT permits public read and reviewed shell/HTTPS GET
+ok 8 - STRICT permits public read and reviewed shell/HTTPS GET
+  ---
+  duration_ms: 5.3307
+  type: 'test'
+  ...
+# Subtest: STRICT treats explicit secret shell by declared mode
+ok 9 - STRICT treats explicit secret shell by declared mode
+  ---
+  duration_ms: 2.2951
+  type: 'test'
+  ...
+# Subtest: STRICT never overrides quarantined Guard
+ok 10 - STRICT never overrides quarantined Guard
+  ---
+  duration_ms: 5.9455
+  type: 'test'
+  ...
+# Subtest: sensitive path is parameter-based even under an innocuous tool alias
+ok 11 - sensitive path is parameter-based even under an innocuous tool alias
+  ---
+  duration_ms: 2.2062
+  type: 'test'
+  ...
+# Subtest: one-shot host approval binds immutable call; model approval fields cannot grant
+ok 12 - one-shot host approval binds immutable call; model approval fields cannot grant
+  ---
+  duration_ms: 3.7848
+  type: 'test'
+  ...
+# Subtest: approval expired, foreign, missing operator and quarantined requests are rejected
+ok 13 - approval expired, foreign, missing operator and quarantined requests are rejected
+  ---
+  duration_ms: 15.8265
+  type: 'test'
+  ...
+# Subtest: approved secret read taints later network egress and cannot be approved through
+ok 14 - approved secret read taints later network egress and cannot be approved through
+  ---
+  duration_ms: 5.2753
+  type: 'test'
+  ...
+# Subtest: pending network request is rechecked after another secret read
+ok 15 - pending network request is rechecked after another secret read
+  ---
+  duration_ms: 6.9323
+  type: 'test'
+  ...
+# Subtest: replacing a policy router or mode cannot erase same-session sensitive history
+ok 16 - replacing a policy router or mode cannot erase same-session sensitive history
+  ---
+  duration_ms: 7.3743
+  type: 'test'
+  ...
+# Subtest: concurrent one-shot approvals execute once
+ok 17 - concurrent one-shot approvals execute once
+  ---
+  duration_ms: 4.15
+  type: 'test'
+  ...
+# Subtest: a decoy quarantines immediately while another callback is in flight
+ok 18 - a decoy quarantines immediately while another callback is in flight
+  ---
+  duration_ms: 18.728
+  type: 'test'
+  ...
+# Subtest: malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+ok 19 - malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+  ---
+  duration_ms: 9.3096
+  type: 'test'
+  ...
+# Subtest: destructive and write approvals keep ordinary workflow possible
+ok 20 - destructive and write approvals keep ordinary workflow possible
+  ---
+  duration_ms: 10.6523
+  type: 'test'
+  ...
+# Subtest: audit errors do not execute callbacks; audit omits raw arguments
+ok 21 - audit errors do not execute callbacks; audit omits raw arguments
+  ---
+  duration_ms: 5.0028
+  type: 'test'
+  ...
+# Subtest: accessors, cycles and oversized JSON cannot control policy
+ok 22 - accessors, cycles and oversized JSON cannot control policy
+  ---
+  duration_ms: 0.8316
+  type: 'test'
+  ...
+# Subtest: queue capacity is bounded while decoys retain immediate priority
+ok 23 - queue capacity is bounded while decoys retain immediate priority
+  ---
+  duration_ms: 151.8492
+  type: 'test'
+  ...
+# Subtest: console approval requires separate operator capability, cannot be forged with known CSRF
+ok 24 - console approval requires separate operator capability, cannot be forged with known CSRF
+  ---
+  duration_ms: 199.6095
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 888.6901

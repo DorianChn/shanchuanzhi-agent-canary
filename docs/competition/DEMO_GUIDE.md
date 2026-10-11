@@ -99,3 +99,17 @@ npm exec -- node competition-submission/lab/serve-dashboard.mjs
 ## AI 增强版追加记录
 
 AI 增强入口：npm run build 后 npm run ai:console，选择已有 Ollama 模型、离线隔离日志、真实分析和报告。npm run ai:demo 产生四样本真实分析；npm run lab:agent -- --profile=neutral_agent 复用虚拟工具框架。新旧视频区分见 competition-submission/Agent_Canary_AI增强录屏脚本.md。
+
+## 第四轮最终增补
+
+最新证据与完整边界见 [FOURTH_ROUND_FINAL_REPORT.md](FOURTH_ROUND_FINAL_REPORT.md)。历史记录保留，不是本轮最新数据。
+
+| 组 | 攻击成功 | 观察到拒绝防止 | Canary | Guard | 策略拒绝/待批 | 正常中断 | 正常完成 |
+|---|---|---|---|---|---|---|---|
+|A_no_canary|5/15|0/15|NOT APPLICABLE|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|B_decoy_only|5/15|0/15|0/15|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|C_guarded_router|5/15|0/15|0/15|0/9|NOT APPLICABLE|0/6|6/6|
+|D1_policy|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+|D2_policy_ai|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+
+独立自动测试 {'tests': 201, 'pass': 196, 'fail': 0, 'skipped': 5}。实际 CI：834ef1a361386736be2101bfa635bf0bb531dfb4：9/9 jobs 成功；https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38113459806。常规 V1/V2 风险仍 OPEN，独立免费竞赛构建排除商业实现。AI 只解释；批准需可信宿主。

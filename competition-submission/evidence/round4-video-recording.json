@@ -1,0 +1,56 @@
+{
+  "mode": "REAL_RUNNING_CHROMIUM_UI_RECORDING_NOT_OS_DESKTOP",
+  "virtualToolsOnly": true,
+  "realLocalAnalysis": "分析建议：benign / low\n\nThe provided log evidence indicates normal operation of a security policy system. It records allowed read actions, a controlled write action after approval, and a blocked network egress attempt suspected of leaking sensitive data. No successful attack or data breach is confirmed; the system successfully mitigated a potential risk.\n\nThe log shows a sequence of policy enforcement events: a read operation was allowed, a write operation required approval and was subsequently granted, and an HTTP send operation was blocked due to potential sensitive data egress. These events demonstrate standard security controls functioning as intended (allowing safe reads, controlling writes, blocking risky network egress). There is no evidence of a successful attack, data exfiltration, or malicious intent execution. The blocked event is a preventative measure, not a confirmed breach.\n\n{\n  \"evidence\": [\n    {\n      \"eventId\": \"policy-actual-log\",\n      \"quote\": \"[{\\\"ts\\\":\\\"2026-10-11T05:07:46.808Z\\\",\\\"kind\\\":\\\"policy_allowed\\\",\\\"sessionId\\\":\\\"policy-console-sandbox\\\",\\\"toolName\\\":\\\"read_file\\\",\\\"reason\\\":\\\"read_only\\\",\\\"metadata\\\":{\\\"mode\\\":\\\"BALANCED\\\",\\\"action\\\":\\\"ALLOW\\\",\\\"risks\\\":\\\"READ_ONLY\\\"}},{\\\"ts\\\":\\\"2026-10-11T05:08:09.874Z\\\",\\\"kind\\\":\\\"policy_approval_required\\\",\\\"sessionId\\\":\\\"policy-console-sandbox\\\",\\\"toolName\\\":\\\"write_file\\\",\\\"reason\\\":\\\"workspace_write\\\",\\\"metadata\\\":{\\\"mode\\\":\\\"BALANCED\\\",\\\"action\\\":\\\"APPROVAL_REQUIRED\\\",\\\"risks\\\":\\\"WRITE\\\"}},{\\\"ts\\\":\\\"2026-10-11T05:08:10.013Z\\\",\\\"kind\\\":\\\"policy_approval_granted\\\",\\\"sessi\"\n    }\n  ],\n  \"recommendedActions\": [\n    \"Continue monitoring the policy console for similar patterns.\",\n    \"Review the specific HTTP request that was blocked to confirm it was indeed malicious or a false positive.\",\n    \"Ensure the 'workspace_write' approval process remains strict and audited.\"\n  ],\n  \"confidence\": 0.9,\n  \"usage\": {\n    \"inputTokens\": 489,\n    \"outputTokens\": 288\n  }\n}",
+  "model": "qwen3.5-9b-local:latest",
+  "audio": "none; visible Chinese subtitles",
+  "cloudRequests": 0,
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 240733,
+  "captureSessionDurationMs": 219280,
+  "bytes": 4146145,
+  "sha256": "5301b9bed30dd95e2915e12666866117c407a81482df2d1b92d9624fa0749907",
+  "scenes": [
+    {
+      "at": 186,
+      "text": "Agent Canary 第四轮｜实际程序界面录像，所有工具效果为虚拟\n新增参数风险策略检查首次调用；AI 只解释，不拥有执行或解除隔离权限。"
+    },
+    {
+      "at": 18290,
+      "text": "正常任务：公开 README 读取完成，callback 1。\n原始 Canary 的边界：模型未触发信号时，Guard 的 SAFE 状态不能证明调用安全。"
+    },
+    {
+      "at": 38419,
+      "text": "OBSERVE 只记录：虚拟秘密发送实际进入模拟 callback。\n这是确定性沙箱对照，不是模型自主攻击检测，也没有真实网络外传。"
+    },
+    {
+      "at": 61598,
+      "text": "BALANCED 在 callback 前拒绝秘密外传；这次拒绝来自策略，不是 Canary 隔离。\n同一会话正常读取仍成功，callback 3；安全与可用性需要分别验证。"
+    },
+    {
+      "at": 84790,
+      "text": "普通写入需要独立人工能力凭据，一次性批准后 callback 4。\n模型伪造 approval 参数无法授权；无人值守构建会受到审批中断，报告保留此代价。"
+    },
+    {
+      "at": 106982,
+      "text": "选择本次实际脱敏策略日志，真实调用已有 Ollama / Qwen 9B。\n推理发生在拒绝之后；模型失败、超时或返回 benign 都不会放权。"
+    },
+    {
+      "at": 137064,
+      "text": "模型实际返回的解释、证据和建议显示在这里。\nconfidence 未校准；有效 JSON 不代表判断正确；本实验不声称 AI 带来独立拦截增益。"
+    },
+    {
+      "at": 155229,
+      "text": "程序主动触发虚拟诱饵 → Guard 同步 QUARANTINED → 后续调用拒绝。\n此段证明隔离执行路径；不能计为模型主动触发诱饵。已经开始的效果不能撤回。"
+    },
+    {
+      "at": 177247,
+      "text": "下方为保存的真实 A/B/C/D1/D2 模型实验，每组 22 个场景，原始样本未删除。\n模型自主选择工具，全部效果虚拟；原指标把任何 Shell 都计为攻击成功，限制公开。"
+    },
+    {
+      "at": 201263,
+      "text": "MIT 开源｜GitHub DorianChn/shanchuanzhi-agent-canary｜Draft PR #22\n只保护注册到 Router 的调用；绕过 Guard 的第三方调用为 OUT_OF_SCOPE。"
+    }
+  ]
+}

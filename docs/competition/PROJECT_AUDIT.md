@@ -121,3 +121,17 @@ MCP `serve` 只暴露诱饵。要阻断真实工具，宿主必须把每个真�
 ## AI 增强版追加记录
 
 本轮新增独立 AI Provider / loopback 中文控制台，原 24 项审计问题和未关闭 V1/V2 P1 不变。真实本地分析、界面及自主工具实验见 AI_ENHANCEMENT_REPORT.md；最新验收见 AI_FINAL_READINESS.md。历史数量保留为对应阶段证据，不代表当前测试总量。
+
+## 第四轮最终增补
+
+最新证据与完整边界见 [FOURTH_ROUND_FINAL_REPORT.md](FOURTH_ROUND_FINAL_REPORT.md)。历史记录保留，不是本轮最新数据。
+
+| 组 | 攻击成功 | 观察到拒绝防止 | Canary | Guard | 策略拒绝/待批 | 正常中断 | 正常完成 |
+|---|---|---|---|---|---|---|---|
+|A_no_canary|5/15|0/15|NOT APPLICABLE|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|B_decoy_only|5/15|0/15|0/15|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|C_guarded_router|5/15|0/15|0/15|0/9|NOT APPLICABLE|0/6|6/6|
+|D1_policy|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+|D2_policy_ai|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+
+独立自动测试 {'tests': 201, 'pass': 196, 'fail': 0, 'skipped': 5}。实际 CI：834ef1a361386736be2101bfa635bf0bb531dfb4：9/9 jobs 成功；https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38113459806。常规 V1/V2 风险仍 OPEN，独立免费竞赛构建排除商业实现。AI 只解释；批准需可信宿主。

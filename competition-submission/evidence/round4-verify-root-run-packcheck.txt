@@ -1,0 +1,5 @@
+
+> @dorianchn/agent-canary@1.2.7 pack:check
+> node scripts/check-package.mjs
+
+package smoke check passed: dorianchn-agent-canary-1.2.7.tgz (35 files)

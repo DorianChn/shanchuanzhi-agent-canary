@@ -1,0 +1,17 @@
+{
+  "file": "Agent_Canary_Round4_Demo.mp4",
+  "seconds": 240.733333,
+  "bytes": 4146145,
+  "sha256": "5301b9bed30dd95e2915e12666866117c407a81482df2d1b92d9624fa0749907",
+  "codec": "h264",
+  "width": 1920,
+  "height": 1080,
+  "fullDecode": "VERIFIED",
+  "renderedActualSceneFrames": 10,
+  "contentMode": "actual Chromium UI recording, virtual tools, one real local model analysis; not OS desktop",
+  "audio": "none; authored visible Chinese subtitles",
+  "oldVideoPreserved": true,
+  "publicPlayback": "NOT VERIFIED until GitHub upload and actual browser load",
+  "visualReview": "VERIFIED: ten actual scene frames inspected; visible Chinese captions, unchanged actual local model benign/low response, simulated scope, policy and Guard states",
+  "oldVideoBackup": "New filename; original Agent_Canary_AI_Demo.mp4 preserved in worktree and Git"
+}

@@ -84,3 +84,17 @@
 最终 AI 代码 d7e0a0e：根 152（148/0/4）、sponsor 25（24/0/1），共 177（172 通过/0 失败/5 跳过）；pack 32 files，audit 均 0。Run 38078821555 实际 9/9 SUCCESS，包含三平台 Node 20/22 与 Docker CLI smoke。此前 d26aad7 的 Windows EPERM CI 失败保留，新增两项锁回归有修复前失败和修复后通过日志，不把失败改成跳过。
 
 新 AI 视频 Agent_Canary_AI_Demo.mp4：H.264 1920×1080，220.933 秒，3,397,872 字节，无音轨、屏幕中文字幕；实际运行 Chromium UI 录像，真实 Ollama 分析，明确离线演示与保存数据，非 OS 桌面录像。全片解码 exit 0，90/125/175/200 秒抽帧检查，哈希与公开验证见 ai-video-verification.json。当前 PDF 17/7 页已重新提取、24 页渲染并检查关键页。新材料仍未发邮件。
+
+## 第四轮最终增补
+
+最新证据与完整边界见 [FOURTH_ROUND_FINAL_REPORT.md](FOURTH_ROUND_FINAL_REPORT.md)。历史记录保留，不是本轮最新数据。
+
+| 组 | 攻击成功 | 观察到拒绝防止 | Canary | Guard | 策略拒绝/待批 | 正常中断 | 正常完成 |
+|---|---|---|---|---|---|---|---|
+|A_no_canary|5/15|0/15|NOT APPLICABLE|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|B_decoy_only|5/15|0/15|0/15|NOT APPLICABLE|NOT APPLICABLE|0/6|6/6|
+|C_guarded_router|5/15|0/15|0/15|0/9|NOT APPLICABLE|0/6|6/6|
+|D1_policy|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+|D2_policy_ai|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
+
+独立自动测试 {'tests': 201, 'pass': 196, 'fail': 0, 'skipped': 5}。实际 CI：834ef1a361386736be2101bfa635bf0bb531dfb4：9/9 jobs 成功；https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38113459806。常规 V1/V2 风险仍 OPEN，独立免费竞赛构建排除商业实现。AI 只解释；批准需可信宿主。
