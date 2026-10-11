@@ -3,8 +3,10 @@ import {createAgentGuard,type ContainmentStateStore} from './containment.js';imp
 function hookStore(directory:string):ContainmentStateStore{
  fs.mkdirSync(directory,{recursive:true,mode:0o700});if(fs.lstatSync(directory).isSymbolicLink())throw Error('HOOK_STATE_SYMLINK');
  const file=(scope:string)=>path.join(directory,createHash('sha256').update(scope).digest('hex')+'.quarantine');
- const get=(scope:string)=>{try{const name=file(scope),stat=fs.lstatSync(name);if(stat.isSymbolicLink()||!stat.isFile()||stat.size>1000)throw Error('HOOK_STATE_UNSAFE');if(fs.readFileSync(name,'utf8')!=='QUARANTINED\n')throw Error('HOOK_STATE_CORRUPT');return 'QUARANTINED' as const;}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT')return undefined;throw e;}};
- return {get,quarantine(scope){try{fs.writeFileSync(file(scope),'QUARANTINED\n',{flag:'wx',mode:0o600});return true;}catch(e){if((e as NodeJS.ErrnoException).code==='EEXIST')return get(scope)==='QUARANTINED';throw e;}},reset(){throw Error('HOOK_RESET_UNSUPPORTED');}};
+ const failMarker=path.join(directory,'.fail-closed'),lock=path.join(directory,'.write-lock');
+ const checkCapacity=()=>{const dir=fs.opendirSync(directory);let count=0;try{for(let entry=dir.readSync();entry;entry=dir.readSync()){if(entry.name.endsWith('.quarantine')&&++count>=1024)throw Error('HOOK_STATE_CAPACITY_FAIL_CLOSED');}}finally{dir.closeSync();}};
+ const get=(scope:string)=>{fs.accessSync(directory,fs.constants.W_OK);if(fs.existsSync(failMarker))throw Error('HOOK_STATE_OPERATOR_REVIEW_REQUIRED');try{const name=file(scope),stat=fs.lstatSync(name);if(stat.isSymbolicLink()||!stat.isFile()||stat.size>1000)throw Error('HOOK_STATE_UNSAFE');if(fs.readFileSync(name,'utf8')!=='QUARANTINED\n')throw Error('HOOK_STATE_CORRUPT');return 'QUARANTINED' as const;}catch(e){if((e as NodeJS.ErrnoException).code==='ENOENT'){checkCapacity();return undefined;}throw e;}};
+ return {get,quarantine(scope){let fd:number|undefined;try{if(get(scope))return true;fd=fs.openSync(lock,'wx',0o600);checkCapacity();fs.writeFileSync(file(scope),'QUARANTINED\n',{flag:'wx',mode:0o600});return true;}catch(e){try{fs.writeFileSync(failMarker,'Operator review required; do not auto-reset\n',{flag:'wx',mode:0o600});}catch{}throw e;}finally{if(fd!==undefined){fs.closeSync(fd);fs.unlinkSync(lock);}}},reset(){throw Error('HOOK_RESET_UNSUPPORTED');}};
 }
 /** Official hook protocol adapter. Input fixtures verified; actual client activation is separate. */
 export async function decideAgentHook(client:'claude'|'cursor',workspaceRoot:string,stateDirectory:string,input:Record<string,unknown>){
@@ -12,8 +14,9 @@ export async function decideAgentHook(client:'claude'|'cursor',workspaceRoot:str
  const session=String(input.session_id??input.conversation_id??'');if(!/^[a-zA-Z0-9_.-]{1,128}$/.test(session))throw Error('HOOK_SESSION_REQUIRED');
  const name=String(input.tool_name??(typeof input.command==='string'?'Shell':'Unknown'));
  const raw=input.tool_input&&typeof input.tool_input==='object'&&!Array.isArray(input.tool_input)?input.tool_input as Record<string,unknown>:input;
- const principal=createHash('sha256').update(client+':'+session).digest('hex');
- const guard=createAgentGuard({sessionId:principal,principalId:principal,stateStore:hookStore(stateDirectory),alert:false});
+ const principal=createHash('sha256').update(client+':'+fs.realpathSync(workspaceRoot)).digest('hex'),sessionKey=createHash('sha256').update(client+':'+session).digest('hex');
+ const guard=createAgentGuard({sessionId:sessionKey,principalId:principal,stateStore:hookStore(stateDirectory),alert:false});
+ guard.inspect(JSON.stringify(raw),'native-hook-arguments');
  const decoy=name.split('__').at(-1)??name;
  let permission:'allow'|'deny'|'ask'='ask',reason='unregistered_tool';
  if(isDecoy(decoy)){await guard.runDecoy(decoy,{});permission='deny';reason='canary_quarantine';}

@@ -5,11 +5,11 @@ import {createSecurityToolRouter} from '../security-router.js';
 import type {AIProvider} from './types.js';
 import {readEvents} from '../alerts.js';
 /** Console-only virtual executors. No shell/file/network side effects. */
-export function createPolicySandbox(){
+export function createPolicySandbox(options:{reviewTimeoutMs?:number}={}){
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-policy-console-')),eventsFile=path.join(dir,'events.jsonl');
  const guard=createAgentGuard({sessionId:'policy-console-sandbox',eventsFile,alert:false});
  let mode:ProtectionMode='BALANCED',callbacks=0,busy=false,reviewEnabled=false,provider:AIProvider|undefined;
- const build=()=>createSecurityToolRouter({guard,mode,workspaceRoot:dir,eventsFile,provider:reviewEnabled?provider:undefined,tools:{read_file:{operation:'file-read'},write_file:{operation:'file-write'},send_http:{operation:'http'},run_shell:{operation:'shell'},read_secret:{operation:'sensitive-read'}},executeRealTool:call=>{callbacks++;return{simulated:true,callbackExecuted:true,tool:call.name,value:call.name==='read_file'?'Public README':call.name==='read_secret'?'NOT_A_REAL_CREDENTIAL_DEMO':'virtual effect accepted',realExternalEffects:0};}});
+ const build=()=>createSecurityToolRouter({guard,mode,workspaceRoot:dir,eventsFile,reviewTimeoutMs:options.reviewTimeoutMs,provider:reviewEnabled?provider:undefined,tools:{read_file:{operation:'file-read'},write_file:{operation:'file-write'},send_http:{operation:'http'},run_shell:{operation:'shell'},read_secret:{operation:'sensitive-read'}},executeRealTool:call=>{callbacks++;return{simulated:true,callbackExecuted:true,tool:call.name,value:call.name==='read_file'?'Public README':call.name==='read_secret'?'NOT_A_REAL_CREDENTIAL_DEMO':'virtual effect accepted',realExternalEffects:0};}});
  let router=build();
  const state=()=>({mode,guardState:guard.state,callbacks,pending:router.pendingApprovals(),events:readEvents(eventsFile,100),dataflow:router.dataflow(),reviews:router.reviews(),reviewEnabled,scope:'VIRTUAL_EXECUTORS; optional actual local AI review; not global host mode'});
  async function attempt(operation:()=>Promise<unknown>){if(busy)throw new Error('POLICY_SANDBOX_BUSY');busy=true;try{return{status:'EXECUTED',result:await operation(),...state()};}catch(e){if(e instanceof PolicyBlockedError)return{status:e.decision.action,decision:e.decision,...state()};if(e instanceof CanaryBlockedError)return{status:'BLOCKED_BY_GUARD',decision:e.decision,...state()};throw e;}finally{busy=false;}}

@@ -3,7 +3,8 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawn, type ChildProcess } from 'node:child_process';
+import { spawn, execFile, type ChildProcess } from 'node:child_process';
+import {promisify} from 'node:util';
 import { readEvents } from '../alerts.js';
 import { createAIProvider, PROVIDER_PRESETS, previewAnalysis, redactAnalysisText, formatAnalysisEvent } from './provider.js';
 import type { ProviderConfig, SecurityAnalysisResult } from './types.js';
@@ -14,7 +15,7 @@ import {createPolicySandbox} from './policy-demo.js';
 import os from 'node:os';
 import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient} from '../agent-integrations.js';
 
-export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string } = {}) {
+export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number } = {}) {
   const port = options.port ?? 4318;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('AI_CONSOLE_PORT_INVALID');
   const csrf = randomBytes(32).toString('hex');
@@ -27,7 +28,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   let child: ChildProcess | undefined;
   const operatorCode=options.operatorApprovalCode;
   const secrets = [...(options.apiKey?[options.apiKey]:[]),...(operatorCode?[operatorCode]:[])];
-  const sandbox=createPolicySandbox();
+  const sandbox=createPolicySandbox({reviewTimeoutMs:options.preReviewTimeoutMs});
   const integrationProject=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-integration-'));
   const integrationRecords=new Map<string,ReturnType<typeof installAgentIntegration>>();
   const integrationEntry={command:process.execPath,args:[path.join(root,'dist/competition.js'),'serve']};
@@ -77,6 +78,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       if(req.url==='/api/agents/preview'){const p=previewAgentIntegration(body.agent as AgentClient,integrationProject,integrationEntry);reply({agent:p.agent,configPath:p.configPath,entry:p.entry,baseHash:p.baseHash,status:p.status,coverage:p.coverage});return;}
       if(req.url==='/api/agents/install'){const r=installAgentIntegration(body.agent,integrationProject,integrationEntry,body.baseHash);integrationRecords.set(body.agent,r);reply({agent:r.agent,status:r.status,coverage:r.coverage});return;}
       if(req.url==='/api/agents/restore'){const r=integrationRecords.get(body.agent);if(!r)throw new Error('INTEGRATION_NOT_INSTALLED');reply(restoreAgentIntegration(r));integrationRecords.delete(body.agent);return;}
+      if(req.url==='/api/agents/probe'){const script=path.join(root,'competition-submission/lab/verify-v2-mcp.mjs');if(!fs.existsSync(script))throw new Error('PROTECTED_MCP_PROBE_NOT_INCLUDED');const result=await promisify(execFile)(process.execPath,[script],{cwd:root,windowsHide:true,timeout:20_000,maxBuffer:8000});reply({...JSON.parse(result.stdout.trim()),coverage:'Actual SDK stdio probe of three virtual host callbacks; desktop client activation NOT VERIFIED'});return;}
       if(req.url==='/api/policy/review'){if(typeof body.enabled!=='boolean')throw new Error('PRE_REVIEW_BOOLEAN_REQUIRED');reply(sandbox.setReview(body.enabled,provider));return;}
       if (req.url === '/api/policy/mode') { reply(sandbox.setMode(body.mode)); return; }
       if (req.url === '/api/policy/action') { reply(await sandbox.action(body.action)); return; }

@@ -73,9 +73,11 @@ button2(agents2,'detectAgents','检测本机 Agent 配置目录',async()=>{agent
 button2(agents2,'previewAgent','预览所选配置',async()=>{agentPreview=await api('agents/preview',{agent:agentSelect.value});agentPanel.textContent=JSON.stringify(agentPreview,null,2);});
 button2(agents2,'installAgent','安装到演示项目',async()=>{if(!agentPreview||agentPreview.agent!==agentSelect.value)throw Error('请先预览当前 Agent 配置');agentPanel.textContent=JSON.stringify(await api('agents/install',{agent:agentSelect.value,baseHash:agentPreview.baseHash}),null,2);agentPreview=null;});
 button2(agents2,'restoreAgent','恢复演示项目配置',async()=>{agentPanel.textContent=JSON.stringify(await api('agents/restore',{agent:agentSelect.value}),null,2);});
+button2(agents2,'verifyProtectedMcp','验证受保护 MCP 握手与隔离',async()=>{agentPanel.textContent=JSON.stringify(await api('agents/probe',{}),null,2);});
 const eval2=section2('eval2','A / B / C / D / E 真实模型实验','E 增加事前 AI 审查。危险执行器始终是虚拟实现；AI 判为安全仍需人工批准。报告保留失败和超时，不把审批中断当作检测成功。');
 const evalPanel=document.createElement('pre');evalPanel.id='evalPanel';eval2.append(evalPanel);
-button2(eval2,'loadEval2','读取保存的 2.0 实验',async()=>{evalPanel.textContent=JSON.stringify(await api('v2'),null,2);});
+button2(eval2,'loadEval2','读取保存的 2.0 实验',async()=>{const s=await api('v2');if(!s.complete){evalPanel.textContent='NOT COMPLETED · 尚无完成的 2.0 真实模型实验';return;}const rate=v=>v.numerator+'/'+v.denominator;evalPanel.textContent='真实模型 / 虚拟效果 · '+s.model+' · '+s.totalTrials+' 次\n\n'+Object.entries(s.arms).map(([a,v])=>a+'：攻击成功 '+rate(v.attackSuccess)+'；正常完成 '+rate(v.normalTaskSuccess)+'；正常硬拒绝 '+rate(v.falsePositive)+'；事前审查 '+v.reviewRequests+' 次').join('\n')+'\n\nAI 独立收益：'+s.aiReviewContribution.causalIndependentGain+'\n原始文件：'+s.sourceFile;});
+button2(eval2,'exportEval2','导出 2.0 真实实验 JSON',async()=>{const s=await api('v2'),a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'}));a.href=u;a.download='agent-canary-v2-model-results.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});
 button2(eval2,'startEval2','启动本地真实 A/B/C/D/E 实验',async()=>{await api('eval',{v2:true});v2Status.textContent='真实本地实验已启动；零真实危险操作。进度见实验中心。';});
 refreshV2State().catch(e=>{v2Status.textContent=e.message;});
 </script></body></html>`;
