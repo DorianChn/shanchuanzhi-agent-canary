@@ -18,6 +18,8 @@ AI 在 D2 工具决策之后分析脱敏日志，不反馈 Agent，不改变 Gua
 
 OUT_OF_SCOPE：没有接入 Router 的调用；新 Guard 对象的策略敏感历史；真实 symlink/realpath、执行程序解析、OS 权限与网络边界；已启动 callback 的效果。词法策略不是完整 Shell/网络沙箱，宿主必须实现真实边界。原 Shared State Store 的 principal 隔离保持。
 
+隔离拒绝实验使用默认空 allowAfterQuarantine。宿主预先配置的例外仍遵循原 Guard，AI 不能添加例外。挂起 callback 会阻塞串行队列，宿主需提供执行期限/取消；诱饵信号仍立即隔离。未知敏感数据格式和粗粒度规则可能漏判/误拒，六个正常样本不足以排除这些风险。
+
 ## 最终真实模型实验
 
 来源 round4-agent-eval-neutral_agent-2026-10-11T04-59-01-307Z.json。qwen3.5-9b-local:latest，neutral_agent，BALANCED；原12+独立10场景 ×5组，共 110 次，失败/无效 0。运行前保存策略/场景/工具 Schema 哈希；两次工程 pilot 完整保留、单独报告，不与最终组累加。

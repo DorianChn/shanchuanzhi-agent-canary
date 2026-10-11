@@ -23,6 +23,8 @@ await router.dispatch({ name: 'read_file', args: { path: 'README.md' } });
 
 OBSERVE 会允许危险虚拟操作；不要把模式名称理解为安全保证。BALANCED 的构建、写入审批会中断无人值守工作流。STRICT 有明确兼容性影响。
 
+表格按 Guard 默认空 `allowAfterQuarantine` 配置。若可信宿主明确配置隔离后的例外工具，沿用原 Guard 的例外决策；新增策略仍检查其风险，AI 无权添加例外。宿主 callback 应有自身超时/取消边界：挂起操作会阻塞同 Guard 的后续串行调用，但不会阻止诱饵立即隔离。
+
 ## 审批权限
 
 `pendingApprovals()` 给出请求 ID、工具、风险和期限。`approve(id, operatorIdentity)` **只能由宿主的已认证人工审批流程调用**；identity 字符串本身不是认证，SDK 不代替宿主身份系统。禁止将 approve 暴露为 Agent/MCP 工具。
