@@ -269,3 +269,10 @@ npm run ai:console
 ## 可选确定性风险策略
 
 SDK 新增 createRiskPolicyRouter，支持 OBSERVE / BALANCED / STRICT。宿主注册工具描述并按参数检查，敏感外传拒绝，普通写入/构建可申请一次性人工批准。AI 仅提供事后解释，不能放权。只保护经过此 Router 的调用；路径、进程、网络和身份边界仍由宿主实现。详见 [策略合同与边界](docs/RISK_POLICY.md)。
+
+
+## 3.0 工程候选（独立分支，非稳定版）
+
+[Evidence and limitations](docs/3.0/FINAL_REPORT.md) · [SDK integration](docs/3.0/DEVELOPER_GUIDE.md) · [Real local-model trials](docs/3.0/REAL_AGENT_EVALUATION.md) · [Agent coverage](docs/3.0/AGENT_COVERAGE_MATRIX.md).
+
+Draft PR #24; only registered gateway callbacks are protected. Verified 2.0 materials remain available.

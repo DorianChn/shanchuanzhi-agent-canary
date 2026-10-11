@@ -331,3 +331,10 @@ available. See [provider documentation](docs/AI_PROVIDERS.md) and
 ## Optional deterministic risk policy
 
 The SDK now exports createRiskPolicyRouter with OBSERVE / BALANCED / STRICT. Host-owned tool descriptors and parameter checks gate registered callbacks before execution. Human approval is expiring and one-shot; AI advice never grants rights. Normal writes/builds may need approval. See [policy contract and limits](docs/RISK_POLICY.md) and the fourth-round competition report.
+
+
+## 3.0 engineering candidate
+
+[Evidence and limitations](docs/3.0/FINAL_REPORT.md) · [SDK integration](docs/3.0/DEVELOPER_GUIDE.md) · [Real local-model trials](docs/3.0/REAL_AGENT_EVALUATION.md) · [Agent coverage](docs/3.0/AGENT_COVERAGE_MATRIX.md).
+
+Draft PR #24; only registered gateway callbacks are protected. Verified 2.0 materials remain available.

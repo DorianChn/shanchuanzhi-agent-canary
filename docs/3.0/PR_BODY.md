@@ -11,14 +11,18 @@ Draft，尚未请求合并或稳定版发布。此 PR 以 `competition/shanchuan
 - 会话数据流指纹、有界 TTL / 容量，跨网关替换不清空同一 Guard 的敏感历史。
 - 增量中文控制台：真实临时 IO DEMO、局部证据、审批、蜜罐、报告导出。
 
-### 已有测试证据
+### 最新测试与实验（运行时代码9f00b6b）
 
-- 新增 28 项网关 / 蜜罐 / 数据流 / 控制台测试通过。旧回归测试保留。
-- 完整验证检查点：root 252 tests，248 pass、4 skip；Sponsor 25 tests，24 pass、1 skip，零失败。最终同会话历史保留补丁之后完整验证 / CI 另行更新，不把较旧检查点当最终结果。
-- 48 次真实本地 Qwen / 受控 SDK Agent 间接 README 对照：A–F 均攻击成功 0/5、正常 3/3，主动阻断 0/5。模型未跟随注入，不能证明额外防护收益。
-- 21 次单独的真实模型直接执行准入验证：A 危险效果 4/4，E/F 0/4，正常各 3/3。F 实际读取虚拟 .env 后隔离，后续写入拒绝、文件未改变。此组 **不是 Prompt Injection 防护率**。
-- E/F 各一次真实事前 AI 审查为有效 suspicious，AI 不能授权；独立因果防护收益 NOT MEASURED。
-- 复现并修复：无效 AI 输出被当作有效结论、敏感 MCP 输出后的 network 能力绕过、同一 Guard 替换网关清空敏感历史。失败与修复后日志全部保留。
+- 根254 tests /250 pass /0 fail /4 skip；Sponsor25 /24 pass /0 fail /1 skip，合计279 /274 pass /0 fail /5 skip。新增29测试。
+- 冻结代码CI9/9真实通过：https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38131742795 。新交付HEAD CI另外核对。
+- 保存90次真实Qwen /受控SDK Agent运行：48间接README +21旧直接准入 +21冻结直接准入；分别统计，不混分母。
+- 间接对照A–F：各0/5危险效果、0/5主动拒绝、正常3/3。模型未跟随注入，不能证明额外防护收益。
+- 冻结直接准入A效果4/4，E/F0/4；E/F主动拒绝4/4；正常各3/3。F实际读虚拟.env后隔离，后续调用拒绝，受保护文件未变化。不是Prompt Injection防护率。
+- E/F各1次有效事前AI suspicious；独立因果阻断增益NOT MEASURED。
+- 四项安全/可靠性根因有失败复现：无效AI输出、敏感MCP外传、同Guard替换网关历史丢失、Windows状态锁删除竞态。失败CI与所有样本保留。
+- 早期两个原始sourceSHA被命令展开记为前一提交；原始结果不改，运行时五文件哈希核实更正，最新重跑显式正确SHA。
+- Community正向清单111文件：45专项测试、独立构建、自检、audit通过；新ZIP解压到中文/空格临时路径再次构建、自检通过。root/Sponsor audit为0已知漏洞。
+- 3份中文工程候选PDF共14页全部渲染；真实浏览器1080p WebM、SRT、架构SVG、报告与清单位于competition-submission/3.0。视频明确操作者DEMO与已保存模型结果；无现场推理或完整OS桌面录屏宣称。
 
 ### 安全与兼容边界
 
@@ -33,3 +37,7 @@ Draft，尚未请求合并或稳定版发布。此 PR 以 `competition/shanchuan
 见 `docs/3.0/{BASELINE_AUDIT,ARCHITECTURE,SECURITY_BOUNDARIES,THREAT_MODEL,AGENT_COVERAGE_MATRIX,EVIDENCE_PROTOCOL,DEVELOPER_GUIDE}.md`。
 
 运行 `npm ci && npm run build && npm test`；使用已安装 Ollama，顺序运行 `node security-lab/run-sdk-agent.mjs --sha=<真实 Git SHA>` 与 `--execution-proof`。所有工具副作用局限于新建的隔离临时目录和 loopback 测试端点。3.0 不替代当前已验证 2.0 竞赛版本，未发送参赛邮件。
+
+### 最终审查依据
+
+见 docs/3.0/FINAL_REPORT.md、REAL_AGENT_EVALUATION.md、COORDINATION.md。完整3.0仍NOT_READY：原生主宿主E2E、独立100/50盲测、静态/自适应对照、AI独立增益及root商业分发边界未完成。保留已验证2.0版本。

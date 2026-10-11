@@ -7,6 +7,7 @@ const {startAIConsole}=await import('../dist/ai/console.js'),{chromium}=await im
 const app=await startAIConsole({port:0,operatorApprovalCode:'VIDEO_FIXTURE_OPERATOR'});
 const browser=await chromium.launch({headless:true,executablePath:chrome}),context=await browser.newContext({viewport:{width:1920,height:1080},recordVideo:{dir:temp,size:{width:1920,height:1080}}}),page=await context.newPage(),video=page.video();
 const scenes=[],start=Date.now();
+const output='competition-submission/3.0/Agent_Canary_3_0_Engineering_Demo.webm';if(fs.existsSync(output))throw Error('VIDEO_ALREADY_EXISTS_NO_OVERWRITE');
 function time(ms){return [Math.floor(ms/3600000),Math.floor(ms/60000)%60,Math.floor(ms/1000)%60].map(n=>String(n).padStart(2,'0')).join(':')+','+String(ms%1000).padStart(3,'0');}
 async function caption(text,seconds=25){scenes.push({at:Date.now()-start,text});await page.evaluate(text=>{let e=document.querySelector('#recording-caption');if(!e){e=document.createElement('div');e.id='recording-caption';e.style.cssText='position:fixed;left:0;right:0;bottom:0;padding:20px 50px;background:#061020;color:#f1f5ff;font:26px/1.5 Microsoft YaHei,system-ui;z-index:10000;white-space:pre-wrap';document.body.style.paddingBottom='160px';document.body.append(e);}e.textContent=text;},text);await page.waitForTimeout(seconds*1000);}
 try{
@@ -24,7 +25,6 @@ try{
  await page.locator('#runtime3Model').click();await page.locator('#model3Results').filter({hasText:'CONTROLLED'}).waitFor({state:'attached',timeout:2000}).catch(()=>{});await page.locator('#model3Results').scrollIntoViewIfNeeded();
  await caption('下方为已保存的真实 Qwen / 受控 SDK Agent 实验，不是本视频现场模型推理。\n间接注入未产生攻击尝试；直接准入阻断结果不能当作 Prompt Injection 防护率。',30);
  await caption('AI 只提供建议或收紧拒绝，不能授权或解除隔离。\n局部哈希链不是绝对防篡改；原生桌面 Agent 全局覆盖和自适应收益尚未验证。',25);
-}finally{await context.close();await browser.close();await app.close();}
-const output='competition-submission/3.0/Agent_Canary_3_0_Engineering_Demo.webm';if(fs.existsSync(output))throw Error('VIDEO_ALREADY_EXISTS_NO_OVERWRITE');await video.saveAs(output);
+}finally{await context.close();await video.saveAs(output);await browser.close();await app.close();}
 const durationMs=Date.now()-start;fs.writeFileSync('competition-submission/3.0/Agent_Canary_3_0_演示字幕.srt',scenes.map((s,i)=>(i+1)+'\n'+time(s.at)+' --> '+time(scenes[i+1]?.at??durationMs)+'\n'+s.text+'\n').join('\n'),{flag:'wx'});
 const evidence={mode:'REAL_RUNNING_BROWSER_RECORDING_NOT_OS_DESKTOP',modelMode:'SAVED_REAL_MODEL_RESULTS_NOT_LIVE_MODEL_RUN',demoMode:'OPERATOR_TRIGGERED_REAL_TEMPORARY_IO',width:1920,height:1080,durationMs,audio:'none; Chinese visible captions and SRT',bytes:fs.statSync(output).size,sha256:createHash('sha256').update(fs.readFileSync(output)).digest('hex'),scenes};fs.writeFileSync('security-lab/evidence/video-recording.json',JSON.stringify(evidence,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(evidence));

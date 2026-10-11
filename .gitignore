@@ -13,3 +13,12 @@ __pycache__/
 /competition-submission/evidence/round4-free-artifact-location.txt
 /competition-submission/evidence/v2-free-build-location.txt
 /competition-submission/evidence/v2-final-head.local.json
+
+# Retain local master recording and intermediate Community builds outside normal Git
+/competition-submission/3.0/Agent_Canary_3_0_Engineering_Demo.webm
+/competition-submission/3.0/*Preview_77101c5a.zip
+/competition-submission/3.0/*Preview_e3c79190.zip
+/competition-submission/3.0/*Preview_06cd3dcb.zip
+/competition-submission/3.0/community-build-77101c5a.json
+/competition-submission/3.0/community-build-e3c79190.json
+/competition-submission/3.0/community-build-06cd3dcb.json

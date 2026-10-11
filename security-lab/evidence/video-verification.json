@@ -1,0 +1,19 @@
+{
+  "originalWallTimeMs": 227353,
+  "originalMediaDurationMs": 212520,
+  "note": "recording durationMs originally included encoding/closure time, not media duration; original sidecar kept",
+  "compressedFile": "competition-submission/3.0/Agent_Canary_3_0_Engineering_Demo_1080p.webm",
+  "sha256": "e9f667957b7a2e0628502155a6c360a1d37b17a3df8c5b758c974d1f220dd2c0",
+  "bytes": 1944022,
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "frameRate": 5,
+  "framesVisuallyReviewed": [
+    145
+  ],
+  "mode": "REAL_RUNNING_BROWSER_RECORDING_NOT_OS_DESKTOP",
+  "audio": "none",
+  "modelMode": "SAVED_REAL_MODEL_RESULTS_NOT_LIVE_MODEL_RUN"
+}
