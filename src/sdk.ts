@@ -94,6 +94,12 @@ export function createAgentGuard(options: AgentGuardOptions = {}): AgentGuard {
 export type DecoyToolResult = Awaited<ReturnType<typeof handleDecoyCall>>;
 
 export type RealToolExecutor<T> = (call: ToolCall) => T | Promise<T>;
+export {createSecurityToolRouter,type SecurityRouterOptions,type SecurityDecision,type SecurityAction} from './security-router.js';
+export {SessionDataFlow} from './dataflow.js';
+export {executePinnedJSONTool} from './network-tool.js';
+export {decideAgentHook} from './agent-hook.js';
+export {serveProtectedMCP} from './protected-mcp.js';
+export {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient,type IntegrationState} from './agent-integrations.js';
 
 export interface GuardedToolRouterOptions<T> {
   /** One guard per agent session. Do not share it across independent sessions. */

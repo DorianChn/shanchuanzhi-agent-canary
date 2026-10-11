@@ -19,6 +19,8 @@ export interface RiskPolicyOptions {
   eventsFile?: string;
   approvalTtlMs?: number;
   maxPending?: number;
+  /** Trusted host extension; may only tighten decisions, never grant privileges. */
+  reviewDecision?: (call: ToolCall, decision: Readonly<PolicyDecision>) => Promise<'DENY' | 'UNCHANGED'>;
 }
 export interface PolicyDecision { action: 'ALLOW' | 'DENY' | 'APPROVAL_REQUIRED'; risks: ToolRisk[]; reason: string; mode: ProtectionMode; requestId?: string }
 export class PolicyBlockedError extends Error {
@@ -132,6 +134,9 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       guard.inspect(JSON.stringify(safe.args),'policy-tool-arguments');
       const gd=guard.beforeToolCall(safe);if(!gd.allowed)throw new CanaryBlockedError(gd);
       const decision=classify(safe);sweep();
+      if(options.reviewDecision && await options.reviewDecision(safe,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}))==='DENY'){
+        decision.action='DENY';decision.reason='host_pre_execution_review_denied';
+      }
       if(decision.action==='APPROVAL_REQUIRED'){
         if(pending.size>=limit)throw new PolicyBlockedError({...decision,action:'DENY',reason:'approval_capacity'});
         const requestId=randomUUID();decision.requestId=requestId;
@@ -154,5 +159,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       return execute(p.call,p.decision);
     });},
     pendingApprovals(){sweep();return [...pending].map(([requestId,p])=>({requestId,tool:p.call.name,risks:[...p.decision.risks],reason:p.decision.reason,expiresAt:p.expires}));},
+    inspectPolicy(call:ToolCall){return classify(snapshot(call));},
+    denyApproval(requestId:string){const p=pending.get(requestId);if(!p)throw new Error('POLICY_APPROVAL_MISSING_OR_EXPIRED');pending.delete(requestId);audit('policy_blocked',p.call,{...p.decision,action:'DENY',reason:'host_approval_rejected'});},
   };
 }
