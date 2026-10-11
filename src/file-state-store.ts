@@ -28,11 +28,26 @@ export function createFileContainmentStateStore(file:string,options:{initialize?
  function transaction(change:(data:Snapshot)=>boolean):boolean{
   parentOK();const lock=file+'.lock';let lockFd:number|undefined,temp:string|undefined;
   try{
-   try{lockFd=fs.openSync(lock,'wx',0o600);}catch(error){if((error as NodeJS.ErrnoException).code==='EEXIST')throw Error('STATE_STORE_BUSY');throw Error('STATE_STORE_IO');}
+   try{lockFd=fs.openSync(lock,'wx',0o600);}catch(error){
+    const code=(error as NodeJS.ErrnoException).code;
+    if(code==='EEXIST')throw Error('STATE_STORE_BUSY');
+    // Windows may report sharing contention as EPERM rather than EEXIST.
+    if(process.platform==='win32'&&(code==='EPERM'||code==='EACCES')){try{fs.lstatSync(lock);}catch{throw Error('STATE_STORE_IO');}throw Error('STATE_STORE_BUSY');}
+    throw Error('STATE_STORE_IO');
+   }
    const data=read(),changed=change(data);if(!changed)return false;
    const bytes=JSON.stringify(data)+'\n';if(Buffer.byteLength(bytes)>MAX_BYTES)throw Error('STATE_STORE_FILE_LIMIT');
    temp=file+'.'+randomUUID()+'.tmp';const fd=fs.openSync(temp,'wx',0o600);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
-   parentOK();const current=fs.lstatSync(file);if(!current.isFile()||current.isSymbolicLink())throw Error('STATE_STORE_FILE_UNSAFE');fs.renameSync(temp,file);temp=undefined;return true;
+   for(let attempt=0;;attempt++){
+    parentOK();const current=fs.lstatSync(file);if(!current.isFile()||current.isSymbolicLink())throw Error('STATE_STORE_FILE_UNSAFE');
+    try{fs.renameSync(temp,file);break;}catch(error){
+     const code=(error as NodeJS.ErrnoException).code;
+     if(process.platform!=='win32'||attempt>=5||!['EPERM','EACCES','EBUSY'].includes(code??''))throw error;
+     // Keep the writer lock and the original file; never unlink to force replacement.
+     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,10*(attempt+1));
+    }
+   }
+   temp=undefined;return true;
   }catch(error){if(error instanceof Error&&error.message.startsWith('STATE_STORE_'))throw error;throw Error('STATE_STORE_IO');}
   finally{if(temp){try{fs.unlinkSync(temp);}catch{}}if(lockFd!==undefined){fs.closeSync(lockFd);fs.unlinkSync(lock);}}
  }

@@ -24,3 +24,18 @@ test('four concurrent processes preserve every quarantine without lost writes',a
  const store=sdk.createFileContainmentStateStore(file);for(let w=0;w<4;w++)for(let i=0;i<12;i++)assert.equal(store.get('worker:'+w+':'+i),'QUARANTINED');
  assert.equal(Object.keys(JSON.parse(fs.readFileSync(file,'utf8')).states).length,48);
 });
+test('Windows transient rename sharing failures retry without losing quarantine',{skip:process.platform!=='win32'},()=>{
+ const {file}=fixture(),store=sdk.createFileContainmentStateStore(file,{initialize:true}),original=fs.renameSync;let calls=0;
+ fs.renameSync=((...args:any[])=>{if(++calls===1)throw Object.assign(Error('private detail'),{code:'EPERM'});return (original as any)(...args);}) as any;
+ try{assert.equal(store.quarantine('p'),true);assert.equal(store.get('p'),'QUARANTINED');assert.equal(calls,2);}finally{fs.renameSync=original;}
+});
+test('persistent rename failure never replaces the existing state or leaks details',()=>{
+ const {file}=fixture(),store=sdk.createFileContainmentStateStore(file,{initialize:true}),original=fs.renameSync,before=fs.readFileSync(file,'utf8');
+ fs.renameSync=(()=>{throw Object.assign(Error('PRIVATE_DETAILS'),{code:'EPERM'});}) as any;
+ try{assert.throws(()=>store.quarantine('p'),e=>String(e)==='Error: STATE_STORE_IO');assert.equal(fs.readFileSync(file,'utf8'),before);assert.equal(fs.existsSync(file+'.lock'),false);}finally{fs.renameSync=original;}
+});
+test('Windows lock EPERM with an existing writer is BUSY, not a data reset',{skip:process.platform!=='win32'},()=>{
+ const {file}=fixture(),store=sdk.createFileContainmentStateStore(file,{initialize:true}),original=fs.openSync;fs.writeFileSync(file+'.lock','writer');
+ fs.openSync=((p:any,...args:any[])=>{if(p===file+'.lock')throw Object.assign(Error('private path'),{code:'EPERM'});return (original as any)(p,...args);}) as any;
+ try{assert.throws(()=>store.quarantine('p'),/STATE_STORE_BUSY/);assert.equal(fs.readFileSync(file,'utf8'),'{"version":1,"states":{}}\n');}finally{fs.openSync=original;fs.unlinkSync(file+'.lock');}
+});
