@@ -1,0 +1,12 @@
+{"asset":"Agent_Canary_Competition_2_0.zip","status":"VERIFIED"}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+DOMException [TimeoutError]: The operation was aborted due to timeout
+    at new DOMException (node:internal/per_context/domexception:76:18)
+    at Timeout._onTimeout (node:internal/abort_controller:155:9)
+    at listOnTimeout (node:internal/timers:585:17)
+    at process.processTimers (node:internal/timers:521:7)
+
+Node.js v22.23.1

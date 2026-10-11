@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: memory store boundary: separate stores do not preserve quarantine
+ok 1 - memory store boundary: separate stores do not preserve quarantine
+  ---
+  duration_ms: 1.5603
+  type: 'test'
+  ...
+# Subtest: file store requires explicit bootstrap and never overwrites existing state
+ok 2 - file store requires explicit bootstrap and never overwrites existing state
+  ---
+  duration_ms: 26.961
+  type: 'test'
+  ...
+# Subtest: file store survives process restart and same principal gets quarantine
+ok 3 - file store survives process restart and same principal gets quarantine
+  ---
+  duration_ms: 1137.53
+  type: 'test'
+  ...
+# Subtest: corruption empty truncation and schema errors reject without rewriting
+ok 4 - corruption empty truncation and schema errors reject without rewriting
+  ---
+  duration_ms: 26.466
+  type: 'test'
+  ...
+# Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+ok 5 - missing state after bootstrap latches guard fail-closed without regeneration
+  ---
+  duration_ms: 10.5986
+  type: 'test'
+  ...
+# Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+ok 6 - concurrent store instances preserve different scopes and enforce one quarantine
+  ---
+  duration_ms: 29.6092
+  type: 'test'
+  ...
+# Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+ok 7 - busy lock, excessive file and scope capacity never permit sensitive callback
+  ---
+  duration_ms: 22.1601
+  type: 'test'
+  ...
+# Subtest: symlink/junction redirected state and parent are rejected
+ok 8 - symlink/junction redirected state and parent are rejected
+  ---
+  duration_ms: 7.2891
+  type: 'test'
+  ...
+# Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+ok 9 - trusted reset removes only one scope and invalid scopes are redacted errors
+  ---
+  duration_ms: 34.2243
+  type: 'test'
+  ...
+# Subtest: active writer lock causes guard reads to latch fail-closed
+ok 10 - active writer lock causes guard reads to latch fail-closed
+  ---
+  duration_ms: 11.9806
+  type: 'test'
+  ...
+# Subtest: prototype-looking scopes are data and cannot return inherited state
+ok 11 - prototype-looking scopes are data and cannot return inherited state
+  ---
+  duration_ms: 37.0544
+  type: 'test'
+  ...
+# Subtest: string bootstrap flags cannot recreate missing state
+ok 12 - string bootstrap flags cannot recreate missing state
+  ---
+  duration_ms: 2.1177
+  type: 'test'
+  ...
+# Subtest: four concurrent processes preserve every quarantine without lost writes
+ok 13 - four concurrent processes preserve every quarantine without lost writes
+  ---
+  duration_ms: 1418.9296
+  type: 'test'
+  ...
+# Subtest: Windows transient rename sharing failures retry without losing quarantine
+ok 14 - Windows transient rename sharing failures retry without losing quarantine
+  ---
+  duration_ms: 27.6148
+  type: 'test'
+  ...
+# Subtest: persistent rename failure never replaces the existing state or leaks details
+ok 15 - persistent rename failure never replaces the existing state or leaks details
+  ---
+  duration_ms: 217.0901
+  type: 'test'
+  ...
+# Subtest: Windows lock EPERM with an existing writer is BUSY, not a data reset
+ok 16 - Windows lock EPERM with an existing writer is BUSY, not a data reset
+  ---
+  duration_ms: 8.5395
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4148.497

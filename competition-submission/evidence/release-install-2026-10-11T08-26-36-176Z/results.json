@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-11T08:26:36.179Z",
+  "tag": "v2.0.0-competition-preview.1",
+  "platform": "win32",
+  "node": "v22.23.1",
+  "os": "Windows 11 Home China",
+  "temporaryChineseAndSpacePath": true,
+  "cleanOS": false,
+  "assets": [
+    {
+      "name": "Agent_Canary_Competition_2_0.zip",
+      "sha256": "a70b0e1a22ad9c0be56732ad47d7b11734a5741955fbc34b6342ff29a2a060b6",
+      "bytes": 211835,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip"
+    }
+  ],
+  "steps": [],
+  "agents": [],
+  "target": "73cfdf990e7de669d5ffdb47ae56f5041ad4d31b"
+}

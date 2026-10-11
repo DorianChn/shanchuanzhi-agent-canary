@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: memory store boundary: separate stores do not preserve quarantine
+ok 1 - memory store boundary: separate stores do not preserve quarantine
+  ---
+  duration_ms: 1.5169
+  type: 'test'
+  ...
+# Subtest: file store requires explicit bootstrap and never overwrites existing state
+ok 2 - file store requires explicit bootstrap and never overwrites existing state
+  ---
+  duration_ms: 27.515
+  type: 'test'
+  ...
+# Subtest: file store survives process restart and same principal gets quarantine
+ok 3 - file store survives process restart and same principal gets quarantine
+  ---
+  duration_ms: 977.6705
+  type: 'test'
+  ...
+# Subtest: corruption empty truncation and schema errors reject without rewriting
+ok 4 - corruption empty truncation and schema errors reject without rewriting
+  ---
+  duration_ms: 30.7811
+  type: 'test'
+  ...
+# Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+ok 5 - missing state after bootstrap latches guard fail-closed without regeneration
+  ---
+  duration_ms: 11.7803
+  type: 'test'
+  ...
+# Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+ok 6 - concurrent store instances preserve different scopes and enforce one quarantine
+  ---
+  duration_ms: 30.932
+  type: 'test'
+  ...
+# Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+ok 7 - busy lock, excessive file and scope capacity never permit sensitive callback
+  ---
+  duration_ms: 23.4056
+  type: 'test'
+  ...
+# Subtest: symlink/junction redirected state and parent are rejected
+ok 8 - symlink/junction redirected state and parent are rejected
+  ---
+  duration_ms: 6.6565
+  type: 'test'
+  ...
+# Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+ok 9 - trusted reset removes only one scope and invalid scopes are redacted errors
+  ---
+  duration_ms: 32.6599
+  type: 'test'
+  ...
+# Subtest: active writer lock causes guard reads to latch fail-closed
+ok 10 - active writer lock causes guard reads to latch fail-closed
+  ---
+  duration_ms: 12.2009
+  type: 'test'
+  ...
+# Subtest: prototype-looking scopes are data and cannot return inherited state
+ok 11 - prototype-looking scopes are data and cannot return inherited state
+  ---
+  duration_ms: 47.8178
+  type: 'test'
+  ...
+# Subtest: string bootstrap flags cannot recreate missing state
+ok 12 - string bootstrap flags cannot recreate missing state
+  ---
+  duration_ms: 2.4329
+  type: 'test'
+  ...
+# Subtest: four concurrent processes preserve every quarantine without lost writes
+ok 13 - four concurrent processes preserve every quarantine without lost writes
+  ---
+  duration_ms: 1456.2521
+  type: 'test'
+  ...
+# Subtest: Windows transient rename sharing failures retry without losing quarantine
+not ok 14 - Windows transient rename sharing failures retry without losing quarantine
+  ---
+  duration_ms: 13.1933
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:7202'
+  failureType: 'testCodeFailure'
+  error: 'STATE_STORE_IO'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    transaction (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\src\file-state-store.ts:36:103)
+    Object.quarantine (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\src\file-state-store.ts:45:40)
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:30:25)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: persistent rename failure never replaces the existing state or leaks details
+ok 15 - persistent rename failure never replaces the existing state or leaks details
+  ---
+  duration_ms: 13.2963
+  type: 'test'
+  ...
+# Subtest: Windows lock EPERM with an existing writer is BUSY, not a data reset
+not ok 16 - Windows lock EPERM with an existing writer is BUSY, not a data reset
+  ---
+  duration_ms: 10.7239
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:8253'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /STATE_STORE_BUSY/. Input:
+    
+    'Error: STATE_STORE_IO'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'STATE_STORE_IO'
+  stack: |-
+    transaction (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\src\file-state-store.ts:31:148)
+    Object.quarantine (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\src\file-state-store.ts:45:40)
+    <anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:40:30)
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:40:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:40:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 14
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3841.0901

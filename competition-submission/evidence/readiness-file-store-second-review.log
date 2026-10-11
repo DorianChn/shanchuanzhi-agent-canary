@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: memory store boundary: separate stores do not preserve quarantine
+ok 1 - memory store boundary: separate stores do not preserve quarantine
+  ---
+  duration_ms: 1.7261
+  type: 'test'
+  ...
+# Subtest: file store requires explicit bootstrap and never overwrites existing state
+ok 2 - file store requires explicit bootstrap and never overwrites existing state
+  ---
+  duration_ms: 27.5561
+  type: 'test'
+  ...
+# Subtest: file store survives process restart and same principal gets quarantine
+ok 3 - file store survives process restart and same principal gets quarantine
+  ---
+  duration_ms: 1126.9201
+  type: 'test'
+  ...
+# Subtest: corruption empty truncation and schema errors reject without rewriting
+ok 4 - corruption empty truncation and schema errors reject without rewriting
+  ---
+  duration_ms: 21.0934
+  type: 'test'
+  ...
+# Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+ok 5 - missing state after bootstrap latches guard fail-closed without regeneration
+  ---
+  duration_ms: 9.1845
+  type: 'test'
+  ...
+# Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+ok 6 - concurrent store instances preserve different scopes and enforce one quarantine
+  ---
+  duration_ms: 27.433
+  type: 'test'
+  ...
+# Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+ok 7 - busy lock, excessive file and scope capacity never permit sensitive callback
+  ---
+  duration_ms: 20.669
+  type: 'test'
+  ...
+# Subtest: symlink/junction redirected state and parent are rejected
+ok 8 - symlink/junction redirected state and parent are rejected
+  ---
+  duration_ms: 5.0059
+  type: 'test'
+  ...
+# Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+ok 9 - trusted reset removes only one scope and invalid scopes are redacted errors
+  ---
+  duration_ms: 29.6447
+  type: 'test'
+  ...
+# Subtest: active writer lock causes guard reads to latch fail-closed
+ok 10 - active writer lock causes guard reads to latch fail-closed
+  ---
+  duration_ms: 12.2546
+  type: 'test'
+  ...
+# Subtest: prototype-looking scopes are data and cannot return inherited state
+ok 11 - prototype-looking scopes are data and cannot return inherited state
+  ---
+  duration_ms: 35.3809
+  type: 'test'
+  ...
+# Subtest: string bootstrap flags cannot recreate missing state
+ok 12 - string bootstrap flags cannot recreate missing state
+  ---
+  duration_ms: 1.1337
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2501.1333

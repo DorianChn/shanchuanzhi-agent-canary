@@ -1,0 +1,5 @@
+
+> @dorianchn/agent-canary@1.2.7 test
+> node dist/competition.js self-test --json
+
+{"passed":true,"checks":[{"name":"safe_call","passed":true},{"name":"decoy_quarantine","passed":true},{"name":"blocked_callback","passed":true},{"name":"audit_order","passed":true}]}

@@ -1,0 +1,21 @@
+{"asset":"Agent_Canary_Competition_2_0.zip","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Chinese_Subtitles.srt","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Real_Model_Experiments.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Technical_Innovation.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Project_Overview.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"SHA256SUMS.txt","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+node:fs:1370
+  const result = binding.mkdir(
+                         ^
+
+Error: EEXIST: file already exists, mkdir 'C:\Users\36712\AppData\Local\Temp\Agent Canary 中文 安装 tirx7w\claude 配置 空格'
+    at Object.mkdirSync (node:fs:1370:26)
+    at file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/scripts/verify-release-candidate.mjs:47:53
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  errno: -4075,
+  code: 'EEXIST',
+  syscall: 'mkdir',
+  path: 'C:\\Users\\36712\\AppData\\Local\\Temp\\Agent Canary 中文 安装 tirx7w\\claude 配置 空格'
+}
+
+Node.js v22.23.1

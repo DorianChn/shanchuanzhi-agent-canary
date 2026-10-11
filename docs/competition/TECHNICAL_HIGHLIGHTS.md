@@ -108,3 +108,8 @@ E 组没有降低 ASR（D1/E 均 1/19），且出现 2/8 正常任务硬拒绝�
 
 
 只保护注册到 Router 的宿主 callback。MCP 诱饵安装不等于全局保护；绕过 Guard、已开始的外部操作、模型内部状态 OUT_OF_SCOPE。AI 不能批准、重置 Guard 或改权限。realpath 仍有 TOCTOU 窗口；自定义网络 callback 需使用 DNS 固定与禁止重定向的安全 transport。来源提示不等于完整动态污点分析。
+
+
+## 2026-10-11 最终发布验收更新
+
+本轮当前结论见 [发布验收](RELEASE_READINESS_AUDIT.md) 与 [真实模型最终复验](REAL_MODEL_FINAL_EVALUATION.md)，历史数据在上文保留。新增可选文件Guard持久化有16回归；本地250项测试245通过、0失败、5跳过；Windows共享冲突已复现并修复，增强核心a5425b2的9项CI实际通过。168次新模型试验：D1/D2/E均1/19，E正常硬误拒绝2/8，AI默认关闭。正式稳定版仍因普通商业分发P1阻塞；独立免费竞赛包、七附件下载和官网手机/视频验收通过。新资料、旧视频参考范围及发送前未知官方限制见 competition-submission/FINAL_READINESS_CHECKLIST.md。Draft PR23未合并，未发布稳定版或发邮件。

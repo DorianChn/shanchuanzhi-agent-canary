@@ -1,0 +1,25 @@
+{"asset":"Agent_Canary_Competition_2_0.zip","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Chinese_Subtitles.srt","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Real_Model_Experiments.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Technical_Innovation.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Project_Overview.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"SHA256SUMS.txt","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+undefined !== 168
+
+    at file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/scripts/verify-release-candidate.mjs:65:66
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: 168,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.1

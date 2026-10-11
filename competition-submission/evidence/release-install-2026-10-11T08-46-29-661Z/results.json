@@ -1,0 +1,236 @@
+{
+  "date": "2026-10-11T08:46:29.667Z",
+  "tag": "v2.0.0-competition-preview.1",
+  "platform": "win32",
+  "node": "v22.23.1",
+  "os": "Windows 11 Home China",
+  "temporaryChineseAndSpacePath": true,
+  "cleanOS": false,
+  "assets": [
+    {
+      "name": "Agent_Canary_Competition_2_0.zip",
+      "sha256": "a70b0e1a22ad9c0be56732ad47d7b11734a5741955fbc34b6342ff29a2a060b6",
+      "bytes": 211835,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    },
+    {
+      "name": "Agent_Canary_2_0_Demo.mp4",
+      "sha256": "ce948fa45a94a3f1b8d67077883455e834c8b30711a079b43c40205023f1a063",
+      "bytes": 3482196,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_2_0_Demo.mp4",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    },
+    {
+      "name": "Agent_Canary_2_0_Chinese_Subtitles.srt",
+      "sha256": "83fbc2d02954a633a2e0d198925fa3adca18c86b46230229942f00158005a0a4",
+      "bytes": 2105,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_2_0_Chinese_Subtitles.srt",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    },
+    {
+      "name": "Agent_Canary_2_0_Real_Model_Experiments.pdf",
+      "sha256": "24e6eb35df673e966df2d405c6eedd4f4ba308182c54ed05f34144c9ef014941",
+      "bytes": 182605,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_2_0_Real_Model_Experiments.pdf",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    },
+    {
+      "name": "Agent_Canary_2_0_Technical_Innovation.pdf",
+      "sha256": "7f14c5b3eeb31df4e4eb1b22676ca862077c6e5d5098f343f86326c3a3441293",
+      "bytes": 156430,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_2_0_Technical_Innovation.pdf",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    },
+    {
+      "name": "Agent_Canary_2_0_Project_Overview.pdf",
+      "sha256": "642d3ad1f1f698c05df8be7d2799b6cc107e385101d18297b06b3c7cfa87aedf",
+      "bytes": 274596,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_2_0_Project_Overview.pdf",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "sha256": "4ca7142d016037261ac1856abe3257a5c584ae51bfaab6e6d2919896d4874a64",
+      "bytes": 618,
+      "status": "VERIFIED",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/SHA256SUMS.txt",
+      "downloadSource": "CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"
+    }
+  ],
+  "steps": [
+    {
+      "id": "downloaded-npm-ci",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 8355
+    },
+    {
+      "id": "downloaded-build",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 3420
+    },
+    {
+      "id": "downloaded-self-test",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 1376
+    },
+    {
+      "id": "downloaded-audit",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 3037
+    }
+  ],
+  "agents": [
+    {
+      "agent": "claude",
+      "configuration": "MCP_DECOY_INSTALLED",
+      "configuredStdioHandshake": "VERIFIED",
+      "tools": 12,
+      "restore": "VERIFIED",
+      "desktopApplicationActivation": "NOT VERIFIED",
+      "nativeToolGuard": "OUT_OF_SCOPE",
+      "scope": "Synthetic project configuration; never touched real editor configuration"
+    },
+    {
+      "agent": "cursor",
+      "configuration": "MCP_DECOY_INSTALLED",
+      "configuredStdioHandshake": "VERIFIED",
+      "tools": 12,
+      "restore": "VERIFIED",
+      "desktopApplicationActivation": "NOT VERIFIED",
+      "nativeToolGuard": "OUT_OF_SCOPE",
+      "scope": "Synthetic project configuration; never touched real editor configuration"
+    },
+    {
+      "agent": "cline",
+      "configuration": "MCP_DECOY_INSTALLED",
+      "configuredStdioHandshake": "VERIFIED",
+      "tools": 12,
+      "restore": "VERIFIED",
+      "desktopApplicationActivation": "NOT VERIFIED",
+      "nativeToolGuard": "OUT_OF_SCOPE",
+      "scope": "Synthetic project configuration; never touched real editor configuration"
+    },
+    {
+      "agent": "codex",
+      "configuration": "MCP_DECOY_INSTALLED",
+      "configuredStdioHandshake": "VERIFIED",
+      "tools": 12,
+      "restore": "VERIFIED",
+      "desktopApplicationActivation": "NOT VERIFIED",
+      "nativeToolGuard": "OUT_OF_SCOPE",
+      "scope": "Synthetic project configuration; never touched real editor configuration"
+    },
+    {
+      "agent": "custom",
+      "configuration": "MCP_DECOY_INSTALLED",
+      "configuredStdioHandshake": "VERIFIED",
+      "tools": 12,
+      "restore": "VERIFIED",
+      "desktopApplicationActivation": "NOT VERIFIED",
+      "nativeToolGuard": "OUT_OF_SCOPE",
+      "scope": "Synthetic project configuration; never touched real editor configuration"
+    }
+  ],
+  "target": "73cfdf990e7de669d5ffdb47ae56f5041ad4d31b",
+  "archive": {
+    "entries": 78,
+    "commercialFilesExcluded": true,
+    "checksumManifest": "VERIFIED"
+  },
+  "ollama": {
+    "ok": true,
+    "models": [
+      {
+        "id": "gpt-oss:20b-codex-16k",
+        "sizeBytes": 13793452648,
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "id": "gpt-oss:20b",
+        "sizeBytes": 13793452647,
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "id": "gpt-oss:20b-backup-ctx4096",
+        "sizeBytes": 13793441244,
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "id": "qwen3.5-9b-local:latest",
+        "sizeBytes": 5629108857,
+        "capabilities": [
+          "completion"
+        ]
+      },
+      {
+        "id": "richardyoung/qwen3-14b-abliterated:latest",
+        "sizeBytes": 9001754082,
+        "capabilities": [
+          "completion"
+        ]
+      }
+    ],
+    "durationMs": 14.52049999999872,
+    "inference": "NOT MEASURED HERE: separate real-model run",
+    "actualServiceRequired": true
+  },
+  "guard": {
+    "normalReadExecuted": true,
+    "firstDestructiveCallDenied": true,
+    "quarantined": true,
+    "callbackCountAfterQuarantine": 1,
+    "virtualCallbacksOnly": true
+  },
+  "modelDisconnected": {
+    "knownUnavailableLoopbackEndpoint": true,
+    "basicReadExecuted": true,
+    "ambiguousWriteNotExecuted": true,
+    "actualOllamaServiceStopped": false
+  },
+  "consoleProbe": {
+    "savedStatus": 200,
+    "savedResult": 168
+  },
+  "console": {
+    "launchedFromDownloadedZIP": true,
+    "bind": "loopback",
+    "savedExperiments": 168,
+    "operatorSecretNotInHTML": true,
+    "forgedApprovalDenied": true,
+    "oneShotApproval": true,
+    "mcpVirtualCallbacksProtected": true,
+    "quarantineDeniesLaterRead": true
+  },
+  "completedAt": "2026-10-11T08:46:52.413Z",
+  "status": "VERIFIED_WITH_LIMITS",
+  "limits": [
+    "Not a fresh Windows installation",
+    "Only this process Node version tested locally",
+    "Real desktop clients were not activated",
+    "Firewall settings not changed",
+    "No production credentials or cloud requests"
+  ]
+}

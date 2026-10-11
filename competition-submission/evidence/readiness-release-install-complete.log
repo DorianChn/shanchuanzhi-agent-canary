@@ -1,0 +1,8 @@
+{"asset":"Agent_Canary_Competition_2_0.zip","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Demo.mp4","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Chinese_Subtitles.srt","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Real_Model_Experiments.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Technical_Innovation.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"Agent_Canary_2_0_Project_Overview.pdf","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"asset":"SHA256SUMS.txt","status":"VERIFIED","source":"CURRENT_TURN_PRIOR_VERIFIED_DOWNLOAD"}
+{"evidence":"C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\competition-submission\\evidence\\release-install-2026-10-11T08-46-29-661Z","status":"VERIFIED_WITH_LIMITS","steps":[{"id":"downloaded-npm-ci","exitCode":0,"status":"VERIFIED","durationMs":8355},{"id":"downloaded-build","exitCode":0,"status":"VERIFIED","durationMs":3420},{"id":"downloaded-self-test","exitCode":0,"status":"VERIFIED","durationMs":1376},{"id":"downloaded-audit","exitCode":0,"status":"VERIFIED","durationMs":3037}],"agents":5}

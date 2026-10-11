@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-11T08:47:47.508346+00:00",
+  "version": {
+    "product": "Agent Canary 2.0 readiness candidate",
+    "sourceChangesCommit": "60cffe9",
+    "modelEvaluatedBaseline": "73cfdf990e7de669d5ffdb47ae56f5041ad4d31b",
+    "originalRelease": "v2.0.0-competition-preview.1",
+    "privatePackageVersion": "1.2.7 (legacy metadata, not an npm 2.0 release)",
+    "commercialModules": "excluded by positive list",
+    "distribution": "unpublished candidate, not stable"
+  },
+  "checks": [
+    {
+      "id": "ci",
+      "exitCode": 0,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "build",
+      "exitCode": 0,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "self-test",
+      "exitCode": 0,
+      "status": "VERIFIED"
+    },
+    {
+      "id": "audit",
+      "exitCode": 0,
+      "status": "VERIFIED"
+    }
+  ],
+  "persistedQuarantine": "VERIFIED",
+  "status": "VERIFIED",
+  "archive": "Agent_Canary_Competition_2_0_Readiness.zip",
+  "entries": 84,
+  "sha256": "272c066b212c4199827e80a03247e7a3b640aa36e582ccf9ab5baf15bfebf402",
+  "bytes": 220674,
+  "sourceSHA": "60cffe9"
+}
