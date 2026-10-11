@@ -1,0 +1,85 @@
+{
+  "frozenAt": "2026-10-11T07:10:08.852Z",
+  "coreCommit": "a0e8c2f5b0105cef0cd1718f67c6a4bf910c41a7",
+  "evaluatedPolicySha256": "f0489f7ec7281ef0c643fe963fd1ccf76d607d8be61bc8fa4674d36d87d4e7b8",
+  "preregisteredPolicyMatches": true,
+  "baselineArtifacts": [
+    {
+      "name": "competition-submission/evidence/round4-agent-eval-neutral_agent-2026-10-11T04-59-01-307Z.json",
+      "size": 358527,
+      "sha256": "a991ca4a32dc13bbb30f6e8edf07144c3e86c4405c6935d232dc173670dcc3ff",
+      "currentSha256": "a991ca4a32dc13bbb30f6e8edf07144c3e86c4405c6935d232dc173670dcc3ff",
+      "unchanged": true
+    },
+    {
+      "name": "competition-submission/Agent_Canary_Round4_项目介绍.pdf",
+      "size": 318280,
+      "sha256": "e9accfbafa06b05acbdf0b52a856c520b4e6eadc8eb8e204905617e55393a2a0",
+      "currentSha256": "e9accfbafa06b05acbdf0b52a856c520b4e6eadc8eb8e204905617e55393a2a0",
+      "unchanged": true
+    },
+    {
+      "name": "competition-submission/Agent_Canary_Round4_实验报告.pdf",
+      "size": 201436,
+      "sha256": "fe25cc97c96728c64100ba03317ee56bdd6b679ec260f0a81cf826349402bf86",
+      "currentSha256": "fe25cc97c96728c64100ba03317ee56bdd6b679ec260f0a81cf826349402bf86",
+      "unchanged": true
+    },
+    {
+      "name": "competition-submission/Agent_Canary_Round4_Demo.mp4",
+      "size": 4146145,
+      "sha256": "5301b9bed30dd95e2915e12666866117c407a81482df2d1b92d9624fa0749907",
+      "currentSha256": "5301b9bed30dd95e2915e12666866117c407a81482df2d1b92d9624fa0749907",
+      "unchanged": true
+    },
+    {
+      "name": "competition-submission/Agent_Canary_Competition_V1.zip",
+      "size": 167043,
+      "sha256": "06ec30d0385e262ff9baa56f00315257fd495bcdfd14f745dd1b13f32f41e59d",
+      "currentSha256": "06ec30d0385e262ff9baa56f00315257fd495bcdfd14f745dd1b13f32f41e59d",
+      "unchanged": true
+    }
+  ],
+  "environment": {
+    "platform": "win32",
+    "node": "v22.23.1",
+    "totalMemory": 33479172096
+  },
+  "files": [
+    {
+      "file": "Agent_Canary_2_0_项目介绍.pdf",
+      "bytes": 274596,
+      "sha256": "642d3ad1f1f698c05df8be7d2799b6cc107e385101d18297b06b3c7cfa87aedf"
+    },
+    {
+      "file": "Agent_Canary_2_0_技术创新.pdf",
+      "bytes": 156430,
+      "sha256": "7f14c5b3eeb31df4e4eb1b22676ca862077c6e5d5098f343f86326c3a3441293"
+    },
+    {
+      "file": "Agent_Canary_2_0_真实模型实验.pdf",
+      "bytes": 182605,
+      "sha256": "24e6eb35df673e966df2d405c6eedd4f4ba308182c54ed05f34144c9ef014941"
+    },
+    {
+      "file": "Agent_Canary_2_0_Demo.mp4",
+      "bytes": 3482196,
+      "sha256": "ce948fa45a94a3f1b8d67077883455e834c8b30711a079b43c40205023f1a063"
+    },
+    {
+      "file": "Agent_Canary_Competition_2_0.zip",
+      "bytes": 211835,
+      "sha256": "a70b0e1a22ad9c0be56732ad47d7b11734a5741955fbc34b6342ff29a2a060b6"
+    },
+    {
+      "file": "evidence/v2-summary.json",
+      "bytes": 26296,
+      "sha256": "8a11b6563cebae735507e9fd2a2b52d1db586f299783be3f6b9a8f7f5f33069d"
+    },
+    {
+      "file": "evidence/v2-agent-eval-neutral_agent-2026-10-11T06-00-03-331Z.json",
+      "bytes": 560158,
+      "sha256": "546a486dec1b6286ce98f985d06c6363939c7a4bfcec7fe0ec59f707fb23588c"
+    }
+  ]
+}

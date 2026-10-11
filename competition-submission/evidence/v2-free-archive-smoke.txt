@@ -1,0 +1,1 @@
+{"extractedArchiveInstallBuildSelfTest":"VERIFIED","mcpTools":12}

@@ -1,0 +1,17 @@
+{
+  "controls": [
+    "Agent metadata detection, Codex preview/install/restore in temporary project",
+    "Actual local pre-execution inference, no AI authority",
+    "Approved synthetic source, hashed provenance and network denial",
+    "Normal call after policy denial, canary isolation, post-isolation refusal"
+  ],
+  "errors": [],
+  "scope": "Real Chromium, isolated configurations and virtual effects; actual local pre-review where recorded",
+  "reviewState": "{\n  \"mode\": \"BALANCED\",\n  \"guard\": \"SAFE\",\n  \"preReview\": true,\n  \"dataflow\": [],\n  \"reviews\": [\n    {\n      \"tool\": \"write_file\",\n      \"result\": null,\n      \"status\": \"FAILED_CONSERVATIVE_APPROVAL\",\n      \"durationMs\": 10002\n    }\n  ],\n  \"pending\": [\n    {\n      \"requestId\": \"2b9dd34b-fb4a-417d-933a-684bafc33883\",\n      \"tool\": \"write_file\",\n      \"risks\": [\n        \"WRITE\"\n      ],\n      \"reason\": \"workspace_write\",\n      \"expiresAt\": 1791699139109\n    }\n  ]\n}",
+  "dimensions": {
+    "viewport": 390,
+    "scrollWidth": 390,
+    "storageKeys": []
+  },
+  "status": "VERIFIED"
+}

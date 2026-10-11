@@ -1,0 +1,1224 @@
+
+> @dorianchn/agent-canary@1.2.7 test
+> node --import tsx --test test/alerts.test.ts test/tokens.test.ts test/eval.test.ts test/dashboard.test.ts test/sdk.test.ts test/license.test.ts test/containment.test.ts test/install.test.ts test/config.test.ts test/install-backup.test.ts test/webhook.test.ts test/self-test.test.ts test/metadata.test.ts test/security-simulation.test.ts test/file-walk.test.ts test/watch.test.ts test/ai.test.ts test/risk-policy.test.ts test/security-router.test.ts test/agent-integrations.test.ts
+
+TAP version 13
+# Subtest: claude preview, nonoverwriting install and verified restore
+ok 1 - claude preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 17.571
+  type: 'test'
+  ...
+# Subtest: cursor preview, nonoverwriting install and verified restore
+ok 2 - cursor preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 13.3389
+  type: 'test'
+  ...
+# Subtest: cline preview, nonoverwriting install and verified restore
+ok 3 - cline preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 14.8429
+  type: 'test'
+  ...
+# Subtest: codex preview, nonoverwriting install and verified restore
+ok 4 - codex preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 13.1683
+  type: 'test'
+  ...
+# Subtest: custom preview, nonoverwriting install and verified restore
+ok 5 - custom preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 12.369
+  type: 'test'
+  ...
+# Subtest: preserves other server and private config and refuses overwriting later user edits
+ok 6 - preserves other server and private config and refuses overwriting later user edits
+  ---
+  duration_ms: 14.1872
+  type: 'test'
+  ...
+# Subtest: corrupt and changed configuration cannot be overwritten
+ok 7 - corrupt and changed configuration cannot be overwritten
+  ---
+  duration_ms: 4.7469
+  type: 'test'
+  ...
+# Subtest: redirected parent config does not write outside chosen project
+ok 8 - redirected parent config does not write outside chosen project
+  ---
+  duration_ms: 8.5313
+  type: 'test'
+  ...
+# Subtest: AI console inline JavaScript parses independently of TypeScript build
+ok 9 - AI console inline JavaScript parses independently of TypeScript build
+  ---
+  duration_ms: 3.2254
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: ollama
+ok 10 - AI native wire protocol and usage: ollama
+  ---
+  duration_ms: 93.8919
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: openai
+ok 11 - AI native wire protocol and usage: openai
+  ---
+  duration_ms: 17.3445
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: openai-compatible
+ok 12 - AI native wire protocol and usage: openai-compatible
+  ---
+  duration_ms: 12.4147
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: anthropic
+ok 13 - AI native wire protocol and usage: anthropic
+  ---
+  duration_ms: 9.9076
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: gemini
+ok 14 - AI native wire protocol and usage: gemini
+  ---
+  duration_ms: 8.3685
+  type: 'test'
+  ...
+# Subtest: AI cloud requires consent before any network operation
+ok 15 - AI cloud requires consent before any network operation
+  ---
+  duration_ms: 0.9492
+  type: 'test'
+  ...
+# Subtest: AI evidence IDs are grounded by host-extracted original text
+ok 16 - AI evidence IDs are grounded by host-extracted original text
+  ---
+  duration_ms: 0.3231
+  type: 'test'
+  ...
+# Subtest: AI CSV export neutralizes spreadsheet formulas and limits report size
+ok 17 - AI CSV export neutralizes spreadsheet formulas and limits report size
+  ---
+  duration_ms: 19.0581
+  type: 'test'
+  ...
+# Subtest: AI input minimization redacts keys, email, phone, exact host secret and token
+ok 18 - AI input minimization redacts keys, email, phone, exact host secret and token
+  ---
+  duration_ms: 1.2349
+  type: 'test'
+  ...
+# Subtest: AI evidence input has bounds and unique secret-free IDs
+ok 19 - AI evidence input has bounds and unique secret-free IDs
+  ---
+  duration_ms: 0.451
+  type: 'test'
+  ...
+# Subtest: AI rejects output: invalidJSON
+ok 20 - AI rejects output: invalidJSON
+  ---
+  duration_ms: 0.3179
+  type: 'test'
+  ...
+# Subtest: AI rejects output: hallucinatedEvidence
+ok 21 - AI rejects output: hallucinatedEvidence
+  ---
+  duration_ms: 0.8122
+  type: 'test'
+  ...
+# Subtest: AI rejects output: unknownQuote
+ok 22 - AI rejects output: unknownQuote
+  ---
+  duration_ms: 7.4198
+  type: 'test'
+  ...
+# Subtest: AI rejects output: invalidConfidence
+ok 23 - AI rejects output: invalidConfidence
+  ---
+  duration_ms: 0.2364
+  type: 'test'
+  ...
+# Subtest: AI rejects output: oversizedSummary
+ok 24 - AI rejects output: oversizedSummary
+  ---
+  duration_ms: 0.4409
+  type: 'test'
+  ...
+# Subtest: AI rejects output: extraReset
+ok 25 - AI rejects output: extraReset
+  ---
+  duration_ms: 0.2434
+  type: 'test'
+  ...
+# Subtest: AI rejects output: missingEvidence
+ok 26 - AI rejects output: missingEvidence
+  ---
+  duration_ms: 0.1255
+  type: 'test'
+  ...
+# Subtest: AI known key is removed from model explanation
+ok 27 - AI known key is removed from model explanation
+  ---
+  duration_ms: 31.4647
+  type: 'test'
+  ...
+# Subtest: AI model lookup cannot reflect the backend API key into the frontend
+ok 28 - AI model lookup cannot reflect the backend API key into the frontend
+  ---
+  duration_ms: 18.0669
+  type: 'test'
+  ...
+# Subtest: AI malformed response is uncertain, not benign
+ok 29 - AI malformed response is uncertain, not benign
+  ---
+  duration_ms: 7.1645
+  type: 'test'
+  ...
+# Subtest: AI timeout and caller cancellation abort outstanding requests
+ok 30 - AI timeout and caller cancellation abort outstanding requests
+  ---
+  duration_ms: 109.1783
+  type: 'test'
+  ...
+# Subtest: AI retries only configured 429/503, no unbounded retries
+ok 31 - AI retries only configured 429/503, no unbounded retries
+  ---
+  duration_ms: 236.1609
+  type: 'test'
+  ...
+# Subtest: AI refuses redirects, oversized responses and raw provider error bodies
+ok 32 - AI refuses redirects, oversized responses and raw provider error bodies
+  ---
+  duration_ms: 34.7016
+  type: 'test'
+  ...
+# Subtest: AI endpoint policy rejects SSRF and unsafe parameter combinations
+ok 33 - AI endpoint policy rejects SSRF and unsafe parameter combinations
+  ---
+  duration_ms: 0.9109
+  type: 'test'
+  ...
+# Subtest: AI public HTTPS private IP fails at DNS destination validation
+ok 34 - AI public HTTPS private IP fails at DNS destination validation
+  ---
+  duration_ms: 1.1562
+  type: 'test'
+  ...
+# Subtest: AI benign answer and provider outage cannot reopen a quarantined guard
+ok 35 - AI benign answer and provider outage cannot reopen a quarantined guard
+  ---
+  duration_ms: 41.4911
+  type: 'test'
+  ...
+# Subtest: AI offline demo is explicit and dangerous callback does not execute
+ok 36 - AI offline demo is explicit and dangerous callback does not execute
+  ---
+  duration_ms: 21.1676
+  type: 'test'
+  ...
+# Subtest: AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+ok 37 - AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+  ---
+  duration_ms: 136.9114
+  type: 'test'
+  ...
+# Subtest: audit log omits raw arguments and redacts canary and secret values
+ok 38 - audit log omits raw arguments and redacts canary and secret values
+  ---
+  duration_ms: 10.3265
+  type: 'test'
+  ...
+# Subtest: audit fields cannot inject terminal control sequences or forged log lines
+ok 39 - audit fields cannot inject terminal control sequences or forged log lines
+  ---
+  duration_ms: 6.5131
+  type: 'test'
+  ...
+# Subtest: legacy event headers and CLI display values cannot inject terminal controls
+ok 40 - legacy event headers and CLI display values cannot inject terminal controls
+  ---
+  duration_ms: 0.3205
+  type: 'test'
+  ...
+# Subtest: new audit logs are owner-readable on POSIX systems
+ok 41 - new audit logs are owner-readable on POSIX systems # SKIP
+  ---
+  duration_ms: 0.1881
+  type: 'test'
+  ...
+# Subtest: webhook receives the same sanitized event shape
+ok 42 - webhook receives the same sanitized event shape
+  ---
+  duration_ms: 34.878
+  type: 'test'
+  ...
+# Subtest: sendAlertTest reports event log success and webhook success without desktop notification
+ok 43 - sendAlertTest reports event log success and webhook success without desktop notification
+  ---
+  duration_ms: 14.9785
+  type: 'test'
+  ...
+# Subtest: sendAlertTest reports webhook failures and does not throw
+ok 44 - sendAlertTest reports webhook failures and does not throw
+  ---
+  duration_ms: 9.5602
+  type: 'test'
+  ...
+# Subtest: sendAlertTest sanitizes its webhook payload
+ok 45 - sendAlertTest sanitizes its webhook payload
+  ---
+  duration_ms: 11.0675
+  type: 'test'
+  ...
+# Subtest: sendAlertTest reports an unconfigured webhook and event-log failure
+ok 46 - sendAlertTest reports an unconfigured webhook and event-log failure
+  ---
+  duration_ms: 3.4944
+  type: 'test'
+  ...
+# Subtest: webhook delivery does not follow redirects to a second destination
+ok 47 - webhook delivery does not follow redirects to a second destination
+  ---
+  duration_ms: 12.7384
+  type: 'test'
+  ...
+# Subtest: event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL
+ok 48 - event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL
+  ---
+  duration_ms: 33.9297
+  type: 'test'
+  ...
+# Subtest: writeFileAtomically creates a file and replaces it without leaving temp files
+ok 49 - writeFileAtomically creates a file and replaces it without leaving temp files
+  ---
+  duration_ms: 16.1663
+  type: 'test'
+  ...
+# Subtest: writeFileAtomically leaves the existing file when the destination is invalid
+ok 50 - writeFileAtomically leaves the existing file when the destination is invalid
+  ---
+  duration_ms: 9.7413
+  type: 'test'
+  ...
+# Subtest: private Agent Canary files and directories use owner-only POSIX permissions
+ok 51 - private Agent Canary files and directories use owner-only POSIX permissions # SKIP
+  ---
+  duration_ms: 0.2654
+  type: 'test'
+  ...
+# Subtest: first run uses defaults without writing a config file
+ok 52 - first run uses defaults without writing a config file
+  ---
+  duration_ms: 1.4008
+  type: 'test'
+  ...
+# Subtest: empty, truncated, malformed, and non-object config files fail closed without overwrite
+ok 53 - empty, truncated, malformed, and non-object config files fail closed without overwrite
+  ---
+  duration_ms: 8.4196
+  type: 'test'
+  ...
+# Subtest: unreadable config path fails closed instead of returning defaults
+ok 54 - unreadable config path fails closed instead of returning defaults
+  ---
+  duration_ms: 2.0142
+  type: 'test'
+  ...
+# Subtest: invalid known config fields are rejected while omitted fields receive defaults
+ok 55 - invalid known config fields are rejected while omitted fields receive defaults
+  ---
+  duration_ms: 4.1669
+  type: 'test'
+  ...
+# Subtest: 1: SAFE session permits a normal tool call
+ok 56 - 1: SAFE session permits a normal tool call
+  ---
+  duration_ms: 3.593
+  type: 'test'
+  ...
+# Subtest: 2: decoy invocation synchronously quarantines its own session
+ok 57 - 2: decoy invocation synchronously quarantines its own session
+  ---
+  duration_ms: 26.6148
+  type: 'test'
+  ...
+# Subtest: 3: a quarantined session blocks a dangerous real tool
+ok 58 - 3: a quarantined session blocks a dangerous real tool
+  ---
+  duration_ms: 15.93
+  type: 'test'
+  ...
+# Subtest: 4: a blocked callback is never executed
+ok 59 - 4: a blocked callback is never executed
+  ---
+  duration_ms: 10.8634
+  type: 'test'
+  ...
+# Subtest: 5: exact quarantine allowlist permits a reviewed safe operation
+ok 60 - 5: exact quarantine allowlist permits a reviewed safe operation
+  ---
+  duration_ms: 5.0429
+  type: 'test'
+  ...
+# Subtest: 6: a human acknowledgement is required before reset restores normal operation
+ok 61 - 6: a human acknowledgement is required before reset restores normal operation
+  ---
+  duration_ms: 11.8788
+  type: 'test'
+  ...
+# Subtest: 7: one tripped session cannot quarantine another session
+ok 62 - 7: one tripped session cannot quarantine another session
+  ---
+  duration_ms: 20.6932
+  type: 'test'
+  ...
+# Subtest: 8: alert delivery failure cannot re-open a quarantined session
+ok 63 - 8: alert delivery failure cannot re-open a quarantined session
+  ---
+  duration_ms: 15.4896
+  type: 'test'
+  ...
+# Subtest: 9: no async race allows a post-decoy dangerous callback through
+ok 64 - 9: no async race allows a post-decoy dangerous callback through
+  ---
+  duration_ms: 45.4266
+  type: 'test'
+  ...
+# Subtest: token detection trips before its token event is emitted
+ok 65 - token detection trips before its token event is emitted
+  ---
+  duration_ms: 29.3532
+  type: 'test'
+  ...
+# Subtest: credential revoker receives no secret data and starts after quarantine before alerts
+ok 66 - credential revoker receives no secret data and starts after quarantine before alerts
+  ---
+  duration_ms: 5.8942
+  type: 'test'
+  ...
+# Subtest: credential revoker failures do not re-open the circuit
+ok 67 - credential revoker failures do not re-open the circuit
+  ---
+  duration_ms: 8.2558
+  type: 'test'
+  ...
+# Subtest: shared principal state quarantines a fresh session without affecting another identity
+ok 68 - shared principal state quarantines a fresh session without affecting another identity
+  ---
+  duration_ms: 5.3662
+  type: 'test'
+  ...
+# Subtest: a new session for the same principal cannot race a synchronous decoy trip
+ok 69 - a new session for the same principal cannot race a synchronous decoy trip
+  ---
+  duration_ms: 13.2739
+  type: 'test'
+  ...
+# Subtest: principalId requires an explicit shared state store
+ok 70 - principalId requires an explicit shared state store
+  ---
+  duration_ms: 0.3694
+  type: 'test'
+  ...
+# Subtest: a shared-store read failure during a trip latches the session closed after recovery
+ok 71 - a shared-store read failure during a trip latches the session closed after recovery
+  ---
+  duration_ms: 5.2855
+  type: 'test'
+  ...
+# Subtest: a blocked call during a shared-store outage remains blocked after recovery
+ok 72 - a blocked call during a shared-store outage remains blocked after recovery
+  ---
+  duration_ms: 4.1007
+  type: 'test'
+  ...
+# Subtest: a shared store returning SAFE after a failed quarantine cannot override the local latch
+ok 73 - a shared store returning SAFE after a failed quarantine cannot override the local latch
+  ---
+  duration_ms: 5.8439
+  type: 'test'
+  ...
+# Subtest: a corrupt token registry quarantines a guard instead of returning a clean inspection
+ok 74 - a corrupt token registry quarantines a guard instead of returning a clean inspection
+  ---
+  duration_ms: 6.5183
+  type: 'test'
+  ...
+# Subtest: dashboard renders summary cards and timeline
+ok 75 - dashboard renders summary cards and timeline
+  ---
+  duration_ms: 1.7882
+  type: 'test'
+  ...
+# Subtest: dashboard escapes attacker-controlled payloads (XSS)
+ok 76 - dashboard escapes attacker-controlled payloads (XSS)
+  ---
+  duration_ms: 0.2744
+  type: 'test'
+  ...
+# Subtest: empty event log renders friendly empty state
+ok 77 - empty event log renders friendly empty state
+  ---
+  duration_ms: 0.1492
+  type: 'test'
+  ...
+# Subtest: CEF export: header, severity, escaped extension
+ok 78 - CEF export: header, severity, escaped extension
+  ---
+  duration_ms: 0.9079
+  type: 'test'
+  ...
+# Subtest: JSON export: newline-delimited, parses back
+ok 79 - JSON export: newline-delimited, parses back
+  ---
+  duration_ms: 0.5429
+  type: 'test'
+  ...
+# Subtest: CSV export: header + quoted cells
+ok 80 - CSV export: header + quoted cells
+  ---
+  duration_ms: 0.453
+  type: 'test'
+  ...
+# Subtest: CSV export neutralizes spreadsheet formula cells from event fields
+ok 81 - CSV export neutralizes spreadsheet formula cells from event fields
+  ---
+  duration_ms: 0.2886
+  type: 'test'
+  ...
+# Subtest: payload suite sanity: unique ids, valid categories, decoy coverage
+ok 82 - payload suite sanity: unique ids, valid categories, decoy coverage
+  ---
+  duration_ms: 1.8072
+  type: 'test'
+  ...
+# Subtest: isDecoyTool recognizes decoys and rejects normal names
+ok 83 - isDecoyTool recognizes decoys and rejects normal names
+  ---
+  duration_ms: 0.3568
+  type: 'test'
+  ...
+# Subtest: resisting model scores 100
+ok 84 - resisting model scores 100
+  ---
+  duration_ms: 3.2802
+  type: 'test'
+  ...
+# Subtest: tool-touching model scores 0 and every payload is flagged
+ok 85 - tool-touching model scores 0 and every payload is flagged
+  ---
+  duration_ms: 676.6899
+  type: 'test'
+  ...
+# Subtest: token-leaking model is flagged as compromised
+ok 86 - token-leaking model is flagged as compromised
+  ---
+  duration_ms: 1.485
+  type: 'test'
+  ...
+# Subtest: provider failure fails closed instead of counting as resistance
+ok 87 - provider failure fails closed instead of counting as resistance
+  ---
+  duration_ms: 1.01
+  type: 'test'
+  ...
+# Subtest: eval rejects invalid turn limits instead of scoring skipped calls as resistance
+ok 88 - eval rejects invalid turn limits instead of scoring skipped calls as resistance
+  ---
+  duration_ms: 1.7498
+  type: 'test'
+  ...
+# Subtest: OpenAI-compatible provider refuses redirects to a second endpoint
+ok 89 - OpenAI-compatible provider refuses redirects to a second endpoint
+  ---
+  duration_ms: 232.7515
+  type: 'test'
+  ...
+# Subtest: decoy handler is invoked during eval (audit trail)
+ok 90 - decoy handler is invoked during eval (audit trail)
+  ---
+  duration_ms: 865.6319
+  type: 'test'
+  ...
+# Subtest: markdown report renders score and detail table
+ok 91 - markdown report renders score and detail table
+  ---
+  duration_ms: 2.3477
+  type: 'test'
+  ...
+# Subtest: handleDecoyCall returns trace-tokened fake replies
+ok 92 - handleDecoyCall returns trace-tokened fake replies
+  ---
+  duration_ms: 35.9945
+  type: 'test'
+  ...
+# Subtest: directory enumeration errors are surfaced so a scan cannot report a false clean
+ok 93 - directory enumeration errors are surfaced so a scan cannot report a false clean
+  ---
+  duration_ms: 4.0956
+  type: 'test'
+  ...
+# Subtest: recursive walking does not follow a symlink supplied as its root
+ok 94 - recursive walking does not follow a symlink supplied as its root # SKIP
+  ---
+  duration_ms: 0.1966
+  type: 'test'
+  ...
+# Subtest: repeated installs preserve each previous MCP config backup
+ok 95 - repeated installs preserve each previous MCP config backup
+  ---
+  duration_ms: 26.184
+  type: 'test'
+  ...
+# Subtest: install creates a Claude config in an isolated home
+ok 96 - install creates a Claude config in an isolated home
+  ---
+  duration_ms: 10.8569
+  type: 'test'
+  ...
+# Subtest: install backs up and preserves unrelated MCP servers
+ok 97 - install backs up and preserves unrelated MCP servers
+  ---
+  duration_ms: 15.2479
+  type: 'test'
+  ...
+# Subtest: uninstall removes only agent-canary and leaves other servers intact
+ok 98 - uninstall removes only agent-canary and leaves other servers intact
+  ---
+  duration_ms: 10.4809
+  type: 'test'
+  ...
+# Subtest: invalid JSON returns a clear error instead of being overwritten
+ok 99 - invalid JSON returns a clear error instead of being overwritten
+  ---
+  duration_ms: 6.9984
+  type: 'test'
+  ...
+# Subtest: entry commands cover Windows and Unix MCP process rules
+ok 100 - entry commands cover Windows and Unix MCP process rules
+  ---
+  duration_ms: 0.2668
+  type: 'test'
+  ...
+# Subtest: activate with valid gateway signature → licensed
+ok 101 - activate with valid gateway signature → licensed
+  ---
+  duration_ms: 375.9917
+  type: 'test'
+  ...
+# Subtest: license signed by a wrong key is rejected
+ok 102 - license signed by a wrong key is rejected
+  ---
+  duration_ms: 129.9454
+  type: 'test'
+  ...
+# Subtest: license bound to a different machine is rejected
+ok 103 - license bound to a different machine is rejected
+  ---
+  duration_ms: 137.4473
+  type: 'test'
+  ...
+# Subtest: expired license token is rejected
+ok 104 - expired license token is rejected
+  ---
+  duration_ms: 98.1228
+  type: 'test'
+  ...
+# Subtest: handle without subscription is refused
+ok 105 - handle without subscription is refused
+  ---
+  duration_ms: 32.2775
+  type: 'test'
+  ...
+# Subtest: tampered cache file is rejected on load
+ok 106 - tampered cache file is rejected on load
+  ---
+  duration_ms: 72.0068
+  type: 'test'
+  ...
+# Subtest: clock rollback makes the cache untrusted
+ok 107 - clock rollback makes the cache untrusted
+  ---
+  duration_ms: 117.6125
+  type: 'test'
+  ...
+# Subtest: offline grace: unreachable gateway + valid cache still activates
+ok 108 - offline grace: unreachable gateway + valid cache still activates
+  ---
+  duration_ms: 62.9041
+  type: 'test'
+  ...
+# Subtest: public MCP and Glama metadata stays aligned with the free V1 release
+ok 109 - public MCP and Glama metadata stays aligned with the free V1 release
+  ---
+  duration_ms: 6.9696
+  type: 'test'
+  ...
+# Subtest: decoy tool definitions disclose inert behavior and conservative MCP annotations
+ok 110 - decoy tool definitions disclose inert behavior and conservative MCP annotations
+  ---
+  duration_ms: 0.6812
+  type: 'test'
+  ...
+# Subtest: server instructions disclose the containment boundary without implying real decoy actions
+ok 111 - server instructions disclose the containment boundary without implying real decoy actions
+  ---
+  duration_ms: 1.7595
+  type: 'test'
+  ...
+# Subtest: stdio MCP server lists inert decoys and answers calls without writing to stdout out of protocol
+ok 112 - stdio MCP server lists inert decoys and answers calls without writing to stdout out of protocol
+  ---
+  duration_ms: 1620.1885
+  type: 'test'
+  ...
+# Subtest: multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+ok 113 - multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+  ---
+  duration_ms: 19.5249
+  type: 'test'
+  ...
+# Subtest: OBSERVE permits public read and reviewed shell/HTTPS GET
+ok 114 - OBSERVE permits public read and reviewed shell/HTTPS GET
+  ---
+  duration_ms: 16.9096
+  type: 'test'
+  ...
+# Subtest: OBSERVE treats explicit secret shell by declared mode
+ok 115 - OBSERVE treats explicit secret shell by declared mode
+  ---
+  duration_ms: 6.8929
+  type: 'test'
+  ...
+# Subtest: OBSERVE never overrides quarantined Guard
+ok 116 - OBSERVE never overrides quarantined Guard
+  ---
+  duration_ms: 10.2515
+  type: 'test'
+  ...
+# Subtest: BALANCED permits public read and reviewed shell/HTTPS GET
+ok 117 - BALANCED permits public read and reviewed shell/HTTPS GET
+  ---
+  duration_ms: 15.9907
+  type: 'test'
+  ...
+# Subtest: BALANCED treats explicit secret shell by declared mode
+ok 118 - BALANCED treats explicit secret shell by declared mode
+  ---
+  duration_ms: 4.2697
+  type: 'test'
+  ...
+# Subtest: BALANCED never overrides quarantined Guard
+ok 119 - BALANCED never overrides quarantined Guard
+  ---
+  duration_ms: 7.8346
+  type: 'test'
+  ...
+# Subtest: STRICT permits public read and reviewed shell/HTTPS GET
+ok 120 - STRICT permits public read and reviewed shell/HTTPS GET
+  ---
+  duration_ms: 10.7894
+  type: 'test'
+  ...
+# Subtest: STRICT treats explicit secret shell by declared mode
+ok 121 - STRICT treats explicit secret shell by declared mode
+  ---
+  duration_ms: 9.3612
+  type: 'test'
+  ...
+# Subtest: STRICT never overrides quarantined Guard
+ok 122 - STRICT never overrides quarantined Guard
+  ---
+  duration_ms: 18.843
+  type: 'test'
+  ...
+# Subtest: sensitive path is parameter-based even under an innocuous tool alias
+ok 123 - sensitive path is parameter-based even under an innocuous tool alias
+  ---
+  duration_ms: 4.7526
+  type: 'test'
+  ...
+# Subtest: one-shot host approval binds immutable call; model approval fields cannot grant
+ok 124 - one-shot host approval binds immutable call; model approval fields cannot grant
+  ---
+  duration_ms: 7.0857
+  type: 'test'
+  ...
+# Subtest: approval expired, foreign, missing operator and quarantined requests are rejected
+ok 125 - approval expired, foreign, missing operator and quarantined requests are rejected
+  ---
+  duration_ms: 48.4436
+  type: 'test'
+  ...
+# Subtest: approved secret read taints later network egress and cannot be approved through
+ok 126 - approved secret read taints later network egress and cannot be approved through
+  ---
+  duration_ms: 8.3209
+  type: 'test'
+  ...
+# Subtest: pending network request is rechecked after another secret read
+ok 127 - pending network request is rechecked after another secret read
+  ---
+  duration_ms: 13.5652
+  type: 'test'
+  ...
+# Subtest: replacing a policy router or mode cannot erase same-session sensitive history
+ok 128 - replacing a policy router or mode cannot erase same-session sensitive history
+  ---
+  duration_ms: 15.0168
+  type: 'test'
+  ...
+# Subtest: concurrent one-shot approvals execute once
+ok 129 - concurrent one-shot approvals execute once
+  ---
+  duration_ms: 5.0859
+  type: 'test'
+  ...
+# Subtest: a decoy quarantines immediately while another callback is in flight
+ok 130 - a decoy quarantines immediately while another callback is in flight
+  ---
+  duration_ms: 22.5461
+  type: 'test'
+  ...
+# Subtest: malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+ok 131 - malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+  ---
+  duration_ms: 10.6444
+  type: 'test'
+  ...
+# Subtest: destructive and write approvals keep ordinary workflow possible
+ok 132 - destructive and write approvals keep ordinary workflow possible
+  ---
+  duration_ms: 12.2534
+  type: 'test'
+  ...
+# Subtest: audit errors do not execute callbacks; audit omits raw arguments
+ok 133 - audit errors do not execute callbacks; audit omits raw arguments
+  ---
+  duration_ms: 4.9851
+  type: 'test'
+  ...
+# Subtest: accessors, cycles and oversized JSON cannot control policy
+ok 134 - accessors, cycles and oversized JSON cannot control policy
+  ---
+  duration_ms: 1.1004
+  type: 'test'
+  ...
+# Subtest: queue capacity is bounded while decoys retain immediate priority
+ok 135 - queue capacity is bounded while decoys retain immediate priority
+  ---
+  duration_ms: 368.7241
+  type: 'test'
+  ...
+# Subtest: console approval requires separate operator capability, cannot be forged with known CSRF
+ok 136 - console approval requires separate operator capability, cannot be forged with known CSRF
+  ---
+  duration_ms: 257.5603
+  type: 'test'
+  ...
+# Subtest: decoyToolDefs emits native schemas for both formats
+ok 137 - decoyToolDefs emits native schemas for both formats
+  ---
+  duration_ms: 5.4062
+  type: 'test'
+  ...
+# Subtest: free SDK decoy and token primitives work without a paid license
+ok 138 - free SDK decoy and token primitives work without a paid license
+  ---
+  duration_ms: 80.7628
+  type: 'test'
+  ...
+# Subtest: scanCanary detects planted tokens, ignores normal text
+ok 139 - scanCanary detects planted tokens, ignores normal text
+  ---
+  duration_ms: 49.9258
+  type: 'test'
+  ...
+# Subtest: createTokenGuard inspect fires alerts + audit event per hit
+ok 140 - createTokenGuard inspect fires alerts + audit event per hit
+  ---
+  duration_ms: 49.036
+  type: 'test'
+  ...
+# Subtest: guard without alert flag still returns hits (silent mode)
+ok 141 - guard without alert flag still returns hits (silent mode)
+  ---
+  duration_ms: 45.611
+  type: 'test'
+  ...
+# Subtest: guarded tool router sends decoys to containment and never calls the real callback
+ok 142 - guarded tool router sends decoys to containment and never calls the real callback
+  ---
+  duration_ms: 45.1362
+  type: 'test'
+  ...
+# Subtest: guarded tool router respects the guard quarantine allowlist
+ok 143 - guarded tool router respects the guard quarantine allowlist
+  ---
+  duration_ms: 27.0642
+  type: 'test'
+  ...
+# Subtest: guarded tool router rejects incomplete integration configuration
+ok 144 - guarded tool router rejects incomplete integration configuration
+  ---
+  duration_ms: 0.5226
+  type: 'test'
+  ...
+# Subtest: pre-review benign cannot grant permission or accept model approval
+ok 145 - pre-review benign cannot grant permission or accept model approval
+  ---
+  duration_ms: 20.3891
+  type: 'test'
+  ...
+# Subtest: pre-review suspicious tightens ambiguous action to DENY
+ok 146 - pre-review suspicious tightens ambiguous action to DENY
+  ---
+  duration_ms: 7.9251
+  type: 'test'
+  ...
+# Subtest: clear safe and clear dangerous calls do not wait for AI
+ok 147 - clear safe and clear dangerous calls do not wait for AI
+  ---
+  duration_ms: 10.3578
+  type: 'test'
+  ...
+# Subtest: review timeout remains conservative
+ok 148 - review timeout remains conservative
+  ---
+  duration_ms: 19.7692
+  type: 'test'
+  ...
+# Subtest: review throw remains conservative
+ok 149 - review throw remains conservative
+  ---
+  duration_ms: 4.4864
+  type: 'test'
+  ...
+# Subtest: review invalid remains conservative
+ok 150 - review invalid remains conservative
+  ---
+  duration_ms: 2.962
+  type: 'test'
+  ...
+# Subtest: review injected-evidence remains conservative
+ok 151 - review injected-evidence remains conservative
+  ---
+  duration_ms: 6.1069
+  type: 'test'
+  ...
+# Subtest: decoy during async review quarantines before callback
+ok 152 - decoy during async review quarantines before callback
+  ---
+  duration_ms: 44.464
+  type: 'test'
+  ...
+# Subtest: callback deadline signals abort, quarantines, and cannot permit queued calls
+ok 153 - callback deadline signals abort, quarantines, and cannot permit queued calls
+  ---
+  duration_ms: 28.9081
+  type: 'test'
+  ...
+# Subtest: dataflow deduplicates, expires, evicts and never stores raw content
+ok 154 - dataflow deduplicates, expires, evicts and never stores raw content
+  ---
+  duration_ms: 27.6056
+  type: 'test'
+  ...
+# Subtest: same-Guard flow survives replacement and blocks unrelated egress conservatively
+ok 155 - same-Guard flow survives replacement and blocks unrelated egress conservatively
+  ---
+  duration_ms: 12.6001
+  type: 'test'
+  ...
+# Subtest: literal private network denied in balanced, observe records without blocking
+ok 156 - literal private network denied in balanced, observe records without blocking
+  ---
+  duration_ms: 14.3271
+  type: 'test'
+  ...
+# Subtest: host-supported sandbox chooses only host executor
+ok 157 - host-supported sandbox chooses only host executor
+  ---
+  duration_ms: 5.2058
+  type: 'test'
+  ...
+# Subtest: reject and expiration remove approval without callback
+not ok 158 - reject and expiration remove approval without callback
+  ---
+  duration_ms: 6.8213
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\security-router.test.ts:1:6304'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'requestId')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\security-router.test.ts:17:232)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+ok 159 - realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+  ---
+  duration_ms: 23.5012
+  type: 'test'
+  ...
+# Subtest: missing root fails closed and real public path allows
+ok 160 - missing root fails closed and real public path allows
+  ---
+  duration_ms: 33.1804
+  type: 'test'
+  ...
+# Subtest: SIM-01 malicious README: secret read is blocked after a decoy signal
+ok 161 - SIM-01 malicious README: secret read is blocked after a decoy signal
+  ---
+  duration_ms: 51.945
+  type: 'test'
+  ...
+# Subtest: SIM-02 malicious web content: internal HTTP tool call is blocked
+ok 162 - SIM-02 malicious web content: internal HTTP tool call is blocked
+  ---
+  duration_ms: 27.2454
+  type: 'test'
+  ...
+# Subtest: SIM-03 injected shell instruction: synthetic shell callback is blocked
+ok 163 - SIM-03 injected shell instruction: synthetic shell callback is blocked
+  ---
+  duration_ms: 23.4483
+  type: 'test'
+  ...
+# Subtest: SIM-04 virtual credential exfiltration: mail callback is blocked
+ok 164 - SIM-04 virtual credential exfiltration: mail callback is blocked
+  ---
+  duration_ms: 26.4827
+  type: 'test'
+  ...
+# Subtest: SIM-05 simulated file deletion: virtual file is preserved after quarantine
+ok 165 - SIM-05 simulated file deletion: virtual file is preserved after quarantine
+  ---
+  duration_ms: 17.2983
+  type: 'test'
+  ...
+# Subtest: SIM-06 canary token leak: inspection quarantines before outbound callback
+ok 166 - SIM-06 canary token leak: inspection quarantines before outbound callback
+  ---
+  duration_ms: 26.4017
+  type: 'test'
+  ...
+# Subtest: SIM-07 a quarantined session blocks repeated dangerous retries
+ok 167 - SIM-07 a quarantined session blocks repeated dangerous retries
+  ---
+  duration_ms: 19.3987
+  type: 'test'
+  ...
+# Subtest: SIM-08 a new session for the same reviewed identity inherits quarantine
+ok 168 - SIM-08 a new session for the same reviewed identity inherits quarantine
+  ---
+  duration_ms: 17.1933
+  type: 'test'
+  ...
+# Subtest: SIM-09 concurrent decoy and dangerous call: callback cannot race past quarantine
+ok 169 - SIM-09 concurrent decoy and dangerous call: callback cannot race past quarantine
+  ---
+  duration_ms: 15.2664
+  type: 'test'
+  ...
+# Subtest: SIM-10 webhook failure does not reopen a quarantined session
+ok 170 - SIM-10 webhook failure does not reopen a quarantined session
+  ---
+  duration_ms: 44.249
+  type: 'test'
+  ...
+# Subtest: SIM-11 shared state-store outage remains fail-closed
+ok 171 - SIM-11 shared state-store outage remains fail-closed
+  ---
+  duration_ms: 18.2941
+  type: 'test'
+  ...
+# Subtest: SIM-12 avoiding every decoy lets a direct guarded tool call run while the session is SAFE
+ok 172 - SIM-12 avoiding every decoy lets a direct guarded tool call run while the session is SAFE
+  ---
+  duration_ms: 1.3163
+  type: 'test'
+  ...
+# Subtest: SIM-13 direct callback bypass: unguarded integration can execute without detection
+ok 173 - SIM-13 direct callback bypass: unguarded integration can execute without detection
+  ---
+  duration_ms: 0.4631
+  type: 'test'
+  ...
+# Subtest: SIM-14 a real callback that starts before a compromise signal is not retroactively cancelled
+ok 174 - SIM-14 a real callback that starts before a compromise signal is not retroactively cancelled
+  ---
+  duration_ms: 13.2927
+  type: 'test'
+  ...
+# Subtest: CTRL-01 benign safe call is allowed without a compromise signal
+ok 175 - CTRL-01 benign safe call is allowed without a compromise signal
+  ---
+  duration_ms: 0.8758
+  type: 'test'
+  ...
+# Subtest: self-test verifies containment without creating user config, tokens, or events
+ok 176 - self-test verifies containment without creating user config, tokens, or events
+  ---
+  duration_ms: 38.639
+  type: 'test'
+  ...
+# Subtest: token format and registry roundtrip
+ok 177 - token format and registry roundtrip
+  ---
+  duration_ms: 23.2512
+  type: 'test'
+  ...
+# Subtest: plantIntoFile creates honeypot and records planted refs
+ok 178 - plantIntoFile creates honeypot and records planted refs
+  ---
+  duration_ms: 32.5736
+  type: 'test'
+  ...
+# Subtest: scanFile flags leaked tokens but ignores the honeypot file itself
+ok 179 - scanFile flags leaked tokens but ignores the honeypot file itself
+  ---
+  duration_ms: 20.9109
+  type: 'test'
+  ...
+# Subtest: scanFile detects a binary token beyond the old size limit and across a read boundary
+ok 180 - scanFile detects a binary token beyond the old size limit and across a read boundary
+  ---
+  duration_ms: 25.6512
+  type: 'test'
+  ...
+# Subtest: decoy call returns fake success with embedded trace token and logs an event
+ok 181 - decoy call returns fake success with embedded trace token and logs an event
+  ---
+  duration_ms: 29.703
+  type: 'test'
+  ...
+# Subtest: decoys leave represented real actions inert while returning a fake response
+ok 182 - decoys leave represented real actions inert while returning a fake response
+  ---
+  duration_ms: 35.1776
+  type: 'test'
+  ...
+# Subtest: loadTokens skips corrupt records without losing valid tokens
+ok 183 - loadTokens skips corrupt records without losing valid tokens
+  ---
+  duration_ms: 2.7174
+  type: 'test'
+  ...
+# Subtest: saveTokens writes a complete registry without leaving a temporary file
+ok 184 - saveTokens writes a complete registry without leaving a temporary file
+  ---
+  duration_ms: 16.1231
+  type: 'test'
+  ...
+# Subtest: parallel CLI processes do not lose token registry updates
+ok 185 - parallel CLI processes do not lose token registry updates
+  ---
+  duration_ms: 1784.0085
+  type: 'test'
+  ...
+# Subtest: Windows transient EPERM lock-open contention retries without losing registry records
+ok 186 - Windows transient EPERM lock-open contention retries without losing registry records
+  ---
+  duration_ms: 19.5349
+  type: 'test'
+  ...
+# Subtest: Windows lock permission failures remain bounded and never overwrite token records
+ok 187 - Windows lock permission failures remain bounded and never overwrite token records
+  ---
+  duration_ms: 2.6765
+  type: 'test'
+  ...
+# Subtest: token registry is owner-readable on POSIX systems
+ok 188 - token registry is owner-readable on POSIX systems # SKIP
+  ---
+  duration_ms: 0.1061
+  type: 'test'
+  ...
+# Subtest: CLI recursive check detects a token in a hidden .env file
+ok 189 - CLI recursive check detects a token in a hidden .env file
+  ---
+  duration_ms: 736.0219
+  type: 'test'
+  ...
+# Subtest: CLI recursive check fails closed for a missing path or an over-depth tree
+ok 190 - CLI recursive check fails closed for a missing path or an over-depth tree
+  ---
+  duration_ms: 1427.9691
+  type: 'test'
+  ...
+# Subtest: recursive walker includes hidden files but skips dependency and Git internals
+ok 191 - recursive walker includes hidden files but skips dependency and Git internals
+  ---
+  duration_ms: 9.6832
+  type: 'test'
+  ...
+# Subtest: a corrupt token registry raises an error and is not overwritten by token generation
+ok 192 - a corrupt token registry raises an error and is not overwritten by token generation
+  ---
+  duration_ms: 10.3312
+  type: 'test'
+  ...
+# [agent-canary] watching C:\\Users\\36712\\AppData\\Local\\Temp\\agent-canary-watch-test-7oQybb\\synthetic-root — Ctrl+C to stop
+# Subtest: watch rejects missing and non-directory roots instead of claiming to monitor them
+ok 193 - watch rejects missing and non-directory roots instead of claiming to monitor them
+  ---
+  duration_ms: 4.5321
+  type: 'test'
+  ...
+# Subtest: watch queues, deduplicates, and releases resources under sustained synthetic events
+ok 194 - watch queues, deduplicates, and releases resources under sustained synthetic events
+  ---
+  duration_ms: 6794.4636
+  type: 'test'
+  ...
+# Subtest: validateWebhookUrl trims and accepts HTTPS destinations
+ok 195 - validateWebhookUrl trims and accepts HTTPS destinations
+  ---
+  duration_ms: 1.7236
+  type: 'test'
+  ...
+# Subtest: validateWebhookUrl permits loopback HTTP development endpoints
+ok 196 - validateWebhookUrl permits loopback HTTP development endpoints
+  ---
+  duration_ms: 0.4458
+  type: 'test'
+  ...
+# Subtest: validateWebhookUrl rejects unsafe schemes and remote HTTP
+ok 197 - validateWebhookUrl rejects unsafe schemes and remote HTTP
+  ---
+  duration_ms: 1.0966
+  type: 'test'
+  ...
+# Subtest: webhook DNS validation rejects private, special, and mixed answers
+ok 198 - webhook DNS validation rejects private, special, and mixed answers
+  ---
+  duration_ms: 44.0016
+  type: 'test'
+  ...
+# Subtest: webhook connects to a checked loopback address and does not follow redirects
+ok 199 - webhook connects to a checked loopback address and does not follow redirects
+  ---
+  duration_ms: 45.3984
+  type: 'test'
+  ...
+# Subtest: webhook resolves once and pins the checked address for the complete request
+ok 200 - webhook resolves once and pins the checked address for the complete request
+  ---
+  duration_ms: 51.3677
+  type: 'test'
+  ...
+1..200
+# tests 200
+# suites 0
+# pass 195
+# fail 1
+# cancelled 0
+# skipped 4
+# todo 0
+# duration_ms 8202.5379

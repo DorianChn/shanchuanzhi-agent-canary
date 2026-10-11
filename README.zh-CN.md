@@ -11,6 +11,14 @@ JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的�
 
 ![Agent Canary — AI Agent / MCP 安全](docs/agent-canary-cover-v2.png)
 
+## Agent Canary 2.0 竞赛预览（尚未发布）
+
+可选的[安全 Router](docs/SECURITY_ROUTER_2.md)增加可信宿主参数策略、有界敏感来源提示、realpath 检查、callback 截止时间和事前 AI 审查；原有 CLI、SDK 与确定性 Guard 保持兼容。AI 不能批准操作或解除隔离，事前审查**默认关闭**。
+
+[Agent 接入指南](docs/AGENT_INTEGRATIONS_2.md)提供 Claude Code、Cursor、Cline CLI、Codex 与自定义 MCP 的安全预览、私有备份、安装和恢复。实际桌面任务保护**尚未验证**；自定义受保护 MCP 宿主已用真实本地模型自主调用虚拟 callback 验证，其他服务器及原生工具不自动受保护。
+
+[168 次真实 Qwen 实验](competition-submission/evidence/v2-summary.json)保留 A/B/C/D/E 全部结果。沿用原指标，D1 与 E 的攻击成功均为 1/19；E 对正常任务新增 2/8 硬拒绝，未证明 AI 独立阻断增益。模型自主选择工具，危险效果均虚拟。参见[最终审计](docs/competition/AGENT_CANARY_2_FINAL_REPORT.md)、[冻结版本](competition-submission/V2_DELIVERY_VERSION.md)与[独立免费包](competition-submission/Agent_Canary_Competition_2_0.zip)。普通商业包分发边界仍有 P1；本轮没有发布或迁移商业授权。
+
 ## V1.2.7：隔离状态会覆盖紧随其后的重试
 
 V1.2.7 是免费公开版本线。它用明确的诱饵调用和生成令牌的精确匹配作为高特异性信号；

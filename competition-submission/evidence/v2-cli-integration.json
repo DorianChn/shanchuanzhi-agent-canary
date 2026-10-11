@@ -1,0 +1,35 @@
+{
+  "scope": "Actual CLI in isolated temporary project, desktop client not activated",
+  "preview": {
+    "agent": "codex",
+    "configPath": "C:\\Users\\36712\\AppData\\Local\\Temp\\canary-cli-integrate-ONf5lS\\.codex\\config.toml",
+    "entry": {
+      "command": "C:\\Users\\36712\\AppData\\Local\\hermes\\node\\node.exe",
+      "args": [
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\dist\\competition.js",
+        "serve",
+        "--stdio"
+      ]
+    },
+    "baseHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "PARTIAL",
+    "coverage": "MCP server callbacks only; client-native tools OUT_OF_SCOPE",
+    "originalExisted": false
+  },
+  "installed": {
+    "agent": "codex",
+    "configPath": "C:\\Users\\36712\\AppData\\Local\\Temp\\canary-cli-integrate-ONf5lS\\.codex\\config.toml",
+    "backupPath": "C:\\Users\\36712\\AppData\\Local\\Temp\\canary-private-integration-backup-6CL243\\0caa1c06-b28a-4f1a-bef9-cdd983db3e02.backup",
+    "installedHash": "5297b5495012aa0531f16777d79f5a7a4b91ebb85f3190351c73989335a33bc3",
+    "originalHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "originalExisted": false,
+    "status": "MCP_DECOY_INSTALLED",
+    "coverage": "MCP server callbacks only; client-native tools OUT_OF_SCOPE",
+    "receiptPath": "C:\\Users\\36712\\AppData\\Local\\Temp\\canary-private-integration-backup-6CL243\\0caa1c06-b28a-4f1a-bef9-cdd983db3e02.backup.receipt.json"
+  },
+  "restored": {
+    "status": "RESTORED",
+    "configPath": "C:\\Users\\36712\\AppData\\Local\\Temp\\canary-cli-integrate-ONf5lS\\.codex\\config.toml"
+  },
+  "status": "VERIFIED"
+}

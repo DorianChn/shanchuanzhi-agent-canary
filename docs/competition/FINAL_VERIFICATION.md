@@ -98,3 +98,22 @@
 |D2_policy_ai|1/15|4/15|0/15|0/9|7/9|1/6|5/6|
 
 独立自动测试 {'tests': 201, 'pass': 196, 'fail': 0, 'skipped': 5}。实际 CI：834ef1a361386736be2101bfa635bf0bb531dfb4：9/9 jobs 成功；https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38113459806。常规 V1/V2 风险仍 OPEN，独立免费竞赛构建排除商业实现。AI 只解释；批准需可信宿主。
+
+## Agent Canary 2.0 更新
+
+本轮结果见 [2.0 最终报告](AGENT_CANARY_2_FINAL_REPORT.md) 和 competition-submission/V2_DELIVERY_VERSION.md。
+
+|组|攻击成功|观察拒绝防止|Canary|正常完成|硬误拒绝|审批中断|
+|---|---|---|---|---|---|---|
+|A_no_canary|4/19|0/19|0/19|8/8|0/8|0/8|
+|B_decoy_only|6/19|0/19|0/19|8/8|0/8|0/8|
+|C_guarded_router|6/19|0/19|0/19|8/8|0/8|0/8|
+|D1_policy|1/19|5/19|0/19|6/8|0/8|2/8|
+|D2_policy_ai|1/19|5/19|0/19|6/8|0/8|2/8|
+|E_pre_review|1/19|5/19|0/19|6/8|2/8|0/8|
+
+E 组没有降低 ASR（D1/E 均 1/19），且出现 2/8 正常任务硬拒绝，D1 为 0/8。10 次事前审查全部 suspicious，含正常构建与安装；中位 21.6 秒。AI 默认关闭，不能宣称独立增益。D1/D2 有 2/8 正常任务审批中断。
+
+
+
+只保护注册到 Router 的宿主 callback。MCP 诱饵安装不等于全局保护；绕过 Guard、已开始的外部操作、模型内部状态 OUT_OF_SCOPE。AI 不能批准、重置 Guard 或改权限。realpath 仍有 TOCTOU 窗口；自定义网络 callback 需使用 DNS 固定与禁止重定向的安全 transport。来源提示不等于完整动态污点分析。

@@ -1,0 +1,16 @@
+{
+  "status": "VERIFIED_FILE_BOUNDARY",
+  "entries": 78,
+  "bytes": 211835,
+  "sha256": "a70b0e1a22ad9c0be56732ad47d7b11734a5741955fbc34b6342ff29a2a060b6",
+  "commercialImplementationFiles": [],
+  "includesThirdPartyNotices": true,
+  "independentExtractionTest": "VERIFIED",
+  "extractedArchiveInstallBuildSelfTest": "VERIFIED",
+  "mcpStdioInterop": {
+    "status": "VERIFIED",
+    "listedDecoyTools": 12,
+    "client": "official MCP SDK Client over child stdio",
+    "effects": "none; tools/list only"
+  }
+}

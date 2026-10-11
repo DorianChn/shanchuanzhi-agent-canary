@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: pre-review benign cannot grant permission or accept model approval
+ok 1 - pre-review benign cannot grant permission or accept model approval
+  ---
+  duration_ms: 10.9256
+  type: 'test'
+  ...
+# Subtest: pre-review suspicious tightens ambiguous action to DENY
+ok 2 - pre-review suspicious tightens ambiguous action to DENY
+  ---
+  duration_ms: 2.2423
+  type: 'test'
+  ...
+# Subtest: clear safe and clear dangerous calls do not wait for AI
+ok 3 - clear safe and clear dangerous calls do not wait for AI
+  ---
+  duration_ms: 3.1811
+  type: 'test'
+  ...
+# Subtest: review timeout remains conservative
+ok 4 - review timeout remains conservative
+  ---
+  duration_ms: 11.3603
+  type: 'test'
+  ...
+# Subtest: review throw remains conservative
+ok 5 - review throw remains conservative
+  ---
+  duration_ms: 1.5326
+  type: 'test'
+  ...
+# Subtest: review invalid remains conservative
+ok 6 - review invalid remains conservative
+  ---
+  duration_ms: 1.5541
+  type: 'test'
+  ...
+# Subtest: review injected-evidence remains conservative
+ok 7 - review injected-evidence remains conservative
+  ---
+  duration_ms: 1.4205
+  type: 'test'
+  ...
+# Subtest: decoy during async review quarantines before callback
+ok 8 - decoy during async review quarantines before callback
+  ---
+  duration_ms: 20.4636
+  type: 'test'
+  ...
+# Subtest: callback deadline signals abort, quarantines, and cannot permit queued calls
+ok 9 - callback deadline signals abort, quarantines, and cannot permit queued calls
+  ---
+  duration_ms: 14.6144
+  type: 'test'
+  ...
+# Subtest: dataflow deduplicates, expires, evicts and never stores raw content
+ok 10 - dataflow deduplicates, expires, evicts and never stores raw content
+  ---
+  duration_ms: 27.2751
+  type: 'test'
+  ...
+# Subtest: same-Guard flow survives replacement and blocks unrelated egress conservatively
+ok 11 - same-Guard flow survives replacement and blocks unrelated egress conservatively
+  ---
+  duration_ms: 3.3575
+  type: 'test'
+  ...
+# Subtest: literal private network denied in balanced, observe records without blocking
+ok 12 - literal private network denied in balanced, observe records without blocking
+  ---
+  duration_ms: 2.5595
+  type: 'test'
+  ...
+# Subtest: host-supported sandbox chooses only host executor
+ok 13 - host-supported sandbox chooses only host executor
+  ---
+  duration_ms: 1.7871
+  type: 'test'
+  ...
+# Subtest: reject and expiration remove approval without callback
+ok 14 - reject and expiration remove approval without callback
+  ---
+  duration_ms: 1106.0158
+  type: 'test'
+  ...
+# Subtest: realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+ok 15 - realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+  ---
+  duration_ms: 6.2109
+  type: 'test'
+  ...
+# Subtest: missing root fails closed and real public path allows
+ok 16 - missing root fails closed and real public path allows
+  ---
+  duration_ms: 8.4357
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2037.3623

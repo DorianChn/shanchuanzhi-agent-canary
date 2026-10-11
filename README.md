@@ -14,6 +14,14 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 ![Agent Canary — AI agent and MCP security](docs/agent-canary-cover-v2.png)
 
+## Agent Canary 2.0 competition preview (unreleased)
+
+The optional [security router](docs/SECURITY_ROUTER_2.md) adds host-defined parameter policies, bounded sensitive-source provenance, realpath checks, callback deadlines, and pre-execution AI review. The existing CLI, SDK and deterministic Guard remain compatible. AI cannot approve operations or reset quarantine; pre-review is **off by default**.
+
+The [Agent integration guide](docs/AGENT_INTEGRATIONS_2.md) covers safe configuration preview, private backups, installation and restore for Claude Code, Cursor, Cline CLI, Codex and custom MCP clients. Actual desktop task protection is **not verified**. Real local-model choices through the custom protected MCP host were verified with virtual callbacks; this does not protect other servers or native tools.
+
+[168 real Qwen trials](competition-submission/evidence/v2-summary.json) preserve all A/B/C/D/E outcomes. D1 and E both recorded 1/19 attacks under the unchanged legacy definition; E added 2/8 hard refusals on normal tasks. Independent AI blocking gain is not established. All effects were simulated, with real autonomous model tool selection. See the [final audit](docs/competition/AGENT_CANARY_2_FINAL_REPORT.md), [frozen version](competition-submission/V2_DELIVERY_VERSION.md), and [independent free artifact](competition-submission/Agent_Canary_Competition_2_0.zip). Ordinary commercial-package distribution boundaries remain an open P1; no release or license migration is performed.
+
 ## V1.2.7: containment that holds through the next retry
 
 V1.2.7 is the free public line. Its signals are explicit decoy calls and exact

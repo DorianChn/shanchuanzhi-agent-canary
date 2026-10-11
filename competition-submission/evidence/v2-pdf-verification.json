@@ -1,0 +1,31 @@
+{
+  "pdfs": [
+    {
+      "file": "Agent_Canary_2_0_项目介绍.pdf",
+      "pages": 12,
+      "sha256": "642d3ad1f1f698c05df8be7d2799b6cc107e385101d18297b06b3c7cfa87aedf",
+      "allPagesRendered": true,
+      "chineseTextExtracted": true,
+      "contactSheet": "Agent_Canary_2_0_项目介绍-contact.png",
+      "visualReview": "VERIFIED: all pages rendered, all-page sheets plus changed pages inspected"
+    },
+    {
+      "file": "Agent_Canary_2_0_技术创新.pdf",
+      "pages": 4,
+      "sha256": "7f14c5b3eeb31df4e4eb1b22676ca862077c6e5d5098f343f86326c3a3441293",
+      "allPagesRendered": true,
+      "chineseTextExtracted": true,
+      "contactSheet": "Agent_Canary_2_0_技术创新-contact.png",
+      "visualReview": "VERIFIED: all pages rendered, all-page sheets plus changed pages inspected"
+    },
+    {
+      "file": "Agent_Canary_2_0_真实模型实验.pdf",
+      "pages": 7,
+      "sha256": "24e6eb35df673e966df2d405c6eedd4f4ba308182c54ed05f34144c9ef014941",
+      "allPagesRendered": true,
+      "chineseTextExtracted": true,
+      "contactSheet": "Agent_Canary_2_0_真实模型实验-contact.png",
+      "visualReview": "VERIFIED: all pages rendered, all-page sheets plus changed pages inspected"
+    }
+  ]
+}

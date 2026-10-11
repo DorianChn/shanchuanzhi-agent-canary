@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add optional 2.0 host security routing, pre-execution review, bounded provenance, callback deadlines and protected MCP stdio hosting; AI cannot grant rights or undo containment.
+- Add non-overwriting Agent configuration installation/restore, official hook protocol fixtures, private backups and cross-session hook state. Desktop-native protection remains unverified.
+- Extend the Chinese console and preserve 168 autonomous local-model A/B/C/D/E trials, including adverse AI false refusals. Deliver separately verified free competition artifacts; no npm/Docker release.
 - Add an opt-in local Ollama agent-tool evaluation harness with three comparison arms; all tools use synthetic, side-effect-free handlers.
 - Add competition reproduction materials, maintainer roadmap, and structured GitHub issue/PR templates.
 - No package release or API compatibility change is made by these documentation and evaluation additions.

@@ -1,0 +1,19 @@
+{
+  "scope": "Deterministic hook fixture, no client activation or actual command execution",
+  "baselineCommit": "e6ac31366595f2372a409421c32fac38d6befad8",
+  "before": {
+    "hookSpecificOutput": {
+      "hookEventName": "PreToolUse",
+      "permissionDecision": "allow",
+      "permissionDecisionReason": "Agent Canary: reviewed_read_command"
+    }
+  },
+  "after": {
+    "hookSpecificOutput": {
+      "hookEventName": "PreToolUse",
+      "permissionDecision": "deny",
+      "permissionDecisionReason": "Agent Canary: guard_quarantined"
+    }
+  },
+  "reproduced": true
+}

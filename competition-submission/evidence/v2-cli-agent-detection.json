@@ -1,0 +1,32 @@
+[
+  {
+    "agent": "claude",
+    "detected": false,
+    "status": "PARTIAL",
+    "coverage": "Only this managed MCP server; native tools and other servers OUT_OF_SCOPE"
+  },
+  {
+    "agent": "cursor",
+    "detected": false,
+    "status": "PARTIAL",
+    "coverage": "Only this managed MCP server; native tools and other servers OUT_OF_SCOPE"
+  },
+  {
+    "agent": "cline",
+    "detected": false,
+    "status": "PARTIAL",
+    "coverage": "Only this managed MCP server; native tools and other servers OUT_OF_SCOPE"
+  },
+  {
+    "agent": "codex",
+    "detected": true,
+    "status": "PARTIAL",
+    "coverage": "Only this managed MCP server; native tools and other servers OUT_OF_SCOPE"
+  },
+  {
+    "agent": "custom",
+    "detected": true,
+    "status": "PARTIAL",
+    "coverage": "Only this managed MCP server; native tools and other servers OUT_OF_SCOPE"
+  }
+]

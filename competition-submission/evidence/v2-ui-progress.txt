@@ -1,0 +1,1 @@
+{"status":"VERIFIED","controls":["Agent metadata detection, Codex preview/install/restore in temporary project","Actual local pre-execution inference, no AI authority","Approved synthetic source, hashed provenance and network denial","Normal call after policy denial, canary isolation, post-isolation refusal"]}

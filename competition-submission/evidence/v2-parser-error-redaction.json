@@ -1,0 +1,6 @@
+{
+  "scope": "Virtual malformed TOML only; no actual credentials",
+  "rawLibraryErrorContainsFixtureValue": true,
+  "hostErrorCode": "INTEGRATION_TOML_INVALID",
+  "hostRedactionRegression": "test/agent-integrations.test.ts"
+}

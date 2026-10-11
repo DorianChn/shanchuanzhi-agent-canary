@@ -1,0 +1,117 @@
+{
+  "startedAt": "2026-10-11T06:01:02.163Z",
+  "platform": "win32",
+  "node": "v22.23.1",
+  "commands": [
+    {
+      "scope": "root",
+      "command": "npm ci",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 6443,
+      "log": "v2-initial-verify-root-ci.txt",
+      "counts": {}
+    },
+    {
+      "scope": "root",
+      "command": "npm run build",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2838,
+      "log": "v2-initial-verify-root-run-build.txt",
+      "counts": {}
+    },
+    {
+      "scope": "root",
+      "command": "npm test",
+      "exitCode": 1,
+      "error": null,
+      "durationMs": 8756,
+      "log": "v2-initial-verify-root-test.txt",
+      "counts": {
+        "tests": 200,
+        "pass": 195,
+        "fail": 1,
+        "skipped": 4,
+        "cancelled": 0
+      }
+    },
+    {
+      "scope": "root",
+      "command": "npm run pack:check",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 18803,
+      "log": "v2-initial-verify-root-run-packcheck.txt",
+      "counts": {}
+    },
+    {
+      "scope": "root",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 24219,
+      "log": "v2-initial-verify-root-run-verify.txt",
+      "counts": {
+        "tests": 200,
+        "pass": 196,
+        "fail": 0,
+        "skipped": 4,
+        "cancelled": 0
+      }
+    },
+    {
+      "scope": "root",
+      "command": "npm audit --json",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 2697,
+      "log": "v2-initial-verify-root-audit---json.txt",
+      "counts": {}
+    },
+    {
+      "scope": "sponsor",
+      "command": "npm ci",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 3125,
+      "log": "v2-initial-verify-sponsor-ci.txt",
+      "counts": {}
+    },
+    {
+      "scope": "sponsor",
+      "command": "npm test",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 8058,
+      "log": "v2-initial-verify-sponsor-test.txt",
+      "counts": {
+        "tests": 25,
+        "pass": 24,
+        "fail": 0,
+        "skipped": 1,
+        "cancelled": 0
+      }
+    },
+    {
+      "scope": "sponsor",
+      "command": "npm run smoke",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1230,
+      "log": "v2-initial-verify-sponsor-run-smoke.txt",
+      "counts": {}
+    },
+    {
+      "scope": "sponsor",
+      "command": "npm audit --json",
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 8405,
+      "log": "v2-initial-verify-sponsor-audit---json.txt",
+      "counts": {}
+    }
+  ],
+  "completedAt": "2026-10-11T06:02:26.749Z",
+  "passed": false
+}

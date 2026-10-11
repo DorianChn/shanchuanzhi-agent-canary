@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build
+ok 1 - Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build
+  ---
+  duration_ms: 7.1725
+  type: 'test'
+  ...
+# Subtest: hook canary quarantine persists across process-style Guard instances
+ok 2 - hook canary quarantine persists across process-style Guard instances
+  ---
+  duration_ms: 17.3982
+  type: 'test'
+  ...
+# Subtest: hook path boundary and model approvals cannot authorize dangerous calls
+ok 3 - hook path boundary and model approvals cannot authorize dangerous calls
+  ---
+  duration_ms: 3.4986
+  type: 'test'
+  ...
+# Subtest: full persistent hook state fails closed for new identities without growing files
+ok 4 - full persistent hook state fails closed for new identities without growing files
+  ---
+  duration_ms: 362.7818
+  type: 'test'
+  ...
+# Subtest: quarantine writer contention leaves persistent fail-closed marker rather than losing signal
+ok 5 - quarantine writer contention leaves persistent fail-closed marker rather than losing signal
+  ---
+  duration_ms: 16.0885
+  type: 'test'
+  ...
+# Subtest: new native session cannot bypass workspace-bound quarantine
+ok 6 - new native session cannot bypass workspace-bound quarantine
+  ---
+  duration_ms: 12.9777
+  type: 'test'
+  ...
+# Subtest: claude preview, nonoverwriting install and verified restore
+ok 7 - claude preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 8.5806
+  type: 'test'
+  ...
+# Subtest: cursor preview, nonoverwriting install and verified restore
+ok 8 - cursor preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 6.3184
+  type: 'test'
+  ...
+# Subtest: cline preview, nonoverwriting install and verified restore
+ok 9 - cline preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 6.4192
+  type: 'test'
+  ...
+# Subtest: codex preview, nonoverwriting install and verified restore
+ok 10 - codex preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 6.3423
+  type: 'test'
+  ...
+# Subtest: custom preview, nonoverwriting install and verified restore
+ok 11 - custom preview, nonoverwriting install and verified restore
+  ---
+  duration_ms: 5.9086
+  type: 'test'
+  ...
+# Subtest: preserves other server and private config and refuses overwriting later user edits
+ok 12 - preserves other server and private config and refuses overwriting later user edits
+  ---
+  duration_ms: 7.1992
+  type: 'test'
+  ...
+# Subtest: corrupt and changed configuration cannot be overwritten
+ok 13 - corrupt and changed configuration cannot be overwritten
+  ---
+  duration_ms: 2.1258
+  type: 'test'
+  ...
+# Subtest: redirected parent config does not write outside chosen project
+ok 14 - redirected parent config does not write outside chosen project
+  ---
+  duration_ms: 3.6466
+  type: 'test'
+  ...
+# Subtest: empty existing JSON fails closed; empty TOML presence and private outside-Git backup preserved
+ok 15 - empty existing JSON fails closed; empty TOML presence and private outside-Git backup preserved
+  ---
+  duration_ms: 9.0069
+  type: 'test'
+  ...
+# Subtest: Codex preserves valid TOML exactly and rejects corruption or quoted duplicate server
+ok 16 - Codex preserves valid TOML exactly and rejects corruption or quoted duplicate server
+  ---
+  duration_ms: 11.4151
+  type: 'test'
+  ...
+# Subtest: malformed JSON and TOML errors never echo sensitive source lines
+ok 17 - malformed JSON and TOML errors never echo sensitive source lines
+  ---
+  duration_ms: 2.505
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1174.6318

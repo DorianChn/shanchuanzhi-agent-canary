@@ -1,0 +1,9 @@
+{
+  "controls": [
+    "Agent metadata detection, Codex preview/install/restore in temporary project"
+  ],
+  "errors": [],
+  "scope": "Real Chromium, isolated configurations and virtual effects; actual local pre-review where recorded",
+  "status": "FAILED",
+  "error": "TimeoutError: page.waitForFunction: Timeout 60000ms exceeded."
+}
