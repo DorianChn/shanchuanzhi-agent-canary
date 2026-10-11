@@ -1,5 +1,7 @@
 # 3.0 免费候选构建与安装验收
 
+> 历史验收快照：本文件保留对应提交的结果；最新交叉验收、48次新模型记录和候选包见 [FINAL_3_0_ACCEPTANCE.md](FINAL_3_0_ACCEPTANCE.md)。不要将以下旧计数/版本当成当前结果。
+
 状态：**VERIFIED（当前Windows用户、中文/空格路径），干净机器/独立操作者再现BLOCKED。** 不发布npm/Docker或稳定Release。
 
 - 交付源码：`9ee79e7f8d65368618725b288b4fa696407b1a94`；实际模型核心`334b2c81569e100c8c7d727e0a9b9361ab530c5a`。五个被评测源码文件完全相同，见`security-lab/acceptance/final-verification.json`。

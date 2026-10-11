@@ -1,5 +1,7 @@
 # Open Security Evidence Protocol v0.1
 
+最新版本证据与限制见 [最终交叉验收](FINAL_3_0_ACCEPTANCE.md)；原生宿主验证不能由受控 SDK 验证替代。
+
 工程候选规范：`security-lab/evidence.schema.json`。运行时 `validateEvidence()` 执行相同的字段、枚举、长度与格式限制，`verifyEvidenceChain()` 验证局部连续性。
 
 每个事件包括 schema_version、evidence_id、session_id、agent_id、tool_id、request_id、request_digest、policy_version、decision、decision_reason、approval_reference、execution_status、side_effect_verification、timestamp、previous_event_digest 和 event_digest。
