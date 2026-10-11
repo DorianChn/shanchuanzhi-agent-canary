@@ -15,7 +15,7 @@ with zipfile.ZipFile(seed) as z:
   relative=Path(*parts[1:])
   if relative.parts and relative.parts[0]=='dist':continue
   dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(z.read(info))
-for relative in ['src/ai/console.ts','src/ai/console-page.ts','src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs']:
+for relative in ['src/file-state-store.ts','src/ai/console.ts','src/ai/console-page.ts','src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/file-state-store.test.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs']:
  dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes((root/relative).read_bytes())
 for f in (root/'docs/3.0').glob('*.md'):
  if f.name=='PR_BODY.md':continue
@@ -29,7 +29,7 @@ for line in (root/'src/sdk.ts').read_text(encoding='utf-8').splitlines():
  if "from './runtime/" in line:text+='\n'+line
 sdk.write_text(text+'\n',encoding='utf-8')
 pkg=json.loads((stage/'package.json').read_text());pkg['version']='3.0.0-engineering-preview.1';pkg['private']=True
-pkg['scripts']['test']='node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts'
+pkg['scripts']['test']='node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts'
 pkg['scripts']['self-test']='node dist/competition.js self-test --json'
 (stage/'package.json').write_text(json.dumps(pkg,indent=2)+'\n')
 lock=json.loads((stage/'package-lock.json').read_text());lock['version']=pkg['version'];lock['packages']['']['version']=pkg['version'];(stage/'package-lock.json').write_text(json.dumps(lock,indent=2)+'\n')
