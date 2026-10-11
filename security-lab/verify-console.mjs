@@ -16,7 +16,7 @@ try{
   await page.goto(app.url,{waitUntil:'domcontentloaded'});await page.locator('#runtime3Status').filter({hasText:'Guard：'}).waitFor();
   if(name==='desktop'){
    await page.locator('#runtime3-write').click();await page.locator('#runtime3Evidence').filter({hasText:'writtenBytes'}).waitFor();
-   await page.locator('#runtime3-approval').click();await page.locator('#runtime3Request option').filter({hasText:'mcp_tool'}).waitFor();
+   await page.locator('#runtime3-approval').click();await page.locator('#runtime3Request option').filter({hasText:'mcp_tool'}).waitFor({state:'attached'});
    await page.locator('#operatorCode').fill('UI_FIXTURE_OPERATOR_ONLY');await page.locator('#approveConfirm').check();await page.locator('#runtime3Approve').click();
    await page.locator('#runtime3Evidence').filter({hasText:'approvedFixtureWorkflow'}).waitFor();
    await page.locator('#runtime3-honeypot').click();await page.locator('#runtime3Status').filter({hasText:'QUARANTINED'}).waitFor();
