@@ -16,6 +16,8 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 ## Agent Canary 2.0 competition preview
 
+The optional [file-backed state adapter](docs/FILE_STATE_STORE.md) persists quarantined trusted principals across restarts. Existing defaults remain in-memory. Missing, corrupt or busy state fails closed instead of falling back to an empty store.
+
 [GitHub preview release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [Updated bilingual website](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Download the standalone free build](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
 
 This is a GitHub competition preview, not a stable npm/Docker release. The npm metadata remains 1.2.7; use the explicitly separated free ZIP. PDF and video artifacts retain their frozen, verified core version.
