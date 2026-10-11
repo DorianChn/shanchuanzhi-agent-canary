@@ -40,12 +40,12 @@ export function validateEvidence(event: unknown): event is SecurityEvidenceEvent
   try {
     const e = JSON.parse(canonicalJSON(event));
     if (Object.keys(e).sort().join() !== fields.join() || e.schema_version !== EVIDENCE_VERSION) return false;
-    if (!/^[0-9a-f-]{36}$/.test(e.evidence_id)) return false;
+    if (typeof e.evidence_id !== 'string' || !/^[0-9a-f-]{36}$/.test(e.evidence_id)) return false;
     for (const key of ['session_id','agent_id','tool_id','request_id','policy_version','decision_reason']) if (typeof e[key] !== 'string' || !/^[A-Za-z0-9_.:-]{1,100}$/.test(e[key])) return false;
     if (!['ALLOW','DENY','REQUIRE_APPROVAL','SANDBOX','OBSERVE_ONLY'].includes(e.decision) || !['NOT_STARTED','RUNNING','SUCCEEDED','FAILED','CANCELLED'].includes(e.execution_status) || !['NOT_STARTED','VERIFIED','NOT_VERIFIED','FAILED'].includes(e.side_effect_verification)) return false;
-    for (const key of ['request_digest','event_digest']) if (!/^[a-f0-9]{64}$/.test(e[key])) return false;
-    if (e.previous_event_digest !== null && !/^[a-f0-9]{64}$/.test(e.previous_event_digest)) return false;
-    if (e.approval_reference !== null && !/^[a-f0-9]{64}$/.test(e.approval_reference)) return false;
+    for (const key of ['request_digest','event_digest']) if (typeof e[key] !== 'string' || !/^[a-f0-9]{64}$/.test(e[key])) return false;
+    if (e.previous_event_digest !== null && (typeof e.previous_event_digest !== 'string' || !/^[a-f0-9]{64}$/.test(e.previous_event_digest))) return false;
+    if (e.approval_reference !== null && (typeof e.approval_reference !== 'string' || !/^[a-f0-9]{64}$/.test(e.approval_reference))) return false;
     return typeof e.timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(e.timestamp) && Number.isFinite(Date.parse(e.timestamp));
   } catch {return false;}
 }

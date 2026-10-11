@@ -1,7 +1,8 @@
 """Read-only ZIP integrity and fresh Windows install; no source checkout runtime."""
 from pathlib import Path
-import zipfile,tempfile,json,hashlib,subprocess
-root=Path.cwd();artifact=root/'competition-submission/3.0/Agent_Canary_3_0_Community_Preview_9f00b6ba.zip';stage=Path(tempfile.mkdtemp(prefix='Canary 3 普通用户 中文 path '));results={}
+import zipfile,tempfile,json,hashlib,subprocess,argparse
+p=argparse.ArgumentParser();p.add_argument('--artifact',default='competition-submission/3.0/Agent_Canary_3_0_Community_Preview_9f00b6ba.zip');p.add_argument('--report',default='security-lab/evidence/artifact-install.json');a=p.parse_args()
+root=Path.cwd();artifact=root/a.artifact;stage=Path(tempfile.mkdtemp(prefix='Canary 3 普通用户 中文 path '));results={}
 with zipfile.ZipFile(artifact)as z:
  for n in z.namelist():
   parts=Path(n).parts
@@ -13,5 +14,5 @@ for cmd in [['ci'],['run','build'],['run','self-test']]:
  p=subprocess.run(['C:/Users/36712/AppData/Local/hermes/node/node.exe','C:/Users/36712/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js',*cmd],cwd=cwd,encoding='utf-8',errors='replace',text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);results[' '.join(cmd)]={'exitCode':p.returncode,'output':p.stdout}
  if p.returncode:break
 out={'artifactSHA256':hashlib.sha256(artifact.read_bytes()).hexdigest(),'manifestFiles':len(manifest),'manifestMismatch':mismatch,'freshExtractedDirectory':str(cwd),'scope':'fresh extracted ZIP under Chinese and space path; current user, not separate clean VM','steps':results}
-(root/'security-lab/evidence/artifact-install.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+(root/a.report).write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps({'manifestFiles':len(manifest),'steps':{k:v['exitCode']for k,v in results.items()}},ensure_ascii=True));raise SystemExit(int(any(v['exitCode']for v in results.values())))

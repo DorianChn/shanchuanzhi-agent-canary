@@ -32,13 +32,13 @@ const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
-const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker}>();
+const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>}>();
 
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
   const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
-  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker()};
+  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve()};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
   const mcp=new Map(Object.entries(options.mcpTools??{}).map(([name,t])=>[name,Object.freeze({...t})]));
@@ -65,9 +65,9 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
   }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
-  let closed=false,queued=0,tail:Promise<unknown>=Promise.resolve();
+  let closed=false;
   const pending=new Map<string,{request:Request;expires:number}>();
-  function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));queued++;const task=tail.then(fn).finally(()=>{queued--;});tail=task.catch(()=>{});return task;}
+  function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
   function normalize(call:ToolCall):Request{
     const data=JSON.parse(canonicalJSON(call));
     if(Object.keys(data).some(k=>k!=='name'&&k!=='args')||typeof data.name!=='string'||!idPattern.test(data.name)||!data.args||Array.isArray(data.args)||typeof data.args!=='object')throw Error('GATEWAY_REQUEST_INVALID');
@@ -96,13 +96,13 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     }
     if(r.name==='http_request'){
       try{const u=new URL(String(r.args.url));if(u.protocol!=='https:'||!origins.has(u.origin)||u.username||u.password||u.search||u.hash)return{decision:'DENY',reason:'network_capability_denied'};
-        if(flow.hasSensitiveSource())return{decision:'DENY',reason:'sensitive_session_egress_denied'};
+        if(history.sensitiveObserved)return{decision:'DENY',reason:'sensitive_session_egress_denied'};
         return{decision:'ALLOW',reason:'host_read_origin_capability'};
       }catch{return{decision:'DENY',reason:'network_target_invalid'};}
     }
     const t=typeof r.args.tool==='string'?mcp.get(r.args.tool):undefined;
     if(!t||!r.args.arguments||typeof r.args.arguments!=='object'||Array.isArray(r.args.arguments))return{decision:'DENY',reason:'mcp_capability_denied'};
-    if(t.risk==='NETWORK'&&(flow.hasSensitiveSource()||secretPattern.test(canonicalJSON(r.args.arguments))||provenance.inspect(canonicalJSON(r.args.arguments)).length>0))return{decision:'DENY',reason:'sensitive_session_egress_denied'};
+    if(t.risk==='NETWORK'&&(history.sensitiveObserved||secretPattern.test(canonicalJSON(r.args.arguments))||provenance.inspect(canonicalJSON(r.args.arguments)).length>0))return{decision:'DENY',reason:'sensitive_session_egress_denied'};
     if(t.risk==='SENSITIVE_DATA'||t.risk==='DESTRUCTIVE')return{decision:'DENY',reason:'mcp_high_risk_denied'};
     return{decision:t.approvalRequired||t.risk===undefined?'REQUIRE_APPROVAL':'ALLOW',reason:'host_mcp_capability'};
   }
@@ -135,7 +135,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           const f=resource(r)!;const stat=fs.fstatSync(f.fd);if(stat.size>65_536)throw Error('GATEWAY_READ_LIMIT');
           const buffer=Buffer.alloc(stat.size);let offset=0;while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
           const text=buffer.subarray(0,offset).toString('utf8');
-          if(secretPattern.test(text)||f.descriptor.decoyId){flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
+          if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}
           return {content:text};
         }
@@ -162,7 +162,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       };
       const result=await Promise.race([Promise.resolve(perform()),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
       const output=typeof result==='string'?result:JSON.stringify(result)??'';
-      if(secretPattern.test(output)){flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
+      if(secretPattern.test(output)){history.sensitiveObserved=true;flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
       audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'||r.name==='write_file'?'VERIFIED':'NOT_VERIFIED',approval);
       return result;
     }catch(error){
@@ -199,6 +199,6 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     reject(requestId:string){sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return blocked(p.request,'operator_rejected');},
   });
   return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
-    async close(){closed=true;await tail;pending.clear();for(const f of resources.values())fs.closeSync(f.fd);}
+    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values())fs.closeSync(f.fd);}
   });
 }
