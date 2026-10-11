@@ -1,0 +1,49 @@
+{
+  "surface": "docs/index.html",
+  "verifiedAt": "2026-10-11",
+  "viewports": [
+    {
+      "name": "desktop",
+      "lang": "zh-CN",
+      "overflow": false,
+      "title": "Agent Canary 2.0检测信号，隔离风险。",
+      "rows": 6,
+      "videoPreload": "none",
+      "posterOK": true,
+      "hasStableVersion": true,
+      "errors": [],
+      "checks": [
+        "language round-trip",
+        "quickstart navigation",
+        "legacy disclosure",
+        "no horizontal overflow",
+        "six evidence arms",
+        "no page errors",
+        "unique IDs"
+      ]
+    },
+    {
+      "name": "mobile",
+      "lang": "zh-CN",
+      "overflow": false,
+      "title": "Agent Canary 2.0检测信号，隔离风险。",
+      "rows": 6,
+      "videoPreload": "none",
+      "posterOK": true,
+      "hasStableVersion": true,
+      "errors": [],
+      "checks": [
+        "language round-trip",
+        "quickstart navigation",
+        "legacy disclosure",
+        "no horizontal overflow",
+        "six evidence arms",
+        "no page errors",
+        "unique IDs"
+      ]
+    }
+  ],
+  "storageDisabled": "PASS",
+  "mediaPaddingWarnings": "Intentional edge-to-edge video; no text container",
+  "scope": "Local Chromium site checks; deployment and release URLs checked after publication"
+}

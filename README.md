@@ -14,7 +14,11 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 ![Agent Canary — AI agent and MCP security](docs/agent-canary-cover-v2.png)
 
-## Agent Canary 2.0 competition preview (unreleased)
+## Agent Canary 2.0 competition preview
+
+[GitHub preview release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [Updated bilingual website](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Download the standalone free build](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
+
+This is a GitHub competition preview, not a stable npm/Docker release. The npm metadata remains 1.2.7; use the explicitly separated free ZIP. PDF and video artifacts retain their frozen, verified core version.
 
 The optional [security router](docs/SECURITY_ROUTER_2.md) adds host-defined parameter policies, bounded sensitive-source provenance, realpath checks, callback deadlines, and pre-execution AI review. The existing CLI, SDK and deterministic Guard remain compatible. AI cannot approve operations or reset quarantine; pre-review is **off by default**.
 
