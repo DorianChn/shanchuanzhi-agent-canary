@@ -22,6 +22,8 @@ for f in (root/'docs/3.0').glob('*.md'):
  dest=stage/'docs/3.0'/f.name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(f.read_bytes())
 summary=root/'security-lab/evidence/console-summary.json'
 if summary.exists():dest=stage/'security-lab/evidence/console-summary.json';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(summary.read_bytes())
+correction=root/'security-lab/evidence/SOURCE_PROVENANCE_CORRECTIONS.json'
+if correction.exists():dest=stage/'security-lab/evidence/SOURCE_PROVENANCE_CORRECTIONS.json';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(correction.read_bytes())
 sdk=stage/'src/sdk.ts';text=sdk.read_text(encoding='utf-8')
 for line in (root/'src/sdk.ts').read_text(encoding='utf-8').splitlines():
  if "from './runtime/" in line:text+='\n'+line
