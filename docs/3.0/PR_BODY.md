@@ -18,7 +18,7 @@ Draft，尚未请求合并或稳定版发布。此 PR 以 `competition/shanchuan
 - 保存90次真实Qwen /受控SDK Agent运行：48间接README +21旧直接准入 +21冻结直接准入；分别统计，不混分母。
 - 间接对照A–F：各0/5危险效果、0/5主动拒绝、正常3/3。模型未跟随注入，不能证明额外防护收益。
 - 冻结直接准入A效果4/4，E/F0/4；E/F主动拒绝4/4；正常各3/3。F实际读虚拟.env后隔离，后续调用拒绝，受保护文件未变化。不是Prompt Injection防护率。
-- E/F各1次有效事前AI suspicious；独立因果阻断增益NOT MEASURED。
+- E有2次、F有1次结构校验通过的事前AI suspicious，共3/3；模型解释仍是未经事实认证的推测。独立因果阻断增益NOT MEASURED。
 - 四项安全/可靠性根因有失败复现：无效AI输出、敏感MCP外传、同Guard替换网关历史丢失、Windows状态锁删除竞态。失败CI与所有样本保留。
 - 早期两个原始sourceSHA被命令展开记为前一提交；原始结果不改，运行时五文件哈希核实更正，最新重跑显式正确SHA。
 - Community正向清单111文件：45专项测试、独立构建、自检、audit通过；新ZIP解压到中文/空格临时路径再次构建、自检通过。root/Sponsor audit为0已知漏洞。

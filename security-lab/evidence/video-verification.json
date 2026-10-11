@@ -15,5 +15,7 @@
   ],
   "mode": "REAL_RUNNING_BROWSER_RECORDING_NOT_OS_DESKTOP",
   "audio": "none",
-  "modelMode": "SAVED_REAL_MODEL_RESULTS_NOT_LIVE_MODEL_RUN"
+  "modelMode": "SAVED_REAL_MODEL_RESULTS_NOT_LIVE_MODEL_RUN",
+  "compressedMediaDurationMs": 212800,
+  "verification": "actual Chrome playback and seek, video-browser-playback.json"
 }
