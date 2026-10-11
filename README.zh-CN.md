@@ -13,6 +13,8 @@ JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的�
 
 ## Agent Canary 2.0 竞赛预览
 
+可选的[文件持久化状态适配器](docs/FILE_STATE_STORE.md)可保存可信主体的隔离状态，重启后重新读取；默认仍为进程内状态，不能把 Map 当成磁盘持久化。损坏、缺失及锁竞争均拒绝回退为空状态。
+
 [GitHub 预览发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [更新后的双语网站](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [下载独立免费构建](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
 
 这是 GitHub 竞赛预览发行，不是 npm/Docker 稳定版发布。npm 元数据仍为 1.2.7，请使用明确分离的免费 ZIP。PDF 和视频保留其已验证的冻结核心版本。

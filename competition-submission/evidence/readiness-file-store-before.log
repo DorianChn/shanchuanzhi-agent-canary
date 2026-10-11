@@ -1,0 +1,228 @@
+TAP version 13
+# Subtest: memory store boundary: separate stores do not preserve quarantine
+ok 1 - memory store boundary: separate stores do not preserve quarantine
+  ---
+  duration_ms: 1.4589
+  type: 'test'
+  ...
+# Subtest: file store requires explicit bootstrap and never overwrites existing state
+not ok 2 - file store requires explicit bootstrap and never overwrites existing state
+  ---
+  duration_ms: 4.9341
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:947'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /STATE_STORE_MISSING/. Input:
+    
+    'TypeError: sdk.createFileContainmentStateStore is not a function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  name: 'TypeError'
+  stack: |-
+    <anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:6:133)
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:6:118)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:6:118)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: file store survives process restart and same principal gets quarantine
+not ok 3 - file store survives process restart and same principal gets quarantine
+  ---
+  duration_ms: 1.8
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:1397'
+  failureType: 'testCodeFailure'
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:7:119)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: corruption empty truncation and schema errors reject without rewriting
+not ok 4 - corruption empty truncation and schema errors reject without rewriting
+  ---
+  duration_ms: 2.4647
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:2244'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /STATE_STORE_INVALID/. Input:
+    
+    'TypeError: sdk.createFileContainmentStateStore is not a function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  name: 'TypeError'
+  stack: |-
+    <anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:8:255)
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:8:240)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:8:240)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+not ok 5 - missing state after bootstrap latches guard fail-closed without regeneration
+  ---
+  duration_ms: 0.9887
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:2624'
+  failureType: 'testCodeFailure'
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:9:129)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+not ok 6 - concurrent store instances preserve different scopes and enforce one quarantine
+  ---
+  duration_ms: 0.885
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:3037'
+  failureType: 'testCodeFailure'
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:10:128)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+not ok 7 - busy lock, excessive file and scope capacity never permit sensitive callback
+  ---
+  duration_ms: 0.8594
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:3455'
+  failureType: 'testCodeFailure'
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:11:125)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: symlink/junction redirected state and parent are rejected
+not ok 8 - symlink/junction redirected state and parent are rejected
+  ---
+  duration_ms: 3.6409
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:3940'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /STATE_STORE_PARENT_REDIRECTED/. Input:
+    
+    'TypeError: sdk.createFileContainmentStateStore is not a function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  name: 'TypeError'
+  stack: |-
+    <anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:12:309)
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:12:294)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:12:294)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+not ok 9 - trusted reset removes only one scope and invalid scopes are redacted errors
+  ---
+  duration_ms: 1.2238
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-competition-audit\\test\\file-state-store.test.ts:1:4497'
+  failureType: 'testCodeFailure'
+  error: 'sdk.createFileContainmentStateStore is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-competition-audit\test\file-state-store.test.ts:13:124)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 1
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1308.0576

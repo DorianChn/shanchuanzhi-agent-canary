@@ -9,6 +9,7 @@
 
 import { DECOY_TOOLS, handleDecoyCall } from "./decoys.js";
 import { findTokensInText, plantIntoFile, type CanaryToken } from "./tokens.js";
+export {createFileContainmentStateStore} from './file-state-store.js';
 import { fireAlerts, logEvent, type CanaryEvent } from "./alerts.js";
 import {
   createAgentGuard as createContainmentGuard,

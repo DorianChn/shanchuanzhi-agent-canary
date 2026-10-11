@@ -1,0 +1,264 @@
+{
+  "status": "VERIFIED",
+  "scope": "60-second in-process virtual stress; not long-term production reliability",
+  "elapsedMs": 60045,
+  "batches": 1286,
+  "callbacks": 12860,
+  "insertions": 128600,
+  "retainedEntries": 256,
+  "capacity": 256,
+  "postStressGuardBlocked": true,
+  "samples": [
+    {
+      "elapsedMs": 2313,
+      "callbacks": 500,
+      "retained": 256,
+      "rss": 80592896,
+      "heapTotal": 35545088,
+      "heapUsed": 23478160,
+      "external": 3948539,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 4637,
+      "callbacks": 1000,
+      "retained": 256,
+      "rss": 93306880,
+      "heapTotal": 52584448,
+      "heapUsed": 29171960,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 6965,
+      "callbacks": 1500,
+      "retained": 256,
+      "rss": 94035968,
+      "heapTotal": 53108736,
+      "heapUsed": 21110832,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 9301,
+      "callbacks": 2000,
+      "retained": 256,
+      "rss": 95383552,
+      "heapTotal": 54419456,
+      "heapUsed": 26791360,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 11634,
+      "callbacks": 2500,
+      "retained": 256,
+      "rss": 96432128,
+      "heapTotal": 55468032,
+      "heapUsed": 32431296,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 13975,
+      "callbacks": 3000,
+      "retained": 256,
+      "rss": 97034240,
+      "heapTotal": 57040896,
+      "heapUsed": 24496808,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 16297,
+      "callbacks": 3500,
+      "retained": 256,
+      "rss": 98873344,
+      "heapTotal": 58351616,
+      "heapUsed": 30294784,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 18625,
+      "callbacks": 4000,
+      "retained": 256,
+      "rss": 100429824,
+      "heapTotal": 59400192,
+      "heapUsed": 35976720,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 20941,
+      "callbacks": 4500,
+      "retained": 256,
+      "rss": 101388288,
+      "heapTotal": 60710912,
+      "heapUsed": 28065864,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 23286,
+      "callbacks": 5000,
+      "retained": 256,
+      "rss": 102494208,
+      "heapTotal": 61759488,
+      "heapUsed": 33712272,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 25611,
+      "callbacks": 5500,
+      "retained": 256,
+      "rss": 103477248,
+      "heapTotal": 62808064,
+      "heapUsed": 39400168,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 27940,
+      "callbacks": 6000,
+      "retained": 256,
+      "rss": 104747008,
+      "heapTotal": 63856640,
+      "heapUsed": 31500392,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 30267,
+      "callbacks": 6500,
+      "retained": 256,
+      "rss": 105902080,
+      "heapTotal": 65167360,
+      "heapUsed": 37053632,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 32617,
+      "callbacks": 7000,
+      "retained": 256,
+      "rss": 106647552,
+      "heapTotal": 66478080,
+      "heapUsed": 42710240,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 34956,
+      "callbacks": 7500,
+      "retained": 256,
+      "rss": 107913216,
+      "heapTotal": 67526656,
+      "heapUsed": 34841480,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 37292,
+      "callbacks": 8000,
+      "retained": 256,
+      "rss": 109076480,
+      "heapTotal": 68313088,
+      "heapUsed": 40534256,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 39619,
+      "callbacks": 8500,
+      "retained": 256,
+      "rss": 110125056,
+      "heapTotal": 69623808,
+      "heapUsed": 46116336,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 41943,
+      "callbacks": 9000,
+      "retained": 256,
+      "rss": 111415296,
+      "heapTotal": 70934528,
+      "heapUsed": 38282312,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 44283,
+      "callbacks": 9500,
+      "retained": 256,
+      "rss": 112492544,
+      "heapTotal": 71720960,
+      "heapUsed": 43861880,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 46622,
+      "callbacks": 10000,
+      "retained": 256,
+      "rss": 113606656,
+      "heapTotal": 72769536,
+      "heapUsed": 49531208,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 48962,
+      "callbacks": 10500,
+      "retained": 256,
+      "rss": 114884608,
+      "heapTotal": 74604544,
+      "heapUsed": 41670152,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 51299,
+      "callbacks": 11000,
+      "retained": 256,
+      "rss": 116035584,
+      "heapTotal": 75390976,
+      "heapUsed": 47276240,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 53654,
+      "callbacks": 11500,
+      "retained": 256,
+      "rss": 117084160,
+      "heapTotal": 76439552,
+      "heapUsed": 52896888,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 55965,
+      "callbacks": 12000,
+      "retained": 256,
+      "rss": 118300672,
+      "heapTotal": 77750272,
+      "heapUsed": 45026136,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    },
+    {
+      "elapsedMs": 58282,
+      "callbacks": 12500,
+      "retained": 256,
+      "rss": 119382016,
+      "heapTotal": 79323136,
+      "heapUsed": 50715192,
+      "external": 3948579,
+      "arrayBuffers": 84410
+    }
+  ],
+  "productionLongTerm": "NOT VERIFIED"
+}

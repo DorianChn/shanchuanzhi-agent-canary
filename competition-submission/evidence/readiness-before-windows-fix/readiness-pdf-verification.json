@@ -1,0 +1,29 @@
+[
+  {
+    "file": "Agent_Canary_2_0_Readiness_项目介绍.pdf",
+    "pages": 9,
+    "sha256": "717e112c9b5fdd83d43142c948ed5ca3cc40ae905fcb962f03f33ff21bdac4a9",
+    "allPagesRendered": true,
+    "chineseTextExtracted": true,
+    "contactSheet": "Agent_Canary_2_0_Readiness_项目介绍-contact.png",
+    "visualReview": "PENDING"
+  },
+  {
+    "file": "Agent_Canary_2_0_Readiness_技术创新.pdf",
+    "pages": 4,
+    "sha256": "eb42a913695281081f610088ced68cc4eb934efe49dc70b97c4c9c91b864934b",
+    "allPagesRendered": true,
+    "chineseTextExtracted": true,
+    "contactSheet": "Agent_Canary_2_0_Readiness_技术创新-contact.png",
+    "visualReview": "PENDING"
+  },
+  {
+    "file": "Agent_Canary_2_0_Readiness_真实模型实验.pdf",
+    "pages": 6,
+    "sha256": "09e39dda26fbf6d6a921c0b375745b4ba4fa576334f59867e3bf64858a96f7c5",
+    "allPagesRendered": true,
+    "chineseTextExtracted": true,
+    "contactSheet": "Agent_Canary_2_0_Readiness_真实模型实验-contact.png",
+    "visualReview": "PENDING"
+  }
+]

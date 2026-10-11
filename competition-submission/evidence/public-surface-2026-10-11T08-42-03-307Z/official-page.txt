@@ -1,0 +1,94 @@
+大赛介绍
+赛道规划
+企业赛题
+赛事奖项
+赛程安排
+赛事动态
+评审维度
+参赛指南
+合作咨询
+立即报名
+FastGPT
+PraxisGrowth
+硅星人
+NineData
+HyperAI
+Dify
+宇宙客厅
+一瓣社造
+一支烟花 AI 社区
+VibeFriends
+毕昇
+WaytoAGI
+观猹
+Freak 嵌入式
+Arduino 中文社区
+Aily
+嘉立创
+高擎动力
+中船海舟
+DaoCloud
+中国商飞
+百度地图
+TiDB community
+RT-Thread
+openKylin
+elastic
+deepin
+商飞工业软件创新中心
+上海人工智能创新小镇
+Propeller
+ZSvirt
+Open-Starbridge
+极点 AI Tokenhub
+魔珐星云
+地瓜机器人
+OpenBuild
+开务数据库
+DolphinScheduler
+白鲸开源
+FastGPT
+PraxisGrowth
+硅星人
+NineData
+HyperAI
+Dify
+宇宙客厅
+一瓣社造
+一支烟花 AI 社区
+VibeFriends
+毕昇
+WaytoAGI
+观猹
+Freak 嵌入式
+Arduino 中文社区
+Aily
+嘉立创
+高擎动力
+中船海舟
+DaoCloud
+中国商飞
+百度地图
+TiDB community
+RT-Thread
+openKylin
+elastic
+deepin
+商飞工业软件创新中心
+上海人工智能创新小镇
+Propeller
+ZSvirt
+Open-Starbridge
+极点 AI Tokenhub
+魔珐星云
+地瓜机器人
+OpenBuild
+开务数据库
+DolphinScheduler
+白鲸开源
+
+*本赛事解释权归大赛组委会所有
+
+@OSCHINA (OSChina.NET) 工信部开源软件推进联盟指定官方社区
+北京奥密信息技术有限公司 版权所有
+京ICP备2024059488号-3
