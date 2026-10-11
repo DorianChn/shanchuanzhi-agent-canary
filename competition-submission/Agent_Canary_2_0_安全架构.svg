@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Agent Canary 2.0 安全架构">
+<style>text{font-family:Microsoft YaHei,system-ui;fill:#edf2fb}.title{font-size:32px;font-weight:700}.head{font-size:22px;font-weight:600}.note{font-size:17px;fill:#becada}.box{fill:#18243b;stroke:#4ed6ba;stroke-width:2}.arrow{fill:none;stroke:#4ed6ba;stroke-width:3}</style><rect width="1200" height="800" fill="#0b1528"/>
+<text x="55" y="60" class="title">Agent Canary 2.0｜可信执行与 AI 解释分离</text>
+<g class="box"><rect x="55" y="110" width="330" height="110" rx="12"/><rect x="435" y="110" width="330" height="110" rx="12"/><rect x="815" y="110" width="330" height="110" rx="12"/><rect x="815" y="285" width="330" height="125" rx="12"/><rect x="435" y="285" width="330" height="125" rx="12"/><rect x="55" y="285" width="330" height="125" rx="12"/><rect x="55" y="495" width="1090" height="130" rx="12"/></g>
+<text x="75" y="148" class="head">不可信文本 → Agent</text><text x="75" y="180" class="note">模型自主选择工具；来源不授予权限</text>
+<text x="455" y="148" class="head">可信工具定义与参数策略</text><text x="455" y="180" class="note">明确危险拒绝 / 明确安全允许</text>
+<text x="835" y="148" class="head">可选事前 AI 审查</text><text x="835" y="180" class="note">只收紧模糊决策；默认关闭</text>
+<text x="835" y="325" class="head">Guard / 可信人工审批</text><text x="835" y="359" class="note">模型不能批准、Reset 或修改权限</text><text x="835" y="385" class="note">信号隔离；执行前再次检查</text>
+<text x="455" y="325" class="head">宿主受保护 callback</text><text x="455" y="359" class="note">受控文件 / Shell / 网络 executor</text><text x="455" y="385" class="note">超时取消；已开始效果无法撤销</text>
+<text x="75" y="325" class="head">有界审计与来源提示</text><text x="75" y="359" class="note">HMAC 标签 / TTL / 容量 / 去重</text><text x="75" y="385" class="note">脱敏事件 → 中文控制台 / 报告</text>
+<path class="arrow" d="M385 165h50m330 0h50m165 55v65M815 348h-50m-330 0h-50M220 410v85M980 410v85"/>
+<text x="75" y="532" class="head">独立确定性信号：12 MCP 诱饵 / Canary Token → QUARANTINED</text><text x="75" y="568" class="note">不依赖模型；AI benign 不能解除隔离；仅注册到 Guard Router 的工具受保护</text><text x="75" y="601" class="note">真实 A/B/C/D/E 原始日志与虚拟执行器分别标记；保留不利结果与正常任务中断</text>
+<text x="55" y="690" class="note">OUT_OF_SCOPE：未接入的原生工具、其他 MCP、模型内部状态、绕过 Guard 的调用、已开始外部副作用</text><text x="55" y="728" class="note">来源提示不是完整污点分析；realpath 存在 TOCTOU；宿主需提供 OS/网络安全边界</text></svg>

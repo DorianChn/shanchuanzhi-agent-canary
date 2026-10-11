@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { loadConfig, type CanaryConfig } from "./config.js";
+import { postJsonWebhook } from "./webhook.js";
 
 export type EventKind =
   | "decoy_called"
@@ -12,6 +13,10 @@ export type EventKind =
   | "credential_revocation_failed"
   | "action_blocked"
   | "session_reset"
+  | "policy_allowed"
+  | "policy_blocked"
+  | "policy_approval_required"
+  | "policy_approval_granted"
   | "test";
 
 /** Risk is intentionally coarse: it is audit context, not an authorization grant. */
@@ -44,11 +49,19 @@ export interface AlertTestStatus {
 }
 
 const MAX_EVENT_BYTES = 5 * 1024 * 1024; // ~5 MB, keeps roughly the last few thousand events
+const MAX_EVENT_LINE_BYTES = 256 * 1024;
+const MAX_EVENT_COUNT = 10_000;
 const KEEP_LINES = 1500;
 const MAX_TEXT_LENGTH = 240;
 const SENSITIVE_FIELD = /(pass(word)?|secret|token|key|credential|authorization|cookie|bearer|private)/i;
 const INLINE_SECRET = /(\b(?:pass(?:word)?|secret|token|api[_-]?key|credential|authorization|cookie|bearer|private[_-]?key)\b\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s,;]+)/gi;
 const CANARY_VALUE = /\bcnry_[a-zA-Z0-9_-]+\b/g;
+const EVENT_KINDS = new Set<EventKind>([
+  "decoy_called", "token_found", "session_tripped", "session_quarantined",
+  "credential_revocation_requested", "credential_revocation_failed",
+  "action_blocked", "session_reset", "test", "policy_allowed", "policy_blocked", "policy_approval_required", "policy_approval_granted",
+]);
+const RISK_LEVELS = new Set<RiskLevel>(["SAFE", "READ", "WRITE", "NETWORK", "EXECUTE", "SECRET", "DESTRUCTIVE"]);
 
 /**
  * Produce an audit-safe copy for both disk and outbound alerts.
@@ -61,6 +74,10 @@ export function sanitizeEvent(ev: CanaryEvent): CanaryEvent {
   const { args: _args, ...event } = ev;
   return {
     ...event,
+    ts: typeof event.ts === "string" ? safeDisplayText(event.ts, 64) : "unknown",
+    kind: safeEventKind(event.kind),
+    eventType: event.eventType === undefined ? undefined : safeEventKind(event.eventType),
+    riskLevel: event.riskLevel === undefined || RISK_LEVELS.has(event.riskLevel) ? event.riskLevel : undefined,
     sessionId: safeText(event.sessionId, 128),
     reason: safeText(event.reason),
     toolName: safeText(event.toolName, 128),
@@ -74,21 +91,32 @@ export function sanitizeEvent(ev: CanaryEvent): CanaryEvent {
   };
 }
 
+function safeEventKind(value: unknown): EventKind {
+  return typeof value === "string" && EVENT_KINDS.has(value as EventKind) ? value as EventKind : "test";
+}
+
 function sanitizeMetadata(metadata: CanaryEvent["metadata"]): CanaryEvent["metadata"] {
   if (!metadata) return undefined;
   const safe: NonNullable<CanaryEvent["metadata"]> = {};
   for (const [key, value] of Object.entries(metadata).slice(0, 16)) {
-    safe[key.slice(0, 80)] = SENSITIVE_FIELD.test(key) ? "[REDACTED]" : typeof value === "string" ? redactText(value) : value;
+    const safeKey = key.replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ").slice(0, 80);
+    safe[safeKey] = SENSITIVE_FIELD.test(key) ? "[REDACTED]" : typeof value === "string" ? redactText(value) : value;
   }
   return Object.keys(safe).length ? safe : undefined;
 }
 
 function safeText(value: string | undefined, maxLength = MAX_TEXT_LENGTH): string | undefined {
-  return value === undefined ? undefined : redactText(value, maxLength);
+  return value === undefined ? undefined : safeDisplayText(value, maxLength);
+}
+
+/** Sanitize untrusted text before printing it to a terminal or log line. */
+export function safeDisplayText(value: string, maxLength = MAX_TEXT_LENGTH): string {
+  return redactText(String(value ?? ""), maxLength);
 }
 
 function redactText(value: string, maxLength = MAX_TEXT_LENGTH): string {
   return value
+    .replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ")
     .replace(CANARY_VALUE, "[CANARY_REDACTED]")
     .replace(INLINE_SECRET, "$1[REDACTED]")
     .slice(0, maxLength);
@@ -100,26 +128,32 @@ export function logEvent(ev: CanaryEvent, eventsFile?: string): void {
   // retention: rotate when the audit log grows past the cap (keep recent lines)
   try {
     if (fs.existsSync(file) && fs.statSync(file).size > MAX_EVENT_BYTES) {
-      const lines = fs.readFileSync(file, "utf8").trim().split("\n");
+      const lines = readBoundedTail(file, MAX_EVENT_BYTES).trim().split("\n");
       fs.writeFileSync(file, lines.slice(-KEEP_LINES).join("\n") + "\n");
     }
   } catch {
     /* rotation is best-effort */
   }
-  fs.appendFileSync(file, JSON.stringify(sanitizeEvent(ev)) + "\n");
+  fs.appendFileSync(file, JSON.stringify(sanitizeEvent(ev)) + "\n", { encoding: "utf8", mode: 0o600 });
 }
 
 export function readEvents(eventsFile?: string, tail = 100): CanaryEvent[] {
   const file = eventsFile ?? loadConfig().eventsFile;
-  let raw = "";
+  let raw: string;
   try {
-    raw = fs.readFileSync(file, "utf8");
-  } catch {
-    return [];
+    raw = readBoundedTail(file, MAX_EVENT_BYTES);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw new Error("Could not read the event log; the report may be incomplete.", { cause: error });
   }
+
+  const requested = Number.isFinite(tail) ? Math.max(0, Math.floor(tail)) : MAX_EVENT_COUNT;
+  const maxEvents = Math.min(requested, MAX_EVENT_COUNT);
+  if (maxEvents === 0) return [];
   const events: CanaryEvent[] = [];
   for (const line of raw.split("\n")) {
     if (!line.trim()) continue;
+    if (Buffer.byteLength(line, "utf8") > MAX_EVENT_LINE_BYTES) continue;
     try {
       // Older installations may contain events written before centralized
       // redaction. Sanitize on read so reports and dashboards never replay
@@ -129,7 +163,33 @@ export function readEvents(eventsFile?: string, tail = 100): CanaryEvent[] {
       /* skip corrupted lines */
     }
   }
-  return events.slice(-tail);
+  return events.slice(-maxEvents);
+}
+
+/** Read at most `limit` bytes from the end of a JSONL file and drop a partial first line. */
+function readBoundedTail(file: string, limit: number): string {
+  const descriptor = fs.openSync(file, fs.constants.O_RDONLY);
+  try {
+    const size = fs.fstatSync(descriptor).size;
+    const length = Math.min(size, limit);
+    if (!length) return "";
+    const buffer = Buffer.allocUnsafe(length);
+    let offset = 0;
+    const position = size - length;
+    while (offset < length) {
+      const count = fs.readSync(descriptor, buffer, offset, length - offset, position + offset);
+      if (count === 0) break;
+      offset += count;
+    }
+    let start = 0;
+    if (position > 0) {
+      const newline = buffer.indexOf(0x0a);
+      start = newline < 0 ? offset : newline + 1;
+    }
+    return buffer.toString("utf8", start, offset);
+  } finally {
+    fs.closeSync(descriptor);
+  }
 }
 
 /**
@@ -185,18 +245,7 @@ function summarize(ev: CanaryEvent): string {
 }
 
 async function postWebhook(url: string, ev: CanaryEvent): Promise<boolean> {
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(ev),
-      signal: AbortSignal.timeout(3000),
-    });
-    return response.ok;
-  } catch {
-    /* alerts are best-effort */
-    return false;
-  }
+  return postJsonWebhook(url, ev);
 }
 
 function psEscape(s: string): string {

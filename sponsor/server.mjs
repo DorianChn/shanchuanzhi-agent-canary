@@ -29,8 +29,22 @@ import path from "node:path";
 import http from "node:http";
 import { fileURLToPath } from "node:url";
 import QRCode from "qrcode";
+import { readJsonFile, withFileLock, writeJsonFile } from "./state-store.mjs";
+import {
+  parseUniqueForm,
+  validAlipayPayment,
+  validEpayPayment,
+  validVmqPayment,
+  validWechatPayment,
+} from "./payment-security.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+function safeLogText(value, maxLength = 240) {
+  return String(value ?? "")
+    .replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ")
+    .slice(0, maxLength);
+}
 
 // ---------- config ----------
 function loadDotEnv() {
@@ -58,10 +72,13 @@ const WECHAT = {
   appid: process.env.WECHAT_APPID || "",
   apiv3Key: process.env.WECHAT_APIV3_KEY || "",
   keyPath: process.env.WECHAT_PRIVATE_KEY_PATH || "",
+  platformSerial: process.env.WECHAT_PLATFORM_SERIAL || "",
+  platformPublicKeyPath: process.env.WECHAT_PLATFORM_PUBLIC_KEY_PATH || "",
   gateway: "https://api.mch.weixin.qq.com",
 };
 const ALIPAY = {
   appId: process.env.ALIPAY_APP_ID || "",
+  sellerId: process.env.ALIPAY_SELLER_ID || "",
   privateKeyPath: process.env.ALIPAY_PRIVATE_KEY_PATH || "",
   publicKeyPath: process.env.ALIPAY_PUBLIC_KEY_PATH || "",
   gateway: process.env.ALIPAY_GATEWAY || "https://openapi.alipay.com/gateway.do",
@@ -74,7 +91,7 @@ const EPAY = {
   key: process.env.EPAY_KEY || "",
 };
 const WECHAT_READY = Boolean(WECHAT.mchid && WECHAT.serial && WECHAT.appid && WECHAT.apiv3Key && WECHAT.keyPath);
-const ALIPAY_READY = Boolean(ALIPAY.appId && ALIPAY.privateKeyPath && ALIPAY.publicKeyPath);
+const ALIPAY_READY = Boolean(ALIPAY.appId && ALIPAY.sellerId && ALIPAY.privateKeyPath && ALIPAY.publicKeyPath);
 const EPAY_READY = Boolean(EPAY.url && EPAY.pid && EPAY.key);
 // V免签（szvone/vmqphp 自托管 + 安卓监控端）：零成本全自动确认。
 const VMQ = {
@@ -111,64 +128,131 @@ const PLAN = {
 // ---------- order store ----------
 const ORDERS_FILE = path.join(__dirname, "orders.json");
 const SUBS_FILE = path.join(__dirname, "subscribers.json");
-function readJson(file, fallback) {
-  try {
-    return JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch {
-    return fallback;
+const STATE_LOCK_FILE = path.join(__dirname, ".sponsor-state.lock");
+function assertStateMap(value, file) {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`Business state must be a JSON object: ${path.basename(file)}; no data was changed.`);
+  }
+  return value;
+}
+function readStateMap(file) {
+  const parsed = assertStateMap(readJsonFile(file, {}), file);
+  const safe = Object.create(null);
+  for (const [key, value] of Object.entries(parsed)) {
+    Object.defineProperty(safe, key, { value, enumerable: true, configurable: true, writable: true });
+  }
+  return safe;
+}
+function validateSubscriptionRecords(subscriptions) {
+  for (const [handle, subscription] of Object.entries(subscriptions)) {
+    if (typeof subscription !== "object" || subscription === null || Array.isArray(subscription)) {
+      throw new Error(`Business state subscription record is malformed for ${path.basename(SUBS_FILE)}; no data was changed.`);
+    }
+    if (typeof subscription.expiresAt !== "string" || !Number.isFinite(Date.parse(subscription.expiresAt))) {
+      throw new Error(`Business state subscription expiry is malformed for ${path.basename(SUBS_FILE)}; no data was changed.`);
+    }
+    if (subscription.handle !== undefined && typeof subscription.handle !== "string") {
+      throw new Error(`Business state subscription handle is malformed for ${path.basename(SUBS_FILE)}; no data was changed.`);
+    }
+    if (subscription.lastOrderId !== undefined && typeof subscription.lastOrderId !== "string") {
+      throw new Error(`Business state subscription order reference is malformed for ${path.basename(SUBS_FILE)}; no data was changed.`);
+    }
+    if (!handle) throw new Error(`Business state subscription key is empty for ${path.basename(SUBS_FILE)}; no data was changed.`);
   }
 }
-function writeJson(file, data) {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
+function validateActivationRecords(activations) {
+  for (const record of Object.values(activations)) {
+    if (typeof record !== "object" || record === null || Array.isArray(record) ||
+      typeof record.machines !== "object" || record.machines === null || Array.isArray(record.machines)) {
+      throw new Error(`Business state activation record is malformed for ${path.basename(ACTIVATIONS_FILE)}; no data was changed.`);
+    }
+    for (const [machineHash, lastSeen] of Object.entries(record.machines)) {
+      if (!/^[0-9a-f]{64}$/.test(machineHash) || !Number.isSafeInteger(lastSeen) || lastSeen < 0) {
+        throw new Error(`Business state activation entry is malformed for ${path.basename(ACTIVATIONS_FILE)}; no data was changed.`);
+      }
+    }
+  }
 }
-const orders = readJson(ORDERS_FILE, {});
+const orders = readStateMap(ORDERS_FILE);
+function replaceObject(target, source) {
+  for (const key of Object.keys(target)) delete target[key];
+  for (const [key, value] of Object.entries(source)) {
+    Object.defineProperty(target, key, { value, enumerable: true, configurable: true, writable: true });
+  }
+}
+function withStateLock(operation) {
+  return withFileLock(STATE_LOCK_FILE, () => {
+    replaceObject(orders, readStateMap(ORDERS_FILE));
+    const subscriptions = readStateMap(SUBS_FILE);
+    validateSubscriptionRecords(subscriptions);
+    validateActivationRecords(readStateMap(ACTIVATIONS_FILE));
+    return operation();
+  });
+}
+function validateAllBusinessState() {
+  readStateMap(ORDERS_FILE);
+  validateSubscriptionRecords(readStateMap(SUBS_FILE));
+  validateActivationRecords(readStateMap(ACTIVATIONS_FILE));
+}
 function saveOrders() {
-  writeJson(ORDERS_FILE, orders);
+  writeJsonFile(ORDERS_FILE, orders);
 }
 
 function newOrder(channel, amountYuan, note, plan = null, handle = null) {
-  // disk-fill guard: keep the newest 1500 orders, pruning settled ones first
-  const ids = Object.keys(orders);
-  if (ids.length > 2000) {
-    for (const id of ids.slice(0, ids.length - 1500)) {
-      if (orders[id].status === "paid" || orders[id].status === "failed") delete orders[id];
+  return withStateLock(() => {
+    // disk-fill guard: keep the newest 1500 orders, pruning settled ones first
+    const ids = Object.keys(orders);
+    if (ids.length > 2000) {
+      for (const id of ids.slice(0, ids.length - 1500)) {
+        if (orders[id]?.status === "paid" || orders[id]?.status === "failed") delete orders[id];
+      }
+      saveOrders();
     }
+
+    const id = crypto.randomBytes(8).toString("hex");
+    const order = {
+      id,
+      channel,
+      amount: Math.round(amountYuan * 100) / 100,
+      currency: "CNY",
+      note: (note || "").slice(0, 120),
+      plan,
+      handle,
+      status: "created",
+      outTradeNo: `AC${Date.now()}${crypto.randomBytes(3).toString("hex")}`.toUpperCase(),
+      createdAt: new Date().toISOString(),
+      paidAt: null,
+      transactionId: null,
+    };
+    orders[id] = order;
     saveOrders();
-  }
-  const id = crypto.randomBytes(8).toString("hex");
-  const order = {
-    id,
-    channel,
-    amount: Math.round(amountYuan * 100) / 100,
-    note: (note || "").slice(0, 120),
-    plan,
-    handle,
-    status: "created",
-    outTradeNo: `AC${Date.now()}${crypto.randomBytes(3).toString("hex")}`.toUpperCase(),
-    createdAt: new Date().toISOString(),
-    paidAt: null,
-    transactionId: null,
-  };
-  orders[id] = order;
-  saveOrders();
-  return order;
+    return order;
+  });
 }
-function markPaid(id, transactionId) {
-  const o = orders[id];
-  if (!o || o.status === "paid") return;
-  o.status = "paid";
-  o.paidAt = new Date().toISOString();
-  o.transactionId = transactionId ?? o.transactionId ?? null;
-  if (o.plan === "personal" && o.handle) {
-    o.entitlementExpiresAt = extendSubscription(o.handle, o.id);
-  }
-  saveOrders();
-  console.log(`[sponsor] order ${o.id.slice(0, 8)} PAID (${o.channel}, ¥${o.amount}${o.plan ? `, plan=${o.plan}` : ""})`);
+function markPaid(outTradeNo, transactionId, validatePayment) {
+  return withStateLock(() => {
+    recoverPendingOrdersUnlocked();
+    const o = Object.values(orders).find((candidate) => candidate?.outTradeNo === outTradeNo);
+    if (!o || !validatePayment(o)) return false;
+    if (o.status === "paid") return true;
+    if (o.status !== "created" && o.status !== "pending") return false;
+
+    // Persist the state transition before fulfillment. Startup/retry recovery
+    // uses lastOrderId to make a crash between the two files idempotent.
+    o.status = "paid_pending_fulfillment";
+    o.paidAt = new Date().toISOString();
+    o.transactionId = transactionId;
+    saveOrders();
+    recoverPendingOrdersUnlocked();
+    return orders[o.id]?.status === "paid";
+  });
 }
 
 // ---------- subscriptions ----------
 function loadSubs() {
-  return readJson(SUBS_FILE, {});
+  const subscriptions = readStateMap(SUBS_FILE);
+  validateSubscriptionRecords(subscriptions);
+  return subscriptions;
 }
 
 // ---------- Personal Edition license signing (Ed25519) ----------
@@ -179,22 +263,49 @@ const ACTIVATIONS_FILE = path.join(__dirname, "activations.json");
 const MAX_MACHINES = Number(process.env.LICENSE_MAX_MACHINES || 3);
 const LICENSE_TTL_DAYS = Number(process.env.LICENSE_TTL_DAYS || 30);
 
+// Validate all existing business stores before a missing key can be created or
+// any request can write state. ENOENT is the only first-run fallback.
+validateAllBusinessState();
+
 function ensureLicenseKeys() {
-  try {
-    return readJson(KEYS_FILE, null) ?? generateKeys();
-  } catch {
-    return generateKeys();
-  }
+  return withFileLock(`${KEYS_FILE}.lock`, () => {
+    let stat;
+    try {
+      stat = fs.lstatSync(KEYS_FILE);
+    } catch (error) {
+      if (error?.code !== "ENOENT") {
+        throw new Error("Could not inspect the license signing key; no new identity was generated.", { cause: error });
+      }
+      const keys = generateKeys();
+      writeJsonFile(KEYS_FILE, keys);
+      console.log("[sponsor] generated license signing keypair; keep the private key file backed up and private");
+      return keys;
+    }
+
+    try {
+      if (stat.isSymbolicLink() || !stat.isFile()) throw new Error("not a regular file");
+      if (process.platform !== "win32" && (stat.mode & 0o077) !== 0) throw new Error("permissions are broader than owner-only");
+      const value = readJsonFile(KEYS_FILE, null);
+      if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("invalid object");
+      if (typeof value.publicKey !== "string" || typeof value.privateKey !== "string") throw new Error("missing key fields");
+      const privateKey = crypto.createPrivateKey(value.privateKey);
+      const publicKey = crypto.createPublicKey(value.publicKey);
+      if (privateKey.asymmetricKeyType !== "ed25519" || publicKey.asymmetricKeyType !== "ed25519") throw new Error("unexpected key type");
+      const derived = crypto.createPublicKey(privateKey).export({ type: "spki", format: "der" });
+      const stored = publicKey.export({ type: "spki", format: "der" });
+      if (derived.length !== stored.length || !crypto.timingSafeEqual(derived, stored)) throw new Error("keypair mismatch");
+      return value;
+    } catch (error) {
+      throw new Error("License signing key is damaged or unsafe; restore the original keypair and permissions. It was not regenerated.", { cause: error });
+    }
+  });
+
   function generateKeys() {
     const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
-    const kp = {
+    return {
       publicKey: publicKey.export({ type: "spki", format: "pem" }).toString(),
       privateKey: privateKey.export({ type: "pkcs8", format: "pem" }).toString(),
     };
-    writeJson(KEYS_FILE, kp);
-    try { fs.chmodSync(KEYS_FILE, 0o600); } catch {}
-    console.log("[sponsor] generated license signing keypair → license-keys.json (keep it private, back it up)");
-    return kp;
   }
 }
 const LICENSE_KEYS = ensureLicenseKeys();
@@ -225,13 +336,34 @@ function isLoopback(ip) {
 
 function extendSubscription(handle, orderId) {
   const subs = loadSubs();
+  if (subs[handle]?.lastOrderId === orderId && Number.isFinite(Date.parse(subs[handle].expiresAt))) {
+    return subs[handle].expiresAt;
+  }
   const now = Date.now();
   const current = subs[handle]?.expiresAt ? Date.parse(subs[handle].expiresAt) : 0;
   const expiresAt = new Date(Math.max(now, current) + PLAN.personal.days * 864e5).toISOString();
   subs[handle] = { handle, expiresAt, lastOrderId: orderId, updatedAt: new Date().toISOString() };
-  writeJson(SUBS_FILE, subs);
-  console.log(`[sponsor] personal edition for "${handle}" active until ${expiresAt}`);
+  writeJsonFile(SUBS_FILE, subs);
+  console.log(`[sponsor] personal edition active until ${expiresAt}`);
   return expiresAt;
+}
+
+function recoverPendingOrdersUnlocked() {
+  const pending = Object.values(orders)
+    .filter((order) => order?.status === "paid_pending_fulfillment")
+    .sort((left, right) => Date.parse(left.paidAt || "") - Date.parse(right.paidAt || ""));
+  for (const order of pending) {
+    if (order.plan === "personal" && order.handle) {
+      const subs = loadSubs();
+      if (subs[order.handle]?.lastOrderId === order.id && Number.isFinite(Date.parse(subs[order.handle].expiresAt))) {
+        order.entitlementExpiresAt = subs[order.handle].expiresAt;
+      } else {
+        order.entitlementExpiresAt = extendSubscription(order.handle, order.id);
+      }
+    }
+    order.status = "paid";
+    saveOrders();
+  }
 }
 
 // ---------- WeChat Pay v3 helpers ----------
@@ -275,6 +407,21 @@ function gcmDecrypt(key, nonce, aad, ciphertextB64) {
 }
 async function ensurePlatformKey(serial) {
   if (platformKeys.has(serial)) return platformKeys.get(serial);
+  if (WECHAT.platformSerial || WECHAT.platformPublicKeyPath) {
+    if (!WECHAT.platformSerial || !WECHAT.platformPublicKeyPath || serial !== WECHAT.platformSerial) {
+      throw new Error("Wechatpay-Serial does not match the configured platform certificate pin");
+    }
+    const pem = fs.readFileSync(path.resolve(__dirname, WECHAT.platformPublicKeyPath), "utf8");
+    let publicKey;
+    try {
+      publicKey = new crypto.X509Certificate(pem).publicKey;
+    } catch {
+      publicKey = crypto.createPublicKey(pem);
+    }
+    if (publicKey.asymmetricKeyType !== "rsa") throw new Error("Pinned WeChat platform key must be RSA");
+    platformKeys.set(serial, publicKey);
+    return publicKey;
+  }
   const list = await wechatRequest("GET", "/v3/certificates");
   for (const item of list.data ?? []) {
     const pem = gcmDecrypt(
@@ -292,6 +439,10 @@ async function ensurePlatformKey(serial) {
 async function verifyWechatCallback(headers, rawBody) {
   const { "wechatpay-timestamp": ts, "wechatpay-nonce": nonce, "wechatpay-signature": signature, "wechatpay-serial": serial } = headers;
   if (!ts || !nonce || !signature || !serial) return null;
+  const timestampSeconds = Number(ts);
+  if (!/^\d+$/.test(ts) || !Number.isSafeInteger(timestampSeconds) || Math.abs(Date.now() / 1000 - timestampSeconds) > 300) {
+    return null;
+  }
   const pub = await ensurePlatformKey(serial);
   const ok = crypto
     .createVerify("RSA-SHA256")
@@ -299,7 +450,9 @@ async function verifyWechatCallback(headers, rawBody) {
     .verify(pub, signature, "base64");
   if (!ok) return null;
   const evt = JSON.parse(rawBody);
+  if (evt.event_type !== "TRANSACTION.SUCCESS" || evt.resource_type !== "encrypt-resource" || evt.resource?.original_type !== "transaction") return null;
   if (evt.resource) {
+    if (evt.resource.algorithm !== "AEAD_AES_256_GCM") return null;
     evt.decrypted = JSON.parse(
       gcmDecrypt(
         Buffer.from(WECHAT.apiv3Key, "utf8"),
@@ -382,6 +535,7 @@ async function createAlipayOrder(order) {
   return inner.qr_code;
 }
 function verifyAlipayNotify(form) {
+  if (form.sign_type !== "RSA2" || typeof form.sign !== "string") return false;
   const params = { ...form };
   delete params.sign;
   delete params.sign_type;
@@ -402,6 +556,12 @@ function epaySign(params, key) {
       .map((k) => `${k}=${params[k]}`)
       .join("&") + key;
   return crypto.createHash("md5").update(s, "utf8").digest("hex");
+}
+function signaturesMatch(expected, supplied) {
+  if (typeof expected !== "string" || typeof supplied !== "string") return false;
+  const left = Buffer.from(expected, "utf8");
+  const right = Buffer.from(supplied, "utf8");
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
 }
 function createEpayOrder(order) {
   const params = {
@@ -481,15 +641,40 @@ function send(res, status, body, type = "text/plain; charset=utf-8") {
   res.writeHead(status, { "Content-Type": type });
   res.end(body);
 }
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+}
 function readBody(req) {
   return new Promise((resolve, reject) => {
-    let data = "";
-    req.on("data", (c) => {
-      data += c;
-      if (data.length > 1e6) reject(new Error("body too large"));
+    const chunks = [];
+    let size = 0;
+    let settled = false;
+    req.on("data", (chunk) => {
+      if (settled) return;
+      size += chunk.length;
+      if (size > 1_000_000) {
+        settled = true;
+        chunks.length = 0;
+        const error = new Error("request body too large");
+        error.code = "BODY_TOO_LARGE";
+        reject(error);
+        req.resume();
+        return;
+      }
+      chunks.push(chunk);
     });
-    req.on("end", () => resolve(data));
-    req.on("error", reject);
+    req.on("end", () => {
+      if (!settled) resolve(Buffer.concat(chunks, size).toString("utf8"));
+    });
+    req.on("error", (error) => {
+      if (!settled) reject(error);
+    });
   });
 }
 
@@ -529,12 +714,30 @@ const server = http.createServer(async (req, res) => {
         order = newOrder(channel, amount, input.note);
       }
       try {
-        order.qr = await createPayment(order);
-        saveOrders();
+        const qr = await createPayment(order);
+        order = withStateLock(() => {
+          const current = orders[order.id];
+          if (!current) throw new Error("Order disappeared while payment was being created.");
+          current.qr = qr;
+          if (current.status === "created") current.status = "pending";
+          saveOrders();
+          return current;
+        });
       } catch (err) {
-        order.status = "failed";
-        order.error = String(err.message).slice(0, 300);
-        saveOrders();
+        const detail = safeLogText(err instanceof Error ? err.message : err, 300);
+        order = withStateLock(() => {
+          const current = orders[order.id];
+          if (!current) throw new Error("Order disappeared while payment was being created.");
+          if (current.status !== "paid" && current.status !== "paid_pending_fulfillment") {
+            current.status = "failed";
+            current.error = detail;
+            saveOrders();
+          }
+          return current;
+        });
+        if (order.status === "paid") {
+          return send(res, 200, JSON.stringify({ orderId: order.id, qr: order.qr ?? "", demo: DEMO, plan: order.plan, handle: order.handle }), "application/json");
+        }
         return send(res, 502, JSON.stringify({ error: order.error }), "application/json");
       }
       return send(
@@ -570,9 +773,13 @@ const server = http.createServer(async (req, res) => {
       const order = plan
         ? newOrder(channel, PLAN.personal.cny, input.note, "personal", handle)
         : newOrder(channel, amount, input.note);
-      order.status = "pending_manual";
-      saveOrders();
-      console.log(`[sponsor] manual claim: ${handle} ¥${order.amount} (${channel}${plan ? ", personal" : ""})`);
+      withStateLock(() => {
+        const current = orders[order.id];
+        if (!current || current.status !== "created") throw new Error("Manual order changed before registration completed.");
+        current.status = "pending_manual";
+        saveOrders();
+      });
+      console.log(`[sponsor] manual claim: handle=[redacted] ¥${order.amount} (${channel}${plan ? ", personal" : ""})`);
       return send(res, 200, JSON.stringify({ ok: true, orderId: order.id }), "application/json");
     }
 
@@ -605,42 +812,46 @@ const server = http.createServer(async (req, res) => {
       const evt = await verifyWechatCallback(req.headers, raw).catch(() => null);
       if (!evt) return send(res, 401, JSON.stringify({ code: "FAIL", message: "bad signature" }), "application/json");
       const resource = evt.decrypted ?? {};
-      const order = Object.values(orders).find((o) => o.outTradeNo === resource.out_trade_no);
-      if (order && resource.trade_state === "SUCCESS") markPaid(order.id, resource.transaction_id);
+      const accepted = markPaid(resource.out_trade_no, resource.transaction_id, (order) =>
+        validWechatPayment(order, resource, { mchid: WECHAT.mchid, appid: WECHAT.appid })
+      );
+      if (!accepted) return send(res, 400, JSON.stringify({ code: "FAIL", message: "order verification failed" }), "application/json");
       return send(res, 200, JSON.stringify({ code: "SUCCESS" }), "application/json");
     }
 
     // ---- Alipay async callback ----
     if (req.method === "POST" && url.pathname === "/callback/alipay") {
       const raw = await readBody(req);
-      const form = Object.fromEntries(new URLSearchParams(raw));
+      let form;
+      try { form = parseUniqueForm(raw); } catch { return send(res, 400, "fail"); }
       if (!verifyAlipayNotify(form)) return send(res, 401, "fail");
-      const order = Object.values(orders).find((o) => o.outTradeNo === form.out_trade_no);
-      if (order && (form.trade_status === "TRADE_SUCCESS" || form.trade_status === "TRADE_FINISHED")) {
-        markPaid(order.id, form.trade_no);
-      }
+      const accepted = markPaid(form.out_trade_no, form.trade_no, (order) =>
+        validAlipayPayment(order, form, { appId: ALIPAY.appId, sellerId: ALIPAY.sellerId })
+      );
+      if (!accepted) return send(res, 400, "fail");
       return send(res, 200, "success");
     }
 
     // ---- 易支付(Epay) async callback (GET with signed params) ----
     if (req.method === "GET" && url.pathname === "/callback/epay") {
-      const form = Object.fromEntries(url.searchParams);
-      if (!EPAY_READY || form.sign !== epaySign(form, EPAY.key)) return send(res, 401, "fail");
-      const order = Object.values(orders).find((o) => o.outTradeNo === form.out_trade_no);
-      if (order && form.trade_status === "TRADE_SUCCESS") markPaid(order.id, form.trade_no);
+      let form;
+      try { form = parseUniqueForm(url.search.slice(1)); } catch { return send(res, 400, "fail"); }
+      if (!EPAY_READY || !signaturesMatch(epaySign(form, EPAY.key), form.sign)) return send(res, 401, "fail");
+      const accepted = markPaid(form.out_trade_no, form.trade_no, (order) => validEpayPayment(order, form, { pid: EPAY.pid }));
+      if (!accepted) return send(res, 400, "fail");
       return send(res, 200, "success");
     }
 
     // ---- V免签 async callback: sign = md5(payId+param+type+price+reallyPrice+key) ----
     if (req.method === "GET" && url.pathname === "/callback/vmq") {
-      const form = Object.fromEntries(url.searchParams);
+      let form;
+      try { form = parseUniqueForm(url.search.slice(1)); } catch { return send(res, 400, "error_sign"); }
       const expect = vmqMd5(
         `${form.payId ?? ""}${form.param ?? ""}${form.type ?? ""}${form.price ?? ""}${form.reallyPrice ?? ""}${VMQ.key}`
       );
-      if (!VMQ_READY || form.sign !== expect) return send(res, 401, "error_sign");
-      const order = Object.values(orders).find((o) => o.outTradeNo === form.payId);
-      // reallyPrice 含金额尾数浮动（防撞单），验签通过即可信任
-      if (order) markPaid(order.id, `vmq:${form.param ?? ""}`);
+      if (!VMQ_READY || !signaturesMatch(expect, form.sign)) return send(res, 401, "error_sign");
+      const accepted = markPaid(form.payId, `vmq:${form.param ?? ""}`, (order) => validVmqPayment(order, form));
+      if (!accepted) return send(res, 400, "error_order");
       return send(res, 200, "success");
     }
 
@@ -671,24 +882,33 @@ const server = http.createServer(async (req, res) => {
       if (!handle || !/^[0-9a-f]{64}$/.test(machineHash)) {
         return send(res, 400, JSON.stringify({ ok: false, error: "invalid handle or machineHash" }), "application/json");
       }
-      const sub = loadSubs()[handle];
-      if (!sub || new Date(sub.expiresAt) <= new Date()) {
-        return send(res, 403, JSON.stringify({ ok: false, error: "no active subscription for this handle" }), "application/json");
+      const activation = withStateLock(() => {
+        const sub = loadSubs()[handle];
+        if (!sub || new Date(sub.expiresAt) <= new Date()) return { error: "no active subscription for this handle" };
+        const acts = readStateMap(ACTIVATIONS_FILE);
+        validateActivationRecords(acts);
+        const rec = acts[handle] ?? { machines: {} };
+        if (typeof rec !== "object" || rec === null || Array.isArray(rec) || typeof rec.machines !== "object" || rec.machines === null || Array.isArray(rec.machines)) {
+          throw new Error("Activation state is malformed; the file was left unchanged.");
+        }
+        const MONTH = 45 * 864e5;
+        const activeCount = Object.entries(rec.machines).filter(([, t]) => Number.isFinite(t) && Date.now() - t < MONTH).length;
+        if (!rec.machines[machineHash] && activeCount >= MAX_MACHINES) {
+          return { error: `machine limit reached (${MAX_MACHINES})`, code: "machine_limit" };
+        }
+        rec.machines[machineHash] = Date.now();
+        acts[handle] = rec;
+        writeJsonFile(ACTIVATIONS_FILE, acts);
+        const expiresAt = new Date(Math.min(new Date(sub.expiresAt).getTime(), Date.now() + LICENSE_TTL_DAYS * 864e5)).toISOString();
+        const license = signLicensePayload({ handle, machineHash, expiresAt, iat: Date.now() });
+        return { license, expiresAt };
+      });
+      if (activation.error) {
+        const code = activation.code === "machine_limit" ? 403 : 403;
+        return send(res, code, JSON.stringify({ ok: false, error: activation.error, ...(activation.code ? { code: activation.code } : {}) }), "application/json");
       }
-      const acts = readJson(ACTIVATIONS_FILE, {});
-      const rec = acts[handle] ?? { machines: {} };
-      const MONTH = 45 * 864e5;
-      const activeCount = Object.entries(rec.machines ?? {}).filter(([, t]) => Date.now() - t < MONTH).length;
-      if (!rec.machines[machineHash] && activeCount >= MAX_MACHINES) {
-        writeJson(ACTIVATIONS_FILE, { ...acts, [handle]: rec });
-        return send(res, 403, JSON.stringify({ ok: false, error: `machine limit reached (${MAX_MACHINES})`, code: "machine_limit" }), "application/json");
-      }
-      rec.machines[machineHash] = Date.now();
-      acts[handle] = rec;
-      writeJson(ACTIVATIONS_FILE, acts);
-      const expiresAt = new Date(Math.min(new Date(sub.expiresAt).getTime(), Date.now() + LICENSE_TTL_DAYS * 864e5)).toISOString();
-      const license = signLicensePayload({ handle, machineHash, expiresAt, iat: Date.now() });
-      console.log(`[sponsor] activated "${handle}" machine ${machineHash.slice(0, 12)}… until ${expiresAt}`);
+      const { license, expiresAt } = activation;
+      console.log(`[sponsor] activated handle=[redacted] machine ${machineHash.slice(0, 12)}… until ${expiresAt}`);
       return send(res, 200, JSON.stringify({ ok: true, license, revalidateAfter: Date.now() + 3 * 864e5 }), "application/json");
     }
 
@@ -702,14 +922,18 @@ const server = http.createServer(async (req, res) => {
         200,
         `<body style="font-family:sans-serif;background:#0d1117;color:#c9d1d9;text-align:center;padding-top:60px">
           <h2>演示模式 — 模拟${o.channel === "wechat" ? "微信支付" : "支付宝"} · ${what}</h2>
-          <p>订单 ${o.id.slice(0, 8)}… · ¥${o.amount.toFixed(2)}${o.handle ? ` · ${o.handle}` : ""}</p>
+          <p>订单 ${o.id.slice(0, 8)}… · ¥${o.amount.toFixed(2)}${o.handle ? ` · ${escapeHtml(o.handle)}` : ""}</p>
           <a href="/demo/confirm/${o.id}" style="display:inline-block;margin-top:20px;padding:12px 28px;background:#3fb950;color:#0d1117;border-radius:8px;text-decoration:none;font-weight:700">确认支付（模拟回调）</a>
         </body>`,
         "text/html; charset=utf-8"
       );
     }
     if (DEMO && req.method === "GET" && url.pathname.startsWith("/demo/confirm/")) {
-      markPaid(url.pathname.split("/")[3], "DEMO_TXN");
+      const orderId = url.pathname.split("/")[3];
+      const outTradeNo = orders[orderId]?.outTradeNo;
+      if (!markPaid(outTradeNo, "DEMO_TXN", (order) => DEMO && order.id === orderId)) {
+        return send(res, 400, "invalid demo order");
+      }
       return send(
         res,
         200,
@@ -720,7 +944,8 @@ const server = http.createServer(async (req, res) => {
 
     send(res, 404, "not found");
   } catch (err) {
-    console.error("[sponsor]", err);
+    console.error("[sponsor]", safeLogText(err instanceof Error ? err.message : err));
+    if (err?.code === "BODY_TOO_LARGE") return send(res, 413, "request body too large");
     send(res, 500, "internal error");
   }
 });
@@ -890,6 +1115,8 @@ document.getElementById("handle").addEventListener("change", async () => {
 });
 </script></body></html>`;
 }
+
+withStateLock(() => recoverPendingOrdersUnlocked());
 
 server.listen(PORT, HOST, () => {
   console.log(`[sponsor] listening on ${PUBLIC_BASE}`);

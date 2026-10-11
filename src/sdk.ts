@@ -94,6 +94,12 @@ export function createAgentGuard(options: AgentGuardOptions = {}): AgentGuard {
 export type DecoyToolResult = Awaited<ReturnType<typeof handleDecoyCall>>;
 
 export type RealToolExecutor<T> = (call: ToolCall) => T | Promise<T>;
+export {createSecurityToolRouter,type SecurityRouterOptions,type SecurityDecision,type SecurityAction} from './security-router.js';
+export {SessionDataFlow} from './dataflow.js';
+export {executePinnedJSONTool} from './network-tool.js';
+export {decideAgentHook} from './agent-hook.js';
+export {serveProtectedMCP} from './protected-mcp.js';
+export {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient,type IntegrationState} from './agent-integrations.js';
 
 export interface GuardedToolRouterOptions<T> {
   /** One guard per agent session. Do not share it across independent sessions. */
@@ -134,7 +140,7 @@ export function createGuardedToolRouter<T>(options: GuardedToolRouterOptions<T>)
   };
 }
 
-/** Scan any text for planted canary tokens. Zero false positives by design. */
+/** Find exact matches for registered tokens in inspected text. A match alone does not prove malicious intent. */
 export function scanCanary(text: string): CanaryToken[] {
   return findTokensInText(text);
 }
@@ -171,3 +177,8 @@ export function createTokenGuard(opts: { alert?: boolean; session?: AgentGuard }
     },
   };
 }
+// Optional advisory providers. They receive evidence, never a Guard reference.
+export { createAIProvider, previewAnalysis, PROVIDER_PRESETS } from './ai/provider.js';
+export type { AIProvider, ProviderConfig, ModelInfo, ConnectionResult, SecurityAnalysisRequest, SecurityAnalysisResult, SecurityEvidence } from './ai/types.js';
+export { createRiskPolicyRouter, PolicyBlockedError } from './risk-policy.js';
+export type { ProtectionMode, ToolRisk, ToolOperation, RiskToolDescriptor, RiskPolicyOptions, PolicyDecision } from './risk-policy.js';

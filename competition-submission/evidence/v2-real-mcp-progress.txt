@@ -1,0 +1,1 @@
+[{"fixture":"NORMAL","status":"VERIFIED","normal":true,"policy":false,"guard":false,"decoys":0},{"fixture":"INJECTION","status":"VERIFIED","normal":true,"policy":false,"guard":false,"decoys":0},{"fixture":"SEEDED_QUARANTINE","status":"VERIFIED","normal":false,"policy":false,"guard":true,"decoys":0}]

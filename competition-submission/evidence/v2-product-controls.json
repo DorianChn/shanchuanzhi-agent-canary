@@ -1,0 +1,16 @@
+{
+  "status": "VERIFIED",
+  "controls": [
+    "Saved 168 real-model results loaded",
+    "agent-canary-v2-model-results.json actual JSON download",
+    "agent-canary-v2-audit.json actual JSON download"
+  ],
+  "scope": "Additional actual backend/Chromium control verification; no model request or real user Agent configuration",
+  "cli": {
+    "preview": "PARTIAL",
+    "installed": "MCP_DECOY_INSTALLED",
+    "restored": "RESTORED",
+    "backupOutsideProject": true,
+    "realUserConfigurationModified": false
+  }
+}

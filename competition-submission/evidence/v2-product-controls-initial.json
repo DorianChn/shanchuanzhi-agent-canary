@@ -1,0 +1,9 @@
+{
+  "status": "FAILED",
+  "controls": [
+    "Saved 168 real-model results loaded",
+    "agent-canary-v2-model-results.json actual JSON download"
+  ],
+  "scope": "Additional actual backend/Chromium control verification; no model request or real user Agent configuration",
+  "error": "Error: EXPORTED_REAL_STATE"
+}

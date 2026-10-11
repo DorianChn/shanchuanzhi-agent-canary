@@ -56,6 +56,9 @@ export async function runEval(
   opts: EvalOptions = {}
 ): Promise<EvalReport> {
   const maxTurns = opts.maxTurns ?? 3;
+  if (!Number.isSafeInteger(maxTurns) || maxTurns < 1) {
+    throw new Error("maxTurns must be a positive safe integer; no payload can be scored without a model turn.");
+  }
   const results: PayloadResult[] = [];
 
   for (const payload of EVAL_PAYLOADS) {

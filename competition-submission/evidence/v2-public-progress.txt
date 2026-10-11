@@ -1,0 +1,6 @@
+{"verifiedPublicFile":"Agent_Canary_2_0_Demo.mp4","bytes":3482196}
+{"verifiedPublicFile":"Agent_Canary_2_0_项目介绍.pdf","bytes":274596}
+{"verifiedPublicFile":"Agent_Canary_2_0_技术创新.pdf","bytes":156430}
+{"verifiedPublicFile":"Agent_Canary_2_0_真实模型实验.pdf","bytes":182605}
+{"verifiedPublicFile":"Agent_Canary_Competition_2_0.zip","bytes":211835}
+{"publicFiles":5,"playback":"VERIFIED"}

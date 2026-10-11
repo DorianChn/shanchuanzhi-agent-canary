@@ -1,0 +1,197 @@
+{
+  "sourceFiles": 21,
+  "commercialImplementationFiles": [],
+  "selfTest": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "safe_call",
+        "passed": true
+      },
+      {
+        "name": "decoy_quarantine",
+        "passed": true
+      },
+      {
+        "name": "blocked_callback",
+        "passed": true
+      },
+      {
+        "name": "audit_order",
+        "passed": true
+      }
+    ]
+  },
+  "independentInstallAndBuild": "VERIFIED",
+  "regularPackageBoundary": "P1 STILL OPEN; regular package untouched",
+  "manifest": [
+    {
+      "file": "src/competition.ts",
+      "sha256": "8d129d76e7a4f624fec9d5ddd79914668488e1566482e5055b4ac571e7f11185"
+    },
+    {
+      "file": "src/server.ts",
+      "sha256": "ba892a4b6879445899de178dcd95d6622e8e2c3d586e0345dea60622b8ed5152"
+    },
+    {
+      "file": "src/decoys.ts",
+      "sha256": "950cda4a06e782497b469f6d6942e03932e20d458eea5a865f6cda370d8c95c6"
+    },
+    {
+      "file": "src/tokens.ts",
+      "sha256": "a034df39809fc7a23903632132fa4ae546a26fae0b9f5ed5eb251367328591d8"
+    },
+    {
+      "file": "src/config.ts",
+      "sha256": "e3d61d2d32629c8e5ee52b04e861b7f5e5698ebb272b1fa846287fab40047f01"
+    },
+    {
+      "file": "src/alerts.ts",
+      "sha256": "05c80291884256a48d8526059346e63bc88758224811a90d208e029cf2bcb8d3"
+    },
+    {
+      "file": "src/webhook.ts",
+      "sha256": "9cbd32a3cd1b220bde7b4849d02bccb06fa8be43808c3bc89426e74f5907042f"
+    },
+    {
+      "file": "src/self-test.ts",
+      "sha256": "bc22706f06179b877b275722f006b1fb45b33c230e5e9426f6de86fbf3c695ae"
+    },
+    {
+      "file": "src/containment.ts",
+      "sha256": "0f379f2c39093939945f42e10365ad1298a83f1a1981cc5a442dd966ac2a43f4"
+    },
+    {
+      "file": "src/sdk.ts",
+      "sha256": "23a8cca58bfeab1f336e1983c29cd11a8dd1c842ef4afde0b2ffd823ce8356ec"
+    },
+    {
+      "file": "src/ai\\provider.ts",
+      "sha256": "f8daccab49e433684666c24bcee100e9c6cd05cfe8368f839ec353e2819b0475"
+    },
+    {
+      "file": "src/ai\\privacy.ts",
+      "sha256": "b8589737c58cfc84e71310761d9bb8f39e35510bec73b5b05901bee0041e5172"
+    },
+    {
+      "file": "src/ai\\types.ts",
+      "sha256": "53556842f453bb9d5f62cff228276edfb6b7293ce2be15e8f10e4132a4a721e1"
+    },
+    {
+      "file": "src/ai\\transport.ts",
+      "sha256": "65dde9b9ed097de53ae336226e2bac7a3a521f2e399b27faf3f781bd544a9a92"
+    },
+    {
+      "file": "src/risk-policy.ts",
+      "sha256": "a2d796d72757334a935ac22370b1d2c645f34771dae11315bfd07143db01d080"
+    },
+    {
+      "file": "src/ai\\cli.ts",
+      "sha256": "1c8b1802609c7df6f3c189de5b89ba83235cdf5dd6759900cf5278661a0619cd"
+    },
+    {
+      "file": "src/ai\\console.ts",
+      "sha256": "5c839ddc481bf00c32474b17cc89bbf8632bf44185a6fe7e8acd39d980b869b6"
+    },
+    {
+      "file": "src/ai\\console-page.ts",
+      "sha256": "8cec76d990c124a4c14dc5a84e4a26413304ec8d928fe7d3e11ade14b431a961"
+    },
+    {
+      "file": "src/ai\\demo.ts",
+      "sha256": "0096343cd4adfe856ae80ad46c7dabe18a6c9513d8f078baf7fffe3f04376643"
+    },
+    {
+      "file": "src/ai\\report.ts",
+      "sha256": "ab9b9a5b1037415fa47c2529ba78844ac3abc75c9bc01d064e5088af18eb5f5a"
+    },
+    {
+      "file": "src/ai\\policy-demo.ts",
+      "sha256": "4d4a4ce719453f76462e3859d2034fe99d6e1f9197db7201f0856dc27be4ccaa"
+    },
+    {
+      "file": "dist/competition.js",
+      "sha256": "1b0b82706dbdb8bef903b6e7bd67c4a52ea98731cbd2f0aa8b2dd6873bb90958"
+    },
+    {
+      "file": "dist/server.js",
+      "sha256": "6c5ed1c24302036e5233c2ed24d11c975f14da04f4a305220f8a819847a8b463"
+    },
+    {
+      "file": "dist/decoys.js",
+      "sha256": "6d339c4afc6f1bf2670fbebbd90c2449d028f3ba5f4ea4e63e6987120aed1ba6"
+    },
+    {
+      "file": "dist/tokens.js",
+      "sha256": "1ed216ad8d145f05f9d9a71bb3c0d1fddf185a8ae23628935dca2d2a04594d94"
+    },
+    {
+      "file": "dist/config.js",
+      "sha256": "968d30ebf3d042f70f84bd558cc54f4e44b1faf6c8e14666526f359263aa0e36"
+    },
+    {
+      "file": "dist/alerts.js",
+      "sha256": "2a51552787e6bea34dea8295d8951e077e0fe21fa2e310e5ccbbb637690231be"
+    },
+    {
+      "file": "dist/webhook.js",
+      "sha256": "8369f442f26a71729c2a2ba75226c8bf3cbce50a29207a36fcda47950721abda"
+    },
+    {
+      "file": "dist/self-test.js",
+      "sha256": "f8a7105d6d85959526bb52c00346264686ee7370e5944de08d569c56c7456c20"
+    },
+    {
+      "file": "dist/containment.js",
+      "sha256": "062d99a81354c739f0151b14116177ba0962c4d901d3f24dad4ec372e6b75be0"
+    },
+    {
+      "file": "dist/sdk.js",
+      "sha256": "20dac3a5b47a15e44d3a645ed82f10747dc748f8f5030db3081d7689c224fee3"
+    },
+    {
+      "file": "dist/ai\\provider.js",
+      "sha256": "e2f3abb807be388449aa16cd75953c27247204140354f08fc81b7241e44930d6"
+    },
+    {
+      "file": "dist/ai\\privacy.js",
+      "sha256": "93533230e4b1cde45af374690f9b6271ddfe8a44e83074a68ad11a4daec21a30"
+    },
+    {
+      "file": "dist/ai\\types.js",
+      "sha256": "a2fd54f09f64a9d09f4a9b1fd86f7a032c1fbd8ef9e57c7b9ec73a4fe89c1bcb"
+    },
+    {
+      "file": "dist/ai\\transport.js",
+      "sha256": "ef41f8789f86aeb569e57dc570f18f653bb9a1c3cf9007e571d5f385df3f8ec5"
+    },
+    {
+      "file": "dist/risk-policy.js",
+      "sha256": "4834c505394af0a763aaa0e978591a8385a6ab1aa9c8db469a1b1bb051aa61ea"
+    },
+    {
+      "file": "dist/ai\\cli.js",
+      "sha256": "238a124f8f0aabe5191400ab608da4cedc5b9c201780a937314a53e996da0612"
+    },
+    {
+      "file": "dist/ai\\console.js",
+      "sha256": "33792d5eb91f05456b83cd97544fd3c07f57a02c1e57352d62c556e7c65440d5"
+    },
+    {
+      "file": "dist/ai\\console-page.js",
+      "sha256": "539654069d9987ed0d520edc00e5b663117e7ff2596bbfb7e5b6c360f140af36"
+    },
+    {
+      "file": "dist/ai\\demo.js",
+      "sha256": "058930de40cc8a430253426d2c69b244e0ba5ef63a1cb4a2cca214eb890fdee4"
+    },
+    {
+      "file": "dist/ai\\report.js",
+      "sha256": "eb7cd2aae58dc2a150c242ec277bf5f34fe7a80e61ad36e75c09d11118c2d122"
+    },
+    {
+      "file": "dist/ai\\policy-demo.js",
+      "sha256": "44b94c623197c9442da851a1e85f96e6dcfa479b59695340e303046d4329cc19"
+    }
+  ]
+}

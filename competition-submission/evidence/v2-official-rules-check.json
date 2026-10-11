@@ -1,0 +1,10 @@
+{
+  "checkedDate": "2026-10-11",
+  "officialUrl": "https://www.oschina.net/os2026/",
+  "fullPageStatus": "BLOCKED: web open repeatedly returned 400 timeout",
+  "alternativeEvidence": "Official-domain search result, crawled two weeks earlier; corroborates supplied registration email",
+  "deadlineInOfficialIndexedSnippet": "10月16日24:00",
+  "submissionMailboxInOfficialIndexedSnippet": "oscc@oschina.cn",
+  "notConfirmedFromLiveFullPage": ["latest attachment details", "mandatory default-branch requirement", "post-index changes"],
+  "submissionSent": false
+}

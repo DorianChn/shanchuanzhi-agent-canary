@@ -1,0 +1,10 @@
+file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/dist/containment.js:384
+    return reason.trim().slice(0, 160) || "compromise_signal";
+                  ^
+
+TypeError: Cannot read properties of undefined (reading 'trim')
+    at safeReason (file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/dist/containment.js:384:19)
+    at SessionCircuitBreaker.trip (file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/dist/containment.js:247:21)
+    at file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/competition-submission/lab/stability-v2.mjs:7:112
+
+Node.js v22.23.1

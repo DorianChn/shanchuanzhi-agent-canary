@@ -10,7 +10,7 @@ import { VERSION } from "./config.js";
  * guidance, not an instruction channel for untrusted content.
  */
 export const SERVER_INSTRUCTIONS =
-  "Agent Canary provides inert canary decoys for security testing. Every canary_* tool is synthetic: it never executes commands, reads secrets, changes files, contacts external systems, or moves funds. A decoy call is a compromise signal; record the event and use the Agent Canary guard to quarantine subsequent guarded high-risk tool calls. The guard only contains tool calls routed through its integration layer.";
+  "Agent Canary provides canary decoys for security testing. Their represented actions are synthetic: they never execute commands, read host secrets, modify caller-selected files, contact the represented services, or move funds. Each call creates a trace token in the local Agent Canary registry and attempts to write an audit event; configured alerts may also run. The standalone stdio server does not quarantine tools in another server. Use the SDK guard in the host-controlled callback path to quarantine subsequent calls; the guard only contains tool calls routed through its integration layer.";
 
 /**
  * Runs the decoy MCP server on stdio. All server-side chatter goes to stderr;

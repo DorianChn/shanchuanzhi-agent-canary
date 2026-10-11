@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "Agent_Canary_椤圭洰浠嬬粛.pdf",
+      "pages": 17,
+      "bytes": 327539,
+      "sha256": "0fd60d31ac0da93d1a362ab3f276b834f5541dac76ba5b3ac83c21efe4544d1e",
+      "emptyPages": [],
+      "AIContent": true,
+      "mentions152Tests": true
+    },
+    {
+      "file": "Agent_Canary_瀹為獙鎶ュ憡.pdf",
+      "pages": 7,
+      "bytes": 198127,
+      "sha256": "ce929baeb7645e77bbb95695ac65facd2d18c172dc1b18f829631b8ba1224c3a",
+      "emptyPages": [],
+      "AIContent": true,
+      "mentions152Tests": true
+    }
+  ],
+  "renderedPages": 24,
+  "visualReview": "REVIEWED: all-page contact sheets plus full-size result/verification/final pages; no overflow or missing Chinese text"
+}

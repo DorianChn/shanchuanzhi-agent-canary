@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import crypto from "node:crypto";
+import http from "node:http";
 
 process.env.AGENT_CANARY_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-eval-"));
 
@@ -11,6 +12,7 @@ const { runEval, renderMarkdownReport } = await import("../src/eval/runner.js");
 const { EVAL_PAYLOADS, EVAL_SUITE_VERSION } = await import("../src/eval/payloads.js");
 const { DECOY_TOOLS, handleDecoyCall } = await import("../src/decoys.js");
 const { isDecoyTool } = await import("../src/eval/runner.js");
+const { openaiCompatibleProvider } = await import("../src/eval/providers.js");
 import type { EvalProvider } from "../src/eval/providers.js";
 
 function mockProvider(behavior: "compromise" | "refuse" | "leak"): EvalProvider {
@@ -92,6 +94,55 @@ test("provider failure fails closed instead of counting as resistance", async ()
   assert.equal(report.passed, 0);
   assert.ok(report.results.every((r) => r.compromised && r.error === true));
   assert.match(report.results[0].detail, /counted as compromised/);
+});
+
+test("eval rejects invalid turn limits instead of scoring skipped calls as resistance", async () => {
+  let providerCalls = 0;
+  const provider: EvalProvider = {
+    label: "invalid-turn-limit-test",
+    async chat() {
+      providerCalls++;
+      throw new Error("synthetic provider stop");
+    },
+  };
+
+  for (const maxTurns of [0, -1, Number.NaN, Number.POSITIVE_INFINITY, 1.5]) {
+    await assert.rejects(runEval(provider, "mock-model", { maxTurns }), /maxTurns/i);
+  }
+  assert.equal(providerCalls, 0);
+});
+
+test("OpenAI-compatible provider refuses redirects to a second endpoint", async () => {
+  let redirectedRequests = 0;
+  let leakedAuthorization: string | undefined;
+  const destination = http.createServer((request, response) => {
+    redirectedRequests++;
+    leakedAuthorization = request.headers.authorization;
+    response.writeHead(200, { "content-type": "application/json" }).end(
+      JSON.stringify({ choices: [{ message: { content: "redirected" } }] })
+    );
+  });
+  await new Promise<void>((resolve) => destination.listen(0, "127.0.0.1", resolve));
+  const destinationAddress = destination.address();
+  assert.ok(destinationAddress && typeof destinationAddress !== "string");
+
+  const redirector = http.createServer((_request, response) => {
+    response.writeHead(307, { Location: `http://127.0.0.1:${destinationAddress.port}/collect` }).end();
+  });
+  await new Promise<void>((resolve) => redirector.listen(0, "127.0.0.1", resolve));
+  const redirectorAddress = redirector.address();
+  assert.ok(redirectorAddress && typeof redirectorAddress !== "string");
+
+  try {
+    const provider = openaiCompatibleProvider(`http://127.0.0.1:${redirectorAddress.port}`, "virtual-api-key");
+    await assert.rejects(provider.chat("mock-model", [{ role: "user", content: "synthetic prompt" }], []));
+    assert.equal(redirectedRequests, 0);
+    assert.equal(leakedAuthorization, undefined);
+  } finally {
+    await Promise.all(
+      [redirector, destination].map((server) => new Promise<void>((resolve) => server.close(() => resolve())))
+    );
+  }
 });
 
 test("decoy handler is invoked during eval (audit trail)", async () => {

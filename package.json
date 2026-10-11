@@ -1,7 +1,7 @@
 {
   "name": "@dorianchn/agent-canary",
   "version": "1.2.7",
-  "description": "Free AI-agent tripwires with a guarded tool router, offline containment self-tests, and redacted audit events.",
+  "description": "Event-triggered AI-agent containment with inert MCP decoys, canary tokens, a guarded tool router, and offline self-tests.",
   "license": "MIT",
   "author": "DorianChn",
   "repository": {
@@ -42,14 +42,20 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node --import tsx --test test/alerts.test.ts test/tokens.test.ts test/eval.test.ts test/dashboard.test.ts test/sdk.test.ts test/license.test.ts test/containment.test.ts test/install.test.ts test/config.test.ts test/install-backup.test.ts test/webhook.test.ts test/self-test.test.ts test/metadata.test.ts",
+    "bench:scan": "node scripts/benchmark-scan.mjs",
+    "demo:containment": "node scripts/demo-containment.mjs",
+    "test": "node --import tsx --test test/alerts.test.ts test/tokens.test.ts test/eval.test.ts test/dashboard.test.ts test/sdk.test.ts test/license.test.ts test/containment.test.ts test/install.test.ts test/config.test.ts test/install-backup.test.ts test/webhook.test.ts test/self-test.test.ts test/metadata.test.ts test/security-simulation.test.ts test/file-walk.test.ts test/watch.test.ts test/ai.test.ts test/risk-policy.test.ts test/security-router.test.ts test/agent-integrations.test.ts test/agent-hook.test.ts",
     "pack:check": "node scripts/check-package.mjs",
     "verify": "npm run build && npm test && npm run pack:check",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "ai:console": "node dist/index.js ai console",
+    "ai:demo": "node competition-submission/lab/run-ai-analysis.mjs",
+    "lab:agent": "node competition-submission/lab/run-agent-eval.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "smol-toml": "1.9.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

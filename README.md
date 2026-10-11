@@ -4,8 +4,9 @@ Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in
 your environment, then gives SDK integrations a session circuit breaker to
 contain the next guarded action after a compromise signal.
 
-Works with Claude Code, Cursor, Cline, Windsurf — anything that speaks MCP.
-Non-MCP agents can use the SDK instead (see below). Node 20+, MIT, no telemetry.
+Works with MCP hosts that support stdio; non-MCP agents can use the SDK (see
+below). This audit verified the stdio protocol with the MCP JavaScript client,
+not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 中文文档：[README.zh-CN.md](README.zh-CN.md)
 
@@ -13,10 +14,24 @@ Non-MCP agents can use the SDK instead (see below). Node 20+, MIT, no telemetry.
 
 ![Agent Canary — AI agent and MCP security](docs/agent-canary-cover-v2.png)
 
+## Agent Canary 2.0 competition preview
+
+[GitHub preview release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [Updated bilingual website](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Download the standalone free build](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
+
+This is a GitHub competition preview, not a stable npm/Docker release. The npm metadata remains 1.2.7; use the explicitly separated free ZIP. PDF and video artifacts retain their frozen, verified core version.
+
+The optional [security router](docs/SECURITY_ROUTER_2.md) adds host-defined parameter policies, bounded sensitive-source provenance, realpath checks, callback deadlines, and pre-execution AI review. The existing CLI, SDK and deterministic Guard remain compatible. AI cannot approve operations or reset quarantine; pre-review is **off by default**.
+
+The [Agent integration guide](docs/AGENT_INTEGRATIONS_2.md) covers safe configuration preview, private backups, installation and restore for Claude Code, Cursor, Cline CLI, Codex and custom MCP clients. Actual desktop task protection is **not verified**. Real local-model choices through the custom protected MCP host were verified with virtual callbacks; this does not protect other servers or native tools.
+
+[168 real Qwen trials](competition-submission/evidence/v2-summary.json) preserve all A/B/C/D/E outcomes. D1 and E both recorded 1/19 attacks under the unchanged legacy definition; E added 2/8 hard refusals on normal tasks. Independent AI blocking gain is not established. All effects were simulated, with real autonomous model tool selection. See the [final audit](docs/competition/AGENT_CANARY_2_FINAL_REPORT.md), [frozen version](competition-submission/V2_DELIVERY_VERSION.md), and [independent free artifact](competition-submission/Agent_Canary_Competition_2_0.zip). Ordinary commercial-package distribution boundaries remain an open P1; no release or license migration is performed.
+
 ## V1.2.7: containment that holds through the next retry
 
-V1.2.7 is the free public line. It keeps the zero-false-positive detection
-model and free SDK containment primitives, then adds
+V1.2.7 is the free public line. Its signals are explicit decoy calls and exact
+matches for generated canary tokens; they are high-specificity indicators, not
+a guarantee of zero false positives. It keeps the free SDK containment
+primitives, then adds
 `createGuardedToolRouter()` so integrations have one reviewed dispatch path for
 decoys and real tools. It retains the fully offline `self-test` and centralized
 audit-event redaction before data reaches JSONL or a webhook. It also publishes
@@ -34,7 +49,7 @@ identity cannot bypass quarantine simply by receiving a fresh session handle:
 | Alerting | JSONL audit events and optional webhook/desktop alerts are sent after the state transition; tool arguments and canary values are redacted. |
 
 ```text
-Untrusted content → prompt injection → decoy touched / token detected
+Untrusted content → agent may follow it → decoy call / registered token appears
                                       ↓
                               SESSION TRIPPED
                                       ↓
@@ -48,8 +63,12 @@ Untrusted content → prompt injection → decoy touched / token detected
 ```
 
 The containment API is documented in [docs/containment.md](docs/containment.md).
-V2.x paid features are maintained and delivered separately; V2.1 is not
-published from this branch.
+The audited `main` also tracks the license-gated evaluation, dashboard, export,
+and licensing implementations under `src/`; the package manifest includes
+`dist/`, so a package built from this tree contains those compiled modules.
+License gating is not source separation. This audit does not alter the
+existing commercial packaging boundary; do not describe the current tree as
+containing private V2 source.
 
 ## The problem
 
@@ -57,16 +76,18 @@ Coding agents read files, run commands and call APIs. If one picks up injected
 instructions — a poisoned README, a malicious web page, a doc file — it may
 quietly exfiltrate secrets or worse, and nothing tells you.
 
-Detection tools that score prompts produce false positives, and false positives
-get ignored. agent-canary inverts this: it plants things that no legitimate
-workflow ever touches, so any contact is a real compromise signal.
+Agent Canary does not score prompts or determine whether a model obeyed an
+injection. It waits for a decoy call or a registered token to surface, then
+records that signal. A mistaken integration call can touch a decoy, so an alert
+still needs incident review.
 
 - **Decoy MCP tools.** A fake wire transfer, a fake production secret reader, a
-  fake root shell. They never perform a real action, but a hijacked agent will
-  call one.
-- **Canary tokens.** Unique `cnry_...` strings planted in honeypot files. If one
-  shows up in agent output, an outbound request or a git diff, a secret was
-  copied. There is no benign explanation.
+  fake root shell. They never perform the represented action. Each call does
+  update Agent Canary's local token registry and audit log, and can send alerts
+  to a webhook or desktop notifier you configured.
+- **Canary tokens.** Random `cnry_...` strings planted in honeypot files. An
+  exact match in inspected text is evidence that the token surfaced; review the
+  source and context before deciding what happened.
 
 Every fake tool reply embeds a one-time trace token, so exfiltrated "secrets"
 point back to the exact tool call that leaked them.
@@ -80,9 +101,10 @@ V1.2.7 baseline:
     npm install && npm run build && npm link
 
 Run `agent-canary --help` after linking, then run the offline containment
-check. The public repository and public package contain the free V1 line only.
-V2.x is maintained and delivered privately after verified purchase; it is not
-distributed from this public source branch.
+check. The CLI keeps the free SDK and decoy path available without a paid
+license. The current repository/package build also contains license-gated
+compiled modules; the maintainer must resolve that distribution boundary
+before claiming the paid source is private.
 
 ### Container and Glama evaluation
 
@@ -93,9 +115,9 @@ credentials, network access, or a V2 delivery package:
     docker build -t agent-canary .
     docker run --rm -i agent-canary
 
-The image starts `agent-canary serve`. It exposes the same inert decoy tools as
-the local V1 CLI; it does not execute real tools or contain payment, license,
-or customer data.
+The image starts `agent-canary serve`. It exposes inert decoy tools and does
+not execute real tools. The Docker build context includes compiled license
+checking code but not the sponsor gateway, signing keys, or customer records.
 
 ## Usage
 
@@ -243,14 +265,14 @@ as a successful resistance result:
 
 ## Guarantees and limits
 
-- Decoy tools never perform real actions. `canary_run_shell` does not run
-  commands. The handlers return fabricated output, nothing else (see
-  [SECURITY.md](SECURITY.md)).
+- Decoy tools never perform the represented actions. `canary_run_shell` does
+  not run commands. Calls maintain Agent Canary's local token/audit state and
+  may send configured alerts; see [SECURITY.md](SECURITY.md).
 - Canary tokens unlock nothing anywhere.
 - No telemetry. Events stay in `~/.agent-canary/events.jsonl` unless you
   configure a webhook.
-- Alerts only fire when a decoy is touched or a token surfaces. Nothing in a
-  legitimate workflow can trigger them.
+- Alerts fire when a decoy is called or a registered token is found in inspected
+  output/files. Accidental calls and copied fixtures can also produce signals.
 - **Containment is integration-scoped.** It can block only real tool calls
   routed through `router.dispatch()` or `guard.executeToolCall()` /
   `guard.beforeToolCall()`. If a compromised agent's first dangerous action
@@ -274,6 +296,36 @@ casual copying; it is not DRM.
 
 Run `agent-canary --help` for details.
 
+## Development and governance
+
+- Start with [CONTRIBUTING.md](CONTRIBUTING.md); use the issue and pull request templates for reproducible, sanitized reports.
+- Read [SECURITY.md](SECURITY.md) before testing agents or reporting vulnerabilities.
+- The proposed maintenance plan is in [ROADMAP.md](ROADMAP.md).
+- Current competition experiments and their explicit model/simulation boundaries are in [competition-submission/](competition-submission/README.md).
+
 ## License
 
 MIT
+# Optional AI analysis and Chinese local console
+
+The competition branch adds advisory-only adapters for OpenAI, Claude, Gemini,
+OpenAI-compatible services (DeepSeek/Qwen), Ollama, LM Studio and vLLM.
+Ollama was exercised with real local inference; cloud providers have protocol
+fixture tests and are **not verified against real vendor accounts**.
+
+```sh
+npm ci
+npm run build
+npm run ai:console
+```
+
+Open the printed loopback address, configure an installed model, inspect selected
+evidence and request analysis. API keys stay in the host process; cloud inference
+requires preview and consent. AI has no Guard reset or execution authority.
+Offline containment continues without a model. JSON/Markdown/CSV reports are
+available. See [provider documentation](docs/AI_PROVIDERS.md) and
+[implementation and evidence](docs/competition/AI_ENHANCEMENT_REPORT.md).
+
+## Optional deterministic risk policy
+
+The SDK now exports createRiskPolicyRouter with OBSERVE / BALANCED / STRICT. Host-owned tool descriptors and parameter checks gate registered callbacks before execution. Human approval is expiring and one-shot; AI advice never grants rights. Normal writes/builds may need approval. See [policy contract and limits](docs/RISK_POLICY.md) and the fourth-round competition report.

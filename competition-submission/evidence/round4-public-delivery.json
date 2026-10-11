@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-11T05:19:56.882Z",
+  "materialCommit": "fc742d3d757aa3a3425e085284cce72d66a5ed3f",
+  "repository": "https://github.com/DorianChn/shanchuanzhi-agent-canary",
+  "files": [
+    {
+      "name": "Agent_Canary_Round4_Demo.mp4",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/fc742d3d757aa3a3425e085284cce72d66a5ed3f/competition-submission/Agent_Canary_Round4_Demo.mp4",
+      "httpStatus": 200,
+      "bytes": 4146145,
+      "sha256": "5301b9bed30dd95e2915e12666866117c407a81482df2d1b92d9624fa0749907",
+      "contentType": "application/octet-stream",
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_Round4_项目介绍.pdf",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/fc742d3d757aa3a3425e085284cce72d66a5ed3f/competition-submission/Agent_Canary_Round4_%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pdf",
+      "httpStatus": 200,
+      "bytes": 318280,
+      "sha256": "e9accfbafa06b05acbdf0b52a856c520b4e6eadc8eb8e204905617e55393a2a0",
+      "contentType": "application/octet-stream",
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_Round4_实验报告.pdf",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/fc742d3d757aa3a3425e085284cce72d66a5ed3f/competition-submission/Agent_Canary_Round4_%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf",
+      "httpStatus": 200,
+      "bytes": 201436,
+      "sha256": "fe25cc97c96728c64100ba03317ee56bdd6b679ec260f0a81cf826349402bf86",
+      "contentType": "application/octet-stream",
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_Competition_V1.zip",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/fc742d3d757aa3a3425e085284cce72d66a5ed3f/competition-submission/Agent_Canary_Competition_V1.zip",
+      "httpStatus": 200,
+      "bytes": 167043,
+      "sha256": "06ec30d0385e262ff9baa56f00315257fd495bcdfd14f745dd1b13f32f41e59d",
+      "contentType": "application/zip",
+      "localHashMatches": true
+    }
+  ],
+  "publicPlayback": {
+    "status": "VERIFIED",
+    "duration": 240.733333,
+    "currentTime": 1.204866,
+    "paused": false,
+    "readyState": 4,
+    "error": null,
+    "seekSeconds": 180,
+    "method": "Actual Chromium loaded, played and sought the public immutable HTTPS MP4; not merely a download test"
+  }
+}

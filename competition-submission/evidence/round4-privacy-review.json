@@ -1,0 +1,11 @@
+{
+  "scope": "Staged changed text only; no production credentials or customer records accessed",
+  "filesChecked": 61,
+  "credentialPatternMatches": 0,
+  "completeSecretAudit": false,
+  "modelTools": "virtual only",
+  "paidCloudRequests": 0,
+  "productionOperations": 0,
+  "allDiffCheck": "one cosmetic empty final line in unmodified captured build stdout; raw log preserved",
+  "sourceDiffCheck": "run separately across code, docs and JSON"
+}

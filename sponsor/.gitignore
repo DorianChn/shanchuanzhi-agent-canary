@@ -5,3 +5,6 @@ qr/
 license-keys.json
 activations.json
 node_modules/
+.smoke-run-*/
+.smoke-sandbox-*/
+.security-sandbox-*/

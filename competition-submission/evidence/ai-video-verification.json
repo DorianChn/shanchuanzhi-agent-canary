@@ -1,0 +1,53 @@
+{
+  "file": "Agent_Canary_AI_Demo.mp4",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "format": {
+      "duration": "220.933333",
+      "size": "3397872"
+    }
+  },
+  "sha256": "6939a03da76c6e4519ada314f577a26db7d29e0b7e3f14dbc683429739436188",
+  "fullDecodeExitCode": 0,
+  "frameReview": "REVIEWED: 90/125/175/200 second real UI frames, readable Chinese overlays, actual local analysis and saved comparison; isolated fake data only",
+  "publicURLVerification": {
+    "status": "VERIFIED",
+    "checkedAt": "2026-10-10T19:19:16.666Z",
+    "commit": "11000a7f4709bf505916d6d928bdf86c9e7f7ff9",
+    "checks": [
+      {
+        "file": "Agent_Canary_AI_Demo.mp4",
+        "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/11000a7f4709bf505916d6d928bdf86c9e7f7ff9/competition-submission/Agent_Canary_AI_Demo.mp4",
+        "httpStatus": 200,
+        "bytes": 3397872,
+        "sha256": "6939a03da76c6e4519ada314f577a26db7d29e0b7e3f14dbc683429739436188",
+        "matchesLocal": true
+      },
+      {
+        "file": "Agent_Canary_项目介绍.pdf",
+        "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/11000a7f4709bf505916d6d928bdf86c9e7f7ff9/competition-submission/Agent_Canary_%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pdf",
+        "httpStatus": 200,
+        "bytes": 327539,
+        "sha256": "0fd60d31ac0da93d1a362ab3f276b834f5541dac76ba5b3ac83c21efe4544d1e",
+        "matchesLocal": true
+      },
+      {
+        "file": "Agent_Canary_实验报告.pdf",
+        "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/11000a7f4709bf505916d6d928bdf86c9e7f7ff9/competition-submission/Agent_Canary_%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf",
+        "httpStatus": 200,
+        "bytes": 198127,
+        "sha256": "ce929baeb7645e77bbb95695ac65facd2d18c172dc1b18f829631b8ba1224c3a",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "audio": "none; visible Chinese explanatory subtitles"
+}

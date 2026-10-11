@@ -1,0 +1,9 @@
+file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/dist/dataflow.js:12
+            throw new Error('FLOW_LIMIT_INVALID');
+                  ^
+
+Error: FLOW_LIMIT_INVALID
+    at new SessionDataFlow (file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/dist/dataflow.js:12:19)
+    at file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-competition-audit/competition-submission/lab/stability-v2.mjs:4:317
+
+Node.js v22.23.1

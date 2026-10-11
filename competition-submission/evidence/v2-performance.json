@@ -1,0 +1,24 @@
+{
+  "capturedAt": "2026-10-11T06:08:28.139Z",
+  "platform": "win32",
+  "node": "v22.23.1",
+  "scope": "In-process virtual public callback and 50000 sequential provenance insertions; not a long-lived production deployment or real filesystem/network latency",
+  "router": {
+    "samples": 2000,
+    "unit": "microseconds",
+    "median": 872.899999999845,
+    "p95": 1228.900000000067
+  },
+  "dataflow": {
+    "insertions": 50000,
+    "retainedEntries": 256,
+    "capacity": 256,
+    "durationMs": 910.5958999999998,
+    "rawSensitiveDataRetained": false
+  },
+  "rss": {
+    "beforeBytes": 70656000,
+    "afterBytes": 97763328
+  },
+  "longDurationProductionStability": "NOT VERIFIED"
+}

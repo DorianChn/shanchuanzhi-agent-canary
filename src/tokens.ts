@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { TOKENS_PATH, ensureDirs, writeFileAtomically } from "./config.js";
 
@@ -78,26 +79,34 @@ export function mintToken(label: string): CanaryToken {
 }
 
 export function loadTokens(): CanaryToken[] {
+  let text: string;
   try {
-    const raw: unknown = JSON.parse(fs.readFileSync(TOKENS_PATH, "utf8"));
-    if (!Array.isArray(raw)) return [];
-    return raw.flatMap((entry) => {
-      const token = parseCanaryToken(entry);
-      return token ? [token] : [];
-    });
-  } catch {
-    return [];
+    text = fs.readFileSync(TOKENS_PATH, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw new Error("Could not read the canary token registry; scanning and token updates are unavailable.", { cause: error });
   }
+
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch (error) {
+    throw new Error("The canary token registry is invalid JSON; it was left unchanged.", { cause: error });
+  }
+  if (!Array.isArray(raw)) throw new Error("The canary token registry must contain a JSON array; it was left unchanged.");
+  return raw.flatMap((entry) => {
+    const token = parseCanaryToken(entry);
+    return token ? [token] : [];
+  });
 }
 
 export function saveTokens(tokens: CanaryToken[]): void {
   ensureDirs();
-  writeFileAtomically(TOKENS_PATH, JSON.stringify(tokens, null, 2) + "\n");
+  withTokenRegistryLock(() => writeTokens(tokens));
 }
 
 export function addTokens(added: CanaryToken[]): CanaryToken[] {
-  const all = [...loadTokens(), ...added];
-  saveTokens(all);
+  withTokenRegistryLock(() => writeTokens([...loadTokens(), ...added]));
   return added;
 }
 
@@ -106,10 +115,101 @@ export function generateTokens(label: string, count: number): CanaryToken[] {
 }
 
 export function recordPlanted(token: CanaryToken, ref: PlantedRef): void {
-  const all = loadTokens();
-  const hit = all.find((t) => t.token === token.token);
-  if (hit) hit.planted.push(ref);
-  saveTokens(all);
+  withTokenRegistryLock(() => {
+    const all = loadTokens();
+    const hit = all.find((t) => t.token === token.token);
+    if (hit && !hit.planted.some((existing) => existing.path === ref.path && existing.line === ref.line)) {
+      hit.planted.push(ref);
+      writeTokens(all);
+    }
+  });
+}
+
+const LOCK_TIMEOUT_MS = 10_000;
+const LOCK_STALE_MS = 30_000;
+const WAIT_CELL = new Int32Array(new SharedArrayBuffer(4));
+
+function writeTokens(tokens: CanaryToken[]): void {
+  ensureDirs();
+  writeFileAtomically(TOKENS_PATH, JSON.stringify(tokens, null, 2) + "\n", 0o600);
+}
+
+function staleLockCanBeRemoved(lockPath: string): boolean {
+  let initial: string;
+  try {
+    initial = fs.readFileSync(lockPath, "utf8");
+  } catch {
+    return false;
+  }
+  let owner: { pid?: number; hostname?: string; createdAt?: number };
+  try {
+    owner = JSON.parse(initial) as typeof owner;
+  } catch {
+    return false;
+  }
+  if (
+    owner.hostname !== os.hostname() ||
+    !Number.isInteger(owner.pid) ||
+    typeof owner.createdAt !== "number" ||
+    Date.now() - owner.createdAt < LOCK_STALE_MS
+  ) return false;
+  try {
+    process.kill(owner.pid!, 0);
+    return false;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ESRCH") return false;
+  }
+  try {
+    if (fs.readFileSync(lockPath, "utf8") !== initial) return false;
+    fs.unlinkSync(lockPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Serialize registry read-modify-write operations across CLI processes. */
+function withTokenRegistryLock<T>(operation: () => T): T {
+  ensureDirs();
+  const lockPath = `${TOKENS_PATH}.lock`;
+  const deadline = Date.now() + LOCK_TIMEOUT_MS;
+  let descriptor: number | undefined;
+  while (descriptor === undefined) {
+    try {
+      descriptor = fs.openSync(lockPath, "wx", 0o600);
+      fs.writeFileSync(descriptor, JSON.stringify({ pid: process.pid, hostname: os.hostname(), createdAt: Date.now() }));
+      fs.fsyncSync(descriptor);
+    } catch (error) {
+      // Windows can report EPERM while another process's lock deletion is
+      // pending. Only retry lock creation, never run an unlocked write or
+      // remove someone else's lock on a permission error. Persistent failures
+      // retain the same bounded timeout and fail closed.
+      const retryWindowsOpen = descriptor === undefined && process.platform === "win32" &&
+        (error as NodeJS.ErrnoException).code === "EPERM";
+      if (descriptor !== undefined) {
+        try { fs.closeSync(descriptor); } catch {}
+        descriptor = undefined;
+        try { fs.unlinkSync(lockPath); } catch {}
+      }
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST" && !retryWindowsOpen) {
+        throw new Error("Could not create the canary token registry lock; token updates were not written.", { cause: error });
+      }
+      if (!retryWindowsOpen && staleLockCanBeRemoved(lockPath)) continue;
+      if (Date.now() >= deadline) {
+        throw new Error("The canary token registry is locked by another process; no token update was written.");
+      }
+      Atomics.wait(WAIT_CELL, 0, 0, 10);
+    }
+  }
+
+  try {
+    return operation();
+  } finally {
+    try { fs.closeSync(descriptor); } catch {}
+    try { fs.unlinkSync(lockPath); } catch (error) {
+      throw new Error("The canary token registry lock could not be released; inspect it before retrying.", { cause: error });
+    }
+  }
 }
 
 /**
@@ -156,15 +256,42 @@ export function findTokensInText(text: string): CanaryToken[] {
 }
 
 export function scanFile(p: string): CanaryToken[] {
+  let descriptor: number | undefined;
   try {
-    const stat = fs.statSync(p);
-    if (!stat.isFile() || stat.size > 5 * 1024 * 1024) return [];
+    const noFollow = typeof fs.constants.O_NOFOLLOW === "number" ? fs.constants.O_NOFOLLOW : 0;
+    descriptor = fs.openSync(p, fs.constants.O_RDONLY | noFollow);
+    if (!fs.fstatSync(descriptor).isFile()) return [];
+
     const abs = path.resolve(p);
-    const text = fs.readFileSync(p, "utf8");
     // A token sitting in the exact file where we planted it is legitimate;
     // anywhere else it is a leak.
-    return findTokensInText(text).filter((t) => !t.planted.some((r) => r.path === abs));
-  } catch {
-    return [];
+    const tokens = loadTokens().filter((t) => !t.planted.some((r) => r.path === abs));
+    if (!tokens.length) return [];
+
+    const needles = tokens.map((token) => ({ token, bytes: Buffer.from(token.token, "utf8") }));
+    const overlap = Math.max(...needles.map((needle) => needle.bytes.length)) - 1;
+    const buffer = Buffer.allocUnsafe(64 * 1024);
+    let carry = Buffer.alloc(0);
+    const found = new Set<string>();
+
+    while (true) {
+      const bytesRead = fs.readSync(descriptor, buffer, 0, buffer.length, null);
+      if (bytesRead === 0) break;
+      const chunk = buffer.subarray(0, bytesRead);
+      const sample = carry.length ? Buffer.concat([carry, chunk]) : chunk;
+      for (const needle of needles) {
+        if (!found.has(needle.token.token) && sample.includes(needle.bytes)) found.add(needle.token.token);
+      }
+      if (found.size === needles.length) break;
+      carry = Buffer.from(sample.subarray(Math.max(0, sample.length - overlap)));
+    }
+
+    return tokens.filter((token) => found.has(token.token));
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || code === "ENOTDIR") return [];
+    throw new Error(`Could not scan file ${JSON.stringify(p)}; the scan is incomplete.`, { cause: error });
+  } finally {
+    if (descriptor !== undefined) fs.closeSync(descriptor);
   }
 }

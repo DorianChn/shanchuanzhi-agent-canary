@@ -6,7 +6,9 @@
   "type": "module",
   "engines": { "node": ">=20" },
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "test": "node --check grant.mjs && node --test smoke-isolation.test.mjs security-regression.test.mjs payment-security.test.mjs payment-callback.test.mjs state-store.test.mjs state-fail-closed.test.mjs grant-state.test.mjs",
+    "smoke": "node smoke.mjs"
   },
   "dependencies": {
     "qrcode": "^1.5.4"

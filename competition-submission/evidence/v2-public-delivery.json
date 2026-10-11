@@ -1,0 +1,61 @@
+{
+  "verifiedAt": "2026-10-11T07:19:28.443Z",
+  "materialCommit": "0255c153da943c07fbb37d7bf2c10b140e81f1e6",
+  "files": [
+    {
+      "name": "Agent_Canary_2_0_Demo.mp4",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_Demo.mp4",
+      "httpStatus": 200,
+      "sha256": "ce948fa45a94a3f1b8d67077883455e834c8b30711a079b43c40205023f1a063",
+      "bytes": 3482196,
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_2_0_项目介绍.pdf",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pdf",
+      "httpStatus": 200,
+      "sha256": "642d3ad1f1f698c05df8be7d2799b6cc107e385101d18297b06b3c7cfa87aedf",
+      "bytes": 274596,
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_2_0_技术创新.pdf",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0.pdf",
+      "httpStatus": 200,
+      "sha256": "7f14c5b3eeb31df4e4eb1b22676ca862077c6e5d5098f343f86326c3a3441293",
+      "bytes": 156430,
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_2_0_真实模型实验.pdf",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_%E7%9C%9F%E5%AE%9E%E6%A8%A1%E5%9E%8B%E5%AE%9E%E9%AA%8C.pdf",
+      "httpStatus": 200,
+      "sha256": "24e6eb35df673e966df2d405c6eedd4f4ba308182c54ed05f34144c9ef014941",
+      "bytes": 182605,
+      "localHashMatches": true
+    },
+    {
+      "name": "Agent_Canary_Competition_2_0.zip",
+      "url": "https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_Competition_2_0.zip",
+      "httpStatus": 200,
+      "sha256": "a70b0e1a22ad9c0be56732ad47d7b11734a5741955fbc34b6342ff29a2a060b6",
+      "bytes": 211835,
+      "localHashMatches": true
+    }
+  ],
+  "publicPlayback": {
+    "status": "VERIFIED",
+    "duration": 275.533333,
+    "currentTime": 1.41404,
+    "paused": false,
+    "error": null,
+    "seekSeconds": 180,
+    "seekPlayback": {
+      "currentTime": 180.513233,
+      "readyState": 4,
+      "seeking": false,
+      "error": null
+    },
+    "method": "Actual Chromium streamed the immutable public file, initial play advanced, then seek-to-180 playback advanced past 180.5 seconds"
+  }
+}

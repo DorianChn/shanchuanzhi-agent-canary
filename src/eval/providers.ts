@@ -67,6 +67,7 @@ export function openaiCompatibleProvider(baseUrl: string, apiKey: string): EvalP
       });
       const res = await fetch(endpoint, {
         method: "POST",
+        redirect: "error",
         headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
           model,
@@ -119,6 +120,7 @@ export function anthropicProvider(apiKey: string): EvalProvider {
       }
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
+        redirect: "error",
         headers: {
           "content-type": "application/json",
           "x-api-key": apiKey,

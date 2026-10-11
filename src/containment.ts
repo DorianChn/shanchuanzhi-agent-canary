@@ -196,9 +196,17 @@ class SessionCircuitBreaker implements AgentGuard {
   get state(): CircuitState {
     if (!this.stateStore) return this.currentState;
     try {
-      return this.stateStore.get(this.scopeKey) ?? this.currentState;
+      const sharedState = this.stateStore.get(this.scopeKey);
+      if (!sharedState) return this.currentState;
+      const severity: Record<CircuitState, number> = { SAFE: 0, TRIPPED: 1, QUARANTINED: 2 };
+      // A stale or failed shared store may not roll back this guard's local
+      // quarantine. Conversely, a shared identity quarantine still applies
+      // to a newly-created local session.
+      return severity[this.currentState] >= severity[sharedState] ? this.currentState : sharedState;
     } catch {
       // A shared-store outage must not create a new allow path.
+      // Latch this guard closed so recovery cannot silently restore SAFE.
+      this.currentState = "QUARANTINED";
       return "QUARANTINED";
     }
   }
@@ -255,7 +263,18 @@ class SessionCircuitBreaker implements AgentGuard {
   }
 
   inspect(text: string, source?: string): CanaryToken[] {
-    const hits = findTokensInText(text);
+    let hits: CanaryToken[];
+    try {
+      hits = findTokensInText(text);
+    } catch (error) {
+      this.trip({
+        reason: "token_registry_unavailable",
+        toolName: "token_guard",
+        riskLevel: "SECRET",
+        metadata: { source: source ?? "sdk-inspect" },
+      });
+      throw new Error("Canary token registry inspection failed; the session was quarantined.", { cause: error });
+    }
     if (!hits.length) return hits;
 
     // State changes before token alerts are fanned out. A leaked token cannot
@@ -312,8 +331,21 @@ class SessionCircuitBreaker implements AgentGuard {
 
   trip(input: TripInput): TripResult {
     const traceId = input.traceId ?? randomUUID();
-    if (this.state !== "SAFE") {
+    if (this.currentState !== "SAFE") {
       return { changed: false, sessionId: this.sessionId, state: this.state, traceId };
+    }
+
+    if (this.stateStore) {
+      try {
+        const sharedState = this.stateStore.get(this.scopeKey);
+        if (sharedState !== undefined && sharedState !== "SAFE") {
+          this.currentState = "QUARANTINED";
+          return { changed: false, sessionId: this.sessionId, state: this.currentState, traceId };
+        }
+      } catch {
+        // The signal still trips this local guard when the shared store is
+        // unavailable. Quarantine persistence is retried below and may fail.
+      }
     }
 
     // Complete both state assignments before *any* I/O. Logging and alert

@@ -1,0 +1,46 @@
+{
+  "pdfs": [
+    {
+      "file": "Agent_Canary_Round4_项目介绍.pdf",
+      "pages": 15,
+      "renderedPages": 15,
+      "pageTextLengths": [
+        233,
+        446,
+        466,
+        549,
+        463,
+        528,
+        409,
+        573,
+        591,
+        499,
+        560,
+        504,
+        590,
+        591,
+        737
+      ],
+      "bytes": 318280,
+      "sha256": "e9accfbafa06b05acbdf0b52a856c520b4e6eadc8eb8e204905617e55393a2a0"
+    },
+    {
+      "file": "Agent_Canary_Round4_实验报告.pdf",
+      "pages": 7,
+      "renderedPages": 7,
+      "pageTextLengths": [
+        228,
+        579,
+        516,
+        520,
+        436,
+        567,
+        812
+      ],
+      "bytes": 201436,
+      "sha256": "fe25cc97c96728c64100ba03317ee56bdd6b679ec260f0a81cf826349402bf86"
+    }
+  ],
+  "rendering": "VERIFIED; visual inspection recorded separately",
+  "visualReview": "VERIFIED: all 22 pages inspected in three contact sheets, architecture also inspected at page resolution; Chinese glyphs, tables and page boundaries visible"
+}

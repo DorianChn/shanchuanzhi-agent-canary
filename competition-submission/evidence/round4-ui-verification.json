@@ -1,0 +1,23 @@
+{
+  "mode": "ACTUAL_PLAYWRIGHT_BROWSER_WITH_VIRTUAL_EXECUTORS",
+  "controls": [
+    "normal read",
+    "policy egress denial",
+    "normal read after denial",
+    "pending write",
+    "operator capability",
+    "single approval",
+    "STRICT write refusal",
+    "BALANCED model connection",
+    "decoy isolation",
+    "OBSERVE cannot reset Guard"
+  ],
+  "dimensions": {
+    "viewport": 390,
+    "scrollWidth": 390,
+    "storageKeys": []
+  },
+  "pageErrors": [],
+  "provider": "Ollama tags actually connected; no inference in this UI check",
+  "pass": true
+}

@@ -236,3 +236,133 @@ test("a new session for the same principal cannot race a synchronous decoy trip"
 test("principalId requires an explicit shared state store", () => {
   assert.throws(() => sdk.createAgentGuard({ principalId: "reviewed-agent-identity" }), /requires an explicit stateStore/);
 });
+
+test("a shared-store read failure during a trip latches the session closed after recovery", async () => {
+  let available = false;
+  let sharedState: sdk.CircuitState | undefined;
+  const stateStore: sdk.ContainmentStateStore = {
+    get() {
+      if (!available) throw new Error("state store unavailable");
+      return sharedState;
+    },
+    quarantine() {
+      if (!available) throw new Error("state store unavailable");
+      sharedState = "QUARANTINED";
+      return true;
+    },
+    reset() {
+      if (!available) throw new Error("state store unavailable");
+      sharedState = undefined;
+    },
+  };
+  const guard = sdk.createAgentGuard({
+    sessionId: "store-outage-trip",
+    principalId: "store-outage-principal",
+    stateStore,
+    eventsFile: containmentEvents,
+    alert: false,
+  });
+
+  const trip = guard.trip({ reason: "decoy_called", toolName: "canary_read_secrets", riskLevel: "SECRET" });
+  available = true;
+
+  assert.equal(trip.changed, true);
+  assert.equal(guard.state, "QUARANTINED");
+  let callbackRan = false;
+  await assert.rejects(
+    guard.executeToolCall({ name: "http_post" }, () => { callbackRan = true; return "should not run"; }),
+    (error: unknown) => error instanceof sdk.CanaryBlockedError
+  );
+  assert.equal(callbackRan, false);
+});
+
+test("a blocked call during a shared-store outage remains blocked after recovery", async () => {
+  let available = false;
+  const stateStore: sdk.ContainmentStateStore = {
+    get() {
+      if (!available) throw new Error("state store unavailable");
+      return undefined;
+    },
+    quarantine() {
+      if (!available) throw new Error("state store unavailable");
+      return true;
+    },
+    reset() {
+      if (!available) throw new Error("state store unavailable");
+    },
+  };
+  const guard = sdk.createAgentGuard({
+    sessionId: "store-outage-call",
+    principalId: "store-outage-call-principal",
+    stateStore,
+    eventsFile: containmentEvents,
+    alert: false,
+  });
+  let callbackRan = false;
+
+  await assert.rejects(
+    guard.executeToolCall({ name: "http_post" }, () => { callbackRan = true; return "should not run"; }),
+    (error: unknown) => error instanceof sdk.CanaryBlockedError
+  );
+  available = true;
+
+  assert.equal(callbackRan, false);
+  assert.equal(guard.state, "QUARANTINED");
+  await assert.rejects(
+    guard.executeToolCall({ name: "http_post" }, () => { callbackRan = true; return "should not run"; }),
+    (error: unknown) => error instanceof sdk.CanaryBlockedError
+  );
+  assert.equal(callbackRan, false);
+});
+
+test("a shared store returning SAFE after a failed quarantine cannot override the local latch", async () => {
+  let available = false;
+  const stateStore: sdk.ContainmentStateStore = {
+    get() {
+      if (!available) throw new Error("state store unavailable");
+      return "SAFE";
+    },
+    quarantine() {
+      if (!available) throw new Error("state store unavailable");
+      return false;
+    },
+    reset() {
+      if (!available) throw new Error("state store unavailable");
+    },
+  };
+  const guard = sdk.createAgentGuard({
+    sessionId: "store-safe-rollback",
+    principalId: "store-safe-rollback-principal",
+    stateStore,
+    eventsFile: containmentEvents,
+    alert: false,
+  });
+  guard.beforeToolCall({ name: "canary_read_secrets" });
+  available = true;
+
+  assert.equal(guard.state, "QUARANTINED");
+  let callbackRan = false;
+  await assert.rejects(
+    guard.executeToolCall({ name: "http_post" }, () => { callbackRan = true; return "should not run"; }),
+    (error: unknown) => error instanceof sdk.CanaryBlockedError
+  );
+  assert.equal(callbackRan, false);
+});
+
+test("a corrupt token registry quarantines a guard instead of returning a clean inspection", async () => {
+  fs.writeFileSync(path.join(containmentHome, "tokens.json"), "{ corrupt registry\n");
+  const guard = sdk.createAgentGuard({
+    sessionId: "corrupt-token-registry",
+    eventsFile: containmentEvents,
+    alert: false,
+  });
+
+  assert.throws(() => guard.inspect("synthetic output", "test-output"), /token registry/i);
+  assert.equal(guard.state, "QUARANTINED");
+  let callbackRan = false;
+  await assert.rejects(
+    guard.executeToolCall({ name: "http_post" }, () => { callbackRan = true; return "should not run"; }),
+    (error: unknown) => error instanceof sdk.CanaryBlockedError
+  );
+  assert.equal(callbackRan, false);
+});

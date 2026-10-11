@@ -1,0 +1,18 @@
+[
+  {
+    "agent": "codex",
+    "executableFound": true
+  },
+  {
+    "agent": "claude",
+    "executableFound": false
+  },
+  {
+    "agent": "cursor",
+    "executableFound": false
+  },
+  {
+    "agent": "cline",
+    "executableFound": false
+  }
+]
