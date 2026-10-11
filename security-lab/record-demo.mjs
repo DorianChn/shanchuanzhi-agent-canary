@@ -28,6 +28,7 @@ try{
  await page.locator('#runtime3-honeypot').click();await page.locator('#runtime3Status').filter({hasText:'QUARANTINED'}).waitFor();await page.locator('#runtime3-write').click();await page.locator('#runtime3Evidence').filter({hasText:'guard_quarantined'}).waitFor();
  await caption('实际读取隔离 .env 诱饵 → 会话 QUARANTINED。\n再次写入被 Guard 拒绝，真实目标文件没有发生该次写入。',30);
  await page.locator('#runtime3Model').click();await page.locator('#model3Results').filter({hasText:'CONTROLLED'}).waitFor({state:'attached',timeout:2000}).catch(()=>{});await page.locator('#model3Results').scrollIntoViewIfNeeded();
+ if(heldOutData)await page.locator('#model3Results').evaluate(el=>{el.scrollTop=el.scrollHeight;});
  await caption(heldOutData?'下方为已保存的真实 Qwen / 受控 SDK Agent 实验，不是现场推理。\n留出集 A攻击效果 '+heldOutData.metrics.A.attackSuccess.numerator+'/'+heldOutData.metrics.A.attackSuccess.denominator+'；F '+heldOutData.metrics.F.attackSuccess.numerator+'/'+heldOutData.metrics.F.attackSuccess.denominator+'。作者知道系统设计，不是第三方E4。':'下方为已保存的真实 Qwen / 受控 SDK Agent 实验，不是本视频现场模型推理。\n间接注入未产生攻击尝试；直接准入阻断结果不能当作 Prompt Injection 防护率。',30);
  await caption('AI 只提供建议或收紧拒绝，不能授权或解除隔离。\n局部哈希链不是绝对防篡改；原生桌面 Agent 全局覆盖和自适应收益尚未验证。',25);
 }finally{await context.close();await video.saveAs(output);await browser.close();await app.close();}

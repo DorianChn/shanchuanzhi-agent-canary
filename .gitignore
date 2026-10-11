@@ -22,3 +22,13 @@ __pycache__/
 /competition-submission/3.0/community-build-77101c5a.json
 /competition-submission/3.0/community-build-e3c79190.json
 /competition-submission/3.0/community-build-06cd3dcb.json
+
+# Preserve generated master media and QA iterations locally; selected media goes to Release.
+/competition-submission/3.0-final-video/
+/competition-submission/3.0-final-package/
+/competition-submission/3.0-final/*.webm
+/competition-submission/3.0-final/Agent_Canary_3_0_演示字幕.srt
+/competition-submission/3.0-final/video-recording.json
+/security-lab/competition-freeze/local-only/
+/security-lab/competition-freeze/local-video-player.html
+/security-lab/competition-freeze/pdf-qa/*.png

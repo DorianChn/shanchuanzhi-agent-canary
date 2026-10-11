@@ -1,0 +1,22 @@
+组委会老师您好：
+
+这是 Agent Canary 3.0 更新版参赛材料，烦请替换此前2.1.0材料并关联已通过审核的报名记录。
+
+大赛：2026 上海开源软件应用创新大赛
+赛道：开源 AI 工具赛道；自主选题
+项目：Agent Canary 3.0
+负责人：唐林博豪；学校：闽江大学
+
+冻结代码：https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/99660b36db9d5b1121eea6fe06b026c5f1e36bcf
+Git SHA：99660b36db9d5b1121eea6fe06b026c5f1e36bcf
+可下载的免费竞赛包、三份PDF、原始实验与安装说明：https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.1
+演示视频直链（1920×1080，约3分33秒，WebM，可下载播放；中文说明，无音轨）：https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Competition_Demo_Final_1080p.webm
+
+附件ZIP包含项目介绍、技术创新、真实模型实验PDF、安装说明、架构图及材料清单；视频和代码另提供上述公开链接。
+
+本轮完整保留64次真实本地Qwen与受控SDK Agent留出记录。无保护组攻击效果4/24，完整系统0/24；正常任务两组8/8，非总体安全保证。旧直接准入A12/12、F0/12不能当作间接注入防护率。AI独立收益、自适应蜜罐收益、第三方原生Agent全局防护和E4独立复验尚未证实。视频的DEMO由操作者触发真实程序，模型结果为保存记录，并非现场推理。
+
+免费候选保留MIT，不发布稳定npm/Docker，不合并main，不含生产凭据或订单。请按本邮件对应冻结版本评审；如需其他视频托管或附件格式，烦请告知。请确认材料收悉，谢谢！
+
+唐林博豪
+闽江大学
