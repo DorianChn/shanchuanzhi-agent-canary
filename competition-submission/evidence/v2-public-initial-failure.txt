@@ -1,0 +1,11 @@
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+page.waitForFunction: Timeout 60000ms exceeded.
+    at C:\Users\36712\Desktop\工作\agent-canary-competition-audit\competition-submission\lab\verify-v2-public.mjs:10:983 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v22.23.1

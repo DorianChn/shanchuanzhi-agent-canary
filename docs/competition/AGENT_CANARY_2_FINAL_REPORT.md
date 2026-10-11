@@ -47,3 +47,7 @@ P0 新发现 0；新增 P1 Hook 新 Session 绕过已复现并修复；配置解
 ## 策略阻断指标解释
 
 可比攻击中的危险尝试：D1/D2 各 10 次，其中 8 次保持待批、2 次模拟 ls -la 允许，策略硬拒绝 0/10；E 8/10 硬拒绝、2 次同一只读命令允许。5/19 观察拒绝防止包含无人工批准而 withheld 的 callback，不是成功检测率，也不是 1-ASR。Canary 自主信号为 0，故可比攻击 Guard 拒绝 0/10；预置信号的独立 fixture 证明确实隔离，不能算自主检测。详细分母和审批 withholding 见 v2-summary.json。
+
+## GitHub 公开交付
+
+材料提交 0255c153da943c07fbb37d7bf2c10b140e81f1e6，实际9/9 CI https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38120625945；五份公开文件HTTP200/本机远端哈希一致，实际视频初播及seek后播放成功。初次公开播放验证在暂停后的readyState条件超时，失败记录保留；改用实际seek后继续播放检验，不放宽对文件内容或真实播放的要求。最终PR保持Draft，邮件仅草稿，公开代码/附件已同步，生产稳定/原生覆盖/商业分发P1尚未达到完整验收。

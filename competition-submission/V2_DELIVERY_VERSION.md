@@ -17,3 +17,11 @@ E 与 D1 ASR 均 1/19；E 硬误拒绝 2/8，D1 0/8；AI 默认关闭。残余 A
 实验启动早于首次本轮 Git commit；样本/原策略在启动时哈希预注册，不能冒称外部盲测或所有 2.0 模块均有事前 Git 冻结。评测过程仅使用虚拟能力。最终安装器/Hook/控制台的后来安全修复不等于重新跑过模型矩阵，其独立回归和最终 CI 留档。
 
 公开材料的不可变提交与视频 URL 见 evidence/v2-public-delivery.json；公开请求和实际播放均须验证后才算 VERIFIED。普通 npm/Docker V1/V2 风险仍 P1 OPEN，独立免费 ZIP 的隔离文件清单与重安装证据另行验证。
+
+## 公开材料已验证
+
+不可变材料提交：0255c153da943c07fbb37d7bf2c10b140e81f1e6；代码仍为已验证核心 a0e8c2f5b0105cef0cd1718f67c6a4bf910c41a7。
+
+https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/0255c153da943c07fbb37d7bf2c10b140e81f1e6
+
+材料提交的9/9 CI：https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38120625945。三份PDF、视频、ZIP均HTTP200且远端SHA256与本机一致；视频实际播放与180秒后的继续播放通过。见 evidence/v2-public-delivery.json。后续邮件/证据/PR文字仅元数据追加，不改变冻结代码或这些文件。
