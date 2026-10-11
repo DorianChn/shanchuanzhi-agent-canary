@@ -251,3 +251,7 @@ npm run ai:console
 打开输出的 loopback 地址，配置已有模型、选择证据、检查预览并分析。密钥只在宿主进程，云端每次推理需确认；AI 无解除隔离或执行工具权限。没有模型时基础防护仍可运行。控制台支持 JSON/Markdown/CSV 报告。
 
 完整参数与隐私边界见 [AI 接入指南](docs/AI_PROVIDERS.md)，真实实验与失败数据见 [AI 实施报告](docs/competition/AI_ENHANCEMENT_REPORT.md)。
+
+## 可选确定性风险策略
+
+SDK 新增 createRiskPolicyRouter，支持 OBSERVE / BALANCED / STRICT。宿主注册工具描述并按参数检查，敏感外传拒绝，普通写入/构建可申请一次性人工批准。AI 仅提供事后解释，不能放权。只保护经过此 Router 的调用；路径、进程、网络和身份边界仍由宿主实现。详见 [策略合同与边界](docs/RISK_POLICY.md)。

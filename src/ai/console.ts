@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, timingSafeEqual } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,8 +10,9 @@ import type { ProviderConfig, SecurityAnalysisResult } from './types.js';
 import { CONSOLE_PAGE } from './console-page.js';
 import { runAdvisoryDemo } from './demo.js';
 import { renderAIReport } from './report.js';
+import {createPolicySandbox} from './policy-demo.js';
 
-export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string } = {}) {
+export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string } = {}) {
   const port = options.port ?? 4318;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('AI_CONSOLE_PORT_INVALID');
   const csrf = randomBytes(32).toString('hex');
@@ -22,7 +23,9 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
   let job: { status: string; progress: string[] } = { status: 'idle', progress: [] };
   let child: ChildProcess | undefined;
-  const secrets = options.apiKey ? [options.apiKey] : [];
+  const operatorCode=options.operatorApprovalCode;
+  const secrets = [...(options.apiKey?[options.apiKey]:[]),...(operatorCode?[operatorCode]:[])];
+  const sandbox=createPolicySandbox();
   const server = http.createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -47,6 +50,11 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         reply({ presets: PROVIDER_PRESETS, events, counts: { signals: events.filter(e => e.kind === 'decoy_called' || e.kind === 'token_found').length, sessions: new Set(events.filter(e => e.kind === 'session_quarantined').map(e => e.sessionId)).size, blocked: events.filter(e => e.kind === 'action_blocked').length }, countScope: 'latest 100 recorded events only', experiments }); return;
       }
       if (req.method === 'GET' && req.url === '/api/job') { reply(job); return; }
+      if (req.method === 'GET' && req.url === '/api/policy/state') { reply(sandbox.state()); return; }
+      if (req.method === 'GET' && req.url === '/api/round4') {
+        const p=path.join(root,'competition-submission/evidence/round4-summary.json');
+        reply(fs.existsSync(p)&&fs.statSync(p).size<512_000?JSON.parse(fs.readFileSync(p,'utf8')):{complete:false,status:'NOT COMPLETED'});return;
+      }
       if (req.method === 'GET' && req.url === '/api/report') { reply({ generatedAt: new Date().toISOString(), advisoryOnly: true, scope: 'up to 100 analyses in this console process', analyses }); return; }
       if (req.method === 'GET' && req.url?.startsWith('/api/export?')) {
         const format=new URL(req.url,url).searchParams.get('format');
@@ -59,11 +67,21 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       const chunks: Buffer[] = [];
       for await (const chunk of req) { size += chunk.length; if (size > 32_000) { reply({ error: 'AI_INPUT_TOO_LARGE' }, 413); return; } chunks.push(chunk); }
       const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      if (req.url === '/api/policy/mode') { reply(sandbox.setMode(body.mode)); return; }
+      if (req.url === '/api/policy/action') { reply(await sandbox.action(body.action)); return; }
+      if (req.url === '/api/policy/approve') {
+        if(body.confirm!==true)throw new Error('POLICY_HUMAN_CONFIRMATION_REQUIRED');
+        const supplied=Buffer.from(typeof body.operatorCode==='string'?body.operatorCode:'');
+        const expected=Buffer.from(operatorCode??'');
+        if(!operatorCode||supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){reply({error:'POLICY_OPERATOR_AUTH_REQUIRED'},403);return;}
+        reply(await sandbox.approve(body.requestId));return;
+      }
       if (req.url === '/api/preview') { reply(previewAnalysis(body.events, secrets)); return; }
       if (req.url === '/api/demo') { const demo = await runAdvisoryDemo(); reply({ ...demo, analysisEvents: demo.events.map((e,i)=>({id:'sandbox-'+i,text:formatAnalysisEvent(e as unknown as Record<string,unknown>)})) }); return; }
       if (busy || child) { reply({ error: 'AI_CONSOLE_BUSY' }, 409); return; }
       if (req.url === '/api/configure') {
         if (!body || Object.keys(body).some(k => !['id','protocol','kind','baseUrl','model','timeoutMs'].includes(k))) throw new Error('AI_CONFIG_INVALID');
+        if(secrets.some(secret=>JSON.stringify(body).includes(secret)))throw new Error('AI_CONFIG_SECRET_REJECTED');
         const origin = new URL(body.baseUrl).origin;
         const allowedOrigin = options.keyOrigin ?? process.env.AGENT_CANARY_AI_KEY_ORIGIN;
         if (options.apiKey && body.kind === 'cloud' && origin !== allowedOrigin) throw new Error('AI_KEY_ORIGIN_NOT_AUTHORIZED');
@@ -78,7 +96,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         const env: NodeJS.ProcessEnv = { ...process.env, OLLAMA_BASE_URL: config.baseUrl, OLLAMA_MODEL: config.model };
         delete env.AGENT_CANARY_AI_KEY;
         job = { status: 'running', progress: [] };
-        child = spawn(process.execPath, [script, '--profile=neutral_agent'], { cwd: root, env, stdio: ['ignore','pipe','pipe'], windowsHide: true });
+        child = spawn(process.execPath, [script, '--profile=neutral_agent',...(body.round4===true?['--round4']:[])], { cwd: root, env, stdio: ['ignore','pipe','pipe'], windowsHide: true });
         const capture = (chunk: Buffer) => { job.progress.push(redactAnalysisText(chunk.toString('utf8'), secrets).slice(0, 1000)); if (job.progress.length > 12) job.progress.shift(); };
         child.stdout?.on('data', capture); child.stderr?.on('data', capture);
         child.once('error', () => { job.status = 'failed'; child = undefined; });
@@ -93,12 +111,13 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         if (req.url === '/api/connect') reply(await provider.testConnection(abort.signal));
         else if (req.url === '/api/ollama') reply(await createAIProvider({ id: 'ollama', ...PROVIDER_PRESETS.ollama, model: 'probe' }).testConnection(abort.signal));
         else if (req.url === '/api/analyze') {
-          const result = await provider.analyze({ events: body.events, cloudConsent: body.cloudConsent, signal: abort.signal });
+          const rawResult = await provider.analyze({ events: previewAnalysis(body.events,secrets), cloudConsent: body.cloudConsent, signal: abort.signal });
+          const result:SecurityAnalysisResult=JSON.parse(JSON.stringify(rawResult),(_key,value)=>typeof value==='string'?redactAnalysisText(value,secrets):value);
           analyses.push(result); if (analyses.length > 100) analyses.shift(); reply(result);
         } else reply({ error: 'NOT_FOUND' }, 404);
       } finally { busy = false; res.off('close', onClose); }
     } catch (error) {
-      if (!res.headersSent) reply({ error: error instanceof Error && /^AI_[A-Z_]+$/.test(error.message) ? error.message : 'AI_CONSOLE_REQUEST_INVALID' }, 400);
+      if (!res.headersSent) reply({ error: error instanceof Error && /^(AI|POLICY)_[A-Z_]+$/.test(error.message) ? error.message : 'AI_CONSOLE_REQUEST_INVALID' }, 400);
     }
   });
   server.requestTimeout = 10_000;
@@ -108,5 +127,5 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('AI_CONSOLE_LISTEN_FAILED');
   url = 'http://127.0.0.1:' + address.port;
-  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); } };
+  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); sandbox.close(); } };
 }

@@ -1,0 +1,22 @@
+import fs from 'node:fs';import {startAIConsole} from '../dist/ai/console.js';
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
+const operatorApprovalCode='TEMPORARY-UI-TEST-CAPABILITY';
+const app=await startAIConsole({port:0,operatorApprovalCode});
+const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});
+const page=await browser.newPage({viewport:{width:1440,height:1080}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+const check=(v,msg)=>{if(!v)throw new Error(msg);};
+try{
+ await page.goto(app.url);await page.waitForFunction(()=>document.querySelector('#preset').options.length===9);
+ await page.locator('#policyRead').click();await page.waitForFunction(()=>document.querySelector('#policyStatus').textContent.includes('callback 1'));
+ await page.locator('#policyAttack').click();await page.waitForFunction(()=>document.querySelector('#policyResult').textContent.includes('possible_sensitive_egress'));check((await page.locator('#policyStatus').innerText()).includes('callback 1'),'attack must not execute');
+ await page.locator('#policyRead').click();await page.waitForFunction(()=>document.querySelector('#policyStatus').textContent.includes('callback 2'));
+ await page.locator('#policyWrite').click();await page.waitForFunction(()=>document.querySelector('#pendingApproval').options.length===2);const id=await page.locator('#pendingApproval option').nth(1).getAttribute('value');await page.locator('#pendingApproval').selectOption(id);await page.locator('#approveConfirm').check();check(await page.locator('#approvePolicy').isDisabled(),'operator capability must be required');
+ await page.locator('#operatorCode').fill(operatorApprovalCode);await page.locator('#approvePolicy').click();await page.waitForFunction(()=>document.querySelector('#policyStatus').textContent.includes('callback 3'));check(await page.locator('#operatorCode').inputValue()==='','capability cleared after use');
+ await page.locator('#protectionMode').selectOption('STRICT');await page.locator('#setMode').click();await page.locator('#policyWrite').click();await page.waitForFunction(()=>document.querySelector('#policyResult').textContent.includes('DENY'));check((await page.locator('#policyStatus').innerText()).includes('callback 3'),'strict write refused');
+ await page.locator('#protectionMode').selectOption('BALANCED');await page.locator('#setMode').click();await page.locator('#connect').click();await page.waitForFunction(()=>document.querySelector('#connection').textContent.includes('连接正常'));check(!await page.locator('#eval4').isDisabled(),'round4 button enabled after configuration');
+ await page.screenshot({path:'competition-submission/evidence/round4-console-desktop.png',fullPage:true});
+ await page.locator('#policyDecoy').click();await page.waitForFunction(()=>document.querySelector('#policyStatus').textContent.includes('QUARANTINED'));await page.locator('#protectionMode').selectOption('OBSERVE');await page.locator('#setMode').click();await page.locator('#policyRead').click();await page.waitForFunction(()=>document.querySelector('#policyResult').textContent.includes('BLOCKED_BY_GUARD'));check((await page.locator('#policyStatus').innerText()).includes('callback 3'),'mode change cannot reset Guard');
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:'competition-submission/evidence/round4-console-mobile.png',fullPage:true});
+ const dimensions=await page.evaluate(()=>({viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,storageKeys:Object.keys(localStorage)}));check(dimensions.viewport===dimensions.scrollWidth,'mobile horizontal overflow');check(!dimensions.storageKeys.length,'no persisted frontend secrets');check(!errors.length,'browser JS errors');
+ fs.writeFileSync('competition-submission/evidence/round4-ui-verification.json',JSON.stringify({mode:'ACTUAL_PLAYWRIGHT_BROWSER_WITH_VIRTUAL_EXECUTORS',controls:['normal read','policy egress denial','normal read after denial','pending write','operator capability','single approval','STRICT write refusal','BALANCED model connection','decoy isolation','OBSERVE cannot reset Guard'],dimensions,pageErrors:errors,provider:'Ollama tags actually connected; no inference in this UI check',pass:true},null,2)+'\n');console.log('Round4 UI controls verified');
+}finally{await browser.close();await app.close();}

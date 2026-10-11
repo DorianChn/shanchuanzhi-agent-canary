@@ -13,6 +13,10 @@ export type EventKind =
   | "credential_revocation_failed"
   | "action_blocked"
   | "session_reset"
+  | "policy_allowed"
+  | "policy_blocked"
+  | "policy_approval_required"
+  | "policy_approval_granted"
   | "test";
 
 /** Risk is intentionally coarse: it is audit context, not an authorization grant. */
@@ -55,7 +59,7 @@ const CANARY_VALUE = /\bcnry_[a-zA-Z0-9_-]+\b/g;
 const EVENT_KINDS = new Set<EventKind>([
   "decoy_called", "token_found", "session_tripped", "session_quarantined",
   "credential_revocation_requested", "credential_revocation_failed",
-  "action_blocked", "session_reset", "test",
+  "action_blocked", "session_reset", "test", "policy_allowed", "policy_blocked", "policy_approval_required", "policy_approval_granted",
 ]);
 const RISK_LEVELS = new Set<RiskLevel>(["SAFE", "READ", "WRITE", "NETWORK", "EXECUTE", "SECRET", "DESTRUCTIVE"]);
 

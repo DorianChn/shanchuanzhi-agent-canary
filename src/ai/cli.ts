@@ -48,7 +48,7 @@ export function registerAICommands(program: Command) {
     });
   ai.command('console').description('Start Chinese loopback console; keys remain in the backend process')
     .option('--port <port>', 'Loopback port', '4318').action(async opts => {
-      const consoleServer = await startAIConsole({ port: Number(opts.port), apiKey: process.env.AGENT_CANARY_AI_KEY });
+      const consoleServer = await startAIConsole({ port: Number(opts.port), apiKey: process.env.AGENT_CANARY_AI_KEY,operatorApprovalCode:process.env.AGENT_CANARY_OPERATOR_CODE });
       console.log('Agent Canary 中文控制台: ' + consoleServer.url);
       console.log('基础 Guard 独立运行；本控制台不提供 Reset 或真实危险工具。Ctrl+C 退出。');
     });

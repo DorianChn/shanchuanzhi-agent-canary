@@ -313,3 +313,7 @@ requires preview and consent. AI has no Guard reset or execution authority.
 Offline containment continues without a model. JSON/Markdown/CSV reports are
 available. See [provider documentation](docs/AI_PROVIDERS.md) and
 [implementation and evidence](docs/competition/AI_ENHANCEMENT_REPORT.md).
+
+## Optional deterministic risk policy
+
+The SDK now exports createRiskPolicyRouter with OBSERVE / BALANCED / STRICT. Host-owned tool descriptors and parameter checks gate registered callbacks before execution. Human approval is expiring and one-shot; AI advice never grants rights. Normal writes/builds may need approval. See [policy contract and limits](docs/RISK_POLICY.md) and the fourth-round competition report.

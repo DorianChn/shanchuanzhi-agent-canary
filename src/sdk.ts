@@ -174,3 +174,5 @@ export function createTokenGuard(opts: { alert?: boolean; session?: AgentGuard }
 // Optional advisory providers. They receive evidence, never a Guard reference.
 export { createAIProvider, previewAnalysis, PROVIDER_PRESETS } from './ai/provider.js';
 export type { AIProvider, ProviderConfig, ModelInfo, ConnectionResult, SecurityAnalysisRequest, SecurityAnalysisResult, SecurityEvidence } from './ai/types.js';
+export { createRiskPolicyRouter, PolicyBlockedError } from './risk-policy.js';
+export type { ProtectionMode, ToolRisk, ToolOperation, RiskToolDescriptor, RiskPolicyOptions, PolicyDecision } from './risk-policy.js';
