@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-12",
+  "scope": "same-machine Windows diagnostic build; not a clean VM; not a public Release asset",
+  "sourceLaunchLocation": "%LOCALAPPDATA%\\AgentCanary-CloseoutEFS-QA-20261012 (EFS Encrypted)",
+  "publicCandidate4": {
+    "modified": false,
+    "recordedSha256": "567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6"
+  },
+  "defaultEfsFallback": {
+    "diagnosticInstallerSha256": "f1db74cd2249336c06d5b7be67a29dde06cb0c4e150ae170806402436283ec0d",
+    "arguments": "/S (no /D override)",
+    "sourceWasEncrypted": true,
+    "installExitCode": 0,
+    "target": "%USERPROFILE%\\Agent Canary EFS Default QA 20261012\\Community-candidate.4 (not EFS)",
+    "launcherSmokeExitCode": 0,
+    "uninstallExitCode": 0,
+    "installDirectoryRemains": false,
+    "testRegistryKeyRemains": false,
+    "result": "PASS"
+  },
+  "pathMatrix": [
+    {
+      "id": "NoSpace",
+      "installerSha256": "6ba81e4578bc5e927e4df146296639ada2bbdb6809ecabf553275e71a21b6471",
+      "target": "%USERPROFILE%\\AgentCanaryPathQA20261012\\candidate4",
+      "install": "PASS",
+      "launcherAndChecks": "PASS",
+      "exportRedaction": "PASS",
+      "dangerousCallbackCount": 0,
+      "localSinkRequestCount": 0,
+      "victimSha256Before": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "victimSha256After": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "uninstall": "PASS"
+    },
+    {
+      "id": "Spaces",
+      "installerSha256": "9dd8f13eafccb49aa361041244b717dba1789d2c8dc5dd740279f81d453d38d3",
+      "target": "%USERPROFILE%\\Agent Canary Space QA 20261012\\candidate4",
+      "install": "PASS",
+      "launcherAndChecks": "PASS",
+      "exportRedaction": "PASS",
+      "dangerousCallbackCount": 0,
+      "localSinkRequestCount": 0,
+      "victimSha256Before": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "victimSha256After": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "uninstallReinstallUninstall": "PASS"
+    },
+    {
+      "id": "Chinese",
+      "installerSha256": "b0b7d89f5abbd5af2de847a139b2edf62c27749963572afe628086ea96b2cf07",
+      "target": "%USERPROFILE%\\Agent Canary 中文 QA 20261012\\候选4",
+      "install": "PASS",
+      "launcherAndChecks": "PASS",
+      "exportRedaction": "PASS",
+      "dangerousCallbackCount": 0,
+      "localSinkRequestCount": 0,
+      "victimSha256Before": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "victimSha256After": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "uninstall": "PASS"
+    }
+  ],
+  "restrictedAcl": {
+    "installerSha256": "f7a8a0cf927fbf06cef2304d2f4f3543c4cd0e929501d4ef0aadee4f5ef27352",
+    "userElevated": false,
+    "writeProbe": "DENIED",
+    "installerExitCode": 2,
+    "targetOrRegistryCreated": false,
+    "aclRestorationWriteProbe": "PASS",
+    "result": "PASS_FAIL_CLOSED_NO_PARTIAL_INSTALL"
+  }
+}

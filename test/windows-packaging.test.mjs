@@ -43,6 +43,7 @@ test('NSIS defaults away from EFS paths and rejects encrypted custom targets wit
   assert.match(source,/GetFileAttributesW\(w "\$LOCALAPPDATA"\)/);
   assert.match(source,/\$PROFILE\\Agent Canary Community\\Community-candidate\.3/);
   assert.match(source,/IntOp \$1 \$0 & 0x4000/);
+  assert.match(source,/IfSilent efs_notice_done[\s\S]*?MessageBox MB_ICONEXCLAMATION\|MB_OK[\s\S]*?efs_notice_done:/);
   assert.match(source,/EFS-encrypted install paths are not supported/);
   assert.doesNotMatch(source,/RMDir\s+\/r/i);
 });

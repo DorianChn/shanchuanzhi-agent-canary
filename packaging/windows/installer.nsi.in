@@ -30,7 +30,9 @@ Function .onInit
  ${If} $0 != -1
  ${AndIf} $1 != 0
   StrCpy $INSTDIR "$PROFILE\Agent Canary Community\Community-candidate.3"
+  IfSilent efs_notice_done
   MessageBox MB_ICONEXCLAMATION|MB_OK "Local AppData uses EFS encryption. The default install path was moved to a current-user profile folder so the uninstaller can run. You may choose another non-encrypted path. / 本机 Local AppData 已启用 EFS 加密。为确保卸载器可运行，默认安装位置已改为当前用户目录；也可选择其他未加密位置。"
+efs_notice_done:
  ${EndIf}
  ${IfNot} ${RunningX64}
   MessageBox MB_ICONSTOP "Windows x64 required / 需要 64 位 Windows"

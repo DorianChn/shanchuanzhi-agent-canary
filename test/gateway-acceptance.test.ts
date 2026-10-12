@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
+import {createHash} from 'node:crypto';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-acceptance-home-'));
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder}=await import('../src/sdk.js');
 const fake='NOT_A_REAL_CREDENTIAL_ACCEPTANCE_ONLY';
@@ -94,4 +95,12 @@ test('HTTPS origin permission does not bypass transport loopback rejection',asyn
  try{for(const url of [origin+'/path?secret=fixture',origin+'/path#fragment',origin.replace('https://','https://user:pass@')+'/path'])await assert.rejects(runtime.agent.dispatch({name:'http_request',args:{url}}),/network_capability_denied/);
   await assert.rejects(runtime.agent.dispatch({name:'http_request',args:{url:origin+'/path'}}));assert.equal(s.received(),0);assert.equal(runtime.evidence().at(-1)!.execution_status,'FAILED');
  }finally{await runtime.close();await s.close();}
+});
+test('closed gateway connection rejects before file and network side effects',async()=>{
+ const s=await sinkFixture(),victim=path.join(s.root,'result.txt'),before=fs.readFileSync(victim),hash=(value:Buffer)=>createHash('sha256').update(value).digest('hex');
+ let calls=0;const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),mcpTools:{action:{risk:'WRITE',approvalRequired:false,execute:async()=>{calls++;fs.writeFileSync(victim,'UNAUTHORIZED');await s.send({data:'synthetic'});return{ok:true};}}}});
+ await runtime.close();
+ await assert.rejects(runtime.agent.dispatch({name:'mcp_tool',args:{tool:'action',arguments:{}}}),/GATEWAY_CLOSED_OR_QUEUE_FULL/);
+ assert.equal(calls,0);assert.equal(s.received(),0);assert.equal(hash(fs.readFileSync(victim)),hash(before));
+ await s.close();
 });

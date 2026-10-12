@@ -34,3 +34,5 @@ candidate.3 公开下载安装器 SHA256：6c78620d249ec7e9f13ad929c4c1fb44c307f
 | Ubuntu 当前 WSL 安装入口 | **BLOCKED** | Python 3.14.4 可用但 PATH 无 Node.js；实际 `sh packaging/ubuntu/install.sh install ...` 在安装前退出 1 并提示需要 Node 20/22。本轮未下载或安装 Node。 |
 
 修复后的本机诊断流程用 candidate.4 运行时构建，未替换旧 Release。六份用户报告仍存在（本轮仅核实数量，未重算其内容哈希）；原始公开 candidate.4 安装目录和指向该目录的卸载登记仍存在。旧 EFS 故障复现目录 `%LOCALAPPDATA%\AgentCanary-EFS-Probe-20261012` 留有 3,857 个产品文件；自动安全审查拒绝了递归清理尝试，未通过其他方式绕过。结构化记录：`security-lab/windows-installer-recheck-2026-10-12.json`。没有干净 VM 或新官方安装包结果，不能据此标记正式候选发行生命周期通过。
+
+2026-10-12 后续验证与 Hook/Gateway 故障矩阵见 [发布前收尾验收](RELEASE_CLOSEOUT_2026-10-12.md)。该记录区分本机诊断构建与公开 Release；旧 candidate.4 资产未覆盖。
