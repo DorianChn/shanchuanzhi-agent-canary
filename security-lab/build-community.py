@@ -1,10 +1,11 @@
 """Independent positive-list 3.0 candidate. Never modifies the legacy npm/Docker package."""
 import argparse, hashlib, json, subprocess, tempfile, zipfile, sys
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);p.add_argument('--output-dir',default='competition-submission/3.0');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);p.add_argument('--candidate-id',default='engineering-preview.1');p.add_argument('--output-dir',default='competition-submission/3.0');a=p.parse_args()
 sys.stdout.reconfigure(encoding='utf-8')
 root=Path(__file__).resolve().parent.parent
 if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise SystemExit('Exact source SHA required')
+if not a.candidate_id or len(a.candidate_id)>64 or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789.-' for c in a.candidate_id):raise SystemExit('Invalid candidate identifier')
 seed=root/'competition-submission/Agent_Canary_Competition_2_0_Readiness.zip'
 if hashlib.sha256(seed.read_bytes()).hexdigest()!='57db33063111f45860f9317b6bcaa493fe9949abc50a4fcb0b6fc7fc64ae4b22':raise SystemExit('Verified 2.0 seed digest mismatch')
 stage=Path(tempfile.mkdtemp(prefix='Agent Canary 3 中文 Community '))/ 'agent-canary-community-3';stage.mkdir()
@@ -28,7 +29,12 @@ sdk=stage/'src/sdk.ts';text=sdk.read_text(encoding='utf-8')
 for line in (root/'src/sdk.ts').read_text(encoding='utf-8').splitlines():
  if "from './runtime/" in line:text+='\n'+line
 sdk.write_text(text+'\n',encoding='utf-8')
-pkg=json.loads((stage/'package.json').read_text());pkg['version']='3.0.0-engineering-preview.1';pkg['private']=True
+pkg=json.loads((stage/'package.json').read_text());pkg['version']='3.0.0-'+a.candidate_id;pkg['private']=True
+pkg['exports']['./sdk']={'types':'./dist/sdk.d.ts','import':'./dist/sdk.js','default':'./dist/sdk.js'}
+(stage/'tsconfig.json').write_bytes((root/'tsconfig.json').read_bytes())
+(stage/'scripts').mkdir(exist_ok=True)
+(stage/'scripts/check-sdk-types.mjs').write_bytes((root/'scripts/check-sdk-types.mjs').read_bytes())
+pkg['scripts']['types:check']='node scripts/check-sdk-types.mjs'
 pkg['scripts']['test']='node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts'
 pkg['scripts']['self-test']='node dist/competition.js self-test --json'
 (stage/'package.json').write_text(json.dumps(pkg,indent=2)+'\n')
@@ -38,7 +44,7 @@ version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':
 for readme in ['README.md','README.zh-CN.md']:
  f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(encoding='utf-8'),encoding='utf-8')
 logs={}
-for cmd in [['ci'],['run','build'],['test'],['run','self-test'],['audit','--json']]:
+for cmd in [['ci'],['run','build'],['test'],['run','self-test'],['run','types:check'],['audit','--json']]:
  r=subprocess.run([a.node,a.npm_cli,*cmd],cwd=stage,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,encoding='utf-8',errors='replace');logs[' '.join(cmd)]={'exitCode':r.returncode,'output':r.stdout}
  if r.returncode:break
 out=(root/a.output_dir).resolve()
@@ -47,12 +53,13 @@ out.mkdir(parents=True,exist_ok=True)
 logfile=out/('community-build-'+a.sha[:8]+'.json')
 with logfile.open('x',encoding='utf-8')as f:json.dump({'version':version,'temporaryBuild':str(stage),'steps':logs},f,ensure_ascii=False,indent=2)
 if any(v['exitCode']for v in logs.values()):raise SystemExit('Community validation failed; logs preserved')
+if not (stage/'dist/sdk.d.ts').is_file():raise SystemExit('Public SDK declaration missing')
 included=[]
 for file in sorted(stage.rglob('*')):
  if not file.is_file():continue
  rel=file.relative_to(stage)
  if 'node_modules' in rel.parts:continue
- if any(p in ['sponsor','license.ts','license.js','dashboard.ts','dashboard.js','export.ts','export.js','eval']for p in rel.parts):raise SystemExit('Commercial boundary violation: '+str(rel))
+ if any(p in ['sponsor','license.ts','license.js','license.d.ts','dashboard.ts','dashboard.js','dashboard.d.ts','export.ts','export.js','export.d.ts','eval']for p in rel.parts):raise SystemExit('Commercial boundary violation: '+str(rel))
  if any(p=='.env' or p.startswith('.env.') or p.endswith('.key')or p.endswith('.pem')for p in rel.parts):raise SystemExit('Sensitive path: '+str(rel))
  included.append((file,rel))
 manifest={str(rel).replace('\\','/'):hashlib.sha256(file.read_bytes()).hexdigest()for file,rel in included}
