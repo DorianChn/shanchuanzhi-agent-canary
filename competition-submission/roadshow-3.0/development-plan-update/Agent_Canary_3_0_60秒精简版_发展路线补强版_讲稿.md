@@ -19,4 +19,3 @@ Agent Canary用可信入口控制AI Agent工具调用，并让评委核对危险
 免费候选和原始证据公开，目前保护仅限受控SDK，0/24不能表示100%防护。未来先确认开发容量，积累真实维护与外部复现，再做版本化插件接口和一个可信宿主验收。这些都是未来门槛，不是已经验证的能力。谢谢。
 
 证据：docs/3.0/SECURITY_BOUNDARIES.md；docs/3.0/AGENT_COVERAGE_MATRIX.md；test/gateway-acceptance.test.ts；competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md；docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md；docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md；docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md
-

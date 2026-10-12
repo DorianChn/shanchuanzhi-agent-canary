@@ -103,4 +103,3 @@
 原路线18到31人周，以40小时人周折算开发720到1240小时，是规划假设；维护另算。实际开发资源尚未确认，所以不承诺12个月完成全部功能。3.5依赖真实反馈，4.0仅保留研究方向，不影响竞赛。
 
 证据：competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md；docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md；docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md；docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md
-

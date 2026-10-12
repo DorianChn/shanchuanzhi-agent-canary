@@ -37,4 +37,3 @@
 项目公开免费候选、原始失败和贡献者套件。现有维护记录只有一期。未来先确认开发容量，再积累月度实录和真实外部复现；3.1先定接口版本与兼容规则，再验证一个可信宿主入口。E4与正式插件协议目前未验，谢谢。
 
 证据：competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md；docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md；docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md；docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md
-
