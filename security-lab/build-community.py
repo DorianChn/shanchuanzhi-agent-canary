@@ -34,17 +34,21 @@ pkg['exports']['./sdk']={'types':'./dist/sdk.d.ts','import':'./dist/sdk.js','def
 (stage/'tsconfig.json').write_bytes((root/'tsconfig.json').read_bytes())
 (stage/'scripts').mkdir(exist_ok=True)
 (stage/'scripts/check-sdk-types.mjs').write_bytes((root/'scripts/check-sdk-types.mjs').read_bytes())
+(stage/'reproduction-kit').mkdir(exist_ok=True)
+for name in ['run-offline-demo.mjs','verify-community-manifest.mjs','RESULT_RECEIPT_TEMPLATE.md']:
+ (stage/'reproduction-kit'/name).write_bytes((root/'competition-submission/roadshow-3.0/reproduction-kit'/name).read_bytes())
 pkg['scripts']['types:check']='node scripts/check-sdk-types.mjs'
+pkg['scripts']['acceptance:offline']='npm run self-test && npm run types:check && node reproduction-kit/run-offline-demo.mjs --root=.'
 pkg['scripts']['test']='node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts'
 pkg['scripts']['self-test']='node dist/competition.js self-test --json'
 (stage/'package.json').write_text(json.dumps(pkg,indent=2)+'\n')
 lock=json.loads((stage/'package-lock.json').read_text());lock['version']=pkg['version'];lock['packages']['']['version']=pkg['version'];(stage/'package-lock.json').write_text(json.dumps(lock,indent=2)+'\n')
-version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True}
+version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True,'runtimeBaselineSHA':'99660b36db9d5b1121eea6fe06b026c5f1e36bcf','candidateId':a.candidate_id,'repair':'SDK declarations and conditional type export; runtime sources unchanged'}
 (stage/'FREE_BUILD_VERSION.json').write_text(json.dumps(version,indent=2)+'\n')
 for readme in ['README.md','README.zh-CN.md']:
- f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(encoding='utf-8'),encoding='utf-8')
+ f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n本候选内置dist/sdk.d.ts和类型导出；原candidate.1及其已发送材料保持不变。快速复验：npm ci → npm run build → npm run acceptance:offline。另人独立环境真实运行后才可能支持E4，目前NOT_VERIFIED。\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(encoding='utf-8'),encoding='utf-8')
 logs={}
-for cmd in [['ci'],['run','build'],['test'],['run','self-test'],['run','types:check'],['audit','--json']]:
+for cmd in [['ci'],['run','build'],['test'],['run','self-test'],['run','types:check'],['run','acceptance:offline'],['audit','--json']]:
  r=subprocess.run([a.node,a.npm_cli,*cmd],cwd=stage,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,encoding='utf-8',errors='replace');logs[' '.join(cmd)]={'exitCode':r.returncode,'output':r.stdout}
  if r.returncode:break
 out=(root/a.output_dir).resolve()
