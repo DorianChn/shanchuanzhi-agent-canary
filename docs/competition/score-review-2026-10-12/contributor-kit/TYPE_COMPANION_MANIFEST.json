@@ -110,5 +110,10 @@
     "src/webhook.ts": "9cbd32a3cd1b220bde7b4849d02bccb06fa8be43808c3bc89426e74f5907042f",
     "package-lock.json": "7e5f4ea2760f3f98567818684078d858ae4db9070e3320181cd6d68ea8b8b861",
     "tsconfig.json": "4e12080f9c464b49f3826f455b09e7102f61e89f72b796b54a55bd32c3fec964"
+  },
+  "bridgeFiles": {
+    "typed-sdk.mjs": "6f0132797b98aa7a7f6d6c4abe85ae4a71e81c0f0a76526a8dd51d49697103e5",
+    "typed-sdk.d.mts": "41611a261e72a43d46f597ff8111f785f68d4345883a1830878f9058a4c1b7bc",
+    "kit/typed-runtime-demo.ts": "d0f70da279f2ddda16869ec9d077174b79c00586be58997ce4eee8fc2dd1ee4f"
   }
 }

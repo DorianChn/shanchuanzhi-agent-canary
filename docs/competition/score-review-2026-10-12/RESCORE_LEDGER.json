@@ -170,8 +170,8 @@
       "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
       "gainEvidence": [
         "CONTRIBUTOR_START.md",
-        "evidence/TYPE_COMPANION_PACKAGED_FINAL_CHECKS.json",
-        "evidence/SDK_TEMPLATE_PACKAGED_FINAL_RESULT.json"
+        "evidence/TYPE_COMPANION_PACKAGED_TYPED_CHECKS.json",
+        "evidence/SDK_TEMPLATE_PACKAGED_TYPED_RESULT.json"
       ],
       "whyNoGain": "missing qualifying new evidence"
     },
@@ -201,8 +201,9 @@
       "gainEvidence": [
         "EXTENSION_CONTRACT_SNAPSHOT.md",
         "contributor-kit/TYPE_COMPANION_MANIFEST.json",
-        "evidence/packaged-type-consumer-final.txt",
-        "evidence/companion-integrity-final.txt"
+        "evidence/packaged-type-consumer-typed-final.txt",
+        "evidence/companion-integrity-typed-final.txt",
+        "evidence/TYPED_RUNTIME_CONSUMER.json"
       ],
       "whyNoGain": "missing qualifying new evidence"
     },

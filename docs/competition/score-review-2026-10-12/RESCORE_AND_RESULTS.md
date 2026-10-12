@@ -20,8 +20,8 @@ L1容量分析虽更现实，但预算/承担者仍未确认，不加分。L3只
 - 冻结前诊断规则：SCORING_PROTOCOL_BEFORE.json；77基线、17行、事实/点数分开。
 - SDK贡献模板：9个真实fixture断言通过，含正常文件、实际callback、未知能力、DESTRUCTIVE未执行、伪造审批不授权、一次审批重放、Agent无operator、隔离后无效果和局部链一致。
 - 原发布SDK类型消费：**FAILED**，exit2 / TS7016，无dist/sdk.d.ts。原负面日志保留，不因“预期失败”记PASS。
-- 锁定源码派生33声明：exit0；派生消费strict检查exit0；最终ZIP解压后的摘要/消费/SDK模板3命令均exit0。
-- 类型补充35669字节，SHA256 0976c3bc49a524f2ddf17f76ead61b10aa9d69848db4e503b41e0eedb057c1a6；SDK JS绑定 f55f0ecab402d44ed3286cf76f1bf059d5adc6262dd6621227e9748d434a57f5。
+- 锁定源码派生33声明：exit0；派生消费strict检查exit0；最终ZIP解压后的摘要/消费/SDK模板/真实TS编译及执行共5命令均exit0。实际TS程序通过类型化转发入口调用原SDK，不使用any断言或ts-ignore；3项临时I/O观察单列，不作为新模型样本。
+- 类型补充37755字节，SHA256 1281cb04303741d8c15a4c2c7be4fe445dbf52b85ce099e1b352e922d7f6ca12；SDK JS绑定 f55f0ecab402d44ed3286cf76f1bf059d5adc6262dd6621227e9748d434a57f5。
 - 两次相同模板各9断言不累计成18个独特用例。无真实模型/API/生产数据；操作员trip是回归信号，不算自主蜜罐触发。
 - 新发现P2-DX01未在原发行内修复；补充只改善确切快照，后续正式包需内置声明与版本/exports核对。本轮不改原JS/构建/包/实验/原Release附件。
 

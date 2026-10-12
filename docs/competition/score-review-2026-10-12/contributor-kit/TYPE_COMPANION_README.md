@@ -15,3 +15,12 @@ SDK JS完整SHA：f55f0ecab402d44ed3286cf76f1bf059d5adc6262dd6621227e9748d434a57
 包内类型由锁定编译器从策展Community源码派生，MIT原许可附LICENSE。无支付/生产数据/模型调用。
 
 三种版本须分开：产品3.0候选、package.json旧CLI版本1.2.7、policy_version gateway-3.0-alpha.1。正式npm3.0、稳定插件loader/协议、长期ABI承诺均未发布。源仓普通sdk入口和策展Community额外导出不同，本补充仅针对后者。
+
+## 可实际运行的TypeScript入口
+
+补充目录的typed-sdk.mjs只转发原dist/sdk.js；typed-sdk.d.mts转发派生声明。原SDK文件保持不变。除了静态检查，可从Community根执行：
+
+    node node_modules/typescript/bin/tsc --strict --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --rootDir contributor-review/kit --outDir contributor-review/compiled contributor-review/kit/typed-runtime-demo.ts
+    node contributor-review/compiled/typed-runtime-demo.js
+
+这是实际编译执行的TS程序，不是只声明类型；正常回调、真实正常文件与手工隔离后回调不执行共3项fixture观察。初始化临时home后再动态导入SDK，没有模型/原生宿主或新防护收益。

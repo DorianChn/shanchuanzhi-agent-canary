@@ -39,3 +39,5 @@ node contributor-review/kit/check-template.mjs --root=.
     node node_modules/typescript/bin/tsc -p tsconfig.json --declaration --emitDeclarationOnly --outDir contributor-review-local/types
 
 此命令只生成本地声明，不修改原JS。不要覆盖既有contributor-review或修改manifest来匹配不同版本。消费者需要按该路径导入；源码和SDK必须相同快照。本轮派生编译/消费者日志见evidence/。
+
+完整类型化应用可使用contributor-review/typed-sdk.mjs（只是转发原SDK）与配对.d.mts。详见contributor-kit/TYPE_COMPANION_README.md的编译/执行两条命令；本轮实跑成功，不把纯静态类型检查当成运行成功。
