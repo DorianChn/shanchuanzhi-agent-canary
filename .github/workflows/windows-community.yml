@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 22
       - run: node --test packaging/windows/test-worker.mjs
+      - run: node --test test/windows-packaging.test.mjs
       - run: node --check packaging/windows/build.mjs
       - run: node --check packaging/windows/prepare.mjs
 # Building and GUI acceptance are separate evidence, not inferred from these tests.
