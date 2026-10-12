@@ -17,3 +17,7 @@ candidate.3 公开下载安装器 SHA256：6c78620d249ec7e9f13ad929c4c1fb44c307f
 ## 版本映射
 
 旧npm兼容版1.2.7保留；Community产品候选3.0.0-competition-candidate.4；构建sourceSHA与历史runtimeBaselineSHA分列，securityRuntimeModified=true。免费 CLI --version/build-info/doctor不宣称全部 Agent 保护启用。安装≠配置≠真实工具接入≠副作用验证。
+
+## 候选四本机GUI复验
+
+真实 GUI 安装、环境按钮、安全按钮、导出、重启、标准卸载全部 PASS，见 product-acceptance-evidence/GUI4_ACCEPTANCE.json。安装器SHA567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6。实际登记中文目录；UIAutomation要求的另一个路径未生效，不把它算作候选四空格路径验证。候选3中文/空格实测记录保留。真实卸载点击已抓取，唯一残留是主动放入的keep-user.txt。
