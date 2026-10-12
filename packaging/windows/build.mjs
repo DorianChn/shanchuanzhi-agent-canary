@@ -4,8 +4,8 @@ import crypto from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 const src=path.dirname(fileURLToPath(import.meta.url));
-const [payloadArg,nsisArg,zipArg]=process.argv.slice(2);
-if(!payloadArg||!nsisArg||!zipArg||process.platform!=='win32')throw Error('Usage: node build.mjs PAYLOAD_DIR NSIS_DIR');
+const [payloadArg,nsisArg,zipArg,wrapperSHA]=process.argv.slice(2);
+if(!payloadArg||!nsisArg||!zipArg||!/^[a-f0-9]{40}$/.test(wrapperSHA||'')||process.platform!=='win32')throw Error('Usage: node build.mjs PAYLOAD_DIR NSIS_DIR');
 const root=path.resolve(payloadArg),nsis=path.resolve(nsisArg),output=path.dirname(root);
 const hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 function walk(d,prefix=''){return fs.readdirSync(d,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name,'en')).flatMap(e=>{const p=prefix+e.name;if(e.isSymbolicLink())throw Error('SYMLINK_IN_PAYLOAD');return e.isDirectory()?walk(path.join(d,e.name),p+'/'):[p];});}
@@ -17,7 +17,7 @@ if(runtime.length!==33||!fs.existsSync(path.join(root,'app/dist/sdk.d.ts')))thro
 const meta=JSON.parse(fs.readFileSync(path.join(root,'app/FREE_BUILD_VERSION.json'),'utf8'));
 const pkg=JSON.parse(fs.readFileSync(path.join(root,'app/package.json'),'utf8'));
 if(meta.candidateId!=='competition-candidate.4')throw Error('UNEXPECTED_CANDIDATE');
-const version={desktopVersion:pkg.version,communityVersion:pkg.version,runtimeBaselineSHA:meta.runtimeBaselineSHA,communityRepairSHA:meta.sourceSHA,securityRuntimeModified:meta.securityRuntimeModified,communityZIP_SHA256:hash(path.resolve(zipArg)),nodeVersion:'22.23.1',nodeSHA256:'f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed',signature:'UNSIGNED',coreRuntimeHashes:runtime};
+const version={wrapperSourceSHA:wrapperSHA,desktopVersion:pkg.version,communityVersion:pkg.version,runtimeBaselineSHA:meta.runtimeBaselineSHA,communityRepairSHA:meta.sourceSHA,securityRuntimeModified:meta.securityRuntimeModified,communityZIP_SHA256:hash(path.resolve(zipArg)),nodeVersion:'22.23.1',nodeSHA256:'f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed',signature:'UNSIGNED',coreRuntimeHashes:runtime};
 if(hash(path.join(root,'runtime/node.exe'))!==version.nodeSHA256)throw Error('NODE_CHECKSUM_MISMATCH');
 fs.writeFileSync(path.join(root,'VERSION.json'),JSON.stringify(version,null,2));
 const excluded=new Set(['AgentCanary.exe','PAYLOAD_MANIFEST.json','INSTALL_RECEIPT.json','Uninstall.exe']);
