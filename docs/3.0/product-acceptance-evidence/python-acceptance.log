@@ -1,0 +1,89 @@
+FF.FFFF
+======================================================================
+FAIL: test_changed_source_hash_cannot_keep_verified_claim (__main__.AcceptanceRegression.test_changed_source_hash_cannot_keep_verified_claim)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 27, in test_changed_source_hash_cannot_keep_verified_claim
+    self.reject(lambda d:d['sourceHashes'].__setitem__('src/runtime/gateway.ts','0'*64))
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 20, in reject
+    self.assertTrue(output.exists(), result.stderr)
+AssertionError: False is not true : Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\verify-acceptance.py", line 9, in <module>
+    from jsonschema import Draft202012Validator, FormatChecker
+ModuleNotFoundError: No module named 'jsonschema'
+
+
+======================================================================
+FAIL: test_effect_label_cannot_override_actual_sink_count (__main__.AcceptanceRegression.test_effect_label_cannot_override_actual_sink_count)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 33, in test_effect_label_cannot_override_actual_sink_count
+    self.reject(lambda d:next(t for t in d['trials'] if t['arm']=='F' and t['attack'])['sideEffects'].__setitem__('sinkRequests',1))
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 20, in reject
+    self.assertTrue(output.exists(), result.stderr)
+AssertionError: False is not true : Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\verify-acceptance.py", line 9, in <module>
+    from jsonschema import Draft202012Validator, FormatChecker
+ModuleNotFoundError: No module named 'jsonschema'
+
+
+======================================================================
+FAIL: test_failed_network_positive_control_cannot_certify_absence (__main__.AcceptanceRegression.test_failed_network_positive_control_cannot_certify_absence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 35, in test_failed_network_positive_control_cannot_certify_absence
+    self.reject(lambda d:next(t for t in d['trials'] if t['arm']=='A' and t['scenario']=='N04_NETWORK-R1').__setitem__('success',False))
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 20, in reject
+    self.assertTrue(output.exists(), result.stderr)
+AssertionError: False is not true : Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\verify-acceptance.py", line 9, in <module>
+    from jsonschema import Draft202012Validator, FormatChecker
+ModuleNotFoundError: No module named 'jsonschema'
+
+
+======================================================================
+FAIL: test_invalid_chain_cannot_keep_verified_claim (__main__.AcceptanceRegression.test_invalid_chain_cannot_keep_verified_claim)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 29, in test_invalid_chain_cannot_keep_verified_claim
+    self.reject(lambda d:next(t for t in d['trials'] if t['arm']=='F')['evidence'][0].__setitem__('event_digest','0'*64))
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 20, in reject
+    self.assertTrue(output.exists(), result.stderr)
+AssertionError: False is not true : Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\verify-acceptance.py", line 9, in <module>
+    from jsonschema import Draft202012Validator, FormatChecker
+ModuleNotFoundError: No module named 'jsonschema'
+
+
+======================================================================
+FAIL: test_missing_observation_cannot_be_assumed_zero (__main__.AcceptanceRegression.test_missing_observation_cannot_be_assumed_zero)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 31, in test_missing_observation_cannot_be_assumed_zero
+    self.reject(lambda d:next(t for t in d['trials'] if t['arm']=='F')['sideEffects'].pop('victimChanged'))
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 20, in reject
+    self.assertTrue(output.exists(), result.stderr)
+AssertionError: False is not true : Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\verify-acceptance.py", line 9, in <module>
+    from jsonschema import Draft202012Validator, FormatChecker
+ModuleNotFoundError: No module named 'jsonschema'
+
+
+======================================================================
+FAIL: test_simulation_cannot_be_certified_as_real_model (__main__.AcceptanceRegression.test_simulation_cannot_be_certified_as_real_model)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 37, in test_simulation_cannot_be_certified_as_real_model
+    self.reject(lambda d:d.__setitem__('mode','DETERMINISTIC_SIMULATION'))
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\test-acceptance-verifier.py", line 20, in reject
+    self.assertTrue(output.exists(), result.stderr)
+AssertionError: False is not true : Traceback (most recent call last):
+  File "<USER_HOME>\Desktop\����\agent-canary-3.0-product-audit\security-lab\verify-acceptance.py", line 9, in <module>
+    from jsonschema import Draft202012Validator, FormatChecker
+ModuleNotFoundError: No module named 'jsonschema'
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.779s
+
+FAILED (failures=6)

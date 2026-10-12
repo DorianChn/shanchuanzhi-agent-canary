@@ -1,3 +1,5 @@
+> 3.0 Community product acceptance / 产品验收：本轮修复候选说明见 [RELEASE_READINESS](docs/3.0/RELEASE_READINESS.md)。旧 npm 兼容版本 1.2.7 与 Community 产品版本分列；CLI `build-info` 可查看构建身份。仅已接入的工具受保护，原生宿主及干净 Windows VM 限制公开披露。
+
 # agent-canary
 
 Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in

@@ -1,0 +1,560 @@
+{
+  "schemaVersion": "agent-canary.desktop-reproduction.v1",
+  "sessionId": "12ebe97a-1901-4eb2-ac9e-13557fa0d2c9",
+  "runId": "a43a0b83-477d-41dc-9b7c-5a4b9f650840",
+  "startedAt": "2026-10-12T03:44:38.362Z",
+  "software": {
+    "desktopVersion": "3.0.0-competition-candidate.3",
+    "communityVersion": "3.0.0-competition-candidate.2",
+    "runtimeBaselineSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+    "communityRepairSHA": "975d838443cd56e5becd23c51941f81cfe12c994",
+    "communityZIP_SHA256": "e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7",
+    "nodeVersion": "22.23.1",
+    "nodeSHA256": "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed",
+    "signature": "UNSIGNED",
+    "coreRuntimeHashes": [
+      {
+        "path": "agent-hook.js",
+        "sha256": "972f5bcd5ff64c7567e8e98df387d2a0527f14c8fd4977e7ed1354cbb85e72e7"
+      },
+      {
+        "path": "agent-integrations.js",
+        "sha256": "077d7cbc369186ec51fafaca1a54b3db5b4cb6ab8739fa5f87e6ac44a74b19b3"
+      },
+      {
+        "path": "ai/cli.js",
+        "sha256": "238a124f8f0aabe5191400ab608da4cedc5b9c201780a937314a53e996da0612"
+      },
+      {
+        "path": "ai/console-page.js",
+        "sha256": "073884fc53410d3f4114c05f8b585fc2d549717874ad4f8e0f106d66b40b25b3"
+      },
+      {
+        "path": "ai/console.js",
+        "sha256": "4fc2a030487a5982391ba6c9e34a73e3c51e36534bad6684e6d9b384cfbaeddc"
+      },
+      {
+        "path": "ai/demo.js",
+        "sha256": "058930de40cc8a430253426d2c69b244e0ba5ef63a1cb4a2cca214eb890fdee4"
+      },
+      {
+        "path": "ai/policy-demo.js",
+        "sha256": "f21c300d9a115d532ecd0c882dc0f415be9d3764af4aa8c25d0b52e7405185cb"
+      },
+      {
+        "path": "ai/privacy.js",
+        "sha256": "93533230e4b1cde45af374690f9b6271ddfe8a44e83074a68ad11a4daec21a30"
+      },
+      {
+        "path": "ai/provider.js",
+        "sha256": "e2f3abb807be388449aa16cd75953c27247204140354f08fc81b7241e44930d6"
+      },
+      {
+        "path": "ai/report.js",
+        "sha256": "eb7cd2aae58dc2a150c242ec277bf5f34fe7a80e61ad36e75c09d11118c2d122"
+      },
+      {
+        "path": "ai/transport.js",
+        "sha256": "ef41f8789f86aeb569e57dc570f18f653bb9a1c3cf9007e571d5f385df3f8ec5"
+      },
+      {
+        "path": "ai/types.js",
+        "sha256": "a2fd54f09f64a9d09f4a9b1fd86f7a032c1fbd8ef9e57c7b9ec73a4fe89c1bcb"
+      },
+      {
+        "path": "alerts.js",
+        "sha256": "2a51552787e6bea34dea8295d8951e077e0fe21fa2e310e5ccbbb637690231be"
+      },
+      {
+        "path": "competition.js",
+        "sha256": "1f5e240847c3c95ff3cd9f8271884c5ca5f714a180abe0b664c77b245ce16adb"
+      },
+      {
+        "path": "config.js",
+        "sha256": "968d30ebf3d042f70f84bd558cc54f4e44b1faf6c8e14666526f359263aa0e36"
+      },
+      {
+        "path": "containment.js",
+        "sha256": "062d99a81354c739f0151b14116177ba0962c4d901d3f24dad4ec372e6b75be0"
+      },
+      {
+        "path": "dataflow.js",
+        "sha256": "49fb41c588bcb10927473367f4d0f1ed605b197702b4cf420667fd5b8f98f3fb"
+      },
+      {
+        "path": "decoys.js",
+        "sha256": "6d339c4afc6f1bf2670fbebbd90c2449d028f3ba5f4ea4e63e6987120aed1ba6"
+      },
+      {
+        "path": "file-state-store.js",
+        "sha256": "1c5018e7f6abf1045f4dc969eb782f1e2aeeddf8cf5398e55dc696e3f2b5d0df"
+      },
+      {
+        "path": "network-tool.js",
+        "sha256": "0a85b8e975cc7e8ad680199b0752cf49772d3266a404de34a03df270d513badf"
+      },
+      {
+        "path": "protected-mcp.js",
+        "sha256": "f73e92395d36ea3bbd92605d3414f56ca908c449c584c0114975a8ff7c42235f"
+      },
+      {
+        "path": "risk-policy.js",
+        "sha256": "f0489f7ec7281ef0c643fe963fd1ccf76d607d8be61bc8fa4674d36d87d4e7b8"
+      },
+      {
+        "path": "runtime/dataflow.js",
+        "sha256": "ff6bc6c2cf8d9cb483fccdd59f24529945c0bfe725602943cb03828383a369d4"
+      },
+      {
+        "path": "runtime/demo.js",
+        "sha256": "838f92c2f8c0a29f1e1f2d028051c1c3d22f4a03f46c8f22fc308fa6bee4fd3d"
+      },
+      {
+        "path": "runtime/evidence.js",
+        "sha256": "b678f38d8423bd722995b1ecfd85193c2fe1dc9ae48f7f55fba6ffd60866dba1"
+      },
+      {
+        "path": "runtime/gateway.js",
+        "sha256": "e7215b597fc2538008c655a1cb134cd2f84d6ed829c12bc2b3c9fc01c843d343"
+      },
+      {
+        "path": "runtime/honeypot.js",
+        "sha256": "6b70b5eadd457573af2e6e08014c1e23695e76fee6fd27af096b7198543d7b9f"
+      },
+      {
+        "path": "sdk.js",
+        "sha256": "f55f0ecab402d44ed3286cf76f1bf059d5adc6262dd6621227e9748d434a57f5"
+      },
+      {
+        "path": "security-router.js",
+        "sha256": "819ee7cdad86b023a9f18654826f161c257408ca776f592c471b7c649c369a4e"
+      },
+      {
+        "path": "self-test.js",
+        "sha256": "f8a7105d6d85959526bb52c00346264686ee7370e5944de08d569c56c7456c20"
+      },
+      {
+        "path": "server.js",
+        "sha256": "6c5ed1c24302036e5233c2ed24d11c975f14da04f4a305220f8a819847a8b463"
+      },
+      {
+        "path": "tokens.js",
+        "sha256": "1ed216ad8d145f05f9d9a71bb3c0d1fddf185a8ae23628935dca2d2a04594d94"
+      },
+      {
+        "path": "webhook.js",
+        "sha256": "8369f442f26a71729c2a2ba75226c8bf3cbce50a29207a36fcda47950721abda"
+      }
+    ]
+  },
+  "installer": {
+    "sha256": "6c78620d249ec7e9f13ad929c4c1fb44c307f4b818751e7446f193a09a5d27e1",
+    "status": "RECORDED_AT_INSTALL",
+    "authentication": "unsigned setup; locally computed hash does not prove publisher identity"
+  },
+  "operator": {
+    "declaredRole": "unspecified",
+    "independence": "NOT_VERIFIED_REQUIRES_REAL_OPERATOR_AND_ENVIRONMENT_REVIEW",
+    "machineFingerprintCollected": false
+  },
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "osRelease": "10.0.26200",
+    "nodeVersion": "v22.23.1",
+    "nodeExecutable": "<INSTALL_DIR>\\runtime\\node.exe"
+  },
+  "mode": "OPERATOR_TRIGGERED_REAL_TEMPORARY_IO_NOT_MODEL_ATTACK",
+  "nativeAgentIntegration": "NOT_VERIFIED_THIS_RUN",
+  "E4": "NOT_VERIFIED",
+  "checks": [
+    {
+      "id": "payload-integrity",
+      "nameZh": "安装文件完整性",
+      "nameEn": "Installed payload integrity",
+      "status": "VERIFIED",
+      "detail": {
+        "files": 3844,
+        "manifestSHA256": "dc46af213ef4f4b3e81ce83639fbddb3ef9ccc6039fb9d8afba90d60df373df8",
+        "runtimeFiles": 33,
+        "runtimeByteIdentity": "candidate.2 pinned hashes"
+      }
+    },
+    {
+      "id": "runtime",
+      "nameZh": "随包运行环境",
+      "nameEn": "Bundled runtime",
+      "status": "VERIFIED",
+      "detail": {
+        "node": "v22.23.1",
+        "platform": "win32",
+        "arch": "x64",
+        "noExternalNodeGitPythonRequired": true
+      }
+    },
+    {
+      "id": "cli-self-test",
+      "nameZh": "CLI 基础自检",
+      "nameEn": "CLI self-test",
+      "status": "VERIFIED",
+      "detail": {
+        "exitCode": 0,
+        "selfTest": {
+          "passed": true,
+          "checks": [
+            {
+              "name": "safe_call",
+              "passed": true
+            },
+            {
+              "name": "decoy_quarantine",
+              "passed": true
+            },
+            {
+              "name": "blocked_callback",
+              "passed": true
+            },
+            {
+              "name": "audit_order",
+              "passed": true
+            }
+          ]
+        },
+        "error": null
+      }
+    },
+    {
+      "id": "A_SYNTHETIC_CREDENTIAL_READ",
+      "nameZh": "A_SYNTHETIC_CREDENTIAL_READ",
+      "nameEn": "A_SYNTHETIC_CREDENTIAL_READ",
+      "status": "VERIFIED_REFERENCE_EFFECT",
+      "detail": {
+        "id": "A_SYNTHETIC_CREDENTIAL_READ",
+        "arm": "A",
+        "returnedVirtualSecret": true,
+        "scope": "direct operator admission, not Prompt Injection"
+      }
+    },
+    {
+      "id": "F_NORMAL_WRITE",
+      "nameZh": "F_NORMAL_WRITE",
+      "nameEn": "F_NORMAL_WRITE",
+      "status": "VERIFIED",
+      "detail": {
+        "id": "F_NORMAL_WRITE",
+        "status": "VERIFIED",
+        "actualWrittenValue": "NORMAL_OK"
+      }
+    },
+    {
+      "id": "F_FIRST_CREDENTIAL_REJECTED",
+      "nameZh": "F_FIRST_CREDENTIAL_REJECTED",
+      "nameEn": "F_FIRST_CREDENTIAL_REJECTED",
+      "status": "VERIFIED",
+      "detail": {
+        "id": "F_FIRST_CREDENTIAL_REJECTED",
+        "status": "VERIFIED",
+        "reason": "credential_resource_denied",
+        "returnedVirtualSecret": false,
+        "executionStatus": "NOT_STARTED"
+      }
+    },
+    {
+      "id": "F_CALLBACK_AND_SIDE_EFFECT",
+      "nameZh": "F_CALLBACK_AND_SIDE_EFFECT",
+      "nameEn": "F_CALLBACK_AND_SIDE_EFFECT",
+      "status": "VERIFIED_BOUNDED_SAME_HOST",
+      "detail": {
+        "id": "F_CALLBACK_AND_SIDE_EFFECT",
+        "status": "VERIFIED_BOUNDED_SAME_HOST",
+        "unsafeCalls": 0,
+        "sinkRequests": 0,
+        "victimChanged": false,
+        "victimHashBefore": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+        "victimHashAfter": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257"
+      }
+    },
+    {
+      "id": "TRUSTED_OPERATOR_APPROVAL",
+      "nameZh": "TRUSTED_OPERATOR_APPROVAL",
+      "nameEn": "TRUSTED_OPERATOR_APPROVAL",
+      "status": "VERIFIED",
+      "detail": {
+        "id": "TRUSTED_OPERATOR_APPROVAL",
+        "status": "VERIFIED",
+        "actualCalls": 1,
+        "modelHasOperator": false
+      }
+    },
+    {
+      "id": "HONEYPOT_THEN_GUARD",
+      "nameZh": "HONEYPOT_THEN_GUARD",
+      "nameEn": "HONEYPOT_THEN_GUARD",
+      "status": "VERIFIED",
+      "detail": {
+        "id": "HONEYPOT_THEN_GUARD",
+        "status": "VERIFIED",
+        "state": "QUARANTINED",
+        "postTripWriteOccurred": false,
+        "events": [
+          {
+            "eventId": "b6385ade-5ab2-48de-95c7-e390f72dfbe1",
+            "decoyId": "decoy-9d7658e2-1468-4aa4-bcc1-afda39018197",
+            "sessionId": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+            "kind": "DEPLOYED",
+            "timestamp": "2026-10-12T03:44:39.717Z"
+          },
+          {
+            "eventId": "bf1d30e8-8241-4152-bb2d-bc798d0ef631",
+            "decoyId": "decoy-9d7658e2-1468-4aa4-bcc1-afda39018197",
+            "sessionId": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+            "kind": "READ",
+            "timestamp": "2026-10-12T03:44:39.781Z"
+          },
+          {
+            "eventId": "8716a397-5f50-4c90-ad2f-c415d4fa8ee9",
+            "decoyId": "decoy-9d7658e2-1468-4aa4-bcc1-afda39018197",
+            "sessionId": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+            "kind": "QUARANTINED",
+            "timestamp": "2026-10-12T03:44:39.781Z"
+          }
+        ]
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": {
+        "executable": "<INSTALL_DIR>\\runtime\\node.exe",
+        "arguments": [
+          "<INSTALL_DIR>\\app\\dist\\competition.js",
+          "self-test",
+          "--json"
+        ]
+      },
+      "exitCode": 0,
+      "durationMs": 730,
+      "stdout": "{\"passed\":true,\"checks\":[{\"name\":\"safe_call\",\"passed\":true},{\"name\":\"decoy_quarantine\",\"passed\":true},{\"name\":\"blocked_callback\",\"passed\":true},{\"name\":\"audit_order\",\"passed\":true}]}\n",
+      "stderr": "",
+      "error": null
+    },
+    {
+      "command": {
+        "executable": "<INSTALL_DIR>\\runtime\\node.exe",
+        "arguments": [
+          "<INSTALL_DIR>\\verification.mjs",
+          "--root=<INSTALL_DIR>\\app"
+        ]
+      },
+      "exitCode": 0,
+      "durationMs": 725,
+      "stdout": "{\"status\":\"VERIFIED_BOUNDED_OPERATOR_DEMO\",\"mode\":\"OPERATOR_TRIGGERED_REAL_TEMPORARY_IO_NOT_MODEL_ATTACK\",\"resultFile\":\"[ABSOLUTE_PATH_REDACTED]\",\"fixture\":\"[ABSOLUTE_PATH_REDACTED]\",\"caseCount\":6,\"E4\":\"NOT_VERIFIED_NO_EXTERNAL_OPERATOR\",\"sha256\":\"0f48fd6aa4a8987fd78fc7e47edd643fb48503721d215085913429ecdf0fc1d1\"}\n",
+      "stderr": "",
+      "error": null
+    }
+  ],
+  "limitations": [
+    "Bounded fixture observations only; no OS-wide sandbox or global Agent protection.",
+    "No real model or Claude Code experiment is run by these buttons.",
+    "Local hash chain is not independent certification."
+  ],
+  "fixture": "<SANDBOX>",
+  "sideEffects": {
+    "id": "F_CALLBACK_AND_SIDE_EFFECT",
+    "status": "VERIFIED_BOUNDED_SAME_HOST",
+    "unsafeCalls": 0,
+    "sinkRequests": 0,
+    "victimChanged": false,
+    "victimHashBefore": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+    "victimHashAfter": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257"
+  },
+  "evidence": [
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "write_file",
+      "request_id": "086816cc-54ce-4e91-b762-9e282395dd66",
+      "request_digest": "6c50155cc27e0b8dd10a6a5b8ce849f5ec9f0cb109715823fc5cf41163905e0c",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "ALLOW",
+      "decision_reason": "host_scoped_file_capability",
+      "approval_reference": null,
+      "execution_status": "RUNNING",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "3bb043f9-8ed4-4c8a-a51f-9e5362684d29",
+      "timestamp": "2026-10-12T03:44:39.751Z",
+      "previous_event_digest": null,
+      "event_digest": "c17f586acaa5feef8f193bf4ef16fbd0b18162c086830a0519efe9aa9911f2e5"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "write_file",
+      "request_id": "086816cc-54ce-4e91-b762-9e282395dd66",
+      "request_digest": "6c50155cc27e0b8dd10a6a5b8ce849f5ec9f0cb109715823fc5cf41163905e0c",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "ALLOW",
+      "decision_reason": "host_scoped_file_capability",
+      "approval_reference": null,
+      "execution_status": "SUCCEEDED",
+      "side_effect_verification": "VERIFIED",
+      "schema_version": "0.1",
+      "evidence_id": "04ff3252-915e-41d6-8963-cd6a6e4a0a1d",
+      "timestamp": "2026-10-12T03:44:39.758Z",
+      "previous_event_digest": "c17f586acaa5feef8f193bf4ef16fbd0b18162c086830a0519efe9aa9911f2e5",
+      "event_digest": "26e6011282e74feba139909beb9261cde3cba5186947d366f2cbe42e4f6a8cfc"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "read_file",
+      "request_id": "7847200c-ba36-4db7-a0de-d5267bed8e58",
+      "request_digest": "6da4e7db9b3480217ce7748f33953f71a0bf7faae9b25023961b8515e32a5e79",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "DENY",
+      "decision_reason": "credential_resource_denied",
+      "approval_reference": null,
+      "execution_status": "NOT_STARTED",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "7a3e3933-43f9-427c-ae74-1d75fdaf8502",
+      "timestamp": "2026-10-12T03:44:39.762Z",
+      "previous_event_digest": "26e6011282e74feba139909beb9261cde3cba5186947d366f2cbe42e4f6a8cfc",
+      "event_digest": "de14e40f285516936d6296caee6bed0d2364f658cc3cb1de96a0afa9469401b5"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "mcp_tool",
+      "request_id": "5060a0f5-be59-43d4-8347-8714a0ecad8f",
+      "request_digest": "1e76f7e82266d4e09f5502f9bf91db5868ad138ae34f9511be528779cd8cb66e",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "DENY",
+      "decision_reason": "mcp_high_risk_denied",
+      "approval_reference": null,
+      "execution_status": "NOT_STARTED",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "d234bfb9-07b9-46e3-9547-5ae79c4dfdca",
+      "timestamp": "2026-10-12T03:44:39.765Z",
+      "previous_event_digest": "de14e40f285516936d6296caee6bed0d2364f658cc3cb1de96a0afa9469401b5",
+      "event_digest": "b2642c9cbb553fa24c2a973ee6e9fbe01964601e71d7fa82319c1e28998bd6f1"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "mcp_tool",
+      "request_id": "2f7f6ab9-58d7-4115-ba63-4a9ffcc96377",
+      "request_digest": "b154bf4cfad35921910af4d48ec8beec1131f5b05b6f5d1d16a9e62ccdbcf29b",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "REQUIRE_APPROVAL",
+      "decision_reason": "host_mcp_capability",
+      "approval_reference": null,
+      "execution_status": "NOT_STARTED",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "571c0f5e-8da3-4f3c-9ae8-1eca6771b98e",
+      "timestamp": "2026-10-12T03:44:39.767Z",
+      "previous_event_digest": "b2642c9cbb553fa24c2a973ee6e9fbe01964601e71d7fa82319c1e28998bd6f1",
+      "event_digest": "48de1068ee0bcf0af8149570c1b7f5835b2f2f0ce2049e85fc3e63cff2a0cb73"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "mcp_tool",
+      "request_id": "2f7f6ab9-58d7-4115-ba63-4a9ffcc96377",
+      "request_digest": "b154bf4cfad35921910af4d48ec8beec1131f5b05b6f5d1d16a9e62ccdbcf29b",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "ALLOW",
+      "decision_reason": "host_mcp_capability",
+      "approval_reference": "49dc9ea4b2cd49673f855528d56f37261ffa144b2a38ab156ee8fe272b3a01be",
+      "execution_status": "RUNNING",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "3b14325d-3f11-43ee-aa33-f44f7f0e287e",
+      "timestamp": "2026-10-12T03:44:39.769Z",
+      "previous_event_digest": "48de1068ee0bcf0af8149570c1b7f5835b2f2f0ce2049e85fc3e63cff2a0cb73",
+      "event_digest": "dcaa653240f0eeca84a2e35a6478f79985396e136427ab10aecaf8370649af50"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "mcp_tool",
+      "request_id": "2f7f6ab9-58d7-4115-ba63-4a9ffcc96377",
+      "request_digest": "b154bf4cfad35921910af4d48ec8beec1131f5b05b6f5d1d16a9e62ccdbcf29b",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "ALLOW",
+      "decision_reason": "host_mcp_capability",
+      "approval_reference": "49dc9ea4b2cd49673f855528d56f37261ffa144b2a38ab156ee8fe272b3a01be",
+      "execution_status": "SUCCEEDED",
+      "side_effect_verification": "NOT_VERIFIED",
+      "schema_version": "0.1",
+      "evidence_id": "d88e8fc3-f870-43a2-ad1c-db39790fabf4",
+      "timestamp": "2026-10-12T03:44:39.770Z",
+      "previous_event_digest": "dcaa653240f0eeca84a2e35a6478f79985396e136427ab10aecaf8370649af50",
+      "event_digest": "d544d83e3947189cf4c66b7ec2f02455b89ca26c449fea6cb0388fc81ec15417"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "read_file",
+      "request_id": "ef39c38a-f9f2-491d-9209-c6975c4baff3",
+      "request_digest": "3cec83ce9d105e38f72c485be8f16ef3894e29d33225acfdd64185fae67d309f",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "ALLOW",
+      "decision_reason": "host_scoped_file_capability",
+      "approval_reference": null,
+      "execution_status": "RUNNING",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "b9111f1b-fc7a-401c-ae0a-062fa5015a97",
+      "timestamp": "2026-10-12T03:44:39.774Z",
+      "previous_event_digest": "d544d83e3947189cf4c66b7ec2f02455b89ca26c449fea6cb0388fc81ec15417",
+      "event_digest": "c64ac77e72fded7275b088f431436e0f5deadee6329e8e52ad6cba5f4f0500e8"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "read_file",
+      "request_id": "ef39c38a-f9f2-491d-9209-c6975c4baff3",
+      "request_digest": "3cec83ce9d105e38f72c485be8f16ef3894e29d33225acfdd64185fae67d309f",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "ALLOW",
+      "decision_reason": "host_scoped_file_capability",
+      "approval_reference": null,
+      "execution_status": "SUCCEEDED",
+      "side_effect_verification": "VERIFIED",
+      "schema_version": "0.1",
+      "evidence_id": "d5f3d4ed-941d-483b-8bd7-19deaa27444e",
+      "timestamp": "2026-10-12T03:44:39.781Z",
+      "previous_event_digest": "c64ac77e72fded7275b088f431436e0f5deadee6329e8e52ad6cba5f4f0500e8",
+      "event_digest": "6ed84ed429a94e6d8175ed924875209ee1168c4edb148316012a489c032b4afc"
+    },
+    {
+      "session_id": "ac_1c8a8468-6748-4354-855a-f597ee9e0bdb",
+      "agent_id": "roadshow-controlled-sdk-DEMO",
+      "tool_id": "write_file",
+      "request_id": "c545dbd0-89d1-45ae-9844-35c34ae69958",
+      "request_digest": "3d981c1d44599dfc85c32cd1e406d8a715aec593328165df169dd565950b4a2f",
+      "policy_version": "gateway-3.0-alpha.1",
+      "decision": "DENY",
+      "decision_reason": "guard_quarantined",
+      "approval_reference": null,
+      "execution_status": "NOT_STARTED",
+      "side_effect_verification": "NOT_STARTED",
+      "schema_version": "0.1",
+      "evidence_id": "7df93902-b454-4dee-ba97-ceea4880a00d",
+      "timestamp": "2026-10-12T03:44:39.785Z",
+      "previous_event_digest": "6ed84ed429a94e6d8175ed924875209ee1168c4edb148316012a489c032b4afc",
+      "event_digest": "67a3539a5194af784d566ac26d012b9733e0aa3c463be77476c88416cacbcc47"
+    }
+  ],
+  "evidenceChain": {
+    "valid": true,
+    "reason": "VALID_LOCAL_CHAIN",
+    "head": "67a3539a5194af784d566ac26d012b9733e0aa3c463be77476c88416cacbcc47"
+  },
+  "status": "VERIFIED_BOUNDED_CHECKS",
+  "completedAt": "2026-10-12T03:44:39.820Z"
+}
