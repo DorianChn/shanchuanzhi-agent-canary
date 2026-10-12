@@ -1,0 +1,62 @@
+{
+  "sourceSHA": "975d838443cd56e5becd23c51941f81cfe12c994",
+  "runtimeBaselineSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "version": "3.0.0-competition-candidate.2",
+  "asset": "Agent_Canary_3_0_Community_Preview_975d8384.zip",
+  "sha256": "e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7",
+  "JSByteIdentical": 33,
+  "declarations": 33,
+  "cleanZip": {
+    "node": "v22.23.1",
+    "platform": "Windows",
+    "ChineseAndSpacePath": true,
+    "tests": {
+      "pass": 96,
+      "fail": 0,
+      "skip": 0
+    },
+    "offlineEffects": 6,
+    "typesCompile": "VERIFIED",
+    "typedRuntimeChecks": 3,
+    "independentPerson": false,
+    "cleanVM": false
+  },
+  "fullRoot": {
+    "pass": 306,
+    "fail": 0,
+    "skip": 4
+  },
+  "sponsor": {
+    "pass": 24,
+    "fail": 0,
+    "skip": 1
+  },
+  "audits": {
+    "root": 0,
+    "sponsor": 0,
+    "community": 0
+  },
+  "CI": {
+    "source": "975d838443cd56e5becd23c51941f81cfe12c994",
+    "run": 38191778486,
+    "status": "success",
+    "jobs": 9
+  },
+  "E4": "NOT_VERIFIED",
+  "oldAssetsPreserved": true,
+  "stableNpmDockerPublished": false,
+  "failuresRetained": [
+    "TS declaration negative baseline",
+    "native wrapper syntax/fail-open counterexample",
+    "native Git Bash path preflight",
+    "consumer TS2209 project root",
+    "Python path encoding driver",
+    "isolated latest-host installer exit255"
+  ],
+  "limits": [
+    "Native host proof separately labeled direct admission with Read/Bash; no global coverage",
+    "Original candidate.1 declarations remain missing; historical asset preserved",
+    "Legacy ordinary npm/Docker V2 boundary remains open P1",
+    "No new independent AI/adaptive benefit or PI dataset evaluation"
+  ]
+}

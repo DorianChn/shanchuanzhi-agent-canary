@@ -12,6 +12,8 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 **3.0 engineering candidate acceptance:** [core report](docs/3.0/FINAL_3_0_ACCEPTANCE.md), [fair real-model comparison](docs/3.0/FAIR_CORE_EVALUATION.md), [E0–E4 evidence mapping](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md). Actual pre-execution effects were verified for a controlled SDK Agent. Native clients' global protection, independent AI benefit and adaptive decoy efficacy remain unverified. The 2.0 candidate is preserved; 3.0 is not a stable release.
 
+**Type-fixed supplementary candidate:** [candidate.2](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.2) includes dist/sdk.d.ts, matching ./sdk types and a three-command offline acceptance flow. Its 33 runtime JS files match candidate.1 byte-for-byte. The emailed candidate.1 and its original video/slides are preserved. [Limited native Claude Read/Bash evidence](docs/3.0/AGENT_COVERAGE_MATRIX.md) is separate direct-admission testing, not global protection or a new prompt-injection rate.
+
 ## 3.0 competition candidate and development gates
 
 [Free candidate Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.1) · [Public reproduction index](competition-submission/roadshow-3.0/GitHub公开复现索引.md) · [Updated roadshow](competition-submission/roadshow-3.0/development-plan-update/README.md)
@@ -23,7 +25,7 @@ Runtime freeze: 99660b36db9d5b1121eea6fe06b026c5f1e36bcf. Verified control cover
 |Development capacity|Published planning estimate; actual availability unconfirmed|Maintainer confirms a development budget separately from upkeep. Defer work if capacity is insufficient.|
 |Maintenance history|One actual October 12 review, public CI and retained failures|Propose monthly records of actual SHA, commands, defects, time spent and unknowns. Count only completed cycles.|
 |External participation|Reproduction guide, receipt template and working SDK contributor kit|A different real operator reproduces in an independent environment and records target effects. E4 and new external participation remain unverified.|
-|Plugin protocol|Frozen SDK interface, matching type companion and MCP extension examples|For 3.1, review a versioned contract; test exports/types, permissions, cancellation, lifecycle and compatibility; then verify one official host's controlled entry.|
+|Plugin protocol|Frozen SDK interface, bundled declarations in candidate.2 and MCP extension examples|For 3.1, review a versioned contract; test exports/types, permissions, cancellation, lifecycle and compatibility; then verify one official host's controlled entry.|
 
 **Planned sequence:** 3.0 upkeep → 3.1 trusted Adapters and protocol → 3.2 fair ablations and normal-task evaluation → 3.5 team conveniences subject to real demand → 4.0 permission-propagation research. Resources and acceptance gates determine scheduling. The original roadmap estimate is 18–31 person-weeks (720–1240 development hours assuming 40 hours/week), with maintenance budgeted separately. These are assumptions, not committed staffing or work already done.
 

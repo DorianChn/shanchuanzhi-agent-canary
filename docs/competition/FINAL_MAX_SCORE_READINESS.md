@@ -1,5 +1,12 @@
 # FINAL_MAX_SCORE_READINESS
 
+## 2026-10-12 修复与限定原生验收更新
+
+最新补充：[类型修复候选与完整验收](../../competition-submission/3.0-typefix/README.md)。构建源码975d838443cd56e5becd23c51941f81cfe12c994；候选candidate.2的33个JS与原99660b36包逐字节相同，SDK声明/条件导出缺陷已在新包修复，旧候选保留。限定Claude原生Read/Bash端到端验证见[公开记录](../../security-lab/final-package-repair/public/FINAL_CLOSEOUT.json)，不是全局保护或新间接注入防护率。
+
+同一严格79分口径复评为80：技术23、场景24、治理18、长期15；只对S2新增可验证原生入口加1，类型修复不重复加分。E4、组委会收悉/材料关联与学生主体资格仍NOT_VERIFIED；没有重发邮件。candidate.2是公开修复补充，已发送的candidate.1和视频/PPT不替换。后文77分是首次历史快照，不能当成本轮最终分数。
+
+
 日期2026-10-12（上海）。结论：**READY_WITH_LIMITATIONS**。
 限定：免费受控SDK竞赛候选与技术答辩材料就绪；不是全宿主安全平台认证、正式入围确认或稳定全仓分发。
 本轮不改变冻结运行时，不新增付费/支付功能，不合并main，不重复发送邮件。

@@ -9,6 +9,8 @@ JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的�
 
 **3.0 工程候选核心验收**：[验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md) · [公平真实模型对照](docs/3.0/FAIR_CORE_EVALUATION.md) · [E0–E4证据映射](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md)。受控 SDK Agent 的执行前控制已有真实效果证据；原生客户端全局防护、AI 独立收益、自适应效果未验证。保留2.0竞赛版本，3.0不是稳定版。
 
+**类型修复补充候选**：[candidate.2](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.2)内置dist/sdk.d.ts、./sdk类型导出及三命令离线复验；33个运行时JS与candidate.1逐字节相同。已发送的candidate.1及原视频/PPT保留。[新增Claude原生Read/Bash限定证据](docs/3.0/AGENT_COVERAGE_MATRIX.md)属于独立的直接准入测试，不能作为全局保护或新Prompt Injection防护率。
+
 ## 3.0 竞赛候选与后续发展
 
 [下载免费候选 Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.1) · [公开复现索引](competition-submission/roadshow-3.0/GitHub公开复现索引.md) · [发展路线补强版路演](competition-submission/roadshow-3.0/development-plan-update/README.md)
@@ -20,7 +22,7 @@ JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的�
 |开发容量|已公开规划估算，实际可用时间待确认|维护者确认开发预算，维护另计；容量不足延期，不承诺全路线按年完成|
 |长期维护|10月12日一份真实复盘，公开CI与失败记录|拟每月公开实际SHA、命令、故障、耗时与未验项；完成后才计入维护历史|
 |外部参与|复现手册、签收模板、贡献者SDK套件|另一位真实操作者独立环境复现并保存效果观察；目前E4和新增外部参与未验|
-|插件协议|冻结SDK接口、类型补充及MCP扩展示例|3.1先评审版本化协议，验证类型/导出、权限、取消、生命周期和兼容，再验证一个官方宿主受控入口|
+|插件协议|冻结SDK接口、candidate.2内置声明及MCP扩展示例|3.1先评审版本化协议，验证类型/导出、权限、取消、生命周期和兼容，再验证一个官方宿主受控入口|
 
 **未来计划**：3.0维护 → 3.1可信Adapter与协议 → 3.2公平消融与误报研究 → 3.5按真实需求评估团队便利 → 4.0权限传播研究。阶段推进取决于资源和验收，不把路线图作为实现证明。整个原路线估算18–31人周；开发约720–1240小时按40小时/人周假设，维护另计，均未确认投入。
 

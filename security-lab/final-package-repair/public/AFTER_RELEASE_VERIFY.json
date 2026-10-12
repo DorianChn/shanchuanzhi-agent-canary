@@ -1,0 +1,39 @@
+{
+  "verifiedAt": "2026-10-12T01:38:47.080Z",
+  "publicAssetURL": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/Agent_Canary_3_0_Community_Preview_975d8384.zip",
+  "httpStatus": 200,
+  "size": 381218,
+  "sha256": "e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7",
+  "anonymousFetch": true,
+  "sourceSHA": "975d838443cd56e5becd23c51941f81cfe12c994",
+  "runtimeUnchanged": true,
+  "oldReleaseAssetsUnchanged": 22,
+  "newAssets": [
+    {
+      "name": "Agent_Canary_3_0_Community_Preview_975d8384.zip",
+      "size": 381218,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/Agent_Canary_3_0_Community_Preview_975d8384.zip"
+    },
+    {
+      "name": "Agent_Canary_3_0_Typefix_and_Native_Host_Evidence_Verified.zip",
+      "size": 102592,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/Agent_Canary_3_0_Typefix_and_Native_Host_Evidence_Verified.zip"
+    },
+    {
+      "name": "COMMUNITY_REPAIR_VERIFICATION.json",
+      "size": 1719,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/COMMUNITY_REPAIR_VERIFICATION.json"
+    },
+    {
+      "name": "E4_REPRODUCTION.md",
+      "size": 2491,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/E4_REPRODUCTION.md"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 114,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/SHA256SUMS.txt"
+    }
+  ],
+  "prerelease": true
+}
