@@ -1,0 +1,14 @@
+/** Build-only prerequisites: Node, npm, Python zipfile, portable official NSIS.
+ * None is needed on the end user's machine except Windows 11 built-in .NET. */
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {spawnSync} from 'node:child_process';
+const [destination,python,npm]=process.argv.slice(2);if(!destination||!python||!npm||process.platform!=='win32')throw Error('node prepare.mjs EMPTY_BUILD_DIRECTORY PYTHON_EXE NPM_CLI_JS');
+const out=path.resolve(destination);if(fs.existsSync(out)&&fs.readdirSync(out).length)throw Error('NONEMPTY_BUILD_DIRECTORY_REFUSED');fs.mkdirSync(out,{recursive:true});
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+async function download(url,file,expected){const r=await fetch(url,{signal:AbortSignal.timeout(120000)});if(!r.ok)throw Error('DOWNLOAD_HTTP_'+r.status);const bytes=Buffer.from(await r.arrayBuffer());if(sha(bytes)!==expected)throw Error('DOWNLOAD_CHECKSUM_MISMATCH');fs.writeFileSync(file,bytes);}
+const zip=path.join(out,'community.zip');await download('https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/Agent_Canary_3_0_Community_Preview_975d8384.zip',zip,'e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7');
+const r=spawnSync(python,['-c','import zipfile,sys,pathlib; z=zipfile.ZipFile(sys.argv[1]); assert z.testzip() is None; assert all(not pathlib.PurePosixPath(n).is_absolute() and ".." not in pathlib.PurePosixPath(n).parts and "\\\\" not in n and ":" not in n for n in z.namelist()); z.extractall(sys.argv[2])',zip,path.join(out,'unpacked')],{encoding:'utf8',windowsHide:true});if(r.status!==0)throw Error('ZIP_EXTRACTION_FAILED');
+const payload=path.join(out,'payload');fs.mkdirSync(payload);fs.renameSync(path.join(out,'unpacked/agent-canary-community-3'),path.join(payload,'app'));fs.mkdirSync(path.join(payload,'runtime'));
+await download('https://nodejs.org/dist/v22.23.1/win-x64/node.exe',path.join(payload,'runtime/node.exe'),'f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed');
+await download('https://raw.githubusercontent.com/nodejs/node/v22.23.1/LICENSE',path.join(payload,'runtime/NODE_LICENSE'),'c738ae413cf561f174e34f6961f8ca458aae2369a73640dda6234c629b98bcc4');
+const install=spawnSync(process.execPath,[npm,'ci','--omit=dev','--ignore-scripts','--no-audit','--no-fund'],{cwd:path.join(payload,'app'),encoding:'utf8',windowsHide:true,timeout:240000});if(install.status!==0)throw Error('PRODUCTION_DEPENDENCIES_FAILED');
+console.log(JSON.stringify({payload,next:'node packaging/windows/build.mjs "'+payload+'" "PATH_TO_VERIFIED_PORTABLE_NSIS_3_13"',toolingOnly:true}));
