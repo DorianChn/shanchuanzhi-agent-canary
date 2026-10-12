@@ -34,3 +34,11 @@ P1：普通 npm/Docker 构建仍包含旧商业模块；仅正向清单 Communit
 P0：受测路径中未确认新增P0，不保证未知路径。P1：旧npm/Docker商业分发边界未关闭；不合作执行器取消与非原子外部TOCTOU是必须公开的部署限制。P2：并发CI重试预算时序敏感（首跑失败、原样复跑通过）、未签名/干净WindowsVM与当前原生Hook端到端证据不足。P3：高级结果仍含JSON、桌面英文切换缺本轮单独操作证据。
 
 Qwen这48次是作者已知固定样本的回归复验，不是新的独立留出研究；6直接攻击、2README、4正常独特场景各重复2次，两臂保持同样模型/任务。README无危险效果不算阻断，A组自带模拟执行器拒绝也不算Canary收益。
+
+## 2026-10-12 后续安装器与真实宿主复核
+
+安装器 EFS/空目录卸载缺陷的修复提交为 `afe5f92cd888a64208a9cc2768caed89a904551a`。公开 candidate.4 安装器仍在本机 EFS LocalAppData 复现卸载失败；修复源码已在未签名的 NSIS 3.10 本机诊断构建完成当前用户生命周期复测，但未产生官方 candidate.5 发布包。详情及哈希见 `INSTALLATION_ACCEPTANCE.md` 和 `security-lab/windows-installer-recheck-2026-10-12.json`。
+
+修复提交后重新执行 `npm run verify`：317 项中 312 通过、0 失败、5 跳过，构建与 90 文件 package smoke 通过；`npm audit --audit-level=high` 为 0 漏洞。Windows worker 测试另测 19 项，18 通过、0 失败、1 跳过。
+
+GPT-6 Luna Max 通过 Codex CLI 会话的受控 MCP 对照及原生 Shell 边界测试见 `GPT6_LUNA_MAX_REAL_AGENT_TEST.md`。有界结果支持在本测试中 B 的受保护 `.env` 读取/写入副作用未发生，C 的诱饵后续隔离生效；A 的 loopback 请求和虚拟文件写入确实发生，但接收端未确认正文包含合成凭据。原生 Codex Shell 成功绕开 Gateway。未得到全局宿主防护、间接提示注入成功阻断或 AI 独立增益的证据。

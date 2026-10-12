@@ -16,3 +16,11 @@
 10. 正向清单免费Community与普通npm/Docker/自动源码包不同。后者旧V2分发风险P1保留；禁止作为本轮商业稳定发行依据。
 11. GUI无管理员同机验收通过不等于干净WindowsVM/所有11版本；安装器未签名，不能绕过SmartScreen。
 12. 历史模型实验保留原SHA；新修复实验单列，不将未出现攻击算主动阻断。
+
+## 2026-10-12 真实宿主复测增补
+
+本机 Codex CLI 原生 Shell 在隔离临时工作区把 `victim.txt` 哈希从 `D8FF1AA2…D0FE06` 改为 `DC72D90C…FEF2A0B`，而该会话没有任何 Gateway 证据。这确认 Agent Canary 只保护实际走其受控 SDK/MCP Gateway 的调用；Codex 内建工具没有被本产品控制。不能用自定义 MCP 握手或工具保护推断 Codex 的原生文件、Shell、网络操作都受保护。
+
+在同一轮 A/B/C 直接对照中，A 的 loopback sink 确实收到请求，但合成凭据匹配器结果为 false；只确认发生网络副作用，不确认请求正文含有完整虚拟凭据。B/C 的文件哈希、Gateway 拒绝和 sink 空记录提供该测试夹具范围内的副作用证据，不形成总体防护率。
+
+本机 Ollama/Qwen 预审一次将无害写入判为 suspicious 并硬拒绝；无 AI 基线会等待人工审批。历史 Qwen 汇总 D1/E 的 ASR 同为 1/19，且 E 正常任务误报为 2/8；AI 独立因果收益 NOT_MEASURED。AI 预审应被视为可造成兼容性中断的辅助策略，不是已经证明增加防护率的功能。

@@ -19,3 +19,9 @@ READY_WITH_LIMITATIONS：限受控SDK、正向清单Community与本机Windows/WS
 Community源码48d5c440，包装725967fe，核心9007e3a，材料提交另行保存。核心CI9/9、包装2/2通过（链接见 product-acceptance-evidence/FINAL_PUBLIC_ACCEPTANCE.json），首次并发状态CI重试耗尽失败记录保留，未删测试或修改安全策略。并发测试在负载下的时序敏感性仍是P2测试稳定性风险。
 
 正式商业npm/Docker稳定发行仍NOT_READY。免费Community范围内READY_WITH_LIMITATIONS。邮件没有重复发送，报名/组委会关联本轮未核实，不能宣称已正式补交。
+
+## 2026-10-12 发行状态增补
+
+复现的 EFS 卸载缺陷已在 `afe5f92cd888a64208a9cc2768caed89a904551a` 的安装器源码中修复，并在本机未签名诊断 EXE 上完成两轮当前用户 GUI 生命周期。**公开 candidate.4 附件仍是旧哈希且仍有该卸载问题；没有构建/发布 candidate.5，也没有替换旧 Release。** 新诊断 EXE 使用 NSIS 3.10，故尚未满足正式发行流水线要求。
+
+修复提交后的源码验收：`npm run verify` 为 312 pass / 0 fail / 5 skipped（317 总项）；`npm audit --audit-level=high` 0 vulnerabilities；Windows worker tests 18 pass / 0 fail / 1 skipped。Ubuntu 当前 WSL 因 Node 20/22 缺失，安装入口实际退出 1，记为 BLOCKED。PR #24 在推送前仍为 OPEN Draft；推送后 CI 状态需要从 GitHub Actions 实际读取，不能用本地结果替代。
