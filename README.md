@@ -12,6 +12,23 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 **3.0 engineering candidate acceptance:** [core report](docs/3.0/FINAL_3_0_ACCEPTANCE.md), [fair real-model comparison](docs/3.0/FAIR_CORE_EVALUATION.md), [E0–E4 evidence mapping](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md). Actual pre-execution effects were verified for a controlled SDK Agent. Native clients' global protection, independent AI benefit and adaptive decoy efficacy remain unverified. The 2.0 candidate is preserved; 3.0 is not a stable release.
 
+## 3.0 competition candidate and development gates
+
+[Free candidate Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.1) · [Public reproduction index](competition-submission/roadshow-3.0/GitHub公开复现索引.md) · [Updated roadshow](competition-submission/roadshow-3.0/development-plan-update/README.md)
+
+Runtime freeze: 99660b36db9d5b1121eea6fe06b026c5f1e36bcf. Verified control covers registered tools of the controlled SDK Agent. MCP configuration does not establish global native-host protection. This candidate is not a stable npm/Docker release; existing package metadata and commercial distribution limits remain disclosed below.
+
+|Evidence area|Current evidence|Next step and acceptance gate|
+|---|---|---|
+|Development capacity|Published planning estimate; actual availability unconfirmed|Maintainer confirms a development budget separately from upkeep. Defer work if capacity is insufficient.|
+|Maintenance history|One actual October 12 review, public CI and retained failures|Propose monthly records of actual SHA, commands, defects, time spent and unknowns. Count only completed cycles.|
+|External participation|Reproduction guide, receipt template and working SDK contributor kit|A different real operator reproduces in an independent environment and records target effects. E4 and new external participation remain unverified.|
+|Plugin protocol|Frozen SDK interface, matching type companion and MCP extension examples|For 3.1, review a versioned contract; test exports/types, permissions, cancellation, lifecycle and compatibility; then verify one official host's controlled entry.|
+
+**Planned sequence:** 3.0 upkeep → 3.1 trusted Adapters and protocol → 3.2 fair ablations and normal-task evaluation → 3.5 team conveniences subject to real demand → 4.0 permission-propagation research. Resources and acceptance gates determine scheduling. The original roadmap estimate is 18–31 person-weeks (720–1240 development hours assuming 40 hours/week), with maintenance budgeted separately. These are assumptions, not committed staffing or work already done.
+
+See [capacity and evidence gates](competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md), [contributor start](docs/competition/score-review-2026-10-12/CONTRIBUTOR_START.md), and [extension snapshot](docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md). Independent AI/adaptive-decoy benefit remains unmeasured. Plans do not establish protection claims or justify a score increase.
+
 [Live demo & sponsor](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Glama listing](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary) · [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
 
 ![Agent Canary — AI agent and MCP security](docs/agent-canary-cover-v2.png)
