@@ -75,7 +75,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     return {name:data.name,args:data.args,id:randomUUID(),digest:createHmac('sha256',key).update(canonicalJSON(data)).digest('hex')};
   }
   function audit(r:Request,decision:EvidenceDecision,reason:string,status:ExecutionStatus,verified:SideEffectVerification,approval:string|null=null){
-    return options.evidence.record({session_id:options.guard.sessionId,agent_id:options.agentId,tool_id:r.name,request_id:r.id,request_digest:r.digest,policy_version:'gateway-3.0-alpha.1',decision,decision_reason:reason,approval_reference:approval,execution_status:status,side_effect_verification:verified});
+    return options.evidence.record({session_id:options.guard.sessionId,agent_id:options.agentId,tool_id:r.name,request_id:r.id,request_digest:r.digest,policy_version:'gateway-3.0-alpha.2',decision,decision_reason:reason,approval_reference:approval,execution_status:status,side_effect_verification:verified});
   }
   function blocked(r:Request,reason:string,decision:EvidenceDecision='DENY'):never {audit(r,decision,reason,'NOT_STARTED','NOT_STARTED');throw new GatewayDeniedError(reason,r.id,decision);}
   function resource(r:Request):Resource|undefined{return typeof r.args.path==='string'?resources.get(filePath(r.args.path)):undefined;}
@@ -131,6 +131,11 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     try{
       // File effects are synchronous fd operations: quarantine cannot interleave in this JS turn.
       const perform=()=>{
+        // Audit callbacks may yield a changed path. Reject the observed change before fd I/O.
+        // This narrows the window; it is not an atomic OS-wide path/operation transaction.
+        if(r.name==='read_file'||r.name==='write_file'){
+          const f=resource(r);if(!f||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_EFFECT');
+        }
         if(r.name==='read_file'){
           const f=resource(r)!;const stat=fs.fstatSync(f.fd);if(stat.size>65_536)throw Error('GATEWAY_READ_LIMIT');
           const buffer=Buffer.alloc(stat.size);let offset=0;while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}

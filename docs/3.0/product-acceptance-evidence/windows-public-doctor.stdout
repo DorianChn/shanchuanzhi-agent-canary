@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "product": "Agent Canary",
+    "productVersion": "3.0.0-competition-candidate.4",
+    "packageVersion": "3.0.0-competition-candidate.4",
+    "sourceSHA": "48d5c440de4b1ced45075b2a1c347545576d2e10",
+    "runtimeBaselineSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+    "securityRuntimeModified": true,
+    "globalProtection": false
+  },
+  "selfTest": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "safe_call",
+        "passed": true
+      },
+      {
+        "name": "decoy_quarantine",
+        "passed": true
+      },
+      {
+        "name": "blocked_callback",
+        "passed": true
+      },
+      {
+        "name": "audit_order",
+        "passed": true
+      }
+    ]
+  },
+  "installation": "CLI_STARTED",
+  "configuration": "NOT_VERIFIED",
+  "nativeProtection": "NOT_VERIFIED",
+  "scope": "SDK/Gateway callbacks must be explicitly registered by a trusted host"
+}

@@ -1,3 +1,7 @@
+> Windows 预发布下载：[Community candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4)。安装器无需另装 Node/Python/Git；未签名，本机 GUI 已验收，干净 Windows VM 与 E4 未验证。仅已接入工具受保护。
+
+> 3.0 Community product acceptance / 产品验收：本轮修复候选说明见 [RELEASE_READINESS](docs/3.0/RELEASE_READINESS.md)。旧 npm 兼容版本 1.2.7 与 Community 产品版本分列；CLI `build-info` 可查看构建身份。仅已接入的工具受保护，原生宿主及干净 Windows VM 限制公开披露。
+
 # agent-canary
 
 Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in

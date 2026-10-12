@@ -1,0 +1,23 @@
+{
+  "package": "candidate.3 public downloaded setup",
+  "setupSHA256": "6c78620d249ec7e9f13ad929c4c1fb44c307f4b818751e7446f193a09a5d27e1",
+  "environment": "Windows 11 Home China 25H2 build 26200, 32 GiB, current user",
+  "installation": "PASS real GUI Chinese/space directory",
+  "environmentButton": "PASS",
+  "securityButton": "PASS actual SDK fixture",
+  "export": "PASS JSON and Markdown saved",
+  "restart": "PASS same persisted session",
+  "uninstall": {
+    "programFilesRemoved": true,
+    "registryRemoved": true,
+    "shortcutsRemoved": true,
+    "userFilesPreserved": true,
+    "reportsPreserved": true,
+    "remainingFiles": [
+      "keep-user.txt"
+    ],
+    "guiClickTrace": "PARTIAL uninstaller re-executed"
+  },
+  "cleanWindowsVM": "BLOCKED",
+  "E4": "NOT_VERIFIED"
+}
