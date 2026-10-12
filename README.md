@@ -4,6 +4,8 @@
 
 # agent-canary
 
+> Auto E4 desktop work is being developed on the open PR branch; it is **not included in public candidate.4**. The current source runner produces a bounded local evidence bundle; it does not launch/restore a VM, call GPT-6, modify GitHub, or establish external E4. See [Auto E4 scope and reproduction](docs/3.0/AUTO_E4.md).
+
 Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in
 your environment, then gives SDK integrations a session circuit breaker to
 contain the next guarded action after a compromise signal.

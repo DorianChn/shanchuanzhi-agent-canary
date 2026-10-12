@@ -1,6 +1,6 @@
-# Windows Community candidate.3 包装层
+# Windows Community 安装器与自动验收包装层
 
-此目录构建原生 C# WinForms 启动器、随包 Node 22.23.1、固定 Community candidate.2 与当前用户 NSIS 安装器。**不修改冻结核心、不升级普通 npm/Docker 商业分发、不覆盖 candidate.2。**
+此目录构建原生 C# WinForms 启动器、随包 Node 22.23.1、由输入 payload 标识的 Community candidate 与当前用户 NSIS 安装器。当前分支新增「自动 E4」有界本地验收入口；它尚未进入公开 candidate.4，也不修改冻结安全核心、不升级普通 npm/Docker 分发、不覆盖旧 Release。
 
 ## 构建者要求
 
@@ -23,6 +23,6 @@ Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Python zipfile
 
 ## 验证语义
 
-离线按钮是真实临时 I/O 与受控 SDK 回调验证，非真实模型攻击。只有明确实际执行的检查标记 VERIFIED。模型未运行、第三方 Agent 未测及 E4 均保持 NOT_VERIFIED。外部测试者的身份是声明，不是机器指纹判定。
+「一键安全验证」是真实临时 I/O 与受控 SDK 回调检查，非真实模型攻击。「自动 E4」另行运行 SDK 副作用夹具、打包 Hook wrapper 故障夹具、只读检查 VMware/公开 Release，并导出运行证据 ZIP。它不会启动/恢复 VM、运行 GPT-6、执行 Guest Operations 或写入 GitHub；没有这些前提时对应阶段为 BLOCKED。自动测试和外部身份声明都不能建立 E4。详见 [自动 E4 文档](../../docs/3.0/AUTO_E4.md)。
 
 完整验收仍要求另一干净 Windows 用户或虚拟机：双击安装、按钮点击、导出、重启、卸载、系统残留核对。当前开发用户后台测试不能代替这项。
