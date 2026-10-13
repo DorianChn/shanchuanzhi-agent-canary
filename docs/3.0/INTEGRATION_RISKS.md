@@ -4,10 +4,12 @@
 
 | ID | 优先级 | 风险 | 证据 | 责任/处置 | 状态 |
 | --- | --- | --- | --- | --- | --- |
+| R10 | P0（待定性） | Honeypot quarantine 测试报告 side effects 未回滚 | M1 PR #43 head `d0fd595`，run `38399797819` 在 macOS Node 20 与 Ubuntu Node 22 的 `test/honeypot-runtime.test.ts` 子测试 217 均失败，报 `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`；尚未有 owner 复现结论 | M1 立即在自有分支复现并检查真实副作用；若是产品缺陷先修复，保留失败测试与 fail-closed 策略；若归属其他模块只交证据与责任方，不改他人源码；#35 | IN PROGRESS |
 | R1 | P1 | M6 package-smoke 本地修复未经过远端 CI | 旧 PR #31 远端 package-smoke 失败；本地 899dbf5 修 SOURCE_MANIFEST 中 package.json SHA，181 项 Git-tree 校验 0 mismatch；PR head 未更新 | M6 owner 发布授权后运行确切 CI job；#27 保持 OPEN | IN PROGRESS |
-| R2 | M1 close 修复和 M7 reliability 变更尚未同一 AC3 集成验证 | M1 f15fdcfa local Gateway tests 28/28；M7 f17b7e6 让 gateway.ts 相对 AC3 净 diff 为零，83 pass/1 symlink skip；M1 commit 未包含在 M7 候选 | M1 保持 API owner；M7 保留独有测试；统一候选后跑 Gateway/reliability/CI；#28/#35 | IN PROGRESS |
-| R3 | P1 | M3/M5/M6/M7 的共享 package.json 字段与各自 PR 组合结果仍待 AC3 验证 | #27 记录 M3 onboarding、M5 ./policy、M7 reliability 脚本 owner 字段；M5 本地 cd8abea 语义修复通过 42/42；M6 的 PR #31 package-smoke 另有 manifest mismatch | 由字段 owner 最终组合，保留全部测试与安全策略；跨模块结果需要 AC3 基线 CI | IN PROGRESS |
+| R2 | P1 | M1 close 修复和 M7 reliability 变更尚未同一 AC3 集成验证 | M1 本地 Gateway tests 28/28；M7 旧远端 head `f17b7e6` 的 CI 失败，本地候选 `65ce028` 修正 Windows-only compiler check 和 symlink temp-root 处理；M1 commit 未包含在 M7 候选 | M1 保持 API owner；M7 仅改自有 workflow/test；统一候选后跑 Gateway/reliability/CI；#28/#35/#41 | IN PROGRESS |
+| R3 | P1 | M3/M5/M6/M7 的共享 package.json 字段与各自 PR 组合结果仍待 AC3 验证 | #27 记录各字段 owner；M3 PR #33 head `c404b6b` 的 9/9 CI 成功；M5 本地 `9ec08d9` 契约补充与 `cd8abea` 语义修复、42/42 定向测试通过，但尚无 PR；M6 旧 PR #31 仍有 package-smoke manifest mismatch | 由字段 owner 最终组合，保留所有测试与策略；跨模块结果需要 AC3 基线 CI | IN PROGRESS |
 | R9 | P1 | Windows Node 20 Hook interruption 曾间歇失败，owner 修复尚无远端确认 | PR #30 head 1648277 run 38395605172 再次失败于 Windows Node 20；M1 46af1f1 修复受控复现的 harness race，本地 Node20/22 各 1/1。此次远端 head 不含该提交 | 保留 fail-closed 断言；由 M1 在包含修复的 CI 中验证，历史根因不作过度归因；#32 | OPEN（远端复验待完成）
+| R11 | P1 | M7 修复尚未进入 PR #39 的 CI | 远端 PR head `f17b7e6` 的 runs `38397157815`/`38397158016` 失败；本地候选 `65ce028` 已完成但尚未上传 | M7 在下一批次使用原分支 ref 单次 push；检查新的完整跨平台 CI，不改认证配置；#41 | IN PROGRESS |
 | R4 | P1（协调环境） | WSL 与 Windows 工作树的 `.git` 指针使用各自绝对路径；交叉 runtime 会把对方路径标为 `prunable`/不可读 | M1/M2/M5/M7/M8 在 WSL Git 可读；M3/M4/M6/coordinator/integration 在 Git for Windows 可读 | 各模块沿用创建工作树的 Git runtime；不运行跨环境 `repair/prune` | OPEN |
 | R5 | P1 | Desktop 没有原生线程读取/等待 API，任务快照有异步延迟 | M0 经用户许可只读本机 `thread_history` 并通过 `codex queue` 续作；再对照 worktree、GitHub Issue/PR。不能把它描述成调用 `read_thread` | M0 每次排期同时记录快照时间与 GitHub/文件证据；#29 | MONITOR |
 | R6 | P2 | 原 `.gitignore` 未覆盖 `.env.*`、临时文件和协调输出 | baseline 检查仅有 `.env`、`*.log` 等 | 本 PR 增加相应模式；密钥仍需 PR/CI secret scanning | FIXED IN THIS PR |
@@ -23,4 +25,4 @@
 
 ## 资源冲突
 
-开发并行上限为 3；2026-10-13 12:10 UTC 开发槽 0/3。M1/M3/M6/M7 已完成本轮本地任务；VMware、真实模型和安装测试未运行。
+开发并行上限按用户要求降为 2；2026-10-13 12:56 UTC 为 M1+M7 活动（2/2）。VMware、真实模型和安装测试未运行；最近模块 PR 更新约 12:52 UTC，下一次上传批次不早于 13:12 UTC。

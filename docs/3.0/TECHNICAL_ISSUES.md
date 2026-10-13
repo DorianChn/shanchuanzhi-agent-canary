@@ -19,7 +19,9 @@
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
 - [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN；PR #30 的 Windows Node 20 与 PR #34/#36 的 Windows Node 22 均有失败证据）。
-- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 本地 commit `ec3bc96` 增加同步 `subscribeQuarantine`，63/63 Windows Node 20.20.2 聚焦测试通过；外部 push/PR 尚未完成。保持 OPEN，直至远端 Draft PR 与 CI 验收。
+- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：PR #43 head `d0fd595` 的 run `38399797819` 在 macOS Node 20 与 Ubuntu Node 22 失败于 `test/honeypot-runtime.test.ts` 子测试 217，报 `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`。该结果可能涉及真实回滚/副作用路径，M1 正在复现；不能先归类为测试问题。关闭条件：owner 给出复现与副作用证据、修复及当前 head 相关 CI 通过。
+- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：远端 PR #39 head `f17b7e6` 的 Ubuntu 模板检查和 macOS symlink 测试失败；owner 本地候选 `65ce028` 待上传并由相同 CI 验收。
+- [#42 M3 package manifest/current-head validation](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/42)（P1，OPEN；正文待更正）：PR #33 当前 head `c404b6b` 的 run `38400488378` 为 9/9 成功。旧 `SOURCE_MANIFEST` 差异属于历史 head，不代表当前 AC3 缺陷；将在下一远端窗口更正文案并按验收结果结案。
 
 ## PR 与自动检查
 
@@ -30,6 +32,6 @@
 
 ## 运行资源
 
-- 开发并行度上限为 3。当前 M1、M6、M7 为 RUNNING（3/3）；M4、M5、M8 已结束当前工作。M5/M7 的 WSL 远端发布被认证阻塞，不占槽；M6 正在独立 AC3 worktree 迁移。
+- 开发并行度上限按用户最新要求为 2。2026-10-13 12:56 UTC，M1（#35/#43 CI 复现）与 M7（#41 可靠性 CI）为 RUNNING（2/2）；M3、M5 当前为 IDLE。下一次批量上传不早于 13:12 UTC。
 - VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行，M7 本轮未运行真实安装、VM 或模型测试。
-- M0 从本机保存的 Codex `thread_history` 只读记录核对任务和状态，使用 `codex queue` 续发消息。该本地记录不等于 `read_thread` 工具；开发状态同时对照 Git worktree 和 GitHub Issue/PR。
+- 本会话工具清单未暴露原生 `read_thread`/`wait_threads`。M0 经用户许可从本机 `thread_history` 只读记录核对已引用任务，并用 `codex queue` 续作；该本机记录不冒称原生 `read_thread`。开发状态同时对照 Windows Git worktree 和 GitHub Issue/PR。

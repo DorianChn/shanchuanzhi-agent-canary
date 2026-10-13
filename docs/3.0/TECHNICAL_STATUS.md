@@ -1,22 +1,19 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 12:15 UTC；实时快照）
+## 当前状态（2026-10-13 12:56 UTC；实时快照）
 
-- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4，11/11 checks 成功；M0 未改动或合并。
-- M0 PR #30：OPEN/Draft，head 1648277；CI run 38395605172 的 Windows Node 20 Hook interruption 用例失败，Node 22 job 被取消、package-smoke 跳过；其余 jobs 与两个 coordination gate 成功。Issue #32 仍 OPEN。
-- PR #31：OPEN/Draft，base main、远端 head da52c17；原 run 38371562917 的 package-smoke 失败。M6 本地 commit 899dbf5 修正 SOURCE_MANIFEST.json 的 package.json 哈希；181 项 Git-tree 本地验证 0 mismatch，但修复未推送、远端 CI 未重跑。
-- M2 PR #37：OPEN/Draft、AC3 base，9/9 checks 成功；原生 Codex Shell 仍 UNPROTECTED。
-- M3 PR #33：OPEN/Draft、AC3 base，无远端 checks；本地四个 onboarding/install 测试文件 29/29、build 与 diff check 通过，工作树干净；本轮未重跑 live connect-check。
-- M4 PR #34：OPEN/Draft、AC3 base，9/9 checks 成功；桌面安全中心/E4 后端 404 仍标 UNKNOWN。
-- M9 PR #36：OPEN/Draft、AC3 base，9/9 checks 成功。
-- M1 本地提交 f15fdcfa 和 46af1f1；Gateway suite 28/28，Hook harness 定向测试在 Node 20.20.2/22.23.1 各 1/1。PR #30 的失败 head 不含 46af1f1；历史 CI 根因仍待 owner 分析及远端复验。
-- M5 本地 commit cd8abea：策略审计语义修复，42/42 定向测试、TypeScript noEmit、diff check 通过；无新远端 PR。
-- M6 AC3 候选含 bca895f E4 外部副本完整性修复；fixture evidence 仍 NOT_VERIFIED。PR #31 旧分支修复与 AC3 候选分属不同 worktree。
-- M7 本地 commit f17b7e6；候选对 AC3 的 gateway.ts 净差异为零，可靠性/evidence 覆盖保留；84 项中 83 pass、0 fail、1 symlink-permission skip。M1 close commit 未并入，组合 CI 待集成。
-- M8 本地 commit b0f30ff 更新中英文 README 限制说明，14 文档/55 链接/13 示例及双语核对通过；未推送。
-- 当前开发槽 0/3；M1、M3、M6、M7 已结束本轮工作。VMware、真实模型与安装测试未运行。
-- Issues #27/#28/#29/#32/#35 已更新；模块 owner 的本地提交未发布为新远端 PR，M0 不代替模块推送。
-- 本地报告为 reports/M0_INITIALIZATION_REPORT.md。未合并 main、未修改其他模块代码、未发布 Release。
+- PR #24 仍 OPEN/Draft，base 为 competition/shanchuanzhi-release-readiness、head 62496d4；当前读取到的 CI 与 Windows wrapper runs 均成功，未修改或合并。
+- M0 PR #30 为 OPEN/Draft，head 3d9168b；CI run 38397316692 失败，协调 gate run 38397316727 成功。Issue #32 的 Hook 失败仍未由该 M0 head 验证修复。
+- M1 PR #43 为 OPEN/Draft，head d0fd595；run 38399797819 在 macOS Node 20 和 Ubuntu Node 22 失败于 honeypot quarantine 测试 217（`GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`）。按潜在真实回滚/副作用问题作为 P0 候选交 M1 owner 复现；不得删减或放宽测试。
+- M2 PR #37、M4 PR #34、M9 PR #36：OPEN/Draft，AC3 base，最新读取到的 CI runs 成功。原生 Codex Shell 仍 UNPROTECTED；桌面安全中心/E4 后端 404 仍 UNKNOWN。
+- M3 PR #33：OPEN/Draft，head c404b6b；GitHub Actions run 38400488378 的 9 项检查通过。M3 线程已空闲，工作树干净；历史 manifest 差异属于旧 head，不作为当前 AC3 manifest 缺陷。Issue #42 的正文需在下次远端批次中更正。
+- M5：分支 `feature/ac3-policy-audit`，本地 HEAD 9ec08d9，干净且领先 AC3 基线 5 个提交；已准备 PR 标题/正文与 ref，没有远端 PR。M5 线程已停在安全点，待下一上传窗口。
+- M6 PR #38：OPEN/Draft，head bca895f；CI run 38397135538 失败，M6 外部证据仍为 NOT_VERIFIED，根因未归属前不关闭相关 issue。
+- M7 PR #39：OPEN/Draft，远端仍在 f17b7e6；CI runs 38397157815/38397158016 失败。owner 本地候选 65ce028，正在核实修复并准备一次上传；不变更凭据。
+- M8 PR #40：OPEN/Draft，head b0f30ff；CI run 38397180263 成功。该 SHA 已在 PR head，故不是待上传分支。
+- 并行上限已按用户要求降到 2：M1 与 M7 当前工作；M3/M5 已停在安全点。没有 VMware、真实模型或安装测试在运行。
+- 最近一次模块分支更新约为 12:52 UTC。下一批 push 不早于 13:12 UTC；届时合并已完成的独立分支上传与协调文档/Issue 更新，失败的分支保持单独状态，不相互合并。
+- 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
 
