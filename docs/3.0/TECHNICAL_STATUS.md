@@ -3,7 +3,7 @@
 ## 当前状态（2026-10-13 13:44 UTC；GitHub 与 owner 快照）
 
 - PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；9 项 CI 与 2 项 wrapper 检查全部通过，未修改或合并。
-- M0 PR #30 为 OPEN/Draft，head b032bc9；主 CI run 38406894449 已 9/9 通过。首次协调 gate 因 PR 正文 marker 缩进失败；修正文案后 run 38407210960 正在重跑，暂 pending。
+- M0 PR #30 为 OPEN/Draft，head b032bc9；主 CI run 38406894449 为 9/9，ownership/contract gates 38407210960 与 38407356617 均通过。
 - M1 PR #43 远端 head 仍为 `d0fd595`；run `38399797819` 在 Ubuntu Node 22 的 quarantine honeypot 子测试 217 失败。M1 owner 报告本地 test-only commit `dc4d7fa` 与定向 Windows Node 22 34/34 通过；一次 push 退出 1 且没有捕获到错误文本，远端未更新。Issue #35 历史 P0 仍 OPEN，当前 head 未得到修正后的远端 CI 验收。
 - M2 PR #37 为 OPEN/Draft，9/9 检查通过；原生 Codex Shell 仍 UNPROTECTED。
 - M3 PR #33 head `c404b6b`，run `38400488378` 为 9/9，PR 含 owner 编写的 onboarding API 契约。Issue #42 已根据当前 head 的 package-smoke 与契约验收证据关闭为 completed；跨模块 manifest 协调继续由 #27 跟踪。
@@ -44,7 +44,7 @@
 | M6 | feature/ac3-e4-validation-ac3 (另有旧 PR #31 分支) | bca895f | AC3 PR #38 当前 head；Windows Node 22 测试失败，外部 E4 证据 NOT_VERIFIED。旧 PR #31 另有本地 manifest 修复待远端复验 | Windows Git worktree |
 | M7 | `feature/ac3-reliability-ac3` | `65ce028` | 本地修复候选；PR #39 远端 `f17b7e6` CI 失败；push 被非交互凭据阻止，#41 OPEN | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `b0f30ff` | PR #40 当前 head，9/9 checks 通过；未发布 Release | WSL Git worktree |
-| M0 | feature/ac3-m0-coordination | b032bc9 | PR #30 主 CI 9/9 通过；ownership/contract gate 38407210960 pending（正文 marker 已修正） | Windows Git worktree |
+| M0 | feature/ac3-m0-coordination | b032bc9 | PR #30 主 CI 9/9、ownership/contract gate 通过；本地有后续状态文档待下一批推送 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `996073a` | 集成计划在 Draft PR #36；9/9 checks 通过 | Windows Git worktree |
 
 初始 main 与 AC3 快照存在不同历史；M3 当前 PR #33 head `c404b6b` 已基于 AC3 `62496d4`，旧 main-based 快照 `cf42dde` 保留在 `backup/ac3-agent-onboarding-main-base`。M6 旧 PR #31 分支仍为 main-based `da52c17`；独立 AC3 PR #38 使用 `bca895f`，manifest 与字段组合继续由 #27 跟踪。M4/M0/M9 worktree 基于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
