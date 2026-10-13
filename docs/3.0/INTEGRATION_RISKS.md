@@ -4,7 +4,7 @@
 
 | ID | 优先级 | 风险 | 证据 | 责任/处置 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| R10 | P0（待定性） | Honeypot quarantine 测试报告 side effects 未回滚 | M1 PR #43 head `d0fd595`，run `38399797819` 在 macOS Node 20 与 Ubuntu Node 22 的 `test/honeypot-runtime.test.ts` 子测试 217 均失败，报 `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`；尚未有 owner 复现结论 | M1 立即在自有分支复现并检查真实副作用；若是产品缺陷先修复，保留失败测试与 fail-closed 策略；若归属其他模块只交证据与责任方，不改他人源码；#35 | IN PROGRESS |
+| R10 | P1 | M1 PR #43 当前 CI 失败于 quarantine 测试的预期不符，修正尚未获得远端验证 | run `38399797819` 的子测试 217 在 macOS Node 20/Ubuntu Node 22 抛 `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`；M1 本地复现确认 dispatch 被中止、读取内容未返回、写入标记不变且后续写入被拒，未发现新产品缺陷；测试断言已本地修正，34/34 Node 22 通过 | M1 提交仅测试修正并在下一批次更新 PR #43；当前 head CI 通过后才清除此 P1。历史 quarantine 绕过的 P0 仍由 #35 跟踪 | IN PROGRESS |
 | R1 | P1 | M6 package-smoke 本地修复未经过远端 CI | 旧 PR #31 远端 package-smoke 失败；本地 899dbf5 修 SOURCE_MANIFEST 中 package.json SHA，181 项 Git-tree 校验 0 mismatch；PR head 未更新 | M6 owner 发布授权后运行确切 CI job；#27 保持 OPEN | IN PROGRESS |
 | R2 | P1 | M1 close 修复和 M7 reliability 变更尚未同一 AC3 集成验证 | M1 本地 Gateway tests 28/28；M7 旧远端 head `f17b7e6` 的 CI 失败，本地候选 `65ce028` 修正 Windows-only compiler check 和 symlink temp-root 处理；M1 commit 未包含在 M7 候选 | M1 保持 API owner；M7 仅改自有 workflow/test；统一候选后跑 Gateway/reliability/CI；#28/#35/#41 | IN PROGRESS |
 | R3 | P1 | M3/M5/M6/M7 的共享 package.json 字段与各自 PR 组合结果仍待 AC3 验证 | #27 记录各字段 owner；M3 PR #33 head `c404b6b` 的 9/9 CI 成功；M5 本地 `9ec08d9` 契约补充与 `cd8abea` 语义修复、42/42 定向测试通过，但尚无 PR；M6 旧 PR #31 仍有 package-smoke manifest mismatch | 由字段 owner 最终组合，保留所有测试与策略；跨模块结果需要 AC3 基线 CI | IN PROGRESS |
