@@ -1,18 +1,18 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 13:44 UTC；GitHub 与 owner 快照）
+## 当前状态（2026-10-13 13:49 UTC；GitHub 与 owner 快照）
 
 - PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；9 项 CI 与 2 项 wrapper 检查全部通过，未修改或合并。
 - M0 PR #30 为 OPEN/Draft，head b032bc9；主 CI run 38406894449 为 9/9，ownership/contract gates 38407210960 与 38407356617 均通过。
-- M1 PR #43 远端 head 仍为 `d0fd595`；run `38399797819` 在 Ubuntu Node 22 的 quarantine honeypot 子测试 217 失败。M1 owner 报告本地 test-only commit `dc4d7fa` 与定向 Windows Node 22 34/34 通过；一次 push 退出 1 且没有捕获到错误文本，远端未更新。Issue #35 历史 P0 仍 OPEN，当前 head 未得到修正后的远端 CI 验收。
+- M1 PR #43 远端 head 仍为 d0fd595；run 38399797819 在 quarantine honeypot 子测试 217 失败。M1 owner 本地 test-only commit dc4d7fa 的 Windows Node 22 定向套件 34/34，通过同进程 quarantine/abort/no-side-effect 断言；一次 13:40 UTC push 等待 90 秒后 exit 1、无错误文本，远端未更新。Issue #35 保持 P0/OPEN；#32 Hook interruption follow-up 已重新排入 M1。
 - M2 PR #37 为 OPEN/Draft，9/9 检查通过；原生 Codex Shell 仍 UNPROTECTED。
 - M3 PR #33 head `c404b6b`，run `38400488378` 为 9/9，PR 含 owner 编写的 onboarding API 契约。Issue #42 已根据当前 head 的 package-smoke 与契约验收证据关闭为 completed；跨模块 manifest 协调继续由 #27 跟踪。
 - M4 PR #34 与 M9 PR #36 当前各 9/9 检查通过；桌面安全中心/E4 后端 404 仍 UNKNOWN。
 - M5 `feature/ac3-policy-audit` 本地 HEAD `9ec08d9`，工作树干净且领先 AC3 五个提交；push 超过两分钟无输出后由 owner 停止，GitHub 无分支/PR。
-- M6 PR #38 head `bca895f` 的 Windows Node 22 测试失败；外部 E4 证据仍 NOT_VERIFIED。
+- M6 PR #38 head bca895f 的 Windows Node 22 失败定位到 M1-owned test/agent-hook.test.ts:54；M6 在本机 Node 22 定向 1/1、整文件 10/10，通过，未改代码。Hook 根因仍 UNKNOWN，归入 #32；E4 工具与报告已在 PR 中，外部 E4 仍 NOT_VERIFIED。
 - M7 PR #39 仍在远端 `f17b7e6`，wrapper 与跨平台测试 jobs 失败。Owner 本地候选 `65ce028`；一次普通 push 因非交互 HTTPS 凭据不可用而被阻止，Issue #41 OPEN。
 - M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- M1/M6 继续任务已排入既有 Codex 会话，预留 2/2 槽；GitHub head 尚未改变。M6 worktree status 列出未跟踪路径 security-lab/e4-runs/20261013T114513Z/，M0 未检查内容，目录存在不构成 E4 验证。VMware、真实模型和安装测试均无预约。下一批 push 不早于 14:00 UTC。
+- M6 诊断已完成并释放槽位；M1 的 #32 Hook follow-up 已排队，当前预留 1/2 槽。VMware、真实模型和安装测试均无预约。下一批 push 不早于 14:00 UTC。
 - 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
@@ -36,12 +36,12 @@
 
 | 模块 | 分支 | HEAD | 当前改动快照 | 路径环境 |
 | --- | --- | --- | --- | --- |
-| M1 | `feature/ac3-security-core` | `dc4d7fa` | PR #43 远端仍为 `d0fd595` 且 CI 失败；本地 test-only 修正确认定向 34/34（owner 报告），push 未成功；#35 保持 OPEN | WSL Git worktree |
+| M1 | feature/ac3-security-core | dc4d7fa | PR #43 远端 d0fd595、run 失败；本地 34/34（owner 报告）；P0 #35 未关闭；#32 follow-up 排队 | WSL Git worktree |
 | M2 | `feature/ac3-execution-isolation` | `a1c239d` | PR #37 OPEN/Draft，9/9 checks；隔离原型与证据已提交，原生 Shell 仍为 `UNPROTECTED` | WSL Git worktree |
 | M3 | `feature/ac3-agent-onboarding` | `c404b6b` | PR #33 9/9 checks；M3 API 契约已写入；旧 main-based 快照保留在 backup 分支 | Windows Git worktree |
 | M4 | `feature/ac3-desktop-security-center` | `fe2c973` | PR #34 头一致、当前 run 全绿；工作树干净 | Windows Git worktree |
 | M5 | `feature/ac3-policy-audit` | `9ec08d9` | 工作树干净，领先 AC3 五个提交；上传因无输出超过两分钟后停止；无远端分支/PR | WSL Git worktree |
-| M6 | feature/ac3-e4-validation-ac3 (另有旧 PR #31 分支) | bca895f | AC3 PR #38 当前 head；Windows Node 22 测试失败，外部 E4 证据 NOT_VERIFIED。旧 PR #31 另有本地 manifest 修复待远端复验 | Windows Git worktree |
+| M6 | feature/ac3-e4-validation-ac3 (另有旧 PR #31 分支) | bca895f | PR #38 唯一失败属 M1 Hook 测试；M6 本地 agent-hook 10/10，无代码改动；外部 E4 NOT_VERIFIED | Windows Git worktree |
 | M7 | `feature/ac3-reliability-ac3` | `65ce028` | 本地修复候选；PR #39 远端 `f17b7e6` CI 失败；push 被非交互凭据阻止，#41 OPEN | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `b0f30ff` | PR #40 当前 head，9/9 checks 通过；未发布 Release | WSL Git worktree |
 | M0 | feature/ac3-m0-coordination | b032bc9 | PR #30 主 CI 9/9、ownership/contract gate 通过；本地有后续状态文档待下一批推送 | Windows Git worktree |

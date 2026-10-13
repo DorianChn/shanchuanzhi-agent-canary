@@ -18,8 +18,8 @@
 
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
-- [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN；历史 Hook interruption 失败仍待 owner 组合修复和精确 head CI，不能由无关的绿色 PR 推断已解决）。
-- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：历史 pre-fix 复现确认 quarantine 后仍有活动 callback 写入合成标记。PR #43 远端仍为 `d0fd595`；run `38399797819` 在 Ubuntu Node 22 的子测试 217 失败。M1 owner 本地复现称 dispatch 已中止、读取未返回、标记未变且后续写入被拒；test-only commit `dc4d7fa` 与 34/34 聚焦结果仍仅为 owner 本地证据，push 未更新远端。保持 P0，等待当前 head CI 与端到端安全验收。
+- [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）：PR #38 run 38397135538 的 Windows Node 22 唯一失败落在 M1-owned test/agent-hook.test.ts:54；M6 owner 本地定向 1/1、整文件 10/10，未能复现且未改代码。M1 follow-up 已排队，根因仍 UNKNOWN，保留超时/无 allow/无 callback 断言。
+- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 owner 报告 Windows Node 22 聚焦 34/34 通过，证明同进程 quarantine 时先 abort、dispatch 被拒且没有合成副作用；跨进程/shared-store 边界仍未验证。一次 push 90 秒无输出后 exit 1，PR #43 远端仍 d0fd595。保持 P0，等待当前 PR 头 CI 与充分端到端验收。
 - [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：PR #39 远端 `f17b7e6` 的 wrapper 与跨平台 jobs 失败；owner 本地候选 `65ce028` 的单次 push 因 non-interactive HTTPS 凭据不可用而未成功。
 - [#42 M3 package manifest/current-head validation](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/42)（P1，CLOSED/completed）：PR #33 当前 head c404b6b、run 38400488378 9/9（含 package-smoke）且含 owner-authored M3 API 契约；旧 cf42dde manifest 证据不适用于当前 AC3 PR。跨模块 manifest 组合继续跟踪于 #27。
 
@@ -32,6 +32,6 @@
 
 ## 运行资源
 
-- 开发并行度上限为 2。2026-10-13 13:36 UTC，M1/M6 继续任务已排队，预留 2/2 槽位，执行确认待回报。没有 VMware、真实模型或安装测试活动。下一次批量上传不早于 13:40 UTC，可将 ready 分支合在同一批；窗口前不重复推送。
+- 开发并行度上限为 2。2026-10-13 13:49 UTC，M6 已释放槽位，M1 的 #32 follow-up 排队并预留 1/2 槽。没有 VMware、真实模型或安装测试活动。下一次批量上传不早于 14:00 UTC。
 - VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行，M7 本轮未运行真实安装、VM 或模型测试。
 - 本会话工具清单未暴露原生 read_thread/wait_threads。M0 曾经用户许可从本机 thread_history 只读记录核对已引用任务，并用 codex queue 续作；该本机记录不冒称原生 read_thread。当前活动状态对照实际 GitHub ref/Issue/PR 和 owner worktree。
