@@ -57,6 +57,77 @@ test('external Guard quarantine synchronously aborts an active callback before i
   assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');
  }finally{release();await s.runtime.close();await active.catch(()=>{});}
 });
+test('external Guard quarantine aborts active work and rejects queued sibling Gateway work before effects',async()=>{
+ const guard=createAgentGuard({alert:false});
+ const activeRoot=fs.mkdtempSync(path.join(home,'quarantine-active-gateway-'));
+ const queuedRoot=fs.mkdtempSync(path.join(home,'quarantine-queued-gateway-'));
+ let release!:()=>void,started!:()=>void,activeSignal:AbortSignal|undefined,activeEffects=0,queuedCalls=0;
+ const hold=new Promise<void>(r=>release=r),begun=new Promise<void>(r=>started=r);
+ const activeMarker=path.join(activeRoot,'post-quarantine-marker.txt'),queuedMarker=path.join(queuedRoot,'queued-marker.txt');
+ const activeGateway=createTrustedExecutionGateway({agentId:'quarantine-active',guard,workspaceRoot:activeRoot,files:[],evidence:new EvidenceRecorder(),timeoutMs:5_000,mcpTools:{slow:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,signal:AbortSignal)=>{activeSignal=signal;started();await hold;if(!signal.aborted){activeEffects++;fs.writeFileSync(activeMarker,'synthetic');}return 'done';}}}});
+ const queuedGateway=createTrustedExecutionGateway({agentId:'quarantine-queued',guard,workspaceRoot:queuedRoot,files:[],evidence:new EvidenceRecorder(),timeoutMs:5_000,mcpTools:{write_marker:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>{queuedCalls++;fs.writeFileSync(queuedMarker,'synthetic');return 'done';}}}});
+ let active:Promise<unknown>|undefined,queued:Promise<unknown>|undefined;
+ try{
+  active=activeGateway.agent.dispatch({name:'mcp_tool',args:{tool:'slow',arguments:{}}});
+  await begun;
+  queued=queuedGateway.agent.dispatch({name:'mcp_tool',args:{tool:'write_marker',arguments:{}}});
+  const trip=guard.trip({reason:'external_synthetic_quarantine'});
+  assert.equal(trip.state,'QUARANTINED');
+  assert.equal(activeSignal!.aborted,true);
+  release();
+  await assert.rejects(active,/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  await assert.rejects(queued,/guard_quarantined/);
+  assert.equal(activeEffects,0);
+  assert.equal(queuedCalls,0);
+  assert.equal(fs.existsSync(activeMarker),false);
+  assert.equal(fs.existsSync(queuedMarker),false);
+ }finally{
+  release();
+  await Promise.all([active,queued].filter((promise):promise is Promise<unknown>=>Boolean(promise)).map(promise=>promise.catch(()=>undefined)));
+  await Promise.all([activeGateway.close(),queuedGateway.close()]);
+ }
+});
+test('Guard quarantine consumes pending approval before a later acknowledged reset',async()=>{
+ const guard=createAgentGuard({alert:false});
+ const root=fs.mkdtempSync(path.join(home,'quarantine-pending-approval-'));
+ const marker=path.join(root,'stale-approval-marker.txt');
+ let callbackCalls=0;
+ const runtime=createTrustedExecutionGateway({agentId:'quarantine-pending-approval',guard,workspaceRoot:root,files:[],evidence:new EvidenceRecorder(),mcpTools:{write_marker:{risk:'WRITE',approvalRequired:true,execute:async()=>{callbackCalls++;fs.writeFileSync(marker,'synthetic');return 'written';}}}});
+ try{
+  await assert.rejects(runtime.agent.dispatch({name:'mcp_tool',args:{tool:'write_marker',arguments:{}}}),/REQUIRE_APPROVAL/);
+  const requestId=runtime.operator.pending()[0]!.requestId;
+  const trip=guard.trip({reason:'external_synthetic_quarantine'});
+  assert.equal(trip.state,'QUARANTINED');
+  guard.reset({acknowledgedBy:'synthetic incident review'});
+  let approvalError:unknown;
+  try{await runtime.operator.approve(requestId);}catch(error){approvalError=error;}
+  assert.equal((approvalError as Error|undefined)?.message,'GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED',`callbackCalls=${callbackCalls}; markerExists=${fs.existsSync(marker)}`);
+  assert.equal(callbackCalls,0);
+  assert.equal(fs.existsSync(marker),false);
+ }finally{await runtime.close();}
+});
+test('Guard quarantine cannot revive an interrupted approval review after reset',async()=>{
+ let release!:()=>void,started!:()=>void,reviewSignal:AbortSignal|undefined,callbackCalls=0;
+ const hold=new Promise<void>(r=>release=r),reviewStarted=new Promise<void>(r=>started=r);
+ const s=setup({reviewTimeoutMs:5_000,provider:{analyze:async({signal}:any)=>{reviewSignal=signal;started();await hold;return{status:'ok',advisoryOnly:true,verdict:'benign',severity:'low',confidence:null,summary:'synthetic review',reasoningSummary:'synthetic review',recommendedActions:[],evidence:[]};}},mcpTools:{write_marker:{risk:'WRITE',approvalRequired:true,execute:async()=>{callbackCalls++;fs.writeFileSync(path.join(s.root,'interrupted-review-marker.txt'),'synthetic');return 'written';}}}});
+ const dispatch=s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'write_marker',arguments:{}}});
+ try{
+  await reviewStarted;
+  const trip=s.guard.trip({reason:'external_synthetic_quarantine'});
+  assert.equal(trip.state,'QUARANTINED');
+  assert.equal(reviewSignal!.aborted,true);
+  s.guard.reset({acknowledgedBy:'synthetic incident review'});
+  release();
+  const dispatchError=await dispatch.then(()=>undefined,error=>error as Error&{reason?:string});
+  const pending=s.runtime.operator.pending();
+  let approvalResult='no_pending_request';
+  if(pending.length){try{await s.runtime.operator.approve(pending[0].requestId);approvalResult='callback_ran';}catch(error){approvalResult=(error as Error).message;}}
+  assert.equal(dispatchError?.reason,'guard_quarantined',`dispatchReason=${dispatchError?.reason}; pending=${pending.length}; approval=${approvalResult}; callbackCalls=${callbackCalls}; markerExists=${fs.existsSync(path.join(s.root,'interrupted-review-marker.txt'))}`);
+  assert.equal(pending.length,0);
+  assert.equal(callbackCalls,0);
+  assert.equal(fs.existsSync(path.join(s.root,'interrupted-review-marker.txt')),false);
+ }finally{release();await dispatch.catch(()=>{});await s.runtime.close();}
+});
 test('gateway fails closed when its Guard cannot provide a quarantine subscription',()=>{
  const root=fs.mkdtempSync(path.join(home,'subscription-failure-'));
  fs.writeFileSync(path.join(root,'result.txt'),'before');

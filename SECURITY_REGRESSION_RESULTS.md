@@ -174,3 +174,23 @@ M0 confirmed a batch push at `2026-10-13 16:02:40 UTC` containing `dc4d7fa` and 
 - For P1 #44, Ubuntu Node 20 and all other matrix test jobs passed with the test-only expiry adjustment in `89e40cd`. The controlled 15 ms delay reproduced the stale-`pending()` lookup failure mechanism on exact source, but did not recreate the original Ubuntu runner timing. No Gateway product code or policy changed. Issue #44 was still OPEN when read; the earlier comment attempt remains blocked by API 403.
 
 These are GitHub Actions results for the exact pushed PR commit, not a new local test run. No merge or release was performed.
+
+## P0 #35 follow-up: shared-Guard Gateway cancellation (2026-10-14)
+
+The product fix is present in the M1 branch ancestry at `ec3bc96d7301304f48270faaec926c7dbc1281ef`: `AgentGuard.latchQuarantine()` synchronously invokes quarantine subscribers after latching the state; each Gateway subscribes `abortSession()`, which aborts controllers tracked in the registry shared by that exact Guard object. Gateway instances using that Guard also share the serialized `history.tail`, and each queued task rechecks the Guard before policy execution or callback invocation.
+
+Two pre-fix synthetic reproductions confirmed a further lifecycle defect. First, a Gateway had a pending approval; `guard.trip()` followed by an acknowledged reset left it approvable, and `operator.approve()` ran the callback (`callbackCalls=1; markerExists=true`). Second, a pending AI review was aborted by quarantine, then Guard reset before the review continuation; the stale dispatch created a new pending approval, and approving it ran the callback (`dispatchReason=host_mcp_capability; pending=1; approval=callback_ran; callbackCalls=1; markerExists=true`). Both used isolated temporary directories and synthetic marker contents.
+
+The minimal M1 fix in `src/runtime/gateway.ts` advances a shared internal quarantine epoch, synchronously clears the Gateway's pending approvals, and aborts tracked controllers from the Guard subscription. Dispatch captures the epoch at admission and rechecks it when a queued request begins and after asynchronous AI review. A request admitted before quarantine remains invalid after Guard reset; a new request admitted after reset captures the new epoch. This also prevents an interrupted approval review from creating a fresh pending item after reset.
+
+A deterministic regression uses two Gateway instances with one Guard. The first synthetic MCP callback waits on a manually released gate and would write a marker if its signal were not aborted. A sibling Gateway queues a callback that would write another marker. External `guard.trip()` returns with the active signal already aborted; after gate release, the active dispatch rejects, the queued dispatch is denied, both callback effect counts remain zero, and neither marker exists. Additional regressions verify pending approval consumption and interrupted AI review invalidation across reset. Existing single-Gateway P0 marker coverage remains unchanged.
+
+- Environment: Windows Node `v22.23.1` (`win32 x64`), using the already-installed runtime.
+- Focused new regression: `node --import tsx --test --test-name-pattern='external Guard quarantine aborts active work and rejects queued sibling Gateway work before effects' test/gateway.test.ts` — 1 passed, 0 failed, 0 skipped.
+- Before the fix, the pending-approval regression failed with `callbackCalls=1; markerExists=true`; the interrupted-review regression failed with `dispatchReason=host_mcp_capability; pending=1; approval=callback_ran; callbackCalls=1; markerExists=true`.
+- After the fix, the three quarantine-specific regressions passed: `node --import tsx --test --test-name-pattern='external Guard quarantine aborts active work|Guard quarantine consumes pending approval|Guard quarantine cannot revive an interrupted approval review' test/gateway.test.ts` — 3 passed, 0 failed, 0 skipped.
+- M1 Guard and Gateway suites: `node --import tsx --test test/gateway.test.ts test/containment.test.ts` — 51 passed, 0 failed, 0 skipped.
+- TypeScript build: `node node_modules/typescript/bin/tsc` — exit code 0.
+- `git diff --check` — passed after the documentation update.
+
+The synthetic callback tests honor their supplied AbortSignal. A host callback that ignores the signal can continue its own side effects, and this Gateway is not an OS sandbox. Another Guard instance or process does not receive a synchronous event from this Guard. Issue #35 remains OPEN; this local test result does not replace current-head remote end-to-end CI or prove cross-process cancellation. No push, issue update, merge, or release was performed.

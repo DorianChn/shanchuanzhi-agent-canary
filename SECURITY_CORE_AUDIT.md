@@ -78,6 +78,14 @@ M1 现在提供 `AgentGuard.subscribeQuarantine(listener: () => void): () => voi
 
 本地实现与合成回归通过；远端 Issue/PR 状态本轮没有查询或更新。完整命令、结果和未覆盖边界见 `SECURITY_REGRESSION_RESULTS.md`。
 
+### P0 #35 增补：共享 Guard 下的 Gateway 队列
+
+实现路径包括已提交的 M1 产品修复 `ec3bc96` 和本轮最小修复：`src/containment.ts` 在 `latchQuarantine()` 中先设置本地 `QUARANTINED`，再同步通知订阅者；`src/runtime/gateway.ts` 创建 Gateway 时订阅该通知，`quarantineSession()` 推进共享失效 epoch、清空本 Gateway 的 pending approval，再由 `abortSession()` 遍历同一 Guard 实例的共享 controller 集合。`dispatch()` 记录准入 epoch，并在排队执行和异步 AI review 返回后复核；旧 epoch 请求即使在宿主 reset 后恢复调度，也会以 `guard_quarantined` 拒绝。由同一 Guard 创建的 Gateway 还共享 `history.tail`，所以排队 callback 不会启动。
+
+本轮在 `test/gateway.test.ts` 保留单 Gateway gate/marker 回归，并新增共享 Guard 双 Gateway 活动/排队回归、quarantine 后 reset 仍消费旧 pending approval 的回归，以及 quarantine 中断 AI review 后 reset 不能生成新 pending approval 的回归。修复前两个 reset 回归分别观察到 `callbackCalls=1; markerExists=true` 和 `pending=1; approval=callback_ran; callbackCalls=1; markerExists=true`。修复后同步隔离会使活动 signal 立即 aborted，旧 epoch 的 review/排队请求被拒绝，pending approval 已清除，合成 marker 均不存在。
+
+保证范围仍限于同一进程中的同一个 Guard 对象和遵守 AbortSignal 的 callback。不能强制停止忽略 signal 的任意宿主 callback，也不覆盖共享 store 的跨实例通知、跨进程取消或绕过 Gateway 的原生 Shell/文件/网络路径。
+
 ## Gateway close 生命周期 owner-side 修复（Issue #28，2026-10-13）
 
 按 M1 的 Gateway/Guard 契约 owner review，close 的组合顺序固定为：同步设置 `closed` 并清空 pending approval；创建并发布唯一 memoized Promise；abort 本 Gateway 的活动 controller；先把 disposer 替换成空操作，再安全调用一次退订；等待已入队 Gateway task 的 `history.tail`；最后逐个尝试关闭所有已登记资源。任一 `closeSync` 失败都会被隔离，后续资源仍继续关闭，最终只以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝，不携带底层异常或资源路径。并发及同步重入调用均取得同一 Promise 和最终结果。

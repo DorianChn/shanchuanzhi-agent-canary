@@ -33,13 +33,13 @@ const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
-const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>;controllers:Set<AbortController>}>();
+const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>;controllers:Set<AbortController>;quarantineEpoch:number}>();
 
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
   const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
-  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve(),controllers:new Set<AbortController>()};
+  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve(),controllers:new Set<AbortController>(),quarantineEpoch:0};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
   const mcp=new Map(Object.entries(options.mcpTools??{}).map(([name,t])=>[name,Object.freeze({...t})]));
@@ -80,6 +80,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   function track(controller:AbortController){history.controllers.add(controller);activeControllers.add(controller);}
   function untrack(controller:AbortController){history.controllers.delete(controller);activeControllers.delete(controller);}
   function abortSession(){for(const controller of history.controllers)controller.abort();}
+  function quarantineSession(){history.quarantineEpoch++;pending.clear();abortSession();}
   function guardReason(reason?:string){return reason==='decoy_called'?'canary_quarantine':'guard_quarantined';}
   function normalize(call:ToolCall):Request{
     const data=JSON.parse(canonicalJSON(call));
@@ -201,6 +202,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   const agent=Object.freeze({
     dispatch(call:ToolCall,signal?:AbortSignal){
       const request=normalize(call);
+      const admittedAtEpoch=history.quarantineEpoch;
       if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));
       try{
         if(signal?.aborted)return blocked(request,'cancelled_before_execution');
@@ -210,11 +212,13 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       }catch(error){if(options.guard.state!=='SAFE')abortSession();return Promise.reject(error);}
       return serialize(async()=>{
         if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
+        if(admittedAtEpoch!==history.quarantineEpoch)return blocked(request,'guard_quarantined');
         if(signal?.aborted)return blocked(request,'cancelled_before_execution');
         const gd=options.guard.beforeToolCall(gatewayCall(request));if(!gd.allowed){abortSession();return blocked(request,guardReason(gd.reason));}
         const d=policy(request);if(d.decision==='DENY')return blocked(request,d.reason);
         if(d.decision==='REQUIRE_APPROVAL'){
           if(await aiDenies(request,signal))return blocked(request,'ai_tightened_denial');
+          if(admittedAtEpoch!==history.quarantineEpoch)return blocked(request,'guard_quarantined');
           if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
           if(signal?.aborted)return blocked(request,'cancelled_before_execution');
           const afterReview=options.guard.beforeToolCall(gatewayCall(request));if(!afterReview.allowed){abortSession();return blocked(request,guardReason(afterReview.reason));}
@@ -253,7 +257,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     return result;
   }
   try{
-    const unsubscribe=options.guard.subscribeQuarantine(abortSession);
+    const unsubscribe=options.guard.subscribeQuarantine(quarantineSession);
     if(typeof unsubscribe!=='function')throw Error('GUARD_QUARANTINE_DISPOSER_INVALID');
     unsubscribeQuarantine=unsubscribe;
   }catch{

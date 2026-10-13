@@ -48,8 +48,18 @@ disposer fails construction with the fixed error
 `GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED`; any resource descriptors already
 opened by that construction attempt are closed best-effort before the error is
 returned. A quarantine notification aborts the active execution controllers
-registered with that Guard instance. It does not forcibly terminate arbitrary
-host callbacks.
+registered with that Guard instance, clears pending approvals, and advances a
+shared Gateway invalidation epoch. Each dispatch captures the current epoch at
+admission. Queued work and an asynchronous approval review admitted before a
+quarantine transition are denied if they resume after that transition, even if
+a host later resets the Guard. A pending approval created before quarantine is
+consumed and cannot be revived by reset. Gateway instances created with the
+same Guard object share the session execution queue and controller registry.
+Regressions in `test/gateway.test.ts` cover a gated active callback plus a
+queued sibling Gateway write, a pending approval across reset, and an
+interrupted approval review across reset. These checks use one Guard object in
+one process. They do not forcibly terminate arbitrary host callbacks or
+broadcast to another Guard instance or process.
 
 ## Gateway `close()` lifecycle
 
