@@ -15,6 +15,13 @@ Branch: **feature/ac3-desktop-security-center**
 | **impeccable.cmd detect --json src/ai/console-page.ts src/ai/security-center-adapter.ts** | Returned **[]**. |
 | **git diff --check** | Passed; no whitespace errors. |
 
+## GitHub Actions for Draft PR #34
+
+Workflow run **38381813852** completed with an overall failure:
+
+- **docker-build**, **sponsor-smoke**, and the Ubuntu Node.js 20/22 test jobs passed.
+- **test (windows-latest, 20)** failed in the unmodified M1-owned test/agent-hook.test.ts, test *native lab wrapper interruption emits no allow decision and invokes no tool callback* (line 54; assertion reported false !== true). This file is not part of the M4 diff.
+- The remaining macOS and Windows matrix jobs were cancelled after the failure, so remote cross-platform CI is incomplete. The local full suite passed as recorded above.
 The full suite's fixture/install tests ran as part of **npm test**; no real installer, VMware VM, or real model was launched.
 
 ## Local API verification
