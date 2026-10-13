@@ -24,28 +24,28 @@
 | 模块 | 分支 | HEAD | 当前改动快照 | 路径环境 |
 | --- | --- | --- | --- | --- |
 | M1 | `feature/ac3-security-core` | `60428ed` | 比初始基线新增 3 个本地提交，改动 Hook、Gateway、测试及审计报告 | WSL Git worktree |
-| M2 | `feature/ac3-execution-isolation` | `62496d4` | `execution-isolation/` 未跟踪 | WSL Git worktree |
-| M3 | `feature/ac3-agent-onboarding` | `146be17` | 未提交修改 `package.json`、`src/agent-integrations.ts`、`src/competition.ts`，新增 detection/connection 代码、指南与测试 | Windows Git worktree |
+| M2 | `feature/ac3-execution-isolation` | `62496d4` | `.codex/`、隔离设计/测试报告与 `execution-isolation/` 未跟踪 | WSL Git worktree |
+| M3 | `feature/ac3-agent-onboarding` | `cf42dde` | safe Codex onboarding 已提交并同步远端；当前工作树干净 | Windows Git worktree |
 | M4 | `feature/ac3-desktop-security-center` | `62496d4` | M0 新建空 worktree | Windows Git worktree |
-| M5 | `feature/ac3-policy-audit` | `62496d4` | policy、文档、测试、`package.json` 有修改/新增 | WSL Git worktree |
+| M5 | `feature/ac3-policy-audit` | `053b330` | AC3 基线上 2 个本地提交，策略、文档、测试与 manifest 已提交；当前工作树干净 | WSL Git worktree |
 | M6 | `feature/ac3-e4-validation` | `da52c17` | 3 个 commit ahead of main，已同步模块远端；包含 `package.json`、E4 验证与报告 artifact，工作树干净 | Windows Git worktree |
-| M7 | `feature/ac3-reliability` | `62496d4` | Windows packaging、Gateway、测试和 `package.json` 有修改/新增 | WSL Git worktree |
-| M8 | `feature/ac3-open-source-product` | `62496d4` | README、安全/贡献文档和 GitHub 模板有修改/新增 | WSL Git worktree |
-| M0 | `feature/ac3-m0-coordination` | `262fb64` | 本协调文档和检查 | Windows Git worktree |
+| M7 | `feature/ac3-reliability` | `9d316fe` | AC3 基线上 1 个本地提交，涉及 Windows packaging、Gateway、测试和 manifest；当前工作树干净 | WSL Git worktree |
+| M8 | `feature/ac3-open-source-product` | `62496d4` | README、SECURITY、贡献/支持文档、GitHub 模板和入门/兼容性文档有未提交修改/新增 | WSL Git worktree |
+| M0 | `feature/ac3-m0-coordination` | `1a65374` | 协调文档、检查工作流和脚本已推送至 Draft PR #30 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `62496d4` | 集成计划 | Windows Git worktree |
 
-比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 位于 main HEAD 并有未提交内容；M6 位于 `da52c17`，在 main 上有 3 个模块 commit。两者与 AC3 的比较分别为 46/4 和 46/7，未自动移动/覆盖其内容。M4/M0/M9 新建 worktree 同源于 `62496d4`。worktree 共享对象库，但工作目录/index 独立。
+比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 当前为 `cf42dde`（已提交、工作树干净），相对 AC3 的左右计数为 46/5；M6 为 `da52c17`（已同步远端、工作树干净），计数为 46/7。两者仍不含当前 AC3 头，未自动移动/覆盖其内容。共同历史基点为 `73cfdf9`。M4/M0/M9 新建 worktree 同源于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
 
 ## GitHub 协作
 
 - [Issue #27](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)：M3/M6 基线与 M3/M5/M6/M7 manifest 冲突，OPEN。
 - [Issue #28](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)：M1/M7 Gateway 冲突，OPEN。
-- [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：Windows Node 20 Hook interruption 测试失败，OPEN。
+- [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：Windows Node 20 Hook interruption 曾间歇失败；最新 PR #30 检查通过，根因仍未确认，OPEN。
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
 - 当前工具没有 `read_thread`、`wait_threads` 或线程发送能力。八个线程的正文、承诺和实时任务数无法确认；文件系统与 GitHub Issue 是当前可验证协作依据。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。M0 协作 gate 通过。Windows Node 20 `npm test` 在两次 run 中均失败（`test/agent-hook.test.ts` 中断用例 marker 未出现）；最新 run 的 fail-fast 取消 macOS Node 20/22 和 Windows Node 22，Ubuntu、Docker、sponsor smoke 通过，package-smoke 跳过。本次失败已登记 #32，不能称 PR CI 全绿。
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。当前 head `1a65374` 的 run `38372927321` 所列 checks 全部通过，包含 Windows Node 20、package-smoke、Docker 与 sponsor smoke；协调 gate run `38372927057` 通过。此前 runs `38371811869`、`38372532507` 的 Windows Node 20 hook 中断用例失败，根因未确认，记录于 #32；最新通过不构成根因解释，Issue 继续 OPEN。
 
 ## M0 交付边界
 
-已建立 `main/`（AC3 detached 基线快照）、`agents/M1–M8`、`coordinator/`、`integration/`、`reports/`、`logs/`。根仓库 `main` checkout 保持原状。M0 未改 M1–M8 源码，未合并 main，未发布 Release。WSL 工作树在 Windows Git 显示 `prunable`，但 WSL Git 可读取；未做 `repair/prune`，以免破坏现有 gitdir 指针。
+已建立 `main/`（AC3 detached 基线快照）、`agents/M1–M8`、`coordinator/`、`integration/`、`reports/`、`logs/`。根仓库 `main` checkout 保持原状。M0 未改 M1–M8 源码，未合并 main，未发布 Release。WSL 与 Windows 工作树各由对应 Git runtime 读取；交叉 runtime 会显示不兼容指针为 `prunable`，没有执行 `repair/prune`。
