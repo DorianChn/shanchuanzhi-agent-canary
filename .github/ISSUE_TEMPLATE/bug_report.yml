@@ -1,49 +1,55 @@
 name: Bug report
-description: Report a reproducible Agent Canary defect
+description: Report a reproducible Agent Canary problem
 title: "bug: "
-labels: [bug, triage]
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Do not include real credentials, customer data, payment records, private logs, or security exploit details. Use synthetic values and redact local paths.
+        This is a public issue. Do not include credentials, customer data, private logs, payment records, or exploit details. Use synthetic values and redact usernames and local paths. Report vulnerabilities privately through the Security tab.
   - type: textarea
     id: summary
     attributes:
-      label: Summary
-      description: What failed, and what did you expect?
+      label: What happened?
+      description: Include the expected and observed behavior.
     validations:
       required: true
   - type: textarea
     id: reproduce
     attributes:
       label: Reproduction steps
-      description: Minimal commands and synthetic input needed to reproduce the issue.
+      description: Give the smallest steps using a disposable project and synthetic data.
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Agent Canary version or commit
+      label: Release/tag or full commit SHA
+      placeholder: "For example: v1.2.7 or full SHA"
     validations:
       required: true
   - type: input
-    id: runtime
+    id: environment
     attributes:
-      label: OS and Node.js version
+      label: OS, Node.js, and host/version
     validations:
       required: true
   - type: textarea
-    id: sanitized_doctor
+    id: effects
     attributes:
-      label: Sanitized doctor output
-      description: Remove usernames, private paths, tokens, URLs with credentials, and customer identifiers.
+      label: Observed effect
+      description: If relevant, include redacted callback counts or before/after hashes; a DENY label alone is not side-effect evidence.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized output
+      description: Remove credentials, personal paths, private URLs, and customer identifiers before posting.
   - type: checkboxes
     id: safety
     attributes:
-      label: Safety confirmation
+      label: Safety
       options:
-        - label: I removed real secrets and personal/customer data.
+        - label: I removed secrets and personal/customer data.
           required: true
-        - label: I tested only systems I own or am authorized to test.
+        - label: I tested only systems I own or am authorized to use.
           required: true
