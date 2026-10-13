@@ -164,6 +164,15 @@ function validateEvent(event: unknown): event is PolicyAuditEvent {
     if (!['ALLOW', 'DENY', 'UNKNOWN', 'REQUIRE_CONFIRMATION', 'NOT_APPLICABLE'].includes(e.decision)) return false;
     if (!['NOT_STARTED', 'SUCCEEDED', 'FAILED', 'UNKNOWN'].includes(e.execution_status)) return false;
     if (!['NOT_STARTED', 'VERIFIED', 'NOT_VERIFIED', 'UNKNOWN'].includes(e.side_effect_verification)) return false;
+    if (e.event_type === 'DECISION' && (
+      e.decision === 'NOT_APPLICABLE' || e.execution_status !== 'NOT_STARTED' || e.side_effect_verification !== 'NOT_STARTED'
+    )) return false;
+    if (e.event_type === 'EXECUTION_RESULT' && (
+      e.decision !== 'NOT_APPLICABLE' || e.execution_status === 'NOT_STARTED' || e.side_effect_verification === 'NOT_STARTED'
+    )) return false;
+    if (['POLICY_APPLIED', 'POLICY_ROLLED_BACK', 'POLICY_CHANGE_REJECTED'].includes(e.event_type) && (
+      e.decision !== 'NOT_APPLICABLE' || e.execution_status !== 'NOT_STARTED' || e.side_effect_verification !== 'NOT_STARTED'
+    )) return false;
     if (!RULE_ID.test(e.reason_code)) return false;
     if (e.tool_id !== null && !TOOL_ID.test(e.tool_id)) return false;
     if (e.actor_digest !== null && !/^[a-f0-9]{64}$/.test(e.actor_digest)) return false;

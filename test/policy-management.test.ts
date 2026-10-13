@@ -178,6 +178,16 @@ test('model denial, hook denial, gateway denial, and tool failure have separate 
   assert.equal(events.at(-1)?.execution_status, 'UNKNOWN');
 });
 
+test('audit rejects a denial recorded as a successful execution result', () => {
+  const manager = createProjectPolicyManager({ workspaceRoot: workspace(), storageDirectory: storage() });
+  assert.throws(() => manager.recordDecision({
+    decisionSource: 'GATEWAY', decision: 'DENY', executionStatus: 'SUCCEEDED',
+    sideEffectVerification: 'NOT_VERIFIED', reasonCode: 'gateway_denied', toolId: 'fetch_docs',
+  }), /POLICY_AUDIT_EVENT_INVALID/);
+  assert.deepEqual(manager.evidence(), [], 'invalid outcome combinations must not enter the evidence chain');
+  assert.equal(manager.evidenceHead(), null);
+});
+
 test('a final host Gateway denial remains authoritative after an M5 ALLOW', async () => {
   const { createAgentGuard } = await import('../src/sdk.js');
   let finalGatewayAllows = true;
