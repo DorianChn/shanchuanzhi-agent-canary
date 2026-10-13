@@ -457,6 +457,8 @@ try {
   results.summary = summarize(results.trials);
   await persist();
   console.log(JSON.stringify({ completed: true, outputFile, trials: results.trials.length, summary: results.summary, guardLatency: results.guardLatency }, null, 2));
+  // Preserve frozen published summaries; each new 2.0 run gets its own derived report.
+  if(v2){process.argv.push('--input='+path.basename(outputFile));if(!process.argv.some(a=>a.startsWith('--output-prefix=')))process.argv.push('--output-prefix=v2-'+runStamp);}
   await import(v2?'./build-v2-report.mjs':round4?'./build-round4-report.mjs':'./build-report-data.mjs');
 } catch (error) {
   results.runError = redact(String(error));

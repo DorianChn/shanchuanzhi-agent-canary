@@ -182,3 +182,10 @@ export { createAIProvider, previewAnalysis, PROVIDER_PRESETS } from './ai/provid
 export type { AIProvider, ProviderConfig, ModelInfo, ConnectionResult, SecurityAnalysisRequest, SecurityAnalysisResult, SecurityEvidence } from './ai/types.js';
 export { createRiskPolicyRouter, PolicyBlockedError } from './risk-policy.js';
 export type { ProtectionMode, ToolRisk, ToolOperation, RiskToolDescriptor, RiskPolicyOptions, PolicyDecision } from './risk-policy.js';
+
+export {createFileContainmentStateStore} from './file-state-store.js';
+
+export {createTrustedExecutionGateway,GatewayDeniedError,type GatewayOptions,type GatewayFile,type GatewayCommand} from './runtime/gateway.js';
+export {EvidenceRecorder,canonicalJSON,evidenceDigest,validateEvidence,verifyEvidenceChain,type SecurityEvidenceEvent} from './runtime/evidence.js';
+export {HoneypotRuntime,planAdaptiveDecoys,type DecoyKind,type DecoyInteraction} from './runtime/honeypot.js';
+export {DataFlowTracker} from './runtime/dataflow.js';

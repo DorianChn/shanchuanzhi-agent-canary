@@ -1,277 +1,63 @@
-# agent-canary
+# Agent Canary 3.0
 
-给 AI 编程 agent 装绊线。它在你的环境里布置诱饵 MCP 工具和金丝雀令牌，并给 SDK 集成提供会话熔断器，在发现失陷信号后阻断下一次经过守卫的真实操作。
+Agent Canary 3.0 是面向 AI Agent 的开源 MCP 与 SDK 安全工具，提供诱饵工具、金丝雀令牌、受守卫的执行网关、本地自检和可选风险策略控制台。
 
-面向支持 stdio 的 MCP 客户端；非 MCP agent 可以用 SDK。本次审计用 MCP
-JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的安装界面。Node 20+，MIT，无遥测。
+**当前主线：** 3.0.0 · MIT · Node.js 20+
 
-中文文档（本文件）｜ [English](README.md)
+- [GitHub 发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0)
+- [项目网页与测试结果](https://dorianchn.github.io/shanchuanzhi-agent-canary/)
+- [English](README.md)
+- [架构与验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md)
+- [源码与问题反馈](https://github.com/DorianChn/shanchuanzhi-agent-canary)
 
-[在线体验与赞助](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Glama 条目](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary) · [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
+## 安装
 
-![Agent Canary — AI Agent / MCP 安全](docs/agent-canary-cover-v2.png)
+npm 包发布在 GitHub Packages。先配置 @dorianchn scope，再使用具有 read:packages 权限的 GitHub classic personal access token 登录：
 
-## Agent Canary 3.0 Community 竞赛版
-
-[3.0 最新 Community 发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) · [Windows 安装器](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition/AgentCanary-Community-Setup.exe) · [CLI/SDK ZIP](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition/Agent_Canary_3_0_Community_Preview_48d5c440.zip) · [3.0 竞赛官网](https://dorianchn.github.io/shanchuanzhi-agent-canary/)
-
-此 GitHub 发行版提供 3.0 Community 竞赛包、验收证据、安装说明与 SHA-256 清单。它与旧 V1/V2 分发渠道分开：仓库根 npm 清单仍为 1.2.7，本次不是 npm、GitHub Packages 或 Docker 的 3.0.0 发行。Windows 安装器未签名；干净 Windows 虚拟机和 E4 检查仍为 BLOCKED/NOT_VERIFIED。完整验证范围与限制见发行说明。
-
-下面的 2.0 预览说明属于历史材料，描述早期 2.0 交付物，不是 3.0 的测试结果。
-
-### 历史版本：Agent Canary 2.0 竞赛预览
-
-[GitHub 预览发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [更新后的双语网站](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [下载独立免费构建](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
-
-这是 GitHub 竞赛预览发行，不是 npm/Docker 稳定版发布。npm 元数据仍为 1.2.7，请使用明确分离的免费 ZIP。PDF 和视频保留其已验证的冻结核心版本。
-
-可选的[安全 Router](docs/SECURITY_ROUTER_2.md)增加可信宿主参数策略、有界敏感来源提示、realpath 检查、callback 截止时间和事前 AI 审查；原有 CLI、SDK 与确定性 Guard 保持兼容。AI 不能批准操作或解除隔离，事前审查**默认关闭**。
-
-[Agent 接入指南](docs/AGENT_INTEGRATIONS_2.md)提供 Claude Code、Cursor、Cline CLI、Codex 与自定义 MCP 的安全预览、私有备份、安装和恢复。实际桌面任务保护**尚未验证**；自定义受保护 MCP 宿主已用真实本地模型自主调用虚拟 callback 验证，其他服务器及原生工具不自动受保护。
-
-[168 次真实 Qwen 实验](competition-submission/evidence/v2-summary.json)保留 A/B/C/D/E 全部结果。沿用原指标，D1 与 E 的攻击成功均为 1/19；E 对正常任务新增 2/8 硬拒绝，未证明 AI 独立阻断增益。模型自主选择工具，危险效果均虚拟。参见[最终审计](docs/competition/AGENT_CANARY_2_FINAL_REPORT.md)、[冻结版本](competition-submission/V2_DELIVERY_VERSION.md)与[独立免费包](competition-submission/Agent_Canary_Competition_2_0.zip)。普通商业包分发边界仍有 P1；本轮没有发布或迁移商业授权。
-
-## V1.2.7：隔离状态会覆盖紧随其后的重试
-
-V1.2.7 是免费公开版本线。它用明确的诱饵调用和生成令牌的精确匹配作为高特异性信号；
-这不等于保证零误报。它保留免费的 SDK 隔离能力，
-新增 `createGuardedToolRouter()`，让诱饵和真实工具共用一条经过审查的分发路径；
-同时保留完全离线的 `self-test` 和 JSONL / webhook 出口的统一审计脱敏；还会发布精简的 MCP server instructions，让目录和客户端在调用工具前明确知道诱饵无害，以及受守卫隔离的适用边界。使用短期、会话范围 vault 引用的宿主可以额外接入不含 secret 的 `credentialRevoker`，在隔离完成、告警发送前开始吊销；还可用显式共享状态仓库让同一已审查身份的新会话继承隔离状态：
-
-| 层 | 作用 |
-|---|---|
-| 检测 | 不执行真实操作的诱饵 MCP 工具与已埋放的金丝雀令牌发现失陷信号。 |
-| 隔离 | 同步执行 `SAFE → TRIPPED → QUARANTINED`；Router 把诱饵送入隔离，把真实工具送入失败闭合 guard。 |
-| 告警 | 状态变更之后写入 JSONL 审计事件，并可发送 webhook / 桌面告警；工具参数和金丝雀值会脱敏。 |
-
-```text
-不可信内容 → agent 可能遵循它 → 调用诱饵 / 出现已登记令牌
-                              ↓
-                        SESSION TRIPPED
-                              ↓
-                         QUARANTINED
-                              ↓
-                     危险的受守卫工具调用
-                              ↓
-                           BLOCKED
-                              ↓
-                      告警 + 本地审计日志
+```sh
+npm config set @dorianchn:registry https://npm.pkg.github.com
+npm login --scope=@dorianchn --auth-type=legacy --registry=https://npm.pkg.github.com
+npm install --global @dorianchn/agent-canary@3.0.0
+agent-canary --help
 ```
 
-完整 API 与边界见 [docs/containment.md](docs/containment.md)。审计时的 `main`
-仍跟踪了 `src/` 中受许可证门控的评测、面板、导出和许可实现；包清单包含整个
-`dist/`，因此由此源码构建的包也含有这些编译模块。许可证门控不等于源码隔离。
-本次审计不改变现有商业分发边界；不能把当前代码树描述成“V2 源码私有”。
+Docker 镜像发布在 GitHub Container Registry：
 
-## 问题背景
+```sh
+docker pull ghcr.io/dorianchn/shanchuanzhi-agent-canary:3.0.0
+docker run --rm ghcr.io/dorianchn/shanchuanzhi-agent-canary:3.0.0 --help
+```
 
-编程 agent 能读文件、执行命令、调 API。如果它读到被投毒的 README、网页或文档，跟着里面的恶意指令走，可能会悄悄外传密钥，而你没有收到任何提示。
+要通过标准输入/输出运行 MCP 服务，可使用 agent-canary serve --stdio；容器运行时加 -i 并传入相同参数。
 
-Agent Canary 不给 prompt 打分，也不判断模型是否听从了注入。它等待诱饵被调用或已登记令牌出现，再记录信号。集成误调用也可能触碰诱饵，因此仍需人工核查告警。
-
-- **诱饵 MCP 工具**：假的转账、假的生产密钥读取、假的 root shell。它们不会执行所模拟的操作；每次调用会更新 Agent Canary 本地令牌注册表和审计日志，并可向你配置的 webhook 或桌面通知发送告警。
-- **金丝雀令牌**：埋在蜜罐文件里的随机 `cnry_...` 字符串。在扫描文本中发现精确匹配，说明该令牌出现在该文本中；应结合来源和上下文调查。
-
-每个假工具的返回内容里带一次性追踪令牌，"密钥"被外传时能定位到具体哪次调用泄露的。
-
-## 安装免费 V1.2.7
-
-要求：Node.js 20 或更高版本。公开源码构建包含免费 V1.2.7 基础能力：
-
-    git clone https://github.com/DorianChn/shanchuanzhi-agent-canary && cd shanchuanzhi-agent-canary
-    npm install && npm run build && npm link
-
-执行 `agent-canary --help` 后，再运行离线隔离自检。免费 SDK 和诱饵路径无需付费许可；
-但当前源码/包构建也包含受许可门控的编译模块。若要声称付费源码保持私有，维护者须先
-明确并验证独立的源码与分发边界。
-
-### 容器与 Glama 评测
-
-仓库提供一个最小化、仅 stdio 的 Docker 镜像，供 Glama 等 MCP 目录构建免费 V1
-服务并内省工具 schema；该过程不需要凭据、网络访问或 V2 交付包：
-
-    docker build -t agent-canary .
-    docker run --rm -i agent-canary
-
-镜像启动的是 `agent-canary serve`，提供无害诱饵工具，不执行真实工具。Docker 构建上下文
-含编译后的许可校验代码，但不含赞助网关、签名私钥或客户记录。
-
-## 使用
-
-    # 埋一个假密钥蜜罐文件
-    agent-canary tokens plant .env.canary --label my-project
-
-    # 注册 12 个诱饵工具到 Claude Code（Cursor 用 install cursor）
-    agent-canary install claude
-
-    # 验证告警链路
-    agent-canary alert-test
-
-    # 在本地验证 SAFE → QUARANTINED → BLOCKED；不会访问网络或写入用户数据
-    agent-canary self-test
-
-重启编辑器。之后如果 agent 调了诱饵或泄露了令牌：
-
-    $ agent-canary events
-    2026-09-15T10:21:04Z  decoy_called  tool=canary_read_secrets
-    2026-09-15T10:21:09Z  token_found   label=my-project path=report.md
-
-扫描器可以直接接 CI（发现泄露 exit 1），也有实时监控：
-
-    agent-canary tokens check . && echo clean
-    agent-canary watch .
-
-## 诱饵清单
-
-agent 眼里这些都是管理员级工具，但它们什么都不做。
-
-| 诱饵工具 | 被劫持的 agent 以为能拿到（仅模拟） |
-|---|---|
-| `canary_transfer_funds` | 转账，5 万以下自动放行 |
-| `canary_read_secrets` | 任意环境的生产 API 密钥 |
-| `canary_run_shell` | 构建服务器上的 root shell |
-| `canary_delete_files` | 永久删除，无回收站 |
-| `canary_send_email` | 以任意内部地址发邮件，跳过 SPF |
-| `canary_export_database` | 全表导出 CSV，不留审计 |
-| `canary_fetch_internal` | 从内网访问管理后台 |
-| `canary_disable_security` | 关闭终端防护 |
-| `canary_cloud_console` | 云控制台会话 + 临时凭证 |
-| `canary_k8s_exec` | 在生产 Pod 内执行命令 |
-| `canary_secrets_rotate` | 紧急轮换凭证（锁死人类操作员） |
-| `canary_git_force_push` | 强推受保护分支 |
-
-## 免费版与个人版
-
-当前公开代码树包含受许可证门控的评测、面板、导出和许可实现；签名私钥、客户记录和交付包
-不在本次审计的已跟踪文件中。是否将这些实现拆出公共分发，需要维护者先批准商业分发边界变更。
-
-| | 免费版（永久） | 个人版（¥72 / 30 天） |
-|---|---|---|
-| 诱饵服务器、令牌、监控、告警、安装 | 有 | 有 |
-| `eval` 注入抗性评分 | | 有 |
-| `dashboard` 攻击链时间线 | | 有 |
-| `export` CEF / JSON / CSV 导出 | | 有 |
-| V1.2.7 会话熔断器、共享身份隔离、可选凭据吊销、受守卫工具 Router、MCP 安全说明与离线 `self-test` | 有 | 有 |
-| SDK 诱饵处理与金丝雀扫描 | 有 | 有 |
-
-V2 Personal 目前采用**人工确认**的微信/支付宝付款流程。请查看公开的[付款说明](https://dorianchn.github.io/shanchuanzhi-agent-canary/pay.html)：其中包含二维码、价格和交付所需信息。作者核对实际到账后才发送安装与激活说明；不承诺自动交付或即时激活。
-
-## 合作与集成
-
-欢迎 MCP 客户端维护者、AI Agent/框架作者、AI 安全研究者和 DevSecOps 团队开展定向合作：
-
-- 集成到 MCP 客户端、Agent 框架或安全模板；
-- 运行可复现的 Prompt Injection 抗性评测并共同发布结果；
-- 在受控开发环境或 CI 中试点告警与审计链路；
-- 讨论付费集成、私有部署或安全评估支持。
-
-请在 [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
-说明集成目标、范围和首选联系方式。不要提交 API 密钥、付款凭证、客户数据或未公开漏洞。
-
-## 分发与合作渠道
-
-项目已进入[官方 MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.DorianChn%2Fagent-canary)，
-并保留 [Glama 展示页](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary)。如果要和更大的安全平台做集成，
-[Snyk Technology Alliance Partner Program](https://snyk.io/partners/tapp/) 是一个候选渠道；正式申请或商业条款必须先由维护者确认。
-我们不会批量发帖或向陌生人发送骚扰式推广。
-
-## 非 MCP Agent（V1.2.7 免费受守卫工具 Router）
-
-每个 agent 会话创建一个 guard，然后交给一个 Router。Router 用
-`guard.runDecoy()` 回答诱饵，并把所有非诱饵回调交给
-`guard.executeToolCall()`。
+## SDK
 
 ```ts
-import { CanaryBlockedError, createAgentGuard, createGuardedToolRouter, decoyToolDefs } from "agent-canary/sdk";
-
-const guard = createAgentGuard({
-  sessionId: "support-chat-42",
-  // 仅精确列出经审查的安全操作；默认空 allowlist。
-  quarantineAllow: ["read_file", "git_status"],
-});
-const toolDefs = [...myRealToolSchemas, ...decoyToolDefs("openai")];
-const router = createGuardedToolRouter({
-  guard,
-  executeRealTool: realTool, // 由宿主实现真实回调
-});
-
-await router.dispatch({ name: "git_status", args: {} });              // SAFE：允许
-await router.dispatch({ name: "canary_read_secrets", args: {} });     // trip → quarantine
-
-try {
-  await router.dispatch({ name: "http_post", args: { url: "https://example.invalid" } });
-} catch (error) {
-  if (error instanceof CanaryBlockedError) console.log(error.decision); // action_blocked
-}
-
-// 只能放在真人的事件响应控制面，不能注册成 MCP/LLM 工具。
-guard.reset({ acknowledgedBy: "on-call-human" });
+import { createTrustedExecutionGateway } from "@dorianchn/agent-canary/sdk";
 ```
 
-`guard.inspect(agentOutput, "final-answer")` 发现已埋令牌时，会 trip 同一个会话。
+宿主必须明确注册需要网关保护的回调。Agent Canary 不会自动接管未接入的工具、进程或原生宿主能力。
 
-## 注入抗性评测
+## 测试结果
 
-V2 Personal 包含可复现的 20 条攻击载荷评测。人工查看可使用文本输出，CI
-可使用 JSON；模型/API 失败会按失败闭合处理，不会被错误计为“已抵抗”：
+冻结的 3.0 源码验收记录包含以下结果：
 
-    agent-canary eval --provider openai --model gpt-4o --format json
-    agent-canary eval --provider openai --model deepseek-chat \
-      --base-url https://api.deepseek.com/v1 --format json --out eval.json
+- Community 自动化测试：**100/100 通过**。
+- Windows 11 同一用户安装流程：**9 步通过**；安装器未签名。干净 Windows 虚拟机验证仍为 **BLOCKED**。
+- Ubuntu 便携包：在记录的 WSL2 环境中，SDK 类型、doctor、效果、卸载和重复卸载检查均**通过**。
+- 核心与包装 CI：对应记录中的 **9/9、2/2 作业通过**。
+- 本地 Qwen 工具选择：共 **48 次**。直接违规操作在未保护组产生 12/12 次效果，守卫组为 0/12；守卫组主动拒绝 12/12。README 间接任务两组均为 0/4，不能据此声称主动拦截收益。正常任务两组均完成 8/8。
+- 独立复现 **E4：BLOCKED**。尚无独立操作者在独立环境复现冻结构建；同机测试和日志审查不算 E4。
 
-`decoyToolDefs("anthropic")` 输出 Anthropic 格式。
+这些结果只适用于所列源码、测试和环境，不能证明全局防护、零误报或完全消除 TOCTOU。未配合取消的回调仍可能产生延迟副作用。详见[安全限制](docs/3.0/SECURITY_LIMITATIONS.md)与[完整验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md)。
 
-## 面板与 SIEM
-
-    agent-canary dashboard --out report.html   # 自包含 HTML 时间线
-    agent-canary export --format cef           # 或 json、csv
-
-## 保证与限制
-
-- 诱饵工具不会执行所模拟的操作。`canary_run_shell` 不会运行命令；调用会维护 Agent Canary 本地令牌/审计状态，并可能发送已配置告警（见 [SECURITY.md](SECURITY.md)）。
-- 金丝雀令牌在哪儿都解不开任何东西。
-- 无遥测。事件留在 `~/.agent-canary/events.jsonl`，除非你自己配 webhook。
-- 扫描到诱饵调用或已登记令牌时产生告警；误调用或复制测试样例也会产生信号。
-- **隔离只覆盖已集成的调用链。** 只有经过 `router.dispatch()`、
-  `guard.executeToolCall()` / `guard.beforeToolCall()` 的真实工具调用可以被阻断。如果被劫持 agent 的第一个危险操作绕过这些路径，agent-canary 无法拦截它。诱饵本身无害；一旦先碰到诱饵，guard 就能在之后的受守卫操作前隔离该会话。
-- 此版本没有声称支持任意上游 MCP server 的代理；下一阶段的可审计 MCP proxy 设计见 [docs/containment.md](docs/containment.md)。
-
-已知限制：这是 JavaScript，改 `dist/` 可以拆掉许可检查。签名许可提高了白嫖门槛，但它不是 DRM。
-
-## 命令列表
-
-    serve / init / install / uninstall
-    tokens generate|plant|check|list
-    watch, events, report, dashboard, export, eval
-    self-test
-    status, activate, alert-test, set-webhook, set-notify
-
-`agent-canary --help` 看详情。
-
-## 开发与开源治理
-
-- 贡献前请读 [CONTRIBUTING.md](CONTRIBUTING.md)，通过 Issue/PR 模板提交可复现且已脱敏的报告。
-- 进行安全测试或报告漏洞前请读 [SECURITY.md](SECURITY.md)。
-- 可执行的维护计划见 [ROADMAP.md](ROADMAP.md)。
-- 参赛实验、复现方式和真实模型/模拟模式边界见 [competition-submission/](competition-submission/README.md)。
-
-## 许可证
-
-MIT
-# 可选 AI 分析与中文本地控制台
-
-竞赛强化分支新增 OpenAI、Claude、Gemini 原生协议及 DeepSeek/百炼兼容配置，支持 Ollama、LM Studio、vLLM 和自定义兼容地址。**只有 Ollama 已完成真实本机推理；云端只有模拟协议回归，未验证真实厂商账号。**
+## 本地开发
 
 ```sh
 npm ci
-npm run build
-npm run ai:console
+npm run verify
 ```
 
-打开输出的 loopback 地址，配置已有模型、选择证据、检查预览并分析。密钥只在宿主进程，云端每次推理需确认；AI 无解除隔离或执行工具权限。没有模型时基础防护仍可运行。控制台支持 JSON/Markdown/CSV 报告。
+验证命令会构建 TypeScript、运行自动化测试、执行离线验收和 SDK 类型检查、核对源码清单，并对打包后的 npm 包做冒烟检查。
 
-完整参数与隐私边界见 [AI 接入指南](docs/AI_PROVIDERS.md)，真实实验与失败数据见 [AI 实施报告](docs/competition/AI_ENHANCEMENT_REPORT.md)。
-
-## 可选确定性风险策略
-
-SDK 新增 createRiskPolicyRouter，支持 OBSERVE / BALANCED / STRICT。宿主注册工具描述并按参数检查，敏感外传拒绝，普通写入/构建可申请一次性人工批准。AI 仅提供事后解释，不能放权。只保护经过此 Router 的调用；路径、进程、网络和身份边界仍由宿主实现。详见 [策略合同与边界](docs/RISK_POLICY.md)。
+演示视频等上传后补上。

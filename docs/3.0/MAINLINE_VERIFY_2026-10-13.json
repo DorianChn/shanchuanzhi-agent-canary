@@ -1,0 +1,49 @@
+{
+  "product": "Agent Canary 3.0",
+  "version": "3.0.0",
+  "date": "2026-10-13",
+  "environment": {
+    "platform": "Windows host",
+    "node": "22.23.1"
+  },
+  "dependencyInstall": {
+    "status": "PASS",
+    "packagesAdded": 102,
+    "knownVulnerabilitiesReportedByNpm": 0
+  },
+  "verify": {
+    "command": "npm run verify",
+    "status": "PASS",
+    "build": "PASS",
+    "automatedTests": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0,
+      "skipped": 0
+    },
+    "offlineSelfTest": {
+      "status": "PASS",
+      "checks": 4
+    },
+    "sdkTypeConsumer": {
+      "status": "PASS",
+      "compileTimeChecks": 5
+    },
+    "sourceManifest": {
+      "files": 181,
+      "mismatches": 0
+    },
+    "boundedOperatorDemo": {
+      "status": "VERIFIED_BOUNDED_OPERATOR_DEMO",
+      "cases": 6,
+      "E4": "NOT_VERIFIED_NO_EXTERNAL_OPERATOR"
+    },
+    "packedPackageSmoke": {
+      "status": "PASS",
+      "files": 72,
+      "installedCliVersion": "3.0.0",
+      "installedCliSelfTest": "PASS"
+    }
+  },
+  "scope": "Local build and package checks; this record is not an independent E4 reproduction, a clean-VM certification, or a global host-protection claim."
+}

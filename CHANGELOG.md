@@ -1,13 +1,20 @@
 # Changelog
 
-## Unreleased
+## 3.0.0 — Agent Canary 3.0 mainline
+
+- Promote the open-source CLI, MCP server, SDK, offline self-test, and risk-policy console as the repository mainline.
+- Set the root npm package version to 3.0.0 and expose the `agent-canary` command and typed SDK entry point.
+- Add a tagged release workflow for GitHub Packages and GHCR, gated by build, automated tests, offline acceptance, SDK type checks, source-manifest verification, and package smoke checks.
+- Update the project website and release notes with the verified test scope, source provenance, E0–E4 mapping, and known limits. E4 remains NOT VERIFIED.
+
+## Historical pre-release development notes
 
 - Add optional 2.0 host security routing, pre-execution review, bounded provenance, callback deadlines and protected MCP stdio hosting; AI cannot grant rights or undo containment.
 - Add non-overwriting Agent configuration installation/restore, official hook protocol fixtures, private backups and cross-session hook state. Desktop-native protection remains unverified.
-- Extend the Chinese console and preserve 168 autonomous local-model A/B/C/D/E trials, including adverse AI false refusals. Deliver separately verified free competition artifacts; no npm/Docker release.
+- Extend the Chinese console and preserve historical autonomous local-model trials, including adverse AI false refusals. Those results are not relabelled as current 3.0 mainline tests.
 - Add an opt-in local Ollama agent-tool evaluation harness with three comparison arms; all tools use synthetic, side-effect-free handlers.
 - Add competition reproduction materials, maintainer roadmap, and structured GitHub issue/PR templates.
-- No package release or API compatibility change is made by these documentation and evaluation additions.
+- These development notes describe work before the 3.0.0 mainline release.
 
 ## 1.2.7
 
@@ -73,10 +80,10 @@
   action, and human reset events.
 - Update the public documentation to separate the free V1.x line from paid
   V2.x delivery.
-## Unreleased — competition AI enhancement
+## Historical 3.0 research and AI enhancement notes
 
 - Optional advisory providers: OpenAI-compatible, native Ollama, Anthropic Messages and Gemini generateContent.
 - Chinese loopback console, evidence preview/consent, origin-bound backend key injection, model lookup, sandbox demos and bounded JSON/Markdown/CSV reports.
 - Strict schema/evidence-ID validation, pinned DNS, redirect refusal, cancellation/deadlines and bounded retries; no changes to Guard authority.
 - Real local Qwen analysis and repeated A/B/C tool-selection pilot, including failed references and label disagreement.
-- Additional AI security regression tests and reproducible PDF/material generation. Not an npm release; cloud account verification and V1/V2 distribution boundary remain open.
+- Additional AI security regression tests and reproducible PDF/material generation. These historical experiments are not the 3.0.0 mainline release gate.

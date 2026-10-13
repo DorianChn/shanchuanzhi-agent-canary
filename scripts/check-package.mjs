@@ -32,11 +32,28 @@ try {
   if (!pack?.filename || !Array.isArray(pack.files)) fail("npm pack returned no file manifest");
 
   const files = pack.files.map((entry) => entry.path).sort();
-  const required = ["LICENSE", "README.md", "README.zh-CN.md", "package.json", "dist/index.js", "dist/sdk.js"];
+  const required = [
+    "LICENSE",
+    "README.md",
+    "README.zh-CN.md",
+    "package.json",
+    "FREE_BUILD_VERSION.json",
+    "THIRD_PARTY_NOTICES.md",
+    "dist/competition.js",
+    "dist/sdk.js",
+    "dist/sdk.d.ts",
+  ];
   for (const file of required) if (!files.includes(file)) fail(`missing required file ${file}`);
 
   for (const file of files) {
-    const isPublicFile = file === "LICENSE" || file === "README.md" || file === "README.zh-CN.md" || file === "package.json" || file.startsWith("dist/");
+    const isPublicFile =
+      file === "LICENSE" ||
+      file === "README.md" ||
+      file === "README.zh-CN.md" ||
+      file === "package.json" ||
+      file === "FREE_BUILD_VERSION.json" ||
+      file === "THIRD_PARTY_NOTICES.md" ||
+      file.startsWith("dist/");
     if (!isPublicFile) fail(`unexpected package file ${file}`);
     if (/(^|\/)(?:sponsor|test|src|docs|\.github)(\/|$)|(^|\/)\.env(?:\.|$)/i.test(file)) {
       fail(`sensitive or development path included: ${file}`);
@@ -48,10 +65,14 @@ try {
   fs.mkdirSync(installDir);
   runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
 
-  const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "index.js");
+  const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "competition.js");
   if (!fs.existsSync(cli)) fail("installed CLI entrypoint was not found");
   const help = run(process.execPath, [cli, "--help"], installDir);
-  if (!help.includes("self-test")) fail("installed CLI help does not include self-test");
+  if (!help.includes("self-test") || !help.includes("serve") || help.includes("agent-canary-competition")) {
+    fail("installed CLI help does not identify the 3.0 mainline commands");
+  }
+  const version = run(process.execPath, [cli, "--version"], installDir).trim();
+  if (version !== "3.0.0") fail(`installed CLI version is ${version}, expected 3.0.0`);
   const selfTest = JSON.parse(run(process.execPath, [cli, "self-test", "--json"], installDir));
   if (selfTest.passed !== true) fail("installed CLI self-test did not pass");
 

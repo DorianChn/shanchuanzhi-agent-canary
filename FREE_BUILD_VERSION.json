@@ -1,0 +1,11 @@
+{
+  "product": "Agent Canary 3.0",
+  "sourceSHA": "48d5c440de4b1ced45075b2a1c347545576d2e10",
+  "seedSHA256": "57db33063111f45860f9317b6bcaa493fe9949abc50a4fcb0b6fc7fc64ae4b22",
+  "license": "MIT",
+  "scope": "open-source CLI, MCP server, SDK, self-test, and risk-policy console; legacy V2 commercial modules are not part of this release",
+  "runtimeBaselineSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "releaseVersion": "3.0.0",
+  "securityRuntimeModified": true,
+  "repair": "Explicit product identity, Hook module-load denial, and recheck held file identity before effects; historical experiments are not relabelled as this build"
+}

@@ -1,7 +1,7 @@
 {
   "name": "@dorianchn/agent-canary",
-  "version": "1.2.7",
-  "description": "Event-triggered AI-agent containment with inert MCP decoys, canary tokens, a guarded tool router, and offline self-tests.",
+  "version": "3.0.0",
+  "description": "Agent Canary 3.0 open-source MCP and SDK security toolkit for AI agents.",
   "license": "MIT",
   "author": "DorianChn",
   "repository": {
@@ -29,28 +29,34 @@
     "node": ">=20"
   },
   "bin": {
-    "agent-canary": "dist/index.js"
+    "agent-canary": "dist/competition.js"
   },
   "exports": {
-    "./sdk": "./dist/sdk.js"
+    "./sdk": {
+      "types": "./dist/sdk.d.ts",
+      "import": "./dist/sdk.js",
+      "default": "./dist/sdk.js"
+    }
   },
   "files": [
     "dist",
+    "FREE_BUILD_VERSION.json",
     "README.md",
     "README.zh-CN.md",
-    "LICENSE"
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
     "build": "tsc",
-    "bench:scan": "node scripts/benchmark-scan.mjs",
-    "demo:containment": "node scripts/demo-containment.mjs",
-    "test": "node --import tsx --test test/alerts.test.ts test/tokens.test.ts test/eval.test.ts test/dashboard.test.ts test/sdk.test.ts test/license.test.ts test/containment.test.ts test/install.test.ts test/config.test.ts test/install-backup.test.ts test/webhook.test.ts test/self-test.test.ts test/metadata.test.ts test/security-simulation.test.ts test/file-walk.test.ts test/watch.test.ts test/ai.test.ts test/risk-policy.test.ts test/security-router.test.ts test/agent-integrations.test.ts test/agent-hook.test.ts",
+    "test": "node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts",
+    "ai:console": "node dist/competition.js ai console",
+    "lab:agent": "node competition-submission/lab/run-agent-eval.mjs --profile=neutral_agent --v2",
+    "types:check": "node scripts/check-sdk-types.mjs",
+    "acceptance:offline": "npm run self-test && npm run types:check && node reproduction-kit/verify-community-manifest.mjs . && node reproduction-kit/run-offline-demo.mjs --root=.",
+    "self-test": "node dist/competition.js self-test --json",
     "pack:check": "node scripts/check-package.mjs",
-    "verify": "npm run build && npm test && npm run pack:check",
-    "prepublishOnly": "npm run build",
-    "ai:console": "node dist/index.js ai console",
-    "ai:demo": "node competition-submission/lab/run-ai-analysis.mjs",
-    "lab:agent": "node competition-submission/lab/run-agent-eval.mjs"
+    "verify": "npm run build && npm test && npm run acceptance:offline && npm run pack:check",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
