@@ -31,7 +31,7 @@
 | M6 | `feature/ac3-e4-validation` | `da52c17` | 3 个 commit ahead of main，已同步模块远端；包含 `package.json`、E4 验证与报告 artifact，工作树干净 | Windows Git worktree |
 | M7 | `feature/ac3-reliability` | `62496d4` | Windows packaging、Gateway、测试和 `package.json` 有修改/新增 | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `62496d4` | README、安全/贡献文档和 GitHub 模板有修改/新增 | WSL Git worktree |
-| M0 | `feature/ac3-m0-coordination` | `017d365` | 本协调文档和检查 | Windows Git worktree |
+| M0 | `feature/ac3-m0-coordination` | `262fb64` | 本协调文档和检查 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `62496d4` | 集成计划 | Windows Git worktree |
 
 比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 位于 main HEAD 并有未提交内容；M6 位于 `da52c17`，在 main 上有 3 个模块 commit。两者与 AC3 的比较分别为 46/4 和 46/7，未自动移动/覆盖其内容。M4/M0/M9 新建 worktree 同源于 `62496d4`。worktree 共享对象库，但工作目录/index 独立。
@@ -44,7 +44,7 @@
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
 - 当前工具没有 `read_thread`、`wait_threads` 或线程发送能力。八个线程的正文、承诺和实时任务数无法确认；文件系统与 GitHub Issue 是当前可验证协作依据。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。M0 协作 gate 通过。PR CI 的 Windows Node 20 `npm test` 失败（`test/agent-hook.test.ts` 中断用例 marker 未出现），package-smoke 随之跳过；Windows Node 22、Ubuntu/macOS、Docker、sponsor smoke 通过。本次失败已登记 #32，不能称 PR CI 全绿。
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。M0 协作 gate 通过。Windows Node 20 `npm test` 在两次 run 中均失败（`test/agent-hook.test.ts` 中断用例 marker 未出现）；最新 run 的 fail-fast 取消 macOS Node 20/22 和 Windows Node 22，Ubuntu、Docker、sponsor smoke 通过，package-smoke 跳过。本次失败已登记 #32，不能称 PR CI 全绿。
 
 ## M0 交付边界
 
