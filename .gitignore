@@ -3,6 +3,11 @@ dist/
 *.log
 *.tgz
 .env
+.env.*
+!.env.example
+*.tmp
+*.temp
+*.swp
 .agent-canary/
 package-lock.json.bak
 /competition-submission/Agent_Canary_演示视频.mp4
@@ -32,3 +37,18 @@ __pycache__/
 /security-lab/competition-freeze/local-only/
 /security-lab/competition-freeze/local-video-player.html
 /security-lab/competition-freeze/pdf-qa/*.png
+
+# Local M0/M9 coordination workspaces and outputs; keep exact top-level scope.
+/agents/M1-security/
+/agents/M2-isolation/
+/agents/M3-onboarding/
+/agents/M4-desktop-security-center/
+/agents/M5-policy/
+/agents/M6-e4/
+/agents/M7-reliability/
+/agents/M8-ecosystem/
+/main/
+/coordinator/
+/integration/
+/reports/
+/logs/
