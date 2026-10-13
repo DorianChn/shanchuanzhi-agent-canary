@@ -37,6 +37,14 @@
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
 - M5 本地提交 `cd8abea` 进一步约束策略审计事件：`DECISION` 只表示执行尚未开始；`EXECUTION_RESULT` 使用 `decision=NOT_APPLICABLE` 且状态表示执行已开始；策略变更事件不得伪装成执行结果。新增和导入证据都经过同一语义校验；非法组合不得进入哈希链。策略审计事件的判定来源、执行状态和副作用验证状态必须保持一致。
+### M5 policy-audit event contract (proposal from local branch `feature/ac3-policy-audit` at `9ec08d9`; not yet integrated)
+
+- `DECISION` is a pre-execution policy outcome: `decision` is `ALLOW`, `DENY`, `UNKNOWN`, or `REQUIRE_CONFIRMATION`; both execution and side-effect status are `NOT_STARTED`.
+- `EXECUTION_RESULT` is emitted only after execution has started: `decision=NOT_APPLICABLE`; execution and side-effect statuses cannot remain `NOT_STARTED`.
+- `POLICY_APPLIED`, `POLICY_ROLLED_BACK`, and `POLICY_CHANGE_REJECTED` are policy-management events, not tool decisions or execution results; they use `decision=NOT_APPLICABLE` and both statuses `NOT_STARTED`.
+- Invalid event-type/status combinations are rejected before append and rejected again by evidence-chain/export verification.
+- `UNKNOWN` must not be converted to `ALLOW`, `DENY`, or confirmed failure without evidence. Callback success does not prove side effects; use `NOT_VERIFIED` unless a trusted verifier establishes them. If a callback fails and effects cannot be determined, use `decision=NOT_APPLICABLE`, execution `UNKNOWN`, and side-effect `UNKNOWN`.
+- This is a contract proposal sourced from the local M5 branch; M5 owner and M6 consumer confirmation, a reviewable PR, and combined AC3 CI remain pending. The event contract does not replace final host/Gateway authorization and does not establish that all execution paths are integrated.
 
 ## Agent 宿主接入与安装 — M3
 
