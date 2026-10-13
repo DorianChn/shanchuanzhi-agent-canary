@@ -1,6 +1,6 @@
 # M0 技术问题分级与协作流程
 
-更新日期：2026-10-13。当前状态基于 GitHub、文件系统和本机 Codex thread-history 记录；当前 Desktop 工具集合没有 `read_thread`/`wait_threads`。
+更新时间：2026-10-13 15:43 UTC。当前状态以 GitHub Issues/PR、实际 worktree 与本地队列回执为准；本会话没有原生 `read_thread`/`wait_threads`。
 
 ## 优先级
 
@@ -19,9 +19,10 @@
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
 - [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）：旧 PR #38 run `38397135538` 的 marker 断言失败仍未解释。新证据：PR #39 head `65ce028`、run `38415887207`、Windows Node22 job `115360080156` 在 M1-owned 测试 `native lab wrapper interruption emits no allow decision and invokes no tool callback` 失败，Expected true / actual false；Ubuntu Node20/22与macOS Node22通过，Windows Node20/macOS Node20被取消。M1 正检查该 job 的精确源码并做最多3次定向复现；保留 marker、无 allow、无 callback 断言。
-- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 owner 报告 Windows Node 22 聚焦 34/34 通过，证明同进程 quarantine 时先 abort、dispatch 被拒且没有合成副作用；跨进程/shared-store 边界仍未验证。14:20 单次 push 约51秒后 exit1且无输出，PR #43 远端仍 d0fd595；未重试。保持 P0，等待当前 PR 头 CI 与充分端到端验收。
-- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：PR #39 head `65ce028` 的新 run `38415886978` 中，Ubuntu wrapper通过、Windows wrapper因 `NSIS_COMPILER_MISSING` 失败；run `38415887207` 中 Ubuntu Node20/22与macOS Node22通过，Windows Node22失败属于M1-owned Hook测试（#32），Windows Node20/macOS Node20被取消，Docker/sponsor通过、package-smoke跳过。M7 负责 Windows runner 提供实际 NSIS 编译器，不能跳过检查；M1-owned测试缺陷由 #32 跟进。owner 本地套件40通过/0失败/3权限跳过，diff-check通过；不宣称新 CI 全绿。
-- [#44 gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)（P1，OPEN）：PR #30 head f2f2d10 / run 38412534723 在 Ubuntu Node20 的“approval expires with no actual callback”失败，`requestId` undefined（321 pass/1 fail/4 skip）；fail-fast 取消其余矩阵任务，不能算成独立失败。M1 正在精确源版本上复现并判断是行为缺陷还是测试时序问题；不得弱化“过期审批不调用真实 callback、不产生 allow”不变量。
+- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 本地 HEAD `dc4d7fa`，相关回归证据仍在工作树中；远端 PR #43 仍为 `d0fd595`，没有远端修复/CI 验收。M1 正先处理此项；保留跨进程/shared-store 未验证边界。
+- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：PR #39 远端 `65ce028` 的 Windows wrapper、Windows Node20/22 与 macOS Node20 检查有失败；部分 Hook 失败归 M1/#32。M7 本地 HEAD `68e7caa`，正在修改 `INSTALLER_ACCEPTANCE.md` 和 `test/reliability.test.mjs`，不得跳过 NSIS 编译或 symlink 拒绝检查。
+- [#44 gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)（P1，OPEN）：旧 PR #30 head `f2f2d10` / run `38412534723` 的 Ubuntu Node20 子测试出现 `requestId` undefined；根因仍 UNKNOWN。M1 按精确源码复现并判断行为/时序，不弱化过期审批 fail-closed 不变量。
+- [#45 Resolve native Codex Shell unprotected boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)（P1，OPEN）：M2 的 PR #37 仅验证过特定 AppContainer 子进程；原生 Codex Shell 明确为 `UNPROTECTED`，候选 Hook 未在宿主安装/信任。要求提供真实宿主合成 sentinel 证据，或以宿主能力证据明确保持 `UNPROTECTED`/`BLOCKED`，不得误称已保护；待 M1/M7 释放并发槽后派工。
 - [#42 M3 package manifest/current-head validation](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/42)（P1，CLOSED/completed）：PR #33 当前 head c404b6b、run 38400488378 9/9（含 package-smoke）且含 owner-authored M3 API 契约；旧 cf42dde manifest 证据不适用于当前 AC3 PR。跨模块 manifest 组合继续跟踪于 #27。
 
 ## PR 与自动检查
@@ -33,6 +34,6 @@
 
 ## 运行资源
 
-- 开发并行度上限为 2。2026-10-13 14:47 UTC，M1 处理 #32、M7 处理 #41，共占2/2槽；M5单次上传失败后已结束，M6精确旧Hook路径复现结束。推送至少间隔20分钟，由M0合批；最近成功批次14:42 UTC，下一批不早于15:03 UTC。没有VMware、真实模型或安装测试活动。
+- 2026-10-13 15:43 UTC：M1 处理 #35/#44/#32、M7 处理 #41，占用 2/2 槽；M2 的 #45 已登记，等待空闲槽。Quota 最新读数 13%，约 1h45m 重置，M0 会话内每60秒监看；上次 push 15:41:29 UTC，下一批不早于 16:02 UTC。没有 VMware、真实模型或安装测试预约。
 - VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行；本轮 M6 只做本地合成 Hook 测试，M7 未运行真实安装、VM 或模型测试。
-- 本会话工具清单未暴露原生 read_thread/wait_threads。M0 曾经用户许可从本机 thread_history 只读记录核对已引用任务，并用 codex queue 续作；该本机记录不冒称原生 read_thread。当前活动状态对照实际 GitHub ref/Issue/PR 和 owner worktree。
+- 本会话工具清单没有原生 `read_thread`/`wait_threads`；M0 用 `codex queue` 向窗口投递消息，但不把“已投递”当作接收或完成确认。进度只按 GitHub refs/Issues/PR 与模块 worktree 记录，不声称读取聊天内容。

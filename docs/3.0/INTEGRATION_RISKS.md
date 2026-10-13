@@ -1,6 +1,19 @@
 # M0/M9 集成风险登记
 
-更新日期：2026-10-13。下表是当次本机/GitHub 快照，模块工作树可能继续变化。
+更新日期：2026-10-13。当前增量快照见下表；旧 R1–R11 详细记录按其原时间保留，不覆盖当前快照。
+
+## 当前风险增量（2026-10-13 15:43 UTC）
+
+| ID | 优先级 | 风险/证据 | 责任与当前动作 | 状态 |
+| --- | --- | --- | --- | --- |
+| R10 / #35 | P0 | M1 本地 `dc4d7fa` 有 quarantine 回归；远端 PR #43 仍 `d0fd595`，修复未过远端 CI | M1 保留 API owner，先提交可审查修复；M7 不碰 Gateway | IN PROGRESS |
+| R9 / #32 | P1 | PR #39 Windows Node22 Hook interruption 曾失败；根因仍 UNKNOWN | M1 按精确源码诊断，保留 no-allow/no-callback 断言 | OPEN |
+| #44 | P1 | 旧 PR #30 Ubuntu Node20 approval-expiry 测试 `requestId` undefined | M1 分类为产品行为或测试时序，不改弱安全语义 | OPEN |
+| R11 / #41 | P1 | PR #39 远端 `65ce028` 仍有 Windows/部分 macOS CI 失败；本地 M7 `68e7caa` 正编辑报告和可靠性测试 | M7 修复真实 Windows/NSIS 环境与测试路径，随后更新远端 CI | IN PROGRESS |
+| R12 / #45 | P1 | PR #37 仅覆盖已测子进程；Codex 原生 Shell `UNPROTECTED`，Hook 未安装/信任 | M2 负责；等待槽位。验证宿主实际拦截，或明确保持 `UNPROTECTED`/`BLOCKED` | OPEN |
+| R3 / #27 | P1 | M5 尚无远端 PR；M6 E4 外部验证 `NOT_VERIFIED`；manifest 组合未完成 | 各字段 owner 协调后在 M9 AC3 集成门禁复核 | OPEN |
+| R5 | P1 | 当前工具没有 `read_thread`；Codex CLI `queue` 可投递指令，不能确认窗口是否已消费消息 | 状态只由 GitHub 与 worktree 交叉确认，不声称读取对话 | MONITOR |
+| quota | P1（调度） | 当前 13%，约 1h45m 后重置；M0 会话内每60秒检查一次 | 低于5%或读数不明时暂停全部模块；实际低额度暂停只在确认重置后恢复 | MONITOR |
 
 | ID | 优先级 | 风险 | 证据 | 责任/处置 | 状态 |
 | --- | --- | --- | --- | --- | --- |
@@ -25,4 +38,4 @@
 
 ## 资源冲突
 
-开发并行上限为 2；2026-10-13 14:02 UTC M5 已复核候选并排入14:20上传窗口，预留1/2槽。VMware、真实模型和安装测试未运行；下一次分支 push 不早于 14:20 UTC。
+开发并行上限为 2；2026-10-13 15:43 UTC M1/M7 活跃（2/2），M2 #45 等待槽位。当前配额 13%、约1h45m 重置；最近推送 15:41:29 UTC，下一批不早于16:02 UTC。VMware、真实模型和安装测试未运行。
