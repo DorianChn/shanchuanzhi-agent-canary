@@ -132,3 +132,45 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 ### 结论与限制
 
 已确认并修复一个可复现的测试 harness 竞态；这不是 Hook 产品 fail-open 缺陷。之前的 CI 失败没有保存完整 child exit/error/signal/stdout/stderr 快照，旧 run 的 marker 缺失也来自更早的启动窗口测试，因此不能把所有历史红灯确定归因于本次竞态。当前本机复现和 Node 20/22 绿测已记录，历史 CI 根因归属仍为 `UNKNOWN`，需要包含本地修订的新 Windows CI 结果才能关闭远端 Issue #32。这里没有查询或修改 GitHub。
+
+## Issue #32 follow-up：PR #39 Windows Node 22 复现进度（2026-10-13）
+
+### CI 源码与失败断言
+
+- Run `38415887207` 的失败 job `115360080156` 在 Windows Server 2025 / Node `22.23.3` 上执行 CI merge SHA `72987237c6b9cbbe79d7128564793a1b37bad211`；PR #39 head 为 `65ce0288ceeb9815b6cda7cb5f49c5a17ac7df0f`。run merge SHA 与 PR head 的 `test/agent-hook.test.ts`、`src/agent-hook.ts`、相关 Guard/router/SDK 源、native wrapper 和 package manifests 完全一致。
+- 该 run 的测试仍使用旧 `spawnSync(... timeout: 1000)` 路径：子进程须完成启动、读入 fixture 并动态导入 synthetic hook，之后才写 entry marker；父测试未等待 marker 就开始一秒超时。日志中的 `ETIMEDOUT` 断言通过，随后 marker 断言失败（`false !== true`，`test/agent-hook.test.ts:54:53`）。PR #38 head `bca895fe83a1e73c9215116b738f235a08cd85ac` 对应测试路径相同。
+
+### 有界本地验证
+
+- Windows Node `22.23.1` 下在 PR #39 head 的临时 detached worktree 运行旧用例两次：命令均为 `node --import tsx --test '--test-name-pattern=native lab wrapper interruption emits no allow decision and invokes no tool callback' test/agent-hook.test.ts`，两次各 `1/1` 通过（用例耗时 `1011 ms`、`1026 ms`）。
+- 在 M1 当前工作树以同一命令运行一次：`1/1` 通过；诊断为 marker `true`、spawn error `null`、退出 `{code:null, signal:"SIGTERM"}`、stdout/stderr 为空，决策日志断言通过。总计三次，没有再运行。当前环境未发现 Node 20，因此没有 Node 20 复测。
+
+### 判断与交付
+
+旧测试的未同步启动窗口与断言失败相符，但本地旧路径两次通过，当前 marker-handshake 路径一次通过，均未复现 hosted runner 的具体时序。此次 CI failure 更像旧测试夹具/基线差异是基于现有证据的推断，精确根因仍为 `UNKNOWN`。`46af1f19344dffe93a30817c4805eec0c6c673fe`（异步启动、等待 marker 后再中断，并检查无决策输出/日志）已在 PR #43 远端 head 的祖先链中；它是确定性测试夹具修复，不构成运行时缺陷已修复的证据。没有证据要求追加产品代码修复；等待集成分支重新验证前，Issue #32 保持 OPEN。本节复现记录时的 HEAD 为 `dc4d7fa051ca39403ca94415477019532be8022c`；后续本地提交 `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c` 仅修改 #44 的测试。本节证据未推送或写 GitHub。
+
+## Issue #35 checkpoint
+
+当前已记录的本地 Node 22 honeypot 定向结果为 `34/34`；该结果支持 quarantine 中止 dispatch、marker 未变化、后续写入被拒绝且 secret 未返回，但不是当前 PR head 的端到端 CI 证据。历史 P0 #35 继续保持 OPEN；跨进程边界仍未验证。没有新的可复现运行时缺陷，因此本次不修改 Gateway 产品代码，也不以本地 pass 关闭 #35。
+
+PR #43 远端 head `d0fd595` 的旧测试直接等待 honeypot read dispatch 成功；实际 quarantine abort 进入 Gateway 的统一失败路径，稳定拒绝为 `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`。本地 `dc4d7fa` 相对该 head 的唯一差异是测试增加对此拒绝的 `assert.rejects`，同时保留隔离、sentinel 未变、后续写入拒绝和事件计数断言。该证据支持 CI 为测试期望不匹配，不证明一般副作用回滚或跨进程边界；更新后的远端 CI 尚未确认。
+
+## P1 #44: approval expiry test timing (2026-10-13)
+
+- Exact source commit `f2f2d10c67aaf304f0e3cbec57045d72b90127ac` was checked out into the M1 scratch worktree `agents/M1-security-f2f2d10-scratch`, without changing the main M1 worktree. The official focused command on Windows Node `22.23.1` passed `1/1`; Node 20 was not available in Windows or WSL. The scratch worktree reused existing M1 `node_modules` through a junction; no runtime or dependencies were installed.
+- The CI error location is the test expression `operator.pending()[0].requestId`. In the exact source, `pending()` first calls `sweep()`, which removes expired entries; the fixture uses `approvalTtlMs: 5`. A controlled synthetic reproduction on the exact source inserted a `15 ms` scheduler delay before that lookup and reproduced `Cannot read properties of undefined (reading 'requestId')`. Output showed `decision=REQUIRE_APPROVAL`, a string `requestId` on the dispatch denial, `pending_count=0`, and `callback_count=0`. The original CI runner's timing was not directly observed locally; the test-harness expiry race mechanism is reproduced, while Ubuntu Node 20 remains unavailable.
+- Minimal M1-owned fix: the test now captures and asserts the approval decision and `requestId` from the dispatch rejection, then verifies expiration and `callback===0`; it no longer races by retrieving an already expired item from `pending()`. No Gateway product code, policy, or public API changed.
+- Windows Node `22.23.1` verification: focused subtest `1/1`; full `test/gateway.test.ts` suite `28/28`; working and staged `git diff --check` both passed. Node 20 CI verification remains pending.
+- This test-only adjustment was committed locally as `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c`; it has not been pushed. An attempt to post the result to Issue #44 returned GitHub API `403 Resource not accessible by integration`; there was no retry or alternate route. Issue #44 remains OPEN / root cause UNKNOWN.
+
+## PR #43 current-head CI evidence (2026-10-13)
+
+M0 confirmed a batch push at `2026-10-13 16:02:40 UTC` containing `dc4d7fa` and `89e40cd`. The run associated with exact head `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c`, [CI run 38427313208](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38427313208), completed with conclusion `success`:
+
+- The six `npm test` matrix jobs and their `npm run build` steps passed: Windows Node 20 job `115399969526`, Windows Node 22 `115399969339`, Ubuntu Node 20 `115399969375`, Ubuntu Node 22 `115399969355`, macOS Node 20 `115399969424`, and macOS Node 22 `115399969427`.
+- `package-smoke` job `115400941704`, `docker-build` job `115399969218`, and `sponsor-smoke` job `115399968798` also completed successfully.
+- For P0 #35, this is current-head remote CI evidence for the honeypot/quarantine test suite, supplementing the earlier local Node 22 `34/34` result. No cross-process/shared-store quarantine broadcast was tested, and no general rollback guarantee is claimed. Issue #35 was still OPEN when read; no remote issue state was changed.
+- For P1 #32, Windows Node 20 and 22 full test jobs passed on this integrated head. The deterministic fixture correction remains test-harness-only; the exact timing of historical hosted failures remains `UNKNOWN`. The integration-branch revalidation previously pending is now available. Issue #32 was still OPEN when read; no remote issue state was changed.
+- For P1 #44, Ubuntu Node 20 and all other matrix test jobs passed with the test-only expiry adjustment in `89e40cd`. The controlled 15 ms delay reproduced the stale-`pending()` lookup failure mechanism on exact source, but did not recreate the original Ubuntu runner timing. No Gateway product code or policy changed. Issue #44 was still OPEN when read; the earlier comment attempt remains blocked by API 403.
+
+These are GitHub Actions results for the exact pushed PR commit, not a new local test run. No merge or release was performed.

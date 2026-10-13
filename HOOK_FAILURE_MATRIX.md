@@ -24,6 +24,12 @@
 
 失败 run `38374902576` 的超时断言通过，marker 断言失败；该 run 未保留 child stdout/stderr，无法证明根因。测试现已改为“等入口 marker → 主动中断 → 检查退出/输出/日志”，保持“不产生 allow 决定”的 fail-closed 断言。修订版本的本地 Windows Node 20.20.2 连续 15 次通过；Issue #32 保持 OPEN，直到该版本的新 Windows CI 给出结果。
 
+PR #39 run `38415887207` 的 Windows Node `22.23.3` job 仍运行旧 `spawnSync` 一秒超时测试：`ETIMEDOUT` 断言通过，随后 marker 为 false。旧 PR #38 路径也相同。2026-10-13 在 Windows Node `22.23.1` 对 PR #39 head 旧用例复测 `2/2`、当前 M1 marker-handshake 用例 `1/1`，均通过，未复现该 CI 时序。综合证据，此次失败更像旧测试夹具/基线差异（推断），根因仍为 `UNKNOWN`；commit `46af1f19344dffe93a30817c4805eec0c6c673fe` 是确定性测试夹具修复，已在 PR #43 远端 head 的祖先链中，不是运行时修复证据。#32 保持 OPEN，等待集成分支重新验证。
+
+### PR #43 当前头验证（2026-10-13）
+
+M0 于 16:02:40 UTC 推送 `dc4d7fa`、`89e40cd` 后，PR #43 当前提交 `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c` 的 CI run [38427313208](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38427313208) 完成并成功。Windows Node 20/22 job `115399969526`、`115399969339` 的 `npm test` 均通过；六个 Windows、Ubuntu、macOS Node 20/22 测试矩阵及各自 build 均通过。测试夹具的历史 hosted-runner 时序仍未完全复原，故历史失败的精确根因保持 `UNKNOWN`；本次集成头验证满足此前等待的新 Windows CI 条件。读取时 Issue #32 仍为 OPEN，未通过本轮操作修改远端状态。
+
 ## Fail-closed 结论
 
 仅当 Claude 实际启动配置好的 PreToolUse wrapper，wrapper 执行到返回结果，且宿主把 deny 视为阻断时，才能确认此路径 fail-closed。模块加载失败、Hook 回调异常、非法返回、wrapper 内超时和日志错误都在此路径内返回 deny。Hook 进程本身未加载/启动失败/被外部杀死的 fail-closed 取决于宿主 onFailure:block；本次未验证该外部配置。因此不宣称保护所有原生 Shell 操作或未接入的工具。
