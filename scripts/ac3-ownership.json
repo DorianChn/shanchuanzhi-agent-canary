@@ -10,13 +10,29 @@
     "feature/ac3-reliability": "M7",
     "feature/ac3-open-source-product": "M8",
     "feature/ac3-m0-coordination": "M0",
-    "feature/ac3-m9-integration": "M9"
+    "feature/ac3-m9-integration": "M9",
+    "feature/ac3-e4-validation-ac3": "M6",
+    "feature/ac3-reliability-ac3": "M7"
   },
   "sharedPaths": {
-    "src/runtime/gateway.ts": ["M1", "M7"],
-    "package.json": ["M3", "M5", "M6", "M7"],
-    "src/ai/console.ts": ["M3", "M4"],
-    "src/runtime/evidence.ts": ["M1", "M6"]
+    "src/runtime/gateway.ts": [
+      "M1",
+      "M7"
+    ],
+    "package.json": [
+      "M3",
+      "M5",
+      "M6",
+      "M7"
+    ],
+    "src/ai/console.ts": [
+      "M3",
+      "M4"
+    ],
+    "src/runtime/evidence.ts": [
+      "M1",
+      "M6"
+    ]
   },
   "publicApiCandidates": [
     "src/runtime/gateway.ts",
