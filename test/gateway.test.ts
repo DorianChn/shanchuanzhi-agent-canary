@@ -40,6 +40,40 @@ test('nested MCP canary quarantines immediately and aborts an active controlled 
   assert.equal(decoyCalls,0);
  }finally{release();await s.runtime.close();await Promise.all([activeOutcome,canaryOutcome].filter(Boolean));}
 });
+test('external Guard quarantine synchronously aborts an active callback before its synthetic effect',async()=>{
+ let release!:()=>void,started!:()=>void,completed!:()=>void,activeSignal:AbortSignal|undefined;
+ const hold=new Promise<void>(r=>release=r),begun=new Promise<void>(r=>started=r),callbackDone=new Promise<void>(r=>completed=r);
+ const s=setup({timeoutMs:5_000,mcpTools:{slow:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,signal:AbortSignal)=>{activeSignal=signal;started();try{await hold;if(!signal.aborted)fs.writeFileSync(path.join(s.root,'post-quarantine-marker.txt'),'synthetic');return 'done';}finally{completed();}}}}});
+ const active=s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'slow',arguments:{}}});
+ try{
+  await begun;
+  const trip=s.guard.trip({reason:'external_synthetic_quarantine'});
+  assert.equal(trip.state,'QUARANTINED');
+  assert.equal(activeSignal!.aborted,true);
+  release();
+  await callbackDone;
+  await assert.rejects(active,/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.equal(fs.existsSync(path.join(s.root,'post-quarantine-marker.txt')),false);
+  assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');
+ }finally{release();await s.runtime.close();await active.catch(()=>{});}
+});
+test('gateway fails closed when its Guard cannot provide a quarantine subscription',()=>{
+ const root=fs.mkdtempSync(path.join(home,'subscription-failure-'));
+ fs.writeFileSync(path.join(root,'result.txt'),'before');
+ const guard={sessionId:'missing-subscription-guard',state:'SAFE'} as any;
+ assert.throws(()=>createTrustedExecutionGateway({agentId:'subscription-failure',guard,workspaceRoot:root,files:[{path:'result.txt',writable:true}],evidence:new EvidenceRecorder()}),/GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED/);
+ assert.equal(fs.readFileSync(path.join(root,'result.txt'),'utf8'),'before');
+});
+test('gateway close unsubscribes its Guard observer exactly once',async()=>{
+ const root=fs.mkdtempSync(path.join(home,'subscription-close-'));
+ const guard=createAgentGuard({alert:false});
+ const subscribe=guard.subscribeQuarantine.bind(guard);
+ let unsubscribeCalls=0;
+ guard.subscribeQuarantine=(listener)=>{const dispose=subscribe(listener);return()=>{unsubscribeCalls++;dispose();};};
+ const runtime=createTrustedExecutionGateway({agentId:'subscription-close',guard,workspaceRoot:root,files:[],evidence:new EvidenceRecorder()});
+ await Promise.all([runtime.close(),runtime.close()]);
+ assert.equal(unsubscribeCalls,1);
+});
 test('fixed argv process really executes normal task; arbitrary shell does not run',async()=>{const s=setup({commands:{build:{executable:process.execPath,args:['-e',"require('fs').writeFileSync('built.txt','ok');console.log('BUILD_OK')"]}}});try{await assert.rejects(s.runtime.agent.dispatch({name:'run_command',args:{command:'node -e dangerous'}}),/unregistered_command/);const result=await s.runtime.agent.dispatch({name:'run_command',args:{command:'build'}}) as any;assert.equal(result.exitCode,0);assert.equal(fs.readFileSync(path.join(s.root,'built.txt'),'utf8'),'ok');assert.match(result.stdout,/BUILD_OK/);assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'NOT_VERIFIED');}finally{await s.runtime.close();}});
 test('denied network request has zero actual loopback HTTP side effects',async()=>{let received=0;const server=http.createServer((_req,res)=>{received++;res.end('bad');});await new Promise<void>(r=>server.listen(0,'127.0.0.1',r));const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'http_request',args:{url:'http://127.0.0.1:'+((server.address() as any).port)}}),/network_capability_denied/);assert.equal(received,0);}finally{await s.runtime.close();await new Promise<void>(r=>server.close(()=>r()));}});
 test('host-only approval consumes once and model has no approve or reset entry point',async()=>{let called=0;const s=setup({mcpTools:{ambiguous:{approvalRequired:true,execute:async()=>++called}}});try{assert.equal((s.runtime.agent as any).approve,undefined);assert.equal((s.runtime.agent as any).reset,undefined);await assert.rejects(s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'ambiguous',arguments:{}}}),/REQUIRE_APPROVAL/);const id=s.runtime.operator.pending()[0].requestId;assert.equal(await s.runtime.operator.approve(id),1);await assert.rejects(s.runtime.operator.approve(id),/CONSUMED/);assert.equal(called,1);}finally{await s.runtime.close();}});

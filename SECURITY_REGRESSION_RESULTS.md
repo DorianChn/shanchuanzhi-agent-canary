@@ -62,7 +62,7 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 
 只读检查 M7 worktree：`feature/ac3-reliability`，HEAD `9d316fe`，工作树干净。M7 Gateway 变更 memoize `close()` Promise、等待 `history.tail`、清除待审批，并尝试关闭全部资源后统一抛 `GATEWAY_RESOURCE_CLOSE_FAILED`。M1 当前实现还会在等待队列前清空审批、同步 abort 活动 controllers；M7 文件没有这些 M1 安全取消行为。集成需保留 M1 的 closed/abort/Guard 最终检查，并吸收 M7 的逐资源关闭与稳定错误语义；不可整文件覆盖。两边公共 Gateway shape 没有因此改变。Issue #28 仍 OPEN，等待双模块合并验证。
 
-### 已确认的跨模块接口缺口
+### 历史快照：已确认的跨模块接口缺口（本轮已解决）
 
 使用 Node 20.20.2 的一次性合成复现：受控 MCP callback 等待 gate 时，由另一 host route 对同一个 Guard 调用
 `trip({reason:'synthetic_quarantine'})`；观察到 Guard=`QUARANTINED`、callback signal `aborted=false`，callback 返回 `done` 并在隔离临时目录创建 `after-trip.txt`。这确认当前 Guard API 缺少同步隔离通知，会让已运行 callback 在外部 quarantine 后继续执行。
@@ -75,3 +75,29 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 - 本地提交 `aae4705` 尚未推送；非交互 `git push origin HEAD:refs/heads/feature/ac3-security-core` 返回 `could not read Username`，远端 M1 分支 ref 不存在。因此 Draft PR 尚未创建，三条现有 Issue 的状态/评论未被远端更新。
 - #28 待同步内容：保留 M1 abort/Guard 检查并吸收 M7 close-all 资源行为；#32 待同步内容：修订测试本机 15/15、全量验证通过、历史根因 UNKNOWN、保持 OPEN；#29 状态草案：M1 IDLE，分支/HEAD `feature/ac3-security-core`/`aae4705`，下一步恢复写入后发布 Draft PR 并跑 Windows Node 20 CI。无 VMware/真实模型/安装槽位需求。
 - 不合并 main、不发布 Release。远端写入通道恢复后，以 `feature/agent-canary-3.0` 为 Draft PR base，并将 #32 保持 OPEN 直到新 Windows Node 20 CI 出结果。
+
+## P0 #35：同步 quarantine 通知与活动 callback 中止（2026-10-13）
+
+### 复现与修复
+
+- 修复前先加入自动回归并按原故障顺序运行：启动合成 MCP callback、等待 callback 持有 gate、从 Gateway 外部调用同一 `Guard.trip()`。测试失败于 `signal.aborted`，实际值为 `false`，复现了 P0 的缺口。
+- M1 的 Guard API 增加 `subscribeQuarantine(listener: () => void): () => void`。Guard 先同步 latch 到 `QUARANTINED`，然后同步调用订阅者，早于 state-store 写入、事件日志、凭据撤销和告警；重复 trip 不重复通知，reset 后的新隔离会发出新通知。已 quarantine 的 Guard 在订阅时同步通知一次。listener 异常隔离，disposer 幂等。
+- Gateway 创建时注册 observer；收到通知后 abort 同 Guard 的活动 Gateway controller 集合。注册失败使 Gateway 创建失败，并尝试关闭已打开的文件句柄。Gateway `close()` 先取消本实例 controller、同步退订，再等待队列并关闭资源。
+- 另有构造失败回归：Guard 没有提供 quarantine subscription 时，Gateway 以固定错误拒绝创建，临时 capability 文件保持原内容。
+- 回归的 callback 只会在收到 signal 后检查 `aborted`，若未取消才会在 OS 临时目录下创建合成 marker。修复后 signal 在 `trip()` 返回前已 aborted，释放 gate 后 marker 不存在，既有 `result.txt` 保持 `before`，dispatch 拒绝完成。
+- 生命周期用例覆盖同步通知、重复 trip 去重、observer 抛错后后续 observer 仍运行、已隔离后订阅立即通知、reset 后再 trip、重复 unsubscribe 和退订后不再通知。
+
+### 验证
+
+- 修复前最小回归：失败，观测 `false !== true`（预期 fail-closed signal abort）。
+- 修复后单项回归：通过。
+- 聚焦验证命令：`node --import tsx --test test/gateway.test.ts test/containment.test.ts test/gateway-acceptance.test.ts test/package-types.test.ts`。Windows Node v20.20.2 执行结果：63 项通过，0 失败、0 跳过。
+- TypeScript build：`node node_modules/typescript/bin/tsc`，退出码 0。
+- `git diff --check`：通过。
+- 本节验证的是本 M1 工作树的差异；未重跑完整 `npm run verify`，此前全量验证记录不代表本轮变化已覆盖全量 suite。
+
+### 契约范围与剩余风险
+
+- 当前同步通知只保证从正在使用的同一个 `AgentGuard` 实例调用 `trip()`。不同 Guard 实例共享 state store，或另一进程直接改写持久化状态时，没有推送式同步广播；该扩展需要 M0 定义额外的 store/IPC API。
+- Gateway 可以同步 abort signal 和 dispatch 等待；它不能回滚已完成外部动作，也不能强制终止忽略 AbortSignal 的不合作 callback。本回归验证 callback 在写入前遵守 signal 检查。M1 Gateway 仍只覆盖 `agent.dispatch` 中已登记的受控能力，不保护原生 Shell 或绕过 Gateway 的文件、网络与 MCP 调用。
+- M0 下一步：按本报告所列的签名、时序、重复通知、reset 和 disposer 语义更新 `coordinator/docs/3.0/API_CONTRACTS.md`。本轮未改协调目录、M2–M8 文件，未访问 GitHub connector，未创建 PR 或合并分支。

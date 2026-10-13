@@ -66,7 +66,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
   }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
-  let closed=false,closePromise:Promise<void>|undefined;
+  let closed=false,closePromise:Promise<void>|undefined,unsubscribeQuarantine=()=>{};
   const activeControllers=new Set<AbortController>();
   const pending=new Map<string,{request:Request;expires:number}>();
   function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
@@ -235,8 +235,17 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   function close():Promise<void>{
     if(closePromise)return closePromise;
     closed=true;pending.clear();for(const controller of activeControllers)controller.abort();
+    const unsubscribe=unsubscribeQuarantine;unsubscribeQuarantine=()=>{};try{unsubscribe();}catch{}
     closePromise=history.tail.then(()=>{for(const f of resources.values())if(f.fd>=0){fs.closeSync(f.fd);f.fd=-1;}});
     return closePromise;
+  }
+  try{
+    const unsubscribe=options.guard.subscribeQuarantine(abortSession);
+    if(typeof unsubscribe!=='function')throw Error('GUARD_QUARANTINE_DISPOSER_INVALID');
+    unsubscribeQuarantine=unsubscribe;
+  }catch{
+    for(const f of resources.values())if(f.fd>=0){try{fs.closeSync(f.fd);}catch{}f.fd=-1;}
+    throw Error('GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED');
   }
   return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),close});
 }

@@ -52,7 +52,7 @@ DENY 和审批等待均在受控 callback、文件写入、固定进程启动或
 - 文件 capability 绑定打开句柄，执行前复查路径与 inode，并对写入回读验证。这能阻止已观察到的替换，但不是 OS 级原子事务，不能证明所有并发文件系统变化均无 TOCTOU。
 - 被审计的 Gateway 是宿主内 dispatch 能力，没有独立 MCP socket/session transport。传输断线后的取消只有在宿主将其映射到 AbortSignal/close 时成立；本次没有验证任意 MCP server 传输栈的自动重连或断线语义。
 
-## 续作补充：Hook interruption、M7 Gateway 协调与 Guard 通知
+## 续作补充：Hook interruption、M7 Gateway 协调与 Guard 通知（P0 #35 修复前状态记录）
 
 - Issue #32 的失败 run `38374902576` 中，`spawnSync` 的 `ETIMEDOUT` 断言通过，但紧随其后的 Hook-entry marker 断言为 false。旧测试的一秒预算同时覆盖 Windows 子进程启动与模块导入，失败日志没有保留 stdout/stderr 或进程状态，因此只能确认 Hook 入口 marker 未出现，不能确认是 wrapper 产品缺陷还是启动/测试时序问题。根因记录为 `UNKNOWN / BLOCKED`，等待修订测试的新 Windows Node 20 CI 结果。
 - 回归测试已改为异步启动合成 wrapper，先等 Hook 入口 marker，再主动终止进程；同时检查启动错误、退出状态、stdout/stderr 和决策日志。Windows Node `v20.20.2` 本地定向测试连续通过 15 次；详见 `SECURITY_REGRESSION_RESULTS.md`。这只验证 wrapper 子进程中断时没有输出 allow，不等于真实 Claude 宿主端到端验证。
@@ -63,6 +63,17 @@ DENY 和审批等待均在受控 callback、文件写入、固定进程启动或
 
 Hook 回归曾用纯合成凭据标记证实原 JSONL 会写入完整参数。修复后 wrapper 只写固定决策元数据；错误 detail 和参数不会进入该 Hook 日志。Gateway 证据使用 HMAC 请求摘要而非参数正文，回归覆盖敏感输出后的网络拒绝。日志写入失败会 deny。管理员/同机进程可读取日志的系统访问控制不属于本次验证范围。
 
-## 仍需 M0 协调的接口问题
+## M0 契约同步：P0 #35 本地修复
 
-协调文档现已存在并完成核对，但 `AgentGuard.trip()` 仍没有供 Gateway 订阅的同步隔离通知/取消契约。上文的合成复现确认外部路由触发 quarantine 后活动 callback 可继续。建议 M0 与 M1/Guard owner 定义通知时序、订阅生命周期、重复 trip、close/unsubscribe 和失败语义，并更新契约；新 Issue 标题草案为 `[P1] Define Guard quarantine notification for active Gateway executions`。Issue 创建及向 #28/#29/#32 评论的 API 写入均返回 403，浏览器扩展未连接，故该 Issue 尚未创建、现有 Issue 也未收到本轮评论。该问题处于 `CONFIRMED / BLOCKED on M0 interface coordination`；远端同步限制见 `SECURITY_REGRESSION_RESULTS.md`。
+本节更新 supersede 上一节在修复前记录的 Guard 通知状态。Issue #35 的最小复现是在 Gateway callback 等待 gate 时，从 Gateway 外部对同一 `AgentGuard` 对象调用 `trip()`；状态已 quarantine，但活动 signal 没有 abort，gate 释放后 callback 可以产生合成 marker。
+
+M1 现在提供 `AgentGuard.subscribeQuarantine(listener: () => void): () => void`：
+
+- 每次本地状态进入 `QUARANTINED` 时同步通知，发生在持久化、审计日志、凭据撤销和告警之前；通知不带参数或敏感上下文。
+- 已隔离时订阅会同步收到一次通知；同一隔离状态的重复 `trip()` 不重复通知。host reset 后的下一次隔离是新 transition，会再次通知。
+- listener 异常被隔离，不会撤销隔离或阻止其他 listener；返回的 disposer 可重复调用。
+- Gateway 在返回 host runtime 前注册订阅；通知会同步 abort 此 Guard 跟踪的活动 Gateway 请求。订阅注册失败时 Gateway 创建失败并关闭已打开的 capability 文件句柄。`close()` 会先 abort 本 Gateway 活动请求，再退订，然后等待队列并关闭资源。
+
+该同步保证的范围是同一进程中的同一个 `AgentGuard` 实例。另一个 Guard 实例只通过共享 `ContainmentStateStore` 改变状态，或另一进程直接修改持久化标记，不会主动触发此实例的同步 listener；本地 state 读取能在观察到隔离后 latch，但不能替代跨实例/跨进程事件通道。M0 更新 `API_CONTRACTS.md` 时应明确这个边界及订阅生命周期；若要覆盖跨进程变化，需要单独定义 IPC/状态存储通知契约。此修复不表示保护桌面 Agent 的原生 Shell、未接入 MCP 或直接文件/网络 API。
+
+本地实现与合成回归通过；远端 Issue/PR 状态本轮没有查询或更新。完整命令、结果和未覆盖边界见 `SECURITY_REGRESSION_RESULTS.md`。
