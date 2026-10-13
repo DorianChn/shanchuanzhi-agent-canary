@@ -40,9 +40,11 @@ test('NSIS compile acceptance keeps its Windows, compiler, and template failure 
   assert.ok(source.includes("compileExitCode:compiled.status,outputExists"),'successful compiler output must record the exit code and artifact presence');
 });
 test('Windows community workflow installs and compiles with NSIS only on Windows',()=>{
-  const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8');
+  const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   assert.ok(workflow.includes("name: Install pinned NSIS compiler on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/install-nsis-compiler.mjs"),'the Windows runner must provision the pinned compiler');
   assert.ok(workflow.includes("name: Compile installer template on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/verify-installer-template.mjs"),'Ubuntu must not run Windows-only compiler acceptance');
+  assert.ok(workflow.indexOf('run: node scripts/verify-installer-template.mjs')<workflow.indexOf('- run: npm ci --no-audit --no-fund'),'compiler evidence should run before unrelated tests can fail-fast the Windows job');
+  assert.ok(workflow.includes('fail-fast: false'),'all OS matrix results should finish after one platform fails');
 });
 test('atomic replacement preserves the old file when a disk-full write fails',()=>{
   const root=makeCanonicalTempRoot('agent-canary-atomic-write-');

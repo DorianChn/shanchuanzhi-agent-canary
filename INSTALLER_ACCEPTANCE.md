@@ -11,7 +11,7 @@
 本记录区分三类证据：
 
 - **本轮源码测试**：`npm run verify` 及 Windows 包装器专项回归；这些结果不代表已运行安装程序。
-- **编译检查**：Windows CI 候选流程下载并校验 NSIS 3.13 安装包，安装到临时目录，强制要求 `makensis.exe` 存在并匹配预期版本，再用它编译渲染后的模板；安装步骤会记录安装包与编译器 SHA-256，编译步骤会记录实际版本及输出/模板 SHA-256；编译不启动生成的 EXE。PR #39 在远端 head `65ce028` 的 run `38415886978` 于 Windows 编译步骤失败，报 `NSIS_COMPILER_MISSING`。本地候选修正了 `/D` 参数传递并增加 Windows-only 编译器安装步骤，但本地改动尚未由 hosted Windows runner 执行，真实编译仍未验证。
+- **编译检查**：Windows CI 候选流程下载并校验 NSIS 3.13 安装包，安装到临时目录，强制要求 `makensis.exe` 存在并匹配预期版本，再用它编译渲染后的模板；编译输出是使用合成 payload 的临时 smoke-fixture EXE，不是发行包，且不会运行。安装步骤记录安装包与编译器 SHA-256，编译步骤记录实际版本及输出/模板 SHA-256。PR #39 在旧 head `65ce028` 的 run `38415886978` 曾因 `NSIS_COMPILER_MISSING` 失败。更新后的 head `4f3a2c5` 在 run `38430069038` 的 Windows wrapper job 更早于 `npm run test:reliability` 失败，故 NSIS 安装和模板编译步骤被跳过；该 run 没有可核实的 makensis 版本或编译产物证据。当前本地修复将 compiler/install steps 移到 `npm ci` 和 reliability 测试之前，并关闭 matrix fail-fast；新一轮 CI 尚未运行。
 - **实际安装验收**：本轮未执行。公开或本机构建的真实安装包没有在 M7 环境中运行；VMware 安装测试资源现已释放，没有留下运行中的 VM 或访客安装进程。
 
 历史 Windows 记录见 [`docs/3.0/INSTALLATION_ACCEPTANCE.md`](../../docs/3.0/INSTALLATION_ACCEPTANCE.md)：公开 candidate.4 曾在 EFS LocalAppData 环境卸载失败；随后本机 NSIS 3.10 诊断构建完成了两轮生命周期，但它不是公开 candidate，也不是发行工具链 NSIS 3.13。该历史结果没有被挪作本轮证明。
@@ -50,8 +50,9 @@
 - 官方 NSIS 3.13 ZIP 替代路径未得到可用压缩包：官方记录的预期 SHA-256 为 `ba63dffc4410ee89193e1cb5a41989991bd77c61068da17e3156d136b7b0b3d8`；首次下载返回 152,105 字节 HTML，SHA-256 为 `b41c3ad3f186e44893b9916c8456a2395d2365a39806e2f53943e2b8cb3cf5c2`，与预期不符；另一个官方 SourceForge 下载链接重定向后连接超时。没有解包或运行该响应。
 - `npm audit --audit-level=high`：**0 vulnerabilities**。
 - 本轮没有运行 `npm run verify`、真实安装包、真实模型或 24 小时/7 天测试。VMware 仅执行了只读清单和磁盘链检查，没有启动、修复或修改 VM。以上本地源码/模板结果仍不代表安装器验收。
-- 本地候选 `68e7caa` 的静态 NSIS 参数回归检查通过，但真实 NSIS setup 启动和模板编译仍未验证。对应远端失败来自旧 head `65ce028`；修复需进入 PR 并由 Windows CI 重新执行。即使 CI 编译通过，仍需单独完成实际 EXE 验收。
-- 2026-10-14 本地代码检查点 `77ac15051723dc02339f6da43a4e0ee12eb8f5e4` 的窄范围测试 `node.exe --import tsx --test --test-name-pattern="NSIS|Windows community workflow" test/reliability.test.mjs`：**3 项通过**，覆盖参数、编译器门禁和 Windows-only workflow 条件。它是回归断言，未执行 NSIS 编译器；该候选尚无 hosted Windows run，真实版本输出和模板编译结果仍待 CI。
+- 本地候选 `68e7caa` 的静态 NSIS 参数回归检查通过，但真实 NSIS setup 启动和模板编译仍未验证。旧 head `65ce028` 的失败由后续代码修正；新 head `4f3a2c5` 的 CI 详情见下一项。即使 CI 编译通过，仍需单独完成实际 EXE 验收。
+- 2026-10-13 PR head `4f3a2c5c8114ee7ec77e43d2f1085a8aa5fc949a` 的 run `38430069038`：Windows wrapper job 在 `npm run test:reliability` 的断言 `the Windows runner must provision the pinned compiler` 失败，`Install pinned NSIS compiler on Windows` 和 `Compile installer template on Windows` 均 **skipped**；Ubuntu wrapper job 最终 **cancelled**，其 reliability、audit、package-check 和语法步骤均显示通过。相邻 CI run `38430069098`：Windows Node 20/22 均在同一 M7 workflow 断言失败；macOS Node 20 与 Ubuntu Node 22 通过；Ubuntu Node 20 和 macOS Node 22 job 被取消（其 `npm test` 步骤显示通过）；Docker 和 sponsor 通过。失败断言对换行做了 LF 硬匹配；M7 已改为比较前统一 CRLF。本地 Windows 窄范围 Node 测试 **3 项通过**，并增加断言保证 NSIS 编译步骤先于可能失败的 npm 测试、M7 Windows/Ubuntu wrapper 矩阵不因首个失败而取消。修复还未推送，真实 GitHub Windows job 尚未重跑。
+- 2026-10-14 本地代码检查点 `77ac15051723dc02339f6da43a4e0ee12eb8f5e4` 的窄范围测试 `node.exe --import tsx --test --test-name-pattern="NSIS|Windows community workflow" test/reliability.test.mjs`：**3 项通过**，覆盖参数、编译器门禁和 Windows-only workflow 条件。它是回归断言，未执行 NSIS 编译器。
 - 2026-10-14 本轮真实安装尝试受 VM 环境阻塞：`'/mnt/d/虚拟机/vmrun.exe' -T ws list` 输出 `Total running VMs: 0`；`'/mnt/d/虚拟机/vmware-vdiskmanager.exe' -e 'D:\AgentCanary-3.0-Win11-VM\Windows11-Clean-Test\Agent-Canary-Windows11-Clean-Test.vmdk'` 输出 VMware preferences `.lck` `Access is denied`，随后报告虚拟盘需要修复，退出码 1。没有运行磁盘修复或重试 VMware 写操作。宿主机此前 `Get-Command makensis.exe` 和 `where.exe makensis.exe` 均未找到编译器；本轮没有获得 `makensis /VERSION`，没有真实模板编译和 EXE 安装结果。安装器验收仍为 **NOT VERIFIED / HOLD**。
 - 可用 Community Preview ZIP `Agent_Canary_3_0_Community_Preview_99660b36.zip` 的 SHA-256 为 `011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed`；Python `zipfile.testzip()` 返回 `None`，126 项，无路径异常项，内部元数据标为 `notStable: true`。这是 ZIP 完整性检查，不是编译、来源认证或安装证据。
 

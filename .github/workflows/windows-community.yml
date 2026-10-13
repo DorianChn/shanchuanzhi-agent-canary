@@ -21,6 +21,7 @@ permissions:
 jobs:
   wrapper-regressions:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -29,17 +30,17 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
-      - run: npm ci --no-audit --no-fund
-      - run: npm run build
-      - run: npm run test:reliability
-      - run: npm audit --audit-level=high
-      - run: npm run pack:check
       - name: Install pinned NSIS compiler on Windows
         if: runner.os == 'Windows'
         run: node scripts/install-nsis-compiler.mjs
       - name: Compile installer template on Windows
         if: runner.os == 'Windows'
         run: node scripts/verify-installer-template.mjs
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm run test:reliability
+      - run: npm audit --audit-level=high
+      - run: npm run pack:check
       - run: node --check packaging/windows/build.mjs
       - run: node --check packaging/windows/prepare.mjs
       - run: node --check packaging/windows/render-installer.mjs
