@@ -66,7 +66,6 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
   }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
   let closed=false;
-  let closePromise:Promise<void>|undefined;
   const pending=new Map<string,{request:Request;expires:number}>();
   function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
   function normalize(call:ToolCall):Request{
@@ -204,20 +203,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     approve(requestId:string){return serialize(async()=>{sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return execute(p.request,createHmac('sha256',key).update(requestId).digest('hex'));});},
     reject(requestId:string){sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return blocked(p.request,'operator_rejected');},
   });
-  function close():Promise<void>{
-    if(!closePromise){
-      closed=true;
-      closePromise=(async()=>{
-        await history.tail;
-        pending.clear();
-        let closeFailed=false;
-        for(const resource of resources.values()){
-          try{fs.closeSync(resource.fd);}catch{closeFailed=true;}
-        }
-        if(closeFailed)throw Error('GATEWAY_RESOURCE_CLOSE_FAILED');
-      })();
-    }
-    return closePromise;
-  }
-  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),close});
+  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
+    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values())fs.closeSync(f.fd);}
+  });
 }

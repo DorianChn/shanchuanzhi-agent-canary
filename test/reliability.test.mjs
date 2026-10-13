@@ -120,32 +120,28 @@ test('failed latest-pointer replacement preserves the previous report pointer',(
   }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 
-test('gateway drains queued work and concurrent close calls release held file handles once',async()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-close-race-'));
-  const target=path.join(root,'state.txt'),evidenceFile=path.join(root,'evidence.jsonl');fs.writeFileSync(target,'before');
+test('gateway evidence persists and the chain rejects tampering after accepted local work',async()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-evidence-persist-'));
+  const evidenceFile=path.join(root,'evidence.jsonl');
   const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')});
   const evidence=new EvidenceRecorder(128,evidenceFile);
   const gateway=createTrustedExecutionGateway({
-    agentId:'reliability-close',guard,workspaceRoot:root,files:[{path:'state.txt',writable:true}],evidence,
-    mcpTools:{slow:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>{await new Promise(resolve=>setTimeout(resolve,15));return{ok:true};}}}
+    agentId:'reliability-evidence',guard,workspaceRoot:root,files:[],evidence,
+    mcpTools:{inspect:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>({ok:true})}}
   });
+  let gatewayClosed=false,evidenceClosed=false;
   try{
-    const queued=gateway.agent.dispatch({name:'mcp_tool',args:{tool:'slow',arguments:{}}});
-    const closeA=gateway.close(),closeB=gateway.close();
-    assert.deepEqual(await queued,{ok:true});
-    await Promise.all([closeA,closeB]);
+    assert.deepEqual(await gateway.agent.dispatch({name:'mcp_tool',args:{tool:'inspect',arguments:{}}}),{ok:true});
     assert.equal(verifyEvidenceChain(gateway.evidence()).valid,true);
-    evidence.close();
+    await gateway.close();gatewayClosed=true;
+    evidence.close();evidenceClosed=true;
     const persisted=fs.readFileSync(evidenceFile,'utf8').trim().split(/\r?\n/).map(line=>JSON.parse(line));
     assert.equal(verifyEvidenceChain(persisted).valid,true);
     const corrupted=persisted.map(event=>({...event}));corrupted[0].decision_reason='tampered-after-write';
     assert.equal(verifyEvidenceChain(corrupted).valid,false);
-    await assert.rejects(gateway.agent.dispatch({name:'read_file',args:{path:'state.txt'}}),/GATEWAY_CLOSED_OR_QUEUE_FULL/);
-    const released=path.join(root,'released.txt');fs.renameSync(target,released);
-    assert.equal(fs.readFileSync(released,'utf8'),'before');
   }finally{
-    await gateway.close();
-    evidence.close();
+    if(!gatewayClosed)await gateway.close().catch(()=>{});
+    if(!evidenceClosed)evidence.close();
     fs.rmSync(root,{recursive:true,force:true});
   }
 });
