@@ -17,8 +17,8 @@ export const CONSOLE_PAGE = String.raw`<!doctype html>
 <div class="security-facts" aria-label="防护组件与覆盖情况">
 <div class="security-fact"><span>Gateway</span><strong id="gatewayProtectionStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small id="gatewayConnectionDetail">连接状态 UNKNOWN</small></div>
 <div class="security-fact"><span>Hook 健康</span><strong id="hookProtectionStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small>需后端 Hook 健康接口提供实时状态</small></div>
-<div class="security-fact"><span>Canary 隔离</span><strong id="canaryIsolationStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small>历史隔离事件不代表当前隔离状态</small></div>
-<div class="security-fact"><span>当前策略</span><strong id="currentPolicyName">UNKNOWN</strong><small>策略保护状态 <span id="currentPolicyStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</span></small></div>
+<div class="security-fact"><span>Canary 隔离</span><strong id="canaryIsolationStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small id="canaryIsolationScopeDetail">历史隔离事件不代表当前隔离状态</small></div>
+<div class="security-fact"><span>当前策略</span><strong id="currentPolicyName">UNKNOWN</strong><small>策略保护状态 <span id="currentPolicyStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</span></small><small id="currentPolicyScopeDetail">产品策略未知；Console 沙箱数据不代表真实 Agent 策略</small></div>
 <div class="security-fact"><span>已保护工具</span><strong id="protectedToolCount">UNKNOWN</strong><small>没有真实覆盖计数接口时不估算</small></div>
 <div class="security-fact"><span>未受保护执行路径</span><strong id="unprotectedPathCount">UNKNOWN</strong><small id="unprotectedPathDetail">等待后端返回路径覆盖数据</small></div>
 </div>
@@ -55,10 +55,10 @@ const labels={ollama:'Ollama（本地）',lmstudio:'LM Studio（本地）',vllm:
 async function api(route,body,signal){const r=await fetch('/api/'+route,{method:body===undefined?'GET':'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf},body:body===undefined?undefined:JSON.stringify(body),signal});const j=await r.json();if(!r.ok)throw new Error(j.error||'请求失败');return j;}
 function status(id,message,error=false){$(id).textContent=message;$(id).classList.toggle('error',error);}
 const getEl=id=>document.getElementById(id);
-const SECURITY_SOURCE_LABELS={state:'/api/state 审计事件',agents:'/api/agents 配置检测',securityCenter:'/api/security-center 实时保护状态',e4:'/api/e4/status E4 运行状态'};
+const SECURITY_SOURCE_LABELS={state:'/api/state 审计事件',agents:'/api/agents 配置检测',policyState:'/api/policy/state Console 沙箱策略',runtime3:'/api/runtime3 受控 Runtime 示例',securityCenter:'/api/security-center 实时保护状态',e4:'/api/e4/status E4 运行状态'};
 const SECURITY_SOURCE_TEXT={AVAILABLE:'可读取',UNAVAILABLE:'不可达',TIMEOUT:'超时',PERMISSION_DENIED:'权限不足',UNSUPPORTED:'未实现',INVALID_RESPONSE:'数据格式异常',UNKNOWN:'未知'};
 const AGENT_NAMES={claude:'Claude Code',cursor:'Cursor',cline:'Cline',codex:'Codex'};
-let securitySources={state:'UNKNOWN',agents:'UNKNOWN',securityCenter:'UNKNOWN',e4:'UNKNOWN'};
+let securitySources={state:'UNKNOWN',agents:'UNKNOWN',policyState:'UNKNOWN',runtime3:'UNKNOWN',securityCenter:'UNKNOWN',e4:'UNKNOWN'};
 let securitySnapshot=securityCenterAdapter.adaptSecuritySnapshot({});
 let securityRefreshBusy=false,securityLastChecked=null;
 function protectionLabel(value){return value==='PROTECTED'?'已保护':value==='PARTIALLY_PROTECTED'?'部分保护':value==='NOT_PROTECTED'?'未保护':'未知';}
@@ -77,7 +77,7 @@ async function securityGet(route){
 }
 function showSecuritySources(){
  const issues=[];
- for(const key of ['state','agents','securityCenter','e4']){
+ for(const key of ['state','agents','policyState','runtime3','securityCenter','e4']){
   const state=securitySources[key];
   if(state==='AVAILABLE')continue;
   const name=SECURITY_SOURCE_LABELS[key];
@@ -93,9 +93,9 @@ function showSecuritySources(){
  getEl('securitySourceIssues').textContent=issues.join('\n');
  getEl('securitySourceIssues').hidden=issues.length===0;
  const guidance=[];
- if(securitySources.state==='TIMEOUT'||securitySources.state==='UNAVAILABLE')guidance.push('审计接口超时或断线：确认本地 Console 仍运行，再点“一键健康检查”。');
- if(securitySources.state==='PERMISSION_DENIED'||securitySources.agents==='PERMISSION_DENIED'||securitySources.securityCenter==='PERMISSION_DENIED')guidance.push('权限不足：使用原 Console 页面和合法权限；CSRF/Origin 校验保持启用。');
- if(securitySources.securityCenter==='UNSUPPORTED')guidance.push('保护状态接口返回 404：当前后端尚未提供 Gateway、Hook、策略、隔离或覆盖汇总，相关字段不能从沙箱数据推断。');
+ if(['state','agents','policyState','runtime3'].some(key=>securitySources[key]==='TIMEOUT'||securitySources[key]==='UNAVAILABLE'))guidance.push('本地只读接口超时或断线：确认 Console 仍运行，再点“一键健康检查”；未读到的产品防护状态保持 UNKNOWN。');
+ if(['state','agents','policyState','runtime3','securityCenter'].some(key=>securitySources[key]==='PERMISSION_DENIED'))guidance.push('权限不足：使用原 Console 页面和合法权限；CSRF/Origin 校验保持启用。');
+ if(securitySources.securityCenter==='UNSUPPORTED')guidance.push('保护状态接口返回 404：当前后端尚未提供 Gateway、Hook、真实 Agent 策略、隔离或覆盖汇总；本地沙箱/Runtime 示例不能替代这些状态。');
  if(securitySources.e4==='UNSUPPORTED')guidance.push('E4 状态接口未接入：可复制本地测试脚本命令，但该命令不构成完整外部 E4 验收。');
  if(securitySources.state==='AVAILABLE'&&!securitySnapshot.events.length)guidance.push('审计事件为空：最近 100 条记录中没有事件；这不代表当前没有风险或已受到保护。');
  if(!guidance.length)guidance.push('错误恢复后重新检查；只有后端提供实时状态时保护字段才会离开 UNKNOWN。');
@@ -137,6 +137,14 @@ function renderSecurityCenter(){
  setProtectionNode('currentPolicyStatus',securitySnapshot.policy.protectionStatus);
  getEl('gatewayConnectionDetail').textContent='连接状态 '+securitySnapshot.gateway.connectionStatus;
  getEl('currentPolicyName').textContent=securitySnapshot.policy.name||'UNKNOWN';
+ const sandboxMode=securitySnapshot.consoleSandboxPolicy.mode;
+ getEl('currentPolicyScopeDetail').textContent=sandboxMode
+  ?'Console 虚拟执行器策略：'+sandboxMode+'（不代表真实 Agent 策略）'
+  :'产品策略 UNKNOWN；Console 沙箱策略 '+sourceStateLabel(securitySources.policyState);
+ const runtimeGuard=securitySnapshot.runtimeDemo.guard;
+ getEl('canaryIsolationScopeDetail').textContent=runtimeGuard
+  ?'产品隔离 UNKNOWN；受控 Runtime 示例 Guard：'+runtimeGuard+'（仅登记能力）'
+  :'产品隔离 UNKNOWN；受控 Runtime 示例 '+sourceStateLabel(securitySources.runtime3);
  getEl('protectedToolCount').textContent=securitySnapshot.protectedToolCount===null?'UNKNOWN':String(securitySnapshot.protectedToolCount);
  const paths=securitySnapshot.unprotectedExecutionPaths;
  getEl('unprotectedPathCount').textContent=paths===null?'UNKNOWN':String(paths.length);
@@ -151,14 +159,20 @@ async function refreshSecurityCenter(reason='manual'){
  securityRefreshBusy=true;
  getEl('securityHealthButton').disabled=true;getEl('securityExportButton').disabled=true;
  status('securityHealthStatus',reason==='automatic'?'正在刷新最近审计记录…':'正在检查本地 Console API；此检查不验证保护效果…');
- const routes=[['state','state'],['agents','agents'],['securityCenter','security-center'],['e4','e4/status']];
+ const routes=[['state','state'],['agents','agents'],['policyState','policy/state'],['runtime3','runtime3'],['securityCenter','security-center'],['e4','e4/status']];
  const results=await Promise.allSettled(routes.map(item=>securityGet(item[1])));
- const values={state:null,agents:null,securityCenter:null};
+ const values={state:null,agents:null,policyState:null,runtime3:null,securityCenter:null};
  for(let i=0;i<routes.length;i++){
   const key=routes[i][0],result=results[i];
   if(result.status==='fulfilled'){
    const data=result.value;
-   const valid=key==='state'?Array.isArray(data.events):key==='agents'?Array.isArray(data.agents):true;
+   const valid=key==='state'?Array.isArray(data.events)
+    :key==='agents'?Array.isArray(data.agents)
+    :key==='policyState'?typeof data.mode==='string'&&typeof data.scope==='string'
+    :key==='runtime3'?typeof data.mode==='string'&&typeof data.agent==='string'&&typeof data.coverage==='string'&&typeof data.guard==='string'
+    :key==='securityCenter'?['protectionStatus','gateway','hook','canaryIsolation','policy','protectedToolCount','unprotectedExecutionPaths','agents'].some(field=>Object.hasOwn(data,field))
+    :key==='e4'?typeof data.status==='string'
+    :false;
    if(valid){if(key in values)values[key]=data;securitySources[key]='AVAILABLE';}
    else securitySources[key]='INVALID_RESPONSE';
   }else{
@@ -169,8 +183,8 @@ async function refreshSecurityCenter(reason='manual'){
  securityLastChecked=new Date();
  renderSecurityCenter();
  const stamp=securityLastChecked.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
- const readable=['state','agents'].filter(k=>securitySources[k]==='AVAILABLE').length;
- status('securityHealthStatus',(reason==='automatic'?'已刷新':'健康检查完成')+' · '+stamp+' · '+readable+'/2 个基础只读接口可读。API 可读不等于真实执行路径已受保护。',readable<2);
+ const readable=['state','agents','policyState','runtime3'].filter(k=>securitySources[k]==='AVAILABLE').length;
+ status('securityHealthStatus',(reason==='automatic'?'已刷新':'健康检查完成')+' · '+stamp+' · '+readable+'/4 个已有只读接口可读。API 可读不等于真实执行路径已受保护。',readable<4);
  securityRefreshBusy=false;getEl('securityHealthButton').disabled=false;getEl('securityExportButton').disabled=false;
  return true;
 }

@@ -16,14 +16,16 @@ A new M4-owned **src/ai/security-center-adapter.ts** validates the four exact pr
 | --- | --- | --- |
 | **GET /api/state** | **200**; response includes the latest 100 recorded events. | Event timeline only. Existing aggregate counters are audit-event counters, not current protection metrics. |
 | **GET /api/agents** | **200**; returns configuration detection plus a demo-install section and an explicit demonstration scope. | Only supported Agent configuration detections are shown. **installed**, **status: PARTIAL**, and the always-detected **custom** placeholder are not treated as live connection or protection evidence. |
-| **GET /api/security-center** | **404** on this branch. | Overall status, Gateway, Hook, policy, isolation, tool coverage, and unprotected execution paths remain **UNKNOWN**. |
+| **GET /api/policy/state** | **200**; reports **mode**, **guardState**, and scope **VIRTUAL_EXECUTORS**. | Displays the actual Console demo mode with its virtual-executor scope; does not populate live Agent policy or protection state. |
+| **GET /api/runtime3** | **200**; reports the controlled SDK demo identity, coverage, and current demo Guard state. | Displays only the scoped demo Guard value; it does not populate product-wide Canary isolation or protection state. |
+| **GET /api/security-center** | **404** on this branch. | Overall status, Gateway, Hook, product-wide Agent policy/isolation, tool coverage, and unprotected execution paths remain **UNKNOWN**. Scoped Console demo values are displayed separately. |
 | **GET /api/e4/status** | **404** on this branch. | E4 runtime status remains **UNKNOWN**; the missing interface is reported. |
 
 The **/api/security-center** payload shape accepted by the adapter is an optional integration boundary, not a new public API contract. It supports exact **protectionStatus** values, Gateway connection status, Hook/isolation/policy state, tool count, unprotected-path list, and live Agent records if an owning backend later supplies them.
 
 ## User flows
 
-- **Health check:** Reads the four routes above with an 8-second per-request timeout. **2/2** means the existing audit and Agent-config reads succeeded; it is explicitly not a protection-health result.
+- **Health check:** Reads the four existing routes (**/api/state**, **/api/agents**, **/api/policy/state**, **/api/runtime3**) plus the two optional security/E4 routes with an 8-second per-request timeout. **4/4** means those existing read APIs are readable; it is explicitly not a protection-health result.
 - **Events:** Refreshes every 10 seconds while the tab is visible. Empty data is labeled as an empty recent-record range.
 - **Intercept explanation:** Uses the actual event kind and sanitized reason; the adapter drops arguments, paths, tokens, and unrelated event fields.
 - **Diagnostic export:** Produces **agent-canary.security-diagnostic.v1**. The JSON contains status values, source outcomes, Agent detection booleans, and event kind/time explanations. It omits event arguments, reason text, raw configuration paths, and secrets.

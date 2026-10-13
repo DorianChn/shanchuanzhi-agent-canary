@@ -89,10 +89,14 @@ function mapEvent(value: unknown, index: number) {
 export function adaptSecuritySnapshot(input: {
   state?: unknown;
   agents?: unknown;
+  policyState?: unknown;
+  runtime3?: unknown;
   securityCenter?: unknown;
 } = {}) {
   const state = asRecord(input.state);
   const agentResponse = asRecord(input.agents);
+  const policyState = asRecord(input.policyState);
+  const runtime3 = asRecord(input.runtime3);
   const securityCenter = asRecord(input.securityCenter);
   const gateway = asRecord(securityCenter.gateway);
   const hook = asRecord(securityCenter.hook);
@@ -112,6 +116,20 @@ export function adaptSecuritySnapshot(input: {
       connectionStatus: liveAgents ? normalizeConnectionStatus(item.connectionStatus) : 'UNKNOWN' as const,
       protectionStatus: liveAgents ? normalizeProtectionStatus(item.protectionStatus) : 'UNKNOWN' as const,
     }));
+
+  const sandboxMode =
+    ['OBSERVE', 'BALANCED', 'STRICT'].includes(policyState.mode) &&
+    typeof policyState.scope === 'string' &&
+    policyState.scope.startsWith('VIRTUAL_EXECUTORS')
+      ? policyState.mode as 'OBSERVE' | 'BALANCED' | 'STRICT'
+      : null;
+  const isRuntimeDemo = runtime3.mode === 'DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL' &&
+    runtime3.agent === 'controlled-sdk-demo' &&
+    runtime3.coverage === 'REGISTERED_CAPABILITIES_ONLY';
+  const runtimeDemoGuard = isRuntimeDemo &&
+    (['SAFE', 'TRIPPED', 'QUARANTINED'] as readonly unknown[]).includes(runtime3.guard)
+      ? runtime3.guard as 'SAFE' | 'TRIPPED' | 'QUARANTINED'
+      : null;
 
   const events = (Array.isArray(state.events) ? state.events : [])
     .slice(0, 100)
@@ -140,6 +158,14 @@ export function adaptSecuritySnapshot(input: {
       securityCenter.protectedToolCount >= 0
       ? securityCenter.protectedToolCount as number
       : null,
+    consoleSandboxPolicy: {
+      mode: sandboxMode,
+      scope: sandboxMode ? 'VIRTUAL_EXECUTORS' as const : null,
+    },
+    runtimeDemo: {
+      guard: runtimeDemoGuard,
+      scope: isRuntimeDemo ? 'REGISTERED_CAPABILITIES_ONLY' as const : null,
+    },
     unprotectedExecutionPaths: Array.isArray(securityCenter.unprotectedExecutionPaths)
       ? securityCenter.unprotectedExecutionPaths
         .filter((item: unknown) => typeof item === 'string')
@@ -172,7 +198,7 @@ export function buildSecurityDiagnostic(
   generatedAt = new Date().toISOString(),
 ) {
   const sourceStates: Record<string, string> = {};
-  for (const name of ['state', 'agents', 'securityCenter', 'e4']) {
+  for (const name of ['state', 'agents', 'policyState', 'runtime3', 'securityCenter', 'e4']) {
     const source = sources[name];
     sourceStates[name] = typeof source === 'string' && DATA_SOURCE_STATUSES.includes(source)
       ? source
@@ -194,6 +220,12 @@ export function buildSecurityDiagnostic(
       unprotectedExecutionPathCount: view.unprotectedExecutionPaths === null
         ? null
         : view.unprotectedExecutionPaths.length,
+    },
+    localConsole: {
+      sandboxPolicyMode: view.consoleSandboxPolicy.mode,
+      sandboxPolicyScope: view.consoleSandboxPolicy.scope,
+      runtimeDemoGuard: view.runtimeDemo.guard,
+      runtimeDemoScope: view.runtimeDemo.scope,
     },
     dataSources: sourceStates,
     agents: view.agents.map(agent => ({
