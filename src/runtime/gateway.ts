@@ -3,6 +3,7 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHmac,randomBytes,randomUUID} from 'node:crypto';
 import type {AgentGuard,ToolCall} from '../containment.js';
+import {DECOY_TOOLS} from '../decoys.js';
 import type {AIProvider} from '../ai/types.js';
 import {previewAnalysis,validateAnalysisOutput} from '../ai/provider.js';
 import {SessionDataFlow} from '../dataflow.js';
@@ -32,13 +33,13 @@ const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
-const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>}>();
+const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>;controllers:Set<AbortController>}>();
 
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
   const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
-  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve()};
+  const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve(),controllers:new Set<AbortController>()};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
   const mcp=new Map(Object.entries(options.mcpTools??{}).map(([name,t])=>[name,Object.freeze({...t})]));
@@ -65,9 +66,21 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
   }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
-  let closed=false;
+  let closed=false,closePromise:Promise<void>|undefined;
+  const activeControllers=new Set<AbortController>();
   const pending=new Map<string,{request:Request;expires:number}>();
   function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
+  function gatewayCall(r:Request):ToolCall{
+    if(r.name!=='mcp_tool'||typeof r.args.tool!=='string')return{name:r.name,args:r.args};
+    const target=r.args.tool,suffix=target.split('__').at(-1)??target;
+    const name=DECOY_TOOLS.some(tool=>tool.name===suffix.toLowerCase())?suffix.toLowerCase():target;
+    const args=r.args.arguments;
+    return{name,args:args&&typeof args==='object'&&!Array.isArray(args)?args as Record<string,unknown>:{}};
+  }
+  function track(controller:AbortController){history.controllers.add(controller);activeControllers.add(controller);}
+  function untrack(controller:AbortController){history.controllers.delete(controller);activeControllers.delete(controller);}
+  function abortSession(){for(const controller of history.controllers)controller.abort();}
+  function guardReason(reason?:string){return reason==='decoy_called'?'canary_quarantine':'guard_quarantined';}
   function normalize(call:ToolCall):Request{
     const data=JSON.parse(canonicalJSON(call));
     if(Object.keys(data).some(k=>k!=='name'&&k!=='args')||typeof data.name!=='string'||!idPattern.test(data.name)||!data.args||Array.isArray(data.args)||typeof data.args!=='object')throw Error('GATEWAY_REQUEST_INVALID');
@@ -108,29 +121,36 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   async function aiDenies(r:Request,signal?:AbortSignal):Promise<boolean>{
     if(!options.provider)return false;
-    const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
     const events=previewAnalysis([{id:'proposed-call',text:canonicalJSON({tool:r.name,arguments:r.args,trust:'UNTRUSTED_DATA_NOT_AUTHORITY'})}]);
+    const abort=new AbortController();track(abort);let timer:ReturnType<typeof setTimeout>|undefined,abortListener:(()=>void)|undefined;
     const cancel=()=>abort.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)abort.abort();
     try{
-      const result=await Promise.race([options.provider.analyze({events,cloudConsent:options.cloudConsent,signal:abort.signal}),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(Error('GATEWAY_AI_TIMEOUT'));},reviewMs);})]);
+      const cancelled=new Promise<never>((_,reject)=>{abortListener=()=>reject(Error('GATEWAY_REVIEW_ABORTED'));abort.signal.addEventListener('abort',abortListener,{once:true});if(abort.signal.aborted)abortListener();});
+      const result=await Promise.race([options.provider.analyze({events,cloudConsent:options.cloudConsent,signal:abort.signal}),cancelled,new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(Error('GATEWAY_AI_TIMEOUT'));},reviewMs);})]);
       if(result.status!=='ok'||result.advisoryOnly!==true||canonicalJSON(result).length>16_000)return false;
       const checked=validateAnalysisOutput(canonicalJSON({verdict:result.verdict,severity:result.severity,confidence:result.confidence,summary:result.summary,evidence:result.evidence,reasoningSummary:result.reasoningSummary,recommendedActions:result.recommendedActions}),events);
       return checked.verdict==='suspicious';
-    }catch{return false;}finally{if(timer)clearTimeout(timer);abort.abort();signal?.removeEventListener('abort',cancel);}
+    }catch{return false;}finally{if(timer)clearTimeout(timer);abort.abort();if(abortListener)abort.signal.removeEventListener('abort',abortListener);signal?.removeEventListener('abort',cancel);untrack(abort);}
   }
   async function execute(r:Request,approval:string|null,signal?:AbortSignal):Promise<unknown>{
+    if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
     if(signal?.aborted)return blocked(r,'cancelled_before_execution');
     const decision=policy(r);
     if(decision.decision==='DENY')return blocked(r,decision.reason);
     // Recheck after review/approval/queue, directly before a trusted executor starts.
-    const gd=options.guard.beforeToolCall({name:r.name,args:r.args});if(!gd.allowed)return blocked(r,'guard_quarantined');
+    const gd=options.guard.beforeToolCall(gatewayCall(r));if(!gd.allowed){abortSession();return blocked(r,guardReason(gd.reason));}
     if(!options.evidence.canRecord(2))throw Error('GATEWAY_EVIDENCE_CAPACITY');
     audit(r,'ALLOW',decision.reason,'RUNNING','NOT_STARTED',approval);
-    const abort=new AbortController(),cancel=()=>abort.abort();signal?.addEventListener('abort',cancel,{once:true});
-    let timer:ReturnType<typeof setTimeout>|undefined;
+    const abort=new AbortController(),cancel=()=>abort.abort();track(abort);signal?.addEventListener('abort',cancel,{once:true});
+    let timer:ReturnType<typeof setTimeout>|undefined,abortListener:(()=>void)|undefined;
     try{
+      const cancelled=new Promise<never>((_,reject)=>{abortListener=()=>reject(Error('GATEWAY_REQUEST_ABORTED'));abort.signal.addEventListener('abort',abortListener,{once:true});if(abort.signal.aborted)abortListener();});
       // File effects are synchronous fd operations: quarantine cannot interleave in this JS turn.
       const perform=()=>{
+        if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
+        if(abort.signal.aborted)throw Error('GATEWAY_REQUEST_ABORTED');
+        const finalGuard=options.guard.beforeToolCall(gatewayCall(r));
+        if(!finalGuard.allowed){abortSession();throw Error('GATEWAY_GUARD_CHANGED_BEFORE_EFFECT');}
         // Audit callbacks may yield a changed path. Reject the observed change before fd I/O.
         // This narrows the window; it is not an atomic OS-wide path/operation transaction.
         if(r.name==='read_file'||r.name==='write_file'){
@@ -165,30 +185,39 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           child.on('close',code=>code===0?resolve({exitCode:0,stdout:Buffer.concat(chunks).toString('utf8')}):reject(Error('GATEWAY_PROCESS_EXIT_FAILED')));
         });
       };
-      const result=await Promise.race([Promise.resolve(perform()),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
+      const result=await Promise.race([Promise.resolve().then(perform),cancelled,new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
       const output=typeof result==='string'?result:JSON.stringify(result)??'';
       if(secretPattern.test(output)){history.sensitiveObserved=true;flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
       audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'||r.name==='write_file'?'VERIFIED':'NOT_VERIFIED',approval);
       return result;
     }catch(error){
       options.guard.trip({reason:'gateway_execution_failed'});
+      abortSession();
       audit(r,'ALLOW','execution_failed','FAILED','NOT_VERIFIED',approval);
       throw Error('GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK');
-    }finally{if(timer)clearTimeout(timer);abort.abort();signal?.removeEventListener('abort',cancel);}
+    }finally{if(timer)clearTimeout(timer);abort.abort();if(abortListener)abort.signal.removeEventListener('abort',abortListener);signal?.removeEventListener('abort',cancel);untrack(abort);}
   }
   function sweep(){for(const [id,p]of pending)if(p.expires<=Date.now())pending.delete(id);}
   const agent=Object.freeze({
     dispatch(call:ToolCall,signal?:AbortSignal){
       const request=normalize(call);
-      return serialize(async()=>{
+      if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));
+      try{
         if(signal?.aborted)return blocked(request,'cancelled_before_execution');
         options.guard.inspect(canonicalJSON(request.args),'gateway-arguments');
-        if(!options.guard.beforeToolCall({name:request.name,args:request.args}).allowed)return blocked(request,'guard_quarantined');
+        const initial=options.guard.beforeToolCall(gatewayCall(request));
+        if(!initial.allowed){abortSession();return blocked(request,guardReason(initial.reason));}
+      }catch(error){if(options.guard.state!=='SAFE')abortSession();return Promise.reject(error);}
+      return serialize(async()=>{
+        if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
+        if(signal?.aborted)return blocked(request,'cancelled_before_execution');
+        const gd=options.guard.beforeToolCall(gatewayCall(request));if(!gd.allowed){abortSession();return blocked(request,guardReason(gd.reason));}
         const d=policy(request);if(d.decision==='DENY')return blocked(request,d.reason);
         if(d.decision==='REQUIRE_APPROVAL'){
           if(await aiDenies(request,signal))return blocked(request,'ai_tightened_denial');
+          if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
           if(signal?.aborted)return blocked(request,'cancelled_before_execution');
-          if(!options.guard.beforeToolCall({name:request.name,args:request.args}).allowed)return blocked(request,'guard_quarantined');
+          const afterReview=options.guard.beforeToolCall(gatewayCall(request));if(!afterReview.allowed){abortSession();return blocked(request,guardReason(afterReview.reason));}
           sweep();if(pending.size>=64)return blocked(request,'approval_capacity');
           audit(request,'REQUIRE_APPROVAL',d.reason,'NOT_STARTED','NOT_STARTED');
           pending.set(request.id,{request,expires:Date.now()+ttl});throw new GatewayDeniedError(d.reason,request.id,'REQUIRE_APPROVAL');
@@ -200,10 +229,14 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   /** This object is a host capability; identity comes from possession, not model parameters. */
   const operator=Object.freeze({
     pending(){sweep();return [...pending].map(([requestId,p])=>({requestId,tool:p.request.name,expiresAt:p.expires}));},
-    approve(requestId:string){return serialize(async()=>{sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return execute(p.request,createHmac('sha256',key).update(requestId).digest('hex'));});},
+    approve(requestId:string){return serialize(async()=>{if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return execute(p.request,createHmac('sha256',key).update(requestId).digest('hex'));});},
     reject(requestId:string){sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return blocked(p.request,'operator_rejected');},
   });
-  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
-    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values())fs.closeSync(f.fd);}
-  });
+  function close():Promise<void>{
+    if(closePromise)return closePromise;
+    closed=true;pending.clear();for(const controller of activeControllers)controller.abort();
+    closePromise=history.tail.then(()=>{for(const f of resources.values())if(f.fd>=0){fs.closeSync(f.fd);f.fd=-1;}});
+    return closePromise;
+  }
+  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),close});
 }
