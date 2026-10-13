@@ -2,18 +2,18 @@
 
 更新日期：2026-10-13。当前增量快照见下表；旧 R1–R11 详细记录按其原时间保留，不覆盖当前快照。
 
-## 当前风险增量（2026-10-13 16:03 UTC）
+## 当前风险增量（2026-10-13 16:16 UTC）
 
 | ID | 优先级 | 风险/证据 | 责任与当前动作 | 状态 |
 | --- | --- | --- | --- | --- |
-| R10 / #35 | P0 | M1 PR #43 head 89e40cd 的回归测试通过 CI，但 P0 修复与验收仍未完成 | M1 继续验证隔离/中止安全属性；M7 不改 Gateway | OPEN |
-| #32 | P1 | M1 PR #43 当前 9/9 checks 通过；历史 Windows Hook marker 根因/处置尚未由 owner 关闭 | M1 保留 fail-closed 断言并提交诊断结果 | OPEN |
-| #44 | P1 | M1 PR #43 当前 9/9 checks 通过；approval-expiry 历史失败仍待 owner 明确结论 | M1 核对失效/过期语义与请求追踪 | OPEN |
-| R11 / #41 | P1 | PR #39 远端 head 65ce028 的 Windows Node20/22、macOS Node20 与 Windows wrapper 检查失败；本地 de9ec56+WIP 尚未过 CI | M7 验证真实 NSIS 编译器安装和安装流程，保留全部门禁 | IN PROGRESS |
+| R10 / #35 | P0 | ec3bc96 Guard/Gateway fix 在 PR #43 远端祖先中；current head 89e40cd 的回归测试及 9/9 CI 通过 | M1 确认所有验收标准并给 issue disposition；M0 已记录远端证据，保持 P0 门禁 | OWNER REVIEW |
+| #32 | P1 | M1 PR #43 当前 9/9 checks 通过；历史 Windows Hook marker 根因/处置尚未由 owner 关闭 | M1 保留 fail-closed 断言并提交诊断结论 | OPEN |
+| #44 | P1 | M1 PR #43 当前 9/9 checks 通过；approval-expiry 历史失败仍待 owner 明确结论 | M1 核对失效语义与请求追踪 | OPEN |
+| R11 / #41 | P1 | PR #39 远端 head 65ce028 有 Windows Node20/22、macOS Node20、Windows wrapper 失败；本地 4f3a2c5+WIP 尚未过 CI | M7 推送后验证固定版本 NSIS 安装、编译和测试结果，保留全部门禁 | IN PROGRESS |
 | R12 / #45 | P1 | PR #37 子进程范围通过；Codex 原生 Shell 仍 UNPROTECTED | M2 获槽后验证真实宿主 Hook，或如实维持 BLOCKED | OPEN |
-| R3 / #27 | P1 | M5 无远端 PR，M6 外部 E4 NOT_VERIFIED，API 合同路径及 manifest 字段未合并验证 | M3/M5/M6/M7 按字段 owner 协调，再由 M9 检查组合 | OPEN |
-| R5 | P1 | 本轮未读取其他 Codex 对话；codex queue 对 M1/M7 返回已排队回执，不证明已消费 | M0 仅按 GitHub/worktree 事实核对；不得声称读到会话正文 | MONITOR |
-| quota | P1（调度） | 16:02 UTC 可见读数 13%，约 1h22m 重置 | <=5% 或读数不明时全部暂停；实际低额度暂停须等确认重置再恢复 | MONITOR |
+| R3 / #27 | P1 | M5 无远端 PR，M6 外部 E4 NOT_VERIFIED，API 合同路径及 manifest 字段未组合验证 | M3/M5/M6/M7 按字段 owner 协调，再由 M9 检查组合 | OPEN |
+| R5 | P1 | 本轮未读取其他 Codex 对话；codex queue 对 M1/M7 返回已排队回执，不证明已消费 | 进度只按 GitHub/worktree 交叉核对 | MONITOR |
+| quota | P1（调度） | 16:16 UTC 可见读数 13%，约 1h12m 重置 | <=5% 或读数不明时全部暂停；实际低额度暂停须等确认重置 | MONITOR |
 
 | ID | 优先级 | 风险 | 证据 | 责任/处置 | 状态 |
 | --- | --- | --- | --- | --- | --- |
@@ -38,4 +38,4 @@
 
 ## 资源冲突
 
-开发并行上限为 2；2026-10-13 16:03 UTC 的 M1/M7 占满 2/2 槽位。没有 VMware 或真实模型测试运行证据；M7 负责下一次安装验收的独占资源时段，是否已开始须由 M7 确认。额度读数 13%、约 1h22m 后重置。最近推送批次为 16:02:40 UTC，下一批不早于 16:22:40 UTC。
+开发并行上限为 2；2026-10-13 16:16 UTC 时 M1/M7 占满 2/2 槽位。无 VMware 或真实模型测试运行证据；下一次安装测试归 M7 独占，PR #39 新 CI 尚未开始。额度 13%、约 1h12m 后重置。最新推送批次 16:02:40 UTC，下一批不早于 16:22:40 UTC。
