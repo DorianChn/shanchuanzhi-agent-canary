@@ -1,23 +1,22 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 12:10 UTC；实时快照）
+## 当前状态（2026-10-13 12:15 UTC；实时快照）
 
 - PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4，11/11 checks 成功；M0 未改动或合并。
-- M0 PR #30：OPEN/Draft，head f0f0976；CI run 38394623522 成功，两个独立 coordination gates 38394623543/38394661876 成功，PR 汇总 11/11 checks 全绿。
-- PR #31：仍 OPEN/Draft，base main，远端 head da52c17；原 run 38371562917 的 8 项成功、package-smoke 失败。M6 本地 commit 899dbf5 修正 SOURCE_MANIFEST.json 中 package.json 的哈希；181 项 Git-tree 检查本地 0 失配，但尚未推送/重跑远端 CI。
-- PR #32 对应的旧 Hook 失败仍 OPEN；M1 local commit 46af1f1 修测试 harness 后 Node 20.20.2/22.23.1 聚焦各 1/1，Node 22 build、diff check 通过。新 PR #30 head 全绿，但不包含 M1 该提交，所以不能据此关闭 #32。
+- M0 PR #30：OPEN/Draft，head 1648277；CI run 38395605172 的 Windows Node 20 Hook interruption 用例失败，Node 22 job 被取消、package-smoke 跳过；其余 jobs 与两个 coordination gate 成功。Issue #32 仍 OPEN。
+- PR #31：OPEN/Draft，base main、远端 head da52c17；原 run 38371562917 的 package-smoke 失败。M6 本地 commit 899dbf5 修正 SOURCE_MANIFEST.json 的 package.json 哈希；181 项 Git-tree 本地验证 0 mismatch，但修复未推送、远端 CI 未重跑。
 - M2 PR #37：OPEN/Draft、AC3 base，9/9 checks 成功；原生 Codex Shell 仍 UNPROTECTED。
-- M3 PR #33：OPEN/Draft、AC3 base，目前没有远端 checks；M3 本地 4 个 onboarding/install 测试文件 29/29、build、diff check 通过，工作树干净，未改代码。没有在本轮重跑 live connect-check。
+- M3 PR #33：OPEN/Draft、AC3 base，无远端 checks；本地四个 onboarding/install 测试文件 29/29、build 与 diff check 通过，工作树干净；本轮未重跑 live connect-check。
 - M4 PR #34：OPEN/Draft、AC3 base，9/9 checks 成功；桌面安全中心/E4 后端 404 仍标 UNKNOWN。
 - M9 PR #36：OPEN/Draft、AC3 base，9/9 checks 成功。
-- M1 本地 Gateway commit f15fdcfa 与 Hook harness commit 46af1f1 均在 owner 分支，未推送/未建 PR；P0/P1 仍待相应远端验收。
-- M5 本地 commit cd8abea：审计事件语义修复，聚焦测试 42/42、TypeScript noEmit、diff check 通过；无新远端 PR。
-- M6 AC3 候选分支另含 bca895f E4 外部副本完整性修复；fixture evidence 仍 NOT_VERIFIED。旧 PR 分支的 899dbf5 与候选提交分属不同 worktree。
-- M7 本地 commit f17b7e6：候选对 AC3 的 gateway.ts 净差异为零，M7 独有 reliability/evidence 测试保留；84 项中 83 pass、0 fail、1 symlink-permission skip。M1 f15fdcfa 未并入 M7 候选，组合 CI 仍待集成。
+- M1 本地提交 f15fdcfa 和 46af1f1；Gateway suite 28/28，Hook harness 定向测试在 Node 20.20.2/22.23.1 各 1/1。PR #30 的失败 head 不含 46af1f1；历史 CI 根因仍待 owner 分析及远端复验。
+- M5 本地 commit cd8abea：策略审计语义修复，42/42 定向测试、TypeScript noEmit、diff check 通过；无新远端 PR。
+- M6 AC3 候选含 bca895f E4 外部副本完整性修复；fixture evidence 仍 NOT_VERIFIED。PR #31 旧分支修复与 AC3 候选分属不同 worktree。
+- M7 本地 commit f17b7e6；候选对 AC3 的 gateway.ts 净差异为零，可靠性/evidence 覆盖保留；84 项中 83 pass、0 fail、1 symlink-permission skip。M1 close commit 未并入，组合 CI 待集成。
 - M8 本地 commit b0f30ff 更新中英文 README 限制说明，14 文档/55 链接/13 示例及双语核对通过；未推送。
-- 当前开发槽 0/3；M1、M3、M6、M7 均已结束本轮工作。VMware、真实模型与安装测试没有运行。
-- Issues #27/#28/#29/#32/#35 已更新。模块 owner 的本地提交仍未发布为新远端 PR；M0 不代替模块推送。
-- 本地报告在 reports/M0_INITIALIZATION_REPORT.md；Desktop 未暴露原生 read_thread，本轮依用户授权读取 thread_history_1.sqlite 并用 codex queue 协调，未声称调用原生工具。
+- 当前开发槽 0/3；M1、M3、M6、M7 已结束本轮工作。VMware、真实模型与安装测试未运行。
+- Issues #27/#28/#29/#32/#35 已更新；模块 owner 的本地提交未发布为新远端 PR，M0 不代替模块推送。
+- 本地报告为 reports/M0_INITIALIZATION_REPORT.md。未合并 main、未修改其他模块代码、未发布 Release。
 
 ## 基线与 PR #24
 
