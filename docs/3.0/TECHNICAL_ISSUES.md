@@ -19,7 +19,7 @@
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
 - [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN；PR #30 的 Windows Node 20 与 PR #34/#36 的 Windows Node 22 均有失败证据）。
-- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：历史 pre-fix 复现确认 quarantine 后仍有活动 callback 写入合成标记，P0 仍须由当前 PR 验收关闭。PR #43 run `38399797819` 的新失败经 M1 本地复现为测试预期不符：quarantine 中止 dispatch、读取内容未返回、文件标记未变且后续写入被拒；M1 只修正测试断言，等待当前 head 的远端 CI。不得把这次测试异常说成新产品漏洞，也不得以此关闭历史 P0。
+- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：历史 pre-fix 复现确认 quarantine 后仍有活动 callback 写入合成标记，P0 仍须由当前 PR 验收关闭。PR #43 run `38399797819` 的新失败经 M1 本地复现为测试预期不符：quarantine 中止 dispatch、读取内容未返回、文件标记未变且后续写入被拒；M1 已以 commit `dc4d7fa` 只修正测试断言，等待该精确 head 的远端 CI。不得把这次测试异常说成新产品漏洞，也不得以此关闭历史 P0。
 - [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：远端 PR #39 head `f17b7e6` 的 Ubuntu 模板检查和 macOS symlink 测试失败；owner 本地候选 `65ce028` 待上传并由相同 CI 验收。
 - [#42 M3 package manifest/current-head validation](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/42)（P1，OPEN；正文待更正）：PR #33 当前 head `c404b6b` 的 run `38400488378` 为 9/9 成功。旧 `SOURCE_MANIFEST` 差异属于历史 head，不代表当前 AC3 缺陷；将在下一远端窗口更正文案并按验收结果结案。
 
