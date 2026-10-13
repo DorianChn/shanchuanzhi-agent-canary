@@ -12,7 +12,7 @@
 - M6 PR #38 head bca895f 的 Windows Node 22 失败定位到 M1-owned test/agent-hook.test.ts:54；M6 在本机 Node 22 定向 1/1、整文件 10/10，通过，未改代码。Hook 根因仍 UNKNOWN，归入 #32；E4 工具与报告已在 PR 中，外部 E4 仍 NOT_VERIFIED。
 - M7 PR #39 仍在远端 `f17b7e6`，wrapper 与跨平台测试 jobs 失败。Owner 本地候选 `65ce028`；一次普通 push 因非交互 HTTPS 凭据不可用而被阻止，Issue #41 OPEN。
 - M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- M6 诊断已完成并释放槽位；M1 的 #32 Hook follow-up 已排队，当前预留 1/2 槽。VMware、真实模型和安装测试均无预约。下一批 push 不早于 14:00 UTC。
+- M1 正在处理 #32 的 M1-owned Hook follow-up；M6 已排入只更新 PR #38 状态字段的任务，不改模块代码，当前预留 2/2 槽。VMware、真实模型和安装测试均无预约。下一批 push 不早于 14:00 UTC。
 - 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
