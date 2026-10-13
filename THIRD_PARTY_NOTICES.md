@@ -24,6 +24,6 @@ Exact resolved versions are pinned by the [v3.0.0 package lock](https://github.c
 
 ## Windows community installer
 
-The earlier Windows community candidate installer has additional upstream notices for its bundled Node.js runtime and NSIS components in [packaging/windows/THIRD_PARTY_NOTICES.md](packaging/windows/THIRD_PARTY_NOTICES.md). Those terms apply to that candidate installer payload and should not be assumed to describe the v3.0.0 npm package or GHCR image.
+The Windows community installer has additional upstream notices for its bundled Node.js runtime and NSIS components in [packaging/windows/THIRD_PARTY_NOTICES.md](packaging/windows/THIRD_PARTY_NOTICES.md). The same `AgentCanary-Community-Setup.exe` asset is published in [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4) and the [v3.0.0-competition bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) with SHA-256 `567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6`. Those notices apply to this installer payload and should not be assumed to describe the v3.0.0 npm package or GHCR image.
 
 Before each release, regenerate and review the dependency inventory from the exact lockfile and artifact. Preserve upstream license files and notices in redistributed packages.

@@ -11,7 +11,7 @@
 - Release date: **TBD**
 - Release owner/reviewer: **TBD**
 
-The current stable release is [v3.0.0](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). Candidate.4 is a separate pre-release. Do not reuse this draft for either published release or attach it to a moving branch.
+The current stable release is [v3.0.0](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). A separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) reuses candidate.4 assets; candidate.4 is a separate pre-release. Do not reuse this draft for any already published release or attach it to a moving branch.
 
 ## Proposed release summary
 

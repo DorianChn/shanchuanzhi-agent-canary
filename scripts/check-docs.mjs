@@ -10,6 +10,7 @@ const files = [
   "README.zh-CN.md",
   "GETTING_STARTED.md",
   "SECURITY.md",
+  "SUPPORT.md",
   "CONTRIBUTING.md",
   "COMPATIBILITY.md",
   "SECURITY_TESTING.md",
@@ -20,10 +21,22 @@ const files = [
   "THIRD_PARTY_NOTICES.md",
   ".github/pull_request_template.md",
 ];
+const issueTemplateFiles = [
+  ".github/ISSUE_TEMPLATE/bug_report.yml",
+  ".github/ISSUE_TEMPLATE/config.yml",
+  ".github/ISSUE_TEMPLATE/feature_request.yml",
+  ".github/ISSUE_TEMPLATE/product_feedback.yml",
+];
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const errors = [];
 let checkedLinks = 0;
 let checkedExamples = 0;
+
+for (const issueTemplateFile of issueTemplateFiles) {
+  if (!fs.existsSync(path.join(root, issueTemplateFile))) {
+    errors.push(issueTemplateFile + ": required issue template file is missing");
+  }
+}
 
 function headings(markdown) {
   const ids = new Set();
@@ -147,5 +160,5 @@ if (errors.length) {
   console.error("Documentation check failed with " + errors.length + " problem(s).");
   process.exitCode = 1;
 } else {
-  console.log("Documentation check passed: " + files.length + " files, " + checkedLinks + " local links, " + checkedExamples + " code examples.");
+  console.log("Documentation check passed: " + files.length + " documentation files, " + checkedLinks + " local links, " + checkedExamples + " code examples, " + issueTemplateFiles.length + " issue template files present.");
 }

@@ -6,7 +6,7 @@ Agent Canary 提供无副作用的 MCP 诱饵和合成 Canary Token，用于暴�
 
 ## 项目状态
 
-- **当前稳定发行版：** v3.0.0。V1.2.7 是较早的稳定版；candidate.4 预发布包和持续变化的开发分支是不同产物。
+- **当前稳定发行版：** v3.0.0。V1.2.7 是较早的稳定版。另有单独发布的[竞赛社区包 v3.0.0-competition](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition)，其发布资产复用自 [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4)，但它不是当前稳定 CLI 包。candidate.4 是预发布版本；持续变化的分支属于开发产物。
 - **安装：** v3.0.0 CLI 发布在 GitHub Packages，需要带 `read:packages` 权限的 GitHub Token；见[快速上手](GETTING_STARTED.md)。
 - **独立 E4 复现：** 尚未验证；[证据索引](E4_EVIDENCE_INDEX.md)列出已完成与未完成的检查。
 - **许可证：** 本仓库代码为 MIT。第三方依赖各自保留原许可证，见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

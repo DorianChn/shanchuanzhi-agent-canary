@@ -1,10 +1,10 @@
 # Security policy
 
-Agent Canary is a research-informed open-source tool for narrow, host-integrated tripwire and callback-containment workflows. It is not an operating-system sandbox, prompt-injection filter, or guarantee that an AI agent will act safely.
+Agent Canary is an open-source tool for narrow, host-integrated tripwire and callback-containment workflows. It is not an operating-system sandbox, prompt-injection filter, or guarantee that an AI agent will act safely.
 
 ## Supported release scope
 
-The current latest stable GitHub release is v3.0.0. V1.2.7 is an earlier stable release; v3.0.0-competition-candidate.4 is a separate pre-release, and development branches change independently of published artifacts. Report security issues against the exact tag, commit, package, and host configuration involved. Preview and development builds may behave differently from released assets. E4 independent reproduction remains NOT_VERIFIED; see [the evidence index](E4_EVIDENCE_INDEX.md).
+The current latest stable GitHub release is [v3.0.0](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). V1.2.7 is an earlier stable release. The separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) has the same nine asset names and SHA-256 digests as the [candidate.4 pre-release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4); it is not the current stable CLI package. Development branches change independently of published artifacts. Report security issues against the exact tag, commit, package, and host configuration involved. Preview and development builds may behave differently from released assets. E4 independent reproduction remains NOT_VERIFIED; see [the evidence index](E4_EVIDENCE_INDEX.md).
 
 ## What is in scope
 

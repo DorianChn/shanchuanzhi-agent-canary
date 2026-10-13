@@ -4,7 +4,7 @@ This guide runs Agent Canary code with synthetic inputs. It does not test a live
 
 ## 1. Pin what you are testing
 
-For the current stable release, use the immutable v3.0.0 tag. V1.2.7 is an earlier release. Candidate.4 archives and the moving `feature/agent-canary-3.0` branch are different artifacts; label any such results with their exact candidate or full commit SHA.
+For the current stable release, use the immutable v3.0.0 tag. V1.2.7 is an earlier release. The separate published [v3.0.0-competition bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) uses the same assets as [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4), not the current stable CLI package. Keep any competition-bundle/candidate.4 result bound to its exact tag and asset SHA-256; never report it as a v3.0.0 stable result. The moving `feature/agent-canary-3.0` branch is a different artifact; record its full commit SHA.
 
 Record:
 

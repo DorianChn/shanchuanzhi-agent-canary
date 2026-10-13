@@ -1,6 +1,6 @@
 # Getting started
 
-This guide starts with the published v3.0.0 stable release. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from the release. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
+This guide starts with the published v3.0.0 stable release. A separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) reuses the release assets from [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4); it is not the current stable CLI package described here. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from the release. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
 
 ## Five-minute quick start: stable v3.0.0
 
