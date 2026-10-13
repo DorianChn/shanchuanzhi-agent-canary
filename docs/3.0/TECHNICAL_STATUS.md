@@ -1,6 +1,6 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 13:25 UTC；GitHub 与 owner 快照）
+## 当前状态（2026-10-13 13:36 UTC；GitHub 与 owner 快照）
 
 - PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；9 项 CI 与 2 项 wrapper 检查全部通过，未修改或合并。
 - M0 PR #30 为 OPEN/Draft，head `6d61483`；CI run `38403657526` 为 9/9，ownership/contract gate `38403657775` 为 1/1。
@@ -12,7 +12,7 @@
 - M6 PR #38 head `bca895f` 的 Windows Node 22 测试失败；外部 E4 证据仍 NOT_VERIFIED。
 - M7 PR #39 仍在远端 `f17b7e6`，wrapper 与跨平台测试 jobs 失败。Owner 本地候选 `65ce028`；一次普通 push 因非交互 HTTPS 凭据不可用而被阻止，Issue #41 OPEN。
 - M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- 当前模块任务槽为 0/2；VMware、真实模型和安装测试均无活动预约。下一批分支 push 不早于 13:40 UTC，ready 分支可同批处理；窗口前不重复推送。
+- M1 与 M6 的继续工作已排入原有 Codex 会话；当前为 2/2 预留槽，执行进度待 owner 回报。VMware、真实模型和安装测试均无预约。下一批分支 push 不早于 13:40 UTC，ready 分支可同批处理。
 - 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
