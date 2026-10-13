@@ -125,7 +125,7 @@
   "docs/index.html": "2989482ef63fc2d28797e205388a8cfce522c905afaf0965fe1ab5210c7cc37c",
   "docs/pay.html": "f87dea88263cd4abfec82abd477420592e8724ded2f3ac5b93a28489fdcc36b8",
   "package-lock.json": "d3dfcec5c889f7be1699d69dc604b5cb4bba2016fb1090d96d1df18772627150",
-  "package.json": "c80094781affdf6cc79d4741b3f1d2317e88691f439584f1416b919c9e689fe9",
+  "package.json": "21c4ed97ee795788dadf8b39702f7848f9c55b97d0024f31eb41165cb76858e8",
   "packaging/ubuntu/install.mjs": "381932349787bcc086229e8391f0b1b11a8aa66efd42616ccb7633053ce38cd8",
   "packaging/ubuntu/install.sh": "7c4395723739dd6af90c4a6131367ce6337b46892d1d4ef5f26e3c89506d5737",
   "reproduction-kit/RESULT_RECEIPT_TEMPLATE.md": "ae965c411e1bc52350947c461b1afea496a3ff3fc3c135b2cfdc508e51e8b12a",

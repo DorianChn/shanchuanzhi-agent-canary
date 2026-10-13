@@ -55,6 +55,8 @@
     "acceptance:offline": "npm run self-test && npm run types:check && node reproduction-kit/verify-community-manifest.mjs . && node reproduction-kit/run-offline-demo.mjs --root=.",
     "self-test": "node dist/competition.js self-test --json",
     "pack:check": "node scripts/check-package.mjs",
+    "e4:auto": "npm run build && node security-lab/e4/run.mjs",
+    "e4:verify": "node security-lab/e4/verify-bundle.mjs",
     "verify": "npm run build && npm test && npm run acceptance:offline && npm run pack:check",
     "prepublishOnly": "npm run build"
   },
