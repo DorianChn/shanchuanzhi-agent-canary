@@ -1,20 +1,17 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 14:47 UTC；GitHub 与 owner 快照）
+## 当前状态（2026-10-13 15:38 UTC；实时快照）
 
-- PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；9 项 CI 与 2 项 wrapper 检查全部通过，未修改或合并。
-- M0 PR #30 为 OPEN/Draft，远端 head `61659fb`；当前10项检查全通过。旧 head `f2f2d10` 的 run `38412534723` 曾在 Ubuntu Node20 的 approval-expiry 子测试失败（321 pass/1 fail/4 skip，requestId undefined），仍由 P1 #44 跟踪；新 head 仅为协调文档，不能视为 Gateway 修复。M1 对精确源版本的 Windows Node22 子测试通过1/1，Node20 根因仍 UNKNOWN。
-- M1 PR #43 远端 head 仍为 `d0fd595`；原推送未更新远端。M1 本地 `dc4d7fa` 是单个 M1-owned honeypot 测试断言提交，Windows Node22 定向套件34/34、diff-check通过。#32 新增真实失败：PR #39 head `65ce028` 的 Windows Node22 job `115360080156` 中，M1-owned Hook interruption 测试出现 Expected true / actual false；M1 正按精确源码诊断。#35 P0 保持 OPEN。
-- M2 PR #37 为 OPEN/Draft，9/9 检查通过；原生 Codex Shell 仍 UNPROTECTED。
-- M3 PR #33 head `c404b6b`，run `38400488378` 为 9/9，PR 含 owner 编写的 onboarding API 契约。Issue #42 已根据当前 head 的 package-smoke 与契约验收证据关闭为 completed；跨模块 manifest 协调继续由 #27 跟踪。
-- M4 PR #34 与 M9 PR #36 当前各 9/9 检查通过；桌面安全中心/E4 后端 404 仍 UNKNOWN。
-- M5 feature/ac3-policy-audit 为 clean HEAD 9ec08d9、AC3 merge-base 62496d4、5 commits ahead；14:20 唯一普通 push 约26秒后 exit1、无输出。GitHub 仍无远端分支或 Draft PR；没有重试或更改凭据。
-- M6 PR #38 head bca895f；Windows Node22 失败仍属于 M1-owned Hook test/agent-hook.test.ts:54。M6 对 bca895f 的旧实现本地定向5/5通过，但未复现远端 marker 缺失；未改代码，保留未跟踪 E4 证据目录，外部 E4 仍 NOT_VERIFIED。
-- M7 PR #39 当前远端 head `65ce028`。本地 Windows Node22.23.1 定向可靠性套件40通过、0失败、3跳过（symlink 权限限制），diff-check通过。新 run `38415886978`：Ubuntu wrapper通过，Windows wrapper因 `NSIS_COMPILER_MISSING` 失败。Run `38415887207`：Ubuntu Node20/22与macOS Node22通过；Windows Node22失败属于M1-owned Hook测试（#32）；Windows Node20与macOS Node20被fail-fast取消；Docker/sponsor通过、package-smoke跳过。M7已着手修复 Windows runner 的真实 NSIS 编译器设置，不得跳过编译检查。Issue #41 OPEN。
-- M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- M1 与 M7 两项任务各占一个槽，当前2/2：M1处理 #32，M7处理 #41。M5上传尝试完成并释放槽位；M6旧版本复现完成。没有 VMware、真实模型或安装测试预约。最近合批推送于14:42 UTC成功；下一批不早于15:03 UTC。
-- 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
-
+- PR #24：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`，未合并；当前查看的 11 项 CI 全通过。
+- M0 PR #30：OPEN/Draft，head `0091759`。Run `38421264751` 的 macOS Node 22 job 在等待 15 分钟后以 `cancelled` 结束，`runner_id=0` 且没有步骤日志；`package-smoke` 被跳过。其余列出的测试、Docker、sponsor 与 ownership/contract gate 通过。此为 runner 分配结果未知，不能记作代码测试通过或产品失败。下一次推送最早为 15:41 UTC，或距更新后的最新 GitHub push 满 20 分钟（取较晚者）。
+- M1：占用 2 个并发槽中的 1 个。PR #43 远端 head `d0fd595`；本地 HEAD `dc4d7fa`，工作树有安全回归证据编辑。M1 正按优先级处理 #35 P0、#44 与 #32 P1；Gateway/Guard API 仍由 M1 独占。修复尚未由远端 PR/CI 验证。
+- M7：占用另 1 个并发槽。PR #39 远端 head `65ce028`；本地 HEAD `68e7caa`，`INSTALLER_ACCEPTANCE.md` 有进行中的改动。#41 P1 仍 OPEN，PR #39 仍有跨平台 CI 失败待修；M7 只处理其安装/可靠性所有权路径，不改共享 Gateway。
+- M2：PR #37 OPEN/Draft，检查通过；Codex 原生 Shell 仍为 `UNPROTECTED`，只可报告已测子进程隔离边界。
+- M3：PR #33 9/9 检查通过；M4：PR #34 当前检查通过；M8：PR #40 9/9 通过；均保持 IDLE。
+- M5：本地分支 clean、5 commits ahead，尚无远端分支或 Draft PR；等待并发槽和合批推送安排。
+- M6：PR #38 外部 E4 仍 `NOT_VERIFIED`，Windows Node 22 有待归属/回归的 Hook CI 失败；M9：PR #36 的集成门禁基线 9/9 通过。M6 保持 IDLE，证据不能替代外部 E4 运行。
+- 当前开发并发为 M1 + M7（2/2）。额度页面最近明确读数为 13%，约 1 小时 51 分钟后重置；M0 会话监看脚本每 60 秒读取一次。无 VMware、真实模型、安装测试预约；未合并 main、未发布 Release。
+- 本节为当前权威快照；其后旧矩阵/审计记录保留作历史证据，时间以各记录内标注为准。
 ## 基线与 PR #24
 
 - 总仓库 checkout：`main`，HEAD `146be17ea924d09a78ceff90b83006cdd40dfc43`。
@@ -36,15 +33,15 @@
 
 | 模块 | 分支 | HEAD | 当前改动快照 | 路径环境 |
 | --- | --- | --- | --- | --- |
-| M1 | feature/ac3-security-core | dc4d7fa | PR #43 remote d0fd595; one push exit1/no output; local gateway+honeypot 34/34; #32 UNKNOWN, #35 OPEN, #44 diagnosis active | WSL Git worktree |
+| M1 | feature/ac3-security-core | dc4d7fa | 本地回归证据正在编辑；远端 PR #43 仍 d0fd595，#35/#44/#32 未闭环 | WSL Git worktree |
 | M2 | `feature/ac3-execution-isolation` | `a1c239d` | PR #37 OPEN/Draft，9/9 checks；隔离原型与证据已提交，原生 Shell 仍为 `UNPROTECTED` | WSL Git worktree |
 | M3 | `feature/ac3-agent-onboarding` | `c404b6b` | PR #33 9/9 checks；M3 API 契约已写入；旧 main-based 快照保留在 backup 分支 | Windows Git worktree |
 | M4 | `feature/ac3-desktop-security-center` | `fe2c973` | PR #34 头一致、当前 run 全绿；工作树干净 | Windows Git worktree |
 | M5 | feature/ac3-policy-audit | 9ec08d9 | clean、merge-base 62496d4、5 commits ahead；14:20 单次 push exit1/no output；remote branch 404 | WSL Git worktree |
 | M6 | feature/ac3-e4-validation-ac3 (另有旧 PR #31 分支) | bca895f | PR #38 旧 Hook 测试本地 Windows Node22 5/5；远端 marker failure 未复现；未改代码，外部 E4 NOT_VERIFIED | Windows Git worktree |
-| M7 | `feature/ac3-reliability-ac3` | `65ce028` | 本地候选 clean；PR #39 远端 `f17b7e6` CI 失败；正在映射失败日志并验证候选，#41 OPEN | WSL Git worktree |
+| M7 | `feature/ac3-reliability-ac3` | `68e7caa` | PR #39 远端 65ce028；本地 INSTALLER_ACCEPTANCE.md 正编辑，Issue #41 OPEN | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `b0f30ff` | PR #40 当前 head，9/9 checks 通过；未发布 Release | WSL Git worktree |
-| M0 | feature/ac3-m0-coordination | f2f2d10 | PR #30 14:20 文档推送成功；run 38412534723 的 Ubuntu Node20 approval-expiry 测试失败；gate 38413966169 通过；Issue #44 OPEN | Windows Git worktree |
+| M0 | feature/ac3-m0-coordination | 0091759 | PR #30 OPEN/Draft；quota policy 文档有本地更正，等待推送批次 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `996073a` | 集成计划在 Draft PR #36；9/9 checks 通过 | Windows Git worktree |
 
 初始 main 与 AC3 快照存在不同历史；M3 当前 PR #33 head `c404b6b` 已基于 AC3 `62496d4`，旧 main-based 快照 `cf42dde` 保留在 `backup/ac3-agent-onboarding-main-base`。M6 旧 PR #31 分支仍为 main-based `da52c17`；独立 AC3 PR #38 使用 `bca895f`，manifest 与字段组合继续由 #27 跟踪。M4/M0/M9 worktree 基于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
@@ -61,8 +58,6 @@
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
 - Codex Desktop Connector 未暴露 `read_thread`、`wait_threads` 或 `send_message_to_thread`。应用户许可，M0 曾只读本机 `thread_history` 并用 `codex queue` 调度；具体模块进度以对应 worktree 与 GitHub refs/Issues/PR 为准，不把本机记录说成原生 `read_thread`。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPEN/Draft，base `feature/agent-canary-3.0`，当前 GitHub head `f2f2d10`；run `38412534723` 在 Ubuntu Node20 的 approval-expiry 子测试失败，详见 P1 Issue #44。PR 描述于14:28 UTC刷新，ownership/contract gate `38413966169` 通过。
-
-## M0 交付边界
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPEN/Draft，base `feature/agent-canary-3.0`，远端 head `0091759`。Run `38421264751` 的 macOS Node22 job 等待 15 分钟后被取消，`runner_id=0` 且无步骤日志；`package-smoke` 跳过。其余显示的检查通过。标记为 runner 分配结果未知，待新远端运行确认。\r\n\r\n## M0 交付边界
 
 已建立 `main/`（AC3 detached 基线快照）、`agents/M1–M8`、`coordinator/`、`integration/`、`reports/`、`logs/`。根仓库 `main` checkout 保持原状。M0 未改 M1–M8 源码，未合并 main，未发布 Release。WSL 与 Windows 工作树各由对应 Git runtime 读取；交叉 runtime 会显示不兼容指针为 `prunable`，没有执行 `repair/prune`。
