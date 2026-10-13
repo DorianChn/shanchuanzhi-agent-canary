@@ -1,7 +1,7 @@
 # Agent Canary 3.0 M1 安全核心审计
 
-审计日期：2026-10-13  
-分支：feature/ac3-security-core  
+审计日期：2026-10-13
+分支：feature/ac3-security-core
 审计基线：feature/agent-canary-3.0，提交 62496d4020bd90ba2eede49b2e80a2bbebb036b4
 
 ## 范围与边界
