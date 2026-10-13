@@ -43,9 +43,11 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 已只读检查 `coordinator/docs/3.0/API_CONTRACTS.md`、模块归属/依赖文档及 Issue #27。M0 契约要求保持既有 `createRiskPolicyRouter` 的 `ALLOW|DENY|APPROVAL_REQUIRED` 语义、确保策略只收紧并保留 Gateway 最终执行复查。M5 为 API 兼容把未知工具表示为 `DENY / unregistered_tool`，并在 M5 审计事件中保留 `UNKNOWN`。M5 没有修改 M1 的 Hook、Gateway、Guard 或 `runtime/evidence.ts`；与 Gateway 组合时仍需把最终回调路由到 Gateway `agent.dispatch`。
 
-该契约副本位于 `coordinator`，其 `.git` 指针已损坏且 Git 将其标为 `prunable`，所以无法确认 M0 文档变更的提交状态或由 M0 批准。新 `./policy` 导出和 `agent-canary.policy-audit/1` 是新增公共接口/事件格式，按契约需要同步 API 文档；该文档由 M0 工作区维护，M5 checkout 中没有此文件，未复制或修改另一工作区的文件。Issue #27 仍 OPEN，要求 M5/M6 确认 `package.json` 字段归属。Draft PR 正文应标注 `API-Contract-Change: yes`，并在 M0/M6 明确协调后补齐契约变更和 manifest 组合说明；此 PR 保持 Draft，不可据此合并。
+该契约副本位于 `coordinator`，其 `.git` 指针已损坏且 Git 将其标为 `prunable`，所以无法确认 M0 文档变更的提交状态或由 M0 批准。新 `./policy` 导出和 `agent-canary.policy-audit/1` 是新增公共接口/事件格式，按契约需要同步 API 文档；该文档由 M0 工作区维护，M5 checkout 中没有此文件，未复制或修改另一工作区的文件。Issue #27 仍 OPEN，要求 M5/M6 确认 `package.json` 字段归属。如创建 Draft PR，正文须标注 `API-Contract-Change: yes` 与协调状态；M0/M6 文档和 manifest 协调完成前不得标记 Ready 或合并。
 
 被引用 Codex 线程在本会话可用工具中仍没有 `read_thread`，不能声称已读取该线程或获得 M0/M6 的实时同意。Hook/Gateway 目前只能由宿主显式调用 `policyManager.recordDecision()` 写入 M5 证据，尚未自动统一接线；共享适配、事件关联与合并顺序待协调。
+
+本地开发和验证已完成，但当前没有远程 Draft PR：Git push 因缺少 GitHub HTTPS 写入凭据失败，GitHub 文件写入 API 返回 403（integration 无写入权限）。本地提交保留在 `feature/ac3-policy-audit`；取得可写远程认证并完成 M0/M6 协调后再发布 Draft PR。
 
 ## 验证范围
 
