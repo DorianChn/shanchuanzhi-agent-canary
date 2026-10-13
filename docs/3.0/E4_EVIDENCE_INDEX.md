@@ -23,16 +23,17 @@ Historical release identity was `v3.0.0-competition-candidate.4`, with installer
 
 | Field | Value |
 |---|---|
-| Evidence directory | `security-lab/e4-runs/<run-id>/` |
-| Bound source | `report.json` → `source.commit`, `source.tree`, `source.dirtyAtStart` |
-| Package | `report.json` → `source.packageVersion`; artifact digest is `NOT_SUPPLIED` unless an explicit `--artifact` is passed |
-| Model | `report.json` → `model`; no substitution is permitted; refused/missing tool calls remain inconclusive |
+| Recorded run | [`20261013T084123Z`](../../security-lab/e4-runs/20261013T084123Z/report.json) |
+| Bound source | Commit `04b3d983a650b054447371c0dc2d30497033dbfd`, tree `2d47e7a60b417671f70aad3efd32feeda3afd7f0`; clean at run start (`dirtyAtStart=false`) |
+| Package | Source package version `3.0.0`; no installable artifact supplied (`artifactSha256=NOT_SUPPLIED`) |
+| Model | Requested display name `GPT-6 Luna Max`; provider, model ID, endpoint, and API key environment values absent; 0 model requests, 0 tool calls, identity `NOT_VERIFIED`, case `BLOCKED` |
+| VM | No VM receipt or installed artifact supplied; no shared VMware test started or changed because the M0 coordination thread could not be read in this session |
+| Case counts | 10 total: 5 `PASS_FIXTURE`, 1 `PASS_CONTROL`, 1 `OBSERVED_BYPASS`, 3 `BLOCKED`, 0 `FAIL` |
 | Raw files | `raw.log`, `evidence/*.jsonl`, `report.json`, `report.md`, `SHA256SUMS.txt` |
-| ZIP | `evidence.zip`; adjacent `bundle.sha256` and `bundle.json` record its digest and local verification result |
-| E4 classification | Always `NOT_VERIFIED` for a runner-produced result |
+| ZIP and verification | `evidence.zip` SHA-256 `f1cda41498f984cddf54c19b096ec5e7f4ab6f98ed1b2e806129d233bf017a6a`; `npm run e4:verify -- security-lab/e4-runs/20261013T084123Z` returned valid with 13 ZIP entries |
+| E4 classification | `AUTHOR_AUTOMATION_RUN_NOT_E4`; `e4Status=NOT_VERIFIED` |
 
-After a run, append its exact ID, commit, artifact SHA, provider-reported model IDs, ZIP SHA-256 and verification command here. Do not replace previous run folders or edit their result files. If the exact target model, VM, package, or independent operator is unavailable, record the blocker; do not manufacture a completed result.
-
+This is an author-run synthetic harness record. It does not establish an installed-app result, a clean-VM result, a real-model result, or independent testing. The bundle and report preserve the exact source and each case outcome. The model case was intentionally run with `--real-model` so the absence of a configured target is recorded as `BLOCKED` with zero requests; no replacement model was used.
 ## Integrity and limitations
 
 - `npm run e4:verify -- <run-directory>` checks the ZIP central/local records, CRC-32 values, internal SHA-256 manifest, expected result files, required case IDs, and the rule that automation must not promote E4.
