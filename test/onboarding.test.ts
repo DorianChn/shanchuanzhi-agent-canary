@@ -160,12 +160,17 @@ test('legacy Cline CLI integration refuses its unsupported project-relative conf
 test('Codex CLI apply emits one JSON result with a receipt and restores the isolated project',t=>{
   const f=fixture();t.after(f.close);
   const cli=fileURLToPath(new URL('../dist/competition.js',import.meta.url));
-  const cliEnv={...process.env,CODEX_HOME:path.join(f.root,'codex-home')};
+  const bin=path.join(f.root,'codex-bin');fs.mkdirSync(bin);
+  const codex=path.join(bin,process.platform==='win32'?'codex.cmd':'codex');
+  fs.writeFileSync(codex,process.platform==='win32'?'@echo off\r\necho codex-cli test-stub 1.0\r\n':'#!/bin/sh\nprintf "%s\\n" "codex-cli test-stub 1.0"\n',{mode:0o755});
+  const cliEnv={...process.env,CODEX_HOME:path.join(f.root,'codex-home'),PATH:[bin,process.env.PATH??''].filter(Boolean).join(path.delimiter)};
   let backupRecord:{backupPath:string}|undefined;
   t.after(()=>{if(backupRecord)clearBackup(backupRecord);});
   const installed=spawnSync(process.execPath,[cli,'onboard','--project',f.project,'--apply','--json'],{encoding:'utf8',windowsHide:true,timeout:20_000,env:cliEnv});
   assert.equal(installed.status,0,installed.stderr);
   const result=JSON.parse(installed.stdout);
+  assert.equal(result.preflight.installed,true);
+  assert.equal(process.platform==='win32'?result.preflight.executable.toLowerCase():result.preflight.executable,process.platform==='win32'?codex.toLowerCase():codex);
   assert.equal(result.configurationWrite,'SUCCEEDED');
   assert.equal(result.protectionStatus,'NOT_VERIFIED');
   assert.equal(result.status,'MCP_DECOY_INSTALLED');
