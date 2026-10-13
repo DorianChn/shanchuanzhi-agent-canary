@@ -1,18 +1,25 @@
 # M0 技术协调状态
 
-## 本轮最新状态（2026-10-13 11:25 UTC；覆盖下方较早快照）
+## 当前状态（2026-10-13 11:56 UTC；以本快照与实时 GitHub/worktree 状态为准）
 
-- PR #24：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `feature/agent-canary-3.0` / `62496d4`；没有修改或合并。
-- M0 PR #30：OPEN/Draft，当前 head 2ddf996，run 38389613969/38389613975 检查仍在运行。前一 head 8cab7ce 的 9 项平台/包检查与独立 ownership gate 全部通过；当前 head 结果待确认。
-- M3 PR #33：OPEN/Draft、AC3 base、head `8fd4e4f`。M4 PR #34：OPEN/Draft、head `fe2c973`；run `38386967113` 的 9/9 checks 通过；UI 全量本地测试此前为 325 pass、5 skip。
-- M9 PR #36：OPEN/Draft、AC3 base、head 996073a；run 38388372984 的 9 项检查全部通过。较早 head 28473cc 的 Windows Node 22 Hook interruption 失败仍归入 OPEN 的 P1 #32。
-- M1 P0 修复在本地 commit ec3bc96，Windows Node 20.20.2 历史报告为 15/15；Node 22.23.1 聚焦测试和失败诊断检查未复现间歇失败。根因 UNKNOWN，#35 OPEN/BLOCKED。M1 当前只读审阅 M7 close 生命周期，不访问 M7 worktree/process。
-- **开发槽 3/3：** M1 审阅 #28 中的 M7 Gateway close 说明；M2 用 Windows Git 做一次既有分支远端交付；M6 在新 AC3 worktree 解决 `.gitignore` 冲突并完成迁移。没有 VMware、真实模型或安装测试。
-- M2 本地提交 a1c239d 的 WSL/Windows 本地 ref 已核对相同、工作树干净；当前只做一次 Windows Git remote delivery，尚未确认远端分支/PR。原生 Shell 仍标 UNPROTECTED。M6 旧 PR #31 仍为 main base；新 AC3 迁移未验证。#27/#28/#32/#35 均 OPEN。
-- 没有 VMware、真实模型或安装测试在运行；互斥资源槽空闲。M0 本轮未运行产品测试或修改模块源码。
-- 当前工具集合没有原生 read_thread/wait_threads；经用户许可，M0 只读 thread_history_1.sqlite 获取八个任务正文/状态并使用 codex queue 续作，随后交叉核验 GitHub/worktree；没有声称调用原生 read_thread。
+- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head feature/agent-canary-3.0 / 62496d4；11/11 checks 成功。M0 未改动、未合并。
+- M0 PR #30：OPEN/Draft，AC3 base，head 3e32ccc；最近 CI run 38390302812 中 Windows Node 20 失败于 test/agent-hook.test.ts:54 的 Hook interruption 用例，其余 10 项成功，package-smoke 跳过；独立 ownership gate 38390835616 成功。P1 #32 保持 OPEN，根因 UNKNOWN。
+- M6 PR #31：OPEN/Draft、base main、head da52c17；run 38371562917 的 8 项成功、package-smoke 失败（files:181,mismatches:[package.json]）。旧 PR 未改动；M6 正在自己的 AC3 候选 worktree 查因/修复。M6 E4 文件副本完整性修复已本地提交 bca895f。
+- M2 PR #37：OPEN/Draft、AC3 base，9/9 checks 成功；原生 Codex Shell 仍为 UNPROTECTED，AppContainer 范围仅限已测试子进程操作。
+- M3 PR #33：OPEN/Draft、AC3 base，当前没有 CI checks；HEAD 8fd4e4f。后续需补充聚焦本地验证/远端 CI 证据。
+- M4 PR #34：OPEN/Draft、AC3 base，9/9 checks 成功；安全中心/E4 后端接口 404，产品状态继续标为 UNKNOWN。
+- M9 PR #36：OPEN/Draft、AC3 base，9/9 checks 成功；最终集成门槛与风险排程已建立。
+- M1 本地 Gateway close 修复 f15fdcfa 已提交，Gateway 聚焦测试 28/28、TypeScript build 和 diff check 通过；M1 正在定位 #32 Hook 中断失败。Node 20 在当前环境不可用；本地 Node 22 合成诊断尚不能证明历史 CI 根因。
+- M5 本地策略审计语义修复 cd8abea 已提交；聚焦策略测试 42/42、TypeScript noEmit 和 diff check 通过。远端 Draft PR 仍未建立，WSL 凭据阻塞此前 push，未重试。
+- M7 在自己的 AC3 候选 worktree 处理与 M1 close 生命周期的兼容性，当前活动中；没有改 M1 worktree。
+- M8 双语 README 覆盖范围/限制说明已提交 b0f30ff；14 份文档、55 个本地链接、13 个示例检查及双语主题核对通过；本地干净，未推送。
+- 开发槽 3/3：M1 #32、M6 #31 package-smoke、M7 Gateway 兼容。M8 已完成并释放槽。当前无 VMware、真实模型或安装测试占用。
+- 工具面无原生 Codex read_thread；按用户授权读取本地 thread_history_1.sqlite 并用 codex queue 续作，再以 GitHub/worktree 交叉核对；不声称调用了原生工具。
+- 协调文档工作区本轮尚待提交/同步至 PR #30；未合并 main、未改模块源码、未发布 Release。
 
-较早状态快照如下，仅供审计，不代表当前模块调度状态。
+## 历史状态快照（2026-10-13 11:25 UTC）
+
+以下内容仅作为历史记录，不代表当前模块调度状态。
 
 ## 基线与 PR #24
 

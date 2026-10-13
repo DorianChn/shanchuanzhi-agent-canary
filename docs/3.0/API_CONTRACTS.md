@@ -33,9 +33,10 @@
 - `OBSERVE` 只影响可选策略层，不覆盖 `AgentGuard` quarantine/containment。策略 `ALLOW` 不等于 Gateway 资源登记。
 - `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
 - `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
-- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭；`close()` 先中止活动执行，再退订。该通知目前只覆盖同一进程、同一 Guard 实例；共享持久化 store 的跨 Guard/跨进程变化、忽略 AbortSignal 的不合作 callback 及已完成副作用不在此保证内。
+- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。M1 owner 实现 `close()` 的顺序为：同步锁定 closed 并清空 pending；在触发 abort/disposer 回调前发布唯一 memoized `closePromise`；中止活动 controller、至多一次安全退订 Guard observer；等待已入队的 Gateway 任务结算；逐个尝试关闭全部本实例资源。任一资源关闭失败时，所有调用共享以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝的 promise，不泄露路径或底层 cause。M1 本地提交 f15fdcfa 的 Windows Node 22 Gateway 测试为 28/28、TypeScript build 和 diff check 通过；尚无远端集成 PR/CI 证据，M7 兼容性实现和组合验证待完成。Guard 通知只覆盖同一进程、同一 Guard 实例；忽略 AbortSignal 的不合作 callback 不会被强制终止，已经发生的副作用不承诺回滚。
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
+- M5 本地提交 `cd8abea` 进一步约束策略审计事件：`DECISION` 只表示执行尚未开始；`EXECUTION_RESULT` 使用 `decision=NOT_APPLICABLE` 且状态表示执行已开始；策略变更事件不得伪装成执行结果。新增和导入证据都经过同一语义校验；非法组合不得进入哈希链。策略审计事件的判定来源、执行状态和副作用验证状态必须保持一致。
 
 ## Agent 宿主接入与安装 — M3
 
@@ -54,6 +55,7 @@
 - 机器事件 schema 为 `SecurityEvidenceEvent` v0.1，固定 decision/status 枚举；`canonicalJSON` 定义有限 JSON 规范化，`verifyEvidenceChain(events, expectedHead?)` 检查事件链和可选预期链尾。
 - `expectedHead` 必须来自独立可信来源才能检测尾部截断。无外部锚定、签名和可信时间戳时不能宣称绝对防篡改；格式/哈希验证也不证明执行隔离或所有副作用。
 - E4 报告保留状态、输入 artifact/hash、工具版本和验证范围；缺少证据不得转为 PASS。schema/状态语义变更由 M6 与消费者协商。
+- M6 本地提交 `bca895f` 的 bundle verifier 还逐字节比对外置 `SHA256SUMS.txt`、`report.json`、`report.md`、`raw.log` 与 ZIP 内副本；缺失或不一致均拒绝。合成 fixture 通过只证明对应验证器路径，不提升 E4 状态；真实模型、工具调用、VM/安装器范围未覆盖时继续标 `NOT_VERIFIED`。
 
 ## Draft PR 契约
 
