@@ -31,7 +31,7 @@
 | M6 | `feature/ac3-e4-validation` | `da52c17` | 3 个 commit ahead of main，已同步模块远端；包含 `package.json`、E4 验证与报告 artifact，工作树干净 | Windows Git worktree |
 | M7 | `feature/ac3-reliability` | `62496d4` | Windows packaging、Gateway、测试和 `package.json` 有修改/新增 | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `62496d4` | README、安全/贡献文档和 GitHub 模板有修改/新增 | WSL Git worktree |
-| M0 | `feature/ac3-m0-coordination` | `3354e42` | 本协调文档和检查 | Windows Git worktree |
+| M0 | `feature/ac3-m0-coordination` | `017d365` | 本协调文档和检查 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `62496d4` | 集成计划 | Windows Git worktree |
 
 比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 位于 main HEAD 并有未提交内容；M6 位于 `da52c17`，在 main 上有 3 个模块 commit。两者与 AC3 的比较分别为 46/4 和 46/7，未自动移动/覆盖其内容。M4/M0/M9 新建 worktree 同源于 `62496d4`。worktree 共享对象库，但工作目录/index 独立。
