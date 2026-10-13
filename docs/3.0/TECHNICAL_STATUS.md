@@ -41,7 +41,7 @@
 | M6 | feature/ac3-e4-validation-ac3 (另有旧 PR #31 分支) | bca895f | PR #38 旧 Hook 测试本地 Windows Node22 5/5；远端 marker failure 未复现；未改代码，外部 E4 NOT_VERIFIED | Windows Git worktree |
 | M7 | `feature/ac3-reliability-ac3` | `68e7caa` | PR #39 远端 65ce028；本地 INSTALLER_ACCEPTANCE.md 正编辑，Issue #41 OPEN | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `b0f30ff` | PR #40 当前 head，9/9 checks 通过；未发布 Release | WSL Git worktree |
-| M0 | feature/ac3-m0-coordination | 1179ed1 | PR #30 OPEN/Draft，current head 10/10 CI passed; quota/status docs refreshed | Windows Git worktree |
+| M0 | feature/ac3-m0-coordination | 1179ed1 remote; local docs pending batch | PR #30 OPEN/Draft, remote CI 10/10 passed; next push after 16:02 UTC | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `996073a` | 集成计划在 Draft PR #36；9/9 checks 通过 | Windows Git worktree |
 
 初始 main 与 AC3 快照存在不同历史；M3 当前 PR #33 head `c404b6b` 已基于 AC3 `62496d4`，旧 main-based 快照 `cf42dde` 保留在 `backup/ac3-agent-onboarding-main-base`。M6 旧 PR #31 分支仍为 main-based `da52c17`；独立 AC3 PR #38 使用 `bca895f`，manifest 与字段组合继续由 #27 跟踪。M4/M0/M9 worktree 基于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
