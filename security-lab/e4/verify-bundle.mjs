@@ -40,6 +40,14 @@ const reportBytes = files.get('report.json');
 const markdown = files.get('report.md');
 const rawLog = files.get('raw.log');
 if (!reportBytes || !markdown || !rawLog) throw new Error('E4_REPORT_COMPONENT_MISSING');
+for (const name of ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log']) {
+  const archived = files.get(name);
+  if (!archived) throw new Error(`E4_EXTERNAL_COPY_MISSING_FROM_ARCHIVE:${name}`);
+  let external;
+  try { external = fs.readFileSync(path.join(runDir, name)); }
+  catch { throw new Error(`E4_EXTERNAL_COPY_MISSING:${name}`); }
+  if (!external.equals(archived)) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
+}
 const report = JSON.parse(reportBytes.toString('utf8'));
 if (report.e4Status !== 'NOT_VERIFIED' || report.overall.includes('PASS')) throw new Error('E4_AUTOMATION_MUST_NOT_PROMOTE_VERDICT');
 const requiredCases = ['GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION', 'GW-FAULT-EXECUTOR', 'GW-FAULT-CLOSED', 'HOOK-FAULT-STATESTORE', 'SHELL-BOUNDARY-BYPASS', 'ARTIFACT-VM-BINDING', 'APP-01', 'MODEL-REAL-TOOLCALL'];
