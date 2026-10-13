@@ -49,6 +49,28 @@ try {
   );
   assert.equal(JSON.stringify(record).includes(command), false);
 
+  const blockerPath = path.join(logDir, "not-a-directory");
+  fs.writeFileSync(blockerPath, "synthetic file blocks log-directory creation");
+  const failedLogOutput = JSON.parse(
+    execFileSync(process.execPath, [hook], {
+      input: JSON.stringify(event),
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        AGENT_CANARY_ALERT_LOG: path.join(blockerPath, "alerts.jsonl"),
+      },
+    }),
+  );
+  assert.equal(failedLogOutput.hookSpecificOutput.permissionDecision, "deny");
+  assert.match(failedLogOutput.systemMessage, /UNPROTECTED_NATIVE_SHELL/);
+  assert.match(failedLogOutput.hookSpecificOutput.additionalContext, /local_alert_log=WRITE_FAILED/);
+
+  const malformedOutput = JSON.parse(
+    execFileSync(process.execPath, [hook], { input: "{", encoding: "utf8" }),
+  );
+  assert.equal(malformedOutput.hookSpecificOutput.permissionDecision, "deny");
+  assert.match(malformedOutput.systemMessage, /could not be fully validated/);
+
   const unrelated = JSON.parse(
     execFileSync(process.execPath, [hook], {
       input: JSON.stringify({ ...event, tool_name: "apply_patch" }),
@@ -63,6 +85,8 @@ try {
       directBashDecision: "deny",
       visibleWarning: true,
       optionalAuditLog: "PASS",
+      alertWriteFailure: "DENY_WITH_VISIBLE_WARNING",
+      malformedInputDecision: "deny",
       rawCommandLogged: false,
       unrelatedTool: "PASS_THROUGH",
     }) + "\n",

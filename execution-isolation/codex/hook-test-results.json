@@ -9,10 +9,13 @@
   "directBashDecision": "deny",
   "visibleWarning": "UNPROTECTED_NATIVE_SHELL",
   "optionalAuditLog": "PASS",
+  "alertWriteFailure": "DENY_WITH_VISIBLE_WARNING",
+  "malformedInputDecision": "deny",
   "commandLogged": false,
   "commandSha256Logged": true,
   "windowsCommand": "PASS from repository-root working directory",
   "projectConfigInstalled": false,
+  "liveCodexAlert": "NOT_ACTIVE_UNTIL_PROJECT_HOOK_IS_INSTALLED_AND_TRUSTED",
   "m0OwnershipCoordination": "REQUIRED_FOR_ROOT_HOOK_CONFIG",
   "codexLifecycle": "NOT_TESTED",
   "projectHookTrust": "REVIEW_REQUIRED"
