@@ -20,7 +20,7 @@
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
 - [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）：PR #38 run 38397135538 的 Windows Node22 marker 断言失败落在 M1-owned test/agent-hook.test.ts:54。M1 当前 async 版本10/10、M6 对 bca895f 旧 spawnSync/timeout1000ms 版本5/5均通过；两者均未复现远端 marker 缺失。版本差异已记录，根因仍 UNKNOWN，保留超时/无 allow/无 callback 断言。
 - [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 owner 报告 Windows Node 22 聚焦 34/34 通过，证明同进程 quarantine 时先 abort、dispatch 被拒且没有合成副作用；跨进程/shared-store 边界仍未验证。14:20 单次 push 约51秒后 exit1且无输出，PR #43 远端仍 d0fd595；未重试。保持 P0，等待当前 PR 头 CI 与充分端到端验收。
-- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：PR #39 远端 `f17b7e6` 的 Ubuntu/Windows wrapper 与 macOS/Windows jobs 失败；owner 候选 `65ce028` 正复核确切失败日志和相关本地测试，尚未推送。此前一次 push 因 non-interactive HTTPS 凭据不可用而停止；禁止更换认证方式。
+- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：PR #39 远端 `f17b7e6`。Run `38397157815` 的 Ubuntu wrapper 编译检查失败；Windows wrapper 子测试42通过、0失败、1跳过，后续 `pack:check` 被取消。Run `38397158016` 的 Ubuntu Node20/22通过、macOS Node22测试失败；macOS Node20 job 被取消但 `npm test` step 记为失败；Windows Node20/22 jobs 被取消且没有失败测试 step。Owner 候选 `65ce028` 的 Windows Node22 定向套件40通过、0失败、3跳过（symlink 权限限制），diff-check 通过；候选等待本次合批推送和新 CI。此前单独 push 因 non-interactive HTTPS 凭据不可用而停止，未更换认证方式。
 - [#44 gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)（P1，OPEN）：PR #30 head f2f2d10 / run 38412534723 在 Ubuntu Node20 的“approval expires with no actual callback”失败，`requestId` undefined（321 pass/1 fail/4 skip）；fail-fast 取消其余矩阵任务，不能算成独立失败。M1 正在精确源版本上复现并判断是行为缺陷还是测试时序问题；不得弱化“过期审批不调用真实 callback、不产生 allow”不变量。
 - [#42 M3 package manifest/current-head validation](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/42)（P1，CLOSED/completed）：PR #33 当前 head c404b6b、run 38400488378 9/9（含 package-smoke）且含 owner-authored M3 API 契约；旧 cf42dde manifest 证据不适用于当前 AC3 PR。跨模块 manifest 组合继续跟踪于 #27。
 
@@ -33,6 +33,6 @@
 
 ## 运行资源
 
-- 开发并行度上限为 2。2026-10-13 14:33 UTC，M1 处理 #44、M7 验证 #39 候选，共占 2/2 槽；M5 单次上传失败后已结束，M6 精确旧 Hook 路径复现结束。下一次 push 不早于 14:40 UTC。没有 VMware、真实模型或安装测试活动。
+- 开发并行度上限为 2。2026-10-13 14:40 UTC，M1 处理 #44，M7 候选已完成本地验证并交由 M0 编入推送批次，共占 2/2 槽；M5 单次上传失败后已结束，M6 精确旧 Hook 路径复现结束。推送至少间隔20分钟，由 M0 合批；最近成功批次14:20 UTC，本次窗口14:40 UTC。没有 VMware、真实模型或安装测试活动。
 - VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行；本轮 M6 只做本地合成 Hook 测试，M7 未运行真实安装、VM 或模型测试。
 - 本会话工具清单未暴露原生 read_thread/wait_threads。M0 曾经用户许可从本机 thread_history 只读记录核对已引用任务，并用 codex queue 续作；该本机记录不冒称原生 read_thread。当前活动状态对照实际 GitHub ref/Issue/PR 和 owner worktree。

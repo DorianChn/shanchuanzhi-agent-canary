@@ -1,6 +1,6 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 14:33 UTC；GitHub 与 owner 快照）
+## 当前状态（2026-10-13 14:40 UTC；GitHub 与 owner 快照）
 
 - PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；9 项 CI 与 2 项 wrapper 检查全部通过，未修改或合并。
 - M0 PR #30 为 OPEN/Draft，远端 head f2f2d10；run 38412534723 在 Ubuntu Node20 的 gateway approval-expiry 子测试失败（321 pass/1 fail/4 skip，requestId undefined），其他矩阵项被 fail-fast 取消；build、Docker、sponsor 通过，package-smoke skipped。正文刷新触发的 ownership/contract gate run 38413966169 通过。P1 Issue #44 已交 M1 精确源版本诊断。
@@ -10,9 +10,9 @@
 - M4 PR #34 与 M9 PR #36 当前各 9/9 检查通过；桌面安全中心/E4 后端 404 仍 UNKNOWN。
 - M5 feature/ac3-policy-audit 为 clean HEAD 9ec08d9、AC3 merge-base 62496d4、5 commits ahead；14:20 唯一普通 push 约26秒后 exit1、无输出。GitHub 仍无远端分支或 Draft PR；没有重试或更改凭据。
 - M6 PR #38 head bca895f；Windows Node22 失败仍属于 M1-owned Hook test/agent-hook.test.ts:54。M6 对 bca895f 的旧实现本地定向5/5通过，但未复现远端 marker 缺失；未改代码，保留未跟踪 E4 证据目录，外部 E4 仍 NOT_VERIFIED。
-- M7 PR #39 远端仍为 `f17b7e6`，Ubuntu/Windows wrapper 与 macOS/Windows 矩阵有失败。Owner 候选 `65ce028`；M7 正在复核确切失败日志和本地测试，下一次上传最早14:40；Issue #41 OPEN。
+- M7 PR #39 远端为 `f17b7e6`，owner 候选 `65ce028`。Windows Node22.23.1 定向可靠性套件40通过、0失败、3跳过（symlink 权限限制），`git diff --check` 通过。CI run `38397157815`：Ubuntu wrapper 编译检查失败；Windows wrapper 子测试42通过、0失败、1跳过，后续 `pack:check` 被取消。Run `38397158016`：Ubuntu Node20/22通过；macOS Node22测试失败，macOS Node20 job 虽取消但 `npm test` step 记录失败；Windows Node20/22 job 被取消且无失败测试 step。候选仅做本地验证；未跑安装、VMware 或真实模型测试。Issue #41 保持 OPEN，等待候选 CI。
 - M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- M1 与 M7 两项任务各占一个槽，当前2/2：M1处理P1 #44，M7复核PR #39候选。M5上传尝试完成并释放槽位；M6旧版本复现完成。没有 VMware、真实模型或安装测试预约；下一批push不早于14:40 UTC。
+- M1 与 M7 两项任务各占一个槽，当前2/2：M1处理P1 #44，M7候选已完成本地验证并交由 M0 编入本次推送批次。M5上传尝试完成并释放槽位；M6旧版本复现完成。没有 VMware、真实模型或安装测试预约。推送按至少20分钟间隔合批；最近成功批次为14:20 UTC，本次窗口为14:40 UTC。
 - 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
