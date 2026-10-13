@@ -43,9 +43,9 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 
 基线中未找到 MODULE_OWNERSHIP.md 或 API_CONTRACTS.md。已准备要求 M0 补齐接口基线并定义 Guard 隔离通知契约的 Issue，但 GitHub Connector 返回 403、gh 不可用且 Chrome 扩展未连接，故尚未创建，无法提供 Issue 编号。当前可用工具未提供用户引用 Codex thread 的 read_thread 能力，因此没有读取该线程；本文结论仅基于仓库与测试证据。
 
-## 远端交付状态
+## 远端交付状态（首次审计快照）
 
-本地分支 feature/ac3-security-core 的提交 be5836e 已包含代码、回归和三份交付文档。目标远端分支在推送前不存在；GitHub Connector 创建分支返回 403，非交互 git push 返回“could not read Username”。因此尚未推送，也未创建 Draft PR。没有合并 main 或创建 Release。恢复 GitHub 写入认证后，可从该本地分支直接推送并以 feature/agent-canary-3.0 为 Draft PR base。
+首次审计快照中，本地分支提交 `be5836e` 已包含原代码、回归和三份交付文档；当时尚未推送，也未创建 Draft PR。该状态由本续作的最新同步记录补充。
 
 ## 续作：Windows Node 20 Hook interruption 与 M7 协调（2026-10-13）
 
@@ -71,4 +71,7 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 
 ### GitHub 状态
 
-本续作尚未确认评论/分支/PR 写权限。#28、#29、#32 的当前计划是：#28 记录 M1/M7 安全合并要求；#29 报告 M1 槽位状态与下一步；#32 维持 OPEN 并等待新测试的 Windows CI。新 Draft PR 以 `feature/agent-canary-3.0` 为 base；不合并 main、不发布 Release。
+- 新 M0 Issue 创建及 #28/#29/#32 评论均尝试通过 GitHub Connector；Issue 创建和评论 API 均返回 `403 Resource not accessible by integration`。备用 Chrome 工具报告 Agent360 扩展未连接。
+- 本地提交 `aae4705` 尚未推送；非交互 `git push origin HEAD:refs/heads/feature/ac3-security-core` 返回 `could not read Username`，远端 M1 分支 ref 不存在。因此 Draft PR 尚未创建，三条现有 Issue 的状态/评论未被远端更新。
+- #28 待同步内容：保留 M1 abort/Guard 检查并吸收 M7 close-all 资源行为；#32 待同步内容：修订测试本机 15/15、全量验证通过、历史根因 UNKNOWN、保持 OPEN；#29 状态草案：M1 IDLE，分支/HEAD `feature/ac3-security-core`/`aae4705`，下一步恢复写入后发布 Draft PR 并跑 Windows Node 20 CI。无 VMware/真实模型/安装槽位需求。
+- 不合并 main、不发布 Release。远端写入通道恢复后，以 `feature/agent-canary-3.0` 为 Draft PR base，并将 #32 保持 OPEN 直到新 Windows Node 20 CI 出结果。

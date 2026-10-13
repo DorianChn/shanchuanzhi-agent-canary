@@ -65,4 +65,4 @@ Hook 回归曾用纯合成凭据标记证实原 JSONL 会写入完整参数。�
 
 ## 仍需 M0 协调的接口问题
 
-协调文档现已存在并完成核对，但 `AgentGuard.trip()` 仍没有供 Gateway 订阅的同步隔离通知/取消契约。上文的合成复现确认外部路由触发 quarantine 后活动 callback 可继续。建议 M0 与 M1/Guard owner 定义通知时序、订阅生命周期、重复 trip、close/unsubscribe 和失败语义，并更新契约；新 Issue 标题草案为 `[P1] Define Guard quarantine notification for active Gateway executions`。Issue 创建当前被 GitHub Connector 的 403 拒绝，浏览器扩展未连接，故不能给出 Issue 编号。该问题处于 `CONFIRMED / BLOCKED on M0 interface coordination`。
+协调文档现已存在并完成核对，但 `AgentGuard.trip()` 仍没有供 Gateway 订阅的同步隔离通知/取消契约。上文的合成复现确认外部路由触发 quarantine 后活动 callback 可继续。建议 M0 与 M1/Guard owner 定义通知时序、订阅生命周期、重复 trip、close/unsubscribe 和失败语义，并更新契约；新 Issue 标题草案为 `[P1] Define Guard quarantine notification for active Gateway executions`。Issue 创建及向 #28/#29/#32 评论的 API 写入均返回 403，浏览器扩展未连接，故该 Issue 尚未创建、现有 Issue 也未收到本轮评论。该问题处于 `CONFIRMED / BLOCKED on M0 interface coordination`；远端同步限制见 `SECURITY_REGRESSION_RESULTS.md`。
