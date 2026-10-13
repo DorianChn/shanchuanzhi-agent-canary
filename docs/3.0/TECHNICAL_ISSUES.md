@@ -1,6 +1,6 @@
 # M0 技术问题分级与协作流程
 
-更新日期：2026-10-13。协调结论基于 GitHub 与文件系统实况；被引用的 Codex 会话当前不可读取，模块目标细节和会话运行状态标记为“无法确认”。
+更新日期：2026-10-13。当前状态基于 GitHub、文件系统和本机 Codex thread-history 记录；当前 Desktop 工具集合没有 `read_thread`/`wait_threads`。
 
 ## 优先级
 
@@ -19,6 +19,7 @@
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
 - [#32 Windows Node 20 Hook interruption 测试失败](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）。
+- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 的合成复现观察到外部 `Guard.trip()` 后活动 callback signal 仍为 `aborted=false`，释放测试 gate 后产生临时 marker 副作用。M1 独占本轮 `src/runtime/gateway.ts` 修复和 Guard/Gateway 契约提案；M7 仅继续其 packaging/scripts/M7 测试工作。
 
 ## PR 与自动检查
 
@@ -29,5 +30,6 @@
 
 ## 运行资源
 
-- M0 调度开发并行度上限为 3。M0 通过本机 `codex queue` 恢复 M1/M2/M4（当前 3 个开发槽）；M3/M5/M6/M7/M8 只收到排队登记消息，未获准改文件。Codex Desktop Connector 未提供 `read_thread`/`wait_threads`，本次会话内容和状态读取自本机保存的 Codex session/thread-history 记录。当前没有 VMware、真实模型或安装测试资源申请。工作树状态以 Git 快照核验，不以会话状态替代。
-- VMware、真实模型和安装测试占用同一互斥槽，同一时间只允许其中一项。开始前登记负责人、工作树、开始时间和结束/释放状态。
+- 开发并行度上限为 3。当前开发槽由 M1（P0 #35）、M5（策略/Guard 审计）和 M7（独立 packaging/scripts 工作）占用。M4 代码已完成且 PR #34 CI 通过，M0 已要求其结束 CI 轮询并释放槽；M2/M3 当前无开发工作；M6/M8 排队。
+- VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行，M7 被要求不执行真实安装/VM 测试。
+- M0 从本机保存的 Codex `thread_history` 只读记录核对任务和状态，使用 `codex queue` 续发消息。该本地记录不等于 `read_thread` 工具；开发状态同时对照 Git worktree 和 GitHub Issue/PR。

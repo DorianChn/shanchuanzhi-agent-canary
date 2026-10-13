@@ -1,6 +1,18 @@
 # M0 技术协调状态
 
-更新时间：2026-10-13。状态取自本机/GitHub 快照，不读取或推断其他 Codex 聊天内容。
+## 本轮最新状态（2026-10-13 10:21 UTC；覆盖下方较早快照）
+
+- PR #24 已用 GitHub CLI 复核：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `feature/agent-canary-3.0` / `62496d4`。M0 没有修改或合并它。
+- M0 PR #30：OPEN/Draft，head `86b538c`；run `38378172107` 的 10 项检查及 `ownership-contract-evidence` run `38378172089` 全部通过。
+- M3 PR #33：OPEN/Draft，AC3 base，head `8fd4e4f`。M4 PR #34：OPEN/Draft，head `d60dc9d`；run `38382540617` 中 Windows/macOS/Ubuntu Node 20/22、package-smoke、Docker、sponsor 检查均通过。
+- **开发槽 3/3：** M1（`agents/M1-security`, `feature/ac3-security-core`, `0cff427`）在 P0 #35 修复 Guard quarantine 后活动 Gateway callback 仍能产生副作用；M5（`agents/M5-policy`, `feature/ac3-policy-audit`, `053b330`）执行策略/Guard fail-closed 审计；M7（`agents/M7-reliability`, `feature/ac3-reliability`, `9d316fe`）只做 packaging/scripts/M7 测试，不改共享 Gateway 或 `package.json`。
+- M4 的代码工作已完成，PR #34 CI 全绿。M0 已让 M4 停止轮询 CI 并结束当前轮；异步 CI 不占开发槽。M2 本地实现/证据已完成（`a1c239d`），远端 Draft PR 尚未列出。M3 已有 PR #33。M6 排队；PR #31 base 仍是 `main`，基线协调见 #27。M8 排队，保留其未提交文档和模板。
+- Issue #35 为确认的 P0。#28 仍 OPEN，由 M1 单独处理本轮 `src/runtime/gateway.ts` 修复，M7 已被限定到独立目录；#27 和 #32 仍 OPEN。
+- 当前没有 VMware、真实模型或安装测试占用。M7 本轮不运行这些测试；互斥资源槽空闲。
+- 本轮没有运行模块测试。M0 用 GitHub Actions 检查结果与工作树/本机会话记录核对状态，没有改模块源码。
+- 当前工具表没有 `read_thread`/`wait_threads`；M0 用只读本机 Codex `thread_history` 记录读取用户引用的八个会话，再用 `codex queue` 发续作消息。会话记录和 GitHub/文件状态是两类证据，分别标注。
+
+较早状态快照如下，仅供审计，不代表当前模块调度状态。
 
 ## 基线与 PR #24
 
