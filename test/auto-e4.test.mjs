@@ -18,6 +18,20 @@ test('Auto E4 locks a run and does not silently remove a previous lock',()=>{
   const next=createAutoE4Run({dataDir:data});next.release();
 });
 
+test('Auto E4 reclaims a verifiably dead owner and fails closed on an unverifiable lock',()=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-stale-lock-'));
+  const lock=path.join(data,'auto-e4.lock');
+  fs.writeFileSync(lock,JSON.stringify({schemaVersion:1,runId:'11111111-1111-4111-8111-111111111111',pid:2147483647,startedAt:new Date(0).toISOString()}));
+  const recovered=createAutoE4Run({dataDir:data});
+  assert.equal(JSON.parse(fs.readFileSync(lock,'utf8')).runId,recovered.runId);
+  assert.deepEqual(fs.readdirSync(data).filter(name=>name.includes('.stale.')),[]);
+  recovered.release();
+  const unverifiable={schemaVersion:0,runId:'old-format',pid:2147483647};
+  fs.writeFileSync(lock,JSON.stringify(unverifiable));
+  assert.throws(()=>createAutoE4Run({dataDir:data}),/AUTO_E4_LOCK_OWNER_UNVERIFIABLE/);
+  assert.deepEqual(JSON.parse(fs.readFileSync(lock,'utf8')),unverifiable);
+});
+
 test('Auto E4 stages preserve PASS, BLOCKED and SKIPPED; report never claims external E4',async()=>{
   const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-status-'));
   const run=createAutoE4Run({dataDir:data});

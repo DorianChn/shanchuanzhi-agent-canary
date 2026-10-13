@@ -6,6 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
+import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 
@@ -46,7 +47,42 @@ test('NSIS defaults away from EFS paths and rejects encrypted custom targets wit
   assert.match(source,/IntOp \$1 \$0 & 0x4000/);
   assert.match(source,/IfSilent efs_notice_done[\s\S]*?MessageBox MB_ICONEXCLAMATION\|MB_OK[\s\S]*?efs_notice_done:/);
   assert.match(source,/EFS-encrypted install paths are not supported/);
+  assert.match(source,/RequestExecutionLevel user/);
+  assert.match(source,/HKCU/);
   assert.doesNotMatch(source,/RMDir\s+\/r/i);
+});
+
+test('rendered installer keeps Unicode and spaced paths and emits exact rollback cleanup',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const rendered=renderInstallerScript({
+    source,
+    output:path.join(os.tmpdir(),'Agent Canary 安装','AgentCanary-Community-Setup.exe'),
+    payload:path.join(os.tmpdir(),'Agent Canary 安装','payload'),
+    license:path.join(os.tmpdir(),'Agent Canary 安装','payload','app','LICENSE'),
+    anchor:'a'.repeat(64),candidateNumber:'4',
+    ownedFiles:['AgentCanary.exe','app/dist/competition.js'],directories:['app','app/dist']
+  });
+  assert.equal(rendered.charCodeAt(0),0xfeff);
+  assert.match(rendered,/Agent Canary 安装/);
+  assert.match(rendered,/Agent Canary Community candidate\.4/);
+  assert.match(rendered,/RequestExecutionLevel user/);
+  assert.match(rendered,/Function \.onInstFailed[\s\S]*?Call RollbackInstall/);
+  assert.match(rendered,/Function \.onUserAbort[\s\S]*?Call RollbackInstall/);
+  assert.match(rendered,/Function RollbackInstall[\s\S]*?GetFileAttributesW[\s\S]*?rollback_incomplete/);
+  assert.match(rendered,/GetFileAttributesW\(w "\$SMPROGRAMS\\Agent Canary Community candidate\.4"\)/);
+  assert.match(rendered,/Delete "\$INSTDIR\\app\\dist\\competition\.js"/);
+  assert.match(rendered,/RMDir "\$INSTDIR\\app\\dist"/);
+  assert.match(rendered,/IfErrors install_failed/);
+  assert.doesNotMatch(rendered,/__[A-Z_]+__/);
+  assert.doesNotMatch(rendered,/RMDir\s+\/r/i);
+});
+
+test('Windows build requires a caller-pinned Community ZIP instead of a stale implicit artifact',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
+  assert.match(source,/!communityPath/);
+  assert.match(source,/COMMUNITY_ZIP SHA256/);
+  assert.match(source,/COMMUNITY_CHECKSUM_MISMATCH/);
+  assert.doesNotMatch(source,/competition-candidate\.2/);
 });
 
 test('Windows launcher exposes one non-reentrant Auto E4 action with streamed, explicitly bounded results',()=>{

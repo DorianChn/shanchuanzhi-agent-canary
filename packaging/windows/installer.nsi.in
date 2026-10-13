@@ -20,6 +20,38 @@ ShowUninstDetails show
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "English"
+Var InstallTxn
+Function RollbackInstall
+ StrCmp $InstallTxn 1 0 rollback_done
+ StrCpy $InstallTxn 0
+ SetShellVarContext current
+ StrCpy $2 0
+__ROLLBACK_REPARSE_CHECKS__
+ ${If} $2 == 1
+  Goto rollback_incomplete
+ ${EndIf}
+ ClearErrors
+__ROLLBACK_DELETE__
+ Delete "$INSTDIR\INSTALL_RECEIPT.json"
+ Delete "$INSTDIR\Uninstall.exe"
+__ROLLBACK_RMDIR__
+ RMDir "$INSTDIR"
+ Delete "__START_MENU__\Agent Canary.lnk"
+ RMDir "__START_MENU__"
+ Delete "__DESKTOP_SHORTCUT__"
+ DeleteRegKey HKCU "__REGISTRY_KEY__"
+ IfErrors rollback_incomplete rollback_done
+ rollback_incomplete:
+ IfSilent rollback_done
+ MessageBox MB_ICONEXCLAMATION|MB_OK "Rollback was incomplete. Some owned files remain in the selected install directory. / 回滚未完全完成，所选目录中仍有部分安装文件。" /SD IDOK
+ rollback_done:
+FunctionEnd
+Function .onUserAbort
+ Call RollbackInstall
+FunctionEnd
+Function .onInstFailed
+ Call RollbackInstall
+FunctionEnd
 Function .onInit
  SetShellVarContext current
  ; EFS-encrypted install paths fail NSIS uninstaller startup in the tested
@@ -79,26 +111,56 @@ Section "Community"
  MessageBox MB_ICONSTOP "Target directory is not empty. Choose a new directory / 目标目录非空，请选择新目录。"
  Abort
  empty:
+ ReadRegStr $0 HKCU "__REGISTRY_KEY__" "InstallLocation"
+ ${If} $0 != ""
+  MessageBox MB_ICONSTOP "This candidate is already registered. Uninstall it before reinstalling. / 此候选版本已注册，请先卸载后再安装。" /SD IDOK
+  Abort
+ ${EndIf}
+ IfFileExists "__START_MENU__\Agent Canary.lnk" shortcut_conflict 0
+ IfFileExists "__DESKTOP_SHORTCUT__" shortcut_conflict 0
+ Goto shortcut_clear
+ shortcut_conflict:
+ MessageBox MB_ICONSTOP "A shortcut already exists. Remove it or choose another candidate version. / 快捷方式已存在，请先移除或选择其他候选版本。" /SD IDOK
+ Abort
+ shortcut_clear:
+ System::Call 'kernel32::GetFileAttributesW(w "__START_MENU__") i.r0'
+ ${If} $0 != -1
+  Goto shortcut_conflict
+ ${EndIf}
+ StrCpy $InstallTxn 1
  SetOutPath "$INSTDIR"
+ ClearErrors
  File /r "__PAYLOAD__\*"
+ IfErrors install_failed
+ ClearErrors
  nsExec::ExecToStack '"$INSTDIR\runtime\node.exe" "$INSTDIR\worker.mjs" record-install "$LOCALAPPDATA\AgentCanaryCommunityData" unspecified __ANCHOR__ "$EXEPATH"'
  Pop $0
  Pop $1
  ${If} $0 != 0
   MessageBox MB_ICONSTOP "Integrity receipt failed. Installation was not registered / 完整性记录失败，安装未登记。"
+  Call RollbackInstall
   Abort
  ${EndIf}
+ ClearErrors
  WriteUninstaller "$INSTDIR\Uninstall.exe"
- CreateDirectory "$SMPROGRAMS\Agent Canary Community"
- CreateShortCut "$SMPROGRAMS\Agent Canary Community\Agent Canary.lnk" "$INSTDIR\AgentCanary.exe"
- CreateShortCut "$DESKTOP\Agent Canary Community.lnk" "$INSTDIR\AgentCanary.exe"
- WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "DisplayName" "Agent Canary Community candidate.3"
- WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "DisplayVersion" "3.0.0-competition-candidate.3"
- WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "Publisher" "DorianChn (unsigned candidate)"
- WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "UninstallString" '$\"$INSTDIR\Uninstall.exe$\"'
- WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "InstallLocation" "$INSTDIR"
- WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "NoModify" 1
- WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "NoRepair" 1
+ CreateDirectory "__START_MENU__"
+ CreateShortCut "__START_MENU__\Agent Canary.lnk" "$INSTDIR\AgentCanary.exe"
+ CreateShortCut "__DESKTOP_SHORTCUT__" "$INSTDIR\AgentCanary.exe"
+ WriteRegStr HKCU "__REGISTRY_KEY__" "DisplayName" "__PRODUCT_NAME__"
+ WriteRegStr HKCU "__REGISTRY_KEY__" "DisplayVersion" "__PRODUCT_VERSION__"
+ WriteRegStr HKCU "__REGISTRY_KEY__" "Publisher" "DorianChn (unsigned candidate)"
+ WriteRegStr HKCU "__REGISTRY_KEY__" "UninstallString" '$\"$INSTDIR\Uninstall.exe$\"'
+ WriteRegStr HKCU "__REGISTRY_KEY__" "InstallLocation" "$INSTDIR"
+ WriteRegDWORD HKCU "__REGISTRY_KEY__" "NoModify" 1
+ WriteRegDWORD HKCU "__REGISTRY_KEY__" "NoRepair" 1
+ IfErrors install_failed
+ StrCpy $InstallTxn 0
+ Goto install_done
+ install_failed:
+ Call RollbackInstall
+ MessageBox MB_ICONSTOP|MB_OK "Installation failed. Rollback was attempted; check the install directory if files remain. / 安装失败，已尝试回滚；如仍有文件，请检查安装目录。" /SD IDOK
+ Abort
+ install_done:
 SectionEnd
 Section "Uninstall"
  SetShellVarContext current
@@ -109,9 +171,9 @@ __DELETE__
  Delete "$INSTDIR\Uninstall.exe"
 __RMDIR__
  RMDir "$INSTDIR"
- Delete "$SMPROGRAMS\Agent Canary Community\Agent Canary.lnk"
- RMDir "$SMPROGRAMS\Agent Canary Community"
- Delete "$DESKTOP\Agent Canary Community.lnk"
- DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3"
+ Delete "__START_MENU__\Agent Canary.lnk"
+ RMDir "__START_MENU__"
+ Delete "__DESKTOP_SHORTCUT__"
+ DeleteRegKey HKCU "__REGISTRY_KEY__"
  ; Never recursively delete installation directory. Retain reports and unknown files.
 SectionEnd

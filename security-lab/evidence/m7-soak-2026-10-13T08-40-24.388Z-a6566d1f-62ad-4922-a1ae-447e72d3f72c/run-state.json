@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "agent-canary.m7.stability-soak.v1",
+  "status": "COMPLETED_WITHOUT_HARNESS_ERRORS",
+  "startedAt": "2026-10-13T08:40:24.393Z",
+  "updatedAt": "2026-10-13T08:40:35.194Z",
+  "requestedHours": 0.003,
+  "elapsedMs": 10801,
+  "samples": 11,
+  "successfulOperations": 110,
+  "failedOperations": 0,
+  "parameters": {
+    "intervalSeconds": 1,
+    "operations": 10,
+    "concurrency": 4
+  },
+  "baseline": {
+    "rss": 56160256,
+    "heap": 8878040,
+    "activeResources": 4
+  },
+  "eventsFile": "samples.jsonl",
+  "infrastructureError": null,
+  "completedAt": "2026-10-13T08:40:35.194Z",
+  "durationMs": 10801,
+  "completedDuration": true,
+  "cpuTotalMs": {
+    "user": 1032,
+    "system": 437
+  },
+  "memoryEnd": {
+    "rss": 69570560,
+    "heapUsed": 19281880
+  },
+  "interpretation": "Harness execution status only. A completed run records this synthetic workload and environment; it is not proof of product-wide reliability or installer acceptance."
+}

@@ -3,6 +3,16 @@ on:
   pull_request:
     paths:
       - 'packaging/windows/**'
+      - 'src/runtime/**'
+      - 'scripts/gateway-benchmark-core.mjs'
+      - 'scripts/benchmark-gateway.mjs'
+      - 'scripts/stability-soak.mjs'
+      - 'scripts/verify-installer-template.mjs'
+      - 'test/reliability.test.mjs'
+      - 'test/auto-e4.test.mjs'
+      - 'test/windows-packaging.test.mjs'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/windows-community.yml'
   workflow_dispatch:
 permissions:
@@ -18,8 +28,18 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
-      - run: node --test packaging/windows/test-worker.mjs
-      - run: node --test test/windows-packaging.test.mjs
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm run test:reliability
+      - run: npm audit --audit-level=high
+      - run: npm run pack:check
+      - run: node scripts/verify-installer-template.mjs
       - run: node --check packaging/windows/build.mjs
       - run: node --check packaging/windows/prepare.mjs
+      - run: node --check packaging/windows/render-installer.mjs
+      - run: node --check packaging/windows/durable-files.mjs
+      - run: node --check scripts/gateway-benchmark-core.mjs
+      - run: node --check scripts/benchmark-gateway.mjs
+      - run: node --check scripts/stability-soak.mjs
+      - run: node --check scripts/verify-installer-template.mjs
 # Building and GUI acceptance are separate evidence, not inferred from these tests.
