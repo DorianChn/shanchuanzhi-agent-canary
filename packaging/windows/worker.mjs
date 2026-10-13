@@ -6,33 +6,33 @@ const ROOT=path.dirname(fileURLToPath(import.meta.url)),APP=path.join(ROOT,'app'
 const [action,dataDir,role='other',expected]=process.argv.slice(2);
 const ROLES=new Set(['author','external','other','unspecified']);
 function digest(bytes){return createHash('sha256').update(bytes).digest('hex');}
-function safeDirectory(dir){if(!dir||!path.isAbsolute(dir)||path.parse(dir).root===path.resolve(dir))throw Error('UNSAFE_DATA_DIRECTORY');for(let p=path.resolve(dir);p!==path.dirname(p);p=path.dirname(p)){try{if(fs.lstatSync(p).isSymbolicLink())throw Error('SYMLINK_DIRECTORY_REJECTED');}catch(e){if(e.code!=='ENOENT')throw e;}}fs.mkdirSync(dir,{recursive:true});}
+function safeDirectory(dir,fileSystem=fs){if(!dir||!path.isAbsolute(dir)||path.parse(dir).root===path.resolve(dir))throw Error('UNSAFE_DATA_DIRECTORY');for(let p=path.resolve(dir);p!==path.dirname(p);p=path.dirname(p)){try{if(fileSystem.lstatSync(p).isSymbolicLink())throw Error('SYMLINK_DIRECTORY_REJECTED');}catch(e){if(e.code!=='ENOENT')throw e;}}fileSystem.mkdirSync(dir,{recursive:true});}
 export function inspectPayload(root,anchor){if(!/^[a-f0-9]{64}$/.test(anchor??''))throw Error('MANIFEST_ANCHOR_REQUIRED');const file=path.join(root,'PAYLOAD_MANIFEST.json');if(digest(fs.readFileSync(file))!==anchor)throw Error('MANIFEST_DIGEST_MISMATCH');const m=JSON.parse(fs.readFileSync(file,'utf8'));if(m.schemaVersion!==1||!Array.isArray(m.files)||m.files.length>15000)throw Error('MANIFEST_SCHEMA_INVALID');for(const entry of m.files){if(typeof entry.path!=='string'||entry.path.includes(String.fromCharCode(92))||entry.path.split('/').some(s=>!s||s==='..'||s==='.')||path.isAbsolute(entry.path)||entry.path.includes(':'))throw Error('MANIFEST_PATH_REJECTED');const f=path.resolve(root,entry.path);for(let p=f;p!==path.resolve(root);p=path.dirname(p)){if(fs.lstatSync(p).isSymbolicLink())throw Error('PAYLOAD_SYMLINK_REJECTED');}const s=fs.statSync(f);if(!s.isFile()||s.size!==entry.size||digest(fs.readFileSync(f))!==entry.sha256)throw Error('PAYLOAD_FILE_MISMATCH:'+entry.path);}return m;}
 export function redact(value,roots=[]){if(Array.isArray(value))return value.map(x=>redact(x,roots));if(value&&typeof value==='object'){const o={};for(const [k,v]of Object.entries(value)){o[k]=/^(token|api[_-]?key|password|authorization|secret)$/i.test(k)?'[REDACTED]':redact(v,roots);}return o;}if(typeof value!=='string')return value;let s=value;for(const [from,to]of roots.filter(x=>x[0]).sort((a,b)=>b[0].length-a[0].length)){s=s.split(from).join(to);s=s.split(from.replaceAll(String.fromCharCode(92),'/')).join(to);}s=s.replace(/cnry_[a-zA-Z0-9_-]+/g,'[CANARY_REDACTED]').replace(/\bsk-[a-zA-Z0-9_-]{12,}/g,'[API_KEY_REDACTED]').replace(/(?:Bearer\s+)[a-zA-Z0-9._-]+/gi,'Bearer [REDACTED]').replace(/((?:api[_-]?key|password|authorization|secret)\s*[:=]\s*)[^\s,;]+/gi,'$1[REDACTED]').replace(new RegExp('[A-Za-z]:['+String.fromCharCode(92,92)+'/][^'+String.fromCharCode(92)+'r'+String.fromCharCode(92)+'n"<>]+','g'),'[ABSOLUTE_PATH_REDACTED]');return s;}
 function readJSON(file,maxBytes=8*1024*1024){const s=fs.lstatSync(file);if(s.isSymbolicLink()||!s.isFile()||s.size>maxBytes)throw Error('UNSAFE_OR_OVERSIZED_STATE_FILE');return JSON.parse(fs.readFileSync(file,'utf8'));}
-function createSessionState(file,directory){
+function createSessionState(file,directory,fileSystem=fs){
  const state={sessionId:randomUUID(),firstStartedAt:new Date().toISOString()};
- try{writeFileAtomically(file,JSON.stringify(state));return state;}
- catch(error){if(error.code==='EEXIST')return loadState(directory);throw error;}
+ try{writeFileAtomically(file,JSON.stringify(state),{fileSystem});return state;}
+ catch(error){if(error.code==='EEXIST')return loadState(directory,{fileSystem});throw error;}
 }
-export function loadState(directory=dataDir){
- safeDirectory(directory);
+export function loadState(directory=dataDir,{fileSystem=fs}={}){
+ safeDirectory(directory,fileSystem);
  const file=path.join(directory,'session.json');
  try{
-  const stat=fs.lstatSync(file);
+  const stat=fileSystem.lstatSync(file);
   if(stat.isSymbolicLink()||!stat.isFile())throw Error('SESSION_STATE_UNSAFE');
   if(stat.size>4096)throw Error('SESSION_STATE_INVALID');
   let state;
-  try{state=JSON.parse(fs.readFileSync(file,'utf8'));}catch(error){if(error instanceof SyntaxError)throw Error('SESSION_STATE_INVALID');throw error;}
+  try{state=JSON.parse(fileSystem.readFileSync(file,'utf8'));}catch(error){if(error instanceof SyntaxError)throw Error('SESSION_STATE_INVALID');throw error;}
   if(!state||typeof state!=='object'||Array.isArray(state)||!/^[a-f0-9-]{36}$/.test(state.sessionId))throw Error('SESSION_STATE_INVALID');
   return state;
  }catch(error){
-  if(error.code==='ENOENT')return createSessionState(file,directory);
+  if(error.code==='ENOENT')return createSessionState(file,directory,fileSystem);
   if(error.message==='SESSION_STATE_UNSAFE')throw error;
   if(error.message!=='SESSION_STATE_INVALID')throw error;
   const backup=file+'.corrupt.'+new Date().toISOString().replaceAll(':','-')+'.'+randomUUID()+'.bak';
-  try{fs.renameSync(file,backup);}catch(renameError){if(renameError.code==='ENOENT')return loadState(directory);throw Error('SESSION_STATE_BACKUP_FAILED');}
-  try{return createSessionState(file,directory);}catch{throw Error('SESSION_STATE_RECOVERY_FAILED');}
+  try{fileSystem.renameSync(file,backup);}catch(renameError){if(renameError.code==='ENOENT')return loadState(directory,{fileSystem});throw Error('SESSION_STATE_BACKUP_FAILED');}
+  try{return createSessionState(file,directory,fileSystem);}catch{throw Error('SESSION_STATE_RECOVERY_FAILED');}
  }
 }
 const LABELS={A_SYNTHETIC_CREDENTIAL_READ:['无保护虚拟凭据读取对照','Unprotected virtual-secret reference'],F_NORMAL_WRITE:['正常文件写入','Normal file write'],F_FIRST_CREDENTIAL_REJECTED:['执行前拒绝虚拟凭据读取','Pre-execution virtual-secret denial'],F_CALLBACK_AND_SIDE_EFFECT:['危险回调与文件哈希检查','Dangerous callback and file hash check'],TRUSTED_OPERATOR_APPROVAL:['一次性可信审批与重放拒绝','One-time approval and replay denial'],HONEYPOT_THEN_GUARD:['蜜罐触发后的会话隔离','Honeypot-triggered quarantine']};
@@ -40,13 +40,13 @@ function check(id,zh,en,status,detail){const labels=LABELS[id]??[zh,en];let text
 function invoke(args){const start=Date.now(),home=fs.mkdtempSync(path.join(os.tmpdir(),'AgentCanary verification '));fs.writeFileSync(path.join(home,'config.json'),JSON.stringify({notify:false,webhook:null,eventsFile:path.join(home,'events.jsonl')}));const env={SystemRoot:process.env.SystemRoot??'C:/Windows',WINDIR:process.env.WINDIR??'C:/Windows',PATH:path.dirname(process.execPath)+';'+(process.env.SystemRoot??'C:/Windows')+'/System32',TEMP:os.tmpdir(),TMP:os.tmpdir(),AGENT_CANARY_HOME:home};const r=spawnSync(process.execPath,args,{cwd:APP,env,encoding:'utf8',windowsHide:true,timeout:45000,maxBuffer:2*1024*1024});return{command:{executable:process.execPath,arguments:args},exitCode:r.status,durationMs:Date.now()-start,stdout:r.stdout??'',stderr:r.stderr??'',error:r.error?.message??null};}
 export function readInstallerReceipt(root){try{const r=readJSON(path.join(root,'INSTALL_RECEIPT.json'),4096);if(!/^[a-f0-9]{64}$/.test(r.installerSHA256??'')||typeof r.desktopVersion!=='string'||r.desktopVersion.length>80)throw Error('INVALID_RECEIPT');return {installerSHA256:r.installerSHA256,desktopVersion:r.desktopVersion,status:'RECORDED_LOCAL_HASH_NOT_PUBLISHER_AUTHENTICATION'};}catch(e){return {installerSHA256:null,status:e.code==='ENOENT'?'NOT_VERIFIED_PORTABLE_OR_MISSING_RECEIPT':'NOT_VERIFIED_INVALID_OR_UNREADABLE_RECEIPT'};}}
 function baseline(state,version){const receipt=readInstallerReceipt(ROOT);return{schemaVersion:'agent-canary.desktop-reproduction.v1',sessionId:state.sessionId,runId:randomUUID(),startedAt:new Date().toISOString(),software:version,installer:{sha256:receipt?.installerSHA256??null,status:receipt.status,authentication:'unsigned setup; locally computed hash does not prove publisher identity'},operator:{declaredRole:role,independence:'NOT_VERIFIED_REQUIRES_REAL_OPERATOR_AND_ENVIRONMENT_REVIEW',machineFingerprintCollected:false},environment:{platform:process.platform,architecture:process.arch,osRelease:os.release(),nodeVersion:process.version,nodeExecutable:process.execPath},mode:'OPERATOR_TRIGGERED_REAL_TEMPORARY_IO_NOT_MODEL_ATTACK',nativeAgentIntegration:'NOT_VERIFIED_THIS_RUN',E4:'NOT_VERIFIED',checks:[],commands:[],limitations:['Bounded fixture observations only; no OS-wide sandbox or global Agent protection.','No real model or Claude Code experiment is run by these buttons.','Local hash chain is not independent certification.']};}
-export function saveReport(report,directory=dataDir){
+export function saveReport(report,directory=dataDir,{fileSystem=fs}={}){
  if(!/^[a-f0-9-]{36}$/.test(report.runId??''))throw Error('REPORT_ID_INVALID');
  report.completedAt=new Date().toISOString();
- const reports=path.join(directory,'reports');safeDirectory(reports);
+ const reports=path.join(directory,'reports');safeDirectory(reports,fileSystem);
  const target=path.join(reports,report.runId+'.json');
- writeFileAtomically(target,JSON.stringify(report,null,2));
- writeFileAtomically(path.join(directory,'latest.json'),JSON.stringify({file:target}),{replace:true});
+ writeFileAtomically(target,JSON.stringify(report,null,2),{fileSystem});
+ writeFileAtomically(path.join(directory,'latest.json'),JSON.stringify({file:target}),{replace:true,fileSystem});
  return target;
 }
 function markdown(report){return['# Agent Canary Community reproduction report','','Mode: '+report.mode,'Session: '+report.sessionId,'Operator declaration: '+report.operator.declaredRole,'E4: NOT_VERIFIED','Installer SHA-256: '+(report.installer.sha256??'NOT_VERIFIED'),'Version: '+report.software.desktopVersion,'Runtime baseline: '+report.software.runtimeBaselineSHA,'Started: '+report.startedAt,'Completed: '+report.completedAt,'','## Actual checks',...report.checks.map(c=>'- '+c.status+' / '+c.id+': '+JSON.stringify(c.detail)),'','## Actual commands and exit codes',...report.commands.map(c=>'- Exit '+c.exitCode+': '+JSON.stringify(c.command)),'','## Limits',...report.limitations.map(s=>'- '+s),'','All paths and tokens are redacted before export. Independent status requires human review, not a machine fingerprint.',''].join('\n');}

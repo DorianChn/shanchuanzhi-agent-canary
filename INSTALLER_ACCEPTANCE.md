@@ -5,7 +5,7 @@
 
 ## 边界和证据级别
 
-M7 工作位于独立分支 `feature/ac3-reliability`，以 `feature/agent-canary-3.0` 为基线。没有更改共享 Git 引用、系统安全设置或真实用户安装目录；本轮没有在共享 VMware 中启动、安装、卸载或恢复快照。M0 文档快照记录的 Windows VM 停在 OOBE 网络配置阶段。M0 的实时协调线程在当前会话没有可用的 `read_thread` 能力，因此 VM 排期和授权无法确认。
+M7 工作位于独立分支 `feature/ac3-reliability`，以 `feature/agent-canary-3.0` 为基线。M0 本轮恢复的是本地开发槽；没有申请或占用共享 VMware、真实安装或真实模型资源，也没有更改共享 Git 引用、系统安全设置或真实用户安装目录。先前快照曾记录 Windows VM 停在 OOBE 网络配置阶段；本轮没有核验该 VM 的当前状态。
 
 本记录区分三类证据：
 
@@ -35,13 +35,17 @@ M7 工作位于独立分支 `feature/ac3-reliability`，以 `feature/agent-canar
 - `prepare.mjs` 现在要求调用者明确提供 Community ZIP 与 SHA-256；拒绝符号链接/非普通文件和摘要不匹配，不再静默回退到历史 candidate.2 包。
 - 安装器模板按候选号生成独立身份；对路径中的 `$` 做 NSIS 转义，检查未展开占位符。
 - 增加精确文件/目录清单回滚；回滚和正常卸载均检查目录重解析点，保持非递归删除。
+- 回滚与卸载在目录删除前显式将 NSIS 当前目录切换到 `$TEMP`；安装过程把输出目录设为 `$INSTDIR`，避免回滚时根目录仍被当前目录占用。卸载在清单删除失败时提前退出并报告，保留后续重试路径。该行为有渲染模板回归覆盖，尚无真实 EXE 生命周期证据。
 - `worker.mjs` 的报告、最新指针和安装收据使用同目录临时文件后发布；损坏的会话状态先保留为 `.corrupt.*.bak`，再创建新会话；不安全符号链接仍然失败关闭。
+- 为会话恢复和报告发布加入可选文件系统注入点；新增损坏状态备份拒绝、恢复 ENOSPC、最新报告指针替换 ENOSPC、清理清单路径穿越等负面回归。包装器测试 fixture 现于每个测试后清理。
 
 ## 本轮执行结果
 
 - `npm run verify`：**334 项，329 通过、0 失败、5 跳过**；构建通过，包检查通过（90 个文件）。
-- `npm run test:reliability`：**36 项，34 通过、0 失败、2 跳过**。
+- 上一轮 `npm run test:reliability`：**36 项，34 通过、0 失败、2 跳过**。
+- 本轮 Windows 本机 `npm run test:reliability`：**43 项，40 通过、0 失败、3 跳过**；跳过项是 Windows 符号链接创建权限相关测试。包含 WinForms 编译测试；没有本地 NSIS 编译器，因此本轮没有 NSIS 3.13 编译结果。
 - `npm audit --audit-level=high`：**0 vulnerabilities**。
+- 本轮没有运行 `npm run verify`、真实安装包、VMware、真实模型或 24 小时/7 天测试。以上本地源码/模板结果仍不代表安装器验收。
 - 真正的 NSIS 3.13 编译尚未在本地执行；新增 CI 编译步骤将在 Draft PR 上触发。CI 编译通过后仍需单独完成实际 EXE 验收。
 
 ## 发行前必须补齐

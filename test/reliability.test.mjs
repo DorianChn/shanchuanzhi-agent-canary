@@ -38,6 +38,59 @@ test('corrupt session state is preserved and a fresh session is atomically creat
   }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 
+test('session backup failure fails closed without replacing corrupt state',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-backup-fault-'));
+  const sessionFile=path.join(root,'session.json'),corrupt='{bad-session';
+  fs.writeFileSync(sessionFile,corrupt);
+  const fileSystem={...fs,renameSync(source,target){if(source===sessionFile)throw Object.assign(new Error('synthetic rename failure'),{code:'EACCES'});return fs.renameSync(source,target);}};
+  try{
+    assert.throws(()=>loadState(root,{fileSystem}),/SESSION_STATE_BACKUP_FAILED/);
+    assert.equal(fs.readFileSync(sessionFile,'utf8'),corrupt);
+    assert.deepEqual(fs.readdirSync(root),['session.json']);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test('failed fresh-session creation leaves the corrupt backup intact and no partial state',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-recovery-fault-'));
+  const sessionFile=path.join(root,'session.json'),corrupt='{bad-session';
+  fs.writeFileSync(sessionFile,corrupt);
+  const fileSystem={...fs,openSync(file,...args){if(path.basename(file).startsWith('.session.json.')&&file.endsWith('.tmp'))throw Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});return fs.openSync(file,...args);}};
+  try{
+    assert.throws(()=>loadState(root,{fileSystem}),/SESSION_STATE_RECOVERY_FAILED/);
+    assert.equal(fs.existsSync(sessionFile),false);
+    const backups=fs.readdirSync(root).filter(name=>name.startsWith('session.json.corrupt.'));
+    assert.equal(backups.length,1);
+    assert.equal(fs.readFileSync(path.join(root,backups[0]),'utf8'),corrupt);
+    assert.deepEqual(fs.readdirSync(root),backups);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test('oversized session state is backed up byte-for-byte before recovery',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-oversized-'));
+  const sessionFile=path.join(root,'session.json'),corrupt='x'.repeat(4097);
+  fs.writeFileSync(sessionFile,corrupt);
+  try{
+    const state=loadState(root);
+    assert.match(state.sessionId,/^[a-f0-9-]{36}$/);
+    const backups=fs.readdirSync(root).filter(name=>name.startsWith('session.json.corrupt.'));
+    assert.equal(backups.length,1);
+    assert.equal(fs.readFileSync(path.join(root,backups[0]),'utf8'),corrupt);
+    assert.equal(JSON.parse(fs.readFileSync(sessionFile,'utf8')).sessionId,state.sessionId);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test('session-state symlink is rejected without modifying its target',t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-symlink-'));
+  const target=path.join(root,'target.json'),sessionFile=path.join(root,'session.json'),content='{"sessionId":"synthetic"}';
+  fs.writeFileSync(target,content);
+  try{fs.symlinkSync(target,sessionFile,'file');}catch{fs.rmSync(root,{recursive:true,force:true});t.skip('File symlink creation is unavailable in this environment');return;}
+  try{
+    assert.throws(()=>loadState(root),/SESSION_STATE_UNSAFE/);
+    assert.equal(fs.readFileSync(target,'utf8'),content);
+    assert.equal(fs.lstatSync(sessionFile).isSymbolicLink(),true);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
 test('report publication atomically advances latest while rejecting unsafe report ids',()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-report-write-'));
   const latest=path.join(root,'latest.json');fs.writeFileSync(latest,'previous-pointer');
@@ -48,6 +101,22 @@ test('report publication atomically advances latest while rejecting unsafe repor
     assert.deepEqual(JSON.parse(fs.readFileSync(file,'utf8')).runId,report.runId);
     assert.throws(()=>saveReport({runId:'../outside'},root),/REPORT_ID_INVALID/);
     assert.equal(fs.existsSync(path.join(root,'outside.json')),false);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test('failed latest-pointer replacement preserves the previous report pointer',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-report-pointer-fault-'));
+  const latest=path.join(root,'latest.json'),previous='{"file":"previous-report.json"}';
+  fs.writeFileSync(latest,previous);
+  const fileSystem={...fs,renameSync(source,target){if(target===latest)throw Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});return fs.renameSync(source,target);}};
+  const report={runId:randomUUID(),status:'VERIFIED_BOUNDED_CHECKS'};
+  try{
+    assert.throws(()=>saveReport(report,root,{fileSystem}),error=>error.code==='ENOSPC');
+    assert.equal(fs.readFileSync(latest,'utf8'),previous);
+    const reports=fs.readdirSync(path.join(root,'reports'));
+    assert.deepEqual(reports,[report.runId+'.json']);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(root,'reports',reports[0]),'utf8')).runId,report.runId);
+    assert.deepEqual(fs.readdirSync(root).sort(),['latest.json','reports']);
   }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 

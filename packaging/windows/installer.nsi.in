@@ -31,6 +31,7 @@ __ROLLBACK_REPARSE_CHECKS__
   Goto rollback_incomplete
  ${EndIf}
  ClearErrors
+ SetOutPath "$TEMP"
 __ROLLBACK_DELETE__
  Delete "$INSTDIR\INSTALL_RECEIPT.json"
  Delete "$INSTDIR\Uninstall.exe"
@@ -166,14 +167,26 @@ Section "Uninstall"
  SetShellVarContext current
  ; Reject redirected resources before deleting any owned file.
 __REPARSE_CHECKS__
+ ClearErrors
+ SetOutPath "$TEMP"
 __DELETE__
- Delete "$INSTDIR\INSTALL_RECEIPT.json"
- Delete "$INSTDIR\Uninstall.exe"
 __RMDIR__
- RMDir "$INSTDIR"
+ IfErrors uninstall_incomplete
+ Delete "$INSTDIR\INSTALL_RECEIPT.json"
+ IfErrors uninstall_incomplete
  Delete "__START_MENU__\Agent Canary.lnk"
  RMDir "__START_MENU__"
  Delete "__DESKTOP_SHORTCUT__"
+ IfErrors uninstall_incomplete
+ Delete "$INSTDIR\Uninstall.exe"
+ IfErrors uninstall_incomplete
  DeleteRegKey HKCU "__REGISTRY_KEY__"
+ ClearErrors
+ RMDir "$INSTDIR"
+ Goto uninstall_done
+uninstall_incomplete:
+ IfSilent uninstall_done
+ MessageBox MB_ICONEXCLAMATION|MB_OK "Uninstall was incomplete. Some paths could not be removed. Resolve the access or retained-file issue and retry. / 卸载未完成，部分路径无法删除；请处理访问权限或残留文件问题后重试。" /SD IDOK
+uninstall_done:
  ; Never recursively delete installation directory. Retain reports and unknown files.
 SectionEnd

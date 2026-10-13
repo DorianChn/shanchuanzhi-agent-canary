@@ -1,7 +1,9 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import crypto from 'node:crypto';
 import {redact,inspectPayload,readInstallerReceipt} from './worker.mjs';
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
-function fixture(file='data.txt'){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ac-desktop-test-'));fs.writeFileSync(path.join(root,'data.txt'),'fixture');const m={schemaVersion:1,files:[{path:file,size:7,sha256:sha('fixture')}]};const raw=JSON.stringify(m);fs.writeFileSync(path.join(root,'PAYLOAD_MANIFEST.json'),raw);return {root,anchor:sha(raw)};}
+const fixtureRoots=new Set();
+test.afterEach(()=>{for(const root of fixtureRoots){fs.rmSync(root,{recursive:true,force:true});fixtureRoots.delete(root);}});
+function fixture(file='data.txt'){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ac-desktop-test-'));fixtureRoots.add(root);fs.writeFileSync(path.join(root,'data.txt'),'fixture');const m={schemaVersion:1,files:[{path:file,size:7,sha256:sha('fixture')}]};const raw=JSON.stringify(m);fs.writeFileSync(path.join(root,'PAYLOAD_MANIFEST.json'),raw);return {root,anchor:sha(raw)};}
 test('valid payload hashes actual bytes',()=>{const{root,anchor}=fixture();assert.equal(inspectPayload(root,anchor).files.length,1);});
 test('tampered payload rejected',()=>{const{root,anchor}=fixture();fs.writeFileSync(path.join(root,'data.txt'),'changed');assert.throws(()=>inspectPayload(root,anchor),/MISMATCH/);});
 test('manifest tampering rejected against compiled anchor',()=>{const{root,anchor}=fixture();fs.appendFileSync(path.join(root,'PAYLOAD_MANIFEST.json'),' ');assert.throws(()=>inspectPayload(root,anchor),/DIGEST_MISMATCH/);});

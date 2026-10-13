@@ -77,6 +77,40 @@ test('rendered installer keeps Unicode and spaced paths and emits exact rollback
   assert.doesNotMatch(rendered,/RMDir\s+\/r/i);
 });
 
+test('rollback and uninstall leave the install tree before non-recursive directory cleanup',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const rendered=renderInstallerScript({
+    source,
+    output:path.join(os.tmpdir(),'Agent Canary Setup.exe'),
+    payload:path.join(os.tmpdir(),'Agent Canary payload'),
+    license:path.join(os.tmpdir(),'Agent Canary payload','app','LICENSE'),
+    anchor:'b'.repeat(64),candidateNumber:'5',
+    ownedFiles:['AgentCanary.exe','app/runtime/node.exe'],directories:['app','app/runtime']
+  });
+  const rollback=rendered.slice(rendered.indexOf('Function RollbackInstall'),rendered.indexOf('FunctionEnd',rendered.indexOf('Function RollbackInstall')));
+  const uninstall=rendered.slice(rendered.indexOf('Section "Uninstall"'));
+  assert.match(rollback,/SetOutPath "\$TEMP"[\s\S]*?Delete "\$INSTDIR\\Uninstall\.exe"\s+RMDir "\$INSTDIR\\app\\runtime"[\s\S]*?RMDir "\$INSTDIR"/);
+  assert.match(uninstall,/ClearErrors\s+SetOutPath "\$TEMP"[\s\S]*?Delete "\$INSTDIR\\app\\runtime\\node\.exe"\s+RMDir "\$INSTDIR\\app\\runtime"[\s\S]*?IfErrors uninstall_incomplete[\s\S]*?Delete "\$INSTDIR\\Uninstall\.exe"[\s\S]*?DeleteRegKey HKCU[\s\S]*?RMDir "\$INSTDIR"/);
+  assert.match(rollback,/IfErrors rollback_incomplete rollback_done/);
+  assert.match(uninstall,/Uninstall was incomplete[\s\S]*?Resolve the access or retained-file issue and retry/);
+  assert.match(uninstall,/Never recursively delete installation directory/);
+  assert.doesNotMatch(rendered,/RMDir\s+\/r/i);
+});
+
+test('installer renderer rejects traversal in every cleanup manifest path',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const base={
+    source,output:path.join(os.tmpdir(),'setup.exe'),payload:path.join(os.tmpdir(),'payload'),
+    license:path.join(os.tmpdir(),'payload','LICENSE'),anchor:'c'.repeat(64),candidateNumber:'6'
+  };
+  for(const ownedFiles of [['../outside'],['C:/outside'],['nested\\outside']]){
+    assert.throws(()=>renderInstallerScript({...base,ownedFiles,directories:[]}),/INSTALLER_PAYLOAD_PATH_INVALID/);
+  }
+  for(const directories of [['..'],['nested//child'],['/outside']]){
+    assert.throws(()=>renderInstallerScript({...base,ownedFiles:[],directories}),/INSTALLER_PAYLOAD_PATH_INVALID/);
+  }
+});
+
 test('Windows build requires a caller-pinned Community ZIP instead of a stale implicit artifact',()=>{
   const source=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
   assert.match(source,/!communityPath/);
