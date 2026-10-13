@@ -13,7 +13,7 @@
 | GPT-6 Luna Max | NOT VERIFIED | The historical availability receipt recorded zero API calls and zero tool calls. This iteration will only count a provider-catalog and completion-ID match plus an actual Gateway-denied tool call; a refusal is not a pass. |
 | Installed artifact exercised by M6 | BLOCKED unless independently supplied | `--artifact` hashes a file; the runner does not install or execute it. APP-01 requires an installable package built from the frozen source and test actions against that installed build. |
 | Third-party independent reproduction | NOT VERIFIED | No identity-verified independent operator receipt is present. `--operator-role=external-claim` is a label only. |
-| M6 deterministic automation | Pending recorded run | The run result, source commit, exact case counts and evidence ZIP SHA-256 are indexed in [E4_EVIDENCE_INDEX.md](E4_EVIDENCE_INDEX.md) after execution. Local synthetic checks cannot change this E4 verdict. |
+| M6 author automation | COMPLETED; E4 remains NOT VERIFIED | Run `20261013T084123Z` is bound to commit `04b3d983a650b054447371c0dc2d30497033dbfd` and tree `2d47e7a60b417671f70aad3efd32feeda3afd7f0`. The verifier accepted the 13-entry ZIP (`f1cda41498f984cddf54c19b096ec5e7f4ab6f98ed1b2e806129d233bf017a6a`). Results: 5 local `PASS_FIXTURE`, 1 positive control, 1 separate shell bypass, 3 blocked, 0 failed. No model endpoint, package, or VM receipt was available; see [E4_EVIDENCE_INDEX.md](E4_EVIDENCE_INDEX.md). |
 
 ## Result boundaries
 
