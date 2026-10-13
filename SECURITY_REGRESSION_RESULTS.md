@@ -42,3 +42,7 @@
 Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断线映射为 AbortSignal 并调用 close 时才能使用本次取消逻辑。AbortSignal 不能撤销已经完成的外部副作用，也不能阻止忽略该信号的不合作 callback 在之后自行产生副作用。跨进程 Guard 持久化、新 Guard 重启恢复及操作系统原生 Shell/文件/网络操作不属于已证明覆盖范围。
 
 基线中未找到 MODULE_OWNERSHIP.md 或 API_CONTRACTS.md。已准备要求 M0 补齐接口基线并定义 Guard 隔离通知契约的 Issue，但 GitHub Connector 返回 403、gh 不可用且 Chrome 扩展未连接，故尚未创建，无法提供 Issue 编号。当前可用工具未提供用户引用 Codex thread 的 read_thread 能力，因此没有读取该线程；本文结论仅基于仓库与测试证据。
+
+## 远端交付状态
+
+本地分支 feature/ac3-security-core 的提交 be5836e 已包含代码、回归和三份交付文档。目标远端分支在推送前不存在；GitHub Connector 创建分支返回 403，非交互 git push 返回“could not read Username”。因此尚未推送，也未创建 Draft PR。没有合并 main 或创建 Release。恢复 GitHub 写入认证后，可从该本地分支直接推送并以 feature/agent-canary-3.0 为 Draft PR base。
