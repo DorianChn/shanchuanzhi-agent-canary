@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- | --- |
 | R1 | P1 | M3/M6 用 main 基线，且有未提交内容需保留 | M3、M6 HEAD `146be17`; AC3/PR #24 HEAD `62496d4`; 比较为 AC3 独有 46、main 独有 4 commit | M3/M6 提交迁移办法；不自动 rebase；#27 | OPEN |
 | R2 | P1 | M1/M7 并行改同一 Gateway 文件 | 两个工作树均改 `src/runtime/gateway.ts` | M1/M7 对齐接口与修改顺序；#28 | OPEN |
-| R3 | P1 | M5/M6 同时修改 package manifest | 两工作树均改 `package.json` | 认领字段级 owner 并记录在 #27 | OPEN |
+| R3 | P1 | M5/M6/M7 同时修改 package manifest | 三个工作树均改 `package.json` | 认领字段级 owner 并记录在 #27 | OPEN |
 | R4 | P1（协调环境） | 五个 worktree 的 `.git` 指针用 WSL `/mnt/c/...` 绝对路径，Windows Git 标为 `prunable` | `git worktree list` 的 M1/M2/M5/M7/M8；WSL Git 可读各自 branch/status | 不运行 `worktree repair/prune`；后续统一迁移需会话 owner 参与 | OPEN |
 | R5 | P1 | 线程内容及实时活跃任务数无法确认 | 当前无 `read_thread`、`wait_threads`、线程发送工具 | 不假装读过或已通知；按文件/GitHub 快照协作。并发上限 3 与测试互斥规则待有线程能力后核实 | UNKNOWN |
 | R6 | P2 | 原 `.gitignore` 未覆盖 `.env.*`、临时文件和协调输出 | baseline 检查仅有 `.env`、`*.log` 等 | 本 PR 增加相应模式；密钥仍需 PR/CI secret scanning | FIXED IN THIS PR |
