@@ -178,6 +178,41 @@ test('model denial, hook denial, gateway denial, and tool failure have separate 
   assert.equal(events.at(-1)?.execution_status, 'UNKNOWN');
 });
 
+test('a final host Gateway denial remains authoritative after an M5 ALLOW', async () => {
+  const { createAgentGuard } = await import('../src/sdk.js');
+  let finalGatewayAllows = true;
+  let gatewayChecks = 0;
+  let sideEffects = 0;
+  const router = createManagedRiskPolicyRouter({
+    guard: createAgentGuard({ sessionId: 'managed-gateway-final-check', alert: false }),
+    workspaceRoot: workspace(), policyStorageDirectory: storage(), mode: 'BALANCED',
+    tools: { fetch_docs: { operation: 'http' } },
+    allowedReadOrigins: ['https://docs.example.test'],
+    // Model a trusted host/Gateway authorization changing after M5's initial review.
+    reviewDecision: async () => { finalGatewayAllows = false; return 'UNCHANGED'; },
+    executeRealTool: call => {
+      gatewayChecks++;
+      // This is the final authorization boundary supplied by the host adapter.
+      if (!finalGatewayAllows) throw Error('GATEWAY_FINAL_POLICY_DENIED');
+      sideEffects++;
+      return call.name;
+    },
+  });
+
+  await assert.rejects(
+    router.dispatch({ name: 'fetch_docs', args: { url: 'https://docs.example.test/guide', method: 'GET' } }),
+    /GATEWAY_FINAL_POLICY_DENIED/,
+  );
+  assert.equal(gatewayChecks, 1, 'the final host authorization check must run');
+  assert.equal(sideEffects, 0, 'M5 ALLOW must not skip a later Gateway denial');
+  const events = router.policyManager.evidence();
+  assert.ok(events.some(event => event.decision_source === 'DETERMINISTIC_POLICY' && event.decision === 'ALLOW'));
+  assert.equal(events.at(-1)?.decision_source, 'TOOL');
+  assert.equal(events.at(-1)?.execution_status, 'UNKNOWN', 'an executor boundary failure is not proof that effects were absent');
+  assert.equal(events.at(-1)?.side_effect_verification, 'UNKNOWN');
+  assert.equal(router.policyManager.verifyEvidence().valid, true);
+});
+
 test('managed router records Canary quarantine, blocks callbacks, and resumes only after host reset', async () => {
   const { createAgentGuard, CanaryBlockedError } = await import('../src/sdk.js');
   const guard = createAgentGuard({ sessionId: 'managed-canary-life', alert: false });

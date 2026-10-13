@@ -28,3 +28,9 @@
 M5 新增的集成测试通过托管 Router 触发诱饵、断言 callback 未执行、确认后续读取被拒绝，再由宿主 Reset 并确认正常只读回调恢复。测试同时检查 M5 审计中的 `CANARY_GUARD` 事件与执行状态。
 
 适用的原有测试还覆盖不同 Guard 会话隔离、共享身份作用域、文件存储重启、失效/过大的共享状态、告警失败和异步 callback 竞争。目标测试命令和最终通过数见 Draft PR；测试通过不代表真实宿主所有工具路径均被接入。
+
+## M1 Gateway 组合审计增量
+
+- M5 `test/policy-management.test.ts` 新增“final host Gateway denial remains authoritative after an M5 ALLOW”：在 M5 策略已记录 ALLOW 后，让宿主最终授权 fixture 拒绝，断言副作用计数为 0，失败结果记为 `UNKNOWN / UNKNOWN`，证据链仍可验证。策略、路由与误拦截三个定向测试文件本轮合计 41/41 通过。该测试仅验证 M5 包装层遵守独立宿主授权边界，不是 M1+M5 真实宿主集成测试。
+- M1 `test/gateway.test.ts` 中新增的 `external Guard quarantine synchronously aborts an active callback before its synthetic effect` 在本轮只读运行中失败：调用外部 `guard.trip()` 后，活动 MCP callback 的 `AbortSignal.aborted` 仍为 `false`。断言在释放 callback 前失败；其后 synthetic effect 是否发生未被本次执行确认。不得把“检测到隔离状态”或 M5 审计记录当作在途 callback 已中止的证据。
+- M1 定向执行命令为 `node --import tsx --test test/gateway.test.ts test/gateway-acceptance.test.ts`，结果 37/38。M5 未修改该测试或任何 M1 文件；需要 M1 修复及重跑。真实 M1+M5 宿主接线和 Hook 隔离仍未验证。
