@@ -38,7 +38,6 @@ function readBackup(file:string){
 }
 
 function planAgentIntegration(agent:AgentClient,project:string,entry:{command:string;args:string[]}){
-  if(agent==='cline')throw Error('INTEGRATION_CLINE_PATH_UNSUPPORTED');
   if(!Object.hasOwn(paths,agent)||!path.isAbsolute(project)||typeof entry?.command!=='string'||!entry.command.trim()||!Array.isArray(entry.args)||entry.args.some(argument=>typeof argument!=='string'))throw Error('INTEGRATION_INPUT_INVALID');
   let projectStat:fs.Stats;
   try{projectStat=fs.statSync(project);}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')throw Error('INTEGRATION_PROJECT_NOT_FOUND');throw error;}

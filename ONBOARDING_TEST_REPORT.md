@@ -14,13 +14,13 @@ Codex 项目级 MCP 配置向导、检测、预览、备份/收据、保守回�
 
 引用的活动 M0 thread 无法通过当前工具读取（没有 `read_thread` 能力）。我只读检查了本机 `coordinator` M0 工作区的 `docs/3.0/API_CONTRACTS.md`，其分支为 `feature/ac3-m0-coordination`，契约文件提交为 `60d7ff0`，文中说明该契约基于 AC3 源码快照 `62496d4`。契约要求保留既有 CLI/MCP/SDK 行为；Agent Integration 仍按 `previewAgentIntegration`、`baseHash`、`installAgentIntegration`、`restoreAgentIntegration` 工作，回滚不得覆盖安装后的用户编辑；模块 Draft PR 指向 `feature/agent-canary-3.0`，并写入 `Test-Evidence:`、`API-Contract-Change: yes|no`。
 
-本分支保留现有 SDK 公共导出、方法参数和返回字段；新增 CLI 子命令是 M3 的增量入口，receipt 事务 helper 没有加入 `package.json` 的 SDK export map。没有修改 `src/sdk.ts`。原 M3 分支基于 main `146be17`，AC3 目标为 `62496d4`，共同祖先为 `73cfdf9`；本次不自动 rebase，手工 cherry-pick M3 提交到临时迁移分支并保留原提交备份，以满足 M0 的基线迁移检查。PR 正文记录该 merge-base 与验证证据；公共 ABI 变更仍交由 M0。
+本分支保留现有 SDK 公共导出、方法参数和返回字段；新增 CLI 子命令是 M3 的增量入口，receipt 事务 helper 没有加入 `package.json` 的 SDK export map。没有修改 `src/sdk.ts`。原 M3 分支基于 main `146be17`，AC3 目标为 `62496d4`，共同祖先为 `73cfdf9`；本次不自动 rebase，手工 cherry-pick M3 提交到独立迁移分支并保留原提交备份。迁移后 HEAD 以 AC3 目标为父提交；PR 正文记录该 merge-base、`Test-Evidence:` 和 `API-Contract-Change: no`。公共 ABI 变更仍交由 M0。
 
 ## 基线能力审计
 
 | 面 | 原有能力与限制 | M3 结论 |
 |---|---|---|
-| CLI | `serve --stdio` 只提供 decoy；`doctor` 只做离线自检；原 `integrate` 可预览/写入配置，但写入本身不验证保护。 | 新增 `onboard` 和 `connect-check`。安装报告和自检分别记录“配置写入”与“真实 Gateway 调用”；旧 Cline 项目相对路径与官方位置不符，现已拒绝该路径写入。 |
+| CLI | `serve --stdio` 只提供 decoy；`doctor` 只做离线自检；原 `integrate` 可预览/写入配置，但写入本身不验证保护。 | 新增 `onboard` 和 `connect-check`。安装报告和自检分别记录“配置写入”与“真实 Gateway 调用”；旧 `integrate --agent cline` 的项目相对路径与官方位置不符，CLI 现拒绝该宿主，同时保留底层旧函数形状。 |
 | SDK | `createTrustedExecutionGateway` 需要可信宿主传入资源、固定能力和 `mcpTools` callback；不接管第三方客户端已有能力。 | SDK 公共 exports/signatures 未改变。 |
 | Protected MCP | 现有 `serveProtectedMCP` 使用 `createSecurityToolRouter` 处理显式登记工具；不能仅凭名称视为 `createTrustedExecutionGateway`。 | 额外的临时 Codex 检查服务器直接把 MCP `tools/call` 转到 `createTrustedExecutionGateway.agent.dispatch`，证据记录 `ALLOW`。服务器只返回内存中的固定文本。 |
 | Hook | 仓库已有 `decideAgentHook` 仅针对 Claude/Cursor 协议输入，并未写入宿主配置；Codex 原生工具覆盖不等于 Gateway 接管。 | Codex Hook 没有安装。真实临时 Hook 探针未触发并且探针到达 Gateway，因此状态为未生效；未将其宣传为保护。 |
@@ -31,7 +31,7 @@ Codex 项目级 MCP 配置向导、检测、预览、备份/收据、保守回�
 - Codex 向导：默认预览；交互确认或 `--apply` 才能写入。只追加独立 MCP 表，不重写原 TOML。用户级/项目级同名项均停止处理。
 - 预检：检查宿主 CLI、Node 版本、项目目录、全局冲突、TOML 格式、目标写权限可达性和基线哈希。路径/权限/配置错误会给出不改配置的说明。
 - 事务：先创建项目外备份和回滚收据，再提交配置；配置哈希变化时终止。回滚只在完整安装后哈希仍匹配时恢复；之后用户编辑会保留。
-- 输出范围：接入结果标注 `MCP_DECOY_INSTALLED` / `protectionStatus: NOT_VERIFIED`，并明确原生 Codex 工具 `OUT_OF_SCOPE`。旧 `integrate --agent cline` 会停止并提示路径不受支持。
+- 输出范围：接入结果标注 `MCP_DECOY_INSTALLED` / `protectionStatus: NOT_VERIFIED`，并明确原生 Codex 工具 `OUT_OF_SCOPE`。旧 `integrate --agent cline` 会停止并提示路径不受支持，既有底层集成函数保持兼容。
 - Windows 文件 mode 不等于 NTFS ACL。备份放在用户目录，但 Windows ACL 未由此实现验证，报告和向导已明确标注。
 
 ## 本机检测
@@ -59,21 +59,12 @@ Codex 项目级 MCP 配置向导、检测、预览、备份/收据、保守回�
 
 | 命令 | 结果 |
 |---|---|
-| `npm ci` | 通过，103 个包审计，0 vulnerabilities。 |
-| `node --import tsx --test test/onboarding.test.ts` | 11 项通过（包含在完整测试套件中）。 |
-| `npm test` | 通过：111 项通过，0 失败。 |
-| `npm run build` | 通过。 |
-| `npm run self-test -- --json` | 通过：4 项自检通过。 |
-| `npm run types:check` | 通过：SDK consumer type checks verified。 |
-| `node reproduction-kit/run-offline-demo.mjs --root=.` | 通过：`VERIFIED_BOUNDED_OPERATOR_DEMO`，6 个场景；该脚本明确将 E4 标为 `NOT_VERIFIED_NO_EXTERNAL_OPERATOR`。结果文件留在临时目录。 |
-| `npm run pack:check` | 通过：npm 包 smoke check，78 个文件。 |
+| `npm ci` | 通过，102 个包审计，0 vulnerabilities。 |
+| `node --import tsx --test test/onboarding.test.ts` | 12 项通过。含配置保留、冲突/路径拒绝、回滚和真实 CLI 临时项目写入/恢复。 |
+| `npm run verify` | 通过：build 成功，338 项中 333 通过、5 项平台条件跳过、0 失败；package smoke check 通过（96 个文件）。 |
 | `node dist/competition.js onboard --project . --json` | 通过：只输出检测/预览、目标路径和哈希；`PREVIEW_ONLY`，未写入项目或用户 Codex 配置。 |
+| 临时项目 CLI `onboard --apply --json` / `onboard --restore` | 通过：输出单个 JSON 事务结果，创建外部备份/收据，再从收据恢复临时项目原状态；隔离 Codex 用户配置，测试后清理自建备份目录。 |
 | `node dist/competition.js connect-check` | 通过：真实 Codex CLI `0.162.0-alpha.17.2` 的只读合成 MCP 调用经 Gateway 并记录 `ALLOW`；Hook 未触发；原生工具 `OUT_OF_SCOPE`；持久配置未修改。 |
-| `npm run verify` | 需在 AC3 基线迁移完成后更新。 |
-
-### Windows manifest 校验失败原因
-
-主分支 `package.json` 的 `verify` 会调用 community manifest verifier；当前 M0 AC3 基线的 `verify` 只运行 build/test/pack check。此前在主分支开发工作区单独运行原始字节校验器时报告 181 项中有 104 项不匹配：未修改的 `README.md` 工作树哈希为 `739e81b…`，Git blob 和 manifest 均为 `c4b78bf…`，且 `git diff --quiet -- README.md` 为 clean，确认其中包含 Windows CRLF 基线误报；本分支改动的 manifest 覆盖源文件和生成物也需要维护者更新摘要。这里记录此前的主分支检查，不将其误报成 AC3 基线的 `npm run verify` 结果。
 
 ## 未完成/不可确认项
 

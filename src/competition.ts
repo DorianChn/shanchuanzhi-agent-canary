@@ -113,8 +113,8 @@ program.command('onboard').description('Codex project MCP接入向导：预检�
     if(!host.installed||!host.executable)throw Error('ONBOARDING_HOST_NOT_INSTALLED');
     const {entry,preview,writable,addition}=safePreview('codex',project);
     const preflight={agent:'codex',label:host.label,installed:host.installed,executable:host.executable,version:host.version,project,configurationPath:preview.configPath,writeAccess:writable?'AVAILABLE':'DENIED_OR_UNKNOWN',userConfigurationChecked:codexUserConfigPath(),hookState:host.hooks,backup:'将创建位于项目目录之外的用户目录回滚副本；Windows ACL 未验证',status:'PREVIEW_ONLY',gatewayScope:preview.coverage,nativeHostTools:'OUT_OF_SCOPE',hookInstallation:'not installed by this wizard'};
-    if(options.json){console.log(JSON.stringify({preflight,addition,baseHash:preview.baseHash},null,2));}
-    else{
+    if(options.json&&!options.apply){console.log(JSON.stringify({preflight,addition,baseHash:preview.baseHash},null,2));}
+    else if(!options.json){
       console.log('Agent Canary Codex 首次接入预检');
       console.log(`宿主：${host.label}${host.version?` (${host.version})`:'（版本未确认）'}`);
       console.log(`项目：${project}`);
@@ -139,7 +139,8 @@ program.command('onboard').description('Codex project MCP接入向导：预检�
     if(!apply){if(!options.json)console.log('未写入任何配置。');return;}
     if(!writable)throw Error('ONBOARDING_WRITE_PERMISSION_REQUIRED');
     const result=await commitIntegration('codex',project,entry,preview.baseHash);
-    console.log(JSON.stringify({...result,configurationWrite:'SUCCEEDED',protectionStatus:'NOT_VERIFIED',nextStep:'重启或刷新 Codex 项目，再运行 agent-canary connect-check'},null,2));
+    const completed={...result,configurationWrite:'SUCCEEDED',protectionStatus:'NOT_VERIFIED',nextStep:'重启或刷新 Codex 项目，再运行 agent-canary-competition connect-check'};
+    console.log(JSON.stringify(options.json?{preflight,addition,...completed}:completed,null,2));
   }catch(error){reportError(error);}
 });
 
@@ -154,6 +155,7 @@ program.command('integrate').description('Preview/install one MCP entry; native 
     if(!options.project)throw Error('INTEGRATION_PROJECT_REQUIRED');
     const project=path.resolve(options.project);
     const agent=options.agent as AgentClient;
+    if(agent==='cline')throw Error('INTEGRATION_CLINE_PATH_UNSUPPORTED');
     if(agent==='codex')assertNoGlobalCodexConflict();
     const entry=options.protectedDemo?{command:process.execPath,args:[path.join(installRoot,'competition-submission/lab/protected-mcp-demo.mjs')]}:codexEntry();
     const preview=previewAgentIntegration(agent,project,entry);

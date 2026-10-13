@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {detectAgentHosts} from '../src/agent-host-detection.js';
 import {installAgentIntegrationWithReceipt,previewAgentIntegration,restoreAgentIntegration,type AgentClient} from '../src/agent-integrations.js';
 
@@ -146,8 +148,34 @@ test('JSON host merge preserves other MCP server entries',t=>{
   assert.match(preview.coverage,/OUT_OF_SCOPE/);
 });
 
-test('legacy Cline integration refuses its unsupported project-relative config path',t=>{
+test('legacy Cline CLI integration refuses its unsupported project-relative config path',t=>{
   const f=fixture();t.after(f.close);
-  assert.throws(()=>previewAgentIntegration('cline',f.project,entry()),/INTEGRATION_CLINE_PATH_UNSUPPORTED/);
+  const cli=fileURLToPath(new URL('../dist/competition.js',import.meta.url));
+  const result=spawnSync(process.execPath,[cli,'integrate','--agent','cline','--project',f.project,'--apply'],{encoding:'utf8',windowsHide:true,timeout:10_000});
+  assert.equal(result.status,1);
+  assert.match(result.stderr,/写入路径与当前官方用户级配置位置不一致/);
   assert.equal(fs.existsSync(path.join(f.project,'.cline','data','settings','cline_mcp_settings.json')),false);
+});
+
+test('Codex CLI apply emits one JSON result with a receipt and restores the isolated project',t=>{
+  const f=fixture();t.after(f.close);
+  const cli=fileURLToPath(new URL('../dist/competition.js',import.meta.url));
+  const cliEnv={...process.env,CODEX_HOME:path.join(f.root,'codex-home')};
+  let backupRecord:{backupPath:string}|undefined;
+  t.after(()=>{if(backupRecord)clearBackup(backupRecord);});
+  const installed=spawnSync(process.execPath,[cli,'onboard','--project',f.project,'--apply','--json'],{encoding:'utf8',windowsHide:true,timeout:20_000,env:cliEnv});
+  assert.equal(installed.status,0,installed.stderr);
+  const result=JSON.parse(installed.stdout);
+  assert.equal(result.configurationWrite,'SUCCEEDED');
+  assert.equal(result.protectionStatus,'NOT_VERIFIED');
+  assert.equal(result.status,'MCP_DECOY_INSTALLED');
+  assert.equal(typeof result.receiptPath,'string');
+  const receipt=JSON.parse(fs.readFileSync(result.receiptPath,'utf8'));
+  backupRecord=receipt;
+  const config=path.join(f.project,'.codex','config.toml');
+  assert.match(fs.readFileSync(config,'utf8'),/\[mcp_servers\.agent-canary\]/);
+  const restored=spawnSync(process.execPath,[cli,'onboard','--restore',result.receiptPath],{encoding:'utf8',windowsHide:true,timeout:10_000,env:cliEnv});
+  assert.equal(restored.status,0,restored.stderr);
+  assert.equal(JSON.parse(restored.stdout).status,'RESTORED');
+  assert.equal(fs.existsSync(config),false);
 });
