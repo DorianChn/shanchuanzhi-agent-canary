@@ -24,6 +24,12 @@ test('NSIS bootstrap keeps the spaced Unicode install path as the final unquoted
   const expected="spawnSync(setup,['/S',"+dArgument+"],{encoding:'utf8',windowsHide:true,windowsVerbatimArguments:true";
   assert.ok(source.includes(expected),'NSIS /D must remain unquoted and last while Node passes Windows arguments verbatim');
 });
+test('NSIS compile acceptance keeps its Windows, compiler, and template failure gates',()=>{
+  const source=fs.readFileSync(new URL('../scripts/verify-installer-template.mjs',import.meta.url),'utf8');
+  assert.ok(source.includes("if(process.platform!=='win32')throw Error('INSTALLER_COMPILER_CHECK_REQUIRES_WINDOWS');"),'compiler acceptance must stay Windows-only');
+  assert.ok(source.includes("if(!fs.existsSync(makensis))throw Error('NSIS_COMPILER_MISSING');"),'a missing compiler must fail the check');
+  assert.ok(source.includes("if(compiled.error||compiled.status!==0||!fs.existsSync(output))throw Error('NSIS_TEMPLATE_COMPILE_FAILED:"),'compiler errors or missing output must fail the check');
+});
 test('atomic replacement preserves the old file when a disk-full write fails',()=>{
   const root=makeCanonicalTempRoot('agent-canary-atomic-write-');
   const target=path.join(root,'latest.json');
