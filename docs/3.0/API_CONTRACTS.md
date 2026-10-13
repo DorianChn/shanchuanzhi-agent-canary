@@ -30,7 +30,9 @@
 
 - `createRiskPolicyRouter({ guard, ... })` 对工具分类为 `ALLOW|DENY|APPROVAL_REQUIRED`，返回风险、理由和模式。未登记工具默认需审批；外部网络和敏感数据按当前策略拒绝或要求审批。
 - `OBSERVE` 只影响可选策略层，不覆盖 `AgentGuard` quarantine/containment。策略 `ALLOW` 不等于 Gateway 资源登记。
-- `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`。`trip/reset` 是宿主侧操作，不注册为 agent 工具。
+- `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
+- `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
+- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭；`close()` 先中止活动执行，再退订。该通知目前只覆盖同一进程、同一 Guard 实例；共享持久化 store 的跨 Guard/跨进程变化、忽略 AbortSignal 的不合作 callback 及已完成副作用不在此保证内。
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
 

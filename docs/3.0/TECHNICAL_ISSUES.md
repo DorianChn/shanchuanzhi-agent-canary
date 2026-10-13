@@ -18,8 +18,8 @@
 
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
-- [#32 Windows Node 20 Hook interruption 测试失败](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）。
-- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 的合成复现观察到外部 `Guard.trip()` 后活动 callback signal 仍为 `aborted=false`，释放测试 gate 后产生临时 marker 副作用。M1 独占本轮 `src/runtime/gateway.ts` 修复和 Guard/Gateway 契约提案；M7 仅继续其 packaging/scripts/M7 测试工作。
+- [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN；PR #30 的 Windows Node 20 与 PR #34/#36 的 Windows Node 22 均有失败证据）。
+- [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，OPEN）：M1 本地 commit `ec3bc96` 增加同步 `subscribeQuarantine`，63/63 Windows Node 20.20.2 聚焦测试通过；外部 push/PR 尚未完成。保持 OPEN，直至远端 Draft PR 与 CI 验收。
 
 ## PR 与自动检查
 
@@ -30,6 +30,6 @@
 
 ## 运行资源
 
-- 开发并行度上限为 3。当前开发槽由 M1（P0 #35）、M5（策略/Guard 审计）和 M7（独立 packaging/scripts 工作）占用。M4 代码已完成且 PR #34 CI 通过，M0 已要求其结束 CI 轮询并释放槽；M2/M3 当前无开发工作；M6/M8 排队。
-- VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行，M7 被要求不执行真实安装/VM 测试。
+- 开发并行度上限为 3。当前 M5、M7、M8 为 RUNNING（3/3）；M4 已标记 IDLE，M1 的远端交付被阻塞且不占开发槽。M5/M7 各自在模块线程中进行一次限时 Draft PR 交接；M0 不控制它们的 Git 进程。
+- VMware、真实模型和安装测试共用一个互斥槽，同一时间最多运行其中一项。当前无互斥测试在运行，M7 本轮未运行真实安装、VM 或模型测试。
 - M0 从本机保存的 Codex `thread_history` 只读记录核对任务和状态，使用 `codex queue` 续发消息。该本地记录不等于 `read_thread` 工具；开发状态同时对照 Git worktree 和 GitHub Issue/PR。
