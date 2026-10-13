@@ -77,3 +77,11 @@ M1 现在提供 `AgentGuard.subscribeQuarantine(listener: () => void): () => voi
 该同步保证的范围是同一进程中的同一个 `AgentGuard` 实例。另一个 Guard 实例只通过共享 `ContainmentStateStore` 改变状态，或另一进程直接修改持久化标记，不会主动触发此实例的同步 listener；本地 state 读取能在观察到隔离后 latch，但不能替代跨实例/跨进程事件通道。M0 更新 `API_CONTRACTS.md` 时应明确这个边界及订阅生命周期；若要覆盖跨进程变化，需要单独定义 IPC/状态存储通知契约。此修复不表示保护桌面 Agent 的原生 Shell、未接入 MCP 或直接文件/网络 API。
 
 本地实现与合成回归通过；远端 Issue/PR 状态本轮没有查询或更新。完整命令、结果和未覆盖边界见 `SECURITY_REGRESSION_RESULTS.md`。
+
+## Gateway close 生命周期 owner-side 修复（Issue #28，2026-10-13）
+
+按 M1 的 Gateway/Guard 契约 owner review，close 的组合顺序固定为：同步设置 `closed` 并清空 pending approval；创建并发布唯一 memoized Promise；abort 本 Gateway 的活动 controller；先把 disposer 替换成空操作，再安全调用一次退订；等待已入队 Gateway task 的 `history.tail`；最后逐个尝试关闭所有已登记资源。任一 `closeSync` 失败都会被隔离，后续资源仍继续关闭，最终只以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝，不携带底层异常或资源路径。并发及同步重入调用均取得同一 Promise 和最终结果。
+
+本次仅修改 M1 的 `src/runtime/gateway.ts` 与 `test/gateway.test.ts`，没有增加公共 API。回归覆盖 abort listener 与 Guard disposer 中的同步重入及 Promise identity；close 时 active dispatch 被 abort、已入队写文件和已排队 approval callback 均不执行且资源只在队列结果落定后关闭；以及第一个资源关闭抛合成异常后其余资源仍全部尝试、结果错误固定且不泄露合成路径/cause。原有 Guard quarantine 同步 abort 回归仍在同一 Gateway 定向 suite 内通过。
+
+关闭会等待 Gateway 自身串行队列完成拒绝/收尾，但 AbortSignal 不能强制终止忽略信号的 host callback，也不能撤销 callback 已完成或自行继续产生的外部副作用；这不构成 OS 沙箱，也不保护所有原生 Shell、文件或网络路径。`SECURITY_REGRESSION_RESULTS.md` 记录本次 Node/build 证据及资源关闭错误注入的限制。M0 仍需将 close 的同步锁定、Promise 发布时点、退订/队列/资源顺序和稳定错误同步到共享 `API_CONTRACTS.md`。

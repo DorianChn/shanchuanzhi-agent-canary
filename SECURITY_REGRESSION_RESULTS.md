@@ -101,3 +101,15 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 - 当前同步通知只保证从正在使用的同一个 `AgentGuard` 实例调用 `trip()`。不同 Guard 实例共享 state store，或另一进程直接改写持久化状态时，没有推送式同步广播；该扩展需要 M0 定义额外的 store/IPC API。
 - Gateway 可以同步 abort signal 和 dispatch 等待；它不能回滚已完成外部动作，也不能强制终止忽略 AbortSignal 的不合作 callback。本回归验证 callback 在写入前遵守 signal 检查。M1 Gateway 仍只覆盖 `agent.dispatch` 中已登记的受控能力，不保护原生 Shell 或绕过 Gateway 的文件、网络与 MCP 调用。
 - M0 下一步：按本报告所列的签名、时序、重复通知、reset 和 disposer 语义更新 `coordinator/docs/3.0/API_CONTRACTS.md`。本轮未改协调目录、M2–M8 文件，未访问 GitHub connector，未创建 PR 或合并分支。
+
+## Issue #28：Gateway close 同步与资源清理回归（2026-10-13）
+
+基线为 M1 本地 `feature/ac3-security-core` / `ec3bc96d7301304f48270faaec926c7dbc1281ef`，工作树在本轮修改前干净。使用已存在的 Windows Node `v22.23.1 win32 x64`，未安装 Node。
+
+- 定向命令：`node --import tsx --test test/gateway.test.ts`：28 项通过，0 失败、0 跳过。新增用例证明 abort listener 和 disposer 的同步重入都取得外层 close 的同一 Promise；close 中活动 signal 被中止，pending approvals 清空，排队写文件和排队 approval 不执行，资源关闭开始前活动及排队 dispatch 已落定；重复 close 复用同一 Promise/result。
+- 资源错误用例在临时 fixture 的第一个 `fs.closeSync` 包装点先真实关闭该 descriptor，再抛出包含合成私密 detail/临时路径的错误，避免留下测试 fd。观察到三个已注册 descriptor 都被尝试；Promise 固定拒绝为 `GATEWAY_RESOURCE_CLOSE_FAILED`，不含 cause 或合成路径，重复 close 不增加尝试次数。该注入验证异常处理、继续清理和错误净化，不声称模拟了内核层 close 失败时的 descriptor 状态。
+- 同一 Gateway suite 中原有的外部 Guard quarantine 活动 callback abort 测试通过，P0 #35 行为保持。
+- TypeScript build：`node node_modules/typescript/bin/tsc`，退出码 0。
+- `git diff --check`：本地检查通过。
+
+本轮没有运行 `test/agent-hook.test.ts`、完整 test suite、VM/真实模型/安装验证，也未 push 或写 GitHub。剩余限制：close 能等待 Gateway task queue，但不能终止忽略 AbortSignal 的 callback 或回滚已发生的外部副作用；资源错误覆盖使用安全的合成异常注入，未制造真实内核 close 错误。

@@ -74,6 +74,84 @@ test('gateway close unsubscribes its Guard observer exactly once',async()=>{
  await Promise.all([runtime.close(),runtime.close()]);
  assert.equal(unsubscribeCalls,1);
 });
+test('gateway close publishes one Promise before synchronous abort and disposer reentry',async()=>{
+ const root=fs.mkdtempSync(path.join(home,'close-reentry-'));
+ const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')});
+ const evidence=new EvidenceRecorder();
+ let closeGateway!:()=>Promise<void>,abortReentry:Promise<void>|undefined,disposerReentry:Promise<void>|undefined;
+ let release!:()=>void,started!:()=>void,callbackDone!:()=>void;
+ const hold=new Promise<void>(r=>release=r),begun=new Promise<void>(r=>started=r),done=new Promise<void>(r=>callbackDone=r);
+ const subscribe=guard.subscribeQuarantine.bind(guard);
+ guard.subscribeQuarantine=(listener)=>{const dispose=subscribe(listener);return()=>{disposerReentry=closeGateway();dispose();};};
+ const runtime=createTrustedExecutionGateway({agentId:'close-reentry',guard,workspaceRoot:root,files:[],evidence,timeoutMs:5_000,mcpTools:{slow:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,signal:AbortSignal)=>{signal.addEventListener('abort',()=>{abortReentry=closeGateway();},{once:true});started();try{await hold;return 'done';}finally{callbackDone();}}}}});
+ closeGateway=runtime.close;
+ const active=runtime.agent.dispatch({name:'mcp_tool',args:{tool:'slow',arguments:{}}});
+ const activeOutcome=active.then(()=>false,()=>true);
+ try{
+  await begun;
+  const closing=runtime.close();
+  assert.strictEqual(abortReentry,closing);
+  assert.strictEqual(disposerReentry,closing);
+  assert.strictEqual(runtime.close(),closing);
+  release();
+  assert.equal(await activeOutcome,true);
+  await done;
+  await closing;
+ }finally{release();await runtime.close().catch(()=>{});await active.catch(()=>{});}
+});
+test('gateway close aborts active work, drains queued work, and blocks pending approval',async()=>{
+ let release!:()=>void,started!:()=>void,activeSettled=false,queuedSettled=false,queuedCalls=0,approvalCalls=0;
+ let signal:AbortSignal|undefined;
+ const hold=new Promise<void>(r=>release=r),begun=new Promise<void>(r=>started=r);
+ const s=setup({timeoutMs:5_000,mcpTools:{
+  approval:{approvalRequired:true,execute:async()=>++approvalCalls},
+  slow:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,current:AbortSignal)=>{signal=current;started();await hold;return 'done';}},
+  queued:{risk:'WRITE',approvalRequired:false,execute:async()=>++queuedCalls},
+ }});
+ const originalClose=fs.closeSync;
+ const closeAfterDrain:boolean[]=[];
+ (fs as any).closeSync=(fd:number)=>{closeAfterDrain.push(activeSettled&&queuedSettled);return originalClose(fd);};
+ let activeOutcome:Promise<boolean>|undefined,queuedOutcome:Promise<boolean>|undefined,approvalOutcome:Promise<boolean>|undefined;
+ try{
+  await assert.rejects(s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'approval',arguments:{}}}),/REQUIRE_APPROVAL/);
+  const pendingId=s.runtime.operator.pending()[0].requestId;
+  activeOutcome=s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'slow',arguments:{}}}).then(()=>{activeSettled=true;return false;},()=>{activeSettled=true;return true;});
+  await begun;
+  queuedOutcome=s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'must-not-write'}}).then(()=>{queuedSettled=true;return false;},()=>{queuedSettled=true;return true;});
+  approvalOutcome=s.runtime.operator.approve(pendingId).then(()=>false,()=>true);
+  const closing=s.runtime.close();
+  assert.equal(signal!.aborted,true);
+  assert.equal(s.runtime.operator.pending().length,0);
+  release();
+  assert.equal(await activeOutcome,true);
+  assert.equal(await queuedOutcome,true);
+  assert.equal(await approvalOutcome,true);
+  await closing;
+  assert.equal(queuedCalls,0);
+  assert.equal(approvalCalls,0);
+  assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');
+  assert.ok(closeAfterDrain.length>0);
+  assert.ok(closeAfterDrain.every(Boolean));
+ }finally{(fs as any).closeSync=originalClose;release();await s.runtime.close().catch(()=>{});await Promise.all([activeOutcome,queuedOutcome,approvalOutcome].filter(Boolean));}
+});
+test('gateway close tries every resource after a close error and exposes only a stable failure',async()=>{
+ const s=setup(),originalClose=fs.closeSync,attempted:number[]=[];
+ (fs as any).closeSync=(fd:number)=>{attempted.push(fd);if(attempted.length===1){originalClose(fd);throw new Error(`SYNTHETIC_PRIVATE_CLOSE_DETAIL ${path.join(s.root,'.env')}`);}return originalClose(fd);};
+ try{
+  const closing=s.runtime.close();
+  assert.strictEqual(s.runtime.close(),closing);
+  await assert.rejects(closing,(error:any)=>{
+   assert.equal(error.message,'GATEWAY_RESOURCE_CLOSE_FAILED');
+   assert.equal(Object.hasOwn(error,'cause'),false);
+   assert.doesNotMatch(`${error.message}\n${error.stack??''}\n${error.cause??''}`,/SYNTHETIC_PRIVATE_CLOSE_DETAIL/);
+   assert.ok(!`${error.message}\n${error.stack??''}`.includes(path.join(s.root,'.env')));
+   return true;
+  });
+  assert.equal(attempted.length,3);
+  await assert.rejects(s.runtime.close(),/GATEWAY_RESOURCE_CLOSE_FAILED/);
+  assert.equal(attempted.length,3);
+ }finally{(fs as any).closeSync=originalClose;await s.runtime.close().catch(()=>{});}
+});
 test('fixed argv process really executes normal task; arbitrary shell does not run',async()=>{const s=setup({commands:{build:{executable:process.execPath,args:['-e',"require('fs').writeFileSync('built.txt','ok');console.log('BUILD_OK')"]}}});try{await assert.rejects(s.runtime.agent.dispatch({name:'run_command',args:{command:'node -e dangerous'}}),/unregistered_command/);const result=await s.runtime.agent.dispatch({name:'run_command',args:{command:'build'}}) as any;assert.equal(result.exitCode,0);assert.equal(fs.readFileSync(path.join(s.root,'built.txt'),'utf8'),'ok');assert.match(result.stdout,/BUILD_OK/);assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'NOT_VERIFIED');}finally{await s.runtime.close();}});
 test('denied network request has zero actual loopback HTTP side effects',async()=>{let received=0;const server=http.createServer((_req,res)=>{received++;res.end('bad');});await new Promise<void>(r=>server.listen(0,'127.0.0.1',r));const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'http_request',args:{url:'http://127.0.0.1:'+((server.address() as any).port)}}),/network_capability_denied/);assert.equal(received,0);}finally{await s.runtime.close();await new Promise<void>(r=>server.close(()=>r()));}});
 test('host-only approval consumes once and model has no approve or reset entry point',async()=>{let called=0;const s=setup({mcpTools:{ambiguous:{approvalRequired:true,execute:async()=>++called}}});try{assert.equal((s.runtime.agent as any).approve,undefined);assert.equal((s.runtime.agent as any).reset,undefined);await assert.rejects(s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'ambiguous',arguments:{}}}),/REQUIRE_APPROVAL/);const id=s.runtime.operator.pending()[0].requestId;assert.equal(await s.runtime.operator.approve(id),1);await assert.rejects(s.runtime.operator.approve(id),/CONSUMED/);assert.equal(called,1);}finally{await s.runtime.close();}});

@@ -234,10 +234,23 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   });
   function close():Promise<void>{
     if(closePromise)return closePromise;
-    closed=true;pending.clear();for(const controller of activeControllers)controller.abort();
+    closed=true;pending.clear();
+    let resolveClose!:()=>void,rejectClose!:(error:Error)=>void;
+    const result=new Promise<void>((resolve,reject)=>{resolveClose=resolve;rejectClose=reject;});
+    // Publish before abort listeners or the Guard disposer can re-enter close().
+    closePromise=result;
+    for(const controller of activeControllers)controller.abort();
     const unsubscribe=unsubscribeQuarantine;unsubscribeQuarantine=()=>{};try{unsubscribe();}catch{}
-    closePromise=history.tail.then(()=>{for(const f of resources.values())if(f.fd>=0){fs.closeSync(f.fd);f.fd=-1;}});
-    return closePromise;
+    void history.tail.then(()=>{
+      let failed=false;
+      for(const f of resources.values())if(f.fd>=0){
+        const fd=f.fd;f.fd=-1;
+        try{fs.closeSync(fd);}catch{failed=true;}
+      }
+      if(failed)rejectClose(new Error('GATEWAY_RESOURCE_CLOSE_FAILED'));
+      else resolveClose();
+    });
+    return result;
   }
   try{
     const unsubscribe=options.guard.subscribeQuarantine(abortSession);
