@@ -31,7 +31,7 @@
 | M6 | `feature/ac3-e4-validation` | `da52c17` | 3 个 commit ahead of main，已同步模块远端；包含 `package.json`、E4 验证与报告 artifact，工作树干净 | Windows Git worktree |
 | M7 | `feature/ac3-reliability` | `9d316fe` | AC3 基线上 1 个本地提交，涉及 Windows packaging、Gateway、测试和 manifest；当前工作树干净 | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `62496d4` | README、SECURITY、贡献/支持文档、GitHub 模板和入门/兼容性文档有未提交修改/新增 | WSL Git worktree |
-| M0 | `feature/ac3-m0-coordination` | `1a65374` | 协调文档、检查工作流和脚本已推送至 Draft PR #30 | Windows Git worktree |
+| M0 | `feature/ac3-m0-coordination` | 滚动 | 协调文档、检查工作流和脚本已推送至 Draft PR #30 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `62496d4` | 集成计划 | Windows Git worktree |
 
 比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 当前为 `cf42dde`（已提交、工作树干净），相对 AC3 的左右计数为 46/5；M6 为 `da52c17`（已同步远端、工作树干净），计数为 46/7。两者仍不含当前 AC3 头，未自动移动/覆盖其内容。共同历史基点为 `73cfdf9`。M4/M0/M9 新建 worktree 同源于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
@@ -44,7 +44,7 @@
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
 - 当前工具没有 `read_thread`、`wait_threads` 或线程发送能力。八个线程的正文、承诺和实时任务数无法确认；文件系统与 GitHub Issue 是当前可验证协作依据。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。当前 head `1a65374` 的 run `38372927321` 所列 checks 全部通过，包含 Windows Node 20、package-smoke、Docker 与 sponsor smoke；协调 gate run `38372927057` 通过。此前 runs `38371811869`、`38372532507` 的 Windows Node 20 hook 中断用例失败，根因未确认，记录于 #32；最新通过不构成根因解释，Issue 继续 OPEN。
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。最近一次全绿检查点是 head `e4597bf`：run `38374574040` 所列 checks 全部通过，包含 Windows Node 20、package-smoke、Docker 与 sponsor smoke；协调 gate run `38374574038` 通过。之后 M0 又只更新了状态文档；其提交的 checks 以 PR Checks 页为准。此前 runs `38371811869`、`38372532507` 的 Windows Node 20 hook 中断用例失败，根因未确认，记录于 #32；通过结果不解释根因，Issue 继续 OPEN。
 
 ## M0 交付边界
 

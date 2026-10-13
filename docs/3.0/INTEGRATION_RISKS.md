@@ -7,7 +7,7 @@
 | R1 | P1 | M3/M6 分支不含 AC3 基线，迁移时必须保留当前工作 | M3 HEAD `cf42dde`（工作树干净），M6 HEAD `da52c17`（已同步远端、工作树干净）；AC3 比较为 46/5 与 46/7；共同历史基点 `73cfdf9` | M3/M6 说明迁移办法并在 PR 留 merge-base 证据；不自动 rebase；#27 | OPEN |
 | R2 | P1 | M1/M7 并行改同一 Gateway 文件 | 两个工作树均改 `src/runtime/gateway.ts` | M1/M7 对齐接口与修改顺序；#28 | OPEN |
 | R3 | P1 | M3/M5/M6/M7 的并行分支均包含 package manifest 改动 | 四个模块分支均改 `package.json`；当前 M3/M5/M6/M7 HEAD 分别为 `cf42dde`、`053b330`、`da52c17`、`9d316fe` | 认领字段级 owner 并记录在 #27 | OPEN |
-| R9 | P1 | Windows Node 20 的 hook 中断回归测试曾连续两次失败；最新 PR 检查全绿，但根因仍未确认 | PR #30 runs `38371811869`、`38372532507` 曾失败；head `1a65374` 的 run `38372927321` 中 Windows Node 20 与 package-smoke 通过 | M1 复现/解释失败并记录观察；不删测试；#32 | OPEN（最新通过，根因待查） |
+| R9 | P1 | Windows Node 20 的 hook 中断回归测试曾连续两次失败；最近检查全绿，但根因仍未确认 | PR #30 runs `38371811869`、`38372532507` 曾失败；head `e4597bf` 的 run `38374574040` 中 Windows Node 20 与 package-smoke 通过 | M1 复现/解释失败并记录观察；不删测试；#32 | OPEN（最近通过，根因待查） |
 | R4 | P1（协调环境） | WSL 与 Windows 工作树的 `.git` 指针使用各自绝对路径；交叉 runtime 会把对方路径标为 `prunable`/不可读 | M1/M2/M5/M7/M8 在 WSL Git 可读；M3/M4/M6/coordinator/integration 在 Git for Windows 可读 | 各模块沿用创建工作树的 Git runtime；不运行跨环境 `repair/prune` | OPEN |
 | R5 | P1 | 线程内容及实时活跃任务数无法确认 | 当前无 `read_thread`、`wait_threads`、线程发送工具 | 不假装读过或已通知；按文件/GitHub 快照协作。并发上限 3 与测试互斥规则待有线程能力后核实 | UNKNOWN |
 | R6 | P2 | 原 `.gitignore` 未覆盖 `.env.*`、临时文件和协调输出 | baseline 检查仅有 `.env`、`*.log` 等 | 本 PR 增加相应模式；密钥仍需 PR/CI secret scanning | FIXED IN THIS PR |
