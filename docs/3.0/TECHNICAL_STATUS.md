@@ -24,9 +24,9 @@
 | 模块 | 分支 | HEAD | 当前改动快照 | 路径环境 |
 | --- | --- | --- | --- | --- |
 | M1 | `feature/ac3-security-core` | `60428ed` | 比初始基线新增 3 个本地提交，改动 Hook、Gateway、测试及审计报告 | WSL Git worktree |
-| M2 | `feature/ac3-execution-isolation` | `62496d4` | `.codex/`、隔离设计/测试报告与 `execution-isolation/` 未跟踪 | WSL Git worktree |
-| M3 | `feature/ac3-agent-onboarding` | `cf42dde` | safe Codex onboarding 已提交并同步远端；当前工作树干净 | Windows Git worktree |
-| M4 | `feature/ac3-desktop-security-center` | `62496d4` | M0 新建空 worktree | Windows Git worktree |
+| M2 | `feature/ac3-execution-isolation` | `6b39c3c` | Windows execution isolation prototype 已提交；AC3 基线上 1 个提交，工作树干净 | WSL Git worktree |
+| M3 | `feature/ac3-agent-onboarding` | `8fd4e4f` | AC3 头是 merge-base，两个 onboarding 提交已同步远端；旧 main-based 快照保留在 backup 分支 | Windows Git worktree |
+| M4 | `feature/ac3-desktop-security-center` | `62496d4` | M0 新建空 worktree；M4 现已恢复任务，最新观察时工作树干净 | Windows Git worktree |
 | M5 | `feature/ac3-policy-audit` | `053b330` | AC3 基线上 2 个本地提交，策略、文档、测试与 manifest 已提交；当前工作树干净 | WSL Git worktree |
 | M6 | `feature/ac3-e4-validation` | `da52c17` | 3 个 commit ahead of main，已同步模块远端；包含 `package.json`、E4 验证与报告 artifact，工作树干净 | Windows Git worktree |
 | M7 | `feature/ac3-reliability` | `9d316fe` | AC3 基线上 1 个本地提交，涉及 Windows packaging、Gateway、测试和 manifest；当前工作树干净 | WSL Git worktree |
@@ -34,7 +34,7 @@
 | M0 | `feature/ac3-m0-coordination` | 滚动 | 协调文档、检查工作流和脚本已推送至 Draft PR #30 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `62496d4` | 集成计划 | Windows Git worktree |
 
-比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 当前为 `cf42dde`（已提交、工作树干净），相对 AC3 的左右计数为 46/5；M6 为 `da52c17`（已同步远端、工作树干净），计数为 46/7。两者仍不含当前 AC3 头，未自动移动/覆盖其内容。共同历史基点为 `73cfdf9`。M4/M0/M9 新建 worktree 同源于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
+比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 当前为 `8fd4e4f`（工作树干净并已同步远端），merge-base 正好为 AC3 头 `62496d4`，相对 AC3 左右计数 0/2；其旧 main-based 快照 `cf42dde` 保留在 `backup/ac3-agent-onboarding-main-base`。M6 为 `da52c17`（已同步远端、工作树干净），相对 AC3 仍为 46/7，基线待协调；共同历史基点为 `73cfdf9`。M4/M0/M9 新建 worktree 同源于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
 
 ## GitHub 协作
 
@@ -42,9 +42,9 @@
 - [Issue #28](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)：M1/M7 Gateway 冲突，OPEN。
 - [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：Windows Node 20 Hook interruption 曾间歇失败、两次通过后再次失败；当前失败与根因未确认均记录在 OPEN 的 #32。
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
-- 当前工具没有 `read_thread`、`wait_threads` 或线程发送能力。八个线程的正文、承诺和实时任务数无法确认；文件系统与 GitHub Issue 是当前可验证协作依据。
+- Codex Desktop Connector 未暴露 `read_thread`、`wait_threads` 或 `send_message_to_thread`。M0 本轮读取了这 8 个任务在本机保存的会话记录，并通过 `codex queue` 恢复任务：M1/M2/M4 当前 `inProgress`，占用 3 个开发槽；M3/M5/M6/M7/M8 收到仅登记排队状态、不修改文件的消息。M3/M5/M6/M8 已在 #29 登记 QUEUED；M7 状态登记待回。线程状态来自本机 `thread_history` 快照，代码状态仍以实际 worktree/GitHub 为准。当前没有 VMware、真实模型或安装测试资源申请。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。截至状态文档本次刷新前，head `74757a6` 的 run `38374902576` 再次在 Windows Node 20 hook 中断用例失败；macOS/Ubuntu 矩阵、Windows Node 22、Docker、sponsor 与协调 gate `38374902579` 通过，package-smoke 跳过。最近全绿检查点为 head `e4597bf` 的 run `38374574040`（含 Windows Node 20、package-smoke）。失败历史与验收要求记录于 #32，根因未确认；PR 保持 Draft。
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`，当前 head `1ddcd56`。当前全绿 run `38375363932` 的 10 项 CI 检查通过，包含 Windows Node 20 和 package-smoke；协调 gate `38375650524` 通过。Issue #32 仍 OPEN：此前存在 Windows Node 20 Hook interruption 间歇失败，根因仍需 M1 复核；不因最新 CI 通过而关闭，PR 保持 Draft。
 
 ## M0 交付边界
 
