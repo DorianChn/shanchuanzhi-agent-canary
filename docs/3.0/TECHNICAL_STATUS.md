@@ -1,18 +1,18 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 14:40 UTC；GitHub 与 owner 快照）
+## 当前状态（2026-10-13 14:47 UTC；GitHub 与 owner 快照）
 
 - PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；9 项 CI 与 2 项 wrapper 检查全部通过，未修改或合并。
-- M0 PR #30 为 OPEN/Draft，远端 head f2f2d10；run 38412534723 在 Ubuntu Node20 的 gateway approval-expiry 子测试失败（321 pass/1 fail/4 skip，requestId undefined），其他矩阵项被 fail-fast 取消；build、Docker、sponsor 通过，package-smoke skipped。正文刷新触发的 ownership/contract gate run 38413966169 通过。P1 Issue #44 已交 M1 精确源版本诊断。
-- M1 PR #43 远端 head 仍为 d0fd595；其唯一推送尝试在约51秒后 exit1、无输出，远端未更新且未重试。M1 本地 dc4d7fa 为单个 M1-owned honeypot 测试断言提交，Windows Node22 定向套件34/34、diff-check pass。#32 仍 UNKNOWN：M1当前 async 路径10/10、M6对 PR #38 旧 spawnSync/1秒路径5/5，但均未复现远端 marker 缺失。#35 P0 OPEN；M1正调查#44。
+- M0 PR #30 为 OPEN/Draft，远端 head `61659fb`；当前10项检查全通过。旧 head `f2f2d10` 的 run `38412534723` 曾在 Ubuntu Node20 的 approval-expiry 子测试失败（321 pass/1 fail/4 skip，requestId undefined），仍由 P1 #44 跟踪；新 head 仅为协调文档，不能视为 Gateway 修复。M1 对精确源版本的 Windows Node22 子测试通过1/1，Node20 根因仍 UNKNOWN。
+- M1 PR #43 远端 head 仍为 `d0fd595`；原推送未更新远端。M1 本地 `dc4d7fa` 是单个 M1-owned honeypot 测试断言提交，Windows Node22 定向套件34/34、diff-check通过。#32 新增真实失败：PR #39 head `65ce028` 的 Windows Node22 job `115360080156` 中，M1-owned Hook interruption 测试出现 Expected true / actual false；M1 正按精确源码诊断。#35 P0 保持 OPEN。
 - M2 PR #37 为 OPEN/Draft，9/9 检查通过；原生 Codex Shell 仍 UNPROTECTED。
 - M3 PR #33 head `c404b6b`，run `38400488378` 为 9/9，PR 含 owner 编写的 onboarding API 契约。Issue #42 已根据当前 head 的 package-smoke 与契约验收证据关闭为 completed；跨模块 manifest 协调继续由 #27 跟踪。
 - M4 PR #34 与 M9 PR #36 当前各 9/9 检查通过；桌面安全中心/E4 后端 404 仍 UNKNOWN。
 - M5 feature/ac3-policy-audit 为 clean HEAD 9ec08d9、AC3 merge-base 62496d4、5 commits ahead；14:20 唯一普通 push 约26秒后 exit1、无输出。GitHub 仍无远端分支或 Draft PR；没有重试或更改凭据。
 - M6 PR #38 head bca895f；Windows Node22 失败仍属于 M1-owned Hook test/agent-hook.test.ts:54。M6 对 bca895f 的旧实现本地定向5/5通过，但未复现远端 marker 缺失；未改代码，保留未跟踪 E4 证据目录，外部 E4 仍 NOT_VERIFIED。
-- M7 PR #39 远端为 `f17b7e6`，owner 候选 `65ce028`。Windows Node22.23.1 定向可靠性套件40通过、0失败、3跳过（symlink 权限限制），`git diff --check` 通过。CI run `38397157815`：Ubuntu wrapper 编译检查失败；Windows wrapper 子测试42通过、0失败、1跳过，后续 `pack:check` 被取消。Run `38397158016`：Ubuntu Node20/22通过；macOS Node22测试失败，macOS Node20 job 虽取消但 `npm test` step 记录失败；Windows Node20/22 job 被取消且无失败测试 step。候选仅做本地验证；未跑安装、VMware 或真实模型测试。Issue #41 保持 OPEN，等待候选 CI。
+- M7 PR #39 当前远端 head `65ce028`。本地 Windows Node22.23.1 定向可靠性套件40通过、0失败、3跳过（symlink 权限限制），diff-check通过。新 run `38415886978`：Ubuntu wrapper通过，Windows wrapper因 `NSIS_COMPILER_MISSING` 失败。Run `38415887207`：Ubuntu Node20/22与macOS Node22通过；Windows Node22失败属于M1-owned Hook测试（#32）；Windows Node20与macOS Node20被fail-fast取消；Docker/sponsor通过、package-smoke跳过。M7已着手修复 Windows runner 的真实 NSIS 编译器设置，不得跳过编译检查。Issue #41 OPEN。
 - M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- M1 与 M7 两项任务各占一个槽，当前2/2：M1处理P1 #44，M7候选已完成本地验证并交由 M0 编入本次推送批次。M5上传尝试完成并释放槽位；M6旧版本复现完成。没有 VMware、真实模型或安装测试预约。推送按至少20分钟间隔合批；最近成功批次为14:20 UTC，本次窗口为14:40 UTC。
+- M1 与 M7 两项任务各占一个槽，当前2/2：M1处理 #32，M7处理 #41。M5上传尝试完成并释放槽位；M6旧版本复现完成。没有 VMware、真实模型或安装测试预约。最近合批推送于14:42 UTC成功；下一批不早于15:03 UTC。
 - 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
