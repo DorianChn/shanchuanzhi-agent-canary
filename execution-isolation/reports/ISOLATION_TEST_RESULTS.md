@@ -19,7 +19,7 @@
 | Bash 绕过复现 | PASS | 临时哨兵变更；测试脚本内无 Gateway 调用，Gateway 遥测未接入。见 execution-isolation/codex/native-shell-bypass-evidence.json。 |
 | Hook 协议与告警 | PASS；Codex UI 生命周期未测 | Windows Node 输入 PreToolUse/Bash 得到 `permissionDecision=deny` 与 `UNPROTECTED_NATIVE_SHELL` systemMessage；格式错误输入也拒绝。合成日志目录不可创建时，仍拒绝并返回告警；日志不含命令原文。Hook 片段未安装，当前没有 Codex UI 告警被激活。 |
 
-M2 本地调度状态为 `RUNNING`（占用 1 个开发槽；未占 VMware/真实模型/安装器独占资源）。已尝试把状态与下一步写入 #29，并通过 #28 提交 M1 Gateway 授权执行/取消语义对齐请求；GitHub Issue 评论和更新 API 均因 `Resource not accessible by integration` 返回 403，Browser MCP 未连接，两个 Issue 都未变化。下一步：取得有效写入通道后更新 #29、重送 #28 请求，再实现 adapter 并保留 Gateway 执行前复查。
+M2 本地调度状态为 `RUNNING`（占用 1 个开发槽；未占 VMware/真实模型/安装器独占资源）。已尝试把状态与下一步写入 #29，并通过 #28 提交 M1 Gateway 授权执行/取消语义对齐请求；GitHub Issue 评论和更新 API 均因 `Resource not accessible by integration` 返回 403，Browser MCP 未连接，两个 Issue 都未变化。本地验证增量已提交于 `61db870`；`git push` 因无法读取 GitHub 用户名失败，尚无远端分支或 Draft PR。下一步：取得有效写入通道后更新 #29、重送 #28 请求，推送并创建 Draft PR，再实现 adapter 并保留 Gateway 执行前复查。
 
 证据：`execution-isolation/windows/prototype-evidence.json`（schema v2）；`execution-isolation/codex/hook-test-results.json`。实现与测试：`execution-isolation/windows/AppContainerLauncher.cs`、`execution-isolation/windows/Test-AppContainerPrototype.ps1`。
 

@@ -38,4 +38,4 @@ Windows AppContainer 通过包 SID、能力 SID、DACL 与低完整性令牌限�
 
 只读核对了公共协调目录 `coordinator/docs/3.0/` 中的 `API_CONTRACTS.md`、`MODULE_OWNERSHIP.md` 和 `MODULE_DEPENDENCIES.md`。M0 契约规定 M2 独占 `execution-isolation/`，范围外路径须先建 Issue 并由 owner 协调；Draft PR base 为 `feature/agent-canary-3.0`，正文需 `Test-Evidence:` 与 `API-Contract-Change: yes|no`。三个报告放在 `execution-isolation/reports/`。没有改 M1 文件或接口；原型仍未接入 M1 Gateway 授权请求/执行取消契约，需按 #28 协调。
 
-引用的 M0 Codex 线程要求调用 `read_thread`；当前工具面没有该工具，按引用 ID 的调用也返回工具不存在。已从指定协调目录核对可见契约，但无法确认隐藏线程是否还有补充。M2 已请求把 #29 更新为 `RUNNING` 并记录下一步，但 GitHub 评论与 issue 更新接口均返回 HTTP 403；Chrome Browser MCP 也显示未连接，所以 Issue 尚未变化。通过 #28 提交 M1 Gateway 执行/取消语义对齐请求也遇到相同 403，尚未送达。下一步是在取得有效 Issue 写入通道后补记 #29、重送 #28 请求，再实现 Gateway adapter。Draft PR 仍待本地后续提交和推送；当前不能声称已创建。
+引用的 M0 Codex 线程要求调用 `read_thread`；当前工具面没有该工具，按引用 ID 的调用也返回工具不存在。已从指定协调目录核对可见契约，但无法确认隐藏线程是否还有补充。M2 已请求把 #29 更新为 `RUNNING` 并记录下一步，但 GitHub 评论与 issue 更新接口均返回 HTTP 403；Chrome Browser MCP 也显示未连接，所以 Issue 尚未变化。通过 #28 提交 M1 Gateway 执行/取消语义对齐请求也遇到相同 403，尚未送达。最新本地提交为 `61db870`；推送分支时 Git 无法读取 GitHub 用户名，因此没有远端分支或 Draft PR。下一步是在取得有效写入通道后补记 #29、重送 #28 请求，推送分支并创建 Draft PR，再实现 Gateway adapter。
