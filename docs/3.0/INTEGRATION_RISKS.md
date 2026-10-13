@@ -4,10 +4,10 @@
 
 | ID | 优先级 | 风险 | 证据 | 责任/处置 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| R1 | P1 | 旧 M6 PR #31 基于 main，且 AC3 兼容/打包检查尚未通过 | PR #31 head da52c17 的 run 38371562917 有 8 项成功、package-smoke 失败，报告 files:181,mismatches:[package.json]；M6 AC3 候选已含 bca895f，正在查因 | M6 只在候选自有路径复现并修复；保留旧 PR #31，不覆盖原 worktree；#27 | IN PROGRESS |
-| R2 | P1 | M1/M7 Gateway close 生命周期改动重叠，须保留两侧安全/可靠性不变量 | M1 ec3bc96 quarantine cancel 与 f15fdcfa close 语义修复；Gateway 聚焦测试 28/28。M7 原提交 9d316fe 含 memoized close、queue drain、资源关闭失败语义；兼容工作进行中 | M1 是 Gateway/Guard 契约 owner；M7 仅在自身候选协调适配并加回归，不改写 M1 实现；#28/#35 | IN PROGRESS |
+| R1 | P1 | M6 package-smoke 本地修复未经过远端 CI | 旧 PR #31 远端 package-smoke 失败；本地 899dbf5 修 SOURCE_MANIFEST 中 package.json SHA，181 项 Git-tree 校验 0 mismatch；PR head 未更新 | M6 owner 发布授权后运行确切 CI job；#27 保持 OPEN | IN PROGRESS |
+| R2 | M1 close 修复和 M7 reliability 变更尚未同一 AC3 集成验证 | M1 f15fdcfa local Gateway tests 28/28；M7 f17b7e6 让 gateway.ts 相对 AC3 净 diff 为零，83 pass/1 symlink skip；M1 commit 未包含在 M7 候选 | M1 保持 API owner；M7 保留独有测试；统一候选后跑 Gateway/reliability/CI；#28/#35 | IN PROGRESS |
 | R3 | P1 | M3/M5/M6/M7 的共享 package.json 字段与各自 PR 组合结果仍待 AC3 验证 | #27 记录 M3 onboarding、M5 ./policy、M7 reliability 脚本 owner 字段；M5 本地 cd8abea 语义修复通过 42/42；M6 的 PR #31 package-smoke 另有 manifest mismatch | 由字段 owner 最终组合，保留全部测试与安全策略；跨模块结果需要 AC3 基线 CI | IN PROGRESS |
-| R9 | P1 | Windows Node 20 Hook interruption CI 失败间歇出现，尚无根因 | 最新 PR #30 run 38390302812 的 Windows Node 20 测试失败于 test/agent-hook.test.ts:54，其他矩阵项通过；M1 正用现有 Node 22 诊断 harness 时序，但本机没有 Node 20，尚未确认根因 | 保留失败测试和 fail-closed 断言；M1 继续定位，#32 OPEN | OPEN（根因 UNKNOWN）
+| R9 | Windows Node 20 Hook interruption 曾间歇失败，修复提交尚无对应远端 CI | PR #30 旧 head 3e32ccc 的 run 38390302812 失败；M1 46af1f1 让 harness race 可确定复现且本地 Node20/22 测试各 1/1。PR #30 新 head f0f0976 11/11 绿，但没有 M1 提交 | 保留 fail-closed 断言；观察 M1 提交进入 CI 后再决定是否关闭；#32 | OPEN（远端复验待完成）
 | R4 | P1（协调环境） | WSL 与 Windows 工作树的 `.git` 指针使用各自绝对路径；交叉 runtime 会把对方路径标为 `prunable`/不可读 | M1/M2/M5/M7/M8 在 WSL Git 可读；M3/M4/M6/coordinator/integration 在 Git for Windows 可读 | 各模块沿用创建工作树的 Git runtime；不运行跨环境 `repair/prune` | OPEN |
 | R5 | P1 | Desktop 没有原生线程读取/等待 API，任务快照有异步延迟 | M0 经用户许可只读本机 `thread_history` 并通过 `codex queue` 续作；再对照 worktree、GitHub Issue/PR。不能把它描述成调用 `read_thread` | M0 每次排期同时记录快照时间与 GitHub/文件证据；#29 | MONITOR |
 | R6 | P2 | 原 `.gitignore` 未覆盖 `.env.*`、临时文件和协调输出 | baseline 检查仅有 `.env`、`*.log` 等 | 本 PR 增加相应模式；密钥仍需 PR/CI secret scanning | FIXED IN THIS PR |
@@ -23,4 +23,4 @@
 
 ## 资源冲突
 
-开发并行上限为 3；2026-10-13 11:56 UTC 线程快照为 M1/M6/M7 RUNNING（3/3），M8 已完成本地文档工作并释放槽。VMware、真实模型和安装测试当前无人占用；脏工作树不单独作为活跃会话依据。
+开发并行上限为 3；2026-10-13 12:10 UTC 开发槽 0/3。M1/M3/M6/M7 已完成本轮本地任务；VMware、真实模型和安装测试未运行。
