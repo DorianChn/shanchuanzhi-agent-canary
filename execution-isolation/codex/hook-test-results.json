@@ -1,0 +1,19 @@
+{
+  "schema": "agent-canary.m2.hook-test.v1",
+  "protocol": "PASS",
+  "testedPlatforms": [
+    "Windows Node.js 22.23.1",
+    "PowerShell 7.6.5"
+  ],
+  "input": "PreToolUse/Bash synthetic protocol fixture",
+  "directBashDecision": "deny",
+  "visibleWarning": "UNPROTECTED_NATIVE_SHELL",
+  "optionalAuditLog": "PASS",
+  "commandLogged": false,
+  "commandSha256Logged": true,
+  "windowsCommand": "PASS from repository-root working directory",
+  "projectConfigInstalled": false,
+  "m0OwnershipCoordination": "REQUIRED_FOR_ROOT_HOOK_CONFIG",
+  "codexLifecycle": "NOT_TESTED",
+  "projectHookTrust": "REVIEW_REQUIRED"
+}
