@@ -4,16 +4,16 @@
 
 | 模块 | 分支 / 工作树 | 检查到的内容 | 独占范围或主要职责 | 共享接口/冲突 |
 | --- | --- | --- | --- | --- |
-| M1 | feature/ac3-security-core / agents/M1-security | HEAD 46af1f1；close contract 与 Hook harness 修复均本地提交；相关聚焦测试/build通过，等待远端验收 | Gateway/Guard 契约、Hook 安全执行路径和对应回归 | M1 是 Gateway/Guard 契约 owner；P0/P1 验收见 #32/#35 |
+| M1 | feature/ac3-security-core / agents/M1-security | 本地候选 dc4d7fa 只改 quarantine 测试断言，owner 报告定向 34/34；PR #43 远端仍 d0fd595 且 CI 失败，单次 push 未更新 | Gateway/Guard 契约、Hook 安全执行路径和对应回归 | M1 是 Gateway/Guard 契约 owner；#35 P0 保持 OPEN，#32/#28 继续协调 |
 | M2 | feature/ac3-execution-isolation / agents/M2-isolation | HEAD a1c239d；Draft PR #37 OPEN，AC3 base，当前 9/9 checks 成功 | execution-isolation/ 原型、报告与测试 | 原生 Shell 仍为 UNPROTECTED；AppContainer 仅覆盖已测试子进程操作 |
-| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | HEAD 8fd4e4f；4 个 onboarding/install 测试文件 29/29、build、diff check 通过；本轮无代码改动 | 宿主发现、预览/安装/恢复适配 | PR #33 OPEN/Draft 但当前无 CI checks；与 M5/M6/M7 共享 manifest |
+| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | HEAD c404b6b；PR #33 当前 9/9 checks；owner 契约章节已加入 | 宿主发现、预览/安装/恢复适配 | #42 已依据当前 package-smoke 与 API 契约证据关闭；仍与 M5/M6/M7 通过 #27 协调 manifest |
 | M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | HEAD fe2c973；Draft PR #34 OPEN，9/9 checks 成功；后端相关接口 404，状态 UNKNOWN | src/ai/console-page.ts 和 UI 行为（暂定） | 只经受保护的 Console API 读写；不以 mock 覆盖 UNKNOWN |
-| M5 | feature/ac3-policy-audit / agents/M5-policy | HEAD cd8abea；审计事件语义修复已提交，42/42 聚焦测试、TypeScript noEmit、diff check 通过；远端 PR 未建立 | src/risk-policy.ts、策略管理和相关文档/测试 | package.json 最终组合仍待 #27；此前 WSL push 凭据失败，未重试 |
-| M6 | feature/ac3-e4-validation / agents/M6-e4；候选 feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3 | 旧 PR #31 远端 head da52c17/base main；本地 899dbf5（旧分支 ahead 1）；AC3 候选含 bca895f | E4 schema、验证器、机器报告（暂定） | 899dbf5 更新 SOURCE_MANIFEST 的 package.json SHA；本地 181 项校验通过，需远端 CI 重验 |
-| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | HEAD f17b7e6；工作树干净；gateway.ts 相对 AC3 净差异为零；83 pass/0 fail/1 symlink skip | packaging/windows/、可靠性/打包验证 | M1 是 Gateway/Guard 契约 owner；M7 本地 PR diff 不覆盖 M1 Gateway 更改，集成 CI 待 #28 |
-| M8 | feature/ac3-open-source-product / agents/M8-ecosystem | HEAD b0f30ff；README 双语限制说明已提交，文档/链接/示例检查通过，工作树干净 | README、贡献/安全/支持/开源文档（暂定） | 当前仅本地提交，未推送；不得发布 Release |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | 本协调 PR | `docs/3.0/*` 协调文档、协作检查 | 维护冲突登记与调度，不改 M1–M8 源码 |
-| M9 | `feature/ac3-m9-integration` / `integration` | 本地集成计划 | 跨模块集成验收和风险跟踪，不拥有他人源码 | 不自动合并 main、不发布 Release |
+| M5 | feature/ac3-policy-audit / agents/M5-policy | HEAD 9ec08d9；owner 报告 42/42 聚焦测试及类型/差异检查通过；上传停止于无输出，GitHub 无远端分支/PR | src/risk-policy.ts、策略管理和相关文档/测试 | package.json 最终组合仍待 #27；仅 owner 发布模块分支 |
+| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3；另有旧 PR #31 | AC3 PR #38 head bca895f；Windows Node 22 测试失败，旧 PR #31 的 899dbf5 修复尚待远端复验 | E4 schema、验证器、机器报告（暂定） | E4 外部证据仍 NOT_VERIFIED；共享 manifest 经 #27 协调 |
+| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | 本地候选 65ce028；PR #39 远端仍 f17b7e6 且 checks 失败；单次 push 被非交互 HTTPS 凭据阻止 | packaging/windows/、可靠性/打包验证 | M1 是 Gateway/Guard 契约 owner；#28/#41 保持 OPEN |
+| M8 | feature/ac3-open-source-product / agents/M8-ecosystem | PR #40 head b0f30ff；9/9 checks 通过，工作树干净 | README、贡献/安全/支持/开源文档（暂定） | 不得发布 Release |
+| M0 | feature/ac3-m0-coordination / coordinator | PR #30 head 6d61483；CI 9/9 与 ownership/contract gate 1/1 通过 | docs/3.0/* 协调文档、协作检查 | 维护冲突登记与调度，不改 M1–M8 源码 |
+| M9 | feature/ac3-m9-integration / integration | PR #36 head 996073a；9/9 checks 通过 | 跨模块集成验收和风险跟踪，不拥有他人源码 | 不自动合并 main、不发布 Release |
 
 ## 共享路径规则
 
@@ -24,4 +24,4 @@
 | `src/ai/console.ts` | M3（接入路由）、M4（安全中心配套），暂定 | 路由/响应变更列出协作模块并更新 API 契约 |
 | `src/runtime/evidence.ts` | M1（写入调用）、M6（schema/验证），暂定 | 事件语义变更列出协作模块并保留拒绝/执行/副作用边界 |
 
-每模块只提交自己的分支。遇到未归属路径先更新本表；不能通过复制或重命名接口来规避冲突。M3 已对齐 AC3 `62496d4...` 并开 Draft PR #33；M6 旧 PR #31 仍以 `main` 为 base，新 AC3 worktree 按 #27 独立迁移。M0 不替模块 rebase 或覆盖提交；M8 本地文档提交由模块 owner 保管，Release 未发布。M5/M6/M8 本地修复尚无对应新远端模块 PR；M0 仅同步状态，不替模块发布。
+每模块只提交自己的分支。遇到未归属路径先更新本表；不能通过复制或重命名接口来规避冲突。M3 当前 PR #33 已基于 AC3 并通过 9/9；M6 旧 PR #31 仍以 main 为 base，AC3 PR #38 按 #27 单独跟踪。M0 不替模块 rebase 或覆盖提交；M5 尚无远端 PR，M6/M7 修复未得到新头远端验收。M0 仅协调，不替模块发布。
