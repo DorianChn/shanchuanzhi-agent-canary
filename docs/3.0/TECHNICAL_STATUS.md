@@ -12,7 +12,7 @@
 - M6 PR #38 head `bca895f` 的 Windows Node 22 测试失败；外部 E4 证据仍 NOT_VERIFIED。
 - M7 PR #39 仍在远端 `f17b7e6`，wrapper 与跨平台测试 jobs 失败。Owner 本地候选 `65ce028`；一次普通 push 因非交互 HTTPS 凭据不可用而被阻止，Issue #41 OPEN。
 - M8 PR #40 head `b0f30ff`，9/9 检查通过。
-- M1 与 M6 的继续工作已排入原有 Codex 会话，预留 2/2 槽；GitHub head 尚未改变，M6 本地出现新 E4 run-artifact 目录，owner 仍在验证。VMware、真实模型和安装测试均无预约。下一批 push 不早于 14:00 UTC。
+- M1/M6 继续任务已排入既有 Codex 会话，预留 2/2 槽；GitHub head 尚未改变。M6 worktree status 列出未跟踪路径 security-lab/e4-runs/20261013T114513Z/，M0 未检查内容，目录存在不构成 E4 验证。VMware、真实模型和安装测试均无预约。下一批 push 不早于 14:00 UTC。
 - 当前快照报告保存在 `reports/M0_INITIALIZATION_REPORT.md`。未合并 main、未修改 M1–M8 模块源码或发布 Release。
 
 ## 基线与 PR #24
