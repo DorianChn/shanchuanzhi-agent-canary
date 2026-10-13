@@ -22,6 +22,8 @@ Workflow run **38381813852** completed with an overall failure:
 - **docker-build**, **sponsor-smoke**, and the Ubuntu Node.js 20/22 test jobs passed.
 - **test (windows-latest, 20)** failed in the unmodified M1-owned test/agent-hook.test.ts, test *native lab wrapper interruption emits no allow decision and invokes no tool callback* (line 54; assertion reported false !== true). This file is not part of the M4 diff.
 - The remaining macOS and Windows matrix jobs were cancelled after the failure, so remote cross-platform CI is incomplete. The local full suite passed as recorded above.
+- A documentation-only rerun, **38382237574**, passed every job: Docker, package smoke, sponsor smoke, and all Linux/macOS/Windows Node.js 20/22 test jobs.
+- The first Windows Node.js 20 failure did not reproduce on the rerun; its cause is unconfirmed. Current PR checks are all green.
 The full suite's fixture/install tests ran as part of **npm test**; no real installer, VMware VM, or real model was launched.
 
 ## Local API verification
