@@ -4,16 +4,16 @@
 
 | 模块 | 分支 / 工作树 | 检查到的内容 | 独占范围或主要职责 | 共享接口/冲突 |
 | --- | --- | --- | --- | --- |
-| M1 | feature/ac3-security-core / agents/M1-security | local HEAD dc4d7fa; PR #43 remote d0fd595; HOOK_FAILURE_MATRIX.md and SECURITY_REGRESSION_RESULTS.md have ongoing staged/unstaged edits | Gateway/Guard API, Hook security execution path, regression evidence | M1 owns shared Gateway contract; issues #35 P0, #44 and #32 P1 active |
+| M1 | feature/ac3-security-core / agents/M1-security | local HEAD 89e40cd; PR #43 head 89e40cd; HOOK_FAILURE_MATRIX.md and SECURITY_REGRESSION_RESULTS.md have staged/unstaged edits | Gateway/Guard API, Hook security execution path, regression evidence | M1 owns shared Gateway contract; #35 P0 remediation and #32/#44 disposition remain open |
 | M2 | feature/ac3-execution-isolation / agents/M2-isolation | HEAD a1c239d；PR #37 OPEN/Draft，当前 9/9 checks 成功 | execution-isolation/ 原型、报告与测试 | 原生 Shell 仍 UNPROTECTED；P1 #45 OPEN，M2 待槽位后验证宿主 Hook 或明确标 BLOCKED |
 | M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | HEAD c404b6b；PR #33 当前 9/9 checks；owner 契约章节已加入 | 宿主发现、预览/安装/恢复适配 | #42 已依据当前 package-smoke 与 API 契约证据关闭；仍与 M5/M6/M7 通过 #27 协调 manifest |
 | M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | HEAD fe2c973；Draft PR #34 OPEN，9/9 checks 成功；后端相关接口 404，状态 UNKNOWN | src/ai/console-page.ts 和 UI 行为（暂定） | 只经受保护的 Console API 读写；不以 mock 覆盖 UNKNOWN |
-| M5 | feature/ac3-policy-audit / agents/M5-policy | HEAD 9ec08d9; clean, 5 commits ahead of AC3; no remote branch/PR after prior push error | src/risk-policy.ts, policy management and audit docs/tests | Awaiting a free slot and next M0 push batch; do not retry credentials blindly |
-| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3；另有旧 PR #31 | PR #38 bca895f；M0 已更正文案记录 Windows Node22 M1 Hook 失败与 M6 本地10/10；M6 无代码改动 | E4 schema、验证器、机器报告（暂定） | E4 外部证据 NOT_VERIFIED；Hook 问题归 M1/#32，manifest 经 #27 协调 |
-| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | local HEAD 68e7caa; PR #39 remote 65ce028; INSTALLER_ACCEPTANCE.md and test/reliability.test.mjs are being edited | packaging/windows/, scripts/, reliability and packaging verification | M1 owns Gateway/Guard API; issue #41 OPEN; current CI repair active |
+| M5 | feature/ac3-policy-audit / agents/M5-policy | HEAD 9ec08d9; clean, 5 commits ahead; no remote PR; API contract path overlaps M0 canonical docs | Policy management, audit schema, policy docs/tests | Coordinate docs/3.0/API_CONTRACTS.md and package.json fields through #27; do not publish until ownership is resolved |
+| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3; separate old PR #31 | PR #38 head bca895f; untracked security-lab/e4-runs/20261013T114513Z/ retained; Windows Node22 CI failure; external E4 NOT_VERIFIED | E4 schema, verifier, machine report | Keep raw run directory local; #27 tracks AC3/manifest alignment and #32 Hook ownership |
+| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | local HEAD de9ec56; PR #39 remote 65ce028; 4 tracked modifications plus untracked scripts/install-nsis-compiler.mjs | packaging/windows/, scripts/, reliability and packaging verification | M1 owns Gateway/Guard API; #41 OPEN; verify actual makensis/install path before claiming acceptance |
 | M8 | feature/ac3-open-source-product / agents/M8-ecosystem | PR #40 head b0f30ff；9/9 checks 通过，工作树干净 | README、贡献/安全/支持/开源文档（暂定） | 不得发布 Release |
-| M0 | feature/ac3-m0-coordination / coordinator | PR #30 remote head 1179ed1; current coordination docs include one local commit pending next push batch | docs/3.0/* coordination docs, collaboration checks | Coordinates issues, quota and scheduling; no M1–M8 source edits |
-| M9 | feature/ac3-m9-integration / integration | PR #36 head 996073a；9/9 checks 通过 | 跨模块集成验收和风险跟踪，不拥有他人源码 | 不自动合并 main、不发布 Release |
+| M0 | feature/ac3-m0-coordination / coordinator | PR #30 head d23f1ae; 10/10 checks passed; docs-only latest batch pushed 16:02:40 UTC | docs/3.0/* coordination docs, collaboration checks | Coordinates issues, quota and scheduling; no M1–M8 source edits |
+| M9 | feature/ac3-m9-integration / integration | PR #36 head 996073a; 9/9 checks pass on currently observed head | Cross-module integration acceptance and risk tracking; no ownership of module source | No merge to main; no PR #24 merge; no Release |
 
 ## 共享路径规则
 

@@ -1,17 +1,19 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-13 15:43 UTC；实时快照）
+## 当前状态（2026-10-13 16:03 UTC；实时快照）
 
-- PR #24：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`，未合并；当前查看的 11 项 CI 全通过。
-- M0 PR #30：OPEN/Draft，local/remote head `1179ed1`；当前头 CI 10/10 通过（含 ownership/contract gate）。前一 run `38421264751` 的 macOS Node22 job 曾因 runner_id=0、无步骤日志而被取消，package-smoke 跳过；按 runner 分配结果未知保留历史。下一次推送最早为 16:02 UTC，或距更新后的最新 GitHub push 满 20 分钟（取较晚者）。
-- M1：占用 2 个并发槽中的 1 个。PR #43 远端 head `d0fd595`；本地 HEAD `dc4d7fa`，工作树有安全回归证据编辑。M1 正按优先级处理 #35 P0、#44 与 #32 P1；Gateway/Guard API 仍由 M1 独占。修复尚未由远端 PR/CI 验证。
-- M7：占用另 1 个并发槽。PR #39 远端 head `65ce028`；本地 HEAD `68e7caa`，`INSTALLER_ACCEPTANCE.md` 与 `test/reliability.test.mjs` 有进行中的改动。#41 P1 仍 OPEN，PR #39 仍有跨平台 CI 失败待修；M7 只处理其安装/可靠性所有权路径，不改共享 Gateway。
-- M2：PR #37 OPEN/Draft，检查通过；Codex 原生 Shell 仍为 `UNPROTECTED`。P1 Issue #45 已建立，M2 等待 M1/M7 释放槽位后处理。
-- M3：PR #33 9/9 检查通过；M4：PR #34 当前检查通过；M8：PR #40 9/9 通过；均保持 IDLE。
-- M5：本地分支 clean、5 commits ahead，尚无远端分支或 Draft PR；等待并发槽和合批推送安排。
-- M6：PR #38 外部 E4 仍 `NOT_VERIFIED`，Windows Node22 有待归属/回归的 Hook CI 失败；M9：PR #36 的集成门禁基线 9/9 通过。M6 保持 IDLE，证据不能替代外部 E4 运行。
-- 当前开发并发为 M1 + M7（2/2）。额度页面最近明确读数为 13%，约 1 小时 45 分钟后重置；M0 会话监看脚本每 60 秒读取一次。无 VMware、真实模型、安装测试预约；未合并 main、未发布 Release。
-- 本节为当前权威快照；其后旧矩阵/审计记录保留作历史证据，时间以各记录内标注为准。
+- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4，未合并；最近核对 11/11 checks 通过。
+- M0 PR #30：OPEN/Draft，head d23f1ae；当前头 10/10 checks 通过。最新推送批次为 16:02:40 UTC；下次推送不早于 16:22:40 UTC。
+- M1：活跃槽位 1/2；PR #43 head 89e40cd，当前头 9/9 checks 通过。新提交是回归测试；P0 #35 的修复/验收仍未完成，#32/#44 仍 OPEN；工作树两份回归报告保留未提交修改。
+- M7：活跃槽位 2/2；PR #39 远端仍为 65ce028，当前 CI 有 Windows Node20/22、macOS Node20 和 Windows wrapper 失败。实际工作树分支 feature/ac3-reliability-ac3 HEAD de9ec56，比远端多 2 个提交，另有 4 个修改文件及未跟踪 NSIS 安装脚本；真实 makensis/安装验收待完成。
+- M2：PR #37 OPEN/Draft、9/9 checks 通过；Codex 原生 Shell 仍 UNPROTECTED，P1 #45 OPEN，排队等待槽位。
+- M3：PR #33 9/9 checks 通过，#42 已关闭；M4：PR #34 9/9 checks 通过；M8：PR #40 9/9 checks 通过。三者 IDLE。
+- M5：feature/ac3-policy-audit 本地干净、5 commits ahead，无远端 PR；API_CONTRACTS.md 路径及 package.json 字段仍须按 #27 协调。
+- M6：PR #38 head bca895f 的旧 CI 为 7 pass、Windows Node22 1 fail、package-smoke 1 skipped；外部 E4 仍 NOT_VERIFIED。M6 工作树有未跟踪 security-lab/e4-runs/20261013T114513Z/，保持原样，不把它当作已验证证据。
+- M9：PR #36 仍 OPEN/Draft、head 996073a；其集成描述已按本快照更新，M9 只维护门禁和风险，不改 M1–M8 源码。
+- 并行开发上限为 2；当前仅 M1、M7 活跃（2/2）。额度页面读数 13%，约 1 小时 22 分钟后重置；每 60 秒轮询。低于或等于 5%、或读数不清时全部暂停；真实低额度暂停仅在确认五小时额度已重置后恢复。
+- VMware/真实模型测试未运行；M7 负责下一次安装测试的独占资源时段，实际安装测试是否已开始尚待其回报。未合并 main、未合并 PR #24、未发布 Release。
+- 本节为当前权威快照；下方较早记录按原时间保留作历史证据。
 ## 基线与 PR #24
 
 - 总仓库 checkout：`main`，HEAD `146be17ea924d09a78ceff90b83006cdd40dfc43`。
@@ -33,16 +35,16 @@
 
 | 模块 | 分支 | HEAD | 当前改动快照 | 路径环境 |
 | --- | --- | --- | --- | --- |
-| M1 | feature/ac3-security-core | dc4d7fa | 本地回归证据正在编辑；远端 PR #43 仍 d0fd595，#35/#44/#32 未闭环 | WSL Git worktree |
-| M2 | `feature/ac3-execution-isolation` | `a1c239d` | PR #37 OPEN/Draft，9/9 checks；隔离原型与证据已提交，原生 Shell 仍为 `UNPROTECTED` | WSL Git worktree |
-| M3 | `feature/ac3-agent-onboarding` | `c404b6b` | PR #33 9/9 checks；M3 API 契约已写入；旧 main-based 快照保留在 backup 分支 | Windows Git worktree |
-| M4 | `feature/ac3-desktop-security-center` | `fe2c973` | PR #34 头一致、当前 run 全绿；工作树干净 | Windows Git worktree |
-| M5 | feature/ac3-policy-audit | 9ec08d9 | clean、merge-base 62496d4、5 commits ahead；14:20 单次 push exit1/no output；remote branch 404 | WSL Git worktree |
-| M6 | feature/ac3-e4-validation-ac3 (另有旧 PR #31 分支) | bca895f | PR #38 旧 Hook 测试本地 Windows Node22 5/5；远端 marker failure 未复现；未改代码，外部 E4 NOT_VERIFIED | Windows Git worktree |
-| M7 | `feature/ac3-reliability-ac3` | `68e7caa` | PR #39 远端 65ce028；本地 INSTALLER_ACCEPTANCE.md 正编辑，Issue #41 OPEN | WSL Git worktree |
-| M8 | `feature/ac3-open-source-product` | `b0f30ff` | PR #40 当前 head，9/9 checks 通过；未发布 Release | WSL Git worktree |
-| M0 | feature/ac3-m0-coordination | 1179ed1 remote; local docs pending batch | PR #30 OPEN/Draft, remote CI 10/10 passed; next push after 16:02 UTC | Windows Git worktree |
-| M9 | `feature/ac3-m9-integration` | `996073a` | 集成计划在 Draft PR #36；9/9 checks 通过 | Windows Git worktree |
+| M1 | feature/ac3-security-core | 89e40cd | PR #43 当前头 9/9 checks 通过；两份回归报告有未提交修改；#35/#32/#44 未闭环 | WSL Git worktree |
+| M2 | feature/ac3-execution-isolation | a1c239d | PR #37 OPEN/Draft、9/9 checks；原生 Shell 仍 UNPROTECTED，#45 等待槽位 | WSL Git worktree |
+| M3 | feature/ac3-agent-onboarding | c404b6b | PR #33 9/9 checks；#42 已关闭；工作树快照不变 | Windows Git worktree |
+| M4 | feature/ac3-desktop-security-center | fe2c973 | PR #34 9/9 checks；工作树快照不变 | Windows Git worktree |
+| M5 | feature/ac3-policy-audit | 9ec08d9 | 本地干净、5 commits ahead；无远端 PR；契约路径及 package.json 字段由 #27 协调 | WSL Git worktree |
+| M6 | feature/ac3-e4-validation-ac3（另有旧 PR #31 分支） | bca895f | PR #38 旧 CI 7 pass/1 Windows Node22 fail/1 package-smoke skipped；有未跟踪 E4 run 文件；外部 E4 NOT_VERIFIED | Windows Git worktree |
+| M7 | feature/ac3-reliability-ac3 | de9ec56 | PR #39 远端 65ce028；本地多 2 commits、4 个已修改文件及 1 个未跟踪 NSIS 安装脚本；真实安装验收待完成 | WSL Git worktree |
+| M8 | feature/ac3-open-source-product | b0f30ff | PR #40 当前头，9/9 checks 通过；未发布 Release | WSL Git worktree |
+| M0 | feature/ac3-m0-coordination | d23f1ae | PR #30 当前头，10/10 checks 通过；下批推送不早于 16:22:40 UTC | Windows Git worktree |
+| M9 | feature/ac3-m9-integration | 996073a | 集成计划在 Draft PR #36；当前头 9/9 checks 通过 | Windows Git worktree |
 
 初始 main 与 AC3 快照存在不同历史；M3 当前 PR #33 head `c404b6b` 已基于 AC3 `62496d4`，旧 main-based 快照 `cf42dde` 保留在 `backup/ac3-agent-onboarding-main-base`。M6 旧 PR #31 分支仍为 main-based `da52c17`；独立 AC3 PR #38 使用 `bca895f`，manifest 与字段组合继续由 #27 跟踪。M4/M0/M9 worktree 基于 `62496d4`。工作目录/index 独立；WSL 创建的工作树由 WSL Git 使用，Windows 创建的工作树由 Git for Windows 使用，用另一运行环境查看会把外部绝对路径显示为 prunable。
 
