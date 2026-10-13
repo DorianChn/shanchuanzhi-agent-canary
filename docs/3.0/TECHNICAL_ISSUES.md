@@ -16,8 +16,9 @@
 
 当前已建立：
 
-- [#27 M3/M6 AC3 基线与 M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
+- [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
+- [#32 Windows Node 20 Hook interruption 测试失败](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）。
 
 ## PR 与自动检查
 

@@ -25,25 +25,26 @@
 | --- | --- | --- | --- | --- |
 | M1 | `feature/ac3-security-core` | `60428ed` | 比初始基线新增 3 个本地提交，改动 Hook、Gateway、测试及审计报告 | WSL Git worktree |
 | M2 | `feature/ac3-execution-isolation` | `62496d4` | `execution-isolation/` 未跟踪 | WSL Git worktree |
-| M3 | `feature/ac3-agent-onboarding` | `146be17` | 新增 `src/agent-host-detection.ts` | Windows Git worktree |
+| M3 | `feature/ac3-agent-onboarding` | `146be17` | 未提交修改 `package.json`、`src/agent-integrations.ts`、`src/competition.ts`，新增 detection/connection 代码、指南与测试 | Windows Git worktree |
 | M4 | `feature/ac3-desktop-security-center` | `62496d4` | M0 新建空 worktree | Windows Git worktree |
 | M5 | `feature/ac3-policy-audit` | `62496d4` | policy、文档、测试、`package.json` 有修改/新增 | WSL Git worktree |
-| M6 | `feature/ac3-e4-validation` | `146be17` | `package.json` 修改，`security-lab/e4/` 未跟踪 | Windows Git worktree |
+| M6 | `feature/ac3-e4-validation` | `da52c17` | 3 个 commit ahead of main，已同步模块远端；包含 `package.json`、E4 验证与报告 artifact，工作树干净 | Windows Git worktree |
 | M7 | `feature/ac3-reliability` | `62496d4` | Windows packaging、Gateway、测试和 `package.json` 有修改/新增 | WSL Git worktree |
 | M8 | `feature/ac3-open-source-product` | `62496d4` | README、安全/贡献文档和 GitHub 模板有修改/新增 | WSL Git worktree |
-| M0 | `feature/ac3-m0-coordination` | `62496d4` | 本协调文档和检查 | Windows Git worktree |
+| M0 | `feature/ac3-m0-coordination` | `3354e42` | 本协调文档和检查 | Windows Git worktree |
 | M9 | `feature/ac3-m9-integration` | `62496d4` | 集成计划 | Windows Git worktree |
 
-比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。没有移动/覆盖 M3/M6 的未提交内容。M4/M0/M9 新建 worktree 同源于 `62496d4`。worktree 共享对象库，但工作目录/index 独立。
+比较 AC3 与 main 基线：AC3 独有 46 个 commit，main 独有 4 个。M3 位于 main HEAD 并有未提交内容；M6 位于 `da52c17`，在 main 上有 3 个模块 commit。两者与 AC3 的比较分别为 46/4 和 46/7，未自动移动/覆盖其内容。M4/M0/M9 新建 worktree 同源于 `62496d4`。worktree 共享对象库，但工作目录/index 独立。
 
 ## GitHub 协作
 
-- [Issue #27](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)：M3/M6 基线与 M5/M6/M7 manifest 冲突，OPEN。
+- [Issue #27](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)：M3/M6 基线与 M3/M5/M6/M7 manifest 冲突，OPEN。
 - [Issue #28](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)：M1/M7 Gateway 冲突，OPEN。
+- [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：Windows Node 20 Hook interruption 测试失败，OPEN。
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
 - 当前工具没有 `read_thread`、`wait_threads` 或线程发送能力。八个线程的正文、承诺和实时任务数无法确认；文件系统与 GitHub Issue 是当前可验证协作依据。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 当前为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。M0 协作 gate 与 PR CI 的 11 个 job（8 个跨平台测试、package smoke、Docker、sponsor smoke）均通过本次检查。
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。M0 协作 gate 通过。PR CI 的 Windows Node 20 `npm test` 失败（`test/agent-hook.test.ts` 中断用例 marker 未出现），package-smoke 随之跳过；Windows Node 22、Ubuntu/macOS、Docker、sponsor smoke 通过。本次失败已登记 #32，不能称 PR CI 全绿。
 
 ## M0 交付边界
 

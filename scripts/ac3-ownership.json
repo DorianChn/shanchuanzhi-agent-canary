@@ -14,7 +14,7 @@
   },
   "sharedPaths": {
     "src/runtime/gateway.ts": ["M1", "M7"],
-    "package.json": ["M5", "M6", "M7"],
+    "package.json": ["M3", "M5", "M6", "M7"],
     "src/ai/console.ts": ["M3", "M4"],
     "src/runtime/evidence.ts": ["M1", "M6"]
   },
