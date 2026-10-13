@@ -40,11 +40,11 @@
 
 - [Issue #27](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)：M3/M6 基线与 M3/M5/M6/M7 manifest 冲突，OPEN。
 - [Issue #28](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)：M1/M7 Gateway 冲突，OPEN。
-- [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：Windows Node 20 Hook interruption 曾间歇失败；最新 PR #30 检查通过，根因仍未确认，OPEN。
+- [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：Windows Node 20 Hook interruption 曾间歇失败、两次通过后再次失败；当前失败与根因未确认均记录在 OPEN 的 #32。
 - `.github/workflows/ci.yml` 在 PR 自动跑构建/测试/打包/容器/sponsor 检查。本 PR 加入协作字段与接口冲突 gate；未核实 branch protection 是否强制这些 check。
 - 当前工具没有 `read_thread`、`wait_threads` 或线程发送能力。八个线程的正文、承诺和实时任务数无法确认；文件系统与 GitHub Issue 是当前可验证协作依据。
 
-PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。最近一次全绿检查点是 head `e4597bf`：run `38374574040` 所列 checks 全部通过，包含 Windows Node 20、package-smoke、Docker 与 sponsor smoke；协调 gate run `38374574038` 通过。之后 M0 又只更新了状态文档；其提交的 checks 以 PR Checks 页为准。此前 runs `38371811869`、`38372532507` 的 Windows Node 20 hook 中断用例失败，根因未确认，记录于 #32；通过结果不解释根因，Issue 继续 OPEN。
+PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 为 OPEN、Draft、mergeable，base `feature/agent-canary-3.0`。截至状态文档本次刷新前，head `74757a6` 的 run `38374902576` 再次在 Windows Node 20 hook 中断用例失败；macOS/Ubuntu 矩阵、Windows Node 22、Docker、sponsor 与协调 gate `38374902579` 通过，package-smoke 跳过。最近全绿检查点为 head `e4597bf` 的 run `38374574040`（含 Windows Node 20、package-smoke）。失败历史与验收要求记录于 #32，根因未确认；PR 保持 Draft。
 
 ## M0 交付边界
 
