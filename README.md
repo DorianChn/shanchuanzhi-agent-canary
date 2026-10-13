@@ -18,6 +18,13 @@ Agent Canary protects only calls that a trusted host actually routes through its
 
 In particular, Agent Canary does **not** claim to prevent prompt injection, stop an unguarded first action, control every tool in Codex/Claude/Cursor/Cline, undo an operation already started, or protect native shell access. Review [SECURITY.md](SECURITY.md) and the [host compatibility matrix](COMPATIBILITY.md) before relying on it.
 
+## Coverage and limitations
+
+- **Native Codex Shell — UNPROTECTED:** Agent Canary does not intercept Codex's built-in Shell; MCP/Guard setup does not change that.
+- **AppContainer — LIMITED:** Verified coverage is limited to the tested child-process operations; this is not evidence of whole-host or general shell protection.
+- **Security Center / E4 backend — UNKNOWN on HTTP 404:** A 404 is an unknown state, not evidence of success or failure.
+- **E4 — NOT_VERIFIED:** Fixture-only evidence is not a product pass. Independent E4 remains NOT_VERIFIED.
+
 ## Start here
 
 - [Five-minute getting started and Codex MCP setup](GETTING_STARTED.md)

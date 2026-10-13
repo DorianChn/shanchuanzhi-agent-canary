@@ -18,6 +18,13 @@ Agent Canary 只保护可信宿主实际接入 Guard、Router 或已登记 Gatew
 
 本项目**不宣称**可以阻止所有提示注入、拦截未接入守卫的首次操作、控制 Codex/Claude/Cursor/Cline 的全部工具、撤销已经开始的操作，或保护原生 Shell。使用前请阅读 [SECURITY.md](SECURITY.md) 和[宿主兼容性矩阵](COMPATIBILITY.md)。
 
+## 覆盖范围与限制
+
+- **Codex 原生 Shell — UNPROTECTED（未受保护）：** Agent Canary 不会拦截 Codex 内置 Shell；MCP/Guard 接入不会改变这一点。
+- **AppContainer — LIMITED（范围有限）：** 已验证的覆盖仅限已测试的子进程操作；不能据此推断整个宿主或通用 Shell 得到保护。
+- **Security Center / E4 后端 — HTTP 404 时为 UNKNOWN（未知）：** 404 代表状态未知，不能作为成功或失败的证据。
+- **E4 — NOT_VERIFIED（未验证）：** 仅有 fixture 的证据不代表产品通过；独立 E4 仍为 NOT_VERIFIED。
+
 ## 从这里开始
 
 - [五分钟上手与 Codex MCP 接入](GETTING_STARTED.md)
