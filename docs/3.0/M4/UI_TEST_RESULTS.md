@@ -19,8 +19,10 @@ Branch: **feature/ac3-desktop-security-center**
 
 - Before this follow-up, run **38382540617** passed all checks on M4 head **d60dc9d**.
 - Run **38383827901** on commit **109da61** exposed an M4 test mistake: the test expected a static **4/4** string although the UI computes the readable count at runtime. The assertion was corrected in **8319a67**; no product behavior changed in that fix.
+- Follow-up for that assertion: the health summary numerator is computed from the four existing read-only sources (**state**, **agents**, **policyState**, **runtime3**) whose status is **AVAILABLE**, then rendered dynamically as **count/4**. The regression test now asserts this allowlist, the availability filter, and the dynamic template instead of treating the runtime numerator as static HTML. The same test retains its CSRF, operator identity, replay-control, and real-quarantine assertions.
+- Current local rerun: the named security/quarantine subtest passed **1/1**; **npm run build** passed; **npm test** passed with **330** total, **325** passed, **5** skipped, **0** failed.
 - Run **38384289575** on **8319a67** passed **docker-build**, **sponsor-smoke**, and Ubuntu/macOS Node.js 20/22 tests. Windows Node.js 22 failed in the unchanged M1-owned **test/agent-hook.test.ts:54** interruption test (**false !== true**); Windows Node.js 20 was cancelled by fail-fast and **package-smoke** was skipped. This M1 test is outside the M4 diff and was not changed.
-- Latest run **38384570523** on **038d13e** passed all **9** checks: docker-build, package-smoke, sponsor-smoke, and Windows/macOS/Ubuntu Node.js 20/22. The earlier Windows Node.js 22 failure did not reproduce; its cause remains unconfirmed.
+- Before this regression-test follow-up, run **38384570523** on **038d13e** passed all **9** checks: docker-build, package-smoke, sponsor-smoke, and Windows/macOS/Ubuntu Node.js 20/22. The earlier Windows Node.js 22 failure did not reproduce; its cause remains unconfirmed.
 - Local Windows **npm test** passes all 330 tests as recorded above.
 The full suite's fixture/install tests ran as part of **npm test**; no real installer, VMware VM, or real model was launched.
 
