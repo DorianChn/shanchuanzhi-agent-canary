@@ -15,16 +15,12 @@ Branch: **feature/ac3-desktop-security-center**
 | **impeccable.cmd detect --json src/ai/console-page.ts src/ai/security-center-adapter.ts** | Returned **[]**. |
 | **git diff --check** | Passed; no whitespace errors. |
 
-## GitHub Actions baseline before scoped-field follow-up
+## GitHub Actions
 
-Workflow run **38381813852** completed with an overall failure:
-
-- **docker-build**, **sponsor-smoke**, and the Ubuntu Node.js 20/22 test jobs passed.
-- **test (windows-latest, 20)** failed in the unmodified M1-owned test/agent-hook.test.ts, test *native lab wrapper interruption emits no allow decision and invokes no tool callback* (line 54; assertion reported false !== true). This file is not part of the M4 diff.
-- The remaining macOS and Windows matrix jobs were cancelled after the failure, so remote cross-platform CI is incomplete. The local full suite passed as recorded above.
-- A documentation-only rerun, **38382237574**, passed every job: Docker, package smoke, sponsor smoke, and all Linux/macOS/Windows Node.js 20/22 test jobs.
-- A further run, **38382540617**, also passed every job on the prior M4 source head **d60dc9d**. The scoped-field changes in this follow-up are not included in those runs; they receive a new PR CI run after push.
-- The first Windows Node.js 20 failure did not reproduce on the reruns; its cause is unconfirmed.
+- Before this follow-up, run **38382540617** passed all checks on M4 head **d60dc9d**.
+- Run **38383827901** on commit **109da61** exposed an M4 test mistake: the test expected a static **4/4** string although the UI computes the readable count at runtime. The assertion was corrected in **8319a67**; no product behavior changed in that fix.
+- Latest run **38384289575** on **8319a67** passed **docker-build**, **sponsor-smoke**, and Ubuntu/macOS Node.js 20/22 tests. Windows Node.js 22 failed in the unchanged M1-owned **test/agent-hook.test.ts:54** interruption test (**false !== true**); Windows Node.js 20 was cancelled by fail-fast and **package-smoke** was skipped. This M1 test is outside the M4 diff and was not changed.
+- Local Windows **npm test** passes all 330 tests as recorded above. The latest remote CI run remains incomplete due to the M1-owned failure.
 The full suite's fixture/install tests ran as part of **npm test**; no real installer, VMware VM, or real model was launched.
 
 ## Local API verification
