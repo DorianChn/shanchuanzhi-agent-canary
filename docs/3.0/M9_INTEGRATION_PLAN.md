@@ -2,12 +2,13 @@
 
 初始基线：`feature/agent-canary-3.0` `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。本文件建立候选集成门槛和顺序；当前没有合入任何 M1–M8 代码。
 
-## 当前调度快照（2026-10-13）
+## 当前调度快照（2026-10-13 10:49 UTC）
 
 - P0 #35 是 M9 的前置阻断：在 Guard quarantine 后，已有 Gateway callback 曾保持未 aborted 并产生合成 marker。M1 本地 commit `ec3bc96` 增加同步 `subscribeQuarantine`；同一 Guard 实例的活动 callback 回归与 Windows Node 20.20.2 聚焦 63/63 通过，但远端 PR/CI 尚未确认。收到可审查 PR 与相关 CI 证据前，不集成 Gateway，也不关闭 #35。
 - #28 中 M1 是本轮 `src/runtime/gateway.ts` 唯一写入者。M7 只继续 packaging/scripts/M7 测试；后续合并时保留 M1 的活动执行 abort/Guard 复查与 M7 的资源关闭语义。
-- M4 Draft PR #34 head `038d13e` 的 run `38384570523` 在运行；前一 head `8319a67` 失败于未修改的 M1 Hook interruption 测试。M4 报告更新后本地全量测试通过。M3 在 Draft PR #33；M2 本地验证完成但远端 Draft PR 尚缺。M6 PR #31 base 仍为 `main`，受 #27 阻断。M8 正在审阅其原有未提交文档，发行说明必须限于已核实的 release metadata。
-- 当前开发槽由 M4、M8 使用（2/3）；M1 只做远端交付，不改代码。M5/M7 排队；M6 等待基线协调。
+- M4 Draft PR #34 当前 head `0613057` 的 run `38385403836` 列出的 9/9 checks 通过；此前 `8319a67` 的 Windows Node 22 Hook interruption 失败未修改过。M4 本地全量测试 330 项中 325 通过、5 跳过，另有最新状态报告由 owner 留在本地未提交。M3 在 Draft PR #33；M2 本地验证完成但远端 Draft PR 尚缺。M6 PR #31 base 仍为 `main`，受 #27 阻断。M8 正审阅原有未提交文档，发行说明限于核实过的 release metadata。
+- M9 自身 Draft PR #36 head `28473cc` 的 run `38385128369` 再次在 Windows Node 22 失败于 `test/agent-hook.test.ts` 中同一 Hook interruption 子测试（`false !== true`）；package-smoke 被跳过，其余列出的矩阵、Docker、sponsor checks 通过。该 P1 回归归入 #32，责任为 M1；必须保留失败测试并等待根因说明，不可将本计划的绿色文档检查误报为 CI 全绿。
+- 当前开发槽为 M5、M7、M8（3/3）。M4 已 IDLE；M1 本地 P0 commit `ec3bc96` 的远端交付 BLOCKED；M5/M7 在线程中进行限时 Draft PR 交接；M6 等待基线协调。#35 在 M1 修复有远端 PR/CI 前仍是集成门槛。
 - 不启动 VMware、真实模型或安装测试；当前互斥资源槽空闲。每次需要此槽时先在 #29 登记负责人、测试类型、时间和释放条件。
 
 ## M9 边界
