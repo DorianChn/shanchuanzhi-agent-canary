@@ -1,16 +1,16 @@
 # M0 技术协调状态
 
-## 本轮最新状态（2026-10-13 11:07 UTC；覆盖下方较早快照）
+## 本轮最新状态（2026-10-13 11:16 UTC；覆盖下方较早快照）
 
 - PR #24：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `feature/agent-canary-3.0` / `62496d4`；没有修改或合并。
-- M0 PR #30：OPEN/Draft，head `5aa472b`。run `38386686083` 的 10/10 checks 通过（含 Windows Node 20/22 与 package-smoke）；协调 gate `38386686046` 通过。较早 run `38383140906` 的 Windows Node 20 失败保留于 #32，不能据后续绿色推断根因。
+- M0 PR #30：OPEN/Draft，最新本地 head `8cab7ce`；该 head CI 状态需实时复核。前一 head `5aa472b` 的 run `38386686083` 10/10 checks 与协调 gate `38386686046` 通过。较早 Windows Node 20 失败保留于 #32，不能据后续绿色推断根因。
 - M3 PR #33：OPEN/Draft、AC3 base、head `8fd4e4f`。M4 PR #34：OPEN/Draft、head `fe2c973`；run `38386967113` 的 9/9 checks 通过；UI 全量本地测试此前为 325 pass、5 skip。
-- M9 PR #36：OPEN/Draft、AC3 base、head `c9b9190`；run `38386657562` 的 9/9 checks 通过。较早 head `28473cc` 的 run `38385128369` 曾在 Windows Node 22 失败于同一 Hook interruption 子测试；归入 OPEN 的 P1 #32。
-- M1 P0 修复在本地 commit `ec3bc96`，Windows Node 20.20.2 的历史报告记录 15/15 聚焦检查；最新 Windows Node 22.23.1 的 wrapper 诊断 5/5 通过，marker=true、spawnError=null、SIGTERM、stdout/stderr 空，未复现且不覆盖真实宿主 callback。根因仍 UNKNOWN；M1 正在检查失败时诊断信息是否充足。GitHub M1 分支/PR 仍不存在，#35 保持 OPEN/BLOCKED。
-- **开发槽 3/3：** M1 处理 #32 failure-only 诊断审阅；M6 从 AC3 新建 `agents/M6-e4-ac3` 候选工作树移植 M6 三个自有提交，保留原 worktree/PR #31；M7 只读确认自身 `package.json` 字段。M4、M5、M8 当前 IDLE/本地完成；M5/M7 远端发布因 WSL Git 无法取得密码被阻塞，没有重试或修改凭据。
-- M2 本地交付 `a1c239d` 已完成但无远端 Draft PR；原生 Shell 仍标 `UNPROTECTED`。M6 旧 PR #31 仍以 `main` 为 base，不修改；新 AC3 PR 尚未创建。#27/#28/#32/#35 均 OPEN；#35 本地修复证据已登记但未关闭。
+- M9 PR #36：OPEN/Draft、AC3 base，最新本地 head `996073a`；该 head CI 状态需实时复核。前一 head `c9b9190` 的 run `38386657562` 9/9 checks 通过。较早 head `28473cc` 的 Windows Node 22 失败仍归入 OPEN 的 P1 #32。
+- M1 P0 修复在本地 commit `ec3bc96`，Windows Node 20.20.2 的历史报告记录 15/15 聚焦检查；Node 22.23.1 最近一次聚焦测试通过，失败诊断已包含 child PID、spawn error、exit/signal、stdout/stderr 与 marker。间歇失败未复现，根因 UNKNOWN；#35 保持 OPEN/BLOCKED。M1 任务已结束。
+- **开发槽 3/3：** M6 继续在新 AC3 worktree 解决首笔 cherry-pick 的 `package.json` 冲突，仅添加 M6 自有 E4 script；M7 建立独立 AC3 候选并将 Gateway `close()` 差异交 M1 经 #28 审阅；M8 执行一次有界 Draft PR 交付。三项均无需 VMware、真实模型或安装测试。
+- M2 本地交付 `a1c239d` 已完成、无远端 Draft PR；原生 Shell 仍标 `UNPROTECTED`。M6 旧 PR #31 仍以 `main` 为 base，不修改；新 AC3 PR 尚未确认创建。#27/#28/#32/#35 均 OPEN；#35 本地修复证据已登记但未关闭。
 - 没有 VMware、真实模型或安装测试在运行；互斥资源槽空闲。M0 本轮未运行产品测试或修改模块源码。
-- 当前工具集合没有 `read_thread`/`wait_threads`；经用户许可，M0 只读了本机 `thread_history` 并用 `codex queue` 续作，再与 GitHub/worktree 状态交叉核验；未声称调用 `read_thread`。
+- 当前工具集合没有原生 `read_thread`/`wait_threads`；经用户许可，M0 只读本机 `thread_history_1.sqlite` 获取任务正文/状态，并用 `codex queue` 向 M6/M7/M8 原线程发送续作，再与 GitHub/worktree 状态交叉核验；未声称调用原生 `read_thread`。
 
 较早状态快照如下，仅供审计，不代表当前模块调度状态。
 

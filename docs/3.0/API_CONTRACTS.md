@@ -18,6 +18,7 @@
 - 文件能力使用预持有句柄和身份复查；命令使用固定 executable + argv；网络仅允许登记的 HTTPS origin，禁止凭据/查询/hash；敏感内容外发应拒绝。
 - 拒绝记录为 `NOT_STARTED`。`RUNNING` 不是成功。当前文件读写才记录副作用 `VERIFIED`；命令/MCP/网络成功不证明全部副作用。
 - M1/M7 都在改 `src/runtime/gateway.ts`；见 Issue #28。
+- 生命周期协调提案（截至 2026-10-13，待 M1 owner review，尚无集成 CI 证据）：M1 `ec3bc96` 的 Guard quarantine 通知需在 `trip()` 同步触发活动 callback 中止；Gateway `close()` 也应先拒绝新调用、取消活动 callback 并退订，再等待队列排空后关闭已持有资源。M7 `9d316fe` 增加幂等 memoized close 和稳定错误 `GATEWAY_RESOURCE_CLOSE_FAILED`。组合实现需同时保留这些语义；不合作且忽略 AbortSignal 的 callback 和已经发生的外部副作用仍不承诺回滚。跟踪于 #28。
 
 ## Hook — M1
 
