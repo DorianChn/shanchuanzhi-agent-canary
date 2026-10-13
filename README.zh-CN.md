@@ -11,7 +11,15 @@ JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的�
 
 ![Agent Canary — AI Agent / MCP 安全](docs/agent-canary-cover-v2.png)
 
-## Agent Canary 2.0 竞赛预览
+## Agent Canary 3.0 Community 竞赛版
+
+[3.0 最新 Community 发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) · [Windows 安装器](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition/AgentCanary-Community-Setup.exe) · [CLI/SDK ZIP](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition/Agent_Canary_3_0_Community_Preview_48d5c440.zip) · [3.0 竞赛官网](https://dorianchn.github.io/shanchuanzhi-agent-canary/)
+
+此 GitHub 发行版提供 3.0 Community 竞赛包、验收证据、安装说明与 SHA-256 清单。它与旧 V1/V2 分发渠道分开：仓库根 npm 清单仍为 1.2.7，本次不是 npm、GitHub Packages 或 Docker 的 3.0.0 发行。Windows 安装器未签名；干净 Windows 虚拟机和 E4 检查仍为 BLOCKED/NOT_VERIFIED。完整验证范围与限制见发行说明。
+
+下面的 2.0 预览说明属于历史材料，描述早期 2.0 交付物，不是 3.0 的测试结果。
+
+### 历史版本：Agent Canary 2.0 竞赛预览
 
 [GitHub 预览发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [更新后的双语网站](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [下载独立免费构建](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
 

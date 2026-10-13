@@ -14,7 +14,15 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 ![Agent Canary — AI agent and MCP security](docs/agent-canary-cover-v2.png)
 
-## Agent Canary 2.0 competition preview
+## Agent Canary 3.0 Community competition edition
+
+[Latest 3.0 Community release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) · [Windows installer](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition/AgentCanary-Community-Setup.exe) · [CLI/SDK ZIP](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition/Agent_Canary_3_0_Community_Preview_48d5c440.zip) · [3.0 competition site](https://dorianchn.github.io/shanchuanzhi-agent-canary/)
+
+This GitHub release publishes the 3.0 Community competition bundle, acceptance evidence, installation guide, and SHA-256 manifest. It is separate from the legacy V1/V2 distribution: the root npm manifest remains 1.2.7, and this is not an npm, GitHub Packages, or Docker 3.0.0 release. The Windows installer is unsigned. Clean Windows VM and E4 checks remain BLOCKED/NOT_VERIFIED; the release notes list the full validation scope and limits.
+
+The older 2.0 preview notes below are historical. They describe the earlier 2.0 artifacts and are not the 3.0 test results.
+
+### Historical: Agent Canary 2.0 competition preview
 
 [GitHub preview release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1) · [Updated bilingual website](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Download the standalone free build](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip)
 
