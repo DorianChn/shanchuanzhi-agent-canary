@@ -49,7 +49,8 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
 
 test('native lab wrapper interruption emits no allow decision and invokes no tool callback',async(t)=>{
  const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs'),log=path.join(root,'interrupted.jsonl');
- const moduleSource="import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync("+JSON.stringify(marker)+",'entered');return await new Promise(()=>{})}\n";
+ // Hold this synthetic child after entry so the wrapper's own 2s timeout cannot win if the parent is briefly descheduled.
+ const moduleSource="import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync("+JSON.stringify(marker)+",'entered');Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,30000);return await new Promise(()=>{})}\n";
  fs.writeFileSync(modulePath,moduleSource);
  const child=spawn(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),log],{stdio:['pipe','pipe','pipe']});
  let stdout='',stderr='',spawnError:Error|undefined,closed:{code:number|null;signal:NodeJS.Signals|null}|undefined;
@@ -65,6 +66,7 @@ test('native lab wrapper interruption emits no allow decision and invokes no too
   const deadline=Date.now()+10_000;
   while(!fs.existsSync(marker)&&!spawnError&&!closed&&Date.now()<deadline)await pause(10);
   assert.equal(fs.existsSync(marker),true,'hook child did not reach the synthetic entry marker: '+diagnostic());
+  await pause(2_500); // Reproduce parent scheduling delay beyond the wrapper's 2s internal timeout.
   assert.equal(closed,undefined,'hook child completed before external interruption: '+diagnostic());
   assert.equal(child.kill(),true,'hook child could not be interrupted: '+diagnostic());
   const result=await Promise.race([exited,pause(5_000).then(()=>null)]);

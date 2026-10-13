@@ -85,3 +85,7 @@ M1 现在提供 `AgentGuard.subscribeQuarantine(listener: () => void): () => voi
 本次仅修改 M1 的 `src/runtime/gateway.ts` 与 `test/gateway.test.ts`，没有增加公共 API。回归覆盖 abort listener 与 Guard disposer 中的同步重入及 Promise identity；close 时 active dispatch 被 abort、已入队写文件和已排队 approval callback 均不执行且资源只在队列结果落定后关闭；以及第一个资源关闭抛合成异常后其余资源仍全部尝试、结果错误固定且不泄露合成路径/cause。原有 Guard quarantine 同步 abort 回归仍在同一 Gateway 定向 suite 内通过。
 
 关闭会等待 Gateway 自身串行队列完成拒绝/收尾，但 AbortSignal 不能强制终止忽略信号的 host callback，也不能撤销 callback 已完成或自行继续产生的外部副作用；这不构成 OS 沙箱，也不保护所有原生 Shell、文件或网络路径。`SECURITY_REGRESSION_RESULTS.md` 记录本次 Node/build 证据及资源关闭错误注入的限制。M0 仍需将 close 的同步锁定、Promise 发布时点、退订/队列/资源顺序和稳定错误同步到共享 `API_CONTRACTS.md`。
+
+## Hook interruption P1 #32 本地续作（2026-10-13）
+
+在合成复现中确认 wrapper 固定 2 秒 fail-closed timer 与父测试“marker 后立即外部 kill”的调度存在竞态：若父进程在 marker 后延迟 2.5 秒，wrapper 先输出固定 deny 并 code 0 退出，导致 interruption 专项断言失败。只修测试夹具，使 synthetic Hook 在 marker 后阻塞自身事件循环；测试再故意等待超过 2 秒并核验外部 kill、无 allow/日志。Node 20.20.2 和 22.23.1 定向回归均通过。该证据确认 harness 缺陷，不证明旧 CI 各失败都由它导致；历史 CI 根因仍需新 Windows CI 对照。详见 `SECURITY_REGRESSION_RESULTS.md` 与 `HOOK_FAILURE_MATRIX.md`。

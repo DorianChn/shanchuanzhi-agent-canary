@@ -113,3 +113,22 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 - `git diff --check`：本地检查通过。
 
 本轮没有运行 `test/agent-hook.test.ts`、完整 test suite、VM/真实模型/安装验证，也未 push 或写 GitHub。剩余限制：close 能等待 Gateway task queue，但不能终止忽略 AbortSignal 的 callback 或回滚已发生的外部副作用；资源错误覆盖使用安全的合成异常注入，未制造真实内核 close 错误。
+
+## Issue #32 P1：Windows Hook interruption harness 根因与本地修复（2026-10-13）
+
+### 环境与复现
+
+- 只使用已存在的 Windows Node：20.20.2（`C:\Users\36712\AppData\Local\Temp\ac32-node20.5S2gfu\node.exe`）和 22.23.1（`C:\Users\36712\AppData\Local\hermes\node\node.exe`）；没有安装或替换 Node。
+- 两版本均执行 `node --import tsx --test --test-name-pattern 'native lab wrapper interruption emits no allow decision and invokes no tool callback' test/agent-hook.test.ts`；只选择该一项作为聚焦用例，Node 20 reporter 将其余 9 项标为 name-pattern filtered。
+- 修改前定向测试两版本均通过 1/1。Node 20 诊断：pid `1420`、spawnError `null`、exit `{code:null,signal:"SIGTERM"}`、stdout/stderr 为空、marker `true`。Node 22：pid `27448`，其余字段同样为 spawnError `null`、`SIGTERM`、空 stdout/stderr、marker `true`。因此普通调度下未复现失败。
+- 对同一合成 wrapper 做受控 harness 复现：在观察到 entry marker 后，父进程故意延迟 2500 ms 再尝试外部 kill。观察到 marker `true`、spawnError `null`、exit `{code:0,signal:null}`、stdout `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"LAB_HOOK_ERROR_FAIL_CLOSED"}}\n`、stderr 为空、决策日志不存在。也就是 wrapper 自己的 `HOOK_TIMEOUT_MS=2000` 先结束了子进程；现有 interruption 测试会因 child 已结束和 stdout 非空而失败，尽管产品仍 fail-closed。
+
+### 最小修复与验证
+
+- 仅调整 `test/agent-hook.test.ts` 的合成 Hook 模块：写入 entry marker 后用 `Atomics.wait` 阻塞子进程事件循环，避免内部 2 秒超时在父进程调度延迟时先产出 deny。测试随后固定等待 2500 ms，再断言 child 仍存活并执行外部中断。这把受控复现纳入回归，保留原有 kill、无 allow/输出、无 decision log 和诊断断言；生产 Hook 行为与策略未改。
+- 修复后同一聚焦用例在 Node 20.20.2 和 Node 22.23.1 各通过 1/1。Node 20：pid `35556`、spawnError `null`、exit `{code:null,signal:"SIGTERM"}`、stdout/stderr 为空、marker `true`。Node 22：pid `45372`，exit/signal/stdout/stderr/marker 状态相同。
+- TypeScript build 使用 Node 22.23.1 执行 `node node_modules/typescript/bin/tsc`，退出码 0；`git diff --check` 通过。
+
+### 结论与限制
+
+已确认并修复一个可复现的测试 harness 竞态；这不是 Hook 产品 fail-open 缺陷。之前的 CI 失败没有保存完整 child exit/error/signal/stdout/stderr 快照，旧 run 的 marker 缺失也来自更早的启动窗口测试，因此不能把所有历史红灯确定归因于本次竞态。当前本机复现和 Node 20/22 绿测已记录，历史 CI 根因归属仍为 `UNKNOWN`，需要包含本地修订的新 Windows CI 结果才能关闭远端 Issue #32。这里没有查询或修改 GitHub。

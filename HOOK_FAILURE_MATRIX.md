@@ -11,7 +11,7 @@
 | Hook 返回空值或错误协议结构 | isHookDecision 校验失败并 deny | 合成非法返回回归通过 | 不把未知字段当授权 |
 | Hook 决策超过 wrapper 2 秒预算 | wrapper 输出固定 deny | 自动计时回归通过，约 2 秒返回 | 宿主外部硬杀进程不走此代码分支 |
 | JSONL 证据路径不可写 | append 失败被顶层捕获，最终 deny | 将目录作为日志目标的回归通过 | 可能已有部分文件写入；当前记录不含工具输入 |
-| wrapper 进程在返回决定前被杀 | 修订测试先等待合成 Hook-entry marker，再主动终止 wrapper；无 allow 输出、stderr 或决策日志 | Windows Node 20.20.2 本地连续 15/15 通过；旧 CI 失败 run 的 marker 为 false，但历史根因 `UNKNOWN / BLOCKED` | 原 1 秒 `spawnSync` 预算包含进程启动/模块导入；本地测试不等同真实 Claude 宿主，工具能否继续仍取决于宿主 `onFailure` 行为 |
+| wrapper 进程在返回决定前被杀 | 修订测试等待合成 Hook-entry marker，再主动终止 wrapper；无 allow 输出、stderr 或决策日志 | 历史 Node 20.20.2 本地连续 15/15 通过。2026-10-13 复现当前 harness 竞态：父进程 marker 后延迟 2.5 秒时，wrapper 自身 2 秒计时器先输出固定 deny 并以 code 0 退出。测试夹具现于 marker 后阻塞子进程事件循环 30 秒，回归再故意等待 2.5 秒后 kill；Node 20.20.2 与 22.23.1 各 1/1 通过，记录 `spawnError=null`、`code=null`、`signal=SIGTERM`、stdout/stderr 为空、marker=true。历史 CI run 缺少等价诊断，是否由该竞态导致仍 `UNKNOWN` | 这是测试 harness 的自然超时与外部中断竞态，不是 Hook 放行缺陷；测试仍严格要求外部 kill、无 allow/决策日志。原 1 秒 `spawnSync` 失败也不能据此确定根因。本地 fixture 不等同真实 Claude 宿主，工具能否继续仍取决于宿主 `onFailure` 行为 |
 | canary 命中后 Hook 再次调用 | workspace-bound 隔离标记让后续决定 deny | 多 Guard 实例/新 session/状态容量/锁争用回归通过 | 只针对实际调用此 Hook 的匹配工具 |
 | wrapper/Node 未安装、命令启动失败、Hook 被禁用、Claude --bare、工具未被 matcher 覆盖 | 没有 wrapper 决策 | 未验证为 fail-closed | 必须依赖 Claude 的宿主配置 onFailure:block；该宿主端到端配置未核验 |
 | Cursor 未实际加载 Hook | 本仓库只返回 Cursor 决策协议 | 宿主集成未验证 | 不宣称 Cursor 原生 Shell 或其他工具受保护 |
