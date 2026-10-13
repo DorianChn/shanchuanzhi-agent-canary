@@ -33,7 +33,9 @@ jobs:
       - run: npm run test:reliability
       - run: npm audit --audit-level=high
       - run: npm run pack:check
-      - run: node scripts/verify-installer-template.mjs
+      - name: Compile installer template on Windows
+        if: runner.os == 'Windows'
+        run: node scripts/verify-installer-template.mjs
       - run: node --check packaging/windows/build.mjs
       - run: node --check packaging/windows/prepare.mjs
       - run: node --check packaging/windows/render-installer.mjs

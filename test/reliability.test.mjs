@@ -7,12 +7,18 @@ import {randomUUID} from 'node:crypto';
 import {writeFileAtomically} from '../packaging/windows/durable-files.mjs';
 import {loadState,saveReport} from '../packaging/windows/worker.mjs';
 
-const home=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-reliability-home-'));
+// macOS can expose the temp tree through /var -> /private/var; keep fixtures canonical
+// so worker.mjs continues to exercise its production symlink rejection unchanged.
+function makeCanonicalTempRoot(prefix){
+  return fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),prefix)));
+}
+
+const home=makeCanonicalTempRoot('agent-canary-reliability-home-');
 process.env.AGENT_CANARY_HOME=path.join(home,'guard-home');
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain}=await import('../src/sdk.js');
 
 test('atomic replacement preserves the old file when a disk-full write fails',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-atomic-write-'));
+  const root=makeCanonicalTempRoot('agent-canary-atomic-write-');
   const target=path.join(root,'latest.json');
   fs.writeFileSync(target,'previous-complete-value');
   const diskFull=Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});
@@ -25,7 +31,7 @@ test('atomic replacement preserves the old file when a disk-full write fails',()
 });
 
 test('corrupt session state is preserved and a fresh session is atomically created',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-recovery-'));
+  const root=makeCanonicalTempRoot('agent-canary-session-recovery-');
   const sessionFile=path.join(root,'session.json'),corrupt='{not-json';
   fs.writeFileSync(sessionFile,corrupt);
   try{
@@ -39,7 +45,7 @@ test('corrupt session state is preserved and a fresh session is atomically creat
 });
 
 test('session backup failure fails closed without replacing corrupt state',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-backup-fault-'));
+  const root=makeCanonicalTempRoot('agent-canary-session-backup-fault-');
   const sessionFile=path.join(root,'session.json'),corrupt='{bad-session';
   fs.writeFileSync(sessionFile,corrupt);
   const fileSystem={...fs,renameSync(source,target){if(source===sessionFile)throw Object.assign(new Error('synthetic rename failure'),{code:'EACCES'});return fs.renameSync(source,target);}};
@@ -51,7 +57,7 @@ test('session backup failure fails closed without replacing corrupt state',()=>{
 });
 
 test('failed fresh-session creation leaves the corrupt backup intact and no partial state',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-recovery-fault-'));
+  const root=makeCanonicalTempRoot('agent-canary-session-recovery-fault-');
   const sessionFile=path.join(root,'session.json'),corrupt='{bad-session';
   fs.writeFileSync(sessionFile,corrupt);
   const fileSystem={...fs,openSync(file,...args){if(path.basename(file).startsWith('.session.json.')&&file.endsWith('.tmp'))throw Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});return fs.openSync(file,...args);}};
@@ -66,7 +72,7 @@ test('failed fresh-session creation leaves the corrupt backup intact and no part
 });
 
 test('oversized session state is backed up byte-for-byte before recovery',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-oversized-'));
+  const root=makeCanonicalTempRoot('agent-canary-session-oversized-');
   const sessionFile=path.join(root,'session.json'),corrupt='x'.repeat(4097);
   fs.writeFileSync(sessionFile,corrupt);
   try{
@@ -80,7 +86,7 @@ test('oversized session state is backed up byte-for-byte before recovery',()=>{
 });
 
 test('session-state symlink is rejected without modifying its target',t=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-session-symlink-'));
+  const root=makeCanonicalTempRoot('agent-canary-session-symlink-');
   const target=path.join(root,'target.json'),sessionFile=path.join(root,'session.json'),content='{"sessionId":"synthetic"}';
   fs.writeFileSync(target,content);
   try{fs.symlinkSync(target,sessionFile,'file');}catch{fs.rmSync(root,{recursive:true,force:true});t.skip('File symlink creation is unavailable in this environment');return;}
@@ -92,7 +98,7 @@ test('session-state symlink is rejected without modifying its target',t=>{
 });
 
 test('report publication atomically advances latest while rejecting unsafe report ids',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-report-write-'));
+  const root=makeCanonicalTempRoot('agent-canary-report-write-');
   const latest=path.join(root,'latest.json');fs.writeFileSync(latest,'previous-pointer');
   const report={runId:randomUUID(),status:'VERIFIED_BOUNDED_CHECKS'};
   try{
@@ -105,7 +111,7 @@ test('report publication atomically advances latest while rejecting unsafe repor
 });
 
 test('failed latest-pointer replacement preserves the previous report pointer',()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-report-pointer-fault-'));
+  const root=makeCanonicalTempRoot('agent-canary-report-pointer-fault-');
   const latest=path.join(root,'latest.json'),previous='{"file":"previous-report.json"}';
   fs.writeFileSync(latest,previous);
   const fileSystem={...fs,renameSync(source,target){if(target===latest)throw Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});return fs.renameSync(source,target);}};
@@ -121,7 +127,7 @@ test('failed latest-pointer replacement preserves the previous report pointer',(
 });
 
 test('gateway evidence persists and the chain rejects tampering after accepted local work',async()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-evidence-persist-'));
+  const root=makeCanonicalTempRoot('agent-canary-evidence-persist-');
   const evidenceFile=path.join(root,'evidence.jsonl');
   const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')});
   const evidence=new EvidenceRecorder(128,evidenceFile);
@@ -147,7 +153,7 @@ test('gateway evidence persists and the chain rejects tampering after accepted l
 });
 
 test('gateway bounds concurrent pending dispatches and drains the accepted queue',async()=>{
-  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-queue-bound-'));
+  const root=makeCanonicalTempRoot('agent-canary-queue-bound-');
   const guard=createAgentGuard({alert:false}),evidence=new EvidenceRecorder(4096);
   let release,executed=0;
   const hold=new Promise(resolve=>{release=resolve;});
