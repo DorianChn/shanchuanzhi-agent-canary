@@ -17,6 +17,13 @@ const home=makeCanonicalTempRoot('agent-canary-reliability-home-');
 process.env.AGENT_CANARY_HOME=path.join(home,'guard-home');
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain}=await import('../src/sdk.js');
 
+test('NSIS bootstrap keeps the spaced Unicode install path as the final unquoted argument',()=>{
+  const source=fs.readFileSync(new URL('../scripts/verify-installer-template.mjs',import.meta.url),'utf8');
+  const delimiter=String.fromCharCode(96);
+  const dArgument=delimiter+'/D=${nsis}'+delimiter;
+  const expected="spawnSync(setup,['/S',"+dArgument+"],{encoding:'utf8',windowsHide:true,windowsVerbatimArguments:true";
+  assert.ok(source.includes(expected),'NSIS /D must remain unquoted and last while Node passes Windows arguments verbatim');
+});
 test('atomic replacement preserves the old file when a disk-full write fails',()=>{
   const root=makeCanonicalTempRoot('agent-canary-atomic-write-');
   const target=path.join(root,'latest.json');

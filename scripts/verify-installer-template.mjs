@@ -20,7 +20,8 @@ try{
   const bytes=Buffer.from(await response.arrayBuffer());
   if(sha(bytes)!==provenance.sha256)throw Error('NSIS_SETUP_CHECKSUM_MISMATCH');
   fs.writeFileSync(setup,bytes,{flag:'wx'});
-  const installed=spawnSync(setup,['/S',`/D=${nsis}`],{encoding:'utf8',windowsHide:true,timeout:120000,maxBuffer:1024*1024});
+  // NSIS requires /D to be the final unquoted argument, including paths with spaces.
+  const installed=spawnSync(setup,['/S',`/D=${nsis}`],{encoding:'utf8',windowsHide:true,windowsVerbatimArguments:true,timeout:120000,maxBuffer:1024*1024});
   if(installed.error||installed.status!==0)throw Error('NSIS_INSTALL_FAILED: '+(installed.error?.message??installed.stderr??installed.status));
   const makensis=path.join(nsis,'makensis.exe');
   if(!fs.existsSync(makensis))throw Error('NSIS_COMPILER_MISSING');
