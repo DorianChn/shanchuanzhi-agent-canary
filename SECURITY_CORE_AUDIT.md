@@ -8,7 +8,7 @@
 
 本次审计覆盖 src/runtime/gateway.ts、src/agent-hook.ts、security-lab/claude-native-hook.mjs、受控工具测试及 3.0 安全边界文档。全程使用临时隔离目录、合成文件内容、合成凭据标记和仅绑定 127.0.0.1 的本地网络 sink。
 
-本次审计 checkout 中没有 MODULE_OWNERSHIP.md 或 API_CONTRACTS.md；检视到的 3.0 基线文档也未给出 M0–M8 的文件归属和可依赖接口清单。用户提供的 M0 任务引用要求读取对应 Codex thread，但当前可用工具没有 read_thread，因此没有将该 thread 内容作为事实依据。跨模块接口待 M0 协调事项见文末。
+M1 checkout 不包含协调文档；续作时已从 `C:\Users\36712\Desktop\Agent-Canary-Dev\coordinator\docs\3.0\` 核对 `API_CONTRACTS.md`、`MODULE_OWNERSHIP.md` 和 `MODULE_DEPENDENCIES.md`。文档以 `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 为基线，将 Gateway 契约 owner 暂定为 M1，并将 `src/runtime/gateway.ts` 标记为 M1/M7 共享路径（Issue #28）。当前可用工具没有 `read_thread`，因此没有把引用对话内容当作事实依据；以下结论基于工作树、协调文档、CI 与本地测试证据。
 
 Gateway 是宿主创建的受控调用面。它只处理 agent.dispatch 进入的已登记文件能力、固定 executable/argv 命令、受允许的 HTTPS origin 和宿主注册 MCP callback。run_command 使用 shell:false 和固定参数，不执行模型提供的任意 Shell 字符串。不能据此声称保护桌面 Agent 的原生 Shell、直接文件/网络 API、未接入的 MCP 客户端或所有操作系统调用。
 
@@ -52,10 +52,17 @@ DENY 和审批等待均在受控 callback、文件写入、固定进程启动或
 - 文件 capability 绑定打开句柄，执行前复查路径与 inode，并对写入回读验证。这能阻止已观察到的替换，但不是 OS 级原子事务，不能证明所有并发文件系统变化均无 TOCTOU。
 - 被审计的 Gateway 是宿主内 dispatch 能力，没有独立 MCP socket/session transport。传输断线后的取消只有在宿主将其映射到 AbortSignal/close 时成立；本次没有验证任意 MCP server 传输栈的自动重连或断线语义。
 
+## 续作补充：Hook interruption、M7 Gateway 协调与 Guard 通知
+
+- Issue #32 的失败 run `38374902576` 中，`spawnSync` 的 `ETIMEDOUT` 断言通过，但紧随其后的 Hook-entry marker 断言为 false。旧测试的一秒预算同时覆盖 Windows 子进程启动与模块导入，失败日志没有保留 stdout/stderr 或进程状态，因此只能确认 Hook 入口 marker 未出现，不能确认是 wrapper 产品缺陷还是启动/测试时序问题。根因记录为 `UNKNOWN / BLOCKED`，等待修订测试的新 Windows Node 20 CI 结果。
+- 回归测试已改为异步启动合成 wrapper，先等 Hook 入口 marker，再主动终止进程；同时检查启动错误、退出状态、stdout/stderr 和决策日志。Windows Node `v20.20.2` 本地定向测试连续通过 15 次；详见 `SECURITY_REGRESSION_RESULTS.md`。这只验证 wrapper 子进程中断时没有输出 allow，不等于真实 Claude 宿主端到端验证。
+- M7 分支 `feature/ac3-reliability` 的提交 `9d316fe` 增加 memoized close Promise、等待队列、逐个尝试关闭所有资源，并在任何资源关闭失败时返回固定错误。M1 Gateway 同时有 M7 提交未包含的活动 controller 中止、审批先清除和安全调用检查。#28 集成必须合并两边行为，不能用 M7 的 Gateway 文件整体替换 M1 文件。
+- 复现了另一项已确认的接口缺口：在一个合成 MCP callback 等待期间，从 Gateway 外部对共享 Guard 调用 `trip()`，Guard 变为 `QUARANTINED`，但活动 callback 的 signal 仍为未中止；释放 gate 后它可以写入隔离临时目录中的 marker。当前 API 契约没有 Guard quarantine 的同步订阅/取消通知。该项需要 M0 协调共享接口；在接口确定前不单方面改变公共 Guard API。尝试新建 M0 Issue 返回 GitHub API `403 Resource not accessible by integration`，浏览器备用通道亦未连接，Issue 尚未创建。
+
 ## 安全日志
 
 Hook 回归曾用纯合成凭据标记证实原 JSONL 会写入完整参数。修复后 wrapper 只写固定决策元数据；错误 detail 和参数不会进入该 Hook 日志。Gateway 证据使用 HMAC 请求摘要而非参数正文，回归覆盖敏感输出后的网络拒绝。日志写入失败会 deny。管理员/同机进程可读取日志的系统访问控制不属于本次验证范围。
 
 ## 仍需 M0 协调的接口问题
 
-AgentGuard 暴露 state、beforeToolCall 和 trip，但没有隔离状态转换订阅或统一取消信号。Gateway 可在自己的 dispatch 发现 canary 时主动中止本进程内已跟踪请求；若 Hook/其他路由通过共享 Guard 触发 trip，已运行 Gateway callback 没有同步通知接口。已准备要求 M0 补齐 MODULE_OWNERSHIP.md、API_CONTRACTS.md 并定义隔离通知/取消契约的 Issue；GitHub Connector 创建请求返回 403，gh 不可用，Chrome 扩展当前未连接，因此尚无已创建 Issue 的编号或链接。
+协调文档现已存在并完成核对，但 `AgentGuard.trip()` 仍没有供 Gateway 订阅的同步隔离通知/取消契约。上文的合成复现确认外部路由触发 quarantine 后活动 callback 可继续。建议 M0 与 M1/Guard owner 定义通知时序、订阅生命周期、重复 trip、close/unsubscribe 和失败语义，并更新契约；新 Issue 标题草案为 `[P1] Define Guard quarantine notification for active Gateway executions`。Issue 创建当前被 GitHub Connector 的 403 拒绝，浏览器扩展未连接，故不能给出 Issue 编号。该问题处于 `CONFIRMED / BLOCKED on M0 interface coordination`。

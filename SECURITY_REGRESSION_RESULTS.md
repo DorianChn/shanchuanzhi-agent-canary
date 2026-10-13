@@ -46,3 +46,29 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 ## 远端交付状态
 
 本地分支 feature/ac3-security-core 的提交 be5836e 已包含代码、回归和三份交付文档。目标远端分支在推送前不存在；GitHub Connector 创建分支返回 403，非交互 git push 返回“could not read Username”。因此尚未推送，也未创建 Draft PR。没有合并 main 或创建 Release。恢复 GitHub 写入认证后，可从该本地分支直接推送并以 feature/agent-canary-3.0 为 Draft PR base。
+
+## 续作：Windows Node 20 Hook interruption 与 M7 协调（2026-10-13）
+
+### Issue #32：复现证据与处理
+
+- 历史失败 run：`38374902576`，PR #30 head `74757a6`，Windows Node 20。失败点是 `test/agent-hook.test.ts` 中的 Hook-entry marker 断言（`false !== true`）；此前的 `ETIMEDOUT` 断言已通过。失败 job 没有保存 child stdout/stderr 或进程细节，故只能确认一秒后 marker 不存在。子进程启动/模块导入时序是可能解释，不能据此断言根因。
+- 对照成功 run：`38375363932`，head `1ddcd56`，Windows Node 20 与 package-smoke 全绿。该成功 head 尚不包含本续作的测试改动。
+- 修订测试用 `spawn()` 异步启动隔离 wrapper，等合成 Hook 入口 marker 后再 `kill()`；断言 spawn 无错误、child 在主动中断前未结束、中断后有非零退出/信号、stdout/stderr 为空、没有决策 JSONL。工具输入与目录均为合成数据/系统临时目录；没有降低策略、删除测试或把测试改为宽松的超时通过。
+- 使用从 Node.js 官方 `v20.20.2` Windows x64 发行物校验的二进制（SHA-256 `56c1520ee33b801e8bdb92fb321cf2e98529735b6d12bd4a2a6dec0ac0bab937`）运行：最终修订版定向测试连续 `5/5` 通过；之前同一异步入口握手版本额外 `10/10` 通过。最终测试诊断示例：marker `true`、退出信号 `SIGTERM`、spawn error `null`、stdout/stderr 为空。
+- 最终 Windows Node 20.20.2 `npm run verify`：退出码 0；TypeScript build 通过；330 项中 325 通过、5 跳过、0 失败；package smoke check 通过（90 files）。
+- 处置：更新测试 harness 来消除“入口启动是否赶上一秒硬截止”的混淆，并验证入口后的中断行为；历史间歇失败的真实根因仍为 `UNKNOWN / BLOCKED`，等待包含本改动的新 Windows Node 20 CI。Issue #32 保持 OPEN。
+
+### M7 Gateway 共享路径（Issue #28）
+
+只读检查 M7 worktree：`feature/ac3-reliability`，HEAD `9d316fe`，工作树干净。M7 Gateway 变更 memoize `close()` Promise、等待 `history.tail`、清除待审批，并尝试关闭全部资源后统一抛 `GATEWAY_RESOURCE_CLOSE_FAILED`。M1 当前实现还会在等待队列前清空审批、同步 abort 活动 controllers；M7 文件没有这些 M1 安全取消行为。集成需保留 M1 的 closed/abort/Guard 最终检查，并吸收 M7 的逐资源关闭与稳定错误语义；不可整文件覆盖。两边公共 Gateway shape 没有因此改变。Issue #28 仍 OPEN，等待双模块合并验证。
+
+### 已确认的跨模块接口缺口
+
+使用 Node 20.20.2 的一次性合成复现：受控 MCP callback 等待 gate 时，由另一 host route 对同一个 Guard 调用
+`trip({reason:'synthetic_quarantine'})`；观察到 Guard=`QUARANTINED`、callback signal `aborted=false`，callback 返回 `done` 并在隔离临时目录创建 `after-trip.txt`。这确认当前 Guard API 缺少同步隔离通知，会让已运行 callback 在外部 quarantine 后继续执行。
+
+修复需要 M0 协调 Guard/Gateway 的公共通知接口和生命周期契约，M1 未擅自更改该共享 API。按要求准备的新 Issue 标题：`[P1] Define Guard quarantine notification for active Gateway executions`。GitHub Connector 创建 Issue 返回 `403 Resource not accessible by integration`；备用 Chrome 扩展工具报告 disconnected，因此没有已创建 Issue 编号。该接口项为 `CONFIRMED / BLOCKED`，本次没有为其新增会通过的自动回归；需在 M0 定义接口后补齐并验证“外部 trip → 活动 callback abort → 无合成文件/网络副作用”。
+
+### GitHub 状态
+
+本续作尚未确认评论/分支/PR 写权限。#28、#29、#32 的当前计划是：#28 记录 M1/M7 安全合并要求；#29 报告 M1 槽位状态与下一步；#32 维持 OPEN 并等待新测试的 Windows CI。新 Draft PR 以 `feature/agent-canary-3.0` 为 base；不合并 main、不发布 Release。

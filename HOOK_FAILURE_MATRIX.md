@@ -11,7 +11,7 @@
 | Hook 返回空值或错误协议结构 | isHookDecision 校验失败并 deny | 合成非法返回回归通过 | 不把未知字段当授权 |
 | Hook 决策超过 wrapper 2 秒预算 | wrapper 输出固定 deny | 自动计时回归通过，约 2 秒返回 | 宿主外部硬杀进程不走此代码分支 |
 | JSONL 证据路径不可写 | append 失败被顶层捕获，最终 deny | 将目录作为日志目标的回归通过 | 可能已有部分文件写入；当前记录不含工具输入 |
-| wrapper 进程在返回决定前被杀 | 子进程无 stdout、无 allow 决定 | 1 秒隔离子进程终止回归通过 | 工具能否继续由宿主 onFailure 行为决定；本次未做真实宿主注入 |
+| wrapper 进程在返回决定前被杀 | 修订测试先等待合成 Hook-entry marker，再主动终止 wrapper；无 allow 输出、stderr 或决策日志 | Windows Node 20.20.2 本地连续 15/15 通过；旧 CI 失败 run 的 marker 为 false，但历史根因 `UNKNOWN / BLOCKED` | 原 1 秒 `spawnSync` 预算包含进程启动/模块导入；本地测试不等同真实 Claude 宿主，工具能否继续仍取决于宿主 `onFailure` 行为 |
 | canary 命中后 Hook 再次调用 | workspace-bound 隔离标记让后续决定 deny | 多 Guard 实例/新 session/状态容量/锁争用回归通过 | 只针对实际调用此 Hook 的匹配工具 |
 | wrapper/Node 未安装、命令启动失败、Hook 被禁用、Claude --bare、工具未被 matcher 覆盖 | 没有 wrapper 决策 | 未验证为 fail-closed | 必须依赖 Claude 的宿主配置 onFailure:block；该宿主端到端配置未核验 |
 | Cursor 未实际加载 Hook | 本仓库只返回 Cursor 决策协议 | 宿主集成未验证 | 不宣称 Cursor 原生 Shell 或其他工具受保护 |
@@ -19,6 +19,10 @@
 ## 敏感日志检查
 
 修复前 wrapper 将 tool_name、tool_input 与完整 decision 对象落入 JSONL。回归使用合成标记 NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE 复现。当前记录只包含 timestamp、固定事件名 PreToolUse 和枚举 permissionDecision；测试断言合成标记不在日志中。
+
+## Issue #32 续作记录
+
+失败 run `38374902576` 的超时断言通过，marker 断言失败；该 run 未保留 child stdout/stderr，无法证明根因。测试现已改为“等入口 marker → 主动中断 → 检查退出/输出/日志”，保持“不产生 allow 决定”的 fail-closed 断言。修订版本的本地 Windows Node 20.20.2 连续 15 次通过；Issue #32 保持 OPEN，直到该版本的新 Windows CI 给出结果。
 
 ## Fail-closed 结论
 
