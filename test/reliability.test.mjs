@@ -18,7 +18,7 @@ process.env.AGENT_CANARY_HOME=path.join(home,'guard-home');
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain}=await import('../src/sdk.js');
 
 test('NSIS bootstrap keeps the spaced Unicode install path as the final unquoted argument',()=>{
-  const source=fs.readFileSync(new URL('../scripts/verify-installer-template.mjs',import.meta.url),'utf8');
+  const source=fs.readFileSync(new URL('../scripts/install-nsis-compiler.mjs',import.meta.url),'utf8');
   const delimiter=String.fromCharCode(96);
   const dArgument=delimiter+'/D=${nsis}'+delimiter;
   const expected="spawnSync(setup,['/S',"+dArgument+"],{encoding:'utf8',windowsHide:true,windowsVerbatimArguments:true";
@@ -26,9 +26,23 @@ test('NSIS bootstrap keeps the spaced Unicode install path as the final unquoted
 });
 test('NSIS compile acceptance keeps its Windows, compiler, and template failure gates',()=>{
   const source=fs.readFileSync(new URL('../scripts/verify-installer-template.mjs',import.meta.url),'utf8');
+  const installer=fs.readFileSync(new URL('../scripts/install-nsis-compiler.mjs',import.meta.url),'utf8');
   assert.ok(source.includes("if(process.platform!=='win32')throw Error('INSTALLER_COMPILER_CHECK_REQUIRES_WINDOWS');"),'compiler acceptance must stay Windows-only');
-  assert.ok(source.includes("if(!fs.existsSync(makensis))throw Error('NSIS_COMPILER_MISSING');"),'a missing compiler must fail the check');
-  assert.ok(source.includes("if(compiled.error||compiled.status!==0||!fs.existsSync(output))throw Error('NSIS_TEMPLATE_COMPILE_FAILED:"),'compiler errors or missing output must fail the check');
+  assert.ok(source.includes("if(!makensis||!fs.existsSync(makensis))throw Error('NSIS_COMPILER_MISSING');"),'a missing compiler must fail the check');
+  assert.ok(installer.includes("if(!fs.existsSync(makensis))throw Error('NSIS_COMPILER_MISSING');"),'compiler installation must fail when makensis is absent');
+  assert.ok(installer.includes("if(sha(bytes)!==provenance.sha256)throw Error('NSIS_SETUP_CHECKSUM_MISMATCH');"),'the runner must verify the pinned NSIS setup before executing it');
+  assert.ok(installer.includes("if(versionCheck.error||versionCheck.status!==0||!compilerVersion.includes(provenance.version))throw Error('NSIS_COMPILER_VERSION_MISMATCH:"),'an unexpected or unqueryable compiler version must fail');
+  assert.ok(installer.includes("status:'NSIS_COMPILER_READY',expectedVersion:provenance.version,makensisVersion:compilerVersion"),'the runner must record the executable compiler version');
+  assert.ok(source.includes("if(versionCheck.error||versionCheck.status!==0||!compilerVersion.includes(provenance.version))throw Error('NSIS_COMPILER_VERSION_MISMATCH:"),'compile acceptance must reject an unexpected compiler version');
+  assert.ok(source.includes("expectedNSISVersion:provenance.version,makensisVersion:compilerVersion"),'compile result must record the expected and observed compiler versions');
+  assert.ok(source.includes('const outputExists=fs.existsSync(output);'),'compile acceptance must inspect the emitted installer artifact');
+  assert.ok(source.includes("if(compiled.error||compiled.status!==0||!outputExists)throw Error('NSIS_TEMPLATE_COMPILE_FAILED:"),'compiler errors or missing output must fail the check');
+  assert.ok(source.includes("compileExitCode:compiled.status,outputExists"),'successful compiler output must record the exit code and artifact presence');
+});
+test('Windows community workflow installs and compiles with NSIS only on Windows',()=>{
+  const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8');
+  assert.ok(workflow.includes("name: Install pinned NSIS compiler on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/install-nsis-compiler.mjs"),'the Windows runner must provision the pinned compiler');
+  assert.ok(workflow.includes("name: Compile installer template on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/verify-installer-template.mjs"),'Ubuntu must not run Windows-only compiler acceptance');
 });
 test('atomic replacement preserves the old file when a disk-full write fails',()=>{
   const root=makeCanonicalTempRoot('agent-canary-atomic-write-');
