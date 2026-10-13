@@ -1,0 +1,76 @@
+TAP version 13
+# FIXTURE_SINK_REQUESTS 1
+# Subtest: sensitive provenance expiry must not silently re-authorize egress
+not ok 1 - sensitive provenance expiry must not silently re-authorize egress
+  ---
+  duration_ms: 65.3366
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\test\\gateway-acceptance.test.ts:1:1431'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\test\gateway-acceptance.test.ts:21:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# FIXTURE_SINK_REQUESTS 1
+# Subtest: two gateways sharing one Guard must not race source collection and egress
+# FIXTURE_SINK_REQUESTS 0
+not ok 2 - two gateways sharing one Guard must not race source collection and egress
+  ---
+  duration_ms: 23.0833
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\test\\gateway-acceptance.test.ts:1:2435'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\test\gateway-acceptance.test.ts:33:70)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# FIXTURE_SINK_REQUESTS 0
+# Subtest: concurrent duplicate approval executes a real callback exactly once
+# FIXTURE_SINK_REQUESTS 0
+ok 3 - concurrent duplicate approval executes a real callback exactly once
+  ---
+  duration_ms: 9.9346
+  type: 'test'
+  ...
+# Subtest: approval at the exact expiry boundary cannot execute
+ok 4 - approval at the exact expiry boundary cannot execute
+  ---
+  duration_ms: 6.3949
+  type: 'test'
+  ...
+# Subtest: resource replacement in the check/use window cannot write the replacement inode
+ok 5 - resource replacement in the check/use window cannot write the replacement inode
+  ---
+  duration_ms: 20.3537
+  type: 'test'
+  ...
+# FIXTURE_SINK_REQUESTS 0
+# Subtest: an executor ignoring cancellation may cause a late side effect, which is not verified safe
+ok 6 - an executor ignoring cancellation may cause a late side effect, which is not verified safe
+  ---
+  duration_ms: 44.976
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 4
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1310.5183

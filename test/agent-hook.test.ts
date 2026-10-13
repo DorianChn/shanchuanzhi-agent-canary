@@ -1,3 +1,4 @@
+import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-hook-'));process.env.AGENT_CANARY_HOME=root;
 const {decideAgentHook}=await import('../src/agent-hook.js');
@@ -7,3 +8,48 @@ test('hook path boundary and model approvals cannot authorize dangerous calls',a
 test('full persistent hook state fails closed for new identities without growing files',async()=>{const state=path.join(root,'full-state');fs.mkdirSync(state);for(let i=0;i<1024;i++)fs.writeFileSync(path.join(state,i+'.quarantine'),'QUARANTINED\n');const c:any=await decideAgentHook('claude',root,state,{session_id:'quota-fixture',tool_name:'Bash',tool_input:{command:'git status'}});assert.equal(c.hookSpecificOutput.permissionDecision,'deny');assert.equal(fs.readdirSync(state).length,1024);});
 test('quarantine writer contention leaves persistent fail-closed marker rather than losing signal',async()=>{const state=path.join(root,'busy-state');fs.mkdirSync(state);fs.writeFileSync(path.join(state,'.write-lock'),'fixture lock');const input={session_id:'busy-fixture',tool_name:'canary_read_secrets',tool_input:{}};await decideAgentHook('claude',root,state,input);assert.equal(fs.existsSync(path.join(state,'.fail-closed')),true);fs.unlinkSync(path.join(state,'.write-lock'));const c:any=await decideAgentHook('claude',root,state,{...input,tool_name:'Bash',tool_input:{command:'git status'}});assert.equal(c.hookSpecificOutput.permissionDecision,'deny');});
 test('new native session cannot bypass workspace-bound quarantine',async()=>{const state=path.join(root,'cross-session-state');await decideAgentHook('claude',root,state,{session_id:'old-chat',tool_name:'canary_read_secrets',tool_input:{}});const c:any=await decideAgentHook('claude',root,state,{session_id:'new-chat',tool_name:'Bash',tool_input:{command:'git status'}});assert.equal(c.hookSpecificOutput.permissionDecision,'deny');});
+
+// Actual hook wrapper subprocess, with fixture-only inputs and isolated storage.
+test('native lab wrapper syntax and malformed input fail closed',()=>{
+ const file=path.resolve('security-lab/claude-native-hook.mjs');
+ assert.equal(spawnSync(process.execPath,['--check',file]).status,0);
+ const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
+ assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
+});
+test('native lab wrapper allows fixture read and rejects destructive command',()=>{
+ const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
+ fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
+ for(const [tool,input,expected]of [['Read',{file_path:'normal.txt'},'allow'],['Bash',{command:'rm -- victim.txt'},'deny']] as const){
+ const r=spawnSync(process.execPath,[file,path.resolve('dist/agent-hook.js'),root,path.join(root,'wrapper-state'),log],{input:JSON.stringify({session_id:'wrapper-test',tool_name:tool,tool_input:input}),encoding:'utf8',env:{...process.env,AGENT_CANARY_HOME:path.join(root,'wrapper-home')}});
+ assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,expected);
+ }
+ assert.equal(fs.readFileSync(log,'utf8').trim().split('\n').length,2);
+});
+
+test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ const input=JSON.stringify({session_id:'failure-fixture',tool_name:'Bash',tool_input:{command:'git status'}});
+ const run=(modulePath:string,logFile:string)=>spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'failure-state'),logFile],{input,encoding:'utf8',timeout:5000});
+ const missing=run(path.join(root,'missing-hook-module.mjs'),path.join(root,'missing.jsonl'));
+ assert.equal(missing.status,0);assert.equal(JSON.parse(missing.stdout).hookSpecificOutput.permissionDecision,'deny');
+ const throwing=path.join(root,'throwing-hook-module.mjs');fs.writeFileSync(throwing,"export async function decideAgentHook(){throw new Error('fixture failure')}\n");
+ const failed=run(throwing,path.join(root,'throwing.jsonl'));
+ assert.equal(failed.status,0);assert.equal(JSON.parse(failed.stdout).hookSpecificOutput.permissionDecision,'deny');
+ const invalid=path.join(root,'invalid-hook-module.mjs');fs.writeFileSync(invalid,"export async function decideAgentHook(){return {permissionDecision:'allow'}}\n");
+ const invalidResult=run(invalid,path.join(root,'invalid.jsonl'));
+ assert.equal(invalidResult.status,0);assert.equal(JSON.parse(invalidResult.stdout).hookSpecificOutput.permissionDecision,'deny');
+ const valid=path.join(root,'valid-hook-module.mjs');fs.writeFileSync(valid,"export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:'fixture'}}}\n");
+ const logFailure=run(valid,root);
+ assert.equal(logFailure.status,0);assert.equal(JSON.parse(logFailure.stdout).hookSpecificOutput.permissionDecision,'deny');
+ const timeoutModule=path.join(root,'timeout-hook-module.mjs');fs.writeFileSync(timeoutModule,"export async function decideAgentHook(){return await new Promise(()=>{})}\n");
+ const started=Date.now(),timed=run(timeoutModule,path.join(root,'timeout.jsonl'));
+ assert.equal(timed.status,0);assert.equal(JSON.parse(timed.stdout).hookSpecificOutput.permissionDecision,'deny');
+ assert.ok(Date.now()-started>=1900&&Date.now()-started<5000,'timeout returns a denial within the bounded hook budget');
+});
+
+test('native lab wrapper interruption emits no allow decision and invokes no tool callback',async()=>{
+ const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs');
+ fs.writeFileSync(modulePath,`import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync(${JSON.stringify(marker)},'entered');return await new Promise(()=>{})}\n`);
+ const child=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),path.join(root,'interrupted.jsonl')],{input:JSON.stringify({session_id:'interrupt-fixture',tool_name:'Bash',tool_input:{command:'touch never-run'}}),encoding:'utf8',timeout:1000});
+ assert.equal(child.error?.code,'ETIMEDOUT');assert.equal(fs.existsSync(marker),true);assert.equal(child.stdout,'');
+});

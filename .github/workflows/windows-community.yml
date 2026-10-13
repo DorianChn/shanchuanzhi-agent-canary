@@ -1,0 +1,25 @@
+name: Windows Community wrapper
+on:
+  pull_request:
+    paths:
+      - 'packaging/windows/**'
+      - '.github/workflows/windows-community.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wrapper-regressions:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - run: node --test packaging/windows/test-worker.mjs
+      - run: node --test test/windows-packaging.test.mjs
+      - run: node --check packaging/windows/build.mjs
+      - run: node --check packaging/windows/prepare.mjs
+# Building and GUI acceptance are separate evidence, not inferred from these tests.

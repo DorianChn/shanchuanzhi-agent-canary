@@ -1,0 +1,9 @@
+{
+  "node": "v22.23.1",
+  "exitCode": 0,
+  "output": {
+    "scope": "actual manifest bytes, not runtime certification or E4",
+    "files": 125,
+    "mismatches": []
+  }
+}

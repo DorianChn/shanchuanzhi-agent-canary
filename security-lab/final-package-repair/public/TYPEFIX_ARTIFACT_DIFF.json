@@ -1,0 +1,11 @@
+{
+  "oldSHA256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+  "newSHA256": "e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7",
+  "runtimeJSFiles": 33,
+  "changedRuntimeJS": [],
+  "newDeclarations": 33,
+  "sdkDeclarationIncluded": true,
+  "candidateBuildSourceSHA": "975d838443cd56e5becd23c51941f81cfe12c994",
+  "runtimeBaselineSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "status": "VERIFIED_JS_BYTE_IDENTICAL"
+}

@@ -1,0 +1,166 @@
+TAP version 13
+# Subtest: gateway uses real held handles for authorized read and write and verifies bytes
+ok 1 - gateway uses real held handles for authorized read and write and verifies bytes
+  ---
+  duration_ms: 21.0667
+  type: 'test'
+  ...
+# Subtest: first unauthorized credential read rejected before real content is returned
+ok 2 - first unauthorized credential read rejected before real content is returned
+  ---
+  duration_ms: 10.8259
+  type: 'test'
+  ...
+# Subtest: path traversal and forged grant cannot write outside capability
+ok 3 - path traversal and forged grant cannot write outside capability
+  ---
+  duration_ms: 11.882
+  type: 'test'
+  ...
+# Subtest: replacement after gateway initialization never writes replacement inode
+ok 4 - replacement after gateway initialization never writes replacement inode
+  ---
+  duration_ms: 10.8044
+  type: 'test'
+  ...
+# Subtest: symlink or Windows junction resource escape rejected at registration
+ok 5 - symlink or Windows junction resource escape rejected at registration
+  ---
+  duration_ms: 5.8709
+  type: 'test'
+  ...
+# Subtest: quarantine prevents actual file write and queued command process
+ok 6 - quarantine prevents actual file write and queued command process
+  ---
+  duration_ms: 14.9626
+  type: 'test'
+  ...
+# Subtest: fixed argv process really executes normal task; arbitrary shell does not run
+ok 7 - fixed argv process really executes normal task; arbitrary shell does not run
+  ---
+  duration_ms: 126.6866
+  type: 'test'
+  ...
+# Subtest: denied network request has zero actual loopback HTTP side effects
+ok 8 - denied network request has zero actual loopback HTTP side effects
+  ---
+  duration_ms: 15.6996
+  type: 'test'
+  ...
+# Subtest: host-only approval consumes once and model has no approve or reset entry point
+ok 9 - host-only approval consumes once and model has no approve or reset entry point
+  ---
+  duration_ms: 9.5118
+  type: 'test'
+  ...
+# Subtest: approval expires with no actual callback
+ok 10 - approval expires with no actual callback
+  ---
+  duration_ms: 24.2309
+  type: 'test'
+  ...
+# Subtest: AI benign cannot grant permission or execute callback
+ok 11 - AI benign cannot grant permission or execute callback
+  ---
+  duration_ms: 9.8643
+  type: 'test'
+  ...
+# Subtest: AI timeout cannot grant permission or execute callback
+ok 12 - AI timeout cannot grant permission or execute callback
+  ---
+  duration_ms: 14.6336
+  type: 'test'
+  ...
+# Subtest: AI invalid cannot grant permission or execute callback
+ok 13 - AI invalid cannot grant permission or execute callback
+  ---
+  duration_ms: 8.507
+  type: 'test'
+  ...
+# Subtest: AI suspicious only tightens a decision and guard remains authoritative
+ok 14 - AI suspicious only tightens a decision and guard remains authoritative
+  ---
+  duration_ms: 10.0787
+  type: 'test'
+  ...
+# Subtest: pre-cancelled call and full evidence cannot change actual file
+ok 15 - pre-cancelled call and full evidence cannot change actual file
+  ---
+  duration_ms: 9.7259
+  type: 'test'
+  ...
+# Subtest: serialized concurrent writes leave a complete value and continuous evidence chain
+ok 16 - serialized concurrent writes leave a complete value and continuous evidence chain
+  ---
+  duration_ms: 117.5243
+  type: 'test'
+  ...
+# Subtest: evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+ok 17 - evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+  ---
+  duration_ms: 0.885
+  type: 'test'
+  ...
+# Subtest: invalid suspicious AI output stays pending instead of being accepted as a valid review
+ok 18 - invalid suspicious AI output stays pending instead of being accepted as a valid review
+  ---
+  duration_ms: 7.7724
+  type: 'test'
+  ...
+# Subtest: sensitive MCP output blocks later registered network capability before its callback
+ok 19 - sensitive MCP output blocks later registered network capability before its callback
+  ---
+  duration_ms: 13.0212
+  type: 'test'
+  ...
+# Subtest: deadline aborts registered callback, quarantines and refuses queued real file effect
+ok 20 - deadline aborts registered callback, quarantines and refuses queued real file effect
+  ---
+  duration_ms: 20.5726
+  type: 'test'
+  ...
+# Subtest: five isolated decoy kinds have unique IDs and deployed is not touched
+ok 21 - five isolated decoy kinds have unique IDs and deployed is not touched
+  ---
+  duration_ms: 9.3643
+  type: 'test'
+  ...
+# Subtest: database, internal API and MCP interaction is virtual and records only actual calls
+ok 22 - database, internal API and MCP interaction is virtual and records only actual calls
+  ---
+  duration_ms: 6.0565
+  type: 'test'
+  ...
+# Subtest: adaptive metadata produces bounded selection without invented efficacy
+ok 23 - adaptive metadata produces bounded selection without invented efficacy
+  ---
+  duration_ms: 1.3248
+  type: 'test'
+  ...
+# Subtest: real honeypot file read quarantines before next actual write
+ok 24 - real honeypot file read quarantines before next actual write
+  ---
+  duration_ms: 22.5117
+  type: 'test'
+  ...
+# Subtest: bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+ok 25 - bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+  ---
+  duration_ms: 1.1254
+  type: 'test'
+  ...
+# Subtest: dataflow bounded eviction, TTL and session separation
+ok 26 - dataflow bounded eviction, TTL and session separation
+  ---
+  duration_ms: 12.0897
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1324.7493

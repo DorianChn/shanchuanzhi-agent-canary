@@ -1,0 +1,145 @@
+TAP version 13
+# Subtest: memory store boundary: separate stores do not preserve quarantine
+ok 1 - memory store boundary: separate stores do not preserve quarantine
+  ---
+  duration_ms: 1.5898
+  type: 'test'
+  ...
+# Subtest: file store requires explicit bootstrap and never overwrites existing state
+ok 2 - file store requires explicit bootstrap and never overwrites existing state
+  ---
+  duration_ms: 27.4
+  type: 'test'
+  ...
+# Subtest: file store survives process restart and same principal gets quarantine
+ok 3 - file store survives process restart and same principal gets quarantine
+  ---
+  duration_ms: 1004.7012
+  type: 'test'
+  ...
+# Subtest: corruption empty truncation and schema errors reject without rewriting
+ok 4 - corruption empty truncation and schema errors reject without rewriting
+  ---
+  duration_ms: 32.6078
+  type: 'test'
+  ...
+# Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+ok 5 - missing state after bootstrap latches guard fail-closed without regeneration
+  ---
+  duration_ms: 12.5172
+  type: 'test'
+  ...
+# Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+ok 6 - concurrent store instances preserve different scopes and enforce one quarantine
+  ---
+  duration_ms: 33.24
+  type: 'test'
+  ...
+# Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+ok 7 - busy lock, excessive file and scope capacity never permit sensitive callback
+  ---
+  duration_ms: 25.1965
+  type: 'test'
+  ...
+# Subtest: symlink/junction redirected state and parent are rejected
+ok 8 - symlink/junction redirected state and parent are rejected
+  ---
+  duration_ms: 8.4928
+  type: 'test'
+  ...
+# Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+ok 9 - trusted reset removes only one scope and invalid scopes are redacted errors
+  ---
+  duration_ms: 34.0272
+  type: 'test'
+  ...
+# Subtest: active writer lock causes guard reads to latch fail-closed
+ok 10 - active writer lock causes guard reads to latch fail-closed
+  ---
+  duration_ms: 11.3532
+  type: 'test'
+  ...
+# Subtest: prototype-looking scopes are data and cannot return inherited state
+ok 11 - prototype-looking scopes are data and cannot return inherited state
+  ---
+  duration_ms: 41.4843
+  type: 'test'
+  ...
+# Subtest: string bootstrap flags cannot recreate missing state
+ok 12 - string bootstrap flags cannot recreate missing state
+  ---
+  duration_ms: 2.2453
+  type: 'test'
+  ...
+# Subtest: four concurrent processes preserve every quarantine without lost writes
+ok 13 - four concurrent processes preserve every quarantine without lost writes
+  ---
+  duration_ms: 1574.6616
+  type: 'test'
+  ...
+# Subtest: Windows transient rename sharing failures retry without losing quarantine
+ok 14 - Windows transient rename sharing failures retry without losing quarantine
+  ---
+  duration_ms: 40.9892
+  type: 'test'
+  ...
+# Subtest: persistent rename failure never replaces the existing state or leaks details
+ok 15 - persistent rename failure never replaces the existing state or leaks details
+  ---
+  duration_ms: 213.3984
+  type: 'test'
+  ...
+# Subtest: Windows lock EPERM with an existing writer is BUSY, not a data reset
+ok 16 - Windows lock EPERM with an existing writer is BUSY, not a data reset
+  ---
+  duration_ms: 15.1705
+  type: 'test'
+  ...
+# Subtest: Windows writer lock removed between EPERM and lstat remains fail-closed BUSY
+not ok 17 - Windows writer lock removed between EPERM and lstat remains fail-closed BUSY
+  ---
+  duration_ms: 28.8316
+  type: 'test'
+  location: 'C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\test\\file-state-store.test.ts:1:8848'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /STATE_STORE_BUSY/. Input:
+    
+    'Error: STATE_STORE_IO'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'STATE_STORE_IO'
+  stack: |-
+    transaction (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\src\file-state-store.ts:35:107)
+    Object.quarantine (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\src\file-state-store.ts:60:40)
+    <anonymous> (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\test\file-state-store.test.ts:46:30)
+    getActual (node:assert:609:5)
+    Function.throws (node:assert:757:24)
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\test\file-state-store.test.ts:46:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\test\file-state-store.test.ts:46:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 16
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4268.0775

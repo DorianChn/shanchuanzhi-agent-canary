@@ -14,6 +14,7 @@ import { renderAIReport } from './report.js';
 import {createPolicySandbox} from './policy-demo.js';
 import os from 'node:os';
 import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient} from '../agent-integrations.js';
+import {createRuntimeDemo} from '../runtime/demo.js';
 
 export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number } = {}) {
   const port = options.port ?? 4318;
@@ -29,6 +30,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   const operatorCode=options.operatorApprovalCode;
   const secrets = [...(options.apiKey?[options.apiKey]:[]),...(operatorCode?[operatorCode]:[])];
   const sandbox=createPolicySandbox({reviewTimeoutMs:options.preReviewTimeoutMs});
+  const runtime3=createRuntimeDemo();
   const integrationProject=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-integration-'));
   const integrationRecords=new Map<string,ReturnType<typeof installAgentIntegration>>();
   const integrationEntry={command:process.execPath,args:[path.join(root,'dist/competition.js'),'serve']};
@@ -57,6 +59,8 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       }
       if (req.method === 'GET' && req.url === '/api/job') { reply(job); return; }
       if (req.method === 'GET' && req.url === '/api/policy/state') { reply(sandbox.state()); return; }
+      if(req.method==='GET'&&req.url==='/api/runtime3'){reply(runtime3.state());return;}
+      if(req.method==='GET'&&req.url==='/api/runtime3/evaluation'){const p=path.join(root,'security-lab/evidence/console-summary.json');reply(fs.existsSync(p)&&fs.statSync(p).size<512_000?JSON.parse(fs.readFileSync(p,'utf8')):{status:'NOT MEASURED',reason:'尚无保存的 3.0 实验'});return;}
       if(req.method==='GET'&&req.url==='/api/agents'){reply({agents:detectAgents(),scope:'Configuration demonstration in an isolated temporary project. Does not change your live client config.',installed:[...integrationRecords.values()].map(r=>({agent:r.agent,status:r.status,coverage:r.coverage})),project:integrationProject});return;}
       if(req.method==='GET'&&req.url==='/api/v2'){const p=path.join(root,'competition-submission/evidence/v2-summary.json');reply(fs.existsSync(p)&&fs.statSync(p).size<512_000?JSON.parse(fs.readFileSync(p,'utf8')):{complete:false,status:'NOT COMPLETED'});return;}
       if (req.method === 'GET' && req.url === '/api/round4') {
@@ -75,6 +79,12 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       const chunks: Buffer[] = [];
       for await (const chunk of req) { size += chunk.length; if (size > 32_000) { reply({ error: 'AI_INPUT_TOO_LARGE' }, 413); return; } chunks.push(chunk); }
       const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      if(req.url==='/api/runtime3/action'){reply(await runtime3.action(body.action));return;}
+      if(req.url==='/api/runtime3/approve'){
+        const supplied=Buffer.from(typeof body.operatorCode==='string'?body.operatorCode:''),expected=Buffer.from(operatorCode??'');
+        if(body.confirm!==true||!operatorCode||supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){reply({error:'POLICY_OPERATOR_AUTH_REQUIRED'},403);return;}
+        reply(await runtime3.approve(body.requestId));return;
+      }
       if(req.url==='/api/agents/preview'){const p=previewAgentIntegration(body.agent as AgentClient,integrationProject,integrationEntry);reply({agent:p.agent,configPath:p.configPath,entry:p.entry,baseHash:p.baseHash,status:p.status,coverage:p.coverage});return;}
       if(req.url==='/api/agents/install'){const r=installAgentIntegration(body.agent,integrationProject,integrationEntry,body.baseHash);integrationRecords.set(body.agent,r);reply({agent:r.agent,status:r.status,coverage:r.coverage});return;}
       if(req.url==='/api/agents/restore'){const r=integrationRecords.get(body.agent);if(!r)throw new Error('INTEGRATION_NOT_INSTALLED');reply(restoreAgentIntegration(r));integrationRecords.delete(body.agent);return;}
@@ -140,5 +150,5 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('AI_CONSOLE_LISTEN_FAILED');
   url = 'http://127.0.0.1:' + address.port;
-  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); sandbox.close(); } };
+  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); sandbox.close(); await runtime3.close(); } };
 }

@@ -32,7 +32,7 @@ try {
   if (!pack?.filename || !Array.isArray(pack.files)) fail("npm pack returned no file manifest");
 
   const files = pack.files.map((entry) => entry.path).sort();
-  const required = ["LICENSE", "README.md", "README.zh-CN.md", "package.json", "dist/index.js", "dist/sdk.js"];
+  const required = ["LICENSE", "README.md", "README.zh-CN.md", "package.json", "dist/index.js", "dist/sdk.js", "dist/sdk.d.ts", "dist/runtime/gateway.d.ts"];
   for (const file of required) if (!files.includes(file)) fail(`missing required file ${file}`);
 
   for (const file of files) {
@@ -47,6 +47,8 @@ try {
   const installDir = path.join(temp, "install");
   fs.mkdirSync(installDir);
   runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
+
+  run(process.execPath, [path.join(root, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
 
   const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "index.js");
   if (!fs.existsSync(cli)) fail("installed CLI entrypoint was not found");

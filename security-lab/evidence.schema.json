@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agent-canary:security-evidence:0.1",
+  "title": "Open Security Evidence Protocol v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "session_id",
+    "agent_id",
+    "tool_id",
+    "request_digest",
+    "policy_version",
+    "decision",
+    "decision_reason",
+    "approval_reference",
+    "execution_status",
+    "side_effect_verification",
+    "timestamp",
+    "previous_event_digest",
+    "event_digest",
+    "request_id"
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,100}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f-]{36}$"
+    },
+    "session_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "agent_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "tool_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "request_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "policy_version": {
+      "$ref": "#/$defs/identifier"
+    },
+    "decision": {
+      "enum": [
+        "ALLOW",
+        "DENY",
+        "REQUIRE_APPROVAL",
+        "SANDBOX",
+        "OBSERVE_ONLY"
+      ]
+    },
+    "decision_reason": {
+      "$ref": "#/$defs/identifier"
+    },
+    "approval_reference": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/digest"
+        }
+      ]
+    },
+    "execution_status": {
+      "enum": [
+        "NOT_STARTED",
+        "RUNNING",
+        "SUCCEEDED",
+        "FAILED",
+        "CANCELLED"
+      ]
+    },
+    "side_effect_verification": {
+      "enum": [
+        "NOT_STARTED",
+        "VERIFIED",
+        "NOT_VERIFIED",
+        "FAILED"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "format": "date-time"
+    },
+    "previous_event_digest": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/digest"
+        }
+      ]
+    },
+    "event_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "request_id": {
+      "$ref": "#/$defs/identifier"
+    }
+  }
+}

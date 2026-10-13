@@ -1,0 +1,3 @@
+# 记录格式
+
+公开测试日志是本轮实际stdout/stderr的UTF-8文本副本，换行统一LF并以.txt存入Git；原始.log留在本地构建目录。未改变测试数字或过滤失败。PREPUBLISH_DRIVER_FIRST_RESULT的FAILED是检查驱动误将JSON外层4个键计为题数，改读questions后40题；原失败保留，不删除问答或测试。

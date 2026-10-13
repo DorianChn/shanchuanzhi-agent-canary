@@ -1,0 +1,117 @@
+Unicode true
+!include "MUI2.nsh"
+!include "x64.nsh"
+!include "LogicLib.nsh"
+Name "Agent Canary Community 3.0 candidate.3"
+OutFile "__OUTPUT__"
+InstallDir "$LOCALAPPDATA\AgentCanary\Community-candidate.3"
+RequestExecutionLevel user
+SetCompressor zlib
+ShowInstDetails show
+ShowUninstDetails show
+!define MUI_ABORTWARNING
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "__LICENSE__"
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!define MUI_FINISHPAGE_RUN "$INSTDIR\AgentCanary.exe"
+!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_LANGUAGE "SimpChinese"
+!insertmacro MUI_LANGUAGE "English"
+Function .onInit
+ SetShellVarContext current
+ ; EFS-encrypted install paths fail NSIS uninstaller startup in the tested
+ ; Windows profile. Keep LocalAppData untouched and choose a user-writable,
+ ; non-encrypted profile path when its parent is EFS-encrypted.
+ System::Call 'kernel32::GetFileAttributesW(w "$LOCALAPPDATA") i.r0'
+ IntOp $1 $0 & 0x4000
+ ${If} $0 != -1
+ ${AndIf} $1 != 0
+  StrCpy $INSTDIR "$PROFILE\Agent Canary Community\Community-candidate.3"
+  IfSilent efs_notice_done
+  MessageBox MB_ICONEXCLAMATION|MB_OK "Local AppData uses EFS encryption. The default install path was moved to a current-user profile folder so the uninstaller can run. You may choose another non-encrypted path. / 本机 Local AppData 已启用 EFS 加密。为确保卸载器可运行，默认安装位置已改为当前用户目录；也可选择其他未加密位置。"
+efs_notice_done:
+ ${EndIf}
+ ${IfNot} ${RunningX64}
+  MessageBox MB_ICONSTOP "Windows x64 required / 需要 64 位 Windows"
+  Abort
+ ${EndIf}
+ SetRegView 64
+ ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" "CurrentBuildNumber"
+ IntCmp $0 22000 win11 old win11
+ old:
+  MessageBox MB_ICONSTOP "Windows 11 required / 需要 Windows 11"
+  Abort
+ win11:
+ ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" "Release"
+ IntCmp $0 528040 netok oldnet netok
+ oldnet:
+  MessageBox MB_ICONSTOP "Built-in .NET Framework 4.8 unavailable. Repair Windows components / 请修复 Windows .NET 组件。"
+  Abort
+ netok:
+FunctionEnd
+Section "Community"
+ SetShellVarContext current
+ ; Check the selected directory and its existing parents before writing files.
+ ; If the target does not exist, walk upward to the nearest existing directory.
+ StrCpy $2 "$INSTDIR"
+ efs_path_check:
+ System::Call 'kernel32::GetFileAttributesW(w "$2") i.r0'
+ ${If} $0 != -1
+  IntOp $1 $0 & 0x4000
+  ${If} $1 != 0
+   MessageBox MB_ICONSTOP "EFS-encrypted install paths are not supported by this uninstaller. Choose a non-encrypted current-user path. / 不支持 EFS 加密的安装目录，请选择未加密的当前用户目录。"
+   Abort
+  ${EndIf}
+  Goto efs_path_ok
+ ${EndIf}
+ GetFullPathName $3 "$2\.."
+ ${If} $3 == $2
+  MessageBox MB_ICONSTOP "Could not verify the install path. Choose an existing writable parent directory. / 无法验证安装路径，请选择已有且可写的父目录。"
+  Abort
+ ${EndIf}
+ StrCpy $2 "$3"
+ Goto efs_path_check
+ efs_path_ok:
+ IfFileExists "$INSTDIR\*" 0 empty
+ MessageBox MB_ICONSTOP "Target directory is not empty. Choose a new directory / 目标目录非空，请选择新目录。"
+ Abort
+ empty:
+ SetOutPath "$INSTDIR"
+ File /r "__PAYLOAD__\*"
+ nsExec::ExecToStack '"$INSTDIR\runtime\node.exe" "$INSTDIR\worker.mjs" record-install "$LOCALAPPDATA\AgentCanaryCommunityData" unspecified __ANCHOR__ "$EXEPATH"'
+ Pop $0
+ Pop $1
+ ${If} $0 != 0
+  MessageBox MB_ICONSTOP "Integrity receipt failed. Installation was not registered / 完整性记录失败，安装未登记。"
+  Abort
+ ${EndIf}
+ WriteUninstaller "$INSTDIR\Uninstall.exe"
+ CreateDirectory "$SMPROGRAMS\Agent Canary Community"
+ CreateShortCut "$SMPROGRAMS\Agent Canary Community\Agent Canary.lnk" "$INSTDIR\AgentCanary.exe"
+ CreateShortCut "$DESKTOP\Agent Canary Community.lnk" "$INSTDIR\AgentCanary.exe"
+ WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "DisplayName" "Agent Canary Community candidate.3"
+ WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "DisplayVersion" "3.0.0-competition-candidate.3"
+ WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "Publisher" "DorianChn (unsigned candidate)"
+ WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "UninstallString" '$\"$INSTDIR\Uninstall.exe$\"'
+ WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "InstallLocation" "$INSTDIR"
+ WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "NoModify" 1
+ WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3" "NoRepair" 1
+SectionEnd
+Section "Uninstall"
+ SetShellVarContext current
+ ; Reject redirected resources before deleting any owned file.
+__REPARSE_CHECKS__
+__DELETE__
+ Delete "$INSTDIR\INSTALL_RECEIPT.json"
+ Delete "$INSTDIR\Uninstall.exe"
+__RMDIR__
+ RMDir "$INSTDIR"
+ Delete "$SMPROGRAMS\Agent Canary Community\Agent Canary.lnk"
+ RMDir "$SMPROGRAMS\Agent Canary Community"
+ Delete "$DESKTOP\Agent Canary Community.lnk"
+ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate3"
+ ; Never recursively delete installation directory. Retain reports and unknown files.
+SectionEnd

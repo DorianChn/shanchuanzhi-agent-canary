@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="740" viewBox="0 0 1200 740">
+ <style>text{font-family:'Microsoft YaHei',sans-serif;fill:#e2edff;font-size:19px}.title{font-size:31px;font-weight:600}.note{font-size:16px;fill:#a9bdd5}rect{fill:#142c46;stroke:#427ca4;stroke-width:2}path{stroke:#78c6cf;stroke-width:3;fill:none}</style>
+ <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#78c6cf" stroke="none"/></marker></defs>
+ <rect width="1200" height="740" fill="#081524" stroke="none"/>
+ <text x="50" y="60" class="title">Agent Canary 3.0 · 受控执行与可核查证据</text>
+ <text x="50" y="95" class="note">工程候选 · 只覆盖实际接入网关的宿主工具 · 运行时代码冻结 9f00b6ba7475</text>
+ <rect x="50" y="145" width="230" height="105" rx="14"/><text x="70" y="187">受控 SDK Agent</text><text x="70" y="222" class="note">真实 Qwen / 工具自主选择</text>
+ <rect x="340" y="145" width="370" height="105" rx="14"/><text x="360" y="180">Trusted Execution Gateway</text><text x="360" y="213" class="note">能力绑定 → 参数 / 来源 → Policy / Guard</text><text x="360" y="236" class="note">文件句柄 · 固定 argv · pinned HTTPS · MCP</text>
+ <rect x="790" y="145" width="350" height="105" rx="14"/><text x="810" y="185">宿主登记的执行能力</text><text x="810" y="220" class="note">真实副作用核验 / 无法核验则明确标记</text>
+ <path d="M280 197 L338 197" marker-end="url(#arrow)"/><path d="M710 197 L788 197" marker-end="url(#arrow)"/>
+ <rect x="50" y="330" width="280" height="140" rx="14"/><text x="70" y="367">隔离蜜罐 / 有界来源标签</text><text x="70" y="404" class="note">假 .env / SSH / DB / API / MCP</text><text x="70" y="432" class="note">READ ≠ 部署 · 敏感原文不进日志</text>
+ <rect x="390" y="330" width="320" height="140" rx="14"/><text x="410" y="367">可选事前 AI 审查</text><text x="410" y="404" class="note">suspicious 可收紧；不能批准 / reset</text><text x="410" y="432" class="note">超时 / 无效 / benign 不自动授权</text>
+ <rect x="790" y="330" width="350" height="140" rx="14"/><text x="810" y="367">可信宿主一次性审批</text><text x="810" y="404" class="note">复查 Guard / 资源 / TTL / 一次消费</text><text x="810" y="432" class="note">模型不持有 operator capability</text>
+ <path d="M190 330 L190 282 L450 282 L450 252" marker-end="url(#arrow)"/><path d="M550 330 L550 252" marker-end="url(#arrow)"/><path d="M965 330 L965 290 L650 290 L650 252" marker-end="url(#arrow)"/>
+ <rect x="50" y="550" width="660" height="125" rx="14"/><text x="70" y="587">Evidence Protocol v0.1 + 中文控制台</text><text x="70" y="622" class="note">意图 / 结果 · Request digest · 效果验证 · JSON Schema · 局部哈希链</text><text x="70" y="650" class="note">无独立可信锚时不能防止管理员整体重写</text>
+ <rect x="790" y="550" width="350" height="125" rx="14"/><text x="810" y="587">Security Lab A–F</text><text x="810" y="622" class="note">间接注入与直接准入分开统计</text><text x="810" y="650" class="note">所有原始轨迹、失败、分母保留</text>
+ <path d="M330 400 L360 400 L360 548" marker-end="url(#arrow)"/><path d="M550 470 L550 548" marker-end="url(#arrow)"/>
+ <text x="50" y="717" class="note">OUT_OF_SCOPE：未接入调用、模型内部数据流、同权限本地攻击者、已开始的外部副作用；不是 OS 沙箱或全局 Agent 防火墙</text>
+</svg>

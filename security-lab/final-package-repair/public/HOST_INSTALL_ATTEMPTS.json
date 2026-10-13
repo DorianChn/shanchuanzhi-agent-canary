@@ -1,0 +1,12 @@
+{
+  "latest": "2.1.296",
+  "attempts": [
+    {
+      "method": "isolated npm install",
+      "exitCode": 255,
+      "stderr": "no diagnostic emitted",
+      "status": "FAILED"
+    }
+  ],
+  "strategyChange": "pinned 2.1.92 JavaScript CLI, ignore install scripts; failures retained"
+}

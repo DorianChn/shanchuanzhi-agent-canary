@@ -1,4 +1,10 @@
+> Windows 预发布下载：[Community candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4)。安装器无需另装 Node/Python/Git；未签名，本机 GUI 已验收，干净 Windows VM 与 E4 未验证。仅已接入工具受保护。
+
+> 3.0 Community product acceptance / 产品验收：本轮修复候选说明见 [RELEASE_READINESS](docs/3.0/RELEASE_READINESS.md)。旧 npm 兼容版本 1.2.7 与 Community 产品版本分列；CLI `build-info` 可查看构建身份。仅已接入的工具受保护，原生宿主及干净 Windows VM 限制公开披露。
+
 # agent-canary
+
+> 自动 E4 桌面功能正在开放 PR 分支开发，**尚未包含在公开 candidate.4**。当前源码流水线会生成有界本地证据包；不会启动/恢复虚拟机、调用 GPT-6、修改 GitHub，也不会自动证明外部 E4。详见[自动 E4 范围与复现](docs/3.0/AUTO_E4.md)。
 
 给 AI 编程 agent 装绊线。它在你的环境里布置诱饵 MCP 工具和金丝雀令牌，并给 SDK 集成提供会话熔断器，在发现失陷信号后阻断下一次经过守卫的真实操作。
 
@@ -6,6 +12,27 @@
 JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的安装界面。Node 20+，MIT，无遥测。
 
 中文文档（本文件）｜ [English](README.md)
+
+**3.0 工程候选核心验收**：[验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md) · [公平真实模型对照](docs/3.0/FAIR_CORE_EVALUATION.md) · [E0–E4证据映射](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md)。受控 SDK Agent 的执行前控制已有真实效果证据；原生客户端全局防护、AI 独立收益、自适应效果未验证。保留2.0竞赛版本，3.0不是稳定版。
+
+**类型修复补充候选**：[candidate.2](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.2)内置dist/sdk.d.ts、./sdk类型导出及三命令离线复验；33个运行时JS与candidate.1逐字节相同。已发送的candidate.1及原视频/PPT保留。[新增Claude原生Read/Bash限定证据](docs/3.0/AGENT_COVERAGE_MATRIX.md)属于独立的直接准入测试，不能作为全局保护或新Prompt Injection防护率。
+
+## 3.0 竞赛候选与后续发展
+
+[下载免费候选 Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.1) · [公开复现索引](competition-submission/roadshow-3.0/GitHub公开复现索引.md) · [发展路线补强版路演](competition-submission/roadshow-3.0/development-plan-update/README.md)
+
+运行时冻结于99660b36db9d5b1121eea6fe06b026c5f1e36bcf。已验证防护限受控SDK的登记工具；配置MCP不代表原生宿主全局防护。普通npm元数据和旧商业包边界见下文，3.0候选不是稳定npm/Docker发行。
+
+|证据方向|现在有什么|下一步及验收门槛|
+|---|---|---|
+|开发容量|已公开规划估算，实际可用时间待确认|维护者确认开发预算，维护另计；容量不足延期，不承诺全路线按年完成|
+|长期维护|10月12日一份真实复盘，公开CI与失败记录|拟每月公开实际SHA、命令、故障、耗时与未验项；完成后才计入维护历史|
+|外部参与|复现手册、签收模板、贡献者SDK套件|另一位真实操作者独立环境复现并保存效果观察；目前E4和新增外部参与未验|
+|插件协议|冻结SDK接口、candidate.2内置声明及MCP扩展示例|3.1先评审版本化协议，验证类型/导出、权限、取消、生命周期和兼容，再验证一个官方宿主受控入口|
+
+**未来计划**：3.0维护 → 3.1可信Adapter与协议 → 3.2公平消融与误报研究 → 3.5按真实需求评估团队便利 → 4.0权限传播研究。阶段推进取决于资源和验收，不把路线图作为实现证明。整个原路线估算18–31人周；开发约720–1240小时按40小时/人周假设，维护另计，均未确认投入。
+
+详见[资源与证据门槛](competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md)、[贡献者上手](docs/competition/score-review-2026-10-12/CONTRIBUTOR_START.md)、[当前扩展快照](docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md)。AI/自适应蜜罐独立收益仍未测得；不因新增计划提高安全结论或评分。
 
 [在线体验与赞助](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Glama 条目](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary) · [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
 
@@ -269,3 +296,10 @@ npm run ai:console
 ## 可选确定性风险策略
 
 SDK 新增 createRiskPolicyRouter，支持 OBSERVE / BALANCED / STRICT。宿主注册工具描述并按参数检查，敏感外传拒绝，普通写入/构建可申请一次性人工批准。AI 仅提供事后解释，不能放权。只保护经过此 Router 的调用；路径、进程、网络和身份边界仍由宿主实现。详见 [策略合同与边界](docs/RISK_POLICY.md)。
+
+
+## 3.0 工程候选（独立分支，非稳定版）
+
+[Evidence and limitations](docs/3.0/FINAL_REPORT.md) · [SDK integration](docs/3.0/DEVELOPER_GUIDE.md) · [Real local-model trials](docs/3.0/REAL_AGENT_EVALUATION.md) · [Agent coverage](docs/3.0/AGENT_COVERAGE_MATRIX.md).
+
+Draft PR #24; only registered gateway callbacks are protected. Verified 2.0 materials remain available.

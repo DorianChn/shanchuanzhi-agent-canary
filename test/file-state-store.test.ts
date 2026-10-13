@@ -39,3 +39,10 @@ test('Windows lock EPERM with an existing writer is BUSY, not a data reset',{ski
  fs.openSync=((p:any,...args:any[])=>{if(p===file+'.lock')throw Object.assign(Error('private path'),{code:'EPERM'});return (original as any)(p,...args);}) as any;
  try{assert.throws(()=>store.quarantine('p'),/STATE_STORE_BUSY/);assert.equal(fs.readFileSync(file,'utf8'),'{"version":1,"states":{}}\n');}finally{fs.openSync=original;fs.unlinkSync(file+'.lock');}
 });
+test('Windows writer lock removed between EPERM and lstat remains fail-closed BUSY',{skip:process.platform!=='win32'},()=>{
+ const {file}=fixture(),store=sdk.createFileContainmentStateStore(file,{initialize:true}),open=fs.openSync,lstat=fs.lstatSync,before=fs.readFileSync(file,'utf8');
+ fs.openSync=((p:any,...args:any[])=>{if(p===file+'.lock')throw Object.assign(Error('transient contention'),{code:'EPERM'});return (open as any)(p,...args);}) as any;
+ fs.lstatSync=((p:any,...args:any[])=>{if(p===file+'.lock')throw Object.assign(Error('already removed by writer'),{code:'ENOENT'});return (lstat as any)(p,...args);}) as any;
+ try{assert.throws(()=>store.quarantine('p'),/STATE_STORE_BUSY/);assert.equal(fs.readFileSync(file,'utf8'),before);}finally{fs.openSync=open;fs.lstatSync=lstat;}
+ assert.equal(store.quarantine('p'),true);assert.equal(store.get('p'),'QUARANTINED');
+});

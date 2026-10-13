@@ -1,0 +1,21 @@
+{
+  "artifactSHA256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+  "manifestFiles": 125,
+  "manifestMismatch": [],
+  "freshExtractedDirectory": "C:\\Users\\36712\\AppData\\Local\\Temp\\Canary 3 普通用户 中文 path seaw653x\\agent-canary-community-3",
+  "scope": "fresh extracted ZIP under Chinese and space path; current user, not separate clean VM",
+  "steps": {
+    "ci": {
+      "exitCode": 0,
+      "output": "\nadded 102 packages, and audited 103 packages in 4s\n\n35 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities\n"
+    },
+    "run build": {
+      "exitCode": 0,
+      "output": "\n> @dorianchn/agent-canary@3.0.0-engineering-preview.1 build\n> tsc\n\n"
+    },
+    "run self-test": {
+      "exitCode": 0,
+      "output": "\n> @dorianchn/agent-canary@3.0.0-engineering-preview.1 self-test\n> node dist/competition.js self-test --json\n\n{\"passed\":true,\"checks\":[{\"name\":\"safe_call\",\"passed\":true},{\"name\":\"decoy_quarantine\",\"passed\":true},{\"name\":\"blocked_callback\",\"passed\":true},{\"name\":\"audit_order\",\"passed\":true}]}\n"
+    }
+  }
+}

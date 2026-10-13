@@ -1,0 +1,15 @@
+
+> @dorianchn/agent-canary@3.0.0-competition-candidate.2 acceptance:offline
+> npm run self-test && npm run types:check && node reproduction-kit/run-offline-demo.mjs --root=.
+
+
+> @dorianchn/agent-canary@3.0.0-competition-candidate.2 self-test
+> node dist/competition.js self-test --json
+
+{"passed":true,"checks":[{"name":"safe_call","passed":true},{"name":"decoy_quarantine","passed":true},{"name":"blocked_callback","passed":true},{"name":"audit_order","passed":true}]}
+
+> @dorianchn/agent-canary@3.0.0-competition-candidate.2 types:check
+> node scripts/check-sdk-types.mjs
+
+{"status":"VERIFIED","package":"@dorianchn/agent-canary","version":"3.0.0-competition-candidate.2","consumerDirectory":"C:\\Users\\<LOCAL_USER>\\AppData\\Local\\Temp\\Canary SDK 类型 中文 空格 uYX1Oq","checks":["conditional SDK import","transitive declarations","READ_ONLY descriptor","Agent cannot approve","Agent cannot reset"],"scope":"compile-time contract; not runtime security proof"}
+{"status":"VERIFIED_BOUNDED_OPERATOR_DEMO","mode":"OPERATOR_TRIGGERED_REAL_TEMPORARY_IO_NOT_MODEL_ATTACK","resultFile":"C:\\Users\\<LOCAL_USER>\\AppData\\Local\\Temp\\canary-roadshow-home-HYbi1D\\roadshow-result.json","fixture":"C:\\Users\\<LOCAL_USER>\\AppData\\Local\\Temp\\agent-canary-honeypot-ieJnbf","caseCount":6,"E4":"NOT_VERIFIED_NO_EXTERNAL_OPERATOR","sha256":"22e8b26fbf52e077a78fde3f255823c154e263b71b7864740a85ccf83e62290b"}

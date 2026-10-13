@@ -1,4 +1,10 @@
+> Windows 预发布下载：[Community candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4)。安装器无需另装 Node/Python/Git；未签名，本机 GUI 已验收，干净 Windows VM 与 E4 未验证。仅已接入工具受保护。
+
+> 3.0 Community product acceptance / 产品验收：本轮修复候选说明见 [RELEASE_READINESS](docs/3.0/RELEASE_READINESS.md)。旧 npm 兼容版本 1.2.7 与 Community 产品版本分列；CLI `build-info` 可查看构建身份。仅已接入的工具受保护，原生宿主及干净 Windows VM 限制公开披露。
+
 # agent-canary
+
+> Auto E4 desktop work is being developed on the open PR branch; it is **not included in public candidate.4**. The current source runner produces a bounded local evidence bundle; it does not launch/restore a VM, call GPT-6, modify GitHub, or establish external E4. See [Auto E4 scope and reproduction](docs/3.0/AUTO_E4.md).
 
 Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in
 your environment, then gives SDK integrations a session circuit breaker to
@@ -9,6 +15,27 @@ below). This audit verified the stdio protocol with the MCP JavaScript client,
 not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 中文文档：[README.zh-CN.md](README.zh-CN.md)
+
+**3.0 engineering candidate acceptance:** [core report](docs/3.0/FINAL_3_0_ACCEPTANCE.md), [fair real-model comparison](docs/3.0/FAIR_CORE_EVALUATION.md), [E0–E4 evidence mapping](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md). Actual pre-execution effects were verified for a controlled SDK Agent. Native clients' global protection, independent AI benefit and adaptive decoy efficacy remain unverified. The 2.0 candidate is preserved; 3.0 is not a stable release.
+
+**Type-fixed supplementary candidate:** [candidate.2](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.2) includes dist/sdk.d.ts, matching ./sdk types and a three-command offline acceptance flow. Its 33 runtime JS files match candidate.1 byte-for-byte. The emailed candidate.1 and its original video/slides are preserved. [Limited native Claude Read/Bash evidence](docs/3.0/AGENT_COVERAGE_MATRIX.md) is separate direct-admission testing, not global protection or a new prompt-injection rate.
+
+## 3.0 competition candidate and development gates
+
+[Free candidate Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.1) · [Public reproduction index](competition-submission/roadshow-3.0/GitHub公开复现索引.md) · [Updated roadshow](competition-submission/roadshow-3.0/development-plan-update/README.md)
+
+Runtime freeze: 99660b36db9d5b1121eea6fe06b026c5f1e36bcf. Verified control covers registered tools of the controlled SDK Agent. MCP configuration does not establish global native-host protection. This candidate is not a stable npm/Docker release; existing package metadata and commercial distribution limits remain disclosed below.
+
+|Evidence area|Current evidence|Next step and acceptance gate|
+|---|---|---|
+|Development capacity|Published planning estimate; actual availability unconfirmed|Maintainer confirms a development budget separately from upkeep. Defer work if capacity is insufficient.|
+|Maintenance history|One actual October 12 review, public CI and retained failures|Propose monthly records of actual SHA, commands, defects, time spent and unknowns. Count only completed cycles.|
+|External participation|Reproduction guide, receipt template and working SDK contributor kit|A different real operator reproduces in an independent environment and records target effects. E4 and new external participation remain unverified.|
+|Plugin protocol|Frozen SDK interface, bundled declarations in candidate.2 and MCP extension examples|For 3.1, review a versioned contract; test exports/types, permissions, cancellation, lifecycle and compatibility; then verify one official host's controlled entry.|
+
+**Planned sequence:** 3.0 upkeep → 3.1 trusted Adapters and protocol → 3.2 fair ablations and normal-task evaluation → 3.5 team conveniences subject to real demand → 4.0 permission-propagation research. Resources and acceptance gates determine scheduling. The original roadmap estimate is 18–31 person-weeks (720–1240 development hours assuming 40 hours/week), with maintenance budgeted separately. These are assumptions, not committed staffing or work already done.
+
+See [capacity and evidence gates](competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md), [contributor start](docs/competition/score-review-2026-10-12/CONTRIBUTOR_START.md), and [extension snapshot](docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md). Independent AI/adaptive-decoy benefit remains unmeasured. Plans do not establish protection claims or justify a score increase.
 
 [Live demo & sponsor](https://dorianchn.github.io/shanchuanzhi-agent-canary/) · [Glama listing](https://glama.ai/mcp/servers/DorianChn/shanchuanzhi-agent-canary) · [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions)
 
@@ -331,3 +358,10 @@ available. See [provider documentation](docs/AI_PROVIDERS.md) and
 ## Optional deterministic risk policy
 
 The SDK now exports createRiskPolicyRouter with OBSERVE / BALANCED / STRICT. Host-owned tool descriptors and parameter checks gate registered callbacks before execution. Human approval is expiring and one-shot; AI advice never grants rights. Normal writes/builds may need approval. See [policy contract and limits](docs/RISK_POLICY.md) and the fourth-round competition report.
+
+
+## 3.0 engineering candidate
+
+[Evidence and limitations](docs/3.0/FINAL_REPORT.md) · [SDK integration](docs/3.0/DEVELOPER_GUIDE.md) · [Real local-model trials](docs/3.0/REAL_AGENT_EVALUATION.md) · [Agent coverage](docs/3.0/AGENT_COVERAGE_MATRIX.md).
+
+Draft PR #24; only registered gateway callbacks are protected. Verified 2.0 materials remain available.
