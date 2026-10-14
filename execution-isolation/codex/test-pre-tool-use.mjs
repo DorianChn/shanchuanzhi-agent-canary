@@ -38,6 +38,8 @@ assert.match(
 for (const malformedEvent of [
   "null",
   "[]",
+  JSON.stringify({ tool_name: "Write" }),
+  JSON.stringify({ hook_event_name: "SessionStart", tool_name: "Write" }),
   JSON.stringify({ tool_name: "Bash", tool_input: { command } }),
   JSON.stringify({ hook_event_name: "PreToolUse", tool_input: { command } }),
   JSON.stringify({

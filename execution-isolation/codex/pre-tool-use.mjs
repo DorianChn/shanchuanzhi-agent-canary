@@ -85,23 +85,25 @@ async function main() {
     return;
   }
 
+  // This handler is configured only for PreToolUse. Validate that envelope
+  // before passing through a valid event for another tool.
   if (
-    event !== null &&
-    typeof event === "object" &&
-    !Array.isArray(event) &&
-    typeof event.tool_name === "string" &&
-    event.tool_name !== "Bash"
+    event === null ||
+    typeof event !== "object" ||
+    Array.isArray(event) ||
+    event.hook_event_name !== "PreToolUse"
   ) {
+    emitDeny(null, new Error("invalid-pre-tool-use-event"));
+    return;
+  }
+
+  if (typeof event.tool_name === "string" && event.tool_name !== "Bash") {
     process.stdout.write("{}\n");
     return;
   }
 
   if (
-    event === null ||
-    typeof event !== "object" ||
-    Array.isArray(event) ||
     event.tool_name !== "Bash" ||
-    event.hook_event_name !== "PreToolUse" ||
     event.tool_input === null ||
     typeof event.tool_input !== "object" ||
     Array.isArray(event.tool_input) ||
