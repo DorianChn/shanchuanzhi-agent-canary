@@ -10,13 +10,13 @@
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## 当前契约与集成状态（2026-10-14 18:15 UTC）
+## 当前契约与集成状态（2026-10-14 18:26 UTC）
 
 - PR #43 M1 owner head d26a0c3 / run 38602072618 passed 9/9; expiry rejection, pending clear, non-ALLOW decision and callback=0 evidence remain limited to the recorded regression. M1 owns Gateway/Guard semantics and its contract remains at docs/3.0/M1/GATEWAY_API_CONTRACT.md.
 - Issue #32 M1 disposition: d3b64fc is behaviorally equivalent to the owner fixture only for marker-wait/interruption timing, not byte-identical. PRs #33/#34/#38 still require coordinated async fixture updates that preserve fail-closed assertions and exact-head CI.
-- PR #47 M5 head b672f89 / run 38611183498 passed 9/9. OBSERVE cannot override explicit DENY, SENSITIVE_DATA, path boundaries, or Guard quarantine; sensitive-read denial occurs before approval/callback. The M5 readiness-report refresh is local at 3afc553 and awaits the scheduled push and exact-head checks.
-- PR #36 M9 head c09cdde / product run 38611183619 passed 9/9 and wrapper 38611183819 passed 2/2. Its 137-file diff is a multi-module integration candidate. M0/M9 root contract blobs and the M1 owner-contract path were compared; Issue #49 is CLOSED for that limited comparison.
-- PR #30 M0 head 453aa31 / product run 38611181479 passed 9/9 and ownership run 38611181489 passed 1/1. PR #24 remains OPEN/Draft at 62496d4 with 11/11 checks; it was not modified or merged.
+- PR #47 M5 head 3afc553 / run 38614270263 passed 9/9. OBSERVE cannot override explicit DENY, SENSITIVE_DATA, path boundaries, or Guard quarantine; sensitive-read denial occurs before approval/callback. M5 has locally committed an updated report snapshot at ef38091; Issue #46 remains OPEN until that report is pushed and its new-head checks pass.
+- PR #36 M9 head d802455 / product run 38614289321 passed 9/9 and wrapper 38614289309 passed 2/2. Its 137-file diff is a multi-module integration candidate; this head only updates the canonical contract document and leaves the previously reviewed package manifest unchanged. M0/M9 root contract blobs and the M1 owner-contract path were compared; Issue #49 is CLOSED for that limited comparison.
+- PR #30 M0 head 1ec5287 / product run 38614268660 passed 9/9 and ownership run 38614269082 passed 1/1. PR #24 remains OPEN/Draft at 62496d4 with 11/11 checks; it was not modified or merged.
 - Package manifest comparison across the current PR heads found 36 unique test paths (31 AC3 plus five distinct M3/M5/M7 paths), preserved version/bin/files/./sdk, M5 ./policy, and current M6/M7 scripts. Issue #27 remains OPEN pending explicit M6 field-owner confirmation and combined acceptance.
 - Native Codex Shell remains UNPROTECTED; external E4 and clean-VM installation remain NOT_VERIFIED; M4 backend security/E4 state remains UNKNOWN. Automated checks and fixtures do not expand these claims.
 

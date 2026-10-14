@@ -1,22 +1,22 @@
 # M0/M9 集成风险登记
 
-## 当前风险快照（2026-10-14 18:15 UTC）
+## 当前风险快照（2026-10-14 18:26 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
-| Shared API contract path | P1 | M0 #30 453aa31 与 M9 #36 c09cdde 的 canonical root blob 一致，M1 owner path 也对齐；M9 exact CI 9/9 + wrapper 2/2。 | Issue #49 CLOSED（有限路径/hash验收） |
-| #27 package/M6 composition | P1 | 当前 M9 候选 137 个文件；静态 manifest 为 36 个唯一测试路径，保留 AC3 发布字段，exact package-smoke 与矩阵通过。M6 owner 对 e4:auto/e4:verify/e4:test 缺显式确认。 | OPEN / OWNER CONFIRMATION PENDING |
+| Shared API contract path | P1 | M0 #30 1ec5287 与 M9 #36 d802455 的 canonical root blob 2cc96270 一致，M1 owner path 也对齐；M9 exact CI 9/9 + wrapper 2/2。 | Issue #49 CLOSED（有限路径/hash验收） |
+| #27 package/M6 composition | P1 | 当前 M9 候选 d802455；package.json 与静态核对过的 c09cdde blob 相同，共 36 个唯一测试路径，保留 AC3 发布字段，当前 exact package-smoke 与矩阵通过。M6 owner 对 e4:auto/e4:verify/e4:test 缺显式确认。 | OPEN / OWNER CONFIRMATION PENDING |
 | #28 Gateway lifecycle | P1 | M7 #39 4267c61 CI 9/9 + wrapper 2/2；M1 owner review 与 M0 scoped acceptance 已读回。 | CLOSED（有限合同范围） |
 | #32 Hook interruption | P1 | M1接受 d3b64fc 仅在 marker-wait/中断时序修复上与 owner fixture 行为等价（非字节相同）；#33/#34/#38 仍为旧同步 fixture，待 M1/M3/M4/M6 协调异步更新、保留 fail-closed 断言并完成 exact-head CI。 | OPEN / FIXTURE COORDINATION PENDING |
 | #35 Guard quarantine | P0 | 已关闭；结论限同进程、同一 Guard、遵守 AbortSignal 的 callback。 | CLOSED（有限范围） |
 | #41 installer lifecycle | P1 | Windows pinned NSIS/template compile 有 CI 证据；clean-VM 安装/启动/升级/卸载/取消回滚无验证。 | OPEN / HOLD / NOT VERIFIED |
 | #44 approval expiry | P1 | M1 owner head d26a0c3 的 CI 与 M9 同一 Gateway/test blob 支持限范围 expiry regression。 | CLOSED（有限范围） |
 | #45 native Shell | P1 | 实际 Windows Codex Shell 没有可信 fail-closed policy enforcement 证据。 | OPEN / UNPROTECTED |
-| #46 OBSERVE docs sync | P2 | canonical 语义和 PR47 描述已同步；M5 report refresh 3afc553 本地待推送与 exact-head checks。 | OPEN / CHECKS PENDING |
+| #46 OBSERVE docs sync | P2 | M0 canonical、M5 OBSERVE 语义及 PR47 头 3afc553 的 exact CI 9/9 已核对；M5 report 顶部状态快照仍旧，负责人已本地提交修正 ef38091。 | OPEN / REPORT REFRESH + NEW-HEAD CI PENDING |
 | #48 OBSERVE policy/router | P1 | M5/M1 有限 hard-deny、零审批/零 callback、safe-read/egress 证据与当前 head CI。 | CLOSED（有限策略/router范围） |
 | External E4 | P1 | M6 自动 verifier CI 不替代独立真实模型/外部 E4 evidence。 | NOT VERIFIED |
 | M4 backend state | P2 | 当前安全/E4 后端状态不可用/未核实。 | UNKNOWN |
-| quota / push interval | Scheduling gate | 18:15 UTC 用量页可读：5小时 97%、周 64%、113 credits；上批推送 17:58 UTC，下批不早于 18:18 UTC。 | MONITOR |
+| quota / push interval | Scheduling gate | 18:26 UTC 用量页可读：5小时 97%、周 64%、113 credits；上批推送 18:20 UTC，下批不早于 18:40 UTC。 | MONITOR |
 
 Do not merge main or PR #24, publish a Release, or claim fixture/CI results as native-host, external-E4, or clean-VM acceptance.
 

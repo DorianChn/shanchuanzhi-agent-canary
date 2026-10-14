@@ -1,17 +1,17 @@
 # M0 技术问题分级与协作流程
 
-## 最新问题台账（2026-10-14 18:11 UTC）
+## 最新问题台账（2026-10-14 18:26 UTC）
 
 | Issue | 级别 | 责任模块 | 当前确认事实 | 状态/下一验收 |
 | --- | --- | --- | --- | --- |
-| #27 | P1 | M3/M5/M6/M7，M0 协调 | M9 c09cdde 的 137 文件候选与各当前 package manifest 静态兼容；31 + 5 个测试路径均唯一，9/9 + wrapper 2/2。M6 当前 e4:auto/e4:verify/e4:test 字段尚无显式 owner 确认。 | OPEN；取得 M6 字段确认并记录组合接受 |
+| #27 | P1 | M3/M5/M6/M7，M0 协调 | M9 d802455 保持此前 c09cdde 已比较的 package.json blob；137 文件候选、36 个唯一测试路径与 AC3 发布字段兼容，当前 M9 exact CI 9/9 + wrapper 2/2。M6 当前 e4:auto/e4:verify/e4:test 字段尚无显式 owner 确认。 | OPEN；取得 M6 字段确认并记录组合接受 |
 | #28 | P1 | M1 owner，M7 配合，M0 协调 | M7 #39 head 4267c61 的 Gateway/Guard 生命周期改动经 M1 owner确认，CI 9/9 + wrapper 2/2。 | CLOSED；仅限合同/生命周期代码审查，不代表 PR 合并或真实宿主验收 |
 | #32 | P1 | M1 owner，M0 跟踪 | 当前相关 PR checks 通过；#33/#34/#38 仍共享旧 spawnSync/1秒 marker fixture；#30/#37/#39/#40/#47 为异步 marker 轮询版本；#43/#36 为 M1 owner 版本。M1接受 d3b64fc 仅在 marker-wait/中断时序修复上行为等价，不是字节相同；三个旧 fixture 仍待 M1/M3/M4/M6 协调最小更新，并保留 fail-closed 断言、跑 exact-head CI。 | OPEN；跟进 owner 协调与 exact-head 验收，保留失败/通过历史 |
 | #35 | P0 | M1 | 关闭范围限同进程、同一 Guard 和遵守 AbortSignal 的 callback。 | CLOSED（有限范围） |
 | #41 | P1 | M7 | PR #39 exact CI 9/9、wrapper 2/2，含 Windows pinned NSIS/template compile；clean-VM 安装、启动、升级、卸载及实际取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
 | #44 | P1 | M1 | #43 head d26a0c3 CI 9/9；M9 current Gateway/test blob 与 owner head 匹配；过期拒绝、pending 清理和 callback=0 证据已读回。 | CLOSED；仅审批过期路径和现有测试基线 |
 | #45 | P1 | M2 | 子进程隔离和 Hook fixture 不覆盖实际 Codex 原生 Shell；宿主策略仍未启用/验证。 | OPEN / UNPROTECTED |
-| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical 和 M5 OBSERVE hard-deny 语义已同步；PR #47 body 与 exact run 38611183498 已回读。M5 readiness report 本地提交 3afc553 尚未推送/验 CI。 | OPEN；待下批推送并核对新 head checks |
+| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical 和 M5 OBSERVE hard-deny 语义已同步；PR #47 head 3afc553 exact run 38614270263 已 9/9。M5 readiness report 顶部快照仍旧，负责人已在本地提交修正 ef38091。 | OPEN；推送报告刷新并核对新 head checks 后再关闭 |
 | #48 | P1 | M1/M5，M0 契约 | OBSERVE sensitive-read hard DENY、审批队列零新增/callback=0及下游 egress 有限证据均记录。 | CLOSED（有限范围） |
 | #49 | P1 | M0/M1/M9 | M0/M9 canonical 根路径与 M1 owner 契约路径已按 blob 对照，exact M9 CI 通过。 | CLOSED（仅路径/hash 和对应候选 CI） |
 

@@ -1,11 +1,11 @@
 # M0 技术协调状态
 
-## 当前权威快照（2026-10-14 18:15 UTC）
+## 当前权威快照（2026-10-14 18:26 UTC）
 
-- **额度与调度**：用量页保持打开；18:15 UTC 实读五小时剩余 97%（约 2 小时 53 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行；最近推送批次为 17:58 UTC，下批不得早于 18:18 UTC。VMware、真实模型与安装测试未启动。
-- **当前 PR / exact-head CI**：PR #24 仍 OPEN/Draft、head 62496d4、11/11 checks，未触碰。Draft PR 均 OPEN：#30 453aa31 产品 9/9 + ownership 1/1；#33 d9364cc 9/9；#34 69ec7f1 9/9；#36 c09cdde 9/9 + wrapper 2/2；#37 0f2c10c 9/9；#38 ed82f06 9/9；#39 4267c61 9/9 + wrapper 2/2；#40 139e7f2 9/9；#43 d26a0c3 9/9；#47 b672f89 9/9。各 run SHA 已核对为对应 PR 当前 head。
-- **M9 / package.json**：PR #36 相对 AC3 为 137 个变更文件；exact-head CI 38611183619 为 9/9，wrapper 38611183819 为 2/2。只读 manifest 对照确认保留原 31 个测试路径并增加 5 个不同路径，共 36 个且无重复；保留 version/bin/files/./sdk，组合 ./policy、M6 E4 与 M7 脚本。#27 仍 OPEN，因为缺少 M6 owner 对当前字段的显式确认及组合接受。
-- **契约与问题状态**：#28、#44、#48、#49 已按明示有限范围关闭；#27 OPEN；#32 OPEN（M1接受 d3b64fc 仅在 marker-wait/中断时序修复上与 owner fixture 行为等价，不是字节相同；#33/#34/#38 仍待 M1/M3/M4/M6 协调异步 fixture 更新并复核 fail-closed 断言及 exact-head CI）；#41 OPEN/HOLD（clean-VM 生命周期未验证）；#45 OPEN（原生 Codex Shell UNPROTECTED）；#46 OPEN（M5 报告刷新提交 3afc553 本地待推送及 exact-head checks）；外部 E4 NOT_VERIFIED；M4 backend UNKNOWN。
+- **额度与调度**：用量页保持打开；18:26 UTC 实读五小时剩余 97%（约 2 小时 42 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行；最近推送批次为 18:20 UTC，下批不得早于 18:40 UTC。VMware、真实模型与安装测试未启动。
+- **当前 PR / exact-head CI**：PR #24 仍 OPEN/Draft、head 62496d4、11/11 checks，未触碰。Draft PR 均 OPEN：#30 1ec5287 产品 run 38614268660 为 9/9、ownership run 38614269082 为 1/1；#33 d9364cc 9/9；#34 69ec7f1 9/9；#36 d802455 product run 38614289321 为 9/9、wrapper run 38614289309 为 2/2；#37 0f2c10c 9/9；#38 ed82f06 9/9；#39 4267c61 9/9 + wrapper 2/2；#40 139e7f2 9/9；#43 d26a0c3 9/9；#47 3afc553 run 38614270263 为 9/9。各 run head SHA 已核对。
+- **M9 / package.json**：PR #36 相对 AC3 为 137 个变更文件；当前 d802455 仅更新 canonical 契约文档，package.json 与此前静态核对的 c09cdde blob 相同。当前 exact-head CI 为 9/9 + wrapper 2/2。只读 manifest 对照确认保留原 31 个测试路径并增加 5 个不同路径，共 36 个且无重复；保留 version/bin/files/./sdk，组合 ./policy、M6 E4 与 M7 脚本。#27 仍 OPEN，因为缺少 M6 owner 对当前字段的显式确认及组合接受。
+- **契约与问题状态**：#28、#44、#48、#49 已按明示有限范围关闭；#27 OPEN；#32 OPEN（M1接受 d3b64fc 仅在 marker-wait/中断时序修复上与 owner fixture 行为等价，不是字节相同；#33/#34/#38 仍待 M1/M3/M4/M6 协调异步 fixture 更新并复核 fail-closed 断言及 exact-head CI）；#41 OPEN/HOLD（clean-VM 生命周期未验证）；#45 OPEN（原生 Codex Shell UNPROTECTED）；#46 OPEN（M5 负责人已在本地提交报告快照修正 ef38091，需下批推送并验新头）；外部 E4 NOT_VERIFIED；M4 backend UNKNOWN。
 - **边界**：不删除失败测试、不降低安全策略、不伪造结果；不合并 main 或 PR #24，不发布 Release。仅按文件系统、GitHub 和当前可见用量页核验，不声称读取其他会话聊天内容，也不把 CI 等同于原生宿主、clean-VM 或外部 E4 验收。
 
 本节为当前快照；较早时间点内容按历史记录保留。
