@@ -1,6 +1,24 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-14 20:46 UTC)
+## Current ownership and worktree snapshot (2026-10-14 21:06 UTC)
+
+| Module | Existing branch / worktree | Current PR head and exact-head checks | Ownership / coordination |
+| --- | --- | --- | --- |
+| M1 | feature/ac3-security-core / agents/M1-security | #43 4b562be; CI 38620584097 passed | Owns Gateway/Guard and Hook semantics. Subprocess cannot observe native-host callbacks; correct stale PR-body claim. |
+| M2 | feature/ac3-execution-isolation / agents/M2-isolation | #37 0f2c10c; CI 38561262930 passed | Owns isolation adapter. Native Codex Shell remains UNPROTECTED under #45. |
+| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | #33 d9364cc; CI 38555297535 passed | Owns onboarding and branch-local test copy. #32 comment 6178530800 requests minimal approved async fixture port and exact-head CI. Worktree clean at d9364cc. |
+| M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | #34 69ec7f1; CI 38555299339 passed | Owns desktop UI. Backend security/E4 remains UNKNOWN; fixture update queued. |
+| M5 | feature/ac3-policy-audit / agents/M5-policy | #47 7d5df63; CI 38617317812 passed | Owns policy fields/audit schema. M0 owns canonical root contract; sensitive-read hard DENY remains. |
+| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3 | #38 ed82f06; CI 38555297615 passed | Owns E4 verifier/schema and e4:* fields. M0 field comparison matches M9; owner confirmation requested in #27 comment 6178531392. Preserve untracked E4 evidence. |
+| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | #39 4267c61; CI 38596572303 passed 9/9; wrapper 38596572179 passed 2/2 | Owns Windows packaging/reliability. Owner review accepts M7 manifest fields; #41 lifecycle remains NOT_VERIFIED/HOLD. |
+| M8 | feature/ac3-open-source-product / agents/M8-ecosystem | #40 139e7f2; CI 38561307114 passed | Owns public documentation/community experience; no Release is published. |
+| M0 | feature/ac3-m0-coordination / coordinator | #30 71c2545; product 38635153635 passed 9/9; ownership 38635518024 passed 1/1 | Owns coordination docs, canonical contract, Issues, CI, quota, and schedule; does not edit module product source. |
+| M9 | feature/ac3-m9-integration / integration | #36 6abd4da; CI 38620602632 passed 9/9; wrapper 38620603071 passed 2/2 | Owns integrated candidate/risk aggregation; CI does not clear external E4, native Shell, or clean-VM gates. |
+
+M0/M1/M3/M6/M9 worktrees were locally checked in this checkpoint. M3 is clean at d9364cc. M6 retains untracked security-lab/e4-runs/20261013T114513Z/ and it must not be altered. Other ownership stays as previously recorded; no module branch was created or rewritten.
+
+
+## Archived snapshot (2026-10-14 20:46 UTC)
 
 | Module | Branch / worktree | Current PR head and exact-head CI | Ownership status |
 | --- | --- | --- | --- |

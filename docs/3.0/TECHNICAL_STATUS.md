@@ -1,6 +1,20 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 20:46 UTC)
+## Current authoritative snapshot (2026-10-14 21:06 UTC)
+
+- 用量页可读且高于 5% 暂停线；精确额度仅保存在被 gitignore 忽略的本地报告。低于 5% 或不可读时停止开发、测试、浏览器与 GitHub 操作。上批分支推送为 20:48 UTC。
+- 当前两个模块槽仍为 M3/#32 与 M6/#27。21:06 状态请求已记录：#32 comment 6178530800、#27 comment 6178531392；请求发出时没有负责人回复或分支新提交。
+- M3 PR #33 为 OPEN/Draft，head d9364cc5ad533b8b922859e97d2387e70718d931，exact-head CI 38555297535 通过。M3 当前同步夹具 blob 1ecb3ee 不检查 stderr 和决策日志。M1 owner fixture blob 6c2d8da 使用异步 marker-wait 与外部中断，并检查退出、空 stdout/stderr、无决策记录；子进程不能观察原生宿主 callback。#32 保持 OPEN。
+- M6 PR #38 为 OPEN/Draft，head ed82f0612b9f69463afc9f80a1082b951e7e88fe，exact-head CI 38555297615 通过。M0 静态比对确认 M6 与 M9 的 e4:auto、e4:verify、e4:test 值完全相同；M6 owner 确认仍待回复。保留 M6 未跟踪 E4 证据目录；外部 E4 仍 NOT_VERIFIED。
+- M1 PR #43 为 OPEN/Draft，head 4b562bed32ebcc3f241a17543d8d2ce9f6108c26，CI 38620584097 通过。PR 描述称 d26a0c3 在本地等待推送，但该提交已在当前远端 head 的祖先中；请 M1 owner 修正文案。
+- M7 PR #39 exact-head CI 38596572303 通过 9/9，Windows Community wrapper 38596572179 通过 2/2。M7 owner review 接受其自有 manifest 字段与 M9 对齐。#41 clean-VM 安装/启动/升级/卸载/真实取消回滚仍 NOT_VERIFIED/HOLD。
+- M9 PR #36 为 OPEN/Draft，head 6abd4da78f161577bff90a5d18fd0d3ec329fdd3；CI 38620602632 通过 9/9，wrapper 38620603071 通过 2/2。CI 不替代原生 Shell、外部 E4 或 clean-VM 验收。
+- M0 PR #30 为 OPEN/Draft，head 71c25453cf0e05f5984c1a5016fec78c8b5a2b0f；产品 CI 38635153635 通过 9/9，最新 ownership check 38635518024 通过 1/1。PR #24 仍 OPEN/Draft，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4、base 未变；9 项产品与 2 项 wrapper 检查通过。
+- P1 门槛仍开放：#27 M6 owner 确认与整合；#32 Hook 夹具跨分支复验；#41 clean-VM 生命周期；#45 原生 Codex Shell 仍 UNPROTECTED。M4 后端安全/E4 为 UNKNOWN。其他窗口 VMware、真实模型与安装资源占用不可见，不能假设可用。
+- 此 M0 更新未修改模块产品代码或运行产品测试；未修改/合并 main 或 PR #24，未发布 Release。
+
+
+## Archived snapshot (2026-10-14 20:46 UTC)
 
 - The usage page was readable at 20:46 UTC and above the 5% stop threshold. The exact reading from this checkpoint is in the ignored local coordinator report; this public current snapshot omits it, while older historical snapshots retain readings published earlier. Stop all work if the 5-hour quota is below 5% or unreadable. Last Git push batch was 20:26 UTC; next push is no earlier than 20:46 UTC.
 - M1's owner-disposition task on #32 is complete. The two active slots remain M3/#32 and M6/#27; M4/#32 and M6/#32 are queued until a slot is released. M0 progress comments 6178087679 and 6178091644 specify owner actions and acceptance evidence; neither owner response nor completion commit is visible yet. VMware, real-model, and installer work share an exclusive reservation; occupancy in other windows remains unconfirmed.

@@ -1,6 +1,22 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 20:46 UTC)
+## Current integration risk snapshot (2026-10-14 21:06 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #27 package manifest / M6 fields | P1 | M6 与 M9 的 e4:auto、e4:verify、e4:test 静态值一致；M6 owner 确认待回复。 | 保持 OPEN，等 owner 确认/修正并完成 M9 exact-head 验证。外部 E4 仍 NOT_VERIFIED。 |
+| #32 Hook interruption fixture | P1 | M3 仍为同步 blob 1ecb3ee；M1 owner 参考为 6c2d8da。M3 当前 fixture 未核 stderr/空决策日志；子进程不能观察 native-host callback。 | 保持 OPEN；各 owner 分支只移植获批异步 marker/interruption 行为，保留 fail-closed 断言并跑 exact-head CI。callback 状态仍 NOT_VERIFIED。 |
+| #45 native Codex Shell | P1 | 原生 Shell 仍 UNPROTECTED；协议或子进程测试不能证明宿主已安装可信策略。 | 保持 OPEN，直到真实宿主阻断受保护合成写入，或用户状态明确标为 UNPROTECTED/BLOCKED。 |
+| #41 installer lifecycle | P1 | 固定 NSIS/template CI 通过；无 clean-VM 生命周期证据。 | 保持 OPEN/HOLD，直至验证 clean-VM 安装、启动、升级、卸载及用户取消回滚。 |
+| External E4 | P1 | verifier 和合成归档不能证明独立外部 E4。 | 保留证据；保持 NOT_VERIFIED，直至获授权的独立运行。 |
+| M4 backend state | P1 | 后端安全/E4 endpoint 和 enforcement 仍 UNKNOWN。 | 不将 UNKNOWN 报为 PASS；等待后端证据。 |
+| Exclusive VM/model/installer slot | P2 | 本会话无法看到其他窗口占用情况。 | #29 未记录释放/预约前按不可用处理。 |
+| Stale M1 PR description | P2 | PR #43 head 4b562be 的祖先含 d26a0c3，但 PR body 仍称该提交待推送。 | 请 M1 owner 修正文案；M0 不改 owner-authored PR 正文。 |
+
+M0 在 21:06 UTC 更新 #32/#27 状态请求：comments 6178530800 与 6178531392。PR #30 head 71c2545 的产品 CI 38635153635 为 9/9，最新 ownership check 38635518024 为 1/1。PR #24 仍 OPEN/Draft 且未变。
+
+
+## Archived snapshot (2026-10-14 20:46 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
