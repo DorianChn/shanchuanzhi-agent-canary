@@ -1,6 +1,20 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 21:06 UTC)
+## Current authoritative snapshot (2026-10-14 21:26 UTC)
+
+- 用量页在 21:26 可读且高于 5% 暂停线；精确额度保存在被 gitignore 忽略的本地报告。低于 5% 或不可读时停止开发、测试、浏览器及 GitHub 操作。上次分支推送在 21:08 UTC，本批计划 21:32 UTC。
+- 两个模块槽仍为 M3/#32 与 M6/#27。最新状态请求为 #32 comment 6178865306、#27 comment 6178865803；截至21:26没有负责人回复或模块 head 变化。M3工作树在该 head 干净；M6 未跟踪 E4 证据目录原样保留。
+- M3 PR #33 OPEN/Draft，head d9364cc5ad533b8b922859e97d2387e70718d931，CI 38555297535 通过。M3当前夹具 blob 1ecb3ee 是同步 timeout 夹具，未检查 stderr 或空决策日志；M1 owner 夹具 blob 6c2d8da 有异步 marker-wait、中断/退出、stdout/stderr/决策日志检查，但不观察宿主 callback。#32仍OPEN。
+- M6 PR #38 OPEN/Draft，head ed82f0612b9f69463afc9c80a1082b951e7e88fe，CI 38555297615 通过。M0静态确认 M6/M9 三个 e4:* 值一致；M6 owner signoff仍待回复，外部 E4 NOT_VERIFIED。
+- M1 PR #43 OPEN/Draft，head 4b562bed32ebcc3f241a17543d8d2ce9f6108c26，CI 38620584097通过。PR正文仍错误地称 d26a0c3 在本地等待推送，尽管它已是当前远端 head 的祖先；M1 owner需更新正文。
+- M7 PR #39 CI 38596572303 通过9/9，Windows wrapper 38596572179通过2/2；owner review接受M7自有 manifest字段。#41 clean-VM安装/启动/升级/卸载/取消回滚仍NOT_VERIFIED/HOLD。
+- M9 PR #36 OPEN/Draft，head 6abd4da78f161577bff90a5d18fd0d3ec329fdd3；CI 38620602632通过9/9，wrapper 38620603071通过2/2。M0 PR #30 OPEN/Draft，head ff9822b6f9201b93ac3da8f93a0913879365cf92；产品CI 38638309831通过9/9，ownership checks 38638309677及正文更新后38638890338均通过1/1。
+- PR #24仍OPEN/Draft，base competition/shanchuanzhi-release-readiness、head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；当前9项产品和2项wrapper检查通过，未改未合并。
+- 未关P1：#27 M6 owner确认/集成、#32 Hook夹具跨分支复验、#41 clean-VM生命周期、#45原生Codex Shell仍UNPROTECTED；M4后端安全/E4仍UNKNOWN。其他窗口VMware/真实模型/安装资源占用不可见。
+- 本次只更新协调文档，无模块产品改动或本地产品测试；未改/合并main或PR #24，未发布Release。
+
+
+## Archived snapshot (2026-10-14 21:06 UTC)
 
 - 用量页可读且高于 5% 暂停线；精确额度仅保存在被 gitignore 忽略的本地报告。低于 5% 或不可读时停止开发、测试、浏览器与 GitHub 操作。上批分支推送为 20:48 UTC。
 - 当前两个模块槽仍为 M3/#32 与 M6/#27。21:06 状态请求已记录：#32 comment 6178530800、#27 comment 6178531392；请求发出时没有负责人回复或分支新提交。

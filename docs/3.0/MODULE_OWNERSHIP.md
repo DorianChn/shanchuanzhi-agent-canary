@@ -1,6 +1,24 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-14 21:06 UTC)
+## Current ownership and worktree snapshot (2026-10-14 21:26 UTC)
+
+| Module | Existing branch / worktree | Current PR head and checks | Ownership / coordination |
+| --- | --- | --- | --- |
+| M1 | feature/ac3-security-core / agents/M1-security | #43 4b562be; CI 38620584097 passed | Owns Gateway/Guard and Hook semantics. #43 body still has stale d26a0c3 push statement. |
+| M2 | feature/ac3-execution-isolation / agents/M2-isolation | #37 0f2c10c; CI 38561262930 passed | Owns isolation adapter. Native Shell remains UNPROTECTED (#45). |
+| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | #33 d9364cc; CI 38555297535 passed | Owns onboarding and its test-file copy. Latest status request #32 comment 6178865306; clean worktree at last read. |
+| M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | #34 69ec7f1; CI 38555299339 passed | Owns desktop UI; backend security/E4 UNKNOWN. Fixture copy queued. |
+| M5 | feature/ac3-policy-audit / agents/M5-policy | #47 7d5df63; CI 38617317812 passed | Owns policy/audit fields; sensitive-read hard DENY remains. |
+| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3 | #38 ed82f06; CI 38555297615 passed | Owns E4 verifier/schema and e4:* fields. M0 field comparison matches M9; owner confirmation requested in #27 comment 6178865803. Preserve untracked E4 evidence. |
+| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | #39 4267c61; CI 38596572303 passed 9/9, wrapper 38596572179 passed 2/2 | Owns Windows packaging/reliability. Manifest owner review accepted; #41 remains NOT_VERIFIED/HOLD. |
+| M8 | feature/ac3-open-source-product / agents/M8-ecosystem | #40 139e7f2; CI 38561307114 passed | Owns public docs/community; Release unpublished. |
+| M0 | feature/ac3-m0-coordination / coordinator | #30 ff9822b; product 38638309831 passed 9/9, ownership 38638309677 and 38638890338 passed 1/1 | Owns coordination docs, contract, Issues, CI/quota/schedule; does not edit module source. |
+| M9 | feature/ac3-m9-integration / integration | #36 6abd4da; CI 38620602632 passed 9/9; wrapper 38620603071 passed 2/2 | Owns integration/risk aggregation; external E4/native Shell/clean-VM still outside CI proof. |
+
+M3/M6 remain the two assigned module slots; M4/M6 fixture-copy work stays queued. M6's untracked E4 directory remains untouched. No module branch was created, rebased, or rewritten.
+
+
+## Archived snapshot (2026-10-14 21:06 UTC)
 
 | Module | Existing branch / worktree | Current PR head and exact-head checks | Ownership / coordination |
 | --- | --- | --- | --- |

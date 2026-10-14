@@ -1,6 +1,22 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 21:06 UTC)
+## Current integration risk snapshot (2026-10-14 21:26 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #27 M6 package fields | P1 | M6/M9 e4:auto, e4:verify, e4:test values match by static read; M6 owner confirmation pending. | Keep OPEN through owner disposition and M9 integration check; external E4 remains NOT_VERIFIED. |
+| #32 Hook interruption fixture | P1 | M3 remains on synchronous blob 1ecb3ee; current M1 owner fixture is 6c2d8da. M3 lacks stderr/decision-log checks; subprocess does not observe native-host callback. | Keep OPEN; port only approved asynchronous timing behavior on owned branch, retain fail-closed assertions, rerun exact-head CI; callback remains NOT_VERIFIED. |
+| #45 native Codex Shell | P1 | Native Shell remains UNPROTECTED; protocol/child-process fixtures do not prove installed host enforcement. | Keep OPEN until a real supported host blocks a protected synthetic write or all user-facing status explicitly keeps it UNPROTECTED/BLOCKED. |
+| #41 installer lifecycle | P1 | NSIS/template CI passed; clean-VM install/launch/upgrade/uninstall/cancel rollback unverified. | Keep OPEN/HOLD pending clean-VM evidence. |
+| External E4 | P1 | M6 verifier/archived synthetic bundle is not independent external E4. | Keep NOT_VERIFIED. |
+| M4 backend | P1 | Backend security/E4 endpoints and enforcement remain UNKNOWN. | Do not report PASS without backend evidence. |
+| Exclusive VM/model/installer resources | P2 | Other-window occupancy unavailable. | Assume unavailable until #29 records reservation/release. |
+| M1 PR description | P2 | #43 body still says d26a0c3 awaits push, but current remote head 4b562be descends from it. | Ask M1 owner to correct owner-authored body; M0 does not rewrite it. |
+
+M0 checkpoint comments: #32 6178865306, #27 6178865803. PR #30 head ff9822b has product run 38638309831 (9/9) and ownership runs 38638309677/38638890338 (both 1/1). PR #24 remains OPEN/Draft and unchanged.
+
+
+## Archived snapshot (2026-10-14 21:06 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
