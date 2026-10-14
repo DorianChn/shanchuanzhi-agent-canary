@@ -75,3 +75,15 @@ Gateway 对齐分析见 [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway
 这证明 Windows Codex CLI 的 `sandbox` 子命令能启动本次 PowerShell 并允许该临时目录写入。它不是 Desktop 中 Codex 原生 Shell 工具的调用，未观测 Desktop Hook 回调或决定；也没有测试沙箱拒绝写入。官方 `:workspace` profile 明确允许系统临时目录写入，因此本次成功是预期行为，不能据此声称受保护路径阻断已通过。Desktop 原生 Shell 状态仍为 `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`。一次前置脚本探测因 PowerShell 命令解析失败、哨兵 hash 未变化且没有成功标记而作废，没有记作 sandbox deny。
 
 详细机器结果见 [`native-host-hook-evidence.json`](../codex/native-host-hook-evidence.json)。
+
+## 2026-10-14 06:30 UTC M2 native-shell gate 与 #32 集成门槛
+
+当前 M2 会话没有能够调用 Desktop 原生 Shell 或读取其 Hook 回调/宿主决定的接口。Windows CLI 的 `sandbox` 命令是独立 CLI 子进程路径，不能代表 Desktop 工具链。M1 Gateway 的注册 ID 是 host-owned MCP map key，ID `Bash` 本身不能证明它就是原生 Shell；如果误按名称拒绝，会破坏合法的受隔离 Gateway 工具。因此 M2 binder 现要求可信 host registrar 为每个固定登记显式给出 `executionSurface`：只允许 `M2_ISOLATED_WORKER`，缺失/未知值构造失败；标记为 `NATIVE_CODEX_SHELL` 的任意 ID 在 binder 返回 callback 前以 `M2_NATIVE_SHELL_UNPROTECTED` 拒绝。登记 ID `Bash` 配 `M2_ISOLATED_WORKER` 仍可用。此 seam 只约束经 binder 且分类正确的登记，不会截住 Desktop 直接 Shell，也不能证明注入的 backend 实际隔离。候选 `PreToolUse/Bash` 回执显式给出 `UNPROTECTED` 和 `BLOCKED_NOT_VERIFIED`；项目 Hook fragment 尚未安装，Desktop 是否加载/信任未知，且 Hook 仅在 handler 实际运行时输出 deny，callback 失败时仍不能证明 fail-closed。Native Shell 总体分类保持 `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`。
+
+新增最小回归：同一个登记 ID `Bash` 在 `M2_ISOLATED_WORKER` 下构造并能调用 backend；在 `NATIVE_CODEX_SHELL` 下则构造失败，backend 调用数不变，证明拒绝发生在登记 callback/backend 入口之前；缺失 surface 的任意 alias 也构造失败。Hook 协议夹具使用一条合成受保护哨兵写入命令，验证响应是 deny 并带上述状态。该命令只作为 Hook 输入，不会在测试中执行。
+
+只读 GitHub 核验（06:26 UTC 查询）：PR #37 当时为 OPEN/Draft，head `08c93bcac9906c27fac6d14c029d2134553a575b`。其最新 CI run `38515077665` 使用 merge head `543c6eab69e9aec58d168603c9da3eabe8ae21f8`（base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`）；Windows Node 20 job `115691940178` 的 `npm run build` 通过，但 `npm test` 在 M1-owned `test/agent-hook.test.ts:54:53` 的中断 marker 断言失败，输出 `false !== true`。该 job 汇总为 321 passed / 1 failed / 4 skipped，`package-smoke` 被跳过；Windows Node 22 job 最终标记 cancelled，虽然其 `npm test` 步骤报告 success。没有 M2-owned Hook 文件出现在失败路径中。
+
+PR #43 当前 OPEN/Draft head `2276526cc70f4a13539e2172efae1fe3b4be16dd` 的提交祖先包含 M1 commit `46af1f1`。只读 diff 确认该 M1-owned改动保留 `test/agent-hook.test.ts` 中断验收，将基于定时 `spawnSync` 的夹具替换为显式 entry marker、child `spawn` 和外部中断，并继续断言无 allow 输出和无工具回调/日志。PR #43 描述了 Windows Node 20/22 的 73/73 focused suites，但那不是 PR #37+M1 的组合 CI。M1 当前本地 head `f59ba37c2fd9d1b5e181e067f80981f8920ef16a` 相对 `2276526` 只改 `test/security-router.test.ts`，自身不是 #32 的 Hook 测试修复；它的历史包含 PR #43 的修复基线。
+
+**M9 集成门槛：**组合候选必须包含至少 PR #43 head `2276526` / M1 Hook 修复 `46af1f1`；若纳入较新 M1 本地 head，需由 M0/M1明确选定其提交。保留原中断测试，随后在组合候选重跑 Windows Node 20、Windows Node 22 完整测试和 `package-smoke`，确认 marker 中断断言、无 allow/无 callback 及 package smoke 全部通过。Issue #32 保持 OPEN 直到该组合 CI 有证据；若复发，由 M1 继续定位，不由 M2删测或改 M1测试。

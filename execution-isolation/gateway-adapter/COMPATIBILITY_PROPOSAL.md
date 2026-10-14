@@ -45,6 +45,8 @@ Therefore the M1 callback shape is clear enough to implement a narrow registrati
 
 The host can pass exact tool IDs and static approval/risk metadata to `createGatewayMcpTools(fixedToolMetadata, backend)` and supply the returned map as Gateway `mcpTools` at construction. The binder puts each ID in a closure and freezes the Gateway-shaped descriptor. Its callback forwards the unchanged args object and the identical Gateway `AbortSignal` to the injected backend. The backend must resolve each ID through a host-fixed table, launch a versioned worker protocol in the supported isolated executor, and terminate/await its owned process job when the signal aborts. The binder rejects agent-controlled metadata fields such as executable paths; the backend must also avoid deriving executable paths, working directories, or ACL grants from per-call args.
 
+For the M2 binder only, each host-fixed metadata record also requires `executionSurface: "M2_ISOLATED_WORKER" | "NATIVE_CODEX_SHELL"`. This is adapter metadata, not a change to M1's public Gateway descriptor. The surface must come from the trusted host registrar's fixed registration table, never from agent input. Missing or unknown surfaces fail construction with `M2_GATEWAY_MCP_METADATA_INVALID`; `NATIVE_CODEX_SHELL` fails with `M2_NATIVE_SHELL_UNPROTECTED` before the binder returns a callback. The tool ID is not used to guess the surface: a protected M2 worker may use the ID `Bash`, while a native Shell registration under any ID is rejected if the trusted registrar marks its actual surface. The marker does not prove the backend is isolated; the backend and registration provenance remain host integration responsibilities.
+
 ```text
 MCP request
   -> M1 agent.dispatch
@@ -56,6 +58,8 @@ MCP request
 ```
 
 The M2 callback binder is implemented and locally tested, but it is not connected to an M1 Gateway instance. The broker, worker protocol, real AppContainer bridge, and process cancellation handle are not implemented. A successful binder test or contract fixture is not proof of Gateway integration, AppContainer isolation, or native Shell protection.
+
+The binder does not infer execution surface from a registration ID. It allows ID `Bash` only when trusted host metadata classifies it as `M2_ISOLATED_WORKER`, and refuses any registration marked `NATIVE_CODEX_SHELL` with `M2_NATIVE_SHELL_UNPROTECTED` during construction. Missing/unknown surface metadata also fails closed. This only constrains registrations routed through the M2 binder and correctly classified by a trusted registrar; it does not intercept Desktop's direct Shell tool or prove the injected backend is isolated. The candidate `PreToolUse/Bash` hook returns a visible deny with `UNPROTECTED` / `BLOCKED_NOT_VERIFIED` status when invoked. The repository hook fragment is not installed at the project root; Desktop loading and trust state are unknown, and Codex documents that callback failure/timeout/malformed output can fail without blocking. Therefore the native Shell classification remains `UNPROTECTED` until an actual Desktop-host test proves a protected-path denial.
 
 ## Minimum M1 owner decision
 

@@ -8,7 +8,8 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const hook = path.join(here, "pre-tool-use.mjs");
-const command = "printf shell-bypass-test";
+const command =
+  "Set-Content -LiteralPath 'M2-SYNTHETIC-PROTECTED-SENTINEL' -Value 'CHANGED'";
 const event = {
   hook_event_name: "PreToolUse",
   tool_name: "Bash",
@@ -28,6 +29,11 @@ assert.equal(output.hookSpecificOutput.permissionDecision, "deny");
 assert.match(output.systemMessage, /UNPROTECTED_NATIVE_SHELL/);
 assert.equal(output.hookSpecificOutput.hookEventName, "PreToolUse");
 assert.equal(output.hookSpecificOutput.permissionDecisionReason.includes("M2"), true);
+assert.match(output.hookSpecificOutput.additionalContext, /boundary_status=UNPROTECTED/);
+assert.match(
+  output.hookSpecificOutput.additionalContext,
+  /native_shell_acceptance=BLOCKED_NOT_VERIFIED/,
+);
 
 const logDir = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-hook-test-"));
 const logPath = path.join(logDir, "alerts.jsonl");
@@ -82,8 +88,10 @@ try {
     JSON.stringify({
       schema: "agent-canary.m2.hook-test.v1",
       protocol: "PASS",
-      directBashDecision: "deny",
+      syntheticProtectedWriteDecision: "deny",
       visibleWarning: true,
+      boundaryStatus: "UNPROTECTED",
+      nativeShellAcceptance: "BLOCKED_NOT_VERIFIED",
       optionalAuditLog: "PASS",
       alertWriteFailure: "DENY_WITH_VISIBLE_WARNING",
       malformedInputDecision: "deny",

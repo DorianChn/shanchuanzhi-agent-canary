@@ -4,10 +4,12 @@ import { createGatewayMcpTools } from "./create-gateway-mcp-tools.mjs";
 const metadata = Object.freeze({
   "m2.workspace.read": Object.freeze({
     approvalRequired: true,
+    executionSurface: "M2_ISOLATED_WORKER",
     risk: "READ_ONLY",
   }),
   "m2.workspace.write": Object.freeze({
     approvalRequired: true,
+    executionSurface: "M2_ISOLATED_WORKER",
     risk: "WRITE",
   }),
 });
@@ -69,6 +71,26 @@ await assert.rejects(
 );
 assert.equal(backendCalls, callsBeforeInvalidArgs);
 
+// A registration ID alone does not identify the execution surface. The host
+// may register a protected M2 executor under the conventional "Bash" ID.
+const protectedBashTools = createGatewayMcpTools(
+  {
+    Bash: {
+      approvalRequired: true,
+      executionSurface: "M2_ISOLATED_WORKER",
+      risk: "EXECUTE",
+    },
+  },
+  backend,
+);
+assert.equal(typeof protectedBashTools.Bash.execute, "function");
+const protectedBashResult = await protectedBashTools.Bash.execute(
+  {},
+  new AbortController().signal,
+);
+assert.deepEqual(protectedBashResult, { ok: true, toolId: "Bash" });
+assert.equal(received.toolId, "Bash");
+
 assert.throws(
   () => createGatewayMcpTools({}, backend),
   { name: "TypeError", message: "M2_GATEWAY_MCP_REGISTRATIONS_EMPTY" },
@@ -76,15 +98,47 @@ assert.throws(
 assert.throws(
   () =>
     createGatewayMcpTools(
-      { "bad/tool-id": { approvalRequired: true, risk: "READ_ONLY" } },
+      {
+        "bad/tool-id": {
+          approvalRequired: true,
+          executionSurface: "M2_ISOLATED_WORKER",
+          risk: "READ_ONLY",
+        },
+      },
       backend,
     ),
   { name: "TypeError", message: "M2_GATEWAY_MCP_TOOL_ID_INVALID" },
 );
+const callsBeforeNativeShellRegistration = backendCalls;
 assert.throws(
   () =>
     createGatewayMcpTools(
-      { "m2.invalid": { approvalRequired: true, risk: "UNKNOWN" } },
+      {
+        Bash: {
+          approvalRequired: true,
+          executionSurface: "NATIVE_CODEX_SHELL",
+          risk: "EXECUTE",
+        },
+      },
+      backend,
+    ),
+  { name: "TypeError", message: "M2_NATIVE_SHELL_UNPROTECTED" },
+);
+assert.equal(
+  backendCalls,
+  callsBeforeNativeShellRegistration,
+  "native Shell registration must be rejected before its callback can reach the backend",
+);
+assert.throws(
+  () =>
+    createGatewayMcpTools(
+      {
+        "m2.invalid": {
+          approvalRequired: true,
+          executionSurface: "M2_ISOLATED_WORKER",
+          risk: "UNKNOWN",
+        },
+      },
       backend,
     ),
   { name: "TypeError", message: "M2_GATEWAY_MCP_METADATA_INVALID" },
@@ -95,6 +149,7 @@ assert.throws(
       {
         "m2.invalid": {
           approvalRequired: true,
+          executionSurface: "M2_ISOLATED_WORKER",
           risk: "READ_ONLY",
           executable: "agent-controlled",
         },
@@ -109,5 +164,5 @@ assert.throws(
 );
 
 process.stdout.write(
-  "M2_GATEWAY_MCP_BINDER_PASS (FIXED_IDS; SAME_ARGS_AND_SIGNAL; NO_RUNTIME_ISOLATION_CLAIM)\n",
+  "M2_GATEWAY_MCP_BINDER_PASS (EXPLICIT_SURFACE; PROTECTED_BASH_ID; NATIVE_SHELL_DENIED_BEFORE_BACKEND; SAME_ARGS_AND_SIGNAL; NO_RUNTIME_ISOLATION_CLAIM)\n",
 );

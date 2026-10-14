@@ -7,7 +7,11 @@ const allowedRisks = new Set([
   "SENSITIVE_DATA",
   "DESTRUCTIVE",
 ]);
-const metadataKeys = new Set(["approvalRequired", "risk"]);
+const metadataKeys = new Set(["approvalRequired", "executionSurface", "risk"]);
+const executionSurfaces = new Set([
+  "M2_ISOLATED_WORKER",
+  "NATIVE_CODEX_SHELL",
+]);
 
 function isPlainRecord(value) {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -59,6 +63,10 @@ function abortError() {
 /**
  * Build constructor-time GatewayOptions.mcpTools entries from host-fixed metadata.
  *
+ * executionSurface is a trusted registrar assertion about the actual executor,
+ * not a property inferred from toolId. Native Codex Shell is rejected before a
+ * callback is returned; missing or unknown surface metadata fails closed.
+ *
  * This binds the Gateway callback seam only. The injected backend must be a
  * host-owned isolation runner with a fixed per-tool resource map and must stop
  * its worker when the supplied signal aborts. This module does not launch an
@@ -95,12 +103,18 @@ export function createGatewayMcpTools(fixedToolMetadata, backend) {
     if (!toolIdPattern.test(toolId)) {
       throw new TypeError("M2_GATEWAY_MCP_TOOL_ID_INVALID");
     }
-
     const values = new Map(
       readOwnDataEntries(metadata, "METADATA", metadataKeys),
     );
     if (typeof values.get("approvalRequired") !== "boolean") {
       throw new TypeError("M2_GATEWAY_MCP_METADATA_INVALID");
+    }
+    const executionSurface = values.get("executionSurface");
+    if (!executionSurfaces.has(executionSurface)) {
+      throw new TypeError("M2_GATEWAY_MCP_METADATA_INVALID");
+    }
+    if (executionSurface === "NATIVE_CODEX_SHELL") {
+      throw new TypeError("M2_NATIVE_SHELL_UNPROTECTED");
     }
     const risk = values.get("risk");
     if (risk !== undefined && !allowedRisks.has(risk)) {

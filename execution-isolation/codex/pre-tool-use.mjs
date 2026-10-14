@@ -51,7 +51,8 @@ function emitDeny(event, failure = null) {
       permissionDecision: "deny",
       permissionDecisionReason: DENY_REASON,
       additionalContext:
-        "M2 alert emitted; command_sha256=" +
+        "M2 boundary_status=UNPROTECTED; native_shell_acceptance=BLOCKED_NOT_VERIFIED; " +
+        "command_sha256=" +
         record.commandSha256 +
         "; local_alert_log=" +
         logStatus +

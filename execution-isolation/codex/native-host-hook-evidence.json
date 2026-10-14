@@ -91,6 +91,48 @@
       "scope": "Desktop native Shell only",
       "reason": "The M2 agent shell runs in WSL2 and has no Codex executable on PATH. Although a Windows CLI sandbox subcommand was invoked by absolute path and is recorded separately, this does not expose the actual Desktop native Shell hook lifecycle. The repo fragment remains uninstalled and Desktop trust/loading remains unknown. No unrestricted shell write was used as a substitute test."
     },
+    "m2BoundaryGuard": {
+      "checkedAtUtc": "2026-10-14T06:30:40Z",
+      "gatewayBinderRequiresExecutionSurface": true,
+      "gatewayBinderRejectsMarkedNativeShell": true,
+      "gatewayBinderAllowsBashIdWhenM2Isolated": true,
+      "rejectionCode": "M2_NATIVE_SHELL_UNPROTECTED",
+      "rejectionTiming": "CONSTRUCTION_BEFORE_CALLBACK_OR_BACKEND_INVOCATION",
+      "testStatus": "PASS",
+      "testEvidence": "execution-isolation/gateway-adapter/check-gateway-mcp-tools.mjs; protected M2 surface under ID Bash forwards to backend; native surface under the same ID rejects during construction and backend call count remains unchanged",
+      "candidateHookReportsClassification": "UNPROTECTED",
+      "candidateHookReportsAcceptance": "BLOCKED_NOT_VERIFIED",
+      "limitations": "The executionSurface value must come from a trusted host registrar; the binder cannot infer actual surface from an ID or independently prove the injected backend is isolated. The guard applies only to registrations routed through this M2 binder. It cannot intercept Desktop direct Shell or observe whether the candidate hook is loaded/trusted; host fail-closed behavior remains unverified."
+    },
+    "issue32IntegrationGate": {
+      "checkedAtUtc": "2026-10-14T06:26:46Z",
+      "issueState": "OPEN",
+      "pr37": {
+        "state": "OPEN_DRAFT",
+        "head": "08c93bcac9906c27fac6d14c029d2134553a575b",
+        "latestWorkflowRun": 38515077665,
+        "mergeHead": "543c6eab69e9aec58d168603c9da3eabe8ae21f8",
+        "mergeBase": "62496d4020bd90ba2eede49b2e80a2bbebb036b4",
+        "windowsNode20Job": 115691940178,
+        "windowsNode20Conclusion": "FAILURE",
+        "failingTest": "test/agent-hook.test.ts:54:53; native lab wrapper interruption emits no allow decision and invokes no tool callback",
+        "assertion": "false !== true",
+        "resultCounts": "321 passed, 1 failed, 4 skipped; package-smoke skipped",
+        "ownership": "M1 security-core test file; no M2 file modified"
+      },
+      "pr43M1FixBaseline": {
+        "state": "OPEN_DRAFT",
+        "head": "2276526cc70f4a13539e2172efae1fe3b4be16dd",
+        "containsCommit": "46af1f1",
+        "verifiedChange": "test/agent-hook.test.ts replaces timing-sensitive spawnSync timeout fixture with child spawn, an entry marker, explicit external interruption, and output/log assertions; the test remains present.",
+        "focusedWindowsEvidence": "PR body reports Windows Node 20 and 22 focused Hook/Gateway suites 73/73 each; not a combined PR37 CI result."
+      },
+      "m1LocalHead": {
+        "commit": "f59ba37c2fd9d1b5e181e067f80981f8920ef16a",
+        "verifiedDiff": "Changes only test/security-router.test.ts relative to PR43 head 2276526; it is not itself the interruption-test fix."
+      },
+      "m9Gate": "Combine M2 with an M1 revision containing PR43 head 2276526 / commit 46af1f1 (and the selected newer M1 commits such as f59ba37 if included); rerun Windows Node 20 and 22 full npm test plus package-smoke on the combined candidate. Keep #32 open until combined CI demonstrates the retained interruption regression and package smoke pass."
+    },
     "officialSources": [
       "https://learn.chatgpt.com/docs/hooks",
       "https://learn.chatgpt.com/docs/windows/windows-sandbox"
