@@ -55,3 +55,13 @@ Windows AppContainer 通过包 SID、能力 SID、DACL 与低完整性令牌限�
 GitHub connector read-only fetch at 04:26 UTC confirms PR #37 remains OPEN/Draft, base `feature/agent-canary-3.0`, head `a1c239d3734a9acb355db97ea5eb10758eceedd1`; run `38390381288` has 9/9 successful jobs. Public M0 PR #30 and M1 PR #43 are OPEN/Draft at heads `19ee8ca62e4a4717733264cc0ca96ff55acf79fd` and `2276526cc70f4a13539e2172efae1fe3b4be16dd` respectively. Issue #45 remains OPEN/P1 (updated 03:57:16 UTC). Issue #28 remains OPEN and covers M1/M7 Gateway lifecycle coordination, not an M2 worker protocol. Issue #29's latest M0 comment is `6160815558` (04:15 UTC), listing M2 and M5 as active. Read-only GitHub access succeeded; write access was not tested. Earlier 403 notes remain historical.
 
 Gateway 对齐分析见 [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway-adapter/COMPATIBILITY_PROPOSAL.md)。当前 M2 branch checkpoint：API contract `19ee8ca62e4a4717733264cc0ca96ff55acf79fd`，M1 implementation `2276526cc70f4a13539e2172efae1fe3b4be16dd`；04:25 UTC GitHub 只读核验确认该 M1 commit 是公开 PR #43 的 OPEN/Draft head。M2 与 Gateway 的适配仍为提案/fixture，未集成；native Shell 继续标记 `UNPROTECTED`，真实宿主 Hook 验收继续 `BLOCKED_NOT_VERIFIED`。
+
+## 2026-10-14 04:55 UTC fail-closed 能力复核
+
+本轮重新检查当前执行环境：Git Bash 调用实际落在 WSL2（内核 `6.18.33.2-microsoft-standard-WSL2`），Node 为 `v22.23.1`，当前 shell 的 `PATH` 上没有 `codex` 可执行文件，也没有读取 Desktop Hook 回调遥测的接口。仓库中的 `codex-hooks.fragment.json` 仍是候选片段，并未安装到 `.codex/hooks.json`；因此无法从此进程调用或观测真实 Desktop 原生 Shell，也没有尝试写入真实宿主哨兵。
+
+官方 Hooks 文档确认：受信任的 `PreToolUse` Hook 对匹配的受支持工具返回 `permissionDecision: "deny"` 时可以拒绝调用；项目 Hook 必须先审查并信任其当前精确定义。该信任条件并不提供 fail-closed 保证：回调错误、超时或无效响应可能令 Hook 失败而工具仍继续，且部分专用工具路径可不经过默认 Hook。托管 Hook 可以由策略预先信任，但官方没有因此改变上述回调故障行为。故不存在一个仅靠本仓库 Hook 安装/信任即可证明“故障时仍阻断”的方案；协议单测只验证处理器主动输出 deny，不是实际宿主验收。
+
+官方 Windows Sandbox 提供 MXC 及 legacy `elevated`/`unelevated` 执行边界，但本轮实际执行在 WSL2，不能据此推断当前 Windows Desktop 命令使用哪种沙箱，也未执行对应原生环境兼容性探测。要解除阻塞，必须在目标宿主由其所有者启用并核验 OS 沙箱/权限边界，再对仅含合成文件的原生 Shell 写入尝试记录真实 hook/宿主结果和前后摘要；若宿主仍为 WSL2，则需在该 Codex WSL 执行路径验证其实际强制的 Linux sandbox。当前结论维持 `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`。
+
+更新证据：[`native-host-hook-evidence.json`](../codex/native-host-hook-evidence.json)。官方资料：[Hooks](https://learn.chatgpt.com/docs/hooks)、[Windows sandbox](https://learn.chatgpt.com/docs/windows/windows-sandbox)。

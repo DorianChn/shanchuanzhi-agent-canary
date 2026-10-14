@@ -41,5 +41,33 @@
     "status": "BLOCKED_NOT_VERIFIED",
     "reason": "The candidate is only a repository fragment, no trusted hook is evidenced in the current desktop host, and the standalone Codex CLI stopped at its folder-trust prompt. Accepting trust would persist a trust decision and was not done. No hash pair is reported because no native-host sentinel attempt ran."
   },
+  "reassessment": {
+    "checkedAtUtc": "2026-10-14T04:55:30Z",
+    "currentExecutionEnvironment": {
+      "shell": "Git Bash launcher in WSL2",
+      "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+      "nodeVersion": "v22.23.1",
+      "codexExecutableOnPath": false,
+      "nativeDesktopHookTelemetry": "UNAVAILABLE"
+    },
+    "hookContractConclusion": {
+      "supportedExplicitPreToolUseDeny": true,
+      "trustedProjectHookCanBeInstalled": true,
+      "trustedHookFailureGuaranteedToBlock": false,
+      "qualifiesAsFailClosedEnforcement": false,
+      "basis": "Official Hooks documentation says non-managed hooks require review/trust for the exact current definition, but callback errors, timeouts, or malformed responses may fail the hook without blocking the tool; some specialized tool paths can opt out of the default hook path. Managed hooks are trusted by policy but the documented callback failure behavior still applies."
+    },
+    "hostAcceptance": {
+      "nativeCodexShellSentinelWriteAttempted": false,
+      "nativeHostDecision": "NOT_OBSERVED",
+      "classification": "UNPROTECTED",
+      "acceptance": "BLOCKED_NOT_VERIFIED",
+      "reason": "This execution process is WSL2 and has no Codex executable on PATH, so it cannot invoke or observe the actual desktop host hook lifecycle. The repo fragment remains uninstalled and host trust/loading remains unknown. No unrestricted shell write was used as a substitute test."
+    },
+    "officialSources": [
+      "https://learn.chatgpt.com/docs/hooks",
+      "https://learn.chatgpt.com/docs/windows/windows-sandbox"
+    ]
+  },
   "classification": "UNPROTECTED"
 }
