@@ -6,7 +6,7 @@
 
 M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放宽确认、追加式版本历史、托管策略路由及可校验的审计导出。未登记工具现在在 `OBSERVE`、`BALANCED`、`STRICT` 三种模式都直接拒绝。正常读取与审定开发命令保持可用；写入、构建等已知风险操作仍由宿主人工审批，不由模型批准。
 
-默认模式仍为 `BALANCED`，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写；在读到 M0 契约并协调后，才应做跨模块适配。
+默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 所有的 canonical API contract 位于 docs/3.0/API_CONTRACTS.md；该契约已体现 M5 的策略收紧与 Gateway 最终复查语义，但 M5 尚未完成 M9 跨模块验收或真实宿主接线验证。
 
 ## 主要审计发现与处置
 
@@ -53,9 +53,9 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 ## M0 契约与未完成的协调
 
-当前可读的 `coordinator/docs/3.0/API_CONTRACTS.md` 将 M0 列为契约文档 owner，要求策略只收紧并保留 Gateway 最终执行复查。M5 将未知工具映射为 `DENY / unregistered_tool`，并在 M5 审计事件中保留 `UNKNOWN`。M5 没有修改 M1 的 Hook、Gateway、Guard 或 `runtime/evidence.ts`；与 Gateway 组合时仍需把最终回调路由到 Gateway `agent.dispatch`。
+M0 owner 管理的 canonical API contract 位于 docs/3.0/API_CONTRACTS.md（M0 PR #30）。当前契约体现策略只收紧、OBSERVE 保留显式拒绝及 Gateway 最终执行复查语义。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
 
-本分支还包含同路径 `docs/3.0/API_CONTRACTS.md`，而 canonical 路径由 M0 管理。提交 Draft PR 前必须由 M0 owner 协调这份重复文档的去向，并将新 `./policy` 导出、`agent-canary.policy-audit/1` 事件语义及本次 OBSERVE 安全边界更新到 canonical contract；本轮不修改该共享路径。Issue #27 中 M5 已确认自己只拥有 `exports["./policy"]` 与两个新增 `scripts.test` 路径；M3/M6/M7 字段仍需组合到同一 AC3 manifest 并通过共同 package-smoke/CI。M5 的更改属于公共策略行为变更，PR 应标 `API-Contract-Change: yes`、关联 #27，并保持 Draft 直到契约及 manifest 协调和 CI 完成。
+M5 HEAD cf4e2cdb 不含 docs/3.0/API_CONTRACTS.md，因此不存在 M5 与 M0 canonical contract 的重复路径；该文件由 M0 PR #30 管理，本轮不修改。契约正文已反映 M5 的策略/事件语义，但其中的状态说明仍引用旧 M5 head f8291c9 并称 CI 待运行。最新 M5 远端代码 head 为 cf4e2cdb，PR #47 CI run 38527097304 的 9/9 项检查已通过；由 M0 owner 刷新其状态说明。Issue #27 中 M5 已确认自己只拥有 exports["./policy"] 与两个新增 scripts.test 路径；M3/M6/M7 字段仍需组合到同一 AC3 manifest 并通过共同验收。M5 的更改属于公共策略行为变更，PR 标记 API-Contract-Change: yes、关联 #27，并在 M9 跨模块验收前保持 Draft。
 
 M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入；Hook/Gateway 自动接线、跨模块事件关联及真实 M1+M5 集成尚未验证。
 
@@ -71,32 +71,32 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 
 本轮修复 `OBSERVE` 对安全拒绝的过度覆盖：之前任何已登记工具的 `DENY` 都可能被观察模式改成 `ALLOW`，包括越界路径、明确危险 Shell、敏感外发；敏感路径读取也可能绕过人工确认。现在显式硬拒绝不可覆盖，且 OBSERVE 下任何标有 `SENSITIVE_DATA` 的操作都拒绝；普通已登记操作中仅可选审批仍能按 OBSERVE 规则继续。默认 `BALANCED` 和 M1 Gateway 最终授权不变。
 
-本轮 M5 自有改动：`src/risk-policy.ts`、`test/risk-policy.test.ts`、`docs/RISK_POLICY.md`、`FALSE_POSITIVE_REPORT.md`、本报告。未改 `package.json`、M0 canonical contract、M1 Gateway/Hook 或其他模块路径。M5 原有 manifest 增量仍为 `exports["./policy"]`（types/import/default）以及 `test/false-positive.test.ts`、`test/policy-management.test.ts` 两个 `scripts.test` 路径；Issue #27 已记录 M5 的字段 owner 确认，但合并 manifest 尚待 M3/M6/M7 一起验证。
+本轮 M5 自有改动：src/risk-policy.ts、test/risk-policy.test.ts、docs/RISK_POLICY.md、FALSE_POSITIVE_REPORT.md、本报告。未改 package.json、M0 canonical contract、M1 Gateway/Hook 或其他模块路径。M5 HEAD 组合了 M1 owner-authored commit f59ba37：仅将 M1 router 测试中的 OBSERVE 敏感读取夹具改为安全文件读取，保留 egress 拒绝断言；M5 仍将 OBSERVE 的 sensitive-read 硬拒绝，拒绝前待审批数为 0、callback 次数为 0。M5 原有 manifest 增量仍为 exports["./policy"]（types/import/default）以及 test/false-positive.test.ts、test/policy-management.test.ts 两个 scripts.test 路径；Issue #27 已记录 M5 的字段 owner 确认，但合并 manifest 尚待 M3/M6/M7 一起验证。
 
-### PR 准备信息（仅本地草稿，未创建/推送）
+### PR #47 状态与验证
 
-- 标题：`fix(policy): preserve sensitive-data hard denies in OBSERVE`
-- Base：`feature/agent-canary-3.0`；Draft；关联 Issue #27。
+- 标题：[M5] Preserve hard denials in OBSERVE policy mode。
+- Base：feature/agent-canary-3.0；远端 PR #47 为 OPEN/Draft，代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4。Issue #46 与 #48 均 OPEN。
 - `API-Contract-Change: yes`；`Coordinated-with: M0, M1, M3, M6, M7`。
-- `Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts (44/44); node node_modules/typescript/bin/tsc --noEmit --pretty false (pass); git diff --check (pass)`。
-- M0 owner 需先解决 M5 branch 与 canonical `docs/3.0/API_CONTRACTS.md` 的重复路径；M3/M5/M6/M7 需验收同一组合 manifest 与 package-smoke。达到这些门槛前 PR 不应标记 Ready 或合并。
+- Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-policy.test.ts (43/43); npm test (341 passed, 5 skipped, 0 failed); npm run build (pass); git diff --check (pass); PR #47 CI run 38527097304 (9/9 pass: Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, package-smoke).
+- M0 canonical contract 已无重复路径且正文语义对齐；M0 owner 需刷新其文件中的旧状态说明。M3/M5/M6/M7 仍需验收组合 manifest 和跨模块接线；M9 验收前 PR 保持 Draft。
 
 ### PR 描述草稿（待 M0 协调后复制）
 
 ```markdown
 ## What changed
 
-Keep explicit policy denials authoritative in OBSERVE mode. The mode no longer converts out-of-workspace paths, dangerous shell patterns, or sensitive egress to ALLOW, and it blocks SENSITIVE_DATA reads without queuing a bypassable approval. Ordinary registered work and Guard quarantine retain their existing behavior.
+Keep explicit policy denials authoritative in OBSERVE mode. The mode no longer converts out-of-workspace paths, dangerous shell patterns, or sensitive egress to ALLOW. SENSITIVE_DATA reads and registered sensitive-read operations return DENY before callback dispatch, with zero pending approvals and zero callback executions. Ordinary registered work and Guard quarantine retain their existing behavior.
 
 API-Contract-Change: yes
 Coordinated-with: M0, M1, M3, M6, M7
-Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts (44/44); node node_modules/typescript/bin/tsc --noEmit --pretty false (pass); git diff --check (pass)
+Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-policy.test.ts (43/43); npm test (341 passed, 5 skipped, 0 failed); npm run build (pass); git diff --check (pass); PR #47 CI run 38527097304 (9/9 pass across Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, and package-smoke)
 
 ## Verification
 
-- Focused policy and false-positive suites: 44/44 pass.
-- TypeScript no-emit check and `git diff --check`: pass.
-- Full `npm run verify`, combined manifest package-smoke, and cross-module CI: not run in this local readiness pass.
+- Focused router and risk-policy suites: 43/43 pass; full npm test: 341 passed, 5 skipped, 0 failed; npm run build and git diff --check: pass.
+- PR #47 CI run 38527097304: 9/9 pass, including the six Node 20/22 x Ubuntu/Windows/macOS jobs, Docker, Sponsor, and package-smoke. This validates the M5 PR head; it is not M9 combined acceptance.
+- The local npm run verify aggregate was not run in this readiness pass; the focused tests, full npm test, build, and listed PR CI are recorded above.
 
 ## Security and compatibility
 
@@ -107,7 +107,7 @@ Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-man
 ## Reviewer notes
 
 - P0 acceptance evidence is limited to M5 synthetic callbacks; it does not prove real host/Gateway integration.
-- Keep this PR Draft until M0 resolves the duplicate `docs/3.0/API_CONTRACTS.md` path and M3/M5/M6/M7 verify the combined package manifest and package-smoke.
+- Keep this PR Draft until M0 refreshes the stale status note in its canonical contract and M3/M5/M6/M7 complete combined-manifest and cross-module acceptance. M9 integration and real host/Gateway wiring are not complete.
 ```
 
 ### P0 验收条件
@@ -116,6 +116,6 @@ Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-man
 2. 标记 `SENSITIVE_DATA` 的 `.env` 路径读取、宿主登记的 `sensitive-read` 操作和包含敏感标记的外发均在 `OBSERVE` 下拒绝；不创建待审批请求、不执行 callback、不把参数写入策略日志。
 3. Guard 已隔离时 `OBSERVE` 不能恢复或绕过隔离；后续真实回调计数为 0。
 4. 同一测试集证明公开只读操作和普通已登记操作仍符合各保护模式的预期，避免通过扩大拒绝范围制造假通过。
-5. M0 canonical API 契约合并、组合 manifest 与新的目标分支 CI 通过前，不宣称完成跨模块 P0 集成；M5 fixture 结果只作为本模块单测证据。
+5. M5 standalone PR #47 CI 已通过，但这不等于 M9 验收或跨模块 P0 集成完成；组合 manifest、M9 验收及真实 M1+M5 宿主接线仍须单独完成，M5 fixture 结果只作为本模块单测证据。
 
-GitHub 查询未找到以 `feature/ac3-policy-audit` 为 head 的 PR。本轮未创建 PR/Issue、未推送或写入远端；本收尾变更仅保留在 M5 本地分支。M0 尚未复核本候选；在 M0 复核前不将 P0 标为关闭。完整 M5 `npm run verify`、组合 manifest CI、真实 M1+M5 宿主接线与真实副作用仍未验证。
+PR #47 仍为 OPEN/Draft，远端代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4，CI run 38527097304 为 9/9 全绿。Issue #46、Issue #48 和 M0 PR #30 均保持 OPEN（PR #30 为 Draft）；Issue #48 不在本地报告更新中关闭。M0 canonical contract 正文已体现 M5 策略语义，但其旧 CI/head 状态说明需由 M0 owner 刷新。此处仅修改 M5 所有权报告，未推送或写入 GitHub；本地报告提交待 M0 例行批次推送。M9 验收、组合 manifest 的跨模块验收、真实 M1+M5 宿主接线与真实副作用仍未验证。
