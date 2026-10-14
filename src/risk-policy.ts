@@ -83,10 +83,15 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   function sweep(){for(const [id,p]of pending)if(p.expires<Date.now())pending.delete(id);}
   function classify(call:ToolCall):PolicyDecision {
     const a=call.args??{},d=tools.get(call.name),risks:ToolRisk[]=[];
+    const unknownTool=!d;
     let reason='read_only',action:PolicyDecision['action']='ALLOW';
+    let nonOverridableDeny=false;
     const requireApproval=(r:string)=>{reason=r;action=mode==='STRICT'?'DENY':'APPROVAL_REQUIRED';};
-    const deny=(r:string)=>{reason=r;action='DENY';};
-    if(!d){risks.push('EXECUTE');requireApproval('unregistered_tool');}
+    const deny=(r:string)=>{reason=r;action='DENY';nonOverridableDeny=true;};
+    // An unregistered callback has no trusted capability description. It is
+    // UNKNOWN and stays blocked even in OBSERVE; only a registered, understood
+    // operation can use the mode's explicit observation override.
+    if(!d){risks.push('EXECUTE');deny('unregistered_tool');}
     else if(d.operation==='static-read')risks.push('READ_ONLY');
     else if(d.operation==='sensitive-read'){risks.push('SENSITIVE_DATA');requireApproval('sensitive_data_read');}
     else if(['file-read','file-write','delete'].includes(d.operation)){
@@ -112,8 +117,12 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       else if(String(a.method??'POST').toUpperCase()==='GET'&&body===undefined&&origins.has(u.origin)){reason='approved_read_origin';risks.push('READ_ONLY');}
       else requireApproval('network_write_or_unreviewed_origin');
     }
-    // OBSERVE overrides only the optional policy. Guard containment is ALWAYS enforced.
-    if(mode==='OBSERVE'&&action!=='ALLOW')return {action:'ALLOW',risks,reason:'observe_only:'+reason,mode};
+    // OBSERVE may waive approval policy for understood, non-sensitive work;
+    // it must not expose sensitive data or override an explicit safety denial.
+    if(mode==='OBSERVE'&&risks.includes('SENSITIVE_DATA')&&!nonOverridableDeny){
+      return {action:'DENY',risks,reason:'observe_sensitive_data_blocked',mode};
+    }
+    if(mode==='OBSERVE'&&action!=='ALLOW'&&!nonOverridableDeny&&!unknownTool)return {action:'ALLOW',risks,reason:'observe_only:'+reason,mode};
     return {action,risks,reason,mode};
   }
   async function execute(call:ToolCall,decision:PolicyDecision){
