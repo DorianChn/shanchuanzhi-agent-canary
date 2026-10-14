@@ -1,15 +1,14 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 22:55 UTC)
+## Current authoritative snapshot (2026-10-14 23:09 UTC)
 
-- 用量页 22:55 UTC 可读、在前台且高于 5% 停工线；精确额度保存在 gitignore 忽略的本地报告。标签保持打开。低于 5% 或读数不可确认时停止开发、测试、浏览器与 GitHub 操作。
-- #32 于22:55截止仍未收到 M3/M4 owner 回复或工作树变化。M3 PR #33 保持 `d9364cc5ad533b8b922859e97d2387e70718d931`，M4 PR #34 保持 `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b`；两个工作树干净，各自旧 head CI 仍是 9/9。Issue #32 comment `6180318160` 记录已将两项未确认任务标为 UNACKNOWLEDGED/HOLD，Issue 保持 OPEN，分支保留。
-- M3/M4 stop-hold 消息仅获 Codex queue 回执（M3 `01a13ca1-7cae-7c00-ab38-6903fe528450`，M4 `01a13ca1-7cbc-7d02-bc7b-643e93298675`）；回执不证明已读或停工。为保持最多两个并行任务，暂停替换任务排期，直至原会话的 hold 状态清楚。M0 未读取其他会话聊天。
-- M6 不占开发槽；#27 comment `6179220160` 是释放槽位记录，不是 owner signoff。PR #38仍OPEN/Draft at `ed82f0612b9f69463afc9c80a1082b951e7e88fe`；M6/M9三个脚本值静态匹配，外部E4 NOT_VERIFIED；M6未跟踪证据目录保留。
-- M0 PR #30 OPEN/Draft at `b000cc8ac6616a846e6162b8845ea8fd54854a52`：产品run `38648712858` 9/9；ownership runs `38648712873` 与正文更新后的 `38649025874` 均1/1。PR正文及 Issue #29 已回读同步。最近分支push为22:35 UTC；本批不早于22:55，下一批不早于23:15 UTC。
-- PR #24仍OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，9项产品+2项wrapper检查通过，未修改/合并。M9 PR #36仍OPEN/Draft at `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`；外部E4、原生Shell与clean-VM门槛未闭合。
-- P1门槛仍有 #27 M6 owner signoff/组合验收、#32 Hook夹具分支验收、#41 clean-VM生命周期、#45原生Codex Shell UNPROTECTED；M4后端安全/E4 UNKNOWN。VMware/真实模型/安装占用在其他窗口不可见。
-- 本次仅更新 M0 协调文档；未改模块源码或运行产品测试；未合并 main/PR #24，未发布 Release。
+- 用量页在23:02 UTC仍可读、处于前台且高于5%停工线；标签按用户要求保持打开。精确用量只保存在gitignore忽略的本地报告。低于5%或读数不可确认时停止开发、测试、浏览器与GitHub操作。
+- Issue #32截至23:02没有M3/M4 owner回复；M3 PR #33为`d9364cc5ad533b8b922859e97d2387e70718d931`，M4 PR #34为`69ec7f19d8f07a5dd1a7f482e62efbad88f0069b`，23:09检查的两个工作树均干净。Issue #32 comment `6180318160`记录UNACKNOWLEDGED/HOLD；stop-hold队列回执不证明已读或停工，暂不排替换任务。
+- M6不占开发槽；Issue #27保持OPEN，`6179220160`是释放槽位记录，不是owner signoff。PR #38仍OPEN/Draft at `ed82f0612b9f69463afc9c80a1082b951e7e88fe`；M6/M9脚本值静态匹配，外部E4 NOT_VERIFIED；M6未跟踪证据目录保留。
+- M0 PR #30 OPEN/Draft at `670ceafc1e10f8da9e17371c31372b37e4dbaf5c`：产品run `38651081696`通过9/9；正文更新后的ownership run `38651490898`通过1/1。Issue #29与PR正文已回读。最近分支push为22:55 UTC，下一批不早于23:15 UTC。
+- PR #24仍OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改/合并。M9 PR #36仍OPEN/Draft at `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`；integration工作树干净、无unmerged entries，11项检查通过。
+- M1 PR #43仍OPEN/Draft at `4b562bed32ebcc3f241a17543d8d2ce9f6108c26`，当前9项检查通过；Issue #44已于17:53 UTC以COMPLETED关闭。P1门槛仍有#27 owner signoff/组合验收、#32分支验收、#41 clean-VM生命周期、#45原生Codex Shell UNPROTECTED；外部E4 NOT_VERIFIED，M4后端UNKNOWN。
+- 本次仅更新M0协调状态记录；未改模块源码或运行产品测试；未合并main/PR #24，未发布Release。
 
 ## Archived snapshot (2026-10-14 22:34 UTC)
 
