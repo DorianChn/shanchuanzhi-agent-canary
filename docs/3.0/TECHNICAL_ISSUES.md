@@ -2,21 +2,18 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 05:04 UTC）
+## 当前调度（2026-10-14 05:17 UTC）
 
-- 双槽节奏已实际执行：M3/M4 并行改动并提交，M6/M7 并行 PR/CI 审计；当前两个活跃槽是 M1 与 M2。M1 核对 #44：旧 5ms approval TTL 测试在 8.64ms 后读取并 sweep 掉 requestId，属于测试竞态；修正在 M1 PR #43，当前头 run `38502266488` 为 9/9。Issue #44 等本批以证据更新并关闭。
-- M1 当前处理 #32：比较失败的 PR #30 head `16a9142` / run `38512532532` 与修复候选 PR #43 head `2276526`；本地证实旧头不含 `46af1f1`，修复头含该测试时序修正。#32 继续 OPEN，待 M1 完成核对并在修复进入 PR #30 基线后复验。
-- M2 已在独立分支本地提交 `10a608f`，补充 Hook fail-closed 限制与 WSL2 环境证据；focused hook protocol/JSON/syntax/diff 检查通过。M0 实读原生 Windows Codex CLI `0.162.0-alpha.17.2` 且配置为 `windows.sandbox="elevated"`；M2 正用单命令 CLI 探针核验隔离。桌面原生 Shell 集成仍 UNPROTECTED，未完成探针前 #45 保持 OPEN。
-- PR #30 当前 head 16a9142、run 38512532532：7 个 job 通过；Windows Node 20 测试为 321 pass、1 fail、4 skip，package-smoke 跳过。唯一失败是 test/agent-hook.test.ts:54 的中断 marker 断言，属于 M1 路径；PR #43 当前头的独立 CI 9/9 通过，不替代 PR #30 base 的结果。Issue #32 保持 OPEN，待集成后的 CI 再验。
-- M2 PR #37 head 63b9c08，run 38512537164 的 9 个 CI jobs 全通过；callback binder 不代表 Gateway/AppContainer/宿主安装完成，原生 Codex Shell 仍 UNPROTECTED。
-- M3 本地 commit 54facf0：契约专属附录、发行命令 NOT_VERIFIED 文案和 connect-check limits 修复；build 与 Windows Node 22 定向测试 14/14 通过，共享契约路径净 diff 为零。PR #33 仍旧头 c404b6b，待本批推送和新 CI。
-- M4 本地 commit f301195：安全中心冲突展示与 UI 回归；build、定向测试 6/6、diff check 通过；两个缺失后端 API 实测 404，UI 保持 UNKNOWN/UNSUPPORTED。PR #34 仍旧头 fe2c973，待本批推送和新 CI。
-- M5 本地候选 f8291c9 已推至 feature/ac3-policy-audit；44/44 测试、TypeScript no-emit、diff check 通过。待本批建立 P0 Issue 和 Draft PR。Issue 应描述 OBSERVE 下显式 DENY/SENSITIVE_DATA 的关键安全不变量和 synthetic 回归，不声称真实敏感数据已泄露；候选进入 PR/集成并完成 CI 前保持 OPEN。
-- M6 PR #38 head d513810，run 38512550585 的 9 个 jobs 全通过。PR 实际包含归档 synthetic bundle 20261013T084123Z；未跟踪的 20261013T114513Z 16 文件目录保持本地。PR body 旧失败叙述过期，待本批更新；E4 仍 BLOCKED / NOT_VERIFIED。
-- M7 PR #39 head 5c7d95d，run 38510356534 的 9 个 jobs 与 wrapper run 38510356548 两平台任务通过；Windows 固定 NSIS 编译步骤通过。Issue #41 的候选修复已验证，Issue 保持 OPEN 等待集成；运行时取消回滚与 clean-VM 安装/升级/卸载仍 NOT VERIFIED / HOLD。
-- M8 PR #40 head b0f30ff，CI run 38397180263 成功，但 PR body 仍写 pending；待本批刷新。
-- 额度页 04:59 UTC 实读：5 小时 73%、50 分钟后重置；周额度 80%、余额 113。低于 5% 或无法确认读数时暂停所有模块、测试、浏览器与 GitHub 操作，直至确认额度重置。
-- 最近 push 批次约 04:37 UTC；本次 GitHub 写入集中在 05:00 UTC 批次，下一批不得早于 05:20 UTC。VMware、真实模型、安装测试互斥，目前均未预约。
+- 最多同时占用两个开发槽；当前 M0 通过 GitHub Issue/PR 驱动 M2 的 #32 修复整合、M5 的 #48 路由契约协调及 M3 的 #46 共享文档修复。Codex 引用聊天无法由本会话工具读取或直接发消息，模块实际会话运行状态无法确认。
+- [#32 Hook interruption marker failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：P1 / OPEN。M2 当前 PR #37 的 Windows Node 20 job再次命中相同 marker 竞态；M1 PR #43 独立候选 9/9 通过但尚未进入共同基线。macOS Node 20 与 Windows Node 22 是 fail-fast 取消，不列为测试失败。
+- [#44 Gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)：P1 / OPEN。M1 识别短 TTL 测试时序竞态；PR #43 的当前候选 9/9 通过。没有观察到审批绕过；等候修复集成和共同基线复验。
+- [#45 Resolve native Codex Shell unprotected boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)：P1 / OPEN。Windows CLI 的 :workspace 合成探针只验证允许路径；未测试拒绝路径或 Desktop Shell/Hook。原生桌面状态保持 UNPROTECTED。
+- [#46 Preserve canonical API_CONTRACTS.md across module PRs](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/46)：P2 / OPEN。M0 owns shared contract; M3/M5 must preserve the canonical file and submit public contract proposals for owner review. No runtime defect asserted.
+- [#48 Reconcile OBSERVE sensitive-read deny with router contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)：P1 / OPEN。M5 PR #47 的 Ubuntu Node 22 job failed the same-Guard security-router test with observe_sensitive_data_blocked; five other matrix jobs were cancelled by fail-fast. Preserve the sensitive-read denial and no-callback invariant while M1/M5 align the fixture, adapter and contract.
+- #41 M7：P1 / OPEN，CI 修复候选通过 9/9 与两个 wrapper jobs，仍待集成；clean-VM/runtime rollback 未验证。
+- #27/#28 remain open for package-manifest and Gateway ownership coordination. #35 is closed within its documented same-process scope; #42 is closed based on the then-current M3 PR head. No new P0 incident is established.
+- 05:16 UTC quota page read: five-hour 73%, about 34 minutes to reset; weekly 80%, balance 113. If the five-hour reading is below 5% or unavailable, stop development, testing, browser, and GitHub work until reset is confirmed.
+- Latest branch push batch included only existing M0/M2/M4 branches; next push not before 05:32 UTC. VMware, real-model and install tests share one exclusive slot; M0 has no observed booking.
 
 ## 历史调度（2026-10-14 04:36:33 UTC）
 
