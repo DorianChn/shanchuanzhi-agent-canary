@@ -27,7 +27,8 @@
 ### 尚未满足的 fail-closed 与外部验收门槛
 
 - P0 #35 虽已关闭，其 M0 澄清仅覆盖同进程、同一 Guard、且遵守 AbortSignal 的 callback；不能推断为更广的宿主隔离保证。#32 的间歇 Hook marker 根因仍未知，不能以本地绿色测试关闭。
-- 最近一次只读状态核对时 P1 #27、#28、#32、#44、#45、#48 仍开放或未解决。M2 最新证据仍将 Desktop Native Codex Shell 标为 UNPROTECTED / BLOCKED_NOT_VERIFIED：候选 Hook 片段没有安装或确认加载/信任；没有执行真实 Desktop native Shell sentinel，也没有观察到宿主决策。M2 的 synthetic hook 协议拒绝不能证明真实宿主受保护。#44 approval-expiry 根因未知；#48 的 M5/router 契约尚待复核。保持相关路径 fail-closed，不因本地组合通过而宣称门禁解除。
+- 最近一次只读状态核对时 P1 #27、#28、#32、#44、#45、#48 仍开放或未解决；#32 owner disposition 与间歇 Hook marker 根因仍待确认。M2 最新证据仍将 Desktop Native Codex Shell 标为 UNPROTECTED / BLOCKED_NOT_VERIFIED：候选 Hook 片段没有安装或确认加载/信任；没有执行真实 Desktop native Shell sentinel，也没有观察到宿主决策。M2 的 synthetic hook 协议拒绝不能证明真实宿主受保护。#44 approval-expiry 根因未知。
+- Issue #48 仍为 OPEN。M5 PR #47 head cf4e2cd 的独立 CI run 38527097304 为 9/9，M1 PR #43 head f59ba37 的 run 38522973084 为 9 jobs 全绿；M9 组合 HEAD 83d7268 的 aggregate verify 也通过（397 total、391 pass、0 fail、6 env skip，覆盖仓库级 build/test/package smoke）。这些结果证明各 PR head 的独立 CI 和当前组合的仓库级测试通过，但不证明真实 M1+M5 宿主接线或运行时行为。合并候选远端 CI 与真实 M1+M5 宿主接线验收仍 pending；保持相关路径 fail-closed，不因本地组合通过而宣称 Issue #48 门禁解除。
 - M6 外部独立 E4 仍为 NOT_VERIFIED；本轮测试的 Auto E4 部分使用合成 fixture，不是外部独立性证据。M7 clean-VM 安装、升级、卸载和取消回滚仍未验证；未启动或运行操作系统安装程序。npm package smoke 的临时 npm 包检查不代表原生安装器验证。没有真实安装或 VMware 证据，不能据打包 smoke 宣称这些门槛通过。
 - 因此当前结果是本地组合的 build、test、package smoke 和 docs check 通过；评审、契约、开放 Issue、组合后远端 CI 以及上述未覆盖运行环境门槛仍待解决。本分支未推送，未合并 main 或 PR #24，未发布 Release。
 
