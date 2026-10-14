@@ -1,21 +1,15 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 03:08:17 UTC；实时复核）
+## 当前状态（2026-10-14 03:50:24 UTC；实时复核）
 
-- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；最近可见 checks 11/11 通过。CLI 没有报告该分支的 required checks，branch protection 规则未确认；本任务没有修改或合并此 PR。
-- PR #30：OPEN/Draft，M0 head f13ddd0；最近 checks 为 9 个常规 CI jobs 加 ownership contract gate，全通过。
-- M1：PR #43 OPEN/Draft，head 2276526，run 38502266488 的 9/9 通过；#35 CLOSED。#32/#44 OPEN，历史故障归因仍 UNKNOWN；当前未新分配 M1 开发槽。
-- M2：PR #37 OPEN/Draft，9/9 通过；#45 OPEN，原生 Codex Shell 仍 UNPROTECTED。
-- M3/M4：PR #33/#34 OPEN/Draft，分别 9/9 通过；#42 CLOSED。
-- M5：本地 HEAD 9ec08d9，当前无开放 PR；按 #27 协调共享 API 契约和 package.json 字段。
-- M6：AC3 PR #38 OPEN/Draft，7 pass、1 Windows Node 22 fail、1 package-smoke skipped；外部 E4 保持 NOT_VERIFIED，未跟踪 E4 run 保留本地。
-- M7：当前唯一分配的模块槽位。PR #39 远端 head 4f3a2c5 的 CI 仍失败；本地候选 9b0a504 的 Windows 聚焦测试 3/3、reliability 43 pass/3 skip/0 fail。候选未推送，尚无新 head CI、实际 NSIS 编译或干净 VM 安装验收。#41 OPEN；先由 owner 清理本机绝对路径。
-- M8：PR #40 OPEN/Draft，9/9 通过。M9：PR #36 OPEN/Draft，9/9 通过；集成验收未完成。
-- M1–M8 worktrees 的共同 merge-base 为 AC3 commit 62496d4020bd90ba2eede49b2e80a2bbebb036b4。M0 修复 Git worktree prunable 指针，改动仅限管理元数据；使用 core.autocrlf=true 复核 CRLF worktrees。M6 AC3 worktree 有一个本地未跟踪 E4 run，未改动。
-- 排程按用户最新要求为单槽：只处理 M7；其后再处理 #28/#45，不启动其他模块并行实现。上一远端 push 为 02:44:51 UTC，下一次不早于 03:04:51 UTC，之后每批至少间隔 20 分钟。
-- 额度监视在 02:57:50 UTC 读到 88% 剩余、约 2h52m 重置；用户截图显示 91%/约 4h，均高于 <5% 暂停线。低于 5% 或读数未知时暂停，确认五小时额度重置后恢复。
-- 未合并 main、未合并 PR #24、未发布 Release；VMware、真实模型和安装测试当前没有运行。
-
+- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；本次复核 11/11 checks 通过。未修改或合并。
+- PR #30：OPEN/Draft，M0 head 71aec025177eae0ae379f4aff70ecdc3b6fa24c9；9 个常规 CI jobs 与 ownership-contract gate 均通过。
+- M7 是当前唯一开发槽。工作树 feature/ac3-reliability-ac3 干净，HEAD/PR #39 head 均为 f66dcc6。新 head CI 为 8 pass、2 fail、1 skipped：Windows NSIS 编译失败，报 .onUserAbort 重复定义；Windows Node 22 的 M1-owned Hook 中断用例在 test/agent-hook.test.ts:54 未观察到 marker。#41 OPEN；M7 的编译失败已记入 #41，MUI_CUSTOMFUNCTION_ABORT 是官方 MUI2 文档提供的受支持回调方式，待 M7 通过实际编译和当前头 CI 验证。#32 跟踪 Hook marker 回归，暂不启动第二模块槽。
+- M7 之前的本地证据仍仅为 Windows focused regressions 3/3、reliability 43 pass/3 skip/0 fail；这些不能替代 NSIS 编译或 Windows Node 22 全套结果。未运行本地安装器或 VMware；真实安装验收仍 NOT VERIFIED / HOLD。
+- 其他模块矩阵沿用本文件 03:08 快照；本轮没有启动第二个模块。M9 最终集成验收未完成。
+- 用量页 03:50:24 UTC 实时读数为五小时额度剩余 84%、约 2h9m 后重置。用户截图显示 91%/约 4h，为其截图时读数；两者均高于 5% 暂停线。若实时读数低于 5% 或无法读取，暂停开发、测试和 GitHub 操作；确认五小时额度重置后恢复。
+- 最近远端 push 为 PR #39 于 03:31:52 UTC；下一批不得早于 03:51:52 UTC，多个就绪分支合并到同一批处理。
+- VMware、真实模型、安装测试互斥；当前没有此类本地测试运行。未合并 main、未合并 PR #24、未发布 Release。
 
 ## 历史快照（2026-10-13 16:16 UTC；保留作记录）
 

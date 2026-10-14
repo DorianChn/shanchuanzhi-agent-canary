@@ -2,22 +2,21 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 03:08:17 UTC）
+## 实时风险快照（2026-10-14 03:50:24 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
-| #35 Guard quarantine | P0 | M1 PR #43 head 2276526 的 9/9 CI 通过；Issue #35 已关闭。仅确认同一进程、同一 Guard，且 callback 配合 AbortSignal。 | CLOSED（范围有限） |
-| #32 Hook interruption | P1 | 当前 M1 PR checks 通过，但既有 Windows marker 失败根因未获 owner 结论。 | OPEN / UNKNOWN |
-| #44 approval expiry | P1 | 当前 M1 PR checks 通过；历史 requestId 失败根因仍 UNKNOWN。 | OPEN / UNKNOWN |
-| #41 M7 reliability CI | P1 | 远端 PR #39 head 4f3a2c5 仍有 CI 失败；候选 9b0a504 本地 tests 通过，未推送且无新 head CI。 | OPEN |
-| #45 native host Shell | P1 | PR #37 子进程范围通过；原生 Codex Shell 为 UNPROTECTED。 | OPEN |
-| #27 manifest / package fields | P1 | M3/M5/M6/M7 仍需确认字段组合；M6 外部 E4 未验证。 | OPEN |
-| #28 Gateway lifecycle | P1 | M1 为接口 owner，M7 需与其 Gateway close/quarantine 行为完成组合验收。 | OPEN |
-| worktree pointers | P2 | 已修复 M3/M4/M6、coordinator、integration、main 与旧 M6 worktree 的登记指针；登记路径当前有效。 | FIXED LOCALLY |
-| quota / scheduling | 调度门槛 | 02:57:50 UTC 读数 88% 剩余；当前只分配 M7 一个开发槽，push 间隔至少 20 分钟。 | MONITOR |
+| #35 Guard quarantine | P0 | Issue #35 已 CLOSED；证据仅覆盖同进程、同 Guard 与 AbortSignal callback。跨进程/shared-store 未证明。 | CLOSED（范围有限） |
+| #32 Hook interruption | P1 | PR #39 head f66dcc6、run 38506733463 的 Windows Node 22 测试未观察到子进程 marker；M1 所有，fail-closed 断言保留。 | OPEN / UNKNOWN |
+| #44 approval expiry | P1 | 历史 requestId 失败根因仍 UNKNOWN；Issue 仍 OPEN。 | OPEN / UNKNOWN |
+| #41 M7 reliability CI | P1 | PR #39 head f66dcc6：Windows NSIS 编译因 .onUserAbort 重复定义失败；新 NSIS 门禁确实运行。Windows Node 22 另被 #32 失败阻断。 | OPEN |
+| #45 native host Shell | P1 | PR #37 原生 Codex Shell 仍 UNPROTECTED；详见最近模块矩阵。 | OPEN |
+| #27 manifest / package fields | P1 | M3/M5/M6/M7 组合仍需校验；M6 外部 E4 为 NOT_VERIFIED。 | OPEN |
+| #28 Gateway lifecycle | P1 | M1 是接口 owner；M7 需完成 Gateway close/quarantine 组合验收。 | OPEN |
+| worktree pointers | P2 | 已修复管理指针；03:08 复核后未发现新指针问题。 | FIXED LOCALLY |
+| quota / scheduling | 调度门槛 | 03:50:24 UTC 用量页 84% 剩余、约 2h9m 重置；当前仅 M7 单槽，推送间隔至少 20 分钟。 | MONITOR |
 
-VMware、真实模型和安装测试互斥；本快照没有此类测试运行。低于 5% 或额度页不可读时停止开发、测试和推送；确认五小时额度重置后再继续。
-
+VMware、真实模型和安装测试互斥；本快照没有此类本地测试运行。低于 5% 或实时额度不可读时暂停开发、测试和 GitHub 操作；确认五小时额度重置后再继续。
 
 ## 历史风险增量（2026-10-13 16:16 UTC）
 
