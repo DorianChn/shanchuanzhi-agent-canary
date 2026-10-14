@@ -13,6 +13,7 @@
   "optionalAuditLog": "PASS",
   "alertWriteFailure": "DENY_WITH_VISIBLE_WARNING",
   "malformedInputDecision": "deny",
+  "malformedEventShapeDecision": "deny",
   "commandExecuted": false,
   "rawCommandLogged": false,
   "commandSha256Logged": true,

@@ -35,6 +35,27 @@ assert.match(
   /native_shell_acceptance=BLOCKED_NOT_VERIFIED/,
 );
 
+for (const malformedEvent of [
+  "null",
+  "[]",
+  JSON.stringify({ tool_name: "Bash", tool_input: { command } }),
+  JSON.stringify({ hook_event_name: "PreToolUse", tool_input: { command } }),
+  JSON.stringify({
+    hook_event_name: "PreToolUse",
+    tool_name: "Bash",
+    tool_input: null,
+  }),
+]) {
+  const malformedShapeOutput = JSON.parse(
+    execFileSync(process.execPath, [hook], {
+      input: malformedEvent,
+      encoding: "utf8",
+    }),
+  );
+  assert.equal(malformedShapeOutput.hookSpecificOutput.permissionDecision, "deny");
+  assert.match(malformedShapeOutput.systemMessage, /could not be fully validated/);
+}
+
 const logDir = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-hook-test-"));
 const logPath = path.join(logDir, "alerts.jsonl");
 try {
@@ -95,6 +116,7 @@ try {
       optionalAuditLog: "PASS",
       alertWriteFailure: "DENY_WITH_VISIBLE_WARNING",
       malformedInputDecision: "deny",
+      malformedEventShapeDecision: "deny",
       rawCommandLogged: false,
       unrelatedTool: "PASS_THROUGH",
     }) + "\n",
