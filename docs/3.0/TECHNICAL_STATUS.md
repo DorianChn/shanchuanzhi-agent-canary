@@ -1,12 +1,12 @@
 # M0 技术协调状态
 
-## 当前权威快照（2026-10-14 17:32 UTC）
+## 当前权威快照（2026-10-14 17:54 UTC）
 
-- **额度与调度**：用量页标签页保持打开；17:32 UTC 实读五小时剩余 97%（约 3 小时 36 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行。最近分支推送批次为 17:12 UTC；本批自 17:32 UTC 起允许。VMware、真实模型、安装测试未启动。
-- **当前 PR / CI**：PR #24 仍 OPEN/Draft、head 62496d4，未触碰。M0 #30 head 39e2cc2 10/10（产品 run 38604686940、ownership 38604687014）；M1 #43 head d26a0c3 / run 38602072618 9/9；M5 #47 远端 head 5fd4707 / run 38561283918 9/9，报告更新本地提交 584f96c；M9 #36 head ed0dd01 / product run 38604703774 9/9（含 package-smoke）、wrapper run 38604703745 2/2。M7 #39 head 4267c61 含 6d978a5 的 M1 close-contract 集成，run 38596572303 9/9、wrapper 38596572179 2/2；M1 owner 已确认契约，Issue #28 已由 M0 按其范围关闭。相关 PR 仍 OPEN/Draft；M9 docs-on-AC3 CI 不等于 M1–M8 产品集成验收。
-- **接口路径 / Issue**：M9 根契约 SHA-256 与 M0 canonical 文件一致（fe10af13af8e2da1bc22edff6c1b1e4b09dae094abe6556d992c04647bd639ea）；M9 M1 模块契约与 M1 owner 文件一致（b10a3c515ec0da787f4145ebb6069c18292095245fad254d8c5a2ccd24930aa0）。Issue #48 已按 hard-deny、零审批/零 callback、safe-read/egress 语义和相关 CI 验收关闭；Issue #49 已按路径/hash 与 M9 exact-head CI 验收关闭。Issue #46 仍 OPEN，等待 M5 report-only commit 进入 PR #47、新 head CI 及 PR 描述回读。
-- **未完成问题**：#27 manifest union/M6/E4 组合未验证；#32 marker 根因 UNKNOWN；#41 clean-VM 安装 HOLD/NOT VERIFIED；#44 等 M9 baseline acceptance；#45 原生 Codex Shell UNPROTECTED；#46 等 M5 报告提交推送、精确 head CI 与 PR 描述同步；外部 E4 NOT_VERIFIED；M4 backend UNKNOWN/UNSUPPORTED。
-- **边界**：不删除失败测试、不降低安全策略、不伪造结果；不合并 main 或 PR #24，不发布 Release。只按文件系统、GitHub 与当前可见用量页核验，不声称读取其他会话聊天内容。
+- **额度与调度**：用量页一直保持打开；17:54 UTC 实读五小时剩余 97%（约 3 小时 14 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行。最近分支推送批次为 17:32 UTC；下一批间隔已满足。VMware、真实模型、安装测试未启动。
+- **当前 PR / CI**：PR #24 仍 OPEN/Draft、head 62496d4，未触碰。M0 #30 远端 head 63d10b8，run 38608350412 产品 9/9、run 38608350594 ownership 1/1；M1 #43 head d26a0c3 / run 38602072618 9/9；M5 #47 远端 head 584f96c / run 38608355200 9/9，本地报告快照最新提交 b672f89 待批量推送；M9 #36 远端 head ed0dd01 / product run 38604703774 9/9、wrapper run 38604703745 2/2，本地 docs-only 契约同步提交 c09cdde 待推送与新头 CI。M7 #39 head 4267c61、run 38596572303 9/9、wrapper 38596572179 2/2；Issue #28 按 Gateway/Guard 合同范围关闭。相关 PR 仍 OPEN/Draft。
+- **M9 集成候选与契约**：M9 分支相对 AC3 基线有 137 个变更路径，包含 Gateway、policy、onboarding、execution-isolation、desktop、E4 verifier、reliability、package manifest、测试和文档，属于多模块集成候选。远端 ed0dd01 的现有 CI 为 9/9 + wrapper 2/2；Issue #27 的 M3/M5/M6/M7 字段确认、M6 迁移证据和新头验收仍待核清。M0 canonical 文档本地 SHA-256 为 f51bcd6e7f74f7f2937fc0b5b66158a4fb80399b4ccab4fc4d99b45c12e817be；M9 本地 c09cdde 已同步该文件。远端 Issue #49 当前 CLOSED，待同批同步后重新核对远端 hash 和 CI。
+- **问题状态**：#28、#44、#48 已按有限范围关闭；#49 远端 CLOSED、契约同步候选待推送；#46 OPEN，待 M5 报告提交推送、PR #47 描述同步和新头 CI；#27 manifest/模块 owner 组合 OPEN；#32 marker 根因 UNKNOWN；#41 clean-VM 安装 HOLD/NOT VERIFIED；#45 原生 Codex Shell UNPROTECTED；外部 E4 NOT_VERIFIED；M4 backend UNKNOWN/UNSUPPORTED。
+- **边界**：不删除失败测试、不降低安全策略、不伪造结果；不合并 main 或 PR #24，不发布 Release。仅按文件系统、GitHub 和当前可见用量页核验，不声称读取其他会话聊天内容，也不把 CI 等同于原生宿主、clean-VM 或外部 E4 验收。
 
 本节为当前快照；较早时间点内容按历史记录保留。
 

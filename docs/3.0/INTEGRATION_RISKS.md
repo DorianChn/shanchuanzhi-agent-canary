@@ -1,24 +1,24 @@
 # M0/M9 集成风险登记
 
-## 当前风险快照（2026-10-14 17:32 UTC）
+## 当前风险快照（2026-10-14 17:54 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
-| Shared API contract path | P1 | PR #30 `39e2cc2` 10/10 与 PR #43 `d26a0c3` 9/9 保持 M0 root canonical + M1 owner path；M9 #36 head `ed0dd01` 两个文件 SHA-256 均与 owner 文件一致，product 9/9 + wrapper 2/2。 | CLOSED in Issue #49; no runtime acceptance implied |
-| #27 package/M6 composition | P1 | M9 PR #36 docs-on-AC3 CI 9/9 + wrapper 2/2；该 head 未组合 M3/M5/M6/M7 实现，manifest union 与 AC3 E4 path 未核实。 | OPEN |
-| #28 Gateway lifecycle | P1 | M7 PR #39 head `4267c61` includes `6d978a5`; current-head CI 9/9 + wrapper 2/2, exact M1 Gateway/Guard blobs, M1 owner confirmation #issuecomment-6174345116, and M0 acceptance #issuecomment-6174407469. | CLOSED (SCOPED); no merge/full-product claim |
-| #32 Hook interruption | P1 | Current PR #30/#37/#39/#40/#43/#47 heads pass; historic Windows marker root cause remains UNKNOWN and child-process evidence does not prove host callback behavior. | OPEN / HISTORICAL ROOT CAUSE UNKNOWN |
+| Shared API contract path | P1 | M0 #30 63d10b8 与 M1 #43 d26a0c3 保持 root canonical + M1 owner path；M9 远端 ed0dd01 两份 hash 一致、product 9/9 + wrapper 2/2。本地 M0/M9 候选 hash f51bcd6e…e817be，M9 c09cdde 待推送。 | Issue #49 远端仍 CLOSED；同批推送后核验 |
+| #27 package/M6 composition | P1 | M9 候选相对 AC3 有 137 个变更路径，含多模块 source/test/package/docs；远端 ed0dd01 CI 9/9 + wrapper 2/2。M3/M5/M6/M7 owner 字段确认、AC3 迁移和新头 CI 仍待闭环。 | OPEN |
+| #28 Gateway lifecycle | P1 | M7 #39 head 4267c61 含 6d978a5；CI 9/9 + wrapper 2/2，M1 owner confirmation #issuecomment-6174345116，M0 scoped acceptance #issuecomment-6174407469。 | CLOSED (SCOPED); no merge/full-host claim |
+| #32 Hook interruption | P1 | 当前相关 PR CI 通过；历史 Windows marker 根因仍 UNKNOWN，子进程证据不证明 host callback 行为。 | OPEN / HISTORICAL ROOT CAUSE UNKNOWN |
 | #35 Guard quarantine | P0 | CLOSED only for same process, same Guard, and callbacks honoring AbortSignal. | CLOSED (LIMITED SCOPE) |
-| #41 installer lifecycle | P1 | M7 current CI/wrapper and pinned NSIS/template compilation pass; no clean-VM lifecycle result. | OPEN / HOLD / NOT VERIFIED |
-| #44 approval expiry | P1 | M1 PR #43 head `d26a0c3` run `38602072618` 9/9；精确到期拒绝、清理、callback=0。M9 baseline remains pending. | OPEN |
-| #45 native Shell | P1 | M2 AppContainer child-process tests and Hook protocol fixture do not cover the native Codex Shell. | OPEN / UNPROTECTED |
-| #46 OBSERVE documentation sync | P2 | M0 canonical is on PR #30 `39e2cc2`; M5 #47 exact head `5fd4707` passed 9/9; #48 policy/router acceptance is CLOSED. M5 report-only commit `584f96c` awaits next push and fresh CI; PR #47 description still needs sync. | OPEN / REPORT AND PR DESCRIPTION SYNC PENDING |
-| #48 OBSERVE policy/router behavior | P1 | Current M5/M1/M0/M9 exact-head assertions and CI are recorded in closed Issue #48. | CLOSED (SCOPED) |
-| External E4 | P1 | M6 verifier CI is green but is fixture/package verification only. | NOT VERIFIED |
-| M4 backend state | P2 | Current endpoint responses remain UNKNOWN/UNSUPPORTED. | OPEN |
-| quota / push interval | Scheduling gate | Usage page 17:32 UTC: five-hour 97%, weekly 64%, 113 credits; last branch batch at 17:12 UTC. | MONITOR; batch interval elapsed; recheck before push |
+| #41 installer lifecycle | P1 | pinned NSIS/template compile 有 CI 证据；无 clean-VM install/upgrade/uninstall/cancel-rollback 结果。 | OPEN / HOLD / NOT VERIFIED |
+| #44 approval expiry | P1 | M1 #43 d26a0c3 run 38602072618 9/9，精确过期拒绝、pending 清理、callback=0；M9 源码/测试 blob 相同且 ed0dd01 checks 9/9 + wrapper 2/2。 | CLOSED (SCOPED; issuecomment-6174752088) |
+| #45 native Shell | P1 | M2 AppContainer child-process tests and Hook protocol fixture do not cover native Codex Shell. | OPEN / UNPROTECTED |
+| #46 OBSERVE documentation sync | P2 | M0 canonical #30 63d10b8; M5 #47 remote 584f96c run 38608355200 9/9; local M5 report b672f89 pending. PR #47 body still has stale path/status text. | OPEN / REPORT + PR DESCRIPTION SYNC PENDING |
+| #48 OBSERVE policy/router behavior | P1 | Hard-deny, zero-approval/zero-callback and safe-read/egress assertions are covered by scoped issue evidence and passing current-head checks. | CLOSED (SCOPED) |
+| External E4 | P1 | M6 verifier CI is fixture/package verification only; real external evidence remains unverified. | NOT VERIFIED |
+| M4 backend state | P2 | Current endpoint state remains UNKNOWN/UNSUPPORTED. | OPEN |
+| quota / push interval | Scheduling gate | Usage page 17:54 UTC: five-hour 97%, weekly 64%, 113 credits; last push batch 17:32 UTC. | MONITOR; 20-minute spacing satisfied |
 
-Do not merge `main` or PR #24, publish a Release, or claim fixture/CI results as native-host, external-E4, or clean-VM acceptance.
+Do not merge main or PR #24, publish a Release, or claim fixture/CI results as native-host, external-E4, or clean-VM acceptance.
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
