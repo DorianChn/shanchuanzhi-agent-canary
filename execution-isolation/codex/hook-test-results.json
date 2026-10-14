@@ -1,0 +1,25 @@
+{
+  "schema": "agent-canary.m2.hook-test.v1",
+  "protocol": "PASS",
+  "testedPlatforms": [
+    "Windows Node.js 22.23.1",
+    "PowerShell 7.6.5"
+  ],
+  "input": "PreToolUse/Bash synthetic protected-write event fixture; command was passed as hook input only and was not executed",
+  "syntheticProtectedWriteDecision": "deny",
+  "visibleWarning": "UNPROTECTED_NATIVE_SHELL",
+  "boundaryStatus": "UNPROTECTED",
+  "nativeShellAcceptance": "BLOCKED_NOT_VERIFIED",
+  "optionalAuditLog": "PASS",
+  "alertWriteFailure": "DENY_WITH_VISIBLE_WARNING",
+  "malformedInputDecision": "deny",
+  "commandExecuted": false,
+  "rawCommandLogged": false,
+  "commandSha256Logged": true,
+  "windowsCommand": "PASS from repository-root working directory",
+  "projectConfigInstalled": false,
+  "liveCodexAlert": "NOT_ACTIVE_UNTIL_PROJECT_HOOK_IS_INSTALLED_AND_TRUSTED",
+  "m0OwnershipCoordination": "REQUIRED_FOR_ROOT_HOOK_CONFIG",
+  "codexLifecycle": "NOT_TESTED",
+  "projectHookTrust": "REVIEW_REQUIRED"
+}
