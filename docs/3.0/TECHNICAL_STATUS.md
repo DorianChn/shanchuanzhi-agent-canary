@@ -1,6 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 21:26 UTC)
+## Current authoritative snapshot (2026-10-14 21:53 UTC)
+
+- 用量页在 21:53 UTC 可读且高于 5% 停工线；具体百分比和余额只保存在被 gitignore 忽略的本地协调报告。用量页保持打开。低于 5% 或不可读时停止所有开发、测试、浏览器与 GitHub 操作。
+- 本轮两个开发槽为 M3/#32 与 M4/#32，分别在现有 PR #33/#34 分支处理 M1 owner 批准的异步 marker/interruption 夹具移植。21:53 核验时，#32 最新路由 comment 6179220646 后无模块 owner 回复；两个工作树均干净，head 未变。PR #33 head `d9364cc5ad533b8b922859e97d2387e70718d931` 的 exact-head CI `38555297535` 通过 9/9；PR #34 head `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b` 的 exact-head CI `38555299339` 通过 9/9。#32 继续 OPEN；子进程夹具不观测 native-host callback。
+- M6 当前不占开发槽。#27 comment 6179220160 仅记录释放槽位，不是 owner signoff；PR #38 仍 OPEN/Draft，head `ed82f0612b9f69463afc9c80a1082b951e7e88fe`。已知 M6/M9 的三个 `e4:*` 字段静态值相同；外部 E4 仍 NOT_VERIFIED，M6 未跟踪 evidence 目录保留。
+- M1 对 `d3b64fc` 的接受仅限异步 marker-wait/interruption 定时行为等效；不是 byte-for-byte 等效、native callback 证明或宿主验收。M1 仍拥有 Hook 实现与测试语义，#32 不因该 owner disposition 关闭。
+- M0 PR #30 为 OPEN/Draft，head `9a8a79ed5b9034b69eb62f299ebdfbaca6d17276`；产品 CI `38641094976` 通过 9/9，ownership runs `38641094955` 与正文更新触发的 `38641613332` 均通过 1/1。当前协调分支最新推送为 21:32 UTC；本批推送已到时间窗，下批不早于 22:13 UTC。
+- PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`，head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；刚核验 9 项产品与 2 项 wrapper checks 全通过，未修改或合并。M9 PR #36 仍 OPEN/Draft at `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`；其外部 E4、原生 Codex Shell 与 clean-VM 门槛未闭合。
+- 仍开放的关键门槛包括 #27 M6 owner signoff/组合验收、#32 受影响分支 fixture 更新、#41 clean-VM 生命周期、#45 原生 Codex Shell 仍 UNPROTECTED；M4 后端安全/E4 保持 UNKNOWN。其他窗口 VMware/真实模型/安装资源占用不可见，不能假设空闲。
+- 本次 M0 仅更新协调文档；不改模块源代码、不运行产品测试、不合并 main 或 PR #24、不发布 Release。
+
+## Archived snapshot (2026-10-14 21:26 UTC)
 
 - 用量页在 21:26 可读且高于 5% 暂停线；精确额度保存在被 gitignore 忽略的本地报告。低于 5% 或不可读时停止开发、测试、浏览器及 GitHub 操作。上次分支推送在 21:08 UTC，本批计划 21:32 UTC。
 - 两个模块槽仍为 M3/#32 与 M6/#27。最新状态请求为 #32 comment 6178865306、#27 comment 6178865803；截至21:26没有负责人回复或模块 head 变化。M3工作树在该 head 干净；M6 未跟踪 E4 证据目录原样保留。

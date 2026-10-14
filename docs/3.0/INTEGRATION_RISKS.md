@@ -1,6 +1,22 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 21:26 UTC)
+## Current integration risk snapshot (2026-10-14 21:53 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #27 M6 package fields | P1 | M6 slot released at 21:47; owner signoff is still absent. M6/M9 `e4:auto`, `e4:verify`, `e4:test` match by static read only. | Keep OPEN through explicit M6 owner disposition and M9 integration acceptance; external E4 remains NOT_VERIFIED. Preserve M6's untracked evidence directory. |
+| #32 Hook interruption fixture | P1 | M1 accepts `d3b64fc` only for timing-fix behavior. M3/#33 and M4/#34 now hold the two active slots; at 21:53 both worktrees are clean and heads unchanged. Their existing exact-head CIs pass, but both copies remain old synchronous blob `1ecb3ee`. | Keep OPEN until each owned branch updates the fixture and passes exact-head CI. Retain fail-closed/no-decision/output/log assertions. Native-host callback and historical root cause remain NOT_VERIFIED/UNKNOWN. |
+| #45 native Codex Shell | P1 | Native Shell remains UNPROTECTED; protocol and child-process fixtures do not prove installed-host enforcement. | Keep OPEN until evidence from an actual supported host, or user-facing state remains explicitly UNPROTECTED/BLOCKED. |
+| #41 installer lifecycle | P1 | Current evidence still lacks clean-VM install/launch/upgrade/uninstall/user-cancel rollback. | Keep OPEN/HOLD until lifecycle evidence exists. |
+| External E4 | P1 | Verifier tests and archived synthetic bundle do not establish independent external E4. | Keep NOT_VERIFIED. |
+| M4 backend | P1 | Backend security/E4 endpoints and enforcement remain UNKNOWN. | Do not report PASS without backend evidence. |
+| Exclusive VM/model/installer resources | P2 | Occupancy in other Codex windows is unavailable. | Treat as unavailable until #29 records reservation/release. |
+| M1 PR description | P2 | #43 body stale-push wording was previously reported to its owner; no correction is confirmed in this checkpoint. | M1 owner retains PR-body ownership. |
+| Quota / push cadence | Scheduling | Usage page readable and above stop threshold at 21:53 UTC; exact values are local-only. Last push 21:32 UTC. | Stop all work if quota <5% or unreadable. Next push batch no earlier than 22:13 UTC. |
+
+Issue #32 latest routing comment: 6179220646. Issue #27 slot disposition: 6179220160. PR #30 head `9a8a79e` product CI 38641094976 passed 9/9; ownership runs 38641094955 and 38641613332 each passed 1/1. PR #24 remains OPEN/Draft, unchanged, with 11/11 checks passing.
+
+## Archived snapshot (2026-10-14 21:26 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
