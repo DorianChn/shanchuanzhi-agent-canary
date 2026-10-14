@@ -1,6 +1,22 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 10:51 UTC；用量页 10:50 UTC 实读；GitHub 状态沿用 10:34 UTC 核验）
+## 当前状态（2026-10-14 11:10 UTC；用量页 11:10 UTC 实读；PR heads 11:07 UTC 刷新）
+
+- **额度与调度**：五小时剩余 98%、4 小时 48 分钟后重置；每周剩余 68%，余额 113。该页面已关闭。低于 5% 或读数不明时暂停开发、测试、浏览器及 GitHub 操作，确认实际重置后恢复。
+- **本地候选**：模块 worktree 在刷新后的对应远端分支上均为快进候选、无远端独有提交：M1 `4099ee3`（5 ahead）、M2 `d9d775b`（5 ahead）、M3 `d9364cc`（1）、M4 `69ec7f1`（1）、M5 `bcbec98`（2）、M6 `ed82f06`（1）、M7 `9088bd2`（4）、M8 `4c11981`（1）、M9 `f125e70`（87）。M6 未跟踪的 E4 原始运行目录原样保留。此快照写入时，当前批次尚未推送。
+- **PR #24**：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`，最近确认的旧 head 检查 11/11；本轮未修改、未推送、未合并。
+- **M0 / PR #30**：远端仍为 `a81a33d`。本地协调分支保留既有提交和本快照；未改 main。
+- **M1 / #32 / #44**：PR #43 远端 `f59ba37`；本地回归提交 `4099ee3` 覆盖精确到期时无 callback，定向过期测试 2/2。#44 的本地回归还需 M9 组合 CI；#32 marker 历史根因 UNKNOWN。#44 已收到本轮证据说明评论，Issue 仍 OPEN。
+- **M2 / #45**：PR #37 远端 `cb84f43`；Hook 协议测试覆盖显式 Bash 拒绝、无效输入和日志写失败。未能证明宿主原生 Shell 会执行该 Hook；Codex Desktop 原生 Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`。#45 已收到本轮边界说明评论，Issue 仍 OPEN。
+- **M3 / #27、M4、M5**：PR #33 `54facf0`、#34 `f301195`、#47 `cf4e2cd` 的远端 head 未变。本地分别为 M3 报告、M4 诊断修复（定向 7/7）、M5 policy 报告候选；新 head CI 尚未运行。#27/#48 仍等组合验收。
+- **M6 / #27**：PR #38 远端 `d513810`；本地 E4 测试 12/12、package smoke 100 文件通过，bundle verifier 保留 `NOT_VERIFIED`；不能代替外部 E4。
+- **M7 / #28 / #41**：PR #39 远端 `5c7d95d`。本地报告 `9088bd2` 记录没有可确认的干净 VM 快照；没有运行安装器或改动 VM。#41 clean-VM 安装/升级/卸载与真实取消回滚继续 `HOLD / NOT_VERIFIED`。
+- **M8**：PR #40 远端 `b0f30ff`；本地 `4c11981` 的 11 份公开文档更正经 `check-docs` 验证。未发布 Release；包注册表未认证状态不能证明是否发布。
+- **M9 / PR #36**：本地组合候选 `f125e70` 汇入已审阅的 M1/M4/M6/M7/M8 文件；`npm run verify` 为 393/399 通过、0 失败、6 项环境跳过，package smoke 100 文件通过，`npm run e4:test` 12/12。PR #36 远端仍 `996073a`；这些本地结果不是新 head GitHub CI，也不证明外部 E4、原生 Shell 或 clean-VM 安装通过。
+- **待关闭门槛**：#27 manifest/组合验收、#28 Gateway lifecycle 组合 CI、#32 Hook marker 根因、#41 clean-VM 安装验收、#44 组合 CI、#45 原生 Shell 宿主证据、#48 OBSERVE 联合验收仍 OPEN/HOLD；#46 为 P2 契约文档项。#35 CLOSED 的证据范围仍限同进程、同 Guard 且 callback 遵守 AbortSignal。
+- **推送边界**：批次仅更新各自已存在的 M0–M9 PR 分支；以 dry-run 结果和 fast-forward 推送为准。不得 force-push、修改/合并 main 或 PR #24，也不发布 Release。
+
+## 历史快照（2026-10-14 10:51 UTC；用量页 10:50 UTC 实读；GitHub 状态沿用 10:34 UTC 核验）
 
 - **额度与并发**：网页显示五小时剩余 43%、约 9 分钟后重置；每周 69%，余额 113。M1 #44 回归检查与 M2 #45 Hook 失败路径改进为当前 2/2 模块任务；M7/M8 已释放槽位。低于 5% 或读数不可用即暂停开发、测试、浏览器和 GitHub 操作。
 - **PR #24**：最近核验为 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`，检查 11/11；本轮未触碰、未合并。

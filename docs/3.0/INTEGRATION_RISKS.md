@@ -2,7 +2,27 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 10:51 UTC；额度页 10:50 UTC 实读）
+## 实时风险快照（2026-10-14 11:10 UTC；额度页 11:10 UTC 实读）
+
+| 风险 | 级别 | 责任与证据 | 状态 |
+| --- | --- | --- | --- |
+| #35 Guard quarantine | P0 | Issue #35 CLOSED；证据限同进程、同 Guard 实例且 callback 遵守 AbortSignal，不覆盖跨进程/shared-store 或强制终止。 | CLOSED（范围有限） |
+| #32 Hook interruption | P1 | PR #43 旧远端 head `f59ba37` 的 checks 通过；M1 本地 HEAD `4099ee3` 增加精确过期边界回归，但历史 marker 根因仍 UNKNOWN。 | OPEN / COMBINED CI PENDING |
+| #44 approval expiry | P1 | M1 精确到期时断言 `EXPIRED`、清除 pending 且 callback 零调用；2 个定向过期测试通过。新测试尚未经过 PR head CI/M9 组合验收。 | OPEN / COMBINED CI PENDING |
+| #48 OBSERVE sensitive read | P1 | M5 保留 hard DENY；PR #47 旧 head `cf4e2cd` 检查通过。M9 新组合 head CI 尚未运行，未确认真实数据泄露。 | OPEN / M9 CI PENDING |
+| #41 clean-VM install | P1 | M7 `9088bd2` 报告无法核实干净 VM 快照，安装程序来源未验证；未运行安装或变更 VM。 | HOLD / NOT VERIFIED |
+| #45 native host Shell | P1 | M2 协议测试不等于宿主集成；Codex Desktop 原生 Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`。Issue #45 已收到证据说明评论。 | OPEN / HOST EVIDENCE BLOCKED |
+| #27 manifest / E4 | P1 | M9 `f125e70` 本地组合 `npm run verify` 393/399、0 失败、6 环境跳过，100 文件 package smoke；M6 外部 E4 仍 `NOT_VERIFIED`。 | OPEN / COMBINED CI PENDING |
+| #28 Gateway lifecycle | P1 | M7 本地 `9088bd2` 和 M1 lifecycle 审核尚未进入当前 PR #39 远端 `5c7d95d` 的 CI。 | OPEN / CANDIDATE CI PENDING |
+| #46 canonical API contract | P2 | M0 保持唯一 canonical contract；M5/M6 event schema 分离且 M6 当前不消费 M5 audit stream。 | OPEN |
+| M4 diagnostic truth | P2 | M4 本地 `69ec7f1` 将 API 不可用状态显示为 null/null；定向测试 7/7。旧 PR #34 远端 `f301195` 不覆盖新提交。 | LOCAL FIX / CI PENDING |
+| M9 combined acceptance | P1 | PR #36 远端 `996073a`；本地 `f125e70` 的 verify 393/399、package smoke 100 文件、E4 测试 12/12 均尚无新 head GitHub CI。 | LOCAL VERIFIED / REMOTE CI PENDING |
+| quota / scheduling | 调度门槛 | 网页 11:10 UTC 实读五小时 98%、4h48m 后重置、每周 68%、113 credits。低于 5% 或读数不明时停所有开发/测试/浏览器/GitHub 操作。 | MONITOR |
+| worktree pointers | P2 | AC3 子工作树由 WSL Git 管理。M6 未跟踪 `security-lab/e4-runs/20261013T114513Z/` 原样保留。 | MONITOR |
+
+推送只使用已有 PR 分支的快进更新，不 force-push。main 与 PR #24 不变、不合并 Release。VMware、真实模型和安装测试互斥；本轮未运行其中任一项。fixture、CI 与本地组合验证不能替代原生 Shell、外部 E4 或 clean-VM 结果。
+
+## 历史风险快照（2026-10-14 10:51 UTC；额度页 10:50 UTC 实读）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
