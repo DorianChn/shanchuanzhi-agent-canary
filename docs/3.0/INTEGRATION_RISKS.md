@@ -1,19 +1,19 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 23:09 UTC)
+## Current integration risk snapshot (2026-10-14 23:33 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #27 M6 package fields | P1 | M6 active slot released; explicit owner signoff absent. M6/M9 values match by static read only. | Keep OPEN pending owner disposition and M9 combined acceptance; external E4 NOT_VERIFIED; preserve untracked evidence. |
-| #32 Hook interruption fixture | P1 | No M3/M4 owner response by23:02; both worktrees clean and heads unchanged at23:09. Issue #32 comment6180318160 records UNACKNOWLEDGED/HOLD; stop-message consumption unknown. | Keep OPEN. Do not schedule overlapping work until hold state clears. Preserve fail-closed/no-output/no-decision assertions; root cause UNKNOWN and native callback NOT_VERIFIED. |
-| #45 native Codex Shell | P1 | Native Shell remains UNPROTECTED; protocol fixtures do not prove actual host enforcement. | Keep OPEN; require actual supported-host evidence or explicit UNPROTECTED/BLOCKED status. |
-| #41 installer lifecycle | P1 | Clean-VM installation/launch/upgrade/uninstall/cancel rollback NOT_VERIFIED. | Keep OPEN/HOLD pending lifecycle evidence. |
+| #27 M6 package fields | P1 | M6 slot released; explicit owner signoff absent. Comment 6180684215 requests a precise disposition; no reply by23:33. M6/M9 values match by static read only. | Keep OPEN pending owner disposition and M9 combined acceptance; external E4 NOT_VERIFIED; preserve untracked evidence. |
+| #32 Hook interruption fixture | P1 | No M3/M4 owner response by23:33; both worktrees clean and heads unchanged at23:33. Issue #32 comment6180318160 records UNACKNOWLEDGED/HOLD; stop-message consumption unknown. | Keep OPEN. Do not schedule overlapping work until hold state clears. Preserve fail-closed/no-output/no-decision assertions; root cause UNKNOWN and native callback NOT_VERIFIED. |
+| #45 native Codex Shell | P1 | Native Shell remains UNPROTECTED; comment 6180703055 requests supported-host evidence or BLOCKED_NOT_VERIFIED; no reply by23:33. | Keep OPEN; require actual supported-host evidence or explicit UNPROTECTED/BLOCKED status. |
+| #41 installer lifecycle | P1 | Clean-VM installation/launch/upgrade/uninstall/cancel rollback NOT_VERIFIED; comment 6180703085 requests evidence or BLOCKED_RESERVATION; no reply by23:33. | Keep OPEN/HOLD pending lifecycle evidence and visible exclusive reservation. |
 | External E4 | P1 | Verifier CI and synthetic artifacts do not establish independent external E4. | Keep NOT_VERIFIED. |
 | M4 backend | P1 | Backend security/E4 remains UNKNOWN. | No PASS claim without backend evidence. |
 | Exclusive VM/model/installer resources | P2 | Other-window occupancy unavailable. | Treat unavailable until reservation/release visible on #29. |
-| Quota / push cadence | Scheduling | Usage page open/active/readable at23:02 and above stop threshold; exact values local-only. Last push22:55 UTC. | Stop if quota <5% or unreadable. Next push no earlier than23:15 UTC. |
+| Quota / push cadence | Scheduling | Usage page open/active/readable at23:33 and above stop threshold; exact values local-only. Last push23:15 UTC. | Stop if quota <5% or unreadable. Next push no earlier than23:35 UTC. |
 
-PR #30 head `670ceaf` product run `38651081696` passed9/9 and post-body ownership run `38651490898` passed1/1. M9 PR #36 is clean with 11/11 checks passing; M1 PR #43 is at `4b562be` with 9/9 checks passing. Issue #44 is COMPLETED/CLOSED. PR #24 remains OPEN/Draft at the recorded base/head; it was not modified or merged.
+PR #30 head `d94bae8` product run `38652977375` passed9/9 and post-body ownership run `38653349012` passed1/1. M9 PR #36 is clean with 11/11 checks passing; M1 PR #43 is at `4b562be` with 9/9 checks passing. Issue #44 is COMPLETED/CLOSED. PR #24 remains OPEN/Draft at the recorded base/head with 11/11 checks passing; it was not modified or merged.
 
 ## Archived snapshot (2026-10-14 22:34 UTC)
 
