@@ -6,7 +6,7 @@
     "taskShellEnvironment": "WSL2 Bash",
     "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
     "codexCliVersion": "0.162.0-alpha.17.2",
-    "desktopAppVersion": "UNKNOWN",
+    "desktopAppVersion": "26.1007.2314.0 (OpenAI.Codex Windows AppX)",
     "currentTaskNativeHookInvocationTelemetry": "UNAVAILABLE"
   },
   "candidateHook": {
@@ -61,7 +61,7 @@
     "windowsCliSandboxProbe": {
       "checkedAtUtc": "2026-10-14T05:01:54Z",
       "cliVersion": "0.162.0-alpha.17.2",
-      "configState": "windows.sandbox=elevated (reported by M0 read-only probe; no config changes made)",
+      "configState": "host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN",
       "command": "codex.exe sandbox -P :workspace --include-managed-config -- powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand <synthetic sentinel write and readback>",
       "workingDirectory": "M2 worktree root",
       "testDirectory": "%TEMP%\\agent-canary-m2-native-cli-probe-zIe5UB",
@@ -82,6 +82,41 @@
       "classification": "UNPROTECTED",
       "acceptance": "BLOCKED_NOT_VERIFIED",
       "reason": "The Windows CLI sandbox probe is a distinct codex.exe subprocess path; it does not exercise the Desktop's native Shell tool or expose its hook telemetry. The project hook fragment remains uninstalled and the Desktop loading/trust state remains unknown."
+    },
+    "liveDesktopPolicyInspection": {
+      "checkedAtUtc": "2026-10-14T06:49:42Z",
+      "inspectionMethod": "Read-only native Windows PowerShell inspection of running process metadata and narrowly filtered configuration keys; no config was changed",
+      "desktopAppPackageVersion": "26.1007.2314.0",
+      "desktopAppProcessObserved": true,
+      "windowsCodexCliVersion": "0.162.0-alpha.17.2",
+      "m2TaskShell": "WSL2 Bash; Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+      "nativeDesktopShellInvocationByM2": false,
+      "userConfigPath": "%USERPROFILE%\\.codex\\config.toml",
+      "localHookSources": {
+        "userHooksJson": "ABSENT",
+        "userRequirementsToml": "ABSENT",
+        "programDataRequirementsToml": "ABSENT",
+        "programDataLegacyManagedConfigToml": "ABSENT",
+        "m2ProjectCodexDirectory": "ABSENT",
+        "m2CandidateFragmentInstalled": false
+      },
+      "activeSessionEffectivePermissions": "NOT_OBSERVED",
+      "cloudManagedOrPluginHookSources": "NOT_ENUMERATED",
+      "hookTrustState": "NOT_OBSERVED_IN_DESKTOP",
+      "nativeShellDecision": "NOT_OBSERVED",
+      "classification": "UNPROTECTED",
+      "acceptance": "BLOCKED_NOT_VERIFIED",
+      "interpretation": "host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN. The M2 agent itself runs in WSL2 and cannot invoke the Windows Desktop Shell tool or observe its callback. Inspected user, local system, and M2 project hook files contain no M2 hook installation. Effective per-session mode and cloud/plugin hook sources remain unknown.",
+      "hostPolicySummary": "host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN"
+    },
+    "issue45FollowUp": {
+      "verifiedAtUtc": "2026-10-14T06:52:54Z",
+      "issueState": "OPEN",
+      "commentId": 6162686672,
+      "commentUrl": "https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45#issuecomment-6162686672",
+      "githubConnectorPost": "403_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+      "fallback": "Posted through authenticated Chrome issue page; comment body verified by GitHub comments API; browser tab closed",
+      "decision": "Keep native Shell UNPROTECTED / BLOCKED_NOT_VERIFIED; require enabled OS-level permission profile and real Desktop Shell sentinel test"
     },
     "hostAcceptance": {
       "nativeCodexShellSentinelWriteAttempted": false,
@@ -135,7 +170,9 @@
     },
     "officialSources": [
       "https://learn.chatgpt.com/docs/hooks",
-      "https://learn.chatgpt.com/docs/windows/windows-sandbox"
+      "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+      "https://learn.chatgpt.com/docs/permissions",
+      "https://learn.chatgpt.com/docs/app/windows"
     ]
   },
   "classification": "UNPROTECTED"
