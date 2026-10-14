@@ -1,5 +1,18 @@
 # M0 技术问题分级与协作流程
 
+## Latest issue ledger (2026-10-14 19:43 UTC)
+
+| Issue | Priority / owner | Current evidence | State and next acceptance |
+| --- | --- | --- | --- |
+| #27 | P1 / M3, M5, M6, M7; M0 coordinates | M9 #36 package blob 6b3042bbe7ba5b14a904c7d04fca9a9011a47883; the static composition retains 36 unique test paths and required package fields. No explicit M6 confirmation of e4:auto, e4:verify, and e4:test is visible. | OPEN; M6 confirms/corrects its fields, then M9 reruns exact combined candidate checks. External E4 stays NOT_VERIFIED. |
+| #29 | P2 / M0 | Assigned slots are M3/#32 first and M6/#27; M4/#32 and M6/#32 are queued. Exclusive VM/model/installer reservation cannot be confirmed from other windows. | OPEN; record any resource reservation before starting it. |
+| #32 | P1 / M1 owns Hook semantics; M0 tracks, M3/M4/M6 own branch copies | M1 accepted d3b64fc as behaviorally equivalent to 0de664c only for marker-wait/interruption timing. #33/#34/#38 still have old blob 1ecb3ee, although their exact-head CI passes. M0 update comment 6176773756; schedule clarification 6176870612. | OPEN; affected owners port the minimal approved asynchronous fixture or record an evidence-backed no-change reason; preserve every fail-closed assertion and run exact-head CI. Host callback remains NOT_VERIFIED; root cause UNKNOWN. |
+| #41 | P1 / M7 | PR #39 CI 9/9 and Windows wrapper 2/2, including pinned NSIS/template compilation. No clean-VM lifecycle run. | OPEN/HOLD until clean-VM install, first launch, upgrade, uninstall, and real cancel rollback are verified. |
+| #45 | P1 / M2 | Current PR #37 is 0f2c10c and passes CI 9/9; native Codex Shell is still UNPROTECTED. | OPEN; obtain actual host-path evidence or keep visibly UNPROTECTED. |
+| #46 | P2 / M0, M5 semantics owner | Canonical M0 contract and M5 report are synchronized. | CLOSED 2026-10-14 19:28:53Z, documentation-only scope. |
+| #48 | P1 / M1 and M5 | Scoped sensitive-read hard denial and zero-callback/zero-pending-approval evidence. | CLOSED for the recorded narrow behavior only. |
+| #28, #35, #44, #49 | P1/P0 / respective owners | Current GitHub state is closed; each closure is limited to its documented code, expiry, or path/hash scope. | CLOSED with no inference of complete platform protection. |
+
 ## 最新问题台账（2026-10-14 19:12 UTC）
 
 | Issue | 级别 | 责任模块 | 当前确认事实 | 状态/下一验收 |

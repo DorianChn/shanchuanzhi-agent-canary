@@ -1,5 +1,15 @@
 # Agent Canary 3.0 公共接口契约
 
+## Current coordination evidence (2026-10-14 19:43 UTC)
+
+M0 remains the sole owner of the canonical cross-module contract at docs/3.0/API_CONTRACTS.md; each interface owner remains responsible for semantics and compatibility. No public runtime API change was made by this M0 update.
+
+For the M1-owned Hook test contract, M1 recorded that blob d3b64fc is behaviorally equivalent to blob 0de664c solely for marker-wait/interruption timing. This is not byte identity and does not prove native-host callback behavior. PRs #33/#34/#38 still carry the older synchronous fixture; M1 owns the fixture semantics while M3/M4/M6 own their branch copies. Keep the issue open until each branch has an owner disposition and exact-head CI. Preserve fail-closed behavior.
+
+Current exact-head checks and interface status are summarized in TECHNICAL_STATUS.md. Issue #46 is CLOSED for documentation synchronization only; this does not imply runtime integration, E4, or host enforcement.
+
+
+
 状态：基于 `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 的源码快照。模块分支中的未提交改动可能改变实现；变更须由接口所有者更新契约并提供适配说明。PR #24 指向 readiness 分支，不是已合并到 `main`。
 
 ## 通用兼容规则

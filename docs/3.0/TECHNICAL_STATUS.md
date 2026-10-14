@@ -1,5 +1,18 @@
 # M0 技术协调状态
 
+## Current authoritative snapshot (2026-10-14 19:43 UTC)
+
+- Quota page was visibly read at 19:38 UTC: 5-hour remaining 97%, weekly remaining 64%, balance 113. Stop all work if 5-hour quota is below 5% or unreadable. Last Git push batch was 19:24 UTC; next push is no earlier than 19:44 UTC.
+- M1's owner-disposition task on #32 is complete. The two assigned slots are now M3/#32 (first) and M6/#27; M4/#32 and M6/#32 are queued until a slot is released. VMware, real-model, and installer work share an exclusive reservation; status in other windows is unreadable, so no such test was started.
+- PR #24 remains OPEN/Draft and mergeable, base competition/shanchuanzhi-release-readiness at dc8d0092b35141b295d5ff42873584ed488e4ee7, head feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Current head CI run 38332394567 passed 9/9 and Windows wrapper run 38332394500 passed 2/2. It was not changed or merged.
+- Existing coordination PRs remain OPEN/Draft at their current AC3 heads: M0 #30 e1a5047 (product 38623419263 9/9; ownership 38624148800 1/1); M1 #43 4b562be (38620584097 9/9); M2 #37 0f2c10c (38561262930 9/9); M3 #33 d9364cc (38555297535 9/9); M4 #34 69ec7f1 (38555299339 9/9); M5 #47 7d5df63 (38617317812 9/9); M6 #38 ed82f06 (38555297615 9/9); M7 #39 4267c61 (38596572303 9/9, wrapper 38596572179 2/2); M8 #40 139e7f2 (38561307114 9/9); M9 #36 6abd4da (38620602632 9/9, wrapper 38620603071 2/2). These runs verify only their automated jobs.
+- All ten active M0-M9 worktrees have distinct paths/branches and merge-base 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Windows Git 2.54 verified M0, M1, M3-M6, and M9; WSL Git 2.53 with explicit git-dir/work-tree verified M2, M7, and M8. Cross-runtime listings may say prunable because their absolute paths differ; no worktree repair/prune was run. M6's untracked security-lab/e4-runs/20261013T114513Z/ evidence directory remains preserved.
+- M1/M2/M5/M8 local branch tracking points at origin/feature/agent-canary-3.0 rather than each module PR ref. No config was changed; any future push must name and verify its exact destination branch.
+- P1 gates still OPEN: #27 awaits M6 package-field signoff; #32 has a limited M1 timing-fixture disposition but #33/#34/#38 still hold the old synchronous fixture; #41 clean-VM installation lifecycle is NOT_VERIFIED/HOLD; #45 native Codex Shell remains UNPROTECTED. External E4 is NOT_VERIFIED; M4 backend security/E4 is UNKNOWN. P2 #46 is CLOSED for documentation synchronization only; #48 is CLOSED for its scoped hard-deny evidence.
+- M1's limited disposition and M0's exact-head follow-up were recorded on #32 in comment 6176773756; the two-slot sequence is recorded in comment 6176870612. The subprocess test cannot prove native-host callback behavior; #32 remains OPEN and root cause remains UNKNOWN.
+
+No M1-M8 product source changed in this M0 update. No local product tests ran. Do not merge main or PR #24, and do not publish a Release.
+
 ## 当前权威快照（2026-10-14 19:12 UTC）
 
 - **额度与调度**：额度页仍为活动标签；19:10 UTC 实读五小时剩余 97%（约 1 小时 58 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行；最近推送批次为 19:04 UTC，下批不得早于 19:24 UTC。本协调会话未启动 VMware、真实模型或安装测试；其他窗口的资源占用无法直接读取，启动同类任务前须在 #29 取得互斥调度记录。

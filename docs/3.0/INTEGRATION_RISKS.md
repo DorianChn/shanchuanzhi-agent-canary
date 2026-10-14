@@ -1,5 +1,19 @@
 # M0/M9 集成风险登记
 
+## Current integration risk snapshot (2026-10-14 19:43 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| Shared package manifest / M6 fields | P1 | M9 candidate preserves the statically reviewed composition; explicit M6 field-owner confirmation is absent. | Keep #27 OPEN until M6 confirms/corrects e4:auto, e4:verify, e4:test and M9 exact-head CI passes. |
+| Windows Hook interruption fixture | P1 | M1 disposition is limited to timing-fixture equivalence. M3/M4/M6 branches still use the synchronous marker blob despite green CI. Root cause UNKNOWN. | Keep #32 OPEN; update owner copies or document evidence-backed exceptions, preserve fail-closed assertions, rerun exact heads. Native callback is NOT_VERIFIED. |
+| Native Codex Shell | P1 | Current M2 candidate and protocol tests do not establish installed, trusted host enforcement; status is UNPROTECTED. | Keep #45 OPEN until actual host policy denies a protected synthetic write or limitation is documented in user-facing status. |
+| Installer lifecycle | P1 | M7 CI compiles the pinned NSIS template; no clean-VM install/launch/upgrade/uninstall/cancel-rollback result. | Keep #41 OPEN/HOLD until runtime lifecycle evidence exists. |
+| External E4 | P1 | M6 local evidence and verifier CI do not establish independent external E4. | NOT_VERIFIED; preserve local evidence and obtain external run only under the exclusive schedule. |
+| Desktop backend state | P1 | M4 backend security/E4 endpoints and enforcement remain UNKNOWN. | Do not present UNKNOWN as PASS; require actual backend contract evidence. |
+| Exclusive VM/model/installer slot | P2 | Other-window occupancy cannot be observed here. | Treat as unavailable until a reservation/release is recorded on #29. |
+
+Issue #46 is CLOSED only for M0/M5 documentation synchronization. Green automation does not close any of the runtime, host, installer, or external-E4 risks above.
+
 ## 当前风险快照（2026-10-14 19:12 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
