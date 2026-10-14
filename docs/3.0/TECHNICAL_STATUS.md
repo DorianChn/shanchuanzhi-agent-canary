@@ -1,6 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 22:14 UTC)
+## Current authoritative snapshot (2026-10-14 22:34 UTC)
+
+- 用量页 22:32 UTC 可读、在前台且高于 5% 停工线；精确百分比/余额只记录在 gitignore 忽略的本地报告。标签保持打开。低于 5% 或无法确认读数时停止开发、测试、浏览器和 GitHub 操作。
+- M3/#32 与 M4/#32 仍是两个指定槽位，限现有 PR #33/#34 和各自分支。22:34 核验时两个工作树均干净、head 未变：M3 `d9364cc5ad533b8b922859e97d2387e70718d931` / run `38555297535` 9/9；M4 `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b` / run `38555299339` 9/9。Issue #32 最新 M0 状态请求为 comment `6179870318`；目前无模块 owner 回复或提交。
+- 22:11 投递到两个原 Codex 会话的任务回执分别为 `01a13c78-b291-7a43-87a0-633dec95f983` 和 `01a13c78-b291-7b41-9720-8ab355476a64`；回执不能证明已读取/开工。M0 不声称读取了其他会话聊天内容。
+- M6不占开发槽；#27 comment `6179220160` 是释放槽位记录，不是 owner signoff。PR #38仍 OPEN/Draft at `ed82f0612b9f69463afc9c80a1082b951e7e88fe`，三项 M6/M9 `e4:*` 值静态匹配；外部 E4 NOT_VERIFIED，M6 未跟踪证据目录保留。
+- M0 PR #30 OPEN/Draft at `5685d8ea6b0f0ef1294a57ff8595f08bf6f7ebeb`：产品 run `38646435036` 9/9；ownership runs `38646435026` 和 PR 正文刷新后的 `38646704479` 均 1/1。PR 正文和 Issue #29 已回读同步。上次 push 22:15 UTC；本批不早于22:35 UTC，之后下一批不早于22:55 UTC。
+- PR #24仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，9项产品+2项wrapper检查通过，未改/合并。M9 PR #36仍OPEN/Draft at `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`；外部E4、原生Shell、clean-VM门槛未闭合。
+- P1门槛仍有 #27 M6 owner signoff/组合验收、#32 分支 fixture 更新、#41 clean-VM 生命周期、#45 原生 Codex Shell UNPROTECTED；M4后端安全/E4 UNKNOWN。VMware/真实模型/安装占用在其他窗口不可见。
+- 本快照仅更新 M0 协调文档；未改模块源码、未运行产品测试、未合并 main 或 PR #24、未发布 Release。
+
+## Archived snapshot (2026-10-14 22:14 UTC)
 
 - 用量页 22:13 UTC 实读仍高于 5% 停工线，页面保持打开并在前台；精确百分比与余额只记入 gitignore 忽略的本地协调报告。低于 5% 或读数不可确认时，停止开发、测试、浏览器与 GitHub 操作。
 - 两个开发槽继续为 M3/#32 与 M4/#32，均限现有 PR #33/#34 及各自分支。22:14 核验时两个工作树干净，HEAD 未变化：M3 `d9364cc5ad533b8b922859e97d2387e70718d931` / CI `38555297535` 9/9；M4 `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b` / CI `38555299339` 9/9。#32 最后状态评论为 6179514296，之后无 owner 回复。

@@ -1,6 +1,21 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 22:14 UTC)
+## Current integration risk snapshot (2026-10-14 22:34 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #27 M6 package fields | P1 | M6 slot released; no owner signoff. M6/M9 three script values match by static read. | Keep OPEN pending explicit M6 disposition and M9 combination; external E4 NOT_VERIFIED. Preserve untracked evidence. |
+| #32 Hook interruption fixture | P1 | M3/#33 and M4/#34 slots remain assigned; at 22:34 both worktrees and PR heads unchanged. Task messages were queued; consumption is not verified. Old exact-head CI is green but the copies remain synchronous. | Keep OPEN until each owned copy has the narrow approved timing update and exact-head CI. Preserve fail-closed/no-output/no-decision checks; native callback NOT_VERIFIED and root cause UNKNOWN. |
+| #45 native Codex Shell | P1 | Native Shell UNPROTECTED; protocol tests do not prove installed-host enforcement. | Keep OPEN; require actual supported host evidence or show UNPROTECTED/BLOCKED. |
+| #41 installer lifecycle | P1 | Clean-VM install/launch/upgrade/uninstall/cancel rollback remains NOT_VERIFIED. | Keep OPEN/HOLD pending lifecycle evidence. |
+| External E4 | P1 | Verifier CI and synthetic bundle do not prove independent external E4. | Keep NOT_VERIFIED. |
+| M4 backend | P1 | Backend security/E4 endpoints and enforcement remain UNKNOWN. | No PASS claim without backend evidence. |
+| Exclusive VM/model/installer resources | P2 | Other-window occupancy unavailable. | Treat unavailable until reservation/release is visible on #29. |
+| Quota / push cadence | Scheduling | Usage page readable/open/active at 22:32 UTC, above stop line; exact values local-only. Last push 22:15 UTC. | Stop if quota <5% or unreadable. Next M0 push no earlier than 22:35 UTC; following batch no earlier than 22:55 UTC. |
+
+Issue #32 latest checkpoint comment is `6179870318`. PR #30 head `5685d8e` has product run `38646435036` 9/9 and ownership runs `38646435026`/`38646704479` 1/1. PR #24 remains OPEN/Draft and unchanged with 11/11 checks passing.
+
+## Archived snapshot (2026-10-14 22:14 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
