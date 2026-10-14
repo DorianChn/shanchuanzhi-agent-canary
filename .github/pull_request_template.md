@@ -1,22 +1,38 @@
-## What changed
+## Summary
 
-<!-- Describe the user-facing behavior and motivation. -->
+<!-- Describe the user problem and the change. -->
+
+## Release and feature status
+
+- [ ] This changes a published stable behavior.
+- [ ] This changes a pre-release candidate.
+- [ ] This is development-only documentation/tooling.
+- [ ] Compatibility or feature-status matrices are updated where needed.
+
+<!-- Name the exact release/tag/commit this change applies to. Do not describe branch-only code as released. -->
 
 ## Verification
 
-- [ ] Focused tests pass.
-- [ ] `npm run build` and relevant package/sponsor checks pass.
-- [ ] Failure and boundary behavior are covered where relevant.
-- [ ] Documentation reflects actual behavior and known limits.
+- Commands run:
+- Results:
+- Commands not run and why:
 
-## Security and compatibility
+## Security and privacy
 
-- [ ] No real credentials, customer data, payment records, or private configuration are included.
-- [ ] Decoy handlers remain inert; no real shell/network/payment operation is added to a test.
-- [ ] Guarded integrations route every protected callback through the reviewed guard.
-- [ ] Public V1 CLI/SDK/MCP behavior and existing license checks remain compatible, or the impact is explained.
-- [ ] New dependencies, permissions, network access, or persistent state are described.
+- [ ] Tests use synthetic data and disposable state.
+- [ ] No real credentials, customer data, private configuration, or payment records are included.
+- [ ] Decoys remain inert and no unguarded native tool is described as protected.
+- [ ] Side-effect claims include observed effects, not only a decision label.
+- [ ] New permissions, network access, persistent state, or failure behavior are explained.
+
+## Compatibility, dependencies, and documentation
+
+- [ ] Host/OS/Node impact is described.
+- [ ] New dependencies and their licenses are recorded.
+- [ ] User documentation and examples match the exact implementation.
+- [ ] External links and local document links were checked.
+- [ ] Release notes/upgrade guidance are updated when applicable.
 
 ## Reviewer notes
 
-<!-- Add reproducible commands, screenshots, or a risk note. Never paste secrets. -->
+<!-- Add a minimal reproduction, exact evidence link, and known limitation. Never paste secrets. -->
