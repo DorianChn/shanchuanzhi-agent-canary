@@ -2,15 +2,16 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 实时协作快照（2026-10-14 03:50:24 UTC；覆盖下方旧状态）
+## 实时协作快照（2026-10-14 03:59:05 UTC；覆盖下方旧状态）
 
-- 单槽调度：当前只安排 M7 处理 #41。M0 无法读取其他 Codex 窗口的对话或活跃状态；进度以实际 worktree、PR、CI 和 Issue 为准。
-- PR #39 远端 head f66dcc6；run 38506733463 与 38506733650 已结束。Windows pinned-NSIS 编译因 .onUserAbort 重复定义失败；Windows Node 22 全套 npm test 为 339 passed、4 skipped、1 failed，失败用例在 test/agent-hook.test.ts:54 未观察到中断 marker。其余列出的矩阵 job 通过，package-smoke skipped。#41 保持 OPEN；M7 先处理其拥有的 NSIS 编译失败，保留取消警告、RollbackInstall、编译门禁和现有测试。
-- Windows Node 22 marker 用例属于 M1 Hook 安全执行路径，已由 #32 跟踪；这属于共享阻塞证据，不开启并行 M1 槽位。Issue #32 保持 OPEN/UNKNOWN，禁止移除或放宽断言。
-- PR #24 仍 OPEN/Draft，head 62496d4，base competition/shanchuanzhi-release-readiness，11/11 checks 通过；PR #30 OPEN/Draft，head 71aec02，9 个常规 CI jobs 加 ownership gate 通过。未修改、未合并任一 PR。
-- #35 已 CLOSED，接受范围限同一进程/同一 Guard 且 callback 配合 AbortSignal；跨进程/shared-store 不在该证明范围内。#44/#45/#27/#28 仍按最近 GitHub issue-list 读数 OPEN；其他模块验收矩阵沿用 03:08 快照。
-- 用量页 03:50:24 UTC：五小时限额剩余 84%，约 2h9m 重置；用户截图另显示 91%、约 4h。二者均未接近 5% 暂停线。低于 5% 或实时读数不可得即暂停，并等到确认五小时重置才恢复。
-- 最近远端 push 为 03:31:52 UTC；下次批次最早 03:51:52 UTC，此后间隔至少 20 分钟。VMware、真实模型和本地安装测试无运行预约；三者共用互斥槽。
+- 双槽调度：M7 处理 #41，M2 处理 #45。M0 无法读取其他 Codex 窗口的对话或活跃状态；进度以实际 worktree、PR、CI 和 Issue 为准。
+- PR #39 head f66dcc6；run 38506733463/38506733650 结束。8 pass、2 fail、1 skipped：Windows pinned-NSIS 编译因 .onUserAbort 重复定义失败；Windows Node 22 的 M1 Hook 中断测试在 test/agent-hook.test.ts:54 未观察到 marker。M7 负责 NSIS 修复并保留取消警告、RollbackInstall、编译门禁和测试；M1 Hook 用例仍由 M1 所有并在 #32 跟踪。
+- M1 PR #43 head 2276526 的 run 38502266488 为 9/9 通过。历史 Hook marker 根因 UNKNOWN，#32 保持 OPEN；M7 不更改该 Hook 测试。
+- M2 PR #37 head a1c239d、run 38390381288 为 9/9 通过；原生 Codex Shell 仍 UNPROTECTED。#45 要求真实隔离宿主 synthetic sentinel 证据，或记录明确能力限制并保持 UNPROTECTED/BLOCKED。Hook 协议 fixture 与 AppContainer 子进程证据不等于原生宿主保护。
+- PR #24 仍 OPEN/Draft，head 62496d4，base competition/shanchuanzhi-release-readiness，11/11 checks 通过；PR #30 OPEN/Draft，head 82cdc3e，9 个常规 CI jobs 加 ownership gate 通过。均未修改、未合并。
+- #35 已 CLOSED，范围限同一进程/同一 Guard 且 callback 配合 AbortSignal；#44/#45/#27/#28 保持 OPEN。M3–M6、M8 状态沿用已记录的对应模块 PR/Issue；M9 验收尚未完成。
+- 用量页 03:58 UTC：五小时限额剩余 82%，约 1h51m 重置；用户截图另显示 91%、约 4h，是较早读数。当前高于 5% 暂停线。低于 5% 或实时读数不可得即暂停，确认五小时额度重置后才恢复。
+- 最近远端 push 为 03:52:10 UTC；下一批最早 04:12:10 UTC，此后至少 20 分钟。VMware、真实模型和安装测试无运行预约；三者共用互斥槽。
 
 ## 优先级
 

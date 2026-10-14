@@ -1,15 +1,16 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 03:50:24 UTC；实时复核）
+## 当前状态（2026-10-14 03:59:05 UTC；实时复核）
 
-- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；本次复核 11/11 checks 通过。未修改或合并。
-- PR #30：OPEN/Draft，M0 head 71aec025177eae0ae379f4aff70ecdc3b6fa24c9；9 个常规 CI jobs 与 ownership-contract gate 均通过。
-- M7 是当前唯一开发槽。工作树 feature/ac3-reliability-ac3 干净，HEAD/PR #39 head 均为 f66dcc6。新 head CI 为 8 pass、2 fail、1 skipped：Windows NSIS 编译失败，报 .onUserAbort 重复定义；Windows Node 22 的 M1-owned Hook 中断用例在 test/agent-hook.test.ts:54 未观察到 marker。#41 OPEN；M7 的编译失败已记入 #41，MUI_CUSTOMFUNCTION_ABORT 是官方 MUI2 文档提供的受支持回调方式，待 M7 通过实际编译和当前头 CI 验证。#32 跟踪 Hook marker 回归，暂不启动第二模块槽。
-- M7 之前的本地证据仍仅为 Windows focused regressions 3/3、reliability 43 pass/3 skip/0 fail；这些不能替代 NSIS 编译或 Windows Node 22 全套结果。未运行本地安装器或 VMware；真实安装验收仍 NOT VERIFIED / HOLD。
-- 其他模块矩阵沿用本文件 03:08 快照；本轮没有启动第二个模块。M9 最终集成验收未完成。
-- 用量页 03:50:24 UTC 实时读数为五小时额度剩余 84%、约 2h9m 后重置。用户截图显示 91%/约 4h，为其截图时读数；两者均高于 5% 暂停线。若实时读数低于 5% 或无法读取，暂停开发、测试和 GitHub 操作；确认五小时额度重置后恢复。
-- 最近远端 push 为 PR #39 于 03:31:52 UTC；下一批不得早于 03:51:52 UTC，多个就绪分支合并到同一批处理。
-- VMware、真实模型、安装测试互斥；当前没有此类本地测试运行。未合并 main、未合并 PR #24、未发布 Release。
+- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；11/11 checks 通过。未修改或合并。
+- PR #30：OPEN/Draft，M0 head 82cdc3e3c751d1371c57adbd355b7b9c98dcdf1e；9 个常规 CI jobs 与 ownership-contract gate 共 10/10 通过。
+- 当前两个开发槽为 M7 与 M2。M7 工作树 feature/ac3-reliability-ac3 干净，HEAD/PR #39 为 f66dcc6。CI 为 8 pass、2 fail、1 skipped：Windows pinned-NSIS 编译失败，makensis 报 .onUserAbort 已重复定义；Windows Node 22 在 test/agent-hook.test.ts:54 的 M1-owned Hook 中断测试未观察到 marker。#41 保持 OPEN；M7 修复必须保留 MUI_ABORTWARNING、RollbackInstall 和编译门禁。M0 已在官方 MUI2 文档中核对 MUI_CUSTOMFUNCTION_ABORT 为可行回调方向，仍须实际编译与新 head CI 证明。
+- M2 PR #37 head a1c239d，9/9 checks 通过；原生 Codex Shell 仍 UNPROTECTED。#45 是 M2 当前任务，要求在隔离宿主/项目验证受信任 Hook 对合成 sentinel 的真实阻断，或记录准确能力限制并保持 UNPROTECTED/BLOCKED。
+- M1 PR #43 head 2276526，run 38502266488 为 9/9 通过。历史 marker 复现仍在 #32，根因为 UNKNOWN；M7 不修改 M1 Hook 路径。
+- M7 本地证据仅为 Windows focused reliability regressions 3/3、reliability 43 pass/3 skip/0 fail；不能替代 NSIS 编译或真实安装验收。未运行本地安装器或 VMware；安装验收仍 NOT VERIFIED / HOLD。M9 最终集成未完成。
+- 用量页 03:58 UTC 读数为五小时剩余 82%、约 1h51m 后重置，远高于 5% 暂停线。低于 5% 或读数不可确认时暂停开发、测试和 GitHub 操作；低额度暂停后须看到五小时额度实际重置才恢复。
+- 最近远端 push 为 PR #30 于 03:52:10 UTC；下次批量 push 不得早于 04:12:10 UTC，合并就绪分支一批上传。
+- VMware、真实模型、安装测试互斥；当前没有此类本地测试预约。未合并 main、未合并 PR #24、未发布 Release。
 
 ## 历史快照（2026-10-13 16:16 UTC；保留作记录）
 
