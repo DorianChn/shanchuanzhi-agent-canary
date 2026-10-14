@@ -2,11 +2,15 @@
 
 本图基于现有架构文档、当前源码和实际分支/改动路径。对尚无提交、只有任务命名或当前线程不可读取的内容，标记为暂定；接口细节以 `API_CONTRACTS.md` 为准。
 
-## 当前排程覆盖（2026-10-14 06:48 UTC）
+## 当前排程覆盖（2026-10-14 19:18 UTC）
 
-当前 M2 #45 原生 Shell 保护任务沿用现有分支/worktree。M7 #41 的只读环境盘点已完成并释放开发槽，因隔离 VM/可读快照不具备、虚拟盘链风险、缺 NSIS 3.13 与安装器 EXE 而 BLOCKED/HOLD；没有启动或修复 VM，没有运行安装。M1 #44 诊断已完成；M5 #48 候选 `cf4e2cd` 已在本地将 M1 `f59ba37` 作为精确提交纳入，等 06:54 UTC 后推送并跑远端矩阵。
+- M1–M8/M9 branches share merge-base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; the PR heads and exact-head CI are recorded in `MODULE_OWNERSHIP.md`. M9 #36 head `6abd4da` passes 9/9, and its Windows Community wrapper passes 2/2.
+- The current two module work slots are M1/#32 and M6/#27. M1 owns the Hook fixture and needs to provide an owner-approved minimal update/adaptation or a reason the older #33/#34/#38 fixtures do not need one. M6 needs to explicitly confirm or correct `e4:auto`, `e4:verify`, and `e4:test` in the shared package manifest. Owner acknowledgement is not yet visible; route these tasks through the existing GitHub Issues.
+- M3/M4/M6 current test-file blob is still `1ecb3ee` on PRs #33/#34/#38; M2 #37 carries `d3b64fc`, while M1 #43 and M9 #36 carry `6c2d8da`. Current green checks do not prove the historical marker timing race is eliminated. Preserve all fail-closed assertions and rerun the affected exact PR heads after any owner change.
+- M7 #41 remains OPEN/HOLD: pinned Windows NSIS/template compile checks passed, but clean-VM install, launch, upgrade, uninstall, and real user-cancel rollback are NOT_VERIFIED. External E4 remains NOT_VERIFIED; native Codex Shell under #45 remains UNPROTECTED; M4 backend security/E4 state remains UNKNOWN.
+- Usage page was active and readable at 19:10 UTC (5-hour 97%, weekly 64%, 113 credits). Last Git push batch: 19:04 UTC; next batch no earlier than 19:24 UTC. Below 5% or unreadable quota is a hard stop. VMware, real-model, and installer tests share one exclusive slot; this session has not started them, and occupancy in other windows is not directly visible, so reservation status is unconfirmed.
 
-M2 的 binder 元数据门禁和 M1 的 Hook 兼容测试已有各自 PR CI，但不能代替 M9 联合验收。M5 旧远端 #47 仍有 Ubuntu Node 22 router failure，更新候选未获远端 CI。M7 已完成 #27 manifest 字段 handoff；组合 package-smoke 与完整矩阵仍待 M9。M6 外部 E4 和 M7 clean-VM 安装/取消仍 NOT VERIFIED；M7 安装验收另需清理安全 VM、可读快照、NSIS 3.13 与安装器包后再取得互斥窗口。跨窗口任务状态只按可观察 worktree、PR、CI 和 Issue 证据记录；本会话没有 `read_thread` 工具。
+Cross-window task status is based only on visible worktree, PR, CI, Issue, and browser evidence. No M0 claim depends on reading another Codex conversation.
 
 ```mermaid
 flowchart LR
@@ -47,4 +51,4 @@ flowchart LR
 4. M7 在接口稳定后验证文件、关闭和安装流程；M8 按验收事实更新开源文档。
 5. M9 做跨模块验收。此顺序不改变模块所有权，也不授权合并 main 或发布 Release。
 
-三个并行开发槽和 VMware/真实模型/安装互斥规则见 `TECHNICAL_ISSUES.md`。
+两个并行开发槽和 VMware/真实模型/安装互斥规则见 `TECHNICAL_ISSUES.md`。

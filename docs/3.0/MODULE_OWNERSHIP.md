@@ -2,18 +2,22 @@
 
 规则：模块未提交修改由该模块保管。表按实际分支和当下改动路径建立；未被文件证据确认的范围标注“暂定”。路径外改动先建 Issue 并由 owner 协调。不要用 reset、clean 或 checkout 覆盖其他工作树。
 
+## 当前 ownership snapshot（2026-10-14 19:18 UTC）
+
 | 模块 | 分支 / 工作树 | 检查到的内容 | 独占范围或主要职责 | 共享接口/冲突 |
 | --- | --- | --- | --- | --- |
-| M1 | `feature/ac3-security-core` / `agents/M1-security` | PR #43 `d26a0c3`; run `38602072618` 9/9; #44 targeted expiry tests 2/2; owner contract moved/pushed under M1 path | Gateway/Guard API、Hook 安全执行链及其测试 | #49 M9 remote path reconciliation pending; #28/#32/#44 remain tracked |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | PR #43 `4b562be`; run `38620584097` 9/9; owner contract under M1 path | Gateway/Guard API、Hook 安全执行链及其测试 | M1 owns `test/agent-hook.test.ts`; #32 tracks old fixture on #33/#34/#38; #28/#44 closed for limited scopes |
 | M2 | `feature/ac3-execution-isolation` / `agents/M2-isolation` | PR #37 `0f2c10c`; run `38561262930` 9/9 | execution-isolation 原型、报告与测试 | binder rejects missing/unknown surfaces; native Codex Desktop Shell remains `UNPROTECTED / NOT VERIFIED` (#45) |
 | M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | PR #33 `d9364cc`; run `38555297535` 9/9 | 宿主发现、预览/安装/恢复适配 | #27 manifest fields; interface owner authors semantics, M0 records canonical summary |
 | M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | PR #34 `69ec7f1`; run `38555299339` 9/9; backend endpoints UNKNOWN/UNSUPPORTED | `src/ai/console-page.ts` 与桌面 UI 行为（暂定） | 只经受保护 Console API；不以 mock 覆盖 UNKNOWN |
-| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | PR #47 `5fd4707`, run `38561283918` 9/9; local report-only commit `6a501ab` not pushed | 策略管理、审计 schema、策略测试 | sensitive-read hard DENY; M0 owns root canonical file; #46/#48 semantics coordinated |
+| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | PR #47 `7d5df63`, run `38617317812` 9/9; report blob `1300b4d` | 策略管理、审计 schema、策略测试 | sensitive-read hard DENY; M0 owns root canonical file; #46 documentation criteria met pending close; #48 closed for limited scope |
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | PR #38 `ed82f06`; run `38555297615` 9/9; external E4 NOT_VERIFIED | E4 schema、verifier、机器报告 | 原始 run 留本地；#27 manifest composition; legacy PR #31 remains separate main-based track |
 | M7 | `feature/ac3-reliability-ac3` / `agents/M7-reliability-ac3` | PR #39 `4267c61`; run `38596572303` 9/9, wrapper `38596572179` 2/2 | `packaging/windows/`、scripts、可靠性/打包验证 | #41 clean-VM/user lifecycle remains HOLD/NOT VERIFIED; Gateway lifecycle coordinates with M1 under #28 |
 | M8 | `feature/ac3-open-source-product` / `agents/M8-ecosystem` | PR #40 `139e7f2`; run `38561307114` 9/9 | README、贡献/安全/支持/开源文档（暂定） | 文档必须如实描述安全覆盖边界；未发布 Release |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | PR #30 `a469e37`; run `38602030773` 9/9 product + `38602030720` ownership; current branch clean | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | Canonical shared API doc; does not edit M1–M8 product source |
-| M9 | `feature/ac3-m9-integration` / `integration` | Remote PR #36 `ab382fe`; local HEAD `ed0dd01` reconciles M0 root canonical and preserves M1 module contract; old remote CI 9/9 + wrapper 2/2 | 跨模块集成验收及风险跟踪 | #49 remains OPEN until pushed head CI; external E4/native Shell/clean-VM remain unverified |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | Remote PR #30 `af39e96`; run `38617312991` 9/9 + ownership `38617313009` 1/1; coordinator documentation refresh is local and unpushed | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | Canonical shared API doc; does not edit M1–M8 product source |
+| M9 | `feature/ac3-m9-integration` / `integration` | PR #36 `6abd4da`; run `38620602632` 9/9 + wrapper `38620603071` 2/2 | 跨模块集成验收及风险跟踪 | #27/#32 remain open; external E4/native Shell/clean-VM remain unverified |
+
+M0–M8/M9 current worktree HEADs all resolve to merge-base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; each has a distinct path and expected feature branch. The M6 untracked `security-lab/e4-runs/20261013T114513Z/` evidence directory is preserved unchanged. Current checks do not change file ownership or expand host/VM acceptance.
 
 ## 历史分支与验收状态快照（2026-10-14 11:45 UTC）
 
@@ -39,7 +43,7 @@ AC3 PR #24 与模块候选均以共同基线 `62496d4020bd90ba2eede49b2e80a2bbeb
 | 路径 | owner | 协调规则 |
 | --- | --- | --- |
 | `src/runtime/gateway.ts` | M1（Guard/Gateway 契约与安全实现）、M7（可靠性实现） | 已有可见重叠：M1 增加 quarantine callback cancellation；M7 `close()` 增加幂等关闭及资源关闭错误。M1 review 是契约门；最终集成须保留两侧不变量并由 #28 验证 |
-| `package.json` | M3、M5、M6、M7（M3/M5/M7 已确认各自字段；M6 字段由迁移提交精确核对） | 不覆盖对方字段；#27 记录字段、原因和组合结果 |
+| `package.json` | M3、M5、M6、M7（M3/M5/M7 字段已确认；M6 需要显式确认当前 `e4:*` 字段） | 不覆盖对方字段；#27 记录字段、原因和组合结果 |
 | `src/ai/console.ts` | M3（接入路由）、M4（安全中心配套），暂定 | 路由/响应变更列出协作模块并更新 API 契约 |
 | `src/runtime/evidence.ts` | M1（写入调用）、M6（schema/验证），暂定 | 事件语义变更列出协作模块并保留拒绝/执行/副作用边界 |
 | `test/agent-hook.test.ts`, `security-lab/claude-native-hook.mjs` | M1 | Hook 进程中断与安全决策测试由 M1 修改；其他分支通过合入 M1 提交或消费适配结果，不复制测试实现 |
