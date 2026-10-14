@@ -65,3 +65,13 @@ Gateway 对齐分析见 [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway
 官方 Windows Sandbox 提供 MXC 及 legacy `elevated`/`unelevated` 执行边界，但本轮实际执行在 WSL2，不能据此推断当前 Windows Desktop 命令使用哪种沙箱，也未执行对应原生环境兼容性探测。要解除阻塞，必须在目标宿主由其所有者启用并核验 OS 沙箱/权限边界，再对仅含合成文件的原生 Shell 写入尝试记录真实 hook/宿主结果和前后摘要；若宿主仍为 WSL2，则需在该 Codex WSL 执行路径验证其实际强制的 Linux sandbox。当前结论维持 `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`。
 
 更新证据：[`native-host-hook-evidence.json`](../codex/native-host-hook-evidence.json)。官方资料：[Hooks](https://learn.chatgpt.com/docs/hooks)、[Windows sandbox](https://learn.chatgpt.com/docs/windows/windows-sandbox)。
+
+## 2026-10-14 05:01 UTC Windows CLI sandbox probe
+
+按 M0 只读核验提供的 CLI 路径，启动 Windows Codex CLI `0.162.0-alpha.17.2`；M0 报告当前用户配置为 `windows.sandbox="elevated"`，本次未读写或覆盖配置。命令从 M2 worktree 调用 `codex.exe sandbox -P :workspace --include-managed-config -- powershell.exe ...`，仅尝试把 `%TEMP%\agent-canary-m2-native-cli-probe-zIe5UB\synthetic-sentinel.txt` 从合成内容 `BEFORE` 改为 `AFTER`，并由子命令回读确认。
+
+测试目录解析后确认位于 `%TEMP%`；写入前 SHA-256 为 `be9351741a8155d01fd028d158546f1005e73ceeb0bb2d093335feac4144e450`，写入后为 `94c3f1415d2061d05e4cce4d33e43e26a5ad7ebcf6e89acace6e8b84240a629c`。CLI 退出码 `0`，观察到 `SENTINEL_WRITE_COMPLETED`，stderr 为空。核验前目录为新建唯一目录；完成摘要检查后只删除此目录，并确认其已不存在。
+
+这证明 Windows Codex CLI 的 `sandbox` 子命令能启动本次 PowerShell 并允许该临时目录写入。它不是 Desktop 中 Codex 原生 Shell 工具的调用，未观测 Desktop Hook 回调或决定；也没有测试沙箱拒绝写入。官方 `:workspace` profile 明确允许系统临时目录写入，因此本次成功是预期行为，不能据此声称受保护路径阻断已通过。Desktop 原生 Shell 状态仍为 `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`。一次前置脚本探测因 PowerShell 命令解析失败、哨兵 hash 未变化且没有成功标记而作废，没有记作 sandbox deny。
+
+详细机器结果见 [`native-host-hook-evidence.json`](../codex/native-host-hook-evidence.json)。

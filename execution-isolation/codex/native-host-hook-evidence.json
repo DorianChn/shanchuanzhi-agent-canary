@@ -48,6 +48,7 @@
       "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
       "nodeVersion": "v22.23.1",
       "codexExecutableOnPath": false,
+      "windowsCodexCliByAbsolutePath": "0.162.0-alpha.17.2; invoked for the separate CLI sandbox probe below",
       "nativeDesktopHookTelemetry": "UNAVAILABLE"
     },
     "hookContractConclusion": {
@@ -57,12 +58,38 @@
       "qualifiesAsFailClosedEnforcement": false,
       "basis": "Official Hooks documentation says non-managed hooks require review/trust for the exact current definition, but callback errors, timeouts, or malformed responses may fail the hook without blocking the tool; some specialized tool paths can opt out of the default hook path. Managed hooks are trusted by policy but the documented callback failure behavior still applies."
     },
+    "windowsCliSandboxProbe": {
+      "checkedAtUtc": "2026-10-14T05:01:54Z",
+      "cliVersion": "0.162.0-alpha.17.2",
+      "configState": "windows.sandbox=elevated (reported by M0 read-only probe; no config changes made)",
+      "command": "codex.exe sandbox -P :workspace --include-managed-config -- powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand <synthetic sentinel write and readback>",
+      "workingDirectory": "M2 worktree root",
+      "testDirectory": "%TEMP%\\agent-canary-m2-native-cli-probe-zIe5UB",
+      "target": "synthetic-sentinel.txt",
+      "directoryResolvedWithinTemp": true,
+      "sentinelBeforeSha256": "be9351741a8155d01fd028d158546f1005e73ceeb0bb2d093335feac4144e450",
+      "sentinelAfterSha256": "94c3f1415d2061d05e4cce4d33e43e26a5ad7ebcf6e89acace6e8b84240a629c",
+      "sentinelChanged": true,
+      "cliExitCode": 0,
+      "completionMarkerObserved": true,
+      "stderrLength": 0,
+      "cleanup": "Unique directory was removed after checking its resolved path was inside %TEMP%; post-cleanup existence check was false.",
+      "interpretation": "The Windows Codex CLI sandbox subcommand launched PowerShell and allowed the synthetic write under %TEMP%. This is expected for the :workspace profile, which allows system temporary directories; it does not prove enforcement of a denied write, does not exercise a Desktop native Shell invocation, and does not observe a PreToolUse callback decision. A prior malformed PowerShell preflight had no completion marker and no hash change and was discarded, not counted as a sandbox denial."
+    },
+    "desktopNativeShellAcceptance": {
+      "nativeCodexShellSentinelWriteAttempted": false,
+      "nativeHostDecision": "NOT_OBSERVED",
+      "classification": "UNPROTECTED",
+      "acceptance": "BLOCKED_NOT_VERIFIED",
+      "reason": "The Windows CLI sandbox probe is a distinct codex.exe subprocess path; it does not exercise the Desktop's native Shell tool or expose its hook telemetry. The project hook fragment remains uninstalled and the Desktop loading/trust state remains unknown."
+    },
     "hostAcceptance": {
       "nativeCodexShellSentinelWriteAttempted": false,
       "nativeHostDecision": "NOT_OBSERVED",
       "classification": "UNPROTECTED",
       "acceptance": "BLOCKED_NOT_VERIFIED",
-      "reason": "This execution process is WSL2 and has no Codex executable on PATH, so it cannot invoke or observe the actual desktop host hook lifecycle. The repo fragment remains uninstalled and host trust/loading remains unknown. No unrestricted shell write was used as a substitute test."
+      "scope": "Desktop native Shell only",
+      "reason": "The M2 agent shell runs in WSL2 and has no Codex executable on PATH. Although a Windows CLI sandbox subcommand was invoked by absolute path and is recorded separately, this does not expose the actual Desktop native Shell hook lifecycle. The repo fragment remains uninstalled and Desktop trust/loading remains unknown. No unrestricted shell write was used as a substitute test."
     },
     "officialSources": [
       "https://learn.chatgpt.com/docs/hooks",
