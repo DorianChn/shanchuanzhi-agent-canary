@@ -1,5 +1,12 @@
 # M9 最终集成计划
 
+## 当前 P1 #49 契约路径收敛（2026-10-14 16:56 UTC）
+
+- M0 PR #30 head `a469e37` owns canonical root `docs/3.0/API_CONTRACTS.md`; current checks are 10/10.
+- M1 PR #43 head `d26a0c3` keeps its Gateway/Guard contract under `docs/3.0/M1/GATEWAY_API_CONTRACT.md`; exact-head checks are 9/9.
+- This M9 worktree replaces the old M1-only root file with the M0 canonical contract and preserves the exact M1 owner file under the M1 path. This revision changes documentation only; no M1–M8 source or tests were edited.
+- GitHub PR #36 remains at remote head `ab382fe`; its previous 9/9 checks and 2/2 wrapper do not validate this revision. Keep Issue #49 OPEN until the branch is pushed and its current-head checks pass.
+
 初始基线：`feature/agent-canary-3.0` `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。本文件建立候选集成门槛和顺序；当前本地候选组合状态及限制见下方验收记录。这里的本地组合不表示源 PR 已通过评审或可以发布。
 
 ## 本地候选组合验收记录（2026-10-14）
