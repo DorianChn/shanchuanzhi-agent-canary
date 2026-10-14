@@ -78,7 +78,44 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 - 标题：`fix(policy): preserve sensitive-data hard denies in OBSERVE`
 - Base：`feature/agent-canary-3.0`；Draft；关联 Issue #27。
 - `API-Contract-Change: yes`；`Coordinated-with: M0, M1, M3, M6, M7`。
-- `Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts (43/43); node node_modules/typescript/bin/tsc --noEmit --pretty false (pass); git diff --check (pass)`。
+- `Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts (44/44); node node_modules/typescript/bin/tsc --noEmit --pretty false (pass); git diff --check (pass)`。
 - M0 owner 需先解决 M5 branch 与 canonical `docs/3.0/API_CONTRACTS.md` 的重复路径；M3/M5/M6/M7 需验收同一组合 manifest 与 package-smoke。达到这些门槛前 PR 不应标记 Ready 或合并。
 
-当前本地确认 PR #27 的字段协作状态仍有待集成；GitHub 查询未找到以 `feature/ac3-policy-audit` 为 head 的 PR。本轮未进行远端写入、推送或提交。改动仍在 M5 工作树未提交。完整 M5 build/test/pack、组合 manifest CI、真实 M1+M5 宿主接线与真实副作用仍未验证。
+### PR 描述草稿（待 M0 协调后复制）
+
+```markdown
+## What changed
+
+Keep explicit policy denials authoritative in OBSERVE mode. The mode no longer converts out-of-workspace paths, dangerous shell patterns, or sensitive egress to ALLOW, and it blocks SENSITIVE_DATA reads without queuing a bypassable approval. Ordinary registered work and Guard quarantine retain their existing behavior.
+
+API-Contract-Change: yes
+Coordinated-with: M0, M1, M3, M6, M7
+Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts (44/44); node node_modules/typescript/bin/tsc --noEmit --pretty false (pass); git diff --check (pass)
+
+## Verification
+
+- Focused policy and false-positive suites: 44/44 pass.
+- TypeScript no-emit check and `git diff --check`: pass.
+- Full `npm run verify`, combined manifest package-smoke, and cross-module CI: not run in this local readiness pass.
+
+## Security and compatibility
+
+- No credentials, real shell/network operations, dependencies, or permissions were added.
+- Guard quarantine remains authoritative in OBSERVE mode.
+- OBSERVE continues to waive ordinary optional approvals for registered tools; sensitive data and explicit safety denials remain blocked.
+
+## Reviewer notes
+
+- P0 acceptance evidence is limited to M5 synthetic callbacks; it does not prove real host/Gateway integration.
+- Keep this PR Draft until M0 resolves the duplicate `docs/3.0/API_CONTRACTS.md` path and M3/M5/M6/M7 verify the combined package manifest and package-smoke.
+```
+
+### P0 验收条件
+
+1. `OBSERVE` 下，显式 `DENY`（包括未登记工具、越界路径、硬拒绝 Shell 和敏感外发）保持 `DENY`；每个拒绝在真实回调启动前发生，回调计数为 0。
+2. 标记 `SENSITIVE_DATA` 的 `.env` 路径读取、宿主登记的 `sensitive-read` 操作和包含敏感标记的外发均在 `OBSERVE` 下拒绝；不创建待审批请求、不执行 callback、不把参数写入策略日志。
+3. Guard 已隔离时 `OBSERVE` 不能恢复或绕过隔离；后续真实回调计数为 0。
+4. 同一测试集证明公开只读操作和普通已登记操作仍符合各保护模式的预期，避免通过扩大拒绝范围制造假通过。
+5. M0 canonical API 契约合并、组合 manifest 与新的目标分支 CI 通过前，不宣称完成跨模块 P0 集成；M5 fixture 结果只作为本模块单测证据。
+
+GitHub 查询未找到以 `feature/ac3-policy-audit` 为 head 的 PR。本轮未创建 PR/Issue、未推送或写入远端；本收尾变更仅保留在 M5 本地分支。M0 尚未复核本候选；在 M0 复核前不将 P0 标为关闭。完整 M5 `npm run verify`、组合 manifest CI、真实 M1+M5 宿主接线与真实副作用仍未验证。
