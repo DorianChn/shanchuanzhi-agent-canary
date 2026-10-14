@@ -2,12 +2,12 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 11:50 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
+## 当前调度（2026-10-14 11:56 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
 
 - **额度与推送**：网页 11:50 UTC 实读五小时 88%（4小时8分后重置）、周额度 66%（6天后重置）、113 credits。低于5%或读数不明即暂停。M0/M1/M7/M9 已推送本批更新，下批不早于 12:01 UTC。
 - **CI 分流**：#43 当前头 9/9、#36 11/11 均通过。#30 当前头仅 Windows Node22 Hook interruption marker 失败；#39 当前头 Windows Node20/22 同一 M1 Hook 测试失败，其余矩阵及 wrappers 通过，package smoke 跳过。
-- **跨分支冲突**：M2/M5/M8 旧分支均不含 M1 owner commit `46af1f1`；整提交包括三份目标分支没有的 M1 报告文件，Hook 测试三方应用冲突。M1 owner 正准备最小可移植测试 patch，三个分支未作修改。
-- **集成验收**：#30/#37/#39/#40/#47 要在 owner 修正集成后重跑当前头 CI，保留 no-allow/no-callback/无输出、quarantine、sentinel 和 hard DENY 断言，不删失败测试、不降低策略。
+- **跨分支冲突**：M1 owner 的最小可移植 Hook 夹具 patch 仅改 `test/agent-hook.test.ts`，SHA-256 `7b75374e…49e114b9`；M0/M2/M5/M7/M8 预检可用（M0 忽略 CRLF 空白差异）。M2/M8 正在各自分支应用；M0/M5/M7 尚未改动。不得声称该子进程夹具验证了宿主侧 callback=0。
+- **集成验收**：#30/#37/#39/#40/#47 要在 owner 修正集成后重跑当前头 CI，保留 no-allow、无决策输出、quarantine、sentinel 和 hard DENY 断言，不删失败测试、不降低策略。子进程 Hook 夹具不能观测宿主侧 tool callback；只有真实宿主可观测的断言才可报告 callback=0。
 - **未关闭 P1**：#27/#28/#32/#41/#44/#45/#48。原生 Shell、外部 E4、clean-VM 不得用本地协议测试代替；P2 #46 和 M4 后端诊断范围待分别验收。
 - **调度**：最多两个模块任务并行；VMware、真实模型、安装测试互斥。PR #24 与 main 保持不动，不合并、不发布 Release。
 

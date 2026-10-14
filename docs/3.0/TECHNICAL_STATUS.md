@@ -1,12 +1,13 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 11:50 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
+## 当前状态（2026-10-14 11:56 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
 
 - **额度**：网页版当前显示五小时剩余 88%、4 小时 8 分后重置；每周剩余 66%、6 天后重置，余额 113。页面已关闭。低于 5% 或不能读数时暂停开发、测试、浏览器和 GitHub 操作。
 - **推送节奏**：本批已将 M0 `9aee510`、M1 `ca24d37`、M7 `c9a6b5c`、M9 `ab382fe` 快进推至各自已有 PR 分支；远端 ref 回读一致。为满足 20 分钟间隔，下批不得早于 12:01 UTC。
 - **CI 回读**：#43 当前头 9/9 全通过；#36 当前头 11/11 全通过。#30 当前头仅 Windows Node22 的 Hook interruption marker 断言失败，其余测试矩阵、Docker、sponsor 和 ownership gate 通过；package smoke 因失败而跳过。#39 当前头 Windows Node20/22 同一 M1 Hook interruption 测试失败，其余矩阵与 wrapper 通过，package smoke 跳过。
 - **本地修复证据**：M1 `ca24d37` 精确过期定向 3/3、Hook 10/10、Node22 Hook 3/3；M7 `c9a6b5c` 蜜罐定向 6/6；M9 `ab382fe` verify 393/399（0 fail、6 skip）、package smoke 100 文件、E4 测试 12/12。
-- **跨分支修复**：M2/M5/M8 旧头均不含 M1 owner commit `46af1f1`；整提交还含三份缺失的 M1 报告文件，三方应用在各分支 Hook 文件冲突。M5 确认仍有 `spawnSync(timeout:1000)`。M1 owner 正制作仅含必要 Hook 测试逻辑的可移植修正。未复制或削弱安全断言。
+- **跨分支修复**：M1 owner 的可移植 Hook 夹具补丁位于 ignored `logs/m1-hook-fixture.portable.patch`（SHA-256 `7b75374e…49e114b9`），仅触及 `test/agent-hook.test.ts`；预检可用于 M0/M2/M5/M7/M8，M0 需忽略 CRLF 空白差异。M2/M8 正在各自分支接入并定向验证；未 cherry-pick 含三份报告文档的整提交。此子进程夹具不能观测宿主侧 tool callback，不声称 callback=0。
+- **M2 / #45**：本地 M2 Hook 协议夹具退出码 0，合成 deny 与可见告警通过；没有安装或信任 Hook，也没有宿主 Shell 实测。状态保持 UNPROTECTED / BLOCKED_NOT_VERIFIED。
 - **待验门槛**：#32/#37/#40/#47 仍需合入 owner 修正并重跑 CI；#30/#39 也需在兼容修正后重跑。#45 原生 Shell、#41 clean-VM 安装、外部 E4 未验证，保持 UNKNOWN/NOT VERIFIED。M9 本地结果仍为 verify 393/399（0 fail、6 skip）、package smoke 100 文件、E4 测试 12/12。
 - **资源边界**：当前没有 VMware、真实模型或安装测试。并行最多两个任务；其它 Codex 会话的聊天内容不可见，状态仅以文件系统、GitHub 和本会话网页读数为准。
 
