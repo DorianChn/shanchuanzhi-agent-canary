@@ -1,6 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 21:53 UTC)
+## Current authoritative snapshot (2026-10-14 22:14 UTC)
+
+- 用量页 22:13 UTC 实读仍高于 5% 停工线，页面保持打开并在前台；精确百分比与余额只记入 gitignore 忽略的本地协调报告。低于 5% 或读数不可确认时，停止开发、测试、浏览器与 GitHub 操作。
+- 两个开发槽继续为 M3/#32 与 M4/#32，均限现有 PR #33/#34 及各自分支。22:14 核验时两个工作树干净，HEAD 未变化：M3 `d9364cc5ad533b8b922859e97d2387e70718d931` / CI `38555297535` 9/9；M4 `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b` / CI `38555299339` 9/9。#32 最后状态评论为 6179514296，之后无 owner 回复。
+- 22:11 UTC M0 通过现有 Codex session queue 给 M3/M4 投递了任务，回执分别为 `01a13c78-b291-7a43-87a0-633dec95f983`、`01a13c78-b291-7b41-9720-8ab355476a64`。排队回执不证明消息已被读取或任务已开始；截至22:14，工作树和 PR head 均无变化。
+- M6 不占开发槽。#27 comment 6179220160 仅释放槽位，不代表 owner signoff；PR #38 仍 OPEN/Draft at `ed82f0612b9f69463afc9c80a1082b951e7e88fe`，已知三个 M6/M9 `e4:*` 值静态匹配；外部 E4 仍 NOT_VERIFIED，未跟踪证据目录保留。
+- M0 PR #30 OPEN/Draft at `6f27e1659bb4482346216413f90f03071d49cda4`：产品 run `38644017236` 9/9 通过；ownership runs `38644017422`、`38644355243`、`38644503756` 均 1/1 通过；PR 描述已回读同步。最近分支 push 为21:55 UTC；当前批次不早于22:15 UTC，下一批按至少20分钟间隔安排。
+- PR #24 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`，head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；9项产品与2项wrapper检查通过，未修改/合并。M9 PR #36 仍OPEN/Draft at `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`；外部 E4、原生Shell与clean-VM门槛仍未闭合。
+- 仍开放的主要门槛：#27 M6 owner signoff/组合验收；#32 M3/M4 当前分支 fixture 更新；#41 clean-VM 生命周期；#45 原生 Codex Shell UNPROTECTED；M4 后端安全/E4 UNKNOWN。其他窗口的 VMware/真实模型/安装占用未知。
+- 本次仅 M0 协调文档更新，不改模块源码或运行产品测试；不合并 main/PR #24，不发布 Release。
+
+## Archived snapshot (2026-10-14 21:53 UTC)
 
 - 用量页在 21:53 UTC 可读且高于 5% 停工线；具体百分比和余额只保存在被 gitignore 忽略的本地协调报告。用量页保持打开。低于 5% 或不可读时停止所有开发、测试、浏览器与 GitHub 操作。
 - 本轮两个开发槽为 M3/#32 与 M4/#32，分别在现有 PR #33/#34 分支处理 M1 owner 批准的异步 marker/interruption 夹具移植。21:53 核验时，#32 最新路由 comment 6179220646 后无模块 owner 回复；两个工作树均干净，head 未变。PR #33 head `d9364cc5ad533b8b922859e97d2387e70718d931` 的 exact-head CI `38555297535` 通过 9/9；PR #34 head `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b` 的 exact-head CI `38555299339` 通过 9/9。#32 继续 OPEN；子进程夹具不观测 native-host callback。

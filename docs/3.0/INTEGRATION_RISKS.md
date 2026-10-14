@@ -1,6 +1,21 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 21:53 UTC)
+## Current integration risk snapshot (2026-10-14 22:14 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #27 M6 package fields | P1 | Active slot released; field-owner reply still absent. M6/M9 `e4:auto`, `e4:verify`, `e4:test` are statically equal only. | Keep OPEN through explicit M6 owner disposition and M9 combined acceptance; external E4 NOT_VERIFIED; preserve local E4 evidence. |
+| #32 Hook interruption fixture | P1 | M3/#33 and M4/#34 are active slots. At 22:14 worktrees and PR heads unchanged; exact-head old-fixture CI is green. Owner task messages are queued, but consumption is unconfirmed. | Keep OPEN until owner-authored branch copies and exact-head CI verify the limited timing fix. Keep fail-closed/no-output/no-decision assertions. Root cause UNKNOWN; native callback NOT_VERIFIED. |
+| #45 native Codex Shell | P1 | Native Shell remains UNPROTECTED; child-process/protocol tests do not prove installed-host enforcement. | Keep OPEN; do not present a fixture as host coverage. |
+| #41 installer lifecycle | P1 | Clean-VM install/launch/upgrade/uninstall/user-cancel rollback remains unverified. | Keep OPEN/HOLD pending clean-VM evidence. |
+| External E4 | P1 | Verifier CI and synthetic bundle are not independent external E4. | Keep NOT_VERIFIED. |
+| M4 backend | P1 | Security/E4 backend endpoints and enforcement remain UNKNOWN. | Do not claim PASS without backend evidence. |
+| Exclusive VM/model/installer resources | P2 | Other-window occupancy unavailable. | Treat as unavailable until reservation/release is visible on #29. |
+| Quota / push cadence | Scheduling | Usage page readable and above stop threshold at 22:13 UTC; exact values local-only. Last push 21:55 UTC. | Stop all work if quota <5% or unreadable; next push batch no earlier than 22:15 UTC. |
+
+Issue #32 latest status checkpoint is 6179514296. M3/M4 queued-session acknowledgments are recorded locally only; they are not proof of task completion. PR #30 current head `6f27e16` has product run 38644017236 9/9 and ownership runs 38644017422, 38644355243, 38644503756 each 1/1. PR #24 is unchanged with 11/11 checks passing.
+
+## Archived snapshot (2026-10-14 21:53 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
