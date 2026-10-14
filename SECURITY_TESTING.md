@@ -4,7 +4,7 @@ This guide runs Agent Canary code with synthetic inputs. It does not test a live
 
 ## 1. Pin what you are testing
 
-For the current stable release, use the immutable v3.0.0 tag. V1.2.7 is an earlier release. The separate published [v3.0.0-competition bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) uses the same assets as [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4), not the current stable CLI package. Keep any competition-bundle/candidate.4 result bound to its exact tag and asset SHA-256; never report it as a v3.0.0 stable result. The moving `feature/agent-canary-3.0` branch is a different artifact; record its full commit SHA.
+No GitHub Release is currently published. Use the immutable `v3.0.0` source tag for a reproducible source check; it is not a stable Release artifact. The `v3.0.0-competition` and `v3.0.0-competition-candidate.4` repository tags are also source snapshots, not published Releases. Keep any candidate result bound to its exact source tag and recorded artifact SHA-256. The moving `feature/agent-canary-3.0` branch is a different artifact; record its full commit SHA.
 
 Record:
 
@@ -26,7 +26,7 @@ npm run build
 node dist/competition.js self-test --json
 ~~~
 
-The published v3.0.0 verification receipt records four passing offline self-test checks. This is a bounded local code-path check; it is not a real-model attack, native-host integration test, independent E4 reproduction, or certification.
+The v3.0.0 source verification receipt records four passing offline self-test checks. This is a bounded local code-path check; it is not a real-model attack, native-host integration test, independent E4 reproduction, or certification.
 
 ## 3. Observe the SDK/Gateway path with temporary effects
 
@@ -38,7 +38,7 @@ npm run build
 node --import tsx --test test/gateway-acceptance.test.ts
 ~~~
 
-The focused test exercises the source Gateway with temporary files and a receiver bound to 127.0.0.1. It checks local file hashes, callback counts, approvals, and receiver counts. One negative case records a late write by a callback that ignores cancellation; that temporary write is an observed limitation, not a successful block. The test does not contact public networks or touch a production workspace. `npm run verify` is the broader release-source verification command and includes the project test suite.
+The focused test exercises the source Gateway with temporary files and a receiver bound to 127.0.0.1. It checks local file hashes, callback counts, approvals, and receiver counts. One negative case records a late write by a callback that ignores cancellation; that temporary write is an observed limitation, not a successful block. The test does not contact public networks or touch a production workspace. `npm run verify` is the broader source verification command and includes the project test suite.
 
 Run only in a disposable checkout. Preserve the complete test output, including failures.
 

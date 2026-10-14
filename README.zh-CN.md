@@ -6,8 +6,8 @@ Agent Canary 提供无副作用的 MCP 诱饵和合成 Canary Token，用于暴�
 
 ## 项目状态
 
-- **当前稳定发行版：** v3.0.0。V1.2.7 是较早的稳定版。另有单独发布的[竞赛社区包 v3.0.0-competition](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition)，其发布资产复用自 [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4)，但它不是当前稳定 CLI 包。candidate.4 是预发布版本；持续变化的分支属于开发产物。
-- **安装：** v3.0.0 CLI 发布在 GitHub Packages，需要带 `read:packages` 权限的 GitHub Token；见[快速上手](GETTING_STARTED.md)。
+- **发行状态：** 当前没有已发布的 GitHub Release。`v3.0.0` 源码标签不等于已发布的 Release。
+- **安装：** v3.0.0 CLI 包通过 GitHub Packages 单独分发，需要带 `read:packages` 权限的 GitHub Token；见[快速上手](GETTING_STARTED.md)。
 - **独立 E4 复现：** 尚未验证；[证据索引](E4_EVIDENCE_INDEX.md)列出已完成与未完成的检查。
 - **许可证：** 本仓库代码为 MIT。第三方依赖各自保留原许可证，见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 - **运行环境：** 从源码构建需要 Node.js 20 或更高版本。
@@ -22,7 +22,7 @@ Agent Canary 只保护可信宿主实际接入 Guard、Router 或已登记 Gatew
 
 - **Codex 原生 Shell — UNPROTECTED（未受保护）：** Agent Canary 不会拦截 Codex 内置 Shell；MCP/Guard 接入不会改变这一点。
 - **AppContainer — LIMITED（范围有限）：** 已验证的覆盖仅限已测试的子进程操作；不能据此推断整个宿主或通用 Shell 得到保护。
-- **Security Center / E4 后端 — HTTP 404 时为 UNKNOWN（未知）：** 404 代表状态未知，不能作为成功或失败的证据。
+- **Security Center / E4 后端运行状态 — UNKNOWN（未知）：** HTTP 404 不能证明成功或失败。
 - **E4 — NOT_VERIFIED（未验证）：** 仅有 fixture 的证据不代表产品通过；独立 E4 仍为 NOT_VERIFIED。
 
 ## 从这里开始

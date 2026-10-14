@@ -1,8 +1,8 @@
 # Getting started
 
-This guide starts with the published v3.0.0 stable release. A separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) reuses the release assets from [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4); it is not the current stable CLI package described here. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from the release. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
+No GitHub Release is currently published. This guide uses the v3.0.0 CLI package from GitHub Packages or builds from the `v3.0.0` source tag; GitHub Packages distribution is separate from GitHub Releases. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from that source tag. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
 
-## Five-minute quick start: stable v3.0.0
+## Five-minute quick start: v3.0.0 package
 
 Requirements: Node.js 20+, npm, network access, and a GitHub Classic Personal Access Token with `read:packages` for the published npm package. Do not paste the token into this repository or commit an `.npmrc` containing credentials.
 
@@ -14,13 +14,13 @@ agent-canary --help
 agent-canary self-test --json
 ~~~
 
-The release self-test reports its result as JSON. The v3.0.0 mainline verification receipt records four passing self-test checks. A self-test verifies only its local code path; it does not connect Codex or establish protection of Codex's built-in tools.
+The CLI self-test reports its result as JSON. The v3.0.0 source verification receipt records four passing self-test checks. A self-test verifies only its local code path; it does not connect Codex or establish protection of Codex's built-in tools.
 
-The npm token is managed by npm in the user's configuration. Use a personal account, keep the token out of project files, and remove credentials you no longer need. The published release is documented at [GitHub Releases](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0).
+The npm token is managed by npm in the user's configuration. Use a personal account, keep the token out of project files, and remove credentials you no longer need. The v3.0.0 source tag is available in the repository; it is not a published GitHub Release.
 
-### Build the v3.0.0 release from source instead
+### Build from the v3.0.0 source tag
 
-Use the exact stable tag, not a moving branch:
+Use the exact source tag, not a moving branch:
 
 ~~~sh
 git clone --depth 1 --branch v3.0.0 https://github.com/DorianChn/shanchuanzhi-agent-canary.git agent-canary-3.0.0
@@ -31,11 +31,11 @@ npm run build
 node dist/competition.js self-test --json
 ~~~
 
-The release tag is the reproducible source for v3.0.0. `npm run verify` runs the broader project verification suite; a passing run still does not establish global host-tool coverage or independent E4.
+The source tag is the reproducible code snapshot for v3.0.0. `npm run verify` runs the broader project verification suite; a passing run still does not establish global host-tool coverage or independent E4.
 
 ## Optional development build
 
-The moving `feature/agent-canary-3.0` branch is not a release artifact. If you need to inspect it, pin and record the full commit SHA, label results as development-source results, and do not treat its package metadata or behavior as v3.0.0 behavior.
+The moving `feature/agent-canary-3.0` branch is not a published Release artifact. If you need to inspect it, pin and record the full commit SHA, label results as development-source results, and do not treat its package metadata or behavior as v3.0.0 behavior.
 
 ~~~sh
 git clone --depth 1 --branch feature/agent-canary-3.0 https://github.com/DorianChn/shanchuanzhi-agent-canary.git agent-canary-dev
@@ -46,7 +46,7 @@ npm run build
 node dist/competition.js self-test --json
 ~~~
 
-## Codex MCP setup (v3.0.0 stable release)
+## Codex MCP setup (v3.0.0 tag)
 
 The v3.0.0 CLI includes an integration helper that previews and registers Agent Canary's MCP server in a project-scoped `.codex/config.toml`. Use a disposable scratch project. This is MCP registration, not a guard for Codex's built-in tools.
 

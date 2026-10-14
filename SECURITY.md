@@ -2,9 +2,9 @@
 
 Agent Canary is an open-source tool for narrow, host-integrated tripwire and callback-containment workflows. It is not an operating-system sandbox, prompt-injection filter, or guarantee that an AI agent will act safely.
 
-## Supported release scope
+## Supported source and package scope
 
-The current latest stable GitHub release is [v3.0.0](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). V1.2.7 is an earlier stable release. The separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) has the same nine asset names and SHA-256 digests as the [candidate.4 pre-release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4); it is not the current stable CLI package. Development branches change independently of published artifacts. Report security issues against the exact tag, commit, package, and host configuration involved. Preview and development builds may behave differently from released assets. E4 independent reproduction remains NOT_VERIFIED; see [the evidence index](E4_EVIDENCE_INDEX.md).
+No GitHub Release is currently published. The repository contains a `v3.0.0` source tag, and GitHub Packages distribution is a separate channel. Report security issues against the exact tag, commit, package, and host configuration involved. Preview and development builds may differ from a source tag or package. E4 independent reproduction remains NOT_VERIFIED; see [the evidence index](E4_EVIDENCE_INDEX.md).
 
 ## What is in scope
 
@@ -13,7 +13,7 @@ Please report privately:
 - A bypass or defect in a Guard, Router, SDK, or registered Gateway callback that causes a later guarded callback to run after quarantine.
 - Exposure of real credentials by the product's own logging, configuration, backup, webhook, installer, or package paths.
 - Unsafe configuration writes, restore behavior, or package/update behavior attributable to Agent Canary.
-- A reproducible defect that changes a documented security decision or effect in a supported released path.
+- A reproducible defect that changes a documented security decision or effect in a supported product path.
 
 Installing a decoy MCP server does not make unrelated tools guarded. Native shell and file operations, arbitrary third-party MCP servers, unregistered callbacks, operating-system calls, and actions already started are outside the product's general protection claim.
 

@@ -1,10 +1,10 @@
 # Upgrade guide
 
-## Current release boundary
+## Current source and package boundary
 
-Agent Canary v3.0.0 is the current stable release; V1.2.7 is an earlier release. The separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) reuses [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4) assets and is not the current stable CLI/package release; candidate.4 remains a separate pre-release. The reviewed v3.0.0 release records do not provide a verified in-place V1.2.7-to-v3.0.0 state migration procedure.
+No GitHub Release is currently published. The repository has a `v3.0.0` source tag; the `v3.0.0-competition` and `v3.0.0-competition-candidate.4` tags are separate source snapshots, not published Release assets. The reviewed v3.0.0 source records do not provide a verified in-place V1.2.7-to-v3.0.0 state migration procedure.
 
-Do not treat a moving branch or candidate archive as v3.0.0. Keep the current V1 installation and host configuration untouched while evaluating the exact v3.0.0 tag in a separate source checkout and scratch project. Installing v3.0.0 globally may replace the existing `agent-canary` command; no side-by-side global package procedure is verified here.
+Do not treat a moving branch or candidate archive as the v3.0.0 source snapshot. Keep the current V1 installation and host configuration untouched while evaluating the exact v3.0.0 tag in a separate source checkout and scratch project. Installing the v3.0.0 package globally may replace the existing `agent-canary` command; no side-by-side global package procedure is verified here.
 
 ## Before moving from V1 to v3.0.0
 
@@ -12,7 +12,7 @@ Do not treat a moving branch or candidate archive as v3.0.0. Keep the current V1
 2. Preserve the actual configuration, logs, and local evidence files you need using the host's documented backup method. Store copies outside the project and restrict access; do not assume V1 and v3.0.0 use the same state layout.
 3. Use the exact v3.0.0 tag or published package. Verify the version and checksum when a published checksum is available; do not use a moving branch as a reproducible upgrade target.
 4. Evaluate v3.0.0 in a separate source checkout and scratch project. The project-level Codex helper previews its config change and prints a receipt path when applied.
-5. Run the v3.0.0 self-test and compare only documented behavior for that release. Keep the existing installation and configuration untouched until the migration impact is understood.
+5. Run the v3.0.0 self-test and compare only documented behavior for that source snapshot. Keep the existing installation and configuration untouched until the migration impact is understood.
 
 ## Codex configuration rollback
 
