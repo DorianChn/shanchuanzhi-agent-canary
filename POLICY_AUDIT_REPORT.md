@@ -6,7 +6,7 @@
 
 M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放宽确认、追加式版本历史、托管策略路由及可校验的审计导出。未登记工具现在在 `OBSERVE`、`BALANCED`、`STRICT` 三种模式都直接拒绝。正常读取与审定开发命令保持可用；写入、构建等已知风险操作仍由宿主人工审批，不由模型批准。
 
-默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 负责维护跨模块 canonical API contract；本报告只记录 M5 模块行为和证据，不替代该契约。M0/M1/M5/M9 对应候选的契约、路径和 CI 核对已通过，Issue #48 和 #49 已关闭；这不验证真实 M1+M5 宿主接线或真实副作用。
+默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 负责维护跨模块 canonical API contract；本报告只记录 M5 模块行为和证据，不替代该契约。M0/M1/M5/M9 已完成各自有限范围的契约、路径或 CI 核对，Issue #48 和 #49 已按各自有限范围关闭；这些证据不验证真实 M1+M5 宿主接线或真实副作用。
 
 ## 2026-10-15 当前状态快照
 
@@ -62,13 +62,13 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 **接线边界**：M5 项目规则与 M1 Gateway 是两套独立授权和审计状态。推荐由宿主确保模型只有 Gateway 的 `agent.dispatch` 入口，并将 Gateway 注册的可信 MCP 执行器接到 M5 托管路由，使任一层均可拒绝。若直接暴露 M5 Router、绕过 Gateway，或由 M5 callback 再调用 Gateway，授权顺序和错误归属会变化；目前没有共享合约规定统一调用拓扑、决定关联 ID 或自动镜像拒绝事件。该接口问题提交 M0 在 #35 协调；`package.json` 字段归属仍在 #27 待分配，本轮未接触 `package.json`。
 
-## M0 契约与未完成的协调
+## M0 契约边界与状态核对
 
-M0 通过 PR #30 维护跨模块 canonical API contract `docs/3.0/API_CONTRACTS.md`。截至 2026-10-15，PR #30 仍为 OPEN/Draft，head `39e2cc237e68e963955c07be3719a26afdd5981c` 的 10/10 检查通过（含 ownership-contract-evidence）。Issue #46 仍 OPEN，跟踪独立的文档同步/归属后续工作。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
+历史状态记录（此前核对的 M0 PR #30 head）：M0 通过 PR #30 维护跨模块 canonical API contract docs/3.0/API_CONTRACTS.md。该旧快照记录 head 39e2cc237e68e963955c07be3719a26afdd5981c 的 10/10 检查（含 ownership-contract-evidence）；它已由本报告开头的当前快照所列 M0 head 63d10b86d6c8e2c3e66d2608a9222ddeb728f594 及产品 9/9、ownership 1/1 取代。Issue #46 当前仍 OPEN，等待 M0 更新及 PR #47 描述和相关新 head CI 的读回，详见当前快照。M0 是 canonical 根契约的维护方；M5 不拥有、不修改，也不复制该 canonical 路径。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
 
-路径核对以 PR #47 base `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 和 head `5fd4707746186c4752e3a166e59a7292f112ff63` 为准：`docs/3.0/API_CONTRACTS.md` 在 M5 base 与 head 的 tree 中均不存在，base-to-head 对该路径的 diff 为空。该结论只描述 M5 分支，不表示当前 M9 集成候选缺少契约文件。
+历史路径核对（M5 PR #47 较早 head 5fd4707746186c4752e3a166e59a7292f112ff63）：在该 head 与 base 62496d4020bd90ba2eede49b2e80a2bbebb036b4 的 tree 中，M0 canonical 根路径 docs/3.0/API_CONTRACTS.md 均不存在，对该路径的 base-to-head diff 为空。这只是旧 M5 head 的路径记录，不描述当前 PR #47 head，也不表示 M5 是该契约的所有者或副本维护者。
 
-路径碰撞由 M9 PR #36 的候选 `ed0dd015a6e46029d1df4ac077a6e9378fb1a494` 解决：M9 候选包含 M0 根契约和 M1 子目录契约；根契约 SHA-256 与 M0 PR #30 head `39e2cc237e68e963955c07be3719a26afdd5981c` 的 `fe10af13af8e2da1bc22edff6c1b1e4b09dae094abe6556d992c04647bd639ea` 一致，M1 契约 SHA-256 与 PR #43 head `d26a0c3376885becd7a80c5039891702fdb2f946` 的 `b10a3c515ec0da787f4145ebb6069c18292095245fad254d8c5a2ccd24930aa0` 一致。Issue #49 已关闭记录此路径/hash 核对；Issue #48 已关闭记录 M0/M1/M5/M9 对 OBSERVE hard-deny 的精确 head CI 证据。M0 PR #30 与 M9 PR #36 仍为 OPEN/Draft。
+历史路径/hash 核对（此前比较的 M9 PR #36 head ed0dd015a6e46029d1df4ac077a6e9378fb1a494 与 M0 PR #30 head 39e2cc237e68e963955c07be3719a26afdd5981c、M1 PR #43 head d26a0c3376885becd7a80c5039891702fdb2f946）：该 M9 候选同时包含 M0 canonical 根契约与 M1 子目录契约；根契约 SHA-256 fe10af13af8e2da1bc22edff6c1b1e4b09dae094abe6556d992c04647bd639ea 与当时的 M0 head 一致，M1 契约 SHA-256 b10a3c515ec0da787f4145ebb6069c18292095245fad254d8c5a2ccd24930aa0 与当时的 M1 head 一致。这是 Issue #49 关闭时所记录的有限路径/hash 核对；M0 PR #30 已前进到新 head，因此这些旧 hash 不证明新 M0 head 的内容。M0 维护 canonical 根路径；M5 不修改、复制或声称拥有它。Issue #48 已按 OBSERVE hard-deny 的有限精确 head CI 范围关闭，不代表更广的跨模块集成验收。
 
 M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入；Hook/Gateway 自动接线、跨模块事件关联及真实 M1+M5 集成尚未验证。
 
@@ -86,18 +86,18 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 
 本轮 M5 自有改动：src/risk-policy.ts、test/risk-policy.test.ts、docs/RISK_POLICY.md、FALSE_POSITIVE_REPORT.md、本报告。未改 package.json、M0 canonical contract、M1 Gateway/Hook 或其他模块路径。M5 HEAD 组合了 M1 owner-authored commit f59ba37：仅将 M1 router 测试中的 OBSERVE 敏感读取夹具改为安全文件读取，保留 egress 拒绝断言；M5 仍将 OBSERVE 的 sensitive-read 硬拒绝，拒绝前待审批数为 0、callback 次数为 0。M5 原有 manifest 增量仍为 exports["./policy"]（types/import/default）以及 test/false-positive.test.ts、test/policy-management.test.ts 两个 scripts.test 路径；Issue #27 已记录 M5 的字段 owner 确认，但合并 manifest 尚待 M3/M6/M7 一起验证。
 
-### PR #47 状态与验证
+### PR #47 较早状态与验证记录（历史）
 
 - 标题：[M5] Preserve hard denials in OBSERVE policy mode。
-- Base：`feature/agent-canary-3.0`，SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；截至 2026-10-15，远端 PR #47 为 OPEN/Draft，head `5fd4707746186c4752e3a166e59a7292f112ff63`。Issue #46 为 OPEN；Issue #48 和 #49 为 CLOSED。
+- 历史快照中的 Base：feature/agent-canary-3.0，SHA 62496d4020bd90ba2eede49b2e80a2bbebb036b4；当时 PR #47 为 OPEN/Draft，head 5fd4707746186c4752e3a166e59a7292f112ff63。Issue #46 当时 OPEN，Issue #48/#49 当时 CLOSED；当前状态见本文开头快照。
 - `API-Contract-Change: yes`；`Coordinated-with: M0, M1, M3, M6, M7`。
-- 前一代码候选 `cf4e2cdb` 的本地证据：定向 router/risk 测试 43/43；`npm test` 341 passed、5 skipped、0 failed；`npm run build` 与 `git diff --check` 通过。当前 PR head 加入中断测试夹具后，由下方当前 head CI 覆盖；该完整本地套件未在 5fd4707 上重跑。
-- 当前 PR head `5fd4707746186c4752e3a166e59a7292f112ff63` 的 GitHub Actions run [38561283918](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38561283918) 为 9/9 success：Node 20/22 在 Ubuntu、Windows、macOS，Docker、Sponsor 和 package-smoke 均通过。
-- 跨模块精确 head 检查：M1 PR #43 head `d26a0c3376885becd7a80c5039891702fdb2f946` 的 run 38602072618 为 9/9；M0 PR #30 head `39e2cc237e68e963955c07be3719a26afdd5981c` 为 10/10；M9 PR #36 head `ed0dd015a6e46029d1df4ac077a6e9378fb1a494` 的 product run 38604703774 为 9/9，wrapper run 38604703745 为 2/2。Issues #48/#49 已按各自范围关闭。此 CI/path/hash 证据不代表真实 M1+M5 宿主接线、真实副作用或 E4 已验证；M3/M5/M6/M7 package manifest 组合仍单独跟踪。
+- 此前代码候选 cf4e2cdb 的本地证据：定向 router/risk 测试 43/43；npm test 341 passed、5 skipped、0 failed；npm run build 与 git diff --check 通过。随后 PR head 加入中断测试夹具，由当时的 head CI 覆盖；完整本地套件未在 5fd4707 上重跑。
+- 此前 PR head 5fd4707746186c4752e3a166e59a7292f112ff63 的 GitHub Actions run 38561283918 为 9/9 success：Node 20/22 在 Ubuntu、Windows、macOS，Docker、Sponsor 和 package-smoke 均通过。该 run 不对应开头当前快照中的新 head。
+- 此前跨模块精确 head 检查：M1 PR #43 head d26a0c3376885becd7a80c5039891702fdb2f946 的 run 38602072618 为 9/9；当时 M0 PR #30 head 39e2cc237e68e963955c07be3719a26afdd5981c 为 10/10；M9 PR #36 head ed0dd015a6e46029d1df4ac077a6e9378fb1a494 的 product run 38604703774 为 9/9、wrapper run 38604703745 为 2/2。Issue #48/#49 按各自有限范围关闭。上述旧 head 证据不证明真实 M1+M5 宿主接线、真实副作用或 E4；M3/M5/M6/M7 package manifest 组合仍单独跟踪。
 
-### PR #47 描述状态
+### PR #47 描述的历史观察
 
-远端 PR #47 描述最后更新于 2026-10-14 16:28 UTC，仍写有 M9 combined acceptance pending。按本次范围不修改 PR；本报告以下述 M9 exact-head CI/path/hash 证据及 Issues #48/#49 的已关闭状态为准。真实 M1+M5 宿主接线与真实副作用仍未验证。
+历史观察：此前读取的远端 PR #47 描述最后更新于 2026-10-14 16:28 UTC，当时包含 M9 combined acceptance pending。该观察不证明当前 PR 描述仍是这一内容；按开头当前快照，Issue #46 仍等待 M0 更新及 PR #47 描述和相关新 head CI 的读回。Issue #48/#49 已按各自有限范围关闭；真实 M1+M5 宿主接线与真实副作用仍为 NOT_VERIFIED。
 
 ### P0 验收条件
 
@@ -105,6 +105,6 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 2. 标记 `SENSITIVE_DATA` 的 `.env` 路径读取、宿主登记的 `sensitive-read` 操作和包含敏感标记的外发均在 `OBSERVE` 下拒绝；不创建待审批请求、不执行 callback、不把参数写入策略日志。
 3. Guard 已隔离时 `OBSERVE` 不能恢复或绕过隔离；后续真实回调计数为 0。
 4. 同一测试集证明公开只读操作和普通已登记操作仍符合各保护模式的预期，避免通过扩大拒绝范围制造假通过。
-5. M5 PR #47 standalone CI、M0/M1/M9 对应 exact-head CI 及 M9 路径/hash 核对均已通过，Issue #48/#49 按各自范围关闭。该证据不证明真实 M1+M5 宿主接线或真实副作用；M3/M5/M6/M7 package manifest 组合仍单独跟踪，M5 fixture 仍只作为本模块测试证据。
+5. 验收时应核对 M5 PR #47、相关 M0/M1/M9 候选的精确 head CI，以及对应路径/hash 证据；Issue #48/#49 的关闭仅覆盖各自有限范围。该类 CI/path/hash 证据不代表真实 M1+M5 宿主接线或真实副作用；M3/M5/M6/M7 package manifest 组合仍单独跟踪，M5 fixture 仅是本模块测试证据。
 
-截至 2026-10-15，PR #47 为 OPEN/Draft，base SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，head `5fd4707746186c4752e3a166e59a7292f112ff63`，其当前 head CI run 38561283918 为 9/9 success。Issue #46 为 OPEN；Issue #48/#49 为 CLOSED。M0 PR #30 和 M9 PR #36 仍 OPEN/Draft，但其上述精确 head CI 及路径/hash 证据已通过。Issue #48/#49 的关闭不表示真实 M1+M5 宿主接线、真实副作用或 E4 已验证。此次仅更新 M5 报告；未改源代码、测试、Issues 或 PR，未推送。
+历史摘要（此前 head 与状态记录，已由本文开头的 2026-10-15 当前快照取代）：当时 PR #47 为 OPEN/Draft，base SHA 62496d4020bd90ba2eede49b2e80a2bbebb036b4，head 5fd4707746186c4752e3a166e59a7292f112ff63，其当时 head CI run 38561283918 为 9/9 success。Issue #46 当时 OPEN，Issue #48/#49 当时 CLOSED；当时 M0 PR #30 和 M9 PR #36 仍为 OPEN/Draft，其当时精确 head CI 及路径/hash 证据已通过。Issue #48/#49 的关闭不表示真实 M1+M5 宿主接线、真实副作用或 E4 已验证。该历史记录只描述当时的报告更新；当前状态以开头快照为准。
