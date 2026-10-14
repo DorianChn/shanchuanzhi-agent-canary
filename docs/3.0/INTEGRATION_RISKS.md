@@ -2,7 +2,7 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 10:02 UTC；额度页约 10:00 实读）
+## 实时风险快照（2026-10-14 10:07 UTC；额度页约 10:06 实读）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
@@ -15,9 +15,9 @@
 | #27 manifest / package fields | P1 | M9 组合候选 845743d 的 aggregate verify、pack:check、100 文件 package smoke 本地通过；组合 GitHub CI 与 E4 消费者验收未完成。 | OPEN / CI PENDING |
 | #28 Gateway lifecycle | P1 | M1/M7 两分支共基线 `62496d4`、互非祖先；M7 本地提交 `6d978a5` 选择性移植五个 M1 owner 文件，M1 审查通过且 blob 与 M1 HEAD `738a783` 一致。M7 报告 Gateway/containment/acceptance 66/66、reliability 43 pass/3 skip；M1 未独立重跑。PR #39 远端仍为 `5c7d95d`，候选尚未推送，combined GitHub CI pending。 | OPEN / LOCAL CANDIDATE OWNER-APPROVED |
 | #46 canonical API contract | P2 | M0 维护唯一 canonical contract；M6 确认 SecurityEvidenceEvent 与 M5 PolicyAuditEvent 分离且当前不消费 M5 stream。外部 E4 仍 NOT_VERIFIED。 | OPEN |
-| M9 combined acceptance | P1 | 本地计划文档 head `5c11113`；此前 397 项统计对应功能组合 head `83d7268`（391 pass、0 fail、6 环境条件 skip），package smoke 与 docs checks 已通过。该结果不覆盖当前文档 tip，也不证明 #28 的 M1+M7 代码已组合。PR #36 最近远端仍为 `996073a`，组合 GitHub CI 尚待推送触发。 | LOCAL EVIDENCE / CI PENDING |
+| M9 combined acceptance | P1 | 本地集成 branch HEAD `5c11113` 相对 PR #36 远端 `996073a` 有 86 个本地提交差异、136 个文件改动，包含多模块合并和 E4 `raw.log`/`evidence.zip`；未推送。此前 397 项统计对应较早组合 HEAD `83d7268`（391 pass、0 fail、6 环境条件 skip），不验证当前候选。先完成范围/敏感证据审查和当前 combined verify。 | LOCAL ONLY / AUDIT & VERIFY PENDING |
 | worktree pointers | P2 | M9 integration worktree 在 CRLF-aware core.autocrlf=true、禁可选索引锁的 status 下干净；默认 WSL Git 把 CRLF 行尾误报为全树 M。先前 0 B index.lock 已消失，未清理或改写。 | MONITOR |
-| quota / scheduling | 调度门槛 | 网页用量页约 10:00 UTC 实读五小时 54%、每周 70%、余额 113、约 59m 后重置。最近已知推送约 07:14 UTC；M1/M7 已完成并释放槽位，本地待推送分支正在复核。VMware/真实模型/安装测试没有运行。 | MONITOR |
+| quota / scheduling | 调度门槛 | 网页用量页约 10:06 UTC 实读五小时 53%、每周 70%、余额 113、约 52m 后重置。最近已知推送约 07:14 UTC；M1/M7 已完成并释放槽位。VMware/真实模型/安装测试没有运行。 | MONITOR |
 
 VMware、真实模型和安装测试互斥；M7 clean-VM 安装、升级、卸载及真实取消回滚仍 HOLD，未运行。五小时额度低于 5% 或无法读取时，暂停所有开发、测试、浏览器和 GitHub 操作；确认额度重置后再继续。
 ## 历史风险增量（2026-10-13 16:16 UTC）
