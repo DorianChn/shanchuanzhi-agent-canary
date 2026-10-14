@@ -19,11 +19,11 @@ await router.dispatch({ name: 'read_file', args: { path: 'README.md' } });
 
 | 模式 | 正常公开读取、审定只读命令 | 写入、构建、未审定网络 | 明显秘密外传、越界路径 | 已隔离 Guard |
 |---|---|---|---|---|
-| OBSERVE | 执行并记录 | 执行并记录 | 执行并记录 | 拒绝 |
+| OBSERVE | 执行并记录 | 执行并记录 | 拒绝 | 拒绝 |
 | BALANCED | 执行 | 人工批准 | 拒绝 | 拒绝 |
 | STRICT | 执行 | 拒绝 | 拒绝 | 拒绝 |
 
-OBSERVE 会允许危险虚拟操作；不要把模式名称理解为安全保证。BALANCED 的构建、写入审批会中断无人值守工作流。STRICT 有明确兼容性影响。
+OBSERVE 会放行已登记工具的普通审批类风险，仍禁止明显秘密外传、敏感数据读取和越界路径；不要把模式名称理解为安全保证。BALANCED 的构建、写入审批会中断无人值守工作流。STRICT 有明确兼容性影响。
 
 ## 决策语义
 
@@ -82,4 +82,4 @@ if (preview.conflicts.length === 0) router.policyManager.apply(preview.rules, 'a
 
 ## English summary
 
-The optional router enforces host-owned tool descriptors and parameter/context checks before registered callbacks. OBSERVE logs while allowing optional policy risks; BALANCED requires authenticated human approval for writes/unreviewed commands; STRICT denies them. All modes retain Guard quarantine. Approval is immutable, expiring and one-shot; host authentication is mandatory. AI advice never grants rights. Same-Guard routers serialize operations and retain sensitive-data taint across mode changes; a new Guard object does not inherit policy taint. Host executors remain responsible for real paths, symlinks, executable resolution, network controls, identity and every call outside this router.
+The optional router enforces host-owned tool descriptors and parameter/context checks before registered callbacks. OBSERVE logs while allowing ordinary registered operations that only require optional approval; it still denies sensitive-data access or egress, explicit hard denials, and paths outside the workspace. BALANCED requires authenticated human approval for writes/unreviewed commands; STRICT denies them. All modes retain Guard quarantine. Approval is immutable, expiring and one-shot; host authentication is mandatory. AI advice never grants rights. Same-Guard routers serialize operations and retain sensitive-data taint across mode changes; a new Guard object does not inherit policy taint. Host executors remain responsible for real paths, symlinks, executable resolution, network controls, identity and every call outside this router.

@@ -13,7 +13,7 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 | 项目 | 检查结果 | M5 处置或边界 |
 |---|---|---|
 | 未登记工具 | 原策略把未登记能力放入人工审批；`OBSERVE` 还会覆盖该审批，缺少可信操作描述时仍可能调用宿主回调。 | 无注册描述时按 `UNKNOWN` 处理，兼容现有策略 API 返回 `DENY / unregistered_tool`，不入审批队列，所有模式 fail closed。 |
-| 默认策略 | `BALANCED` 对普通只读按策略放行；写入、未审定 Shell/网络操作需宿主审批；已识别的越界、秘密外传拒绝。 | 保持既有默认。`OBSERVE` 会允许已注册操作的策略风险继续执行；Guard 隔离和未登记工具拒绝不受它覆盖。`OBSERVE` 是明确降低策略强制性的模式，仅适合演练。 |
+| 默认策略 | `BALANCED` 对普通只读按策略放行；写入、未审定 Shell/网络操作需宿主审批；已识别的越界、秘密外传拒绝。 | 保持既有默认。`OBSERVE` 只豁免已登记、非敏感操作的可选审批；敏感数据读/外发、越界路径和显式硬拒绝始终拒绝。Guard 隔离和未登记工具拒绝不受它覆盖。该模式仍降低普通风险审批强制性，仅适合演练。 |
 | 项目策略 | 原来没有带版本、预览、冲突检查和回滚的项目策略管理器。 | 新增规则只能增加 `DENY`，不可声明 `ALLOW`。精确工具名可选风险类别；拒绝重叠选择器和重复 ID。移除或缩窄拒绝范围须显式确认；回滚以新版本追加，不改写旧历史。 |
 | 人工确认 / 模型 | 审批身份必须由宿主认证；模型不得授予执行权。 | 策略回调接口只能给出 `DENY` 或 `UNCHANGED`。审批是原调用绑定、一次性、有时限的宿主操作。项目 API 接收的操作者字符串只用于关联证据，本身不是身份认证。 |
 | 策略版本和解释 | 原策略告警缺少项目策略版本、调用来源和统一原因码；“allowed”事件并非回调成功证明。 | M5 决策/结果事件包含策略版本、调用来源、决策来源、结果状态、侧效应验证状态、原因码和规则 ID。执行结果单独记为 `EXECUTION_RESULT`。 |
@@ -53,13 +53,11 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 ## M0 契约与未完成的协调
 
-已只读检查 `coordinator/docs/3.0/API_CONTRACTS.md`、模块归属/依赖文档及 Issue #27。M0 契约要求保持既有 `createRiskPolicyRouter` 的 `ALLOW|DENY|APPROVAL_REQUIRED` 语义、确保策略只收紧并保留 Gateway 最终执行复查。M5 为 API 兼容把未知工具表示为 `DENY / unregistered_tool`，并在 M5 审计事件中保留 `UNKNOWN`。M5 没有修改 M1 的 Hook、Gateway、Guard 或 `runtime/evidence.ts`；与 Gateway 组合时仍需把最终回调路由到 Gateway `agent.dispatch`。
+当前可读的 `coordinator/docs/3.0/API_CONTRACTS.md` 将 M0 列为契约文档 owner，要求策略只收紧并保留 Gateway 最终执行复查。M5 将未知工具映射为 `DENY / unregistered_tool`，并在 M5 审计事件中保留 `UNKNOWN`。M5 没有修改 M1 的 Hook、Gateway、Guard 或 `runtime/evidence.ts`；与 Gateway 组合时仍需把最终回调路由到 Gateway `agent.dispatch`。
 
-该契约副本位于 `coordinator`，其 `.git` 指针已损坏且 Git 将其标为 `prunable`，所以无法确认 M0 文档变更的提交状态或由 M0 批准。新 `./policy` 导出和 `agent-canary.policy-audit/1` 是新增公共接口/事件格式，按契约需要同步 API 文档；该文档由 M0 工作区维护，M5 checkout 中没有此文件，未复制或修改另一工作区的文件。Issue #27 仍 OPEN，要求 M5/M6 确认 `package.json` 字段归属。如创建 Draft PR，正文须标注 `API-Contract-Change: yes` 与协调状态；M0/M6 文档和 manifest 协调完成前不得标记 Ready 或合并。
+本分支还包含同路径 `docs/3.0/API_CONTRACTS.md`，而 canonical 路径由 M0 管理。提交 Draft PR 前必须由 M0 owner 协调这份重复文档的去向，并将新 `./policy` 导出、`agent-canary.policy-audit/1` 事件语义及本次 OBSERVE 安全边界更新到 canonical contract；本轮不修改该共享路径。Issue #27 中 M5 已确认自己只拥有 `exports["./policy"]` 与两个新增 `scripts.test` 路径；M3/M6/M7 字段仍需组合到同一 AC3 manifest 并通过共同 package-smoke/CI。M5 的更改属于公共策略行为变更，PR 应标 `API-Contract-Change: yes`、关联 #27，并保持 Draft 直到契约及 manifest 协调和 CI 完成。
 
-被引用 Codex 线程在本会话可用工具中仍没有 `read_thread`，不能声称已读取该线程或获得 M0/M6 的实时同意。Hook/Gateway 目前只能由宿主显式调用 `policyManager.recordDecision()` 写入 M5 证据，尚未自动统一接线；共享适配、事件关联与合并顺序待协调。
-
-本地开发和验证已完成，但当前没有远程 Draft PR：Git push 因缺少 GitHub HTTPS 写入凭据失败，GitHub 文件写入 API 返回 403（integration 无写入权限）。本地提交保留在 `feature/ac3-policy-audit`；取得可写远程认证并完成 M0/M6 协调后再发布 Draft PR。
+M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入；Hook/Gateway 自动接线、跨模块事件关联及真实 M1+M5 集成尚未验证。
 
 ## 验证范围
 
@@ -68,3 +66,19 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 先前 M5 交付验证：`npm run build` 通过；`npm test` 共 342 项，337 通过、0 失败、5 项因平台条件跳过；`npm run pack:check` 通过（92 个打包文件）；`git diff --check` 通过。
 
 本轮增量验证：M5 定向策略、路由和误拦截测试 `node --import tsx --test test/policy-management.test.ts test/risk-policy.test.ts test/false-positive.test.ts` 通过（41/41）；`node node_modules/typescript/bin/tsc --noEmit` 与 `git diff --check` 通过。只读运行 M1 Gateway 定向测试 `node --import tsx --test test/gateway.test.ts test/gateway-acceptance.test.ts` 为 37/38，其中上述在途 Guard quarantine 测试失败。完整 M5 build/test/pack 本轮未重跑；真实 M1+M5 宿主接线、Windows 原生 Hook、跨进程/生产 Gateway、真实工具副作用与外部锚定仍未验证。
+
+## 2026-10-14 M5 收尾候选
+
+本轮修复 `OBSERVE` 对安全拒绝的过度覆盖：之前任何已登记工具的 `DENY` 都可能被观察模式改成 `ALLOW`，包括越界路径、明确危险 Shell、敏感外发；敏感路径读取也可能绕过人工确认。现在显式硬拒绝不可覆盖，且 OBSERVE 下任何标有 `SENSITIVE_DATA` 的操作都拒绝；普通已登记操作中仅可选审批仍能按 OBSERVE 规则继续。默认 `BALANCED` 和 M1 Gateway 最终授权不变。
+
+本轮 M5 自有改动：`src/risk-policy.ts`、`test/risk-policy.test.ts`、`docs/RISK_POLICY.md`、`FALSE_POSITIVE_REPORT.md`、本报告。未改 `package.json`、M0 canonical contract、M1 Gateway/Hook 或其他模块路径。M5 原有 manifest 增量仍为 `exports["./policy"]`（types/import/default）以及 `test/false-positive.test.ts`、`test/policy-management.test.ts` 两个 `scripts.test` 路径；Issue #27 已记录 M5 的字段 owner 确认，但合并 manifest 尚待 M3/M6/M7 一起验证。
+
+### PR 准备信息（仅本地草稿，未创建/推送）
+
+- 标题：`fix(policy): preserve sensitive-data hard denies in OBSERVE`
+- Base：`feature/agent-canary-3.0`；Draft；关联 Issue #27。
+- `API-Contract-Change: yes`；`Coordinated-with: M0, M1, M3, M6, M7`。
+- `Test-Evidence: node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts (43/43); node node_modules/typescript/bin/tsc --noEmit --pretty false (pass); git diff --check (pass)`。
+- M0 owner 需先解决 M5 branch 与 canonical `docs/3.0/API_CONTRACTS.md` 的重复路径；M3/M5/M6/M7 需验收同一组合 manifest 与 package-smoke。达到这些门槛前 PR 不应标记 Ready 或合并。
+
+当前本地确认 PR #27 的字段协作状态仍有待集成；GitHub 查询未找到以 `feature/ac3-policy-audit` 为 head 的 PR。本轮未进行远端写入、推送或提交。改动仍在 M5 工作树未提交。完整 M5 build/test/pack、组合 manifest CI、真实 M1+M5 宿主接线与真实副作用仍未验证。
