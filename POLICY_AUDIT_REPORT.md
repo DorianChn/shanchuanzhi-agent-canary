@@ -6,7 +6,7 @@
 
 M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放宽确认、追加式版本历史、托管策略路由及可校验的审计导出。未登记工具现在在 `OBSERVE`、`BALANCED`、`STRICT` 三种模式都直接拒绝。正常读取与审定开发命令保持可用；写入、构建等已知风险操作仍由宿主人工审批，不由模型批准。
 
-默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 所有的 canonical API contract 位于 docs/3.0/API_CONTRACTS.md；该契约已体现 M5 的策略收紧与 Gateway 最终复查语义，但 M5 尚未完成 M9 跨模块验收或真实宿主接线验证。
+默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 负责维护跨模块 canonical API contract；本报告只记录 M5 模块行为和证据，不替代该契约。M5 尚未完成 M9 跨模块验收或真实宿主接线验证。
 
 ## 主要审计发现与处置
 
@@ -53,9 +53,9 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 ## M0 契约与未完成的协调
 
-M0 owner 管理的 canonical API contract 位于 docs/3.0/API_CONTRACTS.md（M0 PR #30）。当前契约体现策略只收紧、OBSERVE 保留显式拒绝及 Gateway 最终执行复查语义。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
+M0 通过 PR #30 维护跨模块 canonical API contract `docs/3.0/API_CONTRACTS.md`。截至 2026-10-15，PR #30 为 OPEN/Draft；Issue #46 跟踪 M5 OBSERVE 语义与该契约的同步，状态为 OPEN。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
 
-M5 HEAD cf4e2cdb 不含 docs/3.0/API_CONTRACTS.md，与 M0 canonical contract 不存在重复路径；该文件由 M0 PR #30 管理，本轮不修改。M0 本地提交 0cb3b009eedc2a48213e880ae0a94c4c7c02ade5 更新了 API_CONTRACTS.md、INTEGRATION_RISKS.md、TECHNICAL_ISSUES.md 和 TECHNICAL_STATUS.md；其中记载 M9 本地组合候选 845743d 的 npm run verify 为 391 passed、0 failed、6 environment-condition skips，100-file package-smoke 通过，但组合 GitHub CI 仍 pending。该 M0 提交尚待例行批次推送；M0 PR #30 的远端页面目前显示 published head bcedbae，未包含 0cb3b00，因此本地更新不作为远端事实。[PR #30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 所在 M0 分支另有未提交文档改动，不属于 0cb3b00。M0 本地状态更新不再作为 PR #47 保持 Draft 的条件；M5/组合验收、组合 GitHub CI 与真实 M1+M5 宿主接线仍未完成。
+路径核对以当前 PR #47 base `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 和 head `5fd4707746186c4752e3a166e59a7292f112ff63` 为准：该路径在 base 与 head 的 tree 中均不存在，base-to-head 对该路径的 diff 为空。M5 不修改 M0 管理的 canonical contract；跨模块文字协调继续由 Issue #46 跟踪。
 
 M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入；Hook/Gateway 自动接线、跨模块事件关联及真实 M1+M5 集成尚未验证。
 
@@ -76,39 +76,14 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 ### PR #47 状态与验证
 
 - 标题：[M5] Preserve hard denials in OBSERVE policy mode。
-- Base：feature/agent-canary-3.0；远端 PR #47 为 OPEN/Draft，代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4。Issue #46 与 #48 均 OPEN。
+- Base：`feature/agent-canary-3.0`，SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；截至 2026-10-15，远端 PR #47 为 OPEN/Draft，head `5fd4707746186c4752e3a166e59a7292f112ff63`。Issue #46 与 #48 均 OPEN。
 - `API-Contract-Change: yes`；`Coordinated-with: M0, M1, M3, M6, M7`。
-- Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-policy.test.ts (43/43); npm test (341 passed, 5 skipped, 0 failed); npm run build (pass); git diff --check (pass); PR #47 CI run 38527097304 (9/9 pass: Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, package-smoke).
-- M0 canonical/status 已由本地提交 0cb3b009eedc2a48213e880ae0a94c4c7c02ade5 更新，尚待例行推送；这不是 PR #47 的 Draft 阻塞项。PR #47 独立 CI 已通过，但 M5 本模块验收、M9 组合 GitHub CI 和真实 M1+M5 宿主接线仍未完成；M3/M5/M6/M7 组合 manifest 仍需验收。
+- 前一代码候选 `cf4e2cdb` 的本地证据：定向 router/risk 测试 43/43；`npm test` 341 passed、5 skipped、0 failed；`npm run build` 与 `git diff --check` 通过。当前 PR head 加入中断测试夹具后，由下方当前 head CI 覆盖；该完整本地套件未在 5fd4707 上重跑。
+- 当前 PR head `5fd4707746186c4752e3a166e59a7292f112ff63` 的 GitHub Actions run [38561283918](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38561283918) 为 9/9 success：Node 20/22 在 Ubuntu、Windows、macOS，Docker、Sponsor 和 package-smoke 均通过。M5 standalone CI 不等于 M9 组合验收或真实 M1+M5 宿主接线；组合 manifest 仍需验收。
 
-### PR 描述草稿（仅供后续批次核对，未发送）
+### PR #47 描述状态
 
-```markdown
-## What changed
-
-Keep explicit policy denials authoritative in OBSERVE mode. The mode no longer converts out-of-workspace paths, dangerous shell patterns, or sensitive egress to ALLOW. SENSITIVE_DATA reads and registered sensitive-read operations return DENY before callback dispatch, with zero pending approvals and zero callback executions. Ordinary registered work and Guard quarantine retain their existing behavior.
-
-API-Contract-Change: yes
-Coordinated-with: M0, M1, M3, M6, M7
-Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-policy.test.ts (43/43); npm test (341 passed, 5 skipped, 0 failed); npm run build (pass); git diff --check (pass); PR #47 CI run 38527097304 (9/9 pass across Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, and package-smoke)
-
-## Verification
-
-- Focused router and risk-policy suites: 43/43 pass; full npm test: 341 passed, 5 skipped, 0 failed; npm run build and git diff --check: pass.
-- PR #47 CI run 38527097304: 9/9 pass, including the six Node 20/22 x Ubuntu/Windows/macOS jobs, Docker, Sponsor, and package-smoke. This validates the M5 PR head; it is not M9 combined acceptance.
-- The local npm run verify aggregate was not run in this readiness pass; the focused tests, full npm test, build, and listed PR CI are recorded above.
-
-## Security and compatibility
-
-- No credentials, real shell/network operations, dependencies, or permissions were added.
-- Guard quarantine remains authoritative in OBSERVE mode.
-- OBSERVE continues to waive ordinary optional approvals for registered tools; sensitive data and explicit safety denials remain blocked.
-
-## Reviewer notes
-
-- P0 acceptance evidence is limited to M5 synthetic callbacks; it does not prove real host/Gateway integration.
-- Keep this PR Draft pending M5 and cross-module acceptance. M9 local candidate 845743d has aggregate verify and package-smoke evidence, but combined GitHub CI remains pending and real M1+M5 host wiring is unverified. M0 local commit 0cb3b00 refreshes its contract/status; its scheduled push is separate from this readiness gate.
-```
+2026-10-15 已按当前 head 与 CI 事实更新远端 PR #47 描述。描述保留 M5 OBSERVE 硬拒绝、零待审批/零 callback 和 M9/真实宿主接线未验收边界；M0 契约路径关系以本报告上方 base/head 核对及 Issue #46 为准。
 
 ### P0 验收条件
 
@@ -118,4 +93,4 @@ Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-p
 4. 同一测试集证明公开只读操作和普通已登记操作仍符合各保护模式的预期，避免通过扩大拒绝范围制造假通过。
 5. M5 standalone PR #47 CI 已通过，但这不等于 M9 验收或跨模块 P0 集成完成；组合 manifest、M9 验收及真实 M1+M5 宿主接线仍须单独完成，M5 fixture 结果只作为本模块单测证据。
 
-PR #47 仍为 OPEN/Draft，远端代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4，CI run 38527097304 为 9/9 全绿。Issue #46、Issue #48 与 M0 PR #30 均保持 OPEN（PR #30 为 Draft）。M0 本地提交 0cb3b009eedc2a48213e880ae0a94c4c7c02ade5 更新了 canonical contract 和三份协调文档；其 M9 本地候选 845743d 的 aggregate verify、100-file package-smoke 已通过，但 combined GitHub CI 仍 pending。PR #30 远端页面当前仍显示 published head bcedbae，尚未包含 0cb3b00；M0 同分支另有未提交文档改动，本地更新等待例行批次推送。M0 更新不是 PR #47 的 Draft 条件；M5 模块验收、组合 GitHub CI、真实 M1+M5 宿主接线与真实副作用仍未完成。本次仅更新 M5 报告，未推送或写入 GitHub。
+截至 2026-10-15，PR #47 为 OPEN/Draft，base SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，head `5fd4707746186c4752e3a166e59a7292f112ff63`，当前 head 的 CI run 38561283918 为 9/9 success。Issue #46、Issue #48 均 OPEN；M0 PR #30 为 OPEN/Draft。M5 standalone CI 不代表 M9 组合 GitHub CI、真实 M1+M5 宿主接线或真实副作用已验收；这些仍未验证。本次仅更新 M5 报告与 PR #47 描述，未推送、未修改 Issues 或 M0 canonical docs。
