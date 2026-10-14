@@ -16,7 +16,7 @@
 
 | 风险 | 本轮检查/变更 | 证据边界 |
 |---|---|---|
-| Gateway 并发关闭与隔离 | 当前 M7 候选的 `close()` 只设置 `closed`、等待队列、随后清理 pending 并顺序关闭资源；它没有共享 close Promise、同步清 pending 或隔离并脱敏资源关闭错误。Guard quarantine 也没有接入活动 Controller 取消 | 当前候选不满足 M1 Issue #28 close/quarantine 契约；M1 owner handoff 必须先整合。M7 定向测试只覆盖队列限额与 drain，不证明并发/重入共享 Promise、quarantine 取消或关闭错误收敛 |
+| Gateway 并发关闭与隔离 | 集成前 M7 基线的 `close()` 缺少共享 close Promise、同步清 pending 和脱敏资源关闭错误；Guard quarantine 未取消活动 Controller | M1 实现现已纳入本地 M7 候选，M1 owner review 已通过；候选定向测试通过。Issue #28 仍待 combined GitHub CI，故不将其报告为 GitHub 集成完成 |
 | 自动验收锁在崩溃后残留 | 锁记录 schema、run ID、PID；只有确认 PID 不存在才回收。旧格式、损坏或仍有活动 PID 的锁失败关闭 | 合成死亡 PID 测试；未在真实 VM 杀进程观察 |
 | 会话状态 JSON 损坏 | 备份损坏字节到 `.corrupt.*.bak`，原子创建新 session；符号链接/非普通文件仍拒绝 | 回归测试验证原字节保留及新状态可读 |
 | 日志/证据损坏 | Gateway 证据 JSONL 写入后校验哈希链；篡改已落盘事件会令链验证失败 | 本地临时文件测试；未通过真实磁盘故障破坏日志 |
@@ -29,15 +29,23 @@
 
 ## Issue #28：M1 Gateway close/quarantine 契约（2026-10-14）
 
-M7 当前候选 HEAD `5c7d95d` 虽在历史上包含 M1 handoff `738a783`，该 M1 提交只修改 `SECURITY_REGRESSION_RESULTS.md`，没有带入 Gateway 实现或回归测试。当前 `src/runtime/gateway.ts` 的 `close()` 仍是单个异步函数：它在等待 `history.tail` 后才清空 pending，没有记住并返回同一个 Promise；资源关闭的首个异常会中断循环并直接暴露底层错误。当前 Gateway 也没有监听 Guard quarantine 来取消活动回调。
+集成前的 M7 PR #39 基线为 `5c7d95d`（M7 审计快照提交为 `f818216`）。M1 handoff `738a783` 本身只修改 `SECURITY_REGRESSION_RESULTS.md`，没有带入 Gateway 实现或回归测试。该基线的 `src/runtime/gateway.ts` 中 `close()` 仍是单个异步函数：它在等待 `history.tail` 后才清空 pending，没有记住并返回同一个 Promise；资源关闭的首个异常会中断循环并直接暴露底层错误。该基线的 Gateway 也没有监听 Guard quarantine 来取消活动回调。
 
-M7 提交 `f17b7e6` 明确将 close 生命周期交由 M1；因此本报告不在 M7 越权修改 Gateway 核心。Issue #28 的验收顺序仍需由 M1 实现并由集成候选验证：同步 latch `closed` 并清空 pending → 发布共享 close Promise → abort 活动 Controller → 安全退订 quarantine observer → drain 队列 → 尝试关闭全部资源 → 只暴露固定脱敏错误；并发与回入调用必须共享 Promise。M7 本分支不能被标为满足该契约，合入 M1 owner 实现和 combined CI 前保持集成阻断。
+M7 提交 `f17b7e6` 明确将 close 生命周期交由 M1。Issue #28 的验收顺序由 M1 owner 实现并由组合候选验证：同步 latch `closed` 并清空 pending → 发布共享 close Promise → abort 活动 Controller → 安全退订 quarantine observer → drain 队列 → 尝试关闭全部资源 → 只暴露固定脱敏错误；并发与回入调用必须共享 Promise。
 
-### 本候选定向验证
+### 集成前基线与 M1 owner 验证记录
 
-- Node `v22.23.1`：`npm run test:reliability` 为 46 项，43 通过、0 失败、3 跳过；跳过项为当前 Windows 环境不假定符号链接权限的测试。
-- Node `v22.23.1`：`node --import tsx --test test/gateway.test.ts test/containment.test.ts` 为 40 项，40 通过、0 失败、0 跳过。这些结果确认现有 Gateway 与隔离回归通过，但它们不包含 M1 handoff 中的 close Promise 身份/回入、同步 pending 清理、quarantine 退订和逐资源脱敏关闭错误测试。
+- 集成前 M7 基线 Node `v22.23.1`：`npm run test:reliability` 为 46 项，43 通过、0 失败、3 跳过；跳过项为当前 Windows 环境不假定符号链接权限的测试。
+- 集成前 M7 基线 Node `v22.23.1`：`node --import tsx --test test/gateway.test.ts test/containment.test.ts` 为 40 项，40 通过、0 失败、0 跳过。这些旧基线结果不包含完整 M1 close/quarantine 回归。
 - M1 handoff `738a783` 记录其自身 owner 候选中 Gateway/containment 定向测试为 51 通过、0 失败、0 跳过；这不是 M7 当前树或 M7+M1 组合候选的验证结果。
+
+## 2026-10-14 M1→M7 本地集成候选
+
+按共同基点 `62496d4` 对 M1 代码链 `be5836e → ec3bc96 → f15fdcf → 89e40cd → 2276526` 做选择性三方移植。Gateway、Guard 与测试的五个目标文件与 M1 owner HEAD `738a783` 完全一致：`src/runtime/gateway.ts`、`src/containment.ts`、`test/gateway.test.ts`、`test/containment.test.ts`、`test/gateway-acceptance.test.ts`。M1 owner review 已通过。M7 安装器与 reliability 用例保留；M1 报告、Hook 文件未纳入。`API_CONTRACTS.md` 是 M0 维护的 canonical 文档，不由 M7 分支提供。
+
+Node `v22.23.1` 定向结果：Gateway/containment/acceptance **66/66 通过**；M7 `npm run test:reliability` **46 项、43 通过、0 失败、3 跳过**（Windows 环境不假定符号链接权限）。候选已在本地提交，尚未推送 PR #39；PR #39 远端仍为 `5c7d95d`（OPEN/DRAFT）。Issue #28 保持 OPEN，候选进入 PR 后等待 combined GitHub CI。尚未运行完整 build/verify、VM、安装或真实模型验证。
+
+`89e40cd` 单独属于 Issue #44 的 approval-expiry 测试稳定化（一行测试修正），为保持 M1 当前测试文件而一并移植；它不改变 Gateway 行为。Issue #44 仍为 OPEN，不能据此推断其历史 CI 原因已解决。
 
 ## 24 小时 / 7 天可复现命令
 
