@@ -2,20 +2,20 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 06:48 UTC）
+## 当前调度（2026-10-14 08:48 UTC）
 
-- M2 在既有 PR #37 分支推进 #45 原生 Shell 保护。M7 #41 只读前置盘点已结束并释放槽位，状态 BLOCKED/HOLD：候选 VM 留有 `.vmx.lck` 与 `cleanShutdown=FALSE`，快照查询要求 VM 密码；既有记录提示 vdisk 锁访问拒绝/链不一致；找不到 NSIS 3.13 `makensis.exe` 和安装器 EXE。未启动或修复 VM，也未运行安装流程。M1 #44 诊断已完成，M5 #48 候选 `cf4e2cd` 等待下批推送和远端 CI。M0 只依据 worktree、PR、CI、Issue 和额度实况协调；当前没有 `read_thread` 工具，不声称读取引用聊天。
-- [#32 Hook interruption marker failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：P1 / OPEN。PR #43 head `f59ba37` 当前 9/9；Ubuntu Node 20、Windows Node 20/22 的目标中断测试均通过。旧 wrapper 精确漏 marker 的根因尚未证实，仍需 M9 组合基线复验。
-- [#44 Gateway approval-expiry](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)：P1 / OPEN。旧 run 中 5 ms TTL 短于约 6 ms dispatch，`pending()` sweep 使测试在 `approve` 前读到 undefined；新测试先从拒绝错误取 requestId，再确认过期时 callback 计数为 0。当前 CI 9/9；共同基线验收前不关闭。
-- [#45 native Codex Shell boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)：P1 / OPEN。M2 binder 已对缺失/未知 executionSurface fail closed，并在原生 Shell 路径执行前返回 `M2_NATIVE_SHELL_UNPROTECTED`；这仍不能证明桌面原生 Shell 已受保护。M2 正核验可支持的真实宿主拦截路径，未完成前保持 UNPROTECTED。
-- [#48 OBSERVE sensitive-read denial](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)：P1 / OPEN。M5 远端 #47 head `f8291c9` 的 Ubuntu Node 22 仍失败；M1 `f59ba37` 把 same-Guard taint fixture 改为安全 file-read，保留显式 sensitive-read deny 与 egress 拒绝断言。M5 本地候选 `cf4e2cd` 已精确包含该 M1 提交，43/43 定向、341 pass/5 skip 全测、build 和 diff-check 通过；待下批推送和新远端 CI。
-- [#46 canonical API contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/46)：P2 / OPEN。M0 是 `docs/3.0/API_CONTRACTS.md` 唯一 owner；本批将记录 OBSERVE 硬拒绝语义和 M2 execution-surface 契约，仍需 M6 consumer 确认与集成验收。
-- [#27 package/manifest](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)：P1 / OPEN。M7 已核对 M3/M5/M6/M7 字段并写 handoff；四个候选锁文件相同，但组合 package-smoke 和完整 CI 尚未运行。
-- [#28 Gateway lifecycle](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)：P1 / OPEN。M1 f15 修复在 M1/M7 分支祖先中，M7 对 AC3 的 Gateway 净差异为空；组合 CI 尚未验证。
-- [#41 M7 reliability](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)：P1 / OPEN。PR #39 9/9 主矩阵及 2/2 wrapper 检查通过；安装验收环境 BLOCKED/HOLD，隔离/回滚条件、NSIS 3.13 和安装器 EXE 均不齐。没有运行安装、升级、卸载或取消回滚，均保持 NOT VERIFIED。
-- #35 CLOSED 的范围限同进程、同 Guard、callback 遵守 AbortSignal。没有新 P0 事件证据。
-- 用量页本轮实读：五小时剩余 82%、每周 75%、额度余额 113、约 4h15 后重置。低于 5% 或无法读取时暂停所有开发、测试、浏览器和 GitHub 操作，确认额度重置后再恢复。
-- 最近推送批次约 06:34 UTC；下一批不早于 06:54 UTC。VMware、真实模型与安装测试共用一个互斥槽；当前没有此类测试运行。PR #24 仍 OPEN/Draft、未改动；M9 联合集成未完成。
+- 当前 2/2 并发槽由 M5 和 M9 占用；M5 在既有 PR #47 分支更新 owner readiness report，M9 在既有 integration worktree 对候选 refs 做只读刷新后开始组合验证。两者均未推送；M9 组合结果尚未产生。M0 只依据 worktree、PR、CI、Issue 和实际用量页协调，不声称读取其他窗口聊天。
+- **PR #24** 仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；未修改、未合并。PR #30 M0 当前 head `a81a33d`；run `38527097301` 9/9 与 ownership-contract run `38527097311` 1/1 通过。
+- **M1 / #32 / #44**：PR #43 head `f59ba37`，CI 9/9。独立候选测试通过不等于共同基线通过；#32 的历史 marker 根因仍 UNKNOWN，#44 过期审批回归也需 M9 共同基线复验。两项保持 OPEN。
+- **M2 / #45**：PR #37 远端 head `cb84f43`，run `38522973817` 9/9；本地脱敏候选 `cfde2f0` 未推送。原生 Codex Desktop Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`；子进程 AppContainer 证据与 Hook 协议 fixture 不证明原生宿主受保护。
+- **M3–M4**：PR #33 head `54facf0`、PR #34 head `f301195`，此前各 9/9；M4 后端保护/E4 状态仍须显示 `UNKNOWN`，不得由 UI fixture 推断 PASS。
+- **M5 / #48**：PR #47 远端 head `cf4e2cd`，run `38527097304` 9/9（Node 20/22 × Ubuntu/Windows/macOS、Docker、Sponsor、package-smoke 均通过）。OBSERVE 对登记的敏感读取仍 hard DENY。Issue #48 保持 OPEN，等待 M9 组合验收；readiness report 修正正在本地进行。
+- **M6 / #46**：PR #38 head `d513810`，CI 9/9；合成事件 schema 41/41、bundle verifier 12/12。M6 已确认其 `SecurityEvidenceEvent` 与 M5 `PolicyAuditEvent` 是分离 schema，M6 当前不消费 M5 audit stream，也未覆盖 M2 binder `executionSurface` 或 OBSERVE 行为。外部 E4 仍 `NOT_VERIFIED`。
+- **M7 / #41**：PR #39 head `5c7d95d`，主 CI 9/9、wrapper 2/2；clean-VM 安装、升级、卸载及真实取消回滚仍 `NOT VERIFIED / HOLD`。已有 VM 锁/异常关机与磁盘链风险，加上隔离回滚前置条件不足；未启动/修复 VM、未运行安装。
+- **M8**：PR #40 head `b0f30ff`，CI 9/9；未发布 Release。**M9** PR #36 自身 CI 9/9，但 M1–M8 组合验收当前进行中，尚无综合结果。
+- 当前未关闭门槛：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，证据仅覆盖同进程、同 Guard 且 callback 遵守 AbortSignal。
+- 用量页于 08:48 UTC 实读：五小时剩余 72%、每周 73%、额度余额 113、约 2h11m 后重置。低于 5% 或读数不可用时暂停所有开发、测试、浏览器和 GitHub 操作；只在可确认重置后恢复。
+- 最近推送批次约 07:14 UTC；20 分钟约束已满足，但 M5/M9 当前先完成本地证据和审查，之后再按同批次安排推送。VMware、真实模型与安装测试共用一个互斥槽；当前没有此类测试运行。M0 未合并 main/#24，未发布 Release。
 
 ## 历史调度（2026-10-14 04:36:33 UTC）
 
@@ -71,13 +71,13 @@
 
 当前已建立：
 
-- M5 拟建 P0 Issue（下一 GitHub 批次创建，当前尚无 Issue 编号）：[P0] Preserve explicit denials and sensitive-data blocking in OBSERVE。责任模块 M5，契约协调 M0，Gateway 接入边界由 M1 核对；只用 synthetic sensitive-read，验收要求 DENY、0 callback、0 approval、无敏感输出且日志脱敏。候选修复 f8291c9 已有 44/44 定向测试，但在 PR CI/集成验证完成前不关闭，也不宣称发生了真实泄露。
+- [#48 OBSERVE sensitive-read policy/router contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)（P1，OPEN）：M5 owns hard DENY semantics; M1 owns the cross-module router fixture/dispatch behavior; M0 owns the canonical contract. Current PR #47 head `cf4e2cd` CI run `38527097304` is 9/9. Preserve DENY, zero callback, zero approval, no sensitive output, and redacted audit evidence; keep open until M9 confirms combined behavior. No real leak is established.
 - [#27 M3/M6 AC3 基线与 M3/M5/M6/M7 package.json 协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)（P1，OPEN）。
 - [#28 M1/M7 TrustedExecutionGateway 并行变更协调](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)（P1，OPEN）。
-- [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）：PR #30 当前 head 16a9142 / run 38512532532 的 Windows Node 20 全量测试在 test/agent-hook.test.ts:54 失败，321 pass、1 fail、4 skip；未到达的 marker 断言属于 M1。PR #43 head 2276526 的独立 CI 9/9 通过，候选修复尚未进入 PR #30 base；不把独立分支结果算作该基线通过。保留 fail-closed、无 allow 与无 callback 断言，不删测试、不降低策略；集成后再验并关闭。
+- [#32 Windows Hook interruption 测试回归](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)（P1，OPEN）：PR #43 head `f59ba37` 的独立 CI 9/9 通过；历史 wrapper 漏 marker 的根因尚 UNKNOWN。待 M9 把候选置于共同基线后复验；保留 fail-closed、无 allow 与无 callback 断言，不删测试或降低策略。
 - [#35 Abort active Gateway executions on Guard quarantine](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/35)（P0，CLOSED，范围有限）：接受范围为同一进程、同一 Guard，且 callback 配合 AbortSignal。该结果不证明跨进程/shared-store 场景；缺失证据仍需标 UNKNOWN。
-- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN，候选修复已验证、待集成）：PR #39 当前 head 5c7d95d 的 CI run 38510356534 全部 9 jobs 通过；wrapper run 38510356548 的 Windows pinned-NSIS compile 与 Ubuntu reliability checks 通过。修复使用 MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup 并保留 RollbackInstall；它证明模板可编译，不证明真实用户取消时 rollback 的运行时效果。Issue 等候集成后关闭；clean-VM install/upgrade/uninstall 仍 NOT VERIFIED / HOLD。
-- [#44 gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)（P1，OPEN）：旧 PR #30 head `f2f2d10` / run `38412534723` 的 Ubuntu Node20 子测试出现 `requestId` undefined；根因仍 UNKNOWN。M1 按精确源码复现并判断行为/时序，不弱化过期审批 fail-closed 不变量。
+- [#41 M7 cross-platform reliability CI failures](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)（P1，OPEN）：PR #39 当前 head `5c7d95d` 的主 CI run `38510356534` 为 9/9，wrapper run `38510356548` 为 2/2。Pinned NSIS 模板编译已过；clean-VM install/upgrade/uninstall 和真实用户取消回滚仍 `NOT VERIFIED / HOLD`。VM 继续保持不启动/不修复。
+- [#44 gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)（P1，OPEN）：旧失败源于 approval-expiry 回归测试中读取已被 `pending()` 清扫的请求；M1 候选先从拒绝结果取 requestId，再验证过期时 callback 为零。PR #43 当前 CI 9/9；需 M9 共同基线复验后再判断关闭。
 - [#45 Resolve native Codex Shell unprotected boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)（P1，OPEN）：M2 的 PR #37 仅验证过特定 AppContainer 子进程；原生 Codex Shell 明确为 UNPROTECTED，候选 Hook 未在宿主安装/信任。要求提供真实宿主 synthetic sentinel 证据，或以宿主能力证据明确保持 UNPROTECTED/BLOCKED，不得误称已保护；后续与 M1/M2 按双槽安排，未获得宿主证据前保持该状态。
 - [#42 M3 package manifest/current-head validation](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/42)（P1，CLOSED/completed）：PR #33 当前 head c404b6b、run 38400488378 9/9（含 package-smoke）且含 owner-authored M3 API 契约；旧 cf42dde manifest 证据不适用于当前 AC3 PR。跨模块 manifest 组合继续跟踪于 #27。
 

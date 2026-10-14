@@ -32,27 +32,27 @@
 
 - `createRiskPolicyRouter({ guard, ... })` 对工具分类为 `ALLOW|DENY|APPROVAL_REQUIRED`，返回风险、理由和模式。未登记工具默认需审批；外部网络和敏感数据按当前策略拒绝或要求审批。
 - `OBSERVE` 只豁免已登记、非敏感操作的可选审批；它不得把显式 `DENY` 或 `SENSITIVE_DATA` 改成 `ALLOW`。越界路径、明确危险操作、敏感读取与敏感外发继续拒绝；`AgentGuard` quarantine/containment 在所有模式下优先。策略 `ALLOW` 不等于 Gateway 资源登记。
-- Draft PR #47 remote head `f8291c9` retains the OBSERVE hard deny for registered sensitive reads; the old Ubuntu Node 22 run fails because an M1-owned same-Guard fixture requests `sensitive-read` before a later egress assertion, so dispatch is correctly denied first. M1 changed only that fixture to safe `file-read` in `f59ba37`, retaining the hard-deny and egress assertions. M5 local candidate `cf4e2cd` cherry-picks that exact M1 commit; router/policy tests pass 43/43, full `npm test` passes 341 with 5 platform skips, and build/diff checks pass. The updated M5 head has not yet been pushed or run through remote matrix/package-smoke. M5's branch diff does not modify this canonical file. Issue #48 remains OPEN pending fresh CI and M9 combined verification; no real leak is established.
+- Draft PR #47 remote head `cf4e2cd` retains the OBSERVE hard deny for registered sensitive reads. It includes M1's safe same-Guard fixture correction from `f59ba37`; the explicit sensitive-read deny and egress assertions remain. Current-head GitHub run `38527097304` passed 9/9, including Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, and package-smoke. This CI pass verifies the M5 candidate in isolation; M9 combined verification remains in progress. The M5 branch does not modify this M0-owned canonical file. Issue #48 stays OPEN until combined behavior is confirmed; no real leak is established.
 - `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
 - `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
 - Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。M1 owner 实现 `close()` 的顺序为：同步锁定 closed 并清空 pending；在触发 abort/disposer 回调前发布唯一 memoized `closePromise`；中止活动 controller、至多一次安全退订 Guard observer；等待已入队的 Gateway 任务结算；逐个尝试关闭全部本实例资源。任一资源关闭失败时，所有调用共享以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝的 promise，不泄露路径或底层 cause。M1 commit `f15fdcfa` is present in PR #43 and in the PR #39 branch ancestry; M7's net Gateway diff against AC3 is empty. This ancestry does not prove that the candidates were tested together; #28 and M9 combined CI remain OPEN. Guard 通知只覆盖同一进程、同一 Guard 实例；忽略 AbortSignal 的不合作 callback 不会被强制终止，已经发生的副作用不承诺回滚。
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
 - M5 本地提交 `cd8abea` 进一步约束策略审计事件：`DECISION` 只表示执行尚未开始；`EXECUTION_RESULT` 使用 `decision=NOT_APPLICABLE` 且状态表示执行已开始；策略变更事件不得伪装成执行结果。新增和导入证据都经过同一语义校验；非法组合不得进入哈希链。策略审计事件的判定来源、执行状态和副作用验证状态必须保持一致。
-### M5 policy-audit event contract (Draft PR #47 head `f8291c9`; not yet integrated)
+### M5 policy-audit event contract (Draft PR #47 head `cf4e2cd`; not yet integrated)
 
 - `DECISION` is a pre-execution policy outcome: `decision` is `ALLOW`, `DENY`, `UNKNOWN`, or `REQUIRE_CONFIRMATION`; both execution and side-effect status are `NOT_STARTED`.
 - `EXECUTION_RESULT` is emitted only after execution has started: `decision=NOT_APPLICABLE`; execution and side-effect statuses cannot remain `NOT_STARTED`.
 - `POLICY_APPLIED`, `POLICY_ROLLED_BACK`, and `POLICY_CHANGE_REJECTED` are policy-management events, not tool decisions or execution results; they use `decision=NOT_APPLICABLE` and both statuses `NOT_STARTED`.
 - Invalid event-type/status combinations are rejected before append and rejected again by evidence-chain/export verification.
 - `UNKNOWN` must not be converted to `ALLOW`, `DENY`, or confirmed failure without evidence. Callback success does not prove side effects; use `NOT_VERIFIED` unless a trusted verifier establishes them. If a callback fails and effects cannot be determined, use `decision=NOT_APPLICABLE`, execution `UNKNOWN`, and side-effect `UNKNOWN`.
-- This contract is reviewable in Draft PR #47; remote head is `f8291c9` and M5 local candidate is `cf4e2cd`. It is not integrated. M6 consumer confirmation and combined AC3 CI remain pending. The event contract does not replace final host/Gateway authorization and does not establish that all execution paths are integrated.
+- This contract is reviewable in Draft PR #47 at remote head `cf4e2cd`. It is not integrated. M6 confirmed that its `SecurityEvidenceEvent` schema is separate from M5 `PolicyAuditEvent`; M6 does not currently consume the M5 audit stream, so this is schema-boundary information, not consumer compatibility proof. M9 combined AC3 CI remains in progress. The event contract does not replace final host/Gateway authorization and does not establish that all execution paths are integrated.
 
 ## 执行隔离与原生 Shell — M2
 
 - Trusted Gateway/MCP registration must provide a recognized `executionSurface`. Missing or unknown metadata fails closed with `M2_GATEWAY_MCP_METADATA_INVALID`.
 - Native Codex Shell is not covered by the current isolated worker. The binder rejects it before backend dispatch with `M2_NATIVE_SHELL_UNPROTECTED`; callers must preserve the `UNPROTECTED` state and must not fall through to direct execution.
-- `M2_ISOLATED_WORKER` is a tested adapter seam. Its tests do not prove AppContainer enforcement, trusted Hook installation, or protection of the actual Codex Desktop Shell. Issue #45 remains OPEN until an end-to-end host path and synthetic protected-path denial are verified.
+- PR #37 remote head is `cb84f43`; a sanitized local descendant `cfde2f0` is not yet published. `M2_ISOLATED_WORKER` is a tested adapter seam. Its tests do not prove AppContainer enforcement, trusted Hook installation, or protection of the actual Codex Desktop Shell. Issue #45 remains OPEN; the actual native Shell remains `UNPROTECTED` until a supported, trusted host path and synthetic protected-path denial are verified.
 
 ## Agent 宿主接入与安装 — M3
 
@@ -72,12 +72,13 @@
 - `expectedHead` 必须来自独立可信来源才能检测尾部截断。无外部锚定、签名和可信时间戳时不能宣称绝对防篡改；格式/哈希验证也不证明执行隔离或所有副作用。
 - E4 报告保留状态、输入 artifact/hash、工具版本和验证范围；缺少证据不得转为 PASS。schema/状态语义变更由 M6 与消费者协商。
 - M6 本地提交 `bca895f` 的 bundle verifier 还逐字节比对外置 `SHA256SUMS.txt`、`report.json`、`report.md`、`raw.log` 与 ZIP 内副本；缺失或不一致均拒绝。合成 fixture 通过只证明对应验证器路径，不提升 E4 状态；真实模型、工具调用、VM/安装器范围未覆盖时继续标 `NOT_VERIFIED`。
+- M6 confirmed that `SecurityEvidenceEvent` and M5 `PolicyAuditEvent` are separate schemas; current M6 code does not consume the M5 policy-audit stream. M6's Shell fixture is classified as `OBSERVED_BYPASS`, but it does not invoke the M2 binder or verify `executionSurface`; M6 tests also do not exercise M5 OBSERVE hard-deny behavior. Do not claim cross-module compatibility or E4 runtime protection from these synthetic checks.
 
 ## Windows 安装包与宿主接入边界 — M7 / M3
 
 - M7 负责 Windows 产品安装包生成与验收。Windows CI 必须安装固定版本 NSIS 并编译安装模板；缺少编译器或编译失败都必须失败退出。只检查 workflow 文本或运行 package smoke 不代表实际执行过编译。
 - M3 负责宿主配置的 preview/install/restore。baseHash 校验和保留用户后续编辑的契约，与产品安装器生命周期分开。
-- 当前证据：M7 本地候选 9b0a504 的聚焦源码测试通过，但该提交尚无 CI、NSIS 编译结果或干净 VM 安装结果。上述步骤实际运行且产物复核前，不得把安装验收标为 PASS。
+- 当前证据：PR #39 head `5c7d95d` 的主 CI run `38510356534` 通过 9/9，wrapper run `38510356548` 通过 2/2，含 pinned NSIS 安装与模板编译检查。它不证明真实用户取消后的 rollback 运行时效果。干净 VM 安装、首次启动、升级、卸载及取消回滚仍 `NOT VERIFIED / HOLD`；上述步骤实际运行且产物复核前，不得把安装验收标为 PASS。
 - M1 负责执行与 Guard 授权契约。M2 只能适配已授权的 Gateway 请求；M4 显示后端真实状态并保留 UNKNOWN/UNPROTECTED；M5 可以收紧策略但不能创建权限；M6 验证声明的证据包，但 fixture 成功不能证明运行时保护。
 ## Draft PR 契约
 

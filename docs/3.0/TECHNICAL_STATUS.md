@@ -1,6 +1,35 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 06:48 UTC；GitHub、worktree 与额度页实核）
+## 当前状态（2026-10-14 08:48 UTC；GitHub/CI/用量页实核）
+
+- **额度与调度**：网页版 08:48 UTC 实读五小时剩余 72%、每周剩余 73%、额度 113、约 2h11m 后重置；M5 与 M9 占用 2/2 开发槽。最近远端更新/推送批次约 07:14 UTC，20 分钟间隔已满足；等本地候选审查后再按批次推送。没有 VMware、真实模型或安装测试在运行。
+- **PR #24**：仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；没有修改或合并。**PR #30** M0 head `a81a33d`，CI run `38527097301` 9/9、ownership contract `38527097311` 1/1 通过。
+- **M1–M8 候选 refs**：M1 `f59ba37`、M2 `cb84f43`、M3 `54facf0`、M4 `f301195`、M5 `cf4e2cd`、M6 `d513810`、M7 `5c7d95d`、M8 `b0f30ff` 均与对应远端 Draft PR head 一致，列示 CI 均绿。M2 脱敏候选 `cfde2f0` 是未推送的本地后继；原生 Codex Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`。
+- **M5 / #48**：PR #47 run `38527097304` 9/9；OBSERVE 对敏感读取仍硬拒绝。M5 正在修复 readiness report 的旧契约路径描述；#48 保持 OPEN，等 M9 共同基线验证。
+- **M6 / #46**：合成事件 schema 41/41、bundle verifier 12/12；M6 确认 M5 `PolicyAuditEvent` 与 M6 `SecurityEvidenceEvent` 分离，当前 M6 不消费 M5 audit stream，也未覆盖 M2 `executionSurface` 或 OBSERVE 行为。外部 E4 仍 `NOT_VERIFIED`。
+- **M7 / #41**：主 CI 9/9、wrapper 2/2；VM 安装/升级/卸载和真实取消回滚仍 `NOT VERIFIED / HOLD`，既有 VM 安全前置条件未满足。
+- **M9 / PR #36**：M9 预检确认所有远端 M1–M8 SHA 与候选清单匹配，PR #24 未动；M9 正在现有 integration worktree 尝试组合。尚无测试或冲突处置结果，未推送。
+- **未关闭门槛**：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，但范围仅限同进程、同 Guard 且 callback 遵守 AbortSignal。未合并 main/#24，未发布 Release。
+- 用量低于 5% 或无法读取时暂停开发、测试、浏览器和 GitHub 操作，只有确认重置后才恢复。M0 本次工作仅限协调文档，不触碰 M1–M8 产品代码。
+
+## 历史快照（2026-10-14 07:16 UTC；额度沿用 07:13 UTC 读数）
+
+- **PR #24**：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`；本轮未修改、未合并。
+- **M0 PR #30**：head `a81a33d`；CI run `38527097301` 9/9、ownership contract run `38527097311` 1/1 通过。
+- **M1 PR #43**：head `f59ba37`，CI 9/9。#44 的过期审批测试修正已通过 Ubuntu Node 20、Windows Node 20/22；#32 旧 wrapper 漏 marker 的精确根因仍 UNKNOWN，#44 与 #32 等 M9 共同基线验收。
+- **M2 PR #37**：远端 head `cb84f43`，CI run `38522973817` 9/9。脱敏候选 `cfde2f0` 在现有分支本地通过 JSON 与 diff 检查，尚未推送；实际 Codex Desktop 原生 Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`，Issue #45 OPEN。
+- **M3 PR #33**：head `54facf0`，run `38519955779` 9/9；契约保留在 M3 专属附录。
+- **M4 PR #34**：head `f301195`，9/9；后端 endpoint 仍 `UNKNOWN/UNSUPPORTED`。
+- **M5 PR #47**：远端 head `cf4e2cd`，CI run `38527097304` 9/9，含完整 Node 20/22 × Ubuntu/Windows/macOS 矩阵、Docker、Sponsor 与 package-smoke。M1 的安全 fixture 修正已纳入；OBSERVE sensitive-read 仍 hard DENY。M5 正修正 readiness report 旧契约路径说明；#48 保持 OPEN 等 M9 组合验收。
+- **M6 PR #38**：head `d513810`，CI 9/9；合成事件与 bundle 测试分别 41/41、12/12。真实外部 E4 仍 `NOT_VERIFIED`。M6 已确认它的 `SecurityEvidenceEvent` 与 M5 `PolicyAuditEvent` 是分离 schema，M6 不消费 M5 audit stream。
+- **M7 PR #39**：head `5c7d95d`，主 CI 9/9、wrapper 2/2。Issue #41 的 clean-VM 安装/升级/卸载/取消回滚仍 `NOT VERIFIED / HOLD`；VM 快照、磁盘链、NSIS 3.13 与安装器包前置条件未满足。
+- **M8 PR #40**：head `b0f30ff`，CI 9/9；未发布 Release。
+- **M9 PR #36**：head `996073a`，自身 CI 9/9；现正核对 M1–M8 远端候选并准备组合验收，结果未出。
+- **未关闭门槛**：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，证据仅覆盖同进程、同 Guard 且 callback 遵守 AbortSignal。
+- **调度**：当前并行 M5 与 M9（2/2）；无 VMware、真实模型或安装测试运行。五小时额度最后成功读取于 07:13 UTC：77%（每周 74%，余额 113）；浏览器本轮额度页重定向，故不宣称有更新读数。最近推送批次约 07:14 UTC，下一批不早于 07:34 UTC。
+- 当前没有可调用的 `read_thread`；进度以现有 worktree、GitHub PR/Issue 与 CI 为准。未合并 main/PR #24，未发布 Release，M0 只改协调文档。
+
+## 历史快照（2026-10-14 06:48 UTC；原始核验记录）
 
 - **PR #24**：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `feature/agent-canary-3.0` / `62496d4`，未合并、未改动。
 - **M0 PR #30**：远端 head `aa1450a`，9 项 CI 与 ownership evidence 1 项均通过；本地 M0 文档待 06:54 UTC 之后的既有分支批次。

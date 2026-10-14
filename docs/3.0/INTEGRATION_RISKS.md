@@ -2,22 +2,22 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 06:48 UTC）
+## 实时风险快照（2026-10-14 08:48 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
 | #35 Guard quarantine | P0 | Issue #35 CLOSED；已验证范围限同进程、同 Guard 实例且 callback 配合 AbortSignal。跨进程/shared-store 与强制终止不在证据内。 | CLOSED（范围有限） |
-| #32 Hook interruption | P1 | PR #43 head f59ba37 为 9/9，当前 Ubuntu/Windows Node 20/22 中断用例通过；旧 wrapper 漏 marker 的精确根因仍未证实，待 M9 共同基线复验。 | OPEN / INTEGRATION PENDING |
-| #44 approval expiry | P1 | 旧 5 ms TTL 小于实测约 6 ms dispatch；测试在调用 approve 前通过 pending sweep 读到 undefined。当前修正跨 Ubuntu Node 20、Windows Node 20/22 通过；尚无共同基线复验。 | OPEN / INTEGRATION PENDING |
-| #48 OBSERVE sensitive read | P1 | M1 f59ba37 安全化非敏感 same-Guard fixture；M5 本地 cf4e2cd 纳入该提交，43/43 定向、341/5/0 全测、build 与 diff-check 通过；远端仍是 f8291c9 失败头，等待下一推送和 CI。 | OPEN / INTEGRATION PENDING |
-| #41 M7 reliability | P1 | PR #39 9/9 主矩阵及 wrapper 2/2；VM 留 `.vmx.lck`/异常关机，快照不可读、既有 vdisk chain 风险，找不到 NSIS 3.13 与安装器 EXE。未启动/修复 VM 或运行安装。 | BLOCKED / HOLD; NOT VERIFIED |
-| #45 native host Shell | P1 | M2 binder 对未知/缺失 surface fail closed，但真实 Desktop 原生 Shell 仍 UNPROTECTED；M2 正核验宿主拦截机制。 | UNPROTECTED / IN PROGRESS |
-| #27 manifest / package fields | P1 | M7 已交接 M3/M5/M6/M7 manifest 差异，锁文件一致；组合 package-smoke 与完整矩阵未运行，M6 外部 E4 NOT_VERIFIED。 | OPEN |
-| #28 Gateway lifecycle | P1 | M1 f15 在 M1/M7 分支祖先中，M7 相对 AC3 的 Gateway 净差异为空；组合 PR/CI 尚未验证。 | OPEN |
-| #46 canonical API contract | P2 | M0 本地更新 OBSERVE 与 M2 契约；仍需 M6 consumer 确认及组合验收，未推送。 | OPEN |
-| M9 combined acceptance | P1 | PR #36 自身 CI 为 9/9，但没有把 M1–M8 候选作为组合基线运行最终门禁。 | NOT RUN |
+| #32 Hook interruption | P1 | PR #43 head `f59ba37` 为 9/9；历史 wrapper 漏 marker 的精确根因仍 UNKNOWN，须在 M9 共同基线复验。 | OPEN / INTEGRATION PENDING |
+| #44 approval expiry | P1 | PR #43 当前 9/9，M1 候选取拒绝错误中的 requestId 并断言过期后 callback 为零；共同基线验收仍未做。 | OPEN / INTEGRATION PENDING |
+| #48 OBSERVE sensitive read | P1 | PR #47 远端 head `cf4e2cd`，run `38527097304` 为 9/9；敏感读取 hard DENY 保留。Issue #48 等待 M9 组合验收，M5 readiness report 正本地更正。 | OPEN / INTEGRATION PENDING |
+| #41 M7 reliability | P1 | PR #39 主 CI `38510356534` 9/9、wrapper `38510356548` 2/2；VM 安装/升级/卸载和实际取消回滚未验证。VM 锁、异常关机及既有 vdisk 风险未解除。 | BLOCKED / HOLD; NOT VERIFIED |
+| #45 native host Shell | P1 | PR #37 远端 head `cb84f43` 9/9；本地脱敏候选 `cfde2f0` 未推送。真实 Codex Desktop 原生 Shell 仍 UNPROTECTED；Hook fixture 与 AppContainer child-process 证据不构成原生宿主保护。 | UNPROTECTED / OPEN |
+| #27 manifest / package fields | P1 | M3/M5/M6/M7 各分支的 package 字段和组合 package-smoke 仍需 M9 核验；M6 外部 E4 仍 NOT_VERIFIED。 | OPEN |
+| #28 Gateway lifecycle | P1 | M1 commit `f15fdcfa` 在 M1/M7 分支祖先中，M7 对 AC3 的 Gateway 净差异为空；M9 组合 CI 尚待执行。 | OPEN |
+| #46 canonical API contract | P2 | M0 维护 canonical contract；M6 确认其 SecurityEvidenceEvent 与 M5 PolicyAuditEvent schema 分离且当前不消费 M5 stream。契约内容已准备修正，仍需 M9 组合复验。 | OPEN |
+| M9 combined acceptance | P1 | PR #36 自身 CI 9/9；M9 正在既有 integration worktree 核对候选 refs 并开始组合验收，综合测试结果待出。 | IN PROGRESS / NOT YET VERIFIED |
 | worktree pointers | P2 | WSL Git 列表可读、分支独立；Windows Git 对部分 WSL 路径显示 prunable，仅用 WSL Git 操作这些 worktree 元数据。 | MONITOR |
-| quota / scheduling | 调度门槛 | 本轮 usage 页实读五小时 82%、每周 75%、余额 113、约 4h15 后重置；最近 push 约 06:34 UTC，下一批不早于 06:54 UTC。M2 为唯一活动模块槽；VMware/真实模型/安装互斥测试尚未启动。 | MONITOR |
+| quota / scheduling | 调度门槛 | 用量页 08:48 UTC 实读五小时 72%、每周 73%、余额 113、约 2h11m 后重置。最近 push 批次约 07:14 UTC；当前 M5/M9 使用 2/2 开发槽。VMware/真实模型/安装互斥测试尚未启动。 | MONITOR |
 
 VMware、真实模型和安装测试互斥；M7 的安装环境盘点已结束，隔离 VM 和回滚条件不成立，所有运行验收暂缓。五小时额度低于 5% 或无法读取时，暂停所有开发、测试、浏览器和 GitHub 操作；确认额度重置后再继续。
 
