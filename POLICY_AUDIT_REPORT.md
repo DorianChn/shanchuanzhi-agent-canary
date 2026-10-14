@@ -12,10 +12,11 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 > 本节是 2026-10-15 更新后的当前状态，并优先于下方较早记录的 head、CI 和 PR 描述状态。下方保留的旧 SHA/run 及 2026-10-14/15 状态段属于此前核对的历史证据，不表示当前 head；Issue #46 的现状以本节为准。
 
-- **M5 PR #47**：远端已推送报告 head 为 584f96cea8d96df46ebe63e3ab709a44981c78b1；该精确 head 的 CI run [38608355200](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38608355200) 为 9/9 通过。
-- **M0 PR #30**：head SHA 63d10b86d6c8e2c3e66d2608a9222ddeb728f594 的产品 CI 为 9/9，ownership 检查为 1/1（产品 run 38608350412；ownership run 38608350594）。
-- **Issue #46**：仍为 OPEN，等待 M0 更新，并读回 PR #47 描述及相关新 head CI。**Issue #48** 已 CLOSED，仅记录 OBSERVE hard-deny 的有限范围精确 head CI 证据；**Issue #49** 已 CLOSED，仅记录 canonical 根契约与 M1 契约的有限路径/hash 核对。关闭不扩展为更广的集成验收。
-- **M9 PR #36**：远端 head SHA ed0dd015a6e46029d1df4ac077a6e9378fb1a494 是相对 AC3 base 含 137 个变更路径的多模块集成候选，包含 Gateway、policy、onboarding、execution-isolation、desktop、E4 verifier、reliability、package、tests 与 docs。该 exact head 的 product CI run 38604703774 为 9/9，wrapper run 38604703745 为 2/2。该结果确认这些检查在此 head 上通过；仍不证明 native-host、clean-VM/installer、external E4 或真实工具副作用。
+- **M5 PR #47**：当前远端 head 为 b672f89cb1e27105cf8728cc9e2bb96c2ab6c854；其精确 head CI run [38611183498](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611183498) 为 9/9 通过。
+- **M0 PR #30**：当前 head 453aa31 的产品 CI run [38611181479](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611181479) 为 9/9，ownership run [38611181489](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611181489) 为 1/1。
+- **Issue #46**：当前正文同步已完成，关闭待后续处理；本快照不提前记为 CLOSED。**Issue #48** 已按 OBSERVE hard-deny 的有限范围 CLOSED；**Issue #49** 已按 canonical 根契约与 M1 契约的有限路径/hash 核对范围 CLOSED。各 Issue 关闭只覆盖其记录范围。
+- **M9 PR #36**：当前远端 head c09cdde 是包含多模块代码与测试的集成候选。该 exact head 的 product CI run [38611183619](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611183619) 为 9/9，wrapper run [38611183819](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611183819) 为 2/2。此候选与通过的检查仍不证明 native-host、clean-VM/installer、external E4 或真实工具副作用。
+- **Issue #27 / combined manifest**：owner acceptance remains pending。
 - **安全边界保持**：OBSERVE 对敏感读取和显式硬拒绝仍是 hard-deny；对应夹具断言拒绝前 pending approval 为 0、callback 次数为 0。UNKNOWN 与 NOT_VERIFIED 仍按字面保留，不从局部 CI 或文档/hash 检查推断为已验证。
 - **仍为 NOT_VERIFIED**：真实 M1+M5 host wiring、native-host、E4 的外部验证、clean-VM/installer、native Shell 保护及真实工具副作用。M5 fixture、M9 多模块集成候选的 exact-head CI 与有限范围的 Issues #48/#49 证据均不替代这些验证。
 
@@ -64,7 +65,7 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 ## M0 契约边界与状态核对
 
-历史状态记录（此前核对的 M0 PR #30 head）：M0 通过 PR #30 维护跨模块 canonical API contract docs/3.0/API_CONTRACTS.md。该旧快照记录 head 39e2cc237e68e963955c07be3719a26afdd5981c 的 10/10 检查（含 ownership-contract-evidence）；它已由本报告开头的当前快照所列 M0 head 63d10b86d6c8e2c3e66d2608a9222ddeb728f594 及产品 9/9、ownership 1/1 取代。Issue #46 当前仍 OPEN，等待 M0 更新及 PR #47 描述和相关新 head CI 的读回，详见当前快照。M0 是 canonical 根契约的维护方；M5 不拥有、不修改，也不复制该 canonical 路径。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
+历史状态记录（此前核对的 M0 PR #30 heads）：旧 head 39e2cc237e68e963955c07be3719a26afdd5981c 当时有 10/10 检查；其后的 63d10b86d6c8e2c3e66d2608a9222ddeb728f594 曾有产品 9/9、ownership 1/1。两组旧 head/run 均已由本文开头当前快照中的最新 M0 head 453aa31 及对应检查取代。Issue #46 此前等待 M0 更新的状态也已过期：当前正文同步已完成，关闭待后续处理。M0 是 canonical 根契约的维护方；M5 不拥有、不修改，也不复制该 canonical 路径。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
 
 历史路径核对（M5 PR #47 较早 head 5fd4707746186c4752e3a166e59a7292f112ff63）：在该 head 与 base 62496d4020bd90ba2eede49b2e80a2bbebb036b4 的 tree 中，M0 canonical 根路径 docs/3.0/API_CONTRACTS.md 均不存在，对该路径的 base-to-head diff 为空。这只是旧 M5 head 的路径记录，不描述当前 PR #47 head，也不表示 M5 是该契约的所有者或副本维护者。
 
@@ -97,7 +98,7 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 
 ### PR #47 描述的历史观察
 
-历史观察：此前读取的远端 PR #47 描述最后更新于 2026-10-14 16:28 UTC，当时包含 M9 combined acceptance pending。该观察不证明当前 PR 描述仍是这一内容；按开头当前快照，Issue #46 仍等待 M0 更新及 PR #47 描述和相关新 head CI 的读回。Issue #48/#49 已按各自有限范围关闭；真实 M1+M5 宿主接线与真实副作用仍为 NOT_VERIFIED。
+历史观察：此前读取的远端 PR #47 描述最后更新于 2026-10-14 16:28 UTC，当时包含 M9 combined acceptance pending。该观察不证明当前 PR 描述仍是这一内容；Issue #46 当前正文同步已完成、关闭待后续处理，详见开头快照。Issue #48/#49 已按各自有限范围关闭；真实 M1+M5 宿主接线与真实副作用仍为 NOT_VERIFIED。
 
 ### P0 验收条件
 
