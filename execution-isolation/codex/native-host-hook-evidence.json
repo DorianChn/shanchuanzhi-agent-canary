@@ -139,6 +139,69 @@
       "candidateHookReportsAcceptance": "BLOCKED_NOT_VERIFIED",
       "limitations": "The executionSurface value must come from a trusted host registrar; the binder cannot infer actual surface from an ID or independently prove the injected backend is isolated. The guard applies only to registrations routed through this M2 binder. It cannot intercept Desktop direct Shell or observe whether the candidate hook is loaded/trusted; host fail-closed behavior remains unverified."
     },
+    "issue45CapabilityAssessment": {
+      "checkedAtUtc": "2026-10-14T10:17:42Z",
+      "workspaceCommit": "b38b1ab1286ab82027d7cdeb8144aa77dab0759c",
+      "issue": {
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45",
+        "state": "OPEN",
+        "acceptance": "A verified fail-closed native Shell policy, or reproducible capability-limit evidence with native Shell kept UNPROTECTED / BLOCKED_NOT_VERIFIED"
+      },
+      "assessmentEnvironment": {
+        "shell": "WSL2 Bash",
+        "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+        "codexOnCurrentShellPath": false,
+        "desktopNativeShellCallableFromThisTask": false,
+        "desktopHookTelemetryAvailable": false,
+        "interpretation": "This task can inspect repository evidence and public Codex contracts, but cannot invoke or observe the Windows Desktop native Shell tool."
+      },
+      "officialHookContract": {
+        "documentation": "https://learn.chatgpt.com/docs/hooks",
+        "preToolUseCanMatchBashAndUnifiedExec": true,
+        "explicitPermissionDecisionDenySupported": true,
+        "nonManagedHooksRequireReviewAndTrustOfCurrentDefinition": true,
+        "handlerErrorTimeoutOrMalformedResponseMayContinueToolCall": true,
+        "someSpecializedToolPathsCanOptOutOfDefaultHookPath": true,
+        "classification": "DEFENSE_IN_DEPTH_ONLY",
+        "whyNotFailClosed": "A returned deny proves behavior only when the configured callback runs. The official contract permits callback failure without blocking the tool, so a repo Hook fragment or protocol fixture cannot prove a fail-closed native Shell boundary."
+      },
+      "officialNativePolicyOptions": {
+        "windowsSandboxDocumentation": "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+        "permissionsDocumentation": "https://learn.chatgpt.com/docs/permissions",
+        "codexHasSupportedNativeWindowsSandbox": true,
+        "codexHasScopedFilesystemDenyRules": true,
+        "nativeWindowsAbsolutePathsAreSupported": true,
+        "documentedWindowsImplementations": [
+          "MXC",
+          "elevated",
+          "unelevated"
+        ],
+        "desktopAutomaticallyPrefersMxcForConsumerAccountsWhenDeviceSupportsIt": true,
+        "mxcCapabilityNeedsHostSupportAndMayBeBlockedByPolicy": true,
+        "unelevatedLimitations": [
+          "weaker network isolation than elevated",
+          "does not support denied read paths"
+        ],
+        "currentDesktopEffectiveProfile": "UNKNOWN",
+        "currentDesktopSandboxImplementation": "UNKNOWN",
+        "currentDesktopPolicyEnforcement": "NOT_VERIFIED",
+        "interpretation": "Codex exposes a supported OS-level enforcement route, so it would be inaccurate to claim that native enforcement is unavailable in general. This M2 task has no authority or interface to provision the host policy, confirm its effective state, or test the Desktop native Shell path."
+      },
+      "reproducibleNextEvidence": [
+        "On the target Windows host, record the effective Codex permission profile and actual sandbox implementation without exposing unrelated settings.",
+        "For a protected path, confirm the active profile contains a specific enforced deny; do not treat a Hook matcher or CLI child-process fixture as this proof.",
+        "In the actual Windows Desktop native Shell, attempt one unique synthetic sentinel write and capture product version, active profile/sandbox, Hook invocation and decision, command result, and before/after SHA-256.",
+        "Require an observed OS-level denial and unchanged sentinel hash. If the sentinel changes or the active policy/callback cannot be observed, retain UNPROTECTED / BLOCKED_NOT_VERIFIED."
+      ],
+      "decision": {
+        "repositoryOnlyFailClosedHookIntegrationAvailable": false,
+        "nativePolicyAvailableInCodexPlatform": true,
+        "nativePolicyIntegratedAndVerifiedByM2": false,
+        "classification": "UNPROTECTED",
+        "acceptance": "BLOCKED_NOT_VERIFIED",
+        "reason": "Official Hooks do not guarantee fail-closed callback failure, while the actual native Windows permission/sandbox policy is host-managed and its effective state and Desktop Shell behavior cannot be inspected or changed from this WSL task. No native Shell write was attempted."
+      }
+    },
     "issue32IntegrationGate": {
       "checkedAtUtc": "2026-10-14T06:26:46Z",
       "issueState": "OPEN",
