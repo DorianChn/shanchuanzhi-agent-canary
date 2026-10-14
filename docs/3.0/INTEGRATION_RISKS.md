@@ -2,7 +2,7 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 09:05 UTC）
+## 实时风险快照（2026-10-14 09:12 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
@@ -11,13 +11,13 @@
 | #44 approval expiry | P1 | PR #43 独立 CI 9/9，过期后 callback 为零的候选测试通过；M9 共同基线 GitHub CI 尚未运行。 | OPEN / INTEGRATION PENDING |
 | #48 OBSERVE sensitive read | P1 | PR #47 head cf4e2cd、run 38527097304 为 9/9；M5 本地 readiness 修正 eddef7e。M9 本地组合测试通过，但共同基线 GitHub CI 尚待运行；敏感读取 hard DENY 保留。 | OPEN / INTEGRATION PENDING |
 | #41 M7 reliability | P1 | PR #39 主 CI 38510356534 为 9/9、wrapper 38510356548 为 2/2；VM 安装/升级/卸载和实际取消回滚未验证，隔离 VM 与回滚前置条件不足。 | BLOCKED / HOLD; NOT VERIFIED |
-| #45 native host Shell | P1 | PR #37 远端 cb84f43 CI 9/9；M2 558eccb 修正 PreToolUse 对合法但结构错误 JSON 的 fail-closed 行为。真实 Codex Desktop 原生 Shell 仍 UNPROTECTED；子进程与协议 fixture 不证明宿主保护。 | UNPROTECTED / OPEN |
+| #45 native host Shell | P1 | PR #37 远端 cb84f43 CI 9/9；M2 4875d84 将 hook_event_name 校验前置于无关工具透传；缺失/错误事件名拒绝，完整 PreToolUse 非 Bash 才透传。真实 Codex Desktop 原生 Shell 仍 UNPROTECTED；协议 fixture 不证明宿主保护。 | UNPROTECTED / OPEN |
 | #27 manifest / package fields | P1 | M9 组合候选 845743d 的 aggregate verify、pack:check、100 文件 package smoke 本地通过；组合 GitHub CI 与 E4 消费者验收未完成。 | OPEN / CI PENDING |
 | #28 Gateway lifecycle | P1 | M1 f15fdcfa 在 M1/M7 分支祖先中，M7 对 AC3 Gateway 净差异为空；M9 本地 aggregate verify 通过但 GitHub 共同基线尚待 CI。 | OPEN / CI PENDING |
 | #46 canonical API contract | P2 | M0 维护唯一 canonical contract；M6 确认 SecurityEvidenceEvent 与 M5 PolicyAuditEvent 分离且当前不消费 M5 stream。外部 E4 仍 NOT_VERIFIED。 | OPEN |
-| M9 combined acceptance | P1 | Candidate 845743d99f634ccdc7e17b43b2ab8c3993e2001b：npm verify 391 pass、0 fail、6 环境条件 skip；package smoke 100 文件、docs checks 通过。PR #36 远端仍 996073a，组合 GitHub CI 和模块状态更新尚待推送。 | LOCAL PASS / CI PENDING |
+| M9 combined acceptance | P1 | Candidate 845743d99f634ccdc7e17b43b2ab8c3993e2001b：npm verify 391 pass、0 fail、6 环境条件 skip；package smoke 100 文件、docs checks 通过。PR #36 远端仍 996073a，M9 验收记录 44205a8 已本地提交；组合 GitHub CI 尚待推送触发。 | LOCAL PASS / CI PENDING |
 | worktree pointers | P2 | M9 integration worktree 在 CRLF-aware core.autocrlf=true、禁可选索引锁的 status 下干净；默认 WSL Git 把 CRLF 行尾误报为全树 M。先前 0 B index.lock 已消失，未清理或改写。 | MONITOR |
-| quota / scheduling | 调度门槛 | 用量页 09:00 UTC 实读五小时 69%、每周 73%、余额 113、约 1h59m 后重置。最近推送约 07:14 UTC；当前 M2/M9 使用 2/2 槽。VMware/真实模型/安装测试没有运行。 | MONITOR |
+| quota / scheduling | 调度门槛 | 网页用量页约 09:12 UTC 实读五小时 66%、每周 72%、余额 113、约 1h46m 后重置。最近推送约 07:14 UTC；当前 M5/M9 使用 2/2 槽。VMware/真实模型/安装测试没有运行。 | MONITOR |
 
 VMware、真实模型和安装测试互斥；M7 clean-VM 安装、升级、卸载及真实取消回滚仍 HOLD，未运行。五小时额度低于 5% 或无法读取时，暂停所有开发、测试、浏览器和 GitHub 操作；确认额度重置后再继续。
 ## 历史风险增量（2026-10-13 16:16 UTC）
