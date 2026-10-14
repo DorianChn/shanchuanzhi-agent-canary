@@ -1,23 +1,23 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-14 22:34 UTC)
+## Current ownership and worktree snapshot (2026-10-14 22:55 UTC)
 
 | Module | Existing branch / worktree | Current PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
 | M1 | feature/ac3-security-core / agents/M1-security | #43 `4b562be`; CI 38620584097 passed | Owns Gateway/Guard and Hook semantics/tests. M1 accepts `d3b64fc` only for timing-fixture behavior; no native callback proof. |
 | M2 | feature/ac3-execution-isolation / agents/M2-isolation | #37 `0f2c10c`; CI 38561262930 passed | Owns isolation adapter. Native Shell remains UNPROTECTED (#45); worktree is WSL-managed. |
-| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | #33 `d9364cc`; CI 38555297535 passed 9/9 | Owns onboarding and branch-local test copy. Active slot 1/2 for #32. No progress/head change at 22:34; queued receipt is not proof of start. |
-| M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | #34 `69ec7f1`; CI 38555299339 passed 9/9 | Owns desktop UI and branch-local test copy. Active slot 2/2 for #32. No progress/head change at 22:34; backend security/E4 UNKNOWN. |
+| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | #33 `d9364cc`; CI 38555297535 passed 9/9 | Owns onboarding and branch-local test copy. #32 assignment UNACKNOWLEDGED/HOLD since22:55; branch unchanged. |
+| M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | #34 `69ec7f1`; CI 38555299339 passed 9/9 | Owns desktop UI and branch-local test copy. #32 assignment UNACKNOWLEDGED/HOLD since22:55; backend security/E4 UNKNOWN. |
 | M5 | feature/ac3-policy-audit / agents/M5-policy | #47 `7d5df63`; CI 38617317812 passed 9/9 | Owns policy/audit fields; sensitive-read hard DENY remains. |
 | M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3 | #38 `ed82f06`; CI 38555297615 passed 9/9 | Owns E4 verifier/schema and e4:* fields. No active slot; #27 owner signoff pending. Preserve untracked evidence. |
 | M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | #39 `4267c61`; CI 38596572303 passed 9/9, wrapper 38596572179 passed 2/2 | Owns Windows packaging/reliability. #41 remains NOT_VERIFIED/HOLD. |
 | M8 | feature/ac3-open-source-product / agents/M8-ecosystem | #40 `139e7f2`; CI 38561307114 passed 9/9 | Owns public docs/community; Release unpublished. |
-| M0 | feature/ac3-m0-coordination / coordinator | #30 `5685d8e`; product 38646435036 passed 9/9, ownership 38646435026/38646704479 passed 1/1 | Owns coordination docs, canonical contract and schedule; does not edit module source. Last push 22:15 UTC. |
+| M0 | feature/ac3-m0-coordination / coordinator | #30 `b000cc8`; product 38648712858 passed 9/9, ownership 38648712873/38649025874 passed 1/1 | Owns coordination docs, canonical contract and schedule; does not edit module source. Last push 22:35 UTC. |
 | M9 | feature/ac3-m9-integration / integration | #36 `6abd4da`; CI 38620602632 passed 9/9, wrapper 38620603071 passed 2/2 | Owns integration/risk aggregation; external E4/native Shell/clean-VM remain outside CI proof. |
 
-At 22:34 UTC, M3 and M4 worktrees are clean at their listed heads. Both existing session task messages were queued at 22:11 UTC; no consumed/complete status is confirmed. Two-slot limit remains M3/M4. M6 owner disposition is pending outside the active development slots. No branch was created or rewritten.
+At22:55 UTC, M3 and M4 worktrees are clean at their listed heads and each #32 task is marked UNACKNOWLEDGED/HOLD. Stop messages were queued; consumption is unknown. No replacement development task is scheduled until the hold state is clear, preserving the two-task concurrency cap. M6 owner disposition remains pending. No branch was created or rewritten.
 
-## Archived snapshot (2026-10-14 22:14 UTC)
+## Archived snapshot (2026-10-14 22:34 UTC)
 
 | Module | Existing branch / worktree | Current PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
