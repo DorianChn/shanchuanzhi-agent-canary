@@ -9,8 +9,8 @@
 | GitHub 最新稳定版本 | `v3.0.0`，发布于 2026-10-13；主分支 package / lockfile 均为 `3.0.0` | VERIFIED |
 | 维护分支 | 本地与 GitHub 远程 `maintenance/glama-sync` 均已创建并含修复、测试 | VERIFIED |
 | GitHub `main` | 审计后仍为基线 `146be17ea924d09a78ceff90b83006cdd40dfc43`，未被本任务修改 | VERIFIED |
-| Pull Request | 远程分支已就绪，PR 正在完成前的核对，尚未创建 | NOT VERIFIED |
-| PR 远程 CI | PR 尚未创建，无远程检查可读取 | NOT VERIFIED |
+| Pull Request | [#50 — fix(mcp): align Agent Canary 3.0 metadata for Glama](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/50)，OPEN，未合并 | VERIFIED |
+| GitHub Actions | [CI run `38604260753`](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38604260753) 在 PR head `ccd84dad8fdb3d0f64ff04e11a9ac440bc7cfaa9` 完成，9/9 jobs success | VERIFIED |
 | Glama 当前版本文字 | 页面仍写 V1.2.7 / 2.0 竞赛预览 | FAILED（页面陈旧） |
 | MCP 工具数量 | GitHub 本地 stdio 服务 12；Glama 页面 12 | VERIFIED（数量一致） |
 | Glama 质量评级 | A / 4.4/5.0，最后可见评分时间 2026-09-21 07:30 | VERIFIED（旧快照评分） |
@@ -51,8 +51,8 @@
 
 - 分支：`maintenance/glama-sync`，基于审计时 `main` 的 `146be17ea924d09a78ceff90b83006cdd40dfc43`；版本元数据、MCP 测试和清单修复已通过已登录的 GitHub 网页提交到远程分支。
 - 写入通道：GitHub MCP 写入接口返回 HTTP 403 `Resource not accessible by integration`；本机 Git HTTPS 无写入凭据。随后使用已登录的 `DorianChn` GitHub 网页界面创建并更新任务分支。远程 `main` 复核仍是审计基线，未被修改。
-- PR：尚未创建，正在完成前的分支和文件核对；状态 **NOT VERIFIED**，暂时没有 PR 链接。
-- CI：**NOT VERIFIED**，PR 创建后再读取实际检查状态。
+- PR：[#50 — fix(mcp): align Agent Canary 3.0 metadata for Glama](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/50)，base `main`，head `maintenance/glama-sync`，状态 OPEN、mergeable、未合并。
+- CI：workflow `CI` run `38604260753` 在 PR head `ccd84dad8fdb3d0f64ff04e11a9ac440bc7cfaa9` 完成，9/9 jobs success：Windows/macOS/Ubuntu Node 20/22 测试矩阵、Docker build、package smoke 和 sponsor smoke。
 - 未尝试直接更新 `main`，也未执行强制推送。
 
 ## Glama 同步与人工步骤
@@ -69,7 +69,6 @@ Glama 评分由其工具定义质量评估生成，重新扫描后分数可能�
 
 ## 尚未解决
 
-- 尚需为 `maintenance/glama-sync` 创建目标为 `main` 的 PR，并核对远程 CI；可用入口：[比较并创建 PR](https://github.com/DorianChn/shanchuanzhi-agent-canary/compare/main...maintenance/glama-sync?expand=1)。
-- PR 合并和 Glama 所有权认领都尚未完成，因此 Glama 页面还没有读取维护分支的修复；必须在合并并重新同步后复核。
+- PR #50 尚待审阅和合并；合并与 Glama 所有权认领都尚未完成，因此 Glama 页面还没有读取维护分支的修复。合并后需认领并请求重新同步，再复核页面。
 - GitHub Packages 需要认证的实际包元数据没有验证。
 - ESLint 和本机 Docker 构建不可执行，因为仓库未配置 ESLint 且当前环境未安装 Docker CLI。
