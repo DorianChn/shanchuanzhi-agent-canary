@@ -66,6 +66,14 @@ Codex 项目级 MCP 配置向导、检测、预览、备份/收据、保守回�
 | 临时项目 CLI `onboard --apply --json` / `onboard --restore` | 通过：输出单个 JSON 事务结果，创建外部备份/收据，再从收据恢复临时项目原状态；隔离 Codex 用户配置，测试后清理自建备份目录。 |
 | `node dist/competition.js connect-check` | 通过：真实 Codex CLI `0.162.0-alpha.17.2` 的只读合成 MCP 调用经 Gateway 并记录 `ALLOW`；Hook 未触发；原生工具 `OUT_OF_SCOPE`；持久配置未修改。 |
 
+## Issue #27：package.json 字段责任核对（2026-10-14）
+
+M3 责任项已存在：`test/onboarding.test.ts` 文件存在，并由根 `package.json` 的 `scripts.test` 注册；PR #33 当前远端 head 与本地 `54facf027b32f3eef4a737e4cf51a3cbca9f4f63` 一致，PR 仍为 OPEN/Draft。M3 在共享 `scripts.test` 命令中的责任仅为保留 onboarding 测试路径，不需要再改写或重复追加该字段。
+
+兼容性边界：M5 的 `exports["./policy"]` 可与现有 `exports["./sdk"]` 并列；M5/M6/M7 的测试路径需要并入同一个 `scripts.test` 列表，不能以各自分支的列表覆盖其他模块注册。M6 的 E4 脚本和 M7 的可靠性命令应使用各自唯一的新增 script key。只读核对的 M5、M6、M7 分支提交快照尚未包含 Issue #27 所列的这些新增字段，因此这段记录证明 M3 字段已就位，不代表四模块合并后的 manifest 已完成或通过 package-smoke；合并后的 manifest 与验证仍待 M0/模块所有者协调。
+
+核对范围：本工作区 `package.json` 与 `test/onboarding.test.ts`；M5 `bcbec98`、M6 `d513810`、M7 `6d978a5` 的已提交 `package.json` 快照；PR #33 元数据。未读取或改动 M6 工作区 artifacts，未修改任何其他模块文件。
+
 ## 未完成/不可确认项
 
 - M0 活动 thread 无法由本会话读取；M0 契约文件已从本地 coordinator 分支只读核对。PR 按其 AC3 base 和证据字段提交，SDK 导出/签名保持不变。
