@@ -16,7 +16,7 @@
 
 | 风险 | 本轮检查/变更 | 证据边界 |
 |---|---|---|
-| Gateway 并发关闭 | `close()` 变为幂等 Promise；关闭前等待队列排空，资源逐一关闭；增加排队调用与并发关闭回归 | 单进程单元测试；没有对真实桌面进程做强制终止/重启 |
+| Gateway 并发关闭与隔离 | 当前 M7 候选的 `close()` 只设置 `closed`、等待队列、随后清理 pending 并顺序关闭资源；它没有共享 close Promise、同步清 pending 或隔离并脱敏资源关闭错误。Guard quarantine 也没有接入活动 Controller 取消 | 当前候选不满足 M1 Issue #28 close/quarantine 契约；M1 owner handoff 必须先整合。M7 定向测试只覆盖队列限额与 drain，不证明并发/重入共享 Promise、quarantine 取消或关闭错误收敛 |
 | 自动验收锁在崩溃后残留 | 锁记录 schema、run ID、PID；只有确认 PID 不存在才回收。旧格式、损坏或仍有活动 PID 的锁失败关闭 | 合成死亡 PID 测试；未在真实 VM 杀进程观察 |
 | 会话状态 JSON 损坏 | 备份损坏字节到 `.corrupt.*.bak`，原子创建新 session；符号链接/非普通文件仍拒绝 | 回归测试验证原字节保留及新状态可读 |
 | 日志/证据损坏 | Gateway 证据 JSONL 写入后校验哈希链；篡改已落盘事件会令链验证失败 | 本地临时文件测试；未通过真实磁盘故障破坏日志 |
@@ -26,6 +26,18 @@
 | NSIS 安装目录清理 | 回滚和卸载在非递归删除前将当前目录切换到 `$TEMP`；卸载检查清单删除错误，失败时保留重试入口 | 渲染模板结构回归；未运行 NSIS 编译或真实安装/卸载 |
 | 进程异常退出与自动恢复 | Gateway 拒绝关闭后的新派发；Auto E4 会回收经 PID 确认的陈旧锁 | Community 桌面 UI 是用户启动的桌面程序，没有 Windows 服务/自动启动恢复。本轮未配置服务或系统安全项；完整 GUI 崩溃后需要用户重新启动应用 |
 | 并发与资源泄漏 | 基准每轮 16 个调用方、每轮关闭 Gateway；三轮完成 3,000 次，无 dispatch 错误，资源类别计数稳定 | 合成进程内回调；短测不能证明长期无泄漏，资源类别也不是 Windows Handle 数 |
+
+## Issue #28：M1 Gateway close/quarantine 契约（2026-10-14）
+
+M7 当前候选 HEAD `5c7d95d` 虽在历史上包含 M1 handoff `738a783`，该 M1 提交只修改 `SECURITY_REGRESSION_RESULTS.md`，没有带入 Gateway 实现或回归测试。当前 `src/runtime/gateway.ts` 的 `close()` 仍是单个异步函数：它在等待 `history.tail` 后才清空 pending，没有记住并返回同一个 Promise；资源关闭的首个异常会中断循环并直接暴露底层错误。当前 Gateway 也没有监听 Guard quarantine 来取消活动回调。
+
+M7 提交 `f17b7e6` 明确将 close 生命周期交由 M1；因此本报告不在 M7 越权修改 Gateway 核心。Issue #28 的验收顺序仍需由 M1 实现并由集成候选验证：同步 latch `closed` 并清空 pending → 发布共享 close Promise → abort 活动 Controller → 安全退订 quarantine observer → drain 队列 → 尝试关闭全部资源 → 只暴露固定脱敏错误；并发与回入调用必须共享 Promise。M7 本分支不能被标为满足该契约，合入 M1 owner 实现和 combined CI 前保持集成阻断。
+
+### 本候选定向验证
+
+- Node `v22.23.1`：`npm run test:reliability` 为 46 项，43 通过、0 失败、3 跳过；跳过项为当前 Windows 环境不假定符号链接权限的测试。
+- Node `v22.23.1`：`node --import tsx --test test/gateway.test.ts test/containment.test.ts` 为 40 项，40 通过、0 失败、0 跳过。这些结果确认现有 Gateway 与隔离回归通过，但它们不包含 M1 handoff 中的 close Promise 身份/回入、同步 pending 清理、quarantine 退订和逐资源脱敏关闭错误测试。
+- M1 handoff `738a783` 记录其自身 owner 候选中 Gateway/containment 定向测试为 51 通过、0 失败、0 跳过；这不是 M7 当前树或 M7+M1 组合候选的验证结果。
 
 ## 24 小时 / 7 天可复现命令
 
