@@ -1,12 +1,13 @@
 # M0 技术协调状态
 
-## 当前权威快照（2026-10-14 18:26 UTC）
+## 当前权威快照（2026-10-14 19:12 UTC）
 
-- **额度与调度**：用量页保持打开；18:26 UTC 实读五小时剩余 97%（约 2 小时 42 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行；最近推送批次为 18:20 UTC，下批不得早于 18:40 UTC。VMware、真实模型与安装测试未启动。
-- **当前 PR / exact-head CI**：PR #24 仍 OPEN/Draft、head 62496d4、11/11 checks，未触碰。Draft PR 均 OPEN：#30 1ec5287 产品 run 38614268660 为 9/9、ownership run 38614269082 为 1/1；#33 d9364cc 9/9；#34 69ec7f1 9/9；#36 d802455 product run 38614289321 为 9/9、wrapper run 38614289309 为 2/2；#37 0f2c10c 9/9；#38 ed82f06 9/9；#39 4267c61 9/9 + wrapper 2/2；#40 139e7f2 9/9；#43 d26a0c3 9/9；#47 3afc553 run 38614270263 为 9/9。各 run head SHA 已核对。
-- **M9 / package.json**：PR #36 相对 AC3 为 137 个变更文件；当前 d802455 仅更新 canonical 契约文档，package.json 与此前静态核对的 c09cdde blob 相同。当前 exact-head CI 为 9/9 + wrapper 2/2。只读 manifest 对照确认保留原 31 个测试路径并增加 5 个不同路径，共 36 个且无重复；保留 version/bin/files/./sdk，组合 ./policy、M6 E4 与 M7 脚本。#27 仍 OPEN，因为缺少 M6 owner 对当前字段的显式确认及组合接受。
-- **契约与问题状态**：#28、#44、#48、#49 已按明示有限范围关闭；#27 OPEN；#32 OPEN（M1接受 d3b64fc 仅在 marker-wait/中断时序修复上与 owner fixture 行为等价，不是字节相同；#33/#34/#38 仍待 M1/M3/M4/M6 协调异步 fixture 更新并复核 fail-closed 断言及 exact-head CI）；#41 OPEN/HOLD（clean-VM 生命周期未验证）；#45 OPEN（原生 Codex Shell UNPROTECTED）；#46 OPEN（M5 负责人已在本地提交报告快照修正 7d5df63，需下批推送并验新头）；外部 E4 NOT_VERIFIED；M4 backend UNKNOWN。
-- **边界**：不删除失败测试、不降低安全策略、不伪造结果；不合并 main 或 PR #24，不发布 Release。仅按文件系统、GitHub 和当前可见用量页核验，不声称读取其他会话聊天内容，也不把 CI 等同于原生宿主、clean-VM 或外部 E4 验收。
+- **额度与调度**：额度页仍为活动标签；19:10 UTC 实读五小时剩余 97%（约 1 小时 58 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行；最近推送批次为 19:04 UTC，下批不得早于 19:24 UTC。本协调会话未启动 VMware、真实模型或安装测试；其他窗口的资源占用无法直接读取，启动同类任务前须在 #29 取得互斥调度记录。
+- **当前 PR / exact-head CI**：PR #24 仍 OPEN/Draft、base `competition/shanchuanzhi-release-readiness`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，9 项产品检查 + 2 项 wrapper 检查通过，未触碰。M0–M9 Draft PR 均 OPEN：#30 `af39e96` run `38617312991` 为 9/9、ownership run `38617313009` 为 1/1；#33 `d9364cc` run `38555297535` 9/9；#34 `69ec7f1` run `38555299339` 9/9；#36 `6abd4da` run `38620602632` 9/9、wrapper run `38620603071` 2/2；#37 `0f2c10c` run `38561262930` 9/9；#38 `ed82f06` run `38555297615` 9/9；#39 `4267c61` run `38596572303` 9/9、wrapper run `38596572179` 2/2；#40 `139e7f2` run `38561307114` 9/9；#43 `4b562be` run `38620584097` 9/9；#47 `7d5df63` run `38617317812` 9/9。检查来自 GitHub 当前 PR 读回；这些结果只证明相应自动化 job。
+- **M9 / package.json**：PR #36 的当前 package.json blob 为 `6b3042bbe7ba5b14a904c7d04fca9a9011a47883`。此前静态组合核对保留 AC3 原 31 个测试路径并增加 5 个不同路径，共 36 个且无重复；保留 version/bin/files/`./sdk`，并含 `./policy`、M6 E4 与 M7 脚本。Issue #27 仍 OPEN，等待 M6 对当前字段的显式 owner 确认及组合接受；外部 E4 仍 NOT_VERIFIED。
+- **Hook 跨分支风险 / #32**：当前 #43/#36 的 `test/agent-hook.test.ts` blob 为 `6c2d8da...`，#37 为 `d3b64fc...`，#33/#34/#38 均为 `1ecb3ee...`。后者仍使用旧的同步中断 marker fixture；当前 #33/#34/#38 CI 通过不证明历史竞态已排除。M1/M9 当前夹具明确说明子进程不能观测宿主侧 callback，因此根因和 native-host callback 行为仍未验证。#32 保持 OPEN，待 M1 提供最小 owner-approved 更新/适配方案，相关模块纳入后重跑精确 head CI；不得删改 fail-closed 断言。
+- **契约与问题状态**：#28、#35、#44、#48、#49 按明示有限范围关闭；#27、#32、#41、#45 保持 OPEN（#41 为 HOLD、#45 为 UNPROTECTED）。#46 的 P2 文档验收已核实：M0 canonical contract blob `693d437...`，M5 report blob `1300b4d...`，M5 PR #47 指向 M0 所有的契约，#48 已关闭；GitHub Issue 关闭及回读待下一批远端协调操作。clean-VM 生命周期未验证；M4 backend security/E4 状态 UNKNOWN。
+- **核验边界**：本轮只读复核 GitHub checks、PR heads、Issue 与工作树；未运行本地测试。不得删除失败测试、降低安全策略或伪造结果；不合并 main 或 PR #24、不发布 Release。只按文件系统、GitHub 和可见用量页核验，不声称读取其他会话聊天内容，也不把 CI 等同于原生宿主、clean-VM 或外部 E4 验收。
 
 本节为当前快照；较早时间点内容按历史记录保留。
 

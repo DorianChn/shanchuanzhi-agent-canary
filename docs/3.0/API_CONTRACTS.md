@@ -10,15 +10,14 @@
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## 当前契约与集成状态（2026-10-14 18:26 UTC）
+## 当前契约与集成状态（2026-10-14 19:12 UTC）
 
-- PR #43 M1 owner head d26a0c3 / run 38602072618 passed 9/9; expiry rejection, pending clear, non-ALLOW decision and callback=0 evidence remain limited to the recorded regression. M1 owns Gateway/Guard semantics and its contract remains at docs/3.0/M1/GATEWAY_API_CONTRACT.md.
-- Issue #32 M1 disposition: d3b64fc is behaviorally equivalent to the owner fixture only for marker-wait/interruption timing, not byte-identical. PRs #33/#34/#38 still require coordinated async fixture updates that preserve fail-closed assertions and exact-head CI.
-- PR #47 M5 head 3afc553 / run 38614270263 passed 9/9. OBSERVE cannot override explicit DENY, SENSITIVE_DATA, path boundaries, or Guard quarantine; sensitive-read denial occurs before approval/callback. M5 has locally committed an updated report snapshot at 7d5df63; Issue #46 remains OPEN until that report is pushed and its new-head checks pass.
-- PR #36 M9 head d802455 / product run 38614289321 passed 9/9 and wrapper 38614289309 passed 2/2. Its 137-file diff is a multi-module integration candidate; this head only updates the canonical contract document and leaves the previously reviewed package manifest unchanged. M0/M9 root contract blobs and the M1 owner-contract path were compared; Issue #49 is CLOSED for that limited comparison.
-- PR #30 M0 head 1ec5287 / product run 38614268660 passed 9/9 and ownership run 38614269082 passed 1/1. PR #24 remains OPEN/Draft at 62496d4 with 11/11 checks; it was not modified or merged.
-- Package manifest comparison across the current PR heads found 36 unique test paths (31 AC3 plus five distinct M3/M5/M7 paths), preserved version/bin/files/./sdk, M5 ./policy, and current M6/M7 scripts. Issue #27 remains OPEN pending explicit M6 field-owner confirmation and combined acceptance.
-- Native Codex Shell remains UNPROTECTED; external E4 and clean-VM installation remain NOT_VERIFIED; M4 backend security/E4 state remains UNKNOWN. Automated checks and fixtures do not expand these claims.
+- PR #43 M1 owner head `4b562be` / run `38620584097` passed 9/9. M1 owns Gateway/Guard semantics and its contract remains at `docs/3.0/M1/GATEWAY_API_CONTRACT.md`; the latest Hook subprocess fixture explicitly cannot observe the native-host tool callback.
+- Issue #32 remains OPEN. Current `test/agent-hook.test.ts` blobs: M1 #43 and M9 #36 `6c2d8da`; M2 #37 `d3b64fc`; M3 #33, M4 #34, and M6 #38 `1ecb3ee`. The latter branches retain the old synchronous interruption-marker fixture. Their currently passing CI does not prove that historical timing race is eliminated; coordinate an owner-approved minimal update and run the affected exact-head checks.
+- PR #47 M5 head `7d5df63` / run `38617317812` passed 9/9. `OBSERVE` only waives optional approval for registered, non-sensitive operations; it cannot override explicit `DENY`, `SENSITIVE_DATA`, path boundaries, or Guard quarantine. The M5 report at blob `1300b4d` and M5 PR description point to this M0-owned contract; Issue #48 is CLOSED for its scoped hard-deny evidence. Issue #46's P2 documentation criteria are verified and its GitHub close is pending the next coordination batch.
+- PR #36 M9 head `6abd4da` / product run `38620602632` passed 9/9 and wrapper run `38620603071` passed 2/2. The current package manifest blob is `6b3042`; the previously reviewed additive composition preserves 36 unique test paths and AC3 package fields. Issue #27 remains OPEN pending explicit M6 field-owner confirmation and combined acceptance. Issue #49 remains closed only for its recorded path/hash scope.
+- PR #30 M0 head `af39e96` / product run `38617312991` passed 9/9 and ownership run `38617313009` passed 1/1; current contract blob `693d437`. PR #24 remains OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with 9 product and 2 wrapper checks passing; it was not modified or merged.
+- PRs #33/#34/#37/#38/#39/#40/#43/#47 are also OPEN/Draft and their current reported checks pass. Native Codex Shell remains UNPROTECTED; external E4 and clean-VM installation remain NOT_VERIFIED; M4 backend security/E4 state remains UNKNOWN. Automated checks and fixtures do not expand these claims.
 
 
 ## TrustedExecutionGateway — M1（接口 owner）
