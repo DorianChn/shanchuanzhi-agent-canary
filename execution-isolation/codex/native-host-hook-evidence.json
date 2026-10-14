@@ -1,0 +1,45 @@
+{
+  "schema": "agent-canary.m2.native-host-hook-evidence.v1",
+  "observedAtUtc": "2026-10-14T04:03:20Z",
+  "workspaceCommit": "a1c239d3734a9acb355db97ea5eb10758eceedd1",
+  "host": {
+    "taskShellEnvironment": "WSL2 Bash",
+    "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+    "codexCliVersion": "0.162.0-alpha.17.2",
+    "desktopAppVersion": "UNKNOWN",
+    "currentTaskNativeHookInvocationTelemetry": "UNAVAILABLE"
+  },
+  "candidateHook": {
+    "path": "execution-isolation/codex/codex-hooks.fragment.json",
+    "handlerPath": "execution-isolation/codex/pre-tool-use.mjs",
+    "installedAtRepositoryRoot": false,
+    "activeInCurrentDesktopHost": "UNKNOWN",
+    "standaloneCliTrustCheck": {
+      "result": "FOLDER_TRUST_PROMPT_SHOWN",
+      "scope": "This standalone CLI launch for the M2 worktree only",
+      "actionTaken": "Exited with Escape without accepting",
+      "persistentTrustChange": false
+    },
+    "currentDesktopAppTrustState": "UNKNOWN"
+  },
+  "officialHookContract": {
+    "documentation": "https://learn.chatgpt.com/docs/hooks",
+    "checkedAtUtc": "2026-10-14T04:03:20Z",
+    "preToolUseCanMatchBashAndUnifiedExec": true,
+    "explicitPermissionDecisionDenySupported": true,
+    "nonManagedHookRequiresReviewAndTrustForExactDefinition": true,
+    "preToolUseHandlerFailureGuaranteedToBlock": false,
+    "failureNote": "The official guide says callback errors, timeouts, or malformed responses can fail the hook without blocking the tool call; some specialized tool paths can opt out of the default hook path."
+  },
+  "nativeShellSentinelAttempt": {
+    "hostWriteAttempted": false,
+    "sentinelCreated": false,
+    "hookCallbackInvoked": false,
+    "hostDecision": "NOT_OBSERVED",
+    "beforeSha256": null,
+    "afterSha256": null,
+    "status": "BLOCKED_NOT_VERIFIED",
+    "reason": "The candidate is only a repository fragment, no trusted hook is evidenced in the current desktop host, and the standalone Codex CLI stopped at its folder-trust prompt. Accepting trust would persist a trust decision and was not done. No hash pair is reported because no native-host sentinel attempt ran."
+  },
+  "classification": "UNPROTECTED"
+}

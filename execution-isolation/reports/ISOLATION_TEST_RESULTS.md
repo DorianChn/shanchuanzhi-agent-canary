@@ -19,7 +19,7 @@
 | Bash 绕过复现 | PASS | 临时哨兵变更；测试脚本内无 Gateway 调用，Gateway 遥测未接入。见 execution-isolation/codex/native-shell-bypass-evidence.json。 |
 | Hook 协议与告警 | PASS；Codex UI 生命周期未测 | Windows Node 输入 PreToolUse/Bash 得到 `permissionDecision=deny` 与 `UNPROTECTED_NATIVE_SHELL` systemMessage；格式错误输入也拒绝。合成日志目录不可创建时，仍拒绝并返回告警；日志不含命令原文。Hook 片段未安装，当前没有 Codex UI 告警被激活。 |
 
-M2 本地调度状态为 `RUNNING`（占用 1 个开发槽；未占 VMware/真实模型/安装器独占资源）。已尝试把状态与下一步写入 #29，并通过 #28 提交 M1 Gateway 授权执行/取消语义对齐请求；GitHub Issue 评论和更新 API 均因 `Resource not accessible by integration` 返回 403，Browser MCP 未连接，两个 Issue 都未变化。本地验证增量已提交于 `61db870`；`git push` 因无法读取 GitHub 用户名失败，尚无远端分支或 Draft PR。下一步：取得有效写入通道后更新 #29、重送 #28 请求，推送并创建 Draft PR，再实现 adapter 并保留 Gateway 执行前复查。
+历史记录（截至 2026-10-13）：M2 曾登记为 `RUNNING`；当时尝试通过 #29 登记状态及通过 #28 提交 Gateway 对齐请求，GitHub 写操作返回 403 且 Browser MCP 未连接。该次记录的本地提交为 `61db870`，当时的 push 失败且尚无 M2 Draft PR。后续 PR/Issue 事实以本报告的 2026-10-14 状态复核为准。
 
 证据：`execution-isolation/windows/prototype-evidence.json`（schema v2）；`execution-isolation/codex/hook-test-results.json`。实现与测试：`execution-isolation/windows/AppContainerLauncher.cs`、`execution-isolation/windows/Test-AppContainerPrototype.ps1`。
 
@@ -41,10 +41,21 @@ M2 本地调度状态为 `RUNNING`（占用 1 个开发槽；未占 VMware/真�
 - M0 `MODULE_OWNERSHIP.md` 将 M2 范围限定为 `execution-isolation/`；三个报告已放入该目录。Hook 根配置仍待 M0 Issue/owner 协调，不能把协议输出称为当前宿主中的实时告警。
 - PROTECTED 只指本次已验证的 AppContainer 子进程操作；Node 文件入口失败仍是集成阻塞。原型尚未接管所有 Shell、IDE 工具或宿主进程。
 - `PreToolUse` 对 Bash/unified exec 可返回 `permissionDecision=deny` 和 UI `systemMessage`；部分专用工具路径能绕过默认 Hook。协议测试通过不等于项目 Hook 已加载或当前 Shell 已有实时警告。[官方 Hooks 文档](https://learn.chatgpt.com/docs/hooks)
-- M2 在 M0 `MODULE_OWNERSHIP.md` 中仅拥有 `execution-isolation/`。请求将 #29 更新为 RUNNING 并报告下一步时，GitHub 评论与 issue 更新 API 均返回 HTTP 403，Chrome Browser MCP 未连接；该 Issue 状态尚未实际更新。
+- 历史记录（2026-10-13）：M2 的 GitHub 写操作返回 HTTP 403；该结果仅描述当时的写入尝试，不代表当前读写权限。M2 的模块文件范围仍为 `execution-isolation/`。
 
 Windows PowerShell 7 复现命令：
 
 pwsh -NoLogo -NoProfile -File execution-isolation/windows/Test-AppContainerPrototype.ps1 -NodeExecutable C:\path\to\node.exe -EvidencePath execution-isolation/windows/prototype-evidence.json
 
 当前测试 Node 路径：C:\Users\36712\AppData\Local\hermes\node\node.exe。失败时应依据 JSON 证据分类，不应把失败路径记为受保护。
+
+## 2026-10-14 原生宿主状态
+
+原生 Codex Shell 仍为 `UNPROTECTED`，Hook 实际阻断为 `BLOCKED_NOT_VERIFIED`。当前任务能识别 Codex CLI `0.162.0-alpha.17.2`，但无法读取 Desktop 本体版本或该 Desktop 会话的 Hook/trust 状态。独立 CLI 针对此 worktree 显示 Folder access 信任提示；未接受并已退出。候选 Hook 未安装，未发起 native Shell sentinel 写入，没有回调决策或前后 SHA-256。详见[原生宿主核验记录](../codex/native-host-hook-evidence.json)和[绕过复现报告](NATIVE_SHELL_BYPASS_REPORT.md)。
+
+## 2026-10-14 04:26 UTC Gateway 与协作状态复核
+
+- GitHub connector read-only fetch at 04:26 UTC: PR #37 remains OPEN/Draft on `feature/agent-canary-3.0`, head `a1c239d3734a9acb355db97ea5eb10758eceedd1`; run `38390381288` has 9/9 successful jobs. P1 Issue #45 remains OPEN (last updated 03:57:16 UTC). Issue #28 remains OPEN and is scoped to M1/M7 Gateway lifecycle coordination, not an M2 worker protocol. Issue #29's latest M0 comment is `6160815558` (04:15 UTC), listing M2 and M5 as active. GitHub read-only fetch succeeded; write access was not tested. Earlier 403 notes remain historical.
+- Read-only compatibility checkpoint: M0 public PR #30 head/contract commit `19ee8ca62e4a4717733264cc0ca96ff55acf79fd`; M1 public PR #43 head and local clean worktree commit `2276526cc70f4a13539e2172efae1fe3b4be16dd`. Both PRs were OPEN/Draft at 04:25–04:26 UTC. The M2 proposal and fixture are under [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway-adapter/COMPATIBILITY_PROPOSAL.md).
+- This M2 change does not alter M1/M0/shared files. Gateway adapter integration remains `NOT_INTEGRATED`; native Shell remains `UNPROTECTED`.
+- Focused M2 checks at 04:30 UTC on Node.js v22.23.1: `check-gateway-mcp-tools.mjs` and `check-contract-fixture.mjs` PASS; `node.exe --check`, JSON parsing, and staged/unstaged `git diff --check` PASS. The binder check covers local callback binding; neither check invokes M1 Gateway or a native host.

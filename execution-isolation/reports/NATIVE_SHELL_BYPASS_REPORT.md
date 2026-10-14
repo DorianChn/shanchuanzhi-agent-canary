@@ -36,6 +36,22 @@ Windows AppContainer 通过包 SID、能力 SID、DACL 与低完整性令牌限�
 
 ## M0/M1 契约与文件范围
 
-只读核对了公共协调目录 `coordinator/docs/3.0/` 中的 `API_CONTRACTS.md`、`MODULE_OWNERSHIP.md` 和 `MODULE_DEPENDENCIES.md`。M0 契约规定 M2 独占 `execution-isolation/`，范围外路径须先建 Issue 并由 owner 协调；Draft PR base 为 `feature/agent-canary-3.0`，正文需 `Test-Evidence:` 与 `API-Contract-Change: yes|no`。三个报告放在 `execution-isolation/reports/`。没有改 M1 文件或接口；原型仍未接入 M1 Gateway 授权请求/执行取消契约，需按 #28 协调。
+历史范围记录（截至 2026-10-13）：曾只读核对 M0 的 API/所有权/依赖契约，M2 仅改 `execution-isolation/`。2026-10-14 04:19 UTC 再核对 M0 契约 commit `19ee8ca62e4a4717733264cc0ca96ff55acf79fd` 与 M1 worktree 当前 commit `2276526cc70f4a13539e2172efae1fe3b4be16dd`；M1 Gateway 的精确 constructor-time `mcpTools` callback seam、执行前授权次序及 signal 行为见 [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway-adapter/COMPATIBILITY_PROPOSAL.md)。Issue #28 当前是 M1/M7 Gateway close/quarantine 生命周期协作，不是 M2 worker protocol 契约；M2 adapter 仍未集成，也未修改 M1 文件或共享契约。
 
-引用的 M0 Codex 线程要求调用 `read_thread`；当前工具面没有该工具，按引用 ID 的调用也返回工具不存在。已从指定协调目录核对可见契约，但无法确认隐藏线程是否还有补充。M2 已请求把 #29 更新为 `RUNNING` 并记录下一步，但 GitHub 评论与 issue 更新接口均返回 HTTP 403；Chrome Browser MCP 也显示未连接，所以 Issue 尚未变化。通过 #28 提交 M1 Gateway 执行/取消语义对齐请求也遇到相同 403，尚未送达。最新本地提交为 `61db870`；推送分支时 Git 无法读取 GitHub 用户名，因此没有远端分支或 Draft PR。下一步是在取得有效写入通道后补记 #29、重送 #28 请求，推送分支并创建 Draft PR，再实现 Gateway adapter。
+历史协作记录（截至 2026-10-13）：引用线程读取工具不可用；当时 M2 的 GitHub 写操作返回 HTTP 403，CLI push 因 GitHub 用户名不可用而失败，记录显示尚无远端分支或 Draft PR。本段仅保留当时的访问/发布状态。2026-10-14 的只读 GitHub 状态复核与修正见后文；本轮没有尝试 GitHub 写操作。
+
+## 2026-10-14 原生宿主 Hook 核验更新
+
+机器可读记录：`execution-isolation/codex/native-host-hook-evidence.json`。本工作树在核验时为 `a1c239d3734a9acb355db97ea5eb10758eceedd1`。当前任务 shell 报告为 WSL2 Bash，内核 `6.18.33.2-microsoft-standard-WSL2`；可定位的 Codex CLI 版本为 `0.162.0-alpha.17.2`。Codex Desktop 本体版本以及当前 Desktop 会话实际加载的 Hook/trust 状态，无法从本次任务工具接口读取，记为 `UNKNOWN`。
+
+官方 Hook 文档确认 `PreToolUse` 可匹配 `Bash`（包括 unified `exec_command`），并可通过 `permissionDecision: "deny"` 在受支持路径调用前拒绝；非托管 Hook 必须先审查并信任确切定义，定义变化后需重新审查。官方文档同时说明 Hook callback 错误、超时或无效响应可能导致 Hook 失败但工具继续执行，且专用工具路径可以绕过默认 Hook。因此协议拒绝能力并不等于 Hook 故障时 fail-closed，也不能据此宣布原生 Shell 已受保护。[Codex Hooks 官方文档](https://learn.chatgpt.com/docs/hooks)
+
+只读启动独立 Codex CLI 并定位到此 M2 worktree 后，CLI 显示该目录尚需 Folder access 信任确认，并说明选择会保存信任决定。为避免更改持久化信任状态，未接受，按 Escape 退出。此结果只描述该独立 CLI 启动，不推断当前 Desktop 会话的信任状态。仓库根 `.codex/hooks.json` 不存在；`execution-isolation/codex/codex-hooks.fragment.json` 仍未安装，尚无可信回调或宿主决策记录。
+
+没有发起真实宿主 Shell sentinel 写入，因此没有回调调用、deny/allow 决策或前后 SHA-256；不把空测试说成阻断成功。原生 Shell 继续标记 `UNPROTECTED`，该验收项为 `BLOCKED_NOT_VERIFIED`。解除阻塞所需证据仍是：在被审查并信任的受支持宿主中，记录产品版本和 Hook/trust 状态，再由 native Shell 发起仅针对合成 sentinel 的写入尝试，留存 Hook 决策/回调与前后摘要。若必须更改当前 Desktop 的持久化信任设置才能运行，则需要由相应宿主所有者完成该审查/信任步骤后复测。
+
+## 2026-10-14 04:26 UTC 状态与 Gateway seam 复核
+
+GitHub connector read-only fetch at 04:26 UTC confirms PR #37 remains OPEN/Draft, base `feature/agent-canary-3.0`, head `a1c239d3734a9acb355db97ea5eb10758eceedd1`; run `38390381288` has 9/9 successful jobs. Public M0 PR #30 and M1 PR #43 are OPEN/Draft at heads `19ee8ca62e4a4717733264cc0ca96ff55acf79fd` and `2276526cc70f4a13539e2172efae1fe3b4be16dd` respectively. Issue #45 remains OPEN/P1 (updated 03:57:16 UTC). Issue #28 remains OPEN and covers M1/M7 Gateway lifecycle coordination, not an M2 worker protocol. Issue #29's latest M0 comment is `6160815558` (04:15 UTC), listing M2 and M5 as active. Read-only GitHub access succeeded; write access was not tested. Earlier 403 notes remain historical.
+
+Gateway 对齐分析见 [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway-adapter/COMPATIBILITY_PROPOSAL.md)。当前 M2 branch checkpoint：API contract `19ee8ca62e4a4717733264cc0ca96ff55acf79fd`，M1 implementation `2276526cc70f4a13539e2172efae1fe3b4be16dd`；04:25 UTC GitHub 只读核验确认该 M1 commit 是公开 PR #43 的 OPEN/Draft head。M2 与 Gateway 的适配仍为提案/fixture，未集成；native Shell 继续标记 `UNPROTECTED`，真实宿主 Hook 验收继续 `BLOCKED_NOT_VERIFIED`。
