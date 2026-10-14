@@ -8,6 +8,17 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 负责维护跨模块 canonical API contract；本报告只记录 M5 模块行为和证据，不替代该契约。M0/M1/M5/M9 对应候选的契约、路径和 CI 核对已通过，Issue #48 和 #49 已关闭；这不验证真实 M1+M5 宿主接线或真实副作用。
 
+## 2026-10-15 当前状态快照
+
+> 本节是 2026-10-15 更新后的当前状态，并优先于下方较早记录的 head、CI 和 PR 描述状态。下方保留的旧 SHA/run 及 2026-10-14/15 状态段属于此前核对的历史证据，不表示当前 head；Issue #46 的现状以本节为准。
+
+- **M5 PR #47**：远端已推送报告 head 为 584f96cea8d96df46ebe63e3ab709a44981c78b1；该精确 head 的 CI run [38608355200](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38608355200) 为 9/9 通过。
+- **M0 PR #30**：head SHA 63d10b86d6c8e2c3e66d2608a9222ddeb728f594 的产品 CI 为 9/9，ownership 检查为 1/1（产品 run 38608350412；ownership run 38608350594）。
+- **Issue #46**：仍为 OPEN，等待 M0 更新，并读回 PR #47 描述及相关新 head CI。**Issue #48** 已 CLOSED，仅记录 OBSERVE hard-deny 的有限范围精确 head CI 证据；**Issue #49** 已 CLOSED，仅记录 canonical 根契约与 M1 契约的有限路径/hash 核对。关闭不扩展为更广的集成验收。
+- **M9 PR #36**：远端 head SHA ed0dd015a6e46029d1df4ac077a6e9378fb1a494 的 docs-on-AC3 检查为 9/9，wrapper 检查为 2/2（runs 38604703774、38604703745）。这不证明 M1–M8 产品组合验收，也不证明真实宿主接线。
+- **安全边界保持**：OBSERVE 对敏感读取和显式硬拒绝仍是 hard-deny；对应夹具断言拒绝前 pending approval 为 0、callback 次数为 0。UNKNOWN 与 NOT_VERIFIED 仍按字面保留，不从局部 CI 或文档/hash 检查推断为已验证。
+- **仍为 NOT_VERIFIED**：真实 M1+M5 host wiring、E4、clean-VM/installer、native Shell 保护及真实工具副作用。M5 fixture、M9 docs 检查和有限范围的 Issues #48/#49 证据均不替代这些验证。
+
 ## 主要审计发现与处置
 
 | 项目 | 检查结果 | M5 处置或边界 |
