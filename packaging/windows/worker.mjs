@@ -1,21 +1,54 @@
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash,randomUUID} from 'node:crypto';import {spawnSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {createAutoE4Run,writeAutoE4Artifacts} from './auto-e4.mjs';
 import {runHookFaultChecks} from './e4-hook-faults.mjs';
+import {writeFileAtomically} from './durable-files.mjs';
 const ROOT=path.dirname(fileURLToPath(import.meta.url)),APP=path.join(ROOT,'app');
 const [action,dataDir,role='other',expected]=process.argv.slice(2);
 const ROLES=new Set(['author','external','other','unspecified']);
 function digest(bytes){return createHash('sha256').update(bytes).digest('hex');}
-function safeDirectory(dir){if(!dir||!path.isAbsolute(dir)||path.parse(dir).root===path.resolve(dir))throw Error('UNSAFE_DATA_DIRECTORY');for(let p=path.resolve(dir);p!==path.dirname(p);p=path.dirname(p)){try{if(fs.lstatSync(p).isSymbolicLink())throw Error('SYMLINK_DIRECTORY_REJECTED');}catch(e){if(e.code!=='ENOENT')throw e;}}fs.mkdirSync(dir,{recursive:true});}
+function safeDirectory(dir,fileSystem=fs){if(!dir||!path.isAbsolute(dir)||path.parse(dir).root===path.resolve(dir))throw Error('UNSAFE_DATA_DIRECTORY');for(let p=path.resolve(dir);p!==path.dirname(p);p=path.dirname(p)){try{if(fileSystem.lstatSync(p).isSymbolicLink())throw Error('SYMLINK_DIRECTORY_REJECTED');}catch(e){if(e.code!=='ENOENT')throw e;}}fileSystem.mkdirSync(dir,{recursive:true});}
 export function inspectPayload(root,anchor){if(!/^[a-f0-9]{64}$/.test(anchor??''))throw Error('MANIFEST_ANCHOR_REQUIRED');const file=path.join(root,'PAYLOAD_MANIFEST.json');if(digest(fs.readFileSync(file))!==anchor)throw Error('MANIFEST_DIGEST_MISMATCH');const m=JSON.parse(fs.readFileSync(file,'utf8'));if(m.schemaVersion!==1||!Array.isArray(m.files)||m.files.length>15000)throw Error('MANIFEST_SCHEMA_INVALID');for(const entry of m.files){if(typeof entry.path!=='string'||entry.path.includes(String.fromCharCode(92))||entry.path.split('/').some(s=>!s||s==='..'||s==='.')||path.isAbsolute(entry.path)||entry.path.includes(':'))throw Error('MANIFEST_PATH_REJECTED');const f=path.resolve(root,entry.path);for(let p=f;p!==path.resolve(root);p=path.dirname(p)){if(fs.lstatSync(p).isSymbolicLink())throw Error('PAYLOAD_SYMLINK_REJECTED');}const s=fs.statSync(f);if(!s.isFile()||s.size!==entry.size||digest(fs.readFileSync(f))!==entry.sha256)throw Error('PAYLOAD_FILE_MISMATCH:'+entry.path);}return m;}
 export function redact(value,roots=[]){if(Array.isArray(value))return value.map(x=>redact(x,roots));if(value&&typeof value==='object'){const o={};for(const [k,v]of Object.entries(value)){o[k]=/^(token|api[_-]?key|password|authorization|secret)$/i.test(k)?'[REDACTED]':redact(v,roots);}return o;}if(typeof value!=='string')return value;let s=value;for(const [from,to]of roots.filter(x=>x[0]).sort((a,b)=>b[0].length-a[0].length)){s=s.split(from).join(to);s=s.split(from.replaceAll(String.fromCharCode(92),'/')).join(to);}s=s.replace(/cnry_[a-zA-Z0-9_-]+/g,'[CANARY_REDACTED]').replace(/\bsk-[a-zA-Z0-9_-]{12,}/g,'[API_KEY_REDACTED]').replace(/(?:Bearer\s+)[a-zA-Z0-9._-]+/gi,'Bearer [REDACTED]').replace(/((?:api[_-]?key|password|authorization|secret)\s*[:=]\s*)[^\s,;]+/gi,'$1[REDACTED]').replace(new RegExp('[A-Za-z]:['+String.fromCharCode(92,92)+'/][^'+String.fromCharCode(92)+'r'+String.fromCharCode(92)+'n"<>]+','g'),'[ABSOLUTE_PATH_REDACTED]');return s;}
 function readJSON(file,maxBytes=8*1024*1024){const s=fs.lstatSync(file);if(s.isSymbolicLink()||!s.isFile()||s.size>maxBytes)throw Error('UNSAFE_OR_OVERSIZED_STATE_FILE');return JSON.parse(fs.readFileSync(file,'utf8'));}
-function loadState(){safeDirectory(dataDir);const f=path.join(dataDir,'session.json');try{const s=readJSON(f,4096);if(!/^[a-f0-9-]{36}$/.test(s.sessionId))throw Error('SESSION_STATE_INVALID');return s;}catch(e){if(e.code!=='ENOENT')throw Error('SESSION_STATE_CORRUPT');const s={sessionId:randomUUID(),firstStartedAt:new Date().toISOString()};try{fs.writeFileSync(f,JSON.stringify(s),{flag:'wx'});return s;}catch(x){if(x.code==='EEXIST')return loadState();throw x;}}}
+function createSessionState(file,directory,fileSystem=fs){
+ const state={sessionId:randomUUID(),firstStartedAt:new Date().toISOString()};
+ try{writeFileAtomically(file,JSON.stringify(state),{fileSystem});return state;}
+ catch(error){if(error.code==='EEXIST')return loadState(directory,{fileSystem});throw error;}
+}
+export function loadState(directory=dataDir,{fileSystem=fs}={}){
+ safeDirectory(directory,fileSystem);
+ const file=path.join(directory,'session.json');
+ try{
+  const stat=fileSystem.lstatSync(file);
+  if(stat.isSymbolicLink()||!stat.isFile())throw Error('SESSION_STATE_UNSAFE');
+  if(stat.size>4096)throw Error('SESSION_STATE_INVALID');
+  let state;
+  try{state=JSON.parse(fileSystem.readFileSync(file,'utf8'));}catch(error){if(error instanceof SyntaxError)throw Error('SESSION_STATE_INVALID');throw error;}
+  if(!state||typeof state!=='object'||Array.isArray(state)||!/^[a-f0-9-]{36}$/.test(state.sessionId))throw Error('SESSION_STATE_INVALID');
+  return state;
+ }catch(error){
+  if(error.code==='ENOENT')return createSessionState(file,directory,fileSystem);
+  if(error.message==='SESSION_STATE_UNSAFE')throw error;
+  if(error.message!=='SESSION_STATE_INVALID')throw error;
+  const backup=file+'.corrupt.'+new Date().toISOString().replaceAll(':','-')+'.'+randomUUID()+'.bak';
+  try{fileSystem.renameSync(file,backup);}catch(renameError){if(renameError.code==='ENOENT')return loadState(directory,{fileSystem});throw Error('SESSION_STATE_BACKUP_FAILED');}
+  try{return createSessionState(file,directory,fileSystem);}catch{throw Error('SESSION_STATE_RECOVERY_FAILED');}
+ }
+}
 const LABELS={A_SYNTHETIC_CREDENTIAL_READ:['无保护虚拟凭据读取对照','Unprotected virtual-secret reference'],F_NORMAL_WRITE:['正常文件写入','Normal file write'],F_FIRST_CREDENTIAL_REJECTED:['执行前拒绝虚拟凭据读取','Pre-execution virtual-secret denial'],F_CALLBACK_AND_SIDE_EFFECT:['危险回调与文件哈希检查','Dangerous callback and file hash check'],TRUSTED_OPERATOR_APPROVAL:['一次性可信审批与重放拒绝','One-time approval and replay denial'],HONEYPOT_THEN_GUARD:['蜜罐触发后的会话隔离','Honeypot-triggered quarantine']};
 function check(id,zh,en,status,detail){const labels=LABELS[id]??[zh,en];let text=null;if(id==='F_CALLBACK_AND_SIDE_EFFECT')text={zh:'危险执行 '+detail.unsafeCalls+' 次；网络接收 '+detail.sinkRequests+' 次；文件哈希 '+(detail.victimHashBefore===detail.victimHashAfter?'一致':'不同'),en:'Unsafe calls '+detail.unsafeCalls+'; sink receives '+detail.sinkRequests+'; file hashes '+(detail.victimHashBefore===detail.victimHashAfter?'equal':'different')};if(id==='F_NORMAL_WRITE')text={zh:'实际写入：'+detail.actualWrittenValue,en:'Actual file content: '+detail.actualWrittenValue};if(id==='TRUSTED_OPERATOR_APPROVAL')text={zh:'获批执行 '+detail.actualCalls+' 次；重复批准已拒绝',en:'Approved calls '+detail.actualCalls+'; replay denied'};return{id,nameZh:labels[0],nameEn:labels[1],status,detail,summaryZh:text?.zh??null,summaryEn:text?.en??null};}
 function invoke(args){const start=Date.now(),home=fs.mkdtempSync(path.join(os.tmpdir(),'AgentCanary verification '));fs.writeFileSync(path.join(home,'config.json'),JSON.stringify({notify:false,webhook:null,eventsFile:path.join(home,'events.jsonl')}));const env={SystemRoot:process.env.SystemRoot??'C:/Windows',WINDIR:process.env.WINDIR??'C:/Windows',PATH:path.dirname(process.execPath)+';'+(process.env.SystemRoot??'C:/Windows')+'/System32',TEMP:os.tmpdir(),TMP:os.tmpdir(),AGENT_CANARY_HOME:home};const r=spawnSync(process.execPath,args,{cwd:APP,env,encoding:'utf8',windowsHide:true,timeout:45000,maxBuffer:2*1024*1024});return{command:{executable:process.execPath,arguments:args},exitCode:r.status,durationMs:Date.now()-start,stdout:r.stdout??'',stderr:r.stderr??'',error:r.error?.message??null};}
 export function readInstallerReceipt(root){try{const r=readJSON(path.join(root,'INSTALL_RECEIPT.json'),4096);if(!/^[a-f0-9]{64}$/.test(r.installerSHA256??'')||typeof r.desktopVersion!=='string'||r.desktopVersion.length>80)throw Error('INVALID_RECEIPT');return {installerSHA256:r.installerSHA256,desktopVersion:r.desktopVersion,status:'RECORDED_LOCAL_HASH_NOT_PUBLISHER_AUTHENTICATION'};}catch(e){return {installerSHA256:null,status:e.code==='ENOENT'?'NOT_VERIFIED_PORTABLE_OR_MISSING_RECEIPT':'NOT_VERIFIED_INVALID_OR_UNREADABLE_RECEIPT'};}}
 function baseline(state,version){const receipt=readInstallerReceipt(ROOT);return{schemaVersion:'agent-canary.desktop-reproduction.v1',sessionId:state.sessionId,runId:randomUUID(),startedAt:new Date().toISOString(),software:version,installer:{sha256:receipt?.installerSHA256??null,status:receipt.status,authentication:'unsigned setup; locally computed hash does not prove publisher identity'},operator:{declaredRole:role,independence:'NOT_VERIFIED_REQUIRES_REAL_OPERATOR_AND_ENVIRONMENT_REVIEW',machineFingerprintCollected:false},environment:{platform:process.platform,architecture:process.arch,osRelease:os.release(),nodeVersion:process.version,nodeExecutable:process.execPath},mode:'OPERATOR_TRIGGERED_REAL_TEMPORARY_IO_NOT_MODEL_ATTACK',nativeAgentIntegration:'NOT_VERIFIED_THIS_RUN',E4:'NOT_VERIFIED',checks:[],commands:[],limitations:['Bounded fixture observations only; no OS-wide sandbox or global Agent protection.','No real model or Claude Code experiment is run by these buttons.','Local hash chain is not independent certification.']};}
-function saveReport(report){report.completedAt=new Date().toISOString();safeDirectory(path.join(dataDir,'reports'));const target=path.join(dataDir,'reports',report.runId+'.json');fs.writeFileSync(target,JSON.stringify(report,null,2),{flag:'wx'});fs.writeFileSync(path.join(dataDir,'latest.json'),JSON.stringify({file:target}));return target;}
+export function saveReport(report,directory=dataDir,{fileSystem=fs}={}){
+ if(!/^[a-f0-9-]{36}$/.test(report.runId??''))throw Error('REPORT_ID_INVALID');
+ report.completedAt=new Date().toISOString();
+ const reports=path.join(directory,'reports');safeDirectory(reports,fileSystem);
+ const target=path.join(reports,report.runId+'.json');
+ writeFileAtomically(target,JSON.stringify(report,null,2),{fileSystem});
+ writeFileAtomically(path.join(directory,'latest.json'),JSON.stringify({file:target}),{replace:true,fileSystem});
+ return target;
+}
 function markdown(report){return['# Agent Canary Community reproduction report','','Mode: '+report.mode,'Session: '+report.sessionId,'Operator declaration: '+report.operator.declaredRole,'E4: NOT_VERIFIED','Installer SHA-256: '+(report.installer.sha256??'NOT_VERIFIED'),'Version: '+report.software.desktopVersion,'Runtime baseline: '+report.software.runtimeBaselineSHA,'Started: '+report.startedAt,'Completed: '+report.completedAt,'','## Actual checks',...report.checks.map(c=>'- '+c.status+' / '+c.id+': '+JSON.stringify(c.detail)),'','## Actual commands and exit codes',...report.commands.map(c=>'- Exit '+c.exitCode+': '+JSON.stringify(c.command)),'','## Limits',...report.limitations.map(s=>'- '+s),'','All paths and tokens are redacted before export. Independent status requires human review, not a machine fingerprint.',''].join('\n');}
 function e4Sanitize(value,roots=[]){return redact(value,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>'],...roots]);}
 function vmwareExecutable(){const bases=[process.env.ProgramFiles,process.env['ProgramFiles(x86)'],'C:/Program Files','C:/Program Files (x86)'].filter(Boolean);for(const base of bases){const p=path.join(base,'VMware','VMware Workstation','vmrun.exe');try{if(fs.statSync(p).isFile())return p;}catch{}}return null;}
@@ -94,13 +127,13 @@ async function runAutoE4(state,version,receipt,manifest){
   let artifacts=writeAutoE4Artifacts(report,run.runDir),bundle=null;
   try{bundle=makeEvidenceBundle(run.runDir);}
   catch(error){const stage=report.stages.find(x=>x.id==='materials');stage.status='BLOCKED';stage.detail={reason:String(error.message),summary:'Reports exist, but a verified ZIP bundle could not be created.'};report.coverage.blocked++;report.coverage.verified=Math.max(0,report.coverage.verified-1);report.technicalResult='BLOCKED';run.record({type:'progress',stageId:'materials',status:'BLOCKED',message:stage.detail.summary,detail:{reason:stage.detail.reason}});artifacts=writeAutoE4Artifacts(report,run.runDir);}
-  fs.writeFileSync(path.join(dataDir,'latest.json'),JSON.stringify({kind:'auto-e4',file:artifacts.jsonFile,markdownFile:artifacts.mdFile}),{mode:0o600});
+  writeFileAtomically(path.join(dataDir,'latest.json'),JSON.stringify({kind:'auto-e4',file:artifacts.jsonFile,markdownFile:artifacts.mdFile}),{replace:true});
   process.stdout.write(JSON.stringify({type:'result',status:report.technicalResult,overallE4:report.overallE4,reportFile:artifacts.jsonFile,markdownFile:artifacts.mdFile,bundleFile:bundle?.archive??null,bundleSHA256:bundle?.sha256??null,bundleBytes:bundle?.bytes??null,report:redact(report,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>']])})+'\n');
   if(report.technicalResult==='FAIL')process.exitCode=1;
  }finally{run.release();}
 }
 export async function main(){if(!['initialize','environment','verify','export','record-install','auto-e4'].includes(action)||!ROLES.has(role))throw Error('COMMAND_OR_ROLE_INVALID');const manifest=inspectPayload(ROOT,expected),version=JSON.parse(fs.readFileSync(path.join(ROOT,'VERSION.json'),'utf8'));
-if(action==='record-install'){const setup=process.argv[6];if(!setup||!path.isAbsolute(setup)||fs.lstatSync(setup).isSymbolicLink()||!setup.toLowerCase().endsWith('.exe'))throw Error('INSTALLER_PATH_INVALID');const receipt={installerSHA256:digest(fs.readFileSync(setup)),recordedAt:new Date().toISOString(),desktopVersion:version.desktopVersion};fs.writeFileSync(path.join(ROOT,'INSTALL_RECEIPT.json'),JSON.stringify(receipt));console.log(JSON.stringify({status:'VERIFIED',receipt}));return;}
+if(action==='record-install'){const setup=process.argv[6];if(!setup||!path.isAbsolute(setup)||fs.lstatSync(setup).isSymbolicLink()||!setup.toLowerCase().endsWith('.exe'))throw Error('INSTALLER_PATH_INVALID');const receipt={installerSHA256:digest(fs.readFileSync(setup)),recordedAt:new Date().toISOString(),desktopVersion:version.desktopVersion};writeFileAtomically(path.join(ROOT,'INSTALL_RECEIPT.json'),JSON.stringify(receipt));console.log(JSON.stringify({status:'VERIFIED',receipt}));return;}
 const state=loadState();if(action==='initialize'){console.log(JSON.stringify({status:'READY',sessionId:state.sessionId,version}));return;}
 if(action==='auto-e4'){await runAutoE4(state,version,readInstallerReceipt(ROOT),manifest);return;}
 if(action==='export'){const latest=readJSON(path.join(dataDir,'latest.json'),4096);if(latest.kind==='auto-e4'){
