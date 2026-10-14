@@ -67,7 +67,9 @@ test('rendered installer keeps Unicode and spaced paths and emits exact rollback
   assert.match(rendered,/Agent Canary Community candidate\.4/);
   assert.match(rendered,/RequestExecutionLevel user/);
   assert.match(rendered,/Function \.onInstFailed[\s\S]*?Call RollbackInstall/);
-  assert.match(rendered,/Function \.onUserAbort[\s\S]*?Call RollbackInstall/);
+  assert.match(rendered,/!define MUI_ABORTWARNING\s+!define MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup[\s\S]*?!insertmacro MUI_LANGUAGE/);
+  assert.match(rendered,/Function AgentCanaryAbortCleanup\s+Call RollbackInstall\s+FunctionEnd/);
+  assert.doesNotMatch(rendered,/Function \.onUserAbort\b/);
   assert.match(rendered,/Function RollbackInstall[\s\S]*?GetFileAttributesW[\s\S]*?rollback_incomplete/);
   assert.match(rendered,/GetFileAttributesW\(w "\$SMPROGRAMS\\Agent Canary Community candidate\.4"\)/);
   assert.match(rendered,/Delete "\$INSTDIR\\app\\dist\\competition\.js"/);

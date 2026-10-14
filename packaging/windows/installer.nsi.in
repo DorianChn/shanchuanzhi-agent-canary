@@ -10,6 +10,7 @@ SetCompressor zlib
 ShowInstDetails show
 ShowUninstDetails show
 !define MUI_ABORTWARNING
+!define MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "__LICENSE__"
 !insertmacro MUI_PAGE_DIRECTORY
@@ -47,7 +48,7 @@ __ROLLBACK_RMDIR__
  MessageBox MB_ICONEXCLAMATION|MB_OK "Rollback was incomplete. Some owned files remain in the selected install directory. / 回滚未完全完成，所选目录中仍有部分安装文件。" /SD IDOK
  rollback_done:
 FunctionEnd
-Function .onUserAbort
+Function AgentCanaryAbortCleanup
  Call RollbackInstall
 FunctionEnd
 Function .onInstFailed
