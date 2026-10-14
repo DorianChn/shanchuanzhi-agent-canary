@@ -30,6 +30,12 @@ PR #39 run `38415887207` 的 Windows Node `22.23.3` job 仍运行旧 `spawnSync`
 
 M0 于 16:02:40 UTC 推送 `dc4d7fa`、`89e40cd` 后，PR #43 当前提交 `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c` 的 CI run [38427313208](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38427313208) 完成并成功。Windows Node 20/22 job `115399969526`、`115399969339` 的 `npm test` 均通过；六个 Windows、Ubuntu、macOS Node 20/22 测试矩阵及各自 build 均通过。测试夹具的历史 hosted-runner 时序仍未完全复原，故历史失败的精确根因保持 `UNKNOWN`；本次集成头验证满足此前等待的新 Windows CI 条件。读取时 Issue #32 仍为 OPEN，未通过本轮操作修改远端状态。
 
+### PR #43 当前头 CI 复核（2026-10-14）
+
+GitHub 将 CI run `38522973084` 关联到 PR #43 精确 head `f59ba37c2fd9d1b5e181e067f80981f8920ef16a`；该 Draft PR 仍为 OPEN。全部 9 个 job 成功。Windows Node 20 job `115716696322`（Node `20.20.2`）与 Windows Node 22 job `115716696306`（Node `22.23.3`）均完成 build 和 `npm test`，各报告 340 项、336 通过、0 失败、4 跳过。中断用例在两 job 均通过；诊断均为 `spawnError=null`、`exit={code:null,signal:"SIGTERM"}`、stdout/stderr 为空、`marker=true`。修订测试仍检查无 allow 决定、无输出/决策日志且不调用工具回调。
+
+历史失败根因分类：`PLAUSIBLE`（Windows runner 启动/调度与旧测试夹具的时序竞争）。失败 job `115684062592`（run `38512532532`）仍执行旧测试，在 marker 断言得到 `false !== true`；旧日志没有保留进程/marker 全量诊断，不能证明精确历史时序。当前绿色 CI 证明修订 head 的回归通过，不构成历史根因已确认的证明。Issue #32 保持 OPEN，等待 M9 合并候选基线复验；没有更改远端 issue 状态。
+
 ## Fail-closed 结论
 
 仅当 Claude 实际启动配置好的 PreToolUse wrapper，wrapper 执行到返回结果，且宿主把 deny 视为阻断时，才能确认此路径 fail-closed。模块加载失败、Hook 回调异常、非法返回、wrapper 内超时和日志错误都在此路径内返回 deny。Hook 进程本身未加载/启动失败/被外部杀死的 fail-closed 取决于宿主 onFailure:block；本次未验证该外部配置。因此不宣称保护所有原生 Shell 操作或未接入的工具。

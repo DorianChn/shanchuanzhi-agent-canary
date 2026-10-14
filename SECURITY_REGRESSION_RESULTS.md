@@ -194,3 +194,32 @@ A deterministic regression uses two Gateway instances with one Guard. The first 
 - `git diff --check` — passed after the documentation update.
 
 The synthetic callback tests honor their supplied AbortSignal. A host callback that ignores the signal can continue its own side effects, and this Gateway is not an OS sandbox. Another Guard instance or process does not receive a synchronous event from this Guard. Issue #35 remains OPEN; this local test result does not replace current-head remote end-to-end CI or prove cross-process cancellation. No push, issue update, merge, or release was performed.
+
+## M1 Issue #32 / #44 current disposition (2026-10-14)
+
+### PR #43 ancestry and current CI
+
+The remote Draft PR #43 is OPEN at exact head `f59ba37c2fd9d1b5e181e067f80981f8920ef16a`, matching the local M1 branch HEAD. Local ancestry checks against that exact SHA returned success for all four reviewed commits:
+
+| Commit | Full SHA | Present in PR #43 ancestry |
+| --- | --- | --- |
+| `aae4705` | `aae4705bfb870e74b28062283bba7755a322b78f` | yes |
+| `46af1f1` | `46af1f19344dffe93a30817c4805eec0c6c673fe` | yes |
+| `89e40cd` | `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c` | yes |
+| `ec3bc96` | `ec3bc96d7301304f48270faaec926c7dbc1281ef` | yes |
+
+GitHub associates CI run [38522973084](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38522973084) with that exact head. All nine jobs completed successfully. Windows Node 20 job `115716696322` ran Node `20.20.2`; Windows Node 22 job `115716696306` ran Node `22.23.3`. Both completed `npm run build` and `npm test`; each test log reports 340 tests, 336 passed, 0 failed, and 4 skipped.
+
+### P1 #32 — Hook interruption marker
+
+**Historical root-cause classification: PLAUSIBLE; exact runner cause is unconfirmed.** The failing Windows Node 20 job `115684062592` in run `38512532532` reports `false !== true` at the old Hook-entry marker assertion. The prior fixture used a one-second synchronous spawn timeout and checked the marker without an asynchronous handshake; runner startup/dispatch timing is a plausible explanation. The historical log does not record enough child state to prove why the marker was absent. Do not treat the green rerun as proof of the old failure's precise cause.
+
+On current head, the interruption subtest passes in both Windows jobs. Their logs report `spawnError=null`, `exit={code:null,signal:"SIGTERM"}`, `stdout=""`, `stderr=""`, and `marker=true`; the test still checks no allow result, no output/decision log, and no tool callback. This verifies the revised synthetic interruption regression, not an actual Claude host's behavior after a killed Hook process. Issue #32 remains OPEN pending M9 combined-baseline verification.
+
+### P1 #44 — approval expiry and missing pending requestId
+
+**Historical root-cause classification: PLAUSIBLE; exact scheduler timing is unconfirmed.** The failing Ubuntu Node 20 job `115348307512` in run `38412534723` failed at `operator.pending()[0].requestId` with `Cannot read properties of undefined (reading 'requestId')`; the failing line was before `operator.approve()`. The old fixture set `approvalTtlMs: 5`, and `pending()` runs the expiry sweep, which removes already expired items. An isolated controlled delay on the exact old source reproduced the same missing-entry error. This supports a test timing race, but does not show the original runner's elapsed time. The observed failure does not demonstrate that an approval succeeded or that a callback ran.
+
+The current test captures `decision` and `requestId` from the `REQUIRE_APPROVAL` rejection, waits beyond TTL, then asserts approval is expired and callback count remains zero. CI run `38522973084` passed this exact subtest in Ubuntu Node 20 job `115716696261` (19.933 ms), Windows Node 20 job `115716696322` (60.481 ms), and Windows Node 22 job `115716696306` (35.538 ms). The full matrix passed; no Gateway production code or security policy was changed for this test correction. Issue #44 remains OPEN pending M9 combined-baseline verification.
+
+No test was deleted, skipped, or weakened for either issue. No GitHub issue was updated in this review; the live Issues #32 and #44 both remain OPEN.
