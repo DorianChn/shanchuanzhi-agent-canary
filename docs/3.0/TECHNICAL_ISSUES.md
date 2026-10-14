@@ -2,20 +2,37 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 10:07 UTC）
+## 当前调度（2026-10-14 10:51 UTC）
 
-- M1 与 M7 已完成 #28 owner handoff 和本地候选复核，当前 0/2 模块任务运行；下一批 M2/M5 尚未启动。进度依据 GitHub、文件系统与额度页，不声称读取其他窗口聊天。
-- **PR #24** 仍 OPEN/Draft，base competition/shanchuanzhi-release-readiness、head 62496d4；未修改、未合并。**PR #30** 仍 OPEN/Draft，head a81a33d；记录的 CI run 38527097301 为 9/9、ownership-contract run 38527097311 为 1/1。
-- **M1 / #28 / #32 / #44**：PR #43 最近远端 head f59ba37，CI 9/9；本地报告提交 738a783，Gateway/containment 定向测试 51/51。M1 owner 已确认 M1/M7 共基线 62496d4 但互非祖先，并审查通过 M7 提交 `6d978a5` 中五个 owner 文件；M7 报告 Gateway/containment/acceptance 66/66、reliability 43 通过/3 跳过，M1 未独立重跑。M7 候选尚未推送，#28 维持 OPEN，待共同 CI 与最终审查。#32 历史 marker 根因仍 UNKNOWN，#44 仍 OPEN。
-- **M2 / #45**：PR #37 远端 head `cb84f43`；本地 branch HEAD `b38b1ab` 尚待推送，含 `4875d84` 的 hook_event_name 前置校验和路径脱敏。缺失/错误事件名拒绝，仅完整 PreToolUse 非 Bash 透传；定向 protocol 测试通过。真实 Codex Desktop Shell 仍 UNPROTECTED / BLOCKED_NOT_VERIFIED；协议 fixture 与 AppContainer 子进程证据不代表原生宿主受保护。
-- **M3–M4**：PR #33 head 54facf0、PR #34 head f301195；已记录 CI 各 9/9。M4 后端保护/E4 状态仍须显示 UNKNOWN，不得由 UI fixture 推断 PASS。
-- **M5 / #48**：PR #47 远端 head `cf4e2cd`；本地 HEAD `bcbec98` 仅更新 readiness report，尚待推送。已记录的旧 head CI 为 9/9。OBSERVE 敏感读取仍 hard DENY；Issue #48 保持 OPEN，等待组合验收。
-- **M6 / #46**：PR #38 head d513810；schema 测试 41/41、bundle verifier 12/12。M6 的 SecurityEvidenceEvent 与 M5 PolicyAuditEvent 分离，当前 M6 不消费 M5 stream，也未验证 M2 binder 的端到端行为；外部 E4 为 NOT_VERIFIED。
-- **M7 / #28 / #41**：PR #39 远端 head 5c7d95d、该旧 head 的主 CI 9/9、wrapper 2/2；本地集成提交 `6d978a5` 已在既有 M7 分支，包含五个 M1 owner 文件和两份 M7 报告。M1 owner 确认五文件与 M1 HEAD blob 一致且候选语义可接受；M7 报告的定向测试为 Gateway/containment/acceptance 66/66、reliability 43 通过/0 失败/3 跳过。尚未推送；新 head 的 GitHub CI 未运行。clean-VM 安装/升级/卸载和真实取消回滚 NOT VERIFIED / HOLD。
-- **M8**：PR #40 head b0f30ff、CI 9/9；未发布 Release。**M9 / PR #36**：本地集成分支 HEAD `5c11113` 相对远端 `996073a` 有 86 个本地提交差异、136 个文件改动，含多模块合并和 E4 raw.log/evidence.zip；未推送。此前 397 项统计对应较早组合 head `83d7268`，不验证当前候选。完成文件范围/敏感证据审查和当前 combined verify 前不更新 PR #36。
-- 当前未关闭门槛：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，证据仅覆盖同进程、同 Guard 且 callback 遵守 AbortSignal。
-- 网页用量页约 10:06 UTC 实读：五小时剩余 53%、约 52m 重置；每周剩余 70%、额度 113。低于 5% 或读数不可用时暂停开发、测试、浏览器和 GitHub 操作；确认重置后才恢复。
-- 最近已知推送批次约 07:14 UTC，间隔已超过 20 分钟；候选和分支 ancestry 审查完后统一批次推送。VMware、真实模型和安装测试共用一个互斥槽；目前无此类运行。未合并 main/#24，未发布 Release，M0 只改协调文档。
+- 当前模块并发 2/2：M1 在现有安全分支核对 #44 过期审批零 callback 回归；M2 在现有隔离分支核对 #45 Hook 失败路径并按协议能力改进。两者只操作各自所有权文件，本轮先本地提交、不推送。
+- M7 已结束只读 VM 前置核查并提交报告 `9088bd2`：没有可确认的干净快照，#41 继续 HOLD；未改 VM、主机或安装程序。M8 已提交 `4c11981` 修正 11 份公开文档，定向文档校验通过；尚未推送。
+- **PR #24** OPEN/Draft，最近核验 head `62496d4`、11/11 检查；未触碰、未合并。**PR #30** 最近核验 head `a81a33d`、10/10；M0 文档改动待推送批次。
+- **M1 / #32 / #44**：PR #43 最近远端 `f59ba37`、9/9；本地报告 `7a6eb98`。历史 #44 证据不足以认定产品错误放行；#32 marker 根因 UNKNOWN。当前任务保留安全断言，不能删减或放宽。
+- **M2 / #45**：PR #37 最近远端 `cb84f43`、9/9；本地 `d9d775b` 含 Hook 事件名校验和路径脱敏。当前只实现协议能表达的 fail-closed 行为；Codex 原生 Shell 仍 UNPROTECTED，#45 OPEN。
+- **M3 / #27**：PR #33 `54facf0`、9/9；本地 `d9364cc`。M3/M5/M6/M7 manifest 字段需按嵌套键合并；#27 等待组合包验收。
+- **M4**：PR #34 旧 head `f301195`、9/9；本地修复 `69ec7f1`，定向测试 7/7，新 head CI 待运行。诊断真实性按 P2 跟踪，UI 不推断后端保护/E4 PASS。
+- **M5 / #46 / #48**：PR #47 `cf4e2cd` 精确 head 9/9，描述已修正并保持 Draft；OBSERVE 敏感读取 hard DENY；#48 等 M1/M5/M9 联合验收。
+- **M6 / #27**：PR #38 `d513810`、9/9；外部 E4 `NOT_VERIFIED`，M6 不消费 M5 audit stream。未跟踪运行目录保持原样。
+- **M7 / #28 / #41**：PR #39 旧 head `5c7d95d`、11/11；本地报告 `9088bd2`。vmrun 因密码要求无法验证快照，候选 VM 没有可见快照清单；未运行安装。#28 等新候选 CI，#41 保持 HOLD。
+- **M8**：本地文档提交 `4c11981`，check-docs 通过；PR #40 旧 head `b0f30ff`、9/9。尚未推送；Package 注册表返回 401，状态未知。
+- **M9 / PR #36**：本地 `5c11113` 旧集成候选；391/0/6 本地 verify、100 文件 package smoke，仅证明本地结果。最新 M7/M8 提交未集成；GitHub 新 head CI 未运行。
+- **待推送**：M0、M1、M2、M3、M4、M5、M7、M8、M9 的现有分支候选，先核对 ancestry 和 dry-run；仅快进项纳入一批，不 force-push。M6 无新提交，#24/main 不动。
+- **额度与互斥**：用量页 10:50 UTC 实读五小时 43%、9 分钟后重置、每周 69%、113 credits；低于 5% 或读数不可用立即暂停全部开发、测试、浏览器和 GitHub。VMware/模型/安装测试共用互斥槽，目前未运行；最近推送约 07:14 UTC，20 分钟推送间隔已满足。
+
+- 当前并发 2/2：M7 只读检查隔离 VM 及安装验收前置条件；M8 检查公开文档安全声明。二者只写各自模块文件；M0 维护协调文档。未声称读取其他 Codex 窗口聊天。
+- **PR #24** OPEN/Draft，base competition/shanchuanzhi-release-readiness、head 62496d4，11/11 检查；未触碰、未合并。**PR #30** OPEN/Draft，远端 head a81a33d，10/10 检查；M0 新快照待批次推送。
+- **M1 / #32 / #44**：PR #43 f59ba37 9/9；本地报告 7a6eb98。#44 证据指向测试观察时序，不足以确认产品错误放行；保留测试和安全断言。#32 marker 根因 UNKNOWN；两 Issue 均 OPEN。
+- **M2 / #45**：PR #37 cb84f43 9/9；本地 d9d775b 含 hook_event_name 前置校验与路径脱敏。Hook 协议 fixture/AppContainer 子进程不证明原生 Desktop Shell；宿主仍 UNPROTECTED / BLOCKED_NOT_VERIFIED，#45 OPEN。
+- **M3 / #27**：PR #33 54facf0 9/9；本地 d9364cc 为责任/验证记录，root scripts.test 已含 onboarding test。M3、M5、M6、M7 的 manifest 字段必须按嵌套键合并，不能覆盖彼此；#27 等待联合包验收。
+- **M4**：PR #34 旧 head f301195 9/9；本地修复 69ec7f1 将审计 API 不可用诊断导出改为 null/null，保留可读但为空的 0/[]。runtime-console.test.ts 定向 7/7、diff 检查通过；新 head CI 待运行。安全中心不推断后端保护或 E4 PASS。
+- **M5 / #46 / #48**：PR #47 cf4e2cd 当前 head run 38527097304 为 9/9；M5 已修正 PR 描述中过期失败记录，PR 仍 Draft。OBSERVE 对敏感读取保留 hard DENY；#48 仍 OPEN，需 M1/M5 对齐并由 M9 组合验收；#46 仍为 P2 文档契约 Issue。
+- **M6 / #27**：PR #38 d513810 9/9。bundle verifier/fixture 不证明外部 E4；M6 不消费 M5 audit stream；外部 E4 保持 NOT_VERIFIED。未跟踪目录 security-lab/e4-runs/20261013T114513Z/ 保留原样。
+- **M7 / #28 / #41**：PR #39 远端 5c7d95d 11/11；本地候选/报告 ead9593 含 6d978a5 代码候选，待推送后新 CI。#28 owner 复核已完成，仍待组合 CI。#41 真实取消回滚和 clean-VM 安装/升级/卸载未验；M7 正在核查是否有可安全使用的现成 VM，无则保持 HOLD。
+- **M8**：PR #40 b0f30ff 9/9；正在逐条核对 README/公开说明的保护范围，不把未验证功能宣传为 PASS。
+- **M9 / PR #36**：PR 远端 996073a 的旧 head 9/9；本地候选 5c11113 有 86 个提交差异、136 个文件改动，npm run verify 为 391 pass / 0 fail / 6 environment skip，package smoke 100 files；尚未推送、当前 head GitHub CI 未运行。发布前须保留对 E4 原始证据包的审查记录并取得新 head CI。
+- **待推送候选**：M0、M1、M2、M3、M4、M5、M7、M9 的既有分支。先检查各目标远端 head 并执行 --dry-run；仅 fast-forward 可纳入同一批次，禁止 force-push。M6/M8 无新提交；#24 与 main 不动。
+- **额度/互斥**：网页 10:33 UTC 实读五小时 47%、约 26 分钟重置、每周 69%、余额 113；低于 5% 或读数不可用时立即暂停开发、测试、浏览器和 GitHub。VMware、真实模型、安装测试共用一个互斥槽；当前由 M7 持有检查/潜在测试槽，其他同类任务不得启动。最近代码推送约 07:14 UTC，20 分钟间隔已满足。
+
 ## 历史调度（2026-10-14 04:36:33 UTC）
 
 - 双槽调度：M3 收尾 onboarding owner contract 与 M0 唯一契约文件的所有权交接；M4 审核 OBSERVE/Guard 状态展示的 fail-closed 与 UNKNOWN 边界。M0 按 worktree、PR、CI、Issue 和额度页核实进度，不声称读取其他 Codex 窗口聊天。M1 #32、M2 adapter、M5 policy 和 M6 bundle 审查已完成本地步骤并释放槽位。
