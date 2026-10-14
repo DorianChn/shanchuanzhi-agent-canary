@@ -4,14 +4,14 @@
 
 ## 开始前
 
-- 安装 Node.js 20 或更高版本、Agent Canary CLI 和 Codex CLI，并完成 Codex 登录。
+- 准备 Node.js 20 或更高版本、可运行的 Codex CLI 和 Agent Canary 源码工作区，并完成 Codex 登录。
 - 向导从 PATH 检测 Codex CLI 并读取 `--version`；仅有 Codex Desktop 或遗留配置文件不能替代可运行的 Codex CLI。
 - 在要接入的项目目录运行；项目级 `.codex/config.toml` 只会在 Codex 信任此项目后加载。
 - 向导使用项目配置，不改用户级 `%USERPROFILE%\.codex\config.toml`。如果用户级文件已有同名 `agent-canary` MCP 项，向导会停止并提示人工检查。
 
 ## 预览并接入
 
-在 Agent Canary 免费构建目录中运行（源码工作区需先执行 `npm ci` 和 `npm run build`）。Windows 发布构建可直接使用 `agent-canary-competition` 命令；源码工作区可将该命令替换为 `node dist/competition.js`。以下用显式 Node 命令展示：
+在源码工作区先执行 npm ci 和 npm run build，再运行下列命令。当前 package.json 未声明 agent-canary-competition 命令；Windows 发布构建是否提供此入口尚未验证。契约详见 [M3 接入 API](./docs/3.0/M3/ONBOARDING_API_CONTRACT.md)：
 
 ```sh
 node dist/competition.js onboard --project "C:/work/my-project"
@@ -43,7 +43,7 @@ args = ["<Agent Canary 安装路径>/dist/competition.js", "serve", "--stdio"]
 node dist/competition.js connect-check --agent codex
 ```
 
-这会用实际 Codex CLI 发起一个模型回合，通过临时 MCP 配置调用合成只读工具，并核对 Trusted Execution Gateway 的 `ALLOW` 证据。临时目录结束后会删除；用户级及项目级 Codex 配置不会被修改。此命令会消耗一次 Codex/模型调用额度。
+这会用实际 Codex CLI 在临时 MCP 配置中调用合成只读工具，并核对 Trusted Execution Gateway 的 ALLOW 证据和临时 PreToolUse 探针结果。它不会修改用户级/项目级 Codex 配置，也不验证 Agent Canary Hook 已安装或已保护原生工具。临时目录结束后会删除。此命令会消耗一次 Codex/模型调用额度。
 
 当前实测结果：Codex CLI `0.162.0-alpha.17.2` 成功调用 `public_read` 并得到 Gateway `ALLOW`；合成 `hook_probe` 也到达 Gateway，说明本次临时 Codex `PreToolUse` Hook **没有拦截**。命令因此把 Hook 状态单独标成未生效，不把 Gateway 连通结果描述成完整宿主保护。
 

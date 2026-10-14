@@ -17,6 +17,25 @@ function safeDiagnostic(value:string){
     .replace(/\b(?:sk|sess|gh[pousr]_[A-Za-z0-9_]{12,})[A-Za-z0-9._-]*/g,'[redacted]').slice(-1800);
 }
 
+/** Internal pure status/limits mapper; not a package-level host-protection API. */
+export type CodexConnectionStatus =
+  | 'GATEWAY_AND_HOOK_CONFIRMED'
+  | 'GATEWAY_CONFIRMED_HOOK_NOT_EFFECTIVE'
+  | 'CONNECTION_FAILED';
+
+export function assessCodexConnection(connectionPassed:boolean,hookConfirmed:boolean){
+  const status:CodexConnectionStatus=!connectionPassed
+    ?'CONNECTION_FAILED'
+    :hookConfirmed?'GATEWAY_AND_HOOK_CONFIRMED':'GATEWAY_CONFIRMED_HOOK_NOT_EFFECTIVE';
+  return {
+    status,
+    limits:[
+      'This isolated self-test does not verify the installed project config or native Codex tools.',
+      'The synthetic PreToolUse probe covers only this test MCP call path and does not establish coverage for native tools or other host calls.',
+    ],
+  };
+}
+
 /** Use the installed Codex CLI with a temporary MCP config; never edits the user's Codex config. */
 export function runCodexConnectionCheck(){
   const host=detectAgentHosts().find(candidate=>candidate.agent==='codex');
@@ -70,13 +89,15 @@ export function runCodexConnectionCheck(){
     const probeReachedGateway=gateway.some(event=>event.tool==='hook_probe');
     const markerSeen=(result.stdout||'').includes('M3_HOOK_PROBE_DENIED');
     const connectionPassed=result.status===0&&allowed.length===1;
+    const hookConfirmed=deniedHook.length===1&&!probeReachedGateway&&markerSeen;
+    const assessment=assessCodexConnection(connectionPassed,hookConfirmed);
     return {
       agent:'codex',version:host.version,passed:connectionPassed,
-      status:connectionPassed?(deniedHook.length===1&&!probeReachedGateway&&markerSeen?'GATEWAY_AND_HOOK_CONFIRMED':'GATEWAY_CONFIRMED_HOOK_NOT_EFFECTIVE'):'CONNECTION_FAILED',
+      status:assessment.status,
       checks:{codexProcess:result.status===0,gatewayBackedMcpCall:allowed.length===1,preToolUseHookFired:deniedHook.length===1,hookDeniedBeforeGateway:deniedHook.length===1&&!probeReachedGateway,hookDenialObserved:markerSeen,hookProbeReachedGateway:probeReachedGateway},
       evidence:{gatewayCallbacks:gateway.map(event=>event.tool),hookToolNames:hook.map(event=>event.tool_name).filter(Boolean)},
       persistentConfigModified:false,temporaryMcpApproval:'approve for synthetic read-only test tools only',nativeToolsProtection:'OUT_OF_SCOPE',
-      limits:['The Hook probe did not block the call in this run.','This isolated self-test does not verify the installed project config or native Codex tools.'],
+      limits:assessment.limits,
     };
   }finally{
     const realDirectory=fs.realpathSync(tempDirectory),relative=path.relative(tempRoot,realDirectory);
