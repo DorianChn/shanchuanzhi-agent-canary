@@ -2,18 +2,18 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 05:17 UTC）
+## 当前调度（2026-10-14 06:23 UTC）
 
-- 最多同时占用两个开发槽；当前 M0 通过 GitHub Issue/PR 驱动 M2 的 #32 修复整合、M5 的 #48 路由契约协调及 M3 的 #46 共享文档修复。Codex 引用聊天无法由本会话工具读取或直接发消息，模块实际会话运行状态无法确认。
-- [#32 Hook interruption marker failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：P1 / OPEN。M2 当前 PR #37 的 Windows Node 20 job再次命中相同 marker 竞态；M1 PR #43 独立候选 9/9 通过但尚未进入共同基线。macOS Node 20 与 Windows Node 22 是 fail-fast 取消，不列为测试失败。
-- [#44 Gateway approval-expiry CI failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)：P1 / OPEN。M1 识别短 TTL 测试时序竞态；PR #43 的当前候选 9/9 通过。没有观察到审批绕过；等候修复集成和共同基线复验。
-- [#45 Resolve native Codex Shell unprotected boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)：P1 / OPEN。Windows CLI 的 :workspace 合成探针只验证允许路径；未测试拒绝路径或 Desktop Shell/Hook。原生桌面状态保持 UNPROTECTED。
-- [#46 Sync M5 OBSERVE semantics into the M0 API contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/46)：P2 / OPEN。M0 owns the canonical contract; M5 marks API-Contract-Change yes, while its final branch diff does not change the canonical path. M3 candidate 54facf0 adds only its module contract under docs/3.0/M3. M0/M5 must finalize and publish exact OBSERVE error/approval/callback semantics after #48. No runtime defect asserted.
-- [#48 Reconcile OBSERVE sensitive-read deny with router contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)：P1 / OPEN。M5 PR #47 的 Ubuntu Node 22 job failed the same-Guard security-router test with observe_sensitive_data_blocked; five other matrix jobs were cancelled by fail-fast. Preserve the sensitive-read denial and no-callback invariant while M1/M5 align the fixture, adapter and contract.
-- #41 M7：P1 / OPEN，CI 修复候选通过 9/9 与两个 wrapper jobs，仍待集成；clean-VM/runtime rollback 未验证。
-- #27/#28 remain open for package-manifest and Gateway ownership coordination. #35 is closed within its documented same-process scope; #42 is closed based on the then-current M3 PR head. No new P0 incident is established.
-- 05:16 UTC quota page read: five-hour 73%, about 34 minutes to reset; weekly 80%, balance 113. If the five-hour reading is below 5% or unavailable, stop development, testing, browser, and GitHub work until reset is confirmed.
-- Latest branch push batch included only existing M0/M2/M4 branches; next push not before 05:32 UTC. VMware, real-model and install tests share one exclusive slot; M0 has no observed booking.
+- 当前代码任务最多两个：M2 在现有分支处理 #45 宿主边界；M1 对 #48 的 M1-owned router 测试兼容修复已本地提交，等待推送并让 M5 纳入组合候选。M7 已完成 #41 的 PR/Issue 状态同步，不改代码。M0 按 worktree、PR、CI 与 Issue 证据协调；本会话没有 `read_thread` / 会话消息工具，不声称引用聊天已接单。
+- [#32 Hook interruption marker failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：P1 / OPEN。M2 PR #37 head `08c93bc` 的 Windows Node 20 job失败于 M1-owned Hook marker 测试；Windows Node 22 与 macOS Node 20 为 fail-fast 取消。M1 PR #43 head `2276526` 的 9/9 检查通过，已含异步等待 marker 的测试修复；但该修复尚未进入 PR #37 使用的共同基线，Issue 保持 OPEN。
+- [#44 Gateway approval-expiry](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)：P1 / OPEN。M1 已将历史短 TTL 失败定位为测试时序问题；PR #43 当前 9/9 通过。尚待共同基线集成后复验，不报告审批绕过。
+- [#45 native Codex Shell boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)：P1 / OPEN。M2 只验证 Windows CLI `:workspace` 合成路径可写；拒绝路径和 Desktop 原生 Shell/Hook 未验证，状态仍 UNPROTECTED。
+- [#48 OBSERVE sensitive-read denial](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)：P1 / OPEN。M5 PR #47 head `f8291c9` 的 Ubuntu Node 22 测试仍失败，策略返回 `observe_sensitive_data_blocked`。M1 已在现有分支本地提交 `f59ba37`：把 same-Guard taint fixture 改为非敏感 file-read，定向测试 16/16；尚未推送，也尚未进入 #47。保留 M5 的敏感读取拒绝、零 callback/approval 断言，合并候选全矩阵通过前不关闭。
+- [#46 canonical API contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/46)：P2 / OPEN。契约文件归 M0；M5 PR #47 有可审阅事件契约，但未集成；M3 PR #33 仅增加其模块契约章节。等待 #48 语义定稿后同步规范文本。
+- #41 M7：P1 / OPEN。PR #39 head `5c7d95d` 当前 9/9 主矩阵与 2/2 wrapper 检查通过；等待集成验收。真实 clean-VM 安装、升级、卸载及用户取消后的运行时回滚仍 NOT VERIFIED/HOLD。
+- #27/#28 仍 OPEN，分别跟踪 package/manifest 组合和 M1/M7 Gateway 生命周期组合；#35 在同进程、同 Guard、callback 配合 AbortSignal 的有限范围内 CLOSED。没有新 P0 事件证据。
+- 06:16 UTC 用量页实读：五小时剩余 94%（约 4h42 后重置）、每周 77%、余额 113。若五小时低于 5% 或读数不可用，暂停全部开发/测试/浏览器/GitHub 操作，确认重置后再恢复。
+- 最近推送批次约 06:02–06:04 UTC；下一批不早于 06:24 UTC。当前最多两个模块开发槽；VMware、真实模型和安装测试共用一个互斥槽，当前没有运行中的预约。额度最近于 06:16 UTC 实读为 94%。PR #24 仍 OPEN/Draft，未改动；M9 联合集成未完成。
 
 ## 历史调度（2026-10-14 04:36:33 UTC）
 

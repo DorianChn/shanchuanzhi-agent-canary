@@ -32,21 +32,21 @@
 
 - `createRiskPolicyRouter({ guard, ... })` 对工具分类为 `ALLOW|DENY|APPROVAL_REQUIRED`，返回风险、理由和模式。未登记工具默认需审批；外部网络和敏感数据按当前策略拒绝或要求审批。
 - `OBSERVE` 只豁免已登记、非敏感操作的可选审批；它不得把显式 `DENY` 或 `SENSITIVE_DATA` 改成 `ALLOW`。越界路径、明确危险操作、敏感读取与敏感外发继续拒绝；`AgentGuard` quarantine/containment 在所有模式下优先。策略 `ALLOW` 不等于 Gateway 资源登记。
-- M5 candidate f8291c9 implements the tighter OBSERVE contract and returns observe_sensitive_data_blocked for registered sensitive reads blocked by the mode. M5 reports 44/44 focused tests, TypeScript no-emit, and diff-check passing, including zero callback/approval assertions. Draft PR #47 run 38515368157 exposes an existing M1 security-router test expectation that dispatches a sensitive-read under OBSERVE; that test fails before its later egress assertion, while the five other matrix jobs are cancelled by fail-fast. Issue #48 tracks M1/M5 resolution; the final M5 branch diff does not change this shared path. Issue #46 tracks final wording and M5's stale duplicate-path note. No real leak is established; the candidate is not integrated.
+- M5 candidate `f8291c9` is reviewable in Draft PR #47. Under OBSERVE, a registered sensitive read returns `observe_sensitive_data_blocked` with no approval request and no callback; the M5 focused policy suite reports 44/44 passing. PR #47's Ubuntu Node 22 full-matrix job currently fails in the existing security-router expectation for sensitive-read under OBSERVE; five other matrix jobs were cancelled by fail-fast. Issue #48 tracks M1/M5 alignment. Preserve the deny; update the M1-owned fixture/test or adapter only after confirming the intended contract. M5's final branch diff does not modify this canonical file. Issue #46 tracks this wording and M6 consumer confirmation. No real leak is established; the candidate is not integrated.
 - `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
 - `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
 - Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。M1 owner 实现 `close()` 的顺序为：同步锁定 closed 并清空 pending；在触发 abort/disposer 回调前发布唯一 memoized `closePromise`；中止活动 controller、至多一次安全退订 Guard observer；等待已入队的 Gateway 任务结算；逐个尝试关闭全部本实例资源。任一资源关闭失败时，所有调用共享以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝的 promise，不泄露路径或底层 cause。M1 本地提交 f15fdcfa 的 Windows Node 22 Gateway 测试为 28/28、TypeScript build 和 diff check 通过；尚无远端集成 PR/CI 证据，M7 本地提交 f17b7e6 后，候选相对 AC3 的 src/runtime/gateway.ts 净差异为零，并保留 M7 独有 evidence/reliability 测试（83 pass、0 fail、1 symlink-permission skip）；该候选并不包含 M1 f15fdcfa，组合 CI 尚待完成。Guard 通知只覆盖同一进程、同一 Guard 实例；忽略 AbortSignal 的不合作 callback 不会被强制终止，已经发生的副作用不承诺回滚。
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
 - M5 本地提交 `cd8abea` 进一步约束策略审计事件：`DECISION` 只表示执行尚未开始；`EXECUTION_RESULT` 使用 `decision=NOT_APPLICABLE` 且状态表示执行已开始；策略变更事件不得伪装成执行结果。新增和导入证据都经过同一语义校验；非法组合不得进入哈希链。策略审计事件的判定来源、执行状态和副作用验证状态必须保持一致。
-### M5 policy-audit event contract (proposal from local branch `feature/ac3-policy-audit` at `9ec08d9`; not yet integrated)
+### M5 policy-audit event contract (Draft PR #47 head `f8291c9`; not yet integrated)
 
 - `DECISION` is a pre-execution policy outcome: `decision` is `ALLOW`, `DENY`, `UNKNOWN`, or `REQUIRE_CONFIRMATION`; both execution and side-effect status are `NOT_STARTED`.
 - `EXECUTION_RESULT` is emitted only after execution has started: `decision=NOT_APPLICABLE`; execution and side-effect statuses cannot remain `NOT_STARTED`.
 - `POLICY_APPLIED`, `POLICY_ROLLED_BACK`, and `POLICY_CHANGE_REJECTED` are policy-management events, not tool decisions or execution results; they use `decision=NOT_APPLICABLE` and both statuses `NOT_STARTED`.
 - Invalid event-type/status combinations are rejected before append and rejected again by evidence-chain/export verification.
 - `UNKNOWN` must not be converted to `ALLOW`, `DENY`, or confirmed failure without evidence. Callback success does not prove side effects; use `NOT_VERIFIED` unless a trusted verifier establishes them. If a callback fails and effects cannot be determined, use `decision=NOT_APPLICABLE`, execution `UNKNOWN`, and side-effect `UNKNOWN`.
-- This is a contract proposal sourced from the local M5 branch; M5 owner and M6 consumer confirmation, a reviewable PR, and combined AC3 CI remain pending. The event contract does not replace final host/Gateway authorization and does not establish that all execution paths are integrated.
+- This contract is reviewable in Draft PR #47 at head `f8291c9`; it is not integrated. M6 consumer confirmation and combined AC3 CI remain pending. The event contract does not replace final host/Gateway authorization and does not establish that all execution paths are integrated.
 
 ## Agent 宿主接入与安装 — M3
 

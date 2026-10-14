@@ -1,6 +1,23 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 05:17 UTC；GitHub、worktree 与使用额度页实核）
+## 当前状态（2026-10-14 06:23 UTC；GitHub、worktree 与额度页实核）
+
+- **PR #24**：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `feature/agent-canary-3.0` / `62496d4`；updatedAt 未变化，本轮未修改。
+- **M0 PR #30**：head `bcedbae`，所有当前显示检查通过。本地协调文档正在更新；下一次既有分支推送不早于 06:24 UTC。
+- **M1 PR #43**：远端 head `2276526`，9/9 检查通过。M1 现有分支本地新增 commit `f59ba37`，只修改 M1-owned `test/security-router.test.ts`；非敏感 file-read taint fixture 定向测试 16/16、diff-check 通过，尚未推送。#32/#44 OPEN；#48 等待 M5/M9 组合检查。
+- **M2 PR #37**：head `08c93bc`；Windows Node 20 的 M1-owned Hook marker 断言为唯一真实失败；Windows Node 22 与 macOS Node 20 因 fail-fast 取消。#45 的原生 Desktop Shell 仍 UNPROTECTED；M2 当前在既有分支处理宿主边界。
+- **M3 PR #33**：head `54facf0`，9/9 通过；最终 AC3 diff 只增 M3 onboarding contract，不改 M0 canonical API contract。#27 package/manifest 组合检查仍待完成。
+- **M4 PR #34**：head `f301195`，9/9 通过；后端 endpoint 仍 UNKNOWN/UNSUPPORTED。
+- **M5 PR #47**：head `f8291c9`；策略定向测试 44/44、TypeScript no-emit、diff-check 通过。全矩阵 Ubuntu Node 22 仍在 security-router 旧 sensitive-read/OBSERVE flow 失败，返回 `observe_sensitive_data_blocked`；五项因 fail-fast 取消。保留硬拒绝和零 callback/approval；未观察到真实数据泄露。
+- **M6 PR #38**：head `d513810`，9/9 通过；验证的是合成归档证据，外部 E4 NOT_VERIFIED。
+- **M7 PR #39**：head `5c7d95d`，主矩阵 9/9、Windows/Ubuntu wrapper 2/2 通过。PR 描述与 Issue #41 已更新并读回；#41 保持 OPEN 等待集成。clean-VM 安装、首次启动、升级、卸载及真实取消回滚仍 NOT VERIFIED/HOLD。
+- **M8 PR #40**：head `b0f30ff`，9/9 通过；没有发布 Release。
+- **M9 PR #36**：head `996073a`，9/9 通过，但尚未把 M1–M8 候选组合运行最终验收。
+- **开放跨模块门槛**：#27 manifest/package 组合；#28 M1/M7 Gateway 生命周期；#32 Hook 修复进共同基线；#41 M7 集成/安装验收；#44 approval expiry 共同基线复验；#45 native Shell；#46 canonical OBSERVE contract；#48 M1/M5 route test integration。#35 仅在同进程、同 Guard、callback 配合 AbortSignal 范围内 CLOSED。
+- **排程与额度**：M2 #45 为当前在做的模块代码任务；M1 #48 测试修正已本地提交，等下个推送批次；M7 只完成状态元数据同步。额度页 06:16 UTC 实读五小时剩余 94%（约 4h42 后重置）、每周 77%、余额 113。低于 5% 或读数不可用时暂停所有 M0–M8 工作，确认重置后恢复。最近推送约 06:02–06:04 UTC；下一批不早于 06:24 UTC。
+- 本会话没有 `read_thread` / `send_message_to_thread` 工具；进度以 worktree、PR、CI、Issue 可验证状态为准。未合并 main 或 PR #24，未发布 Release，M0 未改 M1–M8 产品源码。
+
+## 历史快照（2026-10-14 05:17 UTC；保留原始核验记录）
 
 - PR #24：OPEN/Draft，head 62496d4，base competition/shanchuanzhi-release-readiness；未修改、未合并。PR #30 仍 OPEN/Draft，head 9300f80；本批 M0 文档已推送，run 38515050934 的节点矩阵、package-smoke、Docker、sponsor 与 ownership-contract-evidence 当前均通过。
 - M1：PR #43 head 2276526，run 38502266488 为 9/9；Hook interruption 测试采用异步 marker wait。Issue #32 和 #44 保持 OPEN，需将修复纳入基线并验证；未发现实际审批绕过或宿主 callback 证据。

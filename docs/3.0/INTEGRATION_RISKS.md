@@ -2,21 +2,24 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 03:50:24 UTC）
+## 实时风险快照（2026-10-14 06:23 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
-| #35 Guard quarantine | P0 | Issue #35 已 CLOSED；证据仅覆盖同进程、同 Guard 与 AbortSignal callback。跨进程/shared-store 未证明。 | CLOSED（范围有限） |
-| #32 Hook interruption | P1 | PR #39 head f66dcc6、run 38506733463 的 Windows Node 22 测试未观察到子进程 marker；M1 所有，fail-closed 断言保留。 | OPEN / UNKNOWN |
-| #44 approval expiry | P1 | 历史 requestId 失败根因仍 UNKNOWN；Issue 仍 OPEN。 | OPEN / UNKNOWN |
-| #41 M7 reliability CI | P1 | PR #39 head f66dcc6：Windows NSIS 编译因 .onUserAbort 重复定义失败；新 NSIS 门禁确实运行。Windows Node 22 另被 #32 失败阻断。 | OPEN |
-| #45 native host Shell | P1 | PR #37 原生 Codex Shell 仍 UNPROTECTED；详见最近模块矩阵。 | OPEN |
-| #27 manifest / package fields | P1 | M3/M5/M6/M7 组合仍需校验；M6 外部 E4 为 NOT_VERIFIED。 | OPEN |
-| #28 Gateway lifecycle | P1 | M1 是接口 owner；M7 需完成 Gateway close/quarantine 组合验收。 | OPEN |
-| worktree pointers | P2 | 已修复管理指针；03:08 复核后未发现新指针问题。 | FIXED LOCALLY |
-| quota / scheduling | 调度门槛 | 03:50:24 UTC 用量页 84% 剩余、约 2h9m 重置；当前仅 M7 单槽，推送间隔至少 20 分钟。 | MONITOR |
+| #35 Guard quarantine | P0 | Issue #35 CLOSED；已验证范围限同进程、同 Guard 实例且 callback 配合 AbortSignal。跨进程/shared-store 与强制终止不在证据内。 | CLOSED（范围有限） |
+| #32 Hook interruption | P1 | M2 PR #37 head 08c93bc 的 Windows Node 20 job在 M1-owned marker test 失败；M1 PR #43 当前 9/9 通过但尚未集成至 #37 的共同基线。 | OPEN / INTEGRATION PENDING |
+| #44 approval expiry | P1 | M1 将历史短 TTL 失败定位为测试时序问题；PR #43 9/9 通过，Issue 仍待共同基线复验。 | OPEN / INTEGRATION PENDING |
+| #48 OBSERVE sensitive read | P1 | M5 PR #47 仍在 Ubuntu Node 22 安全路由测试失败。M1 本地 commit f59ba37 修正 same-Guard fixture，定向 16/16，尚未推送；M5 sensitive-read deny 不变。 | OPEN / INTEGRATION PENDING |
+| #41 M7 reliability | P1 | PR #39 head 5c7d95d 9/9 主矩阵及 2/2 wrapper 通过；clean-VM 安装/升级/卸载和真实取消回滚没有证据。 | OPEN / INTEGRATION PENDING |
+| #45 native host Shell | P1 | M2 PR #37 只证明 Windows CLI 合成 workspace 的允许路径；Desktop 原生 Shell/Hook 与拒绝路径没有验证。 | UNPROTECTED |
+| #27 manifest / package fields | P1 | M3/M5/M6/M7 字段尚未组合验证；M6 外部 E4 NOT_VERIFIED。 | OPEN |
+| #28 Gateway lifecycle | P1 | M1/M7 对 Gateway close/quarantine 的组合语义尚无共同集成 CI 证据。 | OPEN |
+| #46 canonical API contract | P2 | M5 事件契约 PR #47 可审阅但未集成；M0 保持唯一 canonical API 契约所有权。 | OPEN |
+| M9 combined acceptance | P1 | PR #36 自身 CI 为 9/9，但没有把 M1–M8 候选作为组合基线运行最终门禁。 | NOT RUN |
+| worktree pointers | P2 | WSL Git 列表可读、分支独立；Windows Git 对部分 WSL 路径显示 prunable，仅用 WSL Git 操作这些 worktree 元数据。 | MONITOR |
+| quota / scheduling | 调度门槛 | 06:16 UTC 实读五小时 94%、每周 77%、余额 113；最近 push 约 06:02–06:04 UTC，下一批不早于 06:24 UTC。 | MONITOR |
 
-VMware、真实模型和安装测试互斥；本快照没有此类本地测试运行。低于 5% 或实时额度不可读时暂停开发、测试和 GitHub 操作；确认五小时额度重置后再继续。
+VMware、真实模型和安装测试互斥；当前没有此类运行预约。五小时额度低于 5% 或无法读取时，暂停所有开发、测试、浏览器和 GitHub 操作；确认额度重置后再继续。
 
 ## 历史风险增量（2026-10-13 16:16 UTC）
 

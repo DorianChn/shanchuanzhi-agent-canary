@@ -2,9 +2,12 @@
 
 本图基于现有架构文档、当前源码和实际分支/改动路径。对尚无提交、只有任务命名或当前线程不可读取的内容，标记为暂定；接口细节以 `API_CONTRACTS.md` 为准。
 
-## 当前排程覆盖（2026-10-14 03:08:17 UTC）
+## 当前排程覆盖（2026-10-14 06:23 UTC）
 
-M0 当前只把一个开发槽分配给 M7 的 #41，完成 CI 修复后再处理 M1/M7 的 Gateway 组合问题 #28。M1 是 Gateway/Guard 契约 owner；M7 当前 CI 修复不授权其改 Gateway 源码。M2 的 #45 仍显示原生 Codex Shell 为 UNPROTECTED，不能以子进程 AppContainer 结果替代宿主覆盖证明。M3/M4/M5/M6/M8/M9 保留现有分支与证据；M0 不启动第二个模块实现任务。其他窗口实时活跃状态无法确认。
+M1 已在现有分支本地提交 #48 的 M1-owned fixture 修正 `f59ba37`（16/16 定向测试）；等 06:24 UTC 推送批次后，由 M5 将修复纳入组合候选并重跑 CI。M2 正在现有分支处理 #45；最多同时运行两个模块开发任务。M7 已同步 #41 PR/Issue 状态，clean-VM 安装与取消回滚仍未验证。是否启动/完成只按可观察的 worktree、PR、CI 和 Issue 证据记录；不把排程指派当作其他 Codex 聊天已接单。
+
+M2 PR #37 的 Windows Node 20 Hook marker 失败属于 M1-owned 测试，M1 PR #43 的 hook 修复尚未进入 #37 当前共同基线；不得在 M2 分支复制或删除该测试。M5 PR #47 的 #48 全矩阵失败待 M1 fixture commit `f59ba37` 推送后，以 stacked/组合候选重跑；M5 sensitive-read deny 保持。M6 PR #38、M7 PR #39、M3 #33、M4 #34、M8 #40 的候选自身检查当前通过；M6 外部 E4 与 M7 clean-VM 安装/取消仍 NOT VERIFIED。M9 PR #36 尚未把八个候选组合运行最终验收。
+
 ```mermaid
 flowchart LR
   M1[M1 Gateway / Hook 安全执行] --> M2[M2 执行隔离适配]

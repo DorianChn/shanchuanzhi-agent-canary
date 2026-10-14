@@ -4,36 +4,35 @@
 
 | 模块 | 分支 / 工作树 | 检查到的内容 | 独占范围或主要职责 | 共享接口/冲突 |
 | --- | --- | --- | --- | --- |
-| M1 | feature/ac3-security-core / agents/M1-security | local HEAD b0478b9; PR #43 head 2276526, 9/9 checks; #35 CLOSED for same-process/same-Guard scope | Gateway/Guard API, Hook security execution path, regression evidence | #32 OPEN/UNKNOWN; PR #39 Windows Node 22 marker failure is M1-owned and queued behind the active M7 slot; M1 owns shared Gateway contract |
-| M2 | feature/ac3-execution-isolation / agents/M2-isolation | HEAD a1c239d；PR #37 OPEN/Draft，当前 9/9 checks 成功 | execution-isolation/ 原型、报告与测试 | 原生 Shell 仍 UNPROTECTED；P1 #45 OPEN，M2 待槽位后验证宿主 Hook 或明确标 BLOCKED |
-| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | HEAD c404b6b；PR #33 当前 9/9 checks；owner 契约章节已加入 | 宿主发现、预览/安装/恢复适配 | #42 已依据当前 package-smoke 与 API 契约证据关闭；仍与 M5/M6/M7 通过 #27 协调 manifest |
-| M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | HEAD fe2c973；Draft PR #34 OPEN，9/9 checks 成功；后端相关接口 404，状态 UNKNOWN | src/ai/console-page.ts 和 UI 行为（暂定） | 只经受保护的 Console API 读写；不以 mock 覆盖 UNKNOWN |
-| M5 | feature/ac3-policy-audit / agents/M5-policy | HEAD 9ec08d9; clean, 5 commits ahead; no remote PR; API contract path overlaps M0 canonical docs | Policy management, audit schema, policy docs/tests | Coordinate docs/3.0/API_CONTRACTS.md and package.json fields through #27; do not publish until ownership is resolved |
-| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3; separate old PR #31 | PR #38 head bca895f; untracked security-lab/e4-runs/20261013T114513Z/ retained; Windows Node22 CI failure; external E4 NOT_VERIFIED | E4 schema, verifier, machine report | Keep raw run directory local; #27 tracks AC3/manifest alignment and #32 Hook ownership |
-| M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | local/remote PR #39 HEAD f66dcc6, clean; current CI 8 pass / 2 fail / 1 skipped | packaging/windows/, scripts/, reliability and packaging verification | #41 OPEN; M7 owns the NSIS compile collision; #32 records the separate M1 Hook marker failure; require passing new-head CI |
-| M8 | feature/ac3-open-source-product / agents/M8-ecosystem | PR #40 head b0f30ff；9/9 checks 通过，工作树干净 | README、贡献/安全/支持/开源文档（暂定） | 不得发布 Release |
-| M0 | feature/ac3-m0-coordination / coordinator | local HEAD 71aec02; PR #30 remote HEAD 71aec02; 9 standard CI jobs plus ownership-contract gate pass | docs/3.0/* coordination docs, collaboration checks | Coordinates issues, quota and scheduling; no M1–M8 source edits |
-| M9 | feature/ac3-m9-integration / integration | PR #36 head 996073a; 9/9 checks pass on currently observed head | Cross-module integration acceptance and risk tracking; no ownership of module source | No merge to main; no PR #24 merge; no Release |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | 本地 HEAD `f59ba37`（未推送）；PR #43 远端 `2276526`、9/9 checks；M1 router 定向测试 16/16 | Gateway/Guard API、Hook 安全执行链及其测试 | #32/#44 OPEN；#48 的 M1-owned fixture 已本地修正，待推送并进入 M5/M9 组合检查；#28 接口归 M1 定义 |
+| M2 | `feature/ac3-execution-isolation` / `agents/M2-isolation` | HEAD/PR #37 `08c93bc`；Windows Node 20 失败，其余两项被 fail-fast 取消 | execution-isolation 原型、报告与测试 | #32 等待 M1 修复进入共同集成基线；#45 原生 Desktop Shell 仍 UNPROTECTED，M2 正在处理其宿主边界 |
+| M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | HEAD/PR #33 `54facf0`；9/9 checks | 宿主发现、预览/安装/恢复适配 | #27 manifest 字段协作；契约变更由对应接口 owner 更新 |
+| M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | HEAD/PR #34 `f301195`；9/9 checks；后端 endpoint 当前 UNKNOWN/UNSUPPORTED | `src/ai/console-page.ts` 与桌面 UI 行为（暂定） | 只经受保护 Console API；不以 mock 覆盖 UNKNOWN |
+| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | HEAD/PR #47 `f8291c9`；Draft；Ubuntu Node 22 一项失败、五项被取消 | 策略管理、审计 schema、策略测试 | `docs/3.0/API_CONTRACTS.md` 的唯一 owner 为 M0；#46/#48 对齐；保留敏感读取 DENY |
+| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | HEAD/PR #38 `d513810`；9/9 checks；外部 E4 NOT_VERIFIED；旧 PR #31 是独立 main-based 轨道 | E4 schema、verifier、机器报告 | 原始 run 留本地；#27 manifest 和 #32 Hook 组合待验 |
+| M7 | `feature/ac3-reliability-ac3` / `agents/M7-reliability-ac3` | HEAD/PR #39 `5c7d95d`；9/9 主矩阵、2/2 wrapper 检查；PR 描述与 #41 已同步 | `packaging/windows/`、scripts、可靠性/打包验证 | #41 集成门待过；真实 clean-VM 安装/升级/卸载/取消回滚 NOT VERIFIED/HOLD；Gateway 与 M1 协调 #28 |
+| M8 | `feature/ac3-open-source-product` / `agents/M8-ecosystem` | HEAD/PR #40 `b0f30ff`；9/9 checks；未发布 Release | README、贡献/安全/支持/开源文档（暂定） | 文档必须如实描述安全覆盖边界 |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | HEAD/PR #30 `bcedbae`；当前所有显示 checks 成功 | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | 协调问题，不改 M1–M8 产品源文件 |
+| M9 | `feature/ac3-m9-integration` / `integration` | HEAD/PR #36 `996073a`；9/9 checks；尚无 M1–M8 组合验收 | 跨模块集成验收及风险跟踪 | 不合并 main 或 PR #24，不发布 Release |
 
-## 当前分支与验收状态覆盖（2026-10-14 03:50:24 UTC）
+## 当前分支与验收状态覆盖（2026-10-14 06:23 UTC）
 
-下表更新分支、PR 与门禁快照；前一表保留职责分配和历史状态。模块文件所有权不变。
+以下以本机 Git worktree HEAD 与 GitHub 当前 PR head/CI 交叉核对；模块工作区由其 owner 保管。
 
 | 模块 | 当前工作树 HEAD | GitHub 状态与下一门槛 |
 | --- | --- | --- |
-| M1 | 2276526 | PR #43 OPEN/Draft，9/9 checks；#35 CLOSED（范围有限）；#32 OPEN/UNKNOWN，Windows Node 22 marker failure also reproduced on PR #39; M1 waits for the M7 single-slot handoff. |
-| M2 | a1c239d | PR #37 OPEN/Draft，9/9 checks 通过；#45 OPEN，原生 Codex Shell UNPROTECTED。 |
-| M3 | c404b6b | PR #33 OPEN/Draft，9/9 checks 通过；#42 CLOSED。 |
-| M4 | fe2c973 | PR #34 OPEN/Draft，9/9 checks 通过。 |
-| M5 | 9ec08d9 | 本地分支，无当前开放 PR；按 #27 协调 API 合约路径和 package.json 字段。 |
-| M6 | bca895f | PR #38 OPEN/Draft，7 pass、1 Windows Node 22 fail、1 package-smoke skip；外部 E4 为 NOT_VERIFIED；一个未跟踪 E4 run 保留本地。 |
-| M7 | f66dcc6 | PR #39 OPEN/Draft; runs 38506733463/38506733650 show 8 pass, 2 fail, 1 skipped. Fix actual NSIS compile failure first; no local installer/VM acceptance. |
-| M8 | b0f30ff | PR #40 OPEN/Draft，9/9 checks 通过；没有发布 Release。 |
-| M0 | 71aec02 | PR #30 OPEN/Draft, 9 standard CI jobs plus ownership-contract gate pass. |
-| M9 | 996073a | PR #36 OPEN/Draft，9/9 checks 通过；尚未进行最终集成验收。 |
+| M1 | f59ba37 local / 2276526 remote | PR #43 OPEN/Draft，远端 9/9；本地 router 定向测试 16/16，commit 未推送；#32/#44 OPEN。 |
+| M2 | 08c93bc | PR #37 OPEN/Draft；Windows Node 20 Hook marker 测试失败，Windows Node 22/macOS Node 20 被取消；M2 处理 #45，原生 Shell 仍 UNPROTECTED。 |
+| M3 | 54facf0 | PR #33 OPEN/Draft，9/9 checks；#42 CLOSED。 |
+| M4 | f301195 | PR #34 OPEN/Draft，9/9 checks；后端 endpoint UNKNOWN/UNSUPPORTED。 |
+| M5 | f8291c9 | PR #47 OPEN/Draft；Ubuntu Node 22 路由测试失败，五个 matrix jobs 取消；保持 sensitive-read DENY。 |
+| M6 | d513810 | PR #38 OPEN/Draft，9/9 checks；外部 E4 NOT_VERIFIED。 |
+| M7 | 5c7d95d | PR #39 OPEN/Draft，9/9 主矩阵与 2/2 wrapper 检查通过；真实安装运行验收 NOT VERIFIED/HOLD。 |
+| M8 | b0f30ff | PR #40 OPEN/Draft，9/9 checks；未发布 Release。 |
+| M0 | bcedbae | PR #30 OPEN/Draft，所有当前显示 checks 成功。 |
+| M9 | 996073a | PR #36 OPEN/Draft，9/9 checks；尚未进行最终集成验收。 |
 
-所有 M1–M8 AC3 分支的共同 merge-base 均为 62496d4020bd90ba2eede49b2e80a2bbebb036b4。M0 已修复 Git worktree 管理目录中的 Windows 绝对路径指针；状态核对需使用 core.autocrlf=true 读取 Windows CRLF worktree。修复只更新 Git 元数据，未改模块文件。
-## 共享路径规则
+所有当前 AC3 候选的共同基线为 `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。AC3 工作树相互独立；仓库另保留 M6 旧 PR #31 与 M7 旧分支，它们不替代 #38/#39。Git worktree 列表在 WSL Git 下可读；Windows Git 将部分 WSL 管理路径标为 prunable，禁止跨运行时 repair/prune。## 共享路径规则
 
 | 路径 | owner | 协调规则 |
 | --- | --- | --- |
