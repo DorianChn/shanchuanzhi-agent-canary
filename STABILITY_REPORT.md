@@ -47,6 +47,10 @@ Node `v22.23.1` 定向结果：Gateway/containment/acceptance **66/66 通过**�
 
 `89e40cd` 单独属于 Issue #44 的 approval-expiry 测试稳定化（一行测试修正），为保持 M1 当前测试文件而一并移植；它不改变 Gateway 行为。Issue #44 仍为 OPEN，不能据此推断其历史 CI 原因已解决。
 
+## M9 隐私扫描 owner review（2026-10-14）
+
+对本地 M9 候选 `5c111132848452a51dc0441695ed6c2d530b8412` 的 `packaging/windows/test-worker.mjs:14` 做只读复核。分类为 provider-token-like；结论是**固定测试夹具，安全的 false positive**：匹配内容位于专门验证 cloud/bearer 凭据脱敏的单元测试中，作为固定输入传入本地 `redact()`，并断言结果不保留该值；没有从环境变量、凭据存储或网络读取/提交凭据的路径。为避免泄露，本文不记录匹配值或其周边文本。M9 tree 未修改。
+
 ## 24 小时 / 7 天可复现命令
 
 脚本每个采样周期创建 Gateway、执行可配置的只读合成请求、关闭 Gateway，并将 JSONL 样本 `fsync`；`run-state.json` 每周期原子更新。默认每分钟 100 次、并发 16，记录延迟、吞吐、CPU 时间、RSS/Heap、Node 活动资源类别、可用磁盘空间、错误数和证据链有效性。输出位于 `security-lab/evidence/m7-soak-*`，中断时保留部分记录并标为 `INTERRUPTED`。
