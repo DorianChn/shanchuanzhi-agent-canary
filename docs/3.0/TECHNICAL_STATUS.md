@@ -1,21 +1,20 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 04:54 UTC；GitHub、worktree 与额度页实核）
+## 当前状态（2026-10-14 05:04 UTC；GitHub、worktree 与额度页实核）
 
 - PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4，mergeable；未修改或合并。
 - PR #30：OPEN/Draft，head 16a9142。当前 run 38512532532 有 7 jobs 通过、Windows Node 20 全量测试 1 个失败（321 pass/1 fail/4 skip）、package-smoke 跳过；失败仍是 M1-owned test/agent-hook.test.ts:54 的中断 marker 断言。M1 PR #43 的独立 head 2276526 为 9/9 通过，但尚未进入 PR #30 的 base；Issue #32 保持 OPEN，等待集成后的基线验收。M0 run 38512532426 的 AC3 coordination 检查通过。
 - 最近一轮两个开发槽确实由 M3 与 M4 同时占用并已完成。M3 commit 54facf0（本地 ahead 1）：契约移至 docs/3.0/M3/ONBOARDING_API_CONTRACT.md，修正文档中的未验证发行命令，并修复连接检查 limits 文案；build 通过、Windows Node 22 定向测试 14/14、共享契约路径净 diff 为零。P2 修复待推送和 PR #33 CI。
 - M4 commit f301195（本地 ahead 1）：OBSERVE/敏感数据、DENY/ALLOW 与 QUARANTINED/ALLOW 冲突显示为 POLICY_CONFLICT，保留后端原状态与 callback 数；build、定向测试 6/6、diff check 通过。两个未实现 API 的 CSRF GET 实测返回 404，UI 保持 UNKNOWN/UNSUPPORTED；待推送和 PR #34 CI。
-- 当前 2/2 开发槽位由 M1、M2 使用：M1 调查 Issue #44 指定的 approval-expiry CI 失败（只在 M1 worktree 修改 Gateway/Guard/测试）；M2 处理 Issue #45 原生 Codex Shell 隔离边界（仅 M2 所有权路径，不改全局 Codex 配置）。两任务不推送、不更改 Issue 元数据；M0 以各自 worktree、测试和提交 SHA 核验进度。
-- M1 PR #43 head 2276526、run 38502266488 为 9/9 通过。原生工具保护与 Hook 的宿主安装范围仍按模块报告限定；Issue #32 不因其他分支的本地测试而关闭。
-- M2 PR #37 head 63b9c08，run 38512537164 的 9 个 CI jobs 全部通过；本地 binder 测试通过。该 binder 不集成 AppContainer，原生 Codex Shell 仍 UNPROTECTED，宿主验收 BLOCKED_NOT_VERIFIED。
+- M1 当前槽处理 #32 的精确 CI 头比较；#44 的 5ms TTL 测试竞态已在 PR #43 修正，run 38502266488 的 9 个工作（Node 20/22 跨 Windows/macOS/Ubuntu、package smoke 等）全绿，待 M0 本批关闭 #44。#32 保持 OPEN，等修复进入 PR #30 基线后复验。
+- M2 当前槽核验 #45：本地提交 10a608f 已记录 Hooks 不提供 fail-closed 保证；M0 实读原生 Windows CLI 与 elevated 设置，M2 正做 CLI sandbox 合成哨兵尝试。未触碰全局配置；桌面原生 Shell 集成仍 UNPROTECTED，验收未完成。
 - M5 commit f8291c9 已在 feature/ac3-policy-audit 远端；44/44 policy tests、TypeScript no-emit 与 diff check 通过。仍待创建 P0 Issue 与 Draft PR；明确 DENY、OBSERVE 下 SENSITIVE_DATA 拒绝，真实宿主接入未证明。
 - M6 PR #38 head d513810，run 38512550585 的 9 个 CI jobs 全部通过；PR 正文仍引用早期 M1 Hook 失败，待校正。verifier 回归 12/12；sidecar 漂移、元数据不一致及 ZIP 篡改在临时副本中被拒绝。PR 包含归档 synthetic run 20261013T084123Z；另一份 20261013T114513Z 的 16 个原始文件仍仅在本地。外部 E4 仍 BLOCKED / NOT_VERIFIED；真实模型、外部复现、VMware 与安装验收未做。
 - M7 PR #39 head 5c7d95d，CI run 38510356534 与 Windows Community wrapper run 38510356548 均通过；后一项实际执行固定 NSIS 编译器安装与模板编译，Ubuntu reliability tests 也通过。Issue #41 仍 OPEN，候选修复待 PR 集成；clean-VM 安装、首次运行、升级和卸载仍 NOT_VERIFIED / HOLD。
 - M8 PR #40 head b0f30ff，run 38397180263 成功；PR 正文仍写 CI pending，待更新。未发布 Release。
 - PR #37、#38、#39、#40 均 OPEN/Draft、base feature/agent-canary-3.0；不合并 main 或 PR #24。M9 worktree/branch feature/ac3-m9-integration 已建立，最终集成仍待执行。
-- 04:54 UTC 用量页实读：5 小时剩余 73%，56 分钟后重置；周额度 80%，额度余额 113。低于 5% 或读数不可用时暂停开发、测试与 GitHub 操作，直到确认 5 小时额度实际重置。
-- 上次远端 push 批次约为 04:37 UTC；下一批不得早于 04:57 UTC。VMware、真实模型和安装测试互斥；当前没有预约。main worktree 未动；未合并 main、未合并 PR #24、未发布 Release。
+- 04:59 UTC 用量页实读：5 小时剩余 73%，50 分钟后重置；周额度 80%，额度余额 113。低于 5% 或读数不可用时暂停开发、测试与 GitHub 操作，直到确认 5 小时额度实际重置。
+- 上次远端 push 批次约为 04:37 UTC；本次 GitHub 写入集中于 05:00 UTC 批次，下一批不得早于 05:20 UTC。VMware、真实模型和安装测试互斥；当前没有预约。main worktree 未动；未合并 main、未合并 PR #24、未发布 Release。
 
 ## 历史状态（2026-10-14 04:36:33 UTC；该时间点的快照）
 

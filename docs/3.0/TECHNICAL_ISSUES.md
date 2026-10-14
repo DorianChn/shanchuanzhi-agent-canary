@@ -2,11 +2,11 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 04:54 UTC）
+## 当前调度（2026-10-14 05:04 UTC）
 
-- 双槽节奏已实际执行两轮：M3/M4 同时开发并分别本地提交 54facf0 / f301195；随后 M6/M7 并行审计当前 PR 与 CI。第三轮已在两个独立模块 worktree 启动：M1 处理 #44 approval-expiry 失败复现，M2 处理 #45 原生 Codex Shell 边界；当前 2/2 槽位占用。以 `collaboration.list_agents` 与独立 Git 分支/worktree 为实际运行证据，不把聊天标题当成完成证据。
-- M1 槽位：`feature/ac3-security-core` / `agents/M1-security`；只处理 M1 Gateway/Guard 与测试，复现 #44 指定的 PR #30 run `38412534723` Ubuntu Node 20 失败；有必要时保留失败测试并做最小 fail-closed 修复。不得推送或改 Issue，交由 M0 批次处理。
-- M2 槽位：`feature/ac3-execution-isolation` / `agents/M2-isolation`；只处理 #45 原生 Shell 支持能力和 M2 所有权文件。若当前宿主 API 无法证明受支持的 fail-closed enforcement，明确记录限制并继续标注 UNPROTECTED/BLOCKED；不得变更全局 Codex 配置。
+- 双槽节奏已实际执行：M3/M4 并行改动并提交，M6/M7 并行 PR/CI 审计；当前两个活跃槽是 M1 与 M2。M1 核对 #44：旧 5ms approval TTL 测试在 8.64ms 后读取并 sweep 掉 requestId，属于测试竞态；修正在 M1 PR #43，当前头 run `38502266488` 为 9/9。Issue #44 等本批以证据更新并关闭。
+- M1 当前处理 #32：比较失败的 PR #30 head `16a9142` / run `38512532532` 与修复候选 PR #43 head `2276526`；本地证实旧头不含 `46af1f1`，修复头含该测试时序修正。#32 继续 OPEN，待 M1 完成核对并在修复进入 PR #30 基线后复验。
+- M2 已在独立分支本地提交 `10a608f`，补充 Hook fail-closed 限制与 WSL2 环境证据；focused hook protocol/JSON/syntax/diff 检查通过。M0 实读原生 Windows Codex CLI `0.162.0-alpha.17.2` 且配置为 `windows.sandbox="elevated"`；M2 正用单命令 CLI 探针核验隔离。桌面原生 Shell 集成仍 UNPROTECTED，未完成探针前 #45 保持 OPEN。
 - PR #30 当前 head 16a9142、run 38512532532：7 个 job 通过；Windows Node 20 测试为 321 pass、1 fail、4 skip，package-smoke 跳过。唯一失败是 test/agent-hook.test.ts:54 的中断 marker 断言，属于 M1 路径；PR #43 当前头的独立 CI 9/9 通过，不替代 PR #30 base 的结果。Issue #32 保持 OPEN，待集成后的 CI 再验。
 - M2 PR #37 head 63b9c08，run 38512537164 的 9 个 CI jobs 全通过；callback binder 不代表 Gateway/AppContainer/宿主安装完成，原生 Codex Shell 仍 UNPROTECTED。
 - M3 本地 commit 54facf0：契约专属附录、发行命令 NOT_VERIFIED 文案和 connect-check limits 修复；build 与 Windows Node 22 定向测试 14/14 通过，共享契约路径净 diff 为零。PR #33 仍旧头 c404b6b，待本批推送和新 CI。
@@ -15,8 +15,8 @@
 - M6 PR #38 head d513810，run 38512550585 的 9 个 jobs 全通过。PR 实际包含归档 synthetic bundle 20261013T084123Z；未跟踪的 20261013T114513Z 16 文件目录保持本地。PR body 旧失败叙述过期，待本批更新；E4 仍 BLOCKED / NOT_VERIFIED。
 - M7 PR #39 head 5c7d95d，run 38510356534 的 9 个 jobs 与 wrapper run 38510356548 两平台任务通过；Windows 固定 NSIS 编译步骤通过。Issue #41 的候选修复已验证，Issue 保持 OPEN 等待集成；运行时取消回滚与 clean-VM 安装/升级/卸载仍 NOT VERIFIED / HOLD。
 - M8 PR #40 head b0f30ff，CI run 38397180263 成功，但 PR body 仍写 pending；待本批刷新。
-- 额度页 04:54 UTC 实读：5 小时 73%、56 分钟后重置；周额度 80%、余额 113。低于 5% 或无法确认读数时暂停所有模块、测试、浏览器与 GitHub 操作，直至确认额度重置。
-- 最近 push 批次约 04:37 UTC；不得早于 04:57 UTC 再推送/刷新 PR/Issue。VMware、真实模型、安装测试互斥，目前均未预约。
+- 额度页 04:59 UTC 实读：5 小时 73%、50 分钟后重置；周额度 80%、余额 113。低于 5% 或无法确认读数时暂停所有模块、测试、浏览器与 GitHub 操作，直至确认额度重置。
+- 最近 push 批次约 04:37 UTC；本次 GitHub 写入集中在 05:00 UTC 批次，下一批不得早于 05:20 UTC。VMware、真实模型、安装测试互斥，目前均未预约。
 
 ## 历史调度（2026-10-14 04:36:33 UTC）
 
