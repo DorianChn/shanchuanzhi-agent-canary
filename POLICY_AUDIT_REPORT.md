@@ -8,9 +8,9 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 默认模式仍为 BALANCED，Guard 隔离行为不变。默认策略没有降低。原有 Hook、Gateway 和 OSEP 证据协议没有被 M5 自动改写。M0 负责维护跨模块 canonical API contract；本报告只记录 M5 模块行为和证据，不替代该契约。M0/M1/M5/M9 已完成各自有限范围的契约、路径或 CI 核对，Issue #48 和 #49 已按各自有限范围关闭；这些证据不验证真实 M1+M5 宿主接线或真实副作用。
 
-## 2026-10-15 当前状态快照
+## 当前状态快照（截至 2026-10-14 18:26 UTC / 2026-10-15 02:26 GMT+8）
 
-> 本节是 2026-10-15 更新后的当前状态，并优先于下方较早记录的 head、CI 和 PR 描述状态。下方保留的旧 SHA/run 及 2026-10-14/15 状态段属于此前核对的历史证据，不表示当前 head；Issue #46 的现状以本节为准。
+> 本节是截至 2026-10-14 18:26 UTC / 2026-10-15 02:26 GMT+8 的时间点快照，不代表随时实时状态。列出的 head 和检查结果仅适用于该时间点；其后状态以对应 Draft PR 的最新 head 与 checks 为准。下方保留的更早 SHA/run 及 2026-10-14/15 状态段属于历史记录；Issue #46 的快照状态以本节记录为准。
 
 - **M5 PR #47**：当前远端 head 为 3afc55324cc1d83f2000697e168decb48e33b0b8；其精确 head CI run [38614270263](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614270263) 全部 9/9 成功。
 - **M0 PR #30**：当前 head 为 1ec52878a7a148e917210eaf13e3dd4d4257df2d；产品 CI run [38614268660](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614268660) 为 9/9，ownership run [38614269082](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614269082) 为 1/1。
