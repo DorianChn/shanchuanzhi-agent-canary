@@ -4,30 +4,31 @@
 
 ## 本地候选组合验收记录（2026-10-14）
 
-- 从 M9 初始本地 HEAD `996073ad38aed23bf3c9f8e928857dcf5c6072bb` 开始，在现有 `feature/ac3-m9-integration` 分支按 no-ff 合入下表八个候选头；共同候选基线为 `feature/agent-canary-3.0` `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。组合结束 HEAD 为 `845743d99f634ccdc7e17b43b2ab8c3993e2001b`。
+- 从 M9 初始本地 HEAD `996073ad38aed23bf3c9f8e928857dcf5c6072bb` 开始，在现有 `feature/ac3-m9-integration` 分支按 no-ff 合入下表八个初始候选头，第一轮组合 HEAD 为 `845743d99f634ccdc7e17b43b2ab8c3993e2001b`；共同候选基线为 `feature/agent-canary-3.0` `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。随后将 M2 后续本地候选 head `4875d84d71817f768d806954424e30df603fc287`（父 `558eccb9867d574a3fa0f39212a28913c6f57a85`）合入，M9 merge commit 为 `83d72684adefb01b0420b9be593de35bd11f2afd`；当前代码组合 HEAD 为该 commit。
 
 | 模块 | 来源 PR | 候选 head | M9 本地 merge commit |
 | --- | --- | --- | --- |
 | M1 Security Core | #43 | f59ba37c2fd9d1b5e181e067f80981f8920ef16a | c474ff4f1b03168ec2623b5190868cef9797fa2a |
 | M5 Policy | #47 | cf4e2cdbedd0020e5b5132598af6f845a8214fc4 | 4f04a8a4b9ef6826ce805bfe1214b634463acb64 |
-| M2 Execution Isolation | #37 | cb84f43b1b2bd30ec56ef784d2d35868aedae56e | 471a746eb8f21d47a72f885afbf0bb22475361b5 |
+| M2 Execution Isolation | #37 | cb84f43b1b2bd30ec56ef784d2d35868aedae56e（初始）；4875d84d71817f768d806954424e30df603fc287（后续） | 471a746eb8f21d47a72f885afbf0bb22475361b5（初始）；83d72684adefb01b0420b9be593de35bd11f2afd（后续） |
 | M3 Onboarding | #33 | 54facf027b32f3eef4a737e4cf51a3cbca9f4f63 | f17290fbc163ebab4805e7cb78c11eb2ddfd235f |
 | M4 Desktop Center | #34 | f30119521e2a844233d276a62ed67c03687f6014 | 71cff82b263e13cd2b9cf9ad886d38d3830393df |
 | M6 E4 | #38 | d513810ada9b4375e555d1799e8984ccb09bd1d4 | de0a11680d577b4b77ab68ed1fd5a87fb3974c20 |
 | M7 Reliability | #39 | 5c7d95db6062118eaf90a5004b18f6ebe7c6b238 | 220ddf303fdb69f25be494a2dc67ce44ce92c5cc |
 | M8 Open Source | #40 | b0f30ff1b677a7bbaabcf4e9322f751cd1025135 | 845743d99f634ccdc7e17b43b2ab8c3993e2001b |
 
-- 仅 M3 与 M7 在 package.json 的 test 脚本发生冲突；在 M9 集成分支做了加法式合并，保留双方测试入口及已有 M5/M6/M7 脚本。没有手改 M1–M8 产品实现或测试断言；package-lock.json 未变。其余候选直接合并。
-- npm ci --no-audit --no-fund 成功。完整命令 npm run verify 退出码为 0：TypeScript build 通过；npm test 共 397 项，391 通过、0 失败、6 项因平台/环境条件跳过；其中 Windows WinForms launcher 检查仅编译、通过。该 verify 包含 npm run pack:check，package smoke 通过，生成含 100 个文件的 dorianchn-agent-canary-1.2.7.tgz，并对临时安装包运行类型检查、CLI help 和 self-test。
-- node scripts/check-docs.mjs 通过：14 份文档、55 个本地链接、13 个代码示例、4 个 Issue 模板。没有运行 VMware、真实模型或操作系统安装测试。
-- 默认 WSL Git 曾因 CRLF 归一化差异将全树路径显示为已修改；未改写、清理或重置工作树。按 GIT_OPTIONAL_LOCKS=0 git -c core.autocrlf=true status --short --branch 复核，工作树干净，HEAD 仍为 845743d99f634ccdc7e17b43b2ab8c3993e2001b。
-- 本轮只做本地候选组合与构建/测试，不把 Draft 源 PR 标为验收完成。最近一次远端基线核对时，模块 PR 仍为 Draft 且无 reviewDecision；它们的绿灯仅属于各自候选头。PR #36 的 9/9 checks 对应组合前旧 M9 head 996073a，没有针对组合后 HEAD 的远端 CI。PR #24 与 main 未改变，本轮未 push。
+- 初始 M3 与 M7 仅在 package.json 的 test 脚本发生冲突；在 M9 集成分支做了加法式合并，保留双方测试入口及已有 M5/M6/M7 脚本。后续 M2 commit 4875 只触及 execution-isolation 自有路径，没有 manifest 冲突。没有手改 M1–M8 产品实现或测试断言；package-lock.json 未变。
+- 在当前代码组合 HEAD 83d72684adefb01b0420b9be593de35bd11f2afd 上，npm run verify 退出码为 0：TypeScript build 通过；npm test 共 397 项，391 通过、0 失败、6 项因平台/环境条件跳过；Windows WinForms launcher 检查仅编译、通过。verify 内的 npm run pack:check 通过，生成含 100 个文件的 dorianchn-agent-canary-1.2.7.tgz，并对临时 npm 包运行类型检查、CLI help 和 self-test。输出日志：/tmp/m9-verify-4875d84.log。
+- M2 专项协议测试（主 npm test 列表未包含此文件）通过：/mnt/c/Users/36712/AppData/Local/hermes/node/node.EXE execution-isolation/codex/test-pre-tool-use.mjs。结果确认合成事件拒绝、malformed event 拒绝、告警写失败仍返回 deny、原始命令未写日志；输出继续标记 boundaryStatus=UNPROTECTED、nativeShellAcceptance=BLOCKED_NOT_VERIFIED。日志：/tmp/m9-m2-hook-4875d84.log。该协议测试没有调用真实宿主 Shell。
+- 合入并更新本计划后，node scripts/check-docs.mjs 复核通过：14 份文档、55 个本地链接、13 个代码示例、4 个 Issue 模板。没有运行 VMware、真实模型或操作系统安装测试。
+- 默认 WSL Git 曾因 CRLF 归一化差异将全树路径显示为已修改；未改写、清理或重置工作树。合入后按 GIT_OPTIONAL_LOCKS=0 git -c core.autocrlf=true status --short --branch 复核，工作树在 HEAD 83d72684adefb01b0420b9be593de35bd11f2afd 干净；本次只更新本 M9 文档。
+- 这仍是本地候选组合，不把 Draft 源 PR 标为验收完成。最新 M2 follow-up 未 push；没有针对 M2 head 4875d84 或组合 HEAD 83d7268 的远端 CI 证据。PR #24 与 main 未改变，本轮未 push。
 
 ### 尚未满足的 fail-closed 与外部验收门槛
 
 - P0 #35 虽已关闭，其 M0 澄清仅覆盖同进程、同一 Guard、且遵守 AbortSignal 的 callback；不能推断为更广的宿主隔离保证。#32 的间歇 Hook marker 根因仍未知，不能以本地绿色测试关闭。
-- 最近一次核对时 P1 #27、#28、#32、#44、#45、#48 仍开放或未解决。M2 文档仍将 Native Codex Shell 标为 UNPROTECTED；#44 approval-expiry 根因未知；#48 的 M5/router 契约尚待复核。保持相关路径 fail-closed，不因本地组合通过而宣称门禁解除。
-- M6 外部独立性仍为 NOT_VERIFIED；M7 clean-VM 安装、升级、卸载和取消回滚仍未验证。没有真实安装或 VMware 证据，不能据打包 smoke 宣称这些门槛通过。
+- 最近一次只读状态核对时 P1 #27、#28、#32、#44、#45、#48 仍开放或未解决。M2 最新证据仍将 Desktop Native Codex Shell 标为 UNPROTECTED / BLOCKED_NOT_VERIFIED：候选 Hook 片段没有安装或确认加载/信任；没有执行真实 Desktop native Shell sentinel，也没有观察到宿主决策。M2 的 synthetic hook 协议拒绝不能证明真实宿主受保护。#44 approval-expiry 根因未知；#48 的 M5/router 契约尚待复核。保持相关路径 fail-closed，不因本地组合通过而宣称门禁解除。
+- M6 外部独立 E4 仍为 NOT_VERIFIED；本轮测试的 Auto E4 部分使用合成 fixture，不是外部独立性证据。M7 clean-VM 安装、升级、卸载和取消回滚仍未验证；未启动或运行操作系统安装程序。npm package smoke 的临时 npm 包检查不代表原生安装器验证。没有真实安装或 VMware 证据，不能据打包 smoke 宣称这些门槛通过。
 - 因此当前结果是本地组合的 build、test、package smoke 和 docs check 通过；评审、契约、开放 Issue、组合后远端 CI 以及上述未覆盖运行环境门槛仍待解决。本分支未推送，未合并 main 或 PR #24，未发布 Release。
 
 ## 历史调度快照（2026-10-13 11:07 UTC）
