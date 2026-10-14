@@ -1,17 +1,17 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-14 20:46 UTC)
+## Latest issue ledger (2026-10-14 23:40 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
-| #27 | P1 / M3, M5, M6, M7; M0 coordinates | M9 #36 package blob 6b3042bbe7ba5b14a904c7d04fca9a9011a47883; static composition retains 36 unique test paths. No M6 owner signoff is visible; M0 checkpoint 6178091644 requests field-level confirmation/correction. | OPEN; M6 confirms/corrects e4:auto, e4:verify, and e4:test, then M9 reruns exact combined candidate checks. External E4 stays NOT_VERIFIED. |
-| #29 | P2 / M0 | Two active slots: M3/#32 and M6/#27. Last push batch 20:26 UTC; next batch no earlier than 20:46 UTC. Exclusive VM/model/installer reservation cannot be confirmed from other windows. | OPEN; record any resource reservation before starting it. This current ledger omits exact account-usage values; older history below may retain prior published readings. |
-| #32 | P1 / M1 owns Hook semantics; M0 tracks, M3/M4/M6 own branch copies | M1 accepted d3b64fc as behaviorally equivalent to 0de664c only for marker-wait/interruption timing. #33/#34/#38 still have old blob 1ecb3ee, although exact-head CI passes. M3 checkpoint 6178087679. | OPEN; M3 ports the minimal approved asynchronous fixture to #33 first; preserve every fail-closed assertion and run exact-head CI. Host callback remains NOT_VERIFIED; root cause UNKNOWN. M4/#34 and M6/#38 copies remain queued. |
-| #41 | P1 / M7 | PR #39 CI 9/9 and Windows wrapper 2/2, including pinned NSIS/template compilation. No clean-VM lifecycle run. | OPEN/HOLD until clean-VM install, first launch, upgrade, uninstall, and real cancel rollback are verified. |
-| #45 | P1 / M2 | Current PR #37 is 0f2c10c and passes CI 9/9; native Codex Shell is still UNPROTECTED. | OPEN; obtain actual host-path evidence or keep visibly UNPROTECTED. |
+| #27 | P1 / M3, M5, M6, M7; M0 coordinates | PR #38 remains at ed82f0612b9f69463afc9c80a1082b951e7e88fe with 9/9 checks; M6/M9 e4:auto, e4:verify, and e4:test values match by static comparison. M0 requested owner disposition in comment 6180684215; no reply by23:40. | OPEN; M6 confirms or corrects its owned fields, then M9 records combined acceptance. External E4 stays NOT_VERIFIED. |
+| #29 | P2 / M0 | No confirmed active module task. M3/M4 are UNACKNOWLEDGED/HOLD; M6, M2, and M7 have status-only owner requests. Last push batch 23:35 UTC; next no earlier than23:55 UTC. Exclusive resource occupancy in other windows is unknown. | OPEN; record reservation owner, resource, worktree, start, and release before VMware, real-model, or installer tests. Exact quota values remain local-only. |
+| #32 | P1 / M1 owns Hook semantics; M0 tracks; M3/M4 own their branch copies | M1 PR #43 is at 4b562bed32ebcc3f241a17543d8d2ce9f6108c26; M3/#33 and M4/#34 retain old fixture heads d9364cc and 69ec7f1. No owner reply or branch change by23:40. Stop messages were queued, consumption unknown. | OPEN; preserve fail-closed/no-decision assertions, keep M3/M4 on HOLD until acknowledged, then port the minimal M1-approved async timing fixture and run exact-head CI. Root cause UNKNOWN; native callback NOT_VERIFIED. |
+| #41 | P1 / M7 | PR #39 remains at 4267c61; CI 9/9 and Windows wrapper 2/2 pass. Clean-VM install/launch/upgrade/uninstall/user-cancel rollback is NOT_VERIFIED. M0 comment 6180703085 requests evidence or BLOCKED_RESERVATION; no reply by23:40. | OPEN/HOLD; reserve the exclusive VM/installer resource on #29 before testing; record sanitized lifecycle evidence. |
+| #45 | P1 / M2 | PR #37 remains at 0f2c10c; CI 9/9 passes. Native Codex Shell is UNPROTECTED. M0 comment 6180703055 requests supported-host evidence or BLOCKED_NOT_VERIFIED; no reply by23:40. | OPEN; obtain actual supported-host evidence without claiming WSL/protocol fixtures as host enforcement, or keep visibly UNPROTECTED. |
 | #46 | P2 / M0, M5 semantics owner | Canonical M0 contract and M5 report are synchronized. | CLOSED 2026-10-14 19:28:53Z, documentation-only scope. |
 | #48 | P1 / M1 and M5 | Scoped sensitive-read hard denial and zero-callback/zero-pending-approval evidence. | CLOSED for the recorded narrow behavior only. |
-| #28, #35, #44, #49 | P1/P0 / respective owners | Current GitHub state is closed; each closure is limited to its documented code, expiry, or path/hash scope. | CLOSED with no inference of complete platform protection. |
+| #28, #35, #42, #44 | P1/P0 / respective owners | GitHub state is CLOSED/COMPLETED; closures remain limited to their documented Gateway contract, same-process quarantine, M3 manifest, or approval-expiry scope. | CLOSED with no inference of complete platform protection. |
 
 ## 最新问题台账（2026-10-14 19:12 UTC）
 
