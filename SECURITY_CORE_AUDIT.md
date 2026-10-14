@@ -8,7 +8,7 @@
 
 本次审计覆盖 src/runtime/gateway.ts、src/agent-hook.ts、security-lab/claude-native-hook.mjs、受控工具测试及 3.0 安全边界文档。全程使用临时隔离目录、合成文件内容、合成凭据标记和仅绑定 127.0.0.1 的本地网络 sink。
 
-M1 checkout 不包含协调文档；续作时已从 `C:\Users\36712\Desktop\Agent-Canary-Dev\coordinator\docs\3.0\` 核对 `API_CONTRACTS.md`、`MODULE_OWNERSHIP.md` 和 `MODULE_DEPENDENCIES.md`。文档以 `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 为基线，将 Gateway 契约 owner 暂定为 M1，并将 `src/runtime/gateway.ts` 标记为 M1/M7 共享路径（Issue #28）。当前可用工具没有 `read_thread`，因此没有把引用对话内容当作事实依据；以下结论基于工作树、协调文档、CI 与本地测试证据。
+M1 checkout 不包含协调文档；续作时已从协调 worktree 核对 `API_CONTRACTS.md`、`MODULE_OWNERSHIP.md` 和 `MODULE_DEPENDENCIES.md`。文档以 `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 为基线，将 Gateway 契约 owner 暂定为 M1，并将 `src/runtime/gateway.ts` 标记为 M1/M7 共享路径（Issue #28）。当前可用工具没有 `read_thread`，因此没有把引用对话内容当作事实依据；以下结论基于工作树、协调文档、CI 与本地测试证据。
 
 Gateway 是宿主创建的受控调用面。它只处理 agent.dispatch 进入的已登记文件能力、固定 executable/argv 命令、受允许的 HTTPS origin 和宿主注册 MCP callback。run_command 使用 shell:false 和固定参数，不执行模型提供的任意 Shell 字符串。不能据此声称保护桌面 Agent 的原生 Shell、直接文件/网络 API、未接入的 MCP 客户端或所有操作系统调用。
 

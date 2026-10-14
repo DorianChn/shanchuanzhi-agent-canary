@@ -118,7 +118,7 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 
 ### 环境与复现
 
-- 只使用已存在的 Windows Node：20.20.2（`C:\Users\36712\AppData\Local\Temp\ac32-node20.5S2gfu\node.exe`）和 22.23.1（`C:\Users\36712\AppData\Local\hermes\node\node.exe`）；没有安装或替换 Node。
+- 只使用已存在的 Windows Node 20.20.2 和 22.23.1 运行；没有安装或替换 Node。
 - 两版本均执行 `node --import tsx --test --test-name-pattern 'native lab wrapper interruption emits no allow decision and invokes no tool callback' test/agent-hook.test.ts`；只选择该一项作为聚焦用例，Node 20 reporter 将其余 9 项标为 name-pattern filtered。
 - 修改前定向测试两版本均通过 1/1。Node 20 诊断：pid `1420`、spawnError `null`、exit `{code:null,signal:"SIGTERM"}`、stdout/stderr 为空、marker `true`。Node 22：pid `27448`，其余字段同样为 spawnError `null`、`SIGTERM`、空 stdout/stderr、marker `true`。因此普通调度下未复现失败。
 - 对同一合成 wrapper 做受控 harness 复现：在观察到 entry marker 后，父进程故意延迟 2500 ms 再尝试外部 kill。观察到 marker `true`、spawnError `null`、exit `{code:0,signal:null}`、stdout `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"LAB_HOOK_ERROR_FAIL_CLOSED"}}\n`、stderr 为空、决策日志不存在。也就是 wrapper 自己的 `HOOK_TIMEOUT_MS=2000` 先结束了子进程；现有 interruption 测试会因 child 已结束和 stdout 非空而失败，尽管产品仍 fail-closed。
