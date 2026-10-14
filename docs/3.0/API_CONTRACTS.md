@@ -10,11 +10,11 @@
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## 当前契约与集成状态（2026-10-14 16:56 UTC）
+## 当前契约与集成状态（2026-10-14 17:03 UTC）
 
 - PR #43 M1 owner head `d26a0c3` / run `38602072618` 9/9；审批到期拒绝、清空 pending、保持非 ALLOW 且 callback=0 的定向回归 2/2。M1 是 Gateway/Guard 语义 owner；提交 `d26a0c3` 已将 owner-authored file 100% rename 至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md` 并推送。
 - PR #47 M5 head `5fd4707` / run `38561283918` 9/9；OBSERVE 不得放行敏感读取，拒绝发生在创建审批和 callback 前。safe-read fixture 只用于继续验证下游 egress 拒绝，不改变敏感读取策略。
-- PR #36 M9 remote head `ab382fe` / run `38558216788` 9/9，wrapper `38558216779` 2/2；远端仍带 M1-only 根路径 `docs/3.0/API_CONTRACTS.md`。M9 本地待推分支将根路径改为 M0 canonical 并在 M1 路径保留 owner contract；P1 Issue #49 保持 OPEN，直到新 head 的 CI 回绿。
+- PR #36 M9 remote head `ab382fe` / run `38558216788` 9/9，wrapper `38558216779` 2/2；远端仍有旧 M1-only root 内容。本地 M9 commit `3b5990e` 已将根路径替换为与 M0 相同的 canonical contract，并将 M1 owner file 精确保留在 M1 路径。P1 Issue #49 保持 OPEN，直到下批推送和新 head CI 回绿。
 - PR #24 仍 OPEN/Draft、head `62496d4`、11/11 checks；未修改、未合并。
 - M2 原生 Codex Shell 仍 UNPROTECTED；M6 外部 E4 与 M7 clean-VM 安装生命周期仍 NOT VERIFIED；M4 后端状态 UNKNOWN。CI/fixtures 不扩大这些覆盖声明。
 
