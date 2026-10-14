@@ -1,12 +1,12 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-14 20:25 UTC)
+## Latest issue ledger (2026-10-14 20:46 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
-| #27 | P1 / M3, M5, M6, M7; M0 coordinates | M9 #36 package blob 6b3042bbe7ba5b14a904c7d04fca9a9011a47883; static composition retains 36 unique test paths. No M6 owner signoff is visible; M0 checkpoint 6177609882 requests field-level confirmation/correction. | OPEN; M6 confirms/corrects e4:auto, e4:verify, and e4:test, then M9 reruns exact combined candidate checks. External E4 stays NOT_VERIFIED. |
-| #29 | P2 / M0 | Two active slots: M3/#32 and M6/#27. Last push batch 20:06 UTC; next batch no earlier than 20:26 UTC. Exclusive VM/model/installer reservation cannot be confirmed from other windows. | OPEN; record any resource reservation before starting it. This current ledger omits exact account-usage values; older history below may retain prior published readings. |
-| #32 | P1 / M1 owns Hook semantics; M0 tracks, M3/M4/M6 own branch copies | M1 accepted d3b64fc as behaviorally equivalent to 0de664c only for marker-wait/interruption timing. #33/#34/#38 still have old blob 1ecb3ee, although exact-head CI passes. M3 checkpoint 6177584299. | OPEN; M3 ports the minimal approved asynchronous fixture to #33 first; preserve every fail-closed assertion and run exact-head CI. Host callback remains NOT_VERIFIED; root cause UNKNOWN. M4/#34 and M6/#38 copies remain queued. |
+| #27 | P1 / M3, M5, M6, M7; M0 coordinates | M9 #36 package blob 6b3042bbe7ba5b14a904c7d04fca9a9011a47883; static composition retains 36 unique test paths. No M6 owner signoff is visible; M0 checkpoint 6178091644 requests field-level confirmation/correction. | OPEN; M6 confirms/corrects e4:auto, e4:verify, and e4:test, then M9 reruns exact combined candidate checks. External E4 stays NOT_VERIFIED. |
+| #29 | P2 / M0 | Two active slots: M3/#32 and M6/#27. Last push batch 20:26 UTC; next batch no earlier than 20:46 UTC. Exclusive VM/model/installer reservation cannot be confirmed from other windows. | OPEN; record any resource reservation before starting it. This current ledger omits exact account-usage values; older history below may retain prior published readings. |
+| #32 | P1 / M1 owns Hook semantics; M0 tracks, M3/M4/M6 own branch copies | M1 accepted d3b64fc as behaviorally equivalent to 0de664c only for marker-wait/interruption timing. #33/#34/#38 still have old blob 1ecb3ee, although exact-head CI passes. M3 checkpoint 6178087679. | OPEN; M3 ports the minimal approved asynchronous fixture to #33 first; preserve every fail-closed assertion and run exact-head CI. Host callback remains NOT_VERIFIED; root cause UNKNOWN. M4/#34 and M6/#38 copies remain queued. |
 | #41 | P1 / M7 | PR #39 CI 9/9 and Windows wrapper 2/2, including pinned NSIS/template compilation. No clean-VM lifecycle run. | OPEN/HOLD until clean-VM install, first launch, upgrade, uninstall, and real cancel rollback are verified. |
 | #45 | P1 / M2 | Current PR #37 is 0f2c10c and passes CI 9/9; native Codex Shell is still UNPROTECTED. | OPEN; obtain actual host-path evidence or keep visibly UNPROTECTED. |
 | #46 | P2 / M0, M5 semantics owner | Canonical M0 contract and M5 report are synchronized. | CLOSED 2026-10-14 19:28:53Z, documentation-only scope. |
