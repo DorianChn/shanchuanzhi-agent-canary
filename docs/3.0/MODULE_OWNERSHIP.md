@@ -12,7 +12,7 @@
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | PR #38 `ed82f06`; run `38555297615` 9/9; external E4 NOT_VERIFIED | E4 schema、verifier、机器报告 | 原始 run 留本地；#27 manifest composition; legacy PR #31 remains separate main-based track |
 | M7 | `feature/ac3-reliability-ac3` / `agents/M7-reliability-ac3` | PR #39 `4267c61`; run `38596572303` 9/9, wrapper `38596572179` 2/2 | `packaging/windows/`、scripts、可靠性/打包验证 | #41 clean-VM/user lifecycle remains HOLD/NOT VERIFIED; Gateway lifecycle coordinates with M1 under #28 |
 | M8 | `feature/ac3-open-source-product` / `agents/M8-ecosystem` | PR #40 `139e7f2`; run `38561307114` 9/9 | README、贡献/安全/支持/开源文档（暂定） | 文档必须如实描述安全覆盖边界；未发布 Release |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | PR #30 `b92bde4`; run `38596562618` 9/9 product + `38596562606` ownership; local `.gitignore` and coordination-doc edits are uncommitted | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | Canonical shared API doc; does not edit M1–M8 product source |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | Remote PR #30 `b92bde4`; run `38596562618` 9/9 product + `38596562606` ownership; local coordination commit `8141ae2` is ahead of remote | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | Canonical shared API doc; does not edit M1–M8 product source |
 | M9 | `feature/ac3-m9-integration` / `integration` | PR #36 `ab382fe`; run `38558216788` 9/9 + wrapper `38558216779` 2/2 | 跨模块集成验收及风险跟踪 | Carries M1 root API doc collision #49; external E4/native Shell/clean-VM remain unverified |
 
 ## 历史分支与验收状态快照（2026-10-14 11:45 UTC）
