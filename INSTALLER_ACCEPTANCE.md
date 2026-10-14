@@ -6,7 +6,7 @@
 
 ## 边界和证据级别
 
-当前 M7 AC3 候选位于独立分支 `feature/ac3-reliability-ac3`，以 `feature/agent-canary-3.0` 为基线。2026-10-14 本轮获分配 VMware/安装验收资源，但没有启动 VM、修复磁盘或运行安装器。检查到候选 VM `D:\AgentCanary-3.0-Win11-VM\Windows11-Clean-Test\Agent-Canary-Windows11-Clean-Test.vmx` 已关机（`vmrun -T ws list` 显示 0 台运行中的 VM），仍留有 `.lck` 目录，VMX 为 `cleanShutdown = FALSE`。只读磁盘链检查返回 VMware 偏好文件锁 `Access is denied`，并报告 `The specified virtual disk needs repair (0x3e86)` / `Disk chain is not consistent`。为保留原始 VM 状态，本轮未清锁、修盘或启动该 VM；访客系统的当前状态无法确认。没有更改共享 Git 引用、系统安全设置或真实用户安装目录。
+当前 M7 AC3 候选位于独立分支 `feature/ac3-reliability-ac3`，以 `feature/agent-canary-3.0` 为基线。2026-10-14 本轮获分配 VMware/安装验收资源，但没有启动 VM、修复磁盘或运行安装器。检查到候选 VM `候选 Windows 11 clean-test VM` 已关机（`vmrun -T ws list` 显示 0 台运行中的 VM），仍留有 `.lck` 目录，VMX 为 `cleanShutdown = FALSE`。只读磁盘链检查返回 VMware 偏好文件锁 `Access is denied`，并报告 `The specified virtual disk needs repair (0x3e86)` / `Disk chain is not consistent`。为保留原始 VM 状态，本轮未清锁、修盘或启动该 VM；访客系统的当前状态无法确认。没有更改共享 Git 引用、系统安全设置或真实用户安装目录。
 
 本记录区分三类证据：
 
@@ -53,7 +53,7 @@
 - 本地候选 `68e7caa` 的静态 NSIS 参数回归检查通过，但真实 NSIS setup 启动和模板编译仍未验证。旧 head `65ce028` 的失败由后续代码修正；新 head `4f3a2c5` 的 CI 详情见下一项。即使 CI 编译通过，仍需单独完成实际 EXE 验收。
 - 2026-10-13 PR head `4f3a2c5c8114ee7ec77e43d2f1085a8aa5fc949a` 的 run `38430069038`：Windows wrapper job 在 `npm run test:reliability` 的断言 `the Windows runner must provision the pinned compiler` 失败，`Install pinned NSIS compiler on Windows` 和 `Compile installer template on Windows` 均 **skipped**；Ubuntu wrapper job 最终 **cancelled**，其 reliability、audit、package-check 和语法步骤均显示通过。相邻 CI run `38430069098`：Windows Node 20/22 均在同一 M7 workflow 断言失败；macOS Node 20 与 Ubuntu Node 22 通过；Ubuntu Node 20 和 macOS Node 22 job 被取消（其 `npm test` 步骤显示通过）；Docker 和 sponsor 通过。失败断言对换行做了 LF 硬匹配；M7 已改为比较前统一 CRLF。本地 Windows 窄范围 Node 测试 **3 项通过**，并增加断言保证 NSIS 编译步骤先于可能失败的 npm 测试、M7 Windows/Ubuntu wrapper 矩阵不因首个失败而取消。修复还未推送，真实 GitHub Windows job 尚未重跑。
 - 2026-10-14 本地代码检查点 `77ac15051723dc02339f6da43a4e0ee12eb8f5e4` 的窄范围测试 `node.exe --import tsx --test --test-name-pattern="NSIS|Windows community workflow" test/reliability.test.mjs`：**3 项通过**，覆盖参数、编译器门禁和 Windows-only workflow 条件。它是回归断言，未执行 NSIS 编译器。
-- 2026-10-14 本轮真实安装尝试受 VM 环境阻塞：`'/mnt/d/虚拟机/vmrun.exe' -T ws list` 输出 `Total running VMs: 0`；`'/mnt/d/虚拟机/vmware-vdiskmanager.exe' -e 'D:\AgentCanary-3.0-Win11-VM\Windows11-Clean-Test\Agent-Canary-Windows11-Clean-Test.vmdk'` 输出 VMware preferences `.lck` `Access is denied`，随后报告虚拟盘需要修复，退出码 1。没有运行磁盘修复或重试 VMware 写操作。宿主机此前 `Get-Command makensis.exe` 和 `where.exe makensis.exe` 均未找到编译器；本轮没有获得 `makensis /VERSION`，没有真实模板编译和 EXE 安装结果。安装器验收仍为 **NOT VERIFIED / HOLD**。
+- 2026-10-14 本轮真实安装尝试受 VM 环境阻塞：`'vmrun.exe' -T ws list` 输出 `Total running VMs: 0`；`'vmware-vdiskmanager.exe' -e '<候选 VM 虚拟磁盘>'` 输出 VMware preferences `.lck` `Access is denied`，随后报告虚拟盘需要修复，退出码 1。没有运行磁盘修复或重试 VMware 写操作。宿主机此前 `Get-Command makensis.exe` 和 `where.exe makensis.exe` 均未找到编译器；本轮没有获得 `makensis /VERSION`，没有真实模板编译和 EXE 安装结果。安装器验收仍为 **NOT VERIFIED / HOLD**。
 - 可用 Community Preview ZIP `Agent_Canary_3_0_Community_Preview_99660b36.zip` 的 SHA-256 为 `011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed`；Python `zipfile.testzip()` 返回 `None`，126 项，无路径异常项，内部元数据标为 `notStable: true`。这是 ZIP 完整性检查，不是编译、来源认证或安装证据。
 
 ## 发行前必须补齐
