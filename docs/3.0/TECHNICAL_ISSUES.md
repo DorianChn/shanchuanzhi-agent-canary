@@ -2,18 +2,20 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 06:23 UTC）
+## 当前调度（2026-10-14 06:48 UTC）
 
-- 当前代码任务最多两个：M2 在现有分支处理 #45 宿主边界；M1 对 #48 的 M1-owned router 测试兼容修复已本地提交，等待推送并让 M5 纳入组合候选。M7 已完成 #41 的 PR/Issue 状态同步，不改代码。M0 按 worktree、PR、CI 与 Issue 证据协调；本会话没有 `read_thread` / 会话消息工具，不声称引用聊天已接单。
-- [#32 Hook interruption marker failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：P1 / OPEN。M2 PR #37 head `08c93bc` 的 Windows Node 20 job失败于 M1-owned Hook marker 测试；Windows Node 22 与 macOS Node 20 为 fail-fast 取消。M1 PR #43 head `2276526` 的 9/9 检查通过，已含异步等待 marker 的测试修复；但该修复尚未进入 PR #37 使用的共同基线，Issue 保持 OPEN。
-- [#44 Gateway approval-expiry](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)：P1 / OPEN。M1 已将历史短 TTL 失败定位为测试时序问题；PR #43 当前 9/9 通过。尚待共同基线集成后复验，不报告审批绕过。
-- [#45 native Codex Shell boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)：P1 / OPEN。M2 只验证 Windows CLI `:workspace` 合成路径可写；拒绝路径和 Desktop 原生 Shell/Hook 未验证，状态仍 UNPROTECTED。
-- [#48 OBSERVE sensitive-read denial](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)：P1 / OPEN。M5 PR #47 head `f8291c9` 的 Ubuntu Node 22 测试仍失败，策略返回 `observe_sensitive_data_blocked`。M1 已在现有分支本地提交 `f59ba37`：把 same-Guard taint fixture 改为非敏感 file-read，定向测试 16/16；尚未推送，也尚未进入 #47。保留 M5 的敏感读取拒绝、零 callback/approval 断言，合并候选全矩阵通过前不关闭。
-- [#46 canonical API contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/46)：P2 / OPEN。契约文件归 M0；M5 PR #47 有可审阅事件契约，但未集成；M3 PR #33 仅增加其模块契约章节。等待 #48 语义定稿后同步规范文本。
-- #41 M7：P1 / OPEN。PR #39 head `5c7d95d` 当前 9/9 主矩阵与 2/2 wrapper 检查通过；等待集成验收。真实 clean-VM 安装、升级、卸载及用户取消后的运行时回滚仍 NOT VERIFIED/HOLD。
-- #27/#28 仍 OPEN，分别跟踪 package/manifest 组合和 M1/M7 Gateway 生命周期组合；#35 在同进程、同 Guard、callback 配合 AbortSignal 的有限范围内 CLOSED。没有新 P0 事件证据。
-- 06:16 UTC 用量页实读：五小时剩余 94%（约 4h42 后重置）、每周 77%、余额 113。若五小时低于 5% 或读数不可用，暂停全部开发/测试/浏览器/GitHub 操作，确认重置后再恢复。
-- 最近推送批次约 06:02–06:04 UTC；下一批不早于 06:24 UTC。当前最多两个模块开发槽；VMware、真实模型和安装测试共用一个互斥槽，当前没有运行中的预约。额度最近于 06:16 UTC 实读为 94%。PR #24 仍 OPEN/Draft，未改动；M9 联合集成未完成。
+- M2 在既有 PR #37 分支推进 #45 原生 Shell 保护。M7 #41 只读前置盘点已结束并释放槽位，状态 BLOCKED/HOLD：候选 VM 留有 `.vmx.lck` 与 `cleanShutdown=FALSE`，快照查询要求 VM 密码；既有记录提示 vdisk 锁访问拒绝/链不一致；找不到 NSIS 3.13 `makensis.exe` 和安装器 EXE。未启动或修复 VM，也未运行安装流程。M1 #44 诊断已完成，M5 #48 候选 `cf4e2cd` 等待下批推送和远端 CI。M0 只依据 worktree、PR、CI、Issue 和额度实况协调；当前没有 `read_thread` 工具，不声称读取引用聊天。
+- [#32 Hook interruption marker failure](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32)：P1 / OPEN。PR #43 head `f59ba37` 当前 9/9；Ubuntu Node 20、Windows Node 20/22 的目标中断测试均通过。旧 wrapper 精确漏 marker 的根因尚未证实，仍需 M9 组合基线复验。
+- [#44 Gateway approval-expiry](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/44)：P1 / OPEN。旧 run 中 5 ms TTL 短于约 6 ms dispatch，`pending()` sweep 使测试在 `approve` 前读到 undefined；新测试先从拒绝错误取 requestId，再确认过期时 callback 计数为 0。当前 CI 9/9；共同基线验收前不关闭。
+- [#45 native Codex Shell boundary](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45)：P1 / OPEN。M2 binder 已对缺失/未知 executionSurface fail closed，并在原生 Shell 路径执行前返回 `M2_NATIVE_SHELL_UNPROTECTED`；这仍不能证明桌面原生 Shell 已受保护。M2 正核验可支持的真实宿主拦截路径，未完成前保持 UNPROTECTED。
+- [#48 OBSERVE sensitive-read denial](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/48)：P1 / OPEN。M5 远端 #47 head `f8291c9` 的 Ubuntu Node 22 仍失败；M1 `f59ba37` 把 same-Guard taint fixture 改为安全 file-read，保留显式 sensitive-read deny 与 egress 拒绝断言。M5 本地候选 `cf4e2cd` 已精确包含该 M1 提交，43/43 定向、341 pass/5 skip 全测、build 和 diff-check 通过；待下批推送和新远端 CI。
+- [#46 canonical API contract](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/46)：P2 / OPEN。M0 是 `docs/3.0/API_CONTRACTS.md` 唯一 owner；本批将记录 OBSERVE 硬拒绝语义和 M2 execution-surface 契约，仍需 M6 consumer 确认与集成验收。
+- [#27 package/manifest](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27)：P1 / OPEN。M7 已核对 M3/M5/M6/M7 字段并写 handoff；四个候选锁文件相同，但组合 package-smoke 和完整 CI 尚未运行。
+- [#28 Gateway lifecycle](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/28)：P1 / OPEN。M1 f15 修复在 M1/M7 分支祖先中，M7 对 AC3 的 Gateway 净差异为空；组合 CI 尚未验证。
+- [#41 M7 reliability](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41)：P1 / OPEN。PR #39 9/9 主矩阵及 2/2 wrapper 检查通过；安装验收环境 BLOCKED/HOLD，隔离/回滚条件、NSIS 3.13 和安装器 EXE 均不齐。没有运行安装、升级、卸载或取消回滚，均保持 NOT VERIFIED。
+- #35 CLOSED 的范围限同进程、同 Guard、callback 遵守 AbortSignal。没有新 P0 事件证据。
+- 用量页本轮实读：五小时剩余 82%、每周 75%、额度余额 113、约 4h15 后重置。低于 5% 或无法读取时暂停所有开发、测试、浏览器和 GitHub 操作，确认额度重置后再恢复。
+- 最近推送批次约 06:34 UTC；下一批不早于 06:54 UTC。VMware、真实模型与安装测试共用一个互斥槽；当前没有此类测试运行。PR #24 仍 OPEN/Draft、未改动；M9 联合集成未完成。
 
 ## 历史调度（2026-10-14 04:36:33 UTC）
 

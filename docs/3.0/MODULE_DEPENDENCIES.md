@@ -2,11 +2,11 @@
 
 本图基于现有架构文档、当前源码和实际分支/改动路径。对尚无提交、只有任务命名或当前线程不可读取的内容，标记为暂定；接口细节以 `API_CONTRACTS.md` 为准。
 
-## 当前排程覆盖（2026-10-14 06:23 UTC）
+## 当前排程覆盖（2026-10-14 06:48 UTC）
 
-M1 已在现有分支本地提交 #48 的 M1-owned fixture 修正 `f59ba37`（16/16 定向测试）；等 06:24 UTC 推送批次后，由 M5 将修复纳入组合候选并重跑 CI。M2 正在现有分支处理 #45；最多同时运行两个模块开发任务。M7 已同步 #41 PR/Issue 状态，clean-VM 安装与取消回滚仍未验证。是否启动/完成只按可观察的 worktree、PR、CI 和 Issue 证据记录；不把排程指派当作其他 Codex 聊天已接单。
+当前 M2 #45 原生 Shell 保护任务沿用现有分支/worktree。M7 #41 的只读环境盘点已完成并释放开发槽，因隔离 VM/可读快照不具备、虚拟盘链风险、缺 NSIS 3.13 与安装器 EXE 而 BLOCKED/HOLD；没有启动或修复 VM，没有运行安装。M1 #44 诊断已完成；M5 #48 候选 `cf4e2cd` 已在本地将 M1 `f59ba37` 作为精确提交纳入，等 06:54 UTC 后推送并跑远端矩阵。
 
-M2 PR #37 的 Windows Node 20 Hook marker 失败属于 M1-owned 测试，M1 PR #43 的 hook 修复尚未进入 #37 当前共同基线；不得在 M2 分支复制或删除该测试。M5 PR #47 的 #48 全矩阵失败待 M1 fixture commit `f59ba37` 推送后，以 stacked/组合候选重跑；M5 sensitive-read deny 保持。M6 PR #38、M7 PR #39、M3 #33、M4 #34、M8 #40 的候选自身检查当前通过；M6 外部 E4 与 M7 clean-VM 安装/取消仍 NOT VERIFIED。M9 PR #36 尚未把八个候选组合运行最终验收。
+M2 的 binder 元数据门禁和 M1 的 Hook 兼容测试已有各自 PR CI，但不能代替 M9 联合验收。M5 旧远端 #47 仍有 Ubuntu Node 22 router failure，更新候选未获远端 CI。M7 已完成 #27 manifest 字段 handoff；组合 package-smoke 与完整矩阵仍待 M9。M6 外部 E4 和 M7 clean-VM 安装/取消仍 NOT VERIFIED；M7 安装验收另需清理安全 VM、可读快照、NSIS 3.13 与安装器包后再取得互斥窗口。跨窗口任务状态只按可观察 worktree、PR、CI 和 Issue 证据记录；本会话没有 `read_thread` 工具。
 
 ```mermaid
 flowchart LR
