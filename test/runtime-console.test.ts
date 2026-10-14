@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import os from 'node:os';import fs from 'node:fs';import path from 'node:path';
-import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,normalizeProtectionStatus} from '../src/ai/security-center-adapter.js';
+import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
 test('3.0 console API preserves CSRF, operator identity, replay control and real quarantine',async()=>{
@@ -7,7 +7,8 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
  try{
   assert.equal((await fetch(console.url+'/api/runtime3')).status,403);
   const html=await (await fetch(console.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
-  assert.match(html,/Agent Canary 安全控制中心/);assert.match(html,/自动 E4 测试入口/);assert.match(html,/PARTIALLY_PROTECTED/);assert.match(html,/security-center/);assert.match(html,/currentPolicyScopeDetail/);assert.match(html,/canaryIsolationScopeDetail/);assert.match(html,/Console 虚拟执行器策略/);assert.match(html,/受控 Runtime 示例 Guard/);
+  for(const route of ['security-center','e4/status'])assert.equal((await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!}})).status,404);
+  assert.match(html,/Agent Canary 安全控制中心/);assert.match(html,/自动 E4 测试入口/);assert.match(html,/PARTIALLY_PROTECTED/);assert.match(html,/security-center/);assert.match(html,/currentPolicyScopeDetail/);assert.match(html,/canaryIsolationScopeDetail/);assert.match(html,/Console 虚拟执行器策略/);assert.match(html,/受控 Runtime 示例 Guard/);assert.match(html,/显式 DENY 和 SENSITIVE_DATA 仍会拒绝/);assert.match(html,/preparePolicyResultForDisplay/);assert.match(html,/POLICY_CONFLICT/);assert.match(html,/catch\(e\)\{status\('policyStatus',warning\|\|e\.message,true\);\}/);assert.match(html,/policyResult/);
   assert.match(html,/const readable=\['state','agents','policyState','runtime3'\]\.filter\(k=>securitySources\[k\]==='AVAILABLE'\)\.length/);
   assert.match(html,/readable\+'\/4 个已有只读接口可读/);
   const get=async()=>{const r=await fetch(console.url+'/api/runtime3',{headers:{'x-canary-csrf':csrf!}});return r.json();};
@@ -88,4 +89,22 @@ test('security-center data-source failures preserve timeout, permission, missing
  assert.equal(classifyDataSourceFailure(404,'Error'),'UNSUPPORTED');
  assert.equal(classifyDataSourceFailure(undefined,'InvalidResponseError'),'INVALID_RESPONSE');
  assert.equal(classifyDataSourceFailure(503,'Error'),'UNAVAILABLE');
+});
+
+test('OBSERVE denial, sensitive-data allow, and Guard quarantine are not rendered as successful policy results',()=>{
+ const denied=preparePolicyResultForDisplay({mode:'OBSERVE',status:'DENY',guardState:'SAFE',decision:{action:'DENY',mode:'OBSERVE',risks:['SENSITIVE_DATA']}});
+ assert.equal(denied.status,'DENY');assert.equal(denied.displayWarning,undefined);
+
+ const staleObserveResult=preparePolicyResultForDisplay({mode:'OBSERVE',status:'EXECUTED',guardState:'SAFE',callbacks:1,events:[{kind:'policy_allowed',metadata:{mode:'OBSERVE',action:'ALLOW',risks:'SENSITIVE_DATA'}}]});
+ assert.equal(staleObserveResult.status,'POLICY_CONFLICT');assert.equal(staleObserveResult.backendReportedStatus,'EXECUTED');
+ assert.match(staleObserveResult.displayWarning,/不能视为允许或安全/);assert.equal(staleObserveResult.callbacks,1);
+
+ const contradictoryDenial=preparePolicyResultForDisplay({mode:'OBSERVE',status:'ALLOW',decision:{action:'DENY',mode:'OBSERVE',risks:['SENSITIVE_DATA']}});
+ assert.equal(contradictoryDenial.status,'POLICY_CONFLICT');assert.equal(contradictoryDenial.backendReportedStatus,'ALLOW');
+
+ const quarantined=preparePolicyResultForDisplay({mode:'OBSERVE',status:'BLOCKED_BY_GUARD',guardState:'QUARANTINED',decision:{action:'DENY',mode:'OBSERVE',risks:['READ_ONLY']}});
+ assert.equal(quarantined.status,'BLOCKED_BY_GUARD');assert.equal(quarantined.guardState,'QUARANTINED');assert.equal(quarantined.displayWarning,undefined);
+
+ const contradictoryQuarantine=preparePolicyResultForDisplay({mode:'OBSERVE',status:'ALLOW',guardState:'QUARANTINED'});
+ assert.equal(contradictoryQuarantine.status,'POLICY_CONFLICT');assert.equal(contradictoryQuarantine.backendReportedStatus,'ALLOW');
 });

@@ -186,6 +186,42 @@ export function classifyDataSourceFailure(statusCode?: number, errorName?: strin
   return 'UNKNOWN';
 }
 
+/** Keep contradictory policy responses visible as conflicts, never as a successful decision. */
+export function preparePolicyResultForDisplay(input: unknown) {
+  const result = asRecord(input);
+  const decision = asRecord(result.decision);
+  const events = Array.isArray(result.events) ? result.events.map(asRecord) : [];
+  const latestPolicyEvent = [...events].reverse().find(event =>
+    ['policy_allowed', 'policy_blocked', 'policy_approval_required', 'policy_approval_granted'].includes(event.kind),
+  );
+  const metadata = asRecord(latestPolicyEvent?.metadata);
+  const mode = decision.mode ?? result.mode ?? metadata.mode;
+  const actions = [decision.action, metadata.action];
+  const risks = Array.isArray(decision.risks)
+    ? decision.risks
+    : typeof metadata.risks === 'string'
+      ? metadata.risks.split(',').map((risk: string) => risk.trim())
+      : [];
+  const status = result.status;
+  const reportsAllow = status === 'ALLOW' || actions.includes('ALLOW');
+  const reportsExecuted = status === 'EXECUTED';
+  const reportsDenial = status === 'DENY' || actions.includes('DENY') || latestPolicyEvent?.kind === 'policy_blocked';
+  const guardQuarantined = result.guardState === 'QUARANTINED' || status === 'BLOCKED_BY_GUARD';
+  const sensitiveObserve = mode === 'OBSERVE' && risks.includes('SENSITIVE_DATA');
+  const conflict =
+    reportsDenial && (reportsAllow || reportsExecuted) ||
+    sensitiveObserve && (reportsAllow || reportsExecuted) ||
+    guardQuarantined && reportsAllow;
+
+  if (!conflict) return result;
+  return {
+    ...result,
+    status: 'POLICY_CONFLICT',
+    backendReportedStatus: typeof status === 'string' ? status : null,
+    displayWarning: '后端策略结果字段冲突；不能视为允许或安全。执行状态需核实，callback 可能已经运行，请核查审计记录。',
+  };
+}
+
 export function explainSecurityEvent(event: {kind?: string; reason?: string}): string {
   const base = EVENT_EXPLANATIONS[event.kind ?? ''] ?? '本地后端记录了一条安全事件；请结合原始事件和对应策略核对。';
   const reason = sanitizeText(event.reason, 240);
@@ -265,8 +301,9 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const mapEvent = ' + mapEvent.toString() + ';',
   'const adaptSecuritySnapshot = ' + adaptSecuritySnapshot.toString() + ';',
   'const classifyDataSourceFailure = ' + classifyDataSourceFailure.toString() + ';',
+  'const preparePolicyResultForDisplay = ' + preparePolicyResultForDisplay.toString() + ';',
   'const explainSecurityEvent = ' + explainSecurityEvent.toString() + ';',
   'const buildSecurityDiagnostic = ' + buildSecurityDiagnostic.toString() + ';',
-  'return {normalizeProtectionStatus, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, explainSecurityEvent, buildSecurityDiagnostic};',
+  'return {normalizeProtectionStatus, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
   '})();',
 ].join('\n');
