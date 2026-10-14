@@ -1,19 +1,21 @@
 # M0 技术问题分级与协作流程
 
-## 最新问题台账（2026-10-14 17:54 UTC）
+## 最新问题台账（2026-10-14 18:11 UTC）
 
 | Issue | 级别 | 责任模块 | 当前确认事实 | 状态/下一验收 |
 | --- | --- | --- | --- | --- |
-| #27 | P1 | M3/M5/M6/M7，M0 协调 | M9 候选相对 AC3 基线有 137 个变更路径，含多个模块实现、测试和 package.json；远端 ed0dd01 产品 CI 9/9、wrapper 2/2。字段 owner/迁移证据和 manifest 最终验收仍待核对；本地 c09cdde 仅同步 canonical 文档，待推送与新头 CI。 | OPEN；补齐 M3/M5/M6/M7 字段/迁移确认，核对新头 CI |
-| #28 | P1 | M1 owner，M7 配合，M0 协调 | M7 PR #39 精确 head 4267c61 集成 M1 contract；M1 owner 已在 #issuecomment-6174345116 确认，CI 9/9、Windows wrapper 2/2；M0 acceptance #issuecomment-6174407469。 | CLOSED；仅此 Gateway/Guard 生命周期合同范围，不代表 PR 合并或外部宿主验收 |
-| #32 | P1 | M1 owner，M0 跟踪 | 当前相关 PR CI 通过；历史 Windows marker 间歇失败根因仍 UNKNOWN，不能把子进程夹具称作宿主 callback 证据。 | OPEN；保留历史根因未明状态 |
-| #35 | P0 | M1 | 已关闭，范围限同进程、同一 Guard、callback 遵循 AbortSignal。 | CLOSED（有限范围） |
-| #41 | P1 | M7 | pinned NSIS/template compile 有 CI 证据；clean-VM 安装、启动、升级、卸载、真实用户取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
-| #44 | P1 | M1 | M1 #43 head d26a0c3 / run 38602072618 9/9；M9 current code/test blobs 与 M1 一致，run 38604703774 9/9 + wrapper 2/2；验收记录 #issuecomment-6174752088。 | CLOSED；仅过期拒绝、pending 清理、callback=0 与 M9 代码/测试基线 |
-| #45 | P1 | M2 | AppContainer/Hook fixtures 只覆盖已测子进程/协议；实际 Codex 原生 Shell 仍 UNPROTECTED。 | OPEN / NOT VERIFIED |
-| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical 在 #30 远端 head 63d10b8；M5 #47 远端 584f96c / run 38608355200 9/9，本地报告最新提交 b672f89 待推送。#48 已按 scoped OBSERVE hard-deny 证据关闭；PR #47 描述仍需同步。 | OPEN；推送 M0/M5 文档、更新 #47 描述并回读新头 CI |
-| #48 | P1 | M1/M5，M0 契约 | M5 sensitive-read hard DENY、零审批/零 callback 与 safe-read 下游 egress 断言已记录；对应 CI 通过。 | CLOSED；仅本 Issue 的策略/router 语义范围 |
-| #49 | P1 | M0/M1/M9 | 当前远端 M9 ed0dd01 的 root/M1 路径通过 hash 对照与 CI；本地 M0 canonical 与 M9 c09cdde 副本 hash 同为 f51bcd6e…e817be，尚未推送。 | 远端 CLOSED；同批推送后重新核验远端 hash 与新头 CI |
+| #27 | P1 | M3/M5/M6/M7，M0 协调 | M9 c09cdde 的 137 文件候选与各当前 package manifest 静态兼容；31 + 5 个测试路径均唯一，9/9 + wrapper 2/2。M6 当前 e4:auto/e4:verify/e4:test 字段尚无显式 owner 确认。 | OPEN；取得 M6 字段确认并记录组合接受 |
+| #28 | P1 | M1 owner，M7 配合，M0 协调 | M7 #39 head 4267c61 的 Gateway/Guard 生命周期改动经 M1 owner确认，CI 9/9 + wrapper 2/2。 | CLOSED；仅限合同/生命周期代码审查，不代表 PR 合并或真实宿主验收 |
+| #32 | P1 | M1 owner，M0 跟踪 | 当前相关 PR checks 通过；#33/#34/#38 仍共享旧 spawnSync/1秒 marker fixture；#30/#37/#39/#40/#47 为异步 marker 轮询版本；#43/#36 为 M1 owner 版本。M1接受 d3b64fc 仅在 marker-wait/中断时序修复上行为等价，不是字节相同；三个旧 fixture 仍待 M1/M3/M4/M6 协调最小更新，并保留 fail-closed 断言、跑 exact-head CI。 | OPEN；跟进 owner 协调与 exact-head 验收，保留失败/通过历史 |
+| #35 | P0 | M1 | 关闭范围限同进程、同一 Guard 和遵守 AbortSignal 的 callback。 | CLOSED（有限范围） |
+| #41 | P1 | M7 | PR #39 exact CI 9/9、wrapper 2/2，含 Windows pinned NSIS/template compile；clean-VM 安装、启动、升级、卸载及实际取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
+| #44 | P1 | M1 | #43 head d26a0c3 CI 9/9；M9 current Gateway/test blob 与 owner head 匹配；过期拒绝、pending 清理和 callback=0 证据已读回。 | CLOSED；仅审批过期路径和现有测试基线 |
+| #45 | P1 | M2 | 子进程隔离和 Hook fixture 不覆盖实际 Codex 原生 Shell；宿主策略仍未启用/验证。 | OPEN / UNPROTECTED |
+| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical 和 M5 OBSERVE hard-deny 语义已同步；PR #47 body 与 exact run 38611183498 已回读。M5 readiness report 本地提交 3afc553 尚未推送/验 CI。 | OPEN；待下批推送并核对新 head checks |
+| #48 | P1 | M1/M5，M0 契约 | OBSERVE sensitive-read hard DENY、审批队列零新增/callback=0及下游 egress 有限证据均记录。 | CLOSED（有限范围） |
+| #49 | P1 | M0/M1/M9 | M0/M9 canonical 根路径与 M1 owner 契约路径已按 blob 对照，exact M9 CI 通过。 | CLOSED（仅路径/hash 和对应候选 CI） |
+
+更新日期：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
 问题处理规则：P0 为保护路径失效放行、敏感信息泄露或严重数据损坏；P1 为接口不兼容、构建失败或关键功能不可用；P2 为非关键 UI、文档及一般性能。保留失败测试和安全策略，禁止伪造结果。跨模块 Issue 必须写责任模块、复现、验收标准和状态。
 
