@@ -12,7 +12,7 @@
 | #41 installer lifecycle | P1 | Windows pinned NSIS/template compile 有 CI 证据；clean-VM 安装/启动/升级/卸载/取消回滚无验证。 | OPEN / HOLD / NOT VERIFIED |
 | #44 approval expiry | P1 | M1 owner head d26a0c3 的 CI 与 M9 同一 Gateway/test blob 支持限范围 expiry regression。 | CLOSED（有限范围） |
 | #45 native Shell | P1 | 实际 Windows Codex Shell 没有可信 fail-closed policy enforcement 证据。 | OPEN / UNPROTECTED |
-| #46 OBSERVE docs sync | P2 | M0 canonical、M5 OBSERVE 语义及 PR47 头 3afc553 的 exact CI 9/9 已核对；M5 report 顶部状态快照仍旧，负责人已本地提交修正 ef38091。 | OPEN / REPORT REFRESH + NEW-HEAD CI PENDING |
+| #46 OBSERVE docs sync | P2 | M0 canonical、M5 OBSERVE 语义及 PR47 头 3afc553 的 exact CI 9/9 已核对；M5 report 顶部状态快照仍旧，负责人已本地提交修正 7d5df63。 | OPEN / REPORT REFRESH + NEW-HEAD CI PENDING |
 | #48 OBSERVE policy/router | P1 | M5/M1 有限 hard-deny、零审批/零 callback、safe-read/egress 证据与当前 head CI。 | CLOSED（有限策略/router范围） |
 | External E4 | P1 | M6 自动 verifier CI 不替代独立真实模型/外部 E4 evidence。 | NOT VERIFIED |
 | M4 backend state | P2 | 当前安全/E4 后端状态不可用/未核实。 | UNKNOWN |

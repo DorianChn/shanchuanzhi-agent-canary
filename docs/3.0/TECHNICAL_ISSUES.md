@@ -11,7 +11,7 @@
 | #41 | P1 | M7 | PR #39 exact CI 9/9、wrapper 2/2，含 Windows pinned NSIS/template compile；clean-VM 安装、启动、升级、卸载及实际取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
 | #44 | P1 | M1 | #43 head d26a0c3 CI 9/9；M9 current Gateway/test blob 与 owner head 匹配；过期拒绝、pending 清理和 callback=0 证据已读回。 | CLOSED；仅审批过期路径和现有测试基线 |
 | #45 | P1 | M2 | 子进程隔离和 Hook fixture 不覆盖实际 Codex 原生 Shell；宿主策略仍未启用/验证。 | OPEN / UNPROTECTED |
-| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical 和 M5 OBSERVE hard-deny 语义已同步；PR #47 head 3afc553 exact run 38614270263 已 9/9。M5 readiness report 顶部快照仍旧，负责人已在本地提交修正 ef38091。 | OPEN；推送报告刷新并核对新 head checks 后再关闭 |
+| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical 和 M5 OBSERVE hard-deny 语义已同步；PR #47 head 3afc553 exact run 38614270263 已 9/9。M5 readiness report 顶部快照仍旧，负责人已在本地提交修正 7d5df63。 | OPEN；推送报告刷新并核对新 head checks 后再关闭 |
 | #48 | P1 | M1/M5，M0 契约 | OBSERVE sensitive-read hard DENY、审批队列零新增/callback=0及下游 egress 有限证据均记录。 | CLOSED（有限范围） |
 | #49 | P1 | M0/M1/M9 | M0/M9 canonical 根路径与 M1 owner 契约路径已按 blob 对照，exact M9 CI 通过。 | CLOSED（仅路径/hash 和对应候选 CI） |
 
