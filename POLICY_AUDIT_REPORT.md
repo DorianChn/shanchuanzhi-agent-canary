@@ -55,7 +55,7 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 M0 owner 管理的 canonical API contract 位于 docs/3.0/API_CONTRACTS.md（M0 PR #30）。当前契约体现策略只收紧、OBSERVE 保留显式拒绝及 Gateway 最终执行复查语义。M5 将未知工具映射为 DENY / unregistered_tool，并在 M5 审计事件中保留 UNKNOWN。M5 没有修改 M1 的 Hook、Gateway、Guard 或 runtime/evidence.ts；与 Gateway 组合时仍需把最终回调路由到 Gateway agent.dispatch。
 
-M5 HEAD cf4e2cdb 不含 docs/3.0/API_CONTRACTS.md，因此不存在 M5 与 M0 canonical contract 的重复路径；该文件由 M0 PR #30 管理，本轮不修改。契约正文已反映 M5 的策略/事件语义，但其中的状态说明仍引用旧 M5 head f8291c9 并称 CI 待运行。最新 M5 远端代码 head 为 cf4e2cdb，PR #47 CI run 38527097304 的 9/9 项检查已通过；由 M0 owner 刷新其状态说明。Issue #27 中 M5 已确认自己只拥有 exports["./policy"] 与两个新增 scripts.test 路径；M3/M6/M7 字段仍需组合到同一 AC3 manifest 并通过共同验收。M5 的更改属于公共策略行为变更，PR 标记 API-Contract-Change: yes、关联 #27，并在 M9 跨模块验收前保持 Draft。
+M5 HEAD cf4e2cdb 不含 docs/3.0/API_CONTRACTS.md，与 M0 canonical contract 不存在重复路径；该文件由 M0 PR #30 管理，本轮不修改。M0 本地提交 0cb3b009eedc2a48213e880ae0a94c4c7c02ade5 更新了 API_CONTRACTS.md、INTEGRATION_RISKS.md、TECHNICAL_ISSUES.md 和 TECHNICAL_STATUS.md；其中记载 M9 本地组合候选 845743d 的 npm run verify 为 391 passed、0 failed、6 environment-condition skips，100-file package-smoke 通过，但组合 GitHub CI 仍 pending。该 M0 提交尚待例行批次推送；M0 PR #30 的远端页面目前显示 published head bcedbae，未包含 0cb3b00，因此本地更新不作为远端事实。[PR #30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 所在 M0 分支另有未提交文档改动，不属于 0cb3b00。M0 本地状态更新不再作为 PR #47 保持 Draft 的条件；M5/组合验收、组合 GitHub CI 与真实 M1+M5 宿主接线仍未完成。
 
 M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入；Hook/Gateway 自动接线、跨模块事件关联及真实 M1+M5 集成尚未验证。
 
@@ -79,9 +79,9 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 - Base：feature/agent-canary-3.0；远端 PR #47 为 OPEN/Draft，代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4。Issue #46 与 #48 均 OPEN。
 - `API-Contract-Change: yes`；`Coordinated-with: M0, M1, M3, M6, M7`。
 - Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-policy.test.ts (43/43); npm test (341 passed, 5 skipped, 0 failed); npm run build (pass); git diff --check (pass); PR #47 CI run 38527097304 (9/9 pass: Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, package-smoke).
-- M0 canonical contract 已无重复路径且正文语义对齐；M0 owner 需刷新其文件中的旧状态说明。M3/M5/M6/M7 仍需验收组合 manifest 和跨模块接线；M9 验收前 PR 保持 Draft。
+- M0 canonical/status 已由本地提交 0cb3b009eedc2a48213e880ae0a94c4c7c02ade5 更新，尚待例行推送；这不是 PR #47 的 Draft 阻塞项。PR #47 独立 CI 已通过，但 M5 本模块验收、M9 组合 GitHub CI 和真实 M1+M5 宿主接线仍未完成；M3/M5/M6/M7 组合 manifest 仍需验收。
 
-### PR 描述草稿（待 M0 协调后复制）
+### PR 描述草稿（仅供后续批次核对，未发送）
 
 ```markdown
 ## What changed
@@ -107,7 +107,7 @@ Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-p
 ## Reviewer notes
 
 - P0 acceptance evidence is limited to M5 synthetic callbacks; it does not prove real host/Gateway integration.
-- Keep this PR Draft until M0 refreshes the stale status note in its canonical contract and M3/M5/M6/M7 complete combined-manifest and cross-module acceptance. M9 integration and real host/Gateway wiring are not complete.
+- Keep this PR Draft pending M5 and cross-module acceptance. M9 local candidate 845743d has aggregate verify and package-smoke evidence, but combined GitHub CI remains pending and real M1+M5 host wiring is unverified. M0 local commit 0cb3b00 refreshes its contract/status; its scheduled push is separate from this readiness gate.
 ```
 
 ### P0 验收条件
@@ -118,4 +118,4 @@ Test-Evidence: node --import tsx --test test/security-router.test.ts test/risk-p
 4. 同一测试集证明公开只读操作和普通已登记操作仍符合各保护模式的预期，避免通过扩大拒绝范围制造假通过。
 5. M5 standalone PR #47 CI 已通过，但这不等于 M9 验收或跨模块 P0 集成完成；组合 manifest、M9 验收及真实 M1+M5 宿主接线仍须单独完成，M5 fixture 结果只作为本模块单测证据。
 
-PR #47 仍为 OPEN/Draft，远端代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4，CI run 38527097304 为 9/9 全绿。Issue #46、Issue #48 和 M0 PR #30 均保持 OPEN（PR #30 为 Draft）；Issue #48 不在本地报告更新中关闭。M0 canonical contract 正文已体现 M5 策略语义，但其旧 CI/head 状态说明需由 M0 owner 刷新。此处仅修改 M5 所有权报告，未推送或写入 GitHub；本地报告提交待 M0 例行批次推送。M9 验收、组合 manifest 的跨模块验收、真实 M1+M5 宿主接线与真实副作用仍未验证。
+PR #47 仍为 OPEN/Draft，远端代码 head cf4e2cdbedd0020e5b5132598af6f845a8214fc4，CI run 38527097304 为 9/9 全绿。Issue #46、Issue #48 与 M0 PR #30 均保持 OPEN（PR #30 为 Draft）。M0 本地提交 0cb3b009eedc2a48213e880ae0a94c4c7c02ade5 更新了 canonical contract 和三份协调文档；其 M9 本地候选 845743d 的 aggregate verify、100-file package-smoke 已通过，但 combined GitHub CI 仍 pending。PR #30 远端页面当前仍显示 published head bcedbae，尚未包含 0cb3b00；M0 同分支另有未提交文档改动，本地更新等待例行批次推送。M0 更新不是 PR #47 的 Draft 条件；M5 模块验收、组合 GitHub CI、真实 M1+M5 宿主接线与真实副作用仍未完成。本次仅更新 M5 报告，未推送或写入 GitHub。
