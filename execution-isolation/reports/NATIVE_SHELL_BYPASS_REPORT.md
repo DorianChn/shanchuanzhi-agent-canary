@@ -68,13 +68,25 @@ Gateway 对齐分析见 [`gateway-adapter/COMPATIBILITY_PROPOSAL.md`](../gateway
 
 ## 2026-10-14 05:01 UTC Windows CLI sandbox probe
 
-按 M0 只读核验提供的 CLI 路径，启动 Windows Codex CLI `0.162.0-alpha.17.2`；M0 报告当前用户配置为 `windows.sandbox="elevated"`，本次未读写或覆盖配置。命令从 M2 worktree 调用 `codex.exe sandbox -P :workspace --include-managed-config -- powershell.exe ...`，仅尝试把 `%TEMP%\agent-canary-m2-native-cli-probe-zIe5UB\synthetic-sentinel.txt` 从合成内容 `BEFORE` 改为 `AFTER`，并由子命令回读确认。
+按 M0 只读核验提供的 CLI 路径，启动 Windows Codex CLI `0.162.0-alpha.17.2`；宿主策略值已省略：`host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN`。命令从 M2 worktree 调用 `codex.exe sandbox -P :workspace --include-managed-config -- powershell.exe ...`，仅尝试把 `%TEMP%\agent-canary-m2-native-cli-probe-zIe5UB\synthetic-sentinel.txt` 从合成内容 `BEFORE` 改为 `AFTER`，并由子命令回读确认。
 
 测试目录解析后确认位于 `%TEMP%`；写入前 SHA-256 为 `be9351741a8155d01fd028d158546f1005e73ceeb0bb2d093335feac4144e450`，写入后为 `94c3f1415d2061d05e4cce4d33e43e26a5ad7ebcf6e89acace6e8b84240a629c`。CLI 退出码 `0`，观察到 `SENTINEL_WRITE_COMPLETED`，stderr 为空。核验前目录为新建唯一目录；完成摘要检查后只删除此目录，并确认其已不存在。
 
 这证明 Windows Codex CLI 的 `sandbox` 子命令能启动本次 PowerShell 并允许该临时目录写入。它不是 Desktop 中 Codex 原生 Shell 工具的调用，未观测 Desktop Hook 回调或决定；也没有测试沙箱拒绝写入。官方 `:workspace` profile 明确允许系统临时目录写入，因此本次成功是预期行为，不能据此声称受保护路径阻断已通过。Desktop 原生 Shell 状态仍为 `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`。一次前置脚本探测因 PowerShell 命令解析失败、哨兵 hash 未变化且没有成功标记而作废，没有记作 sandbox deny。
 
 详细机器结果见 [`native-host-hook-evidence.json`](../codex/native-host-hook-evidence.json)。
+
+## 2026-10-14 06:49 UTC Windows Desktop active-policy inspection
+
+我用只读 Windows PowerShell 检查了当前运行的 Codex 桌面进程、Windows AppX 包和指定配置字段，没有改任何用户配置。Desktop 包版本为 `OpenAI.Codex 26.1007.2314.0`；Windows CLI 为 `0.162.0-alpha.17.2`。M2 agent 自己仍运行在 WSL2（Linux `6.18.33.2-microsoft-standard-WSL2`），没有调用桌面原生 Shell，亦没有宿主 Hook callback 遥测。
+
+只读主机检查涉及 `%USERPROFILE%\.codex\config.toml`，具体宿主策略值不在报告中：`host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN`。用户 `hooks.json`、用户 `requirements.toml`、文档所列 `%ProgramData%\OpenAI\Codex\requirements.toml`、同目录旧版 `managed_config.toml`，以及 M2 worktree 根 `.codex` 配置/Hook 均不存在；M2 候选 Hook fragment 未安装。有效会话权限未从 Desktop UI 读取；云托管与插件 Hook 来源未枚举，因此将二者记为 `UNKNOWN`，不据此声称所有宿主层都没有 Hook。
+
+OpenAI 当前文档说明：`PreToolUse` 可以对匹配的 `Bash` 调用作显式拒绝，但 callback 错误、超时或格式错误可能不阻断工具；Windows sandbox/permission profile 可限制本机命令及其子进程的文件访问。换言之，Windows 平台有支持的 OS 沙箱能力，但本次检查未证明实际会话启用了 fail-closed 保护：`host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN`。M2 Hook 未安装，且本会话无法从 WSL agent 调用 Desktop Shell 复验。不能将此结论扩大为“平台完全不支持”，也不能把 Hook 片段或 CLI 子命令测试算作桌面验收。
+
+**当前结果：**Desktop 原生 Shell 仍是 `UNPROTECTED / BLOCKED_NOT_VERIFIED`；Issue #45 保持 OPEN。`host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN`。验收要求：对受保护路径存在可重复的 OS-level deny，且在真正的 Windows Desktop 原生 Shell 中用全新唯一哨兵复测；记录 Hook 是否调用、宿主决定、退出状态及操作前后 SHA-256，并确认写入未发生。Hook 可作额外阻断，但不能单独满足 fail-closed，因为宿主文档明确记录了 callback 失败时可能放行。M2 不修改用户级或 ProgramData 配置，也不安装全局 Hook。
+
+本记录依据 OpenAI 官方 [Hooks](https://learn.chatgpt.com/docs/hooks)、[Windows sandbox](https://learn.chatgpt.com/docs/windows/windows-sandbox)、[Permissions](https://learn.chatgpt.com/docs/permissions) 与 [Windows desktop app](https://learn.chatgpt.com/docs/app/windows) 文档。
 
 ## 2026-10-14 06:30 UTC M2 native-shell gate 与 #32 集成门槛
 
