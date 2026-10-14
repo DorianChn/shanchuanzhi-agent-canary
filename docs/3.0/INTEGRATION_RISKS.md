@@ -2,25 +2,24 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 08:48 UTC）
+## 实时风险快照（2026-10-14 09:05 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
-| #35 Guard quarantine | P0 | Issue #35 CLOSED；已验证范围限同进程、同 Guard 实例且 callback 配合 AbortSignal。跨进程/shared-store 与强制终止不在证据内。 | CLOSED（范围有限） |
-| #32 Hook interruption | P1 | PR #43 head `f59ba37` 为 9/9；历史 wrapper 漏 marker 的精确根因仍 UNKNOWN，须在 M9 共同基线复验。 | OPEN / INTEGRATION PENDING |
-| #44 approval expiry | P1 | PR #43 当前 9/9，M1 候选取拒绝错误中的 requestId 并断言过期后 callback 为零；共同基线验收仍未做。 | OPEN / INTEGRATION PENDING |
-| #48 OBSERVE sensitive read | P1 | PR #47 远端 head `cf4e2cd`，run `38527097304` 为 9/9；敏感读取 hard DENY 保留。Issue #48 等待 M9 组合验收，M5 readiness report 正本地更正。 | OPEN / INTEGRATION PENDING |
-| #41 M7 reliability | P1 | PR #39 主 CI `38510356534` 9/9、wrapper `38510356548` 2/2；VM 安装/升级/卸载和实际取消回滚未验证。VM 锁、异常关机及既有 vdisk 风险未解除。 | BLOCKED / HOLD; NOT VERIFIED |
-| #45 native host Shell | P1 | PR #37 远端 head `cb84f43` 9/9；本地脱敏候选 `cfde2f0` 未推送。真实 Codex Desktop 原生 Shell 仍 UNPROTECTED；Hook fixture 与 AppContainer child-process 证据不构成原生宿主保护。 | UNPROTECTED / OPEN |
-| #27 manifest / package fields | P1 | M3/M5/M6/M7 各分支的 package 字段和组合 package-smoke 仍需 M9 核验；M6 外部 E4 仍 NOT_VERIFIED。 | OPEN |
-| #28 Gateway lifecycle | P1 | M1 commit `f15fdcfa` 在 M1/M7 分支祖先中，M7 对 AC3 的 Gateway 净差异为空；M9 组合 CI 尚待执行。 | OPEN |
-| #46 canonical API contract | P2 | M0 维护 canonical contract；M6 确认其 SecurityEvidenceEvent 与 M5 PolicyAuditEvent schema 分离且当前不消费 M5 stream。契约内容已准备修正，仍需 M9 组合复验。 | OPEN |
-| M9 combined acceptance | P1 | PR #36 自身 CI 9/9；M9 正在既有 integration worktree 核对候选 refs 并开始组合验收，综合测试结果待出。 | IN PROGRESS / NOT YET VERIFIED |
-| worktree pointers | P2 | WSL Git 列表可读、分支独立；Windows Git 对部分 WSL 路径显示 prunable，仅用 WSL Git 操作这些 worktree 元数据。 | MONITOR |
-| quota / scheduling | 调度门槛 | 用量页 08:48 UTC 实读五小时 72%、每周 73%、余额 113、约 2h11m 后重置。最近 push 批次约 07:14 UTC；当前 M5/M9 使用 2/2 开发槽。VMware/真实模型/安装互斥测试尚未启动。 | MONITOR |
+| #35 Guard quarantine | P0 | Issue #35 CLOSED；证据限同进程、同 Guard 实例且 callback 遵守 AbortSignal。跨进程/shared-store 与强制终止不在证据内。 | CLOSED（范围有限） |
+| #32 Hook interruption | P1 | PR #43 f59ba37 的独立 CI 为 9/9；历史 wrapper 漏 marker 的精确根因仍 UNKNOWN，M9 候选尚待 GitHub CI。 | OPEN / INTEGRATION PENDING |
+| #44 approval expiry | P1 | PR #43 独立 CI 9/9，过期后 callback 为零的候选测试通过；M9 共同基线 GitHub CI 尚未运行。 | OPEN / INTEGRATION PENDING |
+| #48 OBSERVE sensitive read | P1 | PR #47 head cf4e2cd、run 38527097304 为 9/9；M5 本地 readiness 修正 eddef7e。M9 本地组合测试通过，但共同基线 GitHub CI 尚待运行；敏感读取 hard DENY 保留。 | OPEN / INTEGRATION PENDING |
+| #41 M7 reliability | P1 | PR #39 主 CI 38510356534 为 9/9、wrapper 38510356548 为 2/2；VM 安装/升级/卸载和实际取消回滚未验证，隔离 VM 与回滚前置条件不足。 | BLOCKED / HOLD; NOT VERIFIED |
+| #45 native host Shell | P1 | PR #37 远端 cb84f43 CI 9/9；M2 558eccb 修正 PreToolUse 对合法但结构错误 JSON 的 fail-closed 行为。真实 Codex Desktop 原生 Shell 仍 UNPROTECTED；子进程与协议 fixture 不证明宿主保护。 | UNPROTECTED / OPEN |
+| #27 manifest / package fields | P1 | M9 组合候选 845743d 的 aggregate verify、pack:check、100 文件 package smoke 本地通过；组合 GitHub CI 与 E4 消费者验收未完成。 | OPEN / CI PENDING |
+| #28 Gateway lifecycle | P1 | M1 f15fdcfa 在 M1/M7 分支祖先中，M7 对 AC3 Gateway 净差异为空；M9 本地 aggregate verify 通过但 GitHub 共同基线尚待 CI。 | OPEN / CI PENDING |
+| #46 canonical API contract | P2 | M0 维护唯一 canonical contract；M6 确认 SecurityEvidenceEvent 与 M5 PolicyAuditEvent 分离且当前不消费 M5 stream。外部 E4 仍 NOT_VERIFIED。 | OPEN |
+| M9 combined acceptance | P1 | Candidate 845743d99f634ccdc7e17b43b2ab8c3993e2001b：npm verify 391 pass、0 fail、6 环境条件 skip；package smoke 100 文件、docs checks 通过。PR #36 远端仍 996073a，组合 GitHub CI 和模块状态更新尚待推送。 | LOCAL PASS / CI PENDING |
+| worktree pointers | P2 | M9 integration worktree 在 CRLF-aware core.autocrlf=true、禁可选索引锁的 status 下干净；默认 WSL Git 把 CRLF 行尾误报为全树 M。先前 0 B index.lock 已消失，未清理或改写。 | MONITOR |
+| quota / scheduling | 调度门槛 | 用量页 09:00 UTC 实读五小时 69%、每周 73%、余额 113、约 1h59m 后重置。最近推送约 07:14 UTC；当前 M2/M9 使用 2/2 槽。VMware/真实模型/安装测试没有运行。 | MONITOR |
 
-VMware、真实模型和安装测试互斥；M7 的安装环境盘点已结束，隔离 VM 和回滚条件不成立，所有运行验收暂缓。五小时额度低于 5% 或无法读取时，暂停所有开发、测试、浏览器和 GitHub 操作；确认额度重置后再继续。
-
+VMware、真实模型和安装测试互斥；M7 clean-VM 安装、升级、卸载及真实取消回滚仍 HOLD，未运行。五小时额度低于 5% 或无法读取时，暂停所有开发、测试、浏览器和 GitHub 操作；确认额度重置后再继续。
 ## 历史风险增量（2026-10-13 16:16 UTC）
 
 | ID | 优先级 | 风险/证据 | 责任与当前动作 | 状态 |

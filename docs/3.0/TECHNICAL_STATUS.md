@@ -1,17 +1,17 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 08:48 UTC；GitHub/CI/用量页实核）
+## 当前状态（2026-10-14 09:05 UTC；GitHub、候选 worktree 与用量页实核）
 
-- **额度与调度**：网页版 08:48 UTC 实读五小时剩余 72%、每周剩余 73%、额度 113、约 2h11m 后重置；M5 与 M9 占用 2/2 开发槽。最近远端更新/推送批次约 07:14 UTC，20 分钟间隔已满足；等本地候选审查后再按批次推送。没有 VMware、真实模型或安装测试在运行。
-- **PR #24**：仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`、head `62496d4`；没有修改或合并。**PR #30** M0 head `a81a33d`，CI run `38527097301` 9/9、ownership contract `38527097311` 1/1 通过。
-- **M1–M8 候选 refs**：M1 `f59ba37`、M2 `cb84f43`、M3 `54facf0`、M4 `f301195`、M5 `cf4e2cd`、M6 `d513810`、M7 `5c7d95d`、M8 `b0f30ff` 均与对应远端 Draft PR head 一致，列示 CI 均绿。M2 脱敏候选 `cfde2f0` 是未推送的本地后继；原生 Codex Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`。
-- **M5 / #48**：PR #47 run `38527097304` 9/9；OBSERVE 对敏感读取仍硬拒绝。M5 正在修复 readiness report 的旧契约路径描述；#48 保持 OPEN，等 M9 共同基线验证。
-- **M6 / #46**：合成事件 schema 41/41、bundle verifier 12/12；M6 确认 M5 `PolicyAuditEvent` 与 M6 `SecurityEvidenceEvent` 分离，当前 M6 不消费 M5 audit stream，也未覆盖 M2 `executionSurface` 或 OBSERVE 行为。外部 E4 仍 `NOT_VERIFIED`。
-- **M7 / #41**：主 CI 9/9、wrapper 2/2；VM 安装/升级/卸载和真实取消回滚仍 `NOT VERIFIED / HOLD`，既有 VM 安全前置条件未满足。
-- **M9 / PR #36**：M9 预检确认所有远端 M1–M8 SHA 与候选清单匹配，PR #24 未动；M9 正在现有 integration worktree 尝试组合。尚无测试或冲突处置结果，未推送。
-- **未关闭门槛**：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，但范围仅限同进程、同 Guard 且 callback 遵守 AbortSignal。未合并 main/#24，未发布 Release。
-- 用量低于 5% 或无法读取时暂停开发、测试、浏览器和 GitHub 操作，只有确认重置后才恢复。M0 本次工作仅限协调文档，不触碰 M1–M8 产品代码。
-
+- **额度与调度**：网页版 09:00 UTC 实读五小时剩余 69%、每周 73%、额度 113，约 1h59m 后重置。M2 和 M9 占用 2/2 开发槽。最近远端推送批次约 07:14 UTC；20 分钟间隔已满足，待本地提交审查后批量推送。没有 VMware、真实模型或安装测试在运行。
+- **PR #24**：GitHub 当前仍 OPEN/Draft，base competition/shanchuanzhi-release-readiness、head 62496d4；未修改或合并。**PR #30** 仍 OPEN/Draft，head a81a33d；记录的 run 38527097301 为 9/9，ownership-contract run 38527097311 为 1/1。
+- **M1–M8 远端 PR**：当前查询仍为 OPEN/Draft，列出的远端 heads 未变化；既有 CI 记录均绿。M2 与 M5 有未推送的本地提交；M2 已修正候选 Hook 的输入结构校验，原生 Shell 保护仍未验证。
+- **M2 / #45**：本地提交 558eccb 在 M2 Hook 对合法 JSON 但结构错误输入时显式拒绝，并新增 5 组 malformed-event 回归。Windows Node 22.23.1 定向 protocol 检查通过。该修复不安装/信任 Desktop Hook；原生 Codex Desktop Shell 仍 UNPROTECTED / BLOCKED_NOT_VERIFIED。
+- **M5 / #48**：PR #47 远端代码 head cf4e2cd，CI run 38527097304 为 9/9；M5 readiness report 已在本地提交 eddef7e，仅改报告，待批次推送。OBSERVE 对敏感读取仍 hard DENY，Issue #48 保持 OPEN。
+- **M6 / #46**：M6 合成事件 schema 41/41、bundle verifier 12/12；SecurityEvidenceEvent 与 PolicyAuditEvent 为分离 schema，当前 M6 不消费 M5 stream。外部 E4 仍 NOT_VERIFIED。
+- **M7 / #41**：PR #39 主 CI 9/9、wrapper 2/2；clean-VM 安装、升级、卸载及真实取消回滚仍 NOT VERIFIED / HOLD。已有 VM 锁、异常关机、磁盘链风险和隔离回滚条件不足，未启动/修复 VM。
+- **M9 / PR #36**：本地组合候选 HEAD 845743d99f634ccdc7e17b43b2ab8c3993e2001b 的 npm run verify 通过：397 项，391 通过、0 失败、6 项环境条件跳过；build、pack:check 与 100 文件 tarball smoke 通过。node scripts/check-docs.mjs 通过（14 文档、55 链接、13 示例、4 issue 模板）；WinForms 仅编译通过，未运行安装程序。M9 worktree 使用 GIT_OPTIONAL_LOCKS=0 与 core.autocrlf=true 核验干净；默认 WSL Git 的全树 M 是 CRLF 行尾差异，临时 index.lock 已消失。M9 正补本地验收记录；远端 PR #36 仍在旧 head 996073a，组合 GitHub CI 尚未运行。
+- **未关闭门槛**：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，但范围仅限同进程、同 Guard 且 callback 遵守 AbortSignal。E4、原生宿主保护及真实安装验收仍不能标 PASS。
+- 五小时额度低于 5% 或读数不可用时暂停所有开发、测试、浏览器和 GitHub 操作；只在可确认重置后恢复。未合并 main/#24，未发布 Release；M0 仅维护协调文档。
 ## 历史快照（2026-10-14 07:16 UTC；额度沿用 07:13 UTC 读数）
 
 - **PR #24**：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`；本轮未修改、未合并。
