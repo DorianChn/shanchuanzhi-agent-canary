@@ -10,7 +10,7 @@ Glama 页面目前仍显示 V1.2.7 / Agent Canary 2.0 竞赛预览等历史内�
 
 仓库原有 `src/config.ts` 和根目录 `server.json` 仍标记 `1.2.7`，因此 MCP `initialize` 响应也会报告 `1.2.7`。本维护分支已把这两处对齐到 `3.0.0`，并增加 stdio 协议、工具发现、完整工具 Schema 与安全标注回归测试。
 
-修复已提交到独立远程分支 `maintenance/glama-sync`，且核对到 GitHub `main` 仍为审计基线提交 `146be17ea924d09a78ceff90b83006cdd40dfc43`。PR 尚未创建；修复尚未进入主分支，也没有触发 Glama 更新。PR 状态为 **NOT VERIFIED**，页面同步为 **NOT VERIFIED**。
+修复已提交到独立远程分支 `maintenance/glama-sync`。PR [#50](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/50) 当前为 OPEN、未合并；GitHub Actions 的 9/9 个 job 已通过。GitHub `main` 仍为审计基线提交 `146be17ea924d09a78ceff90b83006cdd40dfc43`，本任务未直接修改主分支。Glama 更新仍为 **NOT VERIFIED**。
 
 ## GitHub 版本与元数据
 
