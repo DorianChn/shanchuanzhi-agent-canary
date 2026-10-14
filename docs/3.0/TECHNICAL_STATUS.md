@@ -4,11 +4,12 @@
 
 - PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；11/11 checks 通过。未修改或合并。
 - PR #30：OPEN/Draft，M0 head 82cdc3e3c751d1371c57adbd355b7b9c98dcdf1e；9 个常规 CI jobs 与 ownership-contract gate 共 10/10 通过。
-- 当前两个开发槽为 M7 与 M2。M7 工作树 feature/ac3-reliability-ac3 干净，HEAD/PR #39 为 f66dcc6。CI 为 8 pass、2 fail、1 skipped：Windows pinned-NSIS 编译失败，makensis 报 .onUserAbort 已重复定义；Windows Node 22 在 test/agent-hook.test.ts:54 的 M1-owned Hook 中断测试未观察到 marker。#41 保持 OPEN；M7 修复必须保留 MUI_ABORTWARNING、RollbackInstall 和编译门禁。M0 已在官方 MUI2 文档中核对 MUI_CUSTOMFUNCTION_ABORT 为可行回调方向，仍须实际编译与新 head CI 证明。
+- 当前开发槽为 M2 与 M6。M7 已完成本地代码步骤，commit 5c7d95d 将重复 .onUserAbort 改为 MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup；MUI_ABORTWARNING 和 RollbackInstall 保留。定向测试 8 pass/1 skip/0 fail，可靠性套件 43 pass/3 skip/0 fail；固定 NSIS 编译器本机不可用，尚无真实编译证据。该提交尚未推到 PR #39，等待下一批次与新头 CI。
 - M2 PR #37 head a1c239d，9/9 checks 通过；原生 Codex Shell 仍 UNPROTECTED。#45 是 M2 当前任务，要求在隔离宿主/项目验证受信任 Hook 对合成 sentinel 的真实阻断，或记录准确能力限制并保持 UNPROTECTED/BLOCKED。
+- M6 PR #38 head bca895f 为 7 pass、Windows Node 22 1 fail（M1-owned Hook marker 用例）、package-smoke 1 skipped。M6 当前在独立 AC3 worktree 检查 E4 verifier 与未跟踪证据包；该包必须原样保留，外部 E4 保持 NOT VERIFIED。
 - M1 PR #43 head 2276526，run 38502266488 为 9/9 通过。历史 marker 复现仍在 #32，根因为 UNKNOWN；M7 不修改 M1 Hook 路径。
 - 后续模块快照：M3 PR #33、M4 PR #34、M8 PR #40 当前头均为 9/9 checks 通过；M5 本地分支 feature/ac3-policy-audit 有 5 个未发布提交且尚无 PR；M6 PR #38 为 7 pass、Windows Node 22 1 fail、package-smoke 1 skipped，外部 E4 仍 NOT VERIFIED。M5/M6 等空闲槽继续处理。
-- M7 本地证据仅为 Windows focused reliability regressions 3/3、reliability 43 pass/3 skip/0 fail；不能替代 NSIS 编译或真实安装验收。未运行本地安装器或 VMware；安装验收仍 NOT VERIFIED / HOLD。M9 最终集成未完成。
+- M7 本地证据不能替代 NSIS 编译或真实安装验收。未运行本地安装器或 VMware；安装验收仍 NOT VERIFIED / HOLD。M9 最终集成未完成。
 - 用量页 03:58 UTC 读数为五小时剩余 82%、约 1h51m 后重置，远高于 5% 暂停线。低于 5% 或读数不可确认时暂停开发、测试和 GitHub 操作；低额度暂停后须看到五小时额度实际重置才恢复。
 - 最近远端 push 为 PR #30 于 03:52:10 UTC；下次批量 push 不得早于 04:12:10 UTC，合并就绪分支一批上传。
 - VMware、真实模型、安装测试互斥；当前没有此类本地测试预约。未合并 main、未合并 PR #24、未发布 Release。
