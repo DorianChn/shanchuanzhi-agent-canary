@@ -1,5 +1,22 @@
 # M0 技术问题分级与协作流程
 
+## 最新问题台账（2026-10-14 16:42 UTC）
+
+| Issue | 级别 | 责任模块 | 当前确认事实 | 状态/下一验收 |
+| --- | --- | --- | --- | --- |
+| #27 | P1 | M3/M5/M6/M7，M0 协调 | PR #36 组合 CI 11 项通过；仍需核对 manifest 所有字段、M6 AC3 轨道及 M9 实际集成。 | OPEN；完成字段表与组合验收 |
+| #28 | P1 | M1 owner，M7 配合 | M1/M7 各自 CI 通过；M9 同时集成 close/quarantine 语义尚待逐项复核。 | OPEN；M9 组合生命周期回归 |
+| #32 | P1 | M1 owner，M0 跟踪 | 当前 M0/M1–M8/M9 CI 通过；历史 Windows marker 间歇失败根因仍 UNKNOWN，不能把子进程夹具称作宿主 callback 证据。 | OPEN；只在确有旧基线未修复时保留复现并验收 |
+| #35 | P0 | M1 | 已关闭，范围限同进程、同一 Guard、callback 遵循 AbortSignal。 | CLOSED（有限范围） |
+| #41 | P1 | M7 | 当前 #39 CI 与 pinned NSIS/template compile 通过；clean-VM 安装、启动、升级、卸载、真实用户取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
+| #44 | P1 | M1 | 当前 #43 head `ca24d37` 的精确过期回归定向 2/2，CI 9/9；到期审批拒绝、清空 pending、callback=0。旧 1ms 观察窗口问题不证明产品放行。 | OPEN；待 M9 baseline acceptance |
+| #45 | P1 | M2 | AppContainer/Hook fixtures 只覆盖已测子进程/协议；实际 Codex 原生 Shell 仍 UNPROTECTED。 | OPEN / NOT VERIFIED |
+| #46 | P2 | M0 owner，M5 提供语义 | M5 报告和 PR body 已改正；M0 root canonical contract 仍待更新并推送。 | OPEN；文档同步验收 |
+| #48 | P1 | M1/M5，M0 契约 | 保留 sensitive-read hard DENY 与 safe-read 下游 egress fixture；M5 exact-head 9/9、M9 CI 11 项通过。 | OPEN；M9/契约联合验收 |
+| #49 | P1 | M0/M1/M9 | M0 PR #30 与 M1 PR #43 在 root `docs/3.0/API_CONTRACTS.md` 有不同内容；M9 远端当前带 M1 文件。M1 已本地 commit `d26a0c3` 做 100% rename 到模块路径；PR #43 body 已更新，commit 等待推送。 | OPEN；M0/M9 合并完整契约 |
+
+问题处理规则：P0 为保护路径失效放行、敏感信息泄露或严重数据损坏；P1 为接口不兼容、构建失败或关键功能不可用；P2 为非关键 UI、文档及一般性能。保留失败测试和安全策略，禁止伪造结果。跨模块 Issue 必须写责任模块、复现、验收标准和状态。
+
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
 ## 当前调度（2026-10-14 11:56 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）

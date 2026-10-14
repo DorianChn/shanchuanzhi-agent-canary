@@ -6,9 +6,17 @@
 
 - 3.0 以增量导出为主，保留现有 CLI/MCP/SDK 行为。公共字段、路由、事件或失败语义的改变都算契约变更。
 - 接口所有者在同一 Draft PR 更新契约，并说明旧调用方的适配方式、错误语义和版本边界。其他模块经适配层集成，不私自修改接口。
-- `docs/3.0/API_CONTRACTS.md` 由 M0 维护为唯一公共契约文件。模块发现契约缺口时提交变更建议给 M0；模块 PR 不重复新增或维护同一路径。
+- `docs/3.0/API_CONTRACTS.md` 是 M0 维护的唯一跨模块 canonical contract；每个接口 owner 定义并审核自己接口的语义。M0 将 owner-approved 语义汇入本文件，模块 PR 可保留 `docs/3.0/<Mx>/...` owner-authored contract，不得在根路径新增另一份不同内容。其他模块经适配层集成。
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
+
+## 当前契约与集成状态（2026-10-14 16:42 UTC）
+
+- PR #43 M1 owner remote head `ca24d37` / run `38558217057` 9/9；审批到期拒绝、清空 pending、保持非 ALLOW 且 callback=0 的定向回归 2/2。M1 是 Gateway/Guard 语义 owner；本地 commit `d26a0c3` 将其 owner-authored file rename 至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md`，尚待推送。
+- PR #47 M5 head `5fd4707` / run `38561283918` 9/9；OBSERVE 不得放行敏感读取，拒绝发生在创建审批和 callback 前。safe-read fixture 只用于继续验证下游 egress 拒绝，不改变敏感读取策略。
+- PR #36 M9 head `ab382fe` / run `38558216788` 9/9，wrapper `38558216779` 2/2；当前集成分支仍带 M1-only 根路径 `docs/3.0/API_CONTRACTS.md`，与 M0 PR #30 canonical 文件冲突，按 P1 Issue #49 处理。M9 不能静默选一份或丢弃 owner contract。
+- PR #24 仍 OPEN/Draft、head `62496d4`、11/11 checks；未修改、未合并。
+- M2 原生 Codex Shell 仍 UNPROTECTED；M6 外部 E4 与 M7 clean-VM 安装生命周期仍 NOT VERIFIED；M4 后端状态 UNKNOWN。CI/fixtures 不扩大这些覆盖声明。
 
 ## TrustedExecutionGateway — M1（接口 owner）
 
@@ -19,10 +27,10 @@
 - 文件能力使用预持有句柄和身份复查；命令使用固定 executable + argv；网络仅允许登记的 HTTPS origin，禁止凭据/查询/hash；敏感内容外发应拒绝。
 - 拒绝记录为 `NOT_STARTED`。`RUNNING` 不是成功。当前文件读写才记录副作用 `VERIFIED`；命令/MCP/网络成功不证明全部副作用。
 - `src/runtime/gateway.ts` 与 `src/containment.ts` 的执行/Guard 契约由 M1 所有；M7 的可靠性分支须集成这些语义，不能另行削弱或替换。集成跟踪于 Issue #28。
-- **M1 owner-verified lifecycle contract (2026-10-14; combined GitHub CI still pending):** Gateway must subscribe to the same shared `AgentGuard`; construction fails closed when quarantine subscription is unavailable. `trip()` latches quarantine before synchronously notifying that Guard instance's listeners; a new subscriber is notified immediately if quarantine is already active; duplicate `trip()` does not notify twice; one listener throwing cannot suppress the rest; a disposer is idempotent; `reset()` permits a later new quarantine notification.
+- **M1 owner-verified lifecycle contract (PR #43 head `ca24d37`; exact-head run `38558217057` passed 9/9):** Gateway must subscribe to the same shared `AgentGuard`; construction fails closed when quarantine subscription is unavailable. `trip()` latches quarantine before synchronously notifying that Guard instance's listeners; a new subscriber is notified immediately if quarantine is already active; duplicate `trip()` does not notify twice; one listener throwing cannot suppress the rest; a disposer is idempotent; `reset()` permits a later new quarantine notification.
 - `close()` synchronously marks the Gateway closed and clears pending approvals, publishes one shared `closePromise` before any abort/disposer callback can re-enter, aborts this Gateway's active controllers, unsubscribes at most once, drains `history.tail`, then attempts to close every resource owned by this Gateway. Concurrent/re-entrant close calls share the same Promise. A resource failure does not skip later closes; all callers receive only the stable sanitized `GATEWAY_RESOURCE_CLOSE_FAILED` error.
 - Quarantine synchronously invalidates pending approvals and active work; queued/review work from an older Guard epoch must not revive after `reset()`. Preserve fail-closed and no-callback behavior. A callback that ignores `AbortSignal` cannot be forcibly terminated, and already completed external side effects are not rolled back.
-- M1 owner review found the five M1-owned file blobs in M7 local code candidate `6d978a5` identical to M1 owner source HEAD `738a783`; M1 later report-only HEAD is `7a6eb98`. M7 current local HEAD `9088bd2` adds the read-only VM acceptance preflight report. M7 records Gateway/containment/acceptance 66/66 and reliability 43 pass, 0 fail, 3 skipped. The candidate includes `89e40cd` approval-expiry test requestId stabilization; this does not resolve or close #44. PR #39 remote remains `5c7d95d` with its exact-head 11/11 checks; those checks do not cover the unpushed candidate. Keep #28 OPEN until the candidate and combined CI are reviewed.
+- M1 PR #43 current head `ca24d37` passed 9/9; M7 PR #39 current head `4267c61` passed 9/9 and wrapper `38596572179` passed 2/2. M9 PR #36's combined CI also passed, but #28 remains OPEN pending owner review of the combined close/quarantine behavior. #44 remains OPEN pending M9 baseline acceptance. The root contract path collision is separately tracked in #49.
 
 ## Hook — M1
 
@@ -35,10 +43,10 @@
 
 - `createRiskPolicyRouter({ guard, ... })` 对工具分类为 `ALLOW|DENY|APPROVAL_REQUIRED`，返回风险、理由和模式。未登记工具默认需审批；外部网络和敏感数据按当前策略拒绝或要求审批。
 - `OBSERVE` 只豁免已登记、非敏感操作的可选审批；它不得把显式 `DENY` 或 `SENSITIVE_DATA` 改成 `ALLOW`。越界路径、明确危险操作、敏感读取与敏感外发继续拒绝；`AgentGuard` quarantine/containment 在所有模式下优先。策略 `ALLOW` 不等于 Gateway 资源登记。
-- Draft PR #47 remote head `cf4e2cd` retains the OBSERVE hard deny for registered sensitive reads. It includes M1 same-Guard fixture coverage; exact-head run `38527097304` passed 9/9 across Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, and package-smoke. M5 corrected the PR description to mark the older `f8291c9` failure superseded. M9 local combined candidate `f125e70` passed npm run verify (393 passed, 0 failed, 6 environment-condition skips), 100-file package smoke, and `npm run e4:test` (12/12); GitHub CI for that combined head is pending. The M5 branch does not modify this M0-owned canonical file. Issue #48 remains OPEN until M1/M5 behavior and combined acceptance are confirmed; no real leak is established.
+- Draft PR #47 current remote head `5fd4707` retains the OBSERVE hard deny for registered sensitive reads; exact-head run `38561283918` passed 9/9 across Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, and package-smoke. M5's report-only follow-up is local commit `6a501ab`, not yet pushed. M9 current head `ab382fe` passed its combined 9-job CI plus 2 wrapper checks; it contains the M1-only root contract file and is not yet reconciled with M0's canonical path (#49). Issue #48 remains OPEN pending the agreed M1/M5 contract and M9 acceptance; no real leak is established.
 - `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
 - `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
-- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。以上顺序和失败语义由 M1 owner 定义并已复核本地候选。M1 PR #43 remote `f59ba37` has 9/9 checks; its local report-only head is `7a6eb98`. M7 code candidate is `6d978a5`, current local M7 head `9088bd2` (the report-only follow-up); PR #39 remote remains `5c7d95d` OPEN/DRAFT with 11/11 checks on the older remote head, not on the unpushed candidate. Combined GitHub CI is pending. Guard notification only covers one process and one Guard instance; callbacks that ignore AbortSignal cannot be forcibly terminated, and completed side effects are not rolled back.
+- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。以上顺序和失败语义由 M1 owner 定义。M1 PR #43 current head `ca24d37` / run `38558217057` 9/9；M7 PR #39 current head `4267c61` / run `38596572303` 9/9，wrapper run `38596572179` 2/2；M9 PR #36 combined checks are green, but #28 owner review remains. Guard notification only covers one process and one Guard instance; callbacks that ignore AbortSignal cannot be forcibly terminated, and completed side effects are not rolled back.
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
 - M5 本地提交 `cd8abea` 进一步约束策略审计事件：`DECISION` 只表示执行尚未开始；`EXECUTION_RESULT` 使用 `decision=NOT_APPLICABLE` 且状态表示执行已开始；策略变更事件不得伪装成执行结果。新增和导入证据都经过同一语义校验；非法组合不得进入哈希链。策略审计事件的判定来源、执行状态和副作用验证状态必须保持一致。
@@ -49,13 +57,13 @@
 - `POLICY_APPLIED`, `POLICY_ROLLED_BACK`, and `POLICY_CHANGE_REJECTED` are policy-management events, not tool decisions or execution results; they use `decision=NOT_APPLICABLE` and both statuses `NOT_STARTED`.
 - Invalid event-type/status combinations are rejected before append and rejected again by evidence-chain/export verification.
 - `UNKNOWN` must not be converted to `ALLOW`, `DENY`, or confirmed failure without evidence. Callback success does not prove side effects; use `NOT_VERIFIED` unless a trusted verifier establishes them. If a callback fails and effects cannot be determined, use `decision=NOT_APPLICABLE`, execution `UNKNOWN`, and side-effect `UNKNOWN`.
-- This contract is reviewable in Draft PR #47 at remote head `cf4e2cd`; it is not integrated. M6 confirmed `SecurityEvidenceEvent` and M5 `PolicyAuditEvent` are separate schemas; M6 does not currently consume the M5 policy-audit stream, so this is schema-boundary information, not consumer compatibility proof. M9 local combined candidate `f125e70` passed aggregate verify (393 passed, 0 failed, 6 environment-condition skips), 100-file package smoke, and E4 tests (12/12); combined GitHub CI remains pending. The event contract does not replace final host/Gateway authorization and does not establish all execution paths are integrated.
+- This contract is reviewable in Draft PR #47 at remote head `5fd4707`; exact-head run `38561283918` passed 9/9. M6 confirmed `SecurityEvidenceEvent` and M5 `PolicyAuditEvent` are separate schemas; M6 does not currently consume the M5 policy-audit stream, so this is schema-boundary information, not consumer compatibility proof. M9 combined GitHub CI is green at head `ab382fe`; root contract path integration is pending Issue #49. The event contract does not replace final host/Gateway authorization and does not establish all execution paths are integrated.
 
 ## 执行隔离与原生 Shell — M2
 
 - Trusted Gateway/MCP registration must provide a recognized `executionSurface`. Missing or unknown metadata fails closed with `M2_GATEWAY_MCP_METADATA_INVALID`.
 - Native Codex Shell is not covered by the current isolated worker. The binder rejects it before backend dispatch with `M2_NATIVE_SHELL_UNPROTECTED`; callers must preserve the `UNPROTECTED` state and must not fall through to direct execution.
-- PR #37 remote head is `cb84f43`; a sanitized local descendant `cfde2f0` is not yet published. `M2_ISOLATED_WORKER` is a tested adapter seam. Its tests do not prove AppContainer enforcement, trusted Hook installation, or protection of the actual Codex Desktop Shell. Issue #45 remains OPEN; the actual native Shell remains `UNPROTECTED` until a supported, trusted host path and synthetic protected-path denial are verified.
+- PR #37 remote head `0f2c10c`; exact-head run `38561262930` passed 9/9. `M2_ISOLATED_WORKER` is a tested adapter seam. Its tests do not prove AppContainer enforcement, trusted Hook installation, or protection of the actual Codex Desktop Shell. Issue #45 remains OPEN; the actual native Shell remains `UNPROTECTED` until a supported, trusted host path and synthetic protected-path denial are verified.
 
 ## Agent 宿主接入与安装 — M3
 
@@ -81,7 +89,7 @@
 
 - M7 负责 Windows 产品安装包生成与验收。Windows CI 必须安装固定版本 NSIS 并编译安装模板；缺少编译器或编译失败都必须失败退出。只检查 workflow 文本或运行 package smoke 不代表实际执行过编译。
 - M3 负责宿主配置的 preview/install/restore。baseHash 校验和保留用户后续编辑的契约，与产品安装器生命周期分开。
-- 当前证据：PR #39 remote head `5c7d95d` has 11/11 exact-head checks, including the pinned NSIS/template workflow checks. Local M7 candidate `ead9593` is not included in that run. This does not prove real user cancellation rollback. Clean-VM installation, first launch, upgrade, uninstall, and cancellation rollback remain NOT VERIFIED / HOLD until actually run and artifacts reviewed.
+- 当前证据：PR #39 remote head `4267c61` has 9/9 exact-head checks and wrapper run `38596572179` has 2/2, including the pinned NSIS/template compile steps on Windows. This does not prove real user cancellation rollback. Clean-VM installation, first launch, upgrade, uninstall, and cancellation rollback remain NOT VERIFIED / HOLD until actually run and artifacts reviewed.
 - M1 负责执行与 Guard 授权契约。M2 只能适配已授权的 Gateway 请求；M4 显示后端真实状态并保留 UNKNOWN/UNPROTECTED；M5 可以收紧策略但不能创建权限；M6 验证声明的证据包，但 fixture 成功不能证明运行时保护。
 ## Draft PR 契约
 

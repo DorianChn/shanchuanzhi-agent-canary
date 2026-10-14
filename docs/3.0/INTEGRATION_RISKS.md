@@ -1,5 +1,24 @@
 # M0/M9 集成风险登记
 
+## 当前风险快照（2026-10-14 16:42 UTC）
+
+| 风险 | 级别 | 责任与证据 | 状态 |
+| --- | --- | --- | --- |
+| Shared API contract path | P1 | M0 PR #30 (`b92bde4`) 与 M1 PR #43 (`ca24d37`) 远端都新增 `docs/3.0/API_CONTRACTS.md`，blob 分别为 `49cfecc` / `4574c87`；M1 本地 `d26a0c3` 已 rename 到 M1 路径待推送；M9 PR #36 (`ab382fe`) 远端仍带 M1 根文件。Issue #49。 | OPEN / INTEGRATION BLOCKER |
+| #27 package/M6 composition | P1 | M9 PR #36 exact head CI 9/9 + wrapper 2/2；仍需核实 M3/M5/M6/M7 manifest union 与 AC3 E4 path。 | OPEN |
+| #28 Gateway lifecycle | P1 | M1 PR #43 9/9、M7 PR #39 9/9 + wrapper 2/2；M9 same-Guard close/quarantine combined behavior awaits review. | OPEN |
+| #32 Hook interruption | P1 | Current PR #30/#37/#39/#40/#43/#47 heads pass; historic Windows marker root cause remains UNKNOWN and child-process evidence does not prove host callback behavior. | OPEN / HISTORICAL ROOT CAUSE UNKNOWN |
+| #35 Guard quarantine | P0 | CLOSED only for same process, same Guard, and callbacks honoring AbortSignal. | CLOSED (LIMITED SCOPE) |
+| #41 installer lifecycle | P1 | M7 current CI/wrapper and pinned NSIS/template compilation pass; no clean-VM lifecycle result. | OPEN / HOLD / NOT VERIFIED |
+| #44 approval expiry | P1 | M1 current-head exact-expiry test passes; decision does not allow, pending clears, callback stays at zero. M9 baseline remains pending. | OPEN |
+| #45 native Shell | P1 | M2 AppContainer child-process tests and Hook protocol fixture do not cover the native Codex Shell. | OPEN / UNPROTECTED |
+| #46/#48 OBSERVE contract | P2 / P1 | M5 exact-head 9/9 and M9 combined CI pass; sensitive-read hard DENY remains. M0 root contract sync/combined acceptance pending. | OPEN |
+| External E4 | P1 | M6 verifier CI is green but is fixture/package verification only. | NOT VERIFIED |
+| M4 backend state | P2 | Current endpoint responses remain UNKNOWN/UNSUPPORTED. | OPEN |
+| quota / push interval | Scheduling gate | Usage page 16:42 UTC: five-hour 97%, weekly 64%, 113 credits; last branch batch 16:15 UTC. | MONITOR; next push ≥16:35:45 UTC |
+
+Do not merge `main` or PR #24, publish a Release, or claim fixture/CI results as native-host, external-E4, or clean-VM acceptance.
+
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
 ## 实时风险快照（2026-10-14 11:56 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）

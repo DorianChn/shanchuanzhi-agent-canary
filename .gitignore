@@ -5,6 +5,18 @@ dist/
 .env
 .env.*
 !.env.example
+# Private keys and local credential stores. Sanitized fixtures should use an
+# explicit `.example` suffix or a narrowly reviewed force-add.
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
 *.tmp
 *.temp
 *.swp
