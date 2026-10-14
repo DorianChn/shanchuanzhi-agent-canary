@@ -6,6 +6,7 @@
 
 - 3.0 以增量导出为主，保留现有 CLI/MCP/SDK 行为。公共字段、路由、事件或失败语义的改变都算契约变更。
 - 接口所有者在同一 Draft PR 更新契约，并说明旧调用方的适配方式、错误语义和版本边界。其他模块经适配层集成，不私自修改接口。
+- `docs/3.0/API_CONTRACTS.md` 由 M0 维护为唯一公共契约文件。模块发现契约缺口时提交变更建议给 M0；模块 PR 不重复新增或维护同一路径。
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
@@ -30,7 +31,8 @@
 ## Policy / Guard / Canary — M5 + M1
 
 - `createRiskPolicyRouter({ guard, ... })` 对工具分类为 `ALLOW|DENY|APPROVAL_REQUIRED`，返回风险、理由和模式。未登记工具默认需审批；外部网络和敏感数据按当前策略拒绝或要求审批。
-- `OBSERVE` 只影响可选策略层，不覆盖 `AgentGuard` quarantine/containment。策略 `ALLOW` 不等于 Gateway 资源登记。
+- `OBSERVE` 只豁免已登记、非敏感操作的可选审批；它不得把显式 `DENY` 或 `SENSITIVE_DATA` 改成 `ALLOW`。越界路径、明确危险操作、敏感读取与敏感外发继续拒绝；`AgentGuard` quarantine/containment 在所有模式下优先。策略 `ALLOW` 不等于 Gateway 资源登记。
+- M5 policy candidate `9f33f97` implements this tighter `OBSERVE` contract and returns `observe_sensitive_data_blocked` for sensitive operations blocked by the mode. M5 reports 44/44 focused tests and TypeScript no-emit passing after adding direct registered `sensitive-read` denial, zero callback/approval, and sensitive-egress log-redaction assertions; those readiness additions are currently uncommitted in M5's worktree. The canonical event and OBSERVE contracts are maintained here by M0. M5 has no remote PR or CI yet, so the behavior is not integrated. Its branch must remove the duplicate `docs/3.0/API_CONTRACTS.md` change before PR creation.
 - `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
 - `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
 - Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。M1 owner 实现 `close()` 的顺序为：同步锁定 closed 并清空 pending；在触发 abort/disposer 回调前发布唯一 memoized `closePromise`；中止活动 controller、至多一次安全退订 Guard observer；等待已入队的 Gateway 任务结算；逐个尝试关闭全部本实例资源。任一资源关闭失败时，所有调用共享以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝的 promise，不泄露路径或底层 cause。M1 本地提交 f15fdcfa 的 Windows Node 22 Gateway 测试为 28/28、TypeScript build 和 diff check 通过；尚无远端集成 PR/CI 证据，M7 本地提交 f17b7e6 后，候选相对 AC3 的 src/runtime/gateway.ts 净差异为零，并保留 M7 独有 evidence/reliability 测试（83 pass、0 fail、1 symlink-permission skip）；该候选并不包含 M1 f15fdcfa，组合 CI 尚待完成。Guard 通知只覆盖同一进程、同一 Guard 实例；忽略 AbortSignal 的不合作 callback 不会被强制终止，已经发生的副作用不承诺回滚。

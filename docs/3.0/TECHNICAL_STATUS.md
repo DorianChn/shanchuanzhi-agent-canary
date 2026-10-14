@@ -1,18 +1,20 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 03:59:05 UTC；实时复核）
+## 当前状态（2026-10-14 04:36:33 UTC；实时复核）
 
-- PR #24：OPEN/Draft，base competition/shanchuanzhi-release-readiness，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4；11/11 checks 通过。未修改或合并。
-- PR #30：OPEN/Draft，M0 head 82cdc3e3c751d1371c57adbd355b7b9c98dcdf1e；9 个常规 CI jobs 与 ownership-contract gate 共 10/10 通过。
-- 当前开发槽为 M2 与 M6。M7 已完成本地代码步骤，commit 5c7d95d 将重复 .onUserAbort 改为 MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup；MUI_ABORTWARNING 和 RollbackInstall 保留。定向测试 8 pass/1 skip/0 fail，可靠性套件 43 pass/3 skip/0 fail；固定 NSIS 编译器本机不可用，尚无真实编译证据。该提交尚未推到 PR #39，等待下一批次与新头 CI。
-- M2 PR #37 head a1c239d，9/9 checks 通过；原生 Codex Shell 仍 UNPROTECTED。#45 是 M2 当前任务，要求在隔离宿主/项目验证受信任 Hook 对合成 sentinel 的真实阻断，或记录准确能力限制并保持 UNPROTECTED/BLOCKED。
-- M6 PR #38 head bca895f 为 7 pass、Windows Node 22 1 fail（M1-owned Hook marker 用例）、package-smoke 1 skipped。M6 当前在独立 AC3 worktree 检查 E4 verifier 与未跟踪证据包；该包必须原样保留，外部 E4 保持 NOT VERIFIED。
-- M1 PR #43 head 2276526，run 38502266488 为 9/9 通过。历史 marker 复现仍在 #32，根因为 UNKNOWN；M7 不修改 M1 Hook 路径。
-- 后续模块快照：M3 PR #33、M4 PR #34、M8 PR #40 当前头均为 9/9 checks 通过；M5 本地分支 feature/ac3-policy-audit 有 5 个未发布提交且尚无 PR；M6 PR #38 为 7 pass、Windows Node 22 1 fail、package-smoke 1 skipped，外部 E4 仍 NOT VERIFIED。M5/M6 等空闲槽继续处理。
-- M7 本地证据不能替代 NSIS 编译或真实安装验收。未运行本地安装器或 VMware；安装验收仍 NOT VERIFIED / HOLD。M9 最终集成未完成。
-- 用量页 03:58 UTC 读数为五小时剩余 82%、约 1h51m 后重置，远高于 5% 暂停线。低于 5% 或读数不可确认时暂停开发、测试和 GitHub 操作；低额度暂停后须看到五小时额度实际重置才恢复。
-- 最近远端 push 为 PR #30 于 03:52:10 UTC；下次批量 push 不得早于 04:12:10 UTC，合并就绪分支一批上传。
-- VMware、真实模型、安装测试互斥；当前没有此类本地测试预约。未合并 main、未合并 PR #24、未发布 Release。
+- PR #24：OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；11/11 checks 通过。未修改或合并。
+- PR #30：OPEN/Draft，M0 head `19ee8ca` 已于 04:14 UTC 推送；run `38510345880` 为 7 pass、Windows Node 20 1 fail、Windows Node 22 cancelled、package-smoke skipped。失败是旧基线 `spawnSync` 1 秒等待窗口未等到 marker；Node 22 job 日志为 322 pass、0 fail 后被取消。M1 PR #43 的更新代码 Windows Node 20/22 检查通过；#32 保持 OPEN，等待集成后的基线 CI 验收。
+- 当前两个开发槽是 M3 与 M4。M3 正将 owner-authored onboarding 契约交接到 M3 专属附录、清除共享契约路径重叠；M4 审核 OBSERVE/Guard 状态展示是否保留拒绝、隔离与 UNKNOWN。两者只在各自 worktree/文件所有权内工作。
+- M2 commit `63b9c08` 已加入 M2 Gateway callback binder seam 与 fixture；8 个 M2-owned 文件、定向检查通过，当前本地未推送。PR #37 远端仍为 `a1c239d`；该 binder 不集成 AppContainer，原生 Codex Shell 仍 `UNPROTECTED`，宿主验收仍 `BLOCKED_NOT_VERIFIED`。
+- M5 commit `9f33f97` 保留显式 DENY、禁止 OBSERVE 放行 `SENSITIVE_DATA`；后续 commit `f8291c9` 添加已登记 `sensitive-read` 拒绝、零回调/零审批请求和敏感 egress 日志脱敏测试，并移除 M5 分支重复的公共契约文件。定向测试 44/44、TypeScript no-emit、diff check 通过。M5 尚无远端 PR/CI，P0 仍 OPEN。
+- M6 commit `d513810` 比 PR #38 远端 head `bca895f` 超前 1、落后 0；现有 PR 为 OPEN/Draft。此前 12/12 verifier 回归通过，PR 的当前旧头 CI 有 M1-owned Windows Node 22 interruption marker 失败，package-smoke skipped；M6 候选不含 Hook 改动。原始 E4 证据未跟踪且不随 PR 上传，外部 E4 仍 `NOT_VERIFIED`；VMware、真实模型和安装测试未运行。
+- M6 commit `d513810` 已完成 bundle verifier 修复与审计：聚焦回归 12/12 通过；sidecar 漂移、元数据不一致与 ZIP 字节篡改在临时副本中均被拒绝；原始 16 文件 E4 目录未改。PR #38 远端仍是旧 head `bca895f`（7 pass、M1-owned Windows Node 22 Hook marker fail、package-smoke skipped）。真实 E4 仍 `NOT_VERIFIED`。
+- M7 commit `5c7d95d` 已推送至 PR #39；新 run `38510356534` 与 wrapper run `38510356548` 合计 11/11 checks 通过。该修复改用 `MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup`，保留 `MUI_ABORTWARNING` 与 `RollbackInstall`。定向测试 8 pass/1 skip、可靠性套件 43 pass/3 skip；本机没有固定 NSIS 3.13 编译器，真实编译和 VM 安装仍未验证。
+- M1 PR #43 head `2276526`，run `38502266488` 为 9/9 通过。M1 核查确认 #30 Windows Node 20 失败、Node 22 取消；失败来自旧基线的一秒启动窗口，不表示 Hook 放行。M1 当前异步测试等待实际 marker，并验证无输出、无决策日志、无 allow；M7 不修改 Hook 路径。
+- M3 PR #33、M4 PR #34、M8 PR #40 当前头均为 9/9 checks 通过；M9 最终集成尚未完成。
+- 04:36 UTC 用量页：五小时剩余 73%，1h14m 后重置；周额度 80%，额度余额 113。若五小时剩余低于 5% 或读数不可确认，暂停开发、测试与 GitHub 操作；恢复前确认五小时额度已实际重置。
+- 本批远端 push 包含 M0 与 M7 两个分支，协调时点为 04:14 UTC；下一批不得早于 04:34:50 UTC。模块提交/CI 准备期间继续按 20 分钟一批安排。
+- `main` worktree 存在大量未提交改动；本轮未在其中编辑或清理，所有模块更新留在各自 worktree。VMware、真实模型、安装测试互斥；当前没有此类本地测试预约。未合并 main、未合并 PR #24、未发布 Release。
 
 ## 历史快照（2026-10-13 16:16 UTC；保留作记录）
 

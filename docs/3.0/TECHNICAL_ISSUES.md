@@ -2,7 +2,33 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 实时协作快照（2026-10-14 03:59:05 UTC；覆盖下方旧状态）
+## 当前调度（2026-10-14 04:36:33 UTC）
+
+- 双槽调度：M3 收尾 onboarding owner contract 与 M0 唯一契约文件的所有权交接；M4 审核 OBSERVE/Guard 状态展示的 fail-closed 与 UNKNOWN 边界。M0 按 worktree、PR、CI、Issue 和额度页核实进度，不声称读取其他 Codex 窗口聊天。M1 #32、M2 adapter、M5 policy 和 M6 bundle 审查已完成本地步骤并释放槽位。
+- PR #30 head `19ee8ca` 的 run `38510345880` 为 7 pass、Windows Node 20 1 fail、Windows Node 22 cancelled、package-smoke skipped。M1 查明旧基线使用 `spawnSync` 的 1 秒启动窗口；Node 22 job 日志 322 pass、0 fail 后被取消。更新的 M1 PR #43 Windows Node 20/22 检查通过。#32 保持 OPEN，等待该修复集成到基线后的验收；不删减 fail-closed、no-allow、no-callback 断言。PR #39 runs `38510356534/38510356548` 为 11/11 pass。
+- M2 commit `63b9c08` 已提交 8 个 M2-owned adapter/fixture/report 文件；聚焦检查通过，未推送。PR #37 远端仍为 `a1c239d`；仅实现 callback binder，不代表 AppContainer/原生宿主集成，Shell 仍 `UNPROTECTED`。
+- M5 commits `9f33f97` 和 `f8291c9` 已本地完成；44/44 policy tests、TypeScript 与 diff 检查通过。M5 移除了共享契约路径的重复变更；尚无远端 PR/CI，P0 仍 OPEN。
+- M6 `d513810` 比 PR #38 当前远端 `bca895f` 超前 1、落后 0；PR #38 OPEN/Draft。候选审查符合 M6 所有权，原始 bundle 不随 PR 上传，现有旧头 CI 的 Windows Node 22 失败来自 M1 Hook test，E4 仍 `NOT_VERIFIED`。
+- M6 commit `d513810` 修复 sidecar/metadata 校验，12/12 聚焦测试通过；PR #38 远端仍为旧 head `bca895f`，外部 E4 为 `NOT_VERIFIED`。原始 run `security-lab/e4-runs/20261013T114513Z/` 保持不变。
+- M7 commit `5c7d95d` 已推送；PR #39 新 NSIS run 与 wrapper run 合计 11/11 pass。固定编译器本机不可用，真实 NSIS 编译/安装验收仍未验证，不关闭安装验收风险。
+- PR #24 仍 OPEN/Draft，head `62496d4`、base `competition/shanchuanzhi-release-readiness`，11/11 checks 通过。M0 PR #30 仍 OPEN/Draft；M3 #33、M4 #34、M8 #40 各 9/9 通过；M9 集成未完成。
+- 用量页 04:36 UTC 实读：五小时剩余 73%，1h14m 后重置；周额度 80%，余额 113。低于 5% 或读数不可用时暂停所有模块、测试和 GitHub 操作；确认五小时额度实际重置后再恢复。
+- 最近批量 push 为 04:14 UTC（M0、M7）；下一批不早于 04:34:50 UTC。VMware、真实模型和安装测试未预约，三者共用互斥槽。
+
+## 历史快照（2026-10-14 04:14:50 UTC；以下保留当时状态）
+
+- 双槽调度：M2 处理 #45 与 Gateway adapter seam，M5 收尾 policy/audit 自有文件。M0 不读取其他 Codex 窗口聊天，活跃状态按 worktree、PR、CI 和 Issue 核实。M6 本轮已完成本地 verifier 修复并释放槽；M7 修复已推送，等待新 CI。
+- PR #39 新 head `5c7d95d`，run `38510356534` 启动后仍 pending。前一 head `f66dcc6` 的 run `38506733463/38506733650` 为 8 pass、2 fail、1 skipped：一项是现已修复的 pinned-NSIS 重复 `.onUserAbort`，另一项为 M1-owned Windows Node 22 Hook marker 失败（#32）。M7 不修改 M1 Hook 测试。
+- M1 PR #43 head `2276526` 的 run `38502266488` 为 9/9 通过。历史 marker 根因 `UNKNOWN`，#32 保持 OPEN。
+- M7 commit `5c7d95d` 使用 `MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup`，保留 abort warning 与 `RollbackInstall`；相关测试 8 pass/1 skip、可靠性套件 43 pass/3 skip。已推送至 PR #39，新的实际 NSIS CI 正在运行；固定 NSIS 3.13 未在本机安装，真实编译与 VM 安装未验证。
+- M2 PR #37 远端 head `a1c239d`、先前 CI 9/9 通过；原生 Codex Shell 仍 `UNPROTECTED`，#45 的真实宿主验收仍 `BLOCKED_NOT_VERIFIED`。当前 adapter 仅在 M2 所有权目录内推进，不修改 M1 Gateway。
+- M6 PR #38 远端 head `bca895f` 的旧 CI 为 7 pass、M1-owned Windows Node 22 1 fail、package-smoke 1 skipped。M6 新修复在本地聚焦测试 12/12 通过，三文件 staged、未提交/未推送；原始 `security-lab/e4-runs/20261013T114513Z/` 16 文件未改，真实 E4 仍 `NOT_VERIFIED`。提交身份待解决，不伪造。
+- PR #24 仍 OPEN/Draft，head `62496d4`、base `competition/shanchuanzhi-release-readiness`，本次复核 11/11 checks 通过；PR #30 OPEN/Draft，head `19ee8ca` 已推送，新 CI run `38510345880` 中 ownership gate 已过、常规 jobs 仍 pending。均未合并。
+- #35 CLOSED 的范围仍限同一进程/同一 Guard 且 callback 配合 AbortSignal；#44/#45/#27/#28 保持 OPEN。M3 #33、M4 #34、M8 #40 目前各 9/9 checks；M9 最终验收尚未完成。
+- 用量页 04:14 UTC：五小时剩余 79%，约 1h35m 后重置；周额度 81%，余额 113。低于 5% 或读数不明时全部暂停，实际重置后再恢复。
+- M0 与 M7 在本批次已推送，协调时点为 04:14:50 UTC；下次批次不早于 04:34:50 UTC。VMware、真实模型、安装测试无运行预约，且共用一个互斥槽。
+
+## 历史快照（2026-10-14 03:59:05 UTC；以下保留当时状态）
 
 - 双槽调度：M2 处理 #45，M6 检查 #27/#38 中的 E4 verifier 与证据完整性；M0 无法读取其他 Codex 窗口的对话或活跃状态，进度以实际 worktree、PR、CI 和 Issue 为准。M7 本地代码步骤完成后等待下一批推送与 CI，开发槽已释放。
 - PR #39 head f66dcc6；run 38506733463/38506733650 结束。8 pass、2 fail、1 skipped：Windows pinned-NSIS 编译因 .onUserAbort 重复定义失败；Windows Node 22 的 M1 Hook 中断测试在 test/agent-hook.test.ts:54 未观察到 marker。M7 负责 NSIS 修复并保留取消警告、RollbackInstall、编译门禁和测试；M1 Hook 用例仍由 M1 所有并在 #32 跟踪。
