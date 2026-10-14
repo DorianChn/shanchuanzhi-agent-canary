@@ -2,7 +2,64 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 11:10 UTC；额度页 11:10 UTC 实读）
+## 实时风险快照（2026-10-14 11:37 UTC；额度页 11:35 UTC；PR head 查询 11:37 UTC）
+
+| 风险 | 级别 | 责任与证据 | 状态 |
+| --- | --- | --- | --- |
+| #35 Guard quarantine | P0 | CLOSED 范围仍限同进程、同 Guard 实例且 callback 遵守 AbortSignal。 | CLOSED（有限范围） |
+| #32 Hook interruption | P1 | #30/#37/#40/#47 旧头仍有 M1 `spawnSync(1000ms)` marker 断言；M1 修正版仅在 M1 所有者分支验证通过，其他旧头需消费该提交并重跑 CI。 | OPEN / CROSS-PR FIX PENDING |
+| #44 approval expiry | P1 | #43 旧头 3 个矩阵因 1ms TTL 夹具失败；M1 `ca24d37` 保留拒绝、清理、callback=0 并已定向通过，等待推送与新头 CI。 | OPEN / LOCAL FIX |
+| #39 honeypot | P1 | 旧头因读取期望 resolve 失败；M7 `c9a6b5c` 对齐 Gateway 契约，保留隔离和副作用断言，定向 6/6。 | OPEN / LOCAL FIX |
+| #27 manifest / E4 | P1 | #36 远端 `f125e70` 11/11；M9 `ab382fe` 本地包含稳定过期夹具。外部 E4 未验证。 | OPEN / LOCAL FIX; EXTERNAL E4 NOT VERIFIED |
+| #28 Gateway lifecycle | P1 | M7 本地修复待推送并跑新头组合 CI；不得以单模块测试关闭。 | OPEN / NEW HEAD CI PENDING |
+| #48 OBSERVE sensitive read | P1 | hard DENY 保持；M5 PR #47 旧头受 Hook 夹具失败影响，等待更新后的组合 CI。 | OPEN / CI PENDING |
+| #41 clean-VM install | P1 | 无已验证 clean-VM 快照，本轮未运行安装程序。 | HOLD / NOT VERIFIED |
+| #45 native host Shell | P1 | 仅 Hook 协议不证明 Codex Desktop 原生 Shell 拦截；仍需真实宿主证据。 | OPEN / UNPROTECTED |
+| #46 canonical API contract | P2 | API_CONTRACTS 唯一 owner 为 M0；M5/M6 event schema 分离，无消费关系。 | OPEN |
+| quota / schedule | 调度门槛 | 网页 11:35 UTC 显示五小时 92%、周额度 67%、113 credits。 | MONITOR |
+
+最近推送批次 11:15:25 UTC；下一批仅允许快进到已有 PR 分支，间隔已达 20 分钟。PR #24、main 和 Release 未触碰。
+
+## 历史风险快照（2026-10-14 11:26 UTC；GitHub checks 11:24 UTC）
+
+| 风险 | 级别 | 责任与证据 | 状态 |
+| --- | --- | --- | --- |
+| #35 Guard quarantine | P0 | CLOSED 范围限同进程、同 Guard 实例且 callback 遵守 AbortSignal。 | CLOSED（范围有限） |
+| #32 Hook interruption CI | P1 | #30/#37/#40/#47 的当前检查仍含旧 `spawnSync(1000ms)` 入口 marker 断言；M1 当前异步等待入口后再中断版本在 #43 通过相关矩阵。需窄范围向旧分支集成 M1 所有者测试修正。 | OPEN / CROSS-PR FIX PENDING |
+| #44 approval expiry | P1 | #43 Ubuntu20/macOS20/macOS22 的精确到期测试失败；M1 已提交 `ca24d37`，将 1ms TTL 换为 60s 并固定当前时钟，保留拒绝、清理、callback=0。 | OPEN / LOCAL FIX |
+| #39 honeypot quarantine expectation | P1 | #39 的 6 个测试矩阵因旧测试期待读取 resolve 而失败；M7 `c9a6b5c` 与 M1/M9 错误契约对齐，保留隔离与无副作用断言。 | OPEN / LOCAL FIX |
+| #27 manifest / E4 | P1 | #36 远端 head `f125e70` 11/11；M9 本地 `ab382fe` 纳入 M1 exact-expiry 更新。verify 393/399、0 fail、6 环境跳过，package smoke 100 文件，E4 测试 12/12；外部 E4 未验证。 | OPEN / NEW M9 HEAD PENDING; EXTERNAL E4 NOT VERIFIED |
+| #28 Gateway lifecycle | P1 | #36 远端 head 11/11；M7 `c9a6b5c` 与 M9 已有期望对齐，待 M7 新 head checks。 | OPEN / LOCAL FIX |
+| #48 OBSERVE sensitive read | P1 | M9 当前远端 CI 11/11；M9 local `ab382fe` pending push; M5 PR #47 受旧 Hook 回归影响；敏感读取 hard DENY 未放宽。 | OPEN / NEW HEAD CI PENDING |
+| #41 clean-VM install | P1 | 无可核实 clean VM 快照，未运行安装程序。 | HOLD / NOT VERIFIED |
+| #45 native host Shell | P1 | 协议测试不能证明原生宿主已安装且 fail-closed；真实 Windows Desktop sentinel 验证仍缺。 | OPEN / UNPROTECTED |
+| #46 canonical API contract | P2 | M0 维护唯一契约；M5/M6 event schema 分离，无消费关系。 | OPEN |
+| M4 diagnostic truth | P2 | PR #34 9/9；既有 `69ec7f1` 定向 7/7。 | VERIFIED FOR REPORTED CHANGE |
+| quota / scheduling | 调度门槛 | 网页约 11:24 UTC 实读五小时 95%、每周 67%、余额 113。 | MONITOR |
+
+11:15:25 UTC 批次已完成。M1 `ca24d37`、M7 `c9a6b5c` 仅本地；下次推送不早于 11:35:25 UTC。main、PR #24 与 Release 未改动。
+
+## 实时风险快照（2026-10-14 11:16 UTC；额度页 11:10 UTC 实读）
+
+| 风险 | 级别 | 责任与证据 | 状态 |
+| --- | --- | --- | --- |
+| #35 Guard quarantine | P0 | CLOSED 范围限同进程、同 Guard 实例且 callback 遵守 AbortSignal。 | CLOSED（范围有限） |
+| #32 Hook interruption | P1 | M1 新 head `4099ee3` 已推送；CI 排队/运行中，marker 历史根因仍 UNKNOWN。 | OPEN / CI PENDING |
+| #44 approval expiry | P1 | M1 新 head `4099ee3` 含精确过期零 callback 回归，定向 2/2；#43 CI/M9 组合结果未完成。 | OPEN / CI PENDING |
+| #48 OBSERVE sensitive read | P1 | M5 hard DENY 未放宽；M9 `f125e70` 已推送，#36 CI 运行中，尚无组合验收结论。 | OPEN / CI PENDING |
+| #41 clean-VM install | P1 | M7 报告 `9088bd2` 无法核实干净快照，安装程序来源未验证；没有运行安装器。 | HOLD / NOT VERIFIED |
+| #45 native host Shell | P1 | M2 `d9d775b` 已推送；Hook 协议测试不等于宿主集成，Codex Desktop 原生 Shell 仍 `UNPROTECTED / BLOCKED_NOT_VERIFIED`。 | OPEN / HOST EVIDENCE BLOCKED |
+| #27 manifest / E4 | P1 | M9 新 head `f125e70` 已推送；本地 verify 393/399、0 fail、6 环境跳过，100-file package smoke；新 head CI 运行中，外部 E4 未验证。 | OPEN / CI PENDING |
+| #28 Gateway lifecycle | P1 | M7 `9088bd2` 已推送；PR #39 checks queued/in progress，未报告失败或通过终结结果。 | OPEN / CI PENDING |
+| #46 canonical API contract | P2 | M0 维护 canonical contract；M5/M6 events schema 分离，M6 当前不消费 M5 audit stream。 | OPEN |
+| M4 diagnostic truth | P2 | 修复 `69ec7f1` 已推送，定向 7/7；PR #34 新 head checks 尚未结束。 | LOCAL FIX / CI PENDING |
+| M9 combined acceptance | P1 | #36 新 head `f125e70`；11:16 UTC 已有 2 checks success、3 in progress、5 queued，未见 failure。 | IN PROGRESS |
+| quota / scheduling | 调度门槛 | 网页 11:10 UTC 实读五小时 98%、4h48m 后重置、每周 68%、113 credits。 | MONITOR |
+| worktree pointers | P2 | WSL Git worktrees 正常；M6 未跟踪 E4 原始运行目录保持未动。 | MONITOR |
+
+11:15:25 UTC 完成一次 10 分支 fast-forward 批次；下批不得早于 11:35:25 UTC。main、PR #24 和 Release 未改动。VMware/真实模型/安装测试互斥，本轮未运行。
+
+## 历史风险快照（2026-10-14 11:10 UTC；额度页 11:10 UTC 实读）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |

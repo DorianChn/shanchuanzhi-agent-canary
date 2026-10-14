@@ -1,5 +1,37 @@
 # M0 技术协调状态
 
+## 当前状态（2026-10-14 11:37 UTC；额度页 11:35 UTC）
+
+- **额度**：网页版显示五小时剩余 92%、约 4 小时 23 分后重置；每周剩余 67%，余额 113。页面已关闭。低于 5% 或不能读数时暂停开发、测试、浏览器和 GitHub 操作。
+- **推送节奏**：最近批次 11:15:25 UTC；间隔已满 20 分钟。M0 文档与 M1 `ca24d37`、M7 `c9a6b5c`、M9 `ab382fe` 准备合入本批，只允许快进推到各自已有 PR 分支，不改 main/#24、不合并、不发 Release。
+- **已证实 CI**：#33/#34/#38 9/9；#36 远端 head `f125e70` 11/11。#30/#37/#40/#47 旧 head 失败于继承的 M1 `spawnSync(timeout:1000)` marker 夹具；#39 旧 head 失败于蜜罐旧读取期望；#43 旧 head 3 个矩阵失败于 1ms TTL 夹具。
+- **待推送修复**：M1 `ca24d37` 将 TTL 夹具设为 60 秒并固定时钟，Node20 定向 3/3、Hook 10/10、Node22 Hook 3/3；M7 `c9a6b5c` 对齐 Gateway 错误码期望，蜜罐测试 6/6；M9 `ab382fe` 同步 TTL 夹具并验证 verify 393/399（0 fail、6 skip）、package smoke 100 文件、E4 测试 12/12。均为现有工作树本地提交，尚未推送。
+- **未解除门槛**：#32 旧 Hook 失败分支仍需各自基于 M1 所有者提交更新并重跑 CI；#39/#43/#36 新头需远端复验。#45 原生 Shell、#41 clean-VM 安装、外部 E4 均未验证，保持 UNKNOWN/NOT VERIFIED，不得宣布完成。
+- **资源边界**：当前没有 VMware、真实模型或安装测试。并行最多两个任务；其它 Codex 会话的聊天内容不可见，状态仅以文件系统、GitHub 和本会话网页读数为准。
+
+## 当前状态（2026-10-14 11:26 UTC；PR checks 11:24 UTC；额度页约 11:24 UTC）
+
+- **额度**：网页显示五小时 95%、4 小时 35 分钟后重置；每周 67%，余额 113。用量标签与辅助标签已关闭。
+- **最近推送**：11:15:25 UTC 对 M0、M1–M8、M9 的 10 个已有 PR 分支完成 fast-forward 批次，GitHub head 回读一致。下次推送不得早于 11:35:25 UTC。
+- **CI 通过**：PR #33/#34/#38 均 9/9；PR #36 远端组合 head `f125e70` 11/11。M9 已在现有分支提交 `ab382fe` 纳入 M1 过期测试修正；当前本地验证 393/399、0 fail、6 环境跳过，包 smoke 100 文件，E4 测试 12/12。外部 E4 仍未验证。
+- **CI 失败与定位**：#30/#37/#40/#47 的失败矩阵都落在旧版同步 Hook 中断测试 `spawnSync(timeout:1000)` 的进入 marker 断言；M1 已在 #43 使用异步子进程、等待 marker 后再中断的版本。#39 的 6 个测试矩阵均在蜜罐读取的旧 resolve 预期失败；#43 有 3 个矩阵在精确到期回归失败，根因是测试使用 1ms TTL，慢 runner 可先扫除审批。
+- **M1 本地修复**：现有 `feature/ac3-security-core` 新提交 `ca24d37` 把精确到期测试 TTL 改为 60 秒并固定时钟到 `expiresAt`；保留过期拒绝、审批清理与 callback 零调用。Node 20 跨文件定向 3/3、Hook 全文件 10/10、Node 22 Hook 定向 3/3、diff check 通过。尚未推送。
+- **M7 本地修复**：现有 `feature/ac3-reliability-ac3` 新提交 `c9a6b5c` 只将蜜罐读取测试期望对齐 M1/M9 的 `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`；隔离、拒绝后续写入、哨兵不变和计数断言保留。定向 6/6、diff check 通过。尚未推送。
+- **仍未关闭**：#32 历史 marker 根因仍 UNKNOWN；#44 等 M1 新 head CI；#28 等 M7 新 head 组合 CI；#27、#48 等 M9 新 head 与对应 PR 验收；#45 原生 Shell 继续 `UNPROTECTED / BLOCKED_NOT_VERIFIED`；#41 clean-VM 安装继续 `HOLD / NOT_VERIFIED`；外部 E4 仍 `NOT_VERIFIED`。不以本地测试替代宿主或 VM 证据。
+- **边界**：PR #24 仍 OPEN/Draft、head `62496d4`；未修改/合并 PR #24 或 main，也未发布 Release。VMware、真实模型、安装测试均未运行。
+
+## 当前状态（2026-10-14 11:16 UTC；GitHub 回读 11:16 UTC；额度页 11:10 UTC）
+
+- **推送批次**：11:15:25 UTC 将 M0、M1–M8、M9 的 10 个既有分支按 fast-forward 一次推送；GitHub PR head 回读与目标提交一致。WSL Git 使用本次命令级 GitHub CLI credential helper；未修改全局 Git 配置。
+- **PR #24**：仍 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`；本轮未改该分支、未合并 main。已记录的旧 head checks 为 11/11。
+- **远端 head**：PR #30 `a18a126`、#33 `d9364cc`、#34 `69ec7f1`、#36 `f125e70`、#37 `d9d775b`、#38 `ed82f06`、#39 `9088bd2`、#40 `4c11981`、#43 `4099ee3`、#47 `bcbec98`；均为 OPEN/Draft。新 head GitHub checks 在 11:16 UTC 回读时排队或运行，尚未见失败结论。
+- **M1 / #32 / #44**：#43 新 head `4099ee3` 已推送。精确过期定向测试 2/2；#44 仍等该 head CI 及 M9 组合验收，#32 marker 根因 UNKNOWN。#44 评论已发布并读回。
+- **M2 / #45**：#37 新 head `d9d775b` 已推送，Hook 协议测试通过；原生 Codex Desktop Shell 继续 `UNPROTECTED / BLOCKED_NOT_VERIFIED`，#45 评论已发布并读回。
+- **M3/M4/M5/M6/M7/M8**：各自新 head 已推送；M4 定向测试 7/7，M6 E4 测试 12/12 但外部 E4 仍 `NOT_VERIFIED`，M7 clean-VM 仍 `HOLD`，M8 文档检查通过且未发布 Release。M6 的未跟踪 E4 原始运行目录保留不动。
+- **M9 / #27/#28/#48**：#36 新 head `f125e70` 已推送。本地组合结果为 verify 393/399（0 fail、6 环境跳过）、package smoke 100 文件、E4 测试 12/12；新 head CI 已启动，组合验收仍未完成。
+- **额度与剩余门槛**：最近网页实读五小时 98%、4h48m 后重置；每周 68%，余额 113。#27、#28、#32、#41、#44、#45、#48 仍需各自列明的 CI/宿主/clean-VM 证据；#46 与 M4 诊断为 P2。#35 CLOSED 的边界仅限同进程、同 Guard 且 callback 遵守 AbortSignal。
+- **下次推送**：不早于 11:35:25 UTC。后续只推现有 PR 分支的快进提交；不 force-push、不改/合并 main 或 PR #24、不发布 Release。
+
 ## 当前状态（2026-10-14 11:10 UTC；用量页 11:10 UTC 实读；PR heads 11:07 UTC 刷新）
 
 - **额度与调度**：五小时剩余 98%、4 小时 48 分钟后重置；每周剩余 68%，余额 113。该页面已关闭。低于 5% 或读数不明时暂停开发、测试、浏览器及 GitHub 操作，确认实际重置后恢复。
