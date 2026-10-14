@@ -10,13 +10,16 @@
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## 当前契约与集成状态（2026-10-14 17:03 UTC）
+## 当前契约与集成状态（2026-10-14 18:15 UTC）
 
-- PR #43 M1 owner head `d26a0c3` / run `38602072618` 9/9；审批到期拒绝、清空 pending、保持非 ALLOW 且 callback=0 的定向回归 2/2。M1 是 Gateway/Guard 语义 owner；提交 `d26a0c3` 已将 owner-authored file 100% rename 至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md` 并推送。
-- PR #47 M5 head `5fd4707` / run `38561283918` 9/9；OBSERVE 不得放行敏感读取，拒绝发生在创建审批和 callback 前。safe-read fixture 只用于继续验证下游 egress 拒绝，不改变敏感读取策略。
-- PR #36 M9 remote head `ab382fe` / run `38558216788` 9/9，wrapper `38558216779` 2/2；远端仍有旧 M1-only root 内容。本地 M9 commit `3b5990e` 已将根路径替换为与 M0 相同的 canonical contract，并将 M1 owner file 精确保留在 M1 路径。P1 Issue #49 保持 OPEN，直到下批推送和新 head CI 回绿。
-- PR #24 仍 OPEN/Draft、head `62496d4`、11/11 checks；未修改、未合并。
-- M2 原生 Codex Shell 仍 UNPROTECTED；M6 外部 E4 与 M7 clean-VM 安装生命周期仍 NOT VERIFIED；M4 后端状态 UNKNOWN。CI/fixtures 不扩大这些覆盖声明。
+- PR #43 M1 owner head d26a0c3 / run 38602072618 passed 9/9; expiry rejection, pending clear, non-ALLOW decision and callback=0 evidence remain limited to the recorded regression. M1 owns Gateway/Guard semantics and its contract remains at docs/3.0/M1/GATEWAY_API_CONTRACT.md.
+- Issue #32 M1 disposition: d3b64fc is behaviorally equivalent to the owner fixture only for marker-wait/interruption timing, not byte-identical. PRs #33/#34/#38 still require coordinated async fixture updates that preserve fail-closed assertions and exact-head CI.
+- PR #47 M5 head b672f89 / run 38611183498 passed 9/9. OBSERVE cannot override explicit DENY, SENSITIVE_DATA, path boundaries, or Guard quarantine; sensitive-read denial occurs before approval/callback. The M5 readiness-report refresh is local at 3afc553 and awaits the scheduled push and exact-head checks.
+- PR #36 M9 head c09cdde / product run 38611183619 passed 9/9 and wrapper 38611183819 passed 2/2. Its 137-file diff is a multi-module integration candidate. M0/M9 root contract blobs and the M1 owner-contract path were compared; Issue #49 is CLOSED for that limited comparison.
+- PR #30 M0 head 453aa31 / product run 38611181479 passed 9/9 and ownership run 38611181489 passed 1/1. PR #24 remains OPEN/Draft at 62496d4 with 11/11 checks; it was not modified or merged.
+- Package manifest comparison across the current PR heads found 36 unique test paths (31 AC3 plus five distinct M3/M5/M7 paths), preserved version/bin/files/./sdk, M5 ./policy, and current M6/M7 scripts. Issue #27 remains OPEN pending explicit M6 field-owner confirmation and combined acceptance.
+- Native Codex Shell remains UNPROTECTED; external E4 and clean-VM installation remain NOT_VERIFIED; M4 backend security/E4 state remains UNKNOWN. Automated checks and fixtures do not expand these claims.
+
 
 ## TrustedExecutionGateway — M1（接口 owner）
 
