@@ -2,23 +2,23 @@
 
 更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 实时风险快照（2026-10-14 11:37 UTC；额度页 11:35 UTC；PR head 查询 11:37 UTC）
+## 实时风险快照（2026-10-14 11:50 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
 | #35 Guard quarantine | P0 | CLOSED 范围仍限同进程、同 Guard 实例且 callback 遵守 AbortSignal。 | CLOSED（有限范围） |
-| #32 Hook interruption | P1 | #30/#37/#40/#47 旧头仍有 M1 `spawnSync(1000ms)` marker 断言；M1 修正版仅在 M1 所有者分支验证通过，其他旧头需消费该提交并重跑 CI。 | OPEN / CROSS-PR FIX PENDING |
-| #44 approval expiry | P1 | #43 旧头 3 个矩阵因 1ms TTL 夹具失败；M1 `ca24d37` 保留拒绝、清理、callback=0 并已定向通过，等待推送与新头 CI。 | OPEN / LOCAL FIX |
-| #39 honeypot | P1 | 旧头因读取期望 resolve 失败；M7 `c9a6b5c` 对齐 Gateway 契约，保留隔离和副作用断言，定向 6/6。 | OPEN / LOCAL FIX |
-| #27 manifest / E4 | P1 | #36 远端 `f125e70` 11/11；M9 `ab382fe` 本地包含稳定过期夹具。外部 E4 未验证。 | OPEN / LOCAL FIX; EXTERNAL E4 NOT VERIFIED |
-| #28 Gateway lifecycle | P1 | M7 本地修复待推送并跑新头组合 CI；不得以单模块测试关闭。 | OPEN / NEW HEAD CI PENDING |
+| #32 Hook interruption | P1 | #30 当前头 run `38558211885` Windows Node22 失败；#39 run `38558208490` Windows Node20/22 失败，均在旧 M1 interruption marker fixture。M1 owner 产出可移植修正处理中。 | OPEN / CROSS-PR FIX PENDING |
+| #44 approval expiry | P1 | M1 `ca24d37` 已推送；PR #43 当前头 CI 9/9 通过，保留过期拒绝、清理、callback=0。 | OPEN / CI PASS; M9组合仍待验 |
+| #39 honeypot | P1 | M7 `c9a6b5c` 已推送，旧 resolve 期望已对齐并本地 6/6；当前 #39 只因未整合的 M1 Hook fixture 在 Windows 20/22 失败。 | OPEN / CROSS-PR CI BLOCK |
+| #27 manifest / E4 | P1 | M9 `ab382fe` 已推送；#36 当前头 11/11；外部 E4 未验证。 | OPEN / EXTERNAL E4 NOT VERIFIED |
+| #28 Gateway lifecycle | P1 | M7 `c9a6b5c` 已推送；#39 等 M1 Hook 修正集成后的新头组合 CI。 | OPEN / CROSS-PR CI PENDING |
 | #48 OBSERVE sensitive read | P1 | hard DENY 保持；M5 PR #47 旧头受 Hook 夹具失败影响，等待更新后的组合 CI。 | OPEN / CI PENDING |
 | #41 clean-VM install | P1 | 无已验证 clean-VM 快照，本轮未运行安装程序。 | HOLD / NOT VERIFIED |
 | #45 native host Shell | P1 | 仅 Hook 协议不证明 Codex Desktop 原生 Shell 拦截；仍需真实宿主证据。 | OPEN / UNPROTECTED |
 | #46 canonical API contract | P2 | API_CONTRACTS 唯一 owner 为 M0；M5/M6 event schema 分离，无消费关系。 | OPEN |
-| quota / schedule | 调度门槛 | 网页 11:35 UTC 显示五小时 92%、周额度 67%、113 credits。 | MONITOR |
+| quota / schedule | 调度门槛 | 网页 11:50 UTC 显示五小时 88%（4小时8分后重置）、周额度 66%（6天后重置）、113 credits；本批四分支更新已推送。 | MONITOR |
 
-最近推送批次 11:15:25 UTC；下一批仅允许快进到已有 PR 分支，间隔已达 20 分钟。PR #24、main 和 Release 未触碰。
+下批推送不得早于 12:01 UTC；仅允许快进到已有 PR 分支。PR #24、main 和 Release 未触碰。
 
 ## 历史风险快照（2026-10-14 11:26 UTC；GitHub checks 11:24 UTC）
 

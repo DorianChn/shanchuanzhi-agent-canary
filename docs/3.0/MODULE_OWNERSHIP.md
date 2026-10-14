@@ -4,33 +4,33 @@
 
 | 模块 | 分支 / 工作树 | 检查到的内容 | 独占范围或主要职责 | 共享接口/冲突 |
 | --- | --- | --- | --- | --- |
-| M1 | `feature/ac3-security-core` / `agents/M1-security` | local HEAD `ca24d37`; PR #43 remote `4099ee3`; exact-expiry old 1ms fixture failed on 3 matrix jobs; local Node20 focused 3/3, Hook 10/10; #48 fixture 16/16 | Gateway/Guard API、Hook 安全执行链及其测试 | #32 stale Hook fixture CI remains on sibling heads; #44 awaits new-head CI; #28 interface is M1-defined |
-| M2 | `feature/ac3-execution-isolation` / `agents/M2-isolation` | HEAD/PR #37 `d9d775b`; run `38555299198` failed all six matrix jobs at inherited M1 `spawnSync(timeout:1000)` marker test; Docker/sponsor pass; package-smoke skipped | execution-isolation 原型、报告与测试 | binder rejects missing/unknown surfaces; native Desktop Shell remains `UNPROTECTED / BLOCKED_NOT_VERIFIED` |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | local/PR #43 `ca24d37`; current-head checks 9/9; expiry fix Node20 focused 3/3, Hook 10/10, Node22 Hook 3/3 | Gateway/Guard API、Hook 安全执行链及其测试 | M1 owner is preparing a minimal portable Hook fixture correction for stale sibling PR heads |
+| M2 | `feature/ac3-execution-isolation` / `agents/M2-isolation` | PR #37 `d9d775b`; inherited M1 hook test still uses `spawnSync(timeout:1000)`; owner commit `46af1f1` absent and 3-way patch preflight conflicts; no M2 edits made | execution-isolation 原型、报告与测试 | binder rejects missing/unknown surfaces; native Desktop Shell remains `UNPROTECTED / BLOCKED_NOT_VERIFIED` |
 | M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | HEAD/PR #33 `d9364cc`; current-head checks 9/9 | 宿主发现、预览/安装/恢复适配 | #27 manifest 字段协作；契约变更由对应接口 owner 更新 |
 | M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | HEAD/PR #34 `69ec7f1`; current-head checks 9/9; backend endpoint UNKNOWN/UNSUPPORTED | `src/ai/console-page.ts` 与桌面 UI 行为（暂定） | 只经受保护 Console API；不以 mock 覆盖 UNKNOWN |
-| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | PR #47 remote/local `bcbec98`; current run `38555295666` failed Windows Node20 at inherited M1 marker test; prior focused suite 341 pass/5 skip | 策略管理、审计 schema、策略测试 | `docs/3.0/API_CONTRACTS.md` 唯一 owner 为 M0；保留 OBSERVE sensitive-read hard DENY；#46/#48 协调 |
+| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | PR #47 `bcbec98`; owner commit `46af1f1` absent; blob `1ecb3ee8…` still includes `spawnSync(timeout:1000)`; no M5 edits made | 策略管理、审计 schema、策略测试 | `docs/3.0/API_CONTRACTS.md` 唯一 owner 为 M0；保留 OBSERVE sensitive-read hard DENY；#46/#48 协调 |
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | HEAD/PR #38 `ed82f06`; current-head checks 9/9; external E4 NOT_VERIFIED; old PR #31 is a separate main-based track | E4 schema、verifier、机器报告 | 原始 run 留本地；#27 manifest 和 #32 Hook 组合待验 |
-| M7 | `feature/ac3-reliability-ac3` / `agents/M7-reliability-ac3` | local HEAD `c9a6b5c`; PR #39 remote `9088bd2`; current run `38555298663` failed on old honeypot read expectation; local targeted test 6/6 | `packaging/windows/`、scripts、可靠性/打包验证 | #41 clean-VM/install remains HOLD/NOT VERIFIED; Gateway lifecycle coordinates with M1 under #28 |
-| M8 | `feature/ac3-open-source-product` / `agents/M8-ecosystem` | HEAD/PR #40 `4c11981`; current run `38555298183` failed five matrix jobs at inherited M1 marker test; no Release published | README、贡献/安全/支持/开源文档（暂定） | 文档必须如实描述安全覆盖边界 |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | local coordination snapshot pending commit; PR #30 remote `a18a126`; run `38555297405` failed four matrix jobs at inherited M1 marker test; ownership/Docker/sponsor checks pass | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | 协调问题，不改 M1–M8 产品源文件 |
-| M9 | `feature/ac3-m9-integration` / `integration` | local HEAD `ab382fe`; PR #36 remote `f125e70`, current-head checks 11/11; local verify 393/399, 0 fail/6 skip, package smoke 100 files, E4 tests 12/12 | 跨模块集成验收及风险跟踪 | External E4/native Shell/clean-VM remain unverified; no main/PR #24 merge or Release |
+| M7 | `feature/ac3-reliability-ac3` / `agents/M7-reliability-ac3` | local/PR #39 `c9a6b5c`; run `38558208490` fails Windows 20/22 at inherited M1 Hook fixture; local honeypot targeted test 6/6 | `packaging/windows/`、scripts、可靠性/打包验证 | #41 clean-VM/install remains HOLD/NOT VERIFIED; Gateway lifecycle coordinates with M1 under #28 |
+| M8 | `feature/ac3-open-source-product` / `agents/M8-ecosystem` | PR #40 `4c11981`; M1 owner commit `46af1f1` absent; whole-commit preflight conflicts on Hook test and adds three absent M1 reports; old Hook marker CI failure remains; no Release | README、贡献/安全/支持/开源文档（暂定） | 文档必须如实描述安全覆盖边界 |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | local/PR #30 `9aee510`; run `38558211885` failed only Windows Node22 at inherited M1 interruption fixture; ownership/Docker/sponsor pass | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | 协调问题，不改 M1–M8 产品源文件 |
+| M9 | `feature/ac3-m9-integration` / `integration` | local/PR #36 `ab382fe`; current-head checks 11/11; local verify 393/399, 0 fail/6 skip, package smoke 100 files, E4 tests 12/12 | 跨模块集成验收及风险跟踪 | External E4/native Shell/clean-VM remain unverified; no main/PR #24 merge or Release |
 
-## 当前分支与验收状态覆盖（2026-10-14 11:37 UTC）
+## 当前分支与验收状态覆盖（2026-10-14 11:45 UTC）
 
 以下以本机 Git worktree HEAD 与 GitHub 当前 PR head/CI 交叉核对；模块工作区由其 owner 保管。
 
 | 模块 | 当前工作树 HEAD | GitHub 状态与下一门槛 |
 | --- | --- | --- |
-| M1 | local `ca24d37` | PR #43 OPEN/Draft，remote `4099ee3`; new expiry fixture fix awaits push/CI; prior head had 3 expiry matrix failures. |
-| M2 | `d9d775b` | PR #37 OPEN/Draft; current run failed inherited M1 synchronous marker test; #45 native Shell remains UNPROTECTED. |
+| M1 | `ca24d37` | PR #43 OPEN/Draft，9/9 current-head checks pass; exact-expiry fixture fix verified remotely. |
+| M2 | `d9d775b` | PR #37 OPEN/Draft; inherited Hook test fixture remains stale; #45 native Shell remains UNPROTECTED. |
 | M3 | `d9364cc` | PR #33 OPEN/Draft，9/9 current-head checks；#42 CLOSED。 |
 | M4 | `69ec7f1` | PR #34 OPEN/Draft，9/9 current-head checks；后端 endpoint UNKNOWN/UNSUPPORTED。 |
-| M5 | `bcbec98` | PR #47 OPEN/Draft; current run failed inherited M1 synchronous marker test; preserve sensitive-read DENY. |
+| M5 | `bcbec98` | PR #47 OPEN/Draft; owner fix absent, stale Hook test preflight verified; preserve sensitive-read DENY. |
 | M6 | `ed82f06` | PR #38 OPEN/Draft，9/9 current-head checks；外部 E4 NOT_VERIFIED。 |
-| M7 | local `c9a6b5c` | PR #39 OPEN/Draft，remote `9088bd2`; honeypot expectation fix awaits push/CI; clean-VM/install remains HOLD/NOT VERIFIED. |
+| M7 | `c9a6b5c` | PR #39 OPEN/Draft; Windows Node20/22 fail only at inherited M1 Hook fixture; clean-VM/install remains HOLD/NOT VERIFIED. |
 | M8 | `4c11981` | PR #40 OPEN/Draft；current run failed inherited M1 synchronous marker test；未发布 Release。 |
-| M0 | local coordination docs updated for this batch | PR #30 OPEN/Draft，remote `a18a126`; current run failed inherited M1 synchronous marker test. |
-| M9 | local `ab382fe` | PR #36 OPEN/Draft，remote `f125e70`, 11/11 current-head checks; local verify 393/399, 0 fail/6 skip, package smoke 100 files, E4 tests 12/12. |
+| M0 | `9aee510` | PR #30 OPEN/Draft; only Windows Node22 fails inherited M1 interruption fixture; next push after 12:01 UTC. |
+| M9 | `ab382fe` | PR #36 OPEN/Draft，11/11 current-head checks pass; local verify 393/399, 0 fail/6 skip, package smoke 100 files, E4 tests 12/12. |
 
 AC3 PR #24 与模块候选均以共同基线 `62496d4020bd90ba2eede49b2e80a2bbebb036b4` 为验收起点。`git worktree list` 显示 M0/M1–M9 使用不同目录和预期分支；另保留 M1 detached scratch `f2f2d10`、M6 旧 main-based worktree/PR #31、M7 旧分支 `feature/ac3-reliability`（HEAD `9c05286`），不清理不替换。Git worktree 列表以 WSL Git 管理；Windows Git 对部分路径显示 prunable 时禁止跨 runtime repair/prune。
 

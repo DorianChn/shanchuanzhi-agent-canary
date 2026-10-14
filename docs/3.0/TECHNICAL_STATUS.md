@@ -1,12 +1,13 @@
 # M0 技术协调状态
 
-## 当前状态（2026-10-14 11:37 UTC；额度页 11:35 UTC）
+## 当前状态（2026-10-14 11:50 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
 
-- **额度**：网页版显示五小时剩余 92%、约 4 小时 23 分后重置；每周剩余 67%，余额 113。页面已关闭。低于 5% 或不能读数时暂停开发、测试、浏览器和 GitHub 操作。
-- **推送节奏**：最近批次 11:15:25 UTC；间隔已满 20 分钟。M0 文档与 M1 `ca24d37`、M7 `c9a6b5c`、M9 `ab382fe` 准备合入本批，只允许快进推到各自已有 PR 分支，不改 main/#24、不合并、不发 Release。
-- **已证实 CI**：#33/#34/#38 9/9；#36 远端 head `f125e70` 11/11。#30/#37/#40/#47 旧 head 失败于继承的 M1 `spawnSync(timeout:1000)` marker 夹具；#39 旧 head 失败于蜜罐旧读取期望；#43 旧 head 3 个矩阵失败于 1ms TTL 夹具。
-- **待推送修复**：M1 `ca24d37` 将 TTL 夹具设为 60 秒并固定时钟，Node20 定向 3/3、Hook 10/10、Node22 Hook 3/3；M7 `c9a6b5c` 对齐 Gateway 错误码期望，蜜罐测试 6/6；M9 `ab382fe` 同步 TTL 夹具并验证 verify 393/399（0 fail、6 skip）、package smoke 100 文件、E4 测试 12/12。均为现有工作树本地提交，尚未推送。
-- **未解除门槛**：#32 旧 Hook 失败分支仍需各自基于 M1 所有者提交更新并重跑 CI；#39/#43/#36 新头需远端复验。#45 原生 Shell、#41 clean-VM 安装、外部 E4 均未验证，保持 UNKNOWN/NOT VERIFIED，不得宣布完成。
+- **额度**：网页版当前显示五小时剩余 88%、4 小时 8 分后重置；每周剩余 66%、6 天后重置，余额 113。页面已关闭。低于 5% 或不能读数时暂停开发、测试、浏览器和 GitHub 操作。
+- **推送节奏**：本批已将 M0 `9aee510`、M1 `ca24d37`、M7 `c9a6b5c`、M9 `ab382fe` 快进推至各自已有 PR 分支；远端 ref 回读一致。为满足 20 分钟间隔，下批不得早于 12:01 UTC。
+- **CI 回读**：#43 当前头 9/9 全通过；#36 当前头 11/11 全通过。#30 当前头仅 Windows Node22 的 Hook interruption marker 断言失败，其余测试矩阵、Docker、sponsor 和 ownership gate 通过；package smoke 因失败而跳过。#39 当前头 Windows Node20/22 同一 M1 Hook interruption 测试失败，其余矩阵与 wrapper 通过，package smoke 跳过。
+- **本地修复证据**：M1 `ca24d37` 精确过期定向 3/3、Hook 10/10、Node22 Hook 3/3；M7 `c9a6b5c` 蜜罐定向 6/6；M9 `ab382fe` verify 393/399（0 fail、6 skip）、package smoke 100 文件、E4 测试 12/12。
+- **跨分支修复**：M2/M5/M8 旧头均不含 M1 owner commit `46af1f1`；整提交还含三份缺失的 M1 报告文件，三方应用在各分支 Hook 文件冲突。M5 确认仍有 `spawnSync(timeout:1000)`。M1 owner 正制作仅含必要 Hook 测试逻辑的可移植修正。未复制或削弱安全断言。
+- **待验门槛**：#32/#37/#40/#47 仍需合入 owner 修正并重跑 CI；#30/#39 也需在兼容修正后重跑。#45 原生 Shell、#41 clean-VM 安装、外部 E4 未验证，保持 UNKNOWN/NOT VERIFIED。M9 本地结果仍为 verify 393/399（0 fail、6 skip）、package smoke 100 文件、E4 测试 12/12。
 - **资源边界**：当前没有 VMware、真实模型或安装测试。并行最多两个任务；其它 Codex 会话的聊天内容不可见，状态仅以文件系统、GitHub 和本会话网页读数为准。
 
 ## 当前状态（2026-10-14 11:26 UTC；PR checks 11:24 UTC；额度页约 11:24 UTC）
