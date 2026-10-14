@@ -1,6 +1,6 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-14 19:43 UTC)
+## Current schedule and dependencies (2026-10-14 19:59 UTC)
 
 - Maximum active module tasks: two. M1's #32 owner-disposition task is complete; assigned slots are M3/#32 first and M6/#27 package-field signoff. Queue M4/#32 and M6/#32 until slots release.
 - M1's limited owner disposition is now visible: d3b64fc is accepted as behaviorally equivalent to 0de664c only for marker-wait/interruption timing. M3's branch copy is next; M4's and M6's copies are queued under #29. Each owner should port the minimal approved async fixture or record an evidence-backed reason; preserve all fail-closed checks.
@@ -8,7 +8,7 @@
 - M9's package and test composition remains a static candidate only until owner signoff and combined exact-head CI; external E4 remains NOT_VERIFIED.
 - M2 native Codex Shell remains UNPROTECTED; M7 clean-VM installer lifecycle is HOLD/NOT_VERIFIED; M4 backend security/E4 is UNKNOWN.
 - The exclusive VMware/real-model/installer reservation cannot be read across other windows. Treat it as unavailable until an owner records reservation and release on #29.
-- Visible quota at 19:38 UTC: 5-hour 97%, weekly 64%, 113 credits. Last push 19:24 UTC; next batch no earlier than 19:44 UTC. Stop if the 5-hour quota drops below 5% or becomes unreadable.
+- The usage page was readable locally at 19:53 UTC and above the stop threshold. Exact account-usage values remain in the local coordinator report, not this public document. Stop if the 5-hour quota drops below 5% or becomes unreadable. Last push 19:46 UTC; next batch no earlier than 20:06 UTC.
 - Worktrees are independent but use two Git runtimes: native Windows Git and WSL Git. Use the runtime that owns each worktree; do not run repair/prune across runtimes. M1/M2/M5/M8 currently track the AC3 base ref locally; use explicit remote branch refs for any push and verify destination first.
 
 

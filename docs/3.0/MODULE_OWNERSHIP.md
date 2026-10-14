@@ -1,18 +1,18 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-14 19:43 UTC)
+## Current ownership and worktree snapshot (2026-10-14 19:59 UTC)
 
 | Module | Branch / worktree | Current PR head and exact-head CI | Ownership status |
 | --- | --- | --- | --- |
 | M1 | feature/ac3-security-core / agents/M1-security | #43 4b562be, 9/9 | Owns Gateway/Guard, Hook semantics, and test/agent-hook.test.ts. #32 disposition is limited to timing-fixture behavior. |
 | M2 | feature/ac3-execution-isolation / agents/M2-isolation | #37 0f2c10c, 9/9 | Owns execution-isolation adapter; native Shell remains UNPROTECTED. |
-| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | #33 d9364cc, 9/9 | Owns host onboarding; owns its copy of shared Hook test changes on its branch. |
+| M3 | feature/ac3-agent-onboarding / agents/M3-onboarding | #33 d9364cc, 9/9 | Owns host onboarding and its Hook-fixture branch copy; current M3 checkpoint asks for the approved minimal update and exact-head CI. |
 | M4 | feature/ac3-desktop-security-center / agents/M4-desktop-security-center | #34 69ec7f1, 9/9 | Owns desktop UI; backend security/E4 stays UNKNOWN. |
 | M5 | feature/ac3-policy-audit / agents/M5-policy | #47 7d5df63, 9/9 | Owns policy fields and audit schema; canonical root contract remains M0-owned; #46 is CLOSED for documentation only. |
-| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3 | #38 ed82f06, 9/9 | Owns E4 verifier/schema and package fields e4:auto/e4:verify/e4:test; explicit #27 signoff remains pending. Preserve the untracked run directory. |
+| M6 | feature/ac3-e4-validation-ac3 / agents/M6-e4-ac3 | #38 ed82f06, 9/9 | Owns E4 verifier/schema and package fields e4:auto/e4:verify/e4:test; explicit #27 signoff remains pending. Preserve the untracked run directory; its Hook-fixture copy remains queued. |
 | M7 | feature/ac3-reliability-ac3 / agents/M7-reliability-ac3 | #39 4267c61, 9/9; wrapper 2/2 | Owns Windows packaging/reliability; clean-VM lifecycle remains NOT_VERIFIED/HOLD. |
 | M8 | feature/ac3-open-source-product / agents/M8-ecosystem | #40 139e7f2, 9/9 | Owns public docs/community experience; release remains unpublished. |
-| M0 | feature/ac3-m0-coordination / coordinator | #30 e1a5047, product 9/9, ownership 1/1 | Owns coordination docs, canonical contract and schedule; does not edit module product code. |
+| M0 | feature/ac3-m0-coordination / coordinator | #30 2951412; product 38626484848 9/9, ownership 38627715629 1/1 | Owns coordination docs, canonical contract and schedule; does not edit module product code. |
 | M9 | feature/ac3-m9-integration / integration | #36 6abd4da, product 9/9, wrapper 2/2 | Owns integration candidate and risk aggregation; cannot declare external E4/native Shell/clean-VM from CI alone. |
 
 All ten active worktrees are separate and resolve to AC3 merge-base 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Native Windows Git verifies M0, M1, M3-M6, and M9; WSL Git with explicit git-dir/work-tree verifies M2, M7, and M8. Cross-runtime prunable output is not grounds for repair/prune. M6's untracked security-lab/e4-runs/20261013T114513Z/ remains untouched.
