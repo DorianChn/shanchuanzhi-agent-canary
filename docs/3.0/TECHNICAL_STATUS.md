@@ -5,9 +5,9 @@
 - PR #24：OPEN/Draft，head 62496d4，base competition/shanchuanzhi-release-readiness；未修改、未合并。PR #30 仍 OPEN/Draft，head 9300f80；本批 M0 文档已推送，run 38515050934 的节点矩阵、package-smoke、Docker、sponsor 与 ownership-contract-evidence 当前均通过。
 - M1：PR #43 head 2276526，run 38502266488 为 9/9；Hook interruption 测试采用异步 marker wait。Issue #32 和 #44 保持 OPEN，需将修复纳入基线并验证；未发现实际审批绕过或宿主 callback 证据。
 - M2：PR #37 head 08c93bc 已推送。run 38515077665 只有 Windows Node 20 真正失败（test/agent-hook.test.ts marker 断言）；macOS Node 20 与 Windows Node 22 因 fail-fast 取消，其余通过。该失败属于 M1 测试，见 #32。Windows CLI sandbox 的 :workspace 合成哨兵写入成功仅证明允许路径可写；未证明拒绝路径、Desktop Shell 或 Hook，原生桌面仍 UNPROTECTED，#45 OPEN。
-- M3：PR #33 远端仍为 c404b6b。下一候选 54facf0 尚未推送；它删除共享 docs/3.0/API_CONTRACTS.md。已在 PR #33 留言并建立 P2 #46，等待 M3 保留共享契约并把模块详情留在 M3 文档。
+- M3：PR #33 远端仍为 c404b6b。候选 54facf0 的净 PR diff 仅新增 docs/3.0/M3/ONBOARDING_API_CONTRACT.md，不改共享 docs/3.0/API_CONTRACTS.md；这符合模块细节与 M0 canonical contract 分离的所有权约定。已更正此前错误留言；现有提交待下一批推送并触发 CI。
 - M4：PR #34 head f301195 已推送，run 38515082347 全部 9 jobs 通过；保留未实现后端 API 为 UNKNOWN/UNSUPPORTED。
-- M5：现有分支 feature/ac3-policy-audit 已建立 Draft PR #47，head f8291c9。targeted policy tests 44/44、TypeScript no-emit 与 diff-check 通过；run 38515368157 的 Ubuntu Node 22 在 security-router 的 same-Guard flow 测试失败，报 observe_sensitive_data_blocked；其他 5 个测试 job 被 fail-fast 取消，Docker/sponsor 通过，package-smoke 跳过。P1 #48 跟踪 M1/M5 契约与测试冲突；P2 #46 跟踪共享文档归属。未发现真实数据泄露。
+- M5：现有分支 feature/ac3-policy-audit 已建立 Draft PR #47，head f8291c9。targeted policy tests 44/44、TypeScript no-emit 与 diff-check 通过；run 38515368157 的 Ubuntu Node 22 在 security-router 的 same-Guard flow 测试失败，报 observe_sensitive_data_blocked；其他 5 个测试 job 被 fail-fast 取消，Docker/sponsor 通过，package-smoke 跳过。P1 #48 跟踪 M1/M5 行为与测试冲突；P2 #46 跟踪 M5 OBSERVE contract 与 M0 canonical 文档同步。M5 最终 PR diff 不改共享 contract 路径；其报告中的 duplicate-path 说明待 M5 owner 校正。未发现真实数据泄露。
 - M6：PR #38 head d513810，run 38512550585 为 9/9；PR 描述已补当前证据。该结果只验证归档的 synthetic E4 bundle，不代表真实模型/外部 E4 验收；状态 BLOCKED / NOT_VERIFIED。
 - M7：PR #39 head 5c7d95d，CI run 38510356534 为 9/9，wrapper run 38510356548 两个平台通过。PR 与 #41 已补状态，Issue #41 保持 OPEN 等候集成；clean-VM 安装、升级、卸载与真实用户取消回滚仍 NOT VERIFIED / HOLD。
 - M8：PR #40 head b0f30ff，run 38397180263 为 9/9；PR 描述已补当前 CI。未发布 Release。
