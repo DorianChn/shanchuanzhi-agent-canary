@@ -1,19 +1,19 @@
 # M0 技术问题分级与协作流程
 
-## 最新问题台账（2026-10-14 17:03 UTC）
+## 最新问题台账（2026-10-14 17:32 UTC）
 
 | Issue | 级别 | 责任模块 | 当前确认事实 | 状态/下一验收 |
 | --- | --- | --- | --- | --- |
-| #27 | P1 | M3/M5/M6/M7，M0 协调 | PR #36 组合 CI 11 项通过；仍需核对 manifest 所有字段、M6 AC3 轨道及 M9 实际集成。 | OPEN；完成字段表与组合验收 |
-| #28 | P1 | M1 owner，M7 配合 | M1/M7 各自 CI 通过；M9 同时集成 close/quarantine 语义尚待逐项复核。 | OPEN；M9 组合生命周期回归 |
+| #27 | P1 | M3/M5/M6/M7，M0 协调 | M9 PR #36 docs-on-AC3 CI 9/9 + wrapper 2/2 通过；该 head 不包含模块实现合并，仍需核对 manifest union、M6 AC3 轨道及组合验收。 | OPEN；完成字段表与组合验收 |
+| #28 | P1 | M1 owner，M7 配合，M0 协调 | M7 PR #39 精确 head `4267c61` 集成 M1 contract；M1 owner 已在 #issuecomment-6174345116 确认，当前 CI 9/9、Windows wrapper 2/2；M0 acceptance 记录于 #issuecomment-6174407469。 | CLOSED；仅此 Gateway/Guard 生命周期合同范围，不代表合并或 M1–M8 全量集成 |
 | #32 | P1 | M1 owner，M0 跟踪 | 当前 M0/M1–M8/M9 CI 通过；历史 Windows marker 间歇失败根因仍 UNKNOWN，不能把子进程夹具称作宿主 callback 证据。 | OPEN；只在确有旧基线未修复时保留复现并验收 |
 | #35 | P0 | M1 | 已关闭，范围限同进程、同一 Guard、callback 遵循 AbortSignal。 | CLOSED（有限范围） |
 | #41 | P1 | M7 | 当前 #39 CI 与 pinned NSIS/template compile 通过；clean-VM 安装、启动、升级、卸载、真实用户取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
 | #44 | P1 | M1 | 当前 #43 head `d26a0c3` / run `38602072618` 9/9；精确到期回归定向 2/2，审批拒绝、清空 pending、callback=0。旧 1ms 观察窗口问题不证明产品放行。 | OPEN；待 M9 baseline acceptance |
 | #45 | P1 | M2 | AppContainer/Hook fixtures 只覆盖已测子进程/协议；实际 Codex 原生 Shell 仍 UNPROTECTED。 | OPEN / NOT VERIFIED |
-| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical root contract 已在 PR #30 head `a469e37` 更新并通过当前 CI；M5 PR/body 文档已刷新。 | OPEN；待 M5/M1 owner 语义复核及 M9 同步 |
-| #48 | P1 | M1/M5，M0 契约 | 保留 sensitive-read hard DENY 与 safe-read 下游 egress fixture；M5 exact-head 9/9、M9 CI 11 项通过。 | OPEN；M9/契约联合验收 |
-| #49 | P1 | M0/M1/M9 | PR #30 `a469e37`（10/10）与 PR #43 `d26a0c3`（9/9）均已固定各自路径；M1 owner contract 已移至模块路径。M9 本地 HEAD `ed0dd01` 已将 root 改为 M0 canonical，并保留 M1 owner contract；远端 PR #36 仍为 `ab382fe`。 | OPEN；等待下一推送批次及 #36 新 head CI |
+| #46 | P2 | M0 owner，M5 提供语义 | M0 canonical root contract 在 PR #30 head `39e2cc2`；M5 OBSERVE 语义与 #48 resolution 已同步。M5 report-only commit `584f96c` 已本地提交，PR #47 body 尚有旧 M9 pending 文案。 | OPEN；待报告推送、新 head CI 与 PR 描述回读 |
+| #48 | P1 | M1/M5，M0 契约 | M5 sensitive-read hard DENY、零审批/零 callback 与 safe-read 下游 egress 断言保留；M5 #47 9/9、M1 #43 9/9、M0 #30 10/10、M9 #36 product 9/9 + wrapper 2/2。 | CLOSED；仅本 Issue 的策略/router 语义范围 |
+| #49 | P1 | M0/M1/M9 | M0 canonical root 与 M1 owner contract 分别保留在 root 与 M1 模块路径；M9 #36 当前 head `ed0dd01` 的 root/M1 两个文件哈希与 owner 文件一致，product 9/9 + wrapper 2/2。 | CLOSED；仅 public contract 路径冲突 |
 
 问题处理规则：P0 为保护路径失效放行、敏感信息泄露或严重数据损坏；P1 为接口不兼容、构建失败或关键功能不可用；P2 为非关键 UI、文档及一般性能。保留失败测试和安全策略，禁止伪造结果。跨模块 Issue 必须写责任模块、复现、验收标准和状态。
 

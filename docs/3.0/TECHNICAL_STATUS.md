@@ -1,6 +1,16 @@
 # M0 技术协调状态
 
-## 当前权威快照（2026-10-14 17:03 UTC）
+## 当前权威快照（2026-10-14 17:32 UTC）
+
+- **额度与调度**：用量页标签页保持打开；17:32 UTC 实读五小时剩余 97%（约 3 小时 36 分后重置）、每周剩余 64%、113 credits。低于 5% 或无法读数即暂停开发、测试、浏览器和 GitHub 操作。最多 2 个模块任务并行。最近分支推送批次为 17:12 UTC；本批自 17:32 UTC 起允许。VMware、真实模型、安装测试未启动。
+- **当前 PR / CI**：PR #24 仍 OPEN/Draft、head 62496d4，未触碰。M0 #30 head 39e2cc2 10/10（产品 run 38604686940、ownership 38604687014）；M1 #43 head d26a0c3 / run 38602072618 9/9；M5 #47 远端 head 5fd4707 / run 38561283918 9/9，报告更新本地提交 584f96c；M9 #36 head ed0dd01 / product run 38604703774 9/9（含 package-smoke）、wrapper run 38604703745 2/2。M7 #39 head 4267c61 含 6d978a5 的 M1 close-contract 集成，run 38596572303 9/9、wrapper 38596572179 2/2；M1 owner 已确认契约，Issue #28 已由 M0 按其范围关闭。相关 PR 仍 OPEN/Draft；M9 docs-on-AC3 CI 不等于 M1–M8 产品集成验收。
+- **接口路径 / Issue**：M9 根契约 SHA-256 与 M0 canonical 文件一致（fe10af13af8e2da1bc22edff6c1b1e4b09dae094abe6556d992c04647bd639ea）；M9 M1 模块契约与 M1 owner 文件一致（b10a3c515ec0da787f4145ebb6069c18292095245fad254d8c5a2ccd24930aa0）。Issue #48 已按 hard-deny、零审批/零 callback、safe-read/egress 语义和相关 CI 验收关闭；Issue #49 已按路径/hash 与 M9 exact-head CI 验收关闭。Issue #46 仍 OPEN，等待 M5 report-only commit 进入 PR #47、新 head CI 及 PR 描述回读。
+- **未完成问题**：#27 manifest union/M6/E4 组合未验证；#32 marker 根因 UNKNOWN；#41 clean-VM 安装 HOLD/NOT VERIFIED；#44 等 M9 baseline acceptance；#45 原生 Codex Shell UNPROTECTED；#46 等 M5 报告提交推送、精确 head CI 与 PR 描述同步；外部 E4 NOT_VERIFIED；M4 backend UNKNOWN/UNSUPPORTED。
+- **边界**：不删除失败测试、不降低安全策略、不伪造结果；不合并 main 或 PR #24，不发布 Release。只按文件系统、GitHub 与当前可见用量页核验，不声称读取其他会话聊天内容。
+
+本节为当前快照；较早时间点内容按历史记录保留。
+
+## 历史快照（2026-10-14 17:03 UTC）
 
 - **额度与窗口**：用量页保持打开；17:02 UTC 实读五小时剩余 97%（约 4 小时 5 分后重置）、每周剩余 64%（约 5 天 19 小时后重置）、113 credits。低于 5% 或无法读数即暂停全部开发、测试、浏览器和 GitHub 操作。
 - **开发与推送**：最多 2 个模块任务并行。M0/M1 推送批次于 16:52 UTC 完成；下批不得早于 17:12 UTC。VMware、真实模型和安装测试互斥，当前未启动。
@@ -11,7 +21,7 @@
 - **仍未验收**：#27 manifest/M6 组合；#28 Gateway 生命周期组合；#32 Hook 历史根因与旧分支结果；#41 clean-VM 安装；#44 等 M9 baseline acceptance；#45 原生 Codex Shell 仍 UNPROTECTED；#46/#48 OBSERVE 文档与联合验收；外部 E4 NOT_VERIFIED；M4 backend status UNKNOWN。P0 #35 CLOSED 的边界仍限同进程、同 Guard，且 callback 遵守 AbortSignal。
 - **未改变的安全边界**：不删/跳过失败测试，不放宽安全策略，不伪造结果；不合并 main 或 PR #24，不发布 Release。8 个引用聊天不可直接读取，本快照只依据文件系统、GitHub 和当前可见网页。
 
-本节是当前快照；以下较早时间点内容保留为历史记录。
+本节是 17:03 UTC 历史快照；以下较早记录按原时间保留。
 
 ## 当前状态（2026-10-14 11:56 UTC；额度页 11:50 UTC；PR checks 11:45 UTC）
 

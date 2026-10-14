@@ -1,21 +1,22 @@
 # M0/M9 集成风险登记
 
-## 当前风险快照（2026-10-14 17:03 UTC）
+## 当前风险快照（2026-10-14 17:32 UTC）
 
 | 风险 | 级别 | 责任与证据 | 状态 |
 | --- | --- | --- | --- |
-| Shared API contract path | P1 | PR #30 `a469e37` 10/10 与 PR #43 `d26a0c3` 9/9 已改为 M0 root canonical + M1 owner path；M9 local HEAD `ed0dd01` 已在本地 branch 完成同一契约布局，远端 PR #36 仍为 `ab382fe`。Issue #49。 | OPEN / WAITING FOR NEXT PUSH AND CI |
-| #27 package/M6 composition | P1 | M9 PR #36 exact head CI 9/9 + wrapper 2/2；仍需核实 M3/M5/M6/M7 manifest union 与 AC3 E4 path。 | OPEN |
-| #28 Gateway lifecycle | P1 | M1 PR #43 9/9、M7 PR #39 9/9 + wrapper 2/2；M9 same-Guard close/quarantine combined behavior awaits review. | OPEN |
+| Shared API contract path | P1 | PR #30 `39e2cc2` 10/10 与 PR #43 `d26a0c3` 9/9 保持 M0 root canonical + M1 owner path；M9 #36 head `ed0dd01` 两个文件 SHA-256 均与 owner 文件一致，product 9/9 + wrapper 2/2。 | CLOSED in Issue #49; no runtime acceptance implied |
+| #27 package/M6 composition | P1 | M9 PR #36 docs-on-AC3 CI 9/9 + wrapper 2/2；该 head 未组合 M3/M5/M6/M7 实现，manifest union 与 AC3 E4 path 未核实。 | OPEN |
+| #28 Gateway lifecycle | P1 | M7 PR #39 head `4267c61` includes `6d978a5`; current-head CI 9/9 + wrapper 2/2, exact M1 Gateway/Guard blobs, M1 owner confirmation #issuecomment-6174345116, and M0 acceptance #issuecomment-6174407469. | CLOSED (SCOPED); no merge/full-product claim |
 | #32 Hook interruption | P1 | Current PR #30/#37/#39/#40/#43/#47 heads pass; historic Windows marker root cause remains UNKNOWN and child-process evidence does not prove host callback behavior. | OPEN / HISTORICAL ROOT CAUSE UNKNOWN |
 | #35 Guard quarantine | P0 | CLOSED only for same process, same Guard, and callbacks honoring AbortSignal. | CLOSED (LIMITED SCOPE) |
 | #41 installer lifecycle | P1 | M7 current CI/wrapper and pinned NSIS/template compilation pass; no clean-VM lifecycle result. | OPEN / HOLD / NOT VERIFIED |
 | #44 approval expiry | P1 | M1 PR #43 head `d26a0c3` run `38602072618` 9/9；精确到期拒绝、清理、callback=0。M9 baseline remains pending. | OPEN |
 | #45 native Shell | P1 | M2 AppContainer child-process tests and Hook protocol fixture do not cover the native Codex Shell. | OPEN / UNPROTECTED |
-| #46/#48 OBSERVE contract | P2 / P1 | M0 root canonical contract is on PR #30 `a469e37`; M5 exact-head remains `5fd4707` / 9/9, and M9 remote CI is still for `ab382fe`. Sensitive-read hard DENY remains. | OPEN / M9 SYNC AND COMBINED ACCEPTANCE PENDING |
+| #46 OBSERVE documentation sync | P2 | M0 canonical is on PR #30 `39e2cc2`; M5 #47 exact head `5fd4707` passed 9/9; #48 policy/router acceptance is CLOSED. M5 report-only commit `584f96c` awaits next push and fresh CI; PR #47 description still needs sync. | OPEN / REPORT AND PR DESCRIPTION SYNC PENDING |
+| #48 OBSERVE policy/router behavior | P1 | Current M5/M1/M0/M9 exact-head assertions and CI are recorded in closed Issue #48. | CLOSED (SCOPED) |
 | External E4 | P1 | M6 verifier CI is green but is fixture/package verification only. | NOT VERIFIED |
 | M4 backend state | P2 | Current endpoint responses remain UNKNOWN/UNSUPPORTED. | OPEN |
-| quota / push interval | Scheduling gate | Usage page 17:02 UTC: five-hour 97%, weekly 64%, 113 credits; last branch batch M0/M1 at 16:52 UTC. | MONITOR; next push ≥17:12 UTC |
+| quota / push interval | Scheduling gate | Usage page 17:32 UTC: five-hour 97%, weekly 64%, 113 credits; last branch batch at 17:12 UTC. | MONITOR; batch interval elapsed; recheck before push |
 
 Do not merge `main` or PR #24, publish a Release, or claim fixture/CI results as native-host, external-E4, or clean-VM acceptance.
 
