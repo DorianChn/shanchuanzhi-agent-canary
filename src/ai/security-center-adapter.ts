@@ -240,6 +240,7 @@ export function buildSecurityDiagnostic(
       ? source
       : 'UNKNOWN';
   }
+  const auditEventsAvailable = sourceStates.state === 'AVAILABLE';
 
   return {
     schemaVersion: 'agent-canary.security-diagnostic.v1',
@@ -270,12 +271,12 @@ export function buildSecurityDiagnostic(
       connectionStatus: agent.connectionStatus,
       protectionStatus: agent.protectionStatus,
     })),
-    eventCount: view.events.length,
-    events: view.events.map(event => ({
+    eventCount: auditEventsAvailable ? view.events.length : null,
+    events: auditEventsAvailable ? view.events.map(event => ({
       ts: event.ts,
       kind: event.kind,
       explanation: explainSecurityEvent({kind: event.kind}),
-    })),
+    })) : null,
     limitations: [
       'A detected configuration does not prove an Agent is connected or its native tools are protected.',
       'Historical events do not prove current Canary isolation state.',

@@ -6,8 +6,8 @@ Agent Canary provides inert MCP decoys and synthetic canary tokens that can surf
 
 ## Project status
 
-- **Current stable release:** v3.0.0. V1.2.7 is an earlier stable release. The separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) reuses the release assets from [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4); it is not the current stable CLI package. Candidate.4 is a pre-release, and moving branches are development artifacts.
-- **Install:** the v3.0.0 CLI package is published to GitHub Packages and requires a GitHub token with `read:packages`; see [Getting Started](GETTING_STARTED.md).
+- **Release status:** No GitHub Release is currently published. The `v3.0.0` source tag is not a published Release.
+- **Install:** the v3.0.0 CLI package is distributed separately through GitHub Packages and requires a GitHub token with `read:packages`; see [Getting Started](GETTING_STARTED.md).
 - **Independent E4 reproduction:** NOT_VERIFIED; the evidence index records what was and was not tested.
 - **License:** MIT for this repository. Third-party dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **Runtime:** Node.js 20 or newer for the source build.
@@ -22,7 +22,7 @@ In particular, Agent Canary does **not** claim to prevent prompt injection, stop
 
 - **Native Codex Shell — UNPROTECTED:** Agent Canary does not intercept Codex's built-in Shell; MCP/Guard setup does not change that.
 - **AppContainer — LIMITED:** Verified coverage is limited to the tested child-process operations; this is not evidence of whole-host or general shell protection.
-- **Security Center / E4 backend — UNKNOWN on HTTP 404:** A 404 is an unknown state, not evidence of success or failure.
+- **Security Center / E4 backend runtime — UNKNOWN:** An HTTP 404 does not establish success or failure.
 - **E4 — NOT_VERIFIED:** Fixture-only evidence is not a product pass. Independent E4 remains NOT_VERIFIED.
 
 ## Start here

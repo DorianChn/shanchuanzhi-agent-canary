@@ -1,6 +1,6 @@
 # Agent Canary — future release notes draft
 
-> **DRAFT — NOT FOR PUBLISHING.** Agent Canary v3.0.0 has already been published as the current stable release. This document is a template for a future release; it does not revise or describe v3.0.0 and does not create a release.
+> **DRAFT — NOT FOR PUBLISHING.** No GitHub Release is currently published. This document is a template for a future release; it does not describe the existing v3.0.0 source tag or create a release.
 
 ## Release identity (maintainer must fill after freeze)
 
@@ -11,7 +11,7 @@
 - Release date: **TBD**
 - Release owner/reviewer: **TBD**
 
-The current stable release is [v3.0.0](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). A separate published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) reuses candidate.4 assets; candidate.4 is a separate pre-release. Do not reuse this draft for any already published release or attach it to a moving branch.
+The repository has `v3.0.0`, `v3.0.0-competition`, and `v3.0.0-competition-candidate.4` source tags. These tags are not published GitHub Releases or downloadable Release assets. Do not reuse this draft for an existing package or attach it to a moving branch.
 
 ## Proposed release summary
 

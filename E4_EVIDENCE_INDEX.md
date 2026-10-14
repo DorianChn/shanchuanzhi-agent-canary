@@ -1,16 +1,16 @@
 # E4 evidence index
 
-**Status as of 2026-10-13: independent E4 remains NOT_VERIFIED and its evidence gate remains BLOCKED.** The stable v3.0.0 release is published; that release status does not change the E4 result. This page indexes the recorded evidence and limits and does not claim an external certification or independent audit.
+**Status as of 2026-10-13: independent E4 remains NOT_VERIFIED and its evidence gate remains BLOCKED.** No GitHub Release is currently published. The repository's v3.0.0 source tag does not change the E4 result. This page indexes the recorded evidence and limits and does not claim an external certification or independent audit.
 
-## Published v3.0.0 mainline verification
+## v3.0.0 source-tag verification
 
-The current stable release is tag `v3.0.0`, commit `42d1d4d9f42fdc89a9c38c338310679afb924e54`. Its [mainline verification receipt](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/MAINLINE_VERIFY_2026-10-13.json) records `npm run verify` on a Windows host with Node.js 22.23.1: build passed, 100/100 automated tests passed, offline self-test 4/4, SDK type checks 5/5, source manifest 181 files with 0 mismatches, and packed-package smoke 72 files passed.
+The `v3.0.0` source tag points to commit `42d1d4d9f42fdc89a9c38c338310679afb924e54`. Its [mainline verification receipt](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/MAINLINE_VERIFY_2026-10-13.json) records `npm run verify` on a Windows host with Node.js 22.23.1: build passed, 100/100 automated tests passed, offline self-test 4/4, SDK type checks 5/5, source manifest 181 files with 0 mismatches, and packed-package smoke 72 files passed.
 
-These are bounded release-source checks from the recorded host. They do not verify an independent operator/environment, a clean Windows VM, or global protection of native host tools. The [release page](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0) marks v3.0.0 as the current stable release while continuing to list E4 as BLOCKED / NOT VERIFIED.
+These are bounded source checks from the recorded host. They do not verify an independent operator/environment, a clean Windows VM, or global protection of native host tools. A source tag and verification receipt are not a published Release or evidence that E4 is complete.
 
-## Separate competition bundle
+## Competition source tags
 
-The published [v3.0.0-competition Community bundle](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) is a separate competition release, not the current stable CLI/package release. Its release notes say its assets were copied unchanged from [candidate.4](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4). GitHub release metadata lists identical names, sizes, and SHA-256 digests for all nine assets in those two releases. This establishes asset identity only; candidate-specific validation remains tied to those assets and does not become v3.0.0 stable evidence.
+The `v3.0.0-competition` and `v3.0.0-competition-candidate.4` repository tags are source snapshots, not published GitHub Releases. This index makes no claim that either tag has downloadable Release assets or that asset metadata establishes equivalence. Candidate-specific validation remains tied to its exact recorded source and artifact and does not become v3.0.0 evidence.
 
 ## Current external packet review
 
@@ -28,8 +28,8 @@ The recorded Windows 11 VM run was BLOCKED before product testing: the guest rem
 
 | Record | What it supports | What it does not support |
 |---|---|---|
-| [v3.0.0 mainline verification receipt](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/MAINLINE_VERIFY_2026-10-13.json) and [test-results report](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/TEST_RESULTS.md) | Release-source build, bounded test, self-test, type, manifest, and package-smoke outcomes on the recorded host | Independent E4, clean-VM acceptance, or global native-host protection |
-| [v3.0.0-competition release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition) | Published competition bundle with asset digests matching candidate.4 | Current stable CLI/package status or new independent E4 evidence |
+| [v3.0.0 mainline verification receipt](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/MAINLINE_VERIFY_2026-10-13.json) and [test-results report](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/TEST_RESULTS.md) | Source build, bounded test, self-test, type, manifest, and package-smoke outcomes on the recorded host | Independent E4, clean-VM acceptance, or global native-host protection |
+| [v3.0.0-competition source tag](https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/v3.0.0-competition) | Competition source snapshot | Published Release assets, current stable CLI/package status, or new independent E4 evidence |
 | [External packet review](docs/3.0/E4_EXTERNAL_EVIDENCE_REVIEW_2026-10-13.md) and [machine-readable summary](docs/3.0/E4_EXTERNAL_EVIDENCE_REVIEW_2026-10-13.json) | Archive self-consistency, reported test rows, explicit review status and limitations | Verified operator identity, clean VM, real LLM behavior, native host coverage, or independent E4 |
 | [VM automation run](docs/3.0/E4_AUTOMATION_RUN_2026-10-13.md) | The exact blocked stages and why no product test occurred | Product pass/fail, guest execution, or release readiness |
 | [Auto E4 scope](docs/3.0/AUTO_E4.md) | What the source runner inspects and the synthetic checks it can perform | A certifier, automatic VM control, a model call, GitHub writes, or external independence |

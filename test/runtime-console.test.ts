@@ -91,6 +91,15 @@ test('security-center data-source failures preserve timeout, permission, missing
  assert.equal(classifyDataSourceFailure(503,'Error'),'UNAVAILABLE');
 });
 
+test('diagnostic distinguishes an empty audit feed from an unavailable source',()=>{
+ const available=buildSecurityDiagnostic(adaptSecuritySnapshot({state:{events:[]}}),{state:'AVAILABLE'});
+ assert.equal(available.eventCount,0);assert.deepEqual(available.events,[]);
+
+ const unavailable=buildSecurityDiagnostic(adaptSecuritySnapshot({}),{state:'UNSUPPORTED'});
+ assert.equal(unavailable.eventCount,null);assert.equal(unavailable.events,null);
+ assert.equal(unavailable.dataSources.state,'UNSUPPORTED');
+});
+
 test('OBSERVE denial, sensitive-data allow, and Guard quarantine are not rendered as successful policy results',()=>{
  const denied=preparePolicyResultForDisplay({mode:'OBSERVE',status:'DENY',guardState:'SAFE',decision:{action:'DENY',mode:'OBSERVE',risks:['SENSITIVE_DATA']}});
  assert.equal(denied.status,'DENY');assert.equal(denied.displayWarning,undefined);

@@ -57,6 +57,7 @@
     "pack:check": "node scripts/check-package.mjs",
     "e4:auto": "npm run build && node security-lab/e4/run.mjs",
     "e4:verify": "node security-lab/e4/verify-bundle.mjs",
+    "e4:test": "node --test security-lab/e4/verify-bundle.test.mjs",
     "verify": "npm run build && npm test && npm run pack:check",
     "prepublishOnly": "npm run build",
     "ai:console": "node dist/index.js ai console",
