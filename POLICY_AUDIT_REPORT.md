@@ -12,11 +12,11 @@ M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放�
 
 > 本节是 2026-10-15 更新后的当前状态，并优先于下方较早记录的 head、CI 和 PR 描述状态。下方保留的旧 SHA/run 及 2026-10-14/15 状态段属于此前核对的历史证据，不表示当前 head；Issue #46 的现状以本节为准。
 
-- **M5 PR #47**：当前远端 head 为 b672f89cb1e27105cf8728cc9e2bb96c2ab6c854；其精确 head CI run [38611183498](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611183498) 为 9/9 通过。
-- **M0 PR #30**：当前 head 453aa31 的产品 CI run [38611181479](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611181479) 为 9/9，ownership run [38611181489](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611181489) 为 1/1。
-- **Issue #46**：当前正文同步已完成，关闭待后续处理；本快照不提前记为 CLOSED。**Issue #48** 已按 OBSERVE hard-deny 的有限范围 CLOSED；**Issue #49** 已按 canonical 根契约与 M1 契约的有限路径/hash 核对范围 CLOSED。各 Issue 关闭只覆盖其记录范围。
-- **M9 PR #36**：当前远端 head c09cdde 是包含多模块代码与测试的集成候选。该 exact head 的 product CI run [38611183619](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611183619) 为 9/9，wrapper run [38611183819](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38611183819) 为 2/2。此候选与通过的检查仍不证明 native-host、clean-VM/installer、external E4 或真实工具副作用。
-- **Issue #27 / combined manifest**：owner acceptance remains pending。
+- **M5 PR #47**：当前远端 head 为 3afc55324cc1d83f2000697e168decb48e33b0b8；其精确 head CI run [38614270263](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614270263) 全部 9/9 成功。
+- **M0 PR #30**：当前 head 为 1ec52878a7a148e917210eaf13e3dd4d4257df2d；产品 CI run [38614268660](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614268660) 为 9/9，ownership run [38614269082](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614269082) 为 1/1。
+- **Issue #46**：仍为 OPEN，等待本次报告同步及对应新 PR head CI。**Issue #48** 已按 OBSERVE hard-deny 的有限范围 CLOSED；**Issue #49** 已按 canonical 根契约与 M1 契约的有限路径/hash 核对范围 CLOSED。各 Issue 关闭只覆盖其记录范围。
+- **M9 PR #36**：当前远端 head 为 d80245599912aec3cc7fdb3f2a58378caed0143d，是包含多模块代码与测试的集成候选。该 exact head 的 product CI run [38614289321](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614289321) 为 9/9，wrapper run [38614289309](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38614289309) 为 2/2。此候选与通过的检查仍不证明 native-host、clean-VM/installer、external E4 或真实工具副作用。
+- **Issue #27 / combined manifest**：M6 owner 对字段的明确确认仍待办；combined manifest owner acceptance remains pending。
 - **安全边界保持**：OBSERVE 对敏感读取和显式硬拒绝仍是 hard-deny；对应夹具断言拒绝前 pending approval 为 0、callback 次数为 0。UNKNOWN 与 NOT_VERIFIED 仍按字面保留，不从局部 CI 或文档/hash 检查推断为已验证。
 - **仍为 NOT_VERIFIED**：真实 M1+M5 host wiring、native-host、E4 的外部验证、clean-VM/installer、native Shell 保护及真实工具副作用。M5 fixture、M9 多模块集成候选的 exact-head CI 与有限范围的 Issues #48/#49 证据均不替代这些验证。
 
