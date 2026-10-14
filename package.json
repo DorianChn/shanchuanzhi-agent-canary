@@ -48,7 +48,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts",
+    "test": "node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts test/server.test.ts",
     "ai:console": "node dist/competition.js ai console",
     "lab:agent": "node competition-submission/lab/run-agent-eval.mjs --profile=neutral_agent --v2",
     "types:check": "node scripts/check-sdk-types.mjs",
