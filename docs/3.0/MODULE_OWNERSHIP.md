@@ -15,6 +15,24 @@
 | M0 | feature/ac3-m0-coordination / coordinator | local HEAD da25925, remote PR #30 head d23f1ae; current remote CI 10/10 pass | docs/3.0/* coordination docs, collaboration checks | Coordinates issues, quota and scheduling; no M1–M8 source edits |
 | M9 | feature/ac3-m9-integration / integration | PR #36 head 996073a; 9/9 checks pass on currently observed head | Cross-module integration acceptance and risk tracking; no ownership of module source | No merge to main; no PR #24 merge; no Release |
 
+## 当前分支与验收状态覆盖（2026-10-14 03:08:17 UTC）
+
+下表更新分支、PR 与门禁快照；前一表保留职责分配和历史状态。模块文件所有权不变。
+
+| 模块 | 当前工作树 HEAD | GitHub 状态与下一门槛 |
+| --- | --- | --- |
+| M1 | 2276526 | PR #43 OPEN/Draft，9/9 checks 通过；#35 CLOSED；#32/#44 OPEN，历史失败根因仍 UNKNOWN。 |
+| M2 | a1c239d | PR #37 OPEN/Draft，9/9 checks 通过；#45 OPEN，原生 Codex Shell UNPROTECTED。 |
+| M3 | c404b6b | PR #33 OPEN/Draft，9/9 checks 通过；#42 CLOSED。 |
+| M4 | fe2c973 | PR #34 OPEN/Draft，9/9 checks 通过。 |
+| M5 | 9ec08d9 | 本地分支，无当前开放 PR；按 #27 协调 API 合约路径和 package.json 字段。 |
+| M6 | bca895f | PR #38 OPEN/Draft，7 pass、1 Windows Node 22 fail、1 package-smoke skip；外部 E4 为 NOT_VERIFIED；一个未跟踪 E4 run 保留本地。 |
+| M7 | 9b0a504 | PR #39 远端仍为 4f3a2c5，当前 CI 有失败；候选本地验证通过但尚无该 head 的 CI。#41 OPEN；push 前须去掉本地 VM 绝对路径。 |
+| M8 | b0f30ff | PR #40 OPEN/Draft，9/9 checks 通过；没有发布 Release。 |
+| M0 | f13ddd0 | PR #30 OPEN/Draft，9 个常规 CI jobs 与 ownership gate 均通过。 |
+| M9 | 996073a | PR #36 OPEN/Draft，9/9 checks 通过；尚未进行最终集成验收。 |
+
+所有 M1–M8 AC3 分支的共同 merge-base 均为 62496d4020bd90ba2eede49b2e80a2bbebb036b4。M0 已修复 Git worktree 管理目录中的 Windows 绝对路径指针；状态核对需使用 core.autocrlf=true 读取 Windows CRLF worktree。修复只更新 Git 元数据，未改模块文件。
 ## 共享路径规则
 
 | 路径 | owner | 协调规则 |

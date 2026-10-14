@@ -1,8 +1,25 @@
 # M0/M9 集成风险登记
 
-更新日期：2026-10-13。当前增量快照见下表；旧 R1–R11 详细记录按其原时间保留，不覆盖当前快照。
+更新日期：2026-10-14。实时风险快照位于首个风险表；旧记录按原时间保留。
 
-## 当前风险增量（2026-10-13 16:16 UTC）
+## 实时风险快照（2026-10-14 03:08:17 UTC）
+
+| 风险 | 级别 | 责任与证据 | 状态 |
+| --- | --- | --- | --- |
+| #35 Guard quarantine | P0 | M1 PR #43 head 2276526 的 9/9 CI 通过；Issue #35 已关闭。仅确认同一进程、同一 Guard，且 callback 配合 AbortSignal。 | CLOSED（范围有限） |
+| #32 Hook interruption | P1 | 当前 M1 PR checks 通过，但既有 Windows marker 失败根因未获 owner 结论。 | OPEN / UNKNOWN |
+| #44 approval expiry | P1 | 当前 M1 PR checks 通过；历史 requestId 失败根因仍 UNKNOWN。 | OPEN / UNKNOWN |
+| #41 M7 reliability CI | P1 | 远端 PR #39 head 4f3a2c5 仍有 CI 失败；候选 9b0a504 本地 tests 通过，未推送且无新 head CI。 | OPEN |
+| #45 native host Shell | P1 | PR #37 子进程范围通过；原生 Codex Shell 为 UNPROTECTED。 | OPEN |
+| #27 manifest / package fields | P1 | M3/M5/M6/M7 仍需确认字段组合；M6 外部 E4 未验证。 | OPEN |
+| #28 Gateway lifecycle | P1 | M1 为接口 owner，M7 需与其 Gateway close/quarantine 行为完成组合验收。 | OPEN |
+| worktree pointers | P2 | 已修复 M3/M4/M6、coordinator、integration、main 与旧 M6 worktree 的登记指针；登记路径当前有效。 | FIXED LOCALLY |
+| quota / scheduling | 调度门槛 | 02:57:50 UTC 读数 88% 剩余；当前只分配 M7 一个开发槽，push 间隔至少 20 分钟。 | MONITOR |
+
+VMware、真实模型和安装测试互斥；本快照没有此类测试运行。低于 5% 或额度页不可读时停止开发、测试和推送；确认五小时额度重置后再继续。
+
+
+## 历史风险增量（2026-10-13 16:16 UTC）
 
 | ID | 优先级 | 风险/证据 | 责任与当前动作 | 状态 |
 | --- | --- | --- | --- | --- |

@@ -2,6 +2,9 @@
 
 本图基于现有架构文档、当前源码和实际分支/改动路径。对尚无提交、只有任务命名或当前线程不可读取的内容，标记为暂定；接口细节以 `API_CONTRACTS.md` 为准。
 
+## 当前排程覆盖（2026-10-14 03:08:17 UTC）
+
+M0 当前只把一个开发槽分配给 M7 的 #41，完成 CI 修复后再处理 M1/M7 的 Gateway 组合问题 #28。M1 是 Gateway/Guard 契约 owner；M7 当前 CI 修复不授权其改 Gateway 源码。M2 的 #45 仍显示原生 Codex Shell 为 UNPROTECTED，不能以子进程 AppContainer 结果替代宿主覆盖证明。M3/M4/M5/M6/M8/M9 保留现有分支与证据；M0 不启动第二个模块实现任务。其他窗口实时活跃状态无法确认。
 ```mermaid
 flowchart LR
   M1[M1 Gateway / Hook 安全执行] --> M2[M2 执行隔离适配]
