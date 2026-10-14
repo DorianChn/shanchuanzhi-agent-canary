@@ -1,6 +1,6 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-14 19:59 UTC)
+## Current integration risk snapshot (2026-10-14 20:25 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
