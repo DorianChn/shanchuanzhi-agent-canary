@@ -50,6 +50,27 @@ for (const name of ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log']) {
 }
 const report = JSON.parse(reportBytes.toString('utf8'));
 if (report.e4Status !== 'NOT_VERIFIED' || report.overall.includes('PASS')) throw new Error('E4_AUTOMATION_MUST_NOT_PROMOTE_VERDICT');
+if (
+  metadata.schema !== 'agent-canary.e4-bundle.v1' ||
+  metadata.archive !== 'evidence.zip' ||
+  metadata.size !== archive.length ||
+  metadata.entries !== files.size ||
+  metadata.manifest?.valid !== true ||
+  metadata.manifest?.entries !== expected.size ||
+  metadata.verification !== 'LOCAL_ZIP_CRC_AND_SHA256_MANIFEST_VERIFIED' ||
+  metadata.classification !== report.classification
+) throw new Error('E4_BUNDLE_METADATA_MISMATCH_OR_PROMOTED');
+
+// The ZIP is authoritative, but when generated evidence sidecars are present,
+// reject a folder whose visible JSONL copy has drifted from the verified ZIP.
+for (const name of payloadNames.filter(item => item.startsWith('evidence/'))) {
+  const externalPath = path.join(runDir, ...name.split('/'));
+  if (!fs.existsSync(externalPath)) continue;
+  let external;
+  try { external = fs.readFileSync(externalPath); }
+  catch { throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`); }
+  if (!external.equals(files.get(name))) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
+}
 const requiredCases = ['GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION', 'GW-FAULT-EXECUTOR', 'GW-FAULT-CLOSED', 'HOOK-FAULT-STATESTORE', 'SHELL-BOUNDARY-BYPASS', 'ARTIFACT-VM-BINDING', 'APP-01', 'MODEL-REAL-TOOLCALL'];
 for (const id of requiredCases) if (!report.cases.some(row => row.id === id)) throw new Error(`E4_MATRIX_CASE_MISSING:${id}`);
 const shell = report.cases.find(row => row.id === 'SHELL-BOUNDARY-BYPASS');
