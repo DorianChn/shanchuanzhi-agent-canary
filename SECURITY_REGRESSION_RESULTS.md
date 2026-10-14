@@ -118,7 +118,7 @@ Gateway 是宿主进程内的合作执行接口。传输层只有在宿主将断
 
 ### 环境与复现
 
-- 只使用已存在的 Windows Node：20.20.2（`C:\Users\36712\AppData\Local\Temp\ac32-node20.5S2gfu\node.exe`）和 22.23.1（`C:\Users\36712\AppData\Local\hermes\node\node.exe`）；没有安装或替换 Node。
+- 只使用已存在的 Windows Node 20.20.2 和 22.23.1 运行；没有安装或替换 Node。
 - 两版本均执行 `node --import tsx --test --test-name-pattern 'native lab wrapper interruption emits no allow decision and invokes no tool callback' test/agent-hook.test.ts`；只选择该一项作为聚焦用例，Node 20 reporter 将其余 9 项标为 name-pattern filtered。
 - 修改前定向测试两版本均通过 1/1。Node 20 诊断：pid `1420`、spawnError `null`、exit `{code:null,signal:"SIGTERM"}`、stdout/stderr 为空、marker `true`。Node 22：pid `27448`，其余字段同样为 spawnError `null`、`SIGTERM`、空 stdout/stderr、marker `true`。因此普通调度下未复现失败。
 - 对同一合成 wrapper 做受控 harness 复现：在观察到 entry marker 后，父进程故意延迟 2500 ms 再尝试外部 kill。观察到 marker `true`、spawnError `null`、exit `{code:0,signal:null}`、stdout `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"LAB_HOOK_ERROR_FAIL_CLOSED"}}\n`、stderr 为空、决策日志不存在。也就是 wrapper 自己的 `HOOK_TIMEOUT_MS=2000` 先结束了子进程；现有 interruption 测试会因 child 已结束和 stdout 非空而失败，尽管产品仍 fail-closed。
@@ -194,3 +194,46 @@ A deterministic regression uses two Gateway instances with one Guard. The first 
 - `git diff --check` — passed after the documentation update.
 
 The synthetic callback tests honor their supplied AbortSignal. A host callback that ignores the signal can continue its own side effects, and this Gateway is not an OS sandbox. Another Guard instance or process does not receive a synchronous event from this Guard. Issue #35 remains OPEN; this local test result does not replace current-head remote end-to-end CI or prove cross-process cancellation. No push, issue update, merge, or release was performed.
+
+## M1 Issue #32 / #44 current disposition (2026-10-14)
+
+### PR #43 ancestry and current CI
+
+The remote Draft PR #43 is OPEN at exact head `f59ba37c2fd9d1b5e181e067f80981f8920ef16a`, matching the local M1 branch HEAD. Local ancestry checks against that exact SHA returned success for all four reviewed commits:
+
+| Commit | Full SHA | Present in PR #43 ancestry |
+| --- | --- | --- |
+| `aae4705` | `aae4705bfb870e74b28062283bba7755a322b78f` | yes |
+| `46af1f1` | `46af1f19344dffe93a30817c4805eec0c6c673fe` | yes |
+| `89e40cd` | `89e40cd18fdae56124dfcbf54a6cacbdb850ff2c` | yes |
+| `ec3bc96` | `ec3bc96d7301304f48270faaec926c7dbc1281ef` | yes |
+
+GitHub associates CI run [38522973084](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38522973084) with that exact head. All nine jobs completed successfully. Windows Node 20 job `115716696322` ran Node `20.20.2`; Windows Node 22 job `115716696306` ran Node `22.23.3`. Both completed `npm run build` and `npm test`; each test log reports 340 tests, 336 passed, 0 failed, and 4 skipped.
+
+### P1 #32 — Hook interruption marker
+
+**Historical root-cause classification: PLAUSIBLE; exact runner cause is unconfirmed.** The failing Windows Node 20 job `115684062592` in run `38512532532` reports `false !== true` at the old Hook-entry marker assertion. The prior fixture used a one-second synchronous spawn timeout and checked the marker without an asynchronous handshake; runner startup/dispatch timing is a plausible explanation. The historical log does not record enough child state to prove why the marker was absent. Do not treat the green rerun as proof of the old failure's precise cause.
+
+On current head, the interruption subtest passes in both Windows jobs. Their logs report `spawnError=null`, `exit={code:null,signal:"SIGTERM"}`, `stdout=""`, `stderr=""`, and `marker=true`; the test still checks no allow result, no output/decision log, and no tool callback. This verifies the revised synthetic interruption regression, not an actual Claude host's behavior after a killed Hook process. Issue #32 remains OPEN pending M9 combined-baseline verification.
+
+### P1 #44 — approval expiry and missing pending requestId
+
+**Historical root-cause classification: PLAUSIBLE; exact scheduler timing is unconfirmed.** The failing Ubuntu Node 20 job `115348307512` in run `38412534723` failed at `operator.pending()[0].requestId` with `Cannot read properties of undefined (reading 'requestId')`; the failing line was before `operator.approve()`. The old fixture set `approvalTtlMs: 5`, and `pending()` runs the expiry sweep, which removes already expired items. An isolated controlled delay on the exact old source reproduced the same missing-entry error. This supports a test timing race, but does not show the original runner's elapsed time. The observed failure does not demonstrate that an approval succeeded or that a callback ran.
+
+The current test captures `decision` and `requestId` from the `REQUIRE_APPROVAL` rejection, waits beyond TTL, then asserts approval is expired and callback count remains zero. CI run `38522973084` passed this exact subtest in Ubuntu Node 20 job `115716696261` (19.933 ms), Windows Node 20 job `115716696322` (60.481 ms), and Windows Node 22 job `115716696306` (35.538 ms). The full matrix passed; no Gateway production code or security policy was changed for this test correction. Issue #44 remains OPEN pending M9 combined-baseline verification.
+
+No test was deleted, skipped, or weakened for either issue. No GitHub issue was updated in this review; the live Issues #32 and #44 both remain OPEN.
+
+## Issue #28 M1 owner review and M7 handoff (2026-10-14)
+
+M1 owner review of the current `feature/ac3-security-core` tree found all five M1 close/quarantine lifecycle acceptance points implemented and covered by tests. No Gateway/Guard code or test change was needed. The close implementation in `src/runtime/gateway.ts` synchronously sets `closed` and clears pending approvals, publishes its memoized Promise before invoking abort listeners or the Guard disposer, aborts active controllers, replaces and invokes the disposer once, waits for the shared serialized `history.tail`, then attempts each still-open resource descriptor. A failed descriptor close is contained; remaining descriptors are still attempted and the final rejection is only `GATEWAY_RESOURCE_CLOSE_FAILED`, without an underlying cause or resource path. Calls from concurrent close, abort-listener reentry, and disposer reentry share the same Promise.
+
+### Local verification in this review
+
+Using the already-installed Windows Node `22.23.1`, the command `node --import tsx --test test/gateway.test.ts test/containment.test.ts` completed with **51 passed, 0 failed, 0 skipped**. This is fresh local evidence on M1 HEAD `56f55f77ebf7d1c45b015cba29a783658726d225`. In particular, the suite passed `quarantine subscribers run synchronously once per transition and unsubscribe cleanly`, `gateway close unsubscribes its Guard observer exactly once`, `gateway close publishes one Promise before synchronous abort and disposer reentry`, `gateway close aborts active work, drains queued work, and blocks pending approval`, and `gateway close tries every resource after a close error and exposes only a stable failure`.
+
+### Remote CI and integration boundary
+
+Separately, the recorded GitHub CI run [38522973084](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38522973084) passed all 9 jobs at PR #43 code head `f59ba37c2fd9d1b5e181e067f80981f8920ef16a`; the current M1 code is unchanged from that head, with later M1 commits limited to reports. The CI run is remote evidence for the M1 candidate. It is not a combined M1+M7 integration run and does not establish that the M7 Gateway changes have been merged or reconciled. Issue #28 remains OPEN.
+
+M7 integration must preserve the M1 close ordering and Guard-quarantine behavior: synchronously latch `closed` and clear pending approvals; publish the one close Promise before any reentrant abort/disposer callbacks; abort active controllers; unsubscribe exactly once; wait for queued Gateway work to settle before closing resources; attempt every registered resource even after one close error; expose only the stable sanitized error; and retain the identity/reentry, queue-drain, pending-approval, resource-attempt, and quarantine regressions. This review did not inspect or modify M7 files, test a host callback that ignores `AbortSignal`, simulate an OS-level descriptor-close failure, or verify cross-process quarantine notification.
