@@ -2,20 +2,20 @@
 
 更新时间：2026-10-14 UTC。以上实时快照优先；其余 Issue 细节是对应日期的历史记录。
 
-## 当前调度（2026-10-14 09:12 UTC）
+## 当前调度（2026-10-14 10:02 UTC）
 
-- 当前 2/2 并发槽由 M5 与 M9 占用，在各自既有 worktree 完成文档校正和集成复核；M2 已释放槽位，最新本地提交 4875d84 完成 hook_event_name 先于无关工具透传的校验。进度只依据 GitHub、文件系统与额度页，不声称读取其他窗口聊天。
+- 当前 2/2 并发槽由 M1 与 M7 占用：M1 已完成 #28 owner handoff，M7 在自己的 PR #39 worktree 制作集成候选；M9 已完成计划文档更新并释放槽位。进度依据 GitHub、文件系统与额度页，不声称读取其他窗口聊天。
 - **PR #24** 仍 OPEN/Draft，base competition/shanchuanzhi-release-readiness、head 62496d4；未修改、未合并。**PR #30** 仍 OPEN/Draft，head a81a33d；记录的 CI run 38527097301 为 9/9、ownership-contract run 38527097311 为 1/1。
-- **M1 / #32 / #44**：PR #43 head f59ba37，CI 9/9。独立候选通过不等于共同基线通过；#32 历史 marker 根因仍 UNKNOWN，#44 过期审批回归需候选 PR #36 的 GitHub CI 复验；保持 OPEN。
+- **M1 / #28 / #32 / #44**：PR #43 最近远端 head f59ba37，CI 9/9；本地报告提交 738a783，Gateway/containment 定向测试 51/51。M1 owner 已确认 M1/M7 共基线 62496d4 但互非祖先，并审查通过 M7 提交 `6d978a5` 中五个 owner 文件；M7 报告 Gateway/containment/acceptance 66/66、reliability 43 通过/3 跳过，M1 未独立重跑。M7 候选尚未推送，#28 维持 OPEN，待共同 CI 与最终审查。#32 历史 marker 根因仍 UNKNOWN，#44 仍 OPEN。
 - **M2 / #45**：PR #37 远端 head cb84f43、CI 9/9；本地提交 4875d84 前置 hook_event_name 校验：缺失/错误事件名拒绝，仅完整 PreToolUse 非 Bash 透传；定向 protocol 测试通过。真实 Codex Desktop Shell 仍 UNPROTECTED / BLOCKED_NOT_VERIFIED；协议 fixture 与 AppContainer 子进程证据不代表原生宿主受保护。
 - **M3–M4**：PR #33 head 54facf0、PR #34 head f301195；已记录 CI 各 9/9。M4 后端保护/E4 状态仍须显示 UNKNOWN，不得由 UI fixture 推断 PASS。
-- **M5 / #48**：PR #47 远端 head cf4e2cd、CI run 38527097304 为 9/9。M5 本地文档提交 eddef7e 更正 readiness report 的重复契约路径状态；OBSERVE 敏感读取仍 hard DENY。Issue #48 保持 OPEN，等待 M9 GitHub 组合 CI。
+- **M5 / #48**：PR #47 最近远端 head cf4e2cd、CI run 38527097304 为 9/9。M5 本地最新报告修订在 bcbec98；OBSERVE 敏感读取仍 hard DENY。Issue #48 保持 OPEN，等待组合验收。
 - **M6 / #46**：PR #38 head d513810；schema 测试 41/41、bundle verifier 12/12。M6 的 SecurityEvidenceEvent 与 M5 PolicyAuditEvent 分离，当前 M6 不消费 M5 stream，也未验证 M2 binder 的端到端行为；外部 E4 为 NOT_VERIFIED。
-- **M7 / #41**：PR #39 head 5c7d95d、主 CI 9/9、wrapper 2/2；clean-VM 安装/升级/卸载和真实取消回滚 NOT VERIFIED / HOLD。VM 前置条件未满足，未启动/修复。
-- **M8**：PR #40 head b0f30ff、CI 9/9；未发布 Release。**M9 / PR #36**：候选 HEAD 845743d 本地 aggregate verify、package smoke 和 docs check 已通过；397 项中 391 pass、6 环境条件 skip、0 fail。默认 WSL Git 对 Windows CRLF 工作树产生全树 M 假阳性，使用关闭可选锁且 core.autocrlf=true 的状态核验干净；PR #36 远端仍为旧 head 996073a，组合 GitHub CI 待推送后运行。
+- **M7 / #28 / #41**：PR #39 远端 head 5c7d95d、该旧 head 的主 CI 9/9、wrapper 2/2；本地集成提交 `6d978a5` 已在既有 M7 分支，包含五个 M1 owner 文件和两份 M7 报告。M1 owner 确认五文件与 M1 HEAD blob 一致且候选语义可接受；M7 报告的定向测试为 Gateway/containment/acceptance 66/66、reliability 43 通过/0 失败/3 跳过。尚未推送；新 head 的 GitHub CI 未运行。clean-VM 安装/升级/卸载和真实取消回滚 NOT VERIFIED / HOLD。
+- **M8**：PR #40 head b0f30ff、CI 9/9；未发布 Release。**M9 / PR #36**：本地计划文档 head 5c11113；此前 397 项统计对应功能组合 head 83d7268，391 pass、6 环境条件 skip、0 fail，不能当作新提交测试或 #28 集成证明。PR #36 最近远端仍为 996073a，组合 GitHub CI 待推送后运行。
 - 当前未关闭门槛：P1 #27、#28、#32、#41、#44、#45、#48；P2 #46。#35 已 CLOSED，证据仅覆盖同进程、同 Guard 且 callback 遵守 AbortSignal。
-- 网页用量页约 09:12 UTC 实读：五小时 66%、每周 72%、额度 113、约 1h46m 后重置。低于 5% 或读数不可用时暂停开发、测试、浏览器和 GitHub 操作；确认重置后才恢复。
-- 最近推送批次约 07:14 UTC，间隔已超过 20 分钟；M5/M9 完成本地审查后，将同 M0/M2 一起复核并批次推送。VMware、真实模型和安装测试共用一个互斥槽；目前无此类运行。未合并 main/#24，未发布 Release，M0 只改协调文档。
+- 网页用量页约 10:00 UTC 实读：五小时剩余 54%、约 59m 重置；每周剩余 70%、额度 113。低于 5% 或读数不可用时暂停开发、测试、浏览器和 GitHub 操作；确认重置后才恢复。
+- 最近已知推送批次约 07:14 UTC，间隔已超过 20 分钟；候选和分支 ancestry 审查完后统一批次推送。VMware、真实模型和安装测试共用一个互斥槽；目前无此类运行。未合并 main/#24，未发布 Release，M0 只改协调文档。
 ## 历史调度（2026-10-14 04:36:33 UTC）
 
 - 双槽调度：M3 收尾 onboarding owner contract 与 M0 唯一契约文件的所有权交接；M4 审核 OBSERVE/Guard 状态展示的 fail-closed 与 UNKNOWN 边界。M0 按 worktree、PR、CI、Issue 和额度页核实进度，不声称读取其他 Codex 窗口聊天。M1 #32、M2 adapter、M5 policy 和 M6 bundle 审查已完成本地步骤并释放槽位。

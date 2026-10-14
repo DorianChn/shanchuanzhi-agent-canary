@@ -10,7 +10,7 @@
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## TrustedExecutionGateway — M1（接口 owner 暂定）
+## TrustedExecutionGateway — M1（接口 owner）
 
 - 入口：`createTrustedExecutionGateway(GatewayOptions)`，返回 `{ agent, operator, evidence, dataflow, provenance, close }`。
 - `agent.dispatch(ToolCall, signal?)` 是 agent 工具执行唯一入口。只接受 `read_file`、`write_file`、`run_command`、`http_request`、宿主登记的 `mcp_tool`；未登记资源/命令/MCP 工具或额外参数必须拒绝。
@@ -18,8 +18,11 @@
 - `operator.pending/approve/reject` 是宿主能力，不得暴露为 agent/MCP 工具。审批引用不可重放；执行前再次检查 Guard 和资源绑定。
 - 文件能力使用预持有句柄和身份复查；命令使用固定 executable + argv；网络仅允许登记的 HTTPS origin，禁止凭据/查询/hash；敏感内容外发应拒绝。
 - 拒绝记录为 `NOT_STARTED`。`RUNNING` 不是成功。当前文件读写才记录副作用 `VERIFIED`；命令/MCP/网络成功不证明全部副作用。
-- M1/M7 都在改 `src/runtime/gateway.ts`；见 Issue #28。
-- 生命周期协调提案（截至 2026-10-13，待 M1 owner review，尚无集成 CI 证据）：M1 `ec3bc96` 的 Guard quarantine 通知需在 `trip()` 同步触发活动 callback 中止；Gateway `close()` 也应先拒绝新调用、取消活动 callback 并退订，再等待队列排空后关闭已持有资源。M7 `9d316fe` 增加幂等 memoized close 和稳定错误 `GATEWAY_RESOURCE_CLOSE_FAILED`。组合实现需同时保留这些语义；不合作且忽略 AbortSignal 的 callback 和已经发生的外部副作用仍不承诺回滚。跟踪于 #28。
+- `src/runtime/gateway.ts` 与 `src/containment.ts` 的执行/Guard 契约由 M1 所有；M7 的可靠性分支须集成这些语义，不能另行削弱或替换。集成跟踪于 Issue #28。
+- **M1 owner-verified lifecycle contract (2026-10-14; combined GitHub CI still pending):** Gateway must subscribe to the same shared `AgentGuard`; construction fails closed when quarantine subscription is unavailable. `trip()` latches quarantine before synchronously notifying that Guard instance's listeners; a new subscriber is notified immediately if quarantine is already active; duplicate `trip()` does not notify twice; one listener throwing cannot suppress the rest; a disposer is idempotent; `reset()` permits a later new quarantine notification.
+- `close()` synchronously marks the Gateway closed and clears pending approvals, publishes one shared `closePromise` before any abort/disposer callback can re-enter, aborts this Gateway's active controllers, unsubscribes at most once, drains `history.tail`, then attempts to close every resource owned by this Gateway. Concurrent/re-entrant close calls share the same Promise. A resource failure does not skip later closes; all callers receive only the stable sanitized `GATEWAY_RESOURCE_CLOSE_FAILED` error.
+- Quarantine synchronously invalidates pending approvals and active work; queued/review work from an older Guard epoch must not revive after `reset()`. Preserve fail-closed and no-callback behavior. A callback that ignores `AbortSignal` cannot be forcibly terminated, and already completed external side effects are not rolled back.
+- M1 owner review found the five M1-owned file blobs in M7's local candidate identical to M1 local owner HEAD `738a783` (M1 PR #43 remote head `f59ba37`). M7 committed that candidate as local commit `6d978a5` on its existing branch; its report gives Gateway/containment/acceptance 66/66 and reliability 43 pass, 0 fail, 3 skipped. It includes the `89e40cd` approval-expiry test-only requestId stabilization; this does not resolve or close #44. These are local results only: PR #39 remote head remains `5c7d95d`, and combined GitHub CI is pending. Keep #28 OPEN until the pushed candidate and combined CI are reviewed.
 
 ## Hook — M1
 
@@ -35,7 +38,7 @@
 - Draft PR #47 remote head `cf4e2cd` retains the OBSERVE hard deny for registered sensitive reads. It includes M1's safe same-Guard fixture correction from `f59ba37`; the explicit sensitive-read deny and egress assertions remain. Current-head GitHub run `38527097304` passed 9/9, including Node 20/22 on Ubuntu/Windows/macOS, Docker, Sponsor, and package-smoke. This CI pass verifies the M5 candidate in isolation; M9 local combined candidate 845743d passed npm run verify (391 passed, 0 failed, 6 environment-condition skips) and its 100-file package smoke; GitHub CI for the combined head remains pending. The M5 branch does not modify this M0-owned canonical file. Issue #48 stays OPEN until combined behavior is confirmed; no real leak is established.
 - `createAgentGuard()` 宿主接口包括 `beforeToolCall`、`executeToolCall`、`runDecoy`、`inspect`、`trip`、`reset`、`subscribeQuarantine(listener: () => void): () => void`。`trip/reset` 和订阅管理是宿主侧操作，不注册为 agent 工具。
 - `trip()` 先锁存 quarantine 状态，再同步通知该 Guard 实例的订阅者；已处于 quarantine 状态时新订阅立即通知；重复 `trip()` 不重复通知，`reset()` 后再次 `trip()` 可重新通知。单个 listener 抛错不得阻止其他 listener；返回的 disposer 可重复调用。
-- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。M1 owner 实现 `close()` 的顺序为：同步锁定 closed 并清空 pending；在触发 abort/disposer 回调前发布唯一 memoized `closePromise`；中止活动 controller、至多一次安全退订 Guard observer；等待已入队的 Gateway 任务结算；逐个尝试关闭全部本实例资源。任一资源关闭失败时，所有调用共享以 `GATEWAY_RESOURCE_CLOSE_FAILED` 拒绝的 promise，不泄露路径或底层 cause。M1 commit `f15fdcfa` is present in PR #43 and in the PR #39 branch ancestry; M7's net Gateway diff against AC3 is empty. This ancestry does not prove that the candidates were tested together; #28 and M9 combined CI remain OPEN. Guard 通知只覆盖同一进程、同一 Guard 实例；忽略 AbortSignal 的不合作 callback 不会被强制终止，已经发生的副作用不承诺回滚。
+- Gateway 创建时订阅其绑定的同一个 Guard，若订阅能力不可用则构造失败关闭。以上顺序和失败语义由 M1 owner 定义并已复核本地候选。M1 PR #43 与 M7 PR #39 仍是不同分支；截至 2026-10-14 10:02 UTC，M7 本地候选已提交为 `6d978a5`，尚未推送；PR #39 远端仍为 `5c7d95d` OPEN/DRAFT，combined GitHub CI pending。Guard 通知只覆盖同一进程、同一 Guard 实例；忽略 AbortSignal 的不合作 callback 不会被强制终止，已经发生的副作用不承诺回滚。
 - Canary 检测由 `inspect(text, source?)` 返回结构化 token；处置保留来源、会话与隔离语义，不把原始敏感值写入普通日志。
 - 当前 M5 编辑 `src/risk-policy.ts`，需与 M1 Gateway 最终执行检查保持单向收紧关系。
 - M5 本地提交 `cd8abea` 进一步约束策略审计事件：`DECISION` 只表示执行尚未开始；`EXECUTION_RESULT` 使用 `decision=NOT_APPLICABLE` 且状态表示执行已开始；策略变更事件不得伪装成执行结果。新增和导入证据都经过同一语义校验；非法组合不得进入哈希链。策略审计事件的判定来源、执行状态和副作用验证状态必须保持一致。

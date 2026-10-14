@@ -40,12 +40,15 @@ __pycache__/
 
 # Local M0/M9 coordination workspaces and outputs; keep exact top-level scope.
 /agents/M1-security/
+/agents/M1-security-f2f2d10-scratch/
 /agents/M2-isolation/
 /agents/M3-onboarding/
 /agents/M4-desktop-security-center/
 /agents/M5-policy/
 /agents/M6-e4/
+/agents/M6-e4-ac3/
 /agents/M7-reliability/
+/agents/M7-reliability-ac3/
 /agents/M8-ecosystem/
 /main/
 /coordinator/
