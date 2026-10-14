@@ -6,6 +6,7 @@
 | --- | --- | --- | --- | --- |
 | #27 | P1 | M3/M5/M6/M7，M0 协调 | M9 `6abd4da` package.json blob `6b3042`；此前静态对照保留 36 个唯一测试路径与 AC3 package fields。M6 对 `e4:auto`/`e4:verify`/`e4:test` 尚无显式 owner 确认。 | OPEN；取得 M6 字段确认并记录组合接受 |
 | #28 | P1 | M1 owner，M7 配合，M0 协调 | M7 #39 head 4267c61 的 Gateway/Guard 生命周期改动经 M1 owner确认，CI 9/9 + wrapper 2/2。 | CLOSED；仅限合同/生命周期代码审查，不代表 PR 合并或真实宿主验收 |
+| #29 | P2 | M0 协调 | 当前两项模块工作排程为 M1/#32 Hook fixture owner coordination 与 M6/#27 package-field signoff；互斥测试资源在其他窗口中的占用不可直接读取。 | OPEN；更新 GitHub 排程并获取 owner 状态；VMware/真实模型/安装测试启动前记录唯一 reservation |
 | #32 | P1 | M1 owner，M0 跟踪 | 当前 #43/#36 test blob `6c2d8da`；#37 `d3b64fc`；#33/#34/#38 `1ecb3ee`。M1 当前子进程夹具不能观测宿主 callback；各 PR 最新 checks 通过不能排除旧 fixture 的历史竞态。 | OPEN；M1 提供最小 owner-approved 更新/适配方案，受影响 PR 重跑 exact-head CI，保留 fail-closed 断言 |
 | #35 | P0 | M1 | 关闭范围限同进程、同一 Guard 和遵守 AbortSignal 的 callback。 | CLOSED（有限范围） |
 | #41 | P1 | M7 | PR #39 exact CI 9/9、wrapper 2/2，含 Windows pinned NSIS/template compile；clean-VM 安装、启动、升级、卸载及实际取消回滚仍 NOT VERIFIED/HOLD。 | OPEN / HOLD |
