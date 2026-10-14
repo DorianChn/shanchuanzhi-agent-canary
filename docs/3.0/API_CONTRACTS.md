@@ -10,11 +10,11 @@
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## 当前契约与集成状态（2026-10-14 16:42 UTC）
+## 当前契约与集成状态（2026-10-14 17:03 UTC）
 
-- PR #43 M1 owner remote head `ca24d37` / run `38558217057` 9/9；审批到期拒绝、清空 pending、保持非 ALLOW 且 callback=0 的定向回归 2/2。M1 是 Gateway/Guard 语义 owner；本地 commit `d26a0c3` 将其 owner-authored file rename 至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md`，尚待推送。
+- PR #43 M1 owner head `d26a0c3` / run `38602072618` 9/9；审批到期拒绝、清空 pending、保持非 ALLOW 且 callback=0 的定向回归 2/2。M1 是 Gateway/Guard 语义 owner；提交 `d26a0c3` 已将 owner-authored file 100% rename 至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md` 并推送。
 - PR #47 M5 head `5fd4707` / run `38561283918` 9/9；OBSERVE 不得放行敏感读取，拒绝发生在创建审批和 callback 前。safe-read fixture 只用于继续验证下游 egress 拒绝，不改变敏感读取策略。
-- PR #36 M9 head `ab382fe` / run `38558216788` 9/9，wrapper `38558216779` 2/2；当前集成分支仍带 M1-only 根路径 `docs/3.0/API_CONTRACTS.md`，与 M0 PR #30 canonical 文件冲突，按 P1 Issue #49 处理。M9 不能静默选一份或丢弃 owner contract。
+- PR #36 M9 remote head `ab382fe` / run `38558216788` 9/9，wrapper `38558216779` 2/2；远端仍有旧 M1-only root 内容。本地 M9 commit `3b5990e` 已将根路径替换为与 M0 相同的 canonical contract，并将 M1 owner file 精确保留在 M1 路径。P1 Issue #49 保持 OPEN，直到下批推送和新 head CI 回绿。
 - PR #24 仍 OPEN/Draft、head `62496d4`、11/11 checks；未修改、未合并。
 - M2 原生 Codex Shell 仍 UNPROTECTED；M6 外部 E4 与 M7 clean-VM 安装生命周期仍 NOT VERIFIED；M4 后端状态 UNKNOWN。CI/fixtures 不扩大这些覆盖声明。
 
@@ -27,10 +27,10 @@
 - 文件能力使用预持有句柄和身份复查；命令使用固定 executable + argv；网络仅允许登记的 HTTPS origin，禁止凭据/查询/hash；敏感内容外发应拒绝。
 - 拒绝记录为 `NOT_STARTED`。`RUNNING` 不是成功。当前文件读写才记录副作用 `VERIFIED`；命令/MCP/网络成功不证明全部副作用。
 - `src/runtime/gateway.ts` 与 `src/containment.ts` 的执行/Guard 契约由 M1 所有；M7 的可靠性分支须集成这些语义，不能另行削弱或替换。集成跟踪于 Issue #28。
-- **M1 owner-verified lifecycle contract (PR #43 head `ca24d37`; exact-head run `38558217057` passed 9/9):** Gateway must subscribe to the same shared `AgentGuard`; construction fails closed when quarantine subscription is unavailable. `trip()` latches quarantine before synchronously notifying that Guard instance's listeners; a new subscriber is notified immediately if quarantine is already active; duplicate `trip()` does not notify twice; one listener throwing cannot suppress the rest; a disposer is idempotent; `reset()` permits a later new quarantine notification.
+- **M1 owner-verified lifecycle contract (PR #43 head `d26a0c3`; exact-head run `38602072618` passed 9/9):** Gateway must subscribe to the same shared `AgentGuard`; construction fails closed when quarantine subscription is unavailable. `trip()` latches quarantine before synchronously notifying that Guard instance's listeners; a new subscriber is notified immediately if quarantine is already active; duplicate `trip()` does not notify twice; one listener throwing cannot suppress the rest; a disposer is idempotent; `reset()` permits a later new quarantine notification.
 - `close()` synchronously marks the Gateway closed and clears pending approvals, publishes one shared `closePromise` before any abort/disposer callback can re-enter, aborts this Gateway's active controllers, unsubscribes at most once, drains `history.tail`, then attempts to close every resource owned by this Gateway. Concurrent/re-entrant close calls share the same Promise. A resource failure does not skip later closes; all callers receive only the stable sanitized `GATEWAY_RESOURCE_CLOSE_FAILED` error.
 - Quarantine synchronously invalidates pending approvals and active work; queued/review work from an older Guard epoch must not revive after `reset()`. Preserve fail-closed and no-callback behavior. A callback that ignores `AbortSignal` cannot be forcibly terminated, and already completed external side effects are not rolled back.
-- M1 PR #43 current head `ca24d37` passed 9/9; M7 PR #39 current head `4267c61` passed 9/9 and wrapper `38596572179` passed 2/2. M9 PR #36's combined CI also passed, but #28 remains OPEN pending owner review of the combined close/quarantine behavior. #44 remains OPEN pending M9 baseline acceptance. The root contract path collision is separately tracked in #49.
+- M1 PR #43 current head `d26a0c3` passed 9/9; M7 PR #39 current head `4267c61` passed 9/9 and wrapper `38596572179` passed 2/2. M9 PR #36's combined CI also passed, but #28 remains OPEN pending owner review of the combined close/quarantine behavior. #44 remains OPEN pending M9 baseline acceptance. The root contract path collision is separately tracked in #49.
 
 ## Hook — M1
 

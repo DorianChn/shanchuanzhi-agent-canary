@@ -4,7 +4,7 @@
 
 | 模块 | 分支 / 工作树 | 检查到的内容 | 独占范围或主要职责 | 共享接口/冲突 |
 | --- | --- | --- | --- | --- |
-| M1 | `feature/ac3-security-core` / `agents/M1-security` | Remote PR #43 `ca24d37`; run `38558217057` 9/9; #44 targeted expiry tests 2/2; local commit `d26a0c3` moves contract under M1 path, pending push | Gateway/Guard API、Hook 安全执行链及其测试 | #49 M9 still needs path reconciliation; #28/#32/#44 remain tracked |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | PR #43 `d26a0c3`; run `38602072618` 9/9; #44 targeted expiry tests 2/2; owner contract moved/pushed under M1 path | Gateway/Guard API、Hook 安全执行链及其测试 | #49 M9 remote path reconciliation pending; #28/#32/#44 remain tracked |
 | M2 | `feature/ac3-execution-isolation` / `agents/M2-isolation` | PR #37 `0f2c10c`; run `38561262930` 9/9 | execution-isolation 原型、报告与测试 | binder rejects missing/unknown surfaces; native Codex Desktop Shell remains `UNPROTECTED / NOT VERIFIED` (#45) |
 | M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | PR #33 `d9364cc`; run `38555297535` 9/9 | 宿主发现、预览/安装/恢复适配 | #27 manifest fields; interface owner authors semantics, M0 records canonical summary |
 | M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | PR #34 `69ec7f1`; run `38555299339` 9/9; backend endpoints UNKNOWN/UNSUPPORTED | `src/ai/console-page.ts` 与桌面 UI 行为（暂定） | 只经受保护 Console API；不以 mock 覆盖 UNKNOWN |
@@ -12,8 +12,8 @@
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | PR #38 `ed82f06`; run `38555297615` 9/9; external E4 NOT_VERIFIED | E4 schema、verifier、机器报告 | 原始 run 留本地；#27 manifest composition; legacy PR #31 remains separate main-based track |
 | M7 | `feature/ac3-reliability-ac3` / `agents/M7-reliability-ac3` | PR #39 `4267c61`; run `38596572303` 9/9, wrapper `38596572179` 2/2 | `packaging/windows/`、scripts、可靠性/打包验证 | #41 clean-VM/user lifecycle remains HOLD/NOT VERIFIED; Gateway lifecycle coordinates with M1 under #28 |
 | M8 | `feature/ac3-open-source-product` / `agents/M8-ecosystem` | PR #40 `139e7f2`; run `38561307114` 9/9 | README、贡献/安全/支持/开源文档（暂定） | 文档必须如实描述安全覆盖边界；未发布 Release |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | Remote PR #30 `b92bde4`; run `38596562618` 9/9 product + `38596562606` ownership; local coordination commit `8141ae2` is ahead of remote | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | Canonical shared API doc; does not edit M1–M8 product source |
-| M9 | `feature/ac3-m9-integration` / `integration` | PR #36 `ab382fe`; run `38558216788` 9/9 + wrapper `38558216779` 2/2 | 跨模块集成验收及风险跟踪 | Carries M1 root API doc collision #49; external E4/native Shell/clean-VM remain unverified |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | PR #30 `a469e37`; run `38602030773` 9/9 product + `38602030720` ownership; current branch clean | `docs/3.0/*` 协调文档、Issue/CI/额度/排程 | Canonical shared API doc; does not edit M1–M8 product source |
+| M9 | `feature/ac3-m9-integration` / `integration` | Remote PR #36 `ab382fe`; local HEAD `ed0dd01` reconciles M0 root canonical and preserves M1 module contract; old remote CI 9/9 + wrapper 2/2 | 跨模块集成验收及风险跟踪 | #49 remains OPEN until pushed head CI; external E4/native Shell/clean-VM remain unverified |
 
 ## 历史分支与验收状态快照（2026-10-14 11:45 UTC）
 

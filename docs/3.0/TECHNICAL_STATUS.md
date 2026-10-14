@@ -1,12 +1,12 @@
 # M0 技术协调状态
 
-## 当前权威快照（2026-10-14 16:42 UTC）
+## 当前权威快照（2026-10-14 17:03 UTC）
 
-- **额度与窗口**：用量页面保持打开；16:42 UTC 实读五小时剩余 97%（约 4 小时 25 分后重置）、每周剩余 64%（约 5 天 19 小时后重置）、113 credits。低于 5% 或无法读数即暂停全部开发、测试、浏览器和 GitHub 操作。
-- **开发与推送**：最多 2 个模块任务并行。最近推送批次为 M0/M7，16:15 UTC；下一批不早于 16:35:45 UTC。VMware、真实模型和安装测试互斥，当前未启动。
-- **PR 与 CI（GitHub 实时回读）**：PR #24 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`，11/11 检查通过，未触碰。M0/M1–M8/M9 现有 Draft PR 均 OPEN；#30 `b92bde4` 10/10，#33 `d9364cc` 9/9，#34 `69ec7f1` 9/9，#36 `ab382fe` 9/9 + wrapper 2/2，#37 `0f2c10b` 9/9，#38 `ed82f06` 9/9，#39 `4267c61` 9/9 + wrapper 2/2，#40 `139e7f2` 9/9，#43 `ca24d37` 9/9，#47 `5fd4707` 9/9。全部来自对应 PR 当前 head 的 checks；PR 仍为 Draft，不等于集成验收。
-- **M1**：当前 #43 的 exact-head run `38558217057` 9/9。#44 定向回归 2/2；审批到期在 sweep/lookup 前拒绝，pending 清空、decision 不放行、callback=0。旧 1ms 测试窗口导致 `requestId` 观察时序问题；当前 60 秒 TTL/exact-deadline 测试稳定。#32 历史 marker 根因仍 UNKNOWN；#28 等 M9 集成。
-- **M1/M5 与 M9**：#47 exact-head run `38561283918` 9/9，硬拒绝敏感读取不变；safe-read fixture 只用于下游 egress assertion。M1 本地提交 `d26a0c3` 已将 owner contract 100% rename 至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md`，PR #43 远端仍为 `ca24d37`、等待批次推送。M9 #36 current-head run `38558216788` 9/9，wrapper `38558216779` 2/2；远端候选仍携带旧 M1 根文件。P1 Issue #49 已建立，禁止在集成中静默择一。
+- **额度与窗口**：用量页保持打开；17:02 UTC 实读五小时剩余 97%（约 4 小时 5 分后重置）、每周剩余 64%（约 5 天 19 小时后重置）、113 credits。低于 5% 或无法读数即暂停全部开发、测试、浏览器和 GitHub 操作。
+- **开发与推送**：最多 2 个模块任务并行。M0/M1 推送批次于 16:52 UTC 完成；下批不得早于 17:12 UTC。VMware、真实模型和安装测试互斥，当前未启动。
+- **PR 与 CI（GitHub 实时回读）**：PR #24 OPEN/Draft，base `competition/shanchuanzhi-release-readiness`，head `62496d4`，11/11 检查通过，未触碰。M0/M1–M8/M9 现有 Draft PR 均 OPEN；#30 `a469e37` 10/10（run `38602030773` 9 项产品检查 + `38602030720` ownership）；#33 `d9364cc` 9/9，#34 `69ec7f1` 9/9，#36 `ab382fe` 9/9 + wrapper 2/2，#37 `0f2c10c` 9/9，#38 `ed82f06` 9/9，#39 `4267c61` 9/9 + wrapper 2/2，#40 `139e7f2` 9/9，#43 `d26a0c3` 9/9（run `38602072618`），#47 `5fd4707` 9/9。PR 仍为 Draft，不等于集成验收。
+- **M1**：当前 #43 head `d26a0c3`、run `38602072618` 9/9。#44 定向回归 2/2；审批到期在 sweep/lookup 前拒绝，pending 清空、decision 不放行、callback=0。旧 1ms 测试窗口导致 `requestId` 观察时序问题；当前 60 秒 TTL/exact-deadline 测试稳定。#32 历史 marker 根因仍 UNKNOWN；#28 等 M9 集成。
+- **M1/M5 与 M9**：#47 exact-head run `38561283918` 9/9，硬拒绝敏感读取不变；safe-read fixture 只用于下游 egress assertion。M1 owner contract 已推送至 `docs/3.0/M1/GATEWAY_API_CONTRACT.md`。M9 本地 HEAD `ed0dd01`（路径修复由 `3b5990e` 引入）已固定 canonical root 和 M1 模块路径；远端 #36 仍为 `ab382fe`，Issue #49 等候下批推送和新 head CI。
 - **M7**：#39 run `38596572303` 9/9；wrapper `38596572179` 2/2，含 Windows pinned NSIS/setup/template compile。此 CI 不验证实际安装生命周期；clean-VM install、first launch、upgrade、uninstall、真实用户取消回滚均 NOT VERIFIED/HOLD。
 - **仍未验收**：#27 manifest/M6 组合；#28 Gateway 生命周期组合；#32 Hook 历史根因与旧分支结果；#41 clean-VM 安装；#44 等 M9 baseline acceptance；#45 原生 Codex Shell 仍 UNPROTECTED；#46/#48 OBSERVE 文档与联合验收；外部 E4 NOT_VERIFIED；M4 backend status UNKNOWN。P0 #35 CLOSED 的边界仍限同进程、同 Guard，且 callback 遵守 AbortSignal。
 - **未改变的安全边界**：不删/跳过失败测试，不放宽安全策略，不伪造结果；不合并 main 或 PR #24，不发布 Release。8 个引用聊天不可直接读取，本快照只依据文件系统、GitHub 和当前可见网页。
