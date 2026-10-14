@@ -47,7 +47,8 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
  assert.ok(Date.now()-started>=1900&&Date.now()-started<5000,'timeout returns a denial within the bounded hook budget');
 });
 
-test('native lab wrapper interruption emits no allow decision and invokes no tool callback',async(t)=>{
+test('native lab wrapper interruption emits no decision or output',async(t)=>{
+ // The native host dispatches tool callbacks outside this subprocess; this fixture cannot count that callback.
  const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs'),log=path.join(root,'interrupted.jsonl');
  // Hold this synthetic child after entry so the wrapper's own 2s timeout cannot win if the parent is briefly descheduled.
  const moduleSource="import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync("+JSON.stringify(marker)+",'entered');Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,30000);return await new Promise(()=>{})}\n";
@@ -73,7 +74,7 @@ test('native lab wrapper interruption emits no allow decision and invokes no too
   assert.ok(result,'interrupted hook child did not close: '+diagnostic());
   assert.equal(spawnError,undefined,'hook child failed to spawn: '+diagnostic());
   assert.ok(result.signal!==null||(result.code!==null&&result.code!==0),'hook child did not terminate from interruption: '+diagnostic());
-  assert.equal(stdout,'','interrupted hook emitted hook output: '+diagnostic());
+  assert.equal(stdout,'','interrupted hook emitted a permission decision or output: '+diagnostic());
   assert.equal(stderr,'','interrupted hook wrote unexpected stderr: '+diagnostic());
   assert.ok(!fs.existsSync(log),'interrupted hook wrote a decision record: '+diagnostic());
   t.diagnostic('interruption diagnostics: '+diagnostic());
