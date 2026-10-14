@@ -47,7 +47,7 @@ Windows PowerShell 7 复现命令：
 
 pwsh -NoLogo -NoProfile -File execution-isolation/windows/Test-AppContainerPrototype.ps1 -NodeExecutable C:\path\to\node.exe -EvidencePath execution-isolation/windows/prototype-evidence.json
 
-当前测试 Node 路径：C:\Users\36712\AppData\Local\hermes\node\node.exe。失败时应依据 JSON 证据分类，不应把失败路径记为受保护。
+当前测试工具：Windows Node.js v22.23.1；为保护宿主隐私，未记录本机绝对路径。失败时应依据 JSON 证据分类，不应把失败路径记为受保护。
 
 ## 2026-10-14 原生宿主状态
 
