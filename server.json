@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.DorianChn/agent-canary",
-  "description": "Free V1: inert MCP decoys and canary tokens detect AI-agent compromise signals. Local stdio server.",
-  "version": "1.2.7"
+  "description": "Agent Canary 3.0 stdio MCP server exposing 12 inert decoy tools for security testing. Calls create fabricated trace tokens, attempt local audit logging, and may send configured alerts; they never perform the represented actions.",
+  "version": "3.0.0"
 }
