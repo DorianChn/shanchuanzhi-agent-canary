@@ -11,4 +11,4 @@ const payload=path.join(out,'payload');fs.mkdirSync(payload);fs.renameSync(path.
 await download('https://nodejs.org/dist/v22.23.1/win-x64/node.exe',path.join(payload,'runtime/node.exe'),'f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed');
 await download('https://raw.githubusercontent.com/nodejs/node/v22.23.1/LICENSE',path.join(payload,'runtime/NODE_LICENSE'),'c738ae413cf561f174e34f6961f8ca458aae2369a73640dda6234c629b98bcc4');
 const install=spawnSync(process.execPath,[npm,'ci','--omit=dev','--ignore-scripts','--no-audit','--no-fund'],{cwd:path.join(payload,'app'),encoding:'utf8',windowsHide:true,timeout:240000});if(install.status!==0)throw Error('PRODUCTION_DEPENDENCIES_FAILED');
-console.log(JSON.stringify({payload,next:'node packaging/windows/build.mjs "'+payload+'" "PATH_TO_VERIFIED_PORTABLE_NSIS_3_13"',toolingOnly:true}));
+console.log(JSON.stringify({payload,communityZip:zip,next:'node packaging/windows/build.mjs "'+payload+'" "PATH_TO_VERIFIED_PORTABLE_NSIS_3_13" "'+zip+'" "WRAPPER_SOURCE_COMMIT_SHA_40_HEX"',note:'Replace the final placeholder with the 40-character source commit SHA recorded in VERSION.json.',toolingOnly:true}));

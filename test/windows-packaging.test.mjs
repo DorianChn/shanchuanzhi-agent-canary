@@ -121,6 +121,16 @@ test('Windows build requires a caller-pinned Community ZIP instead of a stale im
   assert.doesNotMatch(source,/competition-candidate\.2/);
 });
 
+test('prepare output and build instructions pass the pinned ZIP and required source commit SHA',()=>{
+  const prepare=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
+  const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+  const readme=fs.readFileSync(path.join(repo,'packaging/windows/README.md'),'utf8');
+  assert.match(build,/const \[payloadArg,nsisArg,zipArg,wrapperSHA\]=process\.argv\.slice\(2\)/);
+  assert.match(prepare,/communityZip:zip,next:[^\n]*WRAPPER_SOURCE_COMMIT_SHA_40_HEX/);
+  assert.match(prepare,/"'\+zip\+'"/);
+  assert.match(readme,/node packaging\/windows\/build\.mjs "BUILD_DIRECTORY\/payload" "PORTABLE_NSIS_DIRECTORY" "BUILD_DIRECTORY\/community\.zip" "WRAPPER_SOURCE_COMMIT_SHA_40_HEX"/);
+});
+
 test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async()=>{
   const payload=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-packaged-hook-'));
   try{
