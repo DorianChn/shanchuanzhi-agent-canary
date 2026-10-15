@@ -1,3 +1,8 @@
+## Coordinator publication update (2026-10-15 12:45 UTC)
+
+- **#29 P2:** The 12:43 UTC scheduler update is posted and verified. No module-code task is active in this coordinator; other-window occupancy remains UNKNOWN, and no exclusive test reservation is verified.
+- **#55 P1:** The 12:44 UTC integration update is posted and verified. PR #33 remains at be3880298e1c6766024ecbce5f6dbc23c4d2daa1 with 9/9 checks; PR #36 remains at de3799aae540f58173acec4ab3f7a1fe98593aa7 with both composition platforms failing on the M1/M3 unpinned-read mismatch. M3 owns the correction; M9 must repin and rerun.
+- **#30 M0:** Exact head 0c283eb378d08d85d0665c41cd5e0d582e471973 has 10/10 successful checks. PR #30 remains OPEN/Draft.
 ## Coordinator resource update (2026-10-15 12:27 UTC)
 
 - **#29 P2:** The latest remote scheduler comment remains 11:53 UTC. This coordinator has no active module-code task; occupancy in other Codex windows remains UNKNOWN. No VMware, model, or installer reservation is verified. Keep the exclusive resource unavailable until a complete reservation/release record exists.

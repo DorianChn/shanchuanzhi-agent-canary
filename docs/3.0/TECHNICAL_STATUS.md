@@ -1,3 +1,8 @@
+## Coordinator publication and CI update (2026-10-15 12:45 UTC)
+
+- At 12:41 UTC M0 fast-forward-pushed three documentation commits to existing PR #30, advancing it to 0c283eb378d08d85d0665c41cd5e0d582e471973. Exact-head checks are now 10/10 successful; PR #30 remains OPEN/Draft. PR #24 remains unchanged.
+- M0 posted and verified a new resource update on Issue #29 at 12:43 UTC and an integration status update on Issue #55 at 12:44 UTC. M3 PR #33 remained unchanged at be3880298e1c6766024ecbce5f6dbc23c4d2daa1 at the 12:41 read; the owner correction is pending.
+- The usage page remains open and active; the 12:44 UTC read was above the pause threshold. No account-specific percentages are recorded here. Next public-write batch is no earlier than 13:04 UTC.
 ## Coordinator resource checkpoint (2026-10-15 12:27 UTC)
 
 - No new reservation or cross-window occupancy evidence appeared after Issue #29's 11:53 UTC snapshot. This coordinator has no active module-code task; M3's response remains pending. Global parallel-slot use is UNKNOWN.
