@@ -1,0 +1,117 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { readZip } from './zip.mjs';
+
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(scriptDir, '../..');
+const supplied = process.argv[2] ? path.resolve(process.argv[2]) : null;
+const runsRoot = path.join(repoRoot, 'security-lab', 'e4-runs');
+const runNames = fs.existsSync(runsRoot) ? fs.readdirSync(runsRoot, { withFileTypes: true }).filter(item => item.isDirectory()).map(item => item.name).sort() : [];
+const runDir = supplied ?? (runNames.length ? path.join(runsRoot, runNames.at(-1)) : null);
+let runDirStat;
+try { runDirStat = runDir ? fs.lstatSync(runDir) : null; }
+catch { throw new Error('E4_RUN_DIRECTORY_NOT_FOUND'); }
+if (runDirStat?.isSymbolicLink()) throw new Error('E4_RUN_DIRECTORY_SYMLINK');
+if (!runDirStat?.isDirectory()) throw new Error('E4_RUN_DIRECTORY_NOT_FOUND');
+
+const archivePath = path.join(runDir, 'evidence.zip');
+const sha256 = data => createHash('sha256').update(data).digest('hex');
+
+function readRunFile(name, { required = true, externalCopy = false } = {}) {
+  const segments = name.split('/');
+  let current = runDir;
+  for (let index = 0; index < segments.length; index += 1) {
+    current = path.join(current, segments[index]);
+    let stat;
+    try { stat = fs.lstatSync(current); }
+    catch (error) {
+      if (!required && error.code === 'ENOENT') return null;
+      const code = externalCopy
+        ? (required ? 'E4_EXTERNAL_COPY_MISSING' : 'E4_EXTERNAL_COPY_MISMATCH')
+        : 'E4_BUNDLE_FILE_MISSING';
+      throw new Error(`${code}:${name}`);
+    }
+    if (stat.isSymbolicLink()) {
+      throw new Error(`${externalCopy ? 'E4_EXTERNAL_COPY_SYMLINK' : 'E4_BUNDLE_PATH_SYMLINK'}:${name}`);
+    }
+    if (index < segments.length - 1 ? !stat.isDirectory() : !stat.isFile()) {
+      throw new Error(`${externalCopy ? 'E4_EXTERNAL_COPY_MISMATCH' : 'E4_BUNDLE_PATH_INVALID'}:${name}`);
+    }
+  }
+  try { return fs.readFileSync(current); }
+  catch {
+    throw new Error(`${required ? 'E4_EXTERNAL_COPY_MISSING' : 'E4_EXTERNAL_COPY_MISMATCH'}:${name}`);
+  }
+}
+
+const archive = readRunFile('evidence.zip');
+const archiveHash = sha256(archive);
+const shaLine = readRunFile('bundle.sha256').toString('utf8').trim();
+if (shaLine !== `${archiveHash}  evidence.zip`) throw new Error('E4_OUTER_ZIP_SHA256_MISMATCH');
+const metadata = JSON.parse(readRunFile('bundle.json').toString('utf8'));
+if (metadata.sha256 !== archiveHash || metadata.e4Status !== 'NOT_VERIFIED') throw new Error('E4_BUNDLE_METADATA_MISMATCH_OR_PROMOTED');
+
+const files = readZip(archivePath);
+for (const name of files.keys()) {
+  const segments = name.split('/');
+  if (
+    !name || name.startsWith('/') || name.includes('\\') || name.includes('\0') || /^[a-zA-Z]:/.test(name) ||
+    segments.some(segment => !segment || segment === '.' || segment === '..' || segment.includes(':'))
+  ) throw new Error(`E4_UNSAFE_ARCHIVE_PATH:${name}`);
+}
+const manifestBytes = files.get('SHA256SUMS.txt');
+if (!manifestBytes) throw new Error('E4_INNER_MANIFEST_MISSING');
+const expected = new Map();
+for (const line of manifestBytes.toString('utf8').split(/\r?\n/).filter(Boolean)) {
+  const match = /^([a-f0-9]{64})  (.+)$/.exec(line);
+  if (!match || expected.has(match[2])) throw new Error('E4_INNER_MANIFEST_INVALID');
+  expected.set(match[2], match[1]);
+}
+const payloadNames = [...files.keys()].filter(name => name !== 'SHA256SUMS.txt');
+if (payloadNames.length !== expected.size) throw new Error('E4_INNER_FILE_COUNT_MISMATCH');
+for (const name of payloadNames) if (sha256(files.get(name)) !== expected.get(name)) throw new Error(`E4_INNER_HASH_MISMATCH:${name}`);
+
+const reportBytes = files.get('report.json');
+const markdown = files.get('report.md');
+const rawLog = files.get('raw.log');
+if (!reportBytes || !markdown || !rawLog) throw new Error('E4_REPORT_COMPONENT_MISSING');
+for (const name of ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log']) {
+  const archived = files.get(name);
+  if (!archived) throw new Error(`E4_EXTERNAL_COPY_MISSING_FROM_ARCHIVE:${name}`);
+  const external = readRunFile(name, { externalCopy: true });
+  if (!external.equals(archived)) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
+}
+const report = JSON.parse(reportBytes.toString('utf8'));
+if (
+  report.e4Status !== 'NOT_VERIFIED' ||
+  report.overall.includes('PASS') ||
+  !['AUTHOR_AUTOMATION_RUN_NOT_E4', 'EXTERNAL_CLAIM_NOT_INDEPENDENTLY_VERIFIED'].includes(report.classification)
+) throw new Error('E4_AUTOMATION_MUST_NOT_PROMOTE_VERDICT');
+if (
+  metadata.schema !== 'agent-canary.e4-bundle.v1' ||
+  metadata.archive !== 'evidence.zip' ||
+  metadata.size !== archive.length ||
+  metadata.entries !== files.size ||
+  metadata.manifest?.valid !== true ||
+  metadata.manifest?.entries !== expected.size ||
+  metadata.verification !== 'LOCAL_ZIP_CRC_AND_SHA256_MANIFEST_VERIFIED' ||
+  metadata.classification !== report.classification
+) throw new Error('E4_BUNDLE_METADATA_MISMATCH_OR_PROMOTED');
+
+// The ZIP is authoritative, but when generated evidence sidecars are present,
+// reject a folder whose visible JSONL copy has drifted from the verified ZIP.
+for (const name of payloadNames.filter(item => item.startsWith('evidence/'))) {
+  const external = readRunFile(name, { required: false, externalCopy: true });
+  if (external === null) continue;
+  if (!external.equals(files.get(name))) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
+}
+const requiredCases = ['GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION', 'GW-FAULT-EXECUTOR', 'GW-FAULT-CLOSED', 'HOOK-FAULT-STATESTORE', 'SHELL-BOUNDARY-BYPASS', 'ARTIFACT-VM-BINDING', 'APP-01', 'MODEL-REAL-TOOLCALL'];
+for (const id of requiredCases) if (!report.cases.some(row => row.id === id)) throw new Error(`E4_MATRIX_CASE_MISSING:${id}`);
+const shell = report.cases.find(row => row.id === 'SHELL-BOUNDARY-BYPASS');
+if (shell.status === 'PASS' || shell.details.countsAsGatewayPass !== false || shell.details.countsAsGatewayFail !== false) throw new Error('E4_SHELL_BOUNDARY_CLASSIFICATION_INVALID');
+const modelCase = report.cases.find(row => row.id === 'MODEL-REAL-TOOLCALL');
+if (modelCase.reason?.includes('MODEL_REFUSAL') && modelCase.status.startsWith('PASS')) throw new Error('E4_MODEL_REFUSAL_MUST_NOT_COUNT_AS_GATEWAY_DENIAL');
+
+process.stdout.write(JSON.stringify({ valid: true, e4Status: report.e4Status, classification: report.classification, archiveSha256: archiveHash, entries: files.size, payloadFiles: payloadNames.length, sourceCommit: report.source.commit, shellStatus: shell.status, modelStatus: modelCase.status }) + '\n');
