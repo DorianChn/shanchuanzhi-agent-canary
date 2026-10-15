@@ -1,3 +1,9 @@
+## Coordinator blocker update (2026-10-15 14:00 UTC)
+
+- **#51 P1 / M1:** M1's diagnostics-only commit `7d6f091` is pushed to existing PR #43; exact-head CI is 10/10 green, including the 10-run Ubuntu Node 22 job. M0's 13:57:55 UTC issue update is verified. This confirms the modified test passes on the new head; the earlier M0 run's worker-2 `RETRY_LIMIT` remains unexplained, so root cause stays UNKNOWN and #51 stays OPEN.
+- **#55 P1 / M3 and M9:** PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` (9/9) with no owner response since the 13:35 UTC action update. PR #36 remains at `de3799aae540f58173acec4ab3f7a1fe98593aa7`; both exact-source composition jobs fail because M1 denies and M3 allows the unpinned native `Read`. M3 still owns correction/positive control; M9 must repin the corrected exact head. Keep OPEN.
+- **#30 M0 / PR #24:** M0 PR #30 exact head `4892bc7` passes 10/10 and remains OPEN/Draft. PR #24 remains unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, OPEN/Draft, 11/11; it was not modified or merged.
+- **#29 P2 / M0:** Resource checkpoint comment posted and verified at 13:58:32 UTC. Other-window occupancy is UNKNOWN; no VMware, real-model, or installer reservation is verified. Keep the exclusive slot unavailable until a named owner, existing worktree, start, and release are recorded.
 ## Coordinator blocker update (2026-10-15 13:38 UTC)
 
 - **#51 P1 / M1:** M0 PR #30 exact-head run `38743679686`, Ubuntu Node 22 job `116451592866`, reproduced the existing `file-state-store.test.ts` failure: concurrent worker 2 exhausted 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. The subtest took about 1,894.7 ms total; unlike prior run `38719879606`, the new log has no lock/state identity samples, so it adds no evidence about the contending writer or timing. This confirms recurrence but not root cause or data loss. Keep root cause UNKNOWN and retain #51 as the owner-tracked investigation.
