@@ -11,6 +11,15 @@ import {createWindowsBuildInvocation,parseWindowsBuildArgs,resolveWrapperSourceS
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 
+test('Windows Hook provenance keeps LF checkout bytes equal to the tracked blob',()=>{
+  const attributes=spawnSync('git',['check-attr','eol','--','security-lab/claude-native-hook.mjs'],{cwd:repo,encoding:'utf8',windowsHide:true});
+  assert.equal(attributes.status,0);
+  assert.equal(attributes.stdout.trim(),'security-lab/claude-native-hook.mjs: eol: lf');
+  const tracked=spawnSync('git',['show','HEAD:security-lab/claude-native-hook.mjs'],{cwd:repo,encoding:null,windowsHide:true});
+  assert.equal(tracked.status,0);
+  assert.ok(fs.readFileSync(path.join(repo,'security-lab/claude-native-hook.mjs')).equals(tracked.stdout),'Windows Hook worktree bytes must match the tracked blob');
+});
+
 test('prepare build command carries the same Community ZIP and exact Hook source commit in documented argument order',()=>{
   const out=fs.mkdtempSync(path.join(os.tmpdir(),'canary-build-command-'));
   try{
