@@ -1,11 +1,11 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 06:41 UTC)
+## Current integration risk snapshot (2026-10-15 07:02 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #52 OBSERVE alias contract | P0 | M5 #47 risk-policy denies sensitive `.env` and outside aliases before callback when `verifyRealPaths` is enabled. M5 `security-router.decide()` still returns `UNCHANGED` for OBSERVE and does not project an explicit policy DENY, unlike M9 #36. M5 also lacks M9's general symlink-component rejection for in-workspace non-sensitive targets. M2 candidate `76066cb` is now the exact remote PR #37 head; CI is running, but the adapter is not present in M9's CI tree. | M5 owner resolves the decision/test contract and intended in-workspace symlink policy; M2 exact-head CI and boundary validation follow; M9 then verifies exact owner trees. Keep #52 OPEN until a real product host and protected open/handle boundary are verified; TOCTOU remains. |
-| #30 ownership evidence check | P1 | PR #30 head `494890c` has both a failed and successful ownership check; live PR body has the markers. Product checks pass. | Require a fresh exact-head synchronize result; do not treat mixed check history as resolved. |
+| #52 OBSERVE alias contract | P0 | M5 local commit b6a40b4 preserves OBSERVE hard DENY and rejects symlink/junction components when verifyRealPaths is enabled; focused tests 48/48 and build pass. PR #47 remote is still a6d610e. M9 local commit 3dfef35 adds the actual cross-checkout CI test; Windows composition passes 1/1 with M5 b6 and correctly fails the ordinary-alias DENY assertion against remote a6. No production file host/held-handle wiring is verified. | Push M5, then M9 in the same quota-checked batch; require exact-head and cross-tree CI. Keep #52 OPEN until a real host uses protected open/handle enforcement; TOCTOU remains. |
+| #30 ownership evidence check | P1 | PR #30 exact head e0a46d8 passes product and ownership checks, 10/10 total. Local M0 coordination commit d2fde73 and follow-up ledger changes are not yet pushed. | Push the existing M0 branch in this batch and verify exact-head checks; keep PR OPEN/Draft for review. |
 | #51 store retries | P1 | Historical Windows Node20 reached `RETRY_LIMIT` after 500 busy retries; later exact-source runs pass, but lock owner/timing evidence is absent. | Keep OPEN; root cause UNKNOWN. Preserve all assertions. |
 | #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive VM reservation and lifecycle artifacts. |
 | #45 native Shell | P1 | PR #37 checks 9/9; actual desktop host policy/callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
