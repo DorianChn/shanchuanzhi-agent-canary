@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 import { after, test } from 'node:test';
 
 // Synthetic fixture-level API composition only; this does not prove a production host hookup.
-const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M5', 'M7', 'M8'].map((moduleName) => {
+const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7', 'M8'].map((moduleName) => {
   const root = process.env[`${moduleName}_ROOT`];
   const sha = process.env[`${moduleName}_SHA`];
   assert.ok(root, `${moduleName}_ROOT must point to its independent checkout`);
@@ -18,14 +18,18 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M5', 'M7', 'M8'].map(
 
 const pinnedSourceShas = {
   M1: 'b683d8476cc4302ce7fb93ee0893a9b7e736151a',
-  M2: '76066cbb750ec714ce8691bc0f30c8171186f079',
+  M2: '9db59ed8f2deae905edcb2179982f8bcb594167c',
+  M3: 'be3880298e1c6766024ecbce5f6dbc23c4d2daa1',
   M5: '2ccac21542eeefbc0dba19358db1e904e1cb806d',
-  M7: '52cc149e958f8139ea93cf8bab7e14bedfe45d62',
+  M6: 'c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9',
+  M7: 'cf4b70f5130175582fffdfc65bd7c6847450867b',
   M8: 'c1ff677cc56cd159cc983042e5dfcec5dc93f3ad',
 };
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the reviewed source commit`);
 }
+assert.equal(process.env.M1_OWNER_REVIEW_SHA, 'f14aab781c62db60ac241d2114f543f6cac223ae');
+assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 
 const m8CheckoutPolicy = spawnSync('git', ['-C', sourceRoots.M8.root, 'check-attr', 'eol', '--', 'security-lab/claude-native-hook.mjs'], { encoding: 'utf8', windowsHide: true });
 assert.equal(m8CheckoutPolicy.status, 0);
@@ -35,6 +39,7 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
+console.log('[M9 separate evidence SHAs]', `M1_OWNER_REVIEW_SHA=${process.env.M1_OWNER_REVIEW_SHA}`, `M5_CODE_SHA=${process.env.M5_CODE_SHA}`);
 
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'));
 process.env.AGENT_CANARY_HOME = testHome;
@@ -51,7 +56,186 @@ const [m1, m2, m5] = await Promise.all([
   import(pathToFileURL(path.join(sourceRoots.M5.root, 'src', 'sdk.ts')).href),
 ]);
 
-test('exact M1/M2/M5 sources enforce OBSERVE hard-deny before adapter dispatch', async (t) => {
+test('M5 real-path mode blocks generic file callbacks before execution and keeps approved HTTPS GET available', async (t) => {
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m5-real-path-boundary-'));
+  fs.mkdirSync(path.join(workspace, 'public'));
+  fs.mkdirSync(path.join(workspace, 'private'));
+  fs.writeFileSync(path.join(workspace, 'public', 'readable.txt'), 'M9_SYNTHETIC_PUBLIC_FIXTURE');
+  fs.writeFileSync(path.join(workspace, 'private', '.env'), 'M9_SYNTHETIC_SECRET_FIXTURE');
+  t.after(() => fs.rmSync(workspace, { recursive: true, force: true }));
+
+  const guard = m1.createAgentGuard({ sessionId: 'm9-m5-real-path-boundary', alert: false });
+  const callbackCalls = [];
+  const router = m5.createSecurityToolRouter({
+    guard,
+    workspaceRoot: workspace,
+    mode: 'OBSERVE',
+    verifyRealPaths: true,
+    allowedReadOrigins: ['https://docs.example.test'],
+    tools: {
+      read: { operation: 'file-read' },
+      write: { operation: 'file-write' },
+      remove: { operation: 'delete' },
+      fetch_docs: { operation: 'http' },
+    },
+    executeRealTool: (call) => {
+      callbackCalls.push(call.name);
+      return 'M9_SYNTHETIC_HTTPS_GET';
+    },
+  });
+
+  for (const call of [
+    { name: 'read', args: { path: 'public/readable.txt' } },
+    { name: 'write', args: { path: 'public/readable.txt', content: 'M9_SYNTHETIC_MUST_NOT_WRITE' } },
+    { name: 'remove', args: { path: 'public/readable.txt' } },
+  ]) {
+    assert.equal((await router.decide(call)).reason, 'path_execution_not_pinned');
+    await assert.rejects(
+      router.dispatch(call),
+      (error) => error instanceof m5.PolicyBlockedError && error.decision.reason === 'path_execution_not_pinned',
+    );
+    assert.equal(callbackCalls.length, 0, `${call.name} must fail before the generic path callback`);
+    assert.equal(router.pendingApprovals().length, 0, 'fail-closed paths do not create approvals');
+  }
+
+  const sensitiveRead = { name: 'read', args: { path: 'private/.env' } };
+  assert.equal((await router.decide(sensitiveRead)).reason, 'observe_sensitive_data_blocked');
+  await assert.rejects(
+    router.dispatch(sensitiveRead),
+    (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+  );
+  assert.equal(callbackCalls.length, 0, 'OBSERVE cannot waive the deterministic sensitive-path denial');
+  assert.equal(router.pendingApprovals().length, 0);
+
+  assert.equal(
+    await router.dispatch({ name: 'fetch_docs', args: { url: 'https://docs.example.test/guide', method: 'GET' } }),
+    'M9_SYNTHETIC_HTTPS_GET',
+  );
+  assert.deepEqual(callbackCalls, ['fetch_docs']);
+  assert.equal(guard.state, 'SAFE');
+});
+
+test('M1 held-file Gateway and exact M2 adapter provide the constrained synthetic read route', async (t) => {
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m1-m2-m5-safe-read-'));
+  const workspace = path.join(base, 'workspace');
+  const outside = path.join(base, 'outside');
+  const publicDir = path.join(workspace, 'public');
+  const privateDir = path.join(workspace, 'private');
+  fs.mkdirSync(publicDir, { recursive: true });
+  fs.mkdirSync(privateDir, { recursive: true });
+  fs.mkdirSync(outside, { recursive: true });
+
+  const publicFile = path.join(publicDir, 'readable.txt');
+  const envFile = path.join(privateDir, '.env');
+  const outsideFile = path.join(outside, 'outside.txt');
+  fs.writeFileSync(publicFile, 'M9_SYNTHETIC_HELD_HANDLE_PUBLIC_READ');
+  fs.writeFileSync(envFile, 'M9_SYNTHETIC_SENSITIVE_ALIAS_TARGET');
+  fs.writeFileSync(outsideFile, 'M9_SYNTHETIC_OUTSIDE_ALIAS_TARGET');
+  const aliases = [
+    path.join(workspace, 'public-alias'),
+    path.join(workspace, 'outside-alias'),
+  ];
+  const hardLinkAlias = path.join(publicDir, 'sensitive-alias.txt');
+  const linkType = process.platform === 'win32' ? 'junction' : 'dir';
+  const originalSnapshot = new Map([publicFile, envFile, outsideFile].map((filePath) => [
+    filePath,
+    {
+      contents: fs.readFileSync(filePath, 'utf8'),
+      sha256: createHash('sha256').update(fs.readFileSync(filePath)).digest('hex'),
+    },
+  ]));
+  const assertFixturesUnchanged = () => {
+    for (const [filePath, snapshot] of originalSnapshot) {
+      assert.equal(fs.readFileSync(filePath, 'utf8'), snapshot.contents);
+      assert.equal(createHash('sha256').update(fs.readFileSync(filePath)).digest('hex'), snapshot.sha256);
+    }
+  };
+
+  let gateway;
+  t.after(async () => {
+    if (gateway) await gateway.close();
+    for (const alias of aliases) {
+      try {
+        fs.unlinkSync(alias);
+      } catch (error) {
+        if (error?.code !== 'ENOENT') throw error;
+      }
+    }
+    fs.rmSync(base, { recursive: true, force: true });
+  });
+  fs.symlinkSync(publicDir, aliases[0], linkType);
+  fs.symlinkSync(outside, aliases[1], linkType);
+  fs.linkSync(envFile, hardLinkAlias);
+
+  const guard = m1.createAgentGuard({ sessionId: 'm9-m1-m2-m5-safe-read', alert: false });
+  gateway = m1.createTrustedExecutionGateway({
+    agentId: 'm9-m1-m2-m5-safe-read',
+    guard,
+    workspaceRoot: workspace,
+    files: [{ path: 'public/readable.txt' }],
+    evidence: new m1.EvidenceRecorder(),
+  });
+  const adapter = m2.createSecurityGatewayAdapter(gateway, { read: ['public/readable.txt'] });
+  let adapterEntrances = 0;
+  const router = m5.createSecurityToolRouter({
+    guard,
+    workspaceRoot: workspace,
+    mode: 'OBSERVE',
+    verifyRealPaths: false,
+    tools: adapter.tools,
+    executeRealTool: (call, context) => {
+      adapterEntrances += 1;
+      return adapter.executeRealTool(call, context);
+    },
+  });
+
+  const publicCall = { name: 'read', args: { path: 'public/readable.txt' } };
+  assert.equal((await router.decide(publicCall)).action, 'OBSERVE_ONLY');
+  assert.deepEqual(await router.dispatch(publicCall), { content: 'M9_SYNTHETIC_HELD_HANDLE_PUBLIC_READ' });
+  assert.equal(adapterEntrances, 1);
+  const positiveEvidence = gateway.evidence();
+  assert.ok(positiveEvidence.length > 0, 'the positive control reaches the M1 Gateway');
+  const positiveEvidenceCount = positiveEvidence.length;
+  assert.equal(router.pendingApprovals().length, 0);
+  assert.deepEqual(gateway.operator.pending(), []);
+
+  const protectedPath = { name: 'read', args: { path: 'private/.env' } };
+  assert.equal((await router.decide(protectedPath)).action, 'DENY');
+  await assert.rejects(
+    router.dispatch(protectedPath),
+    (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+  );
+  assert.equal(adapterEntrances, 1, 'M5 blocks the sensitive path before entering the M2 adapter');
+  assert.equal(gateway.evidence().length, positiveEvidenceCount);
+  assert.equal(router.pendingApprovals().length, 0);
+  assert.deepEqual(gateway.operator.pending(), []);
+  assertFixturesUnchanged();
+
+  const aliasPaths = [
+    'public-alias/readable.txt',
+    'public/sensitive-alias.txt',
+    'outside-alias/outside.txt',
+  ];
+  for (const [index, pathArg] of aliasPaths.entries()) {
+    const aliasCall = { name: 'read', args: { path: pathArg } };
+    assert.equal((await router.decide(aliasCall)).action, 'OBSERVE_ONLY', `${pathArg} stays lexical-only in M5`);
+    await assert.rejects(
+      router.dispatch(aliasCall),
+      (error) => error instanceof Error && !(error instanceof m5.PolicyBlockedError),
+      `${pathArg} must be rejected by M2's exact-path adapter`,
+    );
+    assert.equal(adapterEntrances, index + 2);
+    assert.equal(gateway.evidence().length, positiveEvidenceCount, `${pathArg} never dispatches into M1 Gateway`);
+    assert.equal(router.pendingApprovals().length, 0, `${pathArg} creates no policy approval`);
+    assert.deepEqual(gateway.operator.pending(), [], `${pathArg} creates no Gateway approval`);
+    assertFixturesUnchanged();
+  }
+
+  assert.equal(guard.state, 'SAFE');
+  assertFixturesUnchanged();
+});
+
+test('exact M1/M2/M5 sources fail closed before adapter dispatch without host-bound file execution', async (t) => {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-fixtures-'));
   const workspace = path.join(base, 'workspace');
   const outside = path.join(base, 'outside');
@@ -135,14 +319,18 @@ test('exact M1/M2/M5 sources enforce OBSERVE hard-deny before adapter dispatch',
 
   try {
     const publicCall = { name: 'read', args: { path: 'public/readable.txt' } };
-    assert.equal((await router.decide(publicCall)).action, 'OBSERVE_ONLY');
-    assert.deepEqual(await router.dispatch(publicCall), {
-      content: 'M9_SYNTHETIC_HELD_HANDLE_PUBLIC_READ',
-    });
-    assert.equal(adapterCallbackCalls, 1, 'the allowed read reaches the M2 adapter once');
-    assert.deepEqual(gateway.evidence().map((record) => record.tool_id), ['read_file', 'read_file']);
-    const acceptedGatewayEvidenceCount = gateway.evidence().length;
+    const publicDecision = await router.decide(publicCall);
+    assert.equal(publicDecision.action, 'DENY');
+    assert.equal(publicDecision.reason, 'path_execution_not_pinned');
+    await assert.rejects(
+      router.dispatch(publicCall),
+      (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+    );
+    assert.equal(adapterCallbackCalls, 0, 'an ordinary path-bearing host callback is not a held-file capability');
+    const initialGatewayEvidenceCount = gateway.evidence().length;
+    assert.equal(initialGatewayEvidenceCount, 0);
     assert.equal(router.pendingApprovals().length, 0);
+    assertFixturesUnchanged();
 
     const deniedPaths = [
       'private/.env',
@@ -158,8 +346,8 @@ test('exact M1/M2/M5 sources enforce OBSERVE hard-deny before adapter dispatch',
         (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
         pathArg,
       );
-      assert.equal(adapterCallbackCalls, 1, `${pathArg} is rejected before the M2/Gateway callback`);
-      assert.equal(gateway.evidence().length, acceptedGatewayEvidenceCount, `${pathArg} never enters M1 Gateway`);
+      assert.equal(adapterCallbackCalls, 0, `${pathArg} is rejected before the M2/Gateway callback`);
+      assert.equal(gateway.evidence().length, initialGatewayEvidenceCount, `${pathArg} never enters M1 Gateway`);
       assert.equal(router.pendingApprovals().length, 0, `${pathArg} creates no approval`);
       assertFixturesUnchanged();
     }

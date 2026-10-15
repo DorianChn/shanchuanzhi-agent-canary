@@ -33,8 +33,15 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 76066cbb750ec714ce8691bc0f30c8171186f079
+          ref: 9db59ed8f2deae905edcb2179982f8bcb594167c
           path: module-sources/m2
+
+      - name: Checkout M3 PR #33 at reviewed SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: be3880298e1c6766024ecbce5f6dbc23c4d2daa1
+          path: module-sources/m3
 
       - name: Checkout M5 PR #47 at reviewed SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -42,12 +49,20 @@ jobs:
           repository: DorianChn/shanchuanzhi-agent-canary
           ref: 2ccac21542eeefbc0dba19358db1e904e1cb806d
           path: module-sources/m5
+          fetch-depth: 0
+
+      - name: Checkout M6 PR #38 at reviewed SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9
+          path: module-sources/m6
 
       - name: Checkout M7 PR #39 at reviewed SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 52cc149e958f8139ea93cf8bab7e14bedfe45d62
+          ref: cf4b70f5130175582fffdfc65bd7c6847450867b
           path: module-sources/m7
 
       - name: Checkout M8 PR #40 at reviewed SHA
@@ -57,25 +72,37 @@ jobs:
           ref: c1ff677cc56cd159cc983042e5dfcec5dc93f3ad
           path: module-sources/m8
 
-      - name: Record all six checked-out commits
+      - name: Record checked-out commits and review evidence
         shell: bash
         run: |
           m9_sha="$(git -C module-sources/m9 rev-parse --verify HEAD)"
           m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
+          m1_owner_review_sha="f14aab781c62db60ac241d2114f543f6cac223ae"
           m2_sha="$(git -C module-sources/m2 rev-parse --verify HEAD)"
+          m3_sha="$(git -C module-sources/m3 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
+          m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 06fdbb060574e96e5d1eba5c77721014e0a81a3b^{commit})"
+          if ! git -C module-sources/m5 merge-base --is-ancestor "$m5_code_sha" "$m5_sha"; then
+            echo 'Pinned M5 code SHA is not an ancestor of the checked-out M5 head.' >&2
+            exit 1
+          fi
+          m6_sha="$(git -C module-sources/m6 rev-parse --verify HEAD)"
           m7_sha="$(git -C module-sources/m7 rev-parse --verify HEAD)"
           m8_sha="$(git -C module-sources/m8 rev-parse --verify HEAD)"
           {
             printf 'M9_SHA=%s\n' "$m9_sha"
             printf 'M1_SHA=%s\n' "$m1_sha"
+            printf 'M1_OWNER_REVIEW_SHA=%s\n' "$m1_owner_review_sha"
             printf 'M2_SHA=%s\n' "$m2_sha"
+            printf 'M3_SHA=%s\n' "$m3_sha"
             printf 'M5_SHA=%s\n' "$m5_sha"
+            printf 'M5_CODE_SHA=%s\n' "$m5_code_sha"
+            printf 'M6_SHA=%s\n' "$m6_sha"
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M9: %s\nM1: %s\nM2: %s\nM5: %s\nM7: %s\nM8: %s\n' \
-            "$m9_sha" "$m1_sha" "$m2_sha" "$m5_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2: %s\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6: %s\nM7: %s\nM8: %s\n' \
+            "$m9_sha" "$m1_sha" "$m1_owner_review_sha" "$m2_sha" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -89,25 +116,43 @@ jobs:
         run: npm ci
         working-directory: module-sources/m1
 
+      - name: Install M3 owner dependencies
+        run: npm ci
+        working-directory: module-sources/m3
+
       - name: Install M5 owner dependencies
         run: npm ci
         working-directory: module-sources/m5
 
-      - name: Run M7 exact-head packaged positive-control regression
+      - name: Run M3 exact-source build and focused onboarding regressions
+        working-directory: module-sources/m3
+        run: |
+          npm run build
+          node --import tsx --test test/onboarding.test.ts test/codex-connection-check.test.ts test/agent-hook.test.ts
+
+      - name: Run M6 exact-source bundle verification regression
+        working-directory: module-sources/m6
+        run: node --test security-lab/e4/verify-bundle.test.mjs
+
+      - name: Run M7 exact-head package-contract and positive-control regressions
         working-directory: module-sources/m7
-        run: node --test --test-name-pattern="Windows payload E4 checks the co-located privacy-safe hook wrapper" test/windows-packaging.test.mjs
+        run: node --test --test-name-pattern="prepare output and build instructions pass the pinned ZIP and required source commit SHA|Windows payload E4 checks the co-located privacy-safe hook wrapper" test/windows-packaging.test.mjs
 
-      - name: Run M8 exact-head co-located positive-control regression
+      - name: Run M8 exact-head provenance, LF checkout, and JSONL regressions
         working-directory: module-sources/m8
-        run: node --test --test-name-pattern="co-located E4 payload wrapper logs only allowlisted metadata" test/auto-e4.test.mjs
+        run: |
+          node --test --test-name-pattern="prepare build command carries the same Community ZIP and exact Hook source commit in documented argument order|Windows Hook provenance keeps LF checkout bytes equal to the tracked blob" test/windows-packaging.test.mjs
+          node --test --test-name-pattern="co-located E4 payload wrapper logs only allowlisted metadata" test/auto-e4.test.mjs
 
-      - name: Run exact-source M1/M2/M5 and M7/M8 M9 composition regressions
+      - name: Run exact-source M1/M2/M3/M5/M6/M7/M8 M9 composition regressions
         working-directory: module-sources/m9
         env:
           M9_ROOT: ${{ github.workspace }}/module-sources/m9
           M1_ROOT: ${{ github.workspace }}/module-sources/m1
           M2_ROOT: ${{ github.workspace }}/module-sources/m2
+          M3_ROOT: ${{ github.workspace }}/module-sources/m3
           M5_ROOT: ${{ github.workspace }}/module-sources/m5
+          M6_ROOT: ${{ github.workspace }}/module-sources/m6
           M7_ROOT: ${{ github.workspace }}/module-sources/m7
           M8_ROOT: ${{ github.workspace }}/module-sources/m8
         run: node --import tsx --test test/m9-cross-module-composition.test.mjs
@@ -118,8 +163,14 @@ jobs:
         run: |
           {
             echo
-            echo 'M1/M2/M5 evidence: exact allowed read and deterministic protected-path/symlink-alias denials before the adapter callback, with fixture and Gateway evidence unchanged.'
-            echo 'M7/M8 evidence: exact owner tests plus M9 raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent; M8 LF checkout policy is checked with its strict raw-byte provenance comparator retained.'
+            echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-based read/write/delete before generic callbacks; verifyRealPaths=false is lexical policy only, with M5 denying sensitive .env paths, M2 fixed-path validation rejecting aliases before M1 dispatch, and a registered M1 held-file read as the synthetic positive control.'
+            echo 'M1 checkout/head pin is b683d8476cc4302ce7fb93ee0893a9b7e736151a; M1 owner-review evidence SHA is separately recorded as f14aab781c62db60ac241d2114f543f6cac223ae. M2 exact source 9db59ed8f2deae905edcb2179982f8bcb594167c provides a read-only adapter with no write/delete adapter. M5 checkout/head pin is 2ccac21542eeefbc0dba19358db1e904e1cb806d; code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be its ancestor.'
+            echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
+            echo 'M2 scope: registered adapter route and M5 policy fixture only; native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED.'
+            echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests; M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
+            echo 'M6 evidence: source-checkout bundle/sidecar verifier regression; security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
+            echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
+            echo 'M8 exact published PR head pin is c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. The exact M7 source pin and strict M7 byte comparer are unchanged.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'
-            echo 'Not established by this workflow: a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
+            echo 'Not established by this workflow: npm-installed E4, a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
           } >> "$GITHUB_STEP_SUMMARY"
