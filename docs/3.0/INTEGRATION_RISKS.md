@@ -1,19 +1,19 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 00:14 UTC)
+## Current integration risk snapshot (2026-10-15 00:30 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #27 M6 package fields | P1 | Explicit M6 owner signoff absent at00:02. Comment 6180684215 requests a precise disposition; M6/M9 values match by static read. The untracked evidence directory is preserved. | Keep OPEN pending owner disposition and M9 combined acceptance; external E4 NOT_VERIFIED. |
-| #32 Hook interruption fixture | P1 | No M3/M4 owner response by00:02; both Windows worktrees are clean and heads unchanged. Latest checkpoint 6181111750 leaves them UNACKNOWLEDGED/HOLD; stop-message consumption remains unknown. | Keep OPEN. Do not edit or reassign until hold state clears. Preserve fail-closed/no-output/no-decision assertions; root cause UNKNOWN and native callback NOT_VERIFIED. |
-| #45 native Codex Shell | P1 | Native Shell remains UNPROTECTED; M2 audit is active on its existing adapter and host boundary; no new code defect or supported-host evidence is confirmed. | Keep OPEN; require actual supported-host evidence or explicit UNPROTECTED/BLOCKED status. |
-| #41 installer lifecycle | P1 | Clean-VM installation/launch/upgrade/uninstall/cancel rollback NOT_VERIFIED; comment 6180703085 requests evidence or BLOCKED_RESERVATION; no reply by00:02. | Keep OPEN/HOLD pending lifecycle evidence and visible exclusive reservation. |
+| #27 M6 package fields and E4 evidence | P1 | Comment 6181516836 records two reproduced defects: consistent metadata can falsely claim E4_VERIFIED, and repeated Auto E4 artifact generation overwrites earlier evidence. M6 fix commit 4e39762 has focused tests 18/18; exact PR #38 CI pending. Existing evidence directory is preserved. | Keep OPEN until both regressions pass exact-head CI and M6 owner disposition/M9 combined acceptance are recorded; external E4 NOT_VERIFIED. |
+| #32 Hook interruption fixture | P1 | M1 audit comment 6181394646 records passing exact-head and subprocess fixtures; no M3/M4 acknowledgement follows it. Latest checkpoint 6181111750 leaves them UNACKNOWLEDGED/HOLD. | Keep OPEN. Do not edit or reassign until hold state clears. Preserve fail-closed/no-output/no-decision assertions; root cause UNKNOWN and native callback NOT_VERIFIED. |
+| #45 native Codex Shell | P1 | M2 audit complete with no justified code change; Issue comment 6181405060 records BLOCKED_NOT_VERIFIED. Native Shell remains UNPROTECTED without supported-host evidence. | Keep OPEN; require actual supported-host evidence or explicit UNPROTECTED/BLOCKED status. |
+| #41 installer lifecycle | P1 | Clean-VM installation/launch/upgrade/uninstall/cancel rollback NOT_VERIFIED; comment 6180703085 requests evidence or BLOCKED_RESERVATION; no reply as of00:13. | Keep OPEN/HOLD pending lifecycle evidence and visible exclusive reservation. |
 | External E4 | P1 | Verifier CI and synthetic artifacts do not establish independent external E4. | Keep NOT_VERIFIED. |
 | M4 backend | P1 | Backend security/E4 remains UNKNOWN. | No PASS claim without backend evidence. |
 | Exclusive VM/model/installer resources | P2 | Other-window occupancy unavailable. | Treat unavailable until reservation/release visible on #29. |
-| Quota / push cadence | Scheduling | Usage page open/active/readable at00:14 UTC and above stop threshold; exact values local-only. Last push23:55 UTC. | Stop if quota <5% or unreadable. Next push no earlier than00:15 UTC. |
+| Quota / push cadence | Scheduling | Usage page readable at00:29 UTC and above stop threshold; exact values local-only. Last push00:16 UTC. | Stop if quota <5% or unreadable. Next push no earlier than00:36 UTC. |
 
-PR #30 head `68f3fa2` has 9/9 product checks and 1/1 ownership check passing. M9 PR #36 is clean with 11/11 checks passing; M1 PR #43 is at `4b562be` with 9/9 checks passing. Issue #44 is COMPLETED/CLOSED. PR #24 remains OPEN/Draft at the recorded base/head with 11/11 checks passing; it was not modified or merged.
+PR #30 head `205df8e` has 1/1 coordination check and 9/9 product CI checks passing. M9 PR #36 is clean with 11/11 checks passing; M1 PR #43 is at `4b562be` with 9/9 checks passing. Issue #44 is COMPLETED/CLOSED. PR #24 remains OPEN/Draft at the recorded base/head with 11/11 checks passing; it was not modified or merged.
 
 ## Archived snapshot (2026-10-14 22:34 UTC)
 
