@@ -31,6 +31,24 @@ __pycache__/
 /competition-submission/evidence/v2-free-build-location.txt
 /competition-submission/evidence/v2-final-head.local.json
 
+# Local M0 workspaces and nested checkouts are not repository source.
+/main/
+/agents/
+/coordinator/
+/integration/
+/reports/
+/logs/
+
+# Additional local credentials not covered by key/container patterns above.
+*.token
+*.secret
+*.secrets
+
+# Additional temporary editor artifacts.
+*.swo
+*.bak
+*~
+
 # Retain local master recording and intermediate Community builds outside normal Git
 /competition-submission/3.0/Agent_Canary_3_0_Engineering_Demo.webm
 /competition-submission/3.0/*Preview_77101c5a.zip
