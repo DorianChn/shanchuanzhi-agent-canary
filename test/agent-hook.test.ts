@@ -1,4 +1,4 @@
-import {spawnSync} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-hook-'));process.env.AGENT_CANARY_HOME=root;
 const {decideAgentHook}=await import('../src/agent-hook.js');
@@ -26,6 +26,29 @@ test('native lab wrapper allows fixture read and rejects destructive command',()
  assert.equal(fs.readFileSync(log,'utf8').trim().split('\n').length,2);
 });
 
+test('native lab wrapper persists only allowlisted metadata',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'canary-hook-module.mjs'),log=path.join(root,'canary.jsonl');
+ const callerCanary='M2_CALLER_CANARY',toolCanary='M2_TOOL_CANARY',argumentCanary='M2_ARGUMENT_CANARY',pathCanary='M2_PATH_CANARY',reasonCanary='M2_REASON_CANARY';
+ const decision={hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:reasonCanary}};
+ fs.writeFileSync(modulePath,'export async function decideAgentHook(){return '+JSON.stringify(decision)+'}\n');
+ const input={session_id:callerCanary,tool_name:toolCanary,tool_input:{command:argumentCanary,file_path:path.join(root,pathCanary)}};
+ const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'canary-state'),log],{input:JSON.stringify(input),encoding:'utf8'});
+ assert.equal(result.status,0);
+ assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const logText=fs.readFileSync(log,'utf8').trim();
+ for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary])assert.equal(logText.includes(canary),false,canary+' was persisted');
+ const records=logText.split('\n');
+ assert.equal(records.length,1);
+ const record=JSON.parse(records[0]) as Record<string,unknown>;
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');
+ assert.ok(['allow','deny','ask'].includes(String(record.permissionDecision)));
+ assert.equal(typeof record.timestamp,'string');
+ const timestamp=new Date(record.timestamp as string);
+ assert.equal(Number.isNaN(timestamp.valueOf()),false);
+ assert.equal(timestamp.toISOString(),record.timestamp);
+});
 test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
  const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
  const input=JSON.stringify({session_id:'failure-fixture',tool_name:'Bash',tool_input:{command:'git status'}});
@@ -47,9 +70,39 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
  assert.ok(Date.now()-started>=1900&&Date.now()-started<5000,'timeout returns a denial within the bounded hook budget');
 });
 
-test('native lab wrapper interruption emits no allow decision and invokes no tool callback',async()=>{
- const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs');
- fs.writeFileSync(modulePath,`import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync(${JSON.stringify(marker)},'entered');return await new Promise(()=>{})}\n`);
- const child=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),path.join(root,'interrupted.jsonl')],{input:JSON.stringify({session_id:'interrupt-fixture',tool_name:'Bash',tool_input:{command:'touch never-run'}}),encoding:'utf8',timeout:1000});
- assert.equal(child.error?.code,'ETIMEDOUT');assert.equal(fs.existsSync(marker),true);assert.equal(child.stdout,'');
+test('native lab wrapper interruption emits no decision or output',async(t)=>{
+ // The native host dispatches tool callbacks outside this subprocess; this fixture cannot count that callback.
+ const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs'),log=path.join(root,'interrupted.jsonl');
+ // Hold this synthetic child after entry so the wrapper's own 2s timeout cannot win if the parent is briefly descheduled.
+ const moduleSource="import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync("+JSON.stringify(marker)+",'entered');Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,30000);return await new Promise(()=>{})}\n";
+ fs.writeFileSync(modulePath,moduleSource);
+ const child=spawn(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),log],{stdio:['pipe','pipe','pipe']});
+ let stdout='',stderr='',spawnError:Error|undefined,closed:{code:number|null;signal:NodeJS.Signals|null}|undefined;
+ child.stdout.setEncoding('utf8').on('data',(chunk:string)=>stdout+=chunk);
+ child.stderr.setEncoding('utf8').on('data',(chunk:string)=>stderr+=chunk);
+ child.stdin.on('error',()=>{});
+ const exited=new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>child.once('close',(code,signal)=>{closed={code,signal};resolve(closed);}));
+ child.once('error',error=>{spawnError=error;});
+ child.stdin.end(JSON.stringify({session_id:'interrupt-fixture',tool_name:'Bash',tool_input:{command:'touch never-run'}}));
+ const diagnostic=()=>JSON.stringify({pid:child.pid??null,spawnError:spawnError?.message??null,exit:closed??null,stdout,stderr,marker:fs.existsSync(marker)});
+ const pause=(ms:number)=>new Promise<void>(resolve=>setTimeout(resolve,ms));
+ try{
+  const deadline=Date.now()+10_000;
+  while(!fs.existsSync(marker)&&!spawnError&&!closed&&Date.now()<deadline)await pause(10);
+  assert.equal(fs.existsSync(marker),true,'hook child did not reach the synthetic entry marker: '+diagnostic());
+  await pause(2_500); // Reproduce parent scheduling delay beyond the wrapper's 2s internal timeout.
+  assert.equal(closed,undefined,'hook child completed before external interruption: '+diagnostic());
+  assert.equal(child.kill(),true,'hook child could not be interrupted: '+diagnostic());
+  const result=await Promise.race([exited,pause(5_000).then(()=>null)]);
+  assert.ok(result,'interrupted hook child did not close: '+diagnostic());
+  assert.equal(spawnError,undefined,'hook child failed to spawn: '+diagnostic());
+  assert.ok(result.signal!==null||(result.code!==null&&result.code!==0),'hook child did not terminate from interruption: '+diagnostic());
+  assert.equal(stdout,'','interrupted hook emitted a permission decision or output: '+diagnostic());
+  assert.equal(stderr,'','interrupted hook wrote unexpected stderr: '+diagnostic());
+  assert.ok(!fs.existsSync(log),'interrupted hook wrote a decision record: '+diagnostic());
+  t.diagnostic('interruption diagnostics: '+diagnostic());
+ }finally{
+  if(!closed)child.kill();
+  await Promise.race([exited,pause(1_000)]);
+ }
 });

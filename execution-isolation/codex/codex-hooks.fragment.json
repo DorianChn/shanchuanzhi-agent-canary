@@ -1,0 +1,19 @@
+{
+  "description": "Candidate Agent Canary M2 Codex project hook. Requires M0 ownership coordination and project trust/review before installation.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/execution-isolation/codex/pre-tool-use.mjs\"",
+            "commandWindows": "node.exe execution-isolation/codex/pre-tool-use.mjs",
+            "timeout": 3,
+            "statusMessage": "Checking Agent Canary M2 shell isolation"
+          }
+        ]
+      }
+    ]
+  }
+}
