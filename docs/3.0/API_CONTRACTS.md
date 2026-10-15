@@ -1,6 +1,6 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 07:18 UTC)
+## Current coordination evidence (2026-10-15 07:31 UTC)
 
 M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 owns its adapter, and M5 owns policy/router semantics. This record adds no runtime implementation.
 
@@ -9,7 +9,7 @@ M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 o
 - **Adapter and integration order:** M2 candidate 76066cbb is the current remote head of PR #37 with exact-head CI 9/9. M9 3dfef35 adds an independent-checkout CI regression to existing PR #36; run 38696382427 passes on Ubuntu and Windows (1/1 each), and both logs record M9 `3dfef3509ada2b974cd3e0c1e55e6b57d45b2074`, M1 `f14aab781c62db60ac241d2114f543f6cac223ae`, M2 `76066cbb750ec714ce8691bc0f30c8171186f079`, and M5 `b6a40b49f132decba97d269ff942d868fcef928f`. PR #36 exact-head checks are 13/13. Do not treat this synthetic composition as production-host proof.
 - **Production boundary:** M5 has no first-party production file-host consumer; actual I/O remains the host callback. A policy or adapter fixture does not prove a shipped host opts into canonical checks or performs protected-open/handle execution. Issue #52 stays P0/OPEN; production enforcement and TOCTOU remain NOT_VERIFIED.
 - **Current PR state:** #24 is OPEN/Draft, unchanged, with 11/11 checks. M9 #36 head 3dfef35 passes 13/13 including both cross-tree jobs. M5 #47 head b6a40b4 passes 9/9. M2 #37 head 76066cb passes 9/9. M0 #30 head bd8686e passes 10/10 including ownership-contract-evidence.
-- **M4/M8 local follow-ups:** M4 fbf2090 (parent 66e679b) preserves a visible UNPROTECTED / BLOCKED_NOT_VERIFIED state for Native Codex Shell; M8 d12dd2c (parent 454873c) adds strict allowlist/timestamp validation and a co-located packaged-payload log regression. Owner-local validation passed (M4 focused tests 2/2; M8 E4 tests 5/5), but neither commit is on GitHub yet and neither has exact-head CI. These changes do not establish native-host protection, package lifecycle, or external E4.
+- **M4/M8/M7 PR updates:** M4 fbf2090 is the exact head of PR #34; its run 38698635434 failed the existing Ubuntu Node 20 state-store concurrency case (`RETRY_LIMIT`, #51), Ubuntu Node 22/build/sponsor passed, four matrix jobs were cancelled by fail-fast, and package-smoke was skipped. M1 confirmed exact source/test blobs match `f14aab7`; no cause or data loss is established. M8 d12dd2c is the exact head of PR #40 and passes 11/11. M7 local 52cc149 adds direct packaged positive-control JSONL assertions; its focused test passes 1/1, but it is not pushed. None of this establishes native-host protection, a built installer lifecycle, or external E4.
 
 ## Archived coordination evidence (2026-10-15 06:05 UTC)
 
