@@ -10,20 +10,57 @@ const supplied = process.argv[2] ? path.resolve(process.argv[2]) : null;
 const runsRoot = path.join(repoRoot, 'security-lab', 'e4-runs');
 const runNames = fs.existsSync(runsRoot) ? fs.readdirSync(runsRoot, { withFileTypes: true }).filter(item => item.isDirectory()).map(item => item.name).sort() : [];
 const runDir = supplied ?? (runNames.length ? path.join(runsRoot, runNames.at(-1)) : null);
-if (!runDir || !fs.statSync(runDir).isDirectory()) throw new Error('E4_RUN_DIRECTORY_NOT_FOUND');
+let runDirStat;
+try { runDirStat = runDir ? fs.lstatSync(runDir) : null; }
+catch { throw new Error('E4_RUN_DIRECTORY_NOT_FOUND'); }
+if (runDirStat?.isSymbolicLink()) throw new Error('E4_RUN_DIRECTORY_SYMLINK');
+if (!runDirStat?.isDirectory()) throw new Error('E4_RUN_DIRECTORY_NOT_FOUND');
 
 const archivePath = path.join(runDir, 'evidence.zip');
-const shaPath = path.join(runDir, 'bundle.sha256');
-const metaPath = path.join(runDir, 'bundle.json');
 const sha256 = data => createHash('sha256').update(data).digest('hex');
-const archive = fs.readFileSync(archivePath);
+
+function readRunFile(name, { required = true, externalCopy = false } = {}) {
+  const segments = name.split('/');
+  let current = runDir;
+  for (let index = 0; index < segments.length; index += 1) {
+    current = path.join(current, segments[index]);
+    let stat;
+    try { stat = fs.lstatSync(current); }
+    catch (error) {
+      if (!required && error.code === 'ENOENT') return null;
+      const code = externalCopy
+        ? (required ? 'E4_EXTERNAL_COPY_MISSING' : 'E4_EXTERNAL_COPY_MISMATCH')
+        : 'E4_BUNDLE_FILE_MISSING';
+      throw new Error(`${code}:${name}`);
+    }
+    if (stat.isSymbolicLink()) {
+      throw new Error(`${externalCopy ? 'E4_EXTERNAL_COPY_SYMLINK' : 'E4_BUNDLE_PATH_SYMLINK'}:${name}`);
+    }
+    if (index < segments.length - 1 ? !stat.isDirectory() : !stat.isFile()) {
+      throw new Error(`${externalCopy ? 'E4_EXTERNAL_COPY_MISMATCH' : 'E4_BUNDLE_PATH_INVALID'}:${name}`);
+    }
+  }
+  try { return fs.readFileSync(current); }
+  catch {
+    throw new Error(`${required ? 'E4_EXTERNAL_COPY_MISSING' : 'E4_EXTERNAL_COPY_MISMATCH'}:${name}`);
+  }
+}
+
+const archive = readRunFile('evidence.zip');
 const archiveHash = sha256(archive);
-const shaLine = fs.readFileSync(shaPath, 'utf8').trim();
+const shaLine = readRunFile('bundle.sha256').toString('utf8').trim();
 if (shaLine !== `${archiveHash}  evidence.zip`) throw new Error('E4_OUTER_ZIP_SHA256_MISMATCH');
-const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+const metadata = JSON.parse(readRunFile('bundle.json').toString('utf8'));
 if (metadata.sha256 !== archiveHash || metadata.e4Status !== 'NOT_VERIFIED') throw new Error('E4_BUNDLE_METADATA_MISMATCH_OR_PROMOTED');
 
 const files = readZip(archivePath);
+for (const name of files.keys()) {
+  const segments = name.split('/');
+  if (
+    !name || name.startsWith('/') || name.includes('\\') || name.includes('\0') || /^[a-zA-Z]:/.test(name) ||
+    segments.some(segment => !segment || segment === '.' || segment === '..' || segment.includes(':'))
+  ) throw new Error(`E4_UNSAFE_ARCHIVE_PATH:${name}`);
+}
 const manifestBytes = files.get('SHA256SUMS.txt');
 if (!manifestBytes) throw new Error('E4_INNER_MANIFEST_MISSING');
 const expected = new Map();
@@ -43,9 +80,7 @@ if (!reportBytes || !markdown || !rawLog) throw new Error('E4_REPORT_COMPONENT_M
 for (const name of ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log']) {
   const archived = files.get(name);
   if (!archived) throw new Error(`E4_EXTERNAL_COPY_MISSING_FROM_ARCHIVE:${name}`);
-  let external;
-  try { external = fs.readFileSync(path.join(runDir, name)); }
-  catch { throw new Error(`E4_EXTERNAL_COPY_MISSING:${name}`); }
+  const external = readRunFile(name, { externalCopy: true });
   if (!external.equals(archived)) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
 }
 const report = JSON.parse(reportBytes.toString('utf8'));
@@ -68,11 +103,8 @@ if (
 // The ZIP is authoritative, but when generated evidence sidecars are present,
 // reject a folder whose visible JSONL copy has drifted from the verified ZIP.
 for (const name of payloadNames.filter(item => item.startsWith('evidence/'))) {
-  const externalPath = path.join(runDir, ...name.split('/'));
-  if (!fs.existsSync(externalPath)) continue;
-  let external;
-  try { external = fs.readFileSync(externalPath); }
-  catch { throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`); }
+  const external = readRunFile(name, { required: false, externalCopy: true });
+  if (external === null) continue;
   if (!external.equals(files.get(name))) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
 }
 const requiredCases = ['GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION', 'GW-FAULT-EXECUTOR', 'GW-FAULT-CLOSED', 'HOOK-FAULT-STATESTORE', 'SHELL-BOUNDARY-BYPASS', 'ARTIFACT-VM-BINDING', 'APP-01', 'MODEL-REAL-TOOLCALL'];
