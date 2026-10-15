@@ -1,6 +1,35 @@
 # M9 最终集成计划
 
-## 当前 P1 #49 契约路径收敛（2026-10-14 16:56 UTC）
+## 当前 M9 集成快照（2026-10-15 00:18 UTC）
+
+> 本节基于 00:15–00:17 UTC 的 GitHub head、check、Issue 和文件树读取。下方 2026-10-14 的记录保留为历史快照；如与本节冲突，以本节的精确 head 及状态为准。PR checks 通过只证明相应提交的自动化检查，不代表模块 owner signoff、跨分支组合验收或外部环境验收。
+
+- M9 PR #36 为 OPEN/Draft，远端 head `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`：产品 CI run `38620602632` 9/9，wrapper run `38620603071` 2/2。M0 PR #30 为 OPEN/Draft，head `68f3fa237464b68781d182e42ec8a854e29a4c05`：当前 checks 10/10，runs `38657007478`、`38657007532`。
+- 当前模块 PR head 与各自 checks：
+
+| 模块 | PR / head | 当前 checks | 与 M9 `6abd4da` 相比，源 PR 变更路径中 blob 不同的路径 |
+| --- | --- | --- | --- |
+| M1 | #43 `4b562bed` | 9/9，run `38620584097` | `SECURITY_REGRESSION_RESULTS.md` |
+| M2 | #37 `0f2c10cb` | 9/9，run `38561262930` | `execution-isolation/codex/native-host-hook-evidence.json`、`execution-isolation/reports/NATIVE_SHELL_BYPASS_REPORT.md`、`test/agent-hook.test.ts` |
+| M3 | #33 `d9364cc5` | 9/9，run `38555297535` | `ONBOARDING_TEST_REPORT.md`、`package.json` |
+| M4 | #34 `69ec7f19` | 9/9，run `38555299339` | 无；其相对基线变更路径与 M9 blob 相同 |
+| M5 | #47 `7d5df632` | 9/9，run `38617317812` | `POLICY_AUDIT_REPORT.md`、`package.json`、`test/agent-hook.test.ts` |
+| M6 | #38 `ed82f061` | 9/9，run `38555297615` | `package.json` |
+| M7 | #39 `4267c61b` | 11/11，runs `38596572179`、`38596572303` | `RELEASE_READINESS.md`、`STABILITY_REPORT.md`、`package.json`、`test/agent-hook.test.ts`、`test/gateway.test.ts`、`test/honeypot-runtime.test.ts` |
+| M8 | #40 `139e7f27` | 9/9，run `38561307114` | `test/agent-hook.test.ts` |
+
+以上 PR 均为 OPEN/Draft，base 为 `feature/agent-canary-3.0`。路径不同表示当前源 PR 与 M9 组合树的内容还不完全一致；`package.json` 是有意汇总的共享路径，其余报告/证据/测试差异仍按 owner 和下列契约门槛处理。此审计未修改 M1–M8 文件，也没有在此提交后重跑上述 CI。
+
+### 契约、manifest 与未决验收
+
+- M0 当前 canonical `docs/3.0/API_CONTRACTS.md`（M0 #30 head `68f3fa2`）blob 为 `0d51c4019ae292b34054398f1fc9dfa7fc24f594`；M9 当前副本 blob 为 `693d437856a2d879983de4fb16497090128aa1d9`。通用兼容规则及 `## TrustedExecutionGateway` 起的接口语义正文逐字相同（规范化换行后）；差异是顶部协调/PR/Issue 快照，不是接口语义冲突。M1 owner 文件 `docs/3.0/M1/GATEWAY_API_CONTRACT.md` 在 M1 #43 与 M9 中的 blob 一致。根路径 canonical 由 M0 所有，本轮没有改它。
+- PR #36 与 PR #30 branches diverged，共同 merge-base 为 `62496d4020bd90ba2eede49b2e80a2bbebb036b4`（M9 ahead 99、behind 92）。M0 更新 API 快照的提交 `46557842` 与 `29514121` 同时修改多个 M0 协调文档；不应把 M0 分支或这些多文件提交整颗并入 M9。若需同步单一路径，应由 M0 owner 给出路径级更新并复核。
+- M9 `package.json` blob 为 `6b3042bbe7ba5b14a904c7d04fca9a9011a47883`，包含 36 个不同的 `npm test` 路径；当前 PR manifest 中的测试路径及脚本名均已被 M9 汇总覆盖。保留 version `1.2.7`、CLI `bin`、`files`、`./sdk`，并包含 M5 `./policy` 与 M6 E4、M7 reliability 脚本。各模块 PR 均未改 `package-lock.json`。Issue #27 仍 OPEN，M6 owner 的字段签收与组合验收尚未记录；不能由 manifest 字段存在或 M6 独立 CI 通过替代。
+- Hook fixture 仍需 owner 协调：M1 #43 与 M9 的 `test/agent-hook.test.ts` blob 为 `6c2d8da1`；M2/M5/M7/M8 为 `d3b64fc2`；M3/M4/M6 为 `1ecb3ee8`。Issue #32 仍 OPEN。M9 保留 M1 owner 版本；模块分支的独立绿色 CI 不表示这些共享路径已完成组合验收。
+- Issue #28、#46、#48、#49 当前 CLOSED，均只限其记录的验收范围；Issue #32、#41、#45 当前 OPEN。M6 外部独立 E4 为 `NOT_VERIFIED`；Native Codex Shell 仍 `UNPROTECTED`，真实桌面宿主验证为 `NOT_VERIFIED`；clean-VM 安装、升级、卸载及取消回滚均 `NOT_VERIFIED`。M4 后端安全/E4 状态仍为 `UNKNOWN`。
+- 本节记录的 M9 远端 head `6abd4da` 通过了其当时的 11/11 checks；本次计划文档更新尚未 push，也没有新 head CI。PR #24、`main` 与 Release 均未触碰。
+
+## 历史快照：P1 #49 契约路径收敛（2026-10-14 16:56 UTC）
 
 - M0 PR #30 head `a469e37` owns canonical root `docs/3.0/API_CONTRACTS.md`; current checks are 10/10.
 - M1 PR #43 head `d26a0c3` keeps its Gateway/Guard contract under `docs/3.0/M1/GATEWAY_API_CONTRACT.md`; exact-head checks are 9/9.
@@ -9,7 +38,7 @@
 
 初始基线：`feature/agent-canary-3.0` `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。本文件建立候选集成门槛和顺序；当前本地候选组合状态及限制见下方验收记录。这里的本地组合不表示源 PR 已通过评审或可以发布。
 
-## 本地候选组合验收记录（2026-10-14）
+## 历史本地候选组合验收记录（2026-10-14）
 
 - 从 M9 初始本地 HEAD `996073ad38aed23bf3c9f8e928857dcf5c6072bb` 开始，在现有 `feature/ac3-m9-integration` 分支按 no-ff 合入下表八个初始候选头，第一轮组合 HEAD 为 `845743d99f634ccdc7e17b43b2ab8c3993e2001b`；共同候选基线为 `feature/agent-canary-3.0` `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。随后将 M2 后续本地候选 head `4875d84d71817f768d806954424e30df603fc287`（父 `558eccb9867d574a3fa0f39212a28913c6f57a85`）合入，M9 merge commit 为 `83d72684adefb01b0420b9be593de35bd11f2afd`；再将 M2 脱敏提交 `b38b1ab1286ab82027d7cdeb8144aa77dab0759c`（父为 4875d84）合入，M9 merge commit 为 `cd6deb0a8f08f0e47cdd27b1d7ab37d714ac24dc`。之后合入 M1 owner-side review 报告 tip `738a7838e7377290d4ed51da4e41f0a7d14e319b`（父 `56f55f77ebf7d1c45b015cba29a783658726d225`），M9 merge commit 为 `259553a97fe3aef0cd69e58144676b31192a861f`；此 M1 follow-up 只改报告文档。当前 M9 候选分支 HEAD 为 `259553a97fe3aef0cd69e58144676b31192a861f`。
 
