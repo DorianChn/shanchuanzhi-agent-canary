@@ -24,6 +24,14 @@
 - 该修复提交尚未推送，远端 CI pending；本次仅更新 M9 所有的集成计划，没有 cherry-pick M6 代码。M6 owner signoff 仍未确认。
 - 外部独立 E4 验收仍为 NOT_VERIFIED。M9 的 npm run e4:test 是本地合成 bundle verifier 测试，不能替代 M6 外部独立 E4，也不能据此将 E4 状态标记为 VERIFIED。
 
+## M6 narrow fixture 移植候选（2026-10-15 00:54 UTC）
+
+- M6 owner 在原分支 feature/ac3-e4-validation-ac3 完成候选提交 09084490bc17af13cd4589ebb344c7a46e2d0881，父提交为 4e397627c635b75a0e3b6384136d39d078802b72。该候选是窄移植；M9 不直接 cherry-pick 或合入这项 M6 源改动。
+- M6 owner 报告本地 Hook 定向验证 10/10、E4 定向验证 18/18；M9 未重跑。保留这两项验证的原始 run 输出/报告供后续复核。
+- test/agent-hook.test.ts 的子进程夹具保留 no-decision、no-output、termination 断言；夹具没有计数或观察 native host callback，不能将它记作 native callback 执行证据。Host callback 仍为 NOT_VERIFIED。
+- GitHub 上 PR #38 仍在原 head 4e397627c635b75a0e3b6384136d39d078802b72；候选 09084490 尚未推送，因此该 exact-head CI 尚待新 head 推送后运行。Issue #27 与 #32 仍 OPEN；不得据此关闭 manifest/组合验收或共享 Hook fixture 协调门槛。
+- 外部独立 E4 仍为 NOT_VERIFIED；Native Codex Shell 仍 UNPROTECTED；clean-VM 安装、升级、卸载及取消回滚仍 NOT_VERIFIED/HOLD。上述 owner 本地测试不替代这些验收，也不改变其状态。
+
 ## 历史 M9 集成快照（2026-10-15 00:18 UTC）
 
 > 本节为 00:15–00:17 UTC 的历史 GitHub head/check/Issue/文件树快照。M9 与 M0 的较新精确 head/check 状态见上方 00:38 UTC 复核；其他 2026-10-14 记录亦为历史证据。CI 通过仅证明对应提交的自动化检查，不代表模块 owner signoff、跨分支组合验收或外部环境验收。
