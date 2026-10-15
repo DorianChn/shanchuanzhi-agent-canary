@@ -109,3 +109,11 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 5. 验收时应核对 M5 PR #47、相关 M0/M1/M9 候选的精确 head CI，以及对应路径/hash 证据；Issue #48/#49 的关闭仅覆盖各自有限范围。该类 CI/path/hash 证据不代表真实 M1+M5 宿主接线或真实副作用；M3/M5/M6/M7 package manifest 组合仍单独跟踪，M5 fixture 仅是本模块测试证据。
 
 历史摘要（此前 head 与状态记录，已由本文开头的 2026-10-15 当前快照取代）：当时 PR #47 为 OPEN/Draft，base SHA 62496d4020bd90ba2eede49b2e80a2bbebb036b4，head 5fd4707746186c4752e3a166e59a7292f112ff63，其当时 head CI run 38561283918 为 9/9 success。Issue #46 当时 OPEN，Issue #48/#49 当时 CLOSED；当时 M0 PR #30 和 M9 PR #36 仍为 OPEN/Draft，其当时精确 head CI 及路径/hash 证据已通过。Issue #48/#49 的关闭不表示真实 M1+M5 宿主接线、真实副作用或 E4 已验证。该历史记录只描述当时的报告更新；当前状态以开头快照为准。
+
+## 2026-10-15 Issue #52 M5 文件操作边界（本地候选）
+
+- 以 PR #47 head `b6a40b49f132decba97d269ff942d868fcef928f` 为父提交。修改前的临时复现使用 workspace 内 `public.txt` 和 workspace 外的合成哨兵文件：在 `verifyRealPaths: true` 检查通过后，path-based `executeRealTool` 回调替换该路径为哨兵的硬链接并读回 `SYNTHETIC_OUTSIDE_SENTINEL`，证明路径复查与 callback 重开之间存在 TOCTOU；这是合成 callback 证据，不证明生产 host 暴露。
+- M5 无法从通用 `executeRealTool(ToolCall)` 类型识别或证明 M2→M1 held-fd dispatch。因此 `verifyRealPaths: true` 现将 symlink/junction/hardlink alias 拒绝，并在审批/回调前拒绝全部 file-read/file-write/delete（`DENY / path_execution_not_pinned`）。`verifyRealPaths: false` 保留旧词法兼容行为，但不是文件系统安全保护。没有修改 M0 canonical contract、M1/M2/M9 代码或猜测新增 capability API。
+- **组合影响**：任何 M9/M2 组合若将文件调用送入 M5 且启用 `verifyRealPaths: true`，包括可能安全的 M2→M1 held-fd adapter，当前都会被拒绝；M5 无法识别该 adapter 的稳定身份绑定。HTTPS GET 非文件正向路径仍可运行。恢复文件操作需由 M0 维护的共享契约明确 M1 Gateway 身份绑定，并由 M0/M1/M5 协调 M5 如何仅路由到这条受证明的入口。
+- 定向 `test/risk-policy.test.ts` 与 `test/security-router.test.ts`：50/50；新增覆盖 OBSERVE 硬链接别名、read/write/delete 两种 M5 Router 均零 callback / fixture 不变、无审批，以及 HTTPS GET 正向控制。`npm run build` 通过，`git diff --check` 通过。
+- 这些本地 fixture 不证明真实 M1+M5 host wiring、M2 adapter 在产品 host 中实际使用 held fd、生产文件副作用或 P0 产品暴露已修复；上述仍为 **NOT_VERIFIED**。此节记录本地候选，需检查其具体 commit 和新 head CI 后才可作为 PR head 证据。

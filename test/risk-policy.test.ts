@@ -57,6 +57,32 @@ test('M5 OBSERVE policy blocks sensitive file aliases and canonical path variant
   assert.equal(fs.readFileSync(secret,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
  }
 });
+test('M5 rejects hard-link file aliases before approval or callback in OBSERVE',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-hardlink-alias-'));
+ const secret=path.join(root,'secrets','fixture.txt'),alias=path.join(root,'public.txt');fs.mkdirSync(path.dirname(secret));fs.writeFileSync(secret,'M5_HARDLINK_SECRET');fs.linkSync(secret,alias);
+ const before=createHash('sha256').update(fs.readFileSync(secret)).digest('hex');let callbacks=0;const guard=createAgentGuard({sessionId:'test-observe-hardlink-alias',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+ const call={name:'read',args:{file_path:'public.txt'}};const decision=router.inspectPolicy(call);
+ assert.equal(decision.action,'DENY');assert.equal(decision.reason,'path_alias_rejected');
+ await assert.rejects(router.dispatch(call),(e:any)=>e instanceof PolicyBlockedError&&e.decision.reason==='path_alias_rejected');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);assert.equal(fs.readFileSync(secret,'utf8'),'M5_HARDLINK_SECRET');assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
+});
+test('verifyRealPaths blocks path-based file callbacks before read/write/delete reopen TOCTOU',async()=>{
+ for(const routerKind of ['risk-policy','security-router'] as const)for(const operation of ['file-read','file-write','delete'] as const){
+  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,`path-reopen-${routerKind}-${operation}-`)),outside=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'path-reopen-outside-'));
+  const target=path.join(root,'public.txt'),sentinel=path.join(outside,'sentinel.txt');fs.writeFileSync(target,'M5_PUBLIC_FIXTURE');fs.writeFileSync(sentinel,'SYNTHETIC_OUTSIDE_SENTINEL');
+  let filesystemCallbacks=0,safeCallbacks=0;const guard=createAgentGuard({sessionId:'test-path-reopen-'+routerKind+'-'+operation,alert:false});
+  const executeRealTool=(call:any)=>{if(call.name==='fs'){filesystemCallbacks++;fs.unlinkSync(target);fs.linkSync(sentinel,target);if(operation==='file-read')return fs.readFileSync(path.join(root,call.args.file_path),'utf8');if(operation==='file-write')fs.writeFileSync(target,'SYNTHETIC_OUTSIDE_OVERWRITE');else fs.unlinkSync(target);return 'mutated';}safeCallbacks++;return 'M5_SAFE_HTTP_FIXTURE';};
+  const options={guard,workspaceRoot:root,mode:'OBSERVE' as const,verifyRealPaths:true,allowedReadOrigins:['https://docs.example.com'],tools:{fs:{operation,pathArg:'file_path'},http:{operation:'http' as const,urlArg:'url'}},executeRealTool};
+  const router=routerKind==='risk-policy'?createRiskPolicyRouter(options):createSecurityToolRouter(options);
+  const call={name:'fs',args:{file_path:'public.txt'}};
+  const decision=routerKind==='risk-policy'?router.inspectPolicy(call):await router.decide(call);
+  assert.equal(decision.action,'DENY');assert.equal(decision.reason,'path_execution_not_pinned');
+  await assert.rejects(router.dispatch(call),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='path_execution_not_pinned');
+  assert.equal(router.pendingApprovals().length,0);assert.equal(filesystemCallbacks,0);assert.equal(safeCallbacks,0);assert.equal(fs.readFileSync(target,'utf8'),'M5_PUBLIC_FIXTURE');assert.equal(fs.readFileSync(sentinel,'utf8'),'SYNTHETIC_OUTSIDE_SENTINEL');
+  assert.equal(await router.dispatch({name:'http',args:{url:'https://docs.example.com/guide',method:'GET'}}),'M5_SAFE_HTTP_FIXTURE');assert.equal(filesystemCallbacks,0);assert.equal(safeCallbacks,1);
+ }
+});
 test('M1 pre-execution denial reason is accepted only for the OBSERVE symlink alias',async()=>{
  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-router-path-alias-'));
  const secret=path.join(root,'secrets','fixture.txt'),content='M5_ROUTER_CANARY_SECRET';fs.mkdirSync(path.dirname(secret),{recursive:true});fs.writeFileSync(secret,content);
@@ -77,8 +103,8 @@ test('M5 verifyRealPaths rejects in-workspace non-sensitive symlink aliases; leg
   let callbacks=0;const guard=createAgentGuard({sessionId:'test-in-workspace-alias-'+mode,alert:false});
   const router=createSecurityToolRouter({guard,workspaceRoot:root,mode,verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
   const call={name:'read',args:{file_path:'public/fixture.txt'}};
-  const preview=await router.decide(call);assert.equal(preview.action,'DENY');assert.equal(preview.reason,'host_pre_execution_review_denied');
-  await assert.rejects(router.dispatch(call),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='host_pre_execution_review_denied');
+  const preview=await router.decide(call);assert.equal(preview.action,'DENY');assert.equal(preview.reason,'path_alias_rejected');
+  await assert.rejects(router.dispatch(call),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='path_alias_rejected');
   assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
   assert.equal(fs.readFileSync(target,'utf8'),'M5_PUBLIC_FIXTURE');assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
  }

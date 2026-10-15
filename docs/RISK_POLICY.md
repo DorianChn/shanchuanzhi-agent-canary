@@ -17,15 +17,17 @@ await router.dispatch({ name: 'read_file', args: { path: 'README.md' } });
 
 工具描述必须由可信宿主提供，不能来自模型参数。工具别名和参数都会参与判断。类型：READ_ONLY、WRITE、EXECUTE、NETWORK、SENSITIVE_DATA、DESTRUCTIVE。
 
-真实文件系统宿主应通过 `createSecurityToolRouter({ verifyRealPaths: true })` 显式启用真实路径检查。此选项也传递给底层风险策略，使其在文件操作前按规范路径检查 workspace containment 和敏感路径标记；遇到任一符号链接或 Windows junction 路径组件时拒绝，即使链接目标仍位于 workspace 内且不是敏感文件。该规则与 M1 Gateway 的文件别名边界一致：策略预览和最终路由都以宿主提供的字面路径作为能力输入，不将别名解析当作授权。缺省/`false` 保持旧版词法路径行为。Host executor 仍需防范检查与打开文件之间的路径竞争，并自行实施 OS 权限边界。
+真实文件系统宿主可通过 `createSecurityToolRouter({ verifyRealPaths: true })` 显式启用真实路径检查。此选项拒绝 file-read/file-write/delete 中的符号链接、Windows junction 或硬链接别名，并将**所有启用此选项的 file-read/file-write/delete** 在 callback 前以 `path_execution_not_pinned` 拒绝：当前 `executeRealTool` 仅接收含路径的调用，M5 无法证明 callback 按校验过的文件身份访问，而不是重新打开可变路径。公开文件也会被拒绝；文件操作要恢复放行，需 M0 所有的共享接口先定义由 M1 Gateway 提供、绑定已校验文件身份的能力，M5 再调用该能力且不调用通用 path callback。缺省/`false` 保持旧版词法路径行为，但不提供真实路径保护。
 
-| 模式 | 正常公开读取、审定只读命令 | 写入、构建、未审定网络 | 明显秘密外传、越界路径 | 已隔离 Guard |
+| 模式 | 默认/`verifyRealPaths: false` 的正常公开读取、审定只读命令 | 写入、构建、未审定网络 | 明显秘密外传、越界路径 | 已隔离 Guard |
 |---|---|---|---|---|
 | OBSERVE | 执行并记录 | 执行并记录 | 拒绝 | 拒绝 |
 | BALANCED | 执行 | 人工批准 | 拒绝 | 拒绝 |
 | STRICT | 执行 | 拒绝 | 拒绝 | 拒绝 |
 
 OBSERVE 会放行已登记工具的普通审批类风险，仍禁止明显秘密外传、敏感数据读取和越界路径；不要把模式名称理解为安全保证。BALANCED 的构建、写入审批会中断无人值守工作流。STRICT 有明确兼容性影响。
+
+启用 `verifyRealPaths: true` 时，所有注册的 file-read/file-write/delete 在所有模式下都 fail closed；此保护配置不提供文件 I/O 正向路径，见下方原因说明。
 
 ## 决策语义
 
@@ -73,7 +75,7 @@ if (preview.conflicts.length === 0) router.policyManager.apply(preview.rules, 'a
 1. 同一 Guard 对象的多个策略 Router 共享有界串行队列，避免敏感读取与外传竞争。
 2. 诱饵不等待队列，立即产生 Guard 隔离信号。已经开始的 callback 无法撤回。
 3. 敏感操作开始前标记会话；即使 callback 抛错也保留。相同 Guard 更换模式不清除标记。不同 Guard 对象之间不共享该标记；宿主必须将会话绑定稳定主体，并用权限/持久策略覆盖重新建会话。原有 shared-state quarantine 独立保持。
-4. 默认策略依据词法路径、请求参数和已知信号，**不完整解析 Shell、不解析 symlink/realpath、不执行 DNS/网络沙箱**。真实文件系统宿主应设置 `verifyRealPaths: true`：该选项会拒绝 file-read/file-write/delete 路径中的每个符号链接或 junction 组件（包括指向 workspace 内非敏感目标的链接），并用规范路径检查 containment 和敏感目标。它与 M1 Gateway 的字面路径/资源身份契约一致；`false` 仍保留词法 legacy 行为。检查不能替代原子文件打开或 OS 权限隔离。宿主还需固定工作目录、执行程序与网络目的地址；`static-read` 必须确实无副作用。
+4. 默认策略依据词法路径、请求参数和已知信号，**不完整解析 Shell、不解析 symlink/realpath、不执行 DNS/网络沙箱**。`verifyRealPaths: true` 会拒绝 file-read/file-write/delete 路径中的 symlink/junction/hard-link 别名，并在 callback 前一律以 `path_execution_not_pinned` 拒绝，因为通用 `executeRealTool` 接收的是路径调用，无法把先前校验绑定到 callback 实际打开、覆盖或删除的文件。`false` 保留词法 legacy 行为，不提供此保护。修复 generic callback TOCTOU 不能由路径复查代替；恢复安全文件操作需要 M0/M1 定义并接入绑定已校验文件身份的 Gateway capability。宿主还需固定工作目录、执行程序与网络目的地址；`static-read` 必须确实无副作用。
 5. 最终 Guard 在 callback 前检查；Token 参数和返回结果精确检查保留。返回结果中首次出现的 Token 不能撤回该次已执行 callback。
 6. AI 分析在第四轮 D2 中发生于决策之后；超时/断线不导致放行或改变隔离。模型建议既不批准也不 Reset。
 7. 策略审计失败时不执行 callback；日志不记录原始 args。未注册工具视为 UNKNOWN 并直接拒绝，不能通过一次性审批绕过宿主能力注册。
@@ -84,4 +86,4 @@ if (preview.conflicts.length === 0) router.policyManager.apply(preview.rules, 'a
 
 ## English summary
 
-The optional router enforces host-owned tool descriptors and parameter/context checks before registered callbacks. OBSERVE logs while allowing ordinary registered operations that only require optional approval; it never masks a deterministic DENY. With `verifyRealPaths: true`, file-read/file-write/delete paths containing any symlink or Windows junction component are denied, including aliases to in-workspace non-sensitive targets, matching M1 Gateway's literal-path resource boundary; `false` retains legacy lexical behavior. All modes retain Guard quarantine. Approval is immutable, expiring and one-shot; host authentication is mandatory. AI advice never grants rights. Same-Guard routers serialize operations and retain sensitive-data taint across mode changes; a new Guard object does not inherit policy taint. Host executors remain responsible for atomic/no-follow opens, executable resolution, network controls, identity and every call outside this router.
+The optional router enforces host-owned tool descriptors and parameter/context checks before registered callbacks. OBSERVE logs while allowing ordinary registered operations that only require optional approval; it never masks a deterministic DENY. With `verifyRealPaths: true`, file-read/file-write/delete symlink, junction or hard-link aliases are denied, and all path-based file-read/file-write/delete callbacks are denied before execution as `path_execution_not_pinned`: the generic callback receives a path-bearing call and cannot prove it consumes the previously checked file identity. `false` retains legacy lexical behavior without real-path protection. Restoring filesystem operations requires an M0/M1-owned Gateway capability bound to the validated file identity; until then file operations stay blocked in this mode. All modes retain Guard quarantine. Approval is immutable, expiring and one-shot; host authentication is mandatory. AI advice never grants rights. Same-Guard routers serialize operations and retain sensitive-data taint across mode changes; a new Guard object does not inherit policy taint. Host executors remain responsible for executable resolution, network controls, identity and every call outside this router.

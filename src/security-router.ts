@@ -16,7 +16,7 @@ export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
   cloudConsent?:boolean;
   reviewTimeoutMs?:number;
   callbackTimeoutMs?:number;
-  /** Real FS hosts should enable this. Virtual fixture hosts leave it false. */
+  /** Enable M5 real-path checks; file-read/write/delete callbacks fail closed until the host can bind execution to a checked file identity. False retains legacy lexical checks only. */
   verifyRealPaths?:boolean;
   dataflowTtlMs?:number;
   onReview?:(record:{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number})=>void;

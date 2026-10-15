@@ -13,7 +13,7 @@ export interface RiskToolDescriptor { operation: ToolOperation; pathArg?: string
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
-  /** Opt in to realpath-based read containment and sensitive-path classification for filesystem-backed hosts. */
+  /** Opt in to realpath classification. Filesystem callbacks fail closed because executeRealTool receives a path-bearing call and cannot prove it consumes the checked file identity. */
   verifyRealPaths?: boolean;
   /** Trusted host registration; never accept these descriptors from model arguments. */
   tools: Record<string, RiskToolDescriptor>;
@@ -50,6 +50,23 @@ function canonicalPath(candidate:string):string {
       missing.push(path.basename(cursor));cursor=parent;
     }
   }
+}
+
+function hasPathAlias(root:string,target:string):boolean {
+  try {
+    let component=path.resolve(root);
+    if(fs.lstatSync(component).isSymbolicLink())return true;
+    const relative=path.relative(root,target);
+    if(relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative))return true;
+    for(const part of relative.split(path.sep).filter(Boolean)){
+      component=path.join(component,part);
+      try{
+        const stat=fs.lstatSync(component);
+        if(stat.isSymbolicLink()||stat.isFile()&&stat.nlink>1)return true;
+      }catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')break;return true;}
+    }
+    return false;
+  }catch{return true;}
 }
 
 function snapshot(call: ToolCall): ToolCall {
@@ -115,14 +132,22 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     else if(['file-read','file-write','delete'].includes(d.operation)){
       const raw=a[d.pathArg??'path'];
       const normalized=typeof raw==='string'?raw.replaceAll('\\','/'):'\0';
-      const target=path.resolve(root,normalized);let policyTarget=target,policyRoot=root;
-      if(d.operation==='file-read'&&options.verifyRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);}catch{deny('path_resolution_failed');}
+      const filesystemOperation=['file-read','file-write','delete'].includes(d.operation);
+      const target=path.resolve(root,normalized);let policyTarget=target,policyRoot=root,pathAlias=false;
+      if(filesystemOperation&&options.verifyRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);pathAlias=hasPathAlias(root,target);}catch{deny('path_resolution_failed');}
       const relative=path.relative(root,target),policyRelative=path.relative(policyRoot,policyTarget);
       const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||policyRelative==='..'||policyRelative.startsWith('..'+path.sep)||path.isAbsolute(policyRelative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
       risks.push(d.operation==='file-read'?'READ_ONLY':d.operation==='delete'?'DESTRUCTIVE':'WRITE');
-      if(outside)deny('outside_workspace');
-      else if(SENSITIVE_PATH.test(policyTarget.replaceAll('\\','/'))){risks.push('SENSITIVE_DATA');requireApproval('sensitive_path');}
-      else if(d.operation!=='file-read')requireApproval(d.operation==='delete'?'destructive_write':'workspace_write');
+      const sensitivePath=SENSITIVE_PATH.test(policyTarget.replaceAll('\\','/'));
+      if(sensitivePath)risks.push('SENSITIVE_DATA');
+      if(!nonOverridableDeny){
+        if(outside)deny('outside_workspace');
+        else if(mode==='OBSERVE'&&sensitivePath)deny('observe_sensitive_data_blocked');
+        else if(pathAlias)deny('path_alias_rejected');
+        else if(filesystemOperation&&options.verifyRealPaths)deny('path_execution_not_pinned');
+        else if(sensitivePath)requireApproval('sensitive_path');
+        else if(d.operation!=='file-read')requireApproval(d.operation==='delete'?'destructive_write':'workspace_write');
+      }
     }else if(d.operation==='shell'){
       risks.push('EXECUTE');const command=a[d.commandArg??'command'];
       if(typeof command!=='string'||command.length>4096)deny('invalid_command');
