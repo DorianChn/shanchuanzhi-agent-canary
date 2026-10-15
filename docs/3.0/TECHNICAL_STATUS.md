@@ -1,3 +1,24 @@
+## Canonical coordinator checkpoint (2026-10-15 17:01 UTC)
+
+This checkpoint supersedes the 16:57 snapshot immediately below. The current open module PR checks were re-read; CI results are tied to their live PR heads.
+
+- **PR check scan:** #24 11/11 green; M0 #30 10/10; M1 #43 10/10; M2 #37 9/9; M3 #33 9/9; M4 #34 has 3 successes, 1 failure, 4 cancellations, and 1 skipped package job; M5 #47 9/9; M6 #38 11/11; M7 #39 11/11; M8 #40 11/11. M9 #36 has 11 successes and two composition failures.
+- **M1 / #51:** PR #43 remains at `7d6f091926bde22c1b8270a209a22ae733b55eb7`; its ten-run Ubuntu Node 22 workflow is green. M0 comment `6197638664` added the exact M4 Ubuntu Node 20 failure and requests only bounded test-level lock-holder timing diagnostics. The underlying trigger remains UNKNOWN; no data loss is established.
+- **M3 / #55 and M9:** M9 exact-head workflow `38727481764` at `de3799aae540f58173acec4ab3f7a1fe98593aa7` fails on both Ubuntu and Windows in test “M3 native Hook denies an unpinned normal Read like the current M1 Hook”; observed result is `'allow' !== 'deny'`. M3 PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; no owner response is visible. M3 owns the correction and positive control; M9 remains gated.
+- **M4 / PR #34:** Run `38698635434` remains the only observed failing matrix job and fails the shared quarantine-store retry test on Ubuntu Node 20. Four other matrix jobs are cancelled; the available steps show successful `npm test` for macOS Node 20/22 and Windows Node 20, while Windows Node 22 has no steps. Keep ownership under M1 #51.
+- **M0 / boundaries:** PR #30 remains OPEN/Draft at `eb6e01382fd99f8e9d8da518e6a8665b9b319421`, product workflow `38772103462` passes 9/9, and ownership-contract run `38772778765` passes 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- **Scheduling:** M1 #51 and M3 #55 remain the two active module lanes; quota page is readable above the stop threshold and stays open. Other-window occupancy and absent local M2/M3/M4/M6/M7 worktrees remain UNKNOWN. Next M0 push batch is no earlier than 17:08 UTC. No merge to `main` or PR #24, and no Release.
+
+## Canonical coordinator checkpoint (2026-10-15 16:57 UTC)
+
+This checkpoint supersedes the 16:44 snapshot immediately below. GitHub PR heads, issue updates, and the exact M4 failure log were rechecked. Do not store account-specific quota percentages in tracked files.
+
+- **M0 / coordination:** PR #30 remains OPEN/Draft at `eb6e01382fd99f8e9d8da518e6a8665b9b319421`; product CI `38772103462` passes 9/9 including package-smoke, and ownership-contract check `38772778765` passes 1/1. PR #24 remains OPEN/Draft with unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; M0 has not edited or merged it.
+- **M1 / #51 and M4 CI:** M1 PR #43 remains at `7d6f091926bde22c1b8270a209a22ae733b55eb7`; M1's existing ten-run Ubuntu Node 22 workflow passes, but the underlying retry trigger is UNKNOWN. M4 PR #34 exact-head run `38698635434` has one actual failure: Ubuntu Node 20 test 163, “four concurrent processes preserve every quarantine without lost writes,” child 2 exhausts 500 `STATE_STORE_BUSY` retries and throws `RETRY_LIMIT` under Node 20.20.2. Ubuntu Node 22 passes; macOS Node 20/22 and Windows Node 20 reached successful `npm test` steps but their job conclusions are cancelled; Windows Node 22 has no steps. No data loss or separate M4 UI defect is established. Track the shared-store test investigation under M1-owned #51.
+- **M1 action:** No M1 owner response or PR head update is visible through 16:57 UTC. The requested diagnostic change remains test-only: retain filtered lock-event traces for all four workers, including successful holders, without changing production locking, retry limits, delay, or assertions.
+- **M3 / #55:** PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`, with no owner response or head change since the 16:49 UTC follow-up. M3 still owns the unpinned native `Read` fail-closed correction and supported-capability positive control. M9 remains gated pending the corrected exact head and Ubuntu/Windows composition rerun.
+- **Scheduling and isolation:** M1 #51 and M3 #55 remain the two tracked module lanes. M2/M3/M4/M6/M7 local worktree isolation and other-window occupancy remain UNKNOWN from this coordinator clone. The Usage page was readable at 16:57 UTC and above the 5% stop threshold; its tab remains open at the user's request. Next M0 push batch is no earlier than 17:08 UTC. No merge to `main` or PR #24, and no Release.
+
 ## Canonical coordinator checkpoint (2026-10-15 16:44 UTC)
 
 This checkpoint supersedes the 16:05 snapshot immediately below. Current PR heads were read from GitHub; the PRs remain OPEN/Draft. CI identifiers refer only to the exact heads stated here.

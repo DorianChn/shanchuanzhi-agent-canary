@@ -1,3 +1,22 @@
+## Current coordinator checkpoint (2026-10-15 17:01 UTC)
+
+This checkpoint supersedes the 16:57 snapshot below. The current open module PR checks were re-read.
+
+- **#51 P1 — M1 / shared quarantine store:** PR #43 remains green (10/10), including its ten-run Ubuntu Node 22 stress workflow. M4's exact-head CI `38698635434` adds a Ubuntu Node 20 occurrence of child 2 exhausting 500 `STATE_STORE_BUSY` retries and reporting `RETRY_LIMIT`. M0 comment `6197638664` asks for bounded test-only lock-holder timing events across all workers and optional Ubuntu Node 20/22 diagnostic coverage. Root cause UNKNOWN; no lost data established.
+- **#55 P1 — M3 / native Hook contract:** M9 workflow `38727481764` on PR #36 exact head fails on both Ubuntu and Windows: “M3 native Hook denies an unpinned normal Read like the current M1 Hook,” with actual `'allow' !== 'deny'`. M3 PR #33 remains unchanged and no owner update is visible. M3 owns fail-closed behavior and the supported-capability positive control; do not repin M9 until the corrected M3 head passes composition on both platforms.
+- **CI inventory:** PR #24 11/11 green; M0 #30 10/10; M1 #43 10/10; M2 #37 9/9; M3 #33 9/9; M4 #34 3 success / 1 failure / 4 cancelled / 1 skipped; M5 #47 9/9; M6 #38 11/11; M7 #39 11/11; M8 #40 11/11; M9 #36 11 success / 2 composition failures. Passing module-local CI does not clear cross-module or host/installer/E4 gates.
+- **M0 / boundaries:** PR #30 remains OPEN/Draft at `eb6e013`; its exact-head product CI and ownership-contract check pass. PR #24 remains OPEN/Draft and unchanged. Next docs push is no earlier than 17:08 UTC; quota page remains open and above the stop threshold.
+
+## Current coordinator checkpoint (2026-10-15 16:57 UTC)
+
+This checkpoint supersedes the 16:44 snapshot below. Priority definitions remain as stated in the next section.
+
+- **#51 P1 — M1 / shared quarantine store:** M4 PR #34 exact-head run `38698635434` confirms a second cross-version occurrence of the same test-level symptom: Ubuntu Node 20 test 163 exhausts 500 `STATE_STORE_BUSY` retries and reports `RETRY_LIMIT`; Node 22 passes. The source-level lock-holder trigger remains UNKNOWN, and no lost quarantine/data corruption is established. M1 owns instrumentation and diagnosis; preserve production lock behavior, retries, delay, and assertions.
+- **#55 P1 — M3 / native Hook contract:** PR #33 is unchanged at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; no owner update is visible through 16:57 UTC. M3 still owns denial of unpinned native `Read` with `native_file_execution_not_pinned` and a separate supported-capability positive control. M9 composition remains blocked until M3 advances and both platforms pass.
+- **M4 / PR #34:** one CI matrix leg failed in the shared file-store concurrency test; the other observed `npm test` steps succeeded or the job was canceled before steps. This run does not establish a separate desktop UI defect. Keep the cross-version store issue under #51 and do not weaken or remove the failing assertion.
+- **M0 / boundaries:** PR #30 remains OPEN/Draft at `eb6e013`; product CI `38772103462` passed 9/9 and ownership-contract check `38772778765` passed 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- **Scheduling:** M1 #51 and M3 #55 remain the two active module lanes; M9 waits for M3. The Usage page remains open and readable above the stop threshold; no quota percentage is stored here. Next M0 push is no earlier than 17:08 UTC. No `main` merge or Release.
+
 ## Current coordinator checkpoint (2026-10-15 16:44 UTC)
 
 This checkpoint supersedes older snapshots below. All issues remain OPEN unless stated otherwise; synthetic CI evidence does not clear production-host, installer, or external E4 gates.
