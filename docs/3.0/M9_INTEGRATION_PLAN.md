@@ -8,6 +8,13 @@
 - 本轮没有运行真实模型、VMware、操作系统安装器或 clean-VM 测试。M6 owner signoff 仍未确认；外部独立 E4 为 NOT_VERIFIED；Native Codex Shell 仍 UNPROTECTED / 真实宿主验收 NOT_VERIFIED；clean-VM 安装、升级、卸载及取消回滚仍 NOT_VERIFIED。
 - 验证结果对应上述产品候选 HEAD 9c7af262。本段只作为 M9 文档记录并在其后本地提交；该文档提交不在本次验证覆盖的 HEAD 上，且未推送，因此没有新的远端 CI 证据。PR #24、main、其他模块工作树和 Issue/PR 文案均未触碰。
 
+## M6 本地 P1 修复状态（2026-10-15 00:29 UTC）
+
+- M6 owner 在其现有分支报告了本地提交 4e397627c635b75a0e3b6384136d39d078802b72（父提交 ed82f06）：修复 verifier 接受一致伪造的 E4_VERIFIED 分类，以及 Auto E4 重跑覆盖既有证据两项 P1。
+- M6 owner 报告的定向验证为 18/18；M9 未重跑该测试。保留 M6 owner 原始 run 输出/证据供后续审查与 CI 对照，M9 本次只记录摘要，没有复制、覆盖或删除该证据。
+- 该修复提交尚未推送，远端 CI pending；本次仅更新 M9 所有的集成计划，没有 cherry-pick M6 代码。M6 owner signoff 仍未确认。
+- 外部独立 E4 验收仍为 NOT_VERIFIED。M9 的 npm run e4:test 是本地合成 bundle verifier 测试，不能替代 M6 外部独立 E4，也不能据此将 E4 状态标记为 VERIFIED。
+
 ## 当前 M9 集成快照（2026-10-15 00:18 UTC）
 
 > 本节基于 00:15–00:17 UTC 的 GitHub head、check、Issue 和文件树读取。下方 2026-10-14 的记录保留为历史快照；如与本节冲突，以本节的精确 head 及状态为准。PR checks 通过只证明相应提交的自动化检查，不代表模块 owner signoff、跨分支组合验收或外部环境验收。
