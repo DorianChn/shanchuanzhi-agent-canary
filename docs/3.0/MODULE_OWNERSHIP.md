@@ -1,10 +1,10 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 16:40 UTC)
+## Current ownership and worktree snapshot (2026-10-15 16:44 UTC)
 
 | Module | Existing branch / PR head | Verified worktree in coordinator clone | Ownership / active disposition |
 | --- | --- | --- | --- |
-| M0 | `feature/ac3-m0-coordination` / #30 `3004dcf` | `ac3-coordinator-recovery`, clean | Owns coordination docs/status only; does not edit module product code. |
+| M0 | `feature/ac3-m0-coordination` / #30 remote `3004dcf` | `ac3-coordinator-recovery`, clean worktree with one local docs commit `631b4cf` pending push | Owns coordination docs/status only; does not edit module product code. |
 | M1 | `feature/ac3-security-core` / #43 `7d6f091` | `ac3-m1-security-recovery`, clean and remote-synced | Owns Gateway, Guard, canonical Hook contract/logging, and quarantine store. Active #51 diagnostics; no product fix absent reproduction. |
 | M2 | `feature/ac3-execution-isolation` / #37 `9db59ed` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns execution-isolation adapter. Native Codex Shell remains UNPROTECTED (#45). |
 | M3 | `feature/ac3-agent-onboarding` / #33 `be38802` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns onboarding and its Hook behavior/test copy. Active #55 fail-closed correction and positive control. |
@@ -15,7 +15,7 @@
 | M8 | `feature/ac3-open-source-product` / #40 `c1ff677` | `ac3-m8-recovery` | Owns open-source/docs and packaged Hook documentation. Package reachability and independent E4 remain NOT_VERIFIED (#53). |
 | M9 | `feature/ac3-m9-integration` / #36 `de3799a` | `ac3-m9-recovery` | Owns cross-module composition and integration tests, including assigned `test/ai.test.ts` diagnostics. Waits for M3 #55 before repinning; no provider/transport ownership is assigned. |
 
-All module PRs remain separate and open; current CI and acceptance boundaries are summarized in `TECHNICAL_STATUS.md`. The coordinator worktree list is not proof that unlisted modules are idle or isolated in other windows; those states are UNKNOWN. PR #24 remains OPEN/Draft and untouched; no main merge or Release occurred.
+All module PRs remain separate and open; current CI and acceptance boundaries are summarized in `TECHNICAL_STATUS.md`. GitHub reports PRs #33/#34/#36/#37/#38/#39/#40/#43/#47 all target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; GitHub compare checks confirm that exact SHA is the merge base for every head. This verifies branch provenance, not local worktree isolation. The coordinator worktree list contains M1/M5/M8/M9; M2/M3/M4/M6/M7 are not present in this clone, so their local worktree state remains UNKNOWN. PR #24 remains OPEN/Draft and untouched; no main merge or Release occurred.
 
 ## Coordinator ownership note (2026-10-15 11:18 UTC)
 

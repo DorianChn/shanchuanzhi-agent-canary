@@ -1,6 +1,6 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 16:40 UTC)
+## Current integration risk snapshot (2026-10-15 16:44 UTC)
 
 This table supersedes the older snapshot below. Exact-head CI covers the listed source state; it does not establish actual host interception, shipped-package reachability, installer lifecycle, or independent E4.
 
