@@ -6,8 +6,9 @@ Agent Canary provides inert MCP decoys and synthetic canary tokens that can surf
 
 ## Project status
 
-- **Release status:** No GitHub Release is currently published. The `v3.0.0` source tag is not a published Release.
+- **Release status:** v3.0.0 is published as the [Agent Canary 3.0 GitHub Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). The release is tied to its source snapshot.
 - **Install:** the v3.0.0 CLI package is distributed separately through GitHub Packages and requires a GitHub token with `read:packages`; see [Getting Started](GETTING_STARTED.md).
+- **Container image:** The public GHCR package lists the `3.0.0` and `latest` tags. A local pull and runtime behavior have not been verified in this documentation update.
 - **Independent E4 reproduction:** NOT_VERIFIED; the evidence index records what was and was not tested.
 - **License:** MIT for this repository. Third-party dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **Runtime:** Node.js 20 or newer for the source build.
