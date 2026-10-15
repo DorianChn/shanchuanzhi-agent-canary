@@ -1,3 +1,8 @@
+## Coordinator blocker update (2026-10-15 13:38 UTC)
+
+- **#51 P1 / M1:** M0 PR #30 exact-head run `38743679686` reproduced the existing Ubuntu Node 22 `file-state-store.test.ts` failure: concurrent worker 2 exhausted 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. This confirms recurrence in another exact-head workflow; it does not identify the contending writer or establish data loss. Keep root cause UNKNOWN and retain #51 as the owner-tracked investigation.
+- **#55 P1 / M3 and M9:** At 13:35 UTC PR #33 remained at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` (9/9); PR #36 remained at `de3799aae540f58173acec4ab3f7a1fe98593aa7`, with exact-source composition failing on Ubuntu and Windows. M0's 13:35:27 UTC owner follow-up is posted and verified. Keep OPEN until M3 aligns the unpinned native Read contract with M1, adds a supported-capability positive control, and M9 pins the corrected exact head and passes both platforms.
+- **#30 M0:** New exact-head run `38743679686` is not green: 3 successes, 1 failure, 5 canceled matrix jobs, and package smoke skipped. The failure is tracked under #51. PR #30 remains OPEN/Draft. **PR #24** is unchanged and passes 11/11.
 ## Coordinator blocker update (2026-10-15 13:12 UTC)
 
 - **#55 P1:** M0's 13:11 UTC follow-up is posted and verified. M3 remains the responsible owner for the unpinned native-Read denial and positive control; M9 must repin the exact corrected M3 head and pass both composition platforms. PR #33 is still be3880298; issue stays OPEN.
