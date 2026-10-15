@@ -1,3 +1,8 @@
+## Coordinator P0 status (2026-10-15 12:26 UTC)
+
+- **#52 P0:** Still OPEN. Its last update says policy/adapter/synthetic composition evidence does not establish a first-party production filesystem host enforcing protected open/handle semantics. Require host-path alias, handle, and TOCTOU evidence.
+- **#53 P0:** Still OPEN. Its last update records synthetic M3 wrapper JSONL coverage on an earlier M9 state; shipped/reachable copies and packaged behavior remain unreconciled. Do not treat synthetic log checks as installer or E4 acceptance.
+- **#27:** GitHub currently reports CLOSED. Its last comment says external E4 remains NOT_VERIFIED. Current PR #36 exact-head status is tracked under #55; rely on the current PR checks, not the older #27 snapshot.
 ## Coordinator publication update (2026-10-15 12:19 UTC)
 
 - **#51 P1:** M0 posted and verified a 12:16 UTC follow-up with the current sparse-sample evidence and unavailable-WSL result. The root cause remains UNKNOWN; no code, dependency, or retry change was made.

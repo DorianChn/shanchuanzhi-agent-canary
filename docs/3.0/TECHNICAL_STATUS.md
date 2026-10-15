@@ -1,3 +1,8 @@
+## Coordinator issue-state reconciliation (2026-10-15 12:26 UTC)
+
+- Current GitHub reads show Issue #27 CLOSED (updated 04:10 UTC). Its last comment references an M9 combined-test head 37a09e8 and states external E4 remains NOT_VERIFIED. That is historical issue evidence; current live PR #36 was separately observed at de3799a with failing Ubuntu/Windows composition checks, so do not treat the closed issue comment as current PR acceptance.
+- P0 Issues #52 and #53 remain OPEN. Their recorded evidence is synthetic/candidate-level and does not verify a first-party protected-open file host, packaged wrapper reachability, or clean-VM E4 behavior. Keep those acceptance gaps explicit.
+- The usage page remains open and active. The last fresh read was above the pause threshold; recheck before the next public batch.
 ## Coordinator publication update (2026-10-15 12:19 UTC)
 
 - The 12:13 UTC batch pushed five documentation-only commits to M0 PR #30, advancing the existing branch from a069e67 to e321af27f70192734c9d2c32a7a971ee7a85ff8b. Exact-head checks now show 10/10 success; PR #30 remains OPEN/Draft. PR #24 remains unchanged.
