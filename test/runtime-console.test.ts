@@ -1,8 +1,27 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import os from 'node:os';import fs from 'node:fs';import path from 'node:path';
+import {spawnSync} from 'node:child_process';
 import http from 'node:http';
 import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
+test('desktop branch native hook audit log omits synthetic sensitive canaries',()=>{
+ const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m4-hook-log-'));
+ try{
+  const wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(temp,'hook-module.mjs'),log=path.join(temp,'hook.jsonl');
+  const canaries=['M4_SENSITIVE_SESSION_CANARY','M4_SENSITIVE_TOOL_CANARY','M4_SENSITIVE_ARGUMENT_CANARY','M4_SENSITIVE_PATH_CANARY','M4_SENSITIVE_REASON_CANARY'];
+  const decision={hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'ask',permissionDecisionReason:canaries[4]}};
+  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return ${JSON.stringify(decision)}}\n`);
+  const input={session_id:canaries[0],tool_name:canaries[1],tool_input:{command:canaries[2],file_path:canaries[3]}};
+  const result=spawnSync(process.execPath,[wrapper,modulePath,temp,path.join(temp,'state'),log],{input:JSON.stringify(input),encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'ask');
+  const contents=fs.readFileSync(log,'utf8').trim();
+  for(const canary of canaries)assert.equal(contents.includes(canary),false,'sensitive canary persisted: '+canary);
+  const record=JSON.parse(contents);
+  assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+  assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'ask');
+  assert.ok(Number.isFinite(Date.parse(record.timestamp)));
+ }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
 test('3.0 console API preserves CSRF, operator identity, replay control and real quarantine',async()=>{
  const console=await startAIConsole({port:0,operatorApprovalCode:'FIXTURE_OPERATOR_ONLY'});
  try{
