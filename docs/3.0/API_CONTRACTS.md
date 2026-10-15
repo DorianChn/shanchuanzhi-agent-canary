@@ -1,6 +1,17 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 08:44 UTC)
+## Current coordination evidence (2026-10-15 11:15 UTC)
+
+M0 maintains this cross-module contract. M1 owns Gateway and Hook semantics; M2 owns its execution adapter; M3 owns agent onboarding and host adaptation; M5 owns policy/router semantics; M9 owns composition checks. This record adds no runtime implementation.
+
+- **Native Hook file-operation contract (#55, P1):** without an M1-approved held-file capability, a native file `Read` must deny with `native_file_execution_not_pinned`. M1 PR #43 head `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` enforces this; M3 PR #33 head `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` currently allows the same synthetic unpinned `Read`. M9 exact-head Ubuntu composition run `38724906633` observed `expected deny, actual allow`. M3 owns its implementation/test correction; M9 updates its M3 pin after that head advances. This is a test-level contract mismatch, not evidence of production host exposure.
+- **Hook log contract (#53, P0 candidate):** persist only the allowlisted timestamp, fixed `PreToolUse` event, and permission-decision enum. M2/M5/M7/M8/M9 tracked wrapper blobs match the M1 canonical blob `d6f93249306b7966259cab463dd39475728ef338`; M3 has a separate equivalent executable wrapper with a comment-only difference. M9's exact-head synthetic JSONL checks for M3 fields and caller/reason/path/command canaries passed in run `38724906633`. Package reachability, native host activation, and clean-VM lifecycle remain NOT_VERIFIED.
+- **Current M9 composition:** PR #36 exact head `16163357f6c3ed67db69e85cb3ad435bbe95ce95` product CI passed 9/9 and wrapper CI passed 2/2. Ubuntu composition passed 6/7 subtests; the new M1/M3 contract gate is the failure. Windows composition was cancelled by matrix fail-fast. M9 local commit `de3799aae540f58173acec4ab3f7a1fe98593aa7` sets `fail-fast: false` and awaits the next publication batch and exact-head CI.
+- **M1/M2/M5 file boundary (#52, P0):** `verifyRealPaths:true` blocks registered read/write/delete callbacks before approval and dispatch; the exact M2 adapter provides only a fixed read through M1 Gateway's held handle. These source fixtures remain synthetic and do not establish a production file-host consumer or protected-open TOCTOU resistance; keep #52 OPEN.
+- **Other integration limits:** M2 native Codex Shell remains UNPROTECTED (#45); M4's Ubuntu Node 20 `RETRY_LIMIT` trigger remains UNKNOWN (#51); clean-VM installation lifecycle (#41), independent external E4, and exclusive VMware/real-model/installer reservation (#29) remain NOT_VERIFIED or unreserved. No merge of PR #24, main merge, or Release occurred.
+
+
+## Archived coordination evidence (2026-10-15 08:44 UTC)
 
 M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 owns its execution adapter, and M5 owns policy/router semantics. This coordination record adds no runtime implementation.
 
