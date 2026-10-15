@@ -1,5 +1,13 @@
 # M9 最终集成计划
 
+## M9 第二阶段本地集成验证（2026-10-15 00:26 UTC）
+
+- 在 integration worktree、分支 feature/ac3-m9-integration 上验证候选 HEAD 9c7af262131a792aeb811a587b6e83e026ba4a20（父提交 6abd4da78f161577bff90a5d18fd0d3ec329fdd3）；开始前工作树干净、无未合并索引项。环境：Node.js v22.23.1、npm 10.9.8。
+- 精确命令 npm run verify：退出码 0；tsc build 通过；npm test 共 399 项，393 pass、0 fail、6 skip；内含 npm run pack:check 通过，package smoke check 生成并检查 dorianchn-agent-canary-1.2.7.tgz（100 files）。
+- 精确命令 npm run e4:test：退出码 0；12 项 pass、0 fail、0 skip。该命令只运行 node --test security-lab/e4/verify-bundle.test.mjs 的本地合成 bundle 校验测试，不构成 M6 owner signoff 或外部独立 E4 验收。
+- 本轮没有运行真实模型、VMware、操作系统安装器或 clean-VM 测试。M6 owner signoff 仍未确认；外部独立 E4 为 NOT_VERIFIED；Native Codex Shell 仍 UNPROTECTED / 真实宿主验收 NOT_VERIFIED；clean-VM 安装、升级、卸载及取消回滚仍 NOT_VERIFIED。
+- 验证结果对应上述产品候选 HEAD 9c7af262。本段只作为 M9 文档记录并在其后本地提交；该文档提交不在本次验证覆盖的 HEAD 上，且未推送，因此没有新的远端 CI 证据。PR #24、main、其他模块工作树和 Issue/PR 文案均未触碰。
+
 ## 当前 M9 集成快照（2026-10-15 00:18 UTC）
 
 > 本节基于 00:15–00:17 UTC 的 GitHub head、check、Issue 和文件树读取。下方 2026-10-14 的记录保留为历史快照；如与本节冲突，以本节的精确 head 及状态为准。PR checks 通过只证明相应提交的自动化检查，不代表模块 owner signoff、跨分支组合验收或外部环境验收。
