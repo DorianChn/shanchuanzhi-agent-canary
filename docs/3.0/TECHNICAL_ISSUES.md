@@ -509,3 +509,9 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#56 P2 — M0/M1 Hook test ownership overlap:** Issue remains OPEN, with no M1 disposition as of 21:33. PR #30 is OPEN/Draft and its description now accurately states that test/agent-hook.test.ts is M1-owned, references #56, and awaits M1 confirmation. Preserve the test and all assertions.
 - **#55 P1 — M3/M9 native Read contract:** no M3 evidence or PR #33 head change by the 21:32 checkpoint. Comment 6202752274 requests native_file_execution_not_pinned denial, unchanged M1 denial assertions, supported-capability positive control, and exact path/SHA or blocker by 21:52. Keep M9 gated.
 - **#53 P0 — M7/M8 packaged Hook reachability:** no owner evidence or PR #39/#40 head change by 21:32. Comment 6202752861 requests actual pinned Setup.exe/payload and manifest hashes, extracted Hook byte comparison, and extracted harness result or blocker by 21:52. Do not claim package reachability before evidence; installer/VM lifecycle requires the exclusive #29 reservation.
+
+## M0 owner deadline follow-up — 2026-10-15 21:52 UTC
+
+- **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 disposition or PR #43 head change by 21:52. Comment 6203051405 requests canonical-regression path/SHA evidence or a reviewed shared-path exception by 22:12. PR #30 remains Draft; M0 does not alter the M1-owned test.
+- **#55 P1 — M3/M9 native Read contract:** no M3 response or PR #33 head change by 21:52. Comment 6203052042 records the missed deadline; M3 must provide the denial/positive-control evidence or concrete blocker by 22:12. Keep M9 gated.
+- **#53 P0 — M7/M8 package reachability:** no M7/M8 response or PR #39/#40 head change by 21:52. Comment 6203052699 records the missed deadline and requests exact artifact evidence or blocker by 22:12. Keep the P0 open and do not claim reachability.

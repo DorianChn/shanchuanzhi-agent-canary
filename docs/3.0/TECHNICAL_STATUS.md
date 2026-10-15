@@ -846,3 +846,12 @@ PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPE
 - **P0 / Issue #53:** no owner evidence or PR #39/#40 head movement by 21:32. M0 comment 6202752861 requests pinned package/manifest hashes, extracted-Hook comparison, and extracted-harness result or blocker by 21:52. Keep reachability NOT_VERIFIED.
 - Usage tab 336903555 remains open and active; the 21:33 reading was readable and above the 5% pause threshold. Do not copy account-specific percentages into tracked/public records. Next branch push no earlier than 21:39 UTC.
 - No module source/tests changed, no tests run, and no main/PR #24 merge or Release.
+
+## M0 owner checkpoint — 2026-10-15 21:52 UTC
+
+- **M0 / PR #30:** OPEN/Draft at 9707a8d825721d1b610d9bde48540158b2ad4912; exact-head product CI 38811701516 and coordination workflow 38811701515 passed. The PR body’s last status snapshot is 21:21 UTC; scope correction remains verified and the snapshot is due for refresh in the 21:59 publication batch.
+- **P2 / Issue #56:** still OPEN with no M1 disposition or PR #43 head movement. M0 comment 6203051405 requests the canonical-test path/SHA evidence or review of a shared-path exception by 22:12. Preserve the M1 test and assertions; keep #30 Draft.
+- **P1 / Issue #55:** no M3 evidence or PR #33 head movement by 21:52. M0 comment 6203052042 records the missed evidence deadline and requests the exact path/SHA, denial assertion and positive control, or a concrete blocker by 22:12. M9 remains gated.
+- **P0 / Issue #53:** no M7/M8 evidence or PR #39/#40 head movement by 21:52. M0 comment 6203052699 records the missed artifact deadline and requests package/manifest hashes, extracted-Hook comparison and harness result or concrete blocker by 22:12. Keep package reachability NOT_VERIFIED.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. Usage page remains open and readable above the pause threshold. Next branch push no earlier than 21:59 UTC.
+- No module source/tests changed, no tests were run, and no merge or Release occurred.
