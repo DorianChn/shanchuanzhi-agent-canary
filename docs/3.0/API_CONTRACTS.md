@@ -1,6 +1,14 @@
+## Current coordination evidence (2026-10-15 11:33 UTC)
+
+M0 maintains this cross-module contract. M1 owns Gateway and Hook semantics; M2 owns its execution adapter; M3 owns agent onboarding and host adaptation; M5 owns policy/router semantics; M9 owns composition checks. This update records the exact current M9 result and adds no runtime implementation.
+
+- **Native Hook unpinned-read contract (#55, P1):** M1 PR #43 head `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` denies a native file `Read` without an approved held-file capability using `native_file_execution_not_pinned`. M3 PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` and allows the synthetic unpinned read. M9 PR #36 run `38727481764` completed on Ubuntu and Windows and both composition steps failed on this mismatch; the job summaries reported M1 deny and M3 allow. M3 owns its behavior/test correction, M1 retains the fail-closed contract, and M9 will repin only after M3 advances. This is synthetic contract evidence, not production-host exposure.
+- **Current M9 checks:** PR #36 exact head `de3799aae540f58173acec4ab3f7a1fe98593aa7`; product CI `38727481643` and Windows wrapper `38727481657` passed. Cross-module composition `38727481764` failed on both platforms. Workflow `fail-fast: false` ensured both platform results were reported.
+- **Hook logging and remaining boundaries:** the prior exact-head synthetic JSONL regressions and wrapper-blob checks remain as recorded below. Package reachability, native-host activation, protected-open/held-handle behavior, clean-VM lifecycle, and external E4 remain NOT_VERIFIED where applicable. M2 native Codex Shell remains UNPROTECTED (#45); M4's Ubuntu Node 20 `RETRY_LIMIT` trigger remains UNKNOWN (#51); Issue #52 remains open for production-host and TOCTOU evidence. No assertion was deleted or weakened.
+
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 11:15 UTC)
+## Archived coordination evidence (2026-10-15 11:15 UTC)
 
 M0 maintains this cross-module contract. M1 owns Gateway and Hook semantics; M2 owns its execution adapter; M3 owns agent onboarding and host adaptation; M5 owns policy/router semantics; M9 owns composition checks. This record adds no runtime implementation.
 

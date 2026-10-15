@@ -1,3 +1,12 @@
+## Coordinator update (2026-10-15 11:33 UTC)
+
+- The ChatGPT usage page remains open in the browser and was readable above the stop threshold at 11:32 UTC. Keep it open; do not store account-specific percentages in tracked files.
+- PR #24 remains OPEN/Draft at its previously verified exact base/head; it has not been edited or merged. No main merge or Release occurred.
+- M0 PR #30 is now at exact head `1bac7ac0dbc8932676697dcc45fa090b7ec4c73c`; exact-head coordination run `38727471209` and CI run `38727471409` both passed. M0 changes are coordination docs only.
+- M9 PR #36 is now at exact head `de3799aae540f58173acec4ab3f7a1fe98593aa7`. Product CI `38727481643` and Windows wrapper run `38727481657` passed. Composition run `38727481764` completed on Ubuntu and Windows; both failed at the exact-source composition step. Both summaries confirm M1 `b1d7423` denies an unpinned native `Read` while M3 `be38802` allows it. The `fail-fast: false` workflow change exposed both results; it did not make the integration gate pass.
+- Issue #55 remains OPEN/P1. M0 posted the completed CI result and reiterated M3 ownership on PR #33; PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. Acceptance requires M3 to deny the unpinned read with `native_file_execution_not_pinned`, retain an approved-capability positive control, and then pass exact-head M3 and both M9 platform checks. No production-host exposure is inferred.
+- This push batch fast-forwarded M0 from `50676bef95e8683da14db65db71e988232603c0f` to `1bac7ac0dbc8932676697dcc45fa090b7ec4c73c`, and M9 from `16163357f6c3ed67db69e85cb3ad435bbe95ce95` to `de3799aae540f58173acec4ab3f7a1fe98593aa7`. The follow-up M9 workflow result remains red for the unresolved M3 contract. Next public-write batch is no earlier than 11:53 UTC (20 minutes after the final issue comment), after another readable quota check.
+
 # M0 技术协调状态
 
 ## Coordinator update (2026-10-15 11:18 UTC)
