@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
+import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'risk-policy-test-'));
 const {createAgentGuard,createRiskPolicyRouter,createSecurityToolRouter,PolicyBlockedError,CanaryBlockedError}=await import('../src/sdk.js');
 const {readEvents}=await import('../src/alerts.js');
@@ -43,17 +43,29 @@ test('OBSERVE blocks registered sensitive-read operations without creating an ap
  assert.equal(s.router.pendingApprovals().length,0);
  assert.equal(s.calls.length,0);
 });
-test('OBSERVE blocks sensitive file aliases and canonical path variants before approval or callback',async()=>{
+test('M5 OBSERVE policy blocks sensitive file aliases and canonical path variants before approval or callback',async()=>{
  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-path-alias-'));
- fs.mkdirSync(path.join(root,'secrets'));fs.writeFileSync(path.join(root,'secrets','fixture.txt'),'M5_CANARY_SECRET');
+ const secret=path.join(root,'secrets','fixture.txt'),content='M5_CANARY_SECRET';fs.mkdirSync(path.dirname(secret));fs.writeFileSync(secret,content);
  fs.symlinkSync(path.join(root,'secrets'),path.join(root,'public'),process.platform==='win32'?'junction':'dir');
- let callbacks=0;const guard=createAgentGuard({sessionId:'test-observe-path-alias',alert:false});
- const router=createSecurityToolRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+ const before=createHash('sha256').update(fs.readFileSync(secret)).digest('hex');let callbacks=0;const guard=createAgentGuard({sessionId:'test-observe-path-alias',alert:false});
+ // Exercise M5's own canonical-path policy without the M1 pre-execution adapter.
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
  for(const file_path of ['public/fixture.txt','secrets/../secrets/fixture.txt','secrets\\fixture.txt']){
   await assert.rejects(router.dispatch({name:'READ',args:{file_path}}),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='observe_sensitive_data_blocked'&&e.decision.risks.includes('SENSITIVE_DATA'));
   assert.equal(router.pendingApprovals().length,0);
   assert.equal(callbacks,0);
+  assert.equal(fs.readFileSync(secret,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
  }
+});
+test('M1 pre-execution denial reason is accepted only for the OBSERVE symlink alias',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-router-path-alias-'));
+ const secret=path.join(root,'secrets','fixture.txt'),content='M5_ROUTER_CANARY_SECRET';fs.mkdirSync(path.dirname(secret),{recursive:true});fs.writeFileSync(secret,content);
+ fs.symlinkSync(path.join(root,'secrets'),path.join(root,'public'),process.platform==='win32'?'junction':'dir');
+ const before=createHash('sha256').update(fs.readFileSync(secret)).digest('hex');let callbacks=0;const guard=createAgentGuard({sessionId:'test-observe-router-path-alias',alert:false});
+ const router=createSecurityToolRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+ await assert.rejects(router.dispatch({name:'read',args:{file_path:'public/fixture.txt'}}),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&['observe_sensitive_data_blocked','host_pre_execution_review_denied'].includes(e.decision.reason)&&e.decision.risks.includes('SENSITIVE_DATA'));
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
+ assert.equal(fs.readFileSync(secret,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
 });
 test('file-read through an in-workspace junction cannot escape workspace in any mode',async()=>{
  const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'outside-path-alias-'));
