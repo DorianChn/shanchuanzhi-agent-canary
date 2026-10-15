@@ -1,6 +1,6 @@
 # 模块文件所有权表
 
-## Coordinator ownership note (2026-10-15 11:09 UTC)
+## Coordinator ownership note (2026-10-15 11:18 UTC)
 
 - **M3** owns its onboarding branch and Hook test copy. M1 owner review found M3 wrapper executable behavior differs only by a comment. M3 owns fixing Issue #55: its current ordinary unpinned Read allows where M1 denies; preserve M1 assertions and advance existing PR #33.
 - **M9** owns the composition workflow and integration tests. Commit `1616335` is pushed to PR #36; product/wrapper checks pass, but the M1/M3 contract gate fails. Local follow-up `de3799a` disables matrix fail-fast so future Windows results remain visible; it is not pushed. M9 may edit only M9-owned integration files.

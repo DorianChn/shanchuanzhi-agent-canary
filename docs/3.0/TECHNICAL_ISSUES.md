@@ -1,6 +1,6 @@
 # M0 技术问题分级与协作流程
 
-## Coordinator evidence update (2026-10-15 11:09 UTC)
+## Coordinator evidence update (2026-10-15 11:18 UTC)
 
 - **#52 P0:** M9 PR #36 exact head `16163357f6c3ed67db69e85cb3ad435bbe95ce95` has 9/9 product CI and 2/2 wrapper CI. Composition run `38724906633` confirms the separate M1/M3 unpinned-Read mismatch; wrapper-blob and sanitized-JSONL positive controls pass. Windows composition was cancelled by matrix fail-fast; local M9 follow-up `de3799a` disables fail-fast for the next run. Synthetic checks still do not verify a production protected-open host, held-handle TOCTOU, installer payload, clean VM, or independent E4; keep OPEN.
 - **#53 P0:** M9 PR #36 adds a synthetic M3 wrapper allowlist/canary/canonical-time check, which passed in Ubuntu composition run `38724906633`. The separate native Hook behavior conflict is tracked in #55; this log-sanitization test did not fail. Keep #53 OPEN until shipped/reachable copies and packaged behavior are reconciled; real host/package/E4 acceptance remains unverified.
