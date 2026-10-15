@@ -137,6 +137,17 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
     assert.equal(result.positiveControl.logContractSatisfied,true);
     assert.equal(result.positiveControl.decision,'allow');
     assert.equal(result.sideEffects.protectedVictimUnchanged,true);
+    const log=fs.readFileSync(path.join(result.root,'positive-control.jsonl'),'utf8').trim().split(/\r?\n/);
+    assert.equal(log.length,1,'packaged hook must emit one positive-control decision record');
+    const record=JSON.parse(log[0]);
+    assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+    assert.equal(record.hookEventName,'PreToolUse');
+    assert.ok(['allow','deny','ask'].includes(record.permissionDecision));
+    assert.equal(record.permissionDecision,'allow');
+    assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
+    for(const marker of ['SYNTHETIC_E4_HOOK_ARGUMENT_MARKER','SYNTHETIC_E4_HOOK_REASON_MARKER','C:/synthetic/caller/private.txt','write victim']){
+      assert.equal(log[0].includes(marker),false,`packaged decision log leaked ${marker}`);
+    }
   }finally{fs.rmSync(payload,{recursive:true,force:true});}
 });
 
