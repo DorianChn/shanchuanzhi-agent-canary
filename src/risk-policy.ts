@@ -1,5 +1,6 @@
 /** Optional host-owned policy boundary. No model output grants execution rights. */
 import path from 'node:path';
+import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { logEvent } from './alerts.js';
 import { createGuardedToolRouter, isDecoy, type RealToolExecutor } from './sdk.js';
@@ -12,6 +13,8 @@ export interface RiskToolDescriptor { operation: ToolOperation; pathArg?: string
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
+  /** Opt in to realpath-based read containment and sensitive-path classification for filesystem-backed hosts. */
+  verifyRealPaths?: boolean;
   /** Trusted host registration; never accept these descriptors from model arguments. */
   tools: Record<string, RiskToolDescriptor>;
   /** Exact host-reviewed HTTPS origins for read-only GET requests. No wildcard. */
@@ -33,6 +36,21 @@ const SENSITIVE_PATH = /(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?
 const SECRET_CONTENT = /cnry_[A-Za-z0-9_-]+|NOT_A_REAL_CREDENTIAL|sk-[A-Za-z0-9_-]{16,}|-----BEGIN .*PRIVATE KEY|(?:api[_-]?key|password|secret|authorization)\s*[:=]\s*\S+/i;
 // Mode/router replacement must not erase sensitive history for the same Guard.
 const riskStates=new WeakMap<AgentGuard,{sensitiveRead:boolean;tail:Promise<unknown>;queued:number}>();
+
+function canonicalPath(candidate:string):string {
+  let cursor=path.resolve(candidate);const missing:string[]=[];
+  while(true){
+    try{
+      const resolved=fs.realpathSync(cursor);
+      return missing.reverse().reduce((base,part)=>path.join(base,part),resolved);
+    }catch(error){
+      const code=(error as NodeJS.ErrnoException).code;
+      if(code!=='ENOENT'&&code!=='ENOTDIR')throw error;
+      const parent=path.dirname(cursor);if(parent===cursor)return path.resolve(candidate);
+      missing.push(path.basename(cursor));cursor=parent;
+    }
+  }
+}
 
 function snapshot(call: ToolCall): ToolCall {
   // Accept JSON data only. Reject getters, custom toJSON, cycles, excessive depth/size.
@@ -97,11 +115,13 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     else if(['file-read','file-write','delete'].includes(d.operation)){
       const raw=a[d.pathArg??'path'];
       const normalized=typeof raw==='string'?raw.replaceAll('\\','/'):'\0';
-      const target=path.resolve(root,normalized),relative=path.relative(root,target);
-      const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
+      const target=path.resolve(root,normalized);let policyTarget=target,policyRoot=root;
+      if(d.operation==='file-read'&&options.verifyRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);}catch{deny('path_resolution_failed');}
+      const relative=path.relative(root,target),policyRelative=path.relative(policyRoot,policyTarget);
+      const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||policyRelative==='..'||policyRelative.startsWith('..'+path.sep)||path.isAbsolute(policyRelative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
       risks.push(d.operation==='file-read'?'READ_ONLY':d.operation==='delete'?'DESTRUCTIVE':'WRITE');
       if(outside)deny('outside_workspace');
-      else if(SENSITIVE_PATH.test(target.replaceAll('\\','/'))){risks.push('SENSITIVE_DATA');requireApproval('sensitive_path');}
+      else if(SENSITIVE_PATH.test(policyTarget.replaceAll('\\','/'))){risks.push('SENSITIVE_DATA');requireApproval('sensitive_path');}
       else if(d.operation!=='file-read')requireApproval(d.operation==='delete'?'destructive_write':'workspace_write');
     }else if(d.operation==='shell'){
       risks.push('EXECUTE');const command=a[d.commandArg??'command'];
@@ -126,6 +146,12 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     return {action,risks,reason,mode};
   }
   async function execute(call:ToolCall,decision:PolicyDecision){
+    if(options.verifyRealPaths){
+      const current=classify(call);
+      if(current.action!==decision.action||current.reason!==decision.reason||current.risks.length!==decision.risks.length||current.risks.some((risk,index)=>risk!==decision.risks[index])){
+        const changed={...current,action:'DENY' as const,reason:'execution_boundary_changed'};audit('policy_blocked',call,changed);throw new PolicyBlockedError(changed);
+      }
+    }
     // A failed sensitive callback may have read data before throwing. Retain taint.
     if(decision.risks.includes('SENSITIVE_DATA'))riskState.sensitiveRead=true;
     const result=await router.dispatch(call); // final Guard check directly before callback
