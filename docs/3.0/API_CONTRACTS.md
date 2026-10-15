@@ -1,6 +1,15 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 07:31 UTC)
+## Current coordination evidence (2026-10-15 08:44 UTC)
+
+M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 owns its execution adapter, and M5 owns policy/router semantics. This coordination record adds no runtime implementation.
+
+- **M1/M2/M5 file boundary (#52):** M5 candidate code `06fdbb060574e96e5d1eba5c77721014e0a81a3b` (report commit `d578b1d93f2b71692ab76a5c3557f7779f2a6faf`) was reviewed by M1. With `verifyRealPaths:true`, M5 denies registered `file-read`, `file-write`, and `delete` operations before approvals and before the generic `executeRealTool` callback; alias/path-specific denials may occur earlier. OBSERVE cannot override these decisions. This prevents the generic path-check-then-reopen route in this mode, but reduces file functionality and does not prove a production host uses the router.
+- **Approved synthetic read composition:** M5 `verifyRealPaths:false` is lexical policy only and is unsafe as a standalone arbitrary path callback. The exact M2 adapter at `9db59ed8f2deae905edcb2179982f8bcb594167c` exposes only a fixed registered read and sends it directly to M1 `agent.dispatch`, whose Gateway reads its held file handle. M2 has no write/delete adapter and has no fallback or path reopen. M9 local candidate `036308eec5f7f96d16285e2d0a594d04268ed799` tests this restricted read plus M5 true-mode zero-callback denials; its 3/3 local composition result is synthetic API evidence only. No first-party production host callsite has been verified.
+- **Current PR/check state:** #24 remains OPEN/Draft, unchanged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; M1 #43 `f14aab7`, M2 #37 `9db59ed`, M3 #33 `be38802`, M4 #34 `fbf2090`, M5 #47 remote `b6a40b4`, M6 #38 `c1fdf3c`, M7 #39 `cf4b70f`, M8 #40 `499db51`, and M9 #36 remote `4d1dc7a` remain OPEN/Draft. M3 and M7 latest exact-head CI pass; M8 Windows product and wrapper runs `38706666596`/`38706666613` fail with `WRAPPER_SOURCE_PROVENANCE_MISMATCH` and are under owner investigation. M4 run `38698635434` has the separate #51 retry failure. M5 and M9 candidates are local and have not yet been pushed.
+- **Evidence limits:** #52 remains P0/OPEN because no production host path is verified; retain the synthetic TOCTOU finding without claiming product exposure. Native Codex Shell remains UNPROTECTED, Hook trust/activation is NOT_VERIFIED, clean-VM installer lifecycle is NOT_VERIFIED, and external E4 is NOT_VERIFIED.
+
+## Archived coordination evidence (2026-10-15 07:31 UTC)
 
 M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 owns its adapter, and M5 owns policy/router semantics. This record adds no runtime implementation.
 
@@ -63,7 +72,14 @@ Current exact-head checks and interface status are summarized in TECHNICAL_STATU
 - 权限判定必须在受信任执行器启动前最终复查。超时、解析失败、状态不明或证据写失败不能转成成功或放行。
 - AI 分析器只能收紧决定，不能创建权限、批准操作或重置隔离。
 
-## 当前契约与集成状态（2026-10-14 19:12 UTC）
+## Owner-reviewed M1/M2/M5 file operation contract (2026-10-15 08:40 UTC)
+
+- `verifyRealPaths:true` in M5 is fail closed for all registered `file-read`, `file-write`, and `delete` operations through its generic `executeRealTool` path. The router denies before creating an approval or invoking that callback, including in OBSERVE mode. If true mode is later changed to permit a file operation, M5 needs an explicit, owner-reviewed way to distinguish a trusted held-handle adapter from an arbitrary path callback.
+- `verifyRealPaths:false` means M5 applies lexical policy only; it makes no canonical-path or protected-open claim. A standalone arbitrary callback that reopens the path remains unsafe.
+- The exact M2 adapter currently exposes only a fixed-path read. It validates the exact registered tool, path, and arguments, then dispatches directly to M1's registered-file Gateway. M1 holds and checks the registered file handle; M2 does not reopen the path, catch-and-fallback, write, or delete. M5 policy can wrap this adapter in lexical mode for the reviewed synthetic composition. This is an adapter-specific boundary, not blanket approval for generic file callbacks.
+- A trusted adapter path through this interface has been exercised only by M9 synthetic composition tests. No production host consumer/wiring is established; #52 remains open until the real host owner supplies a protected execution path and evidence.
+
+## Archived contract and integration status snapshot (2026-10-14 19:12 UTC)
 
 - PR #43 M1 owner head `4b562be` / run `38620584097` passed 9/9. M1 owns Gateway/Guard semantics and its contract remains at `docs/3.0/M1/GATEWAY_API_CONTRACT.md`; the latest Hook subprocess fixture explicitly cannot observe the native-host tool callback.
 - Issue #32 remains OPEN. Current `test/agent-hook.test.ts` blobs: M1 #43 and M9 #36 `6c2d8da`; M2 #37 `d3b64fc`; M3 #33, M4 #34, and M6 #38 `1ecb3ee`. The latter branches retain the old synchronous interruption-marker fixture. Their currently passing CI does not prove that historical timing race is eliminated; coordinate an owner-approved minimal update and run the affected exact-head checks.
@@ -95,6 +111,8 @@ Current exact-head checks and interface status are summarized in TECHNICAL_STATU
 - 其他宿主适配须说明覆盖范围并保留超时、错误、默认拒绝语义；MCP 接入不等同于原生工具全覆盖。
 
 ## Policy / Guard / Canary — M5 + M1
+
+The owner-reviewed file-operation rules above are authoritative for the current M1/M2/M5 seam. Older PR heads and run IDs in this historical section are retained as dated implementation evidence; consult the 2026-10-15 08:44 snapshot for current remote state.
 
 - `createRiskPolicyRouter({ guard, ... })` 对工具分类为 `ALLOW|DENY|APPROVAL_REQUIRED`，返回风险、理由和模式。未登记工具默认需审批；外部网络和敏感数据按当前策略拒绝或要求审批。
 - `OBSERVE` 只豁免已登记、非敏感操作的可选审批；它不得把显式 `DENY` 或 `SENSITIVE_DATA` 改成 `ALLOW`。越界路径、明确危险操作、敏感读取与敏感外发继续拒绝；`AgentGuard` quarantine/containment 在所有模式下优先。策略 `ALLOW` 不等于 Gateway 资源登记。
