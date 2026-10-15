@@ -1,12 +1,12 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 05:31 UTC)
+## Current authoritative snapshot (2026-10-15 05:33 UTC)
 
 - 用量页仍在用户指定的浏览器标签页；05:25 UTC读数可见且高于5%停工线。精确值只记录于被`.gitignore`排除的本地报告。低于5%或读数不可见时暂停所有模块、测试和GitHub操作；不关闭用量页。
 - PR #24回读仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M0–M9现有PR均OPEN/Draft；截至05:25读到的远端精确head检查全绿：#30 10/10、#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9。PR #30当前head `dfd6320`，#33 `1829e05`，#34 `66e679b`，#36 `2d3f1da`，#38 `c1fdf3c`；其余远端head见本表及GitHub。
-- Issue #53：M2已在既有PR #37父head `0f2c10c` 上本地提交 `04c7ec7`；wrapper blob为M1批准的 `d6f9324`，新增CI运行的合成canary用例，build、目标测试11/11和diff检查通过，工作树干净，尚未推送。M8 PR #40现有wrapper仍为raw日志blob `88c1003`；已确认Windows安装构建和E4 source harness都会复制它，故不能按不可达关闭。M1-contract review 确认可在M8分支测试副本中仅恢复两处缺失的canary输入/断言；M8正按此边界修改。未观察到真实凭据或对外传输。
-- M2/M8原有WSL管理目录均保留不动；为安全核验分别使用 `agents/M2-isolation-win` 与 `agents/M8-ecosystem-win` detached worktree，精确对应现有PR head。M2候选提交已完成，M8是当前唯一活动模块任务。M0不改产品源码、不新建模块分支、不跨runtime repair/prune。
-- 当前没有VMware、真实模型或安装生命周期测试预约/运行。PR #24、main及Release均未触及。Issue #32仅关闭于合成子进程marker回归；历史runner延迟和原生宿主callback仍UNKNOWN/NOT_VERIFIED。#51根因UNKNOWN且保留全部断言；#52仍P0/OPEN，缺真实文件host与受保护句柄证据；#27、#41、#45及M4 provider/E4仍按各自有限范围记录为OPEN、HOLD或NOT_VERIFIED。
+- Issue #53：M2已在既有PR #37父head `0f2c10c` 上本地提交 `04c7ec7`；wrapper blob为M1批准的 `d6f9324`，新增CI运行的合成canary用例，build、目标测试11/11和diff检查通过，工作树干净，尚未推送。M8已在PR #40父head `16e3d01` 上本地提交 `454873c`；wrapper blob同为 `d6f9324`，测试副本恢复为M1 canonical blob `6c2d8da`，build、目标测试10/10和diff检查通过。M8 wrapper 原先为raw日志并已确认Windows安装构建与E4 source harness都会复制；本地修复已完成但尚未推送。未观察到真实凭据或对外传输。
+- M2/M8原有WSL管理目录均保留不动；修复分别在 `agents/M2-isolation-win` 与 `agents/M8-ecosystem-win` detached recovery worktree提交，均从对应现有PR head直接快进一个提交。当前无活动模块任务，两个候选等待统一发布批次。M0不改产品源码、不新建模块分支、不跨runtime repair/prune。
+- 当前没有VMware、真实模型或安装生命周期测试预约/运行。PR #24、main及Release均未触及。Issue #27已仅按共享manifest与M9组合验收范围关闭，外部E4仍NOT_VERIFIED；#32仅关闭于合成子进程marker回归，历史runner延迟和原生宿主callback仍UNKNOWN/NOT_VERIFIED。#51根因UNKNOWN且保留全部断言；#52仍P0/OPEN，缺真实文件host与受保护句柄证据；#41、#45及M4 provider/E4仍按各自有限范围记录为OPEN、HOLD或NOT_VERIFIED。
 - 最近一次公共写入批次在05:20 UTC完成；下一批次不早于05:40:58 UTC。期间只做本地协调记录、只读状态核验和各自worktree内获准的任务，不推送、不发Issue/PR评论。
 
 ## Archived authoritative snapshot (2026-10-15 04:04 UTC)

@@ -1,6 +1,6 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 05:31 UTC)
+## Current ownership and worktree snapshot (2026-10-15 05:33 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
@@ -11,7 +11,7 @@
 | M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | #47 `a6d610e`; 9/9 | Owns policy/audit; #53 wrapper matches M1 contract and canary is in `test/policy-management.test.ts`. No production filesystem host consumer. |
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `c1fdf3c`; 11/11 | Owns verifier/schema and `e4:*`; wrapper matches M1 contract and canary is in `test/auto-e4.test.mjs` (6/6). Existing untracked 16-file E4 report preserved; external E4 remains NOT_VERIFIED. |
 | M7 | `feature/ac3-reliability-ac3` / original WSL `agents/M7-reliability-ac3` | #39 `87e0df0`; 11/11 | Owns Windows packaging. #53 packaged-wrapper E4/log-canary regression passes; clean-VM lifecycle NOT_VERIFIED. |
-| M8 | `feature/ac3-open-source-product` / original WSL `agents/M8-ecosystem`; recovery `agents/M8-ecosystem-win` | #40 `16e3d01`; 9/9 | Owns public docs/community and branch wrapper copy. Raw wrapper is confirmed reachable via Windows installer build and E4 source harness. M0's M1-contract review confirms the minimum branch-local test-copy delta is to restore only the two missing synthetic canary lines; M8 implementation active. Original WSL checkout preserved. GHCR pull/runtime and independent E4 NOT_VERIFIED. |
+| M8 | `feature/ac3-open-source-product` / original WSL `agents/M8-ecosystem`; recovery `agents/M8-ecosystem-win` | Remote #40 `16e3d01`; 9/9; local detached candidate `454873c` | Owns public docs/community and branch wrapper copy. Raw wrapper is confirmed reachable via Windows installer build and E4 source harness. Candidate wrapper equals M1 blob `d6f9324`; branch test equals M1 canonical `6c2d8da`, restoring only the missing canary input/assertion. Build and target test 10/10 pass; no public push yet. Original WSL checkout preserved. GHCR pull/runtime and independent E4 NOT_VERIFIED. |
 | M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 `dfd6320`; 10/10 | Owns coordination docs/issue/CI schedule; product source unchanged. P1 #51 remains OPEN with root cause UNKNOWN. |
 | M9 | `feature/ac3-m9-integration` / `integration` | #36 `2d3f1da`; 11/11 | Owns integration tests/manifest composition; #53 composition checks pass locally and at exact-head CI. External E4 remains NOT_VERIFIED. |
 

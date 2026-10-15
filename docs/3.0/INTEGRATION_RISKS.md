@@ -1,14 +1,14 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 05:31 UTC)
+## Current integration risk snapshot (2026-10-15 05:33 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #53 Hook log sensitive data | P0 candidate | M1 owner copy verified; M7 `87e0df0` exact-head CI 11/11. M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c`, and M9 `2d3f1da` are pushed with current exact-head checks green. M2 local `04c7ec7` matches M1 wrapper blob and passes its build/canary test 11/11. M8 raw wrapper remains reachable through installer build and E4 source harness; M8 is applying the narrow M0/M1-contract-reviewed branch-test delta. No real secret exposure or external transmission observed. | Keep OPEN until M2/M8 exact-head CI passes and reachable shipped copies are reconciled; retain M7 package and M9 composition checks. |
+| #53 Hook log sensitive data | P0 candidate | M1 owner copy verified; M7 `87e0df0` exact-head CI 11/11. M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c`, and M9 `2d3f1da` are pushed with current exact-head checks green. M2 local `04c7ec7` matches M1 wrapper blob and passes its build/canary test 11/11. M8 candidate `454873c` matches M1 wrapper and test blobs and passes build/canary 10/10; exact-head CI is not started until publication. No real secret exposure or external transmission observed. | Keep OPEN until M2/M8 exact-head CI passes and reachable shipped copies are reconciled; retain M7 package and M9 composition checks. |
 | #52 OBSERVE aliases | P0 | M1/M5 synthetic alias-denial changes are integrated in M9; exact-head CI is green, but no production filesystem host/protected open-handle evidence exists. | Keep OPEN; real host opt-in and handle/OS boundary required; TOCTOU remains NOT_VERIFIED. |
 | #51 store retries | P1 | Ubuntu run `38662965312` attempt 1 and M0 Windows Node20 run `38682225388` both exhaust 500 retries; identical store/test blobs pass in later Windows CI. Local Windows Node22 test and 48-state diagnostic pass. Failed attempts skip final 48-state assertion loop; logs lack lock-owner/duration traces. | Keep OPEN; root cause UNKNOWN. Retain `RETRY_LIMIT` and all 48 assertions; no defensible product fix identified. |
 | #32 Hook interruption | P1 | M1/M3/M4/M6/M9 current exact-head CI green; historical direct test mechanism was a one-second fixture window before marker. | CLOSED for the synthetic subprocess marker regression only; historical runner delay UNKNOWN and native-host callback NOT_VERIFIED. |
-| #27 M9 E4 composition | P1 | M9 exact-head CI 11/11; M6 verifier compatibility retained. | Keep issue record synchronized; independent external E4 remains NOT_VERIFIED. |
+| #27 M9 E4 composition | P1 | Issue #27 is CLOSED for package manifest ownership and M9 combined validation; M9 exact-head CI 11/11 and M6 verifier compatibility retained. | External E4 remains NOT_VERIFIED and is outside the closed issue scope. |
 | #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive resource reservation and lifecycle artifacts. |
 | #45 native Shell | P1 | M2 PR #37 checks 9/9; actual desktop host policy/callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
 | M4 security/E4 provider | P1 | M4 PR #34 checks 9/9; provider/IPC absent. | UI remains UNKNOWN; do not show mock PASS. |

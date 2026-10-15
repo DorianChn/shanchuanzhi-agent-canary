@@ -1,9 +1,9 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-15 05:31 UTC)
+## Current schedule and dependencies (2026-10-15 05:33 UTC)
 
-- Maximum active module tasks: two. M8 #53 is the only active module task. M2 #37 candidate `04c7ec7` is locally complete and awaits the next batch; M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c`, and M9 `2d3f1da` are pushed and their current exact-head checks are green.
-- The original M2/M8 WSL-managed directories remain untouched. Detached recovery worktrees match their existing PR heads. M2's wrapper now matches M1's approved allowlist blob and its branch test adds a canary without changing other assertions. M8's wrapper is reachable in Windows installer/E4 paths; the minimum branch-local test delta is to restore only the two missing canary input/assertion lines. M1's canonical test semantics remain unchanged; no shared package/workflow changes are allowed.
+- Maximum active module tasks: two; none currently active. M2 #37 candidate `04c7ec7` and M8 #40 candidate `454873c` are locally complete and await the next batch; M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c`, and M9 `2d3f1da` are pushed and their current exact-head checks are green.
+- The original M2/M8 WSL-managed directories remain untouched. Detached recovery worktrees are one commit ahead of their existing PR heads. M2's wrapper matches M1's approved allowlist blob and its branch test adds a canary without changing other assertions. M8's reachable wrapper/test now match M1 canonical blobs; no shared package/workflow changes were made.
 - P1 evidence for M1/#51: PR #30 head `f818c4d` run `38682225388` had Windows Node20 retry exhaustion; Ubuntu run `38662965312` attempt 1 had the same direct failure. M1 matched identical store/test blobs and found later Windows Node20 and local Node22 passes, but no lock-owner/timing traces. Root cause remains UNKNOWN; preserve all assertions.
 - Interface dependency: M1 defines an allowlist-only persisted log record (timestamp, fixed Hook event, permission-decision enum). M7 packages the owner-approved wrapper. Other modules consume it through an adapter or owner-approved branch-local copy; do not serialize raw tool arguments, full decision objects, reasons, paths, or caller-controlled detail.
 - No VMware, real-model, or installer lifecycle resource is reserved or running. Record exclusive resource, owner, worktree, start, and release on #29 before starting such tests.
