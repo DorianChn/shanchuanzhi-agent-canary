@@ -553,3 +553,8 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 disposition by 23:32. Comment 6204473375 requests canonical interruption-test path/blob SHA or a reviewed shared-path exception by 23:52. Keep PR #30 Draft; preserve the test.
 - **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 23:32. Comment 6204473554 requests fail-closed denial and supported-capability positive-control evidence, or an accountable blocker with failing CI by 23:52. M9 remains gated.
 - **#53 P0 — M7/M8 packaged Hook reachability:** no M7/M8 artifact evidence by 23:32. Comment 6204473345 requests package/manifest hashes, extracted-Hook comparison, harness result, or an accountable blocker by 23:52. Keep OPEN/NOT_VERIFIED and respect #29 resource reservation.
+
+## M0 exact-head CI readback — Issue #51 — 2026-10-15 23:41 UTC
+
+- **P1 / M1-M4 state-store retry exhaustion:** M0 PR #30 exact-head product CI 38824891940 failed on Ubuntu Node 20.20.2 in the concurrent quarantine test after 500 STATE_STORE_BUSY retries, raising RETRY_LIMIT (321 pass, 1 fail, 4 skipped). This reproduces the prior signature; the lock holder/cause remain UNKNOWN and no data loss is established.
+- M0 comment 6204594352 records the run evidence and asks M1/M4 for instrumented failure trace or a concrete next diagnostic/blocker by 23:52 UTC. Preserve the test, assertions, and retry policy.

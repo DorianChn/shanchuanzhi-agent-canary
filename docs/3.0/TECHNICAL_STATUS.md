@@ -914,3 +914,10 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - **P0 / Issue #53:** no M7/M8 artifact evidence or PR #39/#40 head movement by 23:32. Comment 6204473345 requests pinned package/manifest hashes, extracted-Hook comparison, harness result, or an accountable owner/blocker by 23:52. Keep packaged reachability NOT_VERIFIED; installer/VM work requires #29 reservation.
 - Usage tab 336903555 remains open and active; the 23:32 reading was readable above the pause threshold. Next M0 push no earlier than 23:39 UTC.
 - No module source/tests changed; no tests ran, no merge, and no Release.
+
+## M0 exact-head CI failure readback — 2026-10-15 23:41 UTC
+
+- M0 PR #30 head afcca4ef9e9f9550f2d27fd3e3081efd38070dc9 has product CI run 38824891940 fail on Ubuntu Node 20.20.2. The concurrent quarantine state-store subtest exhausted 500 STATE_STORE_BUSY retries and threw RETRY_LIMIT; run summary is 321 passed, 1 failed, 4 skipped.
+- This matches the retry-exhaustion signature in P1 Issue #51. The log does not identify the lock holder or root trigger; cause remains UNKNOWN and no data loss is established. M0 comment 6204594352 records the evidence and requests an instrumented trace or concrete blocker by 23:52 UTC.
+- Exact-head coordination workflow 38824892087 passed. PR #24 remains unchanged; PR #30 remains OPEN/Draft. Next M0 push no earlier than 23:59 UTC.
+- No tests were run locally and no module files were changed.
