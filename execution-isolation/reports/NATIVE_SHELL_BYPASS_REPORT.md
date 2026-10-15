@@ -14,7 +14,7 @@ MCP Gateway 不是原生 Shell 的 OS 安全边界。M1 的 Gateway 设计将执
 
 Codex Windows 正式支持 MXC、`elevated` 和 `unelevated`。MXC 在设备和策略支持时由桌面应用优先选用，并约束命令及子进程的文件和网络权限；官方当前列出的最低 Windows build 为 26100.9278 或 26200.9278。`elevated` 使用专用低权限用户、ACL 与防火墙；`unelevated` 使用当前用户派生的受限 token 和 ACL，但网络隔离较弱且不支持拒绝读取路径。测试证据只记录 Windows `10.0.26200.0`，未证明设备符合 MXC capability 门槛，也没有确认该会话使用 MXC。直接复现运行在 WSL2 Bash，不受本报告证明的 Windows AppContainer 或 MXC 边界约束。[Windows sandbox](https://learn.chatgpt.com/docs/windows/windows-sandbox)
 
-Codex `PreToolUse` Hook 可匹配 `Bash`（包括 unified `exec_command`），通过 `hookSpecificOutput.permissionDecision="deny"` 拒绝调用，并以 `systemMessage` 在 UI 或事件流呈现警告。Hook 定义必须经信任审查；部分专用工具路径可以不经过默认 Hook。因此 Hook 只能保护已匹配且已加载的调用路径，不是 OS 边界。[Hooks](https://learn.chatgpt.com/docs/hooks)
+Codex 在本地执行线程支持 `PreToolUse` Hook：匹配 `Bash`（包括 unified `exec_command`）后，处理器可用 `hookSpecificOutput.permissionDecision="deny"` 拒绝该调用，并以 `systemMessage` 呈现警告。非托管 Hook 必须审查并信任当前精确定义；项目 Hook 还要求项目 `.codex/` 层受信任。该 API 不提供 fail-closed 保证：回调错误/超时、格式错误或不支持的响应可能让工具继续；MCP Hook 的错误、缺失 server 或不可用 tool 不阻止操作，且部分专用路径可绕过默认 Hook。因此 Hook 是已匹配路径上的额外防护，不是 OS 边界。[Hooks](https://learn.chatgpt.com/docs/hooks)
 
 Windows AppContainer 通过包 SID、能力 SID、DACL 与低完整性令牌限制资源访问；未授予网络 capability 时不应有网络访问。Job Object 管理子进程组，并能在最后一个 Job 句柄关闭时终止该组。[Launch an AppContainer](https://learn.microsoft.com/en-us/windows/win32/secauthz/implementing-an-appcontainer)；[Job Objects](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)
 

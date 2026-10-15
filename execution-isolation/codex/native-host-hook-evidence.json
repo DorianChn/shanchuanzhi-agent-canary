@@ -157,10 +157,14 @@
       },
       "officialHookContract": {
         "documentation": "https://learn.chatgpt.com/docs/hooks",
+        "recheckedAtUtc": "2026-10-15T08:00:07Z",
+        "localPreToolUseHookApiSupported": true,
         "preToolUseCanMatchBashAndUnifiedExec": true,
         "explicitPermissionDecisionDenySupported": true,
         "nonManagedHooksRequireReviewAndTrustOfCurrentDefinition": true,
+        "projectLocalHooksRequireTrustedProjectCodexLayer": true,
         "handlerErrorTimeoutOrMalformedResponseMayContinueToolCall": true,
+        "mcpHookErrorMissingServerOrUnavailableToolBlocksOperation": false,
         "someSpecializedToolPathsCanOptOutOfDefaultHookPath": true,
         "classification": "DEFENSE_IN_DEPTH_ONLY",
         "whyNotFailClosed": "A returned deny proves behavior only when the configured callback runs. The official contract permits callback failure without blocking the tool, so a repo Hook fragment or protocol fixture cannot prove a fail-closed native Shell boundary."
