@@ -4,12 +4,12 @@
 
 ## 构建者要求
 
-Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Python zipfile；官方 NSIS 3.13 的便携编译文件。最终用户不需要 Node、Python、Git 或 NSIS。
+Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Git；Python zipfile；官方 NSIS 3.13 的便携编译文件。最终用户不需要 Node、Python、Git 或 NSIS。
 
 1. `node packaging/windows/prepare.mjs "EMPTY_BUILD_DIRECTORY" "PYTHON_EXE" "NPM_CLI_JS"`
 2. 下载并核对官方 NSIS 3.13 校验值；可用 7-Zip 解压，不需要管理员安装工具。
 3. 将 Node 完整 LICENSE 与 `packaging/windows/THIRD_PARTY_NOTICES.md` 放入随包目录。生产依赖原始 LICENSE 随 node_modules 保留。
-4. `node packaging/windows/build.mjs "BUILD_DIRECTORY/payload" "PORTABLE_NSIS_DIRECTORY"`
+4. 将 `prepare.mjs` 输出的 `next` 命令中的 `PATH_TO_VERIFIED_PORTABLE_NSIS_3_13` 替换为 NSIS 3.13 便携目录后，运行该完整命令。参数顺序固定为 payload、NSIS 目录、同次 prepare 输出的 `community.zip`、当前源码 checkout 的 40 位 Git commit SHA。Hook 文件有未提交修改时会拒绝生成 provenance；build 会再次核对该 SHA，并从传入的 ZIP 文件重新计算 `communityZIP_SHA256`。
 5. `node --test packaging/windows/test-worker.mjs`
 6. 用 `scripts/check-sdk-types.mjs --package-root BUILD_DIRECTORY/payload/app` 进行干净外部 SDK 类型消费检查。
 

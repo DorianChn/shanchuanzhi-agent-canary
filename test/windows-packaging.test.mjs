@@ -4,10 +4,60 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
+import {createWindowsBuildInvocation,parseWindowsBuildArgs,resolveWrapperSourceSHA} from '../packaging/windows/build-contract.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+
+test('Windows Hook provenance keeps LF checkout bytes equal to the tracked blob',()=>{
+  const attributes=spawnSync('git',['check-attr','eol','--','security-lab/claude-native-hook.mjs'],{cwd:repo,encoding:'utf8',windowsHide:true});
+  assert.equal(attributes.status,0);
+  assert.equal(attributes.stdout.trim(),'security-lab/claude-native-hook.mjs: eol: lf');
+  const tracked=spawnSync('git',['show','HEAD:security-lab/claude-native-hook.mjs'],{cwd:repo,encoding:null,windowsHide:true});
+  assert.equal(tracked.status,0);
+  assert.ok(fs.readFileSync(path.join(repo,'security-lab/claude-native-hook.mjs')).equals(tracked.stdout),'Windows Hook worktree bytes must match the tracked blob');
+});
+
+test('prepare build command carries the same Community ZIP and exact Hook source commit in documented argument order',()=>{
+  const out=fs.mkdtempSync(path.join(os.tmpdir(),'canary-build-command-'));
+  try{
+    const payload=path.join(out,'payload');
+    const communityZip=path.join(out,'community.zip');
+    fs.mkdirSync(payload);
+    fs.writeFileSync(communityZip,'SYNTHETIC_COMMUNITY_ZIP');
+    const invocation=createWindowsBuildInvocation({
+      repoRoot:repo,
+      buildScript:path.join(repo,'packaging/windows/build.mjs'),
+      payloadDir:payload,
+      nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
+      communityZip
+    });
+    const wrapperSourceSHA=resolveWrapperSourceSHA(repo);
+    assert.match(wrapperSourceSHA,/^[a-f0-9]{40}$/);
+    assert.equal(invocation.wrapperSourceSHA,wrapperSourceSHA);
+    assert.equal(invocation.communityZip,path.resolve(communityZip));
+    assert.equal(invocation.communityZIP_SHA256,createHash('sha256').update(fs.readFileSync(communityZip)).digest('hex'));
+    assert.deepEqual(invocation.buildArgs,[payload,'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',communityZip,wrapperSourceSHA]);
+    assert.deepEqual(parseWindowsBuildArgs(invocation.buildArgs,{platform:'win32'}),invocation.buildArgs);
+    assert.throws(()=>parseWindowsBuildArgs([...invocation.buildArgs,'unexpected'],{platform:'win32'}),/Usage: node build\.mjs/);
+    assert.throws(()=>parseWindowsBuildArgs([...invocation.buildArgs.slice(0,3),'a'.repeat(39)],{platform:'win32'}),/Usage: node build\.mjs/);
+    assert.equal(invocation.args.length,5);
+    assert.ok(invocation.command.includes('"'+path.resolve(communityZip)+'"'));
+    assert.ok(invocation.command.endsWith('"'+wrapperSourceSHA+'"'));
+    const prepareSource=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
+    const buildSource=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+    assert.match(prepareSource,/createWindowsBuildInvocation\(/);
+    assert.match(prepareSource,/communityZip:zip/);
+    assert.match(prepareSource,/communityZIP_SHA256:invocation\.communityZIP_SHA256/);
+    assert.match(prepareSource,/wrapperSourceSHA:invocation\.wrapperSourceSHA/);
+    assert.match(prepareSource,/next:invocation\.command/);
+    assert.match(buildSource,/parseWindowsBuildArgs\(process\.argv\.slice\(2\)\)/);
+    assert.match(buildSource,/resolveWrapperSourceSHA\(repoRoot\)!==wrapperSHA/);
+    assert.match(buildSource,/communityZIP_SHA256:hash\(path\.resolve\(zipArg\)\)/);
+  }finally{fs.rmSync(out,{recursive:true,force:true});}
+});
 
 test('payload inventory includes empty directories so NSIS can remove them non-recursively',()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-payload-layout-'));
