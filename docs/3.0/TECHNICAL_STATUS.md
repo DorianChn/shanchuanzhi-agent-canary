@@ -1,18 +1,18 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 03:13 UTC)
+## Current authoritative snapshot (2026-10-15 03:31 UTC)
 
-- 用量页按用户要求保持打开并置于前台；03:05 UTC可读且高于5%停工线。公开记录不写账户精确余量。页面不可读或低于5%时，所有模块停止开发、测试、浏览器和GitHub操作。
-- M0 PR #30 远端head `9b8d8d1713de29712f7550ce180ce1560a0dd3a2`：产品CI run `38672508461` 9/9、协调检查 `38672508565` 1/1通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；产品9/9及wrapper 2/2通过，未修改或合并。
-- M1 PR #43 head `3828bee`；标准CI及Linux十轮store workflow通过。M1对真实文件执行链的只读审计未发现需改的M1缺口：Gateway canonicalize/lstat/open/fstat并持有fd，执行时再核验后用该fd读写；定向Gateway+router测试48/48、build通过。Windows Node22无`O_NOFOLLOW`常量，仍有身份比较和路径复查；同权限进程并发改名限制已记录。仓库中未发现native host callback接入该Gateway，真实宿主连线仍NOT_VERIFIED。
-- M3 PR #33 head `f9bd818` / run `38672489688`、M4 PR #34 head `9288de0` / run `38672493385`均9/9通过；M3 exact-head Windows Node20检查通过。本地仅有Node22。旧失败直接机制是旧fixture的1秒marker窗口，runner为何超过窗口仍UNKNOWN。两分支fixture是合成子进程，未验证真实宿主callback；#32继续OPEN，待M9组合复核和宿主证据。
-- M5 PR #47 head `c54e7eb` / run `38672499884` 9/9通过。M5-owned adapter透传`verifyRealPaths`，但没有生产中的真实文件host consumer；M5策略/安全路由和build此前分别29/29、16/16、通过。#52仍P0/OPEN：不能证明真实host启用边界或以受保护句柄打开文件。
-- M6 PR #38 head `cd55717` 的产品CI 9/9及wrapper 2/2通过；E4测试此前16/16，三个`e4:*`字段与M9 MATCH_CONFIRMED。M6确认#27修复位于`4e39762`，路径/symlink加固位于`cd55717`；二者都未在M9 `bc5390d`中。整颗cherry-pick已安全abort。M6 owner审查完成并批准最小适配：保留M9锁恢复与`writeFileAtomically`，写入前预检全部三个产物路径并采用稳定冲突码。M9正在现有集成分支实现；尚未验证。lstat后路径读取仍有symlink替换TOCTOU限制；外部E4 NOT_VERIFIED，原始证据目录未触碰。
-- M4当前Console仍没有`/api/security-center`、`/api/e4/status` provider/IPC；404运行态测试7/7通过，UI保留UNKNOWN。
-- M8 PR #40 existing branch 已修正文档、PR范围和CI摘要；head `16e3d01c485f039bfa4eedc97523d223340f93e0` 的run `38674816292` 经实时核验9/9 success，PR正文已读回确认该状态。PR仍OPEN/Draft；本地GHCR pull/runtime与独立E4仍NOT_VERIFIED。
-- M9 PR #36远端head仍`bc5390d`，本地适配commit `0d1a4df`未推送。它保留锁恢复/原子写，预检三个产物路径，新增partial-output与重复调用测试，并将bundle失败写成独立BLOCKED记录；build通过，标准tsx定向测试20 pass/1 skip，`e4:test` 12/12，`verify` 396 pass/6 skip/0 fail，package smoke 100 files通过。M9继续集成M6伪造E4证据拒绝和symlink/junction路径防护；这些尚未验证。
-- 当前只有M9集成任务运行。03:05 UTC额度读取后释放的公共写入批次于03:13:51 UTC完成；下一批不得早于03:33:51 UTC。M0协调文档提交`f5d339c`仅在本地、尚未推送。M2原生Shell仍UNPROTECTED/BLOCKED_NOT_VERIFIED；M7 clean-VM生命周期仍NOT_VERIFIED。
-- Issue #51根因仍UNKNOWN；#32等待M9组合与真实宿主证据；#52等待真实文件host采用安全边界证据。额度页03:05 UTC可读且高于暂停线并保持打开。PR #24仍OPEN/Draft且base/head不变。没有占用VMware、真实模型或安装测试资源；未合并main/PR #24，未发布Release。
+- 用量页按用户要求保持打开并置于前台；03:31 UTC读取可用且高于5%停工线。公开记录不写账户精确余量。页面不可读或低于5%时，所有模块停止开发、测试、浏览器和GitHub操作。
+- M0 PR #30 远端head `9b8d8d1713de29712f7550ce180ce1560a0dd3a2`：产品CI run `38672508461` 9/9、协调检查 `38672508565` 1/1通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；11项检查通过，未修改或合并。
+- M1 PR #43 head `3828bee`；标准CI 9/9及Linux十轮store workflow run `38668337033`通过。真实文件执行链审计未发现需改的M1缺口；真实宿主callback仍NOT_VERIFIED。Issue #44已CLOSED：M1精确期限测试保留EXPIRED与零callback断言，M9基线复核通过；Issue #51仍OPEN，原始锁竞争触发原因UNKNOWN。
+- M3 PR #33 head `f9bd818` / run `38672489688`、M4 PR #34 head `9288de0` / run `38672493385`均9/9通过；#32仍OPEN，旧fixture的一秒窗口解释直接失败机制，但runner延迟原因UNKNOWN，合成子进程未验证真实宿主callback。M4没有安全中心/E4 provider或IPC；404测试7/7，UI保持UNKNOWN。
+- M5 PR #47 head `c54e7eb` / run `38672499884` 9/9通过；adapter传递`verifyRealPaths`，但无生产真实文件host consumer。P0 #52仍OPEN，缺少真实host边界和受保护句柄证据。
+- M6 PR #38 head `cd55717` 的产品CI 9/9及wrapper 2/2通过；M6 owner最终只读复核接受M9 `e2e25fb`，未发现契约缺口。保留限制：lstat后按路径读取仍有TOCTOU窗口；外部E4 NOT_VERIFIED，未触碰原始证据目录。
+- M7 PR #39 head `4267c61` 的产品CI 9/9、wrapper 2/2通过；clean-VM安装生命周期NOT_VERIFIED，互斥安装/VM资源尚未登记或运行。M2 PR #37 head `0f2c10c` 的CI 9/9通过；原生Codex Shell仍UNPROTECTED/BLOCKED_NOT_VERIFIED。
+- M8 PR #40 head `16e3d01c485f039bfa4eedc97523d223340f93e0` 的run `38674816292`实时检查9/9成功，PR保持OPEN/Draft；本地GHCR pull/runtime和独立E4仍NOT_VERIFIED。
+- M9 PR #36远端head仍`bc5390d`；本地候选`e2e25fb`未推送，M6 verifier文件与M6 `cd55717`字节一致。focused tests 11/11、`npm run e4:test` 16/16、build通过、`npm run verify` 399通过/0失败/6跳过、package smoke 100 files；exact-head CI待新head。伪造sidecar拒绝导出且不改落盘文件，已存在sidecar保留并返回稳定冲突码。TOCTOU限制仍记录，外部E4未验证。
+- 最近一次quota核对后的公共写入批次于03:13:51 UTC完成；下一批不得早于03:33:51 UTC。M0协调文件当前有本地未提交修改；PR #30/#36尚未更新。额度页保持打开；公开记录不含账户精确余量。
+- #27仍OPEN等待M9新head exact CI/组合验收；#29保持OPEN，VMware/真实模型/安装资源占用未知。未合并main或PR #24，未发布Release。
 
 ## Archived snapshot (2026-10-15 02:40 UTC)
 

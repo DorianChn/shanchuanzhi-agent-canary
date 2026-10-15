@@ -1,10 +1,10 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 03:13 UTC)
+## Current integration risk snapshot (2026-10-15 03:31 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #27 M6 package fields and E4 evidence | P1 | M6 `cd55717` is the exact PR #38 head; product checks 9/9 and wrappers 2/2 pass. Owner confirms all three fields match M9. M9 local `0d1a4df` adds all-path preflight, partial-artifact tests and a separate truthful BLOCKED bundle-failure report while preserving lock recovery/atomic writes; build, focused checks, `e4:test` (12/12), and `verify` (396 pass, 6 skip, 0 fail) pass. M9 is now integrating M6's forged-evidence guard and symlink/junction bundle hardening. | Keep OPEN until remaining M6 guards/tests, combined verification, evidence indexing, exact-head CI and owner review pass. External E4 remains NOT_VERIFIED; path-read TOCTOU remains. |
+| #27 M6 package fields and E4 evidence | P1 | M6 `cd55717` is the exact PR #38 head; product checks 9/9 and wrappers 2/2 pass. M9 local `e2e25fb` integrates the byte-identical M6 verifier and implements BLOCKED export propagation, immutable sidecar/snapshot hashes, and stable EEXIST normalization. Negative tests reject a forged sidecar without mutation and preserve an existing sidecar. Build, `e4:test` 16/16 and `verify` 399 pass/6 skip/0 fail pass locally. M6 owner final rereview found no contract gap. | Keep OPEN until next exact-head CI and M9 combined acceptance pass. External E4 remains NOT_VERIFIED; verifier/export path-read TOCTOU remains. |
 | [#32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32) Hook interruption fixture | P1 | PR #33 run `38672489688` and PR #34 run `38672493385` each pass 9/9; #33 Windows Node20 passes. The former 1s marker window explains the direct fixture failure, not why the historical runner exceeded the window. Synthetic child interruption does not observe native host callback. | Keep OPEN pending M9 combined-baseline review and real host callback evidence; retain fail-closed, no-output, and no-decision assertions. |
 | [#52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) OBSERVE file reads through aliases | P0 | PR #47 `c54e7eb` exact-head CI passes 9/9. M1 Gateway file operations use a held/rechecked descriptor, but no native host callback is connected to that Gateway. M5 has no production filesystem-host consumer; its adapter does not open files. | Keep OPEN until the actual filesystem host is shown to enable the canonical-path boundary and protect the open/handle. Preserve hard DENY and TOCTOU limits. |
 | PR #40 M8 public documentation accuracy | P2 | Existing-branch docs and PR body were updated through the logged-in web UI; new head `16e3d01c485f039bfa4eedc97523d223340f93e0` run `38674816292` passes all 9 checks. The PR body now records that exact-head success and keeps local GHCR pull/runtime and independent E4 as NOT_VERIFIED. PR remains OPEN/Draft. |
@@ -13,7 +13,7 @@
 | #41 installer lifecycle | P1 | Clean-VM lifecycle remains NOT_VERIFIED; exclusive reservation is not recorded. | Keep OPEN/HOLD until the #29 resource reservation and lifecycle evidence are available. |
 | External E4 / M4 backend | P1 | External E4 NOT_VERIFIED. M4 confirms there are no providers/IPC for `/api/security-center` or `/api/e4/status`; 404 tests pass 7/7 and UI remains UNKNOWN. | Do not report live PASS until a real backend provider and independent external E4 evidence exist. |
 | Exclusive VM/model/installer resources | P2 | Occupancy in other windows remains unknown. | Treat unavailable until owner, worktree, start, and release are recorded on #29. |
-| Quota / push cadence | Scheduling | Usage page remains open/readable above the stop line. The quota-checked public-write batch completed at 03:13:51 UTC. | Stop if unreadable or below 5%; next public-write batch no earlier than 03:33:51 UTC. |
+| Quota / push cadence | Scheduling | Usage page remains open/readable above the stop line; M0 re-read at 03:31 UTC and keeps it open at the user's request. The quota-checked public-write batch completed at 03:13:51 UTC. | Stop if unreadable or below 5%; next public-write batch no earlier than 03:33:51 UTC. |
 
 ## Archived integration risk snapshot (2026-10-15 02:40 UTC)
 

@@ -1,6 +1,6 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 03:13 UTC)
+## Current ownership and worktree snapshot (2026-10-15 03:31 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
@@ -12,8 +12,8 @@
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `cd55717`; 9 product checks and 2 wrappers pass | Owns E4 verifier/schema and three `e4:*` fields. Focused tests 16/16; fields match M9. Owner review approved M9's minimal preflight adaptation retaining M9's lock recovery and atomic writer; review complete. Preserve untracked evidence; external E4 remains NOT_VERIFIED. |
 | M7 | `feature/ac3-reliability-ac3` / WSL-managed `agents/M7-reliability-ac3` | #39 `4267c61`; 9 product checks and 2 wrappers pass | Owns reliability/Windows packaging. Clean-VM lifecycle remains NOT_VERIFIED (#41); no WSL state inspection or exclusive installer/VM test. |
 | M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `16e3d01`; exact-head run `38674816292` passes 9/9 | Owns public docs/community. Release/compatibility, scope, and PR CI summary were corrected on the existing branch via web UI. Read-back confirms OPEN/Draft and no E4 verification claim. |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 remote `9b8d8d1`; local docs commit `f5d339c` | Owns coordination docs, canonical contract, schedule, issue/PR status; does not edit module source. Current M0 docs commit is local and unpushed. |
-| M9 | `feature/ac3-m9-integration` / `integration` | Remote #36 `bc5390d`; local `0d1a4df` | Owns integration/risk aggregation. Local report/no-overwrite adaptation is committed and verified (build, `e4:test` 12/12, `verify` 396 pass/6 skip/0 fail); not pushed. M9 is integrating the remaining M6 forged-evidence guard and symlink/junction hardening. |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 remote `9b8d8d1`; local HEAD `6fbefbb` plus uncommitted coordination refresh | Owns coordination docs, canonical contract, schedule, issue/PR status; does not edit module source. Local updates are not pushed. |
+| M9 | `feature/ac3-m9-integration` / `integration` | Remote #36 `bc5390d`; local clean `e2e25fb` | Owns integration/risk aggregation. Local build, `e4:test` 16/16, `verify` (399 pass/6 skip/0 fail), and package smoke 100 files pass. M6 owner final review accepted; exact-head CI pending. |
 
 All active module PRs #30/#33/#34/#36/#37/#38/#39/#40/#43/#47 target the same base commit `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with 9 product and 2 wrapper checks passed; it remains unchanged. Existing WSL-managed `/mnt/c/...` worktrees are not to be pruned or operated using Windows Git; the WSL distribution is unavailable. The quota-checked public-write batch completed at 03:13:51 UTC; next public batch no earlier than 03:33:51 UTC.
 
