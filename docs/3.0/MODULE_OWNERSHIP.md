@@ -1,6 +1,6 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 03:05 UTC)
+## Current ownership and worktree snapshot (2026-10-15 03:13 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
@@ -11,11 +11,11 @@
 | M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | #47 `c54e7eb`; 9/9 pass | Owns policy/audit and generic adapter. Adapter passes `verifyRealPaths`; no production filesystem-host consumer exists in M5. #52 remains OPEN pending real-host evidence. |
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `cd55717`; 9 product checks and 2 wrappers pass | Owns E4 verifier/schema and three `e4:*` fields. Focused tests 16/16; fields match M9. Owner review approved M9's minimal preflight adaptation retaining M9's lock recovery and atomic writer; review complete. Preserve untracked evidence; external E4 remains NOT_VERIFIED. |
 | M7 | `feature/ac3-reliability-ac3` / WSL-managed `agents/M7-reliability-ac3` | #39 `4267c61`; 9 product checks and 2 wrappers pass | Owns reliability/Windows packaging. Clean-VM lifecycle remains NOT_VERIFIED (#41); no WSL state inspection or exclusive installer/VM test. |
-| M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `139e7f2`; exact-head run `38561307114` passes 9/9 | Owns public docs/community. Release/compatibility and PR body need correction. Contents API returned 403 without changing head/blob; after reread, M8 is using the logged-in web UI on the existing PR branch. No E4 verification claim. |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 `9b8d8d1`; product 9/9, coordination 1/1 pass | Owns coordination docs, canonical contract, schedule, issue/PR status; does not edit module source. Current M0 docs are local updates for next scheduled batch. |
-| M9 | `feature/ac3-m9-integration` / `integration` | #36 `bc5390d`; 9 product checks and 2 wrappers pass | Owns integration/risk aggregation. Branch lacks M6 `4e39762`/`cd55717`; full cherry-pick of `4e39762` conflicted and was safely aborted. M9 is implementing the owner-approved minimal adaptation on this branch, preserving M9 lock recovery/atomic writes. |
+| M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `16e3d01`; exact-head run `38674816292` passes 9/9 | Owns public docs/community. Release/compatibility, scope, and PR CI summary were corrected on the existing branch via web UI. Read-back confirms OPEN/Draft and no E4 verification claim. |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 remote `9b8d8d1`; local docs commit `f5d339c` | Owns coordination docs, canonical contract, schedule, issue/PR status; does not edit module source. Current M0 docs commit is local and unpushed. |
+| M9 | `feature/ac3-m9-integration` / `integration` | Remote #36 `bc5390d`; local `0d1a4df` | Owns integration/risk aggregation. Local report/no-overwrite adaptation is committed and verified (build, `e4:test` 12/12, `verify` 396 pass/6 skip/0 fail); not pushed. M9 is integrating the remaining M6 forged-evidence guard and symlink/junction hardening. |
 
-All active module PRs #30/#33/#34/#36/#37/#38/#39/#40/#43/#47 target the same base commit `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with 9 product and 2 wrapper checks passed; it remains unchanged. Existing WSL-managed `/mnt/c/...` worktrees are not to be pruned or operated using Windows Git; the WSL distribution is unavailable. The 03:05 UTC public-write batch is in progress; schedule the next batch at least 20 minutes after it completes.
+All active module PRs #30/#33/#34/#36/#37/#38/#39/#40/#43/#47 target the same base commit `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with 9 product and 2 wrapper checks passed; it remains unchanged. Existing WSL-managed `/mnt/c/...` worktrees are not to be pruned or operated using Windows Git; the WSL distribution is unavailable. The quota-checked public-write batch completed at 03:13:51 UTC; next public batch no earlier than 03:33:51 UTC.
 
 ## Archived ownership and worktree snapshot (2026-10-15 02:10 UTC)
 

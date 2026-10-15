@@ -1,6 +1,6 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 03:05 UTC)
+## Current authoritative snapshot (2026-10-15 03:13 UTC)
 
 - 用量页按用户要求保持打开并置于前台；03:05 UTC可读且高于5%停工线。公开记录不写账户精确余量。页面不可读或低于5%时，所有模块停止开发、测试、浏览器和GitHub操作。
 - M0 PR #30 远端head `9b8d8d1713de29712f7550ce180ce1560a0dd3a2`：产品CI run `38672508461` 9/9、协调检查 `38672508565` 1/1通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；产品9/9及wrapper 2/2通过，未修改或合并。
@@ -9,9 +9,10 @@
 - M5 PR #47 head `c54e7eb` / run `38672499884` 9/9通过。M5-owned adapter透传`verifyRealPaths`，但没有生产中的真实文件host consumer；M5策略/安全路由和build此前分别29/29、16/16、通过。#52仍P0/OPEN：不能证明真实host启用边界或以受保护句柄打开文件。
 - M6 PR #38 head `cd55717` 的产品CI 9/9及wrapper 2/2通过；E4测试此前16/16，三个`e4:*`字段与M9 MATCH_CONFIRMED。M6确认#27修复位于`4e39762`，路径/symlink加固位于`cd55717`；二者都未在M9 `bc5390d`中。整颗cherry-pick已安全abort。M6 owner审查完成并批准最小适配：保留M9锁恢复与`writeFileAtomically`，写入前预检全部三个产物路径并采用稳定冲突码。M9正在现有集成分支实现；尚未验证。lstat后路径读取仍有symlink替换TOCTOU限制；外部E4 NOT_VERIFIED，原始证据目录未触碰。
 - M4当前Console仍没有`/api/security-center`、`/api/e4/status` provider/IPC；404运行态测试7/7通过，UI保留UNKNOWN。
-- M8 PR #40 head `139e7f2` / run `38561307114` 9/9通过；PR文档仍称v3.0.0无Release且正文范围/CI摘要过时。当前v3.0.0 Release及GHCR `3.0.0`/`latest`标签已发布；E4仍NOT_VERIFIED。Contents API首个写入因403拒绝，且复读确认head和README blob未变；M8正在用已登录网页同一PR分支继续，尚未完成。
-- M9 PR #36 head `bc5390d` 的产品9/9和wrapper 2/2通过。M9正按M6 owner批准的最小适配在现有集成分支工作。当前两个模块槽为M9集成适配和M8文档修订。03:05 UTC经新额度读取后释放的公共写入批次正在进行；新一批至少等本批结束20分钟。M2原生Shell仍UNPROTECTED/BLOCKED_NOT_VERIFIED；M7 clean-VM生命周期仍NOT_VERIFIED。
-- Issue #51根因仍UNKNOWN；#32等待M9组合与真实宿主证据；#52等待真实文件host采用安全边界证据。额度页03:05 UTC可读且高于暂停线并保持打开。没有占用VMware、真实模型或安装测试资源；未合并main/PR #24，未发布Release。
+- M8 PR #40 existing branch 已修正文档、PR范围和CI摘要；head `16e3d01c485f039bfa4eedc97523d223340f93e0` 的run `38674816292` 经实时核验9/9 success，PR正文已读回确认该状态。PR仍OPEN/Draft；本地GHCR pull/runtime与独立E4仍NOT_VERIFIED。
+- M9 PR #36远端head仍`bc5390d`，本地适配commit `0d1a4df`未推送。它保留锁恢复/原子写，预检三个产物路径，新增partial-output与重复调用测试，并将bundle失败写成独立BLOCKED记录；build通过，标准tsx定向测试20 pass/1 skip，`e4:test` 12/12，`verify` 396 pass/6 skip/0 fail，package smoke 100 files通过。M9继续集成M6伪造E4证据拒绝和symlink/junction路径防护；这些尚未验证。
+- 当前只有M9集成任务运行。03:05 UTC额度读取后释放的公共写入批次于03:13:51 UTC完成；下一批不得早于03:33:51 UTC。M0协调文档提交`f5d339c`仅在本地、尚未推送。M2原生Shell仍UNPROTECTED/BLOCKED_NOT_VERIFIED；M7 clean-VM生命周期仍NOT_VERIFIED。
+- Issue #51根因仍UNKNOWN；#32等待M9组合与真实宿主证据；#52等待真实文件host采用安全边界证据。额度页03:05 UTC可读且高于暂停线并保持打开。PR #24仍OPEN/Draft且base/head不变。没有占用VMware、真实模型或安装测试资源；未合并main/PR #24，未发布Release。
 
 ## Archived snapshot (2026-10-15 02:40 UTC)
 
