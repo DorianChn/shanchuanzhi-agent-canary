@@ -1,6 +1,6 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 10:34 UTC)
+## Current ownership and worktree snapshot (2026-10-15 10:36 UTC)
 
 | Module | Current checkout / PR | Ownership and acceptance status |
 | --- | --- | --- |
@@ -13,7 +13,7 @@
 | M6 | No M6 worktree visible in the current coordinator clone; existing branch `feature/ac3-e4-validation-ac3`, #38 `c1fdf3c`, 11/11 | Owns E4 verifier/schema and `e4:*` contract fields. External E4 remains NOT_VERIFIED. |
 | M7 | No M7 worktree visible in the current coordinator clone; existing branch `feature/ac3-reliability-ac3`, #39 `cf4b70f`, 11/11 | Owns Windows packaging/reliability. Clean-VM install/launch/upgrade/uninstall remains NOT_VERIFIED. |
 | M8 | `ac3-m8-recovery` / `feature/ac3-open-source-product`; #40 `c1ff677`, 11/11 | Owns public docs/community and its wrapper copy. Windows LF/blob checks pass; packaged callback and clean-VM runtime are separate acceptance gates. |
-| M9 | `ac3-m9-recovery` / `feature/ac3-m9-integration`; #36 `1f577c5`, 11 success, 1 failure, 1 skipped; issue #54 OPEN | Owns integration tests and manifest composition. Both current-module composition jobs pass; Windows Node 22 `test/ai.test.ts:102` remains the CI failure. M9's isolated Windows Node 22.23.1 harness passed 10/10 retries; full test file is blocked by missing `smol-toml`. Component and test ownership remain unresolved in-repo; M0 opened #54 and will route before source changes. |
+| M9 | `ac3-m9-recovery` / `feature/ac3-m9-integration`; #36 `1f577c5`, 11 success, 1 failure, 1 skipped; issue #54 OPEN | Owns integration tests and manifest composition; M0 explicitly routed `test/ai.test.ts` to M9 for failure-only diagnostics. Both current-module composition jobs pass; Windows Node 22 remains the product-test failure. M9's isolated Windows Node 22.23.1 harness passed 10/10 retries; full test file is blocked by missing `smol-toml`. Ownership of `src/ai/provider.ts` and `src/ai/transport.ts` remains unresolved; M9 must not edit them without owner confirmation. |
 
 All active module PRs target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 is OPEN/Draft with 11/11 checks passing; it remains untouched and unmerged. The usage page stays open in tab 336903483. No `main` merge or Release occurred.
 
