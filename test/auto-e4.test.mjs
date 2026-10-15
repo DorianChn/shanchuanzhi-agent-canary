@@ -147,6 +147,24 @@ test('Auto E4 bundle failure records BLOCKED status without overwriting the repo
   assert.deepEqual(fs.readFileSync(files.indexFile),originalIndex);
 });
 
+test('Auto E4 refuses to overwrite a pre-existing bundle failure sidecar',t=>{
+  const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-existing-sidecar-'));
+  t.after(()=>fs.rmSync(runDir,{recursive:true,force:true}));
+  const stage={id:'materials',status:'PASS',durationMs:1,detail:{summary:'reports created'}};
+  const report={runId:'sidecar-run',technicalResult:'READY_FOR_EXTERNAL_REVIEW',coverage:{verified:1,failed:0,blocked:0,skipped:0,notVerified:0,total:1},stages:[stage]};
+  const files=writeAutoE4Artifacts(report,runDir);
+  const failureFile=path.join(runDir,'AUTO_E4_BUNDLE_FAILURE.json');
+  const priorSidecar=Buffer.from('preserve pre-existing sidecar');
+  fs.writeFileSync(failureFile,priorSidecar);
+  const preserved=[files.jsonFile,files.mdFile,files.indexFile,failureFile].map(file=>fs.readFileSync(file));
+
+  assert.throws(()=>recordAutoE4BundleFailure(report,runDir,files,Error('EVIDENCE_BUNDLE_CREATE_FAILED')),error=>error.message==='AUTO_E4_ARTIFACT_ALREADY_EXISTS');
+  assert.equal(report.technicalResult,'READY_FOR_EXTERNAL_REVIEW');
+  assert.equal(stage.status,'PASS');
+  assert.equal(report.bundleVerification,undefined);
+  for(const [index,file] of [files.jsonFile,files.mdFile,files.indexFile,failureFile].entries())assert.deepEqual(fs.readFileSync(file),preserved[index]);
+});
+
 test('worker bundle failure flows through latest pointer into a BLOCKED export while preserving the pre-failure snapshot',async t=>{
   const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-export-blocked-'));
   t.after(()=>fs.rmSync(dataDir,{recursive:true,force:true}));
@@ -190,4 +208,11 @@ test('worker bundle failure flows through latest pointer into a BLOCKED export w
   assert.deepEqual(exportedReport.bundleVerification.failureSidecar,failure);
   assert.ok(!JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8')).artifacts.some(file=>file.name==='AUTO_E4_BUNDLE_FAILURE.json'));
   for(const [index,file] of [artifacts.jsonFile,artifacts.mdFile,artifacts.indexFile,path.join(run.runDir,report.eventsFile)].entries())assert.deepEqual(fs.readFileSync(file),preserved[index]);
+
+  const forged={...failure,originalReport:{...failure.originalReport,sha256:'0'.repeat(64)}};
+  fs.writeFileSync(result.bundleFailureFile,JSON.stringify(forged,null,2)+'\n');
+  const persistedFiles=[path.join(dataDir,'latest.json'),artifacts.jsonFile,artifacts.mdFile,artifacts.indexFile,path.join(run.runDir,report.eventsFile),result.bundleFailureFile];
+  const beforeRejectedExport=persistedFiles.map(file=>fs.readFileSync(file));
+  assert.throws(()=>buildAutoE4Export(latest,dataDir,'external'),error=>error.message==='BUNDLE_FAILURE_SIDECAR_INVALID');
+  for(const [index,file] of persistedFiles.entries())assert.deepEqual(fs.readFileSync(file),beforeRejectedExport[index]);
 });

@@ -104,7 +104,8 @@ export function recordAutoE4BundleFailure(report,runDir,artifacts,error){
   originalReport:{file:path.basename(artifacts.jsonFile),sha256:digest(fs.readFileSync(artifacts.jsonFile))},
   reportPreserved:true
  };
- writeFileAtomically(failureFile,JSON.stringify(failure,null,2)+'\n');
+ try{writeFileAtomically(failureFile,JSON.stringify(failure,null,2)+'\n');}
+ catch(writeError){if(writeError.code==='EEXIST')throw Error('AUTO_E4_ARTIFACT_ALREADY_EXISTS');throw writeError;}
  const stage=report.stages.find(x=>x.id==='materials');
  if(stage){
   stage.status='BLOCKED';
