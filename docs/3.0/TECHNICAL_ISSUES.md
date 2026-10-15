@@ -1,3 +1,8 @@
+## Coordinator status update (2026-10-15 13:08 UTC)
+
+- **#55 P1:** Still open. PR #33 exact head remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1; no M3 source update or response followed the 12:18 UTC owner-action request. M9 #36 remains blocked on the same contract mismatch.
+- **#29 P2:** Still open. Last scheduler comment is 12:43 UTC; there is no verified resource reservation or cross-window occupancy update.
+- **#30 M0:** Exact head 0c283eb378d08d85d0665c41cd5e0d582e471973 remains 10/10 green and OPEN/Draft. PR #24 is still open/draft at its untouched head.
 ## Coordinator publication update (2026-10-15 12:45 UTC)
 
 - **#29 P2:** The 12:43 UTC scheduler update is posted and verified. No module-code task is active in this coordinator; other-window occupancy remains UNKNOWN, and no exclusive test reservation is verified.
