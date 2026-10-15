@@ -1,6 +1,6 @@
 # M3 Owner Contract：宿主发现与 Agent 接入
 
-状态：以 M3 分支源码为准（审阅 HEAD：c404b6b）。本文描述 M3 所有的宿主发现、MCP 配置预览/写入/回滚及 Codex 自检接口；共享契约由 M0 维护，本文件不替代 docs/3.0/API_CONTRACTS.md。
+本文是 M3 所有的宿主发现、MCP 配置预览/写入/回滚及 Codex 自检接口契约；共享契约由 M0 维护，本文件不替代 docs/3.0/API_CONTRACTS.md。首次完整源码审阅对应提交 `c404b6b`，不是当前分支 HEAD；2026-10-15 的 M1/M2/M5 兼容性复核见 [ONBOARDING_TEST_REPORT.md](../../../ONBOARDING_TEST_REPORT.md)。
 
 **保护状态：** Codex 项目级 MCP 写入状态为 MCP_DECOY_INSTALLED，并不代表 VERIFIED_PROTECTED。Agent Canary Gateway 只覆盖可信宿主显式登记并转交的回调。宿主原生工具、未登记回调和其他 MCP 服务器均为 OUT_OF_SCOPE。真实宿主保护和 Hook 生效状态仍为 NOT_VERIFIED，除非相应运行证据明确证明该窄路径。
 

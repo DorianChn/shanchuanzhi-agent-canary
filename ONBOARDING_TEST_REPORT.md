@@ -80,3 +80,17 @@ M3 责任项已存在：`test/onboarding.test.ts` 文件存在，并由根 `pack
 - 本机没有 Claude Code、Cursor、Cline 的实际安装，未进行这些宿主的真实工具调用测试。
 - Codex Hook 临时实测没有生效；尚无可用于证明 Hook 在 Agent Canary 安装后真实拦截的证据。
 - 当前 Codex 安装配置连接的是 decoy 服务，不会接管 Codex 内建工具。需要可信宿主按 SDK 契约注册真实 callbacks，才能将那些回调纳入 Gateway。
+
+## 跨模块接口兼容性复核（2026-10-15）
+
+复核时各模块 GitHub 分支精确快照：M3 `1829e0518d44879eb67e0fef0e256ca762e1e8fd`（PR #33 head），M1 `f14aab781c62db60ac241d2114f543f6cac223ae`，M2 `9db59ed8f2deae905edcb2179982f8bcb594167c`，M5 `b6a40b49f132decba97d269ff942d868fcef928f`。这些是各模块独立分支，不代表 M1/M2/M5 已集成到 M3 或主线。
+
+| 契约 | M3 实际调用 | 兼容性与边界 |
+|---|---|---|
+| M1 Trusted Execution Gateway | `src/codex-connection-mcp.ts` 以精确工具 ID 构造 `mcpTools` 注册项，再调用 `gateway.agent.dispatch({name:'mcp_tool', args:{tool, arguments}})`。注册项使用 M1 形状 `{risk, approvalRequired, execute(args, signal)}`；M1 当前 `GatewayOptions` 与 `dispatch(ToolCall, signal?)` 保持兼容。 | 形状兼容；只用于两个固定合成回调。该临时服务未注册用户文件/命令能力，也不暴露 Gateway operator。M3 没有把该测试桥接成生产宿主。未运行 M3+M1 精确源码树的组合 CI。 |
+| M2 执行隔离适配器 | M3 未导入或调用 M2 adapter/backend；`onboard` 仅写入启动 M3 decoy MCP 的项目配置（源码模式下为 `node dist/competition.js serve --stdio`）。 | 不存在 M3 到 M2 隔离 worker 的生产调用链。不得从“接入 MCP”推断 AppContainer、隔离执行或 Native Codex Shell 保护；Native Codex Shell 保持 `UNPROTECTED / NOT_VERIFIED`。 |
+| M5 安全策略路由 | M3 自检服务器直接通过 M1 Gateway 路由固定 MCP 回调，不调用 M5 policy router。仓库中既有 Hook adapter 使用 `createSecurityToolRouter({verifyRealPaths:true, ...})` 并消费 `decide()` 的 `action`/`reason` 字段；M5 当前返回结构仍兼容该读取方式。 | M3 没有改 M5 API，也没有已接线的生产文件执行消费者。路径检查后由任意 host callback 按路径重新打开文件不等同于 M1 持有句柄的 Gateway 文件操作；生产宿主接线与 TOCTOU 防护均 `NOT_VERIFIED`。 |
+
+M3 自身的状态映射、配置写入和报告继续区分 `MCP_DECOY_INSTALLED`、`GATEWAY_AND_HOOK_CONFIRMED`（仅临时探针）、`GATEWAY_CONFIRMED_HOOK_NOT_EFFECTIVE` 与 `NOT_VERIFIED`。Hook 配置元数据不证明 Hook 实现可信、已被宿主加载或真实工具调用会执行它；Codex 原生 Shell、其他原生工具及其他 MCP 服务器始终 `OUT_OF_SCOPE`。本次兼容复核未发现可复现的 M3-owned 运行时 API 不一致，因此没有改动 M1/M2/M5 接口、降低拒绝行为或改写安全测试。
+
+本次本地验证：`npm run build` 通过；`node --import tsx --test test/onboarding.test.ts test/codex-connection-check.test.ts test/agent-hook.test.ts` 为 25/25 通过；`git diff --check` 通过。没有启动真实 Codex/模型调用，也没有做宿主安装或 M3+M1 精确源码树组合 CI。
