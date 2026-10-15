@@ -8,7 +8,7 @@ import {createHash} from 'node:crypto';
 const testHome=fs.mkdtempSync(path.join(os.tmpdir(),'m9-security-composition-'));
 after(()=>fs.rmSync(testHome,{recursive:true,force:true}));
 process.env.AGENT_CANARY_HOME=testHome;
-const {createAgentGuard,createSecurityToolRouter,PolicyBlockedError}=await import('../src/sdk.js');
+const {createAgentGuard,createSecurityToolRouter,createTrustedExecutionGateway,EvidenceRecorder,PolicyBlockedError}=await import('../src/sdk.js');
 
 function routerFor(options:Record<string,unknown>,execute:(_:any)=>unknown){
  const guard=createAgentGuard({sessionId:'m9-security-composition',alert:false});
@@ -29,6 +29,58 @@ test('M5 non-overridable sensitive egress stays DENY in OBSERVE with no approval
  await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY');
  assert.equal(router.pendingApprovals().length,0);
  assert.equal(callbacks,0);
+});
+
+test('M5 OBSERVE trusted read adapter composes with M1 held-handle Gateway and denies aliased paths before dispatch',async(t)=>{
+ const base=fs.mkdtempSync(path.join(os.tmpdir(),'m9-gateway-router-composition-'));
+ t.after(()=>fs.rmSync(base,{recursive:true,force:true}));
+ const workspace=path.join(base,'workspace'),privateDir=path.join(workspace,'private'),outside=path.join(base,'outside');
+ fs.mkdirSync(privateDir,{recursive:true});fs.mkdirSync(outside);
+ const publicFile=path.join(workspace,'public.txt'),privateFile=path.join(privateDir,'.env'),outsideFile=path.join(outside,'outside.txt');
+ const publicContent='M9_REGISTERED_GATEWAY_HANDLE_CONTENT',privateContent='M9_INTERNAL_SENSITIVE_TARGET_FIXTURE',outsideContent='M9_EXTERNAL_ALIAS_TARGET_FIXTURE';
+ fs.writeFileSync(publicFile,publicContent);fs.writeFileSync(privateFile,privateContent);fs.writeFileSync(outsideFile,outsideContent);
+ const privateHash=createHash('sha256').update(fs.readFileSync(privateFile)).digest('hex');
+ const outsideHash=createHash('sha256').update(fs.readFileSync(outsideFile)).digest('hex');
+ const linkType=process.platform==='win32'?'junction':'dir';
+ fs.symlinkSync(privateDir,path.join(workspace,'sensitive-alias'),linkType);
+ fs.symlinkSync(outside,path.join(workspace,'outside-alias'),linkType);
+
+ const guard=createAgentGuard({sessionId:'m9-gateway-router-composition',alert:false});
+ const gateway=createTrustedExecutionGateway({
+  agentId:'m9-gateway-router-composition',guard,workspaceRoot:workspace,
+  files:[{path:'public.txt'},{path:'private/.env',sensitive:true}],evidence:new EvidenceRecorder(),
+ });
+ let gatewayDispatches=0;
+ const router=createSecurityToolRouter({
+  guard,workspaceRoot:workspace,mode:'OBSERVE',verifyRealPaths:true,
+  tools:{read:{operation:'file-read'}},
+  executeRealTool:(call,context)=>{
+   gatewayDispatches++;
+   return gateway.agent.dispatch({name:'read_file',args:{path:String(call.args.path)}},context.signal);
+  },
+ });
+ try{
+  const publicCall={name:'read',args:{path:'public.txt'}};
+  assert.equal((await router.decide(publicCall)).action,'OBSERVE_ONLY');
+  assert.equal(gatewayDispatches,0);
+  assert.deepEqual(await router.dispatch(publicCall),{content:publicContent});
+  assert.equal(gatewayDispatches,1);
+  assert.deepEqual(gateway.evidence().map(record=>record.tool_id),['read_file','read_file']);
+  assert.equal(router.pendingApprovals().length,0);
+
+  for(const pathArg of [path.join('sensitive-alias','.env'),path.join('outside-alias','outside.txt')]){
+   const aliasedRead={name:'read',args:{path:pathArg}};
+   assert.equal((await router.decide(aliasedRead)).action,'DENY');
+   await assert.rejects(router.dispatch(aliasedRead),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY');
+   assert.equal(router.pendingApprovals().length,0);
+   assert.equal(gatewayDispatches,1);
+  }
+  assert.equal(guard.state,'SAFE');
+  assert.equal(fs.readFileSync(privateFile,'utf8'),privateContent);
+  assert.equal(createHash('sha256').update(fs.readFileSync(privateFile)).digest('hex'),privateHash);
+  assert.equal(fs.readFileSync(outsideFile,'utf8'),outsideContent);
+  assert.equal(createHash('sha256').update(fs.readFileSync(outsideFile)).digest('hex'),outsideHash);
+ }finally{await gateway.close();}
 });
 
 test('OBSERVE with real-path checks denies a junction file-write before approval or callback',async(t)=>{
