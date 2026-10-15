@@ -558,3 +558,10 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 
 - **P1 / M1-M4 state-store retry exhaustion:** M0 PR #30 exact-head product CI 38824891940 failed on Ubuntu Node 20.20.2 in the concurrent quarantine test after 500 STATE_STORE_BUSY retries, raising RETRY_LIMIT (321 pass, 1 fail, 4 skipped). This reproduces the prior signature; the lock holder/cause remain UNKNOWN and no data loss is established.
 - M0 comment 6204594352 records the run evidence and asks M1/M4 for instrumented failure trace or a concrete next diagnostic/blocker by 23:52 UTC. Preserve the test, assertions, and retry policy.
+
+## M0 owner deadline follow-up — 2026-10-15 23:52 UTC
+
+- **#51 P1 — M1/M4 state-store retry:** no owner response or diagnostic trace by 23:52 after M0 exact-head run 38824891940 reproduced RETRY_LIMIT. Comment 6204723929 requests owner/next diagnostic or blocker by 00:12; root cause UNKNOWN, no data loss established.
+- **#56 P2 — M0/M1 Hook test ownership:** no M1 disposition by 23:52. Comment 6204723919 requests canonical path/blob SHA or a reviewed shared-path exception by 00:12. Preserve the test.
+- **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 23:52. Comment 6204723945 requests fail-closed denial and supported-capability positive-control evidence, or accountable blocker by 00:12. M9 remains gated.
+- **#53 P0 — M7/M8 packaged Hook reachability:** no M7/M8 artifact evidence by 23:52. Comment 6204724145 requests package/manifest hashes, extracted-Hook comparison, harness result, or accountable blocker by 00:12. Keep OPEN/NOT_VERIFIED; respect #29 resource reservation.
