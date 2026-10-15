@@ -1,4 +1,27 @@
-## Canonical coordinator checkpoint (2026-10-15 20:12 UTC)
+## Canonical coordinator checkpoint (2026-10-15 20:32 UTC)
+
+Owner checkpoint re-read GitHub Issues #53/#55 and PR #33/#39/#40 at 20:32 UTC. No owner response or module-head change was visible since 20:12. Comments #55/6201691121 and #53/6201691288 request exact evidence or a concrete blocker by 20:52; resource readback is #29/6201691120.
+
+- **M0 / PR #30:** OPEN/Draft at `a91cc4f031864d26b544150195ae26e393f4f601`; product CI `38800647671` passed 9/9, and ownership checks `38800647555` and `38801507267` each passed 1/1. PR description retains the required API-Contract-Change marker.
+- **PR #24:** remains OPEN/Draft at its unchanged head/base; no edit, retarget, or merge.
+- **M3 / #55 / M9:** PR #33 remains `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`; M9 run `38727481764` still fails both Ubuntu and Windows because unpinned native Read allows where M1 requires deny. M9 remains gated pending M3 correction and supported-capability positive-control evidence.
+- **M7/M8 / #53:** PR #39/#40 remain at `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. Real pinned Windows package, manifest, extracted-Hook comparison, and extracted-harness canary evidence remain NOT_VERIFIED.
+- **Resource/cadence:** Usage page remains open, active, and above the stop threshold. No exclusive resource is running/reserved. Last M0 push was 20:16 UTC; next no earlier than 20:37 UTC after fresh quota/ref checks.
+
+## Archived coordinator checkpoint (2026-10-15 20:25 UTC)
+
+This checkpoint supersedes the archived 20:12 snapshot. GitHub PR/issue state and the Usage page were reread at 20:23–20:25 UTC. Exact-head CI remains separate from product-host, real installer, packaged-payload, and external E4 evidence.
+
+- **PR #24:** OPEN/Draft, unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no M0 change or merge. Its latest recorded exact-head CI was 11/11.
+- **M0 / PR #30:** OPEN/Draft at `a91cc4f031864d26b544150195ae26e393f4f601`; product workflow `38800647671` passed 9/9 and refreshed-description ownership workflow `38801507267` passed 1/1. Description readback retains `API-Contract-Change: yes`.
+- **M1 / PR #43 and #51:** head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; recorded CI passed 9/9 and Ubuntu Node 20/22 x10 stress passed. The historical M4 run exhausted 500 `STATE_STORE_BUSY` attempts in an Ubuntu Node 20 child; lock-holder/timing cause remains UNKNOWN, with no data loss established.
+- **#52 P0:** M1/M2/M5 heads remain #43 `9ef3dc2`, #37 `9db59ed`, and #47 `373e2c2`. Source-level Gateway/adapter checks do not prove first-party host adoption, protected-open using the checked handle, TOCTOU acceptance, or current exact-head host composition. Native-host trial has zero protected cases; no actual exposure is claimed.
+- **#53 P0:** M7 #39 remains `cf4b70f5130175582fffdfc65bd7c6847450867b`; M8 #40 remains `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. Recorded product/wrapper CI and synthetic co-located Hook harness checks pass; real pinned Setup.exe/payload, manifest, extracted-Hook byte comparison, and extracted-harness canary result remain absent. Owner evidence or blocker is due 20:32 UTC; keep OPEN and NOT_VERIFIED.
+- **#55 P1 / M9:** M3 #33 remains `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`; M9 #36 remains `de3799aae540f58173acec4ab3f7a1fe98593aa7`. M9 product CI `38727481643` passed 9/9 and wrapper CI `38727481657` passed 2/2; composition run `38727481764` fails on Ubuntu and Windows because unpinned native Read allows where M1 requires deny. M3 evidence or blocker is due 20:32 UTC. Keep M9 gated.
+- **Other gates:** Native Codex Shell remains UNPROTECTED; M7 clean-VM lifecycle and M6 independent external E4 remain NOT_VERIFIED. VMware, real-model, and installer tests are mutually exclusive; none is running or reserved.
+- **Coordination boundary:** only the M0 coordinator worktree is registered in this clone. Remote PR visibility does not prove other-window worktree isolation. Legacy M6 PR #31 targets `main`; M6 PR #38 is the AC3 integration input, and #31 remains untouched. Last M0 push was 20:16 UTC; next no earlier than 20:37 UTC after fresh quota/ref checks. Usage page remains open and readable above the stop threshold.
+
+## Archived canonical coordinator checkpoint (2026-10-15 20:12 UTC)
 
 This checkpoint supersedes the 19:52 snapshot. Relevant GitHub PR heads, issues, and the Usage page were read at 20:12 UTC; keep exact-head evidence distinct from product-host, installer, package, and external E4 proof.
 

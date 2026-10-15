@@ -1,4 +1,21 @@
-## Current coordinator checkpoint (2026-10-15 20:12 UTC)
+## Current coordinator checkpoint (2026-10-15 20:32 UTC)
+
+- **M0 / PR #30:** OPEN/Draft at `a91cc4f031864d26b544150195ae26e393f4f601`; product CI `38800647671` passed 9/9 and description ownership check `38801507267` passed 1/1. PR #24 remains unchanged and OPEN/Draft.
+- **#53 P0 — M7/M8 packaged Hook-log privacy:** no visible owner response or PR #39/#40 head change at the 20:32 checkpoint. Comment 6201691288 requests exact package/artifact evidence or a blocker by 20:52. Keep OPEN and NOT_VERIFIED.
+- **#55 P1 — M3 native Hook contract:** no visible owner response or PR #33 head change at 20:32. Comment 6201691121 requests exact deny/positive-control evidence or a blocker by 20:52. M9 composition run 38727481764 still fails both platforms; keep integration gated.
+- **#51 P1 — M1 shared quarantine store:** the old M4 run has one actual Ubuntu Node 20 failure after 500 `STATE_STORE_BUSY` attempts; four other platform jobs were cancelled and package-smoke skipped. M1 x10 stress passed without explaining the original trigger. Root cause remains UNKNOWN; no data loss is established.
+- **#52 P0:** first-party host wiring, host protected-open/TOCTOU, and current exact-head composition remain NOT_VERIFIED. **#45 P1:** Native Codex Shell remains UNPROTECTED. **#41 and independent E4 P1:** real clean-VM lifecycle and external E4 remain NOT_VERIFIED.
+
+## Archived coordinator checkpoint (2026-10-15 20:25 UTC)
+
+- **M0 / PR #30:** OPEN/Draft at `a91cc4f031864d26b544150195ae26e393f4f601`; exact-head product CI `38800647671` passed 9/9 and refreshed-description ownership CI `38801507267` passed 1/1. PR #24 remains OPEN/Draft at unchanged head/base.
+- **#51 P1 — M1 shared quarantine store:** M4 run `38698635434` recorded Ubuntu Node 20 worker 2 reaching `RETRY_LIMIT` after 500 `STATE_STORE_BUSY` attempts. M1's later Node 20/22 x10 stress passed without reproducing it. Lock-holder/timing cause remains UNKNOWN; no data loss is established.
+- **#52 P0 — M1/M2/M5 protected file execution:** heads remain #43 `9ef3dc2`, #37 `9db59ed`, and #47 `373e2c2`. Source-level Gateway/adapter and synthetic checks do not prove first-party host wiring, protected-open, or TOCTOU behavior. Keep OPEN; no exposure is claimed.
+- **#53 P0 — M7/M8 packaged Hook-log privacy:** #39/#40 remain at `cf4b70f` / `c1ff677`. Synthetic source/co-located harness CI passes; real Windows payload/Setup.exe, manifest, extracted-Hook comparison, and extracted-harness evidence remain absent. Owner evidence or blocker is due 20:32 UTC; keep OPEN and NOT_VERIFIED.
+- **#55 P1 — M3 native Hook contract:** #33 remains at `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`. M3 must deny unpinned native Read with `native_file_execution_not_pinned`, preserve M1 deny assertions, and add a supported-capability positive control. M9 run `38727481764` fails on Ubuntu and Windows; owner evidence or blocker is due 20:32 UTC. Do not repin or claim integration PASS.
+- **#45 P1:** Native Codex Shell remains UNPROTECTED. **#41 P1:** clean-VM install, launch, upgrade, uninstall, and cancellation rollback remain NOT_VERIFIED. **External E4 P1:** independent verification remains NOT_VERIFIED.
+
+## Archived coordinator checkpoint (2026-10-15 20:12 UTC)
 
 - **M0 / PR #30:** OPEN/Draft at d206c41d54fb18f8e61e411ce1a2979200dab918; exact-head product CI 38797812575 passed 9/9 and refreshed-description ownership check 38798192402 passed 1/1. PR #24 remains untouched.
 

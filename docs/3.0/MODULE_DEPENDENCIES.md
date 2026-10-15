@@ -1,4 +1,23 @@
-## Current schedule and dependencies (2026-10-15 20:12 UTC)
+## Current schedule and dependencies (2026-10-15 20:32 UTC)
+
+- Maximum active module lanes: two. M3 #55 and M7/M8 #53 missed the 20:32 status checkpoint without a visible owner reply or module-head change. Comments #55/6201691121 and #53/6201691288 request evidence or a concrete blocker by 20:52 UTC.
+- M3 owns its native Hook copy and #55 correction. M9 #36 must keep its pinned refs unchanged until M3 denies unpinned native Read with `native_file_execution_not_pinned`, preserves M1 deny assertions, and passes the separate positive control; then rerun both composition platforms.
+- M7 owns installer/payload evidence and M8 owns the Hook/logging copy. Their synthetic checks pass, but the real Setup.exe/payload and extracted-copy gate remains NOT_VERIFIED. Do not reserve/run VMware, real-model, or installer resources until the exclusive resource slot is recorded; none is active now.
+- M1 owns #51 root-cause investigation; the original lock-holder/timing trigger remains UNKNOWN. Preserve retry behavior and assertions. M1/M2/M5 host acceptance #52 remains NOT_VERIFIED; M2 Native Codex Shell remains UNPROTECTED; M6 independent E4 remains NOT_VERIFIED.
+- PR #24 remains untouched. AC3 module PRs target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; legacy M6 PR #31 targets `main` and is not an AC3 integration input. Only the M0 coordinator worktree is visible in this clone.
+- Usage page remains open and readable above the 5% stop threshold. Last M0 branch push was 20:16 UTC; next push no earlier than 20:37 UTC, after fresh quota and remote-ref checks.
+
+## Archived schedule and dependencies (2026-10-15 20:25 UTC)
+
+- Maximum active module lanes: two. The requested owner lanes remain M3 #55's fail-closed native Hook correction and M7/M8 #53's real package-artifact evidence; responses are due 20:32 UTC. No VMware, real-model, or installer resource is running or reserved.
+- M1 owns Gateway held-descriptor semantics and strict `verifyRealPaths`; M2 adapts through its existing adapter and M5 owns policy decisions. First-party host adoption and protected-open evidence remain absent, so #52 stays open.
+- M3 owns its native Hook copy and #55 unpinned-Read correction. M9 #36 product/wrapper CI passes, but current composition run `38727481764` fails on Ubuntu and Windows; M9 waits for corrected M3 evidence before repinning and rerunning.
+- M1/M4 #51 diagnostic triage has not identified the original lock-holder/timing trigger. Preserve production lock/retry behavior and all assertions unless a defect is reproduced.
+- M7 owns installer lifecycle evidence; M8 owns package/Hook-log reconciliation; M6 owns independent E4. Keep #41, #53, and external E4 NOT_VERIFIED until real acceptance evidence passes.
+- PR #24 remains unchanged and OPEN/Draft. AC3 module PRs target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; legacy M6 PR #31 targets `main` and is not an AC3 integration input. Only the M0 coordinator worktree is visible in this clone.
+- Usage page remains open and readable above the stop threshold; do not store exact quota percentages in tracked files. Last M0 push was 20:16 UTC; next push no earlier than 20:37 UTC after fresh quota/ref checks.
+
+## Archived schedule and dependencies (2026-10-15 20:12 UTC)
 
 - Maximum active module tasks: two. Current owner lanes are M3's #55 fail-closed Hook correction and M7/M8's #53 real package-artifact evidence. No M3/M7/M8 owner response or corresponding PR-head change is visible at 20:12. M1 #52 and the M8/M9 source/CI audits are complete; their P0 gates remain open. VMware, real-model, and installation tests remain mutually exclusive and none is running or reserved.
 - M1 owns Gateway held-descriptor semantics and the strict verifyRealPaths contract. M2 adapts through its existing adapter; M5 owns policy decisions. The production host-consumer edge is still absent/UNKNOWN, so synthetic composition cannot close #52.

@@ -1,8 +1,8 @@
-## Current remote ownership snapshot (2026-10-15 20:12 UTC)
+## Current remote ownership snapshot (2026-10-15 20:25 UTC)
 
 | Module | Existing branch / PR | Exact remote head | Owner and current boundary |
 | --- | --- | --- | --- |
-| M0 | feature/ac3-m0-coordination / #30 | d206c41d54fb18f8e61e411ce1a2979200dab918 | Coordination docs and cross-module contracts only. Product CI 9/9 and refreshed-description ownership check 1/1 pass. |
+| M0 | feature/ac3-m0-coordination / #30 | a91cc4f031864d26b544150195ae26e393f4f601 | Coordination docs and cross-module contracts only. Product CI 9/9 and refreshed-description ownership check 1/1 pass. |
 | M1 | feature/ac3-security-core / #43 | 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 | Gateway, Hook contract, quarantine store. #52 host-adoption evidence and #51 UNKNOWN diagnosis remain open. |
 | M2 | feature/ac3-execution-isolation / #37 | 9db59ed8f2deae905edcb2179982f8bcb594167c | Execution adapter; native Codex Shell remains UNPROTECTED. |
 | M3 | feature/ac3-agent-onboarding / #33 | be3880298e1c6766024ecbce5f6dbc23c4d2daa1 | Onboarding and Hook behavior copy; owns #55 correction and positive control. |
@@ -13,7 +13,9 @@
 | M8 | feature/ac3-open-source-product / #40 | c1ff677cc56cd159cc983042e5dfcec5dc93f3ad | Open-source/product documentation and canonical Hook/logging copy; synthetic CI passes but real package reachability for #53 remains NOT_VERIFIED. |
 | M9 | feature/ac3-m9-integration / #36 | de3799aae540f58173acec4ab3f7a1fe98593aa7 | Integration composition; waits for M3 #55 before repin. |
 
-All listed PRs are OPEN/Draft and target feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. In this local clone, git worktree list exposes only the M0 coordinator worktree. Other module local worktree paths are unavailable here; do not infer local isolation from remote PR branches or visibility in other Codex windows.
+All listed PRs are OPEN/Draft and target feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Legacy M6 PR #31 targets `main`; it is outside the AC3 candidate set and remains untouched. In this local clone, `git worktree list` exposes only the M0 coordinator worktree. Other module local worktree paths are unavailable here; do not infer local isolation from remote PR branches or visibility in other Codex windows.
+
+## Archived remote ownership snapshot (2026-10-15 20:12 UTC)
 
 # 模块文件所有权表
 
