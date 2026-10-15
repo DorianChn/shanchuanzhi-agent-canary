@@ -1,14 +1,14 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 07:02 UTC)
+## Current coordination evidence (2026-10-15 07:07 UTC)
 
 M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 owns its adapter, and M5 owns policy/router semantics. This record adds no runtime implementation.
 
 - **OBSERVE decision contract (#52):** M5 owner commit b6a40b4 preserves explicit policy DENY and its original reason under OBSERVE; dispatch remains blocked before approvals/callbacks. The commit is local on the existing #47 branch, so current GitHub head a6d610e does not yet contain it. Focused M5 tests pass 48/48.
 - **Symlink scope:** M5 b6a40b4 with verifyRealPaths enabled denies any symlink/junction component, including in-workspace non-sensitive aliases, matching the M1 literal-path resource boundary. verifyRealPaths=false retains legacy lexical behavior. M5 and M9 agree locally; exact GitHub cross-tree CI is pending.
-- **Adapter and integration order:** M2 candidate 76066cbb is the current remote head of PR #37 with exact-head CI 9/9. M9 commit 3dfef35 adds an independent-checkout CI regression to existing PR #36 and logs the four checked-out SHAs. Windows local composition passes 1/1 with M5 b6a40b4; the exact current remote M5 a6d610e fails the in-workspace alias DENY assertion as expected until b6 is pushed. Do not treat local tests as GitHub CI or production-host proof.
+- **Adapter and integration order:** M2 candidate 76066cbb is the current remote head of PR #37 with exact-head CI 9/9. M9 3dfef35 adds an independent-checkout CI regression to existing PR #36; run 38696382427 passes on Ubuntu and Windows (1/1 each), and both logs record M9 `3dfef3509ada2b974cd3e0c1e55e6b57d45b2074`, M1 `f14aab781c62db60ac241d2114f543f6cac223ae`, M2 `76066cbb750ec714ce8691bc0f30c8171186f079`, and M5 `b6a40b49f132decba97d269ff942d868fcef928f`. PR #36 exact-head checks are 13/13. Do not treat this synthetic composition as production-host proof.
 - **Production boundary:** M5 has no first-party production file-host consumer; actual I/O remains the host callback. A policy or adapter fixture does not prove a shipped host opts into canonical checks or performs protected-open/handle execution. Issue #52 stays P0/OPEN; production enforcement and TOCTOU remain NOT_VERIFIED.
-- **Current PR state:** #24 is OPEN/Draft, unchanged, with 11/11 checks. M9 #36 remote head f87a70f passes 11/11; local 3dfef35 is not pushed and its new cross-tree job has not run. M5 #47 remote head a6d610e passes 9/9; local b6a40b4 is not pushed yet. M2 #37 76066cb passes 9/9. M0 #30 remote e0a46d8 passes 10/10 including ownership-contract-evidence; local M0 commits are ahead and will carry the updated coordination record.
+- **Current PR state:** #24 is OPEN/Draft, unchanged, with 11/11 checks. M9 #36 head 3dfef35 passes 13/13 including both cross-tree jobs. M5 #47 head b6a40b4 passes 9/9. M2 #37 head 76066cb passes 9/9. M0 #30 head bd8686e passes 10/10 including ownership-contract-evidence.
 
 ## Archived coordination evidence (2026-10-15 06:05 UTC)
 

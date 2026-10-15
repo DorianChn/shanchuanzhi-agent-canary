@@ -1,15 +1,15 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 07:02 UTC)
+## Latest issue ledger (2026-10-15 07:07 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
-| #29 | P2 / M0 | M5 fix b6a40b4 and M9 cross-module CI test 3dfef35 are committed locally on their existing PR branches. No exclusive test resource is reserved. Usage page remains open and was readable above the 5% stop line at 07:02 UTC. | OPEN; cap active module work at two. VMware, real-model, installer tests require an exclusive reservation. Last public write 06:41:11 UTC; the 20-minute interval has elapsed; re-read usage immediately before the batch. |
-| #30 | P1 / M0 | PR #30 head e0a46d8 passes all 10 checks, including ownership-contract-evidence. Local M0 commit d2fde73 contains the validated ignore-rule update; this snapshot will be committed and pushed with it. | OPEN/Draft; push existing branch in the quota-checked batch and verify exact-head CI. |
+| #29 | P2 / M0 | M5 b6a40b4, M9 3dfef35, and M0 bd8686e are pushed to their existing PR branches. No exclusive test resource is reserved. Usage page remains open; reread it immediately before the next public-write batch. | OPEN; cap active module work at two. VMware, real-model, installer tests require an exclusive reservation. Last batch completed before 07:05 UTC; next public write no earlier than 07:25 UTC, after rereading usage. |
+| #30 | P1 / M0 | PR #30 head bd8686e passes all 10 checks, including ownership-contract-evidence and package-smoke. | OPEN/Draft; keep for coordination-doc review. |
 | #41 | P1 / M7 | PR #39 exact head `87e0df0` passes 11/11; no clean-VM install/launch/upgrade/uninstall/rollback evidence. | OPEN/HOLD; reserve the exclusive VM/installer resource before lifecycle testing. |
 | #45 | P1 / M2 | PR #37 exact head 76066cb passes 9/9; native Codex Shell host policy/callback remains unavailable. | OPEN/BLOCKED_NOT_VERIFIED; Native Shell remains UNPROTECTED. |
 | #51 | P1 / M1 | Historical Windows Node 20.20.2 run exhausted 500 `STATE_STORE_BUSY` retries before the 48-state assertions; exact source/test blobs later pass. No source defect or lock-owner trigger is confirmed. | OPEN; root cause UNKNOWN. Preserve `RETRY_LIMIT` and all assertions. |
-| #52 | P0 / M5 policy, M2 adapter, M9 integration; M0 coordinates | M5 local commit b6a40b4 fixes OBSERVE explicit-DENY projection and denies symlink/junction path components with verifyRealPaths enabled; owner reports focused tests 48/48 and build pass. PR #47 remote remains a6d610e. M9 commit 3dfef35 tests current owner PR refs in CI; local Windows composition passes with M5 b6 and identifies expected DENY failure on old remote a6. Production host wiring and protected open/handle remain NOT_VERIFIED. | OPEN. Push M5 before M9 in the existing PR branches; require exact-head and cross-tree CI. Do not close until production host boundary evidence exists; preserve TOCTOU limits. |
+| #52 | P0 / M5 policy, M2 adapter, M9 integration; M0 coordinates | M5 PR #47 head b6a40b4 passes 9/9. M9 PR #36 head 3dfef35 passes 13/13; cross-tree run 38696382427 passes on Ubuntu and Windows, and logs exact M1/M2/M5/M9 source SHAs. Production host wiring and protected open/handle remain NOT_VERIFIED. | OPEN. Preserve TOCTOU limits; do not close until a real product host demonstrates the protected open/handle enforcement path. |
 | #53 | P0 candidate / M1 logging contract, M7 packaging; branch-copy owners | M8 audit of #40 `454873c` found its wrapper matches M1's approved blob and its canary excludes caller input; exact-head CI 9/9. Clean-VM/package lifecycle and independent E4 remain NOT_VERIFIED. | OPEN pending complete reachable-copy/package evidence; no actual exposure or external transmission is claimed. |
 
 ## Archived issue ledger (2026-10-15 06:05 UTC)

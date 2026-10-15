@@ -1,11 +1,11 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 07:02 UTC)
+## Current integration risk snapshot (2026-10-15 07:07 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #52 OBSERVE alias contract | P0 | M5 local commit b6a40b4 preserves OBSERVE hard DENY and rejects symlink/junction components when verifyRealPaths is enabled; focused tests 48/48 and build pass. PR #47 remote is still a6d610e. M9 local commit 3dfef35 adds the actual cross-checkout CI test; Windows composition passes 1/1 with M5 b6 and correctly fails the ordinary-alias DENY assertion against remote a6. No production file host/held-handle wiring is verified. | Push M5, then M9 in the same quota-checked batch; require exact-head and cross-tree CI. Keep #52 OPEN until a real host uses protected open/handle enforcement; TOCTOU remains. |
-| #30 ownership evidence check | P1 | PR #30 exact head e0a46d8 passes product and ownership checks, 10/10 total. Local M0 coordination commit d2fde73 and follow-up ledger changes are not yet pushed. | Push the existing M0 branch in this batch and verify exact-head checks; keep PR OPEN/Draft for review. |
+| #52 OBSERVE alias contract | P0 | M5 PR #47 head b6a40b4 passes exact-head CI 9/9. M9 PR #36 head 3dfef35 passes exact-head CI 13/13; cross-checkout job 38696382427 passes Ubuntu and Windows 1/1 each against M1 f14aab7, M2 76066cb, M5 b6a40b4, and M9 3dfef35. No production file host/held-handle wiring is verified. | Keep #52 OPEN until a real host uses protected open/handle enforcement; TOCTOU and shipped-host integration remain unverified. |
+| #30 ownership evidence check | P1 | PR #30 exact head bd8686e passes product and ownership checks, 10/10 total. | Keep PR OPEN/Draft for review; coordination snapshot is current through this integration batch. |
 | #51 store retries | P1 | Historical Windows Node20 reached `RETRY_LIMIT` after 500 busy retries; later exact-source runs pass, but lock owner/timing evidence is absent. | Keep OPEN; root cause UNKNOWN. Preserve all assertions. |
 | #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive VM reservation and lifecycle artifacts. |
 | #45 native Shell | P1 | PR #37 checks 9/9; actual desktop host policy/callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
