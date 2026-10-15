@@ -12,7 +12,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const verifier = path.join(scriptDir, 'verify-bundle.mjs');
 const sha256 = data => createHash('sha256').update(data).digest('hex');
 
-function createValidRun(runDir) {
+function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4'} = {}) {
   fs.mkdirSync(runDir, { recursive: true });
   const cases = [
     'GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION',
@@ -26,7 +26,7 @@ function createValidRun(runDir) {
   const report = {
     e4Status: 'NOT_VERIFIED',
     overall: 'AUTHOR_AUTOMATION_COMPLETE_E4_STILL_NOT_VERIFIED',
-    classification: 'AUTHOR_AUTOMATION_RUN_NOT_E4',
+    classification,
     operatorRole: 'author',
     source: { commit: '1'.repeat(40) },
     cases
@@ -119,3 +119,13 @@ for (const [label, mutate] of [
     assert.match(invalid.stderr, /E4_BUNDLE_METADATA_MISMATCH_OR_PROMOTED/);
   });
 }
+
+test('E4 verifier rejects a promoted classification when report and bundle metadata agree', t => {
+  const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-verifier-'));
+  t.after(() => fs.rmSync(runDir, { recursive: true, force: true }));
+  createValidRun(runDir, {classification: 'E4_VERIFIED'});
+
+  const invalid = runVerifier(runDir);
+  assert.equal(invalid.status, 1, invalid.stderr);
+  assert.match(invalid.stderr, /E4_AUTOMATION_MUST_NOT_PROMOTE_VERDICT/);
+});

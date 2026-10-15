@@ -49,7 +49,11 @@ for (const name of ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log']) {
   if (!external.equals(archived)) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
 }
 const report = JSON.parse(reportBytes.toString('utf8'));
-if (report.e4Status !== 'NOT_VERIFIED' || report.overall.includes('PASS')) throw new Error('E4_AUTOMATION_MUST_NOT_PROMOTE_VERDICT');
+if (
+  report.e4Status !== 'NOT_VERIFIED' ||
+  report.overall.includes('PASS') ||
+  !['AUTHOR_AUTOMATION_RUN_NOT_E4', 'EXTERNAL_CLAIM_NOT_INDEPENDENTLY_VERIFIED'].includes(report.classification)
+) throw new Error('E4_AUTOMATION_MUST_NOT_PROMOTE_VERDICT');
 if (
   metadata.schema !== 'agent-canary.e4-bundle.v1' ||
   metadata.archive !== 'evidence.zip' ||

@@ -54,3 +54,19 @@ test('Auto E4 rejects invalid stage status rather than treating it as PASS',asyn
   const stage=await run.stage('environment',async()=>({status:'VERIFIED',detail:{}}));
   assert.equal(stage.status,'FAIL');assert.equal(stage.detail.error,'INVALID_STAGE_STATUS');run.release();
 });
+
+test('Auto E4 artifact writer refuses to overwrite a prior report',t=>{
+  const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-artifacts-'));
+  t.after(()=>fs.rmSync(runDir,{recursive:true,force:true}));
+  const report={runId:'synthetic',technicalResult:'PARTIAL',overallE4:'E4 EXTERNAL INDEPENDENCE NOT VERIFIED',coverage:{verified:0,total:AUTO_E4_STAGES.length},stages:[],completedAt:'2026-01-01T00:00:00.000Z'};
+  const files=writeAutoE4Artifacts(report,runDir);
+  const originalJson=fs.readFileSync(files.jsonFile,'utf8');
+  const originalMarkdown=fs.readFileSync(files.mdFile,'utf8');
+  const originalIndex=fs.readFileSync(files.indexFile,'utf8');
+
+  report.technicalResult='FAIL';
+  assert.throws(()=>writeAutoE4Artifacts(report,runDir),/AUTO_E4_ARTIFACT_ALREADY_EXISTS/);
+  assert.equal(fs.readFileSync(files.jsonFile,'utf8'),originalJson);
+  assert.equal(fs.readFileSync(files.mdFile,'utf8'),originalMarkdown);
+  assert.equal(fs.readFileSync(files.indexFile,'utf8'),originalIndex);
+});
