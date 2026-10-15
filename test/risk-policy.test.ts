@@ -67,6 +67,24 @@ test('M1 pre-execution denial reason is accepted only for the OBSERVE symlink al
  assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
  assert.equal(fs.readFileSync(secret,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
 });
+test('M5 verifyRealPaths rejects in-workspace non-sensitive symlink aliases; legacy lexical mode remains compatible',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'in-workspace-path-alias-'));
+ const targetDirectory=path.join(root,'docs'),target=path.join(targetDirectory,'fixture.txt'),alias=path.join(root,'public');
+ fs.mkdirSync(targetDirectory);fs.writeFileSync(target,'M5_PUBLIC_FIXTURE');
+ fs.symlinkSync(targetDirectory,alias,process.platform==='win32'?'junction':'dir');
+ const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+ for(const mode of ['OBSERVE','BALANCED','STRICT'] as const){
+  let callbacks=0;const guard=createAgentGuard({sessionId:'test-in-workspace-alias-'+mode,alert:false});
+  const router=createSecurityToolRouter({guard,workspaceRoot:root,mode,verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+  const call={name:'read',args:{file_path:'public/fixture.txt'}};
+  const preview=await router.decide(call);assert.equal(preview.action,'DENY');assert.equal(preview.reason,'host_pre_execution_review_denied');
+  await assert.rejects(router.dispatch(call),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='host_pre_execution_review_denied');
+  assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
+  assert.equal(fs.readFileSync(target,'utf8'),'M5_PUBLIC_FIXTURE');assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+ }
+ let legacyCallbacks=0;const legacy=createSecurityToolRouter({guard:createAgentGuard({sessionId:'test-in-workspace-alias-legacy',alert:false}),workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:false,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{legacyCallbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+ assert.equal(await legacy.dispatch({name:'read',args:{file_path:'public/fixture.txt'}}),'M5_PUBLIC_FIXTURE');assert.equal(legacyCallbacks,1);
+});
 test('file-read through an in-workspace junction cannot escape workspace in any mode',async()=>{
  const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'outside-path-alias-'));
  const root=path.join(base,'workspace'),outside=path.join(base,'outside');fs.mkdirSync(root);fs.mkdirSync(outside);

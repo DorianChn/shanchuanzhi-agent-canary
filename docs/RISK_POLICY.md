@@ -17,7 +17,7 @@ await router.dispatch({ name: 'read_file', args: { path: 'README.md' } });
 
 工具描述必须由可信宿主提供，不能来自模型参数。工具别名和参数都会参与判断。类型：READ_ONLY、WRITE、EXECUTE、NETWORK、SENSITIVE_DATA、DESTRUCTIVE。
 
-真实文件系统宿主应通过 `createSecurityToolRouter({ verifyRealPaths: true })` 显式启用真实路径检查。此选项也传递给底层风险策略，使其在文件读取前按规范路径检查 workspace containment 和敏感路径标记；缺省/`false` 保持旧版词法路径行为。Host executor 仍需防范检查与打开文件之间的路径竞争，并自行实施 OS 权限边界。
+真实文件系统宿主应通过 `createSecurityToolRouter({ verifyRealPaths: true })` 显式启用真实路径检查。此选项也传递给底层风险策略，使其在文件操作前按规范路径检查 workspace containment 和敏感路径标记；遇到任一符号链接或 Windows junction 路径组件时拒绝，即使链接目标仍位于 workspace 内且不是敏感文件。该规则与 M1 Gateway 的文件别名边界一致：策略预览和最终路由都以宿主提供的字面路径作为能力输入，不将别名解析当作授权。缺省/`false` 保持旧版词法路径行为。Host executor 仍需防范检查与打开文件之间的路径竞争，并自行实施 OS 权限边界。
 
 | 模式 | 正常公开读取、审定只读命令 | 写入、构建、未审定网络 | 明显秘密外传、越界路径 | 已隔离 Guard |
 |---|---|---|---|---|
@@ -73,7 +73,7 @@ if (preview.conflicts.length === 0) router.policyManager.apply(preview.rules, 'a
 1. 同一 Guard 对象的多个策略 Router 共享有界串行队列，避免敏感读取与外传竞争。
 2. 诱饵不等待队列，立即产生 Guard 隔离信号。已经开始的 callback 无法撤回。
 3. 敏感操作开始前标记会话；即使 callback 抛错也保留。相同 Guard 更换模式不清除标记。不同 Guard 对象之间不共享该标记；宿主必须将会话绑定稳定主体，并用权限/持久策略覆盖重新建会话。原有 shared-state quarantine 独立保持。
-4. 默认策略依据词法路径、请求参数和已知信号，**不完整解析 Shell、不解析 symlink/realpath、不执行 DNS/网络沙箱**。真实文件系统宿主应设置 `verifyRealPaths: true`，用规范路径检查文件读取是否离开 workspace，并检查目标是否落在已知敏感路径；此检查不能替代原子文件打开或 OS 权限隔离。宿主还需固定工作目录、执行程序与网络目的地址；`static-read` 必须确实无副作用。
+4. 默认策略依据词法路径、请求参数和已知信号，**不完整解析 Shell、不解析 symlink/realpath、不执行 DNS/网络沙箱**。真实文件系统宿主应设置 `verifyRealPaths: true`：该选项会拒绝 file-read/file-write/delete 路径中的每个符号链接或 junction 组件（包括指向 workspace 内非敏感目标的链接），并用规范路径检查 containment 和敏感目标。它与 M1 Gateway 的字面路径/资源身份契约一致；`false` 仍保留词法 legacy 行为。检查不能替代原子文件打开或 OS 权限隔离。宿主还需固定工作目录、执行程序与网络目的地址；`static-read` 必须确实无副作用。
 5. 最终 Guard 在 callback 前检查；Token 参数和返回结果精确检查保留。返回结果中首次出现的 Token 不能撤回该次已执行 callback。
 6. AI 分析在第四轮 D2 中发生于决策之后；超时/断线不导致放行或改变隔离。模型建议既不批准也不 Reset。
 7. 策略审计失败时不执行 callback；日志不记录原始 args。未注册工具视为 UNKNOWN 并直接拒绝，不能通过一次性审批绕过宿主能力注册。
@@ -84,4 +84,4 @@ if (preview.conflicts.length === 0) router.policyManager.apply(preview.rules, 'a
 
 ## English summary
 
-The optional router enforces host-owned tool descriptors and parameter/context checks before registered callbacks. OBSERVE logs while allowing ordinary registered operations that only require optional approval; it still denies sensitive-data access or egress, explicit hard denials, and paths outside the workspace. BALANCED requires authenticated human approval for writes/unreviewed commands; STRICT denies them. All modes retain Guard quarantine. Approval is immutable, expiring and one-shot; host authentication is mandatory. AI advice never grants rights. Same-Guard routers serialize operations and retain sensitive-data taint across mode changes; a new Guard object does not inherit policy taint. Host executors remain responsible for real paths, symlinks, executable resolution, network controls, identity and every call outside this router.
+The optional router enforces host-owned tool descriptors and parameter/context checks before registered callbacks. OBSERVE logs while allowing ordinary registered operations that only require optional approval; it never masks a deterministic DENY. With `verifyRealPaths: true`, file-read/file-write/delete paths containing any symlink or Windows junction component are denied, including aliases to in-workspace non-sensitive targets, matching M1 Gateway's literal-path resource boundary; `false` retains legacy lexical behavior. All modes retain Guard quarantine. Approval is immutable, expiring and one-shot; host authentication is mandatory. AI advice never grants rights. Same-Guard routers serialize operations and retain sensitive-data taint across mode changes; a new Guard object does not inherit policy taint. Host executors remain responsible for atomic/no-follow opens, executable resolution, network controls, identity and every call outside this router.
