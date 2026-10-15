@@ -1,30 +1,32 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-14 23:40 UTC)
+## Current authoritative snapshot (2026-10-15 00:14 UTC)
 
-- 用量页23:40 UTC可读、处于前台且高于5%停工线；标签按用户要求保持打开。精确用量只保存在gitignore忽略的本地报告。低于5%或读数不可确认时停止开发、测试、浏览器与GitHub操作。
-- Issue #32截至23:40没有M3/M4 owner回复；M3 PR #33为`d9364cc5ad533b8b922859e97d2387e70718d931`，M4 PR #34为`69ec7f19d8f07a5dd1a7f482e62efbad88f0069b`，23:33检查的两个工作树均干净。Issue #32 comment `6180318160`记录UNACKNOWLEDGED/HOLD；stop-hold队列回执不证明已读或停工，暂不排替换任务。
-- M6不占开发槽；Issue #27保持OPEN，`6179220160`是释放槽位记录，不是owner signoff。23:22已在#27 comment `6180684215`请求MATCH_CONFIRMED/CORRECTION_REQUIRED/BLOCKED owner disposition；截至23:40无回复。PR #38仍OPEN/Draft at `ed82f0612b9f69463afc9c80a1082b951e7e88fe`，9项检查通过；M6/M9脚本值静态匹配，外部E4 NOT_VERIFIED；M6未跟踪证据目录保留。
-- M0已向M2和M7发出状态/验收请求，不创建新开发槽：#45 comment `6180703055`请求原生宿主证据或BLOCKED_NOT_VERIFIED；#41 comment `6180703085`请求生命周期证据或BLOCKED_RESERVATION。两者截至23:40均无owner回复，Codex队列回执不证明消息已消费；VM/安装测试仍须先在#29显示互斥资源预留。
-- M0 PR #30 OPEN/Draft at `8e2eb76025bec979d41bb9bbbc49f2c1fa6d4e37`：产品run `38655029041`通过9/9；正文更新后的ownership run `38655448652`通过1/1。Issue #29 body及PR正文23:38已回读，CI完成评论`6180909945`于23:40已回读。最近分支push为23:35 UTC，下一批不早于23:55 UTC。
-- PR #24仍OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，11项检查通过，未修改/合并。M9 PR #36仍OPEN/Draft at `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`；integration工作树干净、无unmerged entries，11项检查通过。
-- M1 PR #43仍OPEN/Draft at `4b562bed32ebcc3f241a17543d8d2ce9f6108c26`，当前9项检查通过；Issue #44已于17:53 UTC以COMPLETED关闭。P1门槛仍有#27 owner signoff/组合验收、#32分支验收、#41 clean-VM生命周期、#45原生Codex Shell UNPROTECTED；外部E4 NOT_VERIFIED，M4后端UNKNOWN。
-- 本次M0协调状态更新仅触及协调文档；未改模块源码、未运行产品测试、未合并main/PR #24、未发布Release。
 
-## Current module and PR matrix (2026-10-14 23:47 UTC)
+- 用量页00:14 UTC可读、处于活动标签且高于5%停工线；按用户要求一直保持打开。精确额度只保存在gitignore忽略的本地报告；低于5%或读数不可确认时停止开发、测试、浏览器与GitHub操作。
+- Issue #32仍OPEN。最新M0 HOLD评论为`6181111750`（23:55 UTC）；截至00:02无M3/M4 owner回复。PR #33 head `d9364cc5ad533b8b922859e97d2387e70718d931`、PR #34 head `69ec7f19d8f07a5dd1a7f482e62efbad88f0069b`未变；00:01核对两个Windows工作树均干净。M3/M4维持UNACKNOWLEDGED/HOLD，队列回执不证明停止消息已读；不编辑其分支，也不排替换任务。
+- Issue #27仍OPEN。M6 owner在23:22请求`6180684215`后没有字段签核；PR #38 head `ed82f0612b9f69463afc9c80a1082b951e7e88fe`的9项检查通过。M6/M9三个E4脚本值静态相同，但外部E4仍NOT_VERIFIED；未跟踪的`security-lab/e4-runs/20261013T114513Z/`保持原样。
+- Issue #45/#41仍OPEN。M2正在审计现有PR #37 / Issue #45范围；截至00:14未发现新代码缺陷，原生Codex Shell仍UNPROTECTED且暂无支持宿主证据。M7生命周期状态仍待回复；clean-VM安装、启动、升级、卸载与取消回滚仍NOT_VERIFIED。VM/安装测试在#29出现明确、互斥的资源预留前不得启动。
+- M0 PR #30 OPEN/Draft at `68f3fa237464b68781d182e42ec8a854e29a4c05`：产品run `38657007532`通过9/9，ownership run `38657007478`通过1/1。PR正文和Issue #29尚待本批同步；最近推送23:55 UTC，下一批不早于00:15 UTC。
+- PR #24仍OPEN/Draft，base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，11项检查通过且未修改/合并。M9 PR #36在`6abd4da78f161577bff90a5d18fd0d3ec329fdd3`有11/11通过，集成审计正在比对接口契约；初步发现M0/M9的`API_CONTRACTS.md` blob不同；M9在00:14确认接口正文从TrustedExecutionGateway起逐字节相同，差异仅为顶部owner、fixture与status快照。M9正更新自有集成计划，不整颗cherry-pick已分叉的M0分支。M1 PR #43在`4b562bed32ebcc3f241a17543d8d2ce9f6108c26`有9/9通过。
+- M1与M9的`test/agent-hook.test.ts` blob均为`6c2d8da18e1832bc738d141cd811b4b3f047756e`；M3、M4在各自现有PR上的副本仍为旧blob`1ecb3ee8b45f1fbe942a25bcd5ce696f82534601`。按#32的当前HOLD状态，不自行移植到M3/M4分支。#27签核、#32分支fixture、#41 clean-VM生命周期、#45原生Shell及外部E4仍是未关闭门槛；M4后端状态UNKNOWN。
+- M1对现有分支的审计已完成：Node 20/22 Hook日志各337项通过、0失败，`marker=true`且SIGTERM；未发现需改的M1代码。M1子进程夹具不证明真实宿主callback，#32仍OPEN。
+- 当前两个模块槽位为M2/#45与M9/#36，均使用现有worktree和分支。Issue #29线上正文仍记载上一组M1/M9槽位；M0将在下一推送批次同步正文和PR #30说明。未合并main/PR #24，未发布Release。
+
+## Current module and PR matrix (2026-10-15 00:14 UTC)
 
 | Module | Existing branch / PR head | Exact-head checks | Current acceptance state | Worktree evidence |
 | --- | --- | --- | --- | --- |
-| M1 | feature/ac3-security-core / PR #43 4b562bed32ebcc3f241a17543d8d2ce9f6108c26 | 9/9 pass | Issue #44 closed; Hook interruption root cause and native callback remain UNKNOWN/NOT_VERIFIED in #32. | Windows worktree clean at23:45; HEAD matches PR head. |
-| M2 | feature/ac3-execution-isolation / PR #37 0f2c10cbe34fdbb21f1dea5fed2cead300520dba | 9/9 pass | Native Codex Shell remains UNPROTECTED; #45 owner evidence/status request pending. | WSL-managed; not inspected with Windows Git. |
-| M3 | feature/ac3-agent-onboarding / PR #33 d9364cc5ad533b8b922859e97d2387e70718d931 | 9/9 pass | #32 task UNACKNOWLEDGED/HOLD. | Windows worktree clean at23:33. |
-| M4 | feature/ac3-desktop-security-center / PR #34 69ec7f19d8f07a5dd1a7f482e62efbad88f0069b | 9/9 pass | #32 task UNACKNOWLEDGED/HOLD; backend security/E4 remains UNKNOWN. | Windows worktree clean at23:33. |
+| M1 | feature/ac3-security-core / PR #43 4b562bed32ebcc3f241a17543d8d2ce9f6108c26 | 9/9 pass | Audit found no justified M1 code change; #32 stays open because callback/root cause are UNKNOWN/NOT_VERIFIED. | Windows worktree clean; HEAD matches PR head. |
+| M2 | feature/ac3-execution-isolation / PR #37 0f2c10cbe34fdbb21f1dea5fed2cead300520dba | 9/9 pass | Bounded #45 audit active; native Codex Shell remains UNPROTECTED pending supported-host evidence. | WSL-managed; M2 agent is using its existing worktree. |
+| M3 | feature/ac3-agent-onboarding / PR #33 d9364cc5ad533b8b922859e97d2387e70718d931 | 9/9 pass | #32 task UNACKNOWLEDGED/HOLD. | Windows worktree clean at00:01. |
+| M4 | feature/ac3-desktop-security-center / PR #34 69ec7f19d8f07a5dd1a7f482e62efbad88f0069b | 9/9 pass | #32 task UNACKNOWLEDGED/HOLD; backend security/E4 remains UNKNOWN. | Windows worktree clean at00:01. |
 | M5 | feature/ac3-policy-audit / PR #47 7d5df632df6e6d8561c594dcd6772b357cca58c7 | 9/9 pass | Sensitive-read hard DENY remains; #48 is closed only for recorded narrow behavior. | WSL-managed; not inspected with Windows Git. |
-| M6 | feature/ac3-e4-validation-ac3 / PR #38 ed82f0612b9f69463afc9c80a1082b951e7e88fe | 9/9 pass | Owner signoff on e4:auto/e4:verify/e4:test pending; external E4 NOT_VERIFIED. | Windows worktree retains untracked security-lab/e4-runs/20261013T114513Z/ at23:47. |
-| M7 | feature/ac3-reliability-ac3 / PR #39 4267c61b607d457c72cf1bc60e7843f76c3e4075 | 9/9 CI + 2/2 wrapper pass | Clean-VM install/launch/upgrade/uninstall/cancel rollback NOT_VERIFIED; #41 status request pending. | WSL-managed; not inspected with Windows Git. |
+| M6 | feature/ac3-e4-validation-ac3 / PR #38 ed82f0612b9f69463afc9c80a1082b951e7e88fe | 9/9 pass | Owner signoff on e4:auto/e4:verify/e4:test pending; external E4 NOT_VERIFIED. | Windows worktree retains untracked security-lab/e4-runs/20261013T114513Z/ at00:01. |
+| M7 | feature/ac3-reliability-ac3 / PR #39 4267c61b607d457c72cf1bc60e7843f76c3e4075 | 11/11 pass | Clean-VM install/launch/upgrade/uninstall/cancel rollback NOT_VERIFIED; #41 status request pending. | WSL-managed; not inspected with Windows Git. |
 | M8 | feature/ac3-open-source-product / PR #40 139e7f271818e9d8e0e04141be4f31a597d69508 | 9/9 pass | Open-source experience PR remains Draft; Release unpublished. | WSL-managed; not inspected with Windows Git. |
-| M9 | feature/ac3-m9-integration / PR #36 6abd4da78f161577bff90a5d18fd0d3ec329fdd3 | 9/9 CI + 2/2 wrapper pass | Integration worktree has no unmerged entries; E4, native Shell, and clean-VM gates remain open. | Windows worktree clean at23:47. |
-| M0 | feature/ac3-m0-coordination / PR #30 8e2eb76025bec979d41bb9bbbc49f2c1fa6d4e37 | 9/9 CI + 1/1 ownership pass | PR remains OPEN/Draft; latest docs changes are local for the next 23:55 UTC batch. | Windows coordinator worktree has only M0 status/risk doc edits. |
+| M9 | feature/ac3-m9-integration / PR #36 6abd4da78f161577bff90a5d18fd0d3ec329fdd3 | 11/11 pass | Bounded integration audit active; API contract body is identical; blob drift is snapshot metadata only. M9-owned integration plan refresh is active. E4, native Shell, and clean-VM gates remain open. | Windows worktree clean at00:09; no unmerged entries. |
+| M0 | feature/ac3-m0-coordination / PR #30 68f3fa237464b68781d182e42ec8a854e29a4c05 | 10/10 pass | PR remains OPEN/Draft; docs await the next 00:15 UTC batch. | Coordinator worktree has only M0 status/issue/risk doc edits. |
 
 ## Archived snapshot (2026-10-14 22:34 UTC)
 
@@ -354,3 +356,4 @@ PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPE
 ## M0 交付边界
 
 已建立 `main/`（AC3 detached 基线快照）、`agents/M1–M8`、`coordinator/`、`integration/`、`reports/`、`logs/`。根仓库 `main` checkout 保持原状。M0 未改 M1–M8 源码，未合并 main，未发布 Release。WSL 与 Windows 工作树各由对应 Git runtime 读取；交叉 runtime 会显示不兼容指针为 `prunable`，没有执行 `repair/prune`。
+- 00:08 UTC曾把两个开发槽分配给M1/M9；复核GitHub后确认Issue #29线上正文仍停留在00:02的M1/M9快照。00:09 UTC本地将空出的槽位转给M2现有#45工作树，与M9并行；下一推送批次同步Issue #29。
