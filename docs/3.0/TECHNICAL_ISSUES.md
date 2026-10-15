@@ -1,3 +1,6 @@
+## Coordinator resource update (2026-10-15 12:27 UTC)
+
+- **#29 P2:** The latest remote scheduler comment remains 11:53 UTC. This coordinator has no active module-code task; occupancy in other Codex windows remains UNKNOWN. No VMware, model, or installer reservation is verified. Keep the exclusive resource unavailable until a complete reservation/release record exists.
 ## Coordinator P0 status (2026-10-15 12:26 UTC)
 
 - **#52 P0:** Still OPEN. Its last update says policy/adapter/synthetic composition evidence does not establish a first-party production filesystem host enforcing protected open/handle semantics. Require host-path alias, handle, and TOCTOU evidence.

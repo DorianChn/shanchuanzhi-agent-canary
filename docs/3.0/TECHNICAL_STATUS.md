@@ -1,3 +1,7 @@
+## Coordinator resource checkpoint (2026-10-15 12:27 UTC)
+
+- No new reservation or cross-window occupancy evidence appeared after Issue #29's 11:53 UTC snapshot. This coordinator has no active module-code task; M3's response remains pending. Global parallel-slot use is UNKNOWN.
+- No VMware, real-model, or installer test has been reserved or started here. Keep the shared exclusive slot unavailable until a named owner, existing worktree, start time, and release time are recorded.
 ## Coordinator issue-state reconciliation (2026-10-15 12:26 UTC)
 
 - Current GitHub reads show Issue #27 CLOSED (updated 04:10 UTC). Its last comment references an M9 combined-test head 37a09e8 and states external E4 remains NOT_VERIFIED. That is historical issue evidence; current live PR #36 was separately observed at de3799a with failing Ubuntu/Windows composition checks, so do not treat the closed issue comment as current PR acceptance.
