@@ -4,9 +4,10 @@ import crypto from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {walkPayloadFiles as walk,walkPayloadDirectories} from './payload-walk.mjs';
+import {renderInstallerScript} from './render-installer.mjs';
 const src=path.dirname(fileURLToPath(import.meta.url));
 const [payloadArg,nsisArg,zipArg,wrapperSHA]=process.argv.slice(2);
-if(!payloadArg||!nsisArg||!zipArg||!/^[a-f0-9]{40}$/.test(wrapperSHA||'')||process.platform!=='win32')throw Error('Usage: node build.mjs PAYLOAD_DIR NSIS_DIR');
+if(!payloadArg||!nsisArg||!zipArg||!/^[a-f0-9]{40}$/.test(wrapperSHA||'')||process.platform!=='win32')throw Error('Usage: node build.mjs PAYLOAD_DIR NSIS_DIR COMMUNITY_ZIP WRAPPER_SOURCE_COMMIT_SHA');
 const root=path.resolve(payloadArg),nsis=path.resolve(nsisArg),output=path.dirname(root);
 const hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 for(const f of ['worker.mjs','verification.mjs','auto-e4.mjs','e4-hook-faults.mjs'])fs.copyFileSync(path.join(src,f),path.join(root,f));
@@ -31,17 +32,8 @@ const generated=path.join(output,'Launcher.generated.cs');fs.writeFileSync(gener
 function run(exe,args){const r=spawnSync(exe,args,{cwd:output,encoding:'utf8',windowsHide:true,timeout:240000,maxBuffer:5*1024*1024});fs.appendFileSync(path.join(output,'build.log'),JSON.stringify({exe:path.basename(exe),args,exit:r.status,stdout:r.stdout,stderr:r.stderr})+'\n');if(r.status!==0)throw Error('BUILD_FAILED: '+r.stdout+r.stderr);}
 run(path.join(process.env.WINDIR,'Microsoft.NET/Framework64/v4.0.30319/csc.exe'),['/nologo','/target:winexe','/platform:x64','/optimize+','/reference:System.Windows.Forms.dll','/reference:System.Drawing.dll','/reference:System.Web.Extensions.dll','/win32manifest:'+path.join(src,'app.manifest'),'/out:'+path.join(root,'AgentCanary.exe'),generated]);
 const owned=walk(root),dirs=new Set(walkPayloadDirectories(root));
-const esc=s=>s.replaceAll('$','$$');
-let nsi=fs.readFileSync(path.join(src,'installer.nsi.in'),'utf8').replaceAll('candidate.3',candidateLabel).replaceAll('Candidate3',`Candidate${candidateNumber}`).replaceAll('Agent Canary Community.lnk',`Agent Canary Community ${candidateLabel}.lnk`);
-nsi=nsi.replaceAll("$SMPROGRAMS\\Agent Canary Community",`$SMPROGRAMS\\Agent Canary Community ${candidateLabel}`);
-const values={OUTPUT:esc(path.join(output,'AgentCanary-Community-Setup.exe')),PAYLOAD:esc(root),LICENSE:esc(path.join(root,'app/LICENSE')),ANCHOR:anchor,DELETE:owned.map(p=>' Delete "$INSTDIR\\'+p.replaceAll('/','\\')+'"').join('\n'),RMDIR:[...dirs].sort((a,b)=>b.split('/').length-a.split('/').length).map(d=>' RMDir "$INSTDIR\\'+d.replaceAll('/','\\')+'"').join('\n')};
-for(const[k,v]of Object.entries(values))nsi=nsi.replaceAll('__'+k+'__',v);
-const reparse=[...dirs,''].map(d=>{
- const target='$INSTDIR'+(d?'\\'+d.replaceAll('/','\\'):'');
- return ' System::Call \'kernel32::GetFileAttributesW(w "'+target+'") i.r0\'\n IntOp $1 $0 & 0x400\n ${If} $0 != -1\n ${AndIf} $1 != 0\n  MessageBox MB_ICONSTOP "Redirected directory rejected; no files deleted / 目录被重定向，拒绝卸载删除。"\n  Abort\n ${EndIf}';
-}).join('\n');
-nsi=nsi.replaceAll('__REPARSE_CHECKS__',reparse);
-fs.writeFileSync(path.join(output,'installer.nsi'),'\uFEFF'+nsi);
+const nsi=renderInstallerScript({source:fs.readFileSync(path.join(src,'installer.nsi.in'),'utf8'),output:path.join(output,'AgentCanary-Community-Setup.exe'),payload:root,license:path.join(root,'app/LICENSE'),anchor,candidateNumber,ownedFiles:owned,directories:[...dirs]});
+fs.writeFileSync(path.join(output,'installer.nsi'),nsi);
 run(path.join(nsis,'makensis.exe'),['/V3',path.join(output,'installer.nsi')]);
 const setup=path.join(output,'AgentCanary-Community-Setup.exe');const result={version,manifestSHA256:anchor,launcherSHA256:hash(path.join(root,'AgentCanary.exe')),installerSHA256:hash(setup),installerBytes:fs.statSync(setup).size,ownedFiles:owned.length,unsigned:true};
 fs.writeFileSync(path.join(output,'BUILD_RESULT.json'),JSON.stringify(result,null,2));fs.writeFileSync(setup+'.sha256',result.installerSHA256+'  AgentCanary-Community-Setup.exe\n');console.log(JSON.stringify(result));
