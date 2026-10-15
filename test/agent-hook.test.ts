@@ -16,14 +16,17 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
  const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
  assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
 });
-test('native lab wrapper allows fixture read and rejects destructive command',()=>{
+test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
- for(const [tool,input,expected]of [['Read',{file_path:'normal.txt',note:'NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE'},'allow'],['Bash',{command:'rm -- victim.txt'},'deny']] as const){
+ for(const [tool,input]of [['Read',{file_path:'normal.txt',note:'NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE'}],['Write',{file_path:'normal.txt',content:'WRITE_BODY_LOG_SENTINEL'}],['Delete',{file_path:'normal.txt'}],['Bash',{command:'rm -- victim.txt'}]] as const){
  const r=spawnSync(process.execPath,[file,path.resolve('dist/agent-hook.js'),root,path.join(root,'wrapper-state'),log],{input:JSON.stringify({session_id:'wrapper-test',tool_name:tool,tool_input:input}),encoding:'utf8',env:{...process.env,AGENT_CANARY_HOME:path.join(root,'wrapper-home')}});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,expected);
+  assert.equal(r.status,0);const decision=JSON.parse(r.stdout).hookSpecificOutput;
+  assert.equal(decision.permissionDecision,'deny');
+  if(tool!=='Bash')assert.equal(decision.permissionDecisionReason,'Agent Canary: native_file_execution_not_pinned');
  }
- const records=fs.readFileSync(log,'utf8');assert.equal(records.trim().split('\n').length,2);assert.ok(!records.includes('NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE'));
+ const records=fs.readFileSync(log,'utf8');assert.equal(records.trim().split('\n').length,4);assert.ok(!records.includes('NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE'));assert.ok(!records.includes('WRITE_BODY_LOG_SENTINEL'));
+ assert.equal(fs.readFileSync(path.join(root,'normal.txt'),'utf8'),'NORMAL_FIXTURE');
 });
 
 test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
