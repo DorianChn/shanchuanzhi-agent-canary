@@ -1,18 +1,18 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 00:49 UTC)
+## Current integration risk snapshot (2026-10-15 00:54 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #27 M6 package fields and E4 evidence | P1 | M6 exact head 4e39762 passes 18/18 focused tests. Shared Hook CI has one actual Windows Node22 marker failure, a Windows Node20 fail-fast cancellation whose npm test passed 323/0, and skipped package-smoke. | Keep OPEN until exact-head CI passes, package-field owner signs off, and M9 records combined acceptance; external E4 NOT_VERIFIED. |
-| #32 Hook interruption fixture | P1 | M1 exact head passes Windows Node20/22 and local Node22 test; M6 exact head fails the Windows Node22 marker assertion. M1 recommends transplanting only the spawn import and interruption test block; whole commit 46af1f1 changes four paths and is not a safe cherry-pick. M3/M4 remain UNACKNOWLEDGED/HOLD. | Keep OPEN; preserve fail-closed/no-decision/no-output assertions and rerun M6 focused tests plus exact-head CI after adaptation. Keep native host callback NOT_VERIFIED; root cause UNKNOWN. |
+| #27 M6 package fields and E4 evidence | P1 | M6 remote exact head 4e39762 has 18/18 local focused E4 tests but shared Hook CI has one actual Windows Node22 marker failure, a Windows Node20 fail-fast cancellation whose npm test passed 323/0, and skipped package-smoke. Local candidate 0908449 changes only the test fixture and passes Hook 10/10 plus E4 18/18; new exact-head CI is pending push. | Keep OPEN until exact-head CI passes, package-field owner signs off, and M9 records combined acceptance; external E4 NOT_VERIFIED. |
+| #32 Hook interruption fixture | P1 | M1 exact head passes Windows Node20/22 and local Node22 test; M6 exact head fails the Windows Node22 marker assertion. M6 local commit 0908449 transplants only the M1-verified async spawn import and interruption block, including the 2.5s parent delay; focused Hook 10/10. Whole commit 46af1f1 changes four paths and is not a safe cherry-pick. M3/M4 remain UNACKNOWLEDGED/HOLD. | Keep OPEN; preserve fail-closed/no-decision/no-output assertions and rerun M6 focused tests plus exact-head CI after adaptation. Keep native host callback NOT_VERIFIED; root cause UNKNOWN. |
 | #45 native Codex Shell | P1 | M2 audit complete; Native Shell remains UNPROTECTED without supported-host evidence. | Keep OPEN; require supported-host proof or explicit UNPROTECTED/BLOCKED status. |
 | #41 installer lifecycle | P1 | Clean-VM lifecycle remains NOT_VERIFIED; no exclusive reservation. | Keep OPEN/HOLD pending visible resource reservation and lifecycle evidence. |
 | External E4 / M4 backend | P1 | Independent E4 NOT_VERIFIED; M4 backend UNKNOWN. | Make no PASS claim without independent evidence. |
 | Exclusive VM/model/installer resources | P2 | Occupancy in other windows is unknown. | Treat unavailable until owner/worktree/start/release is recorded on #29. |
 | Quota / push cadence | Scheduling | Usage page remains open/readable above stop threshold; exact values local-only. Last push 00:36 UTC. | Stop if quota <5% or unreadable. Next push no earlier than 00:56 UTC. |
 
-M0 PR #30 is OPEN/Draft at e94f630038144c68aedb3ff5358c473e80dfc0f0 with 10/10 checks. M9 PR #36 remains at 8f713a29356380f5c8ec6d4360a3579f323de315 with 11/11 checks; M9 documentation follow-up 663b997e938ab1f0d02ce3945af76b20eabc863b is local and not pushed. M1 PR #43 remains at 4b562bed32ebcc3f241a17543d8d2ce9f6108c26 with 9/9 checks. PR #24 remains OPEN/Draft, unchanged, with 11/11 checks.
+M0 PR #30 is OPEN/Draft at e94f630038144c68aedb3ff5358c473e80dfc0f0 with 12/12 checks. M9 PR #36 remains at 8f713a29356380f5c8ec6d4360a3579f323de315 with 11/11 checks; M9 documentation follow-ups 663b997e938ab1f0d02ce3945af76b20eabc863b and d133c35ae27274035cc0d854e0f07a8c955fbdaa are local and not pushed. M1 PR #43 remains at 4b562bed32ebcc3f241a17543d8d2ce9f6108c26 with 9/9 checks. PR #24 remains OPEN/Draft, unchanged, with 11/11 checks.
 
 ## Archived integration risk snapshot (2026-10-15 00:30 UTC)
 
