@@ -1,6 +1,16 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 06:05 UTC)
+## Current coordination evidence (2026-10-15 06:41 UTC)
+
+M0 maintains the cross-module contract; M1 owns Gateway and Hook semantics, M2 owns its adapter, and M5 owns policy/router semantics. This record adds no runtime implementation.
+
+- **OBSERVE decision contract (#52):** OBSERVE may waive optional approval only for registered, non-sensitive operations. It must not mask an explicit policy `DENY`. M9's current `security-router.decide()` returns `DENY` for such decisions; M5 #47 returns `UNCHANGED` early under OBSERVE and does not project `d.action === 'DENY'`. M5 `risk-policy` still denies the tested sensitive `.env` and outside aliases before callback dispatch when `verifyRealPaths` is enabled. M5 owner review must reconcile the public decision result and add/retain focused regressions without weakening denial assertions.
+- **Symlink scope:** M9 rejects every observed symlink component, including links resolving to in-workspace non-sensitive files; M5 #47 currently does not share that blanket rule. M5 must state and test the intended policy boundary. Do not treat M2's exact-path adapter rejection as equivalent to a policy decision.
+- **Adapter and integration order:** M2 candidate `76066cbb` is now the remote head of existing PR #37 and its exact-head CI is running; it remains absent from the M9 CI tree. Its checker uses M2's older policy build. M5 owner reconciliation precedes M2's boundary revalidation; M9 then tests the actual checked-out M1/M2/M5 trees, distinguishing policy DENY from adapter allowlist rejection. No function-signature incompatibility was found.
+- **Production boundary:** M5 has no first-party production file-host consumer; actual I/O remains the host callback. A policy or adapter fixture does not prove a shipped host opts into canonical checks or performs protected-open/handle execution. Issue #52 stays P0/OPEN; production enforcement and TOCTOU remain NOT_VERIFIED.
+- **Current PR state:** #24 is OPEN/Draft, unchanged, with 11/11 checks. M9 #36 `f87a70f` passes 11/11 but its synthetic tree is not proof against current M5/M2 trees. M5 #47 `a6d610e` passes 9/9. M2 #37 `76066cb` is the current remote head with CI running. M0 #30 `494890c` has passing product checks and mixed ownership-check history (one failed, one successful); require a fresh exact-head run.
+
+## Archived coordination evidence (2026-10-15 06:05 UTC)
 
 M0 maintains this cross-module contract; M1 owns Hook logging semantics and M7 owns Windows package wiring. This coordination entry adds no runtime implementation.
 

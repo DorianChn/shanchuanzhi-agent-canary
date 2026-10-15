@@ -1,6 +1,18 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 06:05 UTC)
+## Current integration risk snapshot (2026-10-15 06:41 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #52 OBSERVE alias contract | P0 | M5 #47 risk-policy denies sensitive `.env` and outside aliases before callback when `verifyRealPaths` is enabled. M5 `security-router.decide()` still returns `UNCHANGED` for OBSERVE and does not project an explicit policy DENY, unlike M9 #36. M5 also lacks M9's general symlink-component rejection for in-workspace non-sensitive targets. M2 candidate `76066cb` is now the exact remote PR #37 head; CI is running, but the adapter is not present in M9's CI tree. | M5 owner resolves the decision/test contract and intended in-workspace symlink policy; M2 exact-head CI and boundary validation follow; M9 then verifies exact owner trees. Keep #52 OPEN until a real product host and protected open/handle boundary are verified; TOCTOU remains. |
+| #30 ownership evidence check | P1 | PR #30 head `494890c` has both a failed and successful ownership check; live PR body has the markers. Product checks pass. | Require a fresh exact-head synchronize result; do not treat mixed check history as resolved. |
+| #51 store retries | P1 | Historical Windows Node20 reached `RETRY_LIMIT` after 500 busy retries; later exact-source runs pass, but lock owner/timing evidence is absent. | Keep OPEN; root cause UNKNOWN. Preserve all assertions. |
+| #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive VM reservation and lifecycle artifacts. |
+| #45 native Shell | P1 | PR #37 checks 9/9; actual desktop host policy/callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
+| M4 security/E4 provider | P1 | M4 PR #34 checks 9/9; provider/IPC absent. | UI remains UNKNOWN; do not show mock PASS. |
+| #53 Hook log sensitive data | P0 candidate | M8 #40 audit confirms the wrapper/test copy matches the M1 allowlist/canary and exact-head CI is 9/9. Packaged lifecycle and independent E4 remain NOT_VERIFIED. | Keep OPEN pending reachable shipped-copy and package evidence; no actual exposure/transmission claim. |
+
+## Archived integration risk snapshot (2026-10-15 06:05 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |

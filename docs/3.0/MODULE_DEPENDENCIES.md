@@ -1,6 +1,19 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-15 06:05 UTC)
+## Current schedule and dependencies (2026-10-15 06:41 UTC)
+
+- Maximum active module tasks: two. M9's cross-tree review is complete. The next owner action is M5's OBSERVE decision-contract reconciliation; M2's adapter validation follows that disposition. Keep these tasks on their existing branches/PRs.
+- PR #24 remains OPEN/Draft and unchanged at head `62496d4`; its exact checks are 11/11. Current relevant PR heads: M0 #30 `494890c` has passing product checks but mixed ownership-check history; M2 #37 `04c7ec7` 9/9; M5 #47 `a6d610e` 9/9; M9 #36 `f87a70f` 11/11.
+- M9 read-only review: its `security-router.decide()` projects explicit policy DENY under OBSERVE, while M5 #47 `security-router.decide()` returns `UNCHANGED` early and does not project `d.action === 'DENY'`. M5 `risk-policy` still denies the sensitive `.env` and outside aliases at dispatch when `verifyRealPaths` is enabled. M5 also lacks M9's blanket check of every symlink component for in-workspace, non-sensitive targets. Preserve this as an owner-visible semantic discrepancy; do not claim function-signature incompatibility.
+- M2 adapter commit `76066cbb750ec714ce8691bc0f30c8171186f079` is now the fast-forward remote head of existing PR #37; exact-head CI is running. It remains absent from M9's checked-out CI tree. Its checker uses M2's older local `risk-policy` build, so it is not evidence for current M5 #47 semantics.
+- Required integration order: (1) M5 owner resolves OBSERVE `decide()` behavior and symlink policy with focused tests under M5 ownership; (2) M2 places its adapter on existing PR #37 and validates against the agreed M5 boundary; (3) M9 tests actual checked-out M2/M5/M1 trees and separately asserts policy DENY versus adapter allowlist rejection. Issue #52 remains P0/OPEN until a production host consumes the adapter and protected-open evidence exists.
+- M1 remains owner of the Gateway/Hook contracts; M5 owns policy decisions and delegates I/O to the host callback; M2 owns the execution-isolation adapter; M9 owns integration composition/tests. Public interface semantics change only through the interface owner and M0's canonical contract update.
+- M1/#51 trigger remains UNKNOWN; preserve all retries and final assertions. M7 clean-VM installer lifecycle, external E4, native Shell enforcement, and M4 live security/E4 providers remain NOT_VERIFIED/UNKNOWN. No VMware, real-model, or installer resource is reserved.
+- Keep the usage page open and readable. It was readable and above the 5% stop line at 06:32 UTC; stop all module work, browser actions, tests, and GitHub operations if unreadable or below 5%. Do not publish account-specific quota values.
+- Last public writes: Issue #52 comment `6186150158` at 06:41:08 UTC and Issue #29 comment `6186150737` at 06:41:11 UTC. Next public-write batch no earlier than 07:01:11 UTC and only after rereading the usage page.
+- Git uses Windows and WSL-managed worktrees. Preserve stale/prunable WSL metadata and original checkouts; do not prune or repair across runtimes. Do not create branches, merge main/PR #24, or publish a Release.
+
+## Archived schedule and dependencies (2026-10-15 06:05 UTC)
 
 - Maximum active module tasks: two. M1/#51 remains active; M2/#52 is active on its existing PR #37 adapter seam. M5's #52 call-site audit and M9's composition-test task are complete; M9 commit `f87a70f` is now pushed to PR #36 and exact-head CI is running.
 - Current existing PR heads include M2 #37 `04c7ec7` (9/9), M3 #33 `1829e05` (9/9), M4 #34 `66e679b` (9/9), M5 #47 `a6d610e` (9/9), M6 #38 `c1fdf3c` (11/11), M7 #39 `87e0df0` (11/11), M8 #40 `454873c` (9/9), M1 #43 `f14aab7` (10/10), and M9 #36 `f87a70f` (new CI pending; parent `2d3f1da` passed 11/11). M0 #30 remains at `3b93f8b`; product CI passes 9/9, while the latest ownership check fails only because the PR body omits required evidence/API markers.

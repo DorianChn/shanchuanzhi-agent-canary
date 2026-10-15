@@ -1,6 +1,18 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 06:05 UTC)
+## Latest issue ledger (2026-10-15 06:41 UTC)
+
+| Issue | Priority / owner | Current evidence | State and next acceptance |
+| --- | --- | --- | --- |
+| #29 | P2 / M0 | M9 cross-tree review is complete. M5 owner review is next; M2 adapter validation follows M5 disposition. No exclusive test resource is reserved. Usage page is open and remains subject to the 5% hard stop. | OPEN; cap active module work at two. VMware, real-model, and installer tests require an explicit exclusive reservation. Last public write was 06:41:11 UTC; next batch no earlier than 07:01:11 UTC after rereading usage. |
+| #30 | P1 / M0 | PR #30 head `494890c` has passing product checks and both a failed and successful `ownership-contract-evidence` check. Its live PR body contains the required markers. | OPEN; keep unresolved until a fresh exact-head synchronize check passes. |
+| #41 | P1 / M7 | PR #39 exact head `87e0df0` passes 11/11; no clean-VM install/launch/upgrade/uninstall/rollback evidence. | OPEN/HOLD; reserve the exclusive VM/installer resource before lifecycle testing. |
+| #45 | P1 / M2 | PR #37 exact head `04c7ec7` passes 9/9; native Codex Shell host policy/callback remains unavailable. | OPEN/BLOCKED_NOT_VERIFIED; Native Shell remains UNPROTECTED. |
+| #51 | P1 / M1 | Historical Windows Node 20.20.2 run exhausted 500 `STATE_STORE_BUSY` retries before the 48-state assertions; exact source/test blobs later pass. No source defect or lock-owner trigger is confirmed. | OPEN; root cause UNKNOWN. Preserve `RETRY_LIMIT` and all assertions. |
+| #52 | P0 / M5 policy, M2 adapter, M9 integration; M0 coordinates | M5 #47 `a6d610e` correctly dispatch-denies sensitive `.env` and outside aliases under `verifyRealPaths`, before the callback. However M5 `security-router.decide()` returns `UNCHANGED` early for OBSERVE and fails to project explicit policy DENY; M9 #36 `f87a70f` reports DENY. M5 also lacks M9's per-component symlink rejection for in-workspace, non-sensitive targets. M2 adapter `76066cb` is now pushed as the exact PR #37 head; exact-head CI is running, but the adapter is absent from M9 CI. | OPEN. M5 owner must reconcile OBSERVE decision projection and state/test in-workspace symlink semantics; M2 exact-head CI must pass and validate against the agreed M5 boundary; then M9 must test the exact owner trees and distinguish policy DENY from adapter allowlist rejection. Production host wiring and protected open/handle remain NOT_VERIFIED. |
+| #53 | P0 candidate / M1 logging contract, M7 packaging; branch-copy owners | M8 audit of #40 `454873c` found its wrapper matches M1's approved blob and its canary excludes caller input; exact-head CI 9/9. Clean-VM/package lifecycle and independent E4 remain NOT_VERIFIED. | OPEN pending complete reachable-copy/package evidence; no actual exposure or external transmission is claimed. |
+
+## Archived issue ledger (2026-10-15 06:05 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
