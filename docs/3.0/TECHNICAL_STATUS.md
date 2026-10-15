@@ -731,3 +731,24 @@ PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPE
 - **PR #24:** OPEN/Draft, unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; 11/11 checks pass.
 - **Other open acceptance gaps:** M4 shared Ubuntu Node 20 failure under #51 (no data loss demonstrated); M2 native Codex Shell UNPROTECTED; M5 production protected-open/held-handle NOT_VERIFIED; M6 external E4 NOT_VERIFIED; M7 clean-VM lifecycle NOT_VERIFIED; M8 package reachability and independent E4 NOT_VERIFIED. Current wrapper logging is sanitized on remote branches, but #53 remains OPEN pending shipped reachability.
 - No VMware, model, or installer test started. Preserve Draft PRs; no force-push, main merge, PR #24 merge, or Release. Next branch push no earlier than 18:12 UTC.
+## Post-17:52 batch readback — 2026-10-15 17:54 UTC
+
+- M0 existing PR #30 now points to `44bab078ed2f6f247024a032abd5735182e8874e`. Product workflow [38781048630](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38781048630) was in progress at 17:53; Docker and sponsor had passed and test matrix jobs were pending. New-head ownership workflow [38781048699](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38781048699) passed 1/1.
+- M1 PR #43 remains at `4c23e819c1394059cbbf7c89563a695bb70a2756`, with standard CI 9/9 and ten-run Ubuntu Node 22 green. Issue #51 now asks M1 to disposition a ten-run Ubuntu Node 20 diagnostic or explain why not; preserve UNKNOWN until evidence supports a cause.
+- Posted scheduled comments: #51 `6198664866`, #55 `6198665461`, #29 `6198666169`. M3 had not updated PR #33 by 17:52; next requested status/blocker deadline 18:12 UTC.
+- PR #30 description still records the earlier 17:36 snapshot; refresh it after new-head product CI completes. PR #30 remains OPEN/Draft.
+- Usage tab 336903555 is open and active, readable above the 5% stop line at 17:53. Next branch push no earlier than 18:12 UTC.
+## PR #30 description CI readback — 2026-10-15 17:57 UTC
+
+- PR #30 remains OPEN/Draft at head `44bab078ed2f6f247024a032abd5735182e8874e`. Product run [38781048630](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38781048630) passed 9/9 and initial ownership run [38781048699](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38781048699) passed 1/1.
+- Refreshed description metadata readback confirms `Test-Evidence:`, `API-Contract-Change: no`, and `Coordinated-with: M1…M9`. Description edit ownership run [38781423534](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38781423534) passed 1/1; current PR checks are 10/10.
+- M1 #43 remains green 9/9 plus the ten-run Ubuntu Node 22 workflow; underlying issue #51 cause remains UNKNOWN pending owner disposition. No M3 update by the 17:52 checkpoint; M9 composition remains blocked.
+- Next branch push no earlier than 18:12 UTC. Usage tab remains open by user request.
+
+## Coordination checkpoint — 2026-10-15 18:04 UTC
+
+- **Issue #51 / M1:** PR #43 remote head is still 4c23e819c1394059cbbf7c89563a695bb70a2756. The existing M1 branch has local workflow commit 5a9ff225d9a06d875959f244c3d0d7c27fe0a752, adding ten Ubuntu Node 20 repetitions of the complete file-store test while retaining the Node 22 job. YAML/job-structure checks and git diff --check were reported passing; hosted execution is pending the scheduled push. The original lock-holder trigger remains UNKNOWN.
+- **Issue #55 / M3 and M9:** PR #33 remains at be3880298e1c6766024ecbce5f6dbc23c4d2daa1; no owner update is visible after the 17:53 checkpoint. M9 PR #36 remains at de3799aae540f58173acec4ab3f7a1fe98593aa7; composition run 38727481764 fails on both platforms because M3 allows an unpinned native Read where M1 requires deny. M9 remains gated.
+- **M0:** coordinator branch and PR #30 head remain 44bab078ed2f6f247024a032abd5735182e8874e; this checkpoint is documentation-only. The last exact-head PR #30 inventory at 17:57 was 10/10 passing.
+- **PR #24:** remains OPEN/Draft with unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7; last verified checks were 11/11.
+- Usage page remains open, active, readable, and above the pause threshold. Keep it open. Next GitHub push is no earlier than 18:12 UTC.

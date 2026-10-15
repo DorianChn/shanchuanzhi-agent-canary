@@ -424,3 +424,19 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#55 P1:** no M3 owner update by 17:52; PR #33 remains `be388029`. M9 composition fails both platforms on unpinned native Read returning allow. M3 remains responsible for the correction and positive control; M9 stays gated.
 - **M0 and PR #24:** PR #30 head `77d849c` has product 9/9 and ownership 1/1; PR #24 remains unchanged and OPEN/Draft. M0 docs update is on the scheduled 17:52 batch.
 - Usage tab remains open and above the stop threshold. No VMware/real-model/installer activity or reservation. Next branch push no earlier than 18:12 UTC.
+## Post-17:52 batch readback — 2026-10-15 17:54 UTC
+
+- M0 PR #30 head `44bab078ed2f6f247024a032abd5735182e8874e`: product run `38781048630` in progress at first read; ownership run `38781048699` passed 1/1.
+- M1 #51 requested an owner disposition on ten-run Ubuntu Node 20 reproduction; retain UNKNOWN absent evidence. M3 #55 remains unanswered as of 17:52; request correction/blocker by 18:12.
+- Comments posted: #51 `6198664866`, #55 `6198665461`, #29 `6198666169`. Usage page remains open, above pause threshold. Next branch push no earlier than 18:12 UTC.
+## PR #30 description CI readback — 2026-10-15 17:57 UTC
+
+- PR #30 head `44bab078ed2f6f247024a032abd5735182e8874e`: product 9/9, initial ownership 1/1, and refreshed-description ownership 1/1. Metadata fields read back correctly; current checks 10/10 pass.
+- PR #30 remains OPEN/Draft. Next branch push no earlier than 18:12 UTC.
+
+## Coordination checkpoint — 2026-10-15 18:04 UTC
+
+- **#51 P1:** M1's test-only Node 20 x10 workflow commit 5a9ff225d9a06d875959f244c3d0d7c27fe0a752 is local on the existing M1 branch; PR #43 remains remotely at 4c23e819c1394059cbbf7c89563a695bb70a2756 until the scheduled batch. CI evidence is pending; the trigger remains UNKNOWN.
+- **#55 P1:** no M3 owner update since 17:53. PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1; M9 composition still fails both platforms on the unpinned native Read contract. Keep M9 gated.
+- P0 issues #52 and #53 and P1 issues #45, #54, and #41 remain OPEN in the current GitHub inventory; no acceptance is inferred from open PR checks.
+- PR #24 remains OPEN/Draft and unchanged. Usage page is open/readable above the pause threshold. Next GitHub push is no earlier than 18:12 UTC.
