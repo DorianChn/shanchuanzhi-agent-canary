@@ -864,3 +864,29 @@ PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPE
 - **P0 / Issue #53:** no M7/M8 evidence or PR #39/#40 head movement by the 22:12 deadline. Comment 6203393979 requests the pinned artifact and manifest, extracted-Hook comparison, harness result, or concrete blocker by 22:32. Keep packaged reachability NOT_VERIFIED.
 - Usage tab 336903555 remains open and active; the 22:15 reading was parseable and above the pause line. Next M0 push no earlier than 22:19 UTC.
 - No module source/tests changed; no tests ran; no merge or Release.
+
+## M0 all-module exact-head inventory — 2026-10-15 22:24 UTC
+
+All listed module PRs remain OPEN/Draft against feature/agent-canary-3.0 at base 62496d4020bd. Head SHAs below are the exact PR refs read during this inventory; hosted workflow results are tied to those heads.
+
+| Module | PR head | Exact-head CI readback | Current integration state |
+|---|---|---|---|
+| M1 / #43 | 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 | 38786461156 and Ubuntu Node 20/22 x10 run 38786461318 passed | Issue #51 historical retry-exhaustion trigger UNKNOWN; #52 first-party host/held-handle acceptance NOT_VERIFIED; #56 M1 test ownership disposition pending. |
+| M2 / #37 | 9db59ed8f2deae905edcb2179982f8bcb594167c | 38704118421 passed 9/9 | Adapter remains synthetic with no verified first-party product-host consumer; native Codex Shell remains UNPROTECTED under #45. |
+| M3 / #33 | be3880298e1c6766024ecbce5f5dbc23c4d2daa1 | 38706654588 passed | Its unpinned native Read still conflicts with M1's fail-closed Hook contract in M9 run 38727481764; #55 remains gated. |
+| M4 / #34 | fbf20907c6accffc37246eddf04f8599060d99ea | 38698635434 has the Ubuntu Node 20 RETRY_LIMIT failure | Tracked with M1 under #51; no data loss is established; retain UNKNOWN for the original trigger. |
+| M5 / #47 | 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c | 38719884959 passed 9/9 | Synthetic alias/outside-link fixes pass; product-host protected-open/TOCTOU remains NOT_VERIFIED under #52. |
+| M6 / #38 | c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 | 38686183315 and 38686183313 passed | Independent external E4 remains NOT_VERIFIED. |
+| M7 / #39 | cf4b70f5130175582fffdfc65bd7c6847450867b | 38706662845 and Windows wrapper 38706663042 passed | Real pinned package evidence is pending under #53; clean-VM lifecycle remains NOT_VERIFIED under #41. |
+| M8 / #40 | c1ff677cc56cd159cc983042e5dfcec5dc93f3ad | 38712038229 and Windows wrapper 38712038305 passed | Actual packaged-Hook reachability and extracted-harness proof remain NOT_VERIFIED under #53. |
+| M9 / #36 | de3799aae540f58173acec4ab3f7a1fe98593aa7 | Product 38727481643 and wrapper 38727481657 passed; composition 38727481764 failed on Ubuntu and Windows | Composition remains blocked by the M3/M1 unpinned-Read mismatch in #55. |
+
+Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 evidence/blocker checkpoint remains in force. VMware, real-model, and installer resources are mutually exclusive; none is started by M0.
+
+## M0 owner checkpoint — 2026-10-15 22:32 UTC
+
+- **P2 / Issue #56:** no M1 disposition or PR #43 head movement by 22:32. Comment 6203640273 requests canonical-test path/SHA evidence or an explicit reviewed exception by 22:52. Keep PR #30 Draft; preserve the test.
+- **P1 / Issue #55:** no M3 evidence or PR #33 head movement by 22:32. Comment 6203640806 requests the M1-compatible unpinned-read denial, supported-capability positive control, or a concrete blocker by 22:52. Keep M9 gated.
+- **P0 / Issue #53:** no M7/M8 evidence or PR #39/#40 head movement by 22:32. Comment 6203641318 requests package/manifest hashes, extracted-Hook comparison, harness result, or blocker by 22:52. Keep package reachability NOT_VERIFIED.
+- Usage tab 336903555 remains open and active; the 22:32 reading was readable above the pause line. Next M0 push no earlier than 22:39 UTC.
+- No module source/tests changed and no tests ran.

@@ -521,3 +521,17 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 response by 22:12. Comment 6203392855 requests canonical regression location/evidence or a reviewed shared-path exception by 22:32. Preserve all assertions; PR #30 remains Draft.
 - **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 22:12. Comment 6203393354 requests the fail-closed denial and supported-capability positive control or concrete blocker by 22:32. M9 remains gated.
 - **#53 P0 — M7/M8 package reachability:** no package/evidence update by 22:12. Comment 6203393979 requests pinned package and manifest hashes, extracted-Hook comparison, harness result or blocker by 22:32. Keep OPEN/NOT_VERIFIED; installer/VM work still needs #29 reservation.
+
+## M0 additional issue readback — 2026-10-15 22:24 UTC
+
+- **#41 P1 — M7 lifecycle:** current PR #39 head cf4b70f5130175582fffdfc65bd7c6847450867b has product run 38706662845 and Windows wrapper run 38706663042 passing. M0 comment 6203551648 clarifies that clean-VM installation and lifecycle remain unverified; keep OPEN and require #29 exclusive reservation before any installer/VM test.
+- **#45 P1 — M2 native Shell:** current PR #37 head 9db59ed8f2deae905edcb2179982f8bcb594167c passes exact-head run 38704118421 (9/9). M0 comment 6203552219 records that the adapter remains a synthetic seam and native Codex Shell remains UNPROTECTED; keep OPEN.
+- **#51 P1 — M1/M4 shared state store:** latest M0 diagnostic comment 6199611147 records the Ubuntu Node 20 RETRY_LIMIT path, passing current M1 standard CI and x10 Node 20/22 stress, and UNKNOWN root trigger. No data loss is established; preserve retry behavior and assertions.
+- **#52 P0 — M1/M2/M5 host boundary:** latest M0 evidence is comment 6202054736. Current M1/M5 checks pass, but no first-party product-host consumer or protected-open/held-handle/TOCTOU acceptance is verified; keep OPEN.
+- **#54 P1 — M9 retry diagnosis:** latest M0 status is comment 6202055522. Current PR #36 product and wrapper checks pass; the historical Windows Node 22 503 trigger remains UNKNOWN, and its separate composition failure is tracked under #55.
+
+## M0 owner deadline follow-up — 2026-10-15 22:32 UTC
+
+- **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 disposition by 22:32. Comment 6203640273 requests the canonical regression path/SHA or reviewed shared-path exception by 22:52. Keep PR #30 Draft; do not edit M1's test.
+- **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 22:32. Comment 6203640806 requests fail-closed denial and supported-capability positive-control evidence, or a concrete blocker, by 22:52. M9 remains gated.
+- **#53 P0 — M7/M8 packaged Hook reachability:** no M7/M8 artifact evidence by 22:32. Comment 6203641318 requests actual package/manifest and extracted-harness evidence or blocker by 22:52. Keep OPEN/NOT_VERIFIED and respect #29 resource reservation.
