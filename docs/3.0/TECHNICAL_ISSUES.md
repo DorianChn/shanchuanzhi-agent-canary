@@ -407,3 +407,20 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#53 P0 — M8 packaged Hook log privacy:** GitHub blob checks show current M1/M2/M4/M5/M6/M7/M8/M9 wrapper copies match the canonical sanitized M1 blob; M3’s separate implementation logs only fixed timestamp/event/decision fields and its test source contains input/reason canaries. This does not establish shipped artifact reachability or independent E4; keep OPEN.
 - **CI inventory (latest remote heads):** #24 11/11; #30 9/9 plus ownership 1/1; #33 9/9; #34 one actual Ubuntu Node 20 failure, four cancelled, one skipped; #36 product 9/9 and wrapper 2/2 pass with two composition failures; #37 9/9; #38, #39, #40 each 11/11; #43 pre-diagnostic head 10/10; #47 9/9. Exact-head workflows remain authoritative; local M1 evidence does not replace hosted checks.
 - **M0 / boundaries:** PR #30 remains OPEN/Draft, coordinator docs-only. PR #24 remains OPEN/Draft with same head/base and was not touched. Usage tab is open and above stop threshold; no account-specific quota percentage is stored. No `main` merge or Release. Next branch push no earlier than 17:52 UTC.
+## Post-push readback — 2026-10-15 17:36 UTC
+
+- M1 PR #43 head `4c23e819c1394059cbbf7c89563a695bb70a2756` passes its nine standard checks and ten-run Ubuntu Node 22 workflow. Original retry-exhaustion trigger remains UNKNOWN.
+- M0 PR #30 head `77d849c99110f89981435b060a1806c6aac405bc`: product run `38778514092` was in progress with Windows Node 22 pending; ownership run `38778513822` passed 1/1. Description metadata fields were read back. Body refresh triggered ownership run `38778766233`, pending.
+- M0 recorded the M1/M3/M9 checkpoint in #51/#55/#29 (comment IDs `6198336650`, `6198337288`, `6198337835`). M3's response is requested by 17:52 UTC.
+- Usage page is intentionally left open per user request; readable and above pause threshold at 17:36 UTC. Next branch push no earlier than 17:52 UTC.
+## CI completion readback — 2026-10-15 17:39 UTC
+
+- M0 PR #30 current head `77d849c99110f89981435b060a1806c6aac405bc` is 10/10 green: product run `38778514092` 9/9 and description-refresh ownership run `38778766233` 1/1.
+- M1 PR #43 current head `4c23e819c1394059cbbf7c89563a695bb70a2756` is 10/10 green, including the ten-run Ubuntu Node 22 job. Root cause for the original Linux Node 20 retry exhaustion is still UNKNOWN.
+- PR #30 remains OPEN/Draft. Next branch push no earlier than 17:52 UTC.
+## Current coordinator checkpoint — 2026-10-15 17:52 UTC
+
+- **#51 P1:** M1 diagnostic head `4c23e819` is green on the nine-job CI and the ten-run Ubuntu Node 22 job; Ubuntu Node 20 passed once. The original lock-holder trigger remains UNKNOWN. M0 will ask M1 to evaluate a ten-run Ubuntu Node 20 diagnostic or post the specific blocker/disposition; preserve production retry behavior and assertions.
+- **#55 P1:** no M3 owner update by 17:52; PR #33 remains `be388029`. M9 composition fails both platforms on unpinned native Read returning allow. M3 remains responsible for the correction and positive control; M9 stays gated.
+- **M0 and PR #24:** PR #30 head `77d849c` has product 9/9 and ownership 1/1; PR #24 remains unchanged and OPEN/Draft. M0 docs update is on the scheduled 17:52 batch.
+- Usage tab remains open and above the stop threshold. No VMware/real-model/installer activity or reservation. Next branch push no earlier than 18:12 UTC.
