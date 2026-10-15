@@ -1,13 +1,23 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 05:41 UTC)
+## Current authoritative snapshot (2026-10-15 06:05 UTC)
 
-- 用量页保持打开且当前可读；05:41 UTC确认高于5%停工线。精确值只记于被.gitignore排除的本地报告。低于5%或读数不可见时暂停所有模块、测试和GitHub操作；按用户要求不关闭此标签页。
-- PR #24回读仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M0–M9现有PR均OPEN/Draft；截至05:25读到的远端精确head检查全绿：#30 10/10、#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9。PR #30当前head `dfd6320`，#33 `1829e05`，#34 `66e679b`，#36 `2d3f1da`，#38 `c1fdf3c`；其余远端head见本表及GitHub。
-- Issue #53：M3 PR #33 head 1829e05 使用固定字段allowlist并以合成输入/原因canary测试，精确head CI通过；M4/#34、M5/#47、M6/#38、M7/#39、M9/#36当前wrapper blob均与M1批准版 d6f9324 一致且精确head CI通过。M2/#37 本地提交 04c7ec7 基于远端父head 0f2c10c，wrapper与M1一致，合成canary目标测试11/11、build和diff检查通过；M8/#40 本地提交 454873c 基于远端父head 16e3d01，wrapper与M1一致、测试blob恢复为M1 canonical 6c2d8da，目标测试10/10、build、文档检查和diff通过。M2/M8待本批次推送并等待新head CI；旧远端副本仍含raw日志。M7 installer package smoke通过，但clean-VM生命周期和真实外部E4仍NOT_VERIFIED；未观察到真实凭据或对外传输。
-- M2/M8原有WSL管理目录均保留不动；修复分别在 agents/M2-isolation-win 与 agents/M8-ecosystem-win detached recovery worktree提交，均从对应现有PR head直接快进一个提交。M0创建的两个执行子任务已完成；其他Codex窗口的实时活动无法观测，Issue #29上次公开分配仍记录M1/#51。M0不改产品源码、不新建模块分支、不跨runtime repair/prune。
-- 当前没有VMware、真实模型或安装生命周期测试预约/运行。PR #24、main及Release均未触及。Issue #27已仅按共享manifest与M9组合验收范围关闭，外部E4仍NOT_VERIFIED；#32仅关闭于合成子进程marker回归，历史runner延迟和原生宿主callback仍UNKNOWN/NOT_VERIFIED。#51根因UNKNOWN且保留全部断言；#52仍P0/OPEN，缺真实文件host与受保护句柄证据；#41、#45及M4 provider/E4仍按各自有限范围记录为OPEN、HOLD或NOT_VERIFIED。
-- 最近一次公共写入批次在05:20 UTC完成；05:41 UTC额度复核后开始本批次。后续批次至少间隔20分钟，以本批次最后一项远端写入时间计时。
+- The usage page remains open and readable; at 06:05 UTC it was above the 5% stop threshold. Do not put account-specific quota values in public records. Stop module work, tests, browser actions, and GitHub writes if the page becomes unreadable or shows less than 5%.
+- PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; it is unchanged. Current module heads: #30 `3b93f8b` product CI 9/9, ownership check failing because PR-body evidence markers are absent; #33 `1829e05` 9/9; #34 `66e679b` 9/9; #36 remote `2d3f1da` 11/11; #37 `04c7ec7` 9/9; #38 `c1fdf3c` 11/11; #39 `87e0df0` 11/11; #40 `454873c` 9/9; #43 `f14aab7` 10/10; #47 `a6d610e` 9/9.
+- M9 pushed test-only commit `f87a70f` to existing PR #36. Its focused composition test is 4/4; build and diff checks pass. It routes an M5 OBSERVE read of a registered fixture through M1 Gateway; sensitive-workspace and external aliases deny before Gateway dispatch, with zero approvals and unchanged fixture contents/hashes. The test is synthetic and does not verify a production host. Exact-head product run `38691255842` and wrapper run `38691255775` are pending/in progress.
+- M5's #52 read-only audit found no production file-host consumer: M5 delegates I/O to its caller, while M1 Gateway has a separate registered-file held-handle path. M2 now owns the second active slot on an adapter candidate within its existing #37 worktree; it cannot change M1/M5 sources or public APIs and cannot claim production protection without a real product callsite. M1/#51 remains active with root cause UNKNOWN.
+- No VMware, real-model, or installer lifecycle test is reserved or running; M7 stays HOLD because no clean VM baseline is verified. #52 remains OPEN/P0 and production-host protection NOT_VERIFIED; #45 remains BLOCKED_NOT_VERIFIED with native Codex Shell UNPROTECTED; external E4 remains NOT_VERIFIED. No main merge, PR #24 edit/merge, or Release occurred.
+- The last public write before this batch was Issue #29 comment `6185450476` at 05:50:51 UTC. The 06:14 UTC usage-page reread was readable and above the stop line. Record the timestamp of the final write in this batch and wait at least 20 minutes before the next public write.
+
+## Archived authoritative snapshot (2026-10-15 05:53 UTC)
+
+- 用量页保持打开且当前可读；05:52 UTC确认高于5%停工线。精确值只记于被.gitignore排除的本地报告。低于5%或读数不可见时暂停所有模块、测试和GitHub操作；按用户要求保持此标签页打开。
+- PR #24回读仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。现有 PR 仍为 OPEN/Draft。已核对精确head：#30 `3b93f8b` 9/9及ownership 1/1；#33 `1829e05` 9/9；#34 `66e679b` 9/9；#36 `2d3f1da` 11/11；#37 `04c7ec7` 9/9；#38 `c1fdf3c` 11/11；#39 `87e0df0` 11/11；#40 `454873c` 9/9；#43 `f14aab7` 10/10；#47 `a6d610e` 9/9。
+- M9 PR #36 当前HEAD `2d3f1da` 的产品CI run `38686183331` 与wrapper run `38686183321` 均匹配该SHA，合计11/11成功。新增 Windows payload E4 测试运行复制到合成payload目录中的实际wrapper和E4 harness，检查固定日志字段、synthetic caller marker排除和失败场景保护victim不变。PR描述仍沿用旧提交文本并错误标记 #27/#32 为OPEN、#52 正在修复；修订后的准确正文已在忽略的reports文件中准备，待下一公开写入窗口更新。
+- Issue #53：M3 PR #33 使用固定字段allowlist并以合成输入/原因canary测试；M4/#34、M5/#47、M6/#38、M7/#39、M9/#36使用M1批准版wrapper blob `d6f9324`。M2/#37现head `04c7ec7`，M8/#40现head `454873c`，两者均已推送至既有PR；exact-head CI分别9/9。M2目标测试11/11及build通过；M8目标测试10/10、build、文档检查通过。M7 package smoke通过，但clean-VM生命周期和独立外部E4仍NOT_VERIFIED；未观察到真实凭据或对外传输。
+- M2/M8修复均在原有PR对应恢复工作树提交并快进推送；原有WSL管理目录保留不动。M0对M5/#52作只读调用链核查：M5 `risk-policy.ts` 将文件动作交给宿主callback，policy-management中的文件I/O属于策略/审计存储；独立trusted-fd Gateway并未被M5 Router调用。测试只证明合成fixture/callback拒绝。未发现M5生产文件host消费者或可复现的M5-owned绕过，因此未增mock/改码，实际生产host保护保持NOT_VERIFIED。M5工作树原head干净。
+- Issue #29最新公开分配为 M1/#51 和 M5/#52 两个活动位；M2/M8任务完成。M1根因仍UNKNOWN。无VMware、真实模型或安装生命周期测试预约/运行；候选VM目录未确认干净基线，因此M7继续HOLD。PR #24、main及Release未触及。Issue #27仅按共享manifest与M9组合验收范围关闭，外部E4仍NOT_VERIFIED；#32仅关闭于合成子进程marker回归，历史runner延迟和原生宿主callback仍UNKNOWN/NOT_VERIFIED；#41、#45及M4 provider/E4仍按各自有限范围记录为OPEN、HOLD或NOT_VERIFIED。
+- 最后一次公共写入为 Issue #29 comment `6185450476`（05:50:51 UTC）；下一批次不得早于06:10:51 UTC，发布前重新读取保持打开的用量页并确认至少5%。
 
 ## Archived authoritative snapshot (2026-10-15 04:04 UTC)
 
