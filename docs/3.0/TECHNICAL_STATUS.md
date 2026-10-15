@@ -1,15 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 02:27 UTC)
+## Current authoritative snapshot (2026-10-15 02:40 UTC)
 
-- 用量页按用户要求保持打开并置于前台；02:22 UTC可读且高于5%暂停线。精确账户数值不进入公开记录。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
+- 用量页按用户要求一直保持打开并置于前台；02:40 UTC仍可读且高于5%暂停线。精确账户数值不进入公开记录。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
 - M0 PR #30 远端head为 `1a737047585bec851c19d90761657fe212748197`；CI run `38670514197` 的9个产品job与协调 run `38670514206` 均成功。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；workflow runs `38332394567`（9/9）和 `38332394500`（2/2）均成功；未修改或合并。
 - M1 PR #43 head `3828bee2cb7219237a8bb080cc9101d49b27b111`；标准CI run 38668336887通过，专用Linux十轮 run 38668337033通过。M1确认Issue #51直接失败路径是worker连续500次遇到 `STATE_STORE_BUSY` 后抛 `RETRY_LIMIT`；原始日志缺少锁持有者和时序信息，底层触发原因仍UNKNOWN。Issue #32旧Windows Node20 run `38390302812`的直接机制是旧fixture仅有1秒marker窗口；为何runner超过1秒仍UNKNOWN。M1既有async fix `46af1f1`已在PR #43祖先链；exact-head Windows Node20/22显示marker=true和SIGTERM。仍需M9 combined baseline复验；native-host callback NOT_VERIFIED。
-- M3 PR #33与M4 PR #34分别在自己的既有分支本地提交 `f9bd818112afb970496d4963ab0409518923090d`、`9288de0`，仅修改各自的 `test/agent-hook.test.ts`；两者目标文件均10/10通过，M3定向用例1/1通过，diff-check通过。fixture以最长10秒等待marker，再外部中断合成blocked child，并检查空stdout/stderr、无决策日志和退出；不运行真实宿主，因此callback仍NOT_VERIFIED。两个提交尚未推送，等待20分钟批次与远端CI。
-- M5 PR #47当前head `7d5df632df6e6d8561c594dcd6772b357cca58c7`；M5现审计OBSERVE敏感读取在approval/callback前硬拒绝的边界，仅限M5策略文件与测试，尚无新结果。敏感读取硬DENY保持既有要求。
-- M6 PR #38当前head `09084490bc17af13cd4589ebb344c7a46e2d0881`；#51相关Ubuntu Node22完整测试连续通过attempts 2–4，外部E4仍NOT_VERIFIED。M6现审计E4 bundle verifier的路径/符号链接和归档/外部副本完整性；未触碰未跟踪原始目录 `security-lab/e4-runs/20261013T114513Z/`。
+- M1 API owner 确认 `createRiskPolicyRouter` 缺省 realpath 行为是文档承诺的 legacy contract；真实文件宿主应启用 `createSecurityToolRouter({verifyRealPaths:true})` 或提供等价边界，workspace 内敏感 junction 还须按 canonical target 分类。M1 worktree无改动，定向路由测试16/16通过。
+- M3 PR #33与M4 PR #34分别在自己的既有分支本地提交 `f9bd818112afb970496d4963ab0409518923090d`、`9288de0`，仅修改各自的 `test/agent-hook.test.ts`；目标文件均10/10通过，M3定向用例在本机Windows Node 22重复3次通过。Node20本机不可用，需远端Windows Node20 exact-head CI。fixture不运行真实宿主，因此callback仍NOT_VERIFIED。两个提交尚未推送。
+- M5 PR #47远端head仍为 `7d5df632df6e6d8561c594dcd6772b357cca58c7`；本地新提交 `c54e7eb` 在 M1 裁决后把 realpath containment/敏感分类限制于显式 `verifyRealPaths:true`，保留 legacy 默认行为；敏感 junction及外部 junction均在零审批/零callback下拒绝。M5定向策略29/29、安全路由16/16、build通过；P0 #52保持OPEN等待远端CI与宿主接线证据，提交未推送。
+- M6 PR #38远端head `09084490bc17af13cd4589ebb344c7a46e2d0881` checks 11/11；本地新提交 `cd55717` 加固E4 bundle路径/符号链接，当前 `npm run e4:test` 16/16通过。M6与M9 `package.json` 三个字段 `e4:auto`、`e4:verify`、`e4:test` 完全匹配，M6 owner disposition `MATCH_CONFIRMED`；新提交未被远端CI覆盖。未跟踪原始目录 `security-lab/e4-runs/20261013T114513Z/` 保持未触碰，外部E4仍NOT_VERIFIED。
+- M4 核验确认当前仓库无 `/api/security-center`、`/api/e4/status` provider或IPC；Console现存测试明确验证404，安全中心与E4 UI保持UNKNOWN。`test/runtime-console.test.ts` 7/7通过，未改文件或提交；后续需由后端owner提供真实运行态接口。
 - M9 PR #36 head `bc5390dbd04527cf31a84d30c4cf5314dd0aac8f`，精确head checks 11/11通过。M2/#45只读审计已完成，无可复现仓库级fail-open；M2当前会话策略、Hook trust和原生Shell callback仍不可确认，本机无WSL发行版且未用Windows Git替代。原生Codex Shell保持UNPROTECTED / BLOCKED_NOT_VERIFIED。M7 clean-VM安装生命周期NOT_VERIFIED；M8状态进程无输出，worktree未动。
-- Issue #51与#32保持OPEN，原因/宿主边界未知项不升级为PASS。M0协调文档已于02:20 UTC推送；最近push批次02:20 UTC，下一批不早于02:40 UTC。VMware、真实模型和安装测试没有预留或运行。未合并main或PR #24，未发布Release。
+- Issue #51与#32保持OPEN，原因/宿主边界未知项不升级为PASS。M0协调文档最近一次push批次02:20 UTC；当前批次到期，发布前已确认额度页可读且高于暂停线。VMware、真实模型和安装测试没有预留或运行。未合并main或PR #24，未发布Release。
 
 ## Archived snapshot (2026-10-15 00:30 UTC)
 
