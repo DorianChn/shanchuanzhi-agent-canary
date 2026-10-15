@@ -1,5 +1,11 @@
 # M0 技术问题分级与协作流程
 
+## Coordinator evidence update (2026-10-15 11:04 UTC)
+
+- **#52 P0:** M9 local commit `16163357f6c3ed67db69e85cb3ad435bbe95ce95` refreshes PR #36 M1/M5 pins and adds exact Hook-blob and M1/M3 behavior gates. Local syntax/pin checks passed, but composition was not run and the new commit has no CI result yet. It remains synthetic/co-located evidence and does not verify a production protected-open host or held-handle TOCTOU path; keep OPEN.
+- **#53 P0:** M1 owner-reviewed M3 #33 and found executable wrapper behavior matches apart from a comment, while M3 JSONL assertions were weaker. M9 now adds a synthetic M3 wrapper allowlist/canary/canonical-time check. Its exact M1/M3 native Hook gate exposes a real conflict: M1 denies ordinary unpinned Read; M3 currently allows it. M3 owner must align implementation and test, advance PR #33, and M9 must update its pin; no assertions may be weakened. Keep OPEN; real host/package/E4 acceptance remains unverified.
+
+
 ## Latest issue ledger (2026-10-15 10:44 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |

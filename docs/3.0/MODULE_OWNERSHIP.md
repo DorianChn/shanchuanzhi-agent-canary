@@ -1,5 +1,11 @@
 # 模块文件所有权表
 
+## Coordinator ownership note (2026-10-15 11:04 UTC)
+
+- **M3** owns its onboarding branch and Hook test copy. M1's canonical Hook owner review found M3's current wrapper executable code matches; only a comment differs. The M3 Read-allow fixture conflicts with M1's current unpinned-file deny contract, so M3 must reconcile its branch-local expectation before composition.
+- **M9** owns the composition workflow and integration tests. Local commit `16163357f6c3ed67db69e85cb3ad435bbe95ce95` refreshes M1/M5 pins and adds wrapper and M1/M3 contract gates; the sibling-root composition test has not run. M9 may change only M9-owned integration files. M3 owns fixing its Hook allow-vs-deny contract and advancing its PR head.
+
+
 ## Current ownership and worktree snapshot (2026-10-15 10:44 UTC)
 
 | Module | Current checkout / PR | Ownership and acceptance status |
