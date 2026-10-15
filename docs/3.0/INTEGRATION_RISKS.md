@@ -1,3 +1,14 @@
+## M0 ownership risk delta — 2026-10-15 21:16 UTC
+
+- **M0/M1 PR scope overlap (#56, P2):** PR #30 currently lists M1-owned `test/agent-hook.test.ts`; PR #43 also changes the same canonical path. M1 owner approval is not visible in the PR #30 timeline. No runtime failure is established, but the M0 scope statement and changed-file list differ. Keep #30 Draft until the M1-owned path is removed from the M0 diff or an explicit M1-reviewed exception and accurate PR scope are recorded.
+- **M3/M7/M8 activity:** no owner reply or PR-head movement was visible by 21:12. Existing M3 and M7 sessions accepted follow-ups at 21:16; evidence/blocker is due 21:32. This is delivery evidence only, not start/completion evidence.
+
+## M0 risk delta — 2026-10-15 21:06 UTC
+
+- **#55 P1 / M3-to-M9 native Hook contract:** run `38727481764` failed the same unpinned normal `Read` assertion on Windows (`116396823551`) and Ubuntu (`116396823888`): expected `deny`, actual `allow`. The M9 run pins older M1 `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`, not current M1 PR #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; current-head compatibility is NOT_VERIFIED. Require the M3-owned `native_file_execution_not_pinned` denial, unchanged M1 deny assertions, supported-capability positive control, and exact-head M9 rerun. M0 comment `6202315177`; owner evidence/blocker due 21:12 UTC.
+- **Local module isolation:** the coordinator clone currently contains only the coordinator Git worktree; `main`, `agents`, and `integration` are empty. Other module worktree paths remain UNKNOWN.
+- PR #24 remains OPEN/Draft and unchanged. Usage tab remains open/readable above the stop threshold. Last M0 branch push 20:58 UTC; next push no earlier than 21:19 UTC.
+
 ## Current integration risk snapshot (2026-10-15 20:52 UTC)
 
 The following evidence is current as of the M0 checkpoint. Green source CI does not establish product-host, packaged-artifact, installer, or independent E4 acceptance.

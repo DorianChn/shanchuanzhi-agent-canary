@@ -1,3 +1,18 @@
+## M0 ownership follow-up — 2026-10-15 21:16 UTC
+
+- **M0 PR scope / P2 Issue #56:** PR #30's changed-file list contains M1-owned `test/agent-hook.test.ts`; its M0-side change is associated with `b92bde4 test(m1): stabilize native hook interruption fixture`. PR #43 also changes the path. PR #30's current scope says coordination docs only. The PR #30 timeline has no visible M1 owner disposition/review, so approval is UNKNOWN. Keep #30 Draft until reconciled; Issue #56 records reproduction and acceptance.
+- **M3/M7 follow-up:** the 21:12 evidence checkpoint passed with no #53/#55 owner response or PR #33/#39/#40 head movement. `codex queue` accepted follow-ups to the existing M3 and M7 sessions at 21:16 (M3 `01a1416d-8be2-7c22-98be-d30d8218f658`; M7 `01a1416d-8be2-7cc1-b182-0d1c5e06641a`). Queue delivery is not evidence that work started. Next evidence/blocker update is due 21:32 UTC.
+- Usage tab `336903555` remains open, active, and readable above the stop line. The next M0 push window is 21:19 UTC; perform fresh quota, PR #24, and remote-head checks first.
+
+## M0 follow-up delta — 2026-10-15 21:06 UTC
+
+- **M0 / PR #30:** OPEN/Draft at `5f42beabebc361fcfcfdd7dcb9614f1a0d5b96fa`. Product CI `38806245584` passed 9/9. Ownership-contract runs `38806245591`, `38806645721`, and the latest `38806755363` each passed 1/1. The PR description was read back with `38806645721`; no further description edit is needed.
+- **PR #24:** still OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; both current exact-head product and wrapper workflow runs report success. No edit, retarget, or merge.
+- **M3 / #55 / M9:** exact run `38727481764` jobs `116396823551` (Windows) and `116396823888` (Ubuntu) both fail the unpinned normal `Read` assertion (`expected deny`, `actual allow`). Selected M1/M2/M5 denial and constrained-read controls plus M3 Hook JSONL privacy pass in both jobs. The run pins M1 `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`, not current PR #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; current-head compatibility remains unproven. M0 evidence comment `6202315177` requests an M3-owned correction on #33 and exact path/SHA/evidence or blocker by 21:12 UTC.
+- **M7/M8 / #53:** PR #39 remains `cf4b70f5130175582fffdfc65bd7c6847450867b`, PR #40 remains `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; no new owner reply or real Setup.exe/payload evidence was visible by 21:03. Evidence/blocker is due 21:12 UTC.
+- **Local isolation:** under `Agent-Canary-Dev`, only `coordinator` contains `.git`; `main`, `agents`, and `integration` are empty. Module worktree isolation remains UNKNOWN pending owner paths.
+- Usage tab `336903555` remains open, active, readable, and above the pause line. Last branch push was 20:58 UTC; next M0 push no earlier than 21:19 UTC after fresh quota, PR #24, and remote-head checks. No module source or tests were changed/run.
+
 ## Canonical coordinator checkpoint (2026-10-15 20:52 UTC)
 
 This live snapshot is based on GitHub refs, checks, Issues, and the Usage page read at 20:52–20:55 UTC. Queue delivery is recorded separately from implementation evidence.

@@ -1,3 +1,14 @@
+## M0 ownership follow-up — 2026-10-15 21:16 UTC
+
+- **#56 P2 — M0/M1 Hook test ownership overlap:** PR #30 includes M1-owned `test/agent-hook.test.ts` in its changed-file list via the interruption-fixture change associated with `b92bde4`; PR #43 also changes this path. PR #30 says its scope is coordination docs only, and its timeline has no visible M1 disposition/review. No runtime regression is established. M0 owns PR #30 scope reconciliation; M1 owns canonical Hook test semantics. Keep #30 Draft until the final diff excludes the M1-owned path or an explicit M1-reviewed exception and accurate PR scope are recorded. Preserve the test; do not weaken/delete assertions. Issue remains OPEN.
+- **#53 P0 / #55 P1:** the 21:12 evidence checkpoint passed without new owner comments or M7/M8/M3 PR-head changes. M0 queued follow-ups to the existing M7 and M3 sessions at 21:16; next evidence/blocker is due 21:32 UTC. Queue acceptance does not verify work started.
+
+## M0 follow-up delta — 2026-10-15 21:06 UTC
+
+- **#55 P1 — M3 Hook contract:** M9 run `38727481764` fails the same unpinned normal `Read` assertion on Windows and Ubuntu: expected deny, actual allow. Selected M1/M2/M5 deny and constrained-read controls and M3 Hook JSONL privacy pass. The run used M1 pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`, not current PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`. M0 comment `6202315177` preserves this limit and requests an M3-owned denial with `native_file_execution_not_pinned`, retained M1 denies, a positive control, and exact-head M9 rerun. Owner evidence/blocker due 21:12 UTC.
+- **#53 P0 — packaged Hook privacy:** no new owner response or PR #39/#40 head movement was visible by 21:03. Real pinned Setup.exe/payload, manifest, extracted-Hook byte comparison, and extracted-harness canary remain NOT_VERIFIED; evidence/blocker due 21:12 UTC.
+- **M0/PR #30:** current head `5f42beabebc361fcfcfdd7dcb9614f1a0d5b96fa`; product 9/9 and latest ownership run `38806755363` 1/1 pass. PR #24 remains unchanged and OPEN/Draft. Next M0 push no earlier than 21:19 UTC.
+
 ## Current coordinator checkpoint (2026-10-15 20:52 UTC)
 
 GitHub priority labels now match the project definitions: P0 for protected-path fail-open, sensitive-data disclosure, or serious data loss; P1 for incompatible interfaces, build failures, or unavailable key features; P2 for noncritical UI, documentation, or ordinary performance issues.

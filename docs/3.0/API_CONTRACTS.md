@@ -1,3 +1,7 @@
+## M0 contract-evidence delta — 2026-10-15 21:06 UTC
+
+This adds CI evidence only; it does not change a public API. M9 composition run `38727481764` fails on Windows job `116396823551` and Ubuntu job `116396823888` because M3's unpinned normal native `Read` returns `allow` where the M1 Hook contract requires `deny` with `native_file_execution_not_pinned`. The selected M1/M2/M5 denial and constrained-read controls and the M3 allowlisted-JSONL check pass on both platforms. The run checked out M1 `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`; current M1 PR #43 is `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`, so this does not establish current-M1-head compatibility. M3 retains ownership of its correction; M1's denial contract/assertions remain authoritative; M9 must rerun both platforms against current exact refs after M3 advances. Evidence is recorded in Issue #55 comment `6202315177`.
+
 ## Current coordination evidence (2026-10-15 20:52 UTC)
 
 This snapshot refreshes acceptance state; it does not change runtime interfaces. Public contract changes remain owner-controlled, and other modules adapt at their boundary.

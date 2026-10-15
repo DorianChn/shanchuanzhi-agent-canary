@@ -1,3 +1,16 @@
+## M0 ownership/dependency delta — 2026-10-15 21:16 UTC
+
+- Issue #56 tracks a PR-scope ownership overlap: M0 PR #30 currently carries an M1-owned `test/agent-hook.test.ts` diff while PR #43 also changes the canonical path. The PR #30 timeline has no visible M1 review/disposition; approval is UNKNOWN. Keep #30 Draft until the file-level diff and scope are reconciled, preserving the regression test.
+- The M3 #55 and M7/M8 #53 owner deadline at 21:12 passed without issue replies or PR-head changes. Follow-up messages were queued to existing M3 and M7 sessions at 21:16; they remain the two active lanes. Queue acceptance does not prove implementation started. Next evidence/blocker checkpoint is 21:32 UTC.
+- Usage page remains open/readable above the stop threshold. Last M0 push was 20:58 UTC; next is no earlier than 21:19 UTC after fresh quota, PR #24, and remote-head checks.
+
+## M0 dependency delta — 2026-10-15 21:06 UTC
+
+- The two assigned lanes remain M3 #55 and M7 #53 (M8 supplies its copy evidence through #53). No corresponding PR-head movement or owner reply was visible by 21:03; owner evidence/blocker is due 21:12 UTC.
+- M9 run `38727481764` confirms the same unpinned-Read mismatch on Windows and Ubuntu, but its M1 pin is `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`, not current M1 PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`. M3 owns the denial correction; M9 retains its exact refs until M3 advances, then must rerun both platforms with current refs. See Issue #55 comment `6202315177`.
+- Under this coordinator clone, `main`, `agents`, and `integration` are empty; only the coordinator worktree is registered. Other module worktree isolation remains UNKNOWN.
+- Usage page remains open/readable above the pause threshold. Last M0 push was 20:58 UTC; next is no earlier than 21:19 UTC after fresh quota and ref checks. VMware, real-model, and installer tests remain mutually exclusive; no slot is active/reserved.
+
 ## Current schedule and dependencies (2026-10-15 20:52 UTC)
 
 - Two existing work lanes are assigned: M3 owns #55 and M7 owns the package-artifact portion of #53, coordinating M8's Hook-copy evidence through the issue. Their existing sessions accepted tasks at 20:44, but no PR-head movement or issue response was visible at the 20:52 checkpoint. Evidence/blocker is due 21:12.

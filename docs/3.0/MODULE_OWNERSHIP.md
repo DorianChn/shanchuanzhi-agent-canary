@@ -1,3 +1,15 @@
+## M0 ownership review — 2026-10-15 21:16 UTC
+
+- M1 retains ownership of canonical `test/agent-hook.test.ts`. PR #30 currently includes this path via the interruption-fixture change associated with `b92bde4`; M1 PR #43 also modifies it. The PR #30 timeline contains no visible M1 disposition/review, so authorization is UNKNOWN. Issue #56 tracks M0 PR-scope reconciliation. Do not treat this overlap as a transfer of file ownership.
+- M0 owns only its coordination PR scope/reconciliation and may not make additional edits to M1 test semantics. Keep PR #30 Draft until its diff excludes this M1-owned file or M1 records an explicit shared-path exception and the PR body is corrected.
+- M3 retains its Hook copy/tests and #55 correction; M7 owns real package/payload evidence for #53 and coordinates M8's copy proof there. The 21:16 follow-ups were queued to existing M3/M7 sessions; task start remains unverified until owner evidence or branch movement appears.
+
+## M0 ownership delta — 2026-10-15 21:06 UTC
+
+- M3 retains ownership of its Hook copy/tests and the correction under #55. M9 owns composition tests; do not change M1 or M9 files from the M3 lane. The failing M9 run `38727481764` used M1 pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`; current M1 PR #43 head is `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`, so current-head composition still needs proof.
+- M7 owns real installer/payload artifact work for #53; M8 owns its shipped Hook/logging copy. PR #39/#40 heads were unchanged at 21:03 and no module owner path or artifact was reported.
+- Under `Agent-Canary-Dev`, only `coordinator` has a Git worktree. `main`, `agents`, and `integration` are empty; do not claim M1–M8 local isolation until owners provide exact paths and branch refs.
+
 ## Current remote ownership snapshot (2026-10-15 20:52 UTC)
 
 | Module | Existing branch / PR | Exact remote head | Owner and current boundary |
