@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
 
@@ -119,6 +119,25 @@ test('Windows build requires a caller-pinned Community ZIP instead of a stale im
   assert.match(source,/COMMUNITY_ZIP SHA256/);
   assert.match(source,/COMMUNITY_CHECKSUM_MISMATCH/);
   assert.doesNotMatch(source,/competition-candidate\.2/);
+});
+
+test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async()=>{
+  const payload=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-packaged-hook-'));
+  try{
+    const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+    assert.ok(build.includes("'e4-hook-faults.mjs'"),'Windows build must include the E4 hook-fault harness');
+    assert.ok(build.includes("fs.copyFileSync(path.resolve(src,'../../security-lab/claude-native-hook.mjs'),path.join(root,'claude-native-hook.mjs'))"),'Windows build must copy the reviewed wrapper next to the packaged harness');
+    const packagedHook=path.join(payload,'claude-native-hook.mjs');
+    const packagedE4=path.join(payload,'e4-hook-faults.mjs');
+    fs.copyFileSync(path.join(repo,'security-lab/claude-native-hook.mjs'),packagedHook);
+    fs.copyFileSync(path.join(repo,'packaging/windows/e4-hook-faults.mjs'),packagedE4);
+    const {runHookFaultChecks}=await import(`${pathToFileURL(packagedE4).href}?packaged=${Date.now()}`);
+    const result=runHookFaultChecks({appRoot:path.join(payload,'app','dist'),fixturesRoot:payload});
+    assert.equal(result.status,'PASS');
+    assert.equal(result.positiveControl.logContractSatisfied,true);
+    assert.equal(result.positiveControl.decision,'allow');
+    assert.equal(result.sideEffects.protectedVictimUnchanged,true);
+  }finally{fs.rmSync(payload,{recursive:true,force:true});}
 });
 
 test('Windows launcher exposes one non-reentrant Auto E4 action with streamed, explicitly bounded results',()=>{
