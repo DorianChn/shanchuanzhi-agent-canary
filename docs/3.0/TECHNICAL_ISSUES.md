@@ -1,6 +1,19 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 04:04 UTC)
+## Latest issue ledger (2026-10-15 04:33 UTC)
+
+| Issue | Priority / owner | Current evidence | State and next acceptance |
+| --- | --- | --- | --- |
+| #27 | P1 / M6, M9; M0 coordinates | M6 fields match the M9 manifest; current M9 exact-head checks 11/11. | OPEN for synchronized owner record; external E4 remains NOT_VERIFIED. |
+| #29 | P2 / M0 | 5-hour usage page readable above stop threshold; current scheduled slots are M1 and M7 on #53. | OPEN; other modules queued, exclusive VMware/model/installer resources unreserved. Stop all work if quota unreadable or below 5%. |
+| #32 | P1 / M1; M0 tracks | M1 focused Windows diagnostics; M1/M3/M4/M6/M9 current exact-head checks green; M6 accepts timing-equivalent fixture; historical failing runs retained. | CLOSED for the synthetic subprocess marker regression only. Why the original runner exceeded the one-second window remains UNKNOWN; native-host callback remains NOT_VERIFIED. |
+| #41 | P1 / M7 | PR #39 checks 11/11; no clean-VM install/launch/upgrade/uninstall/rollback evidence. | OPEN/HOLD; exclusive resource and sanitized lifecycle proof required. |
+| #45 | P1 / M2 | PR #37 checks 9/9; native Codex Shell host policy/callback unavailable. | OPEN/BLOCKED_NOT_VERIFIED; do not claim native protection. |
+| #51 | P1 / M1 | 500 `STATE_STORE_BUSY` retries reach `RETRY_LIMIT`; ten-run Linux workflow passes. | OPEN; original lock-holder/timing trigger remains UNKNOWN; preserve assertions. |
+| #52 | P0 / M1 router, M5 policy; M0 coordinates | Exact-head owner fixes and synthetic junction tests pass; no production filesystem host or protected open/handle identified. | OPEN until a real filesystem host uses the canonical boundary and protected open/handle evidence exists; TOCTOU remains NOT_VERIFIED. |
+| #53 | P0 candidate / M1 logging contract, M7 Windows packaging; affected branch-copy owners | Code-path review found raw `tool_input`/full `decision` serialized to local logs in several wrapper copies; M7 packages a copy. No real credential or external transmission observed. | OPEN; preserve synthetic canary regression and reconcile every reachable/shipped copy with M1's allowlist contract, M7 package check, and M9 composition review. |
+
+## Archived issue ledger (2026-10-15 04:04 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |

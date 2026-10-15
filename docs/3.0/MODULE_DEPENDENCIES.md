@@ -1,6 +1,16 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-14 20:46 UTC)
+## Current schedule and dependencies (2026-10-15 04:33 UTC)
+
+- Maximum active module tasks: two. Current slots: M1/#53 owns the canonical sanitized Hook-log contract and regression; M7/#53 owns Windows payload/hook-fault integration. Both use existing PR branches #43 and #39.
+- M2/M3/M4/M5/M6/M8/M9 wrapper-copy reviews are queued until M1 posts the approved contract and a slot releases. Each module owns its branch copy; no M0 edits to product code.
+- Interface dependency: M1 defines an allowlist-only persisted log record (timestamp, fixed Hook event, permission-decision enum). M7 packages the owner-approved wrapper. Other modules consume it through an adapter or owner-approved branch-local copy; do not serialize raw tool arguments, full decision objects, reasons, paths, or caller-controlled detail.
+- No VMware, real-model, or installer lifecycle resource is reserved or running. Record exclusive resource, owner, worktree, start, and release on #29 before starting such tests.
+- Keep the usage page open and readable. Stop all module activity and GitHub operations if 5-hour quota is unreadable or below 5%; do not publish quota values.
+- Push/public coordination changes in one batch no more often than every 20 minutes. Current public-write batch began after 04:31 UTC; next batch no earlier than 04:51 UTC.
+- Git uses Windows and WSL-managed worktrees. Do not repair or prune cross-runtime/stale WSL pointers from Windows; preserve current branch state.
+
+## Archived schedule and dependencies (2026-10-14 20:46 UTC)
 
 - Maximum active module tasks: two. M1's #32 owner-disposition task is complete; assigned slots are M3/#32 first and M6/#27 package-field signoff. Queue M4/#32 and M6/#32 until slots release.
 - M1's limited owner disposition is now visible: d3b64fc is accepted as behaviorally equivalent to 0de664c only for marker-wait/interruption timing. M3's branch copy is next; M4's and M6's copies are queued under #29. Each owner should port the minimal approved async fixture or record an evidence-backed reason; preserve all fail-closed checks.

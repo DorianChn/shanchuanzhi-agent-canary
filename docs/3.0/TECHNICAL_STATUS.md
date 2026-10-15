@@ -1,6 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 04:04 UTC)
+## Current authoritative snapshot (2026-10-15 04:33 UTC)
+
+- 用量页保持在原活动浏览器标签页，04:31 UTC可读且高于5%停止线；精确余量只记在被`.gitignore`排除的本地报告，公开文档不含账户额度。低于5%或读数不可见即暂停全部任务。
+- 本批次使用既有 M0 分支和 Draft PR，不创建模块分支、不改模块源码、不合并 main、PR #24 或发布 Release。模块 PR exact-head checks：#30 10/10、#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9；PR #24 11/11。
+- PR #24 已回读仍 OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M1–M9模块 PR 均 OPEN/Draft、base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。
+- 新建 P0 候选 Issue #53：不同模块分支中的 native Hook wrapper 会把原始 `tool_input` 和完整 `decision` 写入本地日志；M7 Windows payload 包含该 wrapper。未观察到真实凭据或对外传输，按潜在本地敏感信息落盘跟踪。M1拥有日志契约，M7负责Windows包装集成。
+- 两个活动模块槽位为 M1/#53（canonical allowlist契约与合成敏感值回归）和 M7/#53（Windows payload/hook-fault harness）。M2/M3/M4/M5/M6/M8/M9排队等槽位释放及M1契约；没有启动或预定 VMware、真实模型或安装生命周期测试。
+- Issue #32 已按有限范围关闭：旧同步夹具的1秒窗口先终止了子进程，导致marker未出现；当前异步夹具及受影响PR exact-head CI通过。旧runner为何超过1秒仍UNKNOWN；原生宿主callback仍NOT_VERIFIED，此关闭不扩大到宿主安全性。
+- #51仍OPEN，原始锁竞争的底层触发仍UNKNOWN。#52仍P0/OPEN：别名保护有合成回归，但没有真实文件host/受保护open-handle证据，TOCTOU仍未解决。#27、#41、#45等E4、clean-VM与原生Shell门槛仍按各issue标记为OPEN/NOT_VERIFIED。
+- M0将以纯协调文档更新既有PR #30；本次新文档head的exact-head CI在推送后核验。WSL-managed工作树不运行repair/prune，按远端分支与PR读取状态。
+
+## Archived authoritative snapshot (2026-10-15 04:04 UTC)
 
 - 04:00 UTC 用量页按用户要求保持活动且可读，仍高于5%暂停线；公开记录不写精确余量。当前公共写入批次已开始，批次之间至少间隔20分钟，以最后一次写入时间为准。
 - 本批次推送并回读的既有分支：M1 PR #43 `f14aab7`（精确head CI 10/10）；M4 PR #34 `e939f04`（9/9）；M5 PR #47 `0fdbd92`（9/9）；M9 PR #36 `37a09e8`（11/11）。四个 PR 均保持 OPEN/Draft。

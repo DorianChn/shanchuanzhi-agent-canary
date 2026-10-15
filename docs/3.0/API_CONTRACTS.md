@@ -1,6 +1,16 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 04:04 UTC)
+## Current coordination evidence (2026-10-15 04:33 UTC)
+
+M0 maintains this cross-module contract; M1 owns Hook logging semantics and M7 owns Windows package wiring. This coordination entry adds no runtime implementation.
+
+- **Persistent Hook log contract (P0 candidate #53):** emit only reviewed allowlisted metadata: timestamp, fixed Hook event name, and permission-decision enum. Do not persist raw `tool_input`, the full `decision` object, decision reasons, paths, or other caller-controlled detail. Keep a synthetic canary-value regression proving the value is absent from the log; do not delete or weaken it.
+- **Packaging dependency:** M7's Windows installer payload and hook-fault harness must consume the M1-approved sanitized behavior and retain package-smoke coverage. `npm pack` exclusion does not establish that the Windows installer omits the wrapper. M2/M3/M4/M5/M6/M8 branch copies and the M9 composition must be reviewed by their owners; adapt through the owner-approved contract.
+- **P0 evidence boundary:** this is a potential local at-rest disclosure based on code-path review. No real credential, production exposure, or external transmission was observed. Keep #53 OPEN until every reachable/shipped copy is reconciled or ruled out with exact evidence.
+- **Hook interruption disposition:** #32 is CLOSED only for the synthetic subprocess marker regression. The old one-second fixture window terminated the child before the marker; why the original runner exceeded that window remains UNKNOWN. Native-host callbacks remain NOT_VERIFIED.
+- **Current PR checks:** #24 11/11; M0 #30 10/10; M1 #43 10/10; M2 #37 9/9; M3 #33 9/9; M4 #34 9/9; M5 #47 9/9; M6 #38 11/11; M7 #39 11/11; M8 #40 9/9; M9 #36 11/11. New M0 documentation head CI remains pending after push.
+
+## Archived coordination evidence (2026-10-15 04:04 UTC)
 
 M0 maintains this canonical cross-module summary; M1 and M5 retain ownership of runtime and policy semantics.
 

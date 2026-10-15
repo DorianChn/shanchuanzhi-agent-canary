@@ -1,6 +1,19 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 04:04 UTC)
+## Current integration risk snapshot (2026-10-15 04:33 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #53 Hook log sensitive data | P0 candidate | Several branch copies log raw tool input/full decision; M7 Windows packaging includes a wrapper copy. No actual secret exposure or external transmission observed. | M1 defines allowlist and retains synthetic canary regression; M7 verifies Windows payload/harness; other branch owners reconcile copies. Keep open until every reachable/shipped copy has exact evidence. |
+| #52 OBSERVE aliases | P0 | M1/M5 synthetic alias-denial changes are integrated in M9; exact-head CI is green, but no production filesystem host/protected open-handle evidence exists. | Keep OPEN; real host opt-in and handle/OS boundary required; TOCTOU remains NOT_VERIFIED. |
+| #51 store retries | P1 | Ten-run workflow and current PR CI pass; 500 `STATE_STORE_BUSY` retries reached `RETRY_LIMIT` in the original run. | Keep OPEN; underlying original lock-holder/timing cause remains UNKNOWN. |
+| #32 Hook interruption | P1 | M1/M3/M4/M6/M9 current exact-head CI green; historical direct test mechanism was a one-second fixture window before marker. | CLOSED for the synthetic subprocess marker regression only; historical runner delay UNKNOWN and native-host callback NOT_VERIFIED. |
+| #27 M9 E4 composition | P1 | M9 exact-head CI 11/11; M6 verifier compatibility retained. | Keep issue record synchronized; independent external E4 remains NOT_VERIFIED. |
+| #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive resource reservation and lifecycle artifacts. |
+| #45 native Shell | P1 | M2 PR #37 checks 9/9; actual desktop host policy/callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
+| M4 security/E4 provider | P1 | M4 PR #34 checks 9/9; provider/IPC absent. | UI remains UNKNOWN; do not show mock PASS. |
+
+## Archived integration risk snapshot (2026-10-15 04:04 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
