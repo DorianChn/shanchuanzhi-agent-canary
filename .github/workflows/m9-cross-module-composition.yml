@@ -1,0 +1,85 @@
+name: M9 cross-module security composition
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compose-current-module-refs:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.number == 36
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout M9 PR #36
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: refs/pull/36/head
+          path: module-sources/m9
+
+      - name: Checkout M1 PR #43
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: refs/pull/43/head
+          path: module-sources/m1
+
+      - name: Checkout M2 PR #37
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: refs/pull/37/head
+          path: module-sources/m2
+
+      - name: Checkout M5 PR #47
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: refs/pull/47/head
+          path: module-sources/m5
+
+      - name: Record all four checked-out commits
+        shell: bash
+        run: |
+          m9_sha="$(git -C module-sources/m9 rev-parse --verify HEAD)"
+          m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
+          m2_sha="$(git -C module-sources/m2 rev-parse --verify HEAD)"
+          m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
+          {
+            printf 'M9_SHA=%s\n' "$m9_sha"
+            printf 'M1_SHA=%s\n' "$m1_sha"
+            printf 'M2_SHA=%s\n' "$m2_sha"
+            printf 'M5_SHA=%s\n' "$m5_sha"
+          } >> "$GITHUB_ENV"
+          printf 'M9: %s\nM1: %s\nM2: %s\nM5: %s\n' \
+            "$m9_sha" "$m1_sha" "$m2_sha" "$m5_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Install M9 test loader
+        run: npm ci
+        working-directory: module-sources/m9
+
+      - name: Install M1 owner dependencies
+        run: npm ci
+        working-directory: module-sources/m1
+
+      - name: Install M5 owner dependencies
+        run: npm ci
+        working-directory: module-sources/m5
+
+      - name: Run synthetic owner-source composition regression
+        working-directory: module-sources/m9
+        env:
+          M9_ROOT: ${{ github.workspace }}/module-sources/m9
+          M1_ROOT: ${{ github.workspace }}/module-sources/m1
+          M2_ROOT: ${{ github.workspace }}/module-sources/m2
+          M5_ROOT: ${{ github.workspace }}/module-sources/m5
+        run: node --import tsx --test test/m9-cross-module-composition.test.mjs
