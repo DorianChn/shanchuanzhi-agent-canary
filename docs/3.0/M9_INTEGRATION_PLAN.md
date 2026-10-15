@@ -1,5 +1,14 @@
 # M9 最终集成计划
 
+## M9 精确 head 与契约/风险复核（2026-10-15 00:38 UTC）
+
+> GitHub API 只读核对；本节更新 M9/M0 的精确 head 与 checks。下方 00:18 UTC 快照现作为历史记录；本轮不重跑本地测试。
+
+- PR #36 为 OPEN/Draft，base 为 feature/agent-canary-3.0（62496d4020bd90ba2eede49b2e80a2bbebb036b4），远端 head 与本地 M9 branch 一致，为 8f713a29356380f5c8ec6d4360a3579f323de315。该精确 head 的产品 CI run 38661011533 为 9/9 jobs success；Windows Community wrapper run 38661011554 为 2/2 jobs success。
+- M0 PR #30 当前 head 为 e94f630038144c68aedb3ff5358c473e80dfc0f0，base 仍为 62496d4020bd90ba2eede49b2e80a2bbebb036b4。该 head 的根路径 API_CONTRACTS.md blob 为 0d51c4019ae292b34054398f1fc9dfa7fc24f594；M9 副本仍为 693d437856a2d879983de4fb16497090128aa1d9。通用兼容规则与从 TrustedExecutionGateway 起的接口语义正文在规范化换行后逐字相同；blob 差异位于协调/状态快照，未发现接口语义冲突。根路径 canonical 由 M0 所有，本轮未改写或 cherry-pick M0 文件/分支。
+- GitHub issue 状态复核：#27、#32、#41、#45 为 OPEN，#48 为 CLOSED。仍按各 Issue 的有限范围处理；#32 Hook fixture 协调、#41 clean-VM HOLD、#45 Native Codex Shell UNPROTECTED 不因 M9 CI 通过而解除。外部独立 E4 仍为 NOT_VERIFIED。
+- 未修改 M1–M8 代码、Issue/PR 文案或其他模块工作树；没有重新运行本地测试、没有推送或合并。
+
 ## M9 第二阶段本地集成验证（2026-10-15 00:26 UTC）
 
 - 在 integration worktree、分支 feature/ac3-m9-integration 上验证候选 HEAD 9c7af262131a792aeb811a587b6e83e026ba4a20（父提交 6abd4da78f161577bff90a5d18fd0d3ec329fdd3）；开始前工作树干净、无未合并索引项。环境：Node.js v22.23.1、npm 10.9.8。
@@ -15,9 +24,9 @@
 - 该修复提交尚未推送，远端 CI pending；本次仅更新 M9 所有的集成计划，没有 cherry-pick M6 代码。M6 owner signoff 仍未确认。
 - 外部独立 E4 验收仍为 NOT_VERIFIED。M9 的 npm run e4:test 是本地合成 bundle verifier 测试，不能替代 M6 外部独立 E4，也不能据此将 E4 状态标记为 VERIFIED。
 
-## 当前 M9 集成快照（2026-10-15 00:18 UTC）
+## 历史 M9 集成快照（2026-10-15 00:18 UTC）
 
-> 本节基于 00:15–00:17 UTC 的 GitHub head、check、Issue 和文件树读取。下方 2026-10-14 的记录保留为历史快照；如与本节冲突，以本节的精确 head 及状态为准。PR checks 通过只证明相应提交的自动化检查，不代表模块 owner signoff、跨分支组合验收或外部环境验收。
+> 本节为 00:15–00:17 UTC 的历史 GitHub head/check/Issue/文件树快照。M9 与 M0 的较新精确 head/check 状态见上方 00:38 UTC 复核；其他 2026-10-14 记录亦为历史证据。CI 通过仅证明对应提交的自动化检查，不代表模块 owner signoff、跨分支组合验收或外部环境验收。
 
 - M9 PR #36 为 OPEN/Draft，远端 head `6abd4da78f161577bff90a5d18fd0d3ec329fdd3`：产品 CI run `38620602632` 9/9，wrapper run `38620603071` 2/2。M0 PR #30 为 OPEN/Draft，head `68f3fa237464b68781d182e42ec8a854e29a4c05`：当前 checks 10/10，runs `38657007478`、`38657007532`。
 - 当前模块 PR head 与各自 checks：
