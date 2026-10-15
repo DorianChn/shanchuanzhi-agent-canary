@@ -1,10 +1,10 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 01:34 UTC)
+## Current ownership and worktree snapshot (2026-10-15 01:35 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
-| M1 | `feature/ac3-security-core` / `agents/M1-security` | PR #43 `a2206d3`; 9/9 pass | Owns Gateway/Guard and Hook. M0 provisionally assigns `src/file-state-store.ts` and `test/file-state-store.test.ts` under #51; M1 owner confirmation is pending. Source review found a lock-contention hypothesis but no confirmed defect; no implementation change. A path-scoped Linux stress workflow is assigned, not yet verified. Subprocess fixture does not prove native callback behavior; #32 remains OPEN. |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | PR #43 `a2206d3`; 9/9 pass | Owns Gateway/Guard, Hook, and (M1 accepted in #51 comment `6182359961`) `src/file-state-store.ts` plus `test/file-state-store.test.ts` for quarantine persistence. Source review found a lock-contention hypothesis but no confirmed defect; no implementation change. A path-scoped Linux stress workflow is in progress, not yet verified. Subprocess fixture does not prove native callback behavior; #32 remains OPEN. |
 | M2 | `feature/ac3-execution-isolation` / WSL-managed `agents/M2-isolation` | PR #37 `0f2c10c`; 9/9 pass | Owns execution isolation adapter. Native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED (#45). |
 | M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | PR #33 `d9364cc`; 9/9 pass | Owns onboarding and its branch-local Hook test copy. #32 remains UNACKNOWLEDGED/HOLD; M0 requested branch-head/ownership/evidence acknowledgment in comment `6182264822`; no branch edit authorized. |
 | M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | PR #34 `69ec7f1`; 9/9 pass | Owns desktop UI and branch-local Hook test copy. #32 remains UNACKNOWLEDGED/HOLD; M0 requested branch-head/ownership/evidence acknowledgment in comment `6182264822`; backend security/E4 UNKNOWN. |
