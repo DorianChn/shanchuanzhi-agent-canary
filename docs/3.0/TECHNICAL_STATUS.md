@@ -1,15 +1,15 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 04:50 UTC)
+## Current authoritative snapshot (2026-10-15 05:03 UTC)
 
-- 用量页保持在原活动浏览器标签页，04:50 UTC仍可读且高于5%停止线；精确余量只记在被`.gitignore`排除的本地报告，公开文档不含账户额度。低于5%或读数不可见即暂停全部任务。
-- 本批次使用既有 M0 分支和 Draft PR，不创建模块分支、不改模块源码、不合并 main、PR #24 或发布 Release。模块/M9 exact-head checks：#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9；PR #24 11/11。M0旧head `497c066` 为10/10；新文档head `f818c4d` 的Windows Node20 store test失败，详见#51。
+- 用量页保持在原活动浏览器标签页，05:00 UTC仍可读且高于5%停止线；精确余量只记在被`.gitignore`排除的本地报告，公开文档不含账户额度。低于5%或读数不可见即暂停全部任务。
+- 本批次使用既有 M0 分支和 Draft PR，不创建模块分支、不改模块源码、不合并 main、PR #24 或发布 Release。当前远端 exact-head checks：#24 11/11、M0 #30 `2be212b` 10/10、M1 #43 10/10、M2 #37 9/9、M3 #33 `f9bd818` 9/9、M4 #34 9/9、M5 #47 9/9、M6 #38 11/11、M7 #39 `87e0df0` 11/11、M8 #40 9/9、M9 #36 `37a09e8` 11/11。M3 `1829e05` 与M9 `2d3f1da` 为本地待批次提交，远端CI尚未运行。
 - PR #24 已回读仍 OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M1–M9模块 PR 均 OPEN/Draft、base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。
-- P0候选 Issue #53：M1当前owner wrapper仅持久化时间戳、固定事件名和permission decision，合成敏感值回归1/1通过；M7本地提交 `87e0df0` 同步该wrapper并增加Windows packaged E4/log-canary回归，聚焦测试、语法和diff检查通过，远端PR CI待验证。其他模块分支副本仍待owner核对。未观察到真实凭据或对外传输。
-- 两个活动模块槽位为 M1/#51（Windows Node20/Ubuntu Node22四进程store retry复核）和 M7/#53（Windows payload/hook-fault harness）。M2/M3/M4/M5/M6/M8/M9排队等槽位释放及M1契约；没有启动或预定 VMware、真实模型或安装生命周期测试。
+- P0候选 Issue #53：M1当前owner wrapper仅持久化时间戳、固定事件名和permission decision，合成敏感值回归1/1通过；M7提交 `87e0df0` 同步该wrapper并增加Windows packaged E4/log-canary回归，PR #39 exact-head checks 11/11通过。M3副本审计和M9组合验证已启动；其他分支副本仍待owner核对。未观察到真实凭据或对外传输。
+- 两个活动模块槽位为 M3/#53（M3分支Hook日志副本核对）和 M9/#53（把M7 owner提交引入M9既有集成分支并做组合验证）。M1完成#51/#53核查且未改代码；M7已完成#53且exact-head CI通过。M2/M4/M5/M6/M8排队；没有启动或预定 VMware、真实模型或安装生命周期测试。
 - Issue #32 已按有限范围关闭：旧同步夹具的1秒窗口先终止了子进程，导致marker未出现；当前异步夹具及受影响PR exact-head CI通过。旧runner为何超过1秒仍UNKNOWN；原生宿主callback仍NOT_VERIFIED，此关闭不扩大到宿主安全性。
-- #51仍OPEN，原始锁竞争的底层触发仍UNKNOWN。M0新head `f818c4d` 的PR #30 run `38682225388` 在Windows Node20再次于四进程quarantine测试达到500次 `STATE_STORE_BUSY` 后报 `RETRY_LIMIT`（321通过/1失败/4跳过），package-smoke因此跳过；其余已完成jobs通过。失败证据保留，不推断数据损失、不改断言；M1已开始聚焦复核。#52仍P0/OPEN：别名保护有合成回归，但没有真实文件host/受保护open-handle证据，TOCTOU仍未解决。#27、#41、#45等E4、clean-VM与原生Shell门槛仍按各issue标记为OPEN/NOT_VERIFIED。
-- M0纯协调文档commit `f818c4d` 已推送至既有PR #30，base未变。所有权检查通过；产品run `38682225388` 失败于Windows Node20四进程file-store用例，package-smoke跳过；不改弱测试。M7本地提交 `87e0df0` 尚未推送，待共同批次审阅与远端CI。WSL-managed工作树不运行repair/prune，按远端分支与PR读取状态。
+- #51仍OPEN，根因UNKNOWN。M1确认M0 Windows Node20 run `38682225388` 与Ubuntu Node22 attempt 1均有worker 0耗尽500次 `STATE_STORE_BUSY` 并抛`RETRY_LIMIT`，最终48项断言在失败attempt未运行；相同store/test blob在另一轮M1 Windows Node20及本机Node22通过。日志无锁持有者/时长，无法定因；未发现有证据支持的源码修复，保留全部断言。PR #30 follow-up head `2be212b` exact-head checks 10/10通过。#52仍P0/OPEN：别名保护有合成回归，但没有真实文件host/受保护open-handle证据，TOCTOU仍未解决。#27、#41、#45等E4、clean-VM与原生Shell门槛仍按各issue标记为OPEN/NOT_VERIFIED。
+- M0纯协调文档commit `2be212b` 已推送至既有PR #30，base未变，exact-head checks 10/10。M7 commit `87e0df0` 已推送既有PR #39，product/wrapper/package检查11/11通过。M3 `1829e05` 与M9 `2d3f1da` 已在各自现有分支本地提交，待05:15批次推送并核验CI。PR #24仍OPEN/Draft且未改；未合并main、未发布Release。WSL-managed工作树不运行repair/prune，按远端分支与PR读取状态。
 
 ## Archived authoritative snapshot (2026-10-15 04:04 UTC)
 

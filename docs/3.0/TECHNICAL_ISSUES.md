@@ -1,6 +1,6 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 04:38 UTC)
+## Latest issue ledger (2026-10-15 05:03 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
@@ -9,9 +9,9 @@
 | #32 | P1 / M1; M0 tracks | M1 focused Windows diagnostics; M1/M3/M4/M6/M9 current exact-head checks green; M6 accepts timing-equivalent fixture; historical failing runs retained. | CLOSED for the synthetic subprocess marker regression only. Why the original runner exceeded the one-second window remains UNKNOWN; native-host callback remains NOT_VERIFIED. |
 | #41 | P1 / M7 | PR #39 checks 11/11; no clean-VM install/launch/upgrade/uninstall/rollback evidence. | OPEN/HOLD; exclusive resource and sanitized lifecycle proof required. |
 | #45 | P1 / M2 | PR #37 checks 9/9; native Codex Shell host policy/callback unavailable. | OPEN/BLOCKED_NOT_VERIFIED; do not claim native protection. |
-| #51 | P1 / M1 | Ten-run Linux workflow passes, but M0 #30 head `f818c4d` run `38682225388` again failed the four-process test on Windows Node20: worker 0 exhausted 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT` (321 pass/1 fail/4 skip); package-smoke skipped. | OPEN; underlying trigger remains UNKNOWN. Preserve all assertions and the failing run; M1 follow-up is queued behind its active #53 slot. |
+| #51 | P1 / M1 | M1 matched Ubuntu Node22 attempt 1 and M0 Windows Node20 run `38682225388`: both exhausted 500 retries; identical store/test blobs pass in later M1 Windows Node20 CI. Local Windows Node22 test and 48-state diagnostic pass. CI lacks lock-owner/duration traces; no source change or assertion reduction. | OPEN; root cause UNKNOWN. Preserve `RETRY_LIMIT` and all 48 assertions. |
 | #52 | P0 / M1 router, M5 policy; M0 coordinates | Exact-head owner fixes and synthetic junction tests pass; no production filesystem host or protected open/handle identified. | OPEN until a real filesystem host uses the canonical boundary and protected open/handle evidence exists; TOCTOU remains NOT_VERIFIED. |
-| #53 | P0 candidate / M1 logging contract, M7 Windows packaging; affected branch-copy owners | M1's owner wrapper persists only timestamp, fixed Hook event name, and permission decision; focused synthetic canary regression passes. M7 local commit `87e0df0` mirrors that wrapper and adds a packaged E4/log-canary check; focused test, syntax checks, and diff check pass locally. Remote PR CI and other branch copies remain pending. No real credential or external transmission observed. | OPEN; preserve canary regression and reconcile every reachable/shipped copy with M1's allowlist contract, M7 package check, and M9 composition review. |
+| #53 | P0 candidate / M1 logging contract, M7 Windows packaging; affected branch-copy owners | M1 owner copy verified; M7 `87e0df0` exact-head checks 11/11 pass. M3 local candidate `1829e05` passes focused 11/11/build; M9 local candidate `2d3f1da` passes packaging, composition 3/3, E4 16/16, build, and package smoke 100 files. Remote M3/M9 CI pending; M2/M4/M5/M6/M8 copies remain to review. | OPEN; preserve canary regression and reconcile every reachable/shipped copy with M1's allowlist contract, M7 package check, M9 composition, and remaining owner copies. |
 
 ## Archived issue ledger (2026-10-15 04:04 UTC)
 
