@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -293,4 +294,69 @@ test('missing policy log with a retained checkpoint fails closed in warm and fre
 
   const fresh = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });
   assert.throws(() => fresh.currentRules(), /POLICY_AUDIT_HEAD_MISMATCH/);
+});
+
+test('native lab hook logs only the fixed allowlist and drops synthetic sensitive canaries', t => {
+  const tempParent = path.resolve(os.tmpdir());
+  const root = fs.mkdtempSync(path.join(tempParent, 'canary-policy-native-hook-'));
+  t.after(() => {
+    const resolvedRoot = path.resolve(root);
+    assert.equal(path.dirname(resolvedRoot), tempParent, 'synthetic fixture must remain directly under the temp directory');
+    const stat = fs.lstatSync(resolvedRoot);
+    assert.equal(stat.isDirectory(), true);
+    assert.equal(stat.isSymbolicLink(), false);
+    fs.rmSync(resolvedRoot, { recursive: true });
+  });
+
+  const canaries = {
+    session: 'M5_SESSION_SHOULD_NOT_PERSIST',
+    toolName: 'M5_TOOL_NAME_SHOULD_NOT_PERSIST',
+    command: 'M5_TOOL_ARGUMENT_SHOULD_NOT_PERSIST',
+    filePath: 'M5_FILE_PATH_SHOULD_NOT_PERSIST',
+    callerData: 'M5_CALLER_CONTROLLED_SHOULD_NOT_PERSIST',
+    reason: 'M5_REASON_SHOULD_NOT_PERSIST',
+    decisionMetadata: 'M5_DECISION_METADATA_SHOULD_NOT_PERSIST',
+  };
+  const modulePath = path.join(root, 'synthetic-hook.mjs');
+  const logFile = path.join(root, 'hook.jsonl');
+  const wrapper = path.resolve('security-lab/claude-native-hook.mjs');
+  const moduleSource = `export async function decideAgentHook() {
+    return { hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: ${JSON.stringify(canaries.reason)},
+      callerControlledMetadata: ${JSON.stringify(canaries.decisionMetadata)}
+    } };
+  }\n`;
+  fs.writeFileSync(modulePath, moduleSource, { flag: 'wx' });
+
+  const input = {
+    session_id: canaries.session,
+    tool_name: canaries.toolName,
+    tool_input: {
+      command: canaries.command,
+      file_path: path.join(root, canaries.filePath),
+      caller_value: canaries.callerData,
+    },
+  };
+  const result = spawnSync(process.execPath, [wrapper, modulePath, root, path.join(root, 'state'), logFile], {
+    input: JSON.stringify(input), encoding: 'utf8', timeout: 5000,
+  });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0);
+  const response = JSON.parse(result.stdout);
+  assert.equal(response.hookSpecificOutput.permissionDecision, 'deny');
+  assert.equal(response.hookSpecificOutput.permissionDecisionReason, canaries.reason);
+
+  const log = fs.readFileSync(logFile, 'utf8');
+  const lines = log.trim().split(/\r?\n/);
+  assert.equal(lines.length, 1);
+  const record = JSON.parse(lines[0]);
+  assert.deepEqual(Object.keys(record), ['timestamp', 'hookEventName', 'permissionDecision']);
+  assert.equal(new Date(record.timestamp).toISOString(), record.timestamp);
+  assert.equal(record.hookEventName, 'PreToolUse');
+  assert.equal(record.permissionDecision, 'deny');
+  for (const canary of Object.values(canaries)) {
+    assert.equal(log.includes(canary), false, `persisted hook log contains synthetic canary ${canary}`);
+  }
 });
