@@ -1,4 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import os from 'node:os';import fs from 'node:fs';import path from 'node:path';
+import http from 'node:http';
 import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
@@ -22,6 +23,25 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
   assert.equal((await post('runtime3/approve',{requestId:request,confirm:true,operatorCode:'FIXTURE_OPERATOR_ONLY'})).status,400);
   await post('runtime3/action',{action:'honeypot'});response=await post('runtime3/action',{action:'write'});const state=await response.json() as any;
   assert.equal(state.guard,'QUARANTINED');assert.equal(state.evidence.at(-1).decision,'DENY');assert.equal(state.evidence.at(-1).execution_status,'NOT_STARTED');assert.equal(state.chain.valid,true);assert.ok(!(JSON.stringify(await get()) as string).includes('FIXTURE_OPERATOR_ONLY'));
+ }finally{await console.close();}
+});
+
+test('missing live security and E4 providers stay unavailable behind the existing Host/Origin/CSRF boundary',async()=>{
+ const console=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(console.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
+  for(const route of ['security-center','e4/status']){
+   assert.equal((await fetch(console.url+'/api/'+route)).status,403,route+' must still require CSRF');
+   assert.equal((await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!}})).status,404,route+' has no authoritative provider');
+   assert.equal((await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!,origin:'https://attacker.example'}})).status,403,route+' must reject cross-origin reads');
+   const mismatchedHostStatus=await new Promise<number>((resolve,reject)=>{const request=http.request(new URL('/api/'+route,console.url),{method:'GET',headers:{'x-canary-csrf':csrf!,host:'attacker.example'}},response=>{response.resume();response.on('end',()=>resolve(response.statusCode??0));});request.on('error',reject);request.end();});
+   assert.equal(mismatchedHostStatus,403,route+' must reject a mismatched Host');
+  }
+  const unknown=adaptSecuritySnapshot({});
+  assert.equal(unknown.protectionStatus,'UNKNOWN');assert.equal(unknown.gateway.protectionStatus,'UNKNOWN');
+  assert.equal(unknown.hook.protectionStatus,'UNKNOWN');assert.equal(unknown.canaryIsolation.protectionStatus,'UNKNOWN');
+  const diagnostic=buildSecurityDiagnostic(unknown,{securityCenter:'UNSUPPORTED',e4:'UNSUPPORTED'});
+  assert.equal(diagnostic.protection.overall,'UNKNOWN');assert.equal(diagnostic.dataSources.securityCenter,'UNSUPPORTED');assert.equal(diagnostic.dataSources.e4,'UNSUPPORTED');
  }finally{await console.close();}
 });
 
