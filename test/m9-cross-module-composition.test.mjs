@@ -17,15 +17,21 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M5', 'M7', 'M8'].map(
 }));
 
 const pinnedSourceShas = {
-  M1: 'f14aab781c62db60ac241d2114f543f6cac223ae',
+  M1: 'b683d8476cc4302ce7fb93ee0893a9b7e736151a',
   M2: '76066cbb750ec714ce8691bc0f30c8171186f079',
-  M5: 'b6a40b49f132decba97d269ff942d868fcef928f',
+  M5: '2ccac21542eeefbc0dba19358db1e904e1cb806d',
   M7: '52cc149e958f8139ea93cf8bab7e14bedfe45d62',
-  M8: 'd12dd2cdb7e4fdeddadcdc45bf5ff0420cca5e04',
+  M8: 'c1ff677cc56cd159cc983042e5dfcec5dc93f3ad',
 };
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the reviewed source commit`);
 }
+
+const m8CheckoutPolicy = spawnSync('git', ['-C', sourceRoots.M8.root, 'check-attr', 'eol', '--', 'security-lab/claude-native-hook.mjs'], { encoding: 'utf8', windowsHide: true });
+assert.equal(m8CheckoutPolicy.status, 0);
+assert.equal(m8CheckoutPolicy.stdout.trim(), 'security-lab/claude-native-hook.mjs: eol: lf');
+const m8BuildContract = fs.readFileSync(path.join(sourceRoots.M8.root, 'packaging/windows/build-contract.mjs'), 'utf8');
+assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(repoRoot,WRAPPER_PATH\)\)\)/, 'M8 must preserve the strict raw-byte provenance comparison');
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));

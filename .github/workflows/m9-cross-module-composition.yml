@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: f14aab781c62db60ac241d2114f543f6cac223ae
+          ref: b683d8476cc4302ce7fb93ee0893a9b7e736151a
           path: module-sources/m1
 
       - name: Checkout M2 PR #37 at reviewed SHA
@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: b6a40b49f132decba97d269ff942d868fcef928f
+          ref: 2ccac21542eeefbc0dba19358db1e904e1cb806d
           path: module-sources/m5
 
       - name: Checkout M7 PR #39 at reviewed SHA
@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: d12dd2cdb7e4fdeddadcdc45bf5ff0420cca5e04
+          ref: c1ff677cc56cd159cc983042e5dfcec5dc93f3ad
           path: module-sources/m8
 
       - name: Record all six checked-out commits
@@ -119,7 +119,7 @@ jobs:
           {
             echo
             echo 'M1/M2/M5 evidence: exact allowed read and deterministic protected-path/symlink-alias denials before the adapter callback, with fixture and Gateway evidence unchanged.'
-            echo 'M7/M8 evidence: exact owner tests plus M9 raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
+            echo 'M7/M8 evidence: exact owner tests plus M9 raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent; M8 LF checkout policy is checked with its strict raw-byte provenance comparator retained.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'
             echo 'Not established by this workflow: a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
           } >> "$GITHUB_STEP_SUMMARY"
