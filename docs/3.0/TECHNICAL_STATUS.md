@@ -1,15 +1,15 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 04:33 UTC)
+## Current authoritative snapshot (2026-10-15 04:50 UTC)
 
-- 用量页保持在原活动浏览器标签页，04:31 UTC可读且高于5%停止线；精确余量只记在被`.gitignore`排除的本地报告，公开文档不含账户额度。低于5%或读数不可见即暂停全部任务。
-- 本批次使用既有 M0 分支和 Draft PR，不创建模块分支、不改模块源码、不合并 main、PR #24 或发布 Release。模块 PR exact-head checks：#30 10/10、#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9；PR #24 11/11。
+- 用量页保持在原活动浏览器标签页，04:50 UTC仍可读且高于5%停止线；精确余量只记在被`.gitignore`排除的本地报告，公开文档不含账户额度。低于5%或读数不可见即暂停全部任务。
+- 本批次使用既有 M0 分支和 Draft PR，不创建模块分支、不改模块源码、不合并 main、PR #24 或发布 Release。模块/M9 exact-head checks：#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9；PR #24 11/11。M0旧head `497c066` 为10/10；新文档head `f818c4d` 的Windows Node20 store test失败，详见#51。
 - PR #24 已回读仍 OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M1–M9模块 PR 均 OPEN/Draft、base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。
-- 新建 P0 候选 Issue #53：不同模块分支中的 native Hook wrapper 会把原始 `tool_input` 和完整 `decision` 写入本地日志；M7 Windows payload 包含该 wrapper。未观察到真实凭据或对外传输，按潜在本地敏感信息落盘跟踪。M1拥有日志契约，M7负责Windows包装集成。
-- 两个活动模块槽位为 M1/#53（canonical allowlist契约与合成敏感值回归）和 M7/#53（Windows payload/hook-fault harness）。M2/M3/M4/M5/M6/M8/M9排队等槽位释放及M1契约；没有启动或预定 VMware、真实模型或安装生命周期测试。
+- P0候选 Issue #53：M1当前owner wrapper仅持久化时间戳、固定事件名和permission decision，合成敏感值回归1/1通过；M7本地提交 `87e0df0` 同步该wrapper并增加Windows packaged E4/log-canary回归，聚焦测试、语法和diff检查通过，远端PR CI待验证。其他模块分支副本仍待owner核对。未观察到真实凭据或对外传输。
+- 两个活动模块槽位为 M1/#51（Windows Node20/Ubuntu Node22四进程store retry复核）和 M7/#53（Windows payload/hook-fault harness）。M2/M3/M4/M5/M6/M8/M9排队等槽位释放及M1契约；没有启动或预定 VMware、真实模型或安装生命周期测试。
 - Issue #32 已按有限范围关闭：旧同步夹具的1秒窗口先终止了子进程，导致marker未出现；当前异步夹具及受影响PR exact-head CI通过。旧runner为何超过1秒仍UNKNOWN；原生宿主callback仍NOT_VERIFIED，此关闭不扩大到宿主安全性。
-- #51仍OPEN，原始锁竞争的底层触发仍UNKNOWN。#52仍P0/OPEN：别名保护有合成回归，但没有真实文件host/受保护open-handle证据，TOCTOU仍未解决。#27、#41、#45等E4、clean-VM与原生Shell门槛仍按各issue标记为OPEN/NOT_VERIFIED。
-- M0将以纯协调文档更新既有PR #30；本次新文档head的exact-head CI在推送后核验。WSL-managed工作树不运行repair/prune，按远端分支与PR读取状态。
+- #51仍OPEN，原始锁竞争的底层触发仍UNKNOWN。M0新head `f818c4d` 的PR #30 run `38682225388` 在Windows Node20再次于四进程quarantine测试达到500次 `STATE_STORE_BUSY` 后报 `RETRY_LIMIT`（321通过/1失败/4跳过），package-smoke因此跳过；其余已完成jobs通过。失败证据保留，不推断数据损失、不改断言；M1已开始聚焦复核。#52仍P0/OPEN：别名保护有合成回归，但没有真实文件host/受保护open-handle证据，TOCTOU仍未解决。#27、#41、#45等E4、clean-VM与原生Shell门槛仍按各issue标记为OPEN/NOT_VERIFIED。
+- M0纯协调文档commit `f818c4d` 已推送至既有PR #30，base未变。所有权检查通过；产品run `38682225388` 失败于Windows Node20四进程file-store用例，package-smoke跳过；不改弱测试。M7本地提交 `87e0df0` 尚未推送，待共同批次审阅与远端CI。WSL-managed工作树不运行repair/prune，按远端分支与PR读取状态。
 
 ## Archived authoritative snapshot (2026-10-15 04:04 UTC)
 

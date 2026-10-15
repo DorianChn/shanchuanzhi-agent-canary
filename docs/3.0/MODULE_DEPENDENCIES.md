@@ -1,13 +1,14 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-15 04:33 UTC)
+## Current schedule and dependencies (2026-10-15 04:50 UTC)
 
-- Maximum active module tasks: two. Current slots: M1/#53 owns the canonical sanitized Hook-log contract and regression; M7/#53 owns Windows payload/hook-fault integration. Both use existing PR branches #43 and #39.
-- M2/M3/M4/M5/M6/M8/M9 wrapper-copy reviews are queued until M1 posts the approved contract and a slot releases. Each module owns its branch copy; no M0 edits to product code.
+- Maximum active module tasks: two. Current slots: M1/#51 investigates the quarantine retry recurrence on its existing PR #43 branch; M7/#53 owns Windows payload/hook-fault integration on existing PR #39. M1 completed its #53 owner-copy review without a code change.
+- M2/M3/M4/M5/M6/M8/M9 wrapper-copy reviews are queued until a slot releases; M1's owner allowlist contract is verified. Each module owns its branch copy; no M0 edits to product code.
+- P1 evidence for M1/#51: PR #30 docs head `f818c4d` has a Windows Node20 four-process quarantine failure (`RETRY_LIMIT` after 500 `STATE_STORE_BUSY` retries); preserve the run and assertions. M1 has started focused triage; the underlying lock-holder/timing trigger remains UNKNOWN.
 - Interface dependency: M1 defines an allowlist-only persisted log record (timestamp, fixed Hook event, permission-decision enum). M7 packages the owner-approved wrapper. Other modules consume it through an adapter or owner-approved branch-local copy; do not serialize raw tool arguments, full decision objects, reasons, paths, or caller-controlled detail.
 - No VMware, real-model, or installer lifecycle resource is reserved or running. Record exclusive resource, owner, worktree, start, and release on #29 before starting such tests.
 - Keep the usage page open and readable. Stop all module activity and GitHub operations if 5-hour quota is unreadable or below 5%; do not publish quota values.
-- Push/public coordination changes in one batch no more often than every 20 minutes. Current public-write batch began after 04:31 UTC; next batch no earlier than 04:51 UTC.
+- Push/public coordination changes in one batch no more often than every 20 minutes. M0's last push completed at about 04:34 UTC; next public-write batch no earlier than 04:55 UTC.
 - Git uses Windows and WSL-managed worktrees. Do not repair or prune cross-runtime/stale WSL pointers from Windows; preserve current branch state.
 
 ## Archived schedule and dependencies (2026-10-14 20:46 UTC)

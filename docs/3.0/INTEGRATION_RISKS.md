@@ -1,12 +1,12 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 04:33 UTC)
+## Current integration risk snapshot (2026-10-15 04:50 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
-| #53 Hook log sensitive data | P0 candidate | Several branch copies log raw tool input/full decision; M7 Windows packaging includes a wrapper copy. No actual secret exposure or external transmission observed. | M1 defines allowlist and retains synthetic canary regression; M7 verifies Windows payload/harness; other branch owners reconcile copies. Keep open until every reachable/shipped copy has exact evidence. |
+| #53 Hook log sensitive data | P0 candidate | M1's owner wrapper persists only timestamp, fixed event name, and permission decision; focused synthetic canary regression passes. M7 local candidate `87e0df0` mirrors the wrapper and adds packaged E4/log-canary coverage; focused test passes, remote PR CI pending. Other branch copies remain unreconciled; no actual secret exposure or external transmission observed. | Verify exact PR head/CI, then have other branch owners reconcile copies. Keep open until every reachable/shipped copy has exact evidence. |
 | #52 OBSERVE aliases | P0 | M1/M5 synthetic alias-denial changes are integrated in M9; exact-head CI is green, but no production filesystem host/protected open-handle evidence exists. | Keep OPEN; real host opt-in and handle/OS boundary required; TOCTOU remains NOT_VERIFIED. |
-| #51 store retries | P1 | Ten-run workflow and current PR CI pass; 500 `STATE_STORE_BUSY` retries reached `RETRY_LIMIT` in the original run. | Keep OPEN; underlying original lock-holder/timing cause remains UNKNOWN. |
+| #51 store retries | P1 | Ten-run Linux workflow passes, but M0 #30 head `f818c4d` run `38682225388` reproduced `RETRY_LIMIT` in the four-process Windows Node20 test after 500 `STATE_STORE_BUSY` retries; 321 pass/1 fail/4 skip; package-smoke skipped. | Keep OPEN; original/recurring trigger UNKNOWN. Retain failure and assertions; M1 has started focused triage. |
 | #32 Hook interruption | P1 | M1/M3/M4/M6/M9 current exact-head CI green; historical direct test mechanism was a one-second fixture window before marker. | CLOSED for the synthetic subprocess marker regression only; historical runner delay UNKNOWN and native-host callback NOT_VERIFIED. |
 | #27 M9 E4 composition | P1 | M9 exact-head CI 11/11; M6 verifier compatibility retained. | Keep issue record synchronized; independent external E4 remains NOT_VERIFIED. |
 | #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive resource reservation and lifecycle artifacts. |
