@@ -1,6 +1,19 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 08:46 UTC)
+## Current authoritative snapshot (2026-10-15 09:31 UTC)
+
+- The usage page remains open and active in tab 336903483; it was readable in the main session at 09:28 UTC. Do not store exact account quota values in tracked files. Stop all work if the page becomes unreadable or falls below 5%.
+- PR #24 remains OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4; it was not edited or merged. No main merge or Release occurred.
+- Current exact-head checks: M0 #30 e049431 all observed checks pass; M3 #33 be38802 9/9; M4 #34 fbf2090 has five failed test jobs, one passed test job, Docker/sponsor pass, package smoke skipped; M2 #37 9db59ed 9/9; M6 #38 c1fdf3c 11/11; M7 #39 cf4b70f 11/11; M8 #40 c1ff677 11/11; M1 #43 b683d84 10/10; M5 #47 2ccac21 has six test-matrix failures, Docker/sponsor pass, package smoke skipped; M9 #36 3909e7d has two compose-current-module-refs failures and 11 other checks passing.
+- The 09:16 UTC publication batch advanced only existing Draft PR branches: M1 #43 to b683d8476cc4302ce7fb93ee0893a9b7e736151a, M5 #47 to 2ccac21542eeefbc0dba19358db1e904e1cb806d, M8 #40 to c1ff677cc56cd159cc983042e5dfcec5dc93f3ad, and M9 #36 to 3909e7d7eefa3eac0b1c709ed23f40f3b32f2985.
+- M1 b683d84 denies unpinned native Hook Read/Write/Delete with native_file_execution_not_pinned. Its exact-head CI passes 10/10. The M1 owner is examining the repeated file-state-store RETRY_LIMIT failure; the M1 worktree lacks tsx, so no official local test has run and no source fix is confirmed.
+- M5 #47 exact-head run 38712035551 fails in all six OS/Node test-matrix jobs at the four-process quarantine retry path tracked by #51. No data loss, corruption, or underlying lock-holder/timing cause is established. Do not weaken or remove the concurrency test.
+- M8 c1ff677 scopes LF checkout to security-lab/claude-native-hook.mjs; exact-head CI passes 11/11, including Windows jobs. Its strict raw-byte comparator remains unchanged.
+- M9 #36 remote head 3909e7d still has the stale composition expectation that a generic path-bearing file callback returns OBSERVE_ONLY. The current M5 contract fails closed with path_execution_not_pinned. M9 is updating the existing worktree locally; the fix is not yet committed or verified at an exact remote head.
+- P0 #52 and #53 remain OPEN. Synthetic policy/log regressions do not establish production host enforcement, protected-open/handle behavior, shipped installer reachability, or external E4. M7 clean-VM lifecycle and M2 Native Codex Shell interception remain NOT_VERIFIED / UNPROTECTED.
+- Next public GitHub write is no earlier than 09:36 UTC. Existing branch updates and coordinator evidence may be batched then; PR #24, main, and Releases remain out of scope.
+
+## Archived snapshot (2026-10-15 08:46 UTC)
 
 - The ChatGPT usage page remains open and active in tab 336903483; it was readable and above the stop threshold at 08:38 UTC. Keep it open, do not publish account-specific quota values, and stop all work if it becomes unreadable or falls below 5%.
 - PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; it has not been edited or merged. No `main` merge or Release occurred.

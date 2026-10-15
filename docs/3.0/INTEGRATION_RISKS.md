@@ -1,6 +1,22 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 07:31 UTC)
+## Current integration risk snapshot (2026-10-15 09:31 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| M1/M5 native Hook file authorization | P0 | M1 #43 b683d84 denies unpinned native file operations and exact-head CI passes 10/10. M5 #47 carries the change but its current six test jobs fail on the separate #51 quarantine retry path. A hook decision still does not prove host I/O uses the Gateway. | Keep verifyRealPaths=true; require held-file capability routing before allowing native file reads/writes/deletes. |
+| #52 OBSERVE alias contract | P0 | Synthetic alias behavior is tested, but no production file host/held-handle route is verified. Current M9 #36 exact head fails its generic path-callback expectation; owner is aligning that test locally with M5 fail-closed semantics. | Keep OPEN until M9 exact-head composition passes and a real product host consumes the registered capability with canonical path/handle identity; retain TOCTOU limits. |
+| #53 Hook log privacy | P0 | M7 #39 and M8 #40 exact-head CI pass. M9 #36 composition is failing; no actual credential exposure or external transmission is verified. | Keep OPEN until all reachable/package copies and a real package lifecycle are reconciled; preserve sanitized synthetic evidence. |
+| Windows Hook source provenance | P1 | M8 #40 c1ff677 applies eol=lf only to the native Hook; Windows packaging regression and strict raw-byte comparator remain. Exact-head checks pass 11/11 including Windows. | Keep the scoped LF rule and exact-blob assertion; M9 must pin the accepted M8 source. |
+| #51 quarantine-store retries | P1 | PR #47 run 38712035551 fails the four-process retry path on all six OS/Node test jobs; the underlying lock-owner/timing/I/O trigger remains UNKNOWN. | Keep OPEN; retain retries and all assertions; change source only on owner-confirmed reproduction. |
+| #41 installer lifecycle | P1 | M7 #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive VM reservation and install/launch/upgrade/uninstall/cancel-rollback evidence. |
+| #45 native Codex Shell | P1 | M2 #37 checks 9/9; actual desktop host policy/callback is unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; report UNPROTECTED. |
+| M4 security/E4 provider | P1 | M4 #34 test jobs are failing on the #51 quarantine retry path; backend enforcement/E4 provider remains UNKNOWN. | Never map UNKNOWN to PASS; track the test failure through #51. |
+| PR #24 / release boundary | P2 / M0 | PR #24 remains OPEN/Draft at unchanged head 62496d4; no merge to main or Release occurred. | Preserve the boundary; continue only through existing Draft PRs and coordinator evidence. |
+
+## Archived integration risk snapshot (2026-10-15 07:31 UTC)
+
+
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
