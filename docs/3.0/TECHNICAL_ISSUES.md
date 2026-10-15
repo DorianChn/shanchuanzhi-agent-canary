@@ -1,3 +1,7 @@
+## Coordinator CI snapshot (2026-10-15 12:05 UTC)
+
+- **#34 / #51 P1:** PR #34 run 38698635434 has one actual failure on Ubuntu Node 20 in the shared file-state-store retry test. Ubuntu Node 22, Docker, and sponsor smoke pass; four matrix jobs were cancelled and package smoke was skipped. PR #43 run 38719879606 independently fails the M1-owned test on Ubuntu Node 22. Keep the trigger UNKNOWN and preserve the existing assertions/retry bounds.
+- **#55 P1:** M3 PR #33 checks are green (9/9), but M9 PR #36 exact-source composition still fails on Ubuntu and Windows; green module CI does not clear the cross-module contract mismatch.
 ## Coordinator evidence update (2026-10-15 12:03 UTC)
 
 - **#51 P1:** M1 checked for an existing Linux test environment; wsl.exe -l -q listed no registered distribution. No Linux reproduction was run, and no distribution or dependency was installed. The lock-starvation theory remains unproven; preserve UNKNOWN.
