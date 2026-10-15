@@ -1,6 +1,6 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 05:17 UTC)
+## Current ownership and worktree snapshot (2026-10-15 05:18 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
@@ -9,7 +9,7 @@
 | M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | Remote #33 `f9bd818`; 9/9; local candidate `1829e05` ahead pending batch | Owns onboarding and Hook-test copy; allowlist wrapper/canary change passes focused 11/11, build, syntax, and diff checks. Remote CI pending. |
 | M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | Remote #34 `e939f04`; local candidate `66e679b` ahead 1 | Owns desktop UI and tests; #53 wrapper copy matches M1 contract and canary is in `test/runtime-console.test.ts`. Build, focused and Hook tests pass; remote CI pending batch. No provider/IPC; UI remains UNKNOWN. |
 | M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | Remote #47 `0fdbd92`; local candidate `a6d610e` ahead 1 | Owns policy/audit; #53 wrapper copy matches M1 contract and canary is in `test/policy-management.test.ts`; focused canary and Hook tests pass. Remote CI pending batch. No production filesystem host consumer. |
-| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `cd55717`; 11/11 | Owns verifier/schema and `e4:*`; active #53 wrapper-copy reconciliation. Preserve the pre-existing untracked E4 evidence directory; external E4 remains NOT_VERIFIED. |
+| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | Remote #38 `cd55717`; local candidate `c1fdf3c` ahead 1 | Owns verifier/schema and `e4:*`; wrapper copy now matches M1 contract and canary is in `test/auto-e4.test.mjs` (6/6); build passed. Existing untracked 16-file E4 report preserved; external E4 remains NOT_VERIFIED. |
 | M7 | `feature/ac3-reliability-ac3` / WSL-managed `agents/M7-reliability-ac3` | #39 `87e0df0`; exact-head checks 11/11 | Owns Windows packaging. #53 packaged-wrapper E4/log-canary regression passes; clean-VM lifecycle NOT_VERIFIED. |
 | M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `16e3d01`; 9/9 | Owns public docs/community; wrapper-copy reconciliation queued on #53. GHCR pull/runtime and independent E4 NOT_VERIFIED. |
 | M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 head `2be212b`; exact-head 10/10 | Owns coordination docs/issue/CI schedule; product source unchanged. P1 #51 remains OPEN with root cause UNKNOWN. |

@@ -1,8 +1,8 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-15 05:17 UTC)
+## Current schedule and dependencies (2026-10-15 05:18 UTC)
 
-- Maximum active module tasks: two. Current slot: M6/#53 on existing PR #38, reconciling only its owned branch copy while preserving pre-existing untracked E4 evidence. M3 `1829e05`, M4 `66e679b`, M5 `a6d610e` and M9 `2d3f1da` are locally complete on existing PRs and wait for the next publication batch; M1 owner-copy verification and M7 exact-head CI are complete.
+- Maximum active module tasks: two. No module tasks are currently active: M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c` and M9 `2d3f1da` are locally complete on existing PRs and enter the 05:18 publication batch; M1 owner-copy verification and M7 exact-head CI are complete.
 - M2/M8 copy reviews remain queued because their registered WSL-managed worktrees cannot be safely inspected or edited with the available Windows Git invocation. Preserve them for the owning runtime instead of repairing. M1's owner allowlist contract is verified. Each module owns its branch copy; no M0 edits to product code.
 - P1 evidence for M1/#51: PR #30 head `f818c4d` run `38682225388` had Windows Node20 retry exhaustion; Ubuntu run `38662965312` attempt 1 had the same direct failure. M1 matched identical store/test blobs and found later Windows Node20 and local Node22 passes, but no lock-owner/timing traces. Root cause remains UNKNOWN; preserve all assertions.
 - Interface dependency: M1 defines an allowlist-only persisted log record (timestamp, fixed Hook event, permission-decision enum). M7 packages the owner-approved wrapper. Other modules consume it through an adapter or owner-approved branch-local copy; do not serialize raw tool arguments, full decision objects, reasons, paths, or caller-controlled detail.
