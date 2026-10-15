@@ -17,10 +17,30 @@ test('string bootstrap flags cannot recreate missing state',()=>{const {file}=fi
 test('four concurrent processes preserve every quarantine without lost writes',async()=>{
  const {file}=fixture();sdk.createFileContainmentStateStore(file,{initialize:true});
  const source=pathToFileURL(path.resolve('src/sdk.ts')).href;
- await Promise.all(Array.from({length:4},(_,worker)=>new Promise<void>((resolve,reject)=>{
-  const script='const sdk=await import('+JSON.stringify(source)+');const fs=await import("node:fs");const statePath='+JSON.stringify(file)+';const lockPath=statePath+".lock";const store=sdk.createFileContainmentStateStore(statePath);for(let i=0;i<12;i++){const stats={lock:{samples:0,enoent:0,other:0,changes:0,first:"NONE",last:"NONE",identity:undefined},state:{samples:0,enoent:0,other:0,changes:0,first:"NONE",last:"NONE",identity:undefined}};const sample=(name,target)=>{const s=stats[name];s.samples++;try{const st=fs.lstatSync(target);const id=String(st.dev)+":"+String(st.ino);if(s.identity!==undefined&&s.identity!==id)s.changes++;s.identity=id;const record=id+":ctimeMs="+st.ctimeMs+":mtimeMs="+st.mtimeMs+":size="+st.size;if(s.first==="NONE")s.first=record;s.last=record;}catch(e){const code=String(e.code??e.name??"UNKNOWN");if(code==="ENOENT"){s.enoent++;if(s.first==="NONE")s.first="ENOENT";s.last="ENOENT";}else{s.other++;if(s.first==="NONE")s.first="ERROR:"+code;s.last="ERROR:"+code;}}};const summary=(name)=>{const s=stats[name];return name+"Samples="+s.samples+" "+name+"ENOENT="+s.enoent+" "+name+"StatErrors="+s.other+" "+name+"IdentityChanges="+s.changes+" "+name+"First="+s.first+" "+name+"Last="+s.last;};let done=false,busyCount=0,waitedNs=0n,lastErrorCode="NONE";for(let retry=0;retry<500;retry++){try{store.quarantine("worker:'+worker+':"+i);done=true;break;}catch(e){if(e.message!=="STATE_STORE_BUSY")throw e;busyCount++;lastErrorCode=String(e.code??e.message??"UNKNOWN");if(busyCount%25===0){sample("lock",lockPath);sample("state",statePath);}const waitStart=process.hrtime.bigint();await new Promise(r=>setTimeout(r,2));waitedNs+=process.hrtime.bigint()-waitStart;}}if(!done)throw Error("RETRY_LIMIT worker:'+worker+' iteration="+i+" (zero-based) busyCount="+busyCount+"/500 waitedMs="+(Number(waitedNs)/1e6).toFixed(3)+" lastErrorCode="+lastErrorCode+" "+summary("lock")+" "+summary("state"));}';
-  const child=spawn(process.execPath,['--import','tsx','--input-type=module','-e',script],{env:process.env});let error='';child.stderr.on('data',c=>error+=c);child.on('error',reject);child.on('close',code=>code===0?resolve():reject(Error(error||String(code))));
+ const workerOutcomes=await Promise.allSettled(Array.from({length:4},(_,worker)=>new Promise<void>((resolve,reject)=>{
+  const statePath=JSON.stringify(file),scopePrefix=JSON.stringify('worker:'+worker+':'),workerLabel=JSON.stringify(worker);
+  const script=[
+   'const sdk=await import('+JSON.stringify(source)+');',
+   'const fs=await import("node:fs");',
+   'const statePath='+statePath+';const lockPath=statePath+".lock";',
+   'const store=sdk.createFileContainmentStateStore(statePath);',
+   'for(let i=0;i<12;i++){',
+   'const stats={lock:{samples:0,enoent:0,other:0,changes:0,first:"NONE",last:"NONE",identity:undefined},state:{samples:0,enoent:0,other:0,changes:0,first:"NONE",last:"NONE",identity:undefined}};',
+   'const iterationStarted=process.hrtime.bigint();const timeline=[];',
+   'const sample=(name,target)=>{const s=stats[name];s.samples++;const offsetMs=Number(process.hrtime.bigint()-iterationStarted)/1e6;let record;',
+   'try{const st=fs.lstatSync(target);const id=String(st.dev)+":"+String(st.ino);if(s.identity!==undefined&&s.identity!==id)s.changes++;s.identity=id;record=id+":ctimeMs="+st.ctimeMs+":mtimeMs="+st.mtimeMs+":size="+st.size;if(s.first==="NONE")s.first=record;s.last=record;}',
+   'catch(e){const code=String(e.code??e.name??"UNKNOWN");if(code==="ENOENT"){s.enoent++;record="ENOENT";if(s.first==="NONE")s.first=record;s.last=record;}else{s.other++;record="ERROR:"+code;if(s.first==="NONE")s.first=record;s.last=record;}}',
+   'timeline.push(offsetMs.toFixed(3)+"ms "+name+"="+record);};',
+   'const summary=(name)=>{const s=stats[name];return name+"Samples="+s.samples+" "+name+"ENOENT="+s.enoent+" "+name+"StatErrors="+s.other+" "+name+"IdentityChanges="+s.changes+" "+name+"First="+s.first+" "+name+"Last="+s.last;};',
+   'let done=false,busyCount=0,waitedNs=0n,lastErrorCode="NONE";',
+   'for(let retry=0;retry<500;retry++){try{store.quarantine('+scopePrefix+'+i);done=true;break;}catch(e){if(e.message!=="STATE_STORE_BUSY")throw e;busyCount++;lastErrorCode=String(e.code??e.message??"UNKNOWN");if(busyCount%25===0){sample("lock",lockPath);sample("state",statePath);}const waitStart=process.hrtime.bigint();await new Promise(r=>setTimeout(r,2));waitedNs+=process.hrtime.bigint()-waitStart;}}',
+   'if(!done)throw Error("RETRY_LIMIT worker="+ '+workerLabel+' +" iteration="+i+" (zero-based) busyCount="+busyCount+"/500 waitedMs="+(Number(waitedNs)/1e6).toFixed(3)+" lastErrorCode="+lastErrorCode+" "+summary("lock")+" "+summary("state")+" sampleTimeline=["+timeline.join(" | ")+"]");',
+   '}'
+  ].join('');
+  const child=spawn(process.execPath,['--import','tsx','--input-type=module','-e',script],{env:process.env});let error='';child.stderr.on('data',c=>error+=c);child.on('error',e=>reject(Error('worker='+worker+' spawn error='+String(e))));child.on('close',code=>code===0?resolve():reject(Error('worker='+worker+' exit='+code+'\n'+error)));
  })));
+ const workerFailures=workerOutcomes.flatMap((outcome,worker)=>outcome.status==='rejected'?['worker='+worker+' '+String(outcome.reason)]:[]);
+ assert.deepEqual(workerFailures,[],'quarantine subprocess failures:\n'+workerFailures.join('\n'));
  const store=sdk.createFileContainmentStateStore(file);for(let w=0;w<4;w++)for(let i=0;i<12;i++)assert.equal(store.get('worker:'+w+':'+i),'QUARANTINED');
  assert.equal(Object.keys(JSON.parse(fs.readFileSync(file,'utf8')).states).length,48);
 });
