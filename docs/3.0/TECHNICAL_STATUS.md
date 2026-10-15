@@ -1,6 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 07:31 UTC)
+## Current authoritative snapshot (2026-10-15 07:52 UTC)
+
+- The usage page remains open in tab 336903483; it was readable and above the stop threshold at 07:50 UTC. Do not record account-specific quota values in public project documents. Stop all work if unreadable or below 5%.
+- PR #24 remains OPEN/Draft at the unchanged base/head and has not been edited or merged. No main merge or Release occurred.
+- M7 PR #39 is at `52cc149e958f8139ea93cf8bab7e14bedfe45d62`. Exact-head product run `38701046560` passed 9/9, including package-smoke; wrapper run `38701046563` passed 2/2. The added M7 positive-control checks cover the synthetic co-located payload only.
+- M0 PR #30 remains OPEN/Draft at `bd8686e`, 10/10 checks. M2 PR #37 `76066cb` is 9/9; M5 PR #47 `b6a40b4` is 9/9; M9 PR #36 `3dfef35` is 13/13 and cross-tree run `38696382427` passes on Ubuntu and Windows.
+- M4 PR #34 `fbf2090` has one Ubuntu Node 20 failure in run `38698635434`, tracked under #51. Ubuntu Node 22 passed, four matrix jobs were cancelled by fail-fast, and package-smoke was skipped. M8 PR #40 `d12dd2c` is 11/11.
+- M1's #51 diagnosis found repeated `STATE_STORE_BUSY`/`RETRY_LIMIT` before final state assertions, but no lock-owner/timing evidence, data-loss proof, or causal defect. Root cause remains UNKNOWN; no code changed and the assertions remain intact.
+- Open gates remain: #45 Native Codex Shell `UNPROTECTED / BLOCKED_NOT_VERIFIED`; #52 production protected-open/handle wiring NOT_VERIFIED; #53 built installer, clean-VM lifecycle, and external E4 NOT_VERIFIED; #41 clean-VM lifecycle OPEN/HOLD.
+- Active module coding slots: 0/2. No VMware, real-model, installer-lifecycle, or external E4 resource is reserved. The current public-write batch includes the M7 push and status comments; wait 20 minutes after the closing coordination update before the next public write.
+
+## Archived authoritative snapshot (2026-10-15 07:31 UTC)
 
 - The ChatGPT usage page remains open in tab 336903483. It was readable and above the 5% stop line before this batch; keep account-specific quota values out of public records and re-read before each public-write batch.
 - PR #24 remains OPEN/Draft, base competition/shanchuanzhi-release-readiness at dc8d0092b35141b295d5ff42873584ed488e4ee7 and head feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Its 11 checks pass; it was not edited or merged.
