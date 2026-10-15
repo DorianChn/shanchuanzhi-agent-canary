@@ -22,11 +22,11 @@ jobs:
           ref: refs/pull/36/head
           path: module-sources/m9
 
-      - name: Checkout M1 PR #43 at reviewed SHA
+      - name: Checkout M1 PR #43 at current PR head pin
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: b683d8476cc4302ce7fb93ee0893a9b7e736151a
+          ref: b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc
           path: module-sources/m1
 
       - name: Checkout M2 PR #37 at reviewed SHA
@@ -43,11 +43,11 @@ jobs:
           ref: be3880298e1c6766024ecbce5f6dbc23c4d2daa1
           path: module-sources/m3
 
-      - name: Checkout M5 PR #47 at reviewed SHA
+      - name: Checkout M5 PR #47 at current PR head pin
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 2ccac21542eeefbc0dba19358db1e904e1cb806d
+          ref: 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c
           path: module-sources/m5
           fetch-depth: 0
 
@@ -164,10 +164,11 @@ jobs:
           {
             echo
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-based read/write/delete before generic callbacks; verifyRealPaths=false is lexical policy only, with M5 denying sensitive .env paths, M2 fixed-path validation rejecting aliases before M1 dispatch, and a registered M1 held-file read as the synthetic positive control.'
-            echo 'M1 checkout/head pin is b683d8476cc4302ce7fb93ee0893a9b7e736151a; M1 owner-review evidence SHA is separately recorded as f14aab781c62db60ac241d2114f543f6cac223ae. M2 exact source 9db59ed8f2deae905edcb2179982f8bcb594167c provides a read-only adapter with no write/delete adapter. M5 checkout/head pin is 2ccac21542eeefbc0dba19358db1e904e1cb806d; code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be its ancestor.'
+            echo 'M1 checkout/head pin is b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc; M1 owner-review evidence SHA is separately recorded as f14aab781c62db60ac241d2114f543f6cac223ae. M2 exact source 9db59ed8f2deae905edcb2179982f8bcb594167c provides a read-only adapter with no write/delete adapter. M5 checkout/head pin is 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be its ancestor.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
             echo 'M2 scope: registered adapter route and M5 policy fixture only; native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED.'
-            echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests; M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
+            echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3-wrapper JSONL regression requiring fixed fields, PreToolUse, a valid enum, canonical ISO time, and caller/reason/path/command canaries absent. M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
+            echo 'M3 integration gate compares exact M1/M3 Hook source decisions for a synthetic unpinned normal Read; both must deny. At M1 b1d7423 and M3 be38802 the owner tests conflict (M1 deny, M3 allow), so this gate remains red until M3 aligns its Hook source and test with the fail-closed contract and advances its pinned head.'
             echo 'M6 evidence: source-checkout bundle/sidecar verifier regression; security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
             echo 'M8 exact published PR head pin is c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. The exact M7 source pin and strict M7 byte comparer are unchanged.'

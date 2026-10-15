@@ -17,10 +17,10 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 }));
 
 const pinnedSourceShas = {
-  M1: 'b683d8476cc4302ce7fb93ee0893a9b7e736151a',
+  M1: 'b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc',
   M2: '9db59ed8f2deae905edcb2179982f8bcb594167c',
   M3: 'be3880298e1c6766024ecbce5f6dbc23c4d2daa1',
-  M5: '2ccac21542eeefbc0dba19358db1e904e1cb806d',
+  M5: '373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c',
   M6: 'c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9',
   M7: 'cf4b70f5130175582fffdfc65bd7c6847450867b',
   M8: 'c1ff677cc56cd159cc983042e5dfcec5dc93f3ad',
@@ -30,6 +30,28 @@ for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
 }
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, 'f14aab781c62db60ac241d2114f543f6cac223ae');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
+
+function readTrackedHookBlob(moduleName) {
+  const result = spawnSync('git', [
+    '-C', sourceRoots[moduleName].root,
+    'show',
+    'HEAD:security-lab/claude-native-hook.mjs',
+  ], { encoding: null, windowsHide: true });
+  assert.equal(result.error, undefined, `${moduleName} Hook blob read must start`);
+  assert.equal(result.status, 0, `${moduleName} checkout must contain the Hook source`);
+  return result.stdout;
+}
+
+test('pinned M2/M5/M7/M8/M9 Hook sources match the current M1 canonical blob', () => {
+  const canonicalHook = readTrackedHookBlob('M1');
+  for (const moduleName of ['M2', 'M5', 'M7', 'M8', 'M9']) {
+    assert.deepEqual(
+      readTrackedHookBlob(moduleName),
+      canonicalHook,
+      `${moduleName} tracked Hook must match the M1 canonical sanitized wrapper`,
+    );
+  }
+});
 
 const m8CheckoutPolicy = spawnSync('git', ['-C', sourceRoots.M8.root, 'check-attr', 'eol', '--', 'security-lab/claude-native-hook.mjs'], { encoding: 'utf8', windowsHide: true });
 assert.equal(m8CheckoutPolicy.status, 0);
@@ -55,6 +77,29 @@ const [m1, m2, m5] = await Promise.all([
   )).href),
   import(pathToFileURL(path.join(sourceRoots.M5.root, 'src', 'sdk.ts')).href),
 ]);
+
+test('M3 native Hook denies an unpinned normal Read like the current M1 Hook', async () => {
+  const [m1Hook, m3Hook] = await Promise.all([
+    import(pathToFileURL(path.join(sourceRoots.M1.root, 'src', 'agent-hook.ts')).href),
+    import(pathToFileURL(path.join(sourceRoots.M3.root, 'src', 'agent-hook.ts')).href),
+  ]);
+  const workspace = path.join(testHome, 'm1-m3-native-hook-contract');
+  fs.mkdirSync(workspace, { recursive: true });
+  fs.writeFileSync(path.join(workspace, 'normal.txt'), 'M9_SYNTHETIC_UNPINNED_READ_FIXTURE');
+  const input = {
+    session_id: 'm9-m1-m3-unpinned-read',
+    tool_name: 'Read',
+    tool_input: { file_path: 'normal.txt' },
+  };
+  const [m1Result, m3Result] = await Promise.all([
+    m1Hook.decideAgentHook('claude', workspace, path.join(testHome, 'm1-hook-state'), input),
+    m3Hook.decideAgentHook('claude', workspace, path.join(testHome, 'm3-hook-state'), input),
+  ]);
+  const m1Decision = m1Result.hookSpecificOutput.permissionDecision;
+  const m3Decision = m3Result.hookSpecificOutput.permissionDecision;
+  assert.equal(m1Decision, 'deny', 'M1 current PR head denies native file I/O without a held-file capability');
+  assert.equal(m3Decision, m1Decision, 'M3 must preserve M1 fail-closed behavior for unpinned native file reads');
+});
 
 test('M5 real-path mode blocks generic file callbacks before execution and keeps approved HTTPS GET available', async (t) => {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m5-real-path-boundary-'));
@@ -357,6 +402,63 @@ test('exact M1/M2/M5 sources fail closed before adapter dispatch without host-bo
   } finally {
     await gateway.close();
     gateway = undefined;
+  }
+});
+
+test('pinned M3 Hook writes only allowlisted JSONL with canonical time and no caller canaries', () => {
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-hook-jsonl-'));
+  try {
+    const wrapper = path.join(sourceRoots.M3.root, 'security-lab', 'claude-native-hook.mjs');
+    const decisionModule = path.join(fixture, 'caller-decision.mjs');
+    const logFile = path.join(fixture, 'caller-positive-control.jsonl');
+    const canaries = {
+      argument: 'M9_M3_SYNTHETIC_ARGUMENT_CANARY',
+      reason: 'M9_M3_SYNTHETIC_REASON_CANARY',
+      path: 'C:/synthetic/m3/private.txt',
+      command: 'M9_M3_SYNTHETIC_COMMAND_CANARY',
+    };
+    fs.writeFileSync(decisionModule,
+      `export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(canaries.reason)}}}}\n`,
+    );
+    const result = spawnSync(process.execPath, [
+      wrapper,
+      decisionModule,
+      fixture,
+      path.join(fixture, 'caller-state'),
+      logFile,
+    ], {
+      input: JSON.stringify({
+        session_id: 'm9-m3-caller',
+        tool_name: 'Bash',
+        tool_input: {
+          command: canaries.command,
+          file_path: canaries.path,
+          note: canaries.argument,
+        },
+      }),
+      encoding: 'utf8',
+      windowsHide: true,
+      timeout: 5000,
+      maxBuffer: 128 * 1024,
+      env: { ...process.env, AGENT_CANARY_HOME: path.join(fixture, 'hook-home') },
+    });
+    assert.equal(result.error, undefined, result.error?.message);
+    assert.equal(result.status, 0, `${result.stdout ?? ''}\n${result.stderr ?? ''}`);
+    assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision, 'allow');
+
+    const lines = fs.readFileSync(logFile, 'utf8').trim().split(/\r?\n/);
+    assert.equal(lines.length, 1);
+    const record = JSON.parse(lines[0]);
+    assert.deepEqual(Object.keys(record).sort(), ['hookEventName', 'permissionDecision', 'timestamp']);
+    assert.equal(record.hookEventName, 'PreToolUse');
+    assert.ok(['allow', 'deny', 'ask'].includes(record.permissionDecision));
+    assert.equal(record.permissionDecision, 'allow');
+    assert.equal(new Date(record.timestamp).toISOString(), record.timestamp);
+    for (const canary of Object.values(canaries)) {
+      assert.equal(lines[0].includes(canary), false, `M3 Hook JSONL must not contain ${canary}`);
+    }
+  } finally {
+    fs.rmSync(fixture, { recursive: true, force: true });
   }
 });
 
