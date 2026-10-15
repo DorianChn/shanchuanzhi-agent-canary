@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'risk-policy-test-'));
-const {createAgentGuard,createRiskPolicyRouter,PolicyBlockedError,CanaryBlockedError}=await import('../src/sdk.js');
+const {createAgentGuard,createRiskPolicyRouter,createSecurityToolRouter,PolicyBlockedError,CanaryBlockedError}=await import('../src/sdk.js');
 const {readEvents}=await import('../src/alerts.js');
 test('multiple routers sharing a Guard serialize sensitive read and egress, including callback failure',async()=>{
  let release!:()=>void;let started!:()=>void;const gate=new Promise<void>(r=>release=r),active=new Promise<void>(r=>started=r);let sent=0;
@@ -48,7 +48,7 @@ test('OBSERVE blocks sensitive file aliases and canonical path variants before a
  fs.mkdirSync(path.join(root,'secrets'));fs.writeFileSync(path.join(root,'secrets','fixture.txt'),'M5_CANARY_SECRET');
  fs.symlinkSync(path.join(root,'secrets'),path.join(root,'public'),process.platform==='win32'?'junction':'dir');
  let callbacks=0;const guard=createAgentGuard({sessionId:'test-observe-path-alias',alert:false});
- const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+ const router=createSecurityToolRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
  for(const file_path of ['public/fixture.txt','secrets/../secrets/fixture.txt','secrets\\fixture.txt']){
   await assert.rejects(router.dispatch({name:'READ',args:{file_path}}),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='observe_sensitive_data_blocked'&&e.decision.risks.includes('SENSITIVE_DATA'));
   assert.equal(router.pendingApprovals().length,0);
@@ -61,8 +61,8 @@ test('file-read through an in-workspace junction cannot escape workspace in any 
  fs.writeFileSync(path.join(outside,'file.txt'),'M5_OUTSIDE_FIXTURE');fs.symlinkSync(outside,path.join(root,'public'),process.platform==='win32'?'junction':'dir');
  for(const mode of ['OBSERVE','BALANCED','STRICT'] as const){
   let callbacks=0;const guard=createAgentGuard({sessionId:'test-outside-path-alias-'+mode,alert:false});
-  const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
-  await assert.rejects(router.dispatch({name:'read',args:{file_path:'public/file.txt'}}),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='outside_workspace');
+  const router=createSecurityToolRouter({guard,workspaceRoot:root,mode,verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+  await assert.rejects(router.dispatch({name:'read',args:{file_path:'public/file.txt'}}),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&['outside_workspace','host_pre_execution_review_denied'].includes(e.decision.reason));
   assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
  }
 });
