@@ -1,3 +1,10 @@
+## Coordinator publication update (2026-10-15 11:54 UTC)
+
+- **#29 P2:** the 11:53 scheduler comment records no module coding task confirmed active locally, unknown other-window occupancy, and no VMware/real-model/installer reservation. VMware tools were unavailable in the local check; keep the shared exclusive slot unavailable until owner/worktree/start/release are recorded.
+- **#51 P1:** the 11:53 comment records M1's current-head review and Windows source-only diagnostic. The trigger remains UNKNOWN; M1 made no code or test changes, and the official narrow local test remains unavailable without existing dependencies.
+- **#55 P1:** the 11:33 final-result comments on #55 and PR #33 record M9's dual-platform composition failure and M3's required fix. PR #33 head remained `be38802` at the 11:49 UTC check.
+- **#30 M0:** PR #30 exact head `a069e67` has coordination run `38730583954` and product CI `38730583917` both successful. PR #30 remains OPEN/Draft; PR #24 is untouched.
+
 ## Coordinator evidence update (2026-10-15 11:42 UTC)
 
 - **#29 P2 resource schedule:** M1's Issue #51 follow-up has finished; no module coding task is confirmed active in this coordinator at this checkpoint. M3's response on #55 is pending, and M9 waits to repin. Occupancy in other Codex windows is unknown. No VMware, real-model, or installer reservation is verified here; treat the shared exclusive slot as unavailable until an owner, worktree, start, and release are recorded.
