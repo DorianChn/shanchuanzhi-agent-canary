@@ -1,3 +1,6 @@
+## Coordinator evidence update (2026-10-15 12:03 UTC)
+
+- **#51 P1:** M1 checked for an existing Linux test environment; wsl.exe -l -q listed no registered distribution. No Linux reproduction was run, and no distribution or dependency was installed. The lock-starvation theory remains unproven; preserve UNKNOWN.
 ## Coordinator evidence update (2026-10-15 12:01 UTC)
 
 - **#51 P1:** Read the raw failure from Ubuntu Node 22 run 38719879606. Worker 2 exhausted 500 STATE_STORE_BUSY retries in 1052.801 ms. The committed per-iteration diagnostics show 20 lock samples with no ENOENT/stat errors and one identity change; 20 state samples with no ENOENT/stat errors, four identity changes, and size growth from 26 to 594 bytes. Other workers were progressing, so a single stale lock is not supported as the whole explanation. Starvation is plausible but unproven; no owner timeline, confirmed lock holder, data loss/corruption, or causal mechanism is established. Root cause stays UNKNOWN. M1 did not change the test or source; its official narrow local test remains UNVERIFIED because the existing checkout lacks required dependencies.

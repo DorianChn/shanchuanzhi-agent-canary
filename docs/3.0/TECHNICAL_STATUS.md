@@ -1,3 +1,6 @@
+## Coordinator update (2026-10-15 12:03 UTC)
+
+- Follow-up for M1 #51: the available-environment check found no registered WSL distribution, so no native-Linux reproduction was possible. No WSL distribution or package was installed. M1 remains clean at b1d7423; root cause is still UNKNOWN.
 ## Coordinator update (2026-10-15 12:01 UTC)
 
 - The ChatGPT usage page remains open and active; its 11:57 UTC check was readable above the pause threshold. Keep this tab open and recheck before the next public-write batch; no account-specific percentages are stored here.
