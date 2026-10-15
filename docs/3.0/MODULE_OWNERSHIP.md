@@ -1,11 +1,11 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 10:32 UTC)
+## Current ownership and worktree snapshot (2026-10-15 10:34 UTC)
 
 | Module | Current checkout / PR | Ownership and acceptance status |
 | --- | --- | --- |
 | M0 | `ac3-coordinator-recovery` / `feature/ac3-m0-coordination`; #30 `584f207`, 10/10 | Owns coordination documents, issue/status snapshots, and schedule; never edits module source. |
-| M1 | `ac3-m1-security-recovery` / `feature/ac3-security-core`; remote #43 `b1d7423`, standard CI/package 9/9, dedicated file-store stress run failed; no local commits ahead | Owns Gateway/Guard, canonical native-Hook logging contract/tests, and file-state-store implementation/tests. #53 exact-field/caller+reason canary regression and #51 per-attempt metadata diagnostics pass exact-head standard CI; dedicated run `38719879606` still fails at retry exhaustion, with lock/state metadata changes observed but holder and trigger UNKNOWN. |
+| M1 | `ac3-m1-security-recovery` / `feature/ac3-security-core`; remote #43 `b1d7423`, standard CI/package 9/9, dedicated file-store stress run failed; no local commits ahead | Owns Gateway/Guard, canonical native-Hook logging contract/tests, and file-state-store implementation/tests. #53 exact-field/caller+reason canary regression and #51 per-attempt metadata diagnostics pass exact-head standard CI. Source review found no FIFO/fair lock queue; fixed 2 ms polling makes worker starvation plausible but unproven. Dedicated run `38719879606` still fails at retry exhaustion; no holder or underlying trigger is identified. |
 | M2 | No M2 worktree visible in the current coordinator clone; existing branch `feature/ac3-execution-isolation`, #37 `9db59ed`, 9/9 | Owns the execution-isolation adapter. Native Codex Shell remains UNPROTECTED/NOT_VERIFIED; CI does not prove host interception. |
 | M3 | No M3 worktree visible in the current coordinator clone; existing branch `feature/ac3-agent-onboarding`, #33 `be38802`, 9/9 | Owns onboarding and its branch-local Hook test copy. |
 | M4 | No M4 worktree visible in this coordinator clone; existing branch `feature/ac3-desktop-security-center`, #34 `fbf2090`; one Ubuntu Node 20 test failure, four matrix jobs cancelled | Owns desktop UI and its tests. Run 38698635434 checked merge ref `0237411`; only Ubuntu Node 20 failed in the concurrent file-state-store test (`RETRY_LIMIT`). Three cancelled jobs had completed `npm test` successfully; Windows Node 22 was cancelled before steps. Ubuntu Node 22, Docker, and sponsor passed; package smoke was skipped. The same test exhausts retries on M1 Ubuntu Node 22; root cause remains UNKNOWN. Backend provider/IPC acceptance remains UNKNOWN. |
