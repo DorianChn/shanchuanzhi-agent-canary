@@ -281,3 +281,11 @@ AC3 PR #24 与模块候选均以共同基线 `62496d4020bd90ba2eede49b2e80a2bbeb
 | `test/honeypot-runtime.test.ts` | M7 场景/恢复验证；M1 Gateway 错误契约 | M7 维护隔离、恢复及副作用场景；错误码期望遵循 M1 Gateway 契约，并与 M9 验收保持一致 |
 
 每模块只提交自己的分支。遇到未归属路径先更新本表；不能通过复制或重命名接口来规避冲突。M3 PR #33 与 M6 PR #38 均基于 AC3；M6 旧 PR #31 仍是独立 main-based 轨道。M0 不替模块 rebase 或覆盖提交；M5 `cf4e2cd` 仍待远端验收，M6 外部 E4 和 M7 clean-VM 安装仍未验证。M0 仅协调，不替模块发布。
+
+
+## Owner disposition — 2026-10-15 18:24 UTC
+
+- **M1** owns `src/security-router.ts` and `test/security-router.test.ts`. Its local `9ef3dc2` change makes `verifyRealPaths:true` fail closed for generic file path callbacks; it does not alter M5 policy files. The existing branch/worktree remains `feature/ac3-security-core`; current M1 checkout is clean and one commit ahead of PR #43's remote head.
+- **M2** owns `execution-isolation/gateway-adapter/*`; the current adapter is a synthetic fixed-read bridge to M1 Gateway, with no first-party product host integration verified.
+- **M5** continues to own `src/risk-policy.ts` and policy/router regressions. **M9** owns current-source cross-module composition. For #52, M0 tracks the contract and evidence boundary; M0 does not edit M1/M2/M5 product code.
+- No source ownership changes were made. Shared contract changes must be made by the owning module and reflected here/API_CONTRACTS.md before other modules adapt.

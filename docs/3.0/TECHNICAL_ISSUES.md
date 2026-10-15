@@ -440,3 +440,12 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#55 P1:** no M3 owner update since 17:53. PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1; M9 composition still fails both platforms on the unpinned native Read contract. Keep M9 gated.
 - P0 issues #52 and #53 and P1 issues #45, #54, and #41 remain OPEN in the current GitHub inventory; no acceptance is inferred from open PR checks.
 - PR #24 remains OPEN/Draft and unchanged. Usage page is open/readable above the pause threshold. Next GitHub push is no earlier than 18:12 UTC.
+
+
+## Current coordinator checkpoint — 2026-10-15 18:24 UTC
+
+- **#52 P0 — M1/M2/M5 protected file boundary:** M1's local commit `9ef3dc2` changes its owned strict real-path router to reject generic path-string file callbacks before approval/dispatch, including OBSERVE; 20/20 focused tests, build, and diff check are reported passing. It is not yet on remote PR #43. M2 PR #37's current adapter is a synthetic fixed-read bridge to M1 Gateway and has no first-party product host consumer. Keep OPEN until exact-head M1/M2/M5 composition and real host protected-open/handle evidence; production TOCTOU remains NOT_VERIFIED.
+- **#51 P1 — M1/M4 shared state-store retry:** PR #43 head `5a9ff225` passes standard CI plus Ubuntu Node 20 x10 and Node 22 x10. M4 run `38698635434` still demonstrates a Node 20 test reaching `RETRY_LIMIT` after 500 `STATE_STORE_BUSY` retries. Stress runs do not explain the original lock-holder/timing trigger; retain UNKNOWN, all assertions, and production retry behavior. No lost data is established.
+- **#55 P1 — M3 native Hook contract:** PR #33 remains `be388029`; M9 composition `38727481764` fails on Ubuntu and Windows because unpinned native Read returns allow instead of `native_file_execution_not_pinned`. M3 owns the correction and a supported-capability positive control; M9 must rerun with the corrected exact M3 head. Keep OPEN.
+- **Other gates:** #53 P0 packaged-hook reachability remains NOT_VERIFIED; #45 native Codex Shell remains UNPROTECTED; #41 clean-VM installer lifecycle and independent external E4 remain NOT_VERIFIED; #54 historical Windows Node 22 retry cause remains UNKNOWN despite current passing runs. Keep each issue OPEN until its stated evidence gate is met.
+- PR #24 remains OPEN/Draft and unchanged with 11/11 checks; no `main` merge, PR #24 merge, Release, VMware, real-model, or installer test was performed. Usage page remains open. Next push batch no earlier than 18:32 UTC.

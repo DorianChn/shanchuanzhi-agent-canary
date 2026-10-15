@@ -195,3 +195,13 @@ The owner-reviewed file-operation rules above are authoritative for the current 
 ## Draft PR 契约
 
 模块 PR base 为 `feature/agent-canary-3.0`，以 Draft 打开。PR 正文提供 `Test-Evidence:`、`API-Contract-Change: yes|no`；若候选接口文件变更且声明 `yes`，须同步本文件。修改共享路径还需填写 `Coordinated-with: Mx` 并关联 Issue。CI 结果由 GitHub check runs 展示，报告链接由 PR 作者提供。
+
+
+## Current coordination evidence — 2026-10-15 18:24 UTC
+
+M1 owns the `verifyRealPaths` execution contract, M2 owns the fixed-resource adapter, M5 owns policy decisions, and M9 owns cross-module composition. This checkpoint records a local owner change; the public PR/CI state remains separate.
+
+- **M1 generic file callback:** local M1 commit `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` (not yet pushed to PR #43) denies generic path-string `file-read`, `file-write`, and `delete` callbacks with `path_execution_not_pinned` when `verifyRealPaths:true`, including OBSERVE, before approval or callback dispatch. `false`/unset preserve legacy lexical behavior and make no canonical-path or protected-open claim. The owner reports 20/20 focused tests plus build/diff checks passing. Exact-head hosted CI is pending publication.
+- **M2/M5 adapter:** PR #37 head `9db59ed8f2deae905edcb2179982f8bcb594167c` contains a fixed exact-path read adapter that forwards through M1 `agent.dispatch` to a registered Gateway file. M2's current report says the binder/backend is not wired to a first-party product host; its recorded M9 composition pins older M1/M2/M5 SHAs. Do not call the adapter a production integration or use its allowlist rejection as proof of M5 policy denial.
+- **Acceptance boundary:** Issue #52 stays P0/OPEN until current exact-head M1/M2/M5 composition passes and a first-party product host is shown consuming the registered file identity with protected-open/handle evidence. Real-host enforcement and TOCTOU remain NOT_VERIFIED. Synthetic fixtures do not establish actual data exposure.
+- **Native Hook:** M1's fail-closed unpinned-read contract remains `native_file_execution_not_pinned`; M3 PR #33 head `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` still violates it in M9 composition run `38727481764` on both Ubuntu and Windows. M3 owns the correction and positive control; M9 owns the exact-head rerun.

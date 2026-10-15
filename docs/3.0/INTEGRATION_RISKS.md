@@ -363,3 +363,17 @@ VMware、真实模型和安装测试互斥。五小时额度低于 5% 或无法�
 ## 资源冲突
 
 开发并行上限为 2；2026-10-13 16:16 UTC 时 M1/M7 占满 2/2 槽位。无 VMware 或真实模型测试运行证据；下一次安装测试归 M7 独占，PR #39 新 CI 尚未开始。额度 13%、约 1h12m 后重置。最新推送批次 16:02:40 UTC，下一批不早于 16:22:40 UTC。
+
+
+## Latest risk delta — 2026-10-15 18:24 UTC
+
+This checkpoint supersedes older risk entries in this file for the listed issues. Passing synthetic tests and CI do not establish product-host, package, installer, or independent E4 acceptance.
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| M1/M2/M5 file identity (#52) | P0 | M1 local commit `9ef3dc2` denies generic path-string file callbacks in strict mode; focused 20/20 and build/diff checks reported passing. M2 adapter remains synthetic and has no first-party product host consumer. Remote PR #43 has not yet advanced to the fix. | Publish M1 at the scheduled batch, pass exact-head CI, compose current M1/M2/M5, then demonstrate real host protected-open/handle behavior. Keep OPEN; TOCTOU NOT_VERIFIED. |
+| Native Hook unpinned read (#55) | P1 | M3 PR #33 remains `be388029`; M9 run `38727481764` fails Ubuntu and Windows because unpinned native Read returns allow. | M3-owned deny with `native_file_execution_not_pinned`, preserve M1 assertions, add supported-capability positive control, rerun M9 on exact source SHAs. |
+| Shared quarantine retry (#51) | P1 | M1 Node 20 and Node 22 x10 runs pass; M4 Ubuntu Node 20 run `38698635434` still has one `RETRY_LIMIT` failure after 500 busy retries. Root trigger UNKNOWN; no data loss shown. | Preserve tests/assertions and retry semantics; claim no root cause without new holder/timing evidence. |
+| Packaged Hook privacy (#53) | P0 | Sanitized source-wrapper evidence exists; shipped package reachability and independent E4 are NOT_VERIFIED. No actual secret exposure is claimed. | Verify reachable packaged artifacts and independent E4; keep OPEN. |
+| Native Codex Shell (#45) | P1 | M2 PR #37 checks do not prove Desktop-host interception; actual Shell remains UNPROTECTED. | Require host-enforced denial evidence; keep visible boundary. |
+| Installer / E4 (#41 and M6) | P1 | M7 clean-VM lifecycle and independent M6 E4 remain NOT_VERIFIED. | Reserve the mutually exclusive VM/install resource and retain independently reviewable artifacts before PASS. |
