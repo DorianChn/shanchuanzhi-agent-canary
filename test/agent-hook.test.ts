@@ -26,6 +26,29 @@ test('native lab wrapper allows fixture read and rejects destructive command',()
  assert.equal(fs.readFileSync(log,'utf8').trim().split('\n').length,2);
 });
 
+test('native lab wrapper persists only allowlisted metadata',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'canary-hook-module.mjs'),log=path.join(root,'canary.jsonl');
+ const callerCanary='M2_CALLER_CANARY',toolCanary='M2_TOOL_CANARY',argumentCanary='M2_ARGUMENT_CANARY',pathCanary='M2_PATH_CANARY',reasonCanary='M2_REASON_CANARY';
+ const decision={hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:reasonCanary}};
+ fs.writeFileSync(modulePath,'export async function decideAgentHook(){return '+JSON.stringify(decision)+'}\n');
+ const input={session_id:callerCanary,tool_name:toolCanary,tool_input:{command:argumentCanary,file_path:path.join(root,pathCanary)}};
+ const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'canary-state'),log],{input:JSON.stringify(input),encoding:'utf8'});
+ assert.equal(result.status,0);
+ assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const logText=fs.readFileSync(log,'utf8').trim();
+ for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary])assert.equal(logText.includes(canary),false,canary+' was persisted');
+ const records=logText.split('\n');
+ assert.equal(records.length,1);
+ const record=JSON.parse(records[0]) as Record<string,unknown>;
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');
+ assert.ok(['allow','deny','ask'].includes(String(record.permissionDecision)));
+ assert.equal(typeof record.timestamp,'string');
+ const timestamp=new Date(record.timestamp as string);
+ assert.equal(Number.isNaN(timestamp.valueOf()),false);
+ assert.equal(timestamp.toISOString(),record.timestamp);
+});
 test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
  const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
  const input=JSON.stringify({session_id:'failure-fixture',tool_name:'Bash',tool_input:{command:'git status'}});
