@@ -515,3 +515,9 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 disposition or PR #43 head change by 21:52. Comment 6203051405 requests canonical-regression path/SHA evidence or a reviewed shared-path exception by 22:12. PR #30 remains Draft; M0 does not alter the M1-owned test.
 - **#55 P1 — M3/M9 native Read contract:** no M3 response or PR #33 head change by 21:52. Comment 6203052042 records the missed deadline; M3 must provide the denial/positive-control evidence or concrete blocker by 22:12. Keep M9 gated.
 - **#53 P0 — M7/M8 package reachability:** no M7/M8 response or PR #39/#40 head change by 21:52. Comment 6203052699 records the missed deadline and requests exact artifact evidence or blocker by 22:12. Keep the P0 open and do not claim reachability.
+
+## M0 owner deadline follow-up — 2026-10-15 22:15 UTC
+
+- **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 response by 22:12. Comment 6203392855 requests canonical regression location/evidence or a reviewed shared-path exception by 22:32. Preserve all assertions; PR #30 remains Draft.
+- **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 22:12. Comment 6203393354 requests the fail-closed denial and supported-capability positive control or concrete blocker by 22:32. M9 remains gated.
+- **#53 P0 — M7/M8 package reachability:** no package/evidence update by 22:12. Comment 6203393979 requests pinned package and manifest hashes, extracted-Hook comparison, harness result or blocker by 22:32. Keep OPEN/NOT_VERIFIED; installer/VM work still needs #29 reservation.
