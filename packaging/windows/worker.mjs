@@ -107,14 +107,97 @@ export function recordAutoE4BundleFailure(report,runDir,artifacts,error){
  writeFileAtomically(failureFile,JSON.stringify(failure,null,2)+'\n');
  const stage=report.stages.find(x=>x.id==='materials');
  if(stage){
-  if(stage.status==='PASS')report.coverage.verified=Math.max(0,report.coverage.verified-1);
-  if(stage.status!=='BLOCKED')report.coverage.blocked++;
   stage.status='BLOCKED';
   stage.detail={reason,summary:failure.summary,originalReportPreserved:true};
+ }
+ if(report.coverage&&Array.isArray(report.stages)){
+  report.coverage.verified=report.stages.filter(x=>x.status==='PASS').length;
+  report.coverage.failed=report.stages.filter(x=>x.status==='FAIL').length;
+  report.coverage.blocked=report.stages.filter(x=>x.status==='BLOCKED').length;
+  report.coverage.skipped=report.stages.filter(x=>x.status==='SKIPPED').length;
+  report.coverage.notVerified=report.stages.filter(x=>x.status==='NOT_VERIFIED').length;
+  report.coverage.total=report.stages.length;
  }
  report.technicalResult='BLOCKED';
  report.bundleVerification={status:'BLOCKED',failureFile:path.basename(failureFile),reportPreserved:true};
  return failureFile;
+}
+export function finalizeAutoE4Run(report,runDir,outputDir,artifacts,{bundleFactory=makeEvidenceBundle}={}){
+ let bundle=null,bundleFailureFile=null;
+ try{bundle=bundleFactory(runDir);}
+ catch(error){bundleFailureFile=recordAutoE4BundleFailure(report,runDir,artifacts,error);}
+ const latestFile=path.join(outputDir,'latest.json');
+ writeFileAtomically(latestFile,JSON.stringify({kind:'auto-e4',status:report.technicalResult,file:artifacts.jsonFile,markdownFile:artifacts.mdFile,indexFile:artifacts.indexFile,eventsFile:path.join(runDir,report.eventsFile??'events.jsonl'),bundleFailureFile}),{replace:true});
+ return{bundle,bundleFailureFile,latestFile};
+}
+function autoE4ExportPath(value,base){
+ if(typeof value!=='string'||!path.isAbsolute(value))throw Error('REPORT_PATH_INVALID');
+ const resolved=path.resolve(value),relative=path.relative(base,resolved);
+ if(!relative||relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative))throw Error('REPORT_PATH_INVALID');
+ const stat=fs.lstatSync(resolved);
+ if(stat.isSymbolicLink()||!stat.isFile())throw Error('REPORT_PATH_INVALID');
+ return resolved;
+}
+function snapshotArtifact(file,expectedName){
+ const stat=fs.lstatSync(file);
+ if(stat.isSymbolicLink()||!stat.isFile()||stat.size>8*1024*1024)throw Error('EVIDENCE_SNAPSHOT_INVALID');
+ const bytes=fs.readFileSync(file),name=path.basename(file);
+ if(name!==expectedName)throw Error('EVIDENCE_SNAPSHOT_INVALID');
+ return{name,sha256:digest(bytes),bytes:bytes.length,content:bytes};
+}
+function sanitizeAutoE4Export(value,directory,extraRoots=[]){
+ return redact(value,[[ROOT,'<INSTALL_DIR>'],[directory,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>'],...extraRoots]);
+}
+export function buildAutoE4Export(latest,directory,declaredRole='other'){
+ if(!latest||latest.kind!=='auto-e4')throw Error('AUTO_E4_EXPORT_POINTER_INVALID');
+ const base=path.resolve(directory,'auto-e4-runs');
+ const reportPath=autoE4ExportPath(latest.file,base),mdPath=autoE4ExportPath(latest.markdownFile,base),runDir=path.dirname(reportPath);
+ if(path.dirname(mdPath)!==runDir)throw Error('REPORT_PATH_INVALID');
+ const reportBytes=snapshotArtifact(reportPath,'AUTO_E4_REPORT.json');
+ let original;try{original=JSON.parse(reportBytes.content.toString('utf8'));}catch{throw Error('AUTO_E4_REPORT_INVALID');}
+ if(!original||typeof original!=='object'||Array.isArray(original)||typeof original.runId!=='string')throw Error('AUTO_E4_REPORT_INVALID');
+ const originalTechnicalResult=original.technicalResult;
+ const status=typeof latest.status==='string'?latest.status:originalTechnicalResult;
+ if(typeof status!=='string'||!status)throw Error('AUTO_E4_EXPORT_STATUS_INVALID');
+ const exported=JSON.parse(JSON.stringify(original));
+ exported.operator={...(exported.operator??{}),declaredRole};
+ exported.technicalResult=status;
+ let md=fs.readFileSync(mdPath,'utf8');
+ if(latest.bundleFailureFile){
+  if(status!=='BLOCKED')throw Error('BUNDLE_FAILURE_STATUS_INVALID');
+  const failurePath=autoE4ExportPath(latest.bundleFailureFile,base);
+  if(path.dirname(failurePath)!==runDir)throw Error('BUNDLE_FAILURE_SIDECAR_INVALID');
+  const failure=readJSON(failurePath,64*1024);
+  if(failure.schemaVersion!=='agent-canary.auto-e4-bundle-failure.v1'||failure.runId!==original.runId||failure.status!=='BLOCKED'||failure.reportPreserved!==true||failure.originalReport?.file!==path.basename(reportPath)||failure.originalReport?.sha256!==reportBytes.sha256)throw Error('BUNDLE_FAILURE_SIDECAR_INVALID');
+  const indexPath=autoE4ExportPath(latest.indexFile??path.join(runDir,'EVIDENCE_INDEX.json'),base);
+  const eventsName=original.eventsFile;
+  if(typeof eventsName!=='string'||!eventsName||path.basename(eventsName)!==eventsName)throw Error('EVIDENCE_SNAPSHOT_INVALID');
+  const eventsPath=autoE4ExportPath(latest.eventsFile??path.join(runDir,eventsName),base);
+  if(path.dirname(indexPath)!==runDir||path.dirname(eventsPath)!==runDir||path.basename(eventsPath)!==eventsName)throw Error('EVIDENCE_SNAPSHOT_INVALID');
+  const indexSnapshot=snapshotArtifact(indexPath,'EVIDENCE_INDEX.json');
+  const eventsSnapshot=snapshotArtifact(eventsPath,eventsName);
+  let index;try{index=JSON.parse(indexSnapshot.content.toString('utf8'));}catch{throw Error('EVIDENCE_SNAPSHOT_INVALID');}
+  if(index.schemaVersion!=='agent-canary.auto-e4-evidence-index.v1'||index.runId!==original.runId||!Array.isArray(index.artifacts))throw Error('EVIDENCE_SNAPSHOT_INVALID');
+  for(const artifact of [reportBytes, snapshotArtifact(mdPath,'AUTO_E4_REPORT.md'), eventsSnapshot]){
+   const indexed=index.artifacts.find(entry=>entry.name===artifact.name);
+   if(!indexed||indexed.sha256!==artifact.sha256||indexed.bytes!==artifact.bytes)throw Error('EVIDENCE_SNAPSHOT_INVALID');
+  }
+  const materials=exported.stages?.find(stage=>stage.id==='materials');
+  const originalMaterialsStage=materials?{status:materials.status,detail:materials.detail}:null;
+  if(materials){materials.status='BLOCKED';materials.detail={reason:failure.reason,summary:failure.summary,originalReportPreserved:true};}
+  if(exported.coverage&&Array.isArray(exported.stages)){
+   exported.coverage.verified=exported.stages.filter(stage=>stage.status==='PASS').length;
+   exported.coverage.failed=exported.stages.filter(stage=>stage.status==='FAIL').length;
+   exported.coverage.blocked=exported.stages.filter(stage=>stage.status==='BLOCKED').length;
+   exported.coverage.skipped=exported.stages.filter(stage=>stage.status==='SKIPPED').length;
+   exported.coverage.notVerified=exported.stages.filter(stage=>stage.status==='NOT_VERIFIED').length;
+   exported.coverage.total=exported.stages.length;
+  }
+  exported.bundleVerification={status:'BLOCKED',failureFile:path.basename(failurePath),failureSidecar:failure,reason:failure.reason,summary:failure.summary,reportPreserved:true,originalTechnicalResult,originalMaterialsStage,evidenceSnapshot:{classification:'PRE_BUNDLE_FAILURE_SNAPSHOT',bundleFailureIncluded:false,note:'The original report, evidence index, and events log are preserved as generated before bundle creation failed; the immutable failure sidecar records this later failure.',index:{name:indexSnapshot.name,sha256:indexSnapshot.sha256,bytes:indexSnapshot.bytes,includesBundleFailure:false},events:{name:eventsSnapshot.name,sha256:eventsSnapshot.sha256,bytes:eventsSnapshot.bytes,includesBundleFailure:false}}};
+  md=md.trimEnd()+'\n\n## Bundle export status\n\nTechnical result: BLOCKED. '+String(failure.summary??'The evidence bundle could not be created or verified.')+'\n\nThe source report, EVIDENCE_INDEX.json, and events log remain the preserved pre-bundle-failure snapshot; see the immutable bundle failure sidecar included in the exported JSON.\n';
+ }
+ const roots=[[original.fixture??'','<SANDBOX>']];
+ return{status:'VERIFIED_EXPORT_REDACTED',technicalResult:status,json:JSON.stringify(sanitizeAutoE4Export(exported,directory,roots),null,2),markdown:sanitizeAutoE4Export(md,directory,roots)};
 }
 async function runAutoE4(state,version,receipt,manifest){
  safeDirectory(dataDir);
@@ -149,10 +232,8 @@ async function runAutoE4(state,version,receipt,manifest){
   await run.stage('github-pr',async()=>({status:'BLOCKED',detail:{reason:'PACKAGED_APP_HAS_NO_SOURCE_CHECKOUT_OR_GITHUB_WRITE_CREDENTIALS',localChangesCommitted:false,remoteWrites:false,summary:'The application will not search for, copy, or stage arbitrary user repositories.'}}));
   await run.stage('materials',async()=>({status:'PASS',detail:{reason:'REPORT_AND_EVIDENCE_INDEX_WILL_BE_GENERATED_IN_THIS_RUN_DIRECTORY',summary:'A run-specific evidence bundle is prepared after report finalization.'}}));
   let report=run.finish();report.commands=run.report.commands;report.environment=run.report.environment;report.installer=run.report.installer;report.software=run.report.software;report.operator=run.report.operator;report.sessionId=run.report.sessionId;
-  let artifacts=writeAutoE4Artifacts(report,run.runDir),bundle=null,bundleFailureFile=null;
-  try{bundle=makeEvidenceBundle(run.runDir);}
-  catch(error){bundleFailureFile=recordAutoE4BundleFailure(report,run.runDir,artifacts,error);}
-  writeFileAtomically(path.join(dataDir,'latest.json'),JSON.stringify({kind:'auto-e4',status:report.technicalResult,file:artifacts.jsonFile,markdownFile:artifacts.mdFile,bundleFailureFile}),{replace:true});
+  let artifacts=writeAutoE4Artifacts(report,run.runDir);
+  const{bundle,bundleFailureFile}=finalizeAutoE4Run(report,run.runDir,dataDir,artifacts);
   process.stdout.write(JSON.stringify({type:'result',status:report.technicalResult,overallE4:report.overallE4,reportFile:artifacts.jsonFile,markdownFile:artifacts.mdFile,bundleFile:bundle?.archive??null,bundleSHA256:bundle?.sha256??null,bundleBytes:bundle?.bytes??null,bundleFailureFile,report:redact(report,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>']])})+'\n');
   if(report.technicalResult==='FAIL')process.exitCode=1;
  }finally{run.release();}
@@ -161,8 +242,7 @@ export async function main(){if(!['initialize','environment','verify','export','
 if(action==='record-install'){const setup=process.argv[6];if(!setup||!path.isAbsolute(setup)||fs.lstatSync(setup).isSymbolicLink()||!setup.toLowerCase().endsWith('.exe'))throw Error('INSTALLER_PATH_INVALID');const receipt={installerSHA256:digest(fs.readFileSync(setup)),recordedAt:new Date().toISOString(),desktopVersion:version.desktopVersion};writeFileAtomically(path.join(ROOT,'INSTALL_RECEIPT.json'),JSON.stringify(receipt));console.log(JSON.stringify({status:'VERIFIED',receipt}));return;}
 const state=loadState();if(action==='initialize'){console.log(JSON.stringify({status:'READY',sessionId:state.sessionId,version}));return;}
 if(action==='auto-e4'){await runAutoE4(state,version,readInstallerReceipt(ROOT),manifest);return;}
-if(action==='export'){const latest=readJSON(path.join(dataDir,'latest.json'),4096);if(latest.kind==='auto-e4'){
- const base=path.resolve(dataDir,'auto-e4-runs');const reportPath=path.resolve(latest.file),mdPath=path.resolve(latest.markdownFile??'');if(!reportPath.startsWith(base+path.sep)||!mdPath.startsWith(base+path.sep)||fs.lstatSync(reportPath).isSymbolicLink()||fs.lstatSync(mdPath).isSymbolicLink())throw Error('REPORT_PATH_INVALID');const original=readJSON(reportPath);original.operator={...(original.operator??{}),declaredRole:role};const sanitized=e4Sanitize(original,[[original.fixture??'','<SANDBOX>']]);const md=fs.readFileSync(mdPath,'utf8');console.log(JSON.stringify({status:'VERIFIED_EXPORT_REDACTED',json:JSON.stringify(sanitized,null,2),markdown:e4Sanitize(md,[[original.fixture??'','<SANDBOX>']])}));return;}
+if(action==='export'){const latest=readJSON(path.join(dataDir,'latest.json'),4096);if(latest.kind==='auto-e4'){console.log(JSON.stringify(buildAutoE4Export(latest,dataDir,role)));return;}
  if(path.dirname(latest.file)!==path.join(dataDir,'reports'))throw Error('REPORT_PATH_INVALID');if(fs.lstatSync(latest.file).isSymbolicLink())throw Error('REPORT_SYMLINK_REJECTED');const original=readJSON(latest.file);original.operator.declaredRole=role;const sanitized=redact(original,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>'],[original.fixture??'','<SANDBOX>']]);console.log(JSON.stringify({status:'VERIFIED_EXPORT_REDACTED',json:JSON.stringify(sanitized,null,2),markdown:markdown(sanitized)}));return;}
 const report=baseline(state,version);report.checks.push(check('payload-integrity','安装文件完整性','Installed payload integrity','VERIFIED',{files:manifest.files.length,manifestSHA256:expected,runtimeFiles:33,runtimeByteIdentity:'VERSION.json coreRuntimeHashes verified for this installed candidate'}));report.checks.push(check('runtime','随包运行环境','Bundled runtime',process.platform==='win32'&&process.arch==='x64'?'VERIFIED':'NOT_VERIFIED',{node:process.version,platform:process.platform,arch:process.arch,noExternalNodeGitPythonRequired:true}));const cli=invoke([path.join(APP,'dist/competition.js'),'self-test','--json']);report.commands.push(cli);let self=null;try{self=JSON.parse(cli.stdout.trim());}catch{}report.checks.push(check('cli-self-test','CLI 基础自检','CLI self-test',cli.exitCode===0&&self?.passed===true?'VERIFIED':'FAILED',{exitCode:cli.exitCode,selfTest:self,error:cli.error}));
 if(action==='environment'){const free=fs.statfsSync(ROOT);report.checks.push(check('disk','可用磁盘空间','Available disk space',free.bavail*free.bsize>=100*1024*1024?'VERIFIED':'FAILED',{freeBytes:free.bavail*free.bsize,minimumForReportsBytes:100*1024*1024}));report.checks.push(check('model','真实模型验证','Real model validation','NOT_VERIFIED',{reason:'Not required for offline SDK verification; no model is started or downloaded.'}));}

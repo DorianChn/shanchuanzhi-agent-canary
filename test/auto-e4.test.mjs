@@ -6,7 +6,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {createAutoE4Run,AUTO_E4_STAGES,writeAutoE4Artifacts} from '../packaging/windows/auto-e4.mjs';
 import {runHookFaultChecks} from '../packaging/windows/e4-hook-faults.mjs';
-import {recordAutoE4BundleFailure} from '../packaging/windows/worker.mjs';
+import {recordAutoE4BundleFailure,finalizeAutoE4Run,buildAutoE4Export} from '../packaging/windows/worker.mjs';
 import {fileURLToPath} from 'node:url';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -102,6 +102,26 @@ test('Auto E4 preflights all artifact paths before writing when one partial arti
   }
 });
 
+test('Auto E4 normalizes an EEXIST race after artifact preflight without replacing the competing file',t=>{
+  const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-race-'));
+  t.after(()=>fs.rmSync(runDir,{recursive:true,force:true}));
+  const jsonFile=path.join(runDir,'AUTO_E4_REPORT.json');
+  const competitor=Buffer.from('created after preflight');
+  const originalLinkSync=fs.linkSync;
+  const linkSync=originalLinkSync.bind(fs);
+  fs.linkSync=(source,target)=>{
+    if(path.resolve(target)===path.resolve(jsonFile)&&!fs.existsSync(jsonFile))fs.writeFileSync(jsonFile,competitor);
+    return linkSync(source,target);
+  };
+  try{
+    assert.throws(()=>writeAutoE4Artifacts({runId:'race',technicalResult:'PARTIAL',coverage:{verified:0,total:0},stages:[]},runDir),error=>error.message==='AUTO_E4_ARTIFACT_ALREADY_EXISTS');
+  }finally{fs.linkSync=originalLinkSync;}
+  assert.deepEqual(fs.readFileSync(jsonFile),competitor);
+  assert.equal(fs.existsSync(path.join(runDir,'AUTO_E4_REPORT.md')),false);
+  assert.equal(fs.existsSync(path.join(runDir,'EVIDENCE_INDEX.json')),false);
+  assert.deepEqual(fs.readdirSync(runDir),['AUTO_E4_REPORT.json']);
+});
+
 test('Auto E4 bundle failure records BLOCKED status without overwriting the report',t=>{
   const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-bundle-failure-'));
   t.after(()=>fs.rmSync(runDir,{recursive:true,force:true}));
@@ -125,4 +145,49 @@ test('Auto E4 bundle failure records BLOCKED status without overwriting the repo
   assert.deepEqual(fs.readFileSync(files.jsonFile),original);
   assert.deepEqual(fs.readFileSync(files.mdFile),originalMarkdown);
   assert.deepEqual(fs.readFileSync(files.indexFile),originalIndex);
+});
+
+test('worker bundle failure flows through latest pointer into a BLOCKED export while preserving the pre-failure snapshot',async t=>{
+  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-export-blocked-'));
+  t.after(()=>fs.rmSync(dataDir,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir});
+  await run.stage('environment',async()=>({status:'PASS',detail:{summary:'local fixture'}}));
+  await run.stage('materials',async()=>({status:'PASS',detail:{summary:'report artifacts prepared'}}));
+  const report=run.finish();
+  const originalTechnicalResult=report.technicalResult;
+  const artifacts=writeAutoE4Artifacts(report,run.runDir);
+  const preserved=[artifacts.jsonFile,artifacts.mdFile,artifacts.indexFile,path.join(run.runDir,report.eventsFile)].map(file=>fs.readFileSync(file));
+  const result=finalizeAutoE4Run(report,run.runDir,dataDir,artifacts,{bundleFactory:()=>{throw Error('EVIDENCE_BUNDLE_CREATE_FAILED');}});
+  run.release();
+
+  assert.equal(result.bundle,null);
+  assert.equal(path.basename(result.bundleFailureFile),'AUTO_E4_BUNDLE_FAILURE.json');
+  const latest=JSON.parse(fs.readFileSync(path.join(dataDir,'latest.json'),'utf8'));
+  assert.equal(latest.status,'BLOCKED');
+  assert.equal(latest.bundleFailureFile,result.bundleFailureFile);
+  assert.equal(latest.indexFile,artifacts.indexFile);
+  assert.equal(latest.eventsFile,path.join(run.runDir,report.eventsFile));
+
+  const exported=buildAutoE4Export(latest,dataDir,'external');
+  const exportedReport=JSON.parse(exported.json);
+  assert.equal(exported.status,'VERIFIED_EXPORT_REDACTED');
+  assert.equal(exported.technicalResult,'BLOCKED');
+  assert.equal(exportedReport.technicalResult,'BLOCKED');
+  assert.equal(exportedReport.operator.declaredRole,'external');
+  assert.equal(exportedReport.bundleVerification.status,'BLOCKED');
+  assert.equal(exportedReport.bundleVerification.originalTechnicalResult,originalTechnicalResult);
+  assert.equal(exportedReport.bundleVerification.evidenceSnapshot.classification,'PRE_BUNDLE_FAILURE_SNAPSHOT');
+  assert.equal(exportedReport.bundleVerification.evidenceSnapshot.bundleFailureIncluded,false);
+  assert.equal(exportedReport.bundleVerification.evidenceSnapshot.index.includesBundleFailure,false);
+  assert.equal(exportedReport.bundleVerification.evidenceSnapshot.events.includesBundleFailure,false);
+  assert.equal(exportedReport.stages.find(stage=>stage.id==='materials').status,'BLOCKED');
+  assert.equal(exportedReport.coverage.blocked,1);
+  assert.equal(exportedReport.coverage.verified,1);
+  assert.match(exported.markdown,/Technical result: BLOCKED/);
+  assert.match(exported.markdown,/pre-bundle-failure snapshot/);
+  const failure=JSON.parse(fs.readFileSync(result.bundleFailureFile,'utf8'));
+  assert.equal(failure.reason,'EVIDENCE_BUNDLE_CREATE_FAILED');
+  assert.deepEqual(exportedReport.bundleVerification.failureSidecar,failure);
+  assert.ok(!JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8')).artifacts.some(file=>file.name==='AUTO_E4_BUNDLE_FAILURE.json'));
+  for(const [index,file] of [artifacts.jsonFile,artifacts.mdFile,artifacts.indexFile,path.join(run.runDir,report.eventsFile)].entries())assert.deepEqual(fs.readFileSync(file),preserved[index]);
 });

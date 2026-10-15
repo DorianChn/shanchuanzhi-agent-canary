@@ -89,14 +89,18 @@ export function writeAutoE4Artifacts(report,runDir){
     try{fs.lstatSync(file);throw Error('AUTO_E4_ARTIFACT_ALREADY_EXISTS');}
     catch(error){if(error.code!=='ENOENT')throw error;}
   }
+ const writeArtifact=(file,content)=>{
+  try{writeFileAtomically(file,content);}
+  catch(error){if(error.code==='EEXIST')throw Error('AUTO_E4_ARTIFACT_ALREADY_EXISTS');throw error;}
+ };
   const safe={...report};
-  writeFileAtomically(jsonFile,JSON.stringify(safe,null,2)+'\n');
+ writeArtifact(jsonFile,JSON.stringify(safe,null,2)+'\n');
   const lines=['# 自动 E4 验收报告','','技术执行状态：'+report.technicalResult,'E4 状态：'+report.overallE4,'运行 ID：'+report.runId,'开始：'+report.startedAt,'结束：'+report.completedAt,'','自动运行覆盖率：'+report.coverage.verified+'/'+report.coverage.total+' 项 PASS（仅步骤覆盖，不是安全得分或攻击阻断率）','外部独立性：NOT_VERIFIED','',
     '## 阶段结果',...report.stages.map(s=>'- **'+s.status+'** `'+s.id+'`（'+s.durationMs+' ms）：'+String(s.detail?.summary??s.detail?.reason??'详见结构化报告')),'',
     '## 边界','- 作者或同机自动测试不能构成 E4 独立复现。','- 受控 SDK / MCP Gateway 结果不代表第三方 Agent 原生工具全局受保护。','- 只有观察到目标文件/网络副作用后才能报告副作用结论；DENY 日志本身不是阻断证明。','- 没有 VM、模型或 GitHub 授权时对应步骤会标记 BLOCKED/NOT_VERIFIED。',''];
-  writeFileAtomically(mdFile,lines.join('\n'));
+  writeArtifact(mdFile,lines.join('\n'));
   const eventFile=path.join(runDir,report.eventsFile??'events.jsonl');
   const artifacts=[jsonFile,mdFile,eventFile].filter(f=>fs.existsSync(f)).map(file=>({name:path.basename(file),sha256:createHash('sha256').update(fs.readFileSync(file)).digest('hex'),bytes:fs.statSync(file).size}));
-  writeFileAtomically(indexFile,JSON.stringify({schemaVersion:'agent-canary.auto-e4-evidence-index.v1',runId:report.runId,artifacts},null,2)+'\n');
+  writeArtifact(indexFile,JSON.stringify({schemaVersion:'agent-canary.auto-e4-evidence-index.v1',runId:report.runId,artifacts},null,2)+'\n');
   return {jsonFile,mdFile,indexFile,artifacts};
 }
