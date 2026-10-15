@@ -1,3 +1,12 @@
+## Current coordination evidence (2026-10-15 16:26 UTC)
+
+M0 maintains these public cross-module semantics. M1 owns Gateway and Hook behavior, M2 owns its adapter, M3 owns onboarding/host adaptation, M5 owns policy/router behavior, and M9 owns composition tests. Any shared contract change must be made by its owner; other modules adapt at their own boundary.
+
+- **Unpinned native file read (#55, P1):** the canonical M1 contract is fail-closed: without an M1-approved held-file capability, native `Read` denies with `native_file_execution_not_pinned`. M1 PR #43 is currently `7d6f091`; M3 PR #33 is `be388029` and still allows the synthetic unpinned read. M9 PR #36 run `38727481764` fails on both Ubuntu and Windows. M3 owns the correction and a separate supported-capability positive control; M9 repins only after the corrected M3 SHA exists. This does not prove a production host exploit or exposure.
+- **M1 investigation boundary (#51):** the test already gathers four child outcomes, retries, sparse identity metadata, and monotonic offsets. The underlying retry-exhaustion trigger remains UNKNOWN; optional test-only lock-owner PID and acquire/release duration evidence is the remaining request. No change to production locking, retry semantics, or the 48 assertions is allowed without a reproduced defect and owner-approved fix.
+- **M5 policy / M2 adapter / M1 I/O boundary (#52):** M5 owns policy decisions and the adapter owns routing; an allowed policy result alone does not authorize arbitrary path I/O. The first-party production host must consume the registered-file capability and enforce protected open/handle identity. Synthetic alias checks do not satisfy this boundary; production host and TOCTOU evidence remain NOT_VERIFIED.
+- **Other acceptance boundaries:** M2 Native Codex Shell remains UNPROTECTED (#45); M7 clean-VM lifecycle remains NOT_VERIFIED (#41); M8 package reachability remains NOT_VERIFIED (#53); independent external E4 remains NOT_VERIFIED. No CI result is promoted to a host or installer claim.
+
 ## Current coordination evidence (2026-10-15 11:33 UTC)
 
 M0 maintains this cross-module contract. M1 owns Gateway and Hook semantics; M2 owns its execution adapter; M3 owns agent onboarding and host adaptation; M5 owns policy/router semantics; M9 owns composition checks. This update records the exact current M9 result and adds no runtime implementation.

@@ -1,3 +1,20 @@
+## Canonical coordinator checkpoint (2026-10-15 16:26 UTC)
+
+This checkpoint supersedes the 16:05 snapshot immediately below. Current PR heads were read from GitHub; the PRs remain OPEN/Draft. CI identifiers refer only to the exact heads stated here.
+
+- **M0 / baseline:** PR #30 is at `aef81be76683b0223d1fb88d60700872bbb93d90`; product CI `38766305507` passed 9/9, coordination run `38766305465` passed 1/1, and refreshed-description check `38767050798` passed 1/1. PR #24 remains OPEN/Draft at unchanged `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; M0 has not edited or merged it.
+- **M1 / #51:** PR #43 is at `7d6f091926bde22c1b8270a209a22ae733b55eb7`; CI `38747079808` and ten-run workflow `38747079961` pass. Existing diagnostics are present; direct 500-busy retry exhaustion is confirmed, underlying trigger UNKNOWN, and optional test-only lock-owner PID/hold-time evidence is pending.
+- **M2 / #45:** PR #37 is at `9db59ed8f2deae905edcb2179982f8bcb594167c`, CI `38704118421` passes 9/9. Native Codex Shell remains UNPROTECTED.
+- **M3 / #55:** PR #33 is at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`, CI `38706654588` passes 9/9. No owner response or commit is visible after 15:28 UTC; unpinned native `Read` correction and positive control remain pending.
+- **M4 / #51:** PR #34 is at `fbf20907c6accffc37246eddf04f8599060d99ea`; CI `38698635434` failed the shared Ubuntu Node 20 quarantine-store retry. M4 found no separate UI defect.
+- **M5 / #52:** PR #47 is at `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`, CI `38719884959` passes. Production protected-open/held-handle integration remains NOT_VERIFIED.
+- **M6 / external E4:** PR #38 is at `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`; product CI `38686183313` and Windows wrapper `38686183315` pass. Independent E4 remains NOT_VERIFIED.
+- **M7 / #41:** PR #39 is at `cf4b70f5130175582fffdfc65bd7c6847450867b`; product CI `38706662845` and wrapper `38706663042` pass. Clean-VM lifecycle remains NOT_VERIFIED.
+- **M8 / #53:** PR #40 is at `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; product CI `38712038229` and wrapper `38712038305` pass. Package reachability and independent E4 remain NOT_VERIFIED.
+- **M9 / #54 / composition:** PR #36 is at `de3799aae540f58173acec4ab3f7a1fe98593aa7`; product CI `38727481643` passes 9/9 including Windows Node 22, wrapper `38727481657` passes. Composition run `38727481764` fails on both platforms at the M1/M3 unpinned-read contract gate. The historical Windows 22 retry trigger remains UNKNOWN; a disposition is pending.
+- **Coordination:** M1 #51 and M3 #55 are the two active module lanes; M9 waits on M3's exact-head correction. Other-window occupancy is UNKNOWN; no VMware/model/installer reservation is recorded. The Usage page remains open and readable; quota percentages are not recorded. Last M0 push was 16:07 UTC; next push batch no earlier than 16:28 UTC. No merge to `main` or PR #24, and no Release.
+- **Local tool and ignore audit:** Git `2.54.0.windows.1`, GitHub CLI `2.102.0`, Codex CLI `0.162.0-alpha.17.2`, and Node `v22.23.1` are available. Neither `python`, `python3`, nor `py` is available; no Python-dependent action was needed or attempted. The repository `.gitignore` covers logs, env files/secrets/private-key formats, temp/editor artifacts, caches, and local coordination workspaces; no ignore change was needed.
+
 ## Coordinator update (2026-10-15 16:05 UTC)
 
 - **M0 / baseline**: PR #30 is OPEN/Draft at `f287efbc81c74e2f19d10239325247d2b5aac00f`. Exact-head product CI `38761288627` passed 9/9, including package-smoke; coordination workflow `38761288378` passed 1/1. PR #24 was read in the browser and remains Draft from `feature/agent-canary-3.0` into `competition/shanchuanzhi-release-readiness`; M0 did not edit or merge it.

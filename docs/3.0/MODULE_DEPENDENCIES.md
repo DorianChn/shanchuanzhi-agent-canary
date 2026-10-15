@@ -1,5 +1,15 @@
 # M1–M9 模块依赖
 
+## Current schedule and dependencies (2026-10-15 16:26 UTC)
+
+- Maximum active module lanes: two. Keep M1's existing #43/#51 lock-owner diagnostic follow-up and M3's existing #33/#55 contract correction as the active lanes. M9's composition rerun is dependency-gated until M3 publishes a corrected exact head; its #54 historical retry disposition is queued behind this contract blocker.
+- Contract order: M1 owns the fail-closed unpinned native `Read` contract (`native_file_execution_not_pinned`); M3 must adapt its owned Hook copy/tests to that contract and add a separate supported-capability positive control; M9 then updates its exact M3 pin and reruns Ubuntu and Windows composition. Do not weaken M1's denial or silently make an incompatible shared-interface change.
+- M1 #51 has already captured all four child outcomes, retry counts, sparse lock/state identity, and monotonic sample offsets. Only safe paired lock acquire/release owner/PID timing remains requested. The 500-attempt/2 ms behavior and 48 assertions remain fixed; the original trigger is UNKNOWN.
+- M5 #47 (`373e2c2`) and M2 #37 (`9db59ed`) have passing exact-head CI, but M5's production protected-open/held-handle host path remains NOT_VERIFIED (#52). M2's actual Native Codex Shell remains UNPROTECTED (#45).
+- M7 clean-VM installer lifecycle (#41), M8 package reachability/log reconciliation (#53), and M6 independent external E4 remain NOT_VERIFIED. Do not start VMware, real-model, or installer testing until an exclusive resource reservation is recorded on #29; no reservation is currently recorded.
+- Current PR heads and checks are recorded in `TECHNICAL_STATUS.md` and `TECHNICAL_ISSUES.md`. PR #24 is still OPEN/Draft at `62496d4`; M0 #30 is OPEN/Draft at `aef81be`. No merge or Release is authorized.
+- The Usage page remains open and readable; stop all work if it becomes unreadable or drops below 5%. Do not store account-specific quota percentages in tracked files. The last M0 push was 16:07 UTC; the next push batch is no earlier than 16:28 UTC.
+
 ## Current schedule and dependencies (2026-10-15 06:41 UTC)
 
 - Maximum active module tasks: two. M9's cross-tree review is complete. The next owner action is M5's OBSERVE decision-contract reconciliation; M2's adapter validation follows that disposition. Keep these tasks on their existing branches/PRs.

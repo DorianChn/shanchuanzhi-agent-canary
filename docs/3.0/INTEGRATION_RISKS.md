@@ -1,5 +1,21 @@
 # M0/M9 集成风险登记
 
+## Current integration risk snapshot (2026-10-15 16:26 UTC)
+
+This table supersedes the older snapshot below. Exact-head CI covers the listed source state; it does not establish actual host interception, shipped-package reachability, installer lifecycle, or independent E4.
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| M1/M3 native Hook read contract (#55) | P1 | M1 #43 `7d6f091` denies an unpinned native `Read`; M3 #33 `be38802` allows it. M9 #36 run `38727481764` fails on Ubuntu and Windows. | M3 changes its owned behavior/test, retains M1's deny assertions, adds a supported-capability positive control; M9 repins the exact M3 SHA and reruns both platforms. |
+| Quarantine state-store retry (#51) | P1 | M1 #43 CI and ten-run workflow pass; direct 500-`STATE_STORE_BUSY` retry exhaustion is confirmed, but original lock-holder/timing cause is UNKNOWN. M4 #34 Ubuntu Node 20 run `38698635434` failed this shared test. | Keep all 48 assertions and retry behavior; collect safe owner PID/acquire-release timing if feasible. Make no product fix without reproduced defect evidence. |
+| M5 protected open / held handle (#52) | P0 | M5 #47 `373e2c2` CI passes synthetic alias-denial tests; a production host consumer and TOCTOU/handle enforcement are NOT_VERIFIED. | Keep OPEN until first-party host wiring and protected-open/handle evidence are demonstrated. |
+| Packaged Hook log privacy (#53) | P0 | M8 #40 `c1ff677` product and wrapper CI pass synthetic sanitization checks; package reachability and independent E4 are NOT_VERIFIED. No actual secret exposure is established. | Reconcile every reachable packaged copy and verify a real package lifecycle; do not infer host protection from wrapper tests. |
+| Installer lifecycle (#41) | P1 | M7 #39 `cf4b70f` product and wrapper checks pass; clean-VM install/upgrade/uninstall/cancel rollback are NOT_VERIFIED. | Wait for an exclusive VM reservation; record lifecycle outcomes and sanitized evidence. |
+| Native Codex Shell (#45) | P1 | M2 #37 `9db59ed` checks pass, while actual Desktop host policy remains UNPROTECTED / NOT_VERIFIED. | Retain the visible boundary until actual host-enforced denial is demonstrated. |
+| External E4 | P1 | M6 #38 `c1fdf3c` product/wrapper checks pass; independent E4 remains NOT_VERIFIED. | Preserve NOT_VERIFIED until an independent E4 run and artifacts exist. |
+| Historical Windows Node 22 retry failure (#54) | P1 | M9 #36 `de3799a` product check passes 9/9 including Windows Node 22; current bounded diagnostic test change preserves assertions. The old trigger remains UNKNOWN. | M9 records a disposition against the current head; do not change provider/transport code without an identified owner. |
+| PR #24 / release boundary | P2 / M0 | PR #24 is OPEN/Draft and unchanged at `62496d4`; #30 remains OPEN/Draft at `aef81be`. | Preserve no-merge/no-Release boundary. |
+
 ## Current integration risk snapshot (2026-10-15 09:31 UTC)
 
 | Risk | Priority | Verified state | Required gate |

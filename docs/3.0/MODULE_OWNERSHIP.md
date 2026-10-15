@@ -1,5 +1,22 @@
 # 模块文件所有权表
 
+## Current ownership and worktree snapshot (2026-10-15 16:26 UTC)
+
+| Module | Existing branch / PR head | Verified worktree in coordinator clone | Ownership / active disposition |
+| --- | --- | --- | --- |
+| M0 | `feature/ac3-m0-coordination` / #30 `aef81be` | `ac3-coordinator-recovery`, clean | Owns coordination docs/status only; does not edit module product code. |
+| M1 | `feature/ac3-security-core` / #43 `7d6f091` | `ac3-m1-security-recovery`, clean and remote-synced | Owns Gateway, Guard, canonical Hook contract/logging, and quarantine store. Active #51 diagnostics; no product fix absent reproduction. |
+| M2 | `feature/ac3-execution-isolation` / #37 `9db59ed` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns execution-isolation adapter. Native Codex Shell remains UNPROTECTED (#45). |
+| M3 | `feature/ac3-agent-onboarding` / #33 `be38802` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns onboarding and its Hook behavior/test copy. Active #55 fail-closed correction and positive control. |
+| M4 | `feature/ac3-desktop-security-center` / #34 `fbf2090` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns desktop UI/tests; shared retry failure routes to M1 #51, with no separate UI defect established. |
+| M5 | `feature/ac3-policy-audit` / #47 `373e2c2` | `ac3-m5-policy-recovery` | Owns policy/router semantics and tests. Synthetic path-alias checks pass; production protected-open/held-handle path remains NOT_VERIFIED (#52). |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 `c1fdf3c` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns E4 tooling/bundle. Independent external E4 remains NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / #39 `cf4b70f` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns reliability and installer evidence; clean-VM lifecycle remains NOT_VERIFIED (#41). |
+| M8 | `feature/ac3-open-source-product` / #40 `c1ff677` | `ac3-m8-recovery` | Owns open-source/docs and packaged Hook documentation. Package reachability and independent E4 remain NOT_VERIFIED (#53). |
+| M9 | `feature/ac3-m9-integration` / #36 `de3799a` | `ac3-m9-recovery` | Owns cross-module composition and integration tests, including assigned `test/ai.test.ts` diagnostics. Waits for M3 #55 before repinning; no provider/transport ownership is assigned. |
+
+All module PRs remain separate and open; current CI and acceptance boundaries are summarized in `TECHNICAL_STATUS.md`. The coordinator worktree list is not proof that unlisted modules are idle or isolated in other windows; those states are UNKNOWN. PR #24 remains OPEN/Draft and untouched; no main merge or Release occurred.
+
 ## Coordinator ownership note (2026-10-15 11:18 UTC)
 
 - **M3** owns its onboarding branch and Hook test copy. M1 owner review found M3 wrapper executable behavior differs only by a comment. M3 owns fixing Issue #55: its current ordinary unpinned Read allows where M1 denies; preserve M1 assertions and advance existing PR #33.
