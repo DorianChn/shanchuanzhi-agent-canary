@@ -1,6 +1,17 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-15 03:31 UTC)
+## Current coordination evidence (2026-10-15 04:04 UTC)
+
+M0 maintains this canonical cross-module summary; M1 and M5 retain ownership of runtime and policy semantics.
+
+- **M1 file router boundary:** commit `f14aab7` preserves the lexical legacy default and, when `verifyRealPaths:true`, hard-denies symlink/junction components for file read/write/delete before approval and again at dispatch. OBSERVE alias regressions assert preview/dispatch DENY, zero approvals/callbacks, and unchanged target content/hash. M1 focused router tests pass 20/20. This synthetic routing test does not establish a connected native host; open-by-path TOCTOU still requires a protected handle/OS boundary.
+- **M5 policy composition:** M5 `nonOverridableDeny` remains hard DENY under OBSERVE. Commit `0fdbd92` separates M5 policy-reason assertions from the M1 alias preflight reason; sensitive-path tests retain DENY, `SENSITIVE_DATA`, zero approvals/callbacks, and unchanged fixture assertions. M5 focused policy tests pass 30/30.
+- **M9 integrated candidate:** `37a09e8` combines the owner commits on the existing branch. Cross-module focused tests 53/53, full `npm test` 409/0 failures/6 environment skips, build, E4 verifier 16/16, and package smoke 100 files pass. Exact PR #36 CI 11/11 is green. M9-owned changes are limited to package test registration and a dedicated composition test. M6 verifier blobs match M6 `cd55717` byte-for-byte.
+- **M4 status boundary:** no `/api/security-center` or `/api/e4/status` provider/IPC exists. M4 tests preserve UNKNOWN and security-origin checks; do not substitute mock values.
+- **Remaining evidence limits:** no production M5 filesystem-host consumer or native M1 callback was found. External E4, native host execution, clean-VM installer lifecycle remain NOT_VERIFIED. M1 held-handle Gateway path still does not prove every same-privilege concurrent rename race.
+- **Exact-head PR checks:** M1 #43 `f14aab7` 10/10; M4 #34 `e939f04` 9/9; M5 #47 `0fdbd92` 9/9; M9 #36 `37a09e8` 11/11. All remain OPEN/Draft. PR #24 is unchanged.
+
+## Archived coordination evidence (2026-10-15 03:31 UTC)
 
 M0 maintains the canonical cross-module summary; M1 and M5 retain ownership of their runtime and policy semantics.
 

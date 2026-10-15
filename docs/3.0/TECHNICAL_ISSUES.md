@@ -1,6 +1,19 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 03:31 UTC)
+## Latest issue ledger (2026-10-15 04:04 UTC)
+
+| Issue | Priority / owner | Current evidence | State and next acceptance |
+| --- | --- | --- | --- |
+| #27 | P1 / M6, M9; M0 coordinates | M6 fields match M9. M9 `37a09e8` exact-head CI passes 11/11; local composition 53/53, full npm test 409 pass/0 fail/6 environment skips, build, E4 16/16, package smoke 100 files pass. | OPEN pending owner/issue record synchronization; external E4 remains NOT_VERIFIED and the separate #51 trigger remains UNKNOWN. |
+| #29 | P2 / M0 | Usage page read at 04:00 UTC, readable and above stop threshold. VMware/model/installer occupancy is not confirmed. | OPEN; keep two module-task cap; reserve exclusive resources visibly before any such test. Stop all work if unreadable or below 5%. |
+| #32 | P1 / M1; M3/M4 own copies | PR #33/#34 current heads pass 9/9; current fixture evidence remains synthetic and does not establish real host callback. Historical runner delay remains UNKNOWN. | OPEN pending owner scope and real-host evidence; retain fail-closed/no-output/no-decision assertions. |
+| #41 | P1 / M7 | PR #39 exact head passes 9 product checks+2 wrappers; clean-VM install/launch/upgrade/uninstall/rollback not run or verified. | OPEN/HOLD pending exclusive reservation and sanitized lifecycle evidence. |
+| #44 | P1 / M1; M9 baseline acceptance | Expiry tests preserve EXPIRED and zero callback; baseline review accepted. | CLOSED only for approval-expiry timing and M9 baseline scope. |
+| #45 | P1 / M2 | PR #37 passes 9/9; native desktop policy/trust/callback remain unobservable. | OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
+| #51 | P1 / M1 | 500 consecutive `STATE_STORE_BUSY` retries reach `RETRY_LIMIT`; ten-run Linux workflow passes, original lock-holder/timing cause absent. | OPEN; cause remains UNKNOWN. Preserve all assertions and do not infer data loss/defect. |
+| #52 | P0 / M1 router, M5 policy; M0 coordinates | M1 `f14aab7`, M5 `c54e7eb`+`0fdbd92`, M9 `37a09e8` are on pushed heads; M9 exact-head CI 11/11; synthetic junction read/write and M5 sensitive-path tests preserve DENY, zero approvals/callbacks and unchanged fixtures. | OPEN pending evidence that real filesystem hosts opt in and protect the open/handle. TOCTOU and native-host wiring remain NOT_VERIFIED. |
+
+## Archived issue ledger (2026-10-15 03:31 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |

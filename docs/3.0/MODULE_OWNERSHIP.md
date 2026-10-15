@@ -1,6 +1,23 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 03:31 UTC)
+## Current ownership and worktree snapshot (2026-10-15 04:04 UTC)
+
+| Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
+| --- | --- | --- | --- |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | #43 `f14aab7`; 10/10 exact-head checks pass | Gateway/router owner; explicit `verifyRealPaths:true` hard-denies read/write junction aliases before callbacks. 20/20 focused route tests. Native host callback remains NOT_VERIFIED. |
+| M2 | `feature/ac3-execution-isolation` / WSL-managed `agents/M2-isolation` | #37 `0f2c10c`; 9/9 pass | Owns execution-isolation adapter; native Codex Shell remains UNPROTECTED/BLOCKED_NOT_VERIFIED. WSL worktree status not newly verified. |
+| M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | #33 `f9bd818`; 9/9 pass | Owns onboarding and its Hook-test copy. Synthetic tests do not prove host callback; #32 remains OPEN. |
+| M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | #34 `e939f04`; 9/9 pass | Owns desktop UI and tests; runtime-console 8/8. No security/E4 provider or IPC; UI remains UNKNOWN. |
+| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | #47 `0fdbd92`; 9/9 pass | Owns policy/audit. Focused policy suite 30/30; OBSERVE retains non-overridable DENY. No production filesystem host consumer. |
+| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `cd55717`; 9 product checks+2 wrappers pass | Owns verifier/schema and `e4:*`; verifier files are byte-identical in M9. External E4 remains NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / WSL-managed `agents/M7-reliability-ac3` | #39 `4267c61`; 9+2 pass | Owns reliability/Windows packaging. Clean-VM lifecycle NOT_VERIFIED; exclusive installer/VM test not run. |
+| M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `16e3d01`; 9/9 pass recorded | Owns public docs/community. Local GHCR pull/runtime and independent E4 NOT_VERIFIED. |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 OPEN/Draft; prior head `76f9a2f` checks 9+1 passed; this snapshot is included in the current update batch | Owns coordination docs, issue/PR status, schedule and canonical contract; does not edit module source. |
+| M9 | `feature/ac3-m9-integration` / `integration` | #36 `37a09e8`; 11/11 exact-head checks pass | Owns integration tests and manifest composition. Local full 409 pass/0 fail/6 environment skips, build, E4 16/16, package smoke 100 files. M6 verifier unchanged. |
+
+All active module PRs remain OPEN/Draft and target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 remains OPEN/Draft at its separate readiness base and was not changed or merged. The usage page remains open. Do not edit main, merge PR #24, or publish a Release.
+
+## Archived ownership and worktree snapshot (2026-10-15 03:31 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |

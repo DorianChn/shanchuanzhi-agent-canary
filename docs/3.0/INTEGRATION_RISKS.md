@@ -1,6 +1,19 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 03:31 UTC)
+## Current integration risk snapshot (2026-10-15 04:04 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| #27 manifest / M9 E4 composition | P1 | M9 `37a09e8` exact CI 11/11; local full npm test 409 pass/0 fail/6 environment skips, build, E4 16/16, package smoke 100 files; M6 verifier byte-identical to `cd55717`. | Keep issue record synchronized; external E4 remains NOT_VERIFIED. |
+| #32 Hook interruption | P1 | M3 #33 and M4 #34 current exact heads pass 9/9; interruption fixture remains synthetic, host callback NOT_VERIFIED, historical runner delay UNKNOWN. | Keep OPEN; retain fail-closed assertions and require real host evidence for broader claims. |
+| #52 OBSERVE aliases | P0 | M1/M5 changes integrated at M9 `37a09e8`; M1 10/10, M5 9/9, M9 11/11 exact-head checks pass. Synthetic read/write junction tests prove zero approvals/callbacks and unchanged fixtures only. | Keep OPEN until a real filesystem host is identified, opts in to canonical-path checks, and protects open/handle; record TOCTOU limit. |
+| #51 store retries | P1 | Ten-run workflow passes; 500 consecutive `STATE_STORE_BUSY` retries reproduce `RETRY_LIMIT`; original lock-owner/timing trigger UNKNOWN. | Keep OPEN and preserve assertions. |
+| #45 native Shell | P1 | M2 PR #37 exact checks 9/9; actual desktop host policy and callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
+| #41 installer lifecycle | P1 | PR #39 checks pass 9+2; no exclusive clean-VM lifecycle evidence. | Keep OPEN/HOLD until resource reservation and lifecycle artifact. |
+| M4 security/E4 provider | P1 | M4 exact PR #34 checks 9/9 and tests 8/8; no provider or IPC; UI remains UNKNOWN. | Do not represent absent provider as live PASS. |
+| quota / push cadence | Scheduling | Usage page remains open/active and readable above 5%; batch began 04:00 UTC. | Stop if unreadable or below 5%; space the next public batch at least 20 minutes after the final write in this batch. |
+
+## Archived integration risk snapshot (2026-10-15 03:31 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |

@@ -1,6 +1,18 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 03:31 UTC)
+## Current authoritative snapshot (2026-10-15 04:04 UTC)
+
+- 04:00 UTC 用量页按用户要求保持活动且可读，仍高于5%暂停线；公开记录不写精确余量。当前公共写入批次已开始，批次之间至少间隔20分钟，以最后一次写入时间为准。
+- 本批次推送并回读的既有分支：M1 PR #43 `f14aab7`（精确head CI 10/10）；M4 PR #34 `e939f04`（9/9）；M5 PR #47 `0fdbd92`（9/9）；M9 PR #36 `37a09e8`（11/11）。四个 PR 均保持 OPEN/Draft。
+- M1 `f14aab7`：安全路由20/20、build与diff检查通过；在显式 `verifyRealPaths:true` 时，OBSERVE 下 junction 读取/写入预览和执行均硬拒绝，零审批、零callback、目标内容和hash不变。合成夹具不证明真实宿主callback；P0 #52继续OPEN。
+- M4 `e939f04`：Console目标测试8/8、build和diff检查通过。没有 `/api/security-center` 或 `/api/e4/status` provider/IPC；UI继续显示 UNKNOWN。
+- M5 `0fdbd92` 与策略提交 `c54e7eb`：策略测试30/30、build和diff检查通过。默认legacy词法路径契约保留；显式opt-in canonical路径保护不代表存在真实文件host consumer。
+- M9 `37a09e8`：本地组合53/53；全量 `npm test` 415项，409通过/0失败/6环境跳过；build、`e4:test` 16/16、`pack:check`（100 files）通过。M9自有提交仅增加package测试注册和组合测试；M1/M5源码分别保留owner提交。M6 verifier两文件与`cd55717`字节一致。
+- 其余精确head：M2 PR #37 `0f2c10c` 9/9；M3 PR #33 `f9bd818` 9/9；M6 PR #38 `cd55717` 9个产品检查+2个wrapper；M7 PR #39 `4267c61` 9+2；M8 PR #40 `16e3d01` 的9/9通过记录仍有效。原生Codex Shell、外部E4、clean-VM安装分别保持UNPROTECTED或NOT_VERIFIED。
+- #27保持OPEN以保留其owner/issue记录；#51原始锁竞争触发仍UNKNOWN；#52虽本地和精确head CI通过，仍缺真实文件宿主与受保护open/handle证据。#32 Hook的真实宿主callback仍NOT_VERIFIED；#41 clean-VM生命周期仍NOT_VERIFIED。
+- PR #30保持OPEN/Draft；前一精确head `76f9a2f` 的9/9产品CI和1/1协调检查通过，本批次协调文档更新后需以新精确head CI回读。PR #24仍OPEN/Draft、11/11通过、未修改未合并；未合并main、未发布Release。
+
+## Archived snapshot (2026-10-15 03:31 UTC)
 
 - 用量页按用户要求保持打开并置于前台；03:31 UTC读取可用且高于5%停工线。公开记录不写账户精确余量。页面不可读或低于5%时，所有模块停止开发、测试、浏览器和GitHub操作。
 - M0 PR #30 远端head `9b8d8d1713de29712f7550ce180ce1560a0dd3a2`：产品CI run `38672508461` 9/9、协调检查 `38672508565` 1/1通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；11项检查通过，未修改或合并。
