@@ -1,3 +1,17 @@
+## Coordinator update (2026-10-15 14:35 UTC)
+
+- PR #30 remains OPEN/Draft at `b2a1ca614ab5f45ede6376091d8e2fe7828842d9`. The PR body now has the required `Test-Evidence` and `API-Contract-Change: no` fields; exact-head ownership-contract workflow `38752364369` passed. Product CI `38750410364` is the latest product run and passed 9/9. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- M1 PR #43: `7d6f091`, CI `38747079808` and ten-run store stress `38747079961` pass. The earlier retry-exhaustion trigger remains UNKNOWN; the diagnostic test changed from the failing heads and may change scheduling, so the new run does not prove the old failure resolved.
+- M2 PR #37: `9db59ed`, exact-head CI `38704118421` passes. Native Codex Shell remains UNPROTECTED.
+- M3 PR #33: `be38802`, CI `38706654588` passes; it remains blocked by #55 because M3 allows an unpinned native `Read` that M1 denies. M3 has not responded or advanced since M0's 14:20 UTC follow-up.
+- M4 PR #34: `fbf2090`, exact-head CI `38698635434` fails the shared file-store retry test on Ubuntu Node 20; the same test passes on Ubuntu Node 22. M4 triage found no separate desktop UI defect. Track the trigger under #51 as UNKNOWN.
+- M5 PR #47: `373e2c2`, exact-head CI `38719884959` passes. P0 #52 remains open for M1's canonical-path review and first-party protected-open/held-handle evidence.
+- M6 PR #38: `c1fdf3c`, product CI `38686183313` and Windows wrapper `38686183315` pass. External E4 remains NOT_VERIFIED.
+- M7 PR #39: `cf4b70f`, product CI `38706662845` and Windows wrapper `38706663042` pass. Clean-VM lifecycle remains NOT_VERIFIED.
+- M8 PR #40: `c1ff677`, product CI `38712038229` and Windows wrapper `38712038305` pass. #53 remains open pending packaged-artifact reachability evidence and independent E4.
+- M9 PR #36: `de3799a`, product CI `38727481643` and wrapper `38727481657` pass; exact-source composition `38727481764` fails on both platforms at the M1/M3 unpinned-read contract gate.
+- The Usage page was readable at 14:29 UTC and stayed open; the quota was above the pause threshold. No account percentage is recorded here. Next public-write batch is no earlier than 14:52 UTC.
+
 ## Coordinator update (2026-10-15 14:00 UTC)
 
 - At the 13:56 UTC batch, M0 fast-forward-pushed four documentation-only commits through `4892bc7ca62508ca41366ee90342d246965fe49f` to existing PR #30. Exact-head product CI run `38747088963` and coordination run `38747089008` passed all 10 checks. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with 11/11 checks passing.
