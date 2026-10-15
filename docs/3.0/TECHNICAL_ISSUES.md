@@ -1,3 +1,8 @@
+## Coordinator publication update (2026-10-15 12:19 UTC)
+
+- **#51 P1:** M0 posted and verified a 12:16 UTC follow-up with the current sparse-sample evidence and unavailable-WSL result. The root cause remains UNKNOWN; no code, dependency, or retry change was made.
+- **#55 P1:** M0 posted and verified a 12:18 UTC owner-action follow-up on PR #33. M3 still owns the unpinned native-Read denial and positive-control correction; M9 must repin after M3 advances. No new M3 head was present at 12:13 UTC.
+- **#30 M0:** PR #30 exact head e321af27f70192734c9d2c32a7a971ee7a85ff8b has 10/10 successful checks. It remains OPEN/Draft.
 ## Coordinator coordination update (2026-10-15 12:09 UTC)
 
 - **#55 P1 / PR #33:** Latest read at 12:09 UTC shows no M3 commit or issue response since the owner action. PR #33 remains at be3880298e1c6766024ecbce5f6dbc23c4d2daa1. The M9 exact-source gate remains blocked by the unpinned-read mismatch. M0 will request an owner progress update in the next permitted coordination batch.
