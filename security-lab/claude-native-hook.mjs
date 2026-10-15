@@ -18,6 +18,6 @@ try {
   if(timedOut){output=deny;}else if(!isHookDecision(result)){throw Error('HOOK_DECISION_INVALID');}else{output=result;}
  } finally {if(timeoutHandle)clearTimeout(timeoutHandle);}
  if(timedOut){fs.writeSync(1,JSON.stringify(deny)+String.fromCharCode(10));process.exit(0);}
- fs.appendFileSync(logFile,JSON.stringify({timestamp:new Date().toISOString(),tool:input.tool_name,input:input.tool_input,decision:output})+String.fromCharCode(10));
+ fs.appendFileSync(logFile,JSON.stringify({timestamp:new Date().toISOString(),hookEventName:'PreToolUse',permissionDecision:output.hookSpecificOutput.permissionDecision})+String.fromCharCode(10));
 } catch { /* Any load, timeout, decision-shape, or evidence-write failure denies. */ output=deny; }
 console.log(JSON.stringify(output));
