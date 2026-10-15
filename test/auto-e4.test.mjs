@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 import {createAutoE4Run,AUTO_E4_STAGES,writeAutoE4Artifacts} from '../packaging/windows/auto-e4.mjs';
 import {runHookFaultChecks} from '../packaging/windows/e4-hook-faults.mjs';
+import {recordAutoE4BundleFailure} from '../packaging/windows/worker.mjs';
 import {fileURLToPath} from 'node:url';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -67,4 +69,60 @@ test('Auto E4 rejects invalid stage status rather than treating it as PASS',asyn
   const run=createAutoE4Run({dataDir:data});
   const stage=await run.stage('environment',async()=>({status:'VERIFIED',detail:{}}));
   assert.equal(stage.status,'FAIL');assert.equal(stage.detail.error,'INVALID_STAGE_STATUS');run.release();
+});
+
+test('Auto E4 refuses repeat artifact writes without changing the prior report',t=>{
+  const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-repeat-'));
+  t.after(()=>fs.rmSync(runDir,{recursive:true,force:true}));
+  const report={runId:'repeat',technicalResult:'PARTIAL',overallE4:'E4 EXTERNAL INDEPENDENCE NOT VERIFIED',startedAt:'start',completedAt:'end',coverage:{verified:0,total:0},stages:[]};
+  const files=writeAutoE4Artifacts(report,runDir);
+  const before=[files.jsonFile,files.mdFile,files.indexFile].map(file=>fs.readFileSync(file));
+
+  report.technicalResult='FAIL';
+  assert.throws(()=>writeAutoE4Artifacts(report,runDir),error=>error.message==='AUTO_E4_ARTIFACT_ALREADY_EXISTS');
+  for(const [index,file] of [files.jsonFile,files.mdFile,files.indexFile].entries())assert.deepEqual(fs.readFileSync(file),before[index]);
+});
+
+test('Auto E4 preflights all artifact paths before writing when one partial artifact exists',t=>{
+  const names=['AUTO_E4_REPORT.json','AUTO_E4_REPORT.md','EVIDENCE_INDEX.json'];
+  for(const existingName of names){
+    const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-partial-'));
+    try{
+      const existingFile=path.join(runDir,existingName);
+      const original=Buffer.from('preserve prior artifact');
+      fs.writeFileSync(existingFile,original);
+      const report={runId:'partial',technicalResult:'PARTIAL',overallE4:'E4 EXTERNAL INDEPENDENCE NOT VERIFIED',startedAt:'start',completedAt:'end',coverage:{verified:0,total:0},stages:[]};
+
+      assert.throws(()=>writeAutoE4Artifacts(report,runDir),error=>error.message==='AUTO_E4_ARTIFACT_ALREADY_EXISTS');
+      assert.deepEqual(fs.readFileSync(existingFile),original);
+      for(const name of names){
+        if(name!==existingName)assert.equal(fs.existsSync(path.join(runDir,name)),false,`${existingName} must be detected before ${name} is written`);
+      }
+    }finally{fs.rmSync(runDir,{recursive:true,force:true});}
+  }
+});
+
+test('Auto E4 bundle failure records BLOCKED status without overwriting the report',t=>{
+  const runDir=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-bundle-failure-'));
+  t.after(()=>fs.rmSync(runDir,{recursive:true,force:true}));
+  const stage={id:'materials',status:'PASS',durationMs:1,detail:{summary:'reports created'}};
+  const report={runId:'blocked-run',technicalResult:'READY_FOR_EXTERNAL_REVIEW',coverage:{verified:1,blocked:0},stages:[stage]};
+  const files=writeAutoE4Artifacts({...report,coverage:{verified:1,blocked:0},stages:[{...stage}]},runDir);
+  const original=fs.readFileSync(files.jsonFile);
+  const originalMarkdown=fs.readFileSync(files.mdFile);
+  const originalIndex=fs.readFileSync(files.indexFile);
+  const failureFile=recordAutoE4BundleFailure(report,runDir,files,Error('EVIDENCE_BUNDLE_CREATE_FAILED'));
+  const failure=JSON.parse(fs.readFileSync(failureFile,'utf8'));
+
+  assert.equal(report.technicalResult,'BLOCKED');
+  assert.equal(stage.status,'BLOCKED');
+  assert.equal(report.coverage.verified,0);
+  assert.equal(report.coverage.blocked,1);
+  assert.equal(report.bundleVerification.status,'BLOCKED');
+  assert.equal(failure.status,'BLOCKED');
+  assert.equal(failure.reportPreserved,true);
+  assert.equal(failure.originalReport.sha256,createHash('sha256').update(original).digest('hex'));
+  assert.deepEqual(fs.readFileSync(files.jsonFile),original);
+  assert.deepEqual(fs.readFileSync(files.mdFile),originalMarkdown);
+  assert.deepEqual(fs.readFileSync(files.indexFile),originalIndex);
 });

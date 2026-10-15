@@ -85,6 +85,10 @@ export function writeAutoE4Artifacts(report,runDir){
   const jsonFile=path.join(runDir,'AUTO_E4_REPORT.json');
   const mdFile=path.join(runDir,'AUTO_E4_REPORT.md');
   const indexFile=path.join(runDir,'EVIDENCE_INDEX.json');
+  for(const file of [jsonFile,mdFile,indexFile]){
+    try{fs.lstatSync(file);throw Error('AUTO_E4_ARTIFACT_ALREADY_EXISTS');}
+    catch(error){if(error.code!=='ENOENT')throw error;}
+  }
   const safe={...report};
   writeFileAtomically(jsonFile,JSON.stringify(safe,null,2)+'\n');
   const lines=['# 自动 E4 验收报告','','技术执行状态：'+report.technicalResult,'E4 状态：'+report.overallE4,'运行 ID：'+report.runId,'开始：'+report.startedAt,'结束：'+report.completedAt,'','自动运行覆盖率：'+report.coverage.verified+'/'+report.coverage.total+' 项 PASS（仅步骤覆盖，不是安全得分或攻击阻断率）','外部独立性：NOT_VERIFIED','',
