@@ -24,13 +24,14 @@
 - 该修复提交尚未推送，远端 CI pending；本次仅更新 M9 所有的集成计划，没有 cherry-pick M6 代码。M6 owner signoff 仍未确认。
 - 外部独立 E4 验收仍为 NOT_VERIFIED。M9 的 npm run e4:test 是本地合成 bundle verifier 测试，不能替代 M6 外部独立 E4，也不能据此将 E4 状态标记为 VERIFIED。
 
-## M6 narrow fixture 移植候选（2026-10-15 00:54 UTC）
+## M6 Hook fixture 候选与 exact-head 验收（2026-10-15 01:04 UTC）
 
-- M6 owner 在原分支 feature/ac3-e4-validation-ac3 完成候选提交 09084490bc17af13cd4589ebb344c7a46e2d0881，父提交为 4e397627c635b75a0e3b6384136d39d078802b72。该候选是窄移植；M9 不直接 cherry-pick 或合入这项 M6 源改动。
-- M6 owner 报告本地 Hook 定向验证 10/10、E4 定向验证 18/18；M9 未重跑。保留这两项验证的原始 run 输出/报告供后续复核。
-- test/agent-hook.test.ts 的子进程夹具保留 no-decision、no-output、termination 断言；夹具没有计数或观察 native host callback，不能将它记作 native callback 执行证据。Host callback 仍为 NOT_VERIFIED。
-- GitHub 上 PR #38 仍在原 head 4e397627c635b75a0e3b6384136d39d078802b72；候选 09084490 尚未推送，因此该 exact-head CI 尚待新 head 推送后运行。Issue #27 与 #32 仍 OPEN；不得据此关闭 manifest/组合验收或共享 Hook fixture 协调门槛。
-- 外部独立 E4 仍为 NOT_VERIFIED；Native Codex Shell 仍 UNPROTECTED；clean-VM 安装、升级、卸载及取消回滚仍 NOT_VERIFIED/HOLD。上述 owner 本地测试不替代这些验收，也不改变其状态。
+- M6 owner 在原分支 `feature/ac3-e4-validation-ac3` 的候选提交为 `09084490bc17af13cd4589ebb344c7a46e2d0881`，父提交为 `4e397627c635b75a0e3b6384136d39d078802b72`。PR #38（Draft）已推送至该 head，base 为 `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；该提交只修改 `test/agent-hook.test.ts`。M9 不直接 cherry-pick 或合入这项 M6 源改动。
+- **ACCEPT（仅 manifest/API 兼容性）**：M6 candidate `package.json` blob `9981817e8d38f5ab3c015fcbe19f18852d5f459c` 与其父提交相同；M9 `package.json` blob 为 `6b3042bbe7ba5b14a904c7d04fca9a9011a47883`。双方 e4 脚本值一致：`e4:auto=npm run build && node security-lab/e4/run.mjs`、`e4:test=node --test security-lab/e4/verify-bundle.test.mjs`、`e4:verify=node security-lab/e4/verify-bundle.mjs`。M6 的 31 个 `npm test` 路径均包含在 M9 的 36 个路径中，且两边路径无重复。M0 PR #30 当前 head `bdad252960cb95c94ecb0612238f69f76273b69f` 的 canonical `docs/3.0/API_CONTRACTS.md` blob 为 `0d51c4019ae292b34054398f1fc9dfa7fc24f594`；M9 副本 blob 为 `693d437856a2d879983de4fb16497090128aa1d9`。E4 schema、证据链锚定及缺少证据不得判 PASS 等契约语义相同；blob 差异是状态快照漂移，不是接口语义冲突。此结论不代表运行时 E4 验收。
+- **Hook fixture 暂不接入**：M6 candidate 的 `test/agent-hook.test.ts` blob 为 `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d`；M9 当前 fixture 与 M1 PR #43 当前 head `a2206d3985db25adcbaad24ee9788c900ee5c2cb` 的文件 blob 均为 `6c2d8da18e1832bc738d141cd811b4b3f047756e`。Issue #32 仍 OPEN，故保留 M1 owner fixture，等待 owner 协调后再评估。M6 子进程夹具的 no-decision、no-output、termination 断言不计数或观察 native host callback。
+- M6 owner 报告本地 Hook 定向验证 10/10、E4 定向验证 18/18；M9 未重跑。上述数字仅作为 owner 报告记录，保留原始 run 输出/报告供后续复核。
+- PR #38 exact-head product CI run `38662965312` **失败**：Ubuntu Node 22 的 `npm test` 中 `four concurrent processes preserve every quarantine without lost writes` 报 `RETRY_LIMIT`，结果为 322 pass、1 fail、4 skipped；fail-fast 后 `package-smoke` 被跳过。失败位于 file-state-store 并发测试，而该 M6 提交只改 Hook fixture；当前证据不足以归因二者因果。Windows Community wrapper run `38662965329` 成功，2/2 jobs。PR #38 因 product CI 失败不能记为 exact-head CI green。
+- Issue #27 与 #32 仍 OPEN。M6 owner signoff 尚未独立确认；native host callback 与外部独立 E4 仍为 `NOT_VERIFIED`；Native Codex Shell 仍 `UNPROTECTED`；clean-VM 安装、升级、卸载及取消回滚仍 `NOT_VERIFIED/HOLD`。上述 owner 本地测试、manifest 检查及 wrapper 结果均不替代这些验收，也不改变其状态。
 
 ## 历史 M9 集成快照（2026-10-15 00:18 UTC）
 
