@@ -22,42 +22,60 @@ jobs:
           ref: refs/pull/36/head
           path: module-sources/m9
 
-      - name: Checkout M1 PR #43
+      - name: Checkout M1 PR #43 at reviewed SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: refs/pull/43/head
+          ref: f14aab781c62db60ac241d2114f543f6cac223ae
           path: module-sources/m1
 
-      - name: Checkout M2 PR #37
+      - name: Checkout M2 PR #37 at reviewed SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: refs/pull/37/head
+          ref: 76066cbb750ec714ce8691bc0f30c8171186f079
           path: module-sources/m2
 
-      - name: Checkout M5 PR #47
+      - name: Checkout M5 PR #47 at reviewed SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: refs/pull/47/head
+          ref: b6a40b49f132decba97d269ff942d868fcef928f
           path: module-sources/m5
 
-      - name: Record all four checked-out commits
+      - name: Checkout M7 PR #39 at reviewed SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: 52cc149e958f8139ea93cf8bab7e14bedfe45d62
+          path: module-sources/m7
+
+      - name: Checkout M8 PR #40 at reviewed SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: d12dd2cdb7e4fdeddadcdc45bf5ff0420cca5e04
+          path: module-sources/m8
+
+      - name: Record all six checked-out commits
         shell: bash
         run: |
           m9_sha="$(git -C module-sources/m9 rev-parse --verify HEAD)"
           m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
           m2_sha="$(git -C module-sources/m2 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
+          m7_sha="$(git -C module-sources/m7 rev-parse --verify HEAD)"
+          m8_sha="$(git -C module-sources/m8 rev-parse --verify HEAD)"
           {
             printf 'M9_SHA=%s\n' "$m9_sha"
             printf 'M1_SHA=%s\n' "$m1_sha"
             printf 'M2_SHA=%s\n' "$m2_sha"
             printf 'M5_SHA=%s\n' "$m5_sha"
+            printf 'M7_SHA=%s\n' "$m7_sha"
+            printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M9: %s\nM1: %s\nM2: %s\nM5: %s\n' \
-            "$m9_sha" "$m1_sha" "$m2_sha" "$m5_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M9: %s\nM1: %s\nM2: %s\nM5: %s\nM7: %s\nM8: %s\n' \
+            "$m9_sha" "$m1_sha" "$m2_sha" "$m5_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -75,11 +93,33 @@ jobs:
         run: npm ci
         working-directory: module-sources/m5
 
-      - name: Run synthetic owner-source composition regression
+      - name: Run M7 exact-head packaged positive-control regression
+        working-directory: module-sources/m7
+        run: node --test --test-name-pattern="Windows payload E4 checks the co-located privacy-safe hook wrapper" test/windows-packaging.test.mjs
+
+      - name: Run M8 exact-head co-located positive-control regression
+        working-directory: module-sources/m8
+        run: node --test --test-name-pattern="co-located E4 payload wrapper logs only allowlisted metadata" test/auto-e4.test.mjs
+
+      - name: Run exact-source M1/M2/M5 and M7/M8 M9 composition regressions
         working-directory: module-sources/m9
         env:
           M9_ROOT: ${{ github.workspace }}/module-sources/m9
           M1_ROOT: ${{ github.workspace }}/module-sources/m1
           M2_ROOT: ${{ github.workspace }}/module-sources/m2
           M5_ROOT: ${{ github.workspace }}/module-sources/m5
+          M7_ROOT: ${{ github.workspace }}/module-sources/m7
+          M8_ROOT: ${{ github.workspace }}/module-sources/m8
         run: node --import tsx --test test/m9-cross-module-composition.test.mjs
+
+      - name: Record evidence limits
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo
+            echo 'M1/M2/M5 evidence: exact allowed read and deterministic protected-path/symlink-alias denials before the adapter callback, with fixture and Gateway evidence unchanged.'
+            echo 'M7/M8 evidence: exact owner tests plus M9 raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
+            echo 'Scope: synthetic/co-located source-fixture composition only.'
+            echo 'Not established by this workflow: a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
+          } >> "$GITHUB_STEP_SUMMARY"
