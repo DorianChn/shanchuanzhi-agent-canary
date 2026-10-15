@@ -1,10 +1,10 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 16:26 UTC)
+## Current ownership and worktree snapshot (2026-10-15 16:40 UTC)
 
 | Module | Existing branch / PR head | Verified worktree in coordinator clone | Ownership / active disposition |
 | --- | --- | --- | --- |
-| M0 | `feature/ac3-m0-coordination` / #30 `aef81be` | `ac3-coordinator-recovery`, clean | Owns coordination docs/status only; does not edit module product code. |
+| M0 | `feature/ac3-m0-coordination` / #30 `3004dcf` | `ac3-coordinator-recovery`, clean | Owns coordination docs/status only; does not edit module product code. |
 | M1 | `feature/ac3-security-core` / #43 `7d6f091` | `ac3-m1-security-recovery`, clean and remote-synced | Owns Gateway, Guard, canonical Hook contract/logging, and quarantine store. Active #51 diagnostics; no product fix absent reproduction. |
 | M2 | `feature/ac3-execution-isolation` / #37 `9db59ed` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns execution-isolation adapter. Native Codex Shell remains UNPROTECTED (#45). |
 | M3 | `feature/ac3-agent-onboarding` / #33 `be38802` | Not listed in this coordinator clone; other-window worktree state UNKNOWN | Owns onboarding and its Hook behavior/test copy. Active #55 fail-closed correction and positive control. |

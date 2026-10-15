@@ -1,6 +1,6 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 16:26 UTC)
+## Current integration risk snapshot (2026-10-15 16:40 UTC)
 
 This table supersedes the older snapshot below. Exact-head CI covers the listed source state; it does not establish actual host interception, shipped-package reachability, installer lifecycle, or independent E4.
 
@@ -14,7 +14,7 @@ This table supersedes the older snapshot below. Exact-head CI covers the listed 
 | Native Codex Shell (#45) | P1 | M2 #37 `9db59ed` checks pass, while actual Desktop host policy remains UNPROTECTED / NOT_VERIFIED. | Retain the visible boundary until actual host-enforced denial is demonstrated. |
 | External E4 | P1 | M6 #38 `c1fdf3c` product/wrapper checks pass; independent E4 remains NOT_VERIFIED. | Preserve NOT_VERIFIED until an independent E4 run and artifacts exist. |
 | Historical Windows Node 22 retry failure (#54) | P1 | M9 #36 `de3799a` product check passes 9/9 including Windows Node 22; current bounded diagnostic test change preserves assertions. The old trigger remains UNKNOWN. | M9 records a disposition against the current head; do not change provider/transport code without an identified owner. |
-| PR #24 / release boundary | P2 / M0 | PR #24 is OPEN/Draft and unchanged at `62496d4`; #30 remains OPEN/Draft at `aef81be`. | Preserve no-merge/no-Release boundary. |
+| PR #24 / release boundary | P2 / M0 | PR #24 is OPEN/Draft and unchanged at `62496d4`; #30 is OPEN/Draft at `3004dcf` with product CI `38769306353` 9/9 and ownership check `38769777348` 1/1. | Preserve no-merge/no-Release boundary. |
 
 ## Current integration risk snapshot (2026-10-15 09:31 UTC)
 

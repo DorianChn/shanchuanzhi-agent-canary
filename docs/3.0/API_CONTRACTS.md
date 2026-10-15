@@ -1,4 +1,4 @@
-## Current coordination evidence (2026-10-15 16:26 UTC)
+## Current coordination evidence (2026-10-15 16:40 UTC)
 
 M0 maintains these public cross-module semantics. M1 owns Gateway and Hook behavior, M2 owns its adapter, M3 owns onboarding/host adaptation, M5 owns policy/router behavior, and M9 owns composition tests. Any shared contract change must be made by its owner; other modules adapt at their own boundary.
 
