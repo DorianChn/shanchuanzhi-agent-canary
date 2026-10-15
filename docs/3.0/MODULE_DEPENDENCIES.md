@@ -1,14 +1,14 @@
 # M1–M9 模块依赖
 
-## Current schedule and dependencies (2026-10-15 05:03 UTC)
+## Current schedule and dependencies (2026-10-15 05:09 UTC)
 
-- Maximum active module tasks: two. Current slots: M3/#53 local candidate `1829e05` on existing PR #33 and M9/#53 local candidate `2d3f1da` on existing PR #36; both have focused local checks and await the 05:15 push/CI batch. M1 completed #53 owner-copy verification and #51 diagnostics; M7's #53 commit passed exact-head CI and its slot is released.
-- M2/M4/M5/M6/M8 branch-copy reviews are queued until a slot releases; M1's owner allowlist contract is verified. Each module owns its branch copy; no M0 edits to product code.
+- Maximum active module tasks: two. Current slots: M4/#53 on existing PR #34 and M5/#53 on existing PR #47, each reconciling its own branch-local wrapper copy. M3 `1829e05` on PR #33 and M9 `2d3f1da` on PR #36 are locally complete and wait for the next publication batch; M1 completed #53 owner-copy verification and #51 diagnostics; M7's #53 commit passed exact-head CI.
+- M2/#53 is queued because its registered WSL-managed worktree cannot be safely read with the available Windows Git invocation; preserve it for the owning runtime instead of repairing it. M6/M8 copy reviews remain queued. M1's owner allowlist contract is verified. Each module owns its branch copy; no M0 edits to product code.
 - P1 evidence for M1/#51: PR #30 head `f818c4d` run `38682225388` had Windows Node20 retry exhaustion; Ubuntu run `38662965312` attempt 1 had the same direct failure. M1 matched identical store/test blobs and found later Windows Node20 and local Node22 passes, but no lock-owner/timing traces. Root cause remains UNKNOWN; preserve all assertions.
 - Interface dependency: M1 defines an allowlist-only persisted log record (timestamp, fixed Hook event, permission-decision enum). M7 packages the owner-approved wrapper. Other modules consume it through an adapter or owner-approved branch-local copy; do not serialize raw tool arguments, full decision objects, reasons, paths, or caller-controlled detail.
 - No VMware, real-model, or installer lifecycle resource is reserved or running. Record exclusive resource, owner, worktree, start, and release on #29 before starting such tests.
-- Keep the usage page open and readable. Stop all module activity and GitHub operations if 5-hour quota is unreadable or below 5%; do not publish quota values.
-- Push/public coordination changes in one batch no more often than every 20 minutes. M0's last push completed at 04:55 UTC; next public-write batch no earlier than 05:15 UTC.
+- Keep the usage page open and readable; read at 05:09 UTC and above the stop threshold. Stop all module activity and GitHub operations if 5-hour quota is unreadable or below 5%; do not publish quota values.
+- Push/public coordination changes in one batch no more often than every 20 minutes. The last public comment was posted by 04:57 UTC; next public-write batch no earlier than 05:18 UTC.
 - Git uses Windows and WSL-managed worktrees. Do not repair or prune cross-runtime/stale WSL pointers from Windows; preserve current branch state.
 
 ## Archived schedule and dependencies (2026-10-14 20:46 UTC)

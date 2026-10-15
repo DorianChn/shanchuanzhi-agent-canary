@@ -1,14 +1,14 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 05:03 UTC)
+## Current ownership and worktree snapshot (2026-10-15 05:09 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
 | M1 | `feature/ac3-security-core` / `agents/M1-security` | #43 `f14aab7`; 10/10 | Owns Gateway/router and canonical native-Hook log contract/test. #53 owner-copy allowlist/canary check passed. #51 diagnostics complete with no defensible source fix; root remains UNKNOWN. |
-| M2 | `feature/ac3-execution-isolation` / WSL-managed `agents/M2-isolation` | #37 `0f2c10c`; 9/9 | Owns execution-isolation adapter; branch wrapper-copy review queued on #53. Native Codex Shell remains UNPROTECTED/BLOCKED_NOT_VERIFIED. |
+| M2 | `feature/ac3-execution-isolation` / registered `agents/M2-isolation` | #37 `0f2c10c`; 9/9 | Owns execution-isolation adapter. The registered checkout is under a WSL-managed path; Windows Git sees tracked-file deletions, so M0 preserves it and will not edit/repair from the wrong runtime. #53 wrapper-copy task is queued. Native Codex Shell remains UNPROTECTED/BLOCKED_NOT_VERIFIED. |
 | M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | Remote #33 `f9bd818`; 9/9; local candidate `1829e05` ahead pending batch | Owns onboarding and Hook-test copy; allowlist wrapper/canary change passes focused 11/11, build, syntax, and diff checks. Remote CI pending. |
-| M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | #34 `e939f04`; 9/9 | Owns desktop UI and tests; wrapper-copy reconciliation queued on #53. No provider/IPC; UI remains UNKNOWN. |
-| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | #47 `0fdbd92`; 9/9 | Owns policy/audit; wrapper-copy reconciliation queued on #53. No production filesystem host consumer. |
+| M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | #34 `e939f04`; 9/9 | Owns desktop UI and tests; active #53 task to sanitize its existing wrapper copy and retain canary regression. No provider/IPC; UI remains UNKNOWN. |
+| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | #47 `0fdbd92`; 9/9 | Owns policy/audit; active #53 task to sanitize its existing wrapper copy and retain canary regression. No production filesystem host consumer. |
 | M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `cd55717`; 11/11 | Owns verifier/schema and `e4:*`; wrapper-copy reconciliation queued on #53. External E4 remains NOT_VERIFIED. |
 | M7 | `feature/ac3-reliability-ac3` / WSL-managed `agents/M7-reliability-ac3` | #39 `87e0df0`; exact-head checks 11/11 | Owns Windows packaging. #53 packaged-wrapper E4/log-canary regression passes; clean-VM lifecycle NOT_VERIFIED. |
 | M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `16e3d01`; 9/9 | Owns public docs/community; wrapper-copy reconciliation queued on #53. GHCR pull/runtime and independent E4 NOT_VERIFIED. |
