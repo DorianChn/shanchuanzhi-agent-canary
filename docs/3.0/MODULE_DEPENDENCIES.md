@@ -1,3 +1,13 @@
+## Current schedule and dependencies (2026-10-15 18:52 UTC)
+
+- Maximum active module tasks: two. Current owner lanes are M3's #55 fail-closed Hook correction and M7/M8's #53 real package-artifact evidence, requested on existing PRs by 19:12 UTC. M1 #52 and the M8/M9 source/CI audits are complete; their P0 gates remain open. VMware, real-model, and installation tests remain mutually exclusive and none is running or reserved.
+- M1 owns Gateway held-descriptor semantics and the strict verifyRealPaths contract. M2 adapts through its existing adapter; M5 owns policy decisions. The production host-consumer edge is still absent/UNKNOWN, so synthetic composition cannot close #52.
+- M3 owns its native Hook copy and the #55 unpinned-Read correction. PR #33 remained at be3880298e1c6766024ecbce5f6dbc23c4d2daa1 at the 18:52 checkpoint. M9 waits for the corrected M3 exact head before repinning and rerunning Ubuntu/Windows composition. M3's branch has not advanced as of the last 18:36 read.
+- M1/M4 #51 source-level diagnostic triage is complete, but the original lock-holder trigger remains UNKNOWN. Keep production retry/lock behavior and all assertions unchanged absent a reproduced defect.
+- M7 owns installer lifecycle evidence; M8 owns packaged open-source experience and Hook-log reconciliation; M6 owns independent E4 evidence. Keep #41, #53, and external E4 NOT_VERIFIED until their real acceptance gates pass.
+- PR #24 is unchanged and OPEN/Draft. All module PRs target feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
+- Usage page remains open/readable above the stop threshold; do not store exact quota percentages. Last branch push was 18:32 UTC; this batch is due now.
+
 # M1–M9 模块依赖
 
 ## Current schedule and dependencies (2026-10-15 16:44 UTC)

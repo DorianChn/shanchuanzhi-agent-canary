@@ -1,3 +1,16 @@
+## Current integration risk snapshot (2026-10-15 18:52 UTC)
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| Product-host protected file execution (#52) | P0 | M1 has an internal held-descriptor Gateway; M2 adapter report says no first-party host is connected. Native-host trial is BLOCKED with zero protected cases. Current exact-head composition, host protected-open, and TOCTOU are NOT_VERIFIED. | Install a selected supported host and verify M5 → M2 → M1 identity/handle enforcement against sensitive, alias, and path-replacement cases; then pass exact-head composition. |
+| Packaged Hook-log reachability (#53) | P0 | M7/M8 source/wrapper checks pass and Hook blobs match; no real Windows payload/Setup.exe or extracted-Hook artifact was verified. Shipped artifact reachability and independent E4 are NOT_VERIFIED. | Build from pinned integrated source, record package SHA/manifest, compare extracted Hook bytes to the canonical blob, and run sanitized canary checks from the extracted harness. |
+| Native M3 unpinned Read (#55) | P1 | M1 denies; M3 head be38802 allows in M9 run 38727481764 on Ubuntu and Windows. | M3 correction on its existing PR, preserve M1 denies, add supported-capability positive control; M9 repins and passes both platforms. |
+| Quarantine retry exhaustion (#51) | P1 | M4 run 38698635434 failed one Ubuntu Node 20 worker after 500 STATE_STORE_BUSY retries. M1 x10 Node 20/22 did not reproduce; trigger UNKNOWN. | Keep retry behavior and assertions; require a failure trace or owner disposition before any production change. |
+| Native Codex Shell (#45) | P1 | UNPROTECTED / NOT_VERIFIED on actual Desktop host. | Preserve user-facing boundary until supported-host enforcement is demonstrated. |
+| Clean-VM installer lifecycle (#41) | P1 | NOT_VERIFIED. | Reserve the exclusive VM slot before installation testing; record sanitized evidence. |
+| Independent external E4 | P1 | NOT_VERIFIED. | Preserve this state until an independent external run and artifacts exist. |
+| PR #24 / Release boundary | M0 | PR #24 OPEN/Draft, unchanged at 62496d4; no main merge or Release. | Preserve the existing no-merge/no-Release boundary. |
+
 # M0/M9 集成风险登记
 
 ## Current integration risk snapshot (2026-10-15 16:44 UTC)

@@ -1,3 +1,15 @@
+## Current coordinator checkpoint (2026-10-15 18:52 UTC)
+
+- **#51 P1 — M1 shared quarantine store:** M4 Ubuntu Node 20 worker 2 reached RETRY_LIMIT after 500 STATE_STORE_BUSY attempts. Current M1 Node 20/22 x10 stress passed without reproducing the historical trigger. Lock-holder/timing cause remains UNKNOWN; no lost data is established. M1 owns the investigation.
+- **#52 P0 — M1/M2/M5 protected file execution:** M1 Gateway internally preopens and identity-checks a held descriptor; M2 has an adapter to the Gateway; M5 fails closed when a generic callback cannot prove it consumes the checked identity. No first-party product-host wiring or host-level protected-open/TOCTOU evidence is verified. Native-host trial has zero completed protected cases. Current exact-head composition is not complete. Keep OPEN; no actual exposure is claimed.
+- **#53 P0 — M8 packaged Hook-log privacy:** Source/CI audit is complete, but no real Windows payload/Setup.exe, manifest, or extracted-Hook comparison was verified. M7/M8 owner artifact evidence is requested by 19:12 UTC. Keep OPEN; independent E4 remains NOT_VERIFIED.
+- **#55 P1 — M3 native Hook contract:** M3 still allows an unpinned native Read in M9 run 38727481764; M1 requires deny with native_file_execution_not_pinned. M3 owns the fail-closed correction and supported-capability positive control; M9 rerun depends on the new exact M3 head. PR #33 remained unchanged at the 18:52 checkpoint; owner status requested by 19:12 UTC.
+- **#45 P1:** Native Codex Shell remains UNPROTECTED.
+- **#41 P1:** Clean-VM install, launch, upgrade, uninstall, and cancellation rollback remain NOT_VERIFIED.
+- **External E4 P1:** Independent verification remains NOT_VERIFIED.
+
+Priority definitions remain: P0 protected-path fail-open, sensitive disclosure, or serious data loss; P1 incompatible interfaces, failed builds, or unavailable critical functions; P2 noncritical UI, documentation, or ordinary performance.
+
 ## Current coordinator checkpoint (2026-10-15 17:01 UTC)
 
 This checkpoint supersedes the 16:57 snapshot below. The current open module PR checks were re-read.

@@ -1,3 +1,12 @@
+## Current coordination evidence (2026-10-15 18:52 UTC)
+
+- **M1 generic file callbacks:** PR #43 exact head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 denies generic path-string file-read, file-write, and delete callbacks with path_execution_not_pinned when verifyRealPaths is true, including OBSERVE, before approval or callback dispatch. False/unset retain legacy lexical behavior and make no canonical-path or protected-open claim. Exact-head CI passed 9/9; Node 20 and Node 22 stress each passed ten runs.
+- **M1 Gateway:** the current source preopens and identity-checks a descriptor, then reads through that held descriptor. This is an internal Gateway capability; it does not prove a product host uses it.
+- **M2 adapter / M5 policy:** M2's adapter forwards allowlisted reads to M1 Gateway, but its report says there is no first-party product-host consumer. M5's strict policy fails closed when a generic callback cannot prove it uses the checked file identity. These layers have distinct ownership; do not treat an allowlisted adapter fixture as product-host enforcement.
+- **#52 acceptance:** first-party host adoption, exact current M1/M2/M5 composition, host protected-open/held-handle use, and TOCTOU acceptance remain NOT_VERIFIED. The native-host trial is BLOCKED with zero completed protected cases.
+- **M3 Hook contract:** native unpinned Read must deny with native_file_execution_not_pinned. M3's current exact head still allows it in M9 run 38727481764; M3 owns correction, M9 owns repin/composition.
+- Public contract changes remain owner-controlled. Other modules adapt at their boundary instead of editing the shared contract.
+
 ## Current coordination evidence (2026-10-15 16:44 UTC)
 
 M0 maintains these public cross-module semantics. M1 owns Gateway and Hook behavior, M2 owns its adapter, M3 owns onboarding/host adaptation, M5 owns policy/router behavior, and M9 owns composition tests. Any shared contract change must be made by its owner; other modules adapt at their own boundary.
