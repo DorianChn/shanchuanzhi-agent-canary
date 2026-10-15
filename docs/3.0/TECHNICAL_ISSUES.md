@@ -1,11 +1,11 @@
-## Current coordinator checkpoint (2026-10-15 19:00 UTC)
+## Current coordinator checkpoint (2026-10-15 19:32 UTC)
 
-- **M0 / PR #30:** OPEN/Draft at 5e77926974bf2ea5b8bef5d2518cb37abc99e8a8; exact-head product CI 38789414980 passed 9/9 and refreshed-description ownership check 38789967832 passed 1/1. PR #24 remains untouched.
+- **M0 / PR #30:** OPEN/Draft at a2c58545eea44382e7852f572e1fe36af860c003; exact-head product CI 38792039632 passed 9/9 and refreshed-description ownership check 38792521661 passed 1/1. PR #24 remains untouched.
 
 - **#51 P1 — M1 shared quarantine store:** M4 Ubuntu Node 20 worker 2 reached RETRY_LIMIT after 500 STATE_STORE_BUSY attempts. Current M1 Node 20/22 x10 stress passed without reproducing the historical trigger. Lock-holder/timing cause remains UNKNOWN; no lost data is established. M1 owns the investigation.
 - **#52 P0 — M1/M2/M5 protected file execution:** M1 Gateway internally preopens and identity-checks a held descriptor; M2 has an adapter to the Gateway; M5 fails closed when a generic callback cannot prove it consumes the checked identity. No first-party product-host wiring or host-level protected-open/TOCTOU evidence is verified. Native-host trial has zero completed protected cases. Current exact-head composition is not complete. Keep OPEN; no actual exposure is claimed.
-- **#53 P0 — M8 packaged Hook-log privacy:** Source/CI audit is complete, but no real Windows payload/Setup.exe, manifest, or extracted-Hook comparison was verified. M7/M8 owner artifact evidence is requested by 19:12 UTC; no owner response is visible at 19:00. Keep OPEN; independent E4 remains NOT_VERIFIED.
-- **#55 P1 — M3 native Hook contract:** M3 still allows an unpinned native Read in M9 run 38727481764; M1 requires deny with native_file_execution_not_pinned. M3 owns the fail-closed correction and supported-capability positive control; M9 rerun depends on the new exact M3 head. PR #33 head remains unchanged at 19:00; no owner response is visible and status is requested by 19:12 UTC.
+- **#53 P0 — M8 packaged Hook-log privacy:** Source/CI audit is complete, but no real Windows payload/Setup.exe, manifest, or extracted-Hook comparison was verified. M7/M8 heads and issue status remain unchanged at 19:32 despite follow-up 6200241708; next status requested by 19:52. Keep OPEN; independent E4 remains NOT_VERIFIED.
+- **#55 P1 — M3 native Hook contract:** M3 still allows an unpinned native Read in M9 run 38727481764; M1 requires deny with native_file_execution_not_pinned. M3 owns the fail-closed correction and supported-capability positive control; M9 rerun depends on the new exact M3 head. PR #33 and issue status remain unchanged at 19:32 despite follow-up 6200241154; next status requested by 19:52.
 - **#45 P1:** Native Codex Shell remains UNPROTECTED.
 - **#41 P1:** Clean-VM install, launch, upgrade, uninstall, and cancellation rollback remain NOT_VERIFIED.
 - **External E4 P1:** Independent verification remains NOT_VERIFIED.

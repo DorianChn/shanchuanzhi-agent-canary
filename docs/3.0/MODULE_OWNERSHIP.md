@@ -1,8 +1,8 @@
-## Current remote ownership snapshot (2026-10-15 19:00 UTC)
+## Current remote ownership snapshot (2026-10-15 19:32 UTC)
 
 | Module | Existing branch / PR | Exact remote head | Owner and current boundary |
 | --- | --- | --- | --- |
-| M0 | feature/ac3-m0-coordination / #30 | 5e77926974bf2ea5b8bef5d2518cb37abc99e8a8 | Coordination docs and cross-module contracts only. Product CI 9/9 and refreshed-description ownership check 1/1 pass. |
+| M0 | feature/ac3-m0-coordination / #30 | a2c58545eea44382e7852f572e1fe36af860c003 | Coordination docs and cross-module contracts only. Product CI 9/9 and refreshed-description ownership check 1/1 pass. |
 | M1 | feature/ac3-security-core / #43 | 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 | Gateway, Hook contract, quarantine store. #52 host-adoption evidence and #51 UNKNOWN diagnosis remain open. |
 | M2 | feature/ac3-execution-isolation / #37 | 9db59ed8f2deae905edcb2179982f8bcb594167c | Execution adapter; native Codex Shell remains UNPROTECTED. |
 | M3 | feature/ac3-agent-onboarding / #33 | be3880298e1c6766024ecbce5f6dbc23c4d2daa1 | Onboarding and Hook behavior copy; owns #55 correction and positive control. |
