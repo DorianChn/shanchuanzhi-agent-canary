@@ -1,10 +1,10 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 10:38 UTC)
+## Current ownership and worktree snapshot (2026-10-15 10:44 UTC)
 
 | Module | Current checkout / PR | Ownership and acceptance status |
 | --- | --- | --- |
-| M0 | `ac3-coordinator-recovery` / `feature/ac3-m0-coordination`; #30 `584f207`, 10/10 | Owns coordination documents, issue/status snapshots, and schedule; never edits module source. |
+| M0 | `ac3-coordinator-recovery` / `feature/ac3-m0-coordination`; #30 `4ff3251`, 10/10 | Owns coordination documents, issue/status snapshots, and schedule; never edits module source. |
 | M1 | `ac3-m1-security-recovery` / `feature/ac3-security-core`; remote #43 `b1d7423`, standard CI/package 9/9, dedicated file-store stress run failed; no local commits ahead | Owns Gateway/Guard, canonical native-Hook logging contract/tests, and file-state-store implementation/tests. #53 exact-field/caller+reason canary regression and #51 per-attempt metadata diagnostics pass exact-head standard CI. Source review found no FIFO/fair lock queue; fixed 2 ms polling makes worker starvation plausible but unproven. Dedicated run `38719879606` still fails at retry exhaustion; no holder or underlying trigger is identified. |
 | M2 | No M2 worktree visible in the current coordinator clone; existing branch `feature/ac3-execution-isolation`, #37 `9db59ed`, 9/9 | Owns the execution-isolation adapter. Native Codex Shell remains UNPROTECTED/NOT_VERIFIED; CI does not prove host interception. |
 | M3 | No M3 worktree visible in the current coordinator clone; existing branch `feature/ac3-agent-onboarding`, #33 `be38802`, 9/9 | Owns onboarding and its branch-local Hook test copy. |
@@ -13,7 +13,7 @@
 | M6 | No M6 worktree visible in the current coordinator clone; existing branch `feature/ac3-e4-validation-ac3`, #38 `c1fdf3c`, 11/11 | Owns E4 verifier/schema and `e4:*` contract fields. External E4 remains NOT_VERIFIED. |
 | M7 | No M7 worktree visible in the current coordinator clone; existing branch `feature/ac3-reliability-ac3`, #39 `cf4b70f`, 11/11 | Owns Windows packaging/reliability. Clean-VM install/launch/upgrade/uninstall remains NOT_VERIFIED. |
 | M8 | `ac3-m8-recovery` / `feature/ac3-open-source-product`; #40 `c1ff677`, 11/11 | Owns public docs/community and its wrapper copy. Windows LF/blob checks pass; packaged callback and clean-VM runtime are separate acceptance gates. |
-| M9 | `ac3-m9-recovery` / `feature/ac3-m9-integration`; #36 remote `1f577c5`, local `4f31bab` one commit ahead; issue #54 OPEN | Owns integration tests and manifest composition; M0 explicitly routed `test/ai.test.ts` to M9. Local commit `4f31bab` adds failure-only request-count and allowlisted error-code diagnostics without weakening assertions or changing provider/transport. Syntax and diff checks pass; full test is blocked by missing `smol-toml`. Ownership of `src/ai/provider.ts` and `src/ai/transport.ts` remains unresolved; M9 must not edit them without owner confirmation. |
+| M9 | `ac3-m9-recovery` / `feature/ac3-m9-integration`; #36 `4f31bab`, 13/13 checks pass; issue #54 OPEN | Owns integration tests and manifest composition; M0 explicitly routed `test/ai.test.ts` to M9. Commit `4f31bab` adds failure-only request-count and allowlisted error-code diagnostics without weakening assertions or changing provider/transport; exact-head composition, wrapper, product, and package checks now pass 13/13. Ownership of `src/ai/provider.ts` and `src/ai/transport.ts` remains unresolved; M9 must not edit them without owner confirmation. |
 
 All active module PRs target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 is OPEN/Draft with 11/11 checks passing; it remains untouched and unmerged. The usage page stays open in tab 336903483. No `main` merge or Release occurred.
 
