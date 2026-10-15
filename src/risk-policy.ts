@@ -113,10 +113,10 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     else if(['file-read','file-write','delete'].includes(d.operation)){
       const raw=a[d.pathArg??'path'];
       const normalized=typeof raw==='string'?raw.replaceAll('\\','/'):'\0';
-      const target=path.resolve(root,normalized);let policyTarget=target;
-      if(d.operation==='file-read')try{policyTarget=canonicalPath(target);}catch{deny('path_resolution_failed');}
-      const relative=path.relative(root,target);
-      const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
+      const target=path.resolve(root,normalized);let policyTarget=target,policyRoot=root;
+      if(d.operation==='file-read')try{policyTarget=canonicalPath(target);policyRoot=canonicalPath(root);}catch{deny('path_resolution_failed');}
+      const relative=path.relative(root,target),policyRelative=path.relative(policyRoot,policyTarget);
+      const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||policyRelative==='..'||policyRelative.startsWith('..'+path.sep)||path.isAbsolute(policyRelative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
       risks.push(d.operation==='file-read'?'READ_ONLY':d.operation==='delete'?'DESTRUCTIVE':'WRITE');
       if(outside)deny('outside_workspace');
       else if(SENSITIVE_PATH.test(policyTarget.replaceAll('\\','/'))){risks.push('SENSITIVE_DATA');requireApproval('sensitive_path');}

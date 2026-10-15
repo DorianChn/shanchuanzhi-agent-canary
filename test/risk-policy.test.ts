@@ -55,6 +55,17 @@ test('OBSERVE blocks sensitive file aliases and canonical path variants before a
   assert.equal(callbacks,0);
  }
 });
+test('file-read through an in-workspace junction cannot escape workspace in any mode',async()=>{
+ const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'outside-path-alias-'));
+ const root=path.join(base,'workspace'),outside=path.join(base,'outside');fs.mkdirSync(root);fs.mkdirSync(outside);
+ fs.writeFileSync(path.join(outside,'file.txt'),'M5_OUTSIDE_FIXTURE');fs.symlinkSync(outside,path.join(root,'public'),process.platform==='win32'?'junction':'dir');
+ for(const mode of ['OBSERVE','BALANCED','STRICT'] as const){
+  let callbacks=0;const guard=createAgentGuard({sessionId:'test-outside-path-alias-'+mode,alert:false});
+  const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+  await assert.rejects(router.dispatch({name:'read',args:{file_path:'public/file.txt'}}),(e:any)=>e instanceof PolicyBlockedError&&e.decision.action==='DENY'&&e.decision.reason==='outside_workspace');
+  assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
+ }
+});
 test('sensitive path is parameter-based even under an innocuous tool alias',async()=>{const s=setup();await assert.rejects(s.router.dispatch({name:'read',args:{path:'config/.env'}}),(e:any)=>e.decision.action==='APPROVAL_REQUIRED');assert.equal(s.calls.length,0);assert.equal(s.guard.state,'SAFE');});
 test('one-shot host approval binds immutable call; model approval fields cannot grant',async()=>{const s=setup();const args={path:'src/a.ts',content:'ok',approval:true,approvedBy:'human'};let id='';await assert.rejects(s.router.dispatch({name:'write',args}),(e:any)=>{id=e.decision.requestId;return e instanceof PolicyBlockedError;});args.path='config/.env';await s.router.approve(id,'test-human');assert.equal(s.calls[0].args.path,'src/a.ts');await assert.rejects(s.router.approve(id,'test-human'),/MISSING/);});
 test('approval expired, foreign, missing operator and quarantined requests are rejected',async()=>{const s=setup('BALANCED',{approvalTtlMs:1});await assert.rejects(s.router.dispatch({name:'write',args:{path:'a'}}),PolicyBlockedError);await new Promise(r=>setTimeout(r,5));await assert.rejects(s.router.approve(s.router.pendingApprovals()[0]?.requestId??'expired','human'),/EXPIRED/);const x=setup();await assert.rejects(x.router.approve('fabricated','human'),/MISSING/);await assert.rejects(x.router.approve('fake',''),/OPERATOR/);await assert.rejects(x.router.dispatch({name:'write',args:{path:'a'}}),PolicyBlockedError);const id=x.router.pendingApprovals()[0].requestId;x.guard.trip({reason:'test'});await assert.rejects(x.router.approve(id,'human'),CanaryBlockedError);assert.equal(x.calls.length,0);});
