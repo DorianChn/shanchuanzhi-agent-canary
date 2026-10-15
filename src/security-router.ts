@@ -32,18 +32,29 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   function pathDenied(call:ToolCall){
     const d=trustedTools[call.name];if(!options.verifyRealPaths||!d||!['file-read','file-write','delete'].includes(d.operation))return false;
     const raw=call.args?.[d.pathArg??'path'];if(typeof raw!=='string'||raw.includes('\0'))return true;
-    try{const realRoot=fs.realpathSync(root);let candidate=path.resolve(root,raw.replaceAll('\\','/'));
+    try{
+      const realRoot=fs.realpathSync(root),candidate=path.resolve(root,raw.replaceAll('\\','/'));
       const rel=path.relative(root,candidate);if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel))return true;
+      // Reject every observed link component, including aliases that still resolve inside root.
+      let current=root;
+      for(const part of rel.split(path.sep).filter(Boolean)){
+        current=path.join(current,part);
+        try{if(fs.lstatSync(current).isSymbolicLink())return true;}
+        catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')break;return true;}
+      }
       // Existing targets and nearest existing parent of new targets must resolve inside root.
-      for(;;){try{fs.lstatSync(candidate);break;}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;const parent=path.dirname(candidate);if(parent===candidate)return true;candidate=parent;}}
-      const actual=fs.realpathSync(candidate),r=path.relative(realRoot,actual);
+      let existing=candidate;
+      for(;;){try{fs.lstatSync(existing);break;}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')return true;const parent=path.dirname(existing);if(parent===existing)return true;existing=parent;}}
+      const actual=fs.realpathSync(existing),r=path.relative(realRoot,actual);
       return r==='..'||r.startsWith('..'+path.sep)||path.isAbsolute(r);
     }catch{return true;}
   }
   function privateTarget(call:ToolCall){const d=trustedTools[call.name];if(d?.operation!=='http')return false;try{const u=new URL(String(call.args?.[d.urlArg??'url']));const h=u.hostname;return h==='localhost'||h==='[::1]'||/^127\.|^10\.|^192\.168\.|^169\.254\.|^0\.|^172\.(1[6-9]|2\d|3[01])\.|^\[f[cd]|^\[fe[89ab]/i.test(h);}catch{return true;}}
   async function review(call:ToolCall,d:Readonly<PolicyDecision>):Promise<'DENY'|'UNCHANGED'>{
+    // Deterministic hard denials and real-path confinement cannot be relaxed by OBSERVE.
+    if(d.action==='DENY'||pathDenied(call))return 'DENY';
     if(options.mode==='OBSERVE')return 'UNCHANGED';
-    if(pathDenied(call)||privateTarget(call)||trustedTools[call.name]?.operation==='http'&&flow.hasSensitiveSource())return 'DENY';
+    if(privateTarget(call)||trustedTools[call.name]?.operation==='http'&&flow.hasSensitiveSource())return 'DENY';
     if(d.action!=='APPROVAL_REQUIRED'||!options.provider)return 'UNCHANGED';
     const start=Date.now(),abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
     let result:SecurityAnalysisResult|null=null,status='FAILED_CONSERVATIVE_APPROVAL';
@@ -57,7 +68,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   }
   const router=createRiskPolicyRouter({...options,reviewDecision:review,executeRealTool:async(call)=>{
     // Recheck realpath immediately before execution; a prior approval is not a path capability.
-    if(options.mode!=='OBSERVE'&&(pathDenied(call)||privateTarget(call)))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'execution_boundary_changed',mode:options.mode??'BALANCED'});
+    if(pathDenied(call)||options.mode!=='OBSERVE'&&privateTarget(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'execution_boundary_changed',mode:options.mode??'BALANCED'});
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
     try{const execute=options.executeSandboxTool??options.executeRealTool;
       const result=await Promise.race([Promise.resolve(execute(call,{signal:abort.signal})),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'callback_timeout'});reject(new Error('SECURITY_CALLBACK_TIMEOUT_STARTED_EFFECTS_NOT_UNDONE'));},callbackMs);})]);
@@ -67,7 +78,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     }finally{if(timer)clearTimeout(timer);abort.abort();}
   }});
   return {...router,
-    async decide(call:ToolCall):Promise<SecurityDecision>{const d=router.inspectPolicy(call),gd=options.guard.beforeToolCall(call);const denied=!gd.allowed||await review(Object.freeze({...call,name:call.name.toLowerCase()}),d)==='DENY';return {action:denied?'DENY':options.mode==='OBSERVE'?'OBSERVE_ONLY':d.action==='APPROVAL_REQUIRED'?'REQUIRE_APPROVAL':d.action==='ALLOW'&&options.executeSandboxTool?'SANDBOX':d.action,reason:!gd.allowed?'guard_quarantined':denied?'host_pre_execution_review_denied':d.reason,risks:d.risks,mode:d.mode,coverage:'REGISTERED_HOST_CALLBACKS_ONLY'};},
+    async decide(call:ToolCall):Promise<SecurityDecision>{const d=router.inspectPolicy(call),gd=options.guard.beforeToolCall(call);const denied=!gd.allowed||d.action==='DENY'||await review(Object.freeze({...call,name:call.name.toLowerCase()}),d)==='DENY';return {action:denied?'DENY':options.mode==='OBSERVE'?'OBSERVE_ONLY':d.action==='APPROVAL_REQUIRED'?'REQUIRE_APPROVAL':d.action==='ALLOW'&&options.executeSandboxTool?'SANDBOX':d.action,reason:!gd.allowed?'guard_quarantined':denied?'host_pre_execution_review_denied':d.reason,risks:d.risks,mode:d.mode,coverage:'REGISTERED_HOST_CALLBACKS_ONLY'};},
     dataflow:()=>flow.snapshot(),reviews:()=>reviews.map(r=>structuredClone(r)),
   };
 }
