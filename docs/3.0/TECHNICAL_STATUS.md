@@ -1,6 +1,17 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 00:30 UTC)
+## Current authoritative snapshot (2026-10-15 00:49 UTC)
+
+- 用量页一直保持打开且可读，高于5%暂停线；精确账户数值仅存于gitignore忽略的本地报告。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
+- M0 PR #30 head e94f630038144c68aedb3ff5358c473e80dfc0f0，精确head CI 10/10通过。PR #24仍OPEN/Draft，base dc8d0092b35141b295d5ff42873584ed488e4ee7、head 62496d4020bd90ba2eede49b2e80a2bbebb036b4，11/11通过；未修改或合并。
+- M1 PR #43远端head 4b562bed32ebcc3f241a17543d8d2ce9f6108c26，CI 9/9。Windows Node20/22精确head中断测试通过，marker=true、spawnError=null、SIGTERM、stdout/stderr为空；本机Node22定向回归1/1通过。M1新增本地文档提交a2206d3，未推送。历史runner根因仍UNKNOWN，合成子进程不证明真实宿主callback，Issue #32保持OPEN。
+- M6 PR #38远端head 4e397627c635b75a0e3b6384136d39d078802b72。CI中Windows Node22是真实测试失败：test/agent-hook.test.ts:54:53在固定1秒断言前未发现marker；Windows Node20 job被fail-fast取消，其npm test日志323 pass/0 fail；package-smoke跳过，wrapper 2/2通过，其余已列检查通过。M6 E4定向测试18/18通过，无证据表明M6自身缺陷。M1建议只把已验证fixture的spawn导入和完整中断测试块移植到M6旧文件；禁止cherry-pick 46af1f1（涉及4个路径）或带入无关凭据日志改动。M6正在原分支做该最小适配。Issue #27/#32仍OPEN；字段owner签核和独立外部E4未完成；未跟踪证据目录不动。
+- M9 PR #36远端head 8f713a29356380f5c8ec6d4360a3579f323de315精确head CI 11/11通过。本地文档提交663b997e938ab1f0d02ce3945af76b20eabc863b（父8f713a2）纠正过时M0快照，未推送。测试父候选64b97d5的npm run verify为393 pass/0 fail/6 skip，build和100-file package smoke通过；npm run e4:test为12/12。此类合成测试不证明独立E4或原生宿主保护。
+- M2/#45仍BLOCKED_NOT_VERIFIED，Native Codex Shell为UNPROTECTED。M3/#33和M4/#34仍未回复Issue #32，保持HOLD且不改其分支。M5/#47为9/9并保留敏感读硬DENY。M7/#39为11/11但clean-VM安装生命周期NOT_VERIFIED。M8/#40为9/9；WSL无响应，worktree未读未改，PR摘要与最新测试文件范围不一致。
+- 活跃开发槽位：M6在原分支移植M1批准的Hook中断夹具；M1 owner已完成核验并建议最小移植；M6是当前唯一活跃开发任务；M9文档更新完成、等待推送。无VMware、真实模型或安装测试预约；独占资源在Issue #29可见记录前不可用。
+- 最近push批次00:36 UTC；下次不早于00:56 UTC。未合并main或PR #24，未发布Release。
+
+## Archived snapshot (2026-10-15 00:30 UTC)
 
 
 - 用量页00:29 UTC可读且高于5%停工线；按用户要求一直保持打开。具体比例/余额只保存在gitignore忽略的本地报告；低于5%或读数不可确认时停止开发、测试、浏览器与GitHub操作。

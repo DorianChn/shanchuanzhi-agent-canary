@@ -1,6 +1,16 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 00:30 UTC)
+## Latest issue ledger (2026-10-15 00:49 UTC)
+
+| Issue | Priority / owner | Current evidence | State and next acceptance |
+| --- | --- | --- | --- |
+| #27 | P1 / M3, M5, M6, M7; M0 coordinates | M6 PR #38 head `4e397627c635b75a0e3b6384136d39d078802b72` has focused E4 tests 18/18. Exact-head CI has one actual Windows Node 22 marker failure; Windows Node 20 was canceled by fail-fast and its test log records 323 pass / 0 fail; package smoke was skipped. | OPEN; M6 is adapting the owner-approved async Hook fixture on its existing branch. Keep package-field owner signoff and external E4 NOT_VERIFIED until evidence is recorded. |
+| #29 | P2 / M0 | Current schedule has M6 as the only active development task; M9's local documentation follow-up waits for the next push batch. Last push 00:36 UTC; next batch no earlier than 00:56 UTC. Exclusive VM/model/installer occupancy remains unknown. | OPEN; do not start exclusive tests until owner, resource, worktree, start and release are recorded. Stop all activity if the usage page is unreadable or below 5%; exact quota values stay in ignored local reports. |
+| #32 | P1 / M1 owns Hook semantics; M0 tracks; M3/M4 own their branch copies | M1 confirmed commit `46af1f1` changes four paths and is not a safe single-file cherry-pick. M1 recommends a narrow transplant of the verified async `spawn` import and interruption test block into M6's old synchronous fixture. The subprocess fixture proves no decision/no output and child termination only; native host callback remains NOT_VERIFIED and historical runner root cause UNKNOWN. | OPEN; M6 is assigned the narrow adaptation on its existing branch, preserving fail-closed assertions. Keep M3/M4 UNACKNOWLEDGED/HOLD; rerun relevant tests and exact-head CI after the change. |
+| #41 | P1 / M7 | PR #39 exact-head checks 11/11 pass. Clean-VM install/launch/upgrade/uninstall/cancel rollback remains NOT_VERIFIED; no exclusive reservation is recorded. | OPEN/HOLD; record the exclusive VM/installer reservation before testing and retain sanitized lifecycle evidence. |
+| #45 | P1 / M2 | PR #37 checks 9/9 pass. Native Codex Shell remains UNPROTECTED without supported-host evidence. | OPEN; obtain real supported-host evidence or retain the visible UNPROTECTED/BLOCKED_NOT_VERIFIED state. |
+
+## Archived issue ledger (2026-10-15 00:30 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
