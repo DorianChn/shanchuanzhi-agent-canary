@@ -1,4 +1,23 @@
-## Current integration risk snapshot (2026-10-15 18:52 UTC)
+## Current integration risk snapshot (2026-10-15 20:52 UTC)
+
+The following evidence is current as of the M0 checkpoint. Green source CI does not establish product-host, packaged-artifact, installer, or independent E4 acceptance.
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| Product-host protected file execution (#52) | P0 | M5 alias-denial changes are in PR #47 and exact-head CI passes 9/9. M2 has no first-party host consumer; selected-host protected-open/held-handle, current M1/M2/M5 composition, and TOCTOU remain NOT_VERIFIED. | Verify a selected supported host consumes M5 → M2 → M1 against sensitive, alias, and path-replacement cases; then pass exact-head composition. |
+| Packaged Hook log privacy (#53) | P0 | No real pinned Setup.exe/payload, manifest, extracted-Hook byte comparison, or extracted-harness canary evidence is recorded. No real-world disclosure is claimed. | M7/M8 provide exact artifact hashes and extracted-harness results; independently verify reachable package copies and retain external E4 as a separate gate. |
+| Native Hook unpinned read (#55) | P1 | M3 head be388029 allows where M1 requires native_file_execution_not_pinned denial; M9 composition run 38727481764 fails Ubuntu and Windows. | M3 corrects its owned branch, preserves M1 denies and a supported-capability positive control; M9 reruns both platforms on exact SHAs. |
+| Quarantine retry exhaustion (#51) | P1 | M4 run 38698635434 has one actual Ubuntu Node 20 failure after 500 STATE_STORE_BUSY retries; four jobs were cancelled, package-smoke skipped. Root trigger UNKNOWN; no data loss shown. | Preserve retry behavior/assertions; require lock-holder/timing evidence or owner disposition before product changes. |
+| Native Codex Shell (#45) | P1 | Actual Desktop Shell remains UNPROTECTED / NOT_VERIFIED. | Keep the visible boundary until supported-host denial is demonstrated. |
+| Installer lifecycle (#41) | P1 | Clean-VM lifecycle remains NOT_VERIFIED. | Reserve the exclusive VM slot and record install/upgrade/uninstall/cancel outcomes before PASS. |
+| Independent external E4 | P1 | M6 tool and CI checks pass; independent external validation remains NOT_VERIFIED. | Require independent run and artifacts. |
+| Windows Node 22 AI retry (#54) | P1 | Current M9 Windows Node 22 product check passes; historical 503 retry trigger remains UNKNOWN. Full M9 composition is separately blocked by #55. | Preserve bounded retries and diagnostics; assign provider/transport source ownership before any future source edit. |
+| Local module worktree isolation | P2 / M0 | Only coordinator worktree is visible to Windows Git; WSL is unavailable and agents/ is empty. Other module worktree paths remain UNKNOWN. | Obtain exact paths/branches from owners before claiming local isolation. |
+| PR #24 / Release boundary | M0 | PR #24 remains OPEN/Draft and unchanged; no main merge or Release. | Preserve no-merge/no-Release boundary. |
+
+Assigned lanes are M3 #55 and M7/M8 #53; task start is not independently verified. No VMware, real-model, or installer task is running/reserved. The Usage page remains open and readable above the stop threshold. Next M0 push no earlier than 20:58 UTC.
+
+## Archived integration risk snapshot (2026-10-15 18:52 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |

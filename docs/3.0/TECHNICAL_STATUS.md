@@ -1,4 +1,24 @@
-## Canonical coordinator checkpoint (2026-10-15 20:32 UTC)
+## Canonical coordinator checkpoint (2026-10-15 20:52 UTC)
+
+This live snapshot is based on GitHub refs, checks, Issues, and the Usage page read at 20:52–20:55 UTC. Queue delivery is recorded separately from implementation evidence.
+
+- **M0 / PR #30:** OPEN/Draft at ff01b6ce04310afa1fb56233931a70a47624b0b1. Product CI 38803436130 passed 9/9; ownership checks 38803436066 and 38803877387 passed 1/1 each.
+- **PR #24:** OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7, and existing product/wrapper checks 11/11 pass. No retarget, edit, or merge.
+- **M1 #43:** head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; standard checks 9/9 and Ubuntu Node 20/22 x10 stress pass. #51's historical lock-holder/timing trigger remains UNKNOWN. Strict generic path callbacks are source/CI evidence only.
+- **M2 #37:** head 9db59ed8f2deae905edcb2179982f8bcb594167c, checks 9/9. Its adapter is synthetic with no first-party host consumer; Native Codex Shell remains UNPROTECTED (#45).
+- **M3 #33:** head be3880298e1c6766024ecbce5f5dbc23c4d2daa1, checks 9/9. #55 still fails M9's unpinned native Read contract on Ubuntu and Windows; M3 correction and positive control are pending.
+- **M4 #34:** head fbf20907c6accffc37246eddf04f8599060d99ea. Run 38698635434 has one actual Ubuntu Node 20 npm-test failure after 500 STATE_STORE_BUSY retries; Ubuntu Node 22, Docker, and sponsor pass; four matrix jobs were cancelled and package-smoke skipped.
+- **M5 #47:** head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c, exact-head run 38719884959 passes 9/9 and includes sensitive-path and outside-link alias fixes. Product-host protected-open and TOCTOU remain NOT_VERIFIED (#52).
+- **M6 #38:** head c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9, product/wrapper checks 11/11 pass; independent external E4 remains NOT_VERIFIED.
+- **M7 #39:** head cf4b70f5130175582fffdfc65bd7c6847450867b, current checks pass; clean-VM lifecycle and real pinned Setup.exe artifact remain NOT_VERIFIED (#41/#53).
+- **M8 #40:** head c1ff677cc56cd159cc983042e5dfcec5dc93f3ad, product and wrapper checks pass; real packaged-Hook reachability remains NOT_VERIFIED (#53).
+- **M9 #36:** head de3799aae540f58173acec4ab3f7a1fe98593aa7. Product 38727481643 passes 9/9 and wrapper 38727481657 passes 2/2; composition 38727481764 fails both Ubuntu and Windows on #55. M9 remains gated.
+- **Issues:** P0/P1/P2 labels are applied to all eight open coordination/security Issues. #32 and #44 are closed for their scoped synthetic-test/expiry findings; neither closure proves native-host integration.
+- **Coordination:** M3 #55 and M7 #53 were dispatched to existing sessions at 20:44. At the 20:52 checkpoint, Issue replies and module PR heads had not changed. GitHub comments 6202053150, 6202053919, 6202054736, 6202055522, and resource record 6202056314 capture the owner checkpoints and evidence boundaries.
+- **Isolation/resources:** Windows Git sees only the M0 coordinator worktree; WSL has no installed distribution and agents/ is empty. Other module worktree isolation therefore remains UNKNOWN pending owner paths. No exclusive VMware, real-model, or installer test is running or reserved. Usage page remains open and readable above the 5% stop threshold.
+- Last M0 push was 20:37 UTC; next M0 branch push no earlier than 20:58 UTC after fresh quota, PR #24, and remote-head checks. No main merge or Release.
+
+## Archived coordinator checkpoint (2026-10-15 20:32 UTC)
 
 Owner checkpoint re-read GitHub Issues #53/#55 and PR #33/#39/#40 at 20:32 UTC. No owner response or module-head change was visible since 20:12. Comments #55/6201691121 and #53/6201691288 request exact evidence or a concrete blocker by 20:52; resource readback is #29/6201691120.
 

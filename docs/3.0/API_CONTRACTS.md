@@ -1,4 +1,14 @@
-## Current coordination evidence (2026-10-15 18:52 UTC)
+## Current coordination evidence (2026-10-15 20:52 UTC)
+
+This snapshot refreshes acceptance state; it does not change runtime interfaces. Public contract changes remain owner-controlled, and other modules adapt at their boundary.
+
+- **M1 generic file callbacks:** PR #43 exact head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 denies generic path-string file-read, file-write, and delete callbacks with path_execution_not_pinned when verifyRealPaths is true, before approval or callback dispatch. Exact-head checks and the ten-run Ubuntu Node 20/22 stress checks pass. This does not prove a product host consumes the Gateway.
+- **M1 Gateway / M2 adapter / M5 policy:** Gateway held-descriptor behavior and M2's fixed-resource adapter are internal/synthetic seams. M5 PR #47 contains the path-alias/outside-link fixes and exact-head CI passes 9/9. No selected first-party host consumer, protected-open/held-handle proof, current-host composition, or TOCTOU evidence is verified (#52).
+- **M3 native Hook:** without the M1-approved held-file capability, native Read must deny with native_file_execution_not_pinned. M3 PR #33 current head be388029 still allows it in M9 run 38727481764 on Ubuntu and Windows. M3 owns correction and positive control; M1 retains denial assertions; M9 repins only after a corrected exact M3 SHA.
+- **Hook logging and packaging:** wrapper logs remain limited to the reviewed fixed-field allowlist. Source/wrapper tests do not prove the installed package uses those bytes. M7/M8 must provide real package manifest, extracted-Hook comparison, and harness evidence under #53.
+- **M0 implementation scope:** no product source/API implementation changed in this checkpoint. This update records priority labels and current evidence only. PR #24 remains unchanged and unmerged.
+
+## Archived coordination evidence (2026-10-15 18:52 UTC)
 
 - **M1 generic file callbacks:** PR #43 exact head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 denies generic path-string file-read, file-write, and delete callbacks with path_execution_not_pinned when verifyRealPaths is true, including OBSERVE, before approval or callback dispatch. False/unset retain legacy lexical behavior and make no canonical-path or protected-open claim. Exact-head CI passed 9/9; Node 20 and Node 22 stress each passed ten runs.
 - **M1 Gateway:** the current source preopens and identity-checks a descriptor, then reads through that held descriptor. This is an internal Gateway capability; it does not prove a product host uses it.

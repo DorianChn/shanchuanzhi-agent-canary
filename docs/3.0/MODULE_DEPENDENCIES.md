@@ -1,4 +1,15 @@
-## Current schedule and dependencies (2026-10-15 20:32 UTC)
+## Current schedule and dependencies (2026-10-15 20:52 UTC)
+
+- Two existing work lanes are assigned: M3 owns #55 and M7 owns the package-artifact portion of #53, coordinating M8's Hook-copy evidence through the issue. Their existing sessions accepted tasks at 20:44, but no PR-head movement or issue response was visible at the 20:52 checkpoint. Evidence/blocker is due 21:12.
+- M1 is the owner of the fail-closed Hook/Gateway contract; M3 must deny unpinned native Read with native_file_execution_not_pinned while retaining M1 denials and a passing supported-capability positive control. M9 must keep its current refs until M3 publishes, then rerun Ubuntu and Windows composition.
+- M5's current PR #47 includes alias-denial fixes and passes its exact-head CI. M2's fixed-resource adapter remains synthetic and is not wired to a first-party host. M1/M2/M5 host protected-open, held-handle consumption, current-head host composition, and TOCTOU remain NOT_VERIFIED under #52.
+- M7 owns installer/payload build and lifecycle; M8 owns the Hook/logging copy; M6 owns E4 validation. The extracted package/harness gate (#53), clean-VM lifecycle (#41), and independent external E4 remain separate evidence gates.
+- M2's actual Native Codex Shell remains UNPROTECTED (#45). M1 owns the unresolved shared-store retry trigger (#51); preserve retries and assertions. M9 owns integration test diagnostics for #54; AI provider/transport source remains unassigned absent a reproduced recurrence.
+- P0/P1/P2 GitHub labels are applied to the eight open coordination/security Issues. VMware, real-model, and installer tests share one exclusive slot; none is currently running or reserved.
+- All AC3 PRs continue to target feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #24 remains unchanged. This clone can verify only the coordinator worktree; other local worktree isolation remains UNKNOWN.
+- Usage page remains open/readable above the 5% pause threshold. Last M0 push was 20:37 UTC; the next push is no earlier than 20:58 UTC after fresh quota and remote-ref checks.
+
+## Archived schedule and dependencies (2026-10-15 20:32 UTC)
 
 - Maximum active module lanes: two. M3 #55 and M7/M8 #53 missed the 20:32 status checkpoint without a visible owner reply or module-head change. Comments #55/6201691121 and #53/6201691288 request evidence or a concrete blocker by 20:52 UTC.
 - M3 owns its native Hook copy and #55 correction. M9 #36 must keep its pinned refs unchanged until M3 denies unpinned native Read with `native_file_execution_not_pinned`, preserves M1 deny assertions, and passes the separate positive control; then rerun both composition platforms.

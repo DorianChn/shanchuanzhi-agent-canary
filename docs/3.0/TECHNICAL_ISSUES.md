@@ -1,4 +1,17 @@
-## Current coordinator checkpoint (2026-10-15 20:32 UTC)
+## Current coordinator checkpoint (2026-10-15 20:52 UTC)
+
+GitHub priority labels now match the project definitions: P0 for protected-path fail-open, sensitive-data disclosure, or serious data loss; P1 for incompatible interfaces, build failures, or unavailable key features; P2 for noncritical UI, documentation, or ordinary performance issues.
+
+- **#52 P0 — M1/M2/M5 host file boundary:** M5 PR #47 now contains the alias/outside-link fixes and exact-head CI passes 9/9. M1 strict callback checks pass. M2 still has no first-party product-host consumer; protected-open/held-handle, current-host composition, and TOCTOU remain NOT_VERIFIED. Current disposition is recorded in comment 6202054736.
+- **#53 P0 — M7/M8 packaged Hook privacy:** source and synthetic checks do not prove the installed payload. No pinned Setup.exe, manifest, extracted-Hook comparison, or extracted-harness canary is present in the issue record. Owner evidence/blocker is due 21:12; see comment 6202053919.
+- **#55 P1 — M3 Hook contract:** current M3 head be388029 allows unpinned native Read where M1 requires native_file_execution_not_pinned denial. M9 composition fails both platforms. Owner evidence/blocker is due 21:12; see comment 6202053150.
+- **#51 P1 — shared quarantine retry:** PR #34 run 38698635434 has one actual Ubuntu Node 20 retry-exhaustion failure; four matrix jobs were cancelled and package-smoke skipped. The historical lock-holder/timing trigger remains UNKNOWN; no data loss is established.
+- **#54 P1 — Windows Node 22 AI retry:** current M9 product Windows Node 22 check passes; the old 503 retry trigger remains UNKNOWN. Full M9 matrix is still blocked by #55. Keep bounded retries/assertions and do not edit provider/transport without an assigned owner.
+- **#45 P1:** native Codex Shell remains UNPROTECTED. **#41 P1:** clean-VM install/launch/upgrade/uninstall/cancel rollback remain NOT_VERIFIED. **M6 E4 P1:** independent external validation remains NOT_VERIFIED.
+- **#29 P2:** records two assigned task lanes, the mutually exclusive installer/VM/model resource, and publication cadence. Task start is not independently verified. No exclusive test is running or reserved; next M0 branch push no earlier than 20:58 UTC.
+- All eight open coordination/security Issues now carry matching P0/P1/P2 labels. #32 and #44 remain closed only for their scoped historical synthetic-test findings.
+
+## Archived coordinator checkpoint (2026-10-15 20:32 UTC)
 
 - **M0 / PR #30:** OPEN/Draft at `a91cc4f031864d26b544150195ae26e393f4f601`; product CI `38800647671` passed 9/9 and description ownership check `38801507267` passed 1/1. PR #24 remains unchanged and OPEN/Draft.
 - **#53 P0 — M7/M8 packaged Hook-log privacy:** no visible owner response or PR #39/#40 head change at the 20:32 checkpoint. Comment 6201691288 requests exact package/artifact evidence or a blocker by 20:52. Keep OPEN and NOT_VERIFIED.

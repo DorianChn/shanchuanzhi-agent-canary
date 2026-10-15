@@ -1,4 +1,21 @@
-## Current remote ownership snapshot (2026-10-15 20:25 UTC)
+## Current remote ownership snapshot (2026-10-15 20:52 UTC)
+
+| Module | Existing branch / PR | Exact remote head | Owner and current boundary |
+| --- | --- | --- | --- |
+| M0 | feature/ac3-m0-coordination / #30 | ff01b6ce04310afa1fb56233931a70a47624b0b1 | Coordination docs, issue status, API contracts, and cross-module gates only; no product source changes. |
+| M1 | feature/ac3-security-core / #43 | 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 | Gateway, Guard, canonical Hook contract, and quarantine store. Owns #51 diagnosis and #52 contract review. |
+| M2 | feature/ac3-execution-isolation / #37 | 9db59ed8f2deae905edcb2179982f8bcb594167c | Execution adapter and host-hook integration. No first-party host consumer is verified; native Shell remains UNPROTECTED (#45). |
+| M3 | feature/ac3-agent-onboarding / #33 | be3880298e1c6766024ecbce5f5dbc23c4d2daa1 | Onboarding and its Hook copy/tests. Owns #55 fail-closed correction and supported-capability positive control. |
+| M4 | feature/ac3-desktop-security-center / #34 | fbf20907c6accffc37246eddf04f8599060d99ea | Desktop security UI/tests; shared-store retry investigation routes to M1 #51. |
+| M5 | feature/ac3-policy-audit / #47 | 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c | Policy/router and alias-denial regressions. Owns source fix; product-host protected-open remains NOT_VERIFIED (#52). |
+| M6 | feature/ac3-e4-validation-ac3 / #38 | c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 | E4 verifier/schema/bundle. Independent external E4 remains NOT_VERIFIED. |
+| M7 | feature/ac3-reliability-ac3 / #39 | cf4b70f5130175582fffdfc65bd7c6847450867b | Reliability/installer payload and lifecycle evidence. Owns package/payload artifact in #53; clean-VM lifecycle remains NOT_VERIFIED (#41). |
+| M8 | feature/ac3-open-source-product / #40 | c1ff677cc56cd159cc983042e5dfcec5dc93f3ad | Open-source/docs and canonical Hook/logging copy. Owns its shipped-copy reconciliation for #53. |
+| M9 | feature/ac3-m9-integration / #36 | de3799aae540f58173acec4ab3f7a1fe98593aa7 | Integration composition and assigned test/ai.test.ts diagnostics. Must wait for M3 #55 before repinning. Provider/transport source ownership is unresolved if a future source change is required. |
+
+All active module PRs listed here target feature/agent-canary-3.0 at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Legacy M6 PR #31 targets main and remains outside AC3. This Windows clone exposes only the M0 coordinator worktree; agents/ is empty and WSL has no installed distribution. Do not claim independent local module worktrees until each owner provides its exact path and branch.
+
+## Archived remote ownership snapshot (2026-10-15 20:25 UTC)
 
 | Module | Existing branch / PR | Exact remote head | Owner and current boundary |
 | --- | --- | --- | --- |
