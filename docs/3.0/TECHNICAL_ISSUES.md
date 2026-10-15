@@ -1,9 +1,10 @@
 # M0 技术问题分级与协作流程
 
-## Coordinator evidence update (2026-10-15 11:04 UTC)
+## Coordinator evidence update (2026-10-15 11:09 UTC)
 
-- **#52 P0:** M9 local commit `16163357f6c3ed67db69e85cb3ad435bbe95ce95` refreshes PR #36 M1/M5 pins and adds exact Hook-blob and M1/M3 behavior gates. Local syntax/pin checks passed, but composition was not run and the new commit has no CI result yet. It remains synthetic/co-located evidence and does not verify a production protected-open host or held-handle TOCTOU path; keep OPEN.
-- **#53 P0:** M1 owner-reviewed M3 #33 and found executable wrapper behavior matches apart from a comment, while M3 JSONL assertions were weaker. M9 now adds a synthetic M3 wrapper allowlist/canary/canonical-time check. Its exact M1/M3 native Hook gate exposes a real conflict: M1 denies ordinary unpinned Read; M3 currently allows it. M3 owner must align implementation and test, advance PR #33, and M9 must update its pin; no assertions may be weakened. Keep OPEN; real host/package/E4 acceptance remains unverified.
+- **#52 P0:** M9 PR #36 exact head `16163357f6c3ed67db69e85cb3ad435bbe95ce95` has 9/9 product CI and 2/2 wrapper CI. Composition run `38724906633` confirms the separate M1/M3 unpinned-Read mismatch; wrapper-blob and sanitized-JSONL positive controls pass. Windows composition was cancelled by matrix fail-fast; local M9 follow-up `de3799a` disables fail-fast for the next run. Synthetic checks still do not verify a production protected-open host, held-handle TOCTOU, installer payload, clean VM, or independent E4; keep OPEN.
+- **#53 P0:** M9 PR #36 adds a synthetic M3 wrapper allowlist/canary/canonical-time check, which passed in Ubuntu composition run `38724906633`. The separate native Hook behavior conflict is tracked in #55; this log-sanitization test did not fail. Keep #53 OPEN until shipped/reachable copies and packaged behavior are reconciled; real host/package/E4 acceptance remains unverified.
+- **#55 P1:** Exact-head M9 run `38724906633` confirms the M1/M3 contract mismatch on Ubuntu (`expected deny`, `actual allow`); M3 owns the source/test correction, M9 owns updating the M3 SHA pin after the fix. Preserve all fail-closed assertions and add a supported-capability positive control. Windows composition was cancelled by matrix fail-fast; M9 local `de3799a` changes the matrix to collect both OS results.
 
 
 ## Latest issue ledger (2026-10-15 10:44 UTC)

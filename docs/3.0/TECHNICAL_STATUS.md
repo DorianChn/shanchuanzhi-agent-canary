@@ -1,13 +1,13 @@
 # M0 技术协调状态
 
-## Coordinator update (2026-10-15 11:04 UTC)
+## Coordinator update (2026-10-15 11:09 UTC)
 
 - The usage page remains open and was readable above the stop threshold at the 11:00 UTC check. Keep it open; do not store account-specific percentages in tracked files.
 - PR #24 remains OPEN/Draft at its previously verified exact base/head; it has not been changed or merged.
 - Issue #53 branch-copy review: PR #33 head `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` (run `38706654588`, 9/9) has wrapper blob `ae23875d91c246c0fa833137e71c949bad9bd3cc`; M1 canonical PR #43 head `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` has blob `d6f93249306b7966259cab463dd39475728ef338`. M1 owner review found only a nonfunctional explanatory-comment difference in executable wrapper behavior. M3's test checks input/reason canaries, exact log keys, event, decision enum, and parseable timestamp; M1's test additionally requires canonical ISO timestamp.
 - A separate integration contract mismatch remains: M3's wrapper fixture expects an ordinary `Read` to allow, while the current M1 unpinned-file contract denies Read/Write/Delete with `native_file_execution_not_pinned`. M3 owner reconciliation is needed; no assertion was removed or weakened.
-- M9 local commit `16163357f6c3ed67db69e85cb3ad435bbe95ce95` updates PR #36 workflow pins to current M1 #43 / M5 #47 heads, compares M2/M5/M7/M8/M9 wrapper blobs to M1 canonical, and adds M3 wrapper canary and M1/M3 unpinned-Read behavior checks. `node --check`, diff whitespace, and pin consistency passed; full composition did not run because sibling roots and dependencies are unavailable. Commit has no CI result yet; its M3 contract gate is expected to fail against pinned M3 `be38802` until the M3 owner fixes the allow-vs-deny mismatch and updates the pin.
-- M0 documentation and M9 integration commits are queued for the next GitHub batch. Re-read the active usage tab immediately before pushing or commenting; keep the tab open and stop if unreadable or at/below the 5% threshold.
+- M9 PR #36 exact head `16163357f6c3ed67db69e85cb3ad435bbe95ce95`: product CI run `38724906631` passed 9/9 and wrapper run `38724906605` passed 2/2. Composition run `38724906633` passed 6/7 Ubuntu subtests; the exact M1/M3 unpinned-Read gate failed `expected deny, actual allow`, while the wrapper-blob and M3 sanitized-JSONL tests passed. Windows composition was cancelled by matrix fail-fast. Local M9 follow-up `de3799aae540f58173acec4ab3f7a1fe98593aa7` sets `fail-fast: false`; not pushed and has no CI result.
+- Issue #55 is OPEN/P1 with M3 as owner for the unpinned-read contract mismatch; acceptance and synthetic reproduction are recorded there. M0 PR #30 exact head `50676bef95e8683da14db65db71e988232603c0f` passed all 10 checks. The next M0/M9 push batch is no earlier than 11:25 UTC; re-read the active usage tab immediately beforehand and keep it open.
 
 
 ## Current authoritative snapshot (2026-10-15 10:44 UTC)
