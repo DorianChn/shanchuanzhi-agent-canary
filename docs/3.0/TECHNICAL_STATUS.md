@@ -1,15 +1,15 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 00:54 UTC)
+## Current authoritative snapshot (2026-10-15 01:03 UTC)
 
-- 用量页一直保持打开且可读，高于5%暂停线；精确账户数值仅存于gitignore忽略的本地报告。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
-- M0 PR #30 head e94f630038144c68aedb3ff5358c473e80dfc0f0，精确head CI 12/12通过。PR #24仍OPEN/Draft，base dc8d0092b35141b295d5ff42873584ed488e4ee7、head 62496d4020bd90ba2eede49b2e80a2bbebb036b4，11/11通过；未修改或合并。
-- M1 PR #43远端head 4b562bed32ebcc3f241a17543d8d2ce9f6108c26，CI 9/9。Windows Node20/22精确head中断测试通过，marker=true、spawnError=null、SIGTERM、stdout/stderr为空；本机Node22定向回归1/1通过。M1新增本地文档提交a2206d3，未推送。历史runner根因仍UNKNOWN，合成子进程不证明真实宿主callback，Issue #32保持OPEN。
-- M6 PR #38远端head 4e397627c635b75a0e3b6384136d39d078802b72。CI中Windows Node22是真实测试失败：test/agent-hook.test.ts:54:53在固定1秒断言前未发现marker；Windows Node20 job被fail-fast取消，其npm test日志323 pass/0 fail；package-smoke跳过，wrapper 2/2通过，其余已列检查通过。M6已在原分支本地提交09084490bc17af13cd4589ebb344c7a46e2d0881（父4e39762），只改test/agent-hook.test.ts；本地Hook 10/10、E4 18/18，diff-check通过，未推送。PR #38远端仍为4e39762，旧head CI结果不适用于新提交；新head CI待推送后运行。该移植保留marker后2.5秒调度延迟及no-decision/no-output/子进程终止诊断；不得cherry-pick 46af1f1（涉及4个路径）或带入无关凭据日志改动。原未跟踪E4证据目录未动。Issue #27/#32仍OPEN；字段owner签核和独立外部E4未完成；未跟踪证据目录不动。
-- M9 PR #36远端head 8f713a29356380f5c8ec6d4360a3579f323de315精确head CI 11/11通过。本地文档提交663b997e938ab1f0d02ce3945af76b20eabc863b（父8f713a2）纠正过时M0快照，未推送。测试父候选64b97d5的npm run verify为393 pass/0 fail/6 skip，build和100-file package smoke通过；npm run e4:test为12/12。此类合成测试不证明独立E4或原生宿主保护。
-- M2/#45仍BLOCKED_NOT_VERIFIED，Native Codex Shell为UNPROTECTED。M3/#33和M4/#34仍未回复Issue #32，保持HOLD且不改其分支。M5/#47为9/9并保留敏感读硬DENY。M7/#39为11/11但clean-VM安装生命周期NOT_VERIFIED。M8/#40为9/9；WSL无响应，worktree未读未改，PR摘要与最新测试文件范围不一致。
-- 当前没有模块代理在编辑：M6候选已本地提交，等待推送触发exact-head CI；M9集成计划已本地提交，登记该候选及未验证边界。下一组模块工作须遵守双模块上限；无VMware、真实模型或安装测试预约，独占资源在Issue #29可见记录前不可用。
-- 最近push批次00:36 UTC；下次不早于00:56 UTC。未合并main或PR #24，未发布Release。
+- 用量页按用户要求保持打开且可读，当前读数高于5%暂停线；精确账户数值只存在gitignore忽略的本地报告。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
+- M0 PR #30 head `bdad252960cb95c94ecb0612238f69f76273b69f` 精确head CI 11/11通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，11/11通过；未修改或合并。
+- M1 PR #43 head `a2206d3985db25adcbaad24ee9788c900ee5c2cb`，9/9通过。Windows Node20/22中断测试通过；合成子进程不证明真实宿主callback，历史runner根因UNKNOWN，Issue #32保持OPEN。
+- M6 PR #38 head `09084490bc17af13cd4589ebb344c7a46e2d0881`。Run `38662965312` 的Ubuntu Node22 `npm test` 有一项 `file-state-store` 并发隔离用例报 `RETRY_LIMIT`（322 pass/1 fail/4 skip）；同一作业的Hook中断测试通过。Node20作业通过；Windows和macOS矩阵作业因fail-fast取消，package-smoke跳过；Docker成功。Wrapper run `38662965329` 为2/2。M6 diff未触及该测试或存储实现，blob与AC3基线一致；M6 Windows定向复核3/3通过。WSL/Linux重跑超过70秒无输出后终止，不能视为复现。M1作为Guard/quarantine责任模块由M0暂定路径归属，owner确认与Linux复现待办；保留所有原测试和断言。M6 owner已ACCEPT `e4:auto`、`e4:verify`、`e4:test`，M9接受字段/路径兼容和API语义；外部E4仍NOT_VERIFIED。未跟踪证据目录保持原样。
+- M9 PR #36 remote head `d133c35ae27274035cc0d854e0f07a8c955fbdaa` 精确head checks 11/11通过。M9只读审计ACCEPT M6/M9的三个E4脚本值、测试路径包含关系和E4 API语义；M9在原分支本地提交计划修正 `bc5390dbd04527cf31a84d30c4cf5314dd0aac8f`，只改 `docs/3.0/M9_INTEGRATION_PLAN.md`，尚待推送。M9/M1 Hook fixture相同，M6 fixture不同，Issue #32仍OPEN；native callback、独立外部E4、clean-VM安装仍未验证。
+- M2/#45仍BLOCKED_NOT_VERIFIED，Native Codex Shell为UNPROTECTED。M3/#33与M4/#34的Issue #32 assignment仍HOLD且未改分支。M5/#47为9/9并保留敏感读硬DENY。M7/#39为11/11但clean-VM安装生命周期NOT_VERIFIED。M8/#40为9/9；WSL状态命令仍无输出，worktree未读未改。
+- 当前活跃模块槽位为M1（只读确认并调查quarantine状态存储CI失败）。M9文档修正已完成本地提交，工作槽释放。没有VMware、真实模型或安装测试在运行；独占资源在Issue #29记录预约前不可用。M0/M1/M6/M9此前head已推送；M9 `bc5390d` 等待下一批。
+- 最近push批次00:56 UTC；下次不早于01:16 UTC。未合并main或PR #24，未发布Release。
 
 ## Archived snapshot (2026-10-15 00:30 UTC)
 
