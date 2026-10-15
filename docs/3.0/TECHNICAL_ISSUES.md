@@ -1,15 +1,15 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 07:52 UTC)
+## Latest issue ledger (2026-10-15 08:04 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
-| #29 | P2 / M0 | M1 #51 diagnosis completed without code change. M7 #39 `52cc149` exact-head product run `38701046560` passes 9/9 and wrapper run `38701046563` passes 2/2. | OPEN; active coding slots 0/2. No exclusive resource reserved. Maintain 20-minute public-write batches and quota stop threshold. |
-| #30 | P1 / M0 | PR #30 head `bd8686e` passes 10/10 checks. | OPEN/Draft; keep for coordination-doc review. |
+| #29 | P2 / M0 | M1 and M2 are active on disjoint worktrees for #52: M1 audits its protected-open/Gateway path; M2 assesses only its adapter seam against the existing API. M7 #39 `52cc149` exact-head product run `38701046560` passes 9/9 and wrapper run `38701046563` passes 2/2. | OPEN; active coding slots 2/2. No exclusive resource reserved. Last public write was 07:52:36 UTC; next batch no earlier than 08:12:36 UTC. Keep the quota page open and stop below 5% or if unreadable. |
+| #30 | P1 / M0 | PR #30 head `c61c6a46d6db92d31c069a2a380427381b5d3950` passes 10/10 checks. | OPEN/Draft; keep for coordination-doc review. |
 | #41 | P1 / M7 | PR #39 `52cc149` passes product checks 9/9 and wrapper checks 2/2. | OPEN/HOLD; clean-VM install/launch/upgrade/uninstall/rollback remains NOT_VERIFIED. Reserve the exclusive VM/installer resource before lifecycle testing. |
-| #45 | P1 / M2; M4 security-center visibility | PR #37 `76066cb` passes 9/9. M4 #34 `fbf2090` persists Native Codex Shell `UNPROTECTED / BLOCKED_NOT_VERIFIED`; its single CI failure is tracked under #51. | OPEN/BLOCKED_NOT_VERIFIED; actual supported-host enforcement remains unverified. |
+| #45 | P1 / M2; M4 security-center visibility | PR #37 remote head `76066cb` passes 9/9. M2 local documentation commit `dab0445` clarifies local PreToolUse behavior and failure limits but does not configure/trust a Hook or prove native Shell enforcement. M4 #34 `fbf2090` persists Native Codex Shell `UNPROTECTED / BLOCKED_NOT_VERIFIED`; its single CI failure is tracked under #51. | OPEN/BLOCKED_NOT_VERIFIED; actual supported-host enforcement remains unverified. |
 | #51 | P1 / M1 | PR #34 run `38698635434`: Ubuntu Node 20 worker 2 reached 500 `STATE_STORE_BUSY` retries and `RETRY_LIMIT` before final state assertions. Node 22 passed; four matrix jobs cancelled by fail-fast; package-smoke skipped. | OPEN; root cause UNKNOWN. Preserve `RETRY_LIMIT` and all assertions; no data loss or causal product defect established. |
-| #52 | P0 / M5 policy, M2 adapter, M9 integration; M0 coordinates | M5 #47 `b6a40b4` 9/9; M2 #37 `76066cb` 9/9; M9 #36 `3dfef35` 13/13. Cross-tree run `38696382427` passes on Ubuntu and Windows. | OPEN; production host wiring and protected open/handle remain NOT_VERIFIED; retain TOCTOU limits. |
+| #52 | P0 / M1 Gateway, M2 adapter, M5 policy, M9 integration; M0 coordinates | M2 has a local adapter-contract review in progress. M9 local commit `4d1dc7a` pins reviewed M1/M2/M5/M7/M8 SHAs and adds synthetic denial/log-composition tests; its previous remote #36 head `3dfef35` passed 13/13 and cross-tree run `38696382427` passed on Ubuntu and Windows. | OPEN; M1/M2 source audits are active. Production host wiring and protected open/handle remain NOT_VERIFIED; retain TOCTOU limits. |
 | #53 | P0 candidate / M1 logging contract, M7 packaging; branch-copy owners | M7 #39 `52cc149` product 9/9 and wrapper 2/2; M8 #40 `d12dd2c` 11/11. Tests cover synthetic/co-located payloads. | OPEN; built-installer reachability, clean-VM lifecycle, and independent E4 remain NOT_VERIFIED; no confirmed exposure or external transmission. |
 
 ## Archived issue ledger (2026-10-15 07:31 UTC)

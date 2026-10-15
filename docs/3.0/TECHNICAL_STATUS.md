@@ -1,5 +1,15 @@
 # M0 技术协调状态
 
+## Current authoritative snapshot (2026-10-15 08:04 UTC)
+
+- The ChatGPT usage page remains open in tab 336903483 and was readable above the stop threshold at 08:04 UTC. Keep it open; stop all work if the reading becomes unavailable or falls below 5%. Do not publish account-specific quota values.
+- PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; it has not been edited or merged. No main merge or Release occurred.
+- PR #30 remains OPEN/Draft at `c61c6a46d6db92d31c069a2a380427381b5d3950`, with all 10 checks passing. Its local coordinator worktree is clean.
+- M2 has local documentation/evidence commit `dab0445aad57c6ebd06f1956e96ac1a2e309fc09`, parented directly on the remote PR #37 head `76066cbb750ec714ce8691bc0f30c8171186f079`. The three changed files clarify supported local `PreToolUse`/Bash behavior, exact hook trust, and non-fail-closed error cases. JSON parsing and `git diff --check` passed; no host test/configuration change occurred. Push and new CI are pending.
+- M9 has local integration commit `4d1dc7a3340192e6dd09ea7dce9e42427ab07c98`, parented directly on remote PR #36 head `3dfef3509ada2b974cd3e0c1e55e6b57d45b2074`. It pins M1/M2/M5/M7/M8 source SHAs and adds synthetic OBSERVE/alias-denial and co-located M7/M8 sanitized-JSONL composition checks. Owner tests passed 1/1 each, M9 tests 2/2, `node --check` and diff checks passed. No local workflow YAML parser is installed; hosted CI remains pending. This does not establish a production host, installer, clean-VM lifecycle, or external E4.
+- The next public GitHub write batch is no earlier than 08:12:36 UTC, 20 minutes after the last write. Until then only local/read-only work proceeds. Two development slots are active: M1 audits its owned protected-open/Gateway path for #52; M2 assesses only its adapter seam against the existing M1 API. Neither may edit the other's files or push.
+- M1 #51 remains OPEN with the retry exhaustion mechanism known but the original contention trigger UNKNOWN. #45 remains UNPROTECTED / BLOCKED_NOT_VERIFIED; #52 production protected-open wiring remains NOT_VERIFIED; #41 clean-VM lifecycle remains HOLD; #53 built-installer reachability and independent E4 remain NOT_VERIFIED. No exclusive VM, real-model, installer, or external E4 resource is reserved.
+
 ## Current authoritative snapshot (2026-10-15 07:52 UTC)
 
 - The usage page remains open in tab 336903483; it was readable and above the stop threshold at 07:50 UTC. Do not record account-specific quota values in public project documents. Stop all work if unreadable or below 5%.
