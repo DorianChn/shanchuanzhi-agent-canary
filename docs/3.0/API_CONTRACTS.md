@@ -1,6 +1,16 @@
 # Agent Canary 3.0 公共接口契约
 
-## Current coordination evidence (2026-10-14 19:43 UTC)
+## Current coordination evidence (2026-10-15 03:05 UTC)
+
+M0 maintains the canonical cross-module summary; M1 and M5 retain ownership of their runtime and policy semantics.
+
+- **File execution boundary:** the M1 `createTrustedExecutionGateway` file path canonicalizes and validates registered paths, opens and retains a descriptor, compares `lstat`/`fstat` identity, rechecks binding before effects, and reads/writes through the retained descriptor. Its focused Gateway/router tests pass 48/48 and build passes. The repository audit found no native-host callback connected to this Gateway; native host use remains NOT_VERIFIED. On Windows Node22, `O_NOFOLLOW` is unavailable, and the documented identity/path checks do not eliminate every same-privilege concurrent rename race.
+- **Generic policy router:** `createRiskPolicyRouter` keeps its documented lexical-path legacy default. A real filesystem host must explicitly set `verifyRealPaths: true` on `createSecurityToolRouter` (or provide an equivalent canonical containment/sensitive-target boundary), then perform the open through a protected handle/no-follow/OS boundary. The M5 management adapter passes the option through but does not itself open files; no production M5 file-host consumer was found. Check-then-open alone does not eliminate TOCTOU. Issue #52 remains P0/OPEN pending real-host evidence.
+- **Hook interruption:** PR #33 (`f9bd818`, run `38672489688`) and PR #34 (`9288de0`, run `38672493385`) each pass 9/9; #33 Windows Node20 passes. The old fixture's one-second marker window is the direct historical failure mechanism; runner delay beyond that window remains UNKNOWN. The synthetic subprocess test does not establish native-host callback behavior. Issue #32 remains OPEN pending M9 combined review and host evidence.
+- **E4 integration:** M6 owner confirms the three `e4:*` package fields match M9. M6 fixes `4e39762` and `cd55717` are absent from M9 `bc5390d`; applying `4e39762` conflicted in `packaging/windows/auto-e4.mjs`, was safely aborted, and left M9 clean. M6 completed its owner review and approved a minimal adaptation: retain M9 lock recovery/atomic writer, preflight all three output paths, and preserve existing artifacts; M9 is implementing this on the existing branch. The verifier's lstat-then-path-read path retains a symlink-replacement TOCTOU limitation. External E4 remains NOT_VERIFIED.
+- **Current PR checks:** M5 #47 exact head `c54e7eb` passes 9/9; M6 #38 exact head `cd55717` passes 9 product checks and 2 wrappers. PR #24 remains OPEN/Draft and unchanged.
+
+## Archived coordination evidence (2026-10-14 19:43 UTC)
 
 M0 remains the sole owner of the canonical cross-module contract at docs/3.0/API_CONTRACTS.md; each interface owner remains responsible for semantics and compatibility. No public runtime API change was made by this M0 update.
 

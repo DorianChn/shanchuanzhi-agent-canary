@@ -1,6 +1,19 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 02:40 UTC)
+## Current authoritative snapshot (2026-10-15 03:05 UTC)
+
+- 用量页按用户要求保持打开并置于前台；03:05 UTC可读且高于5%停工线。公开记录不写账户精确余量。页面不可读或低于5%时，所有模块停止开发、测试、浏览器和GitHub操作。
+- M0 PR #30 远端head `9b8d8d1713de29712f7550ce180ce1560a0dd3a2`：产品CI run `38672508461` 9/9、协调检查 `38672508565` 1/1通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；产品9/9及wrapper 2/2通过，未修改或合并。
+- M1 PR #43 head `3828bee`；标准CI及Linux十轮store workflow通过。M1对真实文件执行链的只读审计未发现需改的M1缺口：Gateway canonicalize/lstat/open/fstat并持有fd，执行时再核验后用该fd读写；定向Gateway+router测试48/48、build通过。Windows Node22无`O_NOFOLLOW`常量，仍有身份比较和路径复查；同权限进程并发改名限制已记录。仓库中未发现native host callback接入该Gateway，真实宿主连线仍NOT_VERIFIED。
+- M3 PR #33 head `f9bd818` / run `38672489688`、M4 PR #34 head `9288de0` / run `38672493385`均9/9通过；M3 exact-head Windows Node20检查通过。本地仅有Node22。旧失败直接机制是旧fixture的1秒marker窗口，runner为何超过窗口仍UNKNOWN。两分支fixture是合成子进程，未验证真实宿主callback；#32继续OPEN，待M9组合复核和宿主证据。
+- M5 PR #47 head `c54e7eb` / run `38672499884` 9/9通过。M5-owned adapter透传`verifyRealPaths`，但没有生产中的真实文件host consumer；M5策略/安全路由和build此前分别29/29、16/16、通过。#52仍P0/OPEN：不能证明真实host启用边界或以受保护句柄打开文件。
+- M6 PR #38 head `cd55717` 的产品CI 9/9及wrapper 2/2通过；E4测试此前16/16，三个`e4:*`字段与M9 MATCH_CONFIRMED。M6确认#27修复位于`4e39762`，路径/symlink加固位于`cd55717`；二者都未在M9 `bc5390d`中。整颗cherry-pick已安全abort。M6 owner审查完成并批准最小适配：保留M9锁恢复与`writeFileAtomically`，写入前预检全部三个产物路径并采用稳定冲突码。M9正在现有集成分支实现；尚未验证。lstat后路径读取仍有symlink替换TOCTOU限制；外部E4 NOT_VERIFIED，原始证据目录未触碰。
+- M4当前Console仍没有`/api/security-center`、`/api/e4/status` provider/IPC；404运行态测试7/7通过，UI保留UNKNOWN。
+- M8 PR #40 head `139e7f2` / run `38561307114` 9/9通过；PR文档仍称v3.0.0无Release且正文范围/CI摘要过时。当前v3.0.0 Release及GHCR `3.0.0`/`latest`标签已发布；E4仍NOT_VERIFIED。Contents API首个写入因403拒绝，且复读确认head和README blob未变；M8正在用已登录网页同一PR分支继续，尚未完成。
+- M9 PR #36 head `bc5390d` 的产品9/9和wrapper 2/2通过。M9正按M6 owner批准的最小适配在现有集成分支工作。当前两个模块槽为M9集成适配和M8文档修订。03:05 UTC经新额度读取后释放的公共写入批次正在进行；新一批至少等本批结束20分钟。M2原生Shell仍UNPROTECTED/BLOCKED_NOT_VERIFIED；M7 clean-VM生命周期仍NOT_VERIFIED。
+- Issue #51根因仍UNKNOWN；#32等待M9组合与真实宿主证据；#52等待真实文件host采用安全边界证据。额度页03:05 UTC可读且高于暂停线并保持打开。没有占用VMware、真实模型或安装测试资源；未合并main/PR #24，未发布Release。
+
+## Archived snapshot (2026-10-15 02:40 UTC)
 
 - 用量页按用户要求一直保持打开并置于前台；02:40 UTC仍可读且高于5%暂停线。精确账户数值不进入公开记录。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
 - M0 PR #30 远端head为 `1a737047585bec851c19d90761657fe212748197`；CI run `38670514197` 的9个产品job与协调 run `38670514206` 均成功。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`；workflow runs `38332394567`（9/9）和 `38332394500`（2/2）均成功；未修改或合并。
@@ -26,7 +39,7 @@
 - M1对现有分支的审计已完成：Node 20/22 Hook日志各337项通过、0失败，`marker=true`且SIGTERM；未发现需改的M1代码。M1子进程夹具不证明真实宿主callback，#32仍OPEN。
 - 当前两个模块槽位为M6/#27与M9/#36，均使用现有worktree和分支。Issue #29已于00:30更新并回读；M6本地提交与M9新计划head均已登记。M6提交`4e39762`与M9当前文档head`8f713a2`等待统一推送及远端CI；M8因WSL无响应暂缓本地审计，未触碰其工作树。未合并main/PR #24，未发布Release。
 
-## Current module and PR matrix (2026-10-15 00:28 UTC)
+## Archived module and PR matrix (2026-10-15 00:28 UTC)
 
 | Module | Existing branch / PR head | Exact-head checks | Current acceptance state | Worktree evidence |
 | --- | --- | --- | --- | --- |
@@ -353,7 +366,7 @@ The following issue notes and PR #30 head are retained as initialization history
 
 PR [#30](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/30) 仍 OPEN/Draft，base `feature/agent-canary-3.0`，远端 head `1179ed1`。当前头检查 10/10 通过。上一头 `0091759` 的 run `38421264751` 中 macOS Node22 job 等待 15 分钟后被取消，`runner_id=0` 且无步骤日志；`package-smoke` 跳过，故仅记为 runner 分配结果未知。
 
-## Current GitHub issue state (2026-10-14 23:40 UTC)
+## Archived GitHub issue state (2026-10-14 23:40 UTC)
 
 - [Issue #27](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/27) OPEN: M6 owner disposition and combined M9 acceptance pending; external E4 NOT_VERIFIED.
 - [Issue #29](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/29) OPEN: no confirmed active module task; M3/M4 remain HOLD; exclusive resource availability is unknown.
