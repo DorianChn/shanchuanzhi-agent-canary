@@ -6,7 +6,7 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 
 | Area | Status | Notes |
 |---|---|---|
-| Agent Canary CLI, MCP stdio server, SDK Gateway, decoys/canary checks, offline self-test, doctor, project MCP integration helper, and local risk-policy console | **v3.0.0 source tag; no GitHub Release published** | The tag is a source snapshot, not a published Release. Recorded source checks are tied to that tag; protection remains limited to registered Agent Canary callbacks. |
+| Agent Canary CLI, MCP stdio server, SDK Gateway, decoys/canary checks, offline self-test, doctor, project MCP integration helper, and local risk-policy console | **v3.0.0 GitHub Release published** | The release is tied to the `v3.0.0` source snapshot. Recorded source checks are tied to that exact source; protection remains limited to registered Agent Canary callbacks. |
 | V1.2.7 | **Historical version/tag** | This matrix does not claim a currently published GitHub Release for this version. Follow its tag-specific package metadata and documentation when reproducing old results. |
 | v3.0.0-competition | **Competition source tag; no published Release asset claimed** | A repository tag does not establish that a GitHub Release or downloadable bundle is published. Candidate evidence remains tied to its exact source and artifact. |
 | v3.0.0-competition-candidate.4 | **Candidate source tag** | Candidate-specific installer and evidence are not a published Release or a stable v3.0.0 package. |
@@ -23,7 +23,7 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 | Node.js | >=20 in the v3.0.0 package manifest | Declared runtime minimum; the source verification receipt records Windows Node.js 22.23.1. This does not imply every Node release has been tested. |
 | Windows source build | **Verified for a bounded v3.0.0 source run** | The immutable mainline receipt records `npm run verify` on a Windows host with Node.js 22.23.1. It is not a clean-VM or all-editions result. |
 | Ubuntu/WSL2 and cross-platform CI | **Candidate-specific evidence** | Earlier candidate-source records include WSL2 checks and a Windows/Linux/macOS Node 20/22 CI matrix. Those records are not a rerun of the v3.0.0 tag. |
-| Docker | **Availability not verified here** | Container startup or a help command does not demonstrate protection of host processes or other MCP servers. |
+| Docker | **GHCR tags `3.0.0` and `latest` published; local pull/runtime NOT_VERIFIED here** | The public package listing confirms those tags. This does not establish a successful local pull, container startup, or protection of host processes or other MCP servers. |
 | Windows desktop installer | **No stable install path claimed** | No published Release asset is claimed; the earlier installer is unsigned and clean-VM validation remains blocked. |
 
 ## Agent hosts and integration paths
