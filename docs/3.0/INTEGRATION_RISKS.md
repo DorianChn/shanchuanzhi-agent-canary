@@ -1,6 +1,6 @@
 # M0/M9 集成风险登记
 
-## Current integration risk snapshot (2026-10-15 07:07 UTC)
+## Current integration risk snapshot (2026-10-15 07:18 UTC)
 
 | Risk | Priority | Verified state | Required gate |
 | --- | --- | --- | --- |
@@ -9,8 +9,8 @@
 | #51 store retries | P1 | Historical Windows Node20 reached `RETRY_LIMIT` after 500 busy retries; later exact-source runs pass, but lock owner/timing evidence is absent. | Keep OPEN; root cause UNKNOWN. Preserve all assertions. |
 | #41 installer lifecycle | P1 | PR #39 checks 11/11; no clean-VM lifecycle evidence. | Keep OPEN/HOLD until exclusive VM reservation and lifecycle artifacts. |
 | #45 native Shell | P1 | PR #37 checks 9/9; actual desktop host policy/callback unavailable. | Keep OPEN/BLOCKED_NOT_VERIFIED; Native Codex Shell remains UNPROTECTED. |
-| M4 security/E4 provider | P1 | M4 PR #34 checks 9/9; provider/IPC absent. | UI remains UNKNOWN; do not show mock PASS. |
-| #53 Hook log sensitive data | P0 candidate | M8 #40 audit confirms the wrapper/test copy matches the M1 allowlist/canary and exact-head CI is 9/9. Packaged lifecycle and independent E4 remain NOT_VERIFIED. | Keep OPEN pending reachable shipped-copy and package evidence; no actual exposure/transmission claim. |
+| M4 security/E4 provider | P1 | Local M4 commit fbf2090 (parent 66e679b) adds a persistent Native Codex Shell UNPROTECTED / BLOCKED_NOT_VERIFIED warning; owner reports build and focused tests 2/2. Provider/IPC remains absent. Commit is not pushed and its CI is pending. | UI does not imply protection or a live PASS; native shell remains UNPROTECTED. |
+| #53 Hook log sensitive data | P0 candidate | Local M8 commit d12dd2c (parent 454873c) adds strict allowlisted JSONL/timestamp checks and a co-located packaged-payload E4 regression; owner reports 5/5 focused tests. Remote #40 head 454873c remains 9/9; new commit is not pushed and its CI is pending. | Keep OPEN pending reachable shipped-copy, package lifecycle, and independent E4 evidence; no actual exposure/transmission claim. |
 
 ## Archived integration risk snapshot (2026-10-15 06:05 UTC)
 
