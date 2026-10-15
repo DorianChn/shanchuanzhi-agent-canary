@@ -1,14 +1,14 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 02:04 UTC)
+## Current authoritative snapshot (2026-10-15 02:19 UTC)
 
-- 用量页按用户要求保持打开；02:04 UTC 复读可用且高于5%暂停线。精确账户数值不进入公开记录。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
+- 用量页按用户要求保持打开并置于前台；02:16、02:19 UTC复读均可用且高于5%暂停线。精确账户数值不进入公开记录。低于5%或读数不明时停止开发、测试、浏览器和GitHub操作。
 - M0 PR #30 远端head为 `fd7a65dae7ceeeeed6e6cc91191a54df6c4e775f`；精确head CI run 38668335116 的9个产品job与协调 run 38668335142 于01:58 UTC全部通过。PR #24仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，11/11通过；未修改或合并。
-- M1 PR #43 head `3828bee2cb7219237a8bb080cc9101d49b27b111`；标准CI run 38668336887 通过，专用Linux十轮 run 38668337033 通过。日志确认编号01/10至10/10齐全，十个测试汇总均为fail=0。M1拥有 `src/file-state-store.ts` 和 `test/file-state-store.test.ts`；未修改store实现或测试断言。历史RETRY_LIMIT根因仍UNKNOWN，无数据损坏证据。合成子进程测试不证明真实宿主callback，Issue #32保持OPEN。
+- M1 PR #43 head `3828bee2cb7219237a8bb080cc9101d49b27b111`；标准CI run 38668336887 通过，专用Linux十轮 run 38668337033 通过。日志来自Ubuntu 24 / Node 22.23.3 merge候选 `3c8d880`（含M1 `3828bee`与基线 `62496d4`）；编号01/10至10/10齐全，每轮17个测试、14通过、0失败、3跳过，四进程quarantine用例十轮均通过。M1现确认Issue #51直接失败路径是worker连续500次遇到 `STATE_STORE_BUSY` 后抛 `RETRY_LIMIT`；原始日志缺少锁持有者和时序信息，底层触发原因仍UNKNOWN，没有修改store实现/测试断言或数据损坏证据。Issue #32旧Windows Node20失败 run `38390302812` 的直接机制也已确认：旧fixture `spawnSync` 只有1秒超时，marker未到即触发断言；为何hosted runner超过1秒仍UNKNOWN。现有异步fixture修复 `46af1f1` 已在PR #43祖先链；定向Node22本地3/3，exact-head Windows Node20/22也观察到marker=true和SIGTERM（Issue #32 comment `6182905215`）。仍需M9 combined baseline复验；native-host callback NOT_VERIFIED（Issue #32保持OPEN）。
 - M6 PR #38 head `09084490bc17af13cd4589ebb344c7a46e2d0881`。Run `38662965312` 初次的Ubuntu Node22 `npm test` 有一项 `file-state-store` 并发隔离用例报 `RETRY_LIMIT`（322 pass/1 fail/4 skip）；M6 diff未触及该测试或存储实现，blob与AC3基线一致。失败作业重跑attempt 2通过全部9个产品job、含package-smoke；随后attempt 3与4各自重新运行Ubuntu Node22完整 `npm test`，三次连续全绿（attempts 2–4），wrapper为2/2。M1源码审查确认测试worker在500次 `STATE_STORE_BUSY` 后抛出测试哨兵；固定2ms轮询与同步持锁区形成竞争假设，但日志没有锁持有时间/所有者，根因仍UNKNOWN；未证实数据损坏或具体实现缺陷。M1本地Linux runner不可用，未再启动WSL；未改源码、测试或断言。M1已在Issue #51 comment `6182359961` 明确接受这两条store路径所有权；M1十轮工作流已在精确head run 38668337033通过；日志确认编号01/10至10/10齐全，十次测试汇总均为fail=0。Issue #51 comment 6182651725记录了结果与根因未知限制。M6 Windows定向复核3/3通过；保留原E4未跟踪证据目录。M6 owner已ACCEPT `e4:auto`、`e4:verify`、`e4:test`，M9接受字段/路径兼容和API语义；外部E4仍NOT_VERIFIED。
 - M9 PR #36 remote head `bc5390dbd04527cf31a84d30c4cf5314dd0aac8f` 精确head checks 11/11通过。M9只读审计ACCEPT M6/M9的三个E4脚本值、测试路径包含关系和E4 API语义；计划修正仅改 `docs/3.0/M9_INTEGRATION_PLAN.md`，已在01:16 UTC批次推送。M9/M1 Hook fixture相同，M6 fixture不同，Issue #32仍OPEN；native callback、独立外部E4、clean-VM安装仍未验证。
-- M2/#45仍BLOCKED_NOT_VERIFIED，Native Codex Shell为UNPROTECTED。M3/#33与M4/#34的Issue #32 assignment仍HOLD且未改分支；M0在comment `6182264822`请求各自确认分支头、改动认领与验收证据。M5/#47为9/9并保留敏感读硬DENY。M7/#39为11/11但clean-VM安装生命周期NOT_VERIFIED。M8/#40为9/9；WSL状态命令仍无输出，worktree未读未改。
-- Issue #51仍OPEN，owner已由M1确认；十次Linux专项通过及PR #38当前精确head CI均为绿色，但原始RETRY_LIMIT根因仍UNKNOWN，无源代码修复或数据损坏证据。M0协调快照有待下一批推送的本地文档提交。没有VMware、真实模型或安装测试在运行；独占资源在Issue #29记录预约前不可用。
+- M2/#45仍BLOCKED_NOT_VERIFIED，Native Codex Shell为UNPROTECTED。M2完成只读审计：仓库handler在收到有效PreToolUse时明确deny，已查用户配置未见inline hooks、hooks.json或项目hooks；但当前会话的有效策略、托管/插件来源、Hook trust和原生Shell回调均无法读取/验证。本机无可用WSL发行版，因此不能进入M2所属Git上下文核实HEAD/status，未修改/测试/提交。需要宿主所有者提供有效sandbox/profile与Hook来源/trust并做真实Desktop Shell sentinel拒绝验证。M3/#33与M4/#34的Issue #32 assignment仍HOLD且未改分支；M0在comment `6182264822`请求各自确认分支头、改动认领与验收证据。M5/#47为9/9并保留敏感读硬DENY。M7/#39为11/11但clean-VM安装生命周期NOT_VERIFIED。M8/#40为9/9；WSL状态命令仍无输出，worktree未读未改。
+- Issue #51仍OPEN，M1 owner已确认；十次Linux专项通过及PR #38当前精确head CI均为绿色。直接失败机制已分类，底层触发原因仍UNKNOWN；没有源代码修复或数据损坏证据。M0文档提交 `f98c662` 尚未推送。没有VMware、真实模型或安装测试在运行；独占资源在Issue #29记录预约前不可用。
 - 最近push批次01:56 UTC（M0 fd7a65d、M1 3828bee）；下一批不早于02:16 UTC。未合并main或PR #24，未发布Release。
 
 ## Archived snapshot (2026-10-15 00:30 UTC)
