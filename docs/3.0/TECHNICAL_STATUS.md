@@ -1,15 +1,13 @@
 # M0 技术协调状态
 
-## Current authoritative snapshot (2026-10-15 05:18 UTC)
+## Current authoritative snapshot (2026-10-15 05:31 UTC)
 
-- 用量页保持在原浏览器标签页，05:09 UTC仍可读且高于5%停止线；精确余量只记在被`.gitignore`排除的本地报告，公开文档不含账户额度。用户要求保留标签页，不关闭。低于5%或读数不可见即暂停全部任务。
-- 本批次使用既有 M0 分支和 Draft PR，不创建模块分支、不改模块源码、不合并 main、PR #24 或发布 Release。当前远端 exact-head checks：#24 11/11、M0 #30 `2be212b` 10/10、M1 #43 10/10、M2 #37 9/9、M3 #33 `f9bd818` 9/9、M4 #34 9/9、M5 #47 9/9、M6 #38 11/11、M7 #39 `87e0df0` 11/11、M8 #40 9/9、M9 #36 `37a09e8` 11/11。M3 `1829e05` 与M9 `2d3f1da` 为本地待批次提交，远端CI尚未运行。
-- PR #24 已回读仍 OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M1–M9模块 PR 均 OPEN/Draft、base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。
-- P0候选 Issue #53：M1当前owner wrapper仅持久化时间戳、固定事件名和permission decision，合成敏感值回归1/1通过；M7提交 `87e0df0` 同步该wrapper并增加Windows packaged E4/log-canary回归，PR #39 exact-head checks 11/11通过。M3 `1829e05`、M4 `66e679b`、M5 `a6d610e`、M6 `c1fdf3c` 与M9 `2d3f1da` 已在现有分支本地提交并通过聚焦检查；远端CI待本批次推送后生成。M6保留原有未跟踪E4报告。M2/#37与M8/#40登记worktree在Windows侧无法安全读取，现场保留并等待所属Git运行时。未观察到真实凭据或对外传输。
-- 当前没有活动开发槽位；M3/M4/M5/M6/M9修复均已完成本地提交，准备在05:18批次统一推送。M1完成#51/#53核查且未改代码；M7已完成#53且exact-head CI通过。M2与M8待运行时核实后排队；没有启动或预定 VMware、真实模型或安装生命周期测试。
-- Issue #32 已按有限范围关闭：旧同步夹具的1秒窗口先终止了子进程，导致marker未出现；当前异步夹具及受影响PR exact-head CI通过。旧runner为何超过1秒仍UNKNOWN；原生宿主callback仍NOT_VERIFIED，此关闭不扩大到宿主安全性。
-- #51仍OPEN，根因UNKNOWN。M1确认M0 Windows Node20 run `38682225388` 与Ubuntu Node22 attempt 1均有worker 0耗尽500次 `STATE_STORE_BUSY` 并抛`RETRY_LIMIT`，最终48项断言在失败attempt未运行；相同store/test blob在另一轮M1 Windows Node20及本机Node22通过。日志无锁持有者/时长，无法定因；未发现有证据支持的源码修复，保留全部断言。PR #30 follow-up head `2be212b` exact-head checks 10/10通过。#52仍P0/OPEN：别名保护有合成回归，但没有真实文件host/受保护open-handle证据，TOCTOU仍未解决。#27、#41、#45等E4、clean-VM与原生Shell门槛仍按各issue标记为OPEN/NOT_VERIFIED。
-- M0提交 `2be212b` 已推送既有PR #30；本批次还含M0协调记录更新，以及M3 `1829e05`、M4 `66e679b`、M5 `a6d610e`、M6 `c1fdf3c`、M9 `2d3f1da` 的既有分支提交，正在05:18批次验证与推送。PR #24刚回读仍OPEN/Draft且head/base未变；未合并main、未发布Release。WSL-managed工作树不运行repair/prune，按远端分支与PR读取状态。
+- 用量页仍在用户指定的浏览器标签页；05:25 UTC读数可见且高于5%停工线。精确值只记录于被`.gitignore`排除的本地报告。低于5%或读数不可见时暂停所有模块、测试和GitHub操作；不关闭用量页。
+- PR #24回读仍OPEN/Draft，base `dc8d0092b35141b295d5ff42873584ed488e4ee7`、head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`，未修改或合并。M0–M9现有PR均OPEN/Draft；截至05:25读到的远端精确head检查全绿：#30 10/10、#33 9/9、#34 9/9、#36 11/11、#37 9/9、#38 11/11、#39 11/11、#40 9/9、#43 10/10、#47 9/9。PR #30当前head `dfd6320`，#33 `1829e05`，#34 `66e679b`，#36 `2d3f1da`，#38 `c1fdf3c`；其余远端head见本表及GitHub。
+- Issue #53：M2已在既有PR #37父head `0f2c10c` 上本地提交 `04c7ec7`；wrapper blob为M1批准的 `d6f9324`，新增CI运行的合成canary用例，build、目标测试11/11和diff检查通过，工作树干净，尚未推送。M8 PR #40现有wrapper仍为raw日志blob `88c1003`；已确认Windows安装构建和E4 source harness都会复制它，故不能按不可达关闭。M1-contract review 确认可在M8分支测试副本中仅恢复两处缺失的canary输入/断言；M8正按此边界修改。未观察到真实凭据或对外传输。
+- M2/M8原有WSL管理目录均保留不动；为安全核验分别使用 `agents/M2-isolation-win` 与 `agents/M8-ecosystem-win` detached worktree，精确对应现有PR head。M2候选提交已完成，M8是当前唯一活动模块任务。M0不改产品源码、不新建模块分支、不跨runtime repair/prune。
+- 当前没有VMware、真实模型或安装生命周期测试预约/运行。PR #24、main及Release均未触及。Issue #32仅关闭于合成子进程marker回归；历史runner延迟和原生宿主callback仍UNKNOWN/NOT_VERIFIED。#51根因UNKNOWN且保留全部断言；#52仍P0/OPEN，缺真实文件host与受保护句柄证据；#27、#41、#45及M4 provider/E4仍按各自有限范围记录为OPEN、HOLD或NOT_VERIFIED。
+- 最近一次公共写入批次在05:20 UTC完成；下一批次不早于05:40:58 UTC。期间只做本地协调记录、只读状态核验和各自worktree内获准的任务，不推送、不发Issue/PR评论。
 
 ## Archived authoritative snapshot (2026-10-15 04:04 UTC)
 

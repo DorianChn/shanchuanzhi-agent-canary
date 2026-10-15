@@ -1,19 +1,19 @@
 # 模块文件所有权表
 
-## Current ownership and worktree snapshot (2026-10-15 05:18 UTC)
+## Current ownership and worktree snapshot (2026-10-15 05:31 UTC)
 
 | Module | Existing branch / worktree | Current remote PR head and checks | Ownership / coordination |
 | --- | --- | --- | --- |
-| M1 | `feature/ac3-security-core` / `agents/M1-security` | #43 `f14aab7`; 10/10 | Owns Gateway/router and canonical native-Hook log contract/test. #53 owner-copy allowlist/canary check passed. #51 diagnostics complete with no defensible source fix; root remains UNKNOWN. |
-| M2 | `feature/ac3-execution-isolation` / registered `agents/M2-isolation` | #37 `0f2c10c`; 9/9 | Owns execution-isolation adapter. The registered checkout is under a WSL-managed path; Windows Git sees tracked-file deletions, so M0 preserves it and will not edit/repair from the wrong runtime. #53 wrapper-copy task is queued. Native Codex Shell remains UNPROTECTED/BLOCKED_NOT_VERIFIED. |
-| M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | Remote #33 `f9bd818`; 9/9; local candidate `1829e05` ahead pending batch | Owns onboarding and Hook-test copy; allowlist wrapper/canary change passes focused 11/11, build, syntax, and diff checks. Remote CI pending. |
-| M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | Remote #34 `e939f04`; local candidate `66e679b` ahead 1 | Owns desktop UI and tests; #53 wrapper copy matches M1 contract and canary is in `test/runtime-console.test.ts`. Build, focused and Hook tests pass; remote CI pending batch. No provider/IPC; UI remains UNKNOWN. |
-| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | Remote #47 `0fdbd92`; local candidate `a6d610e` ahead 1 | Owns policy/audit; #53 wrapper copy matches M1 contract and canary is in `test/policy-management.test.ts`; focused canary and Hook tests pass. Remote CI pending batch. No production filesystem host consumer. |
-| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | Remote #38 `cd55717`; local candidate `c1fdf3c` ahead 1 | Owns verifier/schema and `e4:*`; wrapper copy now matches M1 contract and canary is in `test/auto-e4.test.mjs` (6/6); build passed. Existing untracked 16-file E4 report preserved; external E4 remains NOT_VERIFIED. |
-| M7 | `feature/ac3-reliability-ac3` / WSL-managed `agents/M7-reliability-ac3` | #39 `87e0df0`; exact-head checks 11/11 | Owns Windows packaging. #53 packaged-wrapper E4/log-canary regression passes; clean-VM lifecycle NOT_VERIFIED. |
-| M8 | `feature/ac3-open-source-product` / WSL-managed `agents/M8-ecosystem` | #40 `16e3d01`; 9/9 | Owns public docs/community; wrapper-copy reconciliation queued on #53. GHCR pull/runtime and independent E4 NOT_VERIFIED. |
-| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 head `2be212b`; exact-head 10/10 | Owns coordination docs/issue/CI schedule; product source unchanged. P1 #51 remains OPEN with root cause UNKNOWN. |
-| M9 | `feature/ac3-m9-integration` / `integration` | Remote #36 `37a09e8`; 11/11; local candidate `2d3f1da` ahead pending batch | Owns integration tests/manifest composition; local M7-imported #53 check passes packaging 9/0/1 skip, composition 3/3, E4 16/16, build, and package smoke 100 files. Remote CI pending. |
+| M1 | `feature/ac3-security-core` / `agents/M1-security` | #43 `f14aab7`; 10/10 | Owns Gateway/router, canonical native-Hook logging contract, and canonical Hook test. #53 owner-copy allowlist/canary passed. #51 diagnostics found no evidence-backed source fix; root remains UNKNOWN. |
+| M2 | `feature/ac3-execution-isolation` / original WSL `agents/M2-isolation`; recovery `agents/M2-isolation-win` | Remote #37 `0f2c10c`; 9/9; local detached candidate `04c7ec7` | Owns execution-isolation adapter and its branch-local wrapper copy. #53 wrapper matches M1 blob `d6f9324`; synthetic canary test added without weakening Hook/interruption assertions; build and target test 11/11 pass. Original WSL checkout preserved. Native Codex Shell remains UNPROTECTED/BLOCKED_NOT_VERIFIED. |
+| M3 | `feature/ac3-agent-onboarding` / `agents/M3-onboarding` | #33 `1829e05`; 9/9 | Owns onboarding and its branch-local Hook test copy; wrapper/canary change passes focused 11/11, build, syntax, and diff checks. |
+| M4 | `feature/ac3-desktop-security-center` / `agents/M4-desktop-security-center` | #34 `66e679b`; 9/9 | Owns desktop UI and tests; #53 wrapper matches M1 contract and canary is in `test/runtime-console.test.ts`. No provider/IPC; UI remains UNKNOWN. |
+| M5 | `feature/ac3-policy-audit` / `agents/M5-policy` | #47 `a6d610e`; 9/9 | Owns policy/audit; #53 wrapper matches M1 contract and canary is in `test/policy-management.test.ts`. No production filesystem host consumer. |
+| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6-e4-ac3` | #38 `c1fdf3c`; 11/11 | Owns verifier/schema and `e4:*`; wrapper matches M1 contract and canary is in `test/auto-e4.test.mjs` (6/6). Existing untracked 16-file E4 report preserved; external E4 remains NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / original WSL `agents/M7-reliability-ac3` | #39 `87e0df0`; 11/11 | Owns Windows packaging. #53 packaged-wrapper E4/log-canary regression passes; clean-VM lifecycle NOT_VERIFIED. |
+| M8 | `feature/ac3-open-source-product` / original WSL `agents/M8-ecosystem`; recovery `agents/M8-ecosystem-win` | #40 `16e3d01`; 9/9 | Owns public docs/community and branch wrapper copy. Raw wrapper is confirmed reachable via Windows installer build and E4 source harness. M0's M1-contract review confirms the minimum branch-local test-copy delta is to restore only the two missing synthetic canary lines; M8 implementation active. Original WSL checkout preserved. GHCR pull/runtime and independent E4 NOT_VERIFIED. |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | #30 `dfd6320`; 10/10 | Owns coordination docs/issue/CI schedule; product source unchanged. P1 #51 remains OPEN with root cause UNKNOWN. |
+| M9 | `feature/ac3-m9-integration` / `integration` | #36 `2d3f1da`; 11/11 | Owns integration tests/manifest composition; #53 composition checks pass locally and at exact-head CI. External E4 remains NOT_VERIFIED. |
 
 All active module PRs remain OPEN/Draft and target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #24 remains OPEN/Draft at base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with 11/11 checks passing; it was not changed or merged. The quota page remains open.
 
@@ -220,7 +220,7 @@ AC3 PR #24 与模块候选均以共同基线 `62496d4020bd90ba2eede49b2e80a2bbeb
 | `package.json` | M3、M5、M6、M7（M3/M5/M7 字段已确认；M6 需要显式确认当前 `e4:*` 字段） | 不覆盖对方字段；#27 记录字段、原因和组合结果 |
 | `src/ai/console.ts` | M3（接入路由）、M4（安全中心配套），暂定 | 路由/响应变更列出协作模块并更新 API 契约 |
 | `src/runtime/evidence.ts` | M1（写入调用）、M6（schema/验证），暂定 | 事件语义变更列出协作模块并保留拒绝/执行/副作用边界 |
-| `test/agent-hook.test.ts`, `security-lab/claude-native-hook.mjs` | M1 | Hook 进程中断与安全决策测试由 M1 修改；其他分支通过合入 M1 提交或消费适配结果，不复制测试实现 |
+| `test/agent-hook.test.ts`, `security-lab/claude-native-hook.mjs` | M1 canonical; module-local wrapper copies follow their PR owner | M1 owns canonical Hook/interruption semantics and wrapper-log contract. A branch owner may add only a synthetic canary input/log-exclusion assertion in that branch's existing CI-run test copy to exercise its own wrapper; preserve every fail-closed/interruption assertion and keep M1's worktree untouched. Any broader fixture or semantic change requires M1 review; do not change shared test configuration to evade ownership. |
 | `test/honeypot-runtime.test.ts` | M7 场景/恢复验证；M1 Gateway 错误契约 | M7 维护隔离、恢复及副作用场景；错误码期望遵循 M1 Gateway 契约，并与 M9 验收保持一致 |
 
 每模块只提交自己的分支。遇到未归属路径先更新本表；不能通过复制或重命名接口来规避冲突。M3 PR #33 与 M6 PR #38 均基于 AC3；M6 旧 PR #31 仍是独立 main-based 轨道。M0 不替模块 rebase 或覆盖提交；M5 `cf4e2cd` 仍待远端验收，M6 外部 E4 和 M7 clean-VM 安装仍未验证。M0 仅协调，不替模块发布。

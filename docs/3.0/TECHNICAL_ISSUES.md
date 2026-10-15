@@ -1,17 +1,17 @@
 # M0 技术问题分级与协作流程
 
-## Latest issue ledger (2026-10-15 05:18 UTC)
+## Latest issue ledger (2026-10-15 05:31 UTC)
 
 | Issue | Priority / owner | Current evidence | State and next acceptance |
 | --- | --- | --- | --- |
 | #27 | P1 / M6, M9; M0 coordinates | M6 fields match the M9 manifest; current M9 exact-head checks 11/11. | OPEN for synchronized owner record; external E4 remains NOT_VERIFIED. |
-| #29 | P2 / M0 | 5-hour usage page remains readable above stop threshold and open; no module task is active while M3/M4/M5/M6/M9 candidates enter the 05:18 publication batch. M2/M8 worktrees await owning runtime; no repair attempted. | OPEN; exclusive VMware/model/installer resources unreserved. Stop all work if quota unreadable or below 5%. |
+| #29 | P2 / M0 | Usage page remains open/readable above stop threshold. M2 #37 has local candidate `04c7ec7`; one module task, M8 #53, is active in the detached recovery worktree. The original WSL-managed worktrees remain untouched. | OPEN; VMware/model/installer resources unreserved. Stop all work if quota unreadable or below 5%; next public batch no earlier than 05:40:58 UTC. |
 | #32 | P1 / M1; M0 tracks | M1 focused Windows diagnostics; M1/M3/M4/M6/M9 current exact-head checks green; M6 accepts timing-equivalent fixture; historical failing runs retained. | CLOSED for the synthetic subprocess marker regression only. Why the original runner exceeded the one-second window remains UNKNOWN; native-host callback remains NOT_VERIFIED. |
 | #41 | P1 / M7 | PR #39 checks 11/11; no clean-VM install/launch/upgrade/uninstall/rollback evidence. | OPEN/HOLD; exclusive resource and sanitized lifecycle proof required. |
 | #45 | P1 / M2 | PR #37 checks 9/9; native Codex Shell host policy/callback unavailable. | OPEN/BLOCKED_NOT_VERIFIED; do not claim native protection. |
 | #51 | P1 / M1 | M1 matched Ubuntu Node22 attempt 1 and M0 Windows Node20 run `38682225388`: both exhausted 500 retries; identical store/test blobs pass in later M1 Windows Node20 CI. Local Windows Node22 test and 48-state diagnostic pass. CI lacks lock-owner/duration traces; no source change or assertion reduction. | OPEN; root cause UNKNOWN. Preserve `RETRY_LIMIT` and all 48 assertions. |
 | #52 | P0 / M1 router, M5 policy; M0 coordinates | Exact-head owner fixes and synthetic junction tests pass; no production filesystem host or protected open/handle identified. | OPEN until a real filesystem host uses the canonical boundary and protected open/handle evidence exists; TOCTOU remains NOT_VERIFIED. |
-| #53 | P0 candidate / M1 logging contract, M7 Windows packaging; affected branch-copy owners | M1 owner copy verified; M7 `87e0df0` exact-head checks 11/11 pass. M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c`, and M9 `2d3f1da` have local candidates with canary or composition checks; M6's pre-existing 16-file E4 report remains untracked and untouched. Their exact-head remote CI is pending. M2/M8 worktree availability remains unresolved. | OPEN; preserve canary regression and reconcile every reachable/shipped copy with M1's allowlist contract, M7 package check, M9 composition, and remaining owner copies. |
+| #53 | P0 candidate / M1 logging contract, M7 Windows packaging; affected branch-copy owners | M1 owner copy and M7 packaged regression pass. M3 `1829e05`, M4 `66e679b`, M5 `a6d610e`, M6 `c1fdf3c`, and M9 `2d3f1da` are pushed; their current exact-head CI is green. M2 local `04c7ec7` matches the M1 wrapper blob and adds a canary test (build, 11/11 target tests, diff check pass). M8 wrapper remains raw and is confirmed in installer/E4 harness paths; M0's M1-contract review identified the narrow branch-local test-copy restoration, and M8 is implementing it. | OPEN; await M2/M8 exact-head CI, retain M7 package check and M9 composition evidence, then verify every reachable/shipped copy. No confirmed exposure or external transmission. |
 
 ## Archived issue ledger (2026-10-15 04:04 UTC)
 
