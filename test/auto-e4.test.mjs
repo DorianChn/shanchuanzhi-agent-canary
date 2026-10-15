@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -8,6 +9,40 @@ import {runHookFaultChecks} from '../packaging/windows/e4-hook-faults.mjs';
 import {fileURLToPath} from 'node:url';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+
+test('Claude native hook wrapper logs only the allowlisted decision fields',t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m6-hook-log-'));
+  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const state=path.join(root,'state');fs.mkdirSync(state);
+  const modulePath=path.join(root,'fixture-hook.mjs');
+  const logFile=path.join(root,'hook-events.jsonl');
+  const wrapper=path.join(repo,'security-lab','claude-native-hook.mjs');
+  const sensitive={
+    session:'M6_HOOK_LOG_CANARY_SESSION',
+    tool:'M6_HOOK_LOG_CANARY_TOOL',
+    input:'M6_HOOK_LOG_CANARY_RAW_INPUT',
+    reason:'M6_HOOK_LOG_CANARY_REASON',
+    file:'M6_HOOK_LOG_CANARY_PATH',
+    filePath:path.join(root,'M6_HOOK_LOG_CANARY_PATH.txt')
+  };
+  fs.writeFileSync(modulePath,`export async function decideAgentHook(_provider,_workspace,_state,input){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:input.tool_input.reason}}}\n`);
+  const input={session_id:sensitive.session,tool_name:sensitive.tool,tool_input:{command:sensitive.input,file_path:sensitive.filePath,reason:sensitive.reason}};
+  const result=spawnSync(process.execPath,[wrapper,modulePath,root,state,logFile],{input:JSON.stringify(input),encoding:'utf8',windowsHide:true,timeout:5000});
+  assert.equal(result.error,undefined,result.error?.message);
+  assert.equal(result.status,0,result.stderr);
+  assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecisionReason,sensitive.reason);
+  const log=fs.readFileSync(logFile,'utf8');
+  const lines=log.trim().split(/\r?\n/);
+  assert.equal(lines.length,1);
+  const event=JSON.parse(lines[0]);
+  assert.deepEqual(Object.keys(event).sort(),['hookEventName','permissionDecision','timestamp']);
+  assert.equal(Number.isNaN(Date.parse(event.timestamp)),false);
+  assert.equal(event.hookEventName,'PreToolUse');
+  assert.equal(event.permissionDecision,'allow');
+  for(const value of Object.values(sensitive))assert.equal(log.includes(value),false,`sensitive value persisted: ${value}`);
+  assert.equal(log.includes('permissionDecisionReason'),false);
+  assert.equal(log.includes('tool_input'),false);
+});
 
 test('Auto E4 locks a run and does not silently remove a previous lock',()=>{
   const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-lock-'));
