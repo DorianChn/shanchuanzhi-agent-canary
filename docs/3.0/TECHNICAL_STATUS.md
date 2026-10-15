@@ -1,3 +1,11 @@
+## Coordinator update (2026-10-15 11:42 UTC)
+
+- The usage page remains open and was readable above the stop threshold at 11:33 UTC. Keep it open; read it again before the next public-write batch.
+- M1's follow-up on P1 Issue #51 finished on existing PR #43 head `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`, with a clean worktree and no code change. Dedicated Ubuntu Node 22 run `38719879606` failed worker 2 at 500/500 `STATE_STORE_BUSY`. The M4 Ubuntu Node 20 failure is the same test; M4's store blob matches M1. Root cause remains UNKNOWN.
+- The M1 official narrow local test is unavailable because `tsx` and `@modelcontextprotocol/sdk` are missing; no dependency was installed. A separate Windows Node 22.23.1 four-process run using the actual M1 store source passed 48/48 writes in 357 ms, but bypassed the official import/test path and does not explain the Ubuntu failure. No assertions or retry limits changed; no loss/corruption or code defect is established.
+- No module coding task is confirmed active in this coordinator at 11:42 UTC. M3's action on Issue #55 is pending; M9 is waiting to repin after M3 advances. Other Codex-window occupancy is not observable. No VMware, real-model, or installer slot is reserved here, so treat those exclusive resources as unavailable.
+- Public comments on PR #33 and Issue #55 record the M9 dual-platform failure and M3 action. Last public comment was at 11:33 UTC; next public-write batch is no earlier than 11:53 UTC, after a fresh readable quota check.
+
 ## Coordinator update (2026-10-15 11:33 UTC)
 
 - The ChatGPT usage page remains open in the browser and was readable above the stop threshold at 11:32 UTC. Keep it open; do not store account-specific percentages in tracked files.
