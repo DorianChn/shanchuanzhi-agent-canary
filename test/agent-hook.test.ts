@@ -16,6 +16,22 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
  const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
  assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
 });
+test('native lab wrapper writes only normalized allowlisted log fields',()=>{
+ const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'normalized-hook-module.mjs');
+ const callerCanaries=['SYNTHETIC_NATIVE_HOOK_ARGUMENT_CANARY','C:/synthetic/caller/private.txt'];
+ const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
+ fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
+ const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
+ assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
+ assert.equal(lines.length,1);
+ const record=JSON.parse(lines[0]);
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
+ assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
+ for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
+});
 test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
