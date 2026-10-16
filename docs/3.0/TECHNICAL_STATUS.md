@@ -1050,3 +1050,7 @@ The 01:41 snapshot refresh workflow 38836513714 completed successfully (ownershi
 - Pushed four docs-only commits through `7ed1f0459e1ea53f6fd9d572682ff75a4489120c` to the existing M0 branch. PR #30 remains OPEN/Draft at that exact head; its 01:59 snapshot was read back and retains `API-Contract-Change: yes`.
 - Exact-head coordination workflow 38838063733 passed. Description refresh 38838096872 passed. Product CI 38838063732 was still in progress at this read.
 - PR #24 remains OPEN/Draft at unchanged head/base. Usage tab 336903555 remained open/active at the pre-push check (79%). Next owner checkpoint 02:12 UTC; next push no earlier than 02:19 UTC.
+
+### PR #30 exact-head CI completion — 2026-10-16 02:02 UTC
+
+Exact-head product CI run 38838063732 passed all nine jobs on `7ed1f04`. PR #30 snapshot was refreshed to 02:02 and records the completed CI and passed coordination/description workflows; readback follows. This is M0 documentation CI only.
