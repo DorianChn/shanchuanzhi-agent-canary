@@ -698,3 +698,7 @@ PR #30 exact-head run 38853435999 passed 9/9 on c812427, including Windows Node 
 ## M0 06:20 UTC owner/resource checkpoint — 2026-10-16
 
 No module owner reply or relevant PR head movement was visible since 04:52. Follow-ups due 06:40: #51 comment 6209430895 (M1/M4 file-store diagnosis and routing the distinct token-registry symptom), #53 6209431379 (M7/M8 real Windows package/Hook/harness proof), #54 6209431850 (M9 old Node 22 HTTP 503), #55 6209432325 (M3 native Read denial and positive control), and #56 6209432801 (M1 canonical test path/SHA or reviewed exception). Resource #29 comment 6209433272 retains only the two existing lanes and no exclusive test reservation. Usage Overview was readable at 88%; PR #30 latest pushed head c812427 had exact-head CI 9/9; PR #24 remains unchanged.
+
+## M0 exact-head CI readback — 2026-10-16 06:23 UTC
+
+PR #30 exact-head product run 38860789569 passed all nine jobs on ac4f72d. Coordination 38860789574 and description ownership refresh 38860818272 also passed. These validate the M0 coordination head only; M3/M9 composition, M7/M8 packaged evidence, M1/M4 lock diagnosis, host protection, clean-VM installer lifecycle, and product E4 remain NOT_VERIFIED/open as already recorded.
