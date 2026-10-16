@@ -892,3 +892,8 @@ M0 comment 6216314917 asks M1 to diagnose/repair or name a BLOCKED owner/depende
 - **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 13:20; exact Hook-test blobs remain different. Follow-up 6216422748 requests canonical-test/shared-path review or named owner/path by 13:40.
 - **P1 #51, M1:** exact M0-head product CI failure is run 38905972645 on Ubuntu Node 20 test 163; 500 bounded lock retries exhausted as `RETRY_LIMIT`. Follow-up 6216314917 requests diagnosis or named blocker by 13:30. Preserve tests and UNKNOWN trigger status until supported by evidence.
 - **P0 #52, M1/M2/M5:** no host acceptance evidence by 13:10; follow-up 6216232385 remains due 13:30.
+## P0/P1 deadline readback — 2026-10-16 13:30 UTC
+
+- **P0 #52:** no M1/M2/M5 response, installed-host call path, acceptance evidence, or PR #43/#37/#47 movement by 13:30. Follow-up 6216593750 requests host proof or a named BLOCKED owner/dependency by 13:50.
+- **P1 #51:** no M1 root-cause/lock-holder diagnosis or repair plan by 13:30. Exact-head PR #30 run 38905972645 still fails Ubuntu Node 20 test 163 after 500 bounded lock retries. Follow-up 6216592044 requests diagnosis or named blocker by 13:50; preserve tests and do not claim data loss.
+- #53/#55/#56 remain due 13:40; no owner replies/module PR movement by 13:30.
