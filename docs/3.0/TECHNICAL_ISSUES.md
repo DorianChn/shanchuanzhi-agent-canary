@@ -858,3 +858,8 @@ At the same checkpoint, #53/#55/#56 had no owner reply or head movement after th
 - **P1 #55, M3/M9:** no owner reply/correction or PR #33/#36 movement by 12:40; run 38727481764 remains a fail-open on Ubuntu/Windows for unpinned native Read. Follow-up 6215716953 requests a fail-closed fix, positive control, exact-head rerun, or named blocker by 13:00. Preserve the failing test.
 - **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 12:40; exact PR #30/#43 Hook-test blobs remain different. Follow-up 6215717643 requests canonical-test/shared-path disposition or named owner/path by 13:00.
 - **P0 #52, M1/M2/M5:** still no first-party host evidence as of 12:40; follow-up 6215543788 remains due 12:50.
+## P0 #52 12:50 UTC deadline readback — 2026-10-16
+
+No M1/M2/M5 response, selected host/build/call path, protected-open acceptance evidence, or PR #43/#37/#47 movement by 12:50. Follow-up 6215879713 requests first-party host acceptance or a named BLOCKED owner/dependency by 13:10. P0 remains OPEN/NOT_VERIFIED; synthetic adapter/source-only results do not prove installed-host consumption.
+
+Issues #53/#55/#56 remain due 13:00 after their 12:40 follow-ups; no owner replies or module PR movement were visible at 12:50.
