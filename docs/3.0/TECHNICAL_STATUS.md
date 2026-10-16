@@ -1033,3 +1033,14 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 ### PR #30 description workflow readback — 2026-10-16 01:46 UTC
 
 The 01:41 snapshot refresh workflow 38836513714 completed successfully (ownership-contract-evidence 1/1) on PR #30 head `fd2387c`. This changes no module acceptance status.
+
+## M0 owner/resource checkpoint — 2026-10-16 01:52 UTC
+
+- At the checkpoint, no owner reply or relevant PR-head movement was visible for #51/#53/#54/#55/#56. Posted/read back follow-ups: #51 6206231397, #53 6206231710, #54 6206232057, #55 6206232417, #56 6206232744. Next response/blocker checkpoint 02:12 UTC.
+- **#51 P1 M1/M4:** retry-exhaustion cause remains UNKNOWN; added diagnostics improve future failure reports but passing run 38786461318 does not explain the older events.
+- **#53 P0 M7/M8:** synthetic co-located Hook CI is verified; real Windows package/Setup.exe hashes, extracted-Hook comparison and extracted-harness result remain NOT_VERIFIED.
+- **#54 P1 M9:** old Windows Node 22 503 remains unexplained; current Windows job passes, while Issue #55 independently blocks exact-head M9 composition.
+- **#55 P1 M3/M9:** unpinned normal Read is still allowed in M9 run 38727481764 on both Windows and Ubuntu; no M3 correction/positive control is visible.
+- **#56 P2 M0/M1:** no canonical test path/blob SHA or reviewed shared-path exception is visible; preserve the test and keep PR #30 Draft.
+- Resource comment #29 6206233085 confirms only tracked lanes #55 (M3) and #53 (M7/M8); no new lane or exclusive VMware/real-model/installer reservation; M0 did not start those tests. External Codex thread activity is not observable here.
+- Usage tab 336903555 remains open/active at 79%. PR #30 is OPEN/Draft at pushed head fd2387c; local docs commits are awaiting batch push. PR #24 remains OPEN/Draft at unchanged head/base. Next push window no earlier than 01:59 UTC after fresh preflight.
