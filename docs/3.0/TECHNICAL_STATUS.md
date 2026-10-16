@@ -1024,3 +1024,8 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - Pushed M0 head `fd2387c` exact-head product CI run 38836282658 passed all nine jobs. Coordination runs 38836282548, 38836326039, and 38836350534 passed.
 - PR #30 snapshot refreshed to 01:41 and read back at the same head with CI marked passed and the 01:52 owner checkpoint. PR #24 remains OPEN/Draft at unchanged head/base.
 - Description-refresh run 38836490055 passed; a second refresh run 38836513714 was still in progress at this read. Branch remains clean; next normal push window no earlier than 01:59 UTC.
+
+## M6 and M9 exact-head reconciliation — 2026-10-16 01:44 UTC
+
+- M6 PR #38 remains OPEN/Draft at `c1fdf3c`; all 11 reported checks pass. Its validation notes still classify local Hook tests as local-only and explicitly leave product-level/external E4 verification NOT_VERIFIED.
+- M9 PR #36 remains OPEN/Draft at `de3799a`. Its 11 product/wrapper checks pass, but exact-head composition run 38727481764 fails both `compose-current-module-refs` jobs (Ubuntu and Windows), matching Issue #55's unpinned native Read contract failure. M9 is not green as a whole and remains gated.

@@ -635,3 +635,8 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 ## M0 exact-head CI confirmation — 2026-10-16 01:41 UTC
 
 M0 documentation head `fd2387c` passed exact-head product CI 38836282658 (9/9) and coordination runs 38836282548, 38836326039, 38836350534. This validates only M0 coordination documents and does not resolve any module evidence gaps above.
+
+## M6/M9 exact-head note — 2026-10-16 01:44 UTC
+
+- M6 PR #38 (`c1fdf3c`) reports 11 successful checks, but PR validation text keeps the Hook tests local-only and product-level/external E4 NOT_VERIFIED.
+- M9 PR #36 (`de3799a`) has 11 successful general product/wrapper checks and two failed current-module composition jobs in run 38727481764 (Ubuntu and Windows); the M3 unpinned-Read contract remains the blocker. Keep M9 gated.
