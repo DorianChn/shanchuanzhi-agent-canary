@@ -1104,3 +1104,14 @@ Exact-head product CI 38841526771 passed all nine jobs on `97de61d`. PR #30 snap
 ### PR #30 02:41 description-refresh completion — 2026-10-16
 
 Description-refresh workflow 38841747213 passed ownership-contract-evidence 1/1 on PR #30 head `97de61d`.
+
+## M0 owner/resource checkpoint — 2026-10-16 02:52 UTC
+
+- No owner response or relevant PR-head movement was visible for #51/#53/#54/#55/#56. Posted/read back follow-ups: #51 6206960793, #53 6206961150, #54 6206961491, #55 6206961794, #56 6206962058; next deadline 03:12 UTC.
+- **#51 P1 M1/M4:** old Ubuntu Node 20/22 retry exhaustion remains UNKNOWN; no failure-specific trace or owner diagnostic was added.
+- **#53 P0 M7/M8:** real Windows package/Setup.exe, extracted-Hook, and extracted-harness proof remain NOT_VERIFIED beyond synthetic tests.
+- **#54 P1 M9:** older Windows Node 22 503 remains unexplained; current Windows job passes.
+- **#55 P1 M3/M9:** unpinned normal Read remains allowed; exact-head composition run 38727481764 fails both platforms.
+- **#56 P2 M0/M1:** canonical interruption-test path/blob SHA or reviewed shared-path exception remains missing.
+- Resource comment #29 6206962381: only lanes #55/#53; no new lane or exclusive test resource; no VMware/real-model/installer testing started by M0. Product E4 remains NOT_VERIFIED.
+- Usage tab 336903555 remains open/active at 98%. PR #30 remains OPEN/Draft at 97de61d with exact-head CI passing 9/9; PR #24 unchanged. Next push no earlier than 02:59 UTC.
