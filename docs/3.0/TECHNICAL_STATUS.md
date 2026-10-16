@@ -1287,7 +1287,7 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 
 ## M0 06:40 UTC owner/resource checkpoint — 2026-10-16
 
-- Usage Overview remains open/active in tab 336903555 at 86%; reset in 37 minutes. No module status reply or M1–M8/M9 PR-head movement since the prior checkpoint. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Usage Overview was checked and remains open in the user's browser; the exact quota reading is kept in the private M0 report. No module status reply or M1–M8/M9 PR-head movement since the prior checkpoint. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - PR #30 remains OPEN/Draft at remote head `ac4f72df68e025a3ca9da19d8bf5663795d2c964`; local docs branch is clean and one commit ahead (`f737f09`). No source edits or module-branch changes were made. Next push no earlier than 06:42 UTC after fresh quota/remote/PR #24 preflight.
 - #51 P1: M4 PR #34 exact head `fbf20907c6accffc37246eddf04f8599060d99ea`, run `38698635434`, failed only in Ubuntu Node 20: worker 2 exhausted the bounded `STATE_STORE_BUSY` loop; Ubuntu Node 22 passed and other cancelled matrix jobs are not separate failures. M1 PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` later passed the full file-store test ten times on Ubuntu Node 20 and 22 in `38786461318`. The pass does not diagnose the earlier failure; lock owner/root cause remain UNKNOWN. The separate `src/tokens.ts` timeout remains distinct.
 - #52 P0: M5 PR #47 exact head `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c` CI `38719884959` passes. M1/M2 implementation tests do not prove first-party host consumption of protected-open/held-handle behavior. Real-host sensitive-path, junction, and TOCTOU acceptance remains NOT_VERIFIED; issue remains OPEN.
@@ -1303,3 +1303,8 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Exact-head product CI `38862890439` passed 9/9 and AC3 coordination `38862890411` passed 1/1. After PR description refresh/readback, ownership-contract runs `38863450388` and `38863564662` passed 1/1 on the same head.
 - PR #30 body now records the 06:40 issue/resource checkpoint and current CI evidence; PR #30 still carries the M1-owned test-path overlap tracked in #56.
 - Next M0 push no earlier than 07:04 UTC after fresh Usage, remote-head, PR #24, and diff preflight. No module source changed.
+
+## M0 07:00 UTC resource readback — 2026-10-16
+
+- No owner status reply or M1–M8/M9 PR-head movement appeared after 06:40. Resource Issue #29 comment `6209990887` retains the two tracked lanes M3/#55 and M7/M8/#53; live thread activity remains UNKNOWN. No third lane or exclusive test slot was opened.
+- All open module gates remain as listed above. PR #30 remains OPEN/Draft at `a1dd2c2`; PR #24 remains unchanged. M0 docs commit `9f5b880` is queued locally. Next push no earlier than 07:04 UTC after fresh preflight.
