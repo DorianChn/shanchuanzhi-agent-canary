@@ -1234,3 +1234,9 @@ Description-refresh workflow 38848483566 passed ownership-contract-evidence 1/1 
 - **#56 P2:** canonical interruption-test path/blob SHA or M1-reviewed shared-path exception remains missing; preserve test and Draft gate.
 - PR #30 remains OPEN/Draft at 93821f0. Coordination workflows 38850021714 and 38850400804 passed; product CI 38850021718 has one Windows Node 22 token-registry lock test failure, seven job passes, and package-smoke skipped. PR #24 remains OPEN/Draft, head/base unchanged.
 - Usage tab 336903555 remains open/active at 91%. No third module lane and no M0 VM/model/installer test. Next owner checkpoint 04:52 UTC; next normal push no earlier than 04:39 UTC.
+
+## PR #30 exact-head CI readback — 2026-10-16 04:41 UTC
+
+- Exact-head product CI 38851730894 passed all 9/9 jobs on 0aef2d420136dc7924acc0c991a1067dab584fdd, including Windows Node 22 and test/tokens.test.ts. Coordination 38851730818 and description ownership workflow 38851751695 passed.
+- This run's source and test are unchanged from the preceding Windows Node 22 failure 38850021718 on 93821f0. The later pass does not explain the bounded token-registry lock timeout; keep Issue #51's adjacent symptom and original file-state-store trigger UNKNOWN.
+- PR #30 remains OPEN/Draft; PR #24 remains OPEN/Draft with unchanged head/base. Usage tab 336903555 remains open/active at 90%. Owner checkpoint 04:52 UTC; next push no earlier than 04:59.

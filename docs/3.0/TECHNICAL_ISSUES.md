@@ -682,3 +682,7 @@ No new owner replies or relevant module PR head changes were visible. M0 posted 
 ## M0 04:32 UTC owner/resource follow-up — 2026-10-16
 
 No M1/M4, M3, M7/M8, or M9 owner reply or relevant PR head movement was visible. Follow-ups due 04:52: #51 comment 6208132638 (original file-state-store trigger plus routing the distinct token-registry lock owner), #53 6208133066 (real Windows package and extracted-Hook/harness proof), #54 6208133517 (old Node 22 HTTP 503 disposition), #55 6208133908 (fail-closed Read correction and positive control), and #56 6208134272 (canonical Hook test path/SHA or reviewed exception). Resource comment #29 6208134573 retains the two existing lanes and no exclusive test reservation. Keep all acceptance gates open and preserve tests/policy.
+
+## M0 exact-head CI pass after Windows token-registry timeout — 2026-10-16 04:41 UTC
+
+Product run 38851730894 passed 9/9 on PR #30 docs head 0aef2d4, including Windows Node 22 and the same parallel token-registry test that failed in 38850021718 on 93821f0. M0 made no source or test change between these heads. Treat the failure as not reproduced on this subsequent run; its cause remains UNKNOWN and the earlier worker update did not complete. This does not resolve or merge the token-registry symptom with the distinct file-state-store investigation in #51. Comment 6208234844 records this readback; retain the 04:52 owner-routing deadline.
