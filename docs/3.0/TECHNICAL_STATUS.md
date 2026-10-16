@@ -1373,3 +1373,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 
 - The 08:29 batch snapshot was read back at exact head `23ab1742963d12e70edb9d34344ded939c1285a1`. Product CI `38874084756` passed 9/9, exact-head coordination `38874084711` passed, and post-refresh ownership-contract workflow `38874313671` passed 1/1.
 - PR #30 remains OPEN/Draft. PR #24 is unchanged. Usage was 83% at preflight; the browser tab remains open/active. Next push no earlier than 08:49 UTC.
+
+## M0 08:40 UTC resource readback — 2026-10-16
+
+- Usage Overview remains open/active at 83%. PR #24 is unchanged OPEN/Draft; every M1–M8/M9 PR head matches the 08:20 scan. No module owner reply appeared in the tracked resource/blocker issues; live Codex-thread activity remains UNKNOWN.
+- Resource Issue #29 comment `6211604210` keeps only M3/#55 and M7/M8/#53 as tracked lanes, with no third task or exclusive VMware/real-model/installer reservation.
+- PR #30 exact head `23ab174` product CI passed 9/9; the push-triggered coordination and post-description ownership checks passed. P1 #51 remains open without an identified lock owner/root cause.
+- Next resource check 09:00 UTC; next M0 push no earlier than 08:49 UTC after fresh preflight. No module source changed.
