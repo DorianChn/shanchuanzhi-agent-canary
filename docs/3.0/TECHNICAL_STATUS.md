@@ -1615,3 +1615,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - PR #30 remains OPEN/Draft at exact head `7900c1f`; product CI 38903512535, coordination 38903512440, and description check 38904669817 passed. PR #24 remains unchanged OPEN/Draft.
 - Usage remains readable at 91% five-hour / 70% weekly; page still says "resetting". The displayed value is above 5%, but a refreshed quota is not confirmed. Usage tab remains open.
 - No M0 module source/test changes. Last push 12:51 UTC; next no earlier than 13:11 following fresh preflight.
+## M0 13:16 UTC exact-head P1 regression — 2026-10-16
+
+- PR #30 remains OPEN/Draft at exact head `4185158274c219c24c8826a1fb81a238444c6d71`. Product CI run 38905972645 failed only `test (ubuntu-latest, 20)`: subtest 163 `four concurrent processes preserve every quarantine without lost writes` exhausted 500 bounded `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT` (321 passed, 1 failed, 4 skipped).
+- The failing worker's underlying lock-holder/timing trigger remains UNKNOWN; the run alone does not establish data loss/corruption. Coordination 38905972269 and the previous body check 38906052754 passed. The new description check 38906497087 is in progress.
+- M0 recorded the exact recurrence on P1 #51 in comment 6216314917, requesting M1 diagnosis/repair or a named BLOCKED owner/dependency by 13:30. Preserve the existing concurrency and final-state assertions; no test was removed/weakened.
+- Issue #29 body/resource comment 6216316351 record the failure and current quota/deadlines. Usage remains readable at 91%/70%, page says "resetting"; refreshed quota remains unconfirmed.
+- PR #24 and module PR heads remain unchanged. No M0 module source/test changes. Last push 13:11 UTC; next no earlier than 13:31.
