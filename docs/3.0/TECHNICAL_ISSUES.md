@@ -728,3 +728,9 @@ M0 docs-only head `bcc0ee5b4d066a361a7661b055c516a4eee965c8` has product CI `388
 ## M0 07:20 UTC resource readback — 2026-10-16
 
 No module status reply or M1–M8/M9 PR-head movement appeared since 07:00. Resource #29 comment `6210278818` keeps the two tracked lanes M3/#55 and M7/M8/#53; live thread activity remains UNKNOWN. No third lane or exclusive test reservation was started. All P0/P1 acceptance issues remain open.
+
+## M0 07:40 UTC update — 2026-10-16
+
+- **P1 #51:** exact-head M0 product run `38867665155` reproduced a single Ubuntu Node 20 failure in test #163 (`four concurrent processes preserve every quarantine`): one worker exhausted 500 bounded `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. Ubuntu Node 22 passed; cancelled jobs are not independent failures and package-smoke was skipped. AC3 coordination `38867669152` and refreshed PR-description ownership check `38868536084` passed. The repeated symptom still does not identify a lock owner or root cause; preserve the assertion and fail-closed behavior. Issue comment `6210545636` records this recurrence.
+- The PR #30 docs snapshot was updated to report the red product job accurately; no product source or test was changed to obtain a green result.
+- **Resource 07:40:** Usage Overview read 83% at 07:42 UTC, tab remains open/active. PR #24 and all M1–M8/M9 heads are unchanged from 07:20. Resource Issue #29 comment `6210682385` keeps only M3/#55 and M7/M8/#53 tracked, with no exclusive resource reservation. Next check 08:00 UTC; next M0 push no earlier than 07:49 after preflight.

@@ -1320,3 +1320,17 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 
 - No module status reply or M1–M8/M9 PR-head movement appeared since 07:00. Resource Issue #29 comment `6210278818` retains only M3/#55 and M7/M8/#53 as tracked lanes; live thread activity remains UNKNOWN. No third lane or exclusive test resource was reserved.
 - Usage Overview remains open and above the stop threshold. PR #30 remains OPEN/Draft at `bcc0ee5`; PR #24 is unchanged. Next status check 07:40 UTC; next M0 push no earlier than 07:25 after preflight.
+
+## PR #30 07:28 batch readback — 2026-10-16
+
+- Pushed documentation-only M0 updates through `b22b239b87cb8ea7432015b1a8d72979a430ecab`; PR #30 remains OPEN/Draft and PR #24 remains OPEN/Draft at unchanged head/base.
+- Exact-head product run `38867665155` failed only in the Ubuntu Node 20 npm-test job: test #163, four concurrent processes preserving quarantine in `test/file-state-store.test.ts`; one worker exhausted the bounded 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. Ubuntu Node 22 passed; remaining cancelled matrix jobs are not separate failures; package-smoke was skipped.
+- Exact-head AC3 coordination `38867669152` passed. After the PR description snapshot refresh, ownership-contract run `38868536084` passed. The PR body records the failed product job without changing source/tests.
+- Issue #51 recurrence comment `6210545636` keeps the cause and lock owner UNKNOWN. Preserve assertions and fail-closed behavior. Next M0 push no earlier than 07:49 UTC after fresh preflight.
+
+## M0 07:40 UTC resource readback — 2026-10-16
+
+- Usage Overview was read at 07:42 UTC: 83% of the five-hour limit remains; the Usage tab remains open and active. This is above the 5% stop threshold.
+- All M1–M8/M9 PR heads match the 07:20 scan; all remain OPEN/Draft. PR #24 remains at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5dff42873584ed488e4ee7`. M0 PR #30 remains at `b22b239b87cb8ea7432015b1a8d72979a430ecab`.
+- Resource Issue #29 comment `6210682385` retains only M3/#55 and M7/M8/#53 as tracked lanes. Live Codex-thread activity remains UNKNOWN; no third task or VMware/real-model/installer slot was opened or reserved. P1 #51 remains the route for the repeated Ubuntu Node 20 state-store retry-limit symptom; the cause and lock owner remain UNKNOWN.
+- Next resource check 08:00 UTC; next M0 push no earlier than 07:49 UTC after fresh quota, remote-head, PR #24, and diff preflight. No module code changed.
