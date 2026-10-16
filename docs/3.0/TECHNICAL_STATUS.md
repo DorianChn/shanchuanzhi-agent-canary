@@ -1071,3 +1071,7 @@ Exact-head product CI run 38838063732 passed all nine jobs on `7ed1f04`. PR #30 
 - Pushed the 02:12 checkpoint as docs-only commit a833345. PR #30 remains OPEN/Draft at exact head `a833345cd30edaca1a7adca8aa260f05f7765980`; 02:19 snapshot was refreshed and read back.
 - Exact-head coordination workflow 38839819610 passed. Product CI 38839819568 and the body-refresh workflow 38839850421 were in progress at this read.
 - PR #24 remains OPEN/Draft at its unchanged head/base. Usage tab remained open/active at the pre-push check; next owner checkpoint 02:32 UTC and next push no earlier than 02:39 UTC.
+
+### PR #30 02:21 CI readback — 2026-10-16
+
+Product CI 38839819568 passed all nine jobs on head `a833345`. The 02:21 PR #30 snapshot refresh was read back at the same head; coordination workflow 38839819610 and prior description refresh 38839850421 passed. New refresh run 38840004963 was in progress at this read.
