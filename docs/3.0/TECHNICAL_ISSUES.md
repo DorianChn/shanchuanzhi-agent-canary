@@ -784,3 +784,8 @@ PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `3887627
 - **P1 #55:** filtered Ubuntu and Windows logs for M9 run 38727481764 show “expected deny, actual allow” on unpinned native Read at the logged M1 b1d7423 / M3 be38802 pair. Current PR heads are M1 #43 9ef3dc2, M3 #33 be38802, M9 #36 de3799a. Comment 6213780254 asks M3 to preserve M1 fail-closed behavior and add a supported-capability positive control, then M9 to rerun exact current heads on both platforms by 11:00 UTC.
 - **P2 #56:** comments 6213818328 records differing PR #30/#43 blobs for the M1-owned Hook test and requests M1 confirmation of the canonical test/shared-path exception by 11:00 UTC. M0 did not edit this file; keep PR #30 Draft pending disposition.
 - Resource #29 comment 6213767711 records 91% five-hour / 70% weekly usage, no confirmed active lane, and no VMware/model/installer reservation. M1–M8/M9 branch heads remain unchanged; local module-worktree isolation is NOT_VERIFIED.
+## 11:00 UTC owner deadline readback — 2026-10-16
+
+- #53 (M7/M8), #55 (M3/M9), and #56 (M1) have no owner reply or exact-head movement by the requested deadline. Keep them OPEN; no module lane can be counted as confirmed active from GitHub evidence.
+- #52 first-party host call-path and protected-open evidence remains due 11:15 UTC; synthetic checks are not product-host acceptance.
+- Resource checkpoint #29 comment 6214042031 records Usage 91%/70%, PR #30 exact-head CI/coordination/body checks passing, unchanged PR #24, no confirmed active lane, and no exclusive resource reservation.
