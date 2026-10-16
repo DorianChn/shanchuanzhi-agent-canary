@@ -1480,3 +1480,8 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Exact-head product CI run 38889761399 passed 9/9; coordination run 38889761532 passed 1/1; corrected structured PR-body check 38889984395 passed 1/1. An earlier description check 38889796349 failed because PowerShell flattened newlines; saved its prior body to the local reports directory, replaced it with a concise structured description, and verified required metadata readback. Latest refresh run 38890082265 is pending after synchronizing the passing status.
 - Issue follow-ups: #29 comment 6213767711; #53 comment 6213780639; #55 comment 6213780254; #56 comment 6213818328. Owner responses/evidence are due 11:00 UTC. M9 composition failure remains expected deny / actual allow on both Ubuntu and Windows; no security assertion was weakened.
 - No module source/tests, PR #24, main branch, or Release were changed. Last push 10:49 UTC; next M0 push no earlier than 11:09 UTC after fresh quota/status preflight.
+## M0 10:53 UTC verification update — 2026-10-16
+
+- After the PR #30 body status refresh, exact-head ownership-contract-evidence run 38890082265 passed 1/1. Product CI 38889761399 remains green 9/9; PR #30 is OPEN/Draft at 5dd5f98. PR #24 remains OPEN/Draft and unchanged.
+- P0 Issue #52 follow-up 6213913840 now asks M1/M2/M5 for first-party protected-open/alias/junction/held-handle/TOCTOU acceptance evidence or an owner/blocker/next-delivery statement by 11:15 UTC. The comment was read back after correcting its timestamp.
+- The prior malformed PR-body text is preserved in the local reports directory; the public PR body now has explicit API-Contract-Change and Test-Evidence fields. No code/tests were changed.
