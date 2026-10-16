@@ -1458,3 +1458,15 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Product CI `38887711857` passed 9/9; coordination `38887711849` and latest post-description ownership check `38887980772` passed 1/1. PR #30 body/head were read back.
 - No module source/tests or heads changed. P0 #52/#53 and P1 #41/#45/#51/#54/#55 remain; PR #36 composition is still red for #55. Local worktree isolation and actual module session activity remain unverified.
 - Next resource check 10:40 UTC; next push no earlier than 10:49 UTC after fresh preflight.
+## M0 10:44 UTC resource checkpoint — 2026-10-16
+
+- Usage Overview read from the already-open tab: 91% of the five-hour limit and 70% weekly. PR #24 remains OPEN/Draft at head 62496d4 on base dc8d009; PR #30 remains OPEN/Draft at a244875, based on PR #24 head.
+- Exact-head PR #30 product CI 38887711857 passed 9/9; coordination 38887711849 and post-description ownership check 38887980772 passed. Local docs commit 1b5e584 is queued; last push remains 10:29 UTC, so next push is no earlier than 10:49 UTC.
+- M1–M8/M9 PR heads are unchanged from the 10:20 snapshot. PR #36 composition still fails on Ubuntu and Windows for the M3/M1 unpinned native Read contract tracked by P1 #55. P0 #52/#53 and P1 #41/#45/#51/#54/#55 remain open. P2 #56 tracks the unresolved M0/M1-owned Hook test overlap in PR #30/#43.
+- No module owner response is recorded on #53/#55 since 09:00 UTC; the two tracked lanes remain unconfirmed as active. Module worktree isolation is NOT_VERIFIED and referenced-session activity is UNKNOWN. No VMware, real-model, or installer resource is reserved.
+- No module source/test, PR #24, main branch, or Release was changed. Next resource checkpoint 11:00 UTC.
+## M0 10:46 UTC cross-module blocker evidence — 2026-10-16
+
+- Filtered logs from M9 run 38727481764 show the Ubuntu and Windows composition test expecting deny but receiving allow for an unpinned native Read. The recorded source pair is M1 b1d7423 / M3 be38802; current PR heads are M1 #43 9ef3dc2, M3 #33 be38802, and M9 #36 de3799a. M9 must rerun against current pinned heads after M3 aligns the contract.
+- Posted exact reproduction and acceptance steps to Issue #55 (comment 6213780254). Posted missing real package evidence/blocker request to #53 (comment 6213780639), due 11:00 UTC. Resource checkpoint #29 is comment 6213767711.
+- No source/tests were changed. Preserve M1 denial assertions, keep the supported-capability positive control, and do not start an installer test without an exclusive reservation.
