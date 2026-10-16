@@ -869,3 +869,9 @@ Issues #53/#55/#56 remain due 13:00 after their 12:40 follow-ups; no owner repli
 - **P0 #53 / P1 #55 / P2 #56:** no owner reply or module PR-head change at 12:40. Follow-ups 6215716367, 6215716953, and 6215717643 set 13:00 deadlines.
 - Exact M0 head `7900c1f` coordination 38903512440 and body check 38903583003 passed; product CI 38903512535 was still in progress at 12:52.
 - Usage remains readable at 91%/70% but the five-hour indicator still says "resetting". Do not infer the new limit.
+## 13:00 UTC owner deadline readback — 2026-10-16
+
+- **P0 #53, M7/M8:** no owner reply, package hashes, extracted-Hook comparison, harness evidence, or PR #39/#40 movement by 13:00. Follow-up 6216055764 requests exact artifact evidence or named blocker by 13:20.
+- **P1 #55, M3/M9:** no owner reply/correction, positive control, or PR #33/#36 movement by 13:00. Run 38727481764 remains failed on Ubuntu/Windows for unpinned native Read (expected deny, actual allow). Follow-up 6216056401 requests fail-closed fix, positive control, exact-head rerun, or named blocker by 13:20.
+- **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 13:00; exact M1-owned test blobs remain different. Follow-up 6216057013 requests canonical-test/shared-path disposition or named owner/path by 13:20.
+- **P0 #52, M1/M2/M5:** no first-party host evidence by 12:50; follow-up 6215879713 remains due 13:10.
