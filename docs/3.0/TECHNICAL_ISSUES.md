@@ -828,3 +828,10 @@ Issue #29's M0 line is updated from pending to the actual exact-head results: pr
 
 - Latest PR #30 body-ownership check 38896586707 passed 1/1 on exact head a1ad0ad. Product CI 38896339549 passed 9/9; coordination 38896339546 passed. Issue #29 now reflects the latest check and was read back.
 - Prior Issue #29 body saved locally at Issue29-body-2026-10-16-1153UTC-before-check-refresh.md. No module/PR #24 state changed.
+
+## 12:00 UTC deadline readback — 2026-10-16
+
+- **P0 #53, M7/M8:** no owner reply, package evidence, or PR #39/#40 head movement by 12:00. Follow-up 6215081105 requests real Setup.exe/manifest hashes, extracted-Hook comparison, and extracted-harness command/result, or a named blocker by 12:20. Keep acceptance NOT_VERIFIED; no installer/VM reservation.
+- **P1 #55, M3/M9:** no owner reply, correction, or PR #33/#36 movement by 12:00. Run 38727481764 remains FAIL on Ubuntu/Windows (unpinned native Read expected deny, actual allow). Follow-up 6215081843 requests fail-closed correction, supported-capability positive control, and exact-current-head two-platform rerun or a named blocker by 12:20. Preserve the failing test.
+- **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 12:00. Exact current blobs remain `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d` on PR #30 and `82ca4662e0a6c4269011ff8eba9470f2a26ccc39` on PR #43. Follow-up 6215082540 requests canonical-test/shared-path disposition or named owner/path by 12:20. Keep PR #30 Draft.
+- **P0 #52, M1/M2/M5:** still awaiting first-party product-host protected-open proof or a named BLOCKED owner/dependency; deadline 12:10 remains open. Synthetic/adapter tests do not establish installed host consumption.

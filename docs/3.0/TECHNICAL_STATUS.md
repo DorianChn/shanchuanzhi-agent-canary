@@ -1541,3 +1541,13 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 
 - Latest PR #30 body-ownership check 38896586707 passed 1/1 on exact head a1ad0ad. Product CI 38896339549 passed 9/9; coordination 38896339546 passed. Issue #29 now reflects the latest check and was read back.
 - Prior Issue #29 body saved locally at Issue29-body-2026-10-16-1153UTC-before-check-refresh.md. No module/PR #24 state changed.
+
+## M0 12:04 UTC deadline and resource readback — 2026-10-16
+
+- Usage Overview remained open and read 91% five-hour / 70% weekly at 12:01 UTC; reset was about 17 minutes away. PR #24 remains OPEN/Draft with unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- PR #30 remains OPEN/Draft at `a1ad0ad7a8ab7f13fd324ef8ffc3dbfa250f6f02`; product CI 38896339549 passed 9/9, coordination 38896339546 passed, and body check 38896586707 passed. No M0 module source/tests changed.
+- #53/#55/#56 had no response/evidence or module PR-head movement by 12:00. Follow-ups 6215081105, 6215081843, and 6215082540 set 12:20 deadlines. #52 still had no response/evidence after 11:50 and remains due 12:10.
+- M9 composition run 38727481764 still fails Ubuntu and Windows for unpinned native Read (expected deny, actual allow); other PR #36 checks and PR #33/#39/#40/#43 checks read green at their current heads. P0 artifact/host acceptance remains NOT_VERIFIED.
+- PR #30 and #43 still differ on the M1-owned Hook test path: blob `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d` vs `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`. PR #30 remains Draft pending M1 disposition.
+- Issue #29 body and resource comment 6215083486 were read back with current quota, heads, and deadlines. Local module-worktree isolation remains NOT_VERIFIED; referenced Codex-session activity remains UNKNOWN. No exclusive VMware/model/installer slot is reserved.
+- Last M0 push: 11:49 UTC. Next push no earlier than 12:09 after fresh quota, PR #24, remote-head, and diff-scope preflight.
