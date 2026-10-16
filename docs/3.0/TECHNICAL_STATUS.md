@@ -1296,3 +1296,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - #55 P1: M3 head remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; M9 composition run `38727481764` fails on both OSes because unpinned normal Read is allowed. M9 still pins stale M1 `b1d7423`; current M1 is `9ef3dc2`. Require M3 fail-closed correction plus positive control, then refresh M9 refs and rerun.
 - #56 P2: PR #30 and PR #43 both change `test/agent-hook.test.ts`; blobs differ (`ac4f72d`: `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d`; `9ef3dc2`: `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`; base: `1ecb3ee8b45f1fbe942a25bcd5ce696f82534601`). Keep PR #30 Draft until M1 confirms the canonical interruption regression or reviews a shared-path exception.
 - Resource #29 retains only the two previously tracked lanes M3/#55 and M7/M8/#53; live thread activity is UNKNOWN. No third lane, VMware, real-model, or installer slot was started/reserved. Next status check 07:00 UTC.
+
+## PR #30 06:43 batch readback — 2026-10-16
+
+- Pushed docs-only through `a1dd2c22fb5dd04fb18ead1a50aae1c0a80967a7`; PR #30 remains OPEN/Draft and PR #24 remains OPEN/Draft at unchanged head/base.
+- Exact-head product CI `38862890439` passed 9/9 and AC3 coordination `38862890411` passed 1/1. After PR description refresh/readback, ownership-contract runs `38863450388` and `38863564662` passed 1/1 on the same head.
+- PR #30 body now records the 06:40 issue/resource checkpoint and current CI evidence; PR #30 still carries the M1-owned test-path overlap tracked in #56.
+- Next M0 push no earlier than 07:04 UTC after fresh Usage, remote-head, PR #24, and diff preflight. No module source changed.

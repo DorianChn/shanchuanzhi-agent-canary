@@ -712,3 +712,7 @@ PR #30 exact-head product run 38860789569 passed all nine jobs on ac4f72d. Coord
 - **P1 #55:** M3 still expects unpinned normal Read to allow while M1 requires deny. Current M9 job also pins an older M1 SHA, so all-current-head composition has not passed. Require M3 correction and positive control, then refresh M9 pins and rerun.
 - **P2 #56:** PR #30 and PR #43 contain different blobs at the shared M1-owned `test/agent-hook.test.ts` path. M1 disposition is required; preserve the test and keep PR #30 Draft.
 - **P1 #41:** clean-VM installer lifecycle remains NOT_VERIFIED. **P1 #45:** native Codex Shell remains UNPROTECTED. **M6 #38:** CI does not establish external/product E4. Keep each acceptance gate explicit.
+
+## PR #30 06:43 batch readback — 2026-10-16
+
+The M0 docs-only head `a1dd2c22fb5dd04fb18ead1a50aae1c0a80967a7` has exact-head product CI `38862890439` passed 9/9, coordination `38862890411` passed 1/1, and two post-description-refresh ownership-contract checks `38863450388` and `38863564662` passed 1/1. PR #30 remains OPEN/Draft. PR #24 is unchanged OPEN/Draft. These checks validate M0 coordination only; module blockers above remain open. Next push no earlier than 07:04 UTC.
