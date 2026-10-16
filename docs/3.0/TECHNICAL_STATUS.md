@@ -1437,4 +1437,7 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 
 - Usage Overview remains open/active at 83% (weekly 72%). PR #24 is unchanged OPEN/Draft. PR #30 exact head `ca8d403` is OPEN/Draft; product CI `38883085603` passed 9/9, coordination `38883085546` and latest description ownership check `38883371243` passed 1/1 each.
 - Module heads remain unchanged; #53/#55 and #29's active-worktree request have no owner response. P0 #52/#53 and P1 #41/#45/#51/#54/#55 remain open; PR #36 composition still fails on Ubuntu/Windows for #55. Local module worktree isolation remains NOT_VERIFIED.
-- Resource Issue #29 comment `6213022951` records the checkpoint, two tracked lanes, and no exclusive reservation. Next resource check 10:20 UTC; next push no earlier than 10:09 UTC.
+- Resource Issue #29 comment `6213022951` records the checkpoint, two tracked lanes, and no exclusive reservation. Next resource check 10:20 UTC; next push no earlier than 10:09 UTC.## M0 10:04 UTC toolchain preflight — 2026-10-16
+
+- Verified Git `2.54.0.windows.1`, GitHub CLI `2.102.0`, Codex CLI `0.162.0-alpha.17.2`, and Node.js `v22.23.1`; `gh auth status` is logged in as DorianChn with repo/workflow access (secret masked).
+- `py` is not in PATH and `python` resolves only to the WindowsApps execution alias; a Python interpreter version is NOT_VERIFIED and Python was not used. The configured Hermes Bash path failed to launch as Git Bash and emitted WSL setup text; status operations used PowerShell.
