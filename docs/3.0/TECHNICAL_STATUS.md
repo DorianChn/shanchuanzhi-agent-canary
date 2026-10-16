@@ -1115,3 +1115,9 @@ Description-refresh workflow 38841747213 passed ownership-contract-evidence 1/1 
 - **#56 P2 M0/M1:** canonical interruption-test path/blob SHA or reviewed shared-path exception remains missing.
 - Resource comment #29 6206962381: only lanes #55/#53; no new lane or exclusive test resource; no VMware/real-model/installer testing started by M0. Product E4 remains NOT_VERIFIED.
 - Usage tab 336903555 remains open/active at 98%. PR #30 remains OPEN/Draft at 97de61d with exact-head CI passing 9/9; PR #24 unchanged. Next push no earlier than 02:59 UTC.
+
+## M0 02:59 UTC batch readback — 2026-10-16
+
+- Pushed the 02:52 checkpoint as docs-only commit ec4175a. PR #30 remains OPEN/Draft at exact head `ec4175a99ae691492b07dcce94788b3f5e6970b9`; the 02:59 snapshot is refreshed and read back.
+- Exact-head coordination workflow 38843215088 and description refresh 38843278356 passed. Product CI 38843215109 was still in progress at the read.
+- PR #24 remains unchanged OPEN/Draft. Usage tab 336903555 remained open/active at 97% pre-push. Next owner checkpoint 03:12 UTC; next push no earlier than 03:19 UTC.
