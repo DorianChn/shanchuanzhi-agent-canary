@@ -1737,3 +1737,46 @@ These hosted checks are not substitutes for host, package, VM, or independent E4
 - #41/#53/#54/#55/#56/#57 remain OPEN / NOT_VERIFIED as applicable. Their latest checkpoint was 14:40 and the next due time is 15:00; this checkpoint does not treat evidence as received before that deadline.
 - PR #30 remains OPEN/Draft at exact head ce7628af5b024d36662e1f81be3981735445ad44; current product and coordination checks all read SUCCESS. PR #24 remains OPEN/Draft with head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7, unchanged.
 - No M0 module source/tests changed. Last M0 push was 14:33 UTC; this documentation-only batch is after the 20-minute interval. M1–M8 worktree isolation remains NOT_VERIFIED from M0 filesystem evidence; no claim is made about hidden Codex-session activity.
+
+## M0 15:10 UTC acceptance and worktree reconciliation — 2026-10-16
+
+- Usage Overview at 15:10 UTC was readable at 35% five-hour / 58% weekly; the Usage tab remains open and the quota is above the 5% stop threshold.
+- P0 #52 had no owner response, product host/call-path, protected-open alias/junction/TOCTOU evidence, or PR #43/#37/#47 movement by 15:10. Comment 6218494288 keeps it OPEN / NOT_VERIFIED and sets the next checkpoint at 15:30. Preserve hard denials.
+- #41/#53/#54/#55/#56/#57 had no due-time evidence or owner response at 15:00. Readbacks are recorded in comments 6218322140, 6218321793, 6218321675, 6218321870, 6218322060, and 6218361499 respectively; all remain OPEN / NOT_VERIFIED as applicable, with next checkpoint 15:20. No VM, installer, real-model, or E4-exclusive resource is reserved.
+- M1 exact-head diagnostic evidence: PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 contains worker/PID, monotonic-time, and lock acquire/release traces in the test path. Run 38786461318 and standard CI 38786461156 pass; Node 20 and Node 22 each completed 10 repetitions with 14 pass / 0 fail / 3 skip per repetition. No AC3_LOCK_TRACE occurred because no test failed. This does not explain earlier failures.
+- New exact-head recurrence: PR #30 head 498989dbf24bfafea9d79408a2effae4ac0b9f65 product run 38919965125 failed Ubuntu Node 20 test 163 after a worker exhausted 500 STATE_STORE_BUSY retries and raised RETRY_LIMIT. The M0 change was documentation-only; Ubuntu Node 22 and Docker passed, fail-fast cancelled remaining matrix jobs, and package-smoke was skipped. No lock-holder trace was emitted and the run does not establish data loss/corruption. Tracked in #51; root cause remains UNKNOWN. Preserve the test and bounded fail-closed retry behavior.
+- Worktree registry checked read-only through the M1 common repository at Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4. Clean module worktrees outside Agent-Canary-Dev match current PR heads: M1 ac3-m1-security-recovery / feature/ac3-security-core / 9ef3dc2; M5 ac3-m5-policy-recovery / feature/ac3-policy-audit / 373e2c2; M8 ac3-m8-recovery / feature/ac3-open-source-product / c1ff677; M9 ac3-m9-recovery / feature/ac3-m9-integration / de3799a. The same registry contains a clean older M0 ac3-coordinator-recovery at 2dd855d on the same branch name, distinct from this coordinator clone at 498989d, and a clean E4 product-acceptance worktree at 3965adb. Do not rewrite or prune these.
+- Agent-Canary-Dev/coordinator is a standalone clone and Agent-Canary-Dev/agents is empty. M2/M3/M4/M6/M7 do not appear in the inspected common worktree registry; other clones remain NOT_VERIFIED. Thus not all module worktrees have been verified under the requested root.
+- Issue #29 and PR #30 bodies were refreshed with the 15:10 quota, blocker deadlines, exact PR heads, and worktree scope. PR #24 remains OPEN/Draft unchanged at head 62496d4 / base dc8d009. No M0 module source/tests changed; no main merge or Release.
+- Last M0 push is 498989d at 14:57 UTC. Next push no earlier than 15:17 UTC after fresh quota, PR #24, remote-head, and documentation-scope preflight.
+
+## M0 15:12 UTC current module CI matrix — 2026-10-16
+
+Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
+- #33 M3 be38802: 9/9 SUCCESS.
+- #34 M4 fbf2090: 3 SUCCESS, Ubuntu Node 20 FAILURE, 4 CANCELLED, package-smoke SKIPPED. Run 38698635434 failed test 163 after 500 bounded STATE_STORE_BUSY retries and RETRY_LIMIT.
+- #36 M9 de3799a: 11 SUCCESS and 2 composition failures. Run 38727481764 still fails Ubuntu and Windows on unpinned native Read expected deny / actual allow.
+- #37 M2 9db59ed: 9/9 SUCCESS.
+- #38 M6 c1fdf3c: 11/11 SUCCESS; independent product E4 remains NOT_VERIFIED.
+- #39 M7 cf4b70f: 11/11 SUCCESS; clean-VM lifecycle remains NOT_VERIFIED.
+- #40 M8 c1ff677: 11/11 SUCCESS; real Setup.exe/extracted payload remains NOT_VERIFIED.
+- #43 M1 9ef3dc2: 11/11 SUCCESS, including Node 20 and Node 22 x10 concurrency diagnostic jobs; those runs produced no failure trace.
+- #47 M5 373e2c2: 9/9 SUCCESS.
+- PR #30 exact head 498989d: coordination/ownership-contract evidence SUCCESS; product run 38919965125 failed Ubuntu Node 20 test 163 as tracked in #51. PR #24 remains OPEN/Draft and unchanged. Hosted checks do not substitute for first-party host, package, VM, or independent E4 acceptance.
+## M0 15:16 UTC live state refresh — 2026-10-16
+
+- Usage Overview was readable at 15:14 UTC: five-hour 31%, weekly 58%, reset in about 2h03m. The Usage tab remains open; quota is above the 5% stop threshold.
+- GitHub CLI v2.102.0 is authenticated as DorianChn. PR #24 is still OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Exact PR #30 head 498989dbf24bfafea9d79408a2effae4ac0b9f65 run 38919965125 has one actual product test failure: Ubuntu Node 20 test 163. Ubuntu Node 22, Docker and sponsor smoke passed; fail-fast cancelled the remaining test matrix; package-smoke was skipped. The compact `gh pr checks` display labels cancelled matrix entries as `fail`, so the run/job record is the source of truth. Ownership-contract evidence run 38921944512 passed.
+- At 15:16 no newer owner response or evidence had appeared on #41/#53/#54/#55/#56/#57 since their 15:00 deadlines; their next checkpoint remains 15:20. #51 remains due 15:20 and #52 remains due 15:30. Exact PR heads remained unchanged in the current open-PR list.
+- M0 branch still has only the coordination-status document modified. Last push was at 14:57 UTC; next batch is due after 15:17, with checkpoint refresh at 15:20 before pushing. No module code/tests changed and PR #24 is untouched.
+
+## M0 15:20 UTC owner-deadline and quota checkpoint — 2026-10-16
+
+- Usage Overview refreshed at 15:20 UTC: 30% five-hour / 58% weekly, reset in about 1h58m. Readable and above the 5% stop threshold; Usage tab remains open.
+- No owner evidence or PR head movement appeared by 15:20 for #41/#53/#54/#55/#56/#57; follow-ups 6218710537, 6218711425, 6218712450, 6218713297, 6218714006, and 6218714740 set 15:40 for evidence or a named accountable blocker. VM lifecycle, real extracted package, historical Windows 503, M3/M9 fail-closed composition, M1 test ownership, and independent M6 product E4 remain OPEN / NOT_VERIFIED as applicable.
+- P1 #51 had no M1 root-cause/lock-holder trace or PR #43 movement by 15:20. Follow-up 6218709428 records exact-head run 38919965125: one actual product failure on Ubuntu Node 20 test 163 after 500 bounded STATE_STORE_BUSY retries and RETRY_LIMIT; Ubuntu Node 22 passed; fail-fast cancelled remaining matrix jobs; package-smoke skipped. Root trigger UNKNOWN; no data loss/corruption established. Next checkpoint 15:40; preserve assertions and bounded fail-closed behavior.
+- P0 #52 remains OPEN / NOT_VERIFIED, with no first-party protected-host proof and next checkpoint 15:30. PR #24 remains OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7, unchanged.
+- Issue #29 was refreshed at 15:20: tracker has no owner-confirmed RUNNING module slot, activity outside visible state is UNKNOWN, max two slots, and VMware/model/installer exclusive resource unreserved. The Usage tab remains open.
+- M0 branch changes only docs/3.0/TECHNICAL_STATUS.md. PR #30 current head remains 498989dbf24bfafea9d79408a2effae4ac0b9f65; its compact check summary lists cancelled matrix entries as fail, but run/job record confirms only Ubuntu Node 20 was an actual product failure. M0 changed no module source/tests; no main merge or Release.
+- Last M0 push was 14:57 UTC; the next docs-only push is eligible after 15:17 UTC. This batch follows the 15:20 checkpoint.
