@@ -734,3 +734,8 @@ No module status reply or M1–M8/M9 PR-head movement appeared since 07:00. Reso
 - **P1 #51:** exact-head M0 product run `38867665155` reproduced a single Ubuntu Node 20 failure in test #163 (`four concurrent processes preserve every quarantine`): one worker exhausted 500 bounded `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. Ubuntu Node 22 passed; cancelled jobs are not independent failures and package-smoke was skipped. AC3 coordination `38867669152` and refreshed PR-description ownership check `38868536084` passed. The repeated symptom still does not identify a lock owner or root cause; preserve the assertion and fail-closed behavior. Issue comment `6210545636` records this recurrence.
 - The PR #30 docs snapshot was updated to report the red product job accurately; no product source or test was changed to obtain a green result.
 - **Resource 07:40:** Usage Overview read 83% at 07:42 UTC, tab remains open/active. PR #24 and all M1–M8/M9 heads are unchanged from 07:20. Resource Issue #29 comment `6210682385` keeps only M3/#55 and M7/M8/#53 tracked, with no exclusive resource reservation. Next check 08:00 UTC; next M0 push no earlier than 07:49 after preflight.
+
+## P1 #51 07:52 UTC exact-head rerun — 2026-10-16
+
+- PR #30 exact head `6dde2b200b5ff377872d4be9956a77a503487349` product run `38869859222` passed 9/9, including the Ubuntu Node 20 file-state-store test that failed on prior M0 head `b22b239`.
+- The only intervening diff is the M0 coordination documentation; product code/tests did not change. Treat this as an intermittent recurrence/pass pair, not a diagnosis. The M4 failure remains relevant. Root cause and lock owner are UNKNOWN; keep P1 open and retain assertions/fail-closed behavior. Readback comment `6210800820`.

@@ -1334,3 +1334,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - All M1–M8/M9 PR heads match the 07:20 scan; all remain OPEN/Draft. PR #24 remains at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5dff42873584ed488e4ee7`. M0 PR #30 remains at `b22b239b87cb8ea7432015b1a8d72979a430ecab`.
 - Resource Issue #29 comment `6210682385` retains only M3/#55 and M7/M8/#53 as tracked lanes. Live Codex-thread activity remains UNKNOWN; no third task or VMware/real-model/installer slot was opened or reserved. P1 #51 remains the route for the repeated Ubuntu Node 20 state-store retry-limit symptom; the cause and lock owner remain UNKNOWN.
 - Next resource check 08:00 UTC; next M0 push no earlier than 07:49 UTC after fresh quota, remote-head, PR #24, and diff preflight. No module code changed.
+
+## PR #30 07:52 exact-head CI completion — 2026-10-16
+
+- Product CI `38869859222` completed successfully 9/9 on M0 head `6dde2b200b5ff377872d4be9956a77a503487349`; all Linux/macOS/Windows test matrix jobs, Docker build, sponsor smoke, and package-smoke passed. Ownership-contract check after the prior PR-body refresh `38869976620` passed 1/1.
+- The preceding M0 head `b22b239` had the same Ubuntu Node 20 test #163 fail while this head passed. The intervening commit changes only M0 coordination docs; no product source or tests changed. This is evidence of an intermittent symptom, not a root-cause explanation.
+- Issue #51 comment `6210800820` records the exact-head pass and keeps the lock owner/root cause UNKNOWN; P1 stays OPEN, preserving all assertions and fail-closed behavior. PR #30 remains OPEN/Draft; PR #24 remains unchanged.
+- Next M0 push no earlier than 08:09 UTC after fresh preflight. No module source changed.
