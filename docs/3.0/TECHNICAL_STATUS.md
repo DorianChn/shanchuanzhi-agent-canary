@@ -1096,3 +1096,7 @@ Description-refresh run 38840004963 passed its ownership-contract-evidence check
 - Pushed the 02:32 checkpoint as docs-only commit 97de61d. PR #30 remains OPEN/Draft at exact head `97de61db7b5a0258b320fd441f154d0dbb72f5c0`; the 02:39 snapshot is refreshed/read back.
 - Exact-head coordination workflow 38841526884 passed. Product CI 38841526771 and body-refresh workflow 38841556325 were in progress at last read.
 - PR #24 remains unchanged OPEN/Draft. Usage tab 336903555 remained open/active at 99% on pre-push read. Next owner checkpoint 02:52 UTC; next push no earlier than 02:59 UTC.
+
+### PR #30 02:41 CI readback — 2026-10-16
+
+Exact-head product CI 38841526771 passed all nine jobs on `97de61d`. PR #30 snapshot refreshed/read back at 02:41. The 02:39 coordination workflow 38841526884 and description refresh 38841556325 passed; the new 02:41 refresh run 38841747213 was in progress at this read.
