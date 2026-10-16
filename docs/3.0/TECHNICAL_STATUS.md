@@ -1368,3 +1368,8 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Resource Issue #29 comment `6211260380` retains only M3/#55 and M7/M8/#53 as tracked lanes; no third task or exclusive VMware/real-model/installer slot is reserved.
 - PR #30 head `ea3f6a5` product CI passed 9/9 and its latest ownership-contract check passed. P1 #51 remains open because the previous bounded-lock failure still lacks an identified owner/root cause.
 - Next resource check 08:40 UTC; next M0 push no earlier than 08:29 UTC after preflight. No module source changed.
+
+## PR #30 08:31 refreshed-description readback — 2026-10-16
+
+- The 08:29 batch snapshot was read back at exact head `23ab1742963d12e70edb9d34344ded939c1285a1`. Product CI `38874084756` passed 9/9, exact-head coordination `38874084711` passed, and post-refresh ownership-contract workflow `38874313671` passed 1/1.
+- PR #30 remains OPEN/Draft. PR #24 is unchanged. Usage was 83% at preflight; the browser tab remains open/active. Next push no earlier than 08:49 UTC.
