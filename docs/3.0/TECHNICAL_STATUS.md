@@ -1361,3 +1361,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - The 08:09 batch description refresh was read back at exact head `ea3f6a5fea26bf08648e74aec3ab2586dfd9d54e`; post-refresh AC3 ownership-contract workflow `38872370328` passed 1/1.
 - Product CI remains PASS 9/9 (`38871974366`), coordination workflow `38871974343` passed, and PR #30 remains OPEN/Draft. No module source or tests changed.
 - Usage Overview remains active at 83%. Next resource check 08:20 UTC; next push no earlier than 08:29 UTC.
+
+## M0 08:20 UTC resource readback — 2026-10-16
+
+- Usage Overview remains open/active at 83%. PR #24 remains unchanged OPEN/Draft; all M1–M8/M9 PR heads match the 08:00 scan. No owner response is visible in resource Issue #29; live Codex-thread activity remains UNKNOWN.
+- Resource Issue #29 comment `6211260380` retains only M3/#55 and M7/M8/#53 as tracked lanes; no third task or exclusive VMware/real-model/installer slot is reserved.
+- PR #30 head `ea3f6a5` product CI passed 9/9 and its latest ownership-contract check passed. P1 #51 remains open because the previous bounded-lock failure still lacks an identified owner/root cause.
+- Next resource check 08:40 UTC; next M0 push no earlier than 08:29 UTC after preflight. No module source changed.

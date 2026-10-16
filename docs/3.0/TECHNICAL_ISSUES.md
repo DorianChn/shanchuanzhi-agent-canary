@@ -748,3 +748,7 @@ No module status reply or M1–M8/M9 PR-head movement appeared since 07:00. Reso
 ## M0 08:09 exact-head readback — 2026-10-16
 
 - PR #30 docs-only head `ea3f6a5` has exact-head CI `38871974366` PASS 9/9 and AC3 coordination `38871974343` PASS 1/1. The Ubuntu Node 20 retry test passes on this run; this does not determine why the prior head intermittently failed. Keep #51 P1/OPEN with root cause and lock owner UNKNOWN.
+
+## Resource checkpoint 08:20 UTC — 2026-10-16
+
+Issue #29 comment `6211260380` records 83% Usage, no movement/replies across M1–M8/M9, and only M3/#55 plus M7/M8/#53 as active tracked lanes. No exclusive resource is reserved. PR #30 docs-only CI is green; #51 remains P1/OPEN with lock root cause/owner UNKNOWN.
