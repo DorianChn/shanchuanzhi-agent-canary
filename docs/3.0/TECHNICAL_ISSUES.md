@@ -631,3 +631,7 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 
 - **#51:** current M1 PR #43 source has worker/PID/iteration, monotonic timestamp, lock open/unlink event, and bounded retry diagnostics. Exact-head path run 38786461318 passed, so it supplies no failure trace for the earlier PR #38 events. The underlying lock trigger remains UNKNOWN; existing logs do not support a data-loss claim. M0 clarification comment 6206031784 asks for owner confirmation of the next failure-specific diagnostic/reproducer by 01:52.
 - **#53:** current M7/M8 heads #39 `cf4b70f` and #40 `c1ff677` have CI coverage for the synthetic co-located sanitized-Hook harness and staged payload checks. Actual Windows `build.mjs`/Setup.exe, pinned package/manifest hashes, extracted-Hook byte comparison, and extracted-harness result remain NOT_VERIFIED. M7's NSIS job compiled a synthetic payload only and did not execute the installer; M8 has no NSIS step at this head. M0 clarification comment 6206032101 requests real package evidence or owner/blocker/next delivery by 01:52, subject to #29 reservation.
+
+## M0 exact-head CI confirmation — 2026-10-16 01:41 UTC
+
+M0 documentation head `fd2387c` passed exact-head product CI 38836282658 (9/9) and coordination runs 38836282548, 38836326039, 38836350534. This validates only M0 coordination documents and does not resolve any module evidence gaps above.

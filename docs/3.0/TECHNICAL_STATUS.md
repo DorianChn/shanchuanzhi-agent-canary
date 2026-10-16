@@ -1018,3 +1018,9 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 
 - #51 M0 source audit at M1 head `9ef3dc2`: the quarantine regression now captures worker/PID/iteration, monotonic time, lock open/unlink events, and bounded retry diagnostics. Path run 38786461318 passed, so it supplies no trace for earlier #38 failures. Root trigger remains UNKNOWN; no data-loss claim. Clarification comment 6206031784 requests owner confirmation of the next diagnostic by 01:52.
 - #53 M7/M8 exact heads `cf4b70f`/`c1ff677` have synthetic co-located Hook/payload harness coverage, but no built Windows Setup.exe or workflow artifact. M7 only compiled a synthetic NSIS payload without running the installer; M8 has no NSIS step. Real package hashes, extracted-Hook comparison, and extracted-harness evidence remain NOT_VERIFIED. Clarification comment 6206032101 requests evidence or blocker by 01:52; no VM/installer run without #29 reservation.
+
+## M0 exact-head CI follow-up — 2026-10-16 01:41 UTC
+
+- Pushed M0 head `fd2387c` exact-head product CI run 38836282658 passed all nine jobs. Coordination runs 38836282548, 38836326039, and 38836350534 passed.
+- PR #30 snapshot refreshed to 01:41 and read back at the same head with CI marked passed and the 01:52 owner checkpoint. PR #24 remains OPEN/Draft at unchanged head/base.
+- Description-refresh run 38836490055 passed; a second refresh run 38836513714 was still in progress at this read. Branch remains clean; next normal push window no earlier than 01:59 UTC.
