@@ -813,3 +813,9 @@ No M1/M2/M5 response, host evidence, or PR-head movement was visible at the dead
 ## Scheduler and PR status correction — 11:33 UTC
 
 Issue #29's M0 line is updated from pending to the actual exact-head results: product CI 9/9, coordination PASS, ownership check 38894412645 PASS 1/1. The prior body state is preserved locally. No PR #24 or module state changed.
+## 11:40 UTC issue deadline readback — 2026-10-16
+
+- #53: no M7/M8 response/evidence; follow-up 6214692824 sets 12:00 deadline.
+- #55: no M3/M9 response/correction; follow-up 6214692714 sets 12:00 deadline.
+- #56: no M1 disposition; follow-up 6214692702 sets 12:00 deadline.
+- Issue #29 body now reflects these deadlines and #52's 11:50 deadline. Previous body archived as Issue29-body-2026-10-16-1140UTC-before-refresh.md. All remain OPEN.
