@@ -852,3 +852,9 @@ At 12:14, paginated comments on #53/#55/#56 still showed no owner replies after 
 No M1/M2/M5 response, host/build/call path, protected-open evidence, or PR #43/#37/#47 movement by 12:30. Follow-up 6215543788 sets the next evidence or named BLOCKED owner/dependency deadline at 12:50. P0 remains OPEN/NOT_VERIFIED; synthetic adapter checks do not prove product-host consumption.
 
 At the same checkpoint, #53/#55/#56 had no owner reply or head movement after their 12:20 follow-ups and remain due 12:40. Usage was readable but displayed "resetting" with 91% five-hour / 70% weekly; do not infer a refreshed value.
+## 12:40 UTC owner deadline readback — 2026-10-16
+
+- **P0 #53, M7/M8:** no owner reply, package artifact/payload/harness evidence, or PR #39/#40 movement by 12:40. Follow-up 6215716367 requests exact hashes, extracted-Hook comparison, and harness result or named blocker by 13:00.
+- **P1 #55, M3/M9:** no owner reply/correction or PR #33/#36 movement by 12:40; run 38727481764 remains a fail-open on Ubuntu/Windows for unpinned native Read. Follow-up 6215716953 requests a fail-closed fix, positive control, exact-head rerun, or named blocker by 13:00. Preserve the failing test.
+- **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 12:40; exact PR #30/#43 Hook-test blobs remain different. Follow-up 6215717643 requests canonical-test/shared-path disposition or named owner/path by 13:00.
+- **P0 #52, M1/M2/M5:** still no first-party host evidence as of 12:40; follow-up 6215543788 remains due 12:50.
