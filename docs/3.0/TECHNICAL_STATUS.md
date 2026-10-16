@@ -1422,4 +1422,6 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Next resource check 10:00 UTC. Next M0 push no earlier than 09:49 UTC after fresh quota/status preflight. No module source/tests changed.## M0 09:42 UTC local worktree verification — 2026-10-16
 
 - All six top-level workspace directories exist. Current Windows Git registers only `coordinator` as a worktree at `76e5b77`; `agents/`, `main/`, and `integration/` are empty in this filesystem view, and no WSL distro is registered. The module/M9 PR branches exist remotely, but local module worktree isolation is NOT_VERIFIED. M0 will not create module branches or worktrees.
-- Issue #29 comment `6212705134` records this finding and requests an exact active checkout/path, head, owner, and slot state if another checkout is in use. No module files were touched.
+- Issue #29 comment `6212705134` records this finding and requests an exact active checkout/path, head, owner, and slot state if another checkout is in use. No module files were touched.## M0 09:46 UTC ignore-rule spot check — 2026-10-16
+
+- `git check-ignore -v` confirmed `.env`, `.env.local`, `*.log`, `*.key`, `*.token`, `*.secret`, and `*.tmp` resolve to the repository ignore rules. No sample or credential files were created or read.
