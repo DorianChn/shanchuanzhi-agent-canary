@@ -1407,3 +1407,16 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Usage Overview remains open/active at 83%. PR #24 remains unchanged OPEN/Draft. PR #33/#36/#39/#40/#43 heads remain `be388029`/`de3799a`/`cf4b70f`/`c1ff677`/`9ef3dc2`; no movement from 09:00.
 - The 09:20 owner/blocker/evidence deadline on #53 and #55 passed with no reply or PR-head movement. Resource Issue #29 comment `6212329413` records this, keeps only M3/#55 and M7/M8/#53 tracked, and confirms no exclusive test resource is reserved. Live Codex-thread activity remains UNKNOWN.
 - PR #30 head `bae4718` has the repeated Ubuntu Node 20 retry failure under P1 #51; M0 changed no module code. Next resource check 09:40 UTC; next M0 push no earlier than 09:29 UTC.
+
+## M0 09:29 UTC push and exact-head CI readback — 2026-10-16
+
+- Documentation-only M0 update was pushed through `75236897aa54e1e2304c6733f4eeb5a5e02627bb`. PR #24 remains OPEN/Draft with unchanged head/base. PR #30 remains OPEN/Draft and is based on the unchanged PR #24 head.
+- Exact-head product CI `38880826856` completed PASS 9/9; AC3 coordination workflow `38880826818` completed PASS 1/1 on the same SHA. No module source or tests changed.
+- Usage Overview remains open/active at 83% (weekly 72%); the 09:20 requests on #53/#55 had no owner response or branch movement at the checkpoint. M3/M9 contract mismatch and real M7/M8 package evidence remain unresolved; live Codex-thread activity is UNKNOWN.
+- P1 #51 remains open: earlier Node 20 `RETRY_LIMIT` is not explained by the all-green docs-only head. Next resource check 09:40 UTC; next M0 push no earlier than 09:49 UTC after fresh preflight.
+## M0 09:40 UTC resource and diagnostic checkpoint — 2026-10-16
+
+- Usage Overview is open/active at 83% (weekly 72%). PR #24 is unchanged OPEN/Draft; PR #30 is OPEN/Draft at `7523689` with exact-head product CI 9/9 and coordination 1/1. No module branch head moved.
+- PR #36 composition checks still fail on Ubuntu and Windows for the M3 unpinned native Read mismatch. PR #53 still lacks real exact-head Setup.exe/payload/harness evidence. No owner response to the 09:00 follow-ups was present at this checkpoint; keep #55 P1 and #53 P0 open.
+- Issue #51 comment `6212674253` records that the observed direct failure is bounded lock retry exhaustion, while the holder/trigger remain UNKNOWN; preserve all tests, retry bounds, and fail-closed behavior. Resource Issue #29 comment `6212674928` retains the two tracked lanes (M3/#55 and M7/M8/#53) and no exclusive test reservation.
+- Next resource check 10:00 UTC. Next M0 push no earlier than 09:49 UTC after fresh quota/status preflight. No module source/tests changed.
