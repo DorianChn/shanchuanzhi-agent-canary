@@ -1029,3 +1029,7 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 
 - M6 PR #38 remains OPEN/Draft at `c1fdf3c`; all 11 reported checks pass. Its validation notes still classify local Hook tests as local-only and explicitly leave product-level/external E4 verification NOT_VERIFIED.
 - M9 PR #36 remains OPEN/Draft at `de3799a`. Its 11 product/wrapper checks pass, but exact-head composition run 38727481764 fails both `compose-current-module-refs` jobs (Ubuntu and Windows), matching Issue #55's unpinned native Read contract failure. M9 is not green as a whole and remains gated.
+
+### PR #30 description workflow readback — 2026-10-16 01:46 UTC
+
+The 01:41 snapshot refresh workflow 38836513714 completed successfully (ownership-contract-evidence 1/1) on PR #30 head `fd2387c`. This changes no module acceptance status.
