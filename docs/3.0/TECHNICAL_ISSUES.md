@@ -766,3 +766,8 @@ PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `3887627
 - **P1 #55:** comment `6211942241` assigns the existing M3/M9 acceptance path: M3 fail-closed unpinned Read plus supported-capability positive control; M9 exact pin refresh and Ubuntu/Windows composition. Accountable owner or blocker/next-delivery response requested by 09:20 UTC.
 - **P0 #53:** comment `6211942722` requests exact-head Setup.exe SHA256, extracted Hook byte comparison, and extracted-harness evidence, or accountable owner/blocker/next-delivery response by 09:20 UTC. No installer slot is reserved. Keep open until artifact acceptance is met.
 - Resource #29 comment `6211943209` keeps only those two lanes active; no new task or exclusive VM/model/installer slot.
+
+## P1 #51 09:09 exact-head recurrence — 2026-10-16
+
+- M0 PR #30 exact head `bae4718` reproduces the Ubuntu Node 20.20.2 test #163 bounded `STATE_STORE_BUSY`/`RETRY_LIMIT` failure in CI `38878583874`; Ubuntu Node 22 and non-fail-fast jobs passed, while remaining jobs were canceled and package-smoke skipped.
+- The change from previous M0 head `ae44b10` is limited to coordination documentation. No data loss or source regression is established. Issue comment `6212145862` preserves the evidence. Root cause and lock owner remain UNKNOWN; P1 stays OPEN, with M1 failure-specific diagnostics requested by 09:40 UTC. Do not weaken tests/policy.

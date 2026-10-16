@@ -1394,3 +1394,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Resource #29 comment `6211943209` retains only M3/#55 and M7/M8/#53 as tracked lanes, with no exclusive VMware/model/installer reservation.
 - Posted direct owner follow-ups: #55 comment `6211942241` asks M3 to enforce the unpinned-read denial plus positive control and M9 to refresh pins/rerun both OSes; #53 comment `6211942722` asks for Setup.exe SHA256, extracted Hook byte comparison, and harness results. Owner/blocker/next-delivery responses are due 09:20 UTC.
 - PR #30 exact head `ae44b10` product CI passed 9/9; #51 remains unresolved P1. Next M0 push no earlier than 09:09 UTC; next resource check 09:20 UTC. No module source changed.
+
+## PR #30 09:09 batch and recurrence readback — 2026-10-16
+
+- Pushed documentation-only updates through `bae4718aefac212c346d612ed18b5a03b36c90c8`. Preflight Usage read 83%; PR #24 remained OPEN/Draft at unchanged head/base; origin M0 was `ae44b10`; local queue was two docs commits, worktree clean, and `git diff --check` passed.
+- Exact-head product CI `38878583874` failed only in Ubuntu Node 20.20.2 at test #163 (`four concurrent processes preserve every quarantine`): one worker exhausted the bounded 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. Ubuntu Node 22, Docker, and sponsor smoke passed; the remaining matrix jobs were canceled after fail-fast and package-smoke was skipped.
+- Exact-head coordination `38878583800` passed; PR description ownership check after the refresh `38878865175` passed 1/1. PR #30 remains OPEN/Draft. Issue #51 comment `6212145862` records the recurrence; cause/lock owner remain UNKNOWN. No product source or tests changed.
+- Next resource check 09:20 UTC; next M0 push no earlier than 09:29 UTC. Preserve all tests and fail-closed behavior.
