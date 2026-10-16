@@ -794,3 +794,6 @@ PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `3887627
 - #53: follow-up 6214054663 records the missed 11:00 request; real package/payload/harness evidence or named owner/blocker is due 11:20.
 - #55: follow-up 6214054433 records the missed 11:00 request; preserve deny behavior, add positive control, and rerun exact current heads on both platforms, or report owner/blocker by 11:20.
 - #56: follow-up 6214054413 records no M1 disposition; confirm canonical test/shared-path exception or give a resolution path by 11:20. All remain OPEN.
+## P0 #52 11:15 UTC deadline readback — 2026-10-16
+
+- No M1/M2/M5 response or PR-head movement by the requested time. Internal M1 held-descriptor implementation and M2 synthetic adapter tests still do not prove first-party host consumption. Follow-up 6214298428 requests exact host call-path acceptance evidence or a named BLOCKED owner/dependency/next-delivery by 11:30 UTC. Keep P0 OPEN; preserve all hard denials.
