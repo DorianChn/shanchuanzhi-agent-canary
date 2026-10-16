@@ -847,3 +847,8 @@ At 12:14, paginated comments on #53/#55/#56 still showed no owner replies after 
 - **P1 #55, M3/M9:** no owner reply, correction, or PR #33/#36 movement by 12:20. Run 38727481764 still fails Ubuntu/Windows (unpinned native Read expected deny, actual allow). Follow-up 6215378362 requests fail-closed correction, positive control, and exact-head two-platform rerun or named blocker by 12:40. Preserve the test.
 - **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 12:20; PR #30/PR #43 M1-owned test blobs remain different. Follow-up 6215378878 requests canonical-test/shared-path disposition or named owner/path by 12:40. Keep PR #30 Draft.
 - **P0 #52, M1/M2/M5:** no first-party host evidence or owner response by 12:10; follow-up 6215267529 requests the host/build/call path and acceptance or a named BLOCKED owner/dependency by 12:30.
+## P0 #52 12:30 UTC deadline readback — 2026-10-16
+
+No M1/M2/M5 response, host/build/call path, protected-open evidence, or PR #43/#37/#47 movement by 12:30. Follow-up 6215543788 sets the next evidence or named BLOCKED owner/dependency deadline at 12:50. P0 remains OPEN/NOT_VERIFIED; synthetic adapter checks do not prove product-host consumption.
+
+At the same checkpoint, #53/#55/#56 had no owner reply or head movement after their 12:20 follow-ups and remain due 12:40. Usage was readable but displayed "resetting" with 91% five-hour / 70% weekly; do not infer a refreshed value.
