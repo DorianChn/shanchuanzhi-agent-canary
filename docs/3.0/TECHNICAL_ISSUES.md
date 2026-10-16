@@ -739,3 +739,8 @@ No module status reply or M1–M8/M9 PR-head movement appeared since 07:00. Reso
 
 - PR #30 exact head `6dde2b200b5ff377872d4be9956a77a503487349` product run `38869859222` passed 9/9, including the Ubuntu Node 20 file-state-store test that failed on prior M0 head `b22b239`.
 - The only intervening diff is the M0 coordination documentation; product code/tests did not change. Treat this as an intermittent recurrence/pass pair, not a diagnosis. The M4 failure remains relevant. Root cause and lock owner are UNKNOWN; keep P1 open and retain assertions/fail-closed behavior. Readback comment `6210800820`.
+
+## M0 08:00 UTC status — 2026-10-16
+
+- Resource #29 comment `6210946391` confirms Usage at 83%, PR #24 and module heads unchanged, and only two tracked lanes. Keep live thread activity UNKNOWN; no exclusive VMware/model/installer slot is reserved.
+- PR #30 exact head `6dde2b2` product CI is PASS 9/9, and refreshed-description ownership run `38870300451` is PASS 1/1. This does not diagnose the intermittent #51 retry limit; keep it P1/OPEN with cause and lock owner UNKNOWN.

@@ -1341,3 +1341,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - The preceding M0 head `b22b239` had the same Ubuntu Node 20 test #163 fail while this head passed. The intervening commit changes only M0 coordination docs; no product source or tests changed. This is evidence of an intermittent symptom, not a root-cause explanation.
 - Issue #51 comment `6210800820` records the exact-head pass and keeps the lock owner/root cause UNKNOWN; P1 stays OPEN, preserving all assertions and fail-closed behavior. PR #30 remains OPEN/Draft; PR #24 remains unchanged.
 - Next M0 push no earlier than 08:09 UTC after fresh preflight. No module source changed.
+
+## M0 08:00 UTC resource/CI readback — 2026-10-16
+
+- Usage Overview remains open/active at 83% of the five-hour limit, above the stop threshold. PR #24 is unchanged OPEN/Draft; all M1–M8/M9 heads remain unchanged from 07:40.
+- PR #30 head `6dde2b200b5ff377872d4be9956a77a503487349` product CI `38869859222` passed 9/9. Refreshed-description ownership workflow `38870300451` passed 1/1. The earlier retry-limit failure still has no root cause or lock-owner diagnosis.
+- Resource Issue #29 checkpoint comment `6210946391` retains only M3/#55 and M7/M8/#53 as tracked lanes, with live Codex-thread activity UNKNOWN and no exclusive test reservation. P1 #51 stays OPEN; passing exact-head CI does not close the intermittent symptom.
+- Next resource check 08:20 UTC; next M0 push no earlier than 08:09 UTC after fresh preflight. No module code changed.
