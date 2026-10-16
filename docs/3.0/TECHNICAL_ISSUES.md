@@ -686,3 +686,7 @@ No M1/M4, M3, M7/M8, or M9 owner reply or relevant PR head movement was visible.
 ## M0 exact-head CI pass after Windows token-registry timeout — 2026-10-16 04:41 UTC
 
 Product run 38851730894 passed 9/9 on PR #30 docs head 0aef2d4, including Windows Node 22 and the same parallel token-registry test that failed in 38850021718 on 93821f0. M0 made no source or test change between these heads. Treat the failure as not reproduced on this subsequent run; its cause remains UNKNOWN and the earlier worker update did not complete. This does not resolve or merge the token-registry symptom with the distinct file-state-store investigation in #51. Comment 6208234844 records this readback; retain the 04:52 owner-routing deadline.
+
+## M0 04:52 UTC owner/resource checkpoint — 2026-10-16
+
+No M1/M4, M3, M7/M8, or M9 owner reply or module PR head movement was visible. Follow-ups due 05:12: #51 comment 6208357880 (M1/M4 store diagnosis and routing the distinct src/tokens.ts symptom), #53 6208358415 (M7/M8 real package and extracted-Hook/harness proof), #54 6208358770 (M9 old HTTP 503 disposition), #55 6208359102 (M3 Read denial plus positive control), #56 6208359407 (M1 canonical test path/SHA or reviewed exception). Resource comment #29 6208359732 retains two module lanes and no exclusive test reservation. The M0 docs head 0aef2d4 product CI passed 9/9; the prior Windows token-registry timeout remains unexplained. Keep all open acceptance gates and preserve tests/policy.

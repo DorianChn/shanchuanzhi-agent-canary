@@ -1240,3 +1240,14 @@ Description-refresh workflow 38848483566 passed ownership-contract-evidence 1/1 
 - Exact-head product CI 38851730894 passed all 9/9 jobs on 0aef2d420136dc7924acc0c991a1067dab584fdd, including Windows Node 22 and test/tokens.test.ts. Coordination 38851730818 and description ownership workflow 38851751695 passed.
 - This run's source and test are unchanged from the preceding Windows Node 22 failure 38850021718 on 93821f0. The later pass does not explain the bounded token-registry lock timeout; keep Issue #51's adjacent symptom and original file-state-store trigger UNKNOWN.
 - PR #30 remains OPEN/Draft; PR #24 remains OPEN/Draft with unchanged head/base. Usage tab 336903555 remains open/active at 90%. Owner checkpoint 04:52 UTC; next push no earlier than 04:59.
+
+## M0 owner/resource checkpoint — 2026-10-16 04:52 UTC
+
+- No M1/M4, M3, M7/M8, or M9 owner response or module PR-head movement was visible. Posted/read back follow-ups due 05:12: #51 6208357880, #53 6208358415, #54 6208358770, #55 6208359102, #56 6208359407. Resource #29 comment 6208359732 retains only lanes #55/#53 and no exclusive reservation.
+- **#51 P1:** original file-state-store retry trigger remains UNKNOWN. The distinct src/tokens.ts Windows Node 22 timeout failed on 93821f0 but passed on 0aef2d4 with unchanged source/test; no explanation is established. Owner-routing/diagnostic comments 6208234844 and 6208357880 remain due 05:12.
+- **#53 P0:** real package, Setup.exe hashes, extracted-Hook comparison, and extracted-harness remain NOT_VERIFIED.
+- **#54 P1:** historical Windows Node 22 HTTP 503 remains unexplained.
+- **#55 P1:** unpinned normal Read remains allowed; M9 composition run 38727481764 still fails both platforms.
+- **#56 P2:** canonical interruption-test path/blob SHA or M1-reviewed shared-path exception remains missing; preserve test and Draft gate.
+- PR #30 remains OPEN/Draft at 0aef2d4. Product CI 38851730894 passed 9/9; coordination 38851730818 and description refresh 38851949052 passed. The earlier token-lock CI failure remains unexplained. PR #24 remains OPEN/Draft with unchanged head/base.
+- Usage tab 336903555 remains open/active at 89%. No third module lane and no M0 exclusive-resource testing. Next owner checkpoint 05:12 UTC; next normal push no earlier than 04:59 UTC.
