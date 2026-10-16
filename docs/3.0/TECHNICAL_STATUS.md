@@ -1262,3 +1262,7 @@ Description ownership workflow 38852893078 passed 1/1 on PR #30 head 0aef2d4 aft
 - Exact-head product CI 38853435999 passed all nine jobs; coordination workflow 38853436006 passed. Description ownership workflow 38853453396 passed 1/1 on the same head.
 - The previous exact-head Windows Node 22 token-registry timeout 38850021718 remains unexplained; the same test passed on two later heads with unchanged source/test. Keep Issue #51 UNKNOWN and do not infer a fix.
 - Usage tab 336903555 remains open/active at 89%. Follow-up owner checkpoint 05:12 UTC; next normal push no earlier than 05:19 UTC.
+
+### PR #30 05:02 description-refresh completion — 2026-10-16
+
+The latest refreshed-description ownership workflow 38853726427 passed 1/1 on exact PR #30 head c812427c1f25cb7ca92d105a40fadb2fd86fb3f8.
