@@ -1551,3 +1551,11 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - PR #30 and #43 still differ on the M1-owned Hook test path: blob `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d` vs `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`. PR #30 remains Draft pending M1 disposition.
 - Issue #29 body and resource comment 6215083486 were read back with current quota, heads, and deadlines. Local module-worktree isolation remains NOT_VERIFIED; referenced Codex-session activity remains UNKNOWN. No exclusive VMware/model/installer slot is reserved.
 - Last M0 push: 11:49 UTC. Next push no earlier than 12:09 after fresh quota, PR #24, remote-head, and diff-scope preflight.
+
+## M0 12:14 UTC P0 #52 deadline follow-up — 2026-10-16
+
+- Paginated GitHub comments show no M1/M2/M5 owner response/evidence by 12:10. Follow-up 6215267529 keeps P0 #52 OPEN/NOT_VERIFIED and sets the next host/build/call-path evidence or named-blocker deadline at 12:30 UTC.
+- PR #30 remains OPEN/Draft at exact head `6215e3b7caaf11c1da0c7f579fbbe0ee9ba37892`; product CI 38898575754, coordination 38898575747, and latest body check 38898635195 all passed. PR #24 remains unchanged OPEN/Draft.
+- No M7/M8, M3/M9, or M1 owner reply appeared on #53/#55/#56 after the 12:03 follow-ups; those remain due 12:20. The #55 Ubuntu/Windows fail-open composition and #56 exact Hook-test blob conflict remain unresolved.
+- At 12:13, Usage read 91% five-hour / 70% weekly, reset in about five minutes; Usage Overview remains open. Issue #29 body/resource comment 6215268041 record this snapshot and the current deadlines.
+- No M0 module source/test changes. Local module-worktree isolation remains NOT_VERIFIED; referenced Codex-session activity is UNKNOWN. Last push 12:09 UTC; next no earlier than 12:29 after fresh preflight.
