@@ -720,3 +720,7 @@ The M0 docs-only head `a1dd2c22fb5dd04fb18ead1a50aae1c0a80967a7` has exact-head 
 ## M0 07:00 UTC resource readback — 2026-10-16
 
 No owner status reply or M1–M8/M9 PR-head movement appeared after 06:40. Resource #29 comment `6209990887` retains only the two tracked lanes M3/#55 and M7/M8/#53; live thread activity remains UNKNOWN. No third lane or VMware/real-model/installer reservation was started. Keep all open P0/P1 acceptance gates unchanged.
+
+## PR #30 07:04 batch readback — 2026-10-16
+
+M0 docs-only head `bcc0ee5b4d066a361a7661b055c516a4eee965c8` has product CI `38864988959` passed 9/9, coordination `38864988628` passed 1/1, and refreshed-description ownership check `38865378716` passed 1/1. PR #30 remains OPEN/Draft; PR #24 remains unchanged. These checks validate M0 documentation only; all module acceptance gates remain as listed. Next push no earlier than 07:25 UTC.
