@@ -1509,3 +1509,8 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Usage Overview remains open and reads 91% five-hour / 70% weekly. PR #24 remains unchanged OPEN/Draft. PR #30 exact head 7b6f0bf remains OPEN/Draft; product CI 38891911234 passed 9/9, coordination 38891911256 passed, and latest body check 38892202745 passed 1/1.
 - No M1–M8/M9 PR-head movement or module-owner reply was recorded at 11:20. Comments #29 6214395963, #53 6214396500, #55 6214396031, and #56 6214395978 document the checkpoint and set the next issue deadline to 11:40. #52 remains due 11:30.
 - Usage is above the 5% stop threshold. Local module worktree isolation remains NOT_VERIFIED; no exclusive VM/model/installer slot is reserved. Next push no earlier than 11:29 UTC.
+## M0 11:22 UTC scheduler refresh — 2026-10-16
+
+- Replaced stale Issue #29 body with a current snapshot and read it back at 11:22 UTC; archived the prior issue body in the local reports directory. The new body records the two-task cap, unconfirmed module activity, exact open-PR heads, priority gates, and exclusive resource rule.
+- Usage remains 91% five-hour / 70% weekly from the 11:20 read; Usage Overview stays open. Module PR heads are unchanged. PR #30 is green at 7b6f0bf; PR #24 remains unchanged.
+- #52 follow-up is due 11:30; #53/#55/#56 are due 11:40. Next push no earlier than 11:29 after fresh preflight.
