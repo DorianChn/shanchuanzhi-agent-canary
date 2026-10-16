@@ -1065,3 +1065,9 @@ Exact-head product CI run 38838063732 passed all nine jobs on `7ed1f04`. PR #30 
 - **#56 P2 M0/M1:** canonical interruption-test path/blob SHA or reviewed shared-path exception remains missing.
 - Resource comment #29 6206495995: tracked lanes remain #55 (M3) and #53 (M7/M8) only; no new lane, no exclusive VMware/real-model/installer reservation, and M0 has not started those tests. M6 #38 checks pass, but product E4 remains NOT_VERIFIED.
 - Usage tab 336903555 remains open/active at 78%. PR #30 remains OPEN/Draft at 7ed1f04 with product CI 38838063732 passing 9/9; PR #24 remains unchanged OPEN/Draft. Next push no earlier than 02:19 UTC.
+
+## M0 02:19 UTC batch readback — 2026-10-16
+
+- Pushed the 02:12 checkpoint as docs-only commit a833345. PR #30 remains OPEN/Draft at exact head `a833345cd30edaca1a7adca8aa260f05f7765980`; 02:19 snapshot was refreshed and read back.
+- Exact-head coordination workflow 38839819610 passed. Product CI 38839819568 and the body-refresh workflow 38839850421 were in progress at this read.
+- PR #24 remains OPEN/Draft at its unchanged head/base. Usage tab remained open/active at the pre-push check; next owner checkpoint 02:32 UTC and next push no earlier than 02:39 UTC.
