@@ -930,3 +930,12 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - **P0 / Issue #53:** no M7/M8 artifact evidence or PR #39/#40 head movement by 23:52. Comment 6204724145 requests pinned package/manifest hashes, extracted-Hook comparison, harness result, or accountable blocker by 00:12. Keep reachability NOT_VERIFIED; installer/VM work requires #29 reservation.
 - Usage tab 336903555 remains open and active; the 23:52 reading was readable above the pause threshold. Next M0 push no earlier than 23:59 UTC.
 - No module source/tests changed; no tests ran, no merge, and no Release.
+
+## M0 owner checkpoint — 2026-10-16 00:12 UTC
+
+- **P1 / Issue #51:** no M1/M4 diagnostic response by 00:12 after exact-head run 38824891940. Comment 6204994939 notes that later passing M0 CI does not explain the prior retry exhaustion; it requests owner/next diagnostic or blocker by 00:32. Keep cause UNKNOWN; preserve the test and assertions.
+- **P2 / Issue #56:** no M1 disposition or PR #43 head movement by 00:12. Comment 6204994942 requests canonical test path/blob SHA or reviewed shared-path exception by 00:32. Preserve the test and keep PR #30 Draft.
+- **P1 / Issue #55:** no M3 evidence or PR #33 head movement by 00:12. Comment 6204994931 requests unpinned-Read denial and supported-capability positive control, or accountable blocker by 00:32. M9 remains gated.
+- **P0 / Issue #53:** no M7/M8 artifact evidence or PR #39/#40 head movement by 00:12. Comment 6204994934 requests pinned package/manifest hashes, extracted-Hook comparison, harness result, or owner/blocker by 00:32. Keep reachability NOT_VERIFIED; installer/VM work requires #29 reservation.
+- Usage tab 336903555 remains open and active; the 00:12 reading was readable above the pause threshold. Next M0 push no earlier than 00:19 UTC.
+- No module source/tests changed; no tests ran, no merge, and no Release.

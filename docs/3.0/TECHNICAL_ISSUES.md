@@ -565,3 +565,10 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#56 P2 — M0/M1 Hook test ownership:** no M1 disposition by 23:52. Comment 6204723919 requests canonical path/blob SHA or a reviewed shared-path exception by 00:12. Preserve the test.
 - **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 23:52. Comment 6204723945 requests fail-closed denial and supported-capability positive-control evidence, or accountable blocker by 00:12. M9 remains gated.
 - **#53 P0 — M7/M8 packaged Hook reachability:** no M7/M8 artifact evidence by 23:52. Comment 6204724145 requests package/manifest hashes, extracted-Hook comparison, harness result, or accountable blocker by 00:12. Keep OPEN/NOT_VERIFIED; respect #29 resource reservation.
+
+## M0 owner deadline follow-up — 2026-10-16 00:12 UTC
+
+- **#51 P1 — M1/M4 state-store retry:** no owner response/diagnostic by 00:12. Comment 6204994939 clarifies that the later passing M0 CI does not identify the earlier exact-head retry exhaustion; root cause stays UNKNOWN.
+- **#56 P2 — M0/M1 Hook test ownership:** no M1 disposition by 00:12. Comment 6204994942 requests canonical path/blob SHA or reviewed shared-path exception by 00:32. Preserve the test.
+- **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 00:12. Comment 6204994931 requests fail-closed denial and supported-capability positive-control evidence or accountable blocker by 00:32. M9 remains gated.
+- **#53 P0 — M7/M8 packaged Hook reachability:** no M7/M8 artifact evidence by 00:12. Comment 6204994934 requests package/manifest hashes, extracted-Hook comparison, harness result, or accountable blocker by 00:32. Keep OPEN/NOT_VERIFIED and respect #29 reservation.
