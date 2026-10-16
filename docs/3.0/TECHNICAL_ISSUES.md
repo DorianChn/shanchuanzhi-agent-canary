@@ -690,3 +690,7 @@ Product run 38851730894 passed 9/9 on PR #30 docs head 0aef2d4, including Window
 ## M0 04:52 UTC owner/resource checkpoint — 2026-10-16
 
 No M1/M4, M3, M7/M8, or M9 owner reply or module PR head movement was visible. Follow-ups due 05:12: #51 comment 6208357880 (M1/M4 store diagnosis and routing the distinct src/tokens.ts symptom), #53 6208358415 (M7/M8 real package and extracted-Hook/harness proof), #54 6208358770 (M9 old HTTP 503 disposition), #55 6208359102 (M3 Read denial plus positive control), #56 6208359407 (M1 canonical test path/SHA or reviewed exception). Resource comment #29 6208359732 retains two module lanes and no exclusive test reservation. The M0 docs head 0aef2d4 product CI passed 9/9; the prior Windows token-registry timeout remains unexplained. Keep all open acceptance gates and preserve tests/policy.
+
+## M0 exact-head Windows token-test readback — 2026-10-16 05:01 UTC
+
+PR #30 exact-head run 38853435999 passed 9/9 on c812427, including Windows Node 22 and test/tokens.test.ts. The prior run 38850021718 failed that same test on 93821f0; the test/source were unchanged on the passing heads. This is a subsequent pass, not a diagnosis or fix. Keep the prior timeout and original file-state-store retry trigger UNKNOWN under #51. No test was removed or weakened.

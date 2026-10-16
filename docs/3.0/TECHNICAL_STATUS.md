@@ -1255,3 +1255,10 @@ Description-refresh workflow 38848483566 passed ownership-contract-evidence 1/1 
 ### PR #30 04:53 description-refresh completion — 2026-10-16
 
 Description ownership workflow 38852893078 passed 1/1 on PR #30 head 0aef2d4 after the 04:52 snapshot refresh.
+
+## PR #30 04:59 batch readback — 2026-10-16
+
+- Pushed docs-only commits through c812427c1f25cb7ca92d105a40fadb2fd86fb3f8. PR #30 remains OPEN/Draft at exact head; PR #24 remains OPEN/Draft, head/base unchanged.
+- Exact-head product CI 38853435999 passed all nine jobs; coordination workflow 38853436006 passed. Description ownership workflow 38853453396 passed 1/1 on the same head.
+- The previous exact-head Windows Node 22 token-registry timeout 38850021718 remains unexplained; the same test passed on two later heads with unchanged source/test. Keep Issue #51 UNKNOWN and do not infer a fix.
+- Usage tab 336903555 remains open/active at 89%. Follow-up owner checkpoint 05:12 UTC; next normal push no earlier than 05:19 UTC.
