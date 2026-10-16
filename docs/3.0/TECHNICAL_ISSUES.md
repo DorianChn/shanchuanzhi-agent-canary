@@ -810,3 +810,6 @@ PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `3887627
 ## P0 #52 11:30 UTC owner deadline readback — 2026-10-16
 
 No M1/M2/M5 response, host evidence, or PR-head movement was visible at the deadline. Follow-up 6214530876 asks for exact host acceptance or a named BLOCKED owner/dependency/next delivery by 11:50 UTC. Issue #29 now records this state and current heads.
+## Scheduler and PR status correction — 11:33 UTC
+
+Issue #29's M0 line is updated from pending to the actual exact-head results: product CI 9/9, coordination PASS, ownership check 38894412645 PASS 1/1. The prior body state is preserved locally. No PR #24 or module state changed.
