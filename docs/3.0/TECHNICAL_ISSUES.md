@@ -672,3 +672,9 @@ No owner response or relevant PR-head movement was visible for #51/#53/#54/#55/#
 ## M0 04:12 UTC owner follow-up — 2026-10-16
 
 No new owner replies or relevant module PR head changes were visible. M0 posted follow-ups due 04:32: #51 comment 6207904891 (M1/M4 lock trigger and failure-specific diagnostic), #53 6207905248 (M7/M8 real package and extracted-Hook/harness evidence), #54 6207905619 (M9 old Windows Node 22 HTTP 503 disposition), #55 6207905978 (M3 fail-closed Read correction, positive control, and exact-head composition), and #56 6207906339 (M1 canonical test path/blob SHA or reviewed shared-path exception). Resource comment #29 6207906714 retains only the two existing lanes and no exclusive test reservation. Keep all corresponding issues open at their existing severity; do not weaken tests or security policy.
+
+## M0 exact-head Windows token-registry contention — 2026-10-16 04:23 UTC
+
+- **P1 / ownership UNKNOWN:** PR #30 exact-head product run 38850021718 failed on Windows Node 22 in test/tokens.test.ts:146, where 16 CLI workers concurrently call addTokens. One worker exhausted the bounded lock wait and src/tokens.ts:199 failed closed with “The canary token registry is locked by another process; no token update was written.” The requested update did not complete; the log does not show an unlocked write, overwrite, or on-disk corruption. This path is distinct from the M1-owned src/file-state-store.ts retry failure, and a shared root cause is unproven.
+- Seven other product jobs passed; package-smoke was skipped. Coordination workflow 38850021714 and description ownership workflow 38850104889 passed. No test was removed, weakened, or rerun by M0.
+- Supplemental Issue #51 comment 6208031338 asks the existing M1/M4 lock-triage owners to confirm remit or route the src/tokens.ts owner and next diagnostic by 04:32 UTC. Keep source ownership UNKNOWN until confirmed; no new resource lane or test reservation is opened.

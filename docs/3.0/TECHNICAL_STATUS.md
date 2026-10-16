@@ -1216,3 +1216,10 @@ Description-refresh workflow 38848483566 passed ownership-contract-evidence 1/1 
 - **#56 P2 M0/M1:** canonical interruption-test path/blob SHA or M1-reviewed shared-path exception is still missing. Preserve the test.
 - PR #30 remains OPEN/Draft at pushed head 8c8cf3e. Exact-head product CI 38848260196 passed 9/9; coordination 38848260124 and description refresh 38848483566 passed. PR #24 remains OPEN/Draft, head/base unchanged.
 - Three docs-only commits are queued locally for the 04:19 batch. Next owner checkpoint 04:32 UTC. No VM, real-model, or installer test has been started by M0.
+
+## M0 exact-head CI diagnostic — 2026-10-16 04:23 UTC
+
+- PR #30 head 93821f0580f4f6f5e8af722f3a2e9d15705131cc: product CI 38850021718 failed only on Windows Node 22; seven product jobs passed and package-smoke was skipped. Coordination 38850021714 and refreshed-description ownership check 38850104889 passed.
+- Windows Node 22 test/tokens.test.ts:146 ("parallel CLI processes do not lose token registry updates") had one child fail closed after src/tokens.ts:199 reported the token registry lock was held through its bounded timeout. The worker's requested update did not complete; logs show no unsafe write or on-disk corruption. This is a distinct file/path from src/file-state-store.ts; shared root cause is unproven.
+- Added supplemental diagnostic and owner-routing request to Issue #51 comment 6208031338, due 04:32 UTC. Ownership for src/tokens.ts remains UNKNOWN pending M1/M4 triage; M0 made no source/test change and did not rerun or weaken the test.
+- PR #30 remains OPEN/Draft at 93821f0. PR #24 remains OPEN/Draft with unchanged head/base. Usage tab 336903555 remains open/active at 92%. Next owner/resource checkpoint 04:32 UTC; next normal push no earlier than 04:39 UTC.

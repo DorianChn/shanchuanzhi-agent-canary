@@ -1,3 +1,8 @@
+## M0 ownership routing — 2026-10-16 04:23 UTC
+
+- src/tokens.ts and test/tokens.test.ts are not assigned in the active M1–M9 ownership table. Do not infer they share ownership or root cause with M1's src/file-state-store.ts.
+- Exact-head run 38850021718 exposed a distinct Windows Node 22 token-registry lock timeout. Issue #51 supplemental comment 6208031338 asks the existing M1/M4 lock-triage owners to confirm remit or route the source owner by 04:32 UTC. Until confirmed, ownership of the token-registry lock remains UNKNOWN; M0 makes no source change.
+
 ## M0 ownership review — 2026-10-15 21:16 UTC
 
 - M1 retains ownership of canonical `test/agent-hook.test.ts`. PR #30 currently includes this path via the interruption-fixture change associated with `b92bde4`; M1 PR #43 also modifies it. The PR #30 timeline contains no visible M1 disposition/review, so authorization is UNKNOWN. Issue #56 tracks M0 PR-scope reconciliation. Do not treat this overlap as a transfer of file ownership.
