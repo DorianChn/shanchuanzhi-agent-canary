@@ -1044,3 +1044,9 @@ The 01:41 snapshot refresh workflow 38836513714 completed successfully (ownershi
 - **#56 P2 M0/M1:** no canonical test path/blob SHA or reviewed shared-path exception is visible; preserve the test and keep PR #30 Draft.
 - Resource comment #29 6206233085 confirms only tracked lanes #55 (M3) and #53 (M7/M8); no new lane or exclusive VMware/real-model/installer reservation; M0 did not start those tests. External Codex thread activity is not observable here.
 - Usage tab 336903555 remains open/active at 79%. PR #30 is OPEN/Draft at pushed head fd2387c; local docs commits are awaiting batch push. PR #24 remains OPEN/Draft at unchanged head/base. Next push window no earlier than 01:59 UTC after fresh preflight.
+
+## M0 01:59 UTC batch readback — 2026-10-16
+
+- Pushed four docs-only commits through `7ed1f0459e1ea53f6fd9d572682ff75a4489120c` to the existing M0 branch. PR #30 remains OPEN/Draft at that exact head; its 01:59 snapshot was read back and retains `API-Contract-Change: yes`.
+- Exact-head coordination workflow 38838063733 passed. Description refresh 38838096872 passed. Product CI 38838063732 was still in progress at this read.
+- PR #24 remains OPEN/Draft at unchanged head/base. Usage tab 336903555 remained open/active at the pre-push check (79%). Next owner checkpoint 02:12 UTC; next push no earlier than 02:19 UTC.
