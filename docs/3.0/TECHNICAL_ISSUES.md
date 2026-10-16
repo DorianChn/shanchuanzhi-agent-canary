@@ -702,3 +702,13 @@ No module owner reply or relevant PR head movement was visible since 04:52. Foll
 ## M0 exact-head CI readback — 2026-10-16 06:23 UTC
 
 PR #30 exact-head product run 38860789569 passed all nine jobs on ac4f72d. Coordination 38860789574 and description ownership refresh 38860818272 also passed. These validate the M0 coordination head only; M3/M9 composition, M7/M8 packaged evidence, M1/M4 lock diagnosis, host protection, clean-VM installer lifecycle, and product E4 remain NOT_VERIFIED/open as already recorded.
+
+## M0 06:40 UTC issue rollup — 2026-10-16
+
+- **P0 #52:** M5 PR #47 exact-head CI is green on `373e2c2`; the M5 hard-deny fix is remotely reviewable. First-party host consumption, protected-open/held-handle behavior, junction handling, and TOCTOU acceptance remain NOT_VERIFIED. Keep OPEN.
+- **P0 #53:** M7/M8 code-level sanitized Hook tests and hosted checks are green, but actual Windows Setup.exe hashes, extracted payload comparison, and extracted harness are missing. Keep OPEN; no installer slot is reserved.
+- **P1 #51:** M4 PR #34 head `fbf2090` has one real Ubuntu Node 20 file-store test failure (`RETRY_LIMIT`); other cancelled jobs are not independent failures. M1 exact head later passed 10 repetitions on Ubuntu Node 20/22, which does not identify the failure trigger. The separate Windows `src/tokens.ts` lock timeout remains distinct. Lock owner/root cause UNKNOWN; preserve assertions.
+- **P1 #54:** historical Windows Node 22 HTTP 503 remains unexplained; current product CI does not explain it. Current M9 composition is blocked separately by #55.
+- **P1 #55:** M3 still expects unpinned normal Read to allow while M1 requires deny. Current M9 job also pins an older M1 SHA, so all-current-head composition has not passed. Require M3 correction and positive control, then refresh M9 pins and rerun.
+- **P2 #56:** PR #30 and PR #43 contain different blobs at the shared M1-owned `test/agent-hook.test.ts` path. M1 disposition is required; preserve the test and keep PR #30 Draft.
+- **P1 #41:** clean-VM installer lifecycle remains NOT_VERIFIED. **P1 #45:** native Codex Shell remains UNPROTECTED. **M6 #38:** CI does not establish external/product E4. Keep each acceptance gate explicit.
