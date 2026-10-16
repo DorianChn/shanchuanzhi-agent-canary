@@ -1716,3 +1716,24 @@ These hosted checks are not substitutes for host, package, VM, or independent E4
 - P0 #52 had no M1/M2/M5 owner response, first-party host/call-path evidence, or PR #43/#37/#47 movement by 14:30. Comment 6217749414 requests protected-open and alias/junction/TOCTOU evidence or a named blocker by 14:50. P0 remains OPEN / NOT_VERIFIED.
 - PR #30 before this docs push: head `a90cfe28c3760ec3ec2fef219f1ff648c97193ae`; product CI 38913858799, coordination 38913858711, and refreshed-body check 38915162991 passed. PR #24 remains unchanged OPEN/Draft.
 - No M0 module source/tests changed. Last push 14:12 UTC; next push no earlier than 14:32 after fresh quota, PR #24, remote-head, and docs-scope preflight.
+## M0 14:35 UTC post-push readback — 2026-10-16
+
+- PR #30 is OPEN/Draft at exact head `ce7628af5b024d36662e1f81be3981735445ad44`; coordination run 38916684738 and refreshed-body run 38916868762 PASS. Product CI 38916684742 remains IN_PROGRESS at this read.
+- PR #30 and Issue #29 were read back with #51/#52 due 14:50, #41/#53/#54/#55/#56/#57 due 14:40, and the M4 run 38698635434 recurrence recorded under #51. PR #24 remains unchanged OPEN/Draft.
+- Usage last refreshed 14:32 at 57% five-hour / 62% weekly; Usage tab remains open. No M0 module sources/tests changed. Next push no earlier than 14:53 UTC.
+## M0 14:40 UTC acceptance deadlines — 2026-10-16
+
+- Usage Overview refreshed at 14:41 UTC: 50% five-hour / 61% weekly, reset in 2h37m. Readable and above the 5% stop threshold; tab remains open.
+- No owner evidence/response appeared by 14:40 for #41/#53/#54/#55/#56/#57. Follow-ups 6217925876, 6217926598, 6217927153, 6217927801, 6217928533, and 6217929172 set the next checkpoint at 15:00. VM lifecycle, extracted-package proof, M9 HTTP-503 ownership/diagnosis, M3/M9 fail-closed composition, M1 test ownership, and independent M6 E4 remain NOT_VERIFIED / OPEN as applicable.
+- P1 #51 and P0 #52 remain due 14:50 after comments 6217748449 / 6217749414.
+- PR #30 current head `ce7628af5b024d36662e1f81be3981735445ad44` has product CI 38916684742 PASS, coordination 38916684738 PASS, and refreshed-body check 38916868762 PASS. PR #24 remains unchanged OPEN/Draft.
+- No M0 module source/tests changed. Last push 14:33 UTC; next push no earlier than 14:53 after fresh quota, PR #24, remote-head, and docs-scope preflight.
+
+## M0 14:55 UTC P0/P1 deadline readback — 2026-10-16
+
+- Usage Overview was readable at 14:54 UTC: 50% five-hour / 61% weekly, reset in 2h24m. It remains above the 5% stop threshold; the Usage tab remains open.
+- P1 #51: no M1 diagnosis, lock-holder/timing trace, safe repair, named blocker, or PR #43 movement appeared by the 14:50 deadline. Comment 6218121375 at 14:51 records that two exact-head Ubuntu Node 20 runs (#34 / 38698635434 and prior M0 / 38905972645) hit test 163 retry exhaustion. Root trigger remains UNKNOWN; the logs do not establish data loss/corruption. Next evidence or named-blocker checkpoint: 15:10. Preserve concurrency assertions and bounded fail-closed behavior.
+- P0 #52: no M1/M2/M5 first-party host/build/call-path evidence, protected-open alias/junction/TOCTOU acceptance, or PR #43/#37/#47 movement appeared by 14:50. Comment 6218121960 at 14:51 keeps the P0 OPEN / NOT_VERIFIED and sets 15:10 for evidence or an accountable blocker. Preserve all hard denials.
+- #41/#53/#54/#55/#56/#57 remain OPEN / NOT_VERIFIED as applicable. Their latest checkpoint was 14:40 and the next due time is 15:00; this checkpoint does not treat evidence as received before that deadline.
+- PR #30 remains OPEN/Draft at exact head ce7628af5b024d36662e1f81be3981735445ad44; current product and coordination checks all read SUCCESS. PR #24 remains OPEN/Draft with head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7, unchanged.
+- No M0 module source/tests changed. Last M0 push was 14:33 UTC; this documentation-only batch is after the 20-minute interval. M1–M8 worktree isolation remains NOT_VERIFIED from M0 filesystem evidence; no claim is made about hidden Codex-session activity.
