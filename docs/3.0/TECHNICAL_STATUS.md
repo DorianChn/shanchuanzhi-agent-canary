@@ -1816,3 +1816,51 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - P0 #52 remains OPEN / NOT_VERIFIED after 15:30 comment 6218881522; no product host/call-path or alias/junction/TOCTOU proof; PR #43/#37/#47 heads unchanged. Next checkpoint 15:50.
 - PR #24 remains OPEN/Draft unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at ff1157600f7297e4b00bbeb0ac7bd849f6fda985; product and latest ownership-contract checks pass.
 - M0 changed only coordination status documentation; no module source/tests, main merge, or Release. Last push 15:23 UTC; next no earlier than 15:43 UTC after fresh quota, PR #24, remote-head, and diff-scope checks.
+
+## M0 15:45 UTC current-head CI readback — 2026-10-16
+
+- PR #30 current head 215055cb758a4a665fff3ac1b59d2cd2eca272af product run 38926263121 has all Ubuntu/macOS/Windows Node 20/22 tests, Docker, and Sponsor SUCCESS; package-smoke was IN_PROGRESS at 15:45. Ownership-contract evidence run 38926343329 passed.
+- Current check state is pending only package-smoke; no current failure is shown. PR #30 remains OPEN/Draft. PR #24 remains OPEN/Draft at its unchanged head/base.
+- Usage last readable at 15:42: 21% five-hour / 56% weekly; Usage tab remains open. Next push no earlier than 16:03 UTC.
+- No M0 module source/tests changed, no main merge or Release.
+
+## M0 15:46 UTC exact-head product CI completion — 2026-10-16
+
+- PR #30 exact head 215055cb758a4a665fff3ac1b59d2cd2eca272af product run 38926263121 completed SUCCESS across Ubuntu/macOS/Windows Node 20/22, Docker, Sponsor, and package-smoke. Ownership-contract evidence run 38926343329 also passed.
+- Issue #51 comment 6219166339 records current-head success; it does not resolve or erase the prior 498989d Ubuntu Node 20 test 163 retry exhaustion on run 38919965125. Root trigger remains UNKNOWN; no tests or retry limits changed.
+- PR #24 remains OPEN/Draft and unchanged. PR #30 remains OPEN/Draft. Usage last readable at 15:42: 21% five-hour / 56% weekly; Usage tab remains open.
+- Current body refresh may trigger another ownership-contract check. Last push 15:43; next push no earlier than 16:03 UTC. M0 changed no module source/tests.
+
+## M0 15:47 UTC post-body ownership check — 2026-10-16
+
+- Ownership-contract-evidence run 38926636643 passed after the latest PR #30 body and Issue #29 status refresh. Combined with product run 38926263121, all currently visible PR #30 product and coordination checks pass at head 215055cb758a4a665fff3ac1b59d2cd2eca272af.
+- Last push was 15:43 UTC; next no earlier than 16:03 UTC. No M0 module code/tests changed.
+
+## M0 15:50 UTC P0 protected-host readback — 2026-10-16
+
+- Usage Overview at 15:50 UTC was readable at 20% five-hour / 56% weekly, above the 5% stop threshold; Usage tab remains open.
+- No M1/M2/M5 owner response, first-party protected held-descriptor consumption, alias/junction/TOCTOU evidence, or PR #43/#37/#47 head movement appeared. Comment 6219247860 keeps P0 #52 OPEN / NOT_VERIFIED and sets 16:10 for proof or a named accountable blocker. Preserve every hard denial.
+- PR #30 remains OPEN/Draft at head 215055cb758a4a665fff3ac1b59d2cd2eca272af. Its product run 38926263121 and ownership-contract run 38926343329 pass. PR #24 remains unchanged OPEN/Draft.
+- Issues #51 and #41/#53/#54/#55/#56/#57 are due 16:00. Last push 15:43 UTC; next no earlier than 16:03 after fresh quota, remote-head, PR #24, and docs-only scope preflight.
+- No module source/tests changed; no main merge or Release.
+
+## M0 15:51 UTC latest coordination check — 2026-10-16
+
+- After the 15:50 PR #30 and Issue #29 refresh, ownership-contract-evidence run 38927210609 passed. Product run 38926263121 remains fully successful at exact head 215055cb758a4a665fff3ac1b59d2cd2eca272af.
+- PR #24 remains unchanged OPEN/Draft. P0 #52 next due 16:10; #51 and #41/#53/#54/#55/#56/#57 due 16:00.
+- This remains a local docs-only update. Last M0 push 15:43 UTC; next no earlier than 16:03.
+
+## M0 16:00 UTC module acceptance deadline readback — 2026-10-16
+
+- Usage Overview refreshed at 15:59 UTC: 20% five-hour / 56% weekly, readable and above the 5% stop threshold; Usage tab remains open.
+- No owner evidence or PR head movement appeared by 16:00 for #41/#53/#54/#55/#56/#57. Follow-ups 6219443353, 6219444233, 6219444968, 6219446019, 6219447109, and 6219447717 set 16:20 UTC. Clean-VM lifecycle, real extracted Windows payload, historical HTTP 503, M3/M9 fail-closed composition, canonical Hook-test ownership, and independent product E4 remain OPEN / NOT_VERIFIED as applicable.
+- P1 #51: no M1 diagnosis, failure-correlated trace, repair, named blocker, or PR #43 movement. Comment 6219442233 records current docs-only PR #30 head 215055c product/coordination checks pass, without resolving the prior 498989d retry exhaustion from run 38919965125. Root trigger remains UNKNOWN; next checkpoint 16:20.
+- P0 #52 remains OPEN / NOT_VERIFIED after 15:50 comment 6219247860; next checkpoint 16:10.
+- PR #24 remains OPEN/Draft unchanged. PR #30 remains OPEN/Draft at 215055cb758a4a665fff3ac1b59d2cd2eca272af; current product/coordination checks passed. Last M0 push 15:43 UTC; next no earlier than 16:03 after fresh quota, PR #24, remote-head, and docs-only scope preflight.
+- No module source/tests changed, no main merge or Release.
+
+## M0 16:02 UTC post-body check — 2026-10-16
+
+- Ownership-contract-evidence run 38928690413 passed after the 16:00 Issue #29 / PR #30 refresh. Product run 38926263121 remains fully successful at current PR #30 head 215055cb758a4a665fff3ac1b59d2cd2eca272af.
+- PR #24 is still OPEN/Draft at its unchanged head/base. P0 #52 next due 16:10; #51 and #41/#53/#54/#55/#56/#57 next due 16:20.
+- Next M0 push is eligible after 16:03 UTC; this batch remains limited to TECHNICAL_STATUS.md.
