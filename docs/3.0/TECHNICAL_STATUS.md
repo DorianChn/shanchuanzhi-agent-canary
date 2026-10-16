@@ -1223,3 +1223,14 @@ Description-refresh workflow 38848483566 passed ownership-contract-evidence 1/1 
 - Windows Node 22 test/tokens.test.ts:146 ("parallel CLI processes do not lose token registry updates") had one child fail closed after src/tokens.ts:199 reported the token registry lock was held through its bounded timeout. The worker's requested update did not complete; logs show no unsafe write or on-disk corruption. This is a distinct file/path from src/file-state-store.ts; shared root cause is unproven.
 - Added supplemental diagnostic and owner-routing request to Issue #51 comment 6208031338, due 04:32 UTC. Ownership for src/tokens.ts remains UNKNOWN pending M1/M4 triage; M0 made no source/test change and did not rerun or weaken the test.
 - PR #30 remains OPEN/Draft at 93821f0. PR #24 remains OPEN/Draft with unchanged head/base. Usage tab 336903555 remains open/active at 92%. Next owner/resource checkpoint 04:32 UTC; next normal push no earlier than 04:39 UTC.
+
+## M0 owner/resource checkpoint — 2026-10-16 04:32 UTC
+
+- No M1/M4, M3, M7/M8, or M9 owner reply or relevant PR head movement was visible. Posted/read back 04:52 follow-ups: #51 6208132638, #53 6208133066, #54 6208133517, #55 6208133908, #56 6208134272. Resource #29 comment 6208134573 keeps only lanes #55/#53 and no exclusive reservation.
+- **#51 P1:** original file-state-store retry cause remains UNKNOWN. The separate Windows Node 22 token-registry test failure from run 38850021718 is recorded in supplemental comment 6208031338; M1/M4 must confirm remit or route the owner. No source change or data-corruption finding is established.
+- **#53 P0:** real package, Setup.exe hashes, extracted-Hook comparison, and extracted-harness remain NOT_VERIFIED.
+- **#54 P1:** prior Windows Node 22 HTTP 503 remains unexplained; current green job is not a root-cause explanation.
+- **#55 P1:** unpinned normal Read remains allowed; M9 composition run 38727481764 remains failing on both platforms.
+- **#56 P2:** canonical interruption-test path/blob SHA or M1-reviewed shared-path exception remains missing; preserve test and Draft gate.
+- PR #30 remains OPEN/Draft at 93821f0. Coordination workflows 38850021714 and 38850400804 passed; product CI 38850021718 has one Windows Node 22 token-registry lock test failure, seven job passes, and package-smoke skipped. PR #24 remains OPEN/Draft, head/base unchanged.
+- Usage tab 336903555 remains open/active at 91%. No third module lane and no M0 VM/model/installer test. Next owner checkpoint 04:52 UTC; next normal push no earlier than 04:39 UTC.
