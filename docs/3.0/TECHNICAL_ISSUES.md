@@ -776,3 +776,11 @@ PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `3887627
 
 - **P1 #55:** no M3/M9 owner reply or PR #33/#36 head movement by the 09:20 deadline. The contract/composition acceptance remains unmet; resource #29 comment `6212329413` records the status. Keep open.
 - **P0 #53:** no M7/M8 owner reply or PR #39/#40 head movement by the 09:20 deadline. Real installer/payload acceptance remains NOT_VERIFIED; no installer slot is reserved. Resource #29 comment `6212329413` records the status. Keep open.
+
+## Owner and blocker follow-up 10:44–10:53 UTC — 2026-10-16
+
+- **P0 #52:** comment 6213913840 asks M1/M2/M5 for first-party host call-site and protected-open evidence covering sensitive-path deny, alias/junction, held-handle, and TOCTOU cases with a positive control, or an owner/blocker/next-delivery statement by 11:15 UTC. Synthetic CI is insufficient; keep P0 open.
+- **P0 #53:** comment 6213780639 requests exact Setup.exe/manifest hashes, extracted-Hook byte comparison, and extracted-harness evidence, or a named owner/blocker by 11:00 UTC. No exclusive installer slot is reserved; acceptance remains NOT_VERIFIED.
+- **P1 #55:** filtered Ubuntu and Windows logs for M9 run 38727481764 show “expected deny, actual allow” on unpinned native Read at the logged M1 b1d7423 / M3 be38802 pair. Current PR heads are M1 #43 9ef3dc2, M3 #33 be38802, M9 #36 de3799a. Comment 6213780254 asks M3 to preserve M1 fail-closed behavior and add a supported-capability positive control, then M9 to rerun exact current heads on both platforms by 11:00 UTC.
+- **P2 #56:** comments 6213818328 records differing PR #30/#43 blobs for the M1-owned Hook test and requests M1 confirmation of the canonical test/shared-path exception by 11:00 UTC. M0 did not edit this file; keep PR #30 Draft pending disposition.
+- Resource #29 comment 6213767711 records 91% five-hour / 70% weekly usage, no confirmed active lane, and no VMware/model/installer reservation. M1–M8/M9 branch heads remain unchanged; local module-worktree isolation is NOT_VERIFIED.
