@@ -885,3 +885,10 @@ Issues #53/#55/#56 remain due 13:20 after their 13:00 follow-ups; no owner reply
 PR #30 exact head `4185158274c219c24c8826a1fb81a238444c6d71` product CI run 38905972645 failed on Ubuntu Node 20 at test 163, `four concurrent processes preserve every quarantine without lost writes`. The worker exhausted 500 bounded `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`; run summary: 321 pass, 1 fail, 4 skipped. This adds a Node 20 recurrence to the earlier Ubuntu Node 22 evidence. The underlying lock-holder/timing trigger remains UNKNOWN, and this run does not establish data loss or corruption.
 
 M0 comment 6216314917 asks M1 to diagnose/repair or name a BLOCKED owner/dependency by 13:30. Keep the test, all concurrency/final-state assertions, and visible bounded failure. Do not delete tests, lower the retry bound, or treat exhaustion as success. Exact-head coordination run 38905972269 and previous description check 38906052754 passed; new description check 38906497087 is in progress.
+## 13:20 UTC owner deadline readback — 2026-10-16
+
+- **P0 #53, M7/M8:** no owner reply, exact artifact/payload/harness evidence, or PR #39/#40 movement by 13:20. Follow-up 6216421106 sets 13:40 evidence or named-blocker deadline.
+- **P1 #55, M3/M9:** no owner reply/correction or PR #33/#36 movement by 13:20; run 38727481764 remains failed on both Ubuntu and Windows for unpinned native Read (expected deny, actual allow). Follow-up 6216421920 requests fail-closed fix, positive control, exact-head rerun, or named blocker by 13:40.
+- **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 13:20; exact Hook-test blobs remain different. Follow-up 6216422748 requests canonical-test/shared-path review or named owner/path by 13:40.
+- **P1 #51, M1:** exact M0-head product CI failure is run 38905972645 on Ubuntu Node 20 test 163; 500 bounded lock retries exhausted as `RETRY_LIMIT`. Follow-up 6216314917 requests diagnosis or named blocker by 13:30. Preserve tests and UNKNOWN trigger status until supported by evidence.
+- **P0 #52, M1/M2/M5:** no host acceptance evidence by 13:10; follow-up 6216232385 remains due 13:30.
