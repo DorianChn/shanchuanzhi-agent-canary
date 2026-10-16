@@ -1075,3 +1075,7 @@ Exact-head product CI run 38838063732 passed all nine jobs on `7ed1f04`. PR #30 
 ### PR #30 02:21 CI readback — 2026-10-16
 
 Product CI 38839819568 passed all nine jobs on head `a833345`. The 02:21 PR #30 snapshot refresh was read back at the same head; coordination workflow 38839819610 and prior description refresh 38839850421 passed. New refresh run 38840004963 was in progress at this read.
+
+### PR #30 description-refresh completion — 2026-10-16 02:23 UTC
+
+Description-refresh run 38840004963 passed its ownership-contract-evidence check (1/1) on PR #30 head `a833345`.
