@@ -1175,3 +1175,7 @@ Description-refresh workflow 38845144330 passed ownership-contract-evidence 1/1 
 ### PR #30 03:41 CI readback — 2026-10-16
 
 Exact-head product CI 38846603797 passed all nine jobs on `908ed45`. PR #30 snapshot refreshed/read back at 03:41; coordination workflow 38846603850 and prior description refresh 38846637931 passed. The 03:41 refresh run 38846823969 was in progress at this read.
+
+### PR #30 03:41 description-refresh completion — 2026-10-16
+
+Description-refresh workflow 38846823969 passed ownership-contract-evidence 1/1 on PR #30 head `908ed45`.
