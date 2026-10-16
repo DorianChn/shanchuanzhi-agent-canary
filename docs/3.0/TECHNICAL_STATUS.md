@@ -995,3 +995,21 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - **#52 P0:** first-party host consumption, protected-open/held-handle composition, and production TOCTOU remain NOT_VERIFIED. **#41 P1:** clean-VM installer lifecycle NOT_VERIFIED. **#45 P1:** native Codex Shell UNPROTECTED.
 - **#29:** resource comment 6205753049 records the two existing tracked lanes (#55, #53), no new lane, no reservation/test started, and M0's inability to observe external thread activity. Usage tab 336903555 remains open and active above the stop line.
 - Next owner checkpoint: 01:32 UTC. Next M0 normal push window: 01:19 UTC after fresh quota/remote checks. M0 changed no module code/tests and ran no local tests; no merge or Release.
+
+## M0 CI follow-up — 2026-10-16 01:21 UTC
+
+- Exact-head product CI 38834477830 passed all nine jobs on M0 head 02d4148; coordination workflow 38834477801 passed. This green run does not explain the previous dd7508d Ubuntu Node 22 RETRY_LIMIT failure; Issue #51 remains UNKNOWN and owner diagnostics are due 01:32.
+- PR #30 snapshot was refreshed to 01:21 and read back at 02d4148. Description-refresh run 38834728180 is in progress. PR #24 remains unchanged.
+
+## M0 owner/resource checkpoint — 2026-10-16 01:32 UTC
+
+- Rechecked GitHub through 01:32 UTC. No owner response or relevant module PR-head movement is visible for #51/#53/#54/#55/#56. Follow-ups posted/read back at 01:33:55–01:34:05 UTC: #51 6206000269, #53 6206000656, #54 6206001108, #55 6206001547, #56 6206001925; next response/blocker checkpoint 01:52 UTC.
+- **#51 P1 M1/M4:** Ubuntu Node 20/22 runs still exhausted 500 `STATE_STORE_BUSY` retries; root trigger remains UNKNOWN. Keep tests, assertions, and fail-closed retry behavior intact.
+- **#53 P0 M7/M8:** pinned package/manifest hashes, extracted-Hook byte comparison, and extracted-harness result remain NOT_VERIFIED. No installer/VM reservation is recorded; do not start that test without exclusive scheduling.
+- **#54 P1 M9:** PR #36 current Windows Node 22 is green, but the earlier failure on `1f577c5` remains unexplained; no owner disposition. Preserve bounded retries/assertions.
+- **#55 P1 M3/M9:** run 38727481764 still fails on both platforms for unpinned normal Read; M3 correction and supported-capability positive control are outstanding. M9 remains gated.
+- **#56 P2 M0/M1:** no canonical interruption-test path/blob SHA or M1-reviewed shared-path exception; preserve test and keep PR #30 Draft.
+- **#52 P0 / #41 P1 / #45 P1** remain NOT_VERIFIED/UNPROTECTED at their recorded production-host, installer, and native-shell gates.
+- Resource checkpoint #29 comment 6206002323: only tracked lanes remain M3/#55 and M7/M8/#53; no new lane or exclusive VMware/real-model/installer reservation. M0 has not started those tests. External Codex thread activity is not directly observable.
+- Usage tab 336903555 remains open and active; fresh read showed 81% 5-hour quota. PR #30 remains OPEN/Draft at 02d414812cad59eb5871da5335b3c23497756616; exact-head CI 38834477830, coordination workflow 38834477801, and description-refresh workflow 38834728180 passed. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Last M0 push was 01:19 UTC; next push window is no earlier than 01:39 UTC, subject to fresh quota, PR #24, remote, and worktree preflight.

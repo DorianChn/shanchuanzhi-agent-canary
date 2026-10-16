@@ -613,3 +613,16 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#54 P1 — M9 Windows Node 22 503:** no owner disposition by 01:12. Current exact head passes Windows Node 22, but the old failure remains unexplained; comment 6205752601 requests evidence/owner/blocker by 01:32 without weakening bounded retries or assertions.
 - **#52 P0 / #41 P1 / #45 P1:** production-host protected read, clean-VM installer lifecycle, and native Codex Shell remain NOT_VERIFIED/UNPROTECTED as scoped; no evidence promotes these gates.
 - **#29 P2:** resource checkpoint 6205753049 records no added lane and no reserved/started VMware, real-model, or installer test by M0.
+
+## M0 CI follow-up — 2026-10-16 01:21 UTC
+
+- M0 head 02d4148 product CI 38834477830 and coordination workflow 38834477801 pass. This does not resolve the distinct dd7508d Ubuntu Node 22 retry-exhaustion event; keep Issue #51 trigger UNKNOWN pending M1/M4 diagnostics.
+
+## M0 01:32 UTC owner checkpoint — 2026-10-16
+
+- **#51 P1 — M1/M4 state-store retries:** no owner response or failure-time trace; separate Ubuntu Node 20/22 retry exhaustion remains unexplained. Comment 6206000269 requests accountable owner plus diagnostic step/blocker by 01:52. Preserve test/assertions/retry behavior.
+- **#53 P0 — M7/M8 packaged Hook logging:** package/manifest hashes, extracted-Hook comparison, and extracted harness remain NOT_VERIFIED. Comment 6206000656 requests evidence or owner/blocker/next delivery by 01:52. No installer/VM test without #29 exclusive reservation.
+- **#54 P1 — M9 Windows Node 22 503:** current PR #36 Windows job is green; old `1f577c5` failure remains UNKNOWN and has no owner disposition. Comment 6206001108 requests evidence or source owner/blocker/diagnostic by 01:52. Keep bounded retries/assertions.
+- **#55 P1 — M3 native Read contract:** M9 run 38727481764 still fails on both platforms for unpinned normal Read. Comment 6206001547 requests M3-owned fail-closed correction plus positive control or blocker by 01:52. M9 remains gated.
+- **#56 P2 — M0/M1 test ownership:** canonical path/blob SHA or an M1-reviewed shared-path exception is still missing. Comment 6206001925 requests disposition by 01:52. Preserve the test; PR #30 stays Draft.
+- **#52 P0 / #41 P1 / #45 P1:** protected production-host reads, installer lifecycle, and native Codex Shell remain NOT_VERIFIED/UNPROTECTED as scoped; no acceptance gate was promoted.
