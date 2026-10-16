@@ -588,3 +588,18 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#55 P1 — M3/M9 native Read:** no M3 evidence by 00:32. Comment 6205257338 requests fail-closed denial plus supported-capability positive control, or accountable blocker by 00:52. M9 remains gated.
 - **#53 P0 — M7/M8 package reachability:** no package evidence by 00:32. Comment 6205256972 requests pinned package/manifest, extracted-Hook comparison, and harness result or accountable blocker by 00:52. Keep NOT_VERIFIED and reserve installer/VM work through #29.
 - **#29 P2 — active lanes and exclusive resource:** comment 6205258209 records M0's visibility boundary, the two existing tracked lanes, no additional lane, and no installer/VM reservation recorded. No VMware, real-model, or installer test was started by M0.
+
+## M0 CI follow-up — 2026-10-16 00:42 UTC
+
+- M0 exact-head CI run 38830720684 passes all nine jobs on dd43608b. This does not resolve or explain Issue #51's separate dd7508d Ubuntu Node 22 RETRY_LIMIT failure; keep the trigger UNKNOWN until M1/M4 provide failure-time diagnostics or a concrete blocker.
+
+## M0 owner and integration checkpoint — 2026-10-16 00:52 UTC
+
+- **#51 P1 — M1/M4 lock retry:** no owner response or failure-time lock trace by 00:52. Comments 6205256559 and 6205517507 keep trigger UNKNOWN and request owner diagnostics/blocker by 01:12. Preserve the existing test, assertions, fail-closed path, and retry policy.
+- **#52 P0 — M1/M2/M5 protected read chain:** first-party host adoption, protected-open/held-handle integration, and production TOCTOU remain NOT_VERIFIED; no actual secret exposure is claimed. Keep OPEN.
+- **#53 P0 — M7/M8 package reachability:** no package/manifest hashes, extracted-Hook comparison, or extracted-harness evidence by 00:52. Comment 6205518010 requests these artifacts or a concrete blocker by 01:12; respect exclusive reservation #29.
+- **#55 P1 — M3/M9 native Read:** no M3 evidence by 00:52. Comment 6205518454 records the exact-head both-platform unpinned-Read failure and requests fail-closed correction plus positive control, or blocker, by 01:12.
+- **#56 P2 — M0/M1 test ownership:** no M1 disposition by 00:52. Comment 6205519007 requests canonical test path/blob SHA or reviewed shared-path exception by 01:12. Preserve the test.
+- **#54 P1 — M9 Windows Node 22 503:** current PR #36 head de3799aae540f58173acec4ab3f7a1fe98593aa7 passes Windows Node 22; prior failure 38717318171 was on 1f577c56. The three intervening changes strengthen diagnostics/tests but do not touch provider/transport source. Current pass does not explain old trigger; comment 6205537078 requests disposition or blocker by 01:12.
+- **#41 P1 / #45 P1:** clean-VM installer lifecycle remains NOT_VERIFIED; native Codex Shell remains UNPROTECTED. Do not claim acceptance from source/CI alone.
+- **#29 P2:** resource checkpoint 6205519403 records only the existing tracked lanes, no additional lane, and no exclusive test reservation/run by M0.

@@ -964,3 +964,22 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - **Issue #52 P0 / M1-M2-M5:** first-party host consumption, protected-open/held-handle composition, and production TOCTOU remain NOT_VERIFIED; keep OPEN. No real data exposure is claimed.
 - Resource checkpoint 6205258209 records only the two existing tracked owner lanes (#55 and #53), no additional lane, and no #29 exclusive-test reservation. External thread activity is not directly observable by M0.
 - Next owner checkpoint: 00:52 UTC. Next normal push window: 00:39 UTC, after fresh usage, remote-ref, and PR #24/#30 checks. Usage tab 336903555 remains open and active. M0 did not change module code/tests, run tests locally, merge, or release.
+
+## M0 CI follow-up — 2026-10-16 00:42 UTC
+
+- After the 00:39 push, exact-head product CI 38830720684 completed successfully across all nine jobs on dd43608b; coordination workflow 38830720687 also passed. The successful rerun does not explain the distinct dd7508d Ubuntu Node 22 retry-exhaustion failure. Issue #51 remains OPEN/UNKNOWN pending owner diagnostics by 00:52.
+- PR #30 body was refreshed to current head and read back. Its description-refresh workflow 38830964033 passed. PR #24 remains unchanged.
+
+## M0 owner and integration checkpoint — 2026-10-16 00:52 UTC
+
+- **M0:** PR #30 remains OPEN/Draft at dd43608b; exact-head product CI 38830720684 and coordination workflow 38830720687 pass. PR #24 remains OPEN/Draft at unchanged head/base.
+- **#51 P1:** no M1/M4 reply or failure-time lock trace by 00:52. The Ubuntu Node 20 and Node 22 runs both show 500 STATE_STORE_BUSY retries ending in RETRY_LIMIT; the current M0 nine-job pass does not explain either. Comment 6205517507 requests owner/diagnostic/blocker by 01:12. Trigger remains UNKNOWN.
+- **#52 P0:** no first-party host adoption, protected-open/held-handle composition, or production TOCTOU evidence. Keep NOT_VERIFIED; no real-data exposure is established.
+- **#53 P0 / M7-M8:** no package artifact evidence or PR #39/#40 movement by 00:52. Pinned package/manifest and extracted-Hook/harness evidence remain NOT_VERIFIED; comment 6205518010 requests evidence/blocker by 01:12.
+- **#55 P1 / M3-M9:** no PR #33 movement by 00:52. M9 composition run 38727481764 fails the unpinned native Read contract on both platforms; M9 still pins stale module refs. Comment 6205518454 requests correction/positive control or blocker by 01:12.
+- **#56 P2 / M0-M1:** no PR #43 movement or owner disposition by 00:52; comment 6205519007 requests canonical test path/blob SHA or a reviewed exception by 01:12. Preserve the test.
+- **#54 P1 / M9:** the old Windows Node 22 503 failure was on M9 head 1f577c5 (run 38717318171). Current head de3799aae540f58173acec4ab3f7a1fe98593aa7 passes Windows Node 22 in run 38727481643 (413 pass, 0 fail, 4 skip). The intervening test change adds safe request/error diagnostics without weakening assertions; no provider/transport source change is present. Old trigger stays UNKNOWN. Comment 6205537078 requests exact-head disposition or blocker by 01:12.
+- **#41 P1:** clean-VM installer lifecycle remains NOT_VERIFIED; no exclusive #29 reservation is recorded.
+- **#45 P1:** actual native Codex Shell remains UNPROTECTED; the M2 adapter still lacks verified first-party host consumption.
+- **#29:** comment 6205519403 records the two tracked owner lanes (#55 M3 and #53 M7/M8), no extra lane, no external-thread observability, and no resource reservation/test started by M0. Usage tab 336903555 remains open and above the stop line.
+- Next owner checkpoint: 01:12 UTC. Next push window: 00:59 UTC after fresh quota, remote, and PR #24 checks. M0 did not modify module code/tests or run tests locally; no merge or Release.
