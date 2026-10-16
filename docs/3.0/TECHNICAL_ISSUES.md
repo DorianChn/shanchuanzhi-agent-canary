@@ -744,3 +744,7 @@ No module status reply or M1–M8/M9 PR-head movement appeared since 07:00. Reso
 
 - Resource #29 comment `6210946391` confirms Usage at 83%, PR #24 and module heads unchanged, and only two tracked lanes. Keep live thread activity UNKNOWN; no exclusive VMware/model/installer slot is reserved.
 - PR #30 exact head `6dde2b2` product CI is PASS 9/9, and refreshed-description ownership run `38870300451` is PASS 1/1. This does not diagnose the intermittent #51 retry limit; keep it P1/OPEN with cause and lock owner UNKNOWN.
+
+## M0 08:09 exact-head readback — 2026-10-16
+
+- PR #30 docs-only head `ea3f6a5` has exact-head CI `38871974366` PASS 9/9 and AC3 coordination `38871974343` PASS 1/1. The Ubuntu Node 20 retry test passes on this run; this does not determine why the prior head intermittently failed. Keep #51 P1/OPEN with root cause and lock owner UNKNOWN.

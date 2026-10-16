@@ -1348,3 +1348,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - PR #30 head `6dde2b200b5ff377872d4be9956a77a503487349` product CI `38869859222` passed 9/9. Refreshed-description ownership workflow `38870300451` passed 1/1. The earlier retry-limit failure still has no root cause or lock-owner diagnosis.
 - Resource Issue #29 checkpoint comment `6210946391` retains only M3/#55 and M7/M8/#53 as tracked lanes, with live Codex-thread activity UNKNOWN and no exclusive test reservation. P1 #51 stays OPEN; passing exact-head CI does not close the intermittent symptom.
 - Next resource check 08:20 UTC; next M0 push no earlier than 08:09 UTC after fresh preflight. No module code changed.
+
+## PR #30 08:09 batch and exact-head CI readback — 2026-10-16
+
+- Pushed the queued documentation-only updates through `ea3f6a5fea26bf08648e74aec3ab2586dfd9d54e`. Preflight Usage was 83%; PR #24 remained OPEN/Draft at unchanged head/base; origin M0 was `6dde2b2`, local ahead two docs commits, worktree clean, and `git diff --check` passed.
+- Exact-head product CI `38871974366` passed 9/9, including Ubuntu Node 20 test #163, and AC3 coordination `38871974343` passed 1/1. PR #30 remains OPEN/Draft; the description was refreshed for this batch.
+- The #51 retry-limit cause and lock owner remain UNKNOWN despite the pass; preserve the P1 issue and all test/security assertions. No module source changed.
+- Next resource check 08:20 UTC; next M0 push no earlier than 08:29 UTC after fresh preflight.
