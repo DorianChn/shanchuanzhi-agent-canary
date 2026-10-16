@@ -1401,3 +1401,9 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Exact-head product CI `38878583874` failed only in Ubuntu Node 20.20.2 at test #163 (`four concurrent processes preserve every quarantine`): one worker exhausted the bounded 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`. Ubuntu Node 22, Docker, and sponsor smoke passed; the remaining matrix jobs were canceled after fail-fast and package-smoke was skipped.
 - Exact-head coordination `38878583800` passed; PR description ownership check after the refresh `38878865175` passed 1/1. PR #30 remains OPEN/Draft. Issue #51 comment `6212145862` records the recurrence; cause/lock owner remain UNKNOWN. No product source or tests changed.
 - Next resource check 09:20 UTC; next M0 push no earlier than 09:29 UTC. Preserve all tests and fail-closed behavior.
+
+## M0 09:20 UTC owner/resource readback — 2026-10-16
+
+- Usage Overview remains open/active at 83%. PR #24 remains unchanged OPEN/Draft. PR #33/#36/#39/#40/#43 heads remain `be388029`/`de3799a`/`cf4b70f`/`c1ff677`/`9ef3dc2`; no movement from 09:00.
+- The 09:20 owner/blocker/evidence deadline on #53 and #55 passed with no reply or PR-head movement. Resource Issue #29 comment `6212329413` records this, keeps only M3/#55 and M7/M8/#53 tracked, and confirms no exclusive test resource is reserved. Live Codex-thread activity remains UNKNOWN.
+- PR #30 head `bae4718` has the repeated Ubuntu Node 20 retry failure under P1 #51; M0 changed no module code. Next resource check 09:40 UTC; next M0 push no earlier than 09:29 UTC.
