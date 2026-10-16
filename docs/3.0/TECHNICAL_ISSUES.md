@@ -694,3 +694,7 @@ No M1/M4, M3, M7/M8, or M9 owner reply or module PR head movement was visible. F
 ## M0 exact-head Windows token-test readback — 2026-10-16 05:01 UTC
 
 PR #30 exact-head run 38853435999 passed 9/9 on c812427, including Windows Node 22 and test/tokens.test.ts. The prior run 38850021718 failed that same test on 93821f0; the test/source were unchanged on the passing heads. This is a subsequent pass, not a diagnosis or fix. Keep the prior timeout and original file-state-store retry trigger UNKNOWN under #51. No test was removed or weakened.
+
+## M0 06:20 UTC owner/resource checkpoint — 2026-10-16
+
+No module owner reply or relevant PR head movement was visible since 04:52. Follow-ups due 06:40: #51 comment 6209430895 (M1/M4 file-store diagnosis and routing the distinct token-registry symptom), #53 6209431379 (M7/M8 real Windows package/Hook/harness proof), #54 6209431850 (M9 old Node 22 HTTP 503), #55 6209432325 (M3 native Read denial and positive control), and #56 6209432801 (M1 canonical test path/SHA or reviewed exception). Resource #29 comment 6209433272 retains only the two existing lanes and no exclusive test reservation. Usage Overview was readable at 88%; PR #30 latest pushed head c812427 had exact-head CI 9/9; PR #24 remains unchanged.
