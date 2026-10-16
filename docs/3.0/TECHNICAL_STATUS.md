@@ -1433,4 +1433,8 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 
 - Open P0: #52 (symlink/junction aliases were reproduced synthetically; M5 fix is on PR #47 at `373e2c2` with passing exact-head CI, but real-host protected-open/TOCTOU evidence remains NOT_VERIFIED) and #53 (actual Setup.exe hash, extracted-Hook comparison, and extracted-harness result remain absent).
 - Open P1: #41 (clean-VM installer lifecycle/rollback), #45 (native Codex Shell remains UNPROTECTED), #51 (Ubuntu Node 20 lock retry trigger/owner UNKNOWN), #54 (historical Windows Node 22 HTTP 503 retry trigger UNKNOWN), and #55 (M3/M1 unpinned Read contract mismatch; current M9 composition checks fail on Ubuntu/Windows).
-- Passing module CI or synthetic harness results do not close these runtime/host/package acceptance gates. No module source or tests changed; the only current merge-candidate status is still Draft PR #24.
+- Passing module CI or synthetic harness results do not close these runtime/host/package acceptance gates. No module source or tests changed; the only current merge-candidate status is still Draft PR #24.## M0 10:00 UTC resource checkpoint — 2026-10-16
+
+- Usage Overview remains open/active at 83% (weekly 72%). PR #24 is unchanged OPEN/Draft. PR #30 exact head `ca8d403` is OPEN/Draft; product CI `38883085603` passed 9/9, coordination `38883085546` and latest description ownership check `38883371243` passed 1/1 each.
+- Module heads remain unchanged; #53/#55 and #29's active-worktree request have no owner response. P0 #52/#53 and P1 #41/#45/#51/#54/#55 remain open; PR #36 composition still fails on Ubuntu/Windows for #55. Local module worktree isolation remains NOT_VERIFIED.
+- Resource Issue #29 comment `6213022951` records the checkpoint, two tracked lanes, and no exclusive reservation. Next resource check 10:20 UTC; next push no earlier than 10:09 UTC.
