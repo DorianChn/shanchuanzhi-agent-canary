@@ -1204,3 +1204,15 @@ Exact-head product CI 38848260196 passed all nine jobs on `8c8cf3e`. PR #30 snap
 ### PR #30 04:01 description-refresh completion — 2026-10-16
 
 Description-refresh workflow 38848483566 passed ownership-contract-evidence 1/1 on PR #30 head `8c8cf3e`.
+
+## M0 owner/resource checkpoint — 2026-10-16 04:12 UTC
+
+- Usage tab 336903555 remains open and active at 92% (5-hour reset in 3h05m). No owner replies or module PR head movement were visible for #51/#53/#54/#55/#56 at this checkpoint.
+- Posted/read back follow-ups due 04:32: #51 6207904891, #53 6207905248, #54 6207905619, #55 6207905978, #56 6207906339. Resource issue #29 comment 6207906714 retains two tracked lanes (#55 M3, #53 M7/M8) and no exclusive reservation.
+- **#51 P1 M1/M4:** prior Ubuntu Node 20/22 retry-exhaustion trigger UNKNOWN; no failure-time trace or owner diagnostic.
+- **#53 P0 M7/M8:** real Windows package/Setup.exe hashes, extracted-Hook comparison, and extracted-harness proof remain NOT_VERIFIED.
+- **#54 P1 M9:** prior Windows Node 22 HTTP 503 remains unexplained; current passing job is not root-cause evidence.
+- **#55 P1 M3/M9:** unpinned normal Read remains allowed; exact-head composition run 38727481764 fails on Windows and Ubuntu.
+- **#56 P2 M0/M1:** canonical interruption-test path/blob SHA or M1-reviewed shared-path exception is still missing. Preserve the test.
+- PR #30 remains OPEN/Draft at pushed head 8c8cf3e. Exact-head product CI 38848260196 passed 9/9; coordination 38848260124 and description refresh 38848483566 passed. PR #24 remains OPEN/Draft, head/base unchanged.
+- Three docs-only commits are queued locally for the 04:19 batch. Next owner checkpoint 04:32 UTC. No VM, real-model, or installer test has been started by M0.
