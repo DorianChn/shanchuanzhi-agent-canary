@@ -983,3 +983,15 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - **#45 P1:** actual native Codex Shell remains UNPROTECTED; the M2 adapter still lacks verified first-party host consumption.
 - **#29:** comment 6205519403 records the two tracked owner lanes (#55 M3 and #53 M7/M8), no extra lane, no external-thread observability, and no resource reservation/test started by M0. Usage tab 336903555 remains open and above the stop line.
 - Next owner checkpoint: 01:12 UTC. Next push window: 00:59 UTC after fresh quota, remote, and PR #24 checks. M0 did not modify module code/tests or run tests locally; no merge or Release.
+
+## M0 owner checkpoint — 2026-10-16 01:12 UTC
+
+- **M0 / PR #30:** OPEN/Draft at 4dfb21d7d91f8e6c076c7f148d60026164fb4823; exact-head CI 38832618657 and coordination workflow 38832618611 passed. PR #24 remains OPEN/Draft at unchanged head/base.
+- **#51 P1:** no M1/M4 reply or failure-time trace by 01:12. Ubuntu Node 20/22 both failed after 500 STATE_STORE_BUSY attempts; root trigger remains UNKNOWN. Comment 6205751133 requests accountable owner and diagnostic/blocker by 01:32.
+- **#53 P0:** no M7/M8 artifact evidence or PR #39/#40 movement. Pinned package/manifest and extracted-Hook/harness remain NOT_VERIFIED; comment 6205751487 requests evidence or blocker by 01:32.
+- **#55 P1:** no M3 evidence or PR #33 movement. M9 composition remains red on unpinned Read for both platforms; comment 6205751863 requests correction plus positive control or blocker by 01:32.
+- **#56 P2:** no M1 ownership disposition or PR #43 movement; comment 6205752196 requests canonical test path/SHA or reviewed exception by 01:32.
+- **#54 P1:** no M9 disposition. Current PR #36 Windows Node 22 is green, but the earlier 1f577c5 failure is unexplained and no provider/transport source change was identified. Comment 6205752601 requests disposition or blocker by 01:32.
+- **#52 P0:** first-party host consumption, protected-open/held-handle composition, and production TOCTOU remain NOT_VERIFIED. **#41 P1:** clean-VM installer lifecycle NOT_VERIFIED. **#45 P1:** native Codex Shell UNPROTECTED.
+- **#29:** resource comment 6205753049 records the two existing tracked lanes (#55, #53), no new lane, no reservation/test started, and M0's inability to observe external thread activity. Usage tab 336903555 remains open and active above the stop line.
+- Next owner checkpoint: 01:32 UTC. Next M0 normal push window: 01:19 UTC after fresh quota/remote checks. M0 changed no module code/tests and ran no local tests; no merge or Release.

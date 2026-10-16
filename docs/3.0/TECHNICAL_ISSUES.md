@@ -603,3 +603,13 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#54 P1 — M9 Windows Node 22 503:** current PR #36 head de3799aae540f58173acec4ab3f7a1fe98593aa7 passes Windows Node 22; prior failure 38717318171 was on 1f577c56. The three intervening changes strengthen diagnostics/tests but do not touch provider/transport source. Current pass does not explain old trigger; comment 6205537078 requests disposition or blocker by 01:12.
 - **#41 P1 / #45 P1:** clean-VM installer lifecycle remains NOT_VERIFIED; native Codex Shell remains UNPROTECTED. Do not claim acceptance from source/CI alone.
 - **#29 P2:** resource checkpoint 6205519403 records only the existing tracked lanes, no additional lane, and no exclusive test reservation/run by M0.
+
+## M0 owner deadline follow-up — 2026-10-16 01:12 UTC
+
+- **#51 P1 — M1/M4 lock retry:** no owner response/trace by 01:12. Comment 6205751133 keeps trigger UNKNOWN and requests accountable diagnostic/blocker by 01:32. Preserve test/assertions and retry behavior.
+- **#53 P0 — M7/M8 package reachability:** no package evidence by 01:12. Comment 6205751487 requests pinned package/manifest, extracted-Hook comparison, harness result, or blocker by 01:32; respect #29 exclusive-resource scheduling.
+- **#55 P1 — M3/M9 native Read:** no correction/evidence by 01:12; comment 6205751863 requests fail-closed denial plus positive control or blocker by 01:32. M9 remains gated.
+- **#56 P2 — M0/M1 test ownership:** no disposition by 01:12; comment 6205752196 requests canonical path/SHA or reviewed exception by 01:32. Preserve the test.
+- **#54 P1 — M9 Windows Node 22 503:** no owner disposition by 01:12. Current exact head passes Windows Node 22, but the old failure remains unexplained; comment 6205752601 requests evidence/owner/blocker by 01:32 without weakening bounded retries or assertions.
+- **#52 P0 / #41 P1 / #45 P1:** production-host protected read, clean-VM installer lifecycle, and native Codex Shell remain NOT_VERIFIED/UNPROTECTED as scoped; no evidence promotes these gates.
+- **#29 P2:** resource checkpoint 6205753049 records no added lane and no reserved/started VMware, real-model, or installer test by M0.
