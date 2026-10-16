@@ -939,3 +939,28 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - **P0 / Issue #53:** no M7/M8 artifact evidence or PR #39/#40 head movement by 00:12. Comment 6204994934 requests pinned package/manifest hashes, extracted-Hook comparison, harness result, or owner/blocker by 00:32. Keep reachability NOT_VERIFIED; installer/VM work requires #29 reservation.
 - Usage tab 336903555 remains open and active; the 00:12 reading was readable above the pause threshold. Next M0 push no earlier than 00:19 UTC.
 - No module source/tests changed; no tests ran, no merge, and no Release.
+
+## M0 coordinator update — 2026-10-16 00:22 UTC
+
+- **M0 / PR #30:** OPEN/Draft at dd7508d1aefcc5f59a3c6bc1befd85afbf705b05. Coordination run 38828824870 passed; description-refresh runs 38829149431 and 38829193547 passed. Exact-head product CI 38828824866 failed on Ubuntu Node 22.23.3 in the existing concurrent file-store test: 321 pass, 1 fail, 4 skipped; other matrix jobs were cancelled.
+- **P1 / Issue #51 (M1/M4):** worker 2 exhausted 500 STATE_STORE_BUSY retries and raised RETRY_LIMIT, matching the earlier Ubuntu Node 20 signature. M1 exact-head file-store x10 run 38786461318 passed on Node 20 and 22, but the passing repetitions do not identify the failed run's lock holder or trigger. Keep root cause UNKNOWN; no data loss is established. M0 comment 6205116529 requests failure-time trace or accountable diagnostic/blocker by 00:32 UTC.
+- **P0 / Issue #52 (M1/M2/M5):** source-level Gateway held-file and policy alias checks have CI evidence, but first-party host adoption, exact-head host composition, protected-open/held-handle and TOCTOU remain NOT_VERIFIED. Existing adapter report states no first-party host consumer; keep #52 OPEN.
+- **P0 / Issue #53 (M7/M8):** PR #39 cf4b70f5130175582fffdfc65bd7c6847450867b and PR #40 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad remain unchanged. Real pinned Setup.exe/payload, manifest, extracted-Hook comparison, and extracted-harness evidence remain NOT_VERIFIED; owner checkpoint 00:32. Installer/VM work remains subject to exclusive reservation #29.
+- **P1 / Issue #55 (M3/M9):** PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1; no owner evidence through 00:19. M9 remains gated on fail-closed unpinned native Read denial plus supported-capability positive control or a concrete blocker by 00:32.
+- **P2 / Issue #56 (M0/M1):** PR #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; no M1 disposition through 00:19 on canonical interruption-test path/blob SHA or reviewed shared-path exception. Checkpoint 00:32; preserve the test and keep PR #30 Draft pending scope reconciliation.
+- PR #24 remains OPEN/Draft at its unchanged head/base. No module source/tests were changed by M0, no local tests ran, and no merge or Release occurred. Usage tab 336903555 remains open and active. Next M0 push window: 00:39 UTC.
+
+## M9 composition readback — 2026-10-16 00:26 UTC
+
+- PR #36 remains OPEN/Draft at head de3799aae540f58173acec4ab3f7a1fe98593aa7. Exact-head composition run 38727481764 fails on both Windows and Ubuntu: the synthetic unpinned normal Read returns allow where the shared fail-closed contract expects deny. Product CI 38727481643 and Windows wrapper 38727481657 pass, but neither supersedes the failing composition gate. The composition run pins older M1 source b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc rather than current M1 PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. M3 must correct its owner-controlled Hook/test and preserve the supported-capability positive control; then M9 must pin current module heads and rerun. Production-host enforcement remains NOT_VERIFIED.
+
+## M0 owner checkpoint — 2026-10-16 00:32 UTC
+
+- **PR #30 / PR #24:** PR #30 remains OPEN/Draft at dd7508d1aefcc5f59a3c6bc1befd85afbf705b05. Exact-head product CI 38828824866 failed on Ubuntu Node 22 in the concurrent file-store test; coordination and two description-refresh runs passed. PR #24 remains OPEN/Draft at its unchanged head/base.
+- **Issue #51 P1:** no M1/M4 owner trace or response by 00:32. The Ubuntu Node 22 failure matches the earlier Node 20 500-retry RETRY_LIMIT signature. Keep trigger UNKNOWN; M1's x10 pass does not explain it.
+- **Issue #53 P0 / M7-M8:** no artifact evidence or PR #39/#40 head movement by 00:32. Packaged reachability remains NOT_VERIFIED. #29 has no installer/VM reservation recorded.
+- **Issue #55 P1 / M3-M9:** no owner evidence or PR #33 head movement by 00:32. M9 PR #36 exact-head run 38727481764 still fails on both OSes on unpinned Read allow; its M1 pin is stale. M9 remains gated.
+- **Issue #56 P2 / M0-M1:** no owner disposition or PR #43 head movement by 00:32. The canonical path/blob SHA or reviewed shared-path exception is still needed; preserve the test.
+- **Issue #52 P0 / M1-M2-M5:** first-party host consumption, protected-open/held-handle composition, and production TOCTOU remain NOT_VERIFIED; keep OPEN. No real data exposure is claimed.
+- Resource checkpoint 6205258209 records only the two existing tracked owner lanes (#55 and #53), no additional lane, and no #29 exclusive-test reservation. External thread activity is not directly observable by M0.
+- Next owner checkpoint: 00:52 UTC. Next normal push window: 00:39 UTC, after fresh usage, remote-ref, and PR #24/#30 checks. Usage tab 336903555 remains open and active. M0 did not change module code/tests, run tests locally, merge, or release.

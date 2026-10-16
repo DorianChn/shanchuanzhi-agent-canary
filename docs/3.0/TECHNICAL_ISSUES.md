@@ -572,3 +572,19 @@ This checkpoint supersedes older snapshots below. All issues remain OPEN unless 
 - **#56 P2 — M0/M1 Hook test ownership:** no M1 disposition by 00:12. Comment 6204994942 requests canonical path/blob SHA or reviewed shared-path exception by 00:32. Preserve the test.
 - **#55 P1 — M3/M9 native Read contract:** no M3 evidence by 00:12. Comment 6204994931 requests fail-closed denial and supported-capability positive-control evidence or accountable blocker by 00:32. M9 remains gated.
 - **#53 P0 — M7/M8 packaged Hook reachability:** no M7/M8 artifact evidence by 00:12. Comment 6204994934 requests package/manifest hashes, extracted-Hook comparison, harness result, or accountable blocker by 00:32. Keep OPEN/NOT_VERIFIED and respect #29 reservation.
+
+## M0 exact-head owner follow-up — 2026-10-16 00:22 UTC
+
+- **#51 P1 — M1/M4 state-store retry exhaustion:** M0 exact-head CI 38828824866 failed on Ubuntu Node 22.23.3 in the existing four-process quarantine test after worker 2 exhausted 500 STATE_STORE_BUSY retries and threw RETRY_LIMIT (321 passed, 1 failed, 4 skipped). This reproduces the retry-exhaustion signature on a second Node major; the holder and root trigger remain UNKNOWN, with no data loss established. M1 x10 Node 20/22 run 38786461318 passed but does not explain the failure. M0 comment 6205116529 requests a failure-time trace or accountable owner/next diagnostic/blocker by 00:32. Preserve assertions, fail-closed behavior, and retry policy.
+- **#52 P0 — M1/M2/M5 protected file-read chain:** first-party host adoption, protected-open/held-handle composition, and production TOCTOU remain NOT_VERIFIED. The latest evidence refresh is from 20:52 UTC; keep OPEN and do not claim actual data exposure.
+- **#53 P0 — M7/M8 package reachability:** no real package/manifest hash, extracted-Hook byte comparison, or extracted-harness evidence through 00:19. M0 comment 6204994934 requests exact evidence or accountable blocker by 00:32; respect exclusive installer/VM reservation #29.
+- **#55 P1 — M3/M9 native Read contract:** no M3 evidence through 00:19; M9 remains gated. M0 comment 6204994931 requests fail-closed denial plus the supported-capability positive control, or concrete blocker by 00:32.
+- **#56 P2 — M0/M1 Hook test ownership overlap:** no M1 disposition through 00:19. M0 comment 6204994942 requests canonical path/blob SHA or reviewed shared-path exception by 00:32. Preserve the test and keep PR #30 Draft until reconciled.
+
+## M0 owner deadline follow-up — 2026-10-16 00:32 UTC
+
+- **#51 P1 — M1/M4 state-store:** no owner response or failure-time trace by 00:32. M0 comment 6205256559 records the repeat signature across Ubuntu Node 20/22 and requests an accountable owner plus next diagnostic/blocker by 00:52. Keep trigger UNKNOWN; preserve test/assertions/retry policy.
+- **#56 P2 — M0/M1 test ownership:** no M1 disposition by 00:32. Comment 6205257750 requests canonical path/blob SHA or reviewed shared-path exception by 00:52. Preserve the test and keep PR #30 Draft.
+- **#55 P1 — M3/M9 native Read:** no M3 evidence by 00:32. Comment 6205257338 requests fail-closed denial plus supported-capability positive control, or accountable blocker by 00:52. M9 remains gated.
+- **#53 P0 — M7/M8 package reachability:** no package evidence by 00:32. Comment 6205256972 requests pinned package/manifest, extracted-Hook comparison, and harness result or accountable blocker by 00:52. Keep NOT_VERIFIED and reserve installer/VM work through #29.
+- **#29 P2 — active lanes and exclusive resource:** comment 6205258209 records M0's visibility boundary, the two existing tracked lanes, no additional lane, and no installer/VM reservation recorded. No VMware, real-model, or installer test was started by M0.
