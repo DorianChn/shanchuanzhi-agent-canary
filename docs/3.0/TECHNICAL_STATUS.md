@@ -1387,3 +1387,10 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Exact-head product CI `38876277226` passed 9/9. Exact-head coordination `38876277261` and post-description ownership-contract `38876554613` passed 1/1 each. PR #30 remains OPEN/Draft; its refreshed body was read back.
 - Issue #51 comment `6211805878` records another Ubuntu Node 20 pass without closing the intermittent failure. Root cause/lock owner remain UNKNOWN. No module source or test changed.
 - Usage remains 83% with tab active at 08:52 UTC. Next resource checkpoint 09:00 UTC; next M0 push no earlier than 09:09 UTC.
+
+## M0 09:00 UTC owner/resource checkpoint — 2026-10-16
+
+- Usage Overview is 83% and remains open/active. PR #24 is unchanged OPEN/Draft; all M1–M8/M9 PR heads are unchanged from 08:40. Live Codex-thread activity remains UNKNOWN.
+- Resource #29 comment `6211943209` retains only M3/#55 and M7/M8/#53 as tracked lanes, with no exclusive VMware/model/installer reservation.
+- Posted direct owner follow-ups: #55 comment `6211942241` asks M3 to enforce the unpinned-read denial plus positive control and M9 to refresh pins/rerun both OSes; #53 comment `6211942722` asks for Setup.exe SHA256, extracted Hook byte comparison, and harness results. Owner/blocker/next-delivery responses are due 09:20 UTC.
+- PR #30 exact head `ae44b10` product CI passed 9/9; #51 remains unresolved P1. Next M0 push no earlier than 09:09 UTC; next resource check 09:20 UTC. No module source changed.

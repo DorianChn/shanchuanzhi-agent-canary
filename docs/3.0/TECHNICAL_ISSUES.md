@@ -760,3 +760,9 @@ Issue #29 comment `6211604210` records Usage at 83%, unchanged PR #24 and M1–M
 ## M0 08:49 exact-head rerun — 2026-10-16
 
 PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `38876277261` and refreshed-description ownership check `38876554613` passed. Issue #51 comment `6211805878` records another Ubuntu Node 20 retry-test pass while retaining P1/OPEN because the prior failure trigger and lock owner are still UNKNOWN.
+
+## M0 09:00 owner follow-ups — 2026-10-16
+
+- **P1 #55:** comment `6211942241` assigns the existing M3/M9 acceptance path: M3 fail-closed unpinned Read plus supported-capability positive control; M9 exact pin refresh and Ubuntu/Windows composition. Accountable owner or blocker/next-delivery response requested by 09:20 UTC.
+- **P0 #53:** comment `6211942722` requests exact-head Setup.exe SHA256, extracted Hook byte comparison, and extracted-harness evidence, or accountable owner/blocker/next-delivery response by 09:20 UTC. No installer slot is reserved. Keep open until artifact acceptance is met.
+- Resource #29 comment `6211943209` keeps only those two lanes active; no new task or exclusive VM/model/installer slot.
