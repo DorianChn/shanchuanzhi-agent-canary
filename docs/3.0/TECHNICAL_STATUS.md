@@ -1470,3 +1470,7 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - Filtered logs from M9 run 38727481764 show the Ubuntu and Windows composition test expecting deny but receiving allow for an unpinned native Read. The recorded source pair is M1 b1d7423 / M3 be38802; current PR heads are M1 #43 9ef3dc2, M3 #33 be38802, and M9 #36 de3799a. M9 must rerun against current pinned heads after M3 aligns the contract.
 - Posted exact reproduction and acceptance steps to Issue #55 (comment 6213780254). Posted missing real package evidence/blocker request to #53 (comment 6213780639), due 11:00 UTC. Resource checkpoint #29 is comment 6213767711.
 - No source/tests were changed. Preserve M1 denial assertions, keep the supported-capability positive control, and do not start an installer test without an exclusive reservation.
+## M0 10:48 UTC ownership overlap follow-up — 2026-10-16
+
+- Rechecked the shared Hook test at current GitHub heads: PR #30 a244875 blob d3b64fc265da5c24e45cbdd1c24abecc467c4a5d; PR #43 9ef3dc2 blob 82ca4662e0a6c4269011ff8eba9470f2a26ccc39; base 62496d4 blob 1ecb3ee8b45f1fbe942a25bcd5ce696f82534601. The two PR versions differ.
+- M1 ownership disposition remains absent since the 06:42 UTC exact-blob record. Follow-up #56 comment 6213818328 requests confirmation of the canonical regression/shared-path exception by 11:00 UTC. M0 will not edit the M1-owned test and keeps PR #30 Draft pending reconciliation.
