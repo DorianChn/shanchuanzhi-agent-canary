@@ -1559,3 +1559,11 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - No M7/M8, M3/M9, or M1 owner reply appeared on #53/#55/#56 after the 12:03 follow-ups; those remain due 12:20. The #55 Ubuntu/Windows fail-open composition and #56 exact Hook-test blob conflict remain unresolved.
 - At 12:13, Usage read 91% five-hour / 70% weekly, reset in about five minutes; Usage Overview remains open. Issue #29 body/resource comment 6215268041 record this snapshot and the current deadlines.
 - No M0 module source/test changes. Local module-worktree isolation remains NOT_VERIFIED; referenced Codex-session activity is UNKNOWN. Last push 12:09 UTC; next no earlier than 12:29 after fresh preflight.
+## M0 12:21 UTC owner deadline and body refresh — 2026-10-16
+
+- Paginated issue-comment read at 12:20 showed no owner response/evidence on #52, #53, #55, or #56 after their latest M0 requests. Comments #53 6215377743, #55 6215378362, and #56 6215378878 set the next evidence/owner checkpoint at 12:40. P0 #52 remains due 12:30 after comment 6215267529.
+- PR #24 remains OPEN/Draft at unchanged head/base. Module PR heads remain unchanged and OPEN/Draft against baseline `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- PR #30 remains OPEN/Draft at exact head `6215e3b7caaf11c1da0c7f579fbbe0ee9ba37892`; product CI 38898575754 and coordination 38898575747 passed. The PR body was refreshed with current deadlines; the new ownership check is pending.
+- Usage Overview remains open/readable at 91% five-hour / 70% weekly. At 12:20 the five-hour UI said "resetting" while still showing 91%; do not assume a new quota value until displayed.
+- M9 composition run 38727481764 still fails Ubuntu/Windows on unpinned native Read. M1's PR #30/#43 Hook-test blob conflict remains unresolved. Package, first-party host, VM install, and E4 acceptance are NOT_VERIFIED.
+- No M0 module source/test changes. Local module-worktree isolation remains NOT_VERIFIED; referenced Codex-session activity is UNKNOWN. Issue #29 body was refreshed/read back; resource comment 6215379562 records the checkpoint. Next push no earlier than 12:29 after fresh preflight.

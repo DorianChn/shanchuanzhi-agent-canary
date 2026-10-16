@@ -841,3 +841,9 @@ Issue #29's M0 line is updated from pending to the actual exact-head results: pr
 No M1/M2/M5 response, host/build/call path, protected-open evidence, or PR #43/#37/#47 head movement was visible by 12:10. Follow-up 6215267529 keeps the issue OPEN/NOT_VERIFIED and requests first-party host acceptance or a named BLOCKED owner/dependency by 12:30. Internal held-descriptor code and the synthetic adapter are not installed-host evidence.
 
 At 12:14, paginated comments on #53/#55/#56 still showed no owner replies after M0's 12:03 follow-ups. Their next evidence/owner deadline remains 12:20.
+## 12:20 UTC owner deadline readback — 2026-10-16
+
+- **P0 #53, M7/M8:** no owner reply, artifact evidence, or PR #39/#40 movement by 12:20. Follow-up 6215377743 requests real Setup.exe/manifest hashes, extracted-Hook comparison, and harness evidence or named blocker by 12:40. No installer/VM slot is reserved.
+- **P1 #55, M3/M9:** no owner reply, correction, or PR #33/#36 movement by 12:20. Run 38727481764 still fails Ubuntu/Windows (unpinned native Read expected deny, actual allow). Follow-up 6215378362 requests fail-closed correction, positive control, and exact-head two-platform rerun or named blocker by 12:40. Preserve the test.
+- **P2 #56, M1/M0:** no M1 disposition or PR #43 movement by 12:20; PR #30/PR #43 M1-owned test blobs remain different. Follow-up 6215378878 requests canonical-test/shared-path disposition or named owner/path by 12:40. Keep PR #30 Draft.
+- **P0 #52, M1/M2/M5:** no first-party host evidence or owner response by 12:10; follow-up 6215267529 requests the host/build/call path and acceptance or a named BLOCKED owner/dependency by 12:30.
