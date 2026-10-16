@@ -1637,3 +1637,25 @@ The latest refreshed-description ownership workflow 38853726427 passed 1/1 on ex
 - PR #30 exact head `4185158`: product CI 38905972645 FAIL, coordination 38905972269 PASS, description checks 38906497087 and 38907224955 PASS. PR #24 unchanged OPEN/Draft.
 - Usage remains readable at 91%/70%, page still says "resetting"; no refreshed quota confirmed, displayed value above 5%. Usage tab remains open.
 - No M0 module source/test changes. Last push 13:11 UTC; next no earlier than 13:31.
+## M0 13:40 UTC deadline and CI readback — 2026-10-16
+
+- Usage Overview remains open/readable; refresh shows 95% five-hour, 68% weekly, reset in 3h39m. This is above the 5% stop threshold.
+- PR #30 exact head `6df761cebf10d79e1749eb14de1cb15d06656e8f` now has product CI 38908526127 PASS, coordination checks 38908526274 and 38908627387 PASS. PR #24 remains unchanged OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- No M7/M8 artifact evidence or PR #39/#40 head movement appeared by 13:40 for P0 #53; comment 6216773622 requests evidence or a named BLOCKED owner/dependency by 14:00. No source-only package-smoke substitution or unreserved installer/VM work.
+- No M3/M9 correction, positive control, owner response, or PR #33/#36 head movement appeared by 13:40 for P1 #55; comment 6216774301 requests fail-closed correction and exact-head Ubuntu/Windows rerun, or a named blocker, by 14:00. Run 38727481764 remains failing on both platforms: unpinned native Read expected `deny`, actual `allow`.
+- No M1 disposition or PR #43 movement appeared by 13:40 for P2 #56; comment 6216775102 requests canonical-test/shared-path disposition or a named owner/delivery path by 14:00. PR #30 and #43 still have distinct blobs for the same M1-owned test.
+- P0 #52 first-party host proof and P1 #51 failure diagnosis remain due 13:50. M1–M8/M9 heads otherwise remain unchanged. Local module-worktree isolation is NOT_VERIFIED; Codex-session activity is UNKNOWN; no exclusive VM/model/installer slot is reserved.
+- No module source/tests changed by M0. Last M0 push was 13:31 UTC at `6df761c`; next push no earlier than 13:51 after live quota, PR #24, remote-head, and docs-scope preflight.
+## M0 13:43 UTC lifecycle and M9 diagnostic refresh — 2026-10-16
+
+- PR #39 current head `cf4b70f5130175582fffdfc65bd7c6847450867b` has 11/11 successful checks, but clean-VM install/launch/upgrade/uninstall/cancel-rollback evidence remains NOT_VERIFIED. M0 comment 6216820542 requests actual lifecycle evidence or a named reservation blocker by 14:00; no shared installer/VM slot is currently reserved.
+- PR #36 remains at `de3799aae540f58173acec4ab3f7a1fe98593aa7`, with product/platform checks green and M9 composition run 38727481764 failing on Ubuntu/Windows for #55. Historical Windows Node 22 HTTP 503 root trigger in run 38717318171 remains UNKNOWN; `src/ai/provider.ts`, `src/ai/transport.ts`, and the test still lack a named component owner in #54. M0 comment 6216821674 requests ownership and safe diagnostics/reproduction or a named blocker by 14:00.
+- Usage page remains open/readable at 95% five-hour / 68% weekly. #51 P1 and #52 P0 remain due 13:50; last M0 push remains 13:31, next no earlier than 13:51 UTC.
+## M0 13:50 UTC P0/P1 deadline readback — 2026-10-16
+
+- No M1 diagnosis/lock-holder trace or PR #43 movement appeared by 13:50 for P1 #51; comment 6216960203 requests failure-specific diagnosis/repair or a named blocker by 14:10. The prior exact-head Ubuntu Node 20 `RETRY_LIMIT` is not resolved; trigger remains UNKNOWN, and no data loss/corruption is established.
+- No M1/M2/M5 host/build/call-path evidence or PR #43/#37/#47 movement appeared by 13:50 for P0 #52; comment 6216960948 requests first-party held-descriptor evidence or a named blocker by 14:10. P0 remains OPEN / NOT_VERIFIED; hard denials remain required.
+- Usage Overview refreshed at 13:50 reads 94% five-hour / 68% weekly, with reset in 3h28m. It remains readable and above the 5% stop threshold; the tab remains open.
+- Before the pending M0 docs-only batch, PR #30 exact head `6df761cebf10d79e1749eb14de1cb15d06656e8f` has product CI 38908526127 PASS and coordination checks 38908526274 / 38908627387 PASS. PR #24 remains OPEN/Draft and unchanged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- #53/#55/#56 and #41/#54 next require evidence or named blockers by 14:00 after comments 6216773622, 6216774301, 6216775102, 6216820542, and 6216821674. No module PR head change or M0 source/test modification was observed.
+- Last M0 push was 13:31 UTC. Next push no earlier than 13:51 after live quota, PR #24, remote-head, and documentation-scope preflight.
