@@ -756,3 +756,7 @@ Issue #29 comment `6211260380` records 83% Usage, no movement/replies across M1�
 ## Resource checkpoint 08:40 UTC — 2026-10-16
 
 Issue #29 comment `6211604210` records Usage at 83%, unchanged PR #24 and M1–M8/M9 heads, no visible owner replies, and the two tracked lanes only. PR #30 exact head 23ab174 passed product CI 9/9; keep the remaining P0/P1 acceptance issues open until their specific evidence gates are met.
+
+## M0 08:49 exact-head rerun — 2026-10-16
+
+PR #30 head `ae44b10` product CI `38876277226` passed 9/9; coordination `38876277261` and refreshed-description ownership check `38876554613` passed. Issue #51 comment `6211805878` records another Ubuntu Node 20 retry-test pass while retaining P1/OPEN because the prior failure trigger and lock owner are still UNKNOWN.
