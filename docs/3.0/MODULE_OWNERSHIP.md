@@ -23,6 +23,7 @@ GitHub readback at 20:23 UTC: all listed PRs are OPEN/Draft and target `feature/
 22:08 UTC delta: PR #30 advanced to `e0d0d8b1b64296e85df7caa64412491ef32860d1`; a 22:08 GitHub scan confirms all M1–M9 remain at the listed heads, OPEN/Draft.
 22:20 UTC delta: the M1–M9 head scan remains unchanged; M1/M4 have no owner-reported evidence by 22:20. The next status checkpoint is 22:40 UTC.
 22:28 UTC delta: PR #30 advanced to `e12e7b3c25c10db6af0b084571280aeed0ae5d98`; the 22:28 GitHub readback confirms M1–M9 remain at the listed heads, OPEN/Draft.
+22:40 UTC delta: the M1–M9 head scan remains unchanged; M1/M4 supplied no owner-reported status or work evidence by the checkpoint. Next status is due 23:00 UTC.
 ## M0 ownership routing — 2026-10-16 04:23 UTC
 
 - src/tokens.ts and test/tokens.test.ts are not assigned in the active M1–M9 ownership table. Do not infer they share ownership or root cause with M1's src/file-state-store.ts.
