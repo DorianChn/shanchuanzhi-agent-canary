@@ -2059,3 +2059,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #30 head `c57f5c54b2de4ddc38059d2b12bdce2573b5b702`: product run `39030729035` passed all 9 jobs, including package-smoke; coordination run `39030729046` passed 1/1. PR #30 remains OPEN/Draft.
 - The 12:00 owner checkpoint on #29 passed without module response or watched PR-head movement. M0 recorded the readback; M3/M9 candidate lanes remain unconfirmed and no exclusive test resource is owner-confirmed.
 - PR #24 remains OPEN/Draft and unchanged. Last M0 push was at 11:58 UTC; next is no earlier than 12:19 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test changes, main merge, PR #24 merge, or Release.
+
+## M0 post-push and owner readback — 2026-10-17 12:22 UTC
+
+- PR #30 head `a0de3d2ac93f7b8677d9c2a8851e5a5ce55e6504`: product run `39032038354` passed all 9 jobs, including package-smoke; coordination run `39032038356` passed 1/1. PR #30 remains OPEN/Draft.
+- The 12:20 owner checkpoint on #29 passed without a module response or priority PR-head movement. M0 recorded the readback and set 12:40 UTC as the next checkpoint. M3/M9 proposed lanes and the shared-path owner dispositions remain unconfirmed.
+- PR #24 remains OPEN/Draft and unchanged. Quota was readable above the stop threshold during the checkpoint; no exact value is recorded. Next M0 push is no earlier than 12:39 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test changes, main merge, PR #24 merge, or Release.
