@@ -2192,3 +2192,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Read-only review of M8 PR #40 head c1ff677cc56cd159cc983042e5dfcec5dc93f3ad found that security-lab/claude-native-hook.mjs logs only timestamp, hookEventName, and permissionDecision; its source comment states Hook arguments and returned reasons may contain user data.
 - M8 test/auto-e4.test.mjs contains a synthetic co-located payload fixture: copies the Hook and fault harness to a temporary payload, checks byte identity, runs the harness, and asserts callerInputCanaryAbsent. This is useful source/synthetic-payload evidence and corrects the earlier shorthand that no canary result existed.
 - It still does not verify a real pinned Setup.exe, actual extracted installer bytes, manifest hashes, or installed-host behavior. Keep P0 #53 OPEN / NOT_VERIFIED for those product artifacts; no leak is established. M0 recorded the correction in #53 comment 6234888055 and did not run tests or modify module code.
+
+## M0 .gitignore owner disposition — 2026-10-17 14:13 UTC
+
+- Root .gitignore is M0-owned. Local commit 2ef7099 replaces the broad raw.log exception with one exact reviewed path, security-lab/e4-runs/20261013T084123Z/raw.log; check-ignore readback shows future run raw.log files still match the global *.log ignore.
+- This is a narrow root-configuration change, not module source. It is local-only pending the next scheduled push. M0 recorded the owner boundary in Issue #58 comment 6234931026; M6/M9 are asked to remove their blanket exception and consume the exact allowlist. Keep #58 OPEN until current PR heads align.
+- No tests were run; git diff --check passed. Next push remains no earlier than 14:23 UTC.
