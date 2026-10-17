@@ -2242,3 +2242,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No merge, main change, or Release occurred.
 - The pushed M0 scope was coordinator documentation; the already reviewed M0-owned exact raw.log allowlist remains in the PR. Module code/tests were not changed.
 - Next push is no earlier than 15:03 UTC after fresh quota, PR #24/#30, ancestry, clean-worktree, allowed-path, and diff checks.
+
+## M0 15:00 UTC owner and resource readback — 2026-10-17 15:01 UTC
+
+- Usage Overview was readable at 15:00 UTC with 81% five-hour quota remaining. PR #24 and M1–M9 heads remain unchanged; PR #30 remains OPEN/Draft at 909a31e06140751fe7b7564ef168e0b665407bc4 with 10/10 exact-head checks SUCCESS.
+- No module-owner response, owner-confirmed RUNNING task, or exclusive VMware/real-model/installer reservation was visible in GitHub/worktree evidence. Other Codex chat activity remains UNKNOWN.
+- M0 posted 15:00 readbacks: #45 comment 6235423316, #51 6235423914, #53 6235424375, #58 6235424803, #59 6235425222, and scheduler #29 6235425642. Next owner checkpoint is 15:20 UTC.
+- No module source/tests, PR #24, main, or Release was changed. The next M0 push is no earlier than 15:03 UTC after fresh quota and branch/scope preflight.
