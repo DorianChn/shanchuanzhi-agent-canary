@@ -2335,6 +2335,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 19:06 UTC post-push exact-head verification — 2026-10-17
+
+- Pushed M0 documentation through `0f2e5e4f22a30bf790e2984a8c367f2b6e93cb2e` to PR #30, which remains OPEN/Draft. Exact-head CI run `39060774524` completed SUCCESS (9/9); AC3 coordination run `39060774554` completed SUCCESS (1/1).
+- PR #24 remains OPEN/Draft and unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Readbacks: PR #30 comment `6239204069`, Issue #29 comment `6239204078`, Issue #51 comment `6239204172`.
+- The prior docs-only head `aecac2d` failed the Ubuntu Node 22 #51 test 163; the same test passed on `0f2e5e4` with no source/test diff. Keep #51 P1 open and its root cause UNKNOWN; no data loss is established. No module source/tests, main, merge, or Release changes occurred. Next status is 19:20 UTC; next push is no earlier than 19:23 UTC.
+
 ## M0 19:00 UTC owner and integration readback — 2026-10-17
 
 - Usage Overview was readable at 19:00 UTC: 86% five-hour quota and 47% weekly quota remain. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #30 remains OPEN/Draft at `aecac2d78962fe0c377e26f4a7a2d581d5fff32f`; its latest CI has the #51 Node 22 test-163 failure recorded below, while AC3 coordination passed 1/1.
