@@ -2114,3 +2114,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M3 #55 and M9 #58 remain requested lanes without owner confirmation or PR-head movement. M9 composition stays queued behind a corrected M3 exact head. No module task is owner-confirmed RUNNING; no VMware/model/installer reservation is confirmed.
 - The inspected shared Git registry contains E4, M0, M1, M5, M8, and M9 worktrees; the M1/M5/M8/M9 worktrees are clean. M2/M3/M4/M6/M7 paths outside this registry remain UNKNOWN. No unseen-session activity is inferred.
 - M0 changes remain coordination documentation only. No module source/test, PR #24, main, or Release changes were made. Continue the 20-minute batch cadence and two-task cap.
+
+## M0 exact-source review for #52/#45 — 2026-10-17 13:26 UTC
+
+- M1 PR #43 exact head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` has a source-level held-file path in `src/runtime/gateway.ts`: registered files are validated, opened with `O_NOFOLLOW`, checked against held-FD identity, mapped by exact relative path, rechecked before effects, and read using the same descriptor. `src/security-router.ts` denies generic path-string file callbacks when its pinned-handle requirement is enabled.
+- M2 PR #37 exact head `9db59ed8f2deae905edcb2179982f8bcb594167c` provides a fixed path adapter that dispatches `read_file` through `gateway.agent.dispatch`. Its `execution-isolation/codex/native-host-hook-evidence.json` states that the candidate hook is not installed at the repository root, current desktop-host activation is UNKNOWN, invocation telemetry is unavailable, and no host callback/sentinel run was observed.
+- The reviewed sources support a module-level Gateway capability path, but do not establish first-party product-host wiring to the actual installed host. Keep #52 OPEN / NOT_VERIFIED and #45 native Codex Shell UNPROTECTED / BLOCKED_NOT_VERIFIED. No bypass, exposure, or incident is asserted.
+- M0 performed read-only source review only; no module source or tests were changed or run. Exact evidence and owner follow-ups are recorded in Issues #45 and #52.
