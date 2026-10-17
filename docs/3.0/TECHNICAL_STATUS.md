@@ -2179,3 +2179,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M0 pushed seven coordinator-document commits to PR #30 at exact head 4bef221e1e7737cbb236652fc83eb7d2b2779334 after the 20-minute cadence check. PR #30 remains OPEN/Draft; exact-head GitHub check-runs completed 10/10 SUCCESS, including package-smoke and ownership-contract-evidence. Readbacks are PR comment 6234852295 and Issue #29 comment 6234853021.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No merge, main change, module-source change, or Release occurred.
 - The next M0 push will be no earlier than 14:23 UTC, after fresh quota, PR #24/#30, remote ancestry, clean-worktree, docs-only-path, and diff checks.
+
+## M0 E4 raw-log allowlist audit — 2026-10-17 14:08 UTC
+
+- Current M6 #38 and M9 #36 .gitignore diffs both add the blanket negation rule for security-lab/e4-runs/**/raw.log. It re-includes future run logs as well as the present file.
+- The inspected M9 tree contains one tracked raw.log: 2,537 bytes, 13 line-delimited JSON records, SHA256 3915336775E8D06445147B73A4099967CAC71AA5870495A09540973879E05071. Static scanning found no GitHub/Bearer/private-key/email/secret-assignment or absolute user-home-path patterns. The log has free-text reason/modelResult fields, so this scan does not prove caller-independent output or sanitize future runs; no confirmed disclosure is established.
+- M0 recorded the evidence in Issue #58 comment 6234881839 and requested a path-specific reviewed exception or fixed-field sanitized exporter with a caller-canary negative test. Keep #58 OPEN / NOT_VERIFIED until the M0-owned ignore boundary and evidence are resolved. No log content was published in the comment and no module source/test was changed.
+- The next M0 push remains no earlier than 14:23 UTC, after fresh quota and PR/branch/scope preflight.
