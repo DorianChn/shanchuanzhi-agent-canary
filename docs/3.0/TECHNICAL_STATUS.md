@@ -2335,6 +2335,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 23:06 push and 23:09 exact-head CI readback — 2026-10-17
+
+- Pushed the two documentation-only commits `505474b` and `1017e51` to PR #30 at exact head `1017e515ebe8a1ca88d8617f83d2ac7c6881275f`. Product run `39077750783` passed 9/9, including package-smoke; coordination run `39077750827` passed 1/1. Readbacks: PR #30 comment `6242875597`; Issue #51 comment `6242876952`.
+- PR #30 remains OPEN/Draft on base `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. The pre-push readback verified PR #24 remained unchanged OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- This batch changed coordination documents only. The additional green run does not resolve the intermittent #51 retry exhaustion; root trigger remains UNKNOWN. No module source/tests, main, merge, or Release changes occurred.
+- M1/M4 owner evidence is due 23:20 UTC. Next M0 push no earlier than 23:26:45 UTC after fresh quota, remote ancestry, PR #24, allowed-path, clean-worktree, and diff preflight.
 ## M0 23:00 UTC owner/status checkpoint — 2026-10-17
 
 - Usage Overview was readable at 23:01 UTC and remained above the 5% stop threshold. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
