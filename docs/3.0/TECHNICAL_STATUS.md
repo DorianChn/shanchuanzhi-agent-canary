@@ -2221,3 +2221,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M0 posted exact-head CI readbacks to PR #30 comment 6235063999 and Issue #29 comment 6235064369; Issue #58 boundary readback is 6235064776. Formatting was verified after replacing literal newline markers; evidence and claims were preserved.
 - M6/M9 still have their previous broad raw.log negation. The M0-owned exact-path exception passed M0 coordinator CI, but #58 remains OPEN pending exact-head alignment and owner evidence.
 - The next M0 push is no earlier than 14:43 UTC after fresh quota, PR #24/#30, remote ancestry, worktree, docs/config-only scope, and diff preflight.
+
+## M0 .gitignore pattern readback — 2026-10-17 14:27 UTC
+
+- Read-only git check-ignore inspection confirms .env, .env.local, *.pem, *.key, *.tmp, *.log, and logs/session.txt are ignored. .env.example is the intentional sample exception.
+- The reviewed E4 path security-lab/e4-runs/20261013T084123Z/raw.log is the sole explicit log exception; a future E4 raw.log matches the global *.log rule. This keeps generated logs and temporary files out by default while retaining the one reviewed synthetic audit record needed by the current E4 evidence bundle.
+- The checks used nonexistent sample paths and did not create or stage files. No test suite was run.
