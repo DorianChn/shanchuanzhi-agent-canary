@@ -2132,3 +2132,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 remains OPEN/Draft and unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #30's current pushed head is `b1bc7d153b228e55a39febf9a827b7fd1b657786`; its exact-head CI passed 9/9 product jobs and 1/1 ownership-contract job.
 - The inspected shared Git registry still lists E4/M0/M1/M5/M8/M9; M1/M5/M8/M9 worktrees are clean, while M2/M3/M4/M6/M7 locations elsewhere remain UNKNOWN. No exclusive VMware/model/installer reservation is confirmed.
 - The next M0 docs-only batch is prepared locally. Push no earlier than 13:41:30 UTC after a fresh quota, PR #24, remote-head, ancestry, and documentation-only scope check. No module source/tests, PR #24, main, or Release were changed.
+
+## M0 M3 native-Read source diagnosis — 2026-10-17 13:46 UTC
+
+- M3 PR #33 current head `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` maps an in-workspace native `Read` decision of `ALLOW` directly to Hook `allow` in `src/agent-hook.ts:25,28`; its current `src/risk-policy.ts:92-100` has lexical containment but no `path_execution_not_pinned` denial. `test/agent-hook.test.ts:19` explicitly expects the native lab wrapper to allow `Read normal.txt`.
+- M1 PR #43 current head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` adds the native file-operation deny-until-pinned rule at `src/agent-hook.ts:31-34`. This branch-level divergence is a strong source-level explanation matching M9's expected-deny/actual-allow symptom, not a confirmed product-host defect or exposure.
+- M9 run `38727481764` still uses a stale M1 pin; this static review does not validate current exact refs. Keep #55 OPEN until M3 preserves fail-closed native behavior and M9 passes current M1/M3 exact-head composition on Ubuntu and Windows. M0 changed no module code/tests; details are in #55 comment `6234627772`.
