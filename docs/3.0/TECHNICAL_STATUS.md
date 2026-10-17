@@ -2213,3 +2213,11 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 remained OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No merge, main change, or Release occurred.
 - M0 posted the allowlist readback on Issue #58 comment 6235038846. M6/M9 broad rules remain on their prior heads and require owner alignment; #58 stays OPEN.
 - The next M0 push will be no earlier than 14:43 UTC after fresh quota and PR/remote/scope preflight.
+
+## M0 14:25 UTC exact-head CI and comment readback — 2026-10-17 14:26 UTC
+
+- PR #30 head d341932c3cfb589b3fe3ed6cb5ae3c761001f8e7 completed 10/10 GitHub check-runs SUCCESS, including package-smoke and ownership-contract-evidence. PR #30 remains OPEN/Draft.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No merge or Release occurred.
+- M0 posted exact-head CI readbacks to PR #30 comment 6235063999 and Issue #29 comment 6235064369; Issue #58 boundary readback is 6235064776. Formatting was verified after replacing literal newline markers; evidence and claims were preserved.
+- M6/M9 still have their previous broad raw.log negation. The M0-owned exact-path exception passed M0 coordinator CI, but #58 remains OPEN pending exact-head alignment and owner evidence.
+- The next M0 push is no earlier than 14:43 UTC after fresh quota, PR #24/#30, remote ancestry, worktree, docs/config-only scope, and diff preflight.
