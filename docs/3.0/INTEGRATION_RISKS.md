@@ -420,3 +420,11 @@ This checkpoint supersedes older risk entries in this file for the listed issues
 | Packaged Hook privacy (#53) | P0 | Sanitized source-wrapper evidence exists; shipped package reachability and independent E4 are NOT_VERIFIED. No actual secret exposure is claimed. | Verify reachable packaged artifacts and independent E4; keep OPEN. |
 | Native Codex Shell (#45) | P1 | M2 PR #37 checks do not prove Desktop-host interception; actual Shell remains UNPROTECTED. | Require host-enforced denial evidence; keep visible boundary. |
 | Installer / E4 (#41 and M6) | P1 | M7 clean-VM lifecycle and independent M6 E4 remain NOT_VERIFIED. | Reserve the mutually exclusive VM/install resource and retain independently reviewable artifacts before PASS. |
+
+## Latest integration risk delta — 2026-10-17 10:06 UTC
+
+| Risk | Priority | Verified state | Required gate |
+| --- | --- | --- | --- |
+| Shared Windows packaging / auto-E4 paths (#59) | P1 | PRs #38/#39/#40 differ on packaging files; M9 #36 has not recorded a confirmed canonical owner map. No security incident is established. | M6/M7/M8 confirm exact primary owners; M9 records selected SHAs and passes Windows package/auto-E4 checks. Keep the issue OPEN until exact-head evidence is attached. |
+| M3 native unpinned Read composition (#55) | P1 | M3 #33 remains at `be388029`; M9 #36 remains at `de3799a`, with Ubuntu and Windows composition failures against the current M1 deny contract. | M3 preserves fail-closed denial and a supported-capability positive control; M9 pins exact current M1/M3 SHAs and reruns both platforms. |
+| M4 shared quarantine retry (#51) | P1 | PR #34 has a current Ubuntu Node 20 `RETRY_LIMIT` failure after bounded retries; cause remains UNKNOWN. | Preserve tests and retry semantics; require lock-holder/timing evidence before claiming root cause. |

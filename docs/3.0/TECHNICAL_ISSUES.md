@@ -897,3 +897,7 @@ M0 comment 6216314917 asks M1 to diagnose/repair or name a BLOCKED owner/depende
 - **P0 #52:** no M1/M2/M5 response, installed-host call path, acceptance evidence, or PR #43/#37/#47 movement by 13:30. Follow-up 6216593750 requests host proof or a named BLOCKED owner/dependency by 13:50.
 - **P1 #51:** no M1 root-cause/lock-holder diagnosis or repair plan by 13:30. Exact-head PR #30 run 38905972645 still fails Ubuntu Node 20 test 163 after 500 bounded lock retries. Follow-up 6216592044 requests diagnosis or named blocker by 13:50; preserve tests and do not claim data loss.
 - #53/#55/#56 remain due 13:40; no owner replies/module PR movement by 13:30.
+
+## P1 #59 — M6–M8 Windows packaging overlap — 2026-10-17
+
+Issue #59 is OPEN. Current PR heads #38 `c1fdf3c`, #39 `cf4b70f`, #40 `c1ff677`, and #36 `de3799a` contain divergent Windows packaging and auto-E4 paths. M0 posted a path-owner proposal on the Issue: M7 for packaging build/lifecycle files, M6 for auto-E4 verifier semantics, M8 for its product docs and shipped Hook copy, and M9 for aggregate pins/composition. This is a proposal pending owner confirmation; no ownership transfer is inferred. Preserve all tests and fail-closed behavior, and keep PRs Draft.

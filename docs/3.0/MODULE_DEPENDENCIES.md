@@ -156,3 +156,9 @@ flowchart LR
 5. M9 做跨模块验收。此顺序不改变模块所有权，也不授权合并 main 或发布 Release。
 
 两个并行开发槽和 VMware/真实模型/安装互斥规则见 `TECHNICAL_ISSUES.md`。
+
+## Current M6–M8 to M9 packaging dependency — Issue #59
+
+- M7 owns the installer/build pipeline and its packaging lifecycle checks; M6 owns the E4 verifier/evidence contract; M8 owns its shipped Hook copy and product-facing claims.
+- M9 consumes the selected exact M6/M7/M8 SHAs and runs the combined Windows packaging/auto-E4 checks. Divergent owner-controlled files must be reconciled before pinning; use an adapter at the boundary and obtain the primary owner's review for shared semantics.
+- Issue #59 is OPEN/P1 pending M6/M7/M8 path-owner confirmation and exact-head M9 composition evidence. This dependency does not satisfy the separate #41 installer, #53 packaged-log, or #57 independent product-E4 gates.

@@ -1957,7 +1957,7 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 
 ## M0 2026-10-17 09:52 UTC coordination refresh
 
-- Fresh Usage Overview read at 09:52 UTC: five-hour 99%, weekly 54%; the Usage tab remains open. Continue to stop all project work if the five-hour percentage becomes unreadable or falls below 5%.
+- Usage Overview was readable at 09:52 UTC and above the 5% pause threshold; the Usage tab remains open. Stop all project work if the five-hour reading becomes unreadable or drops below the threshold.
 - PR #24 is unchanged OPEN/Draft: head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - M0 PR #30 is OPEN/Draft at `70979bdbd35e9bbc4bfd83c4914e77fa13c7a858`; exact-head product CI run 38932151271 and coordination run 38933910250 passed. Local/remote M0 branch heads matched before this docs-only update.
 - Module PRs remain OPEN/Draft on common AC3 base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Latest inspected exact-head checks: #33 9/9 pass; #34 fails run 38698635434 (Ubuntu Node 20 test 163 `RETRY_LIMIT`); #36 core CI and wrapper pass, while run 38727481764 fails Ubuntu and Windows composition because an unpinned native Read expected `deny` but returned `allow`; #37 9/9, #38 11/11, #39 11/11, #40 9/9, #43 11/11, and #47 9/9 pass. Green module checks do not satisfy the separate product-host, installer, or independent E4 gates.
@@ -1966,3 +1966,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Scheduling limit is two concurrent module tasks. VMware, real-model, and installer work share one exclusive slot and must be reserved on #29. No owner-confirmed RUNNING slot is currently recorded; this is an evidence gap, not a claim about unseen sessions.
 - Worktree registry read from the common AC3 repository currently lists E4, recovery M0, M1, M5, M8, and M9 worktrees; M2/M3/M4/M6/M7 were not present in that registry snapshot. Other clones/sessions remain UNKNOWN. No worktree was moved or removed, and M0 changed no module source or tests.
 - This checkpoint preserves all fail-closed assertions. PR #24, main, and Release state were not modified.
+
+## M0 live coordination checkpoint — 2026-10-17 10:06 UTC
+
+- **Quota gate:** Usage Overview was readable at 10:06 UTC and above the 5% stop threshold. Keep the Usage tab open; pause project, browser, and GitHub work if the reading is unreadable or below threshold. Exact quota values are intentionally not recorded.
+- **PR #24:** OPEN/Draft and unchanged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- **M0 PR #30:** OPEN/Draft, remote head `2c6232c195c65006ca7f28c41ee93b6535650917`; exact-head product and ownership checks are 10/10 SUCCESS. The clean M0 worktree was fast-forwarded to this remote head after finding its local tracking ref stale.
+- **Current module PRs:** all remain OPEN/Draft on the common AC3 base. Exact-head check summary: #33 9/9 SUCCESS; #34 3 SUCCESS, 1 FAILURE, 4 CANCELLED, 1 SKIPPED (Ubuntu Node 20 `RETRY_LIMIT`); #36 11 SUCCESS and 2 composition FAILURE; #37 9/9, #38 11/11, #39 11/11, #40 11/11, #43 11/11, and #47 9/9 SUCCESS.
+- **M3/M9 gate (#55):** PR #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; PR #36 remains `de3799aae540f58173acec4ab3f7a1fe98593aa7` and its composition run still fails on Ubuntu/Windows because unpinned native Read allows where the current M1 contract denies. M9 must pin the current M1 head and a corrected M3 head before a new two-platform composition run.
+- **M6–M8 path overlap (#59):** Issue #59 is OPEN/P1. M0 posted a path-owner proposal for M7 packaging build files, M6 auto-E4 verifier files, M8 product docs/Hook copy, and M9 aggregate pins; module owner confirmation is pending. No ownership transfer is inferred.
+- **Remaining acceptance:** #52 production-host protected-open/held-handle evidence, #53 packaged artifact/log reachability, #41 clean-VM lifecycle, #45 native Codex Shell protection, #51 retry trigger, #54 historical Windows 503 trigger, #56 canonical Hook-test ownership, and #57 independent product E4 remain open or unverified as documented in their Issues.
+- **Batch guard:** last M0 push was 09:53:06 UTC; next push is no earlier than 10:13:06 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test changes, main merge, PR #24 merge, or Release.

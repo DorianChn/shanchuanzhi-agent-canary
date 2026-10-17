@@ -342,3 +342,16 @@ AC3 PR #24 与模块候选均以共同基线 `62496d4020bd90ba2eede49b2e80a2bbeb
 - **M2** owns `execution-isolation/gateway-adapter/*`; the current adapter is a synthetic fixed-read bridge to M1 Gateway, with no first-party product host integration verified.
 - **M5** continues to own `src/risk-policy.ts` and policy/router regressions. **M9** owns current-source cross-module composition. For #52, M0 tracks the contract and evidence boundary; M0 does not edit M1/M2/M5 product code.
 - No source ownership changes were made. Shared contract changes must be made by the owning module and reflected here/API_CONTRACTS.md before other modules adapt.
+
+## Shared Windows packaging path ownership — 2026-10-17, pending owner signoff
+
+Issue #59 records the current overlap across M6/M7/M8 and the M9 aggregate. M0's proposed primary boundaries are:
+
+| Shared path(s) | Proposed primary owner | Adapter/review boundary |
+| --- | --- | --- |
+| `packaging/windows/README.md`, `build.mjs`, `e4-hook-faults.mjs`, `prepare.mjs`, `test/windows-packaging.test.mjs` | M7 | M6/M8 may request changes through M7; M7 preserves installer, reparse, and lifecycle checks. |
+| `packaging/windows/auto-e4.mjs`, `test/auto-e4.test.mjs` | M6 for E4 verifier/evidence semantics | M7 may change only package invocation/wrapper integration with M6 review; preserve E4 evidence meaning. |
+| M8-owned product documentation and shipped Hook/logging copy | M8 | Claims remain limited to verified package reachability and fixed-field logging evidence. |
+| M9 combined source refs and composition checks | M9 | M9 records exact source SHAs and consumes owner-controlled files; it does not change their semantics without owner signoff. |
+
+This table is a coordination proposal, not a completed ownership transfer. M6/M7/M8 confirmation is pending on Issue #59; update this table if an owner identifies a different exact path boundary.
