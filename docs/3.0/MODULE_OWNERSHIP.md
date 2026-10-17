@@ -366,3 +366,20 @@ This table is a coordination proposal, not a completed ownership transfer. M6/M7
 | `test/agent-hook.test.ts` | M1 for canonical Hook/interruption assertions | Module copies may adapt only with owner-approved scope and must preserve fail-closed coverage; reconcile M0 #30's copy before removing Draft status. Issue #56. |
 
 These entries record the existing owner map and current overlap evidence; they do not authorize M0 to edit M1/M5/M9 product source or tests.
+
+## Latest observed PR and worktree register — 2026-10-17 12:50 UTC
+
+| Module | Existing PR / exact GitHub head | Worktree in the inspected common repository | Read-only status |
+| --- | --- | --- | --- |
+| M0 | #30 `554dde8ed7a218c0e6e499f311d89408bd524fb5` (two docs-only commits are local and pending the next scheduled push) | `ac3-coordinator-recovery` / `feature/ac3-m0-coordination` | Two local documentation commits ahead; no other changed paths. |
+| M1 | #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` | `ac3-m1-security-recovery` / `feature/ac3-security-core` | Clean; local branch matches origin. |
+| M2 | #37 `9db59ed8f2deae905edcb2179982f8bcb594167c` | Not listed by this repository's `git worktree list` | Other local path/state UNKNOWN; request owner confirmation. |
+| M3 | #33 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` | Not listed by this repository's `git worktree list` | Other local path/state UNKNOWN; request owner confirmation. |
+| M4 | #34 `fbf20907c6accffc37246eddf04f8599060d99ea` | Not listed by this repository's `git worktree list` | Other local path/state UNKNOWN; request owner confirmation. |
+| M5 | #47 `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c` | `ac3-m5-policy-recovery` / `feature/ac3-policy-audit` | Clean; local branch matches origin. |
+| M6 | #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9` | Not listed by this repository's `git worktree list` | Other local path/state UNKNOWN; request owner confirmation. |
+| M7 | #39 `cf4b70f5130175582fffdfc65bd7c6847450867b` | Not listed by this repository's `git worktree list` | Other local path/state UNKNOWN; request owner confirmation. |
+| M8 | #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad` | `ac3-m8-recovery` / `feature/ac3-open-source-product` | Clean; local branch matches origin. |
+| M9 | #36 `de3799aae540f58173acec4ab3f7a1fe98593aa7` | `ac3-m9-recovery` / `feature/ac3-m9-integration` | Clean; local branch matches origin. |
+
+All listed module PRs remain OPEN/Draft on `feature/agent-canary-3.0`. “Not listed” means only that no worktree for that branch is registered in this inspected common repository; it does not prove the owner has no other clone. M0 did not create, move, reset, or remove module worktrees. Ask each owner for the exact path and branch before marking independent local isolation VERIFIED.
