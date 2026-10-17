@@ -2158,3 +2158,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The active M0 recovery checkout's Git worktree registry currently contains M0, M1, M5, M8, M9, and E4 worktrees. It does not register M2, M3, M4, M6, or M7; those modules may use separate clones, so their location and independent-worktree status remain UNKNOWN. The separate `Agent-Canary-Dev/coordinator` checkout remains at its pre-existing local commit and was not changed. No module branch/worktree was created or moved.
 - The required six top-level coordination directories are present under `C:\Users\36712\Desktop\Agent-Canary-Dev`. PR #24 remains unchanged; its live base is `competition/shanchuanzhi-release-readiness`, while M1–M9 module PRs use `feature/agent-canary-3.0`.
 - No module source/tests were edited or run. M0 will bundle this documentation with the pending local M0 commits at the next allowed push window, no earlier than 14:02:26 UTC and only after fresh preflight.
+
+## M0 exact changed-path overlap audit — 2026-10-17 13:55 UTC
+
+- A paginated comparison of changed paths at current PR heads found: M9 #36 changes 143 files; M6 #38 changes 33; M7 #39 changes 39; M8 #40 changes 29. Pairwise changed-path overlap counts are #36/#38: 33, #36/#39: 39, #36/#40: 28, #38/#39: 5, #38/#40: 4, and #39/#40: 8.
+- Repeated owner-sensitive paths include `package.json`, `packaging/windows/auto-e4.mjs`, `packaging/windows/build.mjs`, `packaging/windows/e4-hook-faults.mjs`, `packaging/windows/prepare.mjs`, `security-lab/claude-native-hook.mjs`, and `test/agent-hook.test.ts` / `test/auto-e4.test.mjs`. Changed-path overlap alone does not prove conflicting behavior; the M1/M3 semantic conflict on `test/agent-hook.test.ts` is separately evidenced in Issue #56.
+- The ownership proposal in Issue #59 remains unconfirmed. M9's current broad diff also touches M6/M7/M8-owned implementation paths; keep those owners responsible for public semantics and require M9 to consume them through agreed adapters or obtain explicit path-owner review before changing them.
+- This was a read-only diff audit. No module source/tests were edited or run.
