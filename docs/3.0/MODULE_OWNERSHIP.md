@@ -383,3 +383,7 @@ These entries record the existing owner map and current overlap evidence; they d
 | M9 | #36 `de3799aae540f58173acec4ab3f7a1fe98593aa7` | `ac3-m9-recovery` / `feature/ac3-m9-integration` | Clean; local branch matches origin. |
 
 All listed module PRs remain OPEN/Draft on `feature/agent-canary-3.0`. “Not listed” means only that no worktree for that branch is registered in this inspected common repository; it does not prove the owner has no other clone. M0 did not create, move, reset, or remove module worktrees. Ask each owner for the exact path and branch before marking independent local isolation VERIFIED.
+
+## Additional local-path search — 2026-10-17 13:07 UTC
+
+A read-only search of dated immediate project folders under `C:\Users\36712\Documents\Codex` found no additional `ac3-*` module checkouts beyond the registered M0/M1/M5/M8/M9 worktrees; the separate E4 and Glama folders are not M1–M8 worktrees. The desktop `Agent-Canary-Dev\agents` directory is empty, and `C:\Users\36712\.codex\worktrees` does not exist. M2/M3/M4/M6/M7 paths therefore remain NOT_VERIFIED in the inspected locations; this is not a claim that no checkout exists elsewhere. Do not create replacement branches or move any existing folder to make the registry look complete.
