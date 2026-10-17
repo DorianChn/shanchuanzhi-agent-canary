@@ -2095,3 +2095,8 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; no change was made to its branch, base, or files.
 - The 13:03 GitHub readback found no module owner reply after the 13:00 scheduler checkpoint and no movement on M3 #33 or M9 #36. The M3 #55 correction and M9 #58 ignore-rule integration remain REQUESTED, not owner-confirmed RUNNING; exact-head M9 composition remains dependent on M3.
 - Usage Overview remained readable above the stop threshold. M0 changed no module source/tests; no main merge or Release occurred. Next M0 push is no earlier than 13:19:16 UTC, after a fresh quota, PR #24, remote-head, and docs-only scope preflight.
+
+## M0 exact job-count verification — 2026-10-17 13:05 UTC
+
+- Fetched workflow-job lists for PR #30 head `c6173173c2928942732e2c5cf281a6c941f9978d`: product CI run `39034708407` is 9/9 SUCCESS; coordination run `39034708267` is 1/1 SUCCESS. This verifies the run summaries at the exact pushed head.
+- These are coordination-documentation checks only; they do not close any module product, host-protection, package, clean-VM, or independent E4 acceptance gate.
