@@ -2335,6 +2335,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 21:46 UTC push and exact-head CI readback — 2026-10-17
+
+- Usage Overview was readable at 21:43:41 UTC: 86% five-hour / 47% weekly. PR #30 is OPEN/Draft at 4c166176ac0598dc2fe2d16d6a0a7b9dcfb4bc19; coordination run 39072320361 passed 1/1, while product run 39072320332 failed one job. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
+- The failed product job is Ubuntu Node 20 test 163 in the shared-store concurrency test: worker 0 hit STATE_STORE_BUSY through all 500 retries and raised RETRY_LIMIT. The pushed batch changed only M0 coordination docs, not source/tests. Ubuntu Node 22, Docker, sponsor, and coordination passed; macOS/Windows jobs were cancelled and package-smoke skipped. This is an intermittent #51 recurrence; trigger remains UNKNOWN. Issue #51 comment 6241729027 and PR #30 comment 6241732504 record the exact evidence.
+- M1 received the exact failing run and was asked for the bounded test-only trace by 22:00; follow-up queue ID 01a14bd5-f8e9-7bd3-a782-a8502df6d796 is not proof work started. M4 remains on its existing M4-owned deliverable, due 22:00. No module source/test changes, main merge, or Release occurred.
+- Next owner/status checkpoint: 22:00 UTC. Next M0 push no earlier than 22:05:51 UTC after fresh quota, remote ancestry, PR #24, allowed-path, and diff preflight.
+
 ## M0 21:40 UTC owner/status checkpoint — 2026-10-17
 
 - Usage Overview was readable at 21:40:09 UTC: 86% five-hour / 47% weekly. PR #24 is unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #30 is OPEN/Draft at d37191dd88a957aa22d05bd3578c2922140c7a39 with exact-head product CI 9/9 and coordination 1/1 (10/10); readbacks are PR #30 comment 6241358527 and scheduler #29 comment 6241592569.
