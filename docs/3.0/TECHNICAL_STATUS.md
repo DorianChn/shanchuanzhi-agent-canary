@@ -2328,6 +2328,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 17:43 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 17:43 push and exact-head verification — 2026-10-17 17:46 UTC
+
+- Pushed the 17:40 M0 coordinator checkpoint to PR #30 at exact head `cad6972651a3bef316ed8384232334ae5c3f3475`; PR #30 remains OPEN/Draft, based on `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- Exact-head CI run `39054983898` completed SUCCESS (9/9 jobs); AC3 coordination run `39054983890` completed SUCCESS (1/1 job). Total exact-head checks: 10/10. Readbacks: PR #30 comment `6237932094`, Issue #29 comment `6237932061`.
+- PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
+- Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
+
 ## M0 17:40 UTC owner and integration readback — 2026-10-17 17:40 UTC
 
 - Usage Overview was readable: 86% five-hour quota and 47% weekly quota remain. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M0 #30 remains OPEN/Draft at `db3204370a37c8770a9177f39143e8d8df69a2c3` with 10/10 exact-head workflows successful.
