@@ -2029,3 +2029,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The 11:00 owner/status checkpoint on #29 passed without a module response or priority PR-head movement. M0 recorded the missed checkpoint and set 11:20 UTC for the next owner update.
 - M3 #55 / M9 #58 remain proposed lanes only; M9 composition still depends on a corrected M3 head. M1/M5 shared-file dispositions and M6/M7/M8 #59 path confirmation remain pending. No exclusive resource reservation is owner-confirmed.
 - Quota was readable above the stop threshold at this checkpoint. No module code/test changed; Draft PR and no-merge/Release boundaries remain intact.
+
+## M0 owner and CI readback — 2026-10-17 11:21 UTC
+
+- PR #30 head `2b60a279b3ca9582fb3188e446f7cab494e26136`: product run `39028017722` passed 9/9, including package-smoke; coordination run `39028017740` passed 1/1. PR #30 remains OPEN/Draft.
+- The 11:20 owner/status deadline passed without module reply or watched PR-head movement. M0 posted the readback on #29 and set 11:40 UTC as the next checkpoint. M3 #55/M9 #58 remain unconfirmed proposed lanes; no exclusive resource reservation is owner-confirmed.
+- PR #24 remains OPEN/Draft and unchanged. Last M0 push was at 11:15 UTC; next is no earlier than 11:36 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test changes, main merge, PR #24 merge, or Release.
