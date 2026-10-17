@@ -2100,3 +2100,8 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 
 - Fetched workflow-job lists for PR #30 head `c6173173c2928942732e2c5cf281a6c941f9978d`: product CI run `39034708407` is 9/9 SUCCESS; coordination run `39034708267` is 1/1 SUCCESS. This verifies the run summaries at the exact pushed head.
 - These are coordination-documentation checks only; they do not close any module product, host-protection, package, clean-VM, or independent E4 acceptance gate.
+
+## P0 evidence checkpoint requests — 2026-10-17 13:10 UTC
+
+- M0 added current owner/evidence deadlines to P0 #52 comment `6234271283` (supported-host call path, exact source/build SHA, held-object use, alias/path-replacement controls, or named blocker) and P0 #53 comment `6234273885` (package owner/source SHA, Setup.exe/manifest hashes, extracted-Hook byte identity, sanitized extracted-harness result, or named blocker).
+- Both ask owners to report current scheduler state on #29 before starting work. No task is marked RUNNING and no exclusive installer/VM slot was reserved by M0; the 13:20 UTC checkpoint will read owner responses and preserve the two-task cap.
