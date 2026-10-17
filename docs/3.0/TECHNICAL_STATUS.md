@@ -1992,3 +1992,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Exact-head product run `39024073435` passed all 9 jobs, including package-smoke, and coordination ownership run `39024073453` passed 1/1. PR #30 remains OPEN/Draft.
 - PR #24 remains OPEN/Draft at the verified unchanged head/base recorded above. No merge or Release occurred.
 - The next M0 push is no earlier than 10:34 UTC; check fresh quota, PR #24, remote head, and docs-only scope again immediately before it.
+
+## M0 owner/head monitor — 2026-10-17 10:29 UTC
+
+- No owner reply followed the 10:22 scheduler readback on #29. Latest comments on #51/#52/#55/#58/#59 remain M0 evidence/requests; do not mark the proposed lanes RUNNING or infer unseen session activity.
+- PR heads remain unchanged on M3 #33 `be388029`, M4 #34 `fbf20907`, M9 #36 `de3799aa`, M1 #43 `9ef3dc26`, and M5 #47 `373e2c2c`; all remain OPEN/Draft. Existing M4 retry and M9 composition failures remain unresolved.
+- M0 #30 exact-head product and ownership checks are green at `77884cc`; PR #24 remains unchanged OPEN/Draft.
+- No owner-confirmed VMware, real-model, or installer reservation is recorded. The next M0 push remains no earlier than 10:34 UTC, subject to fresh quota, PR #24, remote-head, and docs-only scope checks.
