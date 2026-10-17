@@ -987,3 +987,5 @@ Read-only comparison of M1 PR #43's current test patch shows diagnostic lock acq
 On the next M0 docs-only head `0f2e5e4f22a30bf790e2984a8c367f2b6e93cb2e`, Ubuntu Node 22 test 163 passed in exact-head CI run `39060774524` (full CI 9/9; coordination `39060774554` 1/1). No source or test changed between the failure at `aecac2d` and this pass. The back-to-back results confirm the symptom is intermittent on these CI runs; they do not identify its cause. #51 remains OPEN/P1, and no data loss is established. Owner follow-up: Issue #51 comment `6239204172`.
 
 The same test passed again on docs-only head `ef2a4e754c6f65f7f2b66226fb2efd4ba43fcdd3` (CI `39062246164` 9/9; coordination `39062246175` 1/1), strengthening the intermittent-symptom classification without explaining the trigger. No source or test changed. Latest owner-facing evidence is in Issue #51 comment `6239518877`.
+
+It passed again on docs-only head `ba41be50d59f696e15e25bd97513af1d70383689` (CI `39063679149` 9/9 including package-smoke; coordination `39063679146` 1/1). Consecutive passes do not close #51 or explain the earlier `aecac2d` failure. Issue #51 follow-up: `6239866305`.
