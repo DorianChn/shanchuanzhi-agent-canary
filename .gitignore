@@ -85,3 +85,5 @@ __pycache__/
 /integration/
 /reports/
 /logs/
+# Keep only the reviewed synthetic E4 audit record; all other generated logs remain ignored.
+!/security-lab/e4-runs/20261013T084123Z/raw.log
