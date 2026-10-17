@@ -14,6 +14,7 @@ GitHub readback at 20:23 UTC: all listed PRs are OPEN/Draft and target `feature/
 | M7 | `feature/ac3-reliability-ac3` / #39 | `cf4b70f5130175582fffdfc65bd7c6847450867b` | Reliability, Windows installer/payload and lifecycle evidence. |
 | M8 | `feature/ac3-open-source-product` / #40 | `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad` | Open-source/docs and shipped Hook/logging copy. |
 | M9 | `feature/ac3-m9-integration` / #36 | `de3799aae540f58173acec4ab3f7a1fe98593aa7` | Exact-ref composition and integration tests; module ownership remains with M1–M8. |
+20:47 UTC delta: PR #30 advanced to `b0b3aec824eec181d8d28d343e6a173377b4a878`; the 20:47 GitHub scan showed M1–M9 still at the heads listed above.
 ## M0 ownership routing — 2026-10-16 04:23 UTC
 
 - src/tokens.ts and test/tokens.test.ts are not assigned in the active M1–M9 ownership table. Do not infer they share ownership or root cause with M1's src/file-state-store.ts.
