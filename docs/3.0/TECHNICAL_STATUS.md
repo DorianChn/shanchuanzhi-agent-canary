@@ -2105,3 +2105,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 
 - M0 added current owner/evidence deadlines to P0 #52 comment `6234271283` (supported-host call path, exact source/build SHA, held-object use, alias/path-replacement controls, or named blocker) and P0 #53 comment `6234273885` (package owner/source SHA, Setup.exe/manifest hashes, extracted-Hook byte identity, sanitized extracted-harness result, or named blocker).
 - Both ask owners to report current scheduler state on #29 before starting work. No task is marked RUNNING and no exclusive installer/VM slot was reserved by M0; the 13:20 UTC checkpoint will read owner responses and preserve the two-task cap.
+
+## M0 owner and P0 deadline readback — 2026-10-17 13:20 UTC
+
+- Usage Overview was readable above the stop threshold before this checkpoint; no quota value is recorded. Keep the Usage tab open.
+- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. PR #30 remains OPEN/Draft at pushed head `c6173173c2928942732e2c5cf281a6c941f9978d`; exact-head product run `39034708407` passed 9/9 and coordination run `39034708267` passed 1/1.
+- The 13:20 evidence deadlines on P0 #52 and #53 passed with no owner response, PR-head movement, or requested product evidence. #52 held-object/first-party-host proof and #53 pinned installer/extracted-Hook/harness evidence remain NOT_VERIFIED; no exposure or leak is asserted. Both remain OPEN.
+- M3 #55 and M9 #58 remain requested lanes without owner confirmation or PR-head movement. M9 composition stays queued behind a corrected M3 exact head. No module task is owner-confirmed RUNNING; no VMware/model/installer reservation is confirmed.
+- The inspected shared Git registry contains E4, M0, M1, M5, M8, and M9 worktrees; the M1/M5/M8/M9 worktrees are clean. M2/M3/M4/M6/M7 paths outside this registry remain UNKNOWN. No unseen-session activity is inferred.
+- M0 changes remain coordination documentation only. No module source/test, PR #24, main, or Release changes were made. Continue the 20-minute batch cadence and two-task cap.
