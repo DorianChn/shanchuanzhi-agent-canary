@@ -2335,6 +2335,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 20:07 UTC exact-head CI recurrence — 2026-10-17
+
+- On docs-only PR #30 head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI `39065088510` failed Ubuntu Node 22 test 163: worker 1 exhausted 500 `STATE_STORE_BUSY` retries (`321 pass, 1 fail, 4 skipped`); five matrix jobs were cancelled and package-smoke skipped. AC3 coordination `39065088498` passed 1/1.
+- PR #30 remains OPEN/Draft; PR #24 remains unchanged OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Readbacks: PR #30 comment `6240120991`, Issue #29 comment `6240120980`, Issue #51 comment `6240121065`.
+- The prior docs-only head `ba41be5` passed the same test; source/tests did not change. Keep #51 P1 open and its trigger UNKNOWN; no data loss is established. Next status is 20:20 UTC; next push is no earlier than 20:23 UTC.
+
 ## M0 20:00 UTC owner and integration readback — 2026-10-17
 
 - Usage Overview is readable and shows five-hour reset in progress with 86% remaining, plus 47% weekly. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #30 remains OPEN/Draft at `ba41be50d59f696e15e25bd97513af1d70383689`, exact-head CI 9/9 and coordination 1/1 successful.
