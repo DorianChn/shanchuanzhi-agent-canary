@@ -2206,3 +2206,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M0 refreshed bounded evidence requests: #45 comment 6235008242, #51 6235009153, #53 6235009527, #58 6235009965, #59 6235010462, and scheduler #29 6235010797. Next owner readback target is 14:40 UTC.
 - The M0-owned exact E4 raw.log allowlist remains local-only at commit 2ef7099; broad rules on M6/M9 heads are not changed. The real installer/extracted-Hook gate remains open; M8's synthetic canary fixture is recorded separately.
 - No module source/tests, PR #24, main, or Release was changed. Next M0 push is no earlier than 14:23 UTC, after fresh quota, PR #24/#30, remote ancestry, clean-worktree, docs/config-only scope, and diff checks.
+
+## M0 14:23 UTC push and allowlist readback — 2026-10-17 14:23 UTC
+
+- Pushed seven coordinator commits, including the API contract status and M0-owned exact E4 log allowlist, to PR #30 at head d341932c3cfb589b3fe3ed6cb5ae3c761001f8e7. PR #30 remained OPEN/Draft; 9 exact-head CI checks were pending at the immediate readback.
+- PR #24 remained OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No merge, main change, or Release occurred.
+- M0 posted the allowlist readback on Issue #58 comment 6235038846. M6/M9 broad rules remain on their prior heads and require owner alignment; #58 stays OPEN.
+- The next M0 push will be no earlier than 14:43 UTC after fresh quota and PR/remote/scope preflight.
