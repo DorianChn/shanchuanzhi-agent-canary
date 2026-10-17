@@ -2198,3 +2198,11 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Root .gitignore is M0-owned. Local commit 2ef7099 replaces the broad raw.log exception with one exact reviewed path, security-lab/e4-runs/20261013T084123Z/raw.log; check-ignore readback shows future run raw.log files still match the global *.log ignore.
 - This is a narrow root-configuration change, not module source. It is local-only pending the next scheduled push. M0 recorded the owner boundary in Issue #58 comment 6234931026; M6/M9 are asked to remove their blanket exception and consume the exact allowlist. Keep #58 OPEN until current PR heads align.
 - No tests were run; git diff --check passed. Next push remains no earlier than 14:23 UTC.
+
+## M0 14:20 UTC owner deadline readback — 2026-10-17 14:21 UTC
+
+- Usage Overview was readable at 14:20 UTC: 81% five-hour quota remains. PR #24 and all module PR heads remain unchanged; PR #30 is still OPEN/Draft at 4bef221e1e7737cbb236652fc83eb7d2b2779334.
+- No module-owner response or owner-confirmed RUNNING task is visible on the checked GitHub issues/PRs; no exclusive VMware/real-model/installer reservation is confirmed. This is a GitHub/worktree visibility statement, not a claim about other Codex chats.
+- M0 refreshed bounded evidence requests: #45 comment 6235008242, #51 6235009153, #53 6235009527, #58 6235009965, #59 6235010462, and scheduler #29 6235010797. Next owner readback target is 14:40 UTC.
+- The M0-owned exact E4 raw.log allowlist remains local-only at commit 2ef7099; broad rules on M6/M9 heads are not changed. The real installer/extracted-Hook gate remains open; M8's synthetic canary fixture is recorded separately.
+- No module source/tests, PR #24, main, or Release was changed. Next M0 push is no earlier than 14:23 UTC, after fresh quota, PR #24/#30, remote ancestry, clean-worktree, docs/config-only scope, and diff checks.
