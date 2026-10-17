@@ -413,3 +413,4 @@ All listed module PRs remain OPEN/Draft on `feature/agent-canary-3.0`. “Not li
 ## Additional local-path search — 2026-10-17 13:07 UTC
 
 A read-only search of dated immediate project folders under `C:\Users\36712\Documents\Codex` found no additional `ac3-*` module checkouts beyond the registered M0/M1/M5/M8/M9 worktrees; the separate E4 and Glama folders are not M1–M8 worktrees. The desktop `Agent-Canary-Dev\agents` directory is empty, and `C:\Users\36712\.codex\worktrees` does not exist. M2/M3/M4/M6/M7 paths therefore remain NOT_VERIFIED in the inspected locations; this is not a claim that no checkout exists elsewhere. Do not create replacement branches or move any existing folder to make the registry look complete.
+22:46 UTC delta: PR #30 advanced to `a11760106fd75e60f288d7d14f6397ce02d8f1e4`; exact-head product and coordination CI passed 9/9 and 1/1. The 22:49 GitHub scan found M1–M9 heads unchanged; M1/M4 evidence checkpoint remains due at 23:00 UTC.

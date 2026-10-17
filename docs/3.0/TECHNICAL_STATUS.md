@@ -2335,6 +2335,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 22:46 UTC push and exact-head CI readback — 2026-10-17
+
+- Pushed the docs-only coordination batch to PR #30 at exact head `a11760106fd75e60f288d7d14f6397ce02d8f1e4`; PR #30 remains OPEN/Draft on `feature/agent-canary-3.0`. Product run `39076426332` passed 9/9, including package-smoke; coordination run `39076426331` passed 1/1. Readbacks: PR #30 comment `6242563036`; Issue #51 comment `6242582297`.
+- This passing M0 head changes no product source or tests and follows two exact-head Ubuntu `RETRY_LIMIT` failures on unchanged test/source. The #51 trigger remains UNKNOWN; this pass is evidence of intermittency, not a fix. Keep all assertions, retry bounds, and production locking.
+- Fresh readback at 22:51 UTC confirms PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. The 22:49 scan found M1–M9 PR heads unchanged and OPEN/Draft. M1/M4 work evidence is still pending in the checked GitHub records; their 23:00 checkpoint remains due. Queue receipts are not counted as work started.
+- No module source/tests, PR #24, main, merge, or Release changes occurred. PR #30 remains Draft pending shared-path owner disposition #56.
+- Next M1/M4 owner/status checkpoint: 23:00 UTC. Next M0 push no earlier than 23:06:25 UTC after fresh quota, remote ancestry, PR #24, allowed-path, and diff preflight.
 ## M0 22:40 UTC owner/status checkpoint — 2026-10-17
 
 - Usage Overview was readable at 22:39:48 UTC: 86% five-hour / 47% weekly. PR #24 remains unchanged OPEN/Draft. PR #30 remains OPEN/Draft at e12e7b3c25c10db6af0b084571280aeed0ae5d98 with product CI 9/9 and coordination 1/1 green.
