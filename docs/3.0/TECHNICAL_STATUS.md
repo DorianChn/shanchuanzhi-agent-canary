@@ -2023,3 +2023,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The docs-only status batch reached PR #30 at `c653fd4355b2f5a4f99dbf612274aa1a0aa73c44`; local and remote heads match and the worktree is clean.
 - PR #30 remains OPEN/Draft; its new exact-head checks were QUEUED at readback. PR #24 remains OPEN/Draft at the previously verified unchanged head and base.
 - Next M0 push is no earlier than 11:15 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test change, main merge, PR #24 merge, or Release.
+
+## M0 owner deadline readback — 2026-10-17 11:00 UTC
+
+- The 11:00 owner/status checkpoint on #29 passed without a module response or priority PR-head movement. M0 recorded the missed checkpoint and set 11:20 UTC for the next owner update.
+- M3 #55 / M9 #58 remain proposed lanes only; M9 composition still depends on a corrected M3 head. M1/M5 shared-file dispositions and M6/M7/M8 #59 path confirmation remain pending. No exclusive resource reservation is owner-confirmed.
+- Quota was readable above the stop threshold at this checkpoint. No module code/test changed; Draft PR and no-merge/Release boundaries remain intact.
