@@ -448,3 +448,22 @@ This checkpoint supersedes older risk entries in this file for the listed issues
 | Release boundary (#24) | M0 | PR #24 remains OPEN/Draft and unchanged; PR #30 is OPEN/Draft. No merge or Release occurred. | Keep both Draft and preserve the no-main-merge/no-Release boundary. |
 
 The current #29 readback has no owner-confirmed active task or exclusive installer/VM/model reservation. M3 #55 and M9 #58 remain requested, not confirmed RUNNING. Activity in other Codex sessions is UNKNOWN; do not infer it from issue comments or unchanged PR heads.
+
+## Current integration risk snapshot — 2026-10-17 14:28 UTC
+
+This snapshot uses exact PR/issue and inspected worktree evidence through the 14:20 UTC owner check. Earlier snapshots are retained as history. In particular, the earlier description of M6/M9 raw.log exceptions as scoped is superseded: their current PR diffs contain a blanket negation for all E4 raw.log files.
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected file/host boundary (#52) | P0 / M1, M2, M5, M9 | M1 held-object and M5 deny source paths exist; M2 has no first-party product-host wiring. M3 alias path is a static risk only; no exposure is confirmed. OPEN / NOT_VERIFIED. | Supported host protected-open, held-object identity, alias/path-replacement denial, current exact-head composition. |
+| Packaged Hook privacy (#53) | P0 / M6, M7, M8, M9 | M8 source logs fixed decision metadata and has a synthetic co-located payload/caller-canary fixture. Real Setup.exe, manifest, extracted bytes, and installed behavior are NOT_VERIFIED. No leak is confirmed. | Real artifact hashes, extraction identity, sanitized installed-harness result. |
+| Native Codex Shell (#45) | P1 / M2 | Candidate Hook not installed at repository root; active Desktop host and invocation telemetry UNKNOWN. UNPROTECTED / BLOCKED_NOT_VERIFIED. | Actual host invocation/sentinel or named unsupported-host blocker. |
+| Quarantine retry (#51) | P1 / M1, M5 | M4 #34 run 38698635434 has one Ubuntu Node 20 RETRY_LIMIT after 500 bounded STATE_STORE_BUSY retries; trigger UNKNOWN, no data loss. | M1 reproducible lock/timing diagnosis or explicit blocker; preserve tests and retry bounds. |
+| Native Hook read/alias (#55) | P1 / M3, M9 | M3 #33 allows unpinned native Read at source level; M9 run 38727481764 fails Ubuntu/Windows deny expectation with stale M1 pin. No host exposure is established. | M3 fail-closed correction and exact-head M9 rerun. |
+| Ignore-rule divergence (#58) | P1 / M0, M6, M9 | M0 PR #30 has one exact reviewed E4 log exception; M6 #38 and M9 #36 still have a blanket raw.log negation. One current log had no common credential/PII-pattern matches; future output is unverified. No leak is confirmed. | M6/M9 align to M0 path-specific rule or reviewed sanitized export; preserve global log ignore. |
+| Windows/auto-E4 path ownership (#59) | P1 / M6, M7, M8, M9 | Changed-path overlaps across #36/#38/#39/#40 are recorded in #59; owner split remains unconfirmed. | Each owner confirms exact paths, adapter/reviewer, and M9 consumption plan. |
+| Clean-VM / external E4 (#41/#57) | P1 / M7, M6 | Actual clean-VM lifecycle and independent external E4 remain NOT_VERIFIED. | Exclusive installer/VM reservation and independently reviewable artifacts. |
+| Historical provider retry (#54) | P1 / M6, M9 | Current Windows Node 22 check passes; historical 503 trigger remains UNKNOWN. | Keep bounded retries; assign provider/transport ownership before edits. |
+| Shared Hook test (#56) | P2 / M1 and consuming modules | M1/M3 test blobs encode different unpinned-Read behavior; no tests were removed or weakened. | M1 canonical disposition and owner-approved adapters; keep PR #30 Draft pending its shared-path scope. |
+
+At the 14:20 UTC scheduler readback, no owner-confirmed task or exclusive VMware/real-model/installer reservation was visible. PR #24 remains OPEN/Draft and unchanged. M0 PR #30 head d341932c3cfb589b3fe3ed6cb5ae3c761001f8e7 passed 10/10 exact-head checks; those checks do not close any product/host/installer/E4 gate.
