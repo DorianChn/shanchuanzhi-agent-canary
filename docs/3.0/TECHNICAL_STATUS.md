@@ -2335,6 +2335,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 19:25 UTC post-push exact-head verification — 2026-10-17
+
+- Pushed M0 docs through `ef2a4e754c6f65f7f2b66226fb2efd4ba43fcdd3` to PR #30, still OPEN/Draft. Exact-head CI `39062246164` completed SUCCESS (9/9); AC3 coordination `39062246175` completed SUCCESS (1/1).
+- PR #24 remains OPEN/Draft and unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Readbacks: PR #30 comment `6239518843`, Issue #29 comment `6239518845`, Issue #51 comment `6239518877`.
+- #51 test 163 passed on this and the prior docs-only head after its failure at `aecac2d`; no source/test changed across those M0 heads. Treat as intermittent, keep root cause UNKNOWN and no data loss asserted. No module source/tests, main, merge, or Release changes occurred. Next status is 19:40 UTC; next push is no earlier than 19:43 UTC.
+
 ## M0 19:20 UTC owner and integration readback — 2026-10-17
 
 - Usage Overview is readable at 86% five-hour / 47% weekly. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #30 remains OPEN/Draft at `0f2e5e4f22a30bf790e2984a8c367f2b6e93cb2e`, with exact-head CI 9/9 and coordination 1/1 successful.
