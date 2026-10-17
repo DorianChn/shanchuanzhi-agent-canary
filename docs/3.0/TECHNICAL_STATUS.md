@@ -2328,6 +2328,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 17:43 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 17:40 UTC owner and integration readback — 2026-10-17 17:40 UTC
+
+- Usage Overview was readable: 86% five-hour quota and 47% weekly quota remain. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M0 #30 remains OPEN/Draft at `db3204370a37c8770a9177f39143e8d8df69a2c3` with 10/10 exact-head workflows successful.
+- All M1–M9 PR heads and monitored module issue/PR discussions remain unchanged; no new owner response is visible. No task is marked RUNNING and no exclusive VMware/real-model/installer resource is reserved without owner confirmation.
+- M4 #34 remains failed on Ubuntu Node 20 RETRY_LIMIT (trigger UNKNOWN; no data loss established). M9 #36 CI and Windows wrapper pass, but composition remains failed on Ubuntu/Windows. P0 protected-path/host/installer gates remain OPEN / NOT_VERIFIED where evidence is missing; no bypass, leak, or data loss is asserted.
+- M0 posted the scheduler readback to Issue #29 comment `6237853327`. No module source/tests, PR #24, main, or Release changes occurred. Next owner/status checkpoint is 18:00 UTC; next M0 push is no earlier than 17:43 UTC after fresh preflight.
+
 ## M0 17:20 UTC owner and integration readback — 2026-10-17 17:20 UTC
 
 - Usage Overview was readable: 86% five-hour quota and 47% weekly quota remain. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M0 #30 remains OPEN/Draft at `60e69a177383648b527ccd98c85536b933d1a401` with 10/10 exact-head workflows successful.
