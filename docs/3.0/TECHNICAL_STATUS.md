@@ -1985,3 +1985,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - **Hook test copies (#56):** M0's 10:00 comment records `test/agent-hook.test.ts` across all open module PRs and different current blobs. M1 remains canonical owner; keep PR #30 Draft until M1 records the shared-path disposition.
 - **M7/M8 packaging paths (#53/#59):** the 10:00 evidence identifies divergent package files; M0's 10:10 proposal to M6/M7/M8 on #59 awaits owner confirmation. M9 must pin exact selected refs and retain packaging/E4 checks.
 - No module owner response or exact-head movement had been reported in these latest issue comments. Preserve each issue's existing P0/P1/P2 severity and do not infer unseen Codex-session activity.
+
+## Post-push CI readback — 2026-10-17 10:15 UTC
+
+- M0 pushed the two docs-only commits through `77884cc57088aa22e778b80f03ae58d43baecf78` to existing PR #30. The branch readback matches local `HEAD`; the worktree is clean.
+- Exact-head product run `39024073435` passed all 9 jobs, including package-smoke, and coordination ownership run `39024073453` passed 1/1. PR #30 remains OPEN/Draft.
+- PR #24 remains OPEN/Draft at the verified unchanged head/base recorded above. No merge or Release occurred.
+- The next M0 push is no earlier than 10:34 UTC; check fresh quota, PR #24, remote head, and docs-only scope again immediately before it.
