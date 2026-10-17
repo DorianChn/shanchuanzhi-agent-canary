@@ -1999,3 +1999,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR heads remain unchanged on M3 #33 `be388029`, M4 #34 `fbf20907`, M9 #36 `de3799aa`, M1 #43 `9ef3dc26`, and M5 #47 `373e2c2c`; all remain OPEN/Draft. Existing M4 retry and M9 composition failures remain unresolved.
 - M0 #30 exact-head product and ownership checks are green at `77884cc`; PR #24 remains unchanged OPEN/Draft.
 - No owner-confirmed VMware, real-model, or installer reservation is recorded. The next M0 push remains no earlier than 10:34 UTC, subject to fresh quota, PR #24, remote-head, and docs-only scope checks.
+
+## M0 post-push readback — 2026-10-17 10:35 UTC
+
+- Docs-only batch reached existing PR #30 at `2c5e36e76f8b14c02201cfbf77fb54e0c9f148e1`; local and remote heads match and the M0 worktree is clean.
+- PR #30 remains OPEN/Draft; its new check run was queued at readback. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Next M0 push is no earlier than 10:55 UTC, after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test change, main merge, PR #24 merge, or Release.
