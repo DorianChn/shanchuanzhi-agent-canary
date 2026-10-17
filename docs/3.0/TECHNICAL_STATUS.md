@@ -2292,3 +2292,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - All M1–M9 PR heads remain unchanged from 15:50. Monitored issue and module-PR discussion threads show no new owner response after the 15:20 requests. No task is marked RUNNING and no exclusive VMware/real-model/installer slot is reserved without owner confirmation.
 - M4 #34 remains failed on the Ubuntu Node 20 RETRY_LIMIT test (trigger UNKNOWN; no data loss established). M9 #36 CI and Windows wrapper pass, but composition remains failed on Ubuntu/Windows. P0 path/host/installer gates remain OPEN / NOT_VERIFIED where evidence is missing; no incident is inferred.
 - M0 posted the scheduler readback to Issue #29 comment `6236240526`. No module source/tests were changed or run; PR #24, main, and Release remain untouched. Next owner/status checkpoint is 16:20 UTC; next push is no earlier than 16:03 UTC after fresh preflight.
+
+## M0 16:03 push and exact-head verification — 2026-10-17 16:06 UTC
+
+- Pushed the 16:00 M0 coordinator checkpoint to PR #30 at exact head `02c859349c0e5602250b33dea0f36944a56ad7ce`; PR #30 remains OPEN/Draft, based on `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- Exact-head CI run `39047730730` completed SUCCESS (9/9 jobs); AC3 coordination run `39047730749` completed SUCCESS (1/1 job). Total exact-head checks: 10/10. Readbacks: PR #30 comment `6236321514`, Issue #29 comment `6236321510`.
+- PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
+- Next M0 push is no earlier than 16:23 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
