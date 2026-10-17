@@ -2011,3 +2011,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #30 head `2c5e36e76f8b14c02201cfbf77fb54e0c9f148e1`: product run `39025490690` passed 9/9, including package-smoke; ownership run `39025490735` passed 1/1. Combined current-head checks are 10/10 SUCCESS.
 - No module owner reply or head movement appeared on #29/#55/#58/#59 by this check. M3 #33 remains `be388029`; M9 #36 remains `de3799aa`; both are OPEN/Draft and #55 composition remains blocked on M3's fail-closed correction.
 - PR #24 remains OPEN/Draft and unchanged. Last M0 push was at 10:35 UTC; next is no earlier than 10:55 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks.
+
+## M0 scheduler follow-up — 2026-10-17 10:43 UTC
+
+- M0 posted a single queue follow-up on #29 after no owner status or priority PR head movement appeared since the 10:22 checkpoint. The requested 11:00 update is owner, RUNNING/QUEUED/IDLE, exact head/evidence, and next checkpoint.
+- Proposed M3 #55 and M9 #58 lanes remain unconfirmed; M9's #55 composition depends on a corrected M3 head. M1/M5 #51/#52, M1 #56, and M6/M7/M8 #59 remain queued. No exclusive VMware/real-model/installer slot is owner-confirmed.
+- Keep work to existing Draft PRs and the two-task cap. No new module branch or unverified work state is claimed.
