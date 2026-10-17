@@ -1915,3 +1915,54 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 
 - Ownership-contract-evidence run 38931276351 passed after the 16:20 Issue #29 / PR #30 refresh. Product run 38928984137 remains fully successful at PR #30 head 195e6e7866e8ff3566a0befdc80e20f9a5979d91.
 - #52 next due16:30; #51 and #41/#53/#54/#55/#56/#57 next due16:40. Last push16:03:59 UTC; next eligible after16:23:59.
+
+## M0 16:28 UTC post-push CI readback — 2026-10-16
+
+- M0 pushed docs-only commit 70979bdbd35e9bbc4bfd83c4914e77fa13c7a858 at 16:27:51 UTC. PR #30 remains OPEN/Draft; current-head ownership run 38932151287 passed and product run 38932151271 is in progress.
+- Issue #29 current-head snapshot is refreshed. PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Usage last readable at 16:25: 20% five-hour / 56% weekly; Usage tab remains open. Next push no earlier than 16:47:51 UTC.
+- M0 changed no module source/tests, no main merge, and no Release.
+
+## M0 16:29 UTC current-head CI completion — 2026-10-16
+
+- PR #30 exact head 70979bdbd35e9bbc4bfd83c4914e77fa13c7a858 product run 38932151271 completed SUCCESS across Ubuntu/macOS/Windows Node 20/22, Docker, Sponsor, and package-smoke. Ownership-contract run 38932151287 passed.
+- Issue #51 still records the prior 498989d retry exhaustion as unresolved; the current docs-only pass does not explain that root trigger.
+- P0 #52 due16:30; #51 and #41/#53/#54/#55/#56/#57 next due16:40. Next push no earlier than16:47:51 UTC.
+
+## M0 16:30 UTC P0 protected-host deadline — 2026-10-16
+
+- Usage Overview at 16:31 UTC was readable at 20% five-hour / 56% weekly, above 5%; Usage tab remains open.
+- No M1/M2/M5 owner response, first-party product host/build/call-path, held-descriptor consumption, alias/junction/TOCTOU evidence, or PR #43/#37/#47 head movement by 16:30. Comment 6220058754 keeps P0 #52 OPEN / NOT_VERIFIED and sets 16:50 for proof or a named blocker. Preserve every hard denial.
+- PR #30 head 70979bdbd35e9bbc4bfd83c4914e77fa13c7a858 product run 38932151271 and ownership run 38932151287 passed. PR #24 remains unchanged OPEN/Draft.
+- Issues #51 and #41/#53/#54/#55/#56/#57 are due16:40. Last push16:27:51; next no earlier than16:47:51 UTC after fresh quota, PR #24, remote-head, and scope checks.
+- No module source/tests changed; no main merge or Release.
+
+## M0 16:33 UTC latest coordination check — 2026-10-16
+
+- Ownership-contract-evidence run 38932770706 passed after the 16:30 P0/PR-body refresh. Product run38932151271 remains fully successful at current PR #30 head70979bdbd35e9bbc4bfd83c4914e77fa13c7a858.
+- #52 next due16:50; #51 and #41/#53/#54/#55/#56/#57 next due16:40. Last push16:27:51; next no earlier than16:47:51.
+
+## M0 16:40 UTC module deadline readback — 2026-10-16
+
+- Usage Overview at 16:38 UTC was readable at 20% five-hour / 56% weekly; Usage tab remains open.
+- No owner evidence or module PR head movement appeared by 16:40 for #51/#41/#53/#54/#55/#56/#57. Comments 6220208439, 6220209030, 6220209790, 6220210512, 6220211304, 6220212071, and 6220212666 set 17:00 UTC. Root-cause, clean-VM lifecycle, extracted package, historical 503, fail-closed composition, test ownership, and product E4 remain OPEN / NOT_VERIFIED as applicable.
+- P0 #52 remains OPEN / NOT_VERIFIED after 16:30 comment 6220058754; next checkpoint16:50.
+- PR #30 head70979bdbd35e9bbc4bfd83c4914e77fa13c7a858 product run38932151271 and ownership run38932770706 passed. PR #24 unchanged OPEN/Draft.
+- Last push16:27:51 UTC; next no earlier than16:47:51 UTC after fresh quota, PR #24, remote-head, and diff-scope checks. M0 source/tests untouched.
+
+## M0 16:42 UTC coordination-check completion — 2026-10-16
+
+- Ownership-contract-evidence run 38933910250 passed after the 16:40 Issue #29 / PR #30 refresh. Product run38932151271 remains fully successful at head70979bdbd35e9bbc4bfd83c4914e77fa13c7a858.
+- P0 #52 next due16:50; #51 and #41/#53/#54/#55/#56/#57 next due17:00. Last push16:27:51; next no earlier than16:47:51 UTC.
+
+## M0 2026-10-17 09:52 UTC coordination refresh
+
+- Fresh Usage Overview read at 09:52 UTC: five-hour 99%, weekly 54%; the Usage tab remains open. Continue to stop all project work if the five-hour percentage becomes unreadable or falls below 5%.
+- PR #24 is unchanged OPEN/Draft: head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- M0 PR #30 is OPEN/Draft at `70979bdbd35e9bbc4bfd83c4914e77fa13c7a858`; exact-head product CI run 38932151271 and coordination run 38933910250 passed. Local/remote M0 branch heads matched before this docs-only update.
+- Module PRs remain OPEN/Draft on common AC3 base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Latest inspected exact-head checks: #33 9/9 pass; #34 fails run 38698635434 (Ubuntu Node 20 test 163 `RETRY_LIMIT`); #36 core CI and wrapper pass, while run 38727481764 fails Ubuntu and Windows composition because an unpinned native Read expected `deny` but returned `allow`; #37 9/9, #38 11/11, #39 11/11, #40 9/9, #43 11/11, and #47 9/9 pass. Green module checks do not satisfy the separate product-host, installer, or independent E4 gates.
+- Current integration blockers remain: P0 #52 protected product-host held-descriptor/alias/path-replacement proof is NOT_VERIFIED; P0 #53 packaged Setup.exe/manifest and extracted-Hook/log harness proof is NOT_VERIFIED; #41 clean-VM lifecycle is NOT_VERIFIED; #45 native Codex Shell remains UNPROTECTED; #51 retry root cause UNKNOWN; #54 historical Windows Node 22 503 trigger UNKNOWN; #55 exact-head cross-module Hook composition fails; #56 Hook test canonical ownership unresolved; #57 independent product-level E4 NOT_VERIFIED.
+- M0 posted task-specific evidence requests in Issues: #29 comment 6232495863; #51 6232496090; #52 6232496310; #53 6232496506; #54 6232496697; #55 6232496970; #56 6232497185; #57 6232497388; #41 6232497605; #45 6232497834. Owners should use those Issues for current status and evidence; M0 cannot infer activity in other Codex chats.
+- Scheduling limit is two concurrent module tasks. VMware, real-model, and installer work share one exclusive slot and must be reserved on #29. No owner-confirmed RUNNING slot is currently recorded; this is an evidence gap, not a claim about unseen sessions.
+- Worktree registry read from the common AC3 repository currently lists E4, recovery M0, M1, M5, M8, and M9 worktrees; M2/M3/M4/M6/M7 were not present in that registry snapshot. Other clones/sessions remain UNKNOWN. No worktree was moved or removed, and M0 changed no module source or tests.
+- This checkpoint preserves all fail-closed assertions. PR #24, main, and Release state were not modified.
