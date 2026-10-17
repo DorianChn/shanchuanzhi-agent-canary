@@ -16,6 +16,7 @@ GitHub readback at 20:23 UTC: all listed PRs are OPEN/Draft and target `feature/
 | M9 | `feature/ac3-m9-integration` / #36 | `de3799aae540f58173acec4ab3f7a1fe98593aa7` | Exact-ref composition and integration tests; module ownership remains with M1–M8. |
 20:47 UTC delta: PR #30 advanced to `b0b3aec824eec181d8d28d343e6a173377b4a878`; the 20:47 GitHub scan showed M1–M9 still at the heads listed above.
 21:07 UTC delta: PR #30 advanced to `cae786222f596c9cd0a49af90ad1d9e68e8a1aba`; the 21:07 GitHub scan showed M1–M9 still at the heads listed above.
+21:28 UTC delta: PR #30 advanced to `d37191dd88a957aa22d05bd3578c2922140c7a39`; a 21:28 GitHub readback confirmed M1–M9 remain at the heads listed above. PR #24 remains unchanged.
 ## M0 ownership routing — 2026-10-16 04:23 UTC
 
 - src/tokens.ts and test/tokens.test.ts are not assigned in the active M1–M9 ownership table. Do not infer they share ownership or root cause with M1's src/file-state-store.ts.

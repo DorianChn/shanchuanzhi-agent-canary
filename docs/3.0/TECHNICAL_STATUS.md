@@ -2335,6 +2335,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 21:27 UTC push and P0 audit readback — 2026-10-17
+
+- Usage Overview was readable at 21:25:36 UTC: 86% five-hour / 47% weekly. PR #30 remains OPEN/Draft at d37191dd88a957aa22d05bd3578c2922140c7a39; exact-head product CI run 39070909362 passed 9/9 and AC3 coordination run 39070909322 passed 1/1. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- M1–M9 PR heads were re-read at 21:28 UTC and remain unchanged from the ownership snapshot below. M1/M4 have no owner reply or head movement since 21:20; their queued work is not counted as started.
+- Read-only audits confirmed current M1/M5 synthetic alias denial and fail-closed unpinned Hook behavior, but product-host protected-handle use and TOCTOU remain NOT_VERIFIED (#52 comment 6241350781). Hook source/synthetic canary checks do not verify a real pinned installer, extracted Hook, or installed harness (#53 comment 6241350727). No real disclosure or bypass is asserted. Scheduler and PR readbacks: #29 comment 6241361513; PR #30 comment 6241358527.
+- No module source/tests, main, merge, or Release changes occurred. Next owner/status checkpoint: 21:40 UTC. Next M0 push no earlier than 21:45:51 UTC after fresh quota and ref/path preflight.
+
 ## M0 21:20 UTC owner/status checkpoint — 2026-10-17
 
 - Usage Overview was readable at 21:20:15 UTC: 86% five-hour / 47% weekly. PR #24 remains unchanged OPEN/Draft; PR #30 remains OPEN/Draft at `cae786222f596c9cd0a49af90ad1d9e68e8a1aba`, exact-head product CI `39069467966` 9/9 and coordination `39069467920` 1/1.
