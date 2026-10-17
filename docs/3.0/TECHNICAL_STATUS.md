@@ -2335,6 +2335,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 21:40 UTC owner/status checkpoint — 2026-10-17
+
+- Usage Overview was readable at 21:40:09 UTC: 86% five-hour / 47% weekly. PR #24 is unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #30 is OPEN/Draft at d37191dd88a957aa22d05bd3578c2922140c7a39 with exact-head product CI 9/9 and coordination 1/1 (10/10); readbacks are PR #30 comment 6241358527 and scheduler #29 comment 6241592569.
+- A 21:40 readback confirmed M1–M9 PR heads remain unchanged from the 21:28 snapshot. M1/M4 provided no owner response or head movement by the 21:40 deadline. Existing-session follow-ups are queued for M1 bounded test-only lock diagnostics plus disposition of the M1-owned test/agent-hook.test.ts overlap in #30/#34, and for one M4-owned security-center UI/test slice preserving UNKNOWN/UNSUPPORTED. Queue IDs 01a14bcf-734f-71f2-b1d3-0fb5e72246b7 / 01a14bcf-734f-7532-b483-b5671da56f77 are not evidence that work started; Issue #51 readback is comment 6241594684.
+- The current historical M4 run 38698635434 has one actual failing Ubuntu Node 20 npm-test job; Ubuntu Node 22, Docker, and sponsor jobs pass, macOS/Windows jobs were cancelled, and package-smoke was skipped. Keep this under M1-owned #51; trigger remains UNKNOWN, with no data loss or separate M4 UI defect established.
+- The local codex agents overview is unavailable because this CLI reports an incomplete local package and missing shared server. Session execution state is therefore not independently visible here; only GitHub owner replies, PR heads, and CI are used as evidence.
+- Next owner/status checkpoint: 22:00 UTC. Next M0 push no earlier than 21:45:51 UTC after fresh quota, remote ancestry, PR #24, allowed-path, and diff preflight.
+
 ## M0 21:27 UTC push and P0 audit readback — 2026-10-17
 
 - Usage Overview was readable at 21:25:36 UTC: 86% five-hour / 47% weekly. PR #30 remains OPEN/Draft at d37191dd88a957aa22d05bd3578c2922140c7a39; exact-head product CI run 39070909362 passed 9/9 and AC3 coordination run 39070909322 passed 1/1. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
