@@ -355,3 +355,14 @@ Issue #59 records the current overlap across M6/M7/M8 and the M9 aggregate. M0's
 | M9 combined source refs and composition checks | M9 | M9 records exact source SHAs and consumes owner-controlled files; it does not change their semantics without owner signoff. |
 
 This table is a coordination proposal, not a completed ownership transfer. M6/M7/M8 confirmation is pending on Issue #59; update this table if an owner identifies a different exact path boundary.
+
+## Shared security/test path dispositions — 2026-10-17, owner review pending
+
+| Path(s) | Canonical owner | Other-module change rule |
+| --- | --- | --- |
+| `.gitignore` | M0 | M9 consumes the reviewed rules on its aggregate branch; preserve only reviewed, path-specific evidence exceptions. Issue #58. |
+| `src/security-router.ts`, `test/security-router.test.ts` | M1 for the canonical protected-path contract | M5 policy/router variants require M1 review and exact-head M9 composition; preserve explicit DENY, alias containment, and deny-before-side-effect checks. Issue #52. |
+| `src/file-state-store.ts`, `test/file-state-store.test.ts` | M1 for quarantine-store implementation and canonical regression | M5's diagnostic test-only additions require M1 disposition; do not infer the retry root cause or move tests without owner signoff. Issue #51. |
+| `test/agent-hook.test.ts` | M1 for canonical Hook/interruption assertions | Module copies may adapt only with owner-approved scope and must preserve fail-closed coverage; reconcile M0 #30's copy before removing Draft status. Issue #56. |
+
+These entries record the existing owner map and current overlap evidence; they do not authorize M0 to edit M1/M5/M9 product source or tests.

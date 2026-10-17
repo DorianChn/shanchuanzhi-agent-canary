@@ -1977,3 +1977,11 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - **M6–M8 path overlap (#59):** Issue #59 is OPEN/P1. M0 posted a path-owner proposal for M7 packaging build files, M6 auto-E4 verifier files, M8 product docs/Hook copy, and M9 aggregate pins; module owner confirmation is pending. No ownership transfer is inferred.
 - **Remaining acceptance:** #52 production-host protected-open/held-handle evidence, #53 packaged artifact/log reachability, #41 clean-VM lifecycle, #45 native Codex Shell protection, #51 retry trigger, #54 historical Windows 503 trigger, #56 canonical Hook-test ownership, and #57 independent product E4 remain open or unverified as documented in their Issues.
 - **Batch guard:** last M0 push was 09:53:06 UTC; next push is no earlier than 10:13:06 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test changes, main merge, PR #24 merge, or Release.
+
+## M0 file-level ownership readback — 2026-10-17 10:12 UTC
+
+- **P1 #58 `.gitignore`:** the 10:03 read-only `git check-ignore` evidence in #58 confirms the M0 patterns catch the representative secret/temp/workspace paths, while M9 currently matches only the build log among those probes; M9's explicit E4 raw-log exception is path-specific and works. This is an integration gap, not a confirmed leak. M0 owns canonical ignore rules; M9 must reconcile them on its existing branch.
+- **M1/M5 shared paths:** latest comments on #51 (09:55) and #52 (10:02) report M5 edits to M1-owned store-test/router paths with differing blobs. Exact-head module CI does not resolve semantic ownership; M1/M5 owner dispositions and M9 composition are still required.
+- **Hook test copies (#56):** M0's 10:00 comment records `test/agent-hook.test.ts` across all open module PRs and different current blobs. M1 remains canonical owner; keep PR #30 Draft until M1 records the shared-path disposition.
+- **M7/M8 packaging paths (#53/#59):** the 10:00 evidence identifies divergent package files; M0's 10:10 proposal to M6/M7/M8 on #59 awaits owner confirmation. M9 must pin exact selected refs and retain packaging/E4 checks.
+- No module owner response or exact-head movement had been reported in these latest issue comments. Preserve each issue's existing P0/P1/P2 severity and do not infer unseen Codex-session activity.

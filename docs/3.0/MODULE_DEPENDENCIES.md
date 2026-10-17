@@ -162,3 +162,9 @@ flowchart LR
 - M7 owns the installer/build pipeline and its packaging lifecycle checks; M6 owns the E4 verifier/evidence contract; M8 owns its shipped Hook copy and product-facing claims.
 - M9 consumes the selected exact M6/M7/M8 SHAs and runs the combined Windows packaging/auto-E4 checks. Divergent owner-controlled files must be reconciled before pinning; use an adapter at the boundary and obtain the primary owner's review for shared semantics.
 - Issue #59 is OPEN/P1 pending M6/M7/M8 path-owner confirmation and exact-head M9 composition evidence. This dependency does not satisfy the separate #41 installer, #53 packaged-log, or #57 independent product-E4 gates.
+
+## Current shared security-path dependencies — Issues #51/#52/#56/#58
+
+- M0 supplies canonical `.gitignore` protections; M9 integrates and verifies them while keeping only the reviewed path-specific E4 evidence exception (#58).
+- M1 owns the canonical file-store, security-router, and Hook regression contracts. M5 policy variants must adapt to those contracts with M1 review; M9 verifies exact selected M1/M5 refs before composition (#51/#52/#56).
+- Owner review is a prerequisite for resolving shared-path conflicts. Module-local green CI is not evidence that distinct blobs compose correctly, and it does not close the separate product-host or E4 gates.

@@ -901,3 +901,10 @@ M0 comment 6216314917 asks M1 to diagnose/repair or name a BLOCKED owner/depende
 ## P1 #59 — M6–M8 Windows packaging overlap — 2026-10-17
 
 Issue #59 is OPEN. Current PR heads #38 `c1fdf3c`, #39 `cf4b70f`, #40 `c1ff677`, and #36 `de3799a` contain divergent Windows packaging and auto-E4 paths. M0 posted a path-owner proposal on the Issue: M7 for packaging build/lifecycle files, M6 for auto-E4 verifier semantics, M8 for its product docs and shipped Hook copy, and M9 for aggregate pins/composition. This is a proposal pending owner confirmation; no ownership transfer is inferred. Preserve all tests and fail-closed behavior, and keep PRs Draft.
+
+## Cross-module file dispositions — 2026-10-17
+
+- **P1 #58, M0/M9:** M0 owns canonical root `.gitignore`; M9's current `.gitignore` omits reviewed key/cert, `.env.*`, token/secret, temporary/editor, and coordinator-workspace patterns. Its path-specific E4 raw-log exception matches. No leaked file is confirmed. M9 must reconcile rules on PR #36 and post exact `git check-ignore` evidence; keep the PR Draft.
+- **P1 #51, M1/M5:** M5's PR #47 changes `test/file-state-store.test.ts`, while the issue assigns quarantine-store diagnosis and canonical test ownership to M1. M1/M5 must record review and canonical lineage; keep all retry assertions and UNKNOWN trigger status.
+- **P0 #52, M1/M5/M9:** current M1 #43 and M5 #47 have different blobs for `src/security-router.ts` and `test/security-router.test.ts`. Preserve deny-before-side-effect/canonical-path semantics and require M1/M5 owner disposition plus exact-head M9 composition. Production-host protected-open remains NOT_VERIFIED.
+- **P2 #56, M0/M1/M2–M9:** all open module PRs currently change `test/agent-hook.test.ts` with different blobs. M1 remains canonical owner; each copy must be an owner-approved adapter that preserves fail-closed/interruption coverage. Keep PR #30 Draft until its M1-owned test scope is resolved.
