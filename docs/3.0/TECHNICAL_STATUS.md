@@ -2335,6 +2335,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 20:40 UTC owner/status checkpoint — 2026-10-17
+
+- Usage Overview was readable at 20:40:25 UTC: 86% five-hour / 47% weekly. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #30 remains OPEN/Draft at `a0088d65f95e9d92956f03a8408fd18c5fa656b9`.
+- The 20:33 scan found no M1–M9 head movement; M1 #43 and M4 #34 also remained unchanged at 20:40. No owner status appeared on #51 by the checkpoint. Existing M1/M4 Codex follow-ups were re-queued; queue receipts are not evidence of work started, so neither lane is marked RUNNING.
+- Exact-head CI remains: #30 Ubuntu Node 20 #51 RETRY_LIMIT failure (run `39066517320`); M4 #34 Ubuntu Node 20 failure; M9 #36 composition failures on Ubuntu and Windows. M9 #55 expects deny/observes allow. M0/M6/M9 `.gitignore` overlap remains OPEN (#58); M0/M1-owned Hook test path overlap remains OPEN (#56); M6–M9 packaging overlap remains OPEN (#59). P0 host, packaged-Hook, clean-VM, and independent E4 gates remain NOT_VERIFIED where evidence is missing.
+- M1/M4 queue message IDs: `01a14b90-2c51-7000-a56e-3209dc25fb0d`, `01a14b90-2c51-70d1-a944-6950fb56df67`; 20:40 follow-ups: `01a14b98-796c-7631-b5bc-1dc3dd188ca7`, `01a14b98-795d-7903-8ff1-902b9fb7596a`. Scheduler readback: Issue #29 comment `6240679146`.
+- Next owner/status checkpoint: 21:00 UTC. Next M0 push: no earlier than 20:43:35 UTC after fresh quota, remote ancestry, PR #24, allowed-path, and diff checks.
 ## M0 20:26 UTC post-push evidence readback — 2026-10-17
 
 - Pre-push Usage Overview at 20:23:27 UTC was readable at 86% five-hour / 47% weekly. PR #24 remains OPEN/Draft and unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M0 PR #30 is OPEN/Draft at exact head `a0088d65f95e9d92956f03a8408fd18c5fa656b9`.
