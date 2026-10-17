@@ -2017,3 +2017,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M0 posted a single queue follow-up on #29 after no owner status or priority PR head movement appeared since the 10:22 checkpoint. The requested 11:00 update is owner, RUNNING/QUEUED/IDLE, exact head/evidence, and next checkpoint.
 - Proposed M3 #55 and M9 #58 lanes remain unconfirmed; M9's #55 composition depends on a corrected M3 head. M1/M5 #51/#52, M1 #56, and M6/M7/M8 #59 remain queued. No exclusive VMware/real-model/installer slot is owner-confirmed.
 - Keep work to existing Draft PRs and the two-task cap. No new module branch or unverified work state is claimed.
+
+## M0 post-push readback — 2026-10-17 10:55 UTC
+
+- The docs-only status batch reached PR #30 at `c653fd4355b2f5a4f99dbf612274aa1a0aa73c44`; local and remote heads match and the worktree is clean.
+- PR #30 remains OPEN/Draft; its new exact-head checks were QUEUED at readback. PR #24 remains OPEN/Draft at the previously verified unchanged head and base.
+- Next M0 push is no earlier than 11:15 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test change, main merge, PR #24 merge, or Release.
