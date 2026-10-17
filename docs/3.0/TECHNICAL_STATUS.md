@@ -2227,3 +2227,11 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Read-only git check-ignore inspection confirms .env, .env.local, *.pem, *.key, *.tmp, *.log, and logs/session.txt are ignored. .env.example is the intentional sample exception.
 - The reviewed E4 path security-lab/e4-runs/20261013T084123Z/raw.log is the sole explicit log exception; a future E4 raw.log matches the global *.log rule. This keeps generated logs and temporary files out by default while retaining the one reviewed synthetic audit record needed by the current E4 evidence bundle.
 - The checks used nonexistent sample paths and did not create or stage files. No test suite was run.
+
+## M0 14:40 UTC owner/resource readback — 2026-10-17 14:41 UTC
+
+- Usage Overview was readable at 14:40 UTC with 81% five-hour quota remaining. PR #24 and all M1–M9 heads remain unchanged; PR #30 is still OPEN/Draft at d341932c3cfb589b3fe3ed6cb5ae3c761001f8e7 with 10/10 checks SUCCESS.
+- No module-owner response, owner-confirmed RUNNING task, or exclusive VMware/real-model/installer reservation was visible at the 14:40 GitHub/worktree check. This does not claim visibility into other Codex chats.
+- M0 posted 14:40 readbacks: #45 comment 6235210840, #51 6235214462, #53 6235215060, #58 6235215419, #59 6235215865, and scheduler #29 6235216606. Next owner checkpoint is 15:00 UTC.
+- Current M0 branch changes remain coordinator documents and the M0-owned .gitignore rule only; no module code/tests, PR #24, main, or Release was changed.
+- The next M0 push is no earlier than 14:43 UTC after fresh quota, PR #24/#30, ancestry, clean-worktree, docs/config-only scope, and diff preflight.
