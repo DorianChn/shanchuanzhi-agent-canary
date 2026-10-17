@@ -1,3 +1,19 @@
+## M0 exact-head ownership snapshot — 2026-10-17 20:23 UTC
+
+GitHub readback at 20:23 UTC: all listed PRs are OPEN/Draft and target `feature/agent-canary-3.0` at base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. This snapshot supersedes older exact-head tables below; it does not assert owner confirmation or independent local worktree status.
+
+| Module | Existing branch / PR | Remote head at snapshot | M0-recorded ownership boundary |
+| --- | --- | --- | --- |
+| M0 | `feature/ac3-m0-coordination` / #30 | `a0088d65f95e9d92956f03a8408fd18c5fa656b9` | Coordination docs, issue tracking, interface contracts; no module source/tests. |
+| M1 | `feature/ac3-security-core` / #43 | `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` | Gateway, Guard, canonical Hook and file-store contracts; owns #51 diagnosis and canonical shared tests. |
+| M2 | `feature/ac3-execution-isolation` / #37 | `9db59ed8f2deae905edcb2179982f8bcb594167c` | Execution adapter and host-hook integration; first-party host consumer remains NOT_VERIFIED. |
+| M3 | `feature/ac3-agent-onboarding` / #33 | `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` | Onboarding and its Hook copy/tests; owns #55 denial correction and positive control. |
+| M4 | `feature/ac3-desktop-security-center` / #34 | `fbf20907c6accffc37246eddf04f8599060d99ea` | Desktop security UI/tests; shared-store retry diagnosis routes to M1 #51. |
+| M5 | `feature/ac3-policy-audit` / #47 | `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c` | Policy/router variants and alias-denial regressions; M1 review required on canonical shared files. |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 | `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9` | E4 verifier/schema/bundle; independent external E4 remains NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / #39 | `cf4b70f5130175582fffdfc65bd7c6847450867b` | Reliability, Windows installer/payload and lifecycle evidence. |
+| M8 | `feature/ac3-open-source-product` / #40 | `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad` | Open-source/docs and shipped Hook/logging copy. |
+| M9 | `feature/ac3-m9-integration` / #36 | `de3799aae540f58173acec4ab3f7a1fe98593aa7` | Exact-ref composition and integration tests; module ownership remains with M1–M8. |
 ## M0 ownership routing — 2026-10-16 04:23 UTC
 
 - src/tokens.ts and test/tokens.test.ts are not assigned in the active M1–M9 ownership table. Do not infer they share ownership or root cause with M1's src/file-state-store.ts.
