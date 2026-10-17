@@ -2005,3 +2005,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Docs-only batch reached existing PR #30 at `2c5e36e76f8b14c02201cfbf77fb54e0c9f148e1`; local and remote heads match and the M0 worktree is clean.
 - PR #30 remains OPEN/Draft; its new check run was queued at readback. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - Next M0 push is no earlier than 10:55 UTC, after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test change, main merge, PR #24 merge, or Release.
+
+## M0 current-head CI readback — 2026-10-17 10:37 UTC
+
+- PR #30 head `2c5e36e76f8b14c02201cfbf77fb54e0c9f148e1`: product run `39025490690` passed 9/9, including package-smoke; ownership run `39025490735` passed 1/1. Combined current-head checks are 10/10 SUCCESS.
+- No module owner reply or head movement appeared on #29/#55/#58/#59 by this check. M3 #33 remains `be388029`; M9 #36 remains `de3799aa`; both are OPEN/Draft and #55 composition remains blocked on M3's fail-closed correction.
+- PR #24 remains OPEN/Draft and unchanged. Last M0 push was at 10:35 UTC; next is no earlier than 10:55 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks.
