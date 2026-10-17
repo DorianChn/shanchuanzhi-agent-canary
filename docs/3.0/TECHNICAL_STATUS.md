@@ -2255,3 +2255,11 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Pushed the 15:00 owner-readback documentation to PR #30 at head 44036e45da2d28e1c04545daed26b47529cced6a. Exact-head checks completed 10/10 SUCCESS, including package-smoke and ownership-contract-evidence. PR #30 remains OPEN/Draft; readbacks are PR comment 6235495686 and Issue #29 comment 6235496083.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No main merge or Release occurred.
 - The next M0 push will be no earlier than 15:23 UTC after fresh quota and PR/remote/scope preflight.
+
+## M0 15:20 UTC owner and CI readback — 2026-10-17 15:20 UTC
+
+- Usage Overview was readable at 15:20 UTC: 81% five-hour quota and 51% weekly quota remain. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M0 PR #30 remains OPEN/Draft at `44036e45da2d28e1c04545daed26b47529cced6a`; its exact-head checks remain 10/10 SUCCESS.
+- No module-owner comments or PR-head movement were visible on the monitored M1–M9 issues at this checkpoint. No owner-confirmed RUNNING task or exclusive VMware/real-model/installer reservation is visible in GitHub evidence; activity in other Codex chats remains UNKNOWN.
+- Current exact-head CI readback: M1 #43 passes its latest CI and file-store concurrency runs; M4 #34 still has the Ubuntu Node 20 RETRY_LIMIT failure, trigger UNKNOWN; M9 #36 CI and Windows wrapper pass, while cross-module composition remains failed. No data loss, product-host bypass, or disclosure is asserted from these results.
+- M0 posted evidence/owner requests to existing Issues: #45 comment 6235666392, #51 6235666395, #52 6235666406, #53 6235666384, #56 6235666396, #58 6235666381, and #59 6235666423. These are requests, not owner-confirmed work.
+- M0 changed coordinator documentation only; no module source/tests were changed or run. No PR #24, main, or Release change occurred. Next M0 push is no earlier than 15:23 UTC after fresh quota, PR #24/#30, ancestry, clean-worktree, allowed-path, and diff checks.
