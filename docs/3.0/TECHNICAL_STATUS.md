@@ -2088,3 +2088,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The requested `C:\Users\36712\Desktop\Agent-Canary-Dev` root exists with `main`, `agents`, `coordinator`, `integration`, `reports`, and `logs`. `main`, `agents`, `integration`, and `logs` are empty; `reports` contains existing M0 snapshots and was left untouched.
 - `coordinator` is an existing separate Git checkout. Its worktree is clean on `feature/ac3-m0-coordination` at local commit `09924da8b5e3b523bfcfd1f54f73628952b0f9aa`, while its local `origin/feature/ac3-m0-coordination` tracking ref is `2c6232c195c65006ca7f28c41ee93b6535650917`; the verified live PR #30 head is newer at `554dde8ed7a218c0e6e499f311d89408bd524fb5`. Its local commit and the existing reports are preserved; no fetch, reset, rebase, checkout, or push was done from that clone.
 - Current M0 document commits are prepared in the separately registered `ac3-coordinator-recovery` worktree and will be pushed only after the scheduled fresh-state preflight. Do not treat the stale tracking ref in the desktop coordinator clone as the live PR head.
+
+## M0 post-push CI readback — 2026-10-17 13:04 UTC
+
+- Exact PR #30 head `c6173173c2928942732e2c5cf281a6c941f9978d`: product CI run `39034708407` and coordination run `39034708267` both completed successfully. PR #30 remains OPEN/Draft; local and remote heads match and the M0 worktree is clean.
+- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; no change was made to its branch, base, or files.
+- The 13:03 GitHub readback found no module owner reply after the 13:00 scheduler checkpoint and no movement on M3 #33 or M9 #36. The M3 #55 correction and M9 #58 ignore-rule integration remain REQUESTED, not owner-confirmed RUNNING; exact-head M9 composition remains dependent on M3.
+- Usage Overview remained readable above the stop threshold. M0 changed no module source/tests; no main merge or Release occurred. Next M0 push is no earlier than 13:19:16 UTC, after a fresh quota, PR #24, remote-head, and docs-only scope preflight.
