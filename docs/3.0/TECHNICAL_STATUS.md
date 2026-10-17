@@ -2186,3 +2186,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The inspected M9 tree contains one tracked raw.log: 2,537 bytes, 13 line-delimited JSON records, SHA256 3915336775E8D06445147B73A4099967CAC71AA5870495A09540973879E05071. Static scanning found no GitHub/Bearer/private-key/email/secret-assignment or absolute user-home-path patterns. The log has free-text reason/modelResult fields, so this scan does not prove caller-independent output or sanitize future runs; no confirmed disclosure is established.
 - M0 recorded the evidence in Issue #58 comment 6234881839 and requested a path-specific reviewed exception or fixed-field sanitized exporter with a caller-canary negative test. Keep #58 OPEN / NOT_VERIFIED until the M0-owned ignore boundary and evidence are resolved. No log content was published in the comment and no module source/test was changed.
 - The next M0 push remains no earlier than 14:23 UTC, after fresh quota and PR/branch/scope preflight.
+
+## M0 M8 logging evidence refinement — 2026-10-17 14:09 UTC
+
+- Read-only review of M8 PR #40 head c1ff677cc56cd159cc983042e5dfcec5dc93f3ad found that security-lab/claude-native-hook.mjs logs only timestamp, hookEventName, and permissionDecision; its source comment states Hook arguments and returned reasons may contain user data.
+- M8 test/auto-e4.test.mjs contains a synthetic co-located payload fixture: copies the Hook and fault harness to a temporary payload, checks byte identity, runs the harness, and asserts callerInputCanaryAbsent. This is useful source/synthetic-payload evidence and corrects the earlier shorthand that no canary result existed.
+- It still does not verify a real pinned Setup.exe, actual extracted installer bytes, manifest hashes, or installed-host behavior. Keep P0 #53 OPEN / NOT_VERIFIED for those product artifacts; no leak is established. M0 recorded the correction in #53 comment 6234888055 and did not run tests or modify module code.
