@@ -165,6 +165,6 @@ flowchart LR
 
 ## Current shared security-path dependencies — Issues #51/#52/#56/#58
 
-- M0 supplies canonical `.gitignore` protections; M9 integrates and verifies them while keeping only the reviewed path-specific E4 evidence exception (#58).
+- M0 owns canonical `.gitignore`; PR #30 head d341932 carries one exact reviewed E4 raw.log exception. At the 14:20 readback, M6 #38 and M9 #36 still carry the broad raw.log negation, so #58 remains OPEN until those heads align and verify the owner-controlled rule.
 - M1 owns the canonical file-store, security-router, and Hook regression contracts. M5 policy variants must adapt to those contracts with M1 review; M9 verifies exact selected M1/M5 refs before composition (#51/#52/#56).
 - Owner review is a prerequisite for resolving shared-path conflicts. Module-local green CI is not evidence that distinct blobs compose correctly, and it does not close the separate product-host or E4 gates.
