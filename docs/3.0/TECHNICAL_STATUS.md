@@ -2047,3 +2047,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The docs-only batch reached PR #30 at `49429d47e4ddeb791c6e30fe675a92324d831215`; the worktree and remote head match. Exact-head product run `39029357790` passed 9/9, including package-smoke, and ownership run `39029357792` passed 1/1.
 - The 11:40 scheduler deadline passed without module owner reply or watched PR-head movement. M0 recorded the readback on #29 and set 12:00 UTC as the next checkpoint. M3 #55/M9 #58 remain unconfirmed; no exclusive resource reservation is owner-confirmed.
 - PR #30 and PR #24 remain OPEN/Draft; PR #24 is unchanged. Next M0 push is no earlier than 11:57 UTC after fresh quota, PR #24, remote-head, and docs-only scope checks. No module source/test changes, main merge, PR #24 merge, or Release.
+
+## M0 owner/head monitor — 2026-10-17 11:50 UTC
+
+- Usage Overview was readable above the stop threshold. No exact quota value is recorded.
+- No owner reply or priority PR-head movement appeared on #29/#55/#58/#59 since the 11:41 readback. PR #33 remains `be388029`; PR #36 remains `de3799aa`; the M3/M9 correction and .gitignore tasks remain unconfirmed.
+- M0 PR #30's prior exact-head 10/10 CI result remains green. Keep the two-task limit and exclusive-resource gate; the next M0 push is no earlier than 11:57 UTC after preflight.
