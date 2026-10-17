@@ -977,3 +977,7 @@ No module-owner response or M1–M9 PR-head movement was visible at 17:40. Quota
 ## M0 18:00 UTC live triage readback — 2026-10-17
 
 No module-owner response or M1–M9 PR-head movement was visible at 18:00. Quota is 86% five-hour / 47% weekly. PR #24 is OPEN/Draft and unchanged; PR #30 exact head `cad6972` has 10/10 passing checks. M4 #34's Ubuntu Node 20 RETRY_LIMIT and M9 #36's Ubuntu/Windows composition failure remain unresolved. P0 gates stay OPEN / NOT_VERIFIED where evidence is missing; no incident is inferred. M0 recorded this scheduler check in #29 comment 6238199888. Next checkpoint: 18:20 UTC.
+
+## M0 18:46 UTC P1 #51 reproduced on coordinator baseline — 2026-10-17
+
+PR #30 docs-only head `aecac2d78962fe0c377e26f4a7a2d581d5fff32f` CI run `39059335653` reproduced the shared quarantine-store failure on Ubuntu Node 22: test 163 (`four concurrent processes preserve every quarantine without lost writes`) had one worker exhaust 500 bounded `STATE_STORE_BUSY` retries and throw `RETRY_LIMIT`; the suite reports 321 pass, 1 fail, and 4 skipped. Five matrix jobs were cancelled and package-smoke was skipped after fail-fast. AC3 coordination run `39059335665` passed 1/1. This is evidence of a second Node-version occurrence on the common baseline, not evidence that M0's documentation caused it. The lock-holder/timing trigger remains UNKNOWN; no lost data is established. M1 diagnosis remains required; do not weaken retries or assertions. Issue #51 readback: `6238846475`.

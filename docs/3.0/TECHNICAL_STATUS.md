@@ -2335,6 +2335,11 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 18:46 UTC exact-head CI follow-up — 2026-10-17
+
+- On docs-only PR #30 head `aecac2d78962fe0c377e26f4a7a2d581d5fff32f`, CI run `39059335653` failed Ubuntu Node 22 subtest 163 in `test/file-state-store.test.ts`: one child in the four-process quarantine scenario exhausted 500 `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT` (321 pass, 1 fail, 4 skipped). Five matrix jobs were cancelled and package-smoke was skipped after fail-fast. No M0/module source or test changed in this push.
+- AC3 coordination run `39059335665` passed 1/1. The retry trigger remains UNKNOWN; no data loss is established. M0 recorded the evidence on Issue #51 comment `6238846475`, PR #30 comment `6238844457`, and scheduler Issue #29 comment `6238844452`. Keep #51 P1 open; preserve bounded retries and assertions.
+
 ## M0 18:40 UTC owner and integration readback — 2026-10-17
 
 - Usage Overview was readable at 18:39 UTC: 86% five-hour quota and 47% weekly quota remain. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #30 remains OPEN/Draft at `a3d6cbd55e492a9767cfa574324c3f0f0318545a`, with exact-head CI 9/9 and coordination 1/1 successful.
