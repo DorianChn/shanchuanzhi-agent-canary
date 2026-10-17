@@ -2263,3 +2263,18 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Current exact-head CI readback: M1 #43 passes its latest CI and file-store concurrency runs; M4 #34 still has the Ubuntu Node 20 RETRY_LIMIT failure, trigger UNKNOWN; M9 #36 CI and Windows wrapper pass, while cross-module composition remains failed. No data loss, product-host bypass, or disclosure is asserted from these results.
 - M0 posted evidence/owner requests to existing Issues: #45 comment 6235666392, #51 6235666395, #52 6235666406, #53 6235666384, #56 6235666396, #58 6235666381, and #59 6235666423. These are requests, not owner-confirmed work.
 - M0 changed coordinator documentation only; no module source/tests were changed or run. No PR #24, main, or Release change occurred. Next M0 push is no earlier than 15:23 UTC after fresh quota, PR #24/#30, ancestry, clean-worktree, allowed-path, and diff checks.
+
+## M0 15:23 push and exact-head verification — 2026-10-17 15:26 UTC
+
+- Pushed M0 coordinator documentation to PR #30 at exact head `893a28c421cef5511414419d91a5a57cfa4614dd`. PR #30 remains OPEN/Draft with base `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- Exact-head CI run `39044868589` completed SUCCESS (9/9 jobs); AC3 coordination run `39044868581` completed SUCCESS (1/1 job). Total exact-head checks: 10/10.
+- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. Readback comments: PR #30 `6235734065`, scheduler Issue #29 `6235733973`.
+- M0's 15:20 owner requests remain unacknowledged in GitHub through 15:30. M0 added exact-head M3/M9 composition follow-up to Issue #55 comment `6235757240`. No module source/tests, PR #24, main, merge, or Release changes occurred.
+- Next M0 push is no earlier than 15:43 UTC after fresh quota and PR/remote/scope preflight.
+
+## M0 15:40 UTC owner and integration readback — 2026-10-17 15:40 UTC
+
+- Usage Overview was readable at 15:40 UTC: 81% five-hour and 51% weekly quota remain. PR #24 is unchanged OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 remains OPEN/Draft at `893a28c421cef5511414419d91a5a57cfa4614dd`, with 10/10 exact-head workflows successful.
+- M1–M9 PR heads are unchanged from the 15:30 readback. No module-owner response was visible on Issues #29/#45/#51/#52/#53/#55/#56/#58/#59; no owner-confirmed RUNNING task or exclusive VMware/real-model/installer reservation is visible. Other Codex-chat activity remains UNKNOWN.
+- M4 #34 still has the Ubuntu Node 20 RETRY_LIMIT failure (trigger UNKNOWN; no data loss established). M9 #36 CI and Windows wrapper pass, but composition remains failed on Ubuntu and Windows. P0 path/host/installer evidence remains NOT_VERIFIED; no production bypass or disclosure is asserted.
+- M0 posted scheduler readback to Issue #29 comment `6235923547`. No module source/tests were changed or run; PR #24, main, and Release remain untouched. Next owner/status checkpoint is 16:00 UTC; next M0 push is no earlier than 15:43 UTC after fresh preflight.
