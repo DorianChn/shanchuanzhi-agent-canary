@@ -1,0 +1,25 @@
+name: AC3 coordination
+
+on:
+  pull_request:
+    branches: [feature/agent-canary-3.0]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  ownership-contract-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Check AC3 ownership, API contract, baseline, and evidence fields
+        run: node scripts/ac3-coordination-check.mjs
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          AC3_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          AC3_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AC3_HEAD_REF: ${{ github.head_ref }}
