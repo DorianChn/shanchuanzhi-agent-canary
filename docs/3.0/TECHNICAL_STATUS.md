@@ -2335,6 +2335,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 22:06 UTC push and exact-head CI readback — 2026-10-17
+
+- Usage Overview was readable at 22:05:11 UTC: 86% five-hour / 47% weekly. PR #30 remains OPEN/Draft at e0d0d8b1b64296e85df7caa64412491ef32860d1; coordination run 39073687521 passed 1/1, while product run 39073687546 failed on Ubuntu Node 22 test 163. PR #24 remains unchanged OPEN/Draft.
+- In the shared-store concurrency test, worker 2 exhausted 500 STATE_STORE_BUSY retries and raised RETRY_LIMIT. The M0 batch changed coordination docs only; no source/test file changed. Docker, sponsor, and coordination passed; remaining matrix jobs were cancelled and package-smoke skipped. Combined with the prior Node 20/worker 0 recurrence, this symptom is not Node-20-only; the root trigger remains UNKNOWN. Exact readbacks: Issue #51 comment 6241958887 and PR #30 comment 6241960771.
+- M1 received the exact run and was asked to use both recurrences for a bounded all-worker test-only lock trace; queue ID 01a14be8-41aa-7810-a04b-4aeef3d33340 is not evidence work started. M4 has no new owner evidence. The 22:08 GitHub scan shows M1–M9 PR heads unchanged from the 22:00 snapshot.
+- Next owner/status checkpoint: 22:20 UTC. Next M0 push no earlier than 22:26:14 UTC after fresh quota, remote ancestry, PR #24, allowed-path, and diff preflight.
+
 ## M0 22:00 UTC owner/status checkpoint — 2026-10-17
 
 - Usage Overview was readable at 22:00 UTC: 86% five-hour / 47% weekly. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #30 remains OPEN/Draft at 4c166176ac0598dc2fe2d16d6a0a7b9dcfb4bc19; product run 39072320332 has the intermittent Ubuntu Node 20 test-163 failure and coordination run 39072320361 passes 1/1.
