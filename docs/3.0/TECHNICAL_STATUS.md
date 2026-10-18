@@ -3227,3 +3227,8 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #30 exact head 6632075e1fa3e10c31e1a7500920b73e31963914 passed product CI run 39144999455 at 16:27:57 UTC and coordination run 39144999581 at 16:26:34 UTC.
 - The push contained only the three M0 coordination documents. PR #24 remains unchanged.
 - The next M0 push is no earlier than 16:46:22 UTC, after fresh Usage, PR/ref, and docs-only scope checks.
+
+## M0 toolchain check — 2026-10-19 00:30 Asia/Shanghai
+
+- Git 2.54.0.windows.1; GitHub CLI 2.102.0 authenticated to github.com as DorianChn; Node v22.23.1; Codex CLI 0.163.0-alpha.10.2.
+- The Python command resolves to the Windows Store execution alias and does not provide an interpreter. Python is unavailable in the current Git Bash environment; no Python-dependent work was run.
