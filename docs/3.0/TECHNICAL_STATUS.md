@@ -3498,3 +3498,19 @@ At 21:44:59 UTC, GitHub PR #33 remained at be3880298e1c6766024ecbce5f6dbc23c4d2d
 M7 and M8 are the only active modules for 21:45–22:05 UTC. On #59 they must establish per-file Windows packaging ownership and review dispositions; on P0 #53 they must identify the exact product/package path, producer commit, SHA-256, extraction/consumer path, and extracted-harness evidence. Source-blob parity remains insufficient for package provenance. M6 remains paused. Scheduler receipt: #29 6255535676.
 
 Usage at 21:44 UTC was 100% five-hour / 73% weekly. The next shared push is no earlier than 21:50:42 UTC after fresh quota/ref/scope checks. PR #24 remains unchanged. No merge, main update, M0 module-code edit, or Release.
+
+## 2026-10-19 05:52 Asia/Shanghai — M0 docs push; exact-head CI queued
+
+M0 pushed docs-only branch head 617f7fd4ee64be9f382c248b5e1cddb4df9dcf91 at 21:51:57 UTC; git ls-remote verified the remote ref. Exact-SHA product CI 39169708911 and AC3 coordination CI 39169710618 were queued at the first readback. The immediate PR #30 API response still showed prior head 5a39c59810c754bd567ec66a589da425b7c7e530, so PR-head association and check completion remain pending re-read; no result is claimed. PR #24 was verified OPEN/Draft with unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7 before the push. Next shared push no earlier than 22:11:57 UTC. Scheduler receipt #29 6255599112.
+
+## Exact M0 PR and CI readback — 2026-10-19 05:56 Asia/Shanghai
+
+The PR #30 Commits page now lists commit 617f7fd4ee64be9f382c248b5e1cddb4df9dcf91, resolving the immediate API-head lag noted at 21:52. Exact-SHA product CI 39169708911 and AC3 coordination CI 39169710618 both completed successfully. PR #30 remains OPEN/Draft. Correction receipt: scheduler #29 comment 6255636256.
+
+## 2026-10-19 06:05 Asia/Shanghai — M7/M8 slot closed; M1/M5 P0 lane started
+
+The 21:45–22:05 M7/M8 slot produced no public owner response, per-file signoff, package SHA/path, extracted-harness result, or PR movement. Remote refs at 22:06:08 UTC remain M7 #39 cf4b70f5130175582fffdfc65bd7c6847450867b and M8 #40 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. P0 #53 and P1 #59 remain OPEN / NOT_VERIFIED; this does not establish a real secret incident. M7/M8 pause with work preserved; private activity is UNKNOWN. Receipts: #53 6255720528; #59 6255721640.
+
+M1 and M5 are the only active modules for 22:05–22:25 UTC on P0 #52. Remote refs at 22:06:08 UTC: M5 #47 branch 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; M1 #43 branch 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. M5 must confirm its current candidate/files and provide focused sensitive/outside-workspace symlink/junction hard-deny results with zero approval/callback. M1 must explicitly review the legacy verifyRealPaths test contract and retain or replace it with equal-or-stronger assertions. Local candidate status for issue #52 commits 268c53c and dd74cbd is not independently confirmed. #55/#61 and M6 #57 remain open and unverified. M0 does not edit module code or tests. Receipts: #52 6255722434; #61 6255723457; scheduler #29 6255724391.
+
+Usage at 22:05 UTC was 98% five-hour / 73% weekly. M0 docs branch 617f7fd4ee64be9f382c248b5e1cddb4df9dcf91 is on PR #30 and both exact-head workflows passed (39169708911, 39169710618). PR #24 remains unchanged. Next shared push no earlier than 22:11:57 UTC after fresh quota/ref/scope checks. No merge, main update, or Release.
