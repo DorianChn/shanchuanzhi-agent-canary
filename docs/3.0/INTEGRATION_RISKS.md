@@ -548,3 +548,14 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | Quarantine retry exhaustion (#51) | P1 / M1 store, M4 CI, M9 | Historical four-process test exhausted 500 STATE_STORE_BUSY retries; trigger remains UNKNOWN. | M1 provides a bounded current-head reproduction/diagnostic without changing production locks or retry cap. |
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred.
+
+## M0 08:00 UTC integration gate checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 composition | PR #37 remains at `9db59ed`; only the synthetic/check harness is verified. No first-party callsite or deny-before-callback evidence is visible. | M2 supplies the exact host consumer and alias-denial evidence, or names the missing path/API/owner. Preserve fail-closed behavior and module ownership. Keep OPEN / NOT_VERIFIED. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package evidence, M8 source/logging, M9 acceptance | PR #39 remains at `cf4b70f`; current hash-bound Setup.exe, manifest, and extracted-Hook comparison remain absent. Static/source checks do not establish package acceptance. | M7 supplies current artifact provenance and extraction evidence or the precise blocker. No install on the daily host. Keep OPEN / NOT_VERIFIED. |
+| M6–M8 Windows packaging/E4 path ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 composition | No exact owner acceptance is visible; PR #38/#39/#40 shared paths remain unresolved. M9 composition must consume exact reviewed refs. | Confirm canonical owners, adapter/reviewer boundaries, and exact M9 SHAs; no ownership transfer by inference. |
+| Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M4 CI, M9 | Historical 4-process × 12-call test exhausted 500 retries on Ubuntu Node 20; current trigger remains UNKNOWN. | M1 supplies the bounded diagnostic/result while preserving all assertions, locks, fail-closed behavior, and retry cap. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.

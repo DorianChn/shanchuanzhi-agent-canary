@@ -1160,3 +1160,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#52 P0 / #53 P0:** remain OPEN / NOT_VERIFIED. No host callsite or current installer/extracted-Hook evidence has appeared; no real bypass or disclosure is claimed. M2/M7 are paused by schedule with work preserved.
 - **M0/PR #30:** head d10e3d38 is OPEN/Draft with all 10 exact-head checks passing. PR #24 remains unchanged OPEN/Draft.
 - Scheduler comment #29: 6247236961. M1/M8 are active 07:40–08:00 with no exclusive resource. Queue receipts do not prove task start.
+
+## M0 scheduler and P0 checkpoint — 2026-10-18 08:00 UTC
+
+- **#51 P1:** M1's 07:40–08:00 lane ended without visible diagnostic/result or head change. Paused by schedule, work preserved. The historical retry trigger remains UNKNOWN; no data loss is established. PR #43 remains `9ef3dc2`.
+- **#52 P0:** M2 is active 08:00–08:20 on existing PR #37 (`9db59ed`). Require the first-party host callsite and deny-before-callback alias evidence, or exact missing path/API/owner. Synthetic harness is insufficient; preserve fail-closed behavior and M1/M5 ownership. Keep OPEN / NOT_VERIFIED. Assignment comment: `6247418631`.
+- **#53 P0:** M7 is active 08:00–08:20 on existing PR #39 (`cf4b70f`). Require current hash-bound Setup.exe/source-build/manifest/extracted-Hook evidence or precise artifact blocker. No daily-host installation; no exclusive VMware/installer resource is reserved. Keep OPEN / NOT_VERIFIED. Assignment comment: `6247418900`.
+- **#59 P1:** M8's 07:40–08:00 owner-disposition lane ended without visible exact path acceptance or PR #40 result. Paused by schedule. No ownership transfer is inferred; M9 remains blocked on owner acceptance and exact reviewed refs. PR #40 remains `c1ff677`.
+- **M0/PR #30:** current head `513012f` is OPEN/Draft and all 10 exact-head checks passed; PR #24 is unchanged OPEN/Draft at `62496d4` / base `dc8d009`. Scheduler comment #29: `6247419174`. Only M2 and M7 are active this interval; queue receipts confirm delivery only.
