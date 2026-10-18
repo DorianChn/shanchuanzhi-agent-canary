@@ -452,3 +452,7 @@ M2 remains owner of its existing execution-isolation adapter paths under PR #37 
 ## M0 M3 contract lane — 2026-10-18 03:40 UTC
 
 M3 remains the owner of its existing src/agent-hook.ts behavior and branch-local Hook tests on PR #33 / feature/ac3-agent-onboarding. The current exact head is be3880298e1c6766024ecbce5f5dbc23c4d2daa1; no M3 worktree is registered in the inspected clone, so the owner's actual work path remains UNKNOWN. M3's assignment does not transfer M1's canonical fail-closed contract or shared-test ownership.
+
+## M0 exact-path ownership update — 2026-10-18 10:02 UTC
+
+The current PR #37 changed-file list includes `test/agent-hook.test.ts`, an M1-owned canonical Hook test also present in PRs #30/#33/#34/#47. The visible overlap set is therefore #30/#33/#34/#37/#47, with PR #43 the canonical M1 owner branch. This is a path-ownership finding only; it does not establish a semantic defect in PR #37 and is not grounds to remove tests or assertions. M1 must include #37 in the file-by-file disposition tracked by Issue #56. M2's #52 work remains restricted to M2-owned execution-isolation paths and the existing adapter contract; any shared-contract change requires the M1 owner.
