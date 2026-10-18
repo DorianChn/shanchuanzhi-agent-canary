@@ -3116,3 +3116,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - At 14:15, M2 PR #37 remains `9db59ed` and M7 PR #39 remains `cf4b70f`; Issues #52/#53 show no update since resume and remain OPEN/P0/NOT_VERIFIED. Private task progress remains UNKNOWN. The two-lane cap is respected; M1/M3/M6/M8 remain paused.
 - PR #30 remote head `d94f5454d296a0646449ae964683477d353cf766` product CI run `39133862816` passed 9/9 and coordination run `39133862858` passed 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - Last PR #30 update was 13:57:56 UTC. Next shared push is no earlier than 14:17:56 UTC after fresh quota/ref/scope preflight; this batch is M0 docs only.
+
+## M0 quota recovery and delayed push — 2026-10-18 14:21 UTC
+
+- The 14:17 pre-push Usage read timed out at 14:18:15, so the M0 docs push and both active P0 lanes were held. Pause comments: #52 `6250987128`, #53 `6250987344`, scheduler #29 `6250987604`. A fresh read recovered at 14:20 with 92% / 81%, matching the prior labelled five-hour / weekly values; M2/M7 resumed 14:21–14:41 with receipts #52 `6251008569`, #53 `6251008780`, and scheduler #29 `6251009022`.
+- PR #37 remains `9db59ed` and PR #39 `cf4b70f` at the last read; #52/#53 are still OPEN/P0/NOT_VERIFIED. Private task activity remains UNKNOWN. M1/M3/M6/M8 remain paused.
+- PR #30's remote head remains `d94f5454d296a0646449ae964683477d353cf766`, product CI 9/9 and coordination CI 1/1; PR #24 remains unchanged OPEN/Draft. The M0 docs batch is local and will be pushed only after a fresh quota/ref/scope preflight.

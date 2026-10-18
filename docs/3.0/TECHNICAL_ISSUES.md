@@ -1257,3 +1257,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - M2/M7 remain the only assigned active lanes through 14:28 after quota recovery. Their pause/resume receipts are recorded in `TECHNICAL_STATUS.md`; current PR heads remain #37 `9db59ed` and #39 `cf4b70f`, with no public progress since 14:08. Keep #52/#53 OPEN/P0/NOT_VERIFIED; private activity UNKNOWN.
 - Usage at 14:15:34 was 92% five-hour / 81% weekly. PR #30 exact head `d94f545` is 9/9 product plus 1/1 coordination green. PR #24 remains unchanged OPEN/Draft. Next push no earlier than 14:17:56 UTC.
+
+## M0 delayed-push and lane resume — 2026-10-18 14:21 UTC
+
+- The 14:17 batch was held because the Usage page timed out at 14:18:15. After a fresh 14:20 read (92% / 81%), M2/M7 resumed in a new 14:21–14:41 slot. Pause receipts: #52 `6250987128`, #53 `6250987344`, scheduler #29 `6250987604`; resume receipts: #52 `6251008569`, #53 `6251008780`, scheduler #29 `6251009022`.
+- No module-head movement was visible at the last pre-hold read; #52/#53 remain OPEN/P0/NOT_VERIFIED. M0 docs-only commit is pending a fresh push preflight; PR #24 remains unchanged.

@@ -700,3 +700,7 @@ A second transient Usage timeout triggered a conservative hold. Two successful r
 ### M0 14:15 P0 status
 
 M2 #52 and M7 #53 are active through 14:28 after a quota-triggered pause and confirmed recovery. No public issue result or PR head movement is visible yet; keep both P0 risks OPEN/NOT_VERIFIED. No product source or test changes were made by M0.
+
+### M0 14:21 quota recovery
+
+A transient Usage timeout held the scheduled docs push and both P0 lanes. A fresh read at 14:20 returned 92% / 81%, and M2/M7 resumed under new Issue receipts. No product source changes or P0 acceptance evidence were made during the hold.
