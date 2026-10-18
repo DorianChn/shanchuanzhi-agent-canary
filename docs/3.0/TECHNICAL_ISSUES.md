@@ -1323,3 +1323,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - Resume comments: #52 comment 6251792957; #53 comment 6251793240; scheduler #29 comment 6251793555. M2 stays on the OBSERVE symlink/junction alias boundary. M7 stays on packaged-hook log safety and release evidence; no install/VM claim.
 - Pre-resume public readback: PR #24 remains OPEN/Draft with unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at 8cf0243cd97659a020c6a697b17c1443f3400de0. PR #37 and #39 remain OPEN/Draft at 9db59ed8f2deae905edcb2179982f8bcb594167c and cf4b70f5130175582fffdfc65bd7c6847450867b; both module PRs were last updated Oct 15.
 - M0 docs push remains no earlier than 15:44:26 UTC and requires a fresh Usage read, PR/ref recheck, and a docs-only diff check.
+
+## M0 docs batch and exact-head CI — 2026-10-18 15:45 UTC
+
+- PR #30 now points to 2521da0c353ea146761de4e2ce45560e360b29e5; GitHub last updated it at 15:45:15 UTC. The batch contains only TECHNICAL_ISSUES.md, TECHNICAL_STATUS.md, and INTEGRATION_RISKS.md.
+- Exact-head CI run 39141904930 completed successfully at 15:47:02 UTC; coordination run 39141904927 passed at 15:45:29 UTC.
+- PR #30 remains OPEN/Draft. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. Next M0 push is no earlier than 16:05:30 UTC after fresh quota and scope checks.

@@ -3194,3 +3194,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - The shared repository worktree registry contains separate clean M0, M1, M5, M8, and M9 worktrees. M0 is ahead of its remote by five documentation-only commits; no module worktree has local changes visible in this registry.
 - M2, M3, M4, M6, and M7 do not appear in this shared worktree registry. Their public PR refs are distinct (M3 #33, M4 #34, M2 #37, M6 #38, M7 #39, M8 #40, M1 #43), which confirms separate GitHub branch heads but does not prove local worktree separation in their own contexts.
 - M0 did not create or check out module branches. Private session and worktree state remains UNKNOWN; do not claim the all-module worktree acceptance criterion is verified until those contexts expose evidence.
+
+## M0 exact-head CI and push — 2026-10-18 15:47 UTC
+
+- The M0 documentation batch reached existing Draft PR #30 at head 2521da0c353ea146761de4e2ce45560e360b29e5; GitHub updated the PR at 15:45:15 UTC. The published diff contains only the three M0 coordination documents.
+- Exact-head product CI run 39141904930 passed at 15:47:02 UTC. Coordination run 39141904927 passed at 15:45:29 UTC.
+- PR #24 remains OPEN/Draft with its original head and base. The next M0 push batch is no earlier than 16:05:30 UTC and requires fresh Usage plus PR/ref/scope preflight.
