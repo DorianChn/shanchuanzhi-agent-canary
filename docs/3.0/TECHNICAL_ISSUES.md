@@ -1398,3 +1398,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#52 P0 / M2:** 18:25–18:45 slot assigned on PR #37 to identify a real first-party consumer of the M1 held-object route or record the exact host/dependency gap. Do not invent a mock or edit M1/M5 paths.
 - **#53 P0 / #59 P1 / M7:** 18:25–18:45 slot assigned on PR #39 for source-bound package hashes, extracted-Hook comparison/harness, or a concrete artifact blocker. No VM/install claim; preserve logging assertions.
 - Receipts: #60 6253504583, #57 6253504576, #52 6253504597, #53 6253504677, #59 6253504639, #29 6253504577. No issue closed.
+## M0 lane rotation — 2026-10-19 02:45 Asia/Shanghai
+
+- **#52 P0:** M2's 18:25–18:45 window ended without host evidence; private state UNKNOWN. M5 resumes through 19:05 on PR #47 to validate M5-owned denial/consumer boundaries or record the missing host dependency.
+- **#53 P0 / #59 P1:** M7's 18:25–18:45 window ended without package evidence; private state UNKNOWN. M8 resumes through 19:05 on PR #40 to report exact M8 Hook/logging blob IDs and shipment boundary; M7 owns packaging/windows/*.
+- Preserve all hard-deny, zero-callback, and fixed-field logging assertions. Source CI does not equal product-host or package extraction acceptance.
+- Receipts: #52 6253710724 / 6253710675; #53 6253710765 / 6253710676; #59 6253710661; #29 6253710687.

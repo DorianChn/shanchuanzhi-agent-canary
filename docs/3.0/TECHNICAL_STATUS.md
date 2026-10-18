@@ -3377,3 +3377,13 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #30 head c2a3f9c07cf77a48eb72e64a89ca66be79c67fd2 passed product CI run 39154567926 at 18:33:27 UTC and coordination run 39154567943 at 18:32:02 UTC.
 - At 18:33 UTC, PR #37 remained 9db59ed8f2deae905edcb2179982f8bcb594167c and PR #39 remained cf4b70f5130175582fffdfc65bd7c6847450867b. No module source movement is visible; private activity remains UNKNOWN.
 - PR #24 remains unchanged. Next shared push gate is 18:51:47 UTC.
+## M0 lane rotation — 2026-10-19 02:45 Asia/Shanghai
+
+- Usage read at 18:45 UTC: 76% five-hour / 78% weekly; above the 5% stop threshold.
+- M2/#52 and M7/#53 ended 18:25–18:45 without public PR-head movement or product-host/package evidence. Private activity is UNKNOWN; both are paused with existing work preserved.
+- M5/#52 and M8/#53/#59 are the only scheduled lanes for 18:45–19:05 UTC on existing PR #47/#40. M5 must confirm its owned denial/consumer boundary or state the host dependency; M8 must report exact owned Hook blobs/shipment boundary without editing M7 packaging paths. Starts remain unverified.
+- Receipts: #52 checkpoint 6253710724, M5 task 6253710675; #53 checkpoint 6253710765, M8 task 6253710676; #59 6253710661; scheduler #29 6253710687.
+- PR #47 remains 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c with its exact-head checks passing; PR #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad with product/wrapper checks passing. These do not close #52/#53.
+- M0 PR #30 head c2a3f9c07cf77a48eb72e64a89ca66be79c67fd2 passed CI. PR #24 remains unchanged OPEN/Draft.
+- P0 #52/#53 and M9 remain OPEN / NOT_VERIFIED. No VM/model/installer resource is reserved.
+- M0 next push gate 18:51:47 UTC; next module publish batch no earlier than 19:11:47 UTC.

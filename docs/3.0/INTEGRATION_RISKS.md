@@ -775,3 +775,8 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M4/M6 slots ended without public evidence; M4 exact-head CI and M6 independent product E4 remain open. Private task status is UNKNOWN.
 - M2/M7 resume for bounded #52/#53 evidence. No product host consumer or actual extracted package result is established.
 - M9 exact-ref composition remains blocked on #55/#61 plus packaging-owner and independent E4 gates. No release readiness is claimed.
+## M0 P0 checkpoint — 2026-10-19 02:45 Asia/Shanghai
+
+- M2/M7 produced no public host/package evidence in their latest slots; private state is UNKNOWN.
+- M5/M8 are assigned bounded owner-evidence tasks on their existing branches. The P0 acceptance remains unverified until real host-consumer/protected-open evidence (#52) and source-bound package/extracted-Hook evidence (#53) exist.
+- M9 exact-ref composition, packaging ownership #59, and independent E4 #57 remain open; no release readiness is claimed.
