@@ -3200,3 +3200,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - The M0 documentation batch reached existing Draft PR #30 at head 2521da0c353ea146761de4e2ce45560e360b29e5; GitHub updated the PR at 15:45:15 UTC. The published diff contains only the three M0 coordination documents.
 - Exact-head product CI run 39141904930 passed at 15:47:02 UTC. Coordination run 39141904927 passed at 15:45:29 UTC.
 - PR #24 remains OPEN/Draft with its original head and base. The next M0 push batch is no earlier than 16:05:30 UTC and requires fresh Usage plus PR/ref/scope preflight.
+
+## M0 M2/M7 slot refresh — 2026-10-18 16:00 UTC
+
+- Usage at 15:59:24 UTC: 76% five-hour / 78% weekly. The prior slot had no visible PR-head or issue-result movement; private session state is UNKNOWN.
+- Exactly two active lanes are scheduled for 16:00–16:20 UTC: M2 (#52) and M7 (#53). Public resume receipts are #52 6252001481, #53 6252001757, and scheduler #29 6252002030. No VM, VMware, installer, or real-model resource is reserved.
+- M2 is limited to host-path/adapter evidence and must not edit M1/M5 files. M7 is limited to source-bound package and extracted-harness evidence; no install/VM claim.
+- PR #37/#39 remained at 9db59ed8f2deae905edcb2179982f8bcb594167c / cf4b70f5130175582fffdfc65bd7c6847450867b at the slot start. Next shared push is no earlier than 16:05:30 UTC and requires fresh preflight.

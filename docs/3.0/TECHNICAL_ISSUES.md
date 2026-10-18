@@ -1329,3 +1329,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - PR #30 now points to 2521da0c353ea146761de4e2ce45560e360b29e5; GitHub last updated it at 15:45:15 UTC. The batch contains only TECHNICAL_ISSUES.md, TECHNICAL_STATUS.md, and INTEGRATION_RISKS.md.
 - Exact-head CI run 39141904930 completed successfully at 15:47:02 UTC; coordination run 39141904927 passed at 15:45:29 UTC.
 - PR #30 remains OPEN/Draft. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. Next M0 push is no earlier than 16:05:30 UTC after fresh quota and scope checks.
+
+## M0 M2/M7 slot refresh — 2026-10-18 16:00 UTC
+
+- Fresh Usage read at 15:59:24 UTC: 76% five-hour / 78% weekly. The prior 15:39–15:59 slot ended without visible PR-head or issue-result movement; private work remains UNKNOWN.
+- M2 #52 and M7 #53 were scheduled as the only active lanes for 16:00–16:20 UTC. Receipts: #52 comment 6252001481, #53 comment 6252001757, scheduler #29 comment 6252002030.
+- M2 scope remains host-path/adapter evidence; M5 owns policy implementation and M1 owns contract review. M7 scope remains source-bound packaged-hook evidence, with no install/VM claim.
+- Shared push is no earlier than 16:05:30 UTC after fresh quota, ref, and scope checks. PR #24 remains unchanged; P0 issues remain OPEN/NOT_VERIFIED.

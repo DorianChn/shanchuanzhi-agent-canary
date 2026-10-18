@@ -717,3 +717,13 @@ This checkpoint supersedes earlier live-state snapshots for the listed refs. Git
 | Active P0 evidence (#52/#53) | P0 / M2, M7, M9 | #52 is currently titled OBSERVE symlink/junction alias denial; #53 is packaged native-hook log privacy. Both remain OPEN. The only active lanes are M2 and M7 for 15:39–15:59 UTC; no module-head change was visible at resume. | Keep both P0s NOT_VERIFIED until source-bound evidence is visible. Their active slot does not clear any M9 pin, packaging, host-path, or independent-E4 gate. |
 
 No module code, tests, or workflow files were changed by M0.
+
+### M0 P0 lane refresh — 2026-10-18 16:00 UTC
+
+| Gate | Priority / owners | Current evidence | M9 impact |
+| --- | --- | --- | --- |
+| OBSERVE aliases and protected host path (#52) | P0 / M5 policy, M1 contract, M2 adapter, M9 | #52 remains OPEN. M2 is assigned only host-path/adapter evidence through 16:20 UTC; the prior slot produced no visible PR or issue-result change. Private state is UNKNOWN. | Keep NOT_VERIFIED until the supported host callsite, alias deny-before-callback, allowed control, and exact-head composition are visible. |
+| Packaged Hook caller-data privacy (#53) | P0 / M7 packaging, M9 | #53 remains OPEN. M7 is assigned source-bound package and extracted-harness evidence through 16:20 UTC; the prior slot produced no visible public result. Private state is UNKNOWN. | Keep NOT_VERIFIED until Setup.exe/manifest hashes, extracted Hook byte comparison, and canary result or exact blocker are attached. |
+| Exact M9 composition (#55/#61) | P1 / M1, M3, M9 | PR #36 remains at de3799aae540f58173acec4ab3f7a1fe98593aa7; historical run 38727481764 failed both Ubuntu and Windows. #55/#61 remain OPEN. | M9 stays gated; current owner-reviewed exact refs and passing composition jobs are still required. |
+
+The 16:00 slot does not authorize a third lane or change the public PR #24 baseline.
