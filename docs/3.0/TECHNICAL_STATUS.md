@@ -2703,3 +2703,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - GitHub checkpoint comments: #51 6244669380, #52 6244669643, #56 6244669925, #60 6244670159, and scheduler #29 6244670374.
 - M9 #36 remains at de3799a: product CI 9/9 and wrapper CI 2/2 pass, but composition run 38727481764 fails on Ubuntu and Windows. Integration is not accepted; P0/P1 artifact, ownership, host, installer, and E4 gates remain open or NOT_VERIFIED.
 - Last M0 push was after 02:07 UTC; next docs push is no earlier than 02:28 UTC after quota, ancestry, PR #24/#30, scope, and diff-check preflight. No module source/tests, main, merge, or Release changed.
+## M0 02:40 UTC checkpoint — 2026-10-18
+
+- Usage Overview remains readable: 64% five-hour / 94% weekly. The stop threshold is unreadable or at/below 5%.
+- Full open-PR scan: PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 is OPEN/Draft at a14a205c7b18fd0a0d8211e14f809f965a45ea77; product run 39090261025 passed 9/9 and coordination run 39090261041 passed 1/1. M1–M8 and M9 module PR heads remain unchanged from the 02:20 scan.
+- M1 missed the 02:40 evidence checkpoint; no new commit, focused result, owner report, or inspected tree change is visible. #51 remains UNKNOWN. M1 is re-queued by 03:00 for the bounded lock/timing trace or blocker and M1-owned file disposition on #52/#56.
+- M5 missed the 02:40 evidence checkpoint; PR #47 remains at 373e2c2, its exact-head CI remains 9/9 green, and the inspected worktree is clean. #52 stays OPEN/P0 pending M1 review and host/held-handle/TOCTOU/composition evidence. M5 is re-queued by 03:00 for M5-owned evidence or blocker.
+- M4 remains paused only in M0's shared schedule; no M4 report or focused console evidence is visible, and the inspected clone has no M4 worktree. Existing branches and files were not modified.
+- The two-lane schedule remains M1 + M5; no third lane is open. Queue IDs: M1 01a14ce2-01a2-7112-ae5e-bc4ff2344bb0 and M5 01a14ce2-02b2-7b62-bdb5-98da333861e4. Queue delivery does not prove work started.
+- M9 #36 remains at de3799a: product CI 9/9 and wrapper 2/2 pass, but composition run 38727481764 fails on Ubuntu and Windows. M9 integration is not accepted.
+- GitHub checkpoint comments: #51 6244825116, #52 6244825348, #56 6244825569, #60 6244825792, #29 6244826049.
+- Last M0 push was at about 02:29 UTC; next documentation push is no earlier than 02:49 UTC after fresh quota and scope preflight. No module code/tests, main, merge, or Release changed.

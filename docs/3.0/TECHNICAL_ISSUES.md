@@ -1032,3 +1032,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #56 P2: M5 PR #47 now joins PRs #30 and #34 in changing M1-owned test/agent-hook.test.ts; its blob differs from M1 PR #43. Require M1 disposition and preserve tests. Keep PR #30 Draft. Comment 6244669925.
 - #60 P1: M4 provided no exact path/head, focused console evidence, or owner report; PR #34 remains fbf2090. Its old CI's only actual failure is M1-owned Ubuntu Node 20 test 163; M4 causation is not established. M4 paused in the shared schedule, work preserved. Comment 6244670159.
 - #29 scheduler: two active lanes M1 + M5, M4 paused; next owner evidence due 02:40 and next M0 push window no earlier than 02:28. Comment 6244670374.
+## M0 issue checkpoint — 2026-10-18 02:40 UTC
+
+- #51 P1: no new M1 diagnostic result or owner report; lock/timing trigger UNKNOWN. M1 evidence/blocker by 03:00, queue 01a14ce2-01a2-7112-ae5e-bc4ff2344bb0; comment 6244825116.
+- #52 P0: PR #47 remains 373e2c2 with exact-head product CI 9/9; no new M5 evidence by 02:40. Keep OPEN for M1 disposition, host/held-handle, TOCTOU, and current M9 composition. No real exposure claimed. M5 evidence/blocker by 03:00, queue 01a14ce2-02b2-7b62-bdb5-98da333861e4; comment 6244825348.
+- #56 P2: M1 has not dispositioned the PR #30/#34/#47 overlap on M1-owned Hook tests; keep OPEN and PR #30 Draft; comment 6244825569.
+- #60 P1: M4 remains paused in M0's schedule; PR #34 unchanged, no focused evidence visible. The existing failure is M1-owned test 163, not an established M4 defect; comment 6244825792.
+- #29: two active slots M1 + M5; next owner checkpoint 03:00, next M0 push no earlier than 02:49; comment 6244826049.
