@@ -527,3 +527,14 @@ No production bypass, real disclosure, or installed-host enforcement is claimed.
 | M6–M8 Windows packaging overlap (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 composition | No exact path-owner acceptance is visible; M9 composition run 38727481764 failed on Ubuntu and Windows at the current recorded refs. | Owners confirm exact canonical paths and M9 pins the reviewed SHAs before composition rerun. Preserve each module's tests and semantics. |
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
+
+## M0 07:20 UTC integration readiness checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path host enforcement (#52) | P0 / M2, M1, M5, M9 | M2's synthetic adapter harness remains the only verified adapter callsite; first-party host/open-object/TOCTOU evidence is absent. | Keep NOT_VERIFIED; require exact host callsite and deny-before-callback proof or named blocker, then exact-head M9 composition. |
+| Packaged Hook log privacy (#53) | P0 / M7, M8, M9 | Source wrapper uses fixed-field JSONL and current reason tokens; no caller-data leak reproduced. Current Setup.exe/manifest/extracted-Hook proof remains absent. | M7 must supply hash-bound package evidence or precise blocker; package and isolated VM gates stay open. |
+| M6–M8 shared Windows/E4 paths (#59) | P1 / M6, M7, M8, M9 | No exact owner acceptance is visible; M9 composition remains failed on Ubuntu/Windows at recorded refs. | M6 confirms E4 files; M7 confirms installer paths; M8 confirms docs/Hook copy; M9 pins reviewed exact SHAs. Preserve each module's checks and semantics. |
+| M3 native Hook unpinned-read contract (#55) | P1 / M3, M1, M9 | PR #33 current head be388029 does not yet have the requested owner correction; prior M9 run reports expected deny / actual allow. | M3-owned fix plus supported-capability positive control; rerun exact reviewed heads in M9 without changing the assertion. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred.

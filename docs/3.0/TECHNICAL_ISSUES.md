@@ -1140,3 +1140,13 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#59 P1:** exact M6/M7/M8/M9 shared-path ownership remains unconfirmed. M9 composition run 38727481764 fails on Ubuntu and Windows. Keep all PRs Draft; no ownership transfer is inferred. Owner checkpoint: 6246945009.
 - **M0/PR #30:** before this checkpoint, head aa7813e had all 10 exact-head checks passing. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
 - Scheduler comment #29: 6246945104. M2 and M7 are active 07:00–07:20; M7 alone holds installer/VM testing. Queue receipts are not evidence of task start.
+
+## M0 scheduler and integration checkpoint — 2026-10-18 07:20 UTC
+
+- **#52 P0:** M2's 07:00–07:20 lane ended with no visible PR #37 head or issue result; paused by schedule, work preserved. No first-party host callsite or protected-open/held-object/TOCTOU proof is visible. Keep OPEN / NOT_VERIFIED; no real bypass is claimed. Checkpoint: 6247111170.
+- **#53 P0:** M7's 07:00–07:20 lane ended without a visible PR #39 head or package result; paused with work preserved and exclusive installer/VM slot released. No current Setup.exe/manifest/extracted-Hook/package-harness evidence is visible. M8 source evidence does not establish package acceptance or a real disclosure. Keep OPEN / NOT_VERIFIED. Checkpoint: 6247111098.
+- **#55 P1:** M3 is active through 07:40 on its current PR #33 head; it must deny unpinned native Read per M1's contract and preserve the positive control and assertions. Checkpoint: 6247111129.
+- **#59 P1:** M6 is active through 07:40 to confirm the auto-E4 source/test ownership boundary and M9 consumption. M6/M7/M8/M9 owner acceptance remains unconfirmed. M9 composition run 38727481764 failed on both platforms. Checkpoint: 6247111118.
+- **#51 P1:** M1 remains paused after no visible diagnostic at 07:00; retry trigger/root cause UNKNOWN, no data loss established.
+- **M0:** PR #30 head f877d43 is OPEN/Draft; ownership-contract-evidence passed and product CI is in progress. PR #24 remains unchanged OPEN/Draft.
+- Scheduler comment #29 is 6247111107; M3/M6 are active 07:20–07:40. No exclusive resource is reserved. Queue receipts do not prove task start.

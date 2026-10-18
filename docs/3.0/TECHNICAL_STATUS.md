@@ -2848,3 +2848,15 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Issue #59 remains OPEN/P1: no M6/M7/M8/M9 exact path-owner acceptance is visible; PR #36 composition run 38727481764 failed on Ubuntu and Windows. Exact current heads: #38 c1fdf3c, #39 cf4b70f, #40 c1ff677, #36 de3799a.
 - Scheduler/issues were updated: #29 comment 6246945104; #51 6246945001; #52 6246945058; #53 6246945041; #59 6246945009. Queue receipts for M1/M8 pause and M2/M7 activation are recorded in #29; receipts prove delivery only.
 - Last M0 push was at approximately 06:44 UTC; this checkpoint is within the next 07:04+ publication batch. Next push after this batch is no earlier than 07:24 UTC, after fresh quota and branch/PR scope checks. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 scheduler checkpoint — 2026-10-18 07:20 UTC (read back 07:25)
+
+- Usage Overview is readable at 64% five-hour / 94% weekly; stop threshold not triggered. Existing browser tab remains open.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 is OPEN/Draft at f877d43b0333282a57d534a5f4c1ae870ad1dde2; ownership-contract-evidence passed and product CI is running. M0 worktree is on the same head.
+- M2 #52 and M7 #53 reached 07:20 with no visible PR-head or issue-result changes. Both are paused by schedule only, preserving work; M7's exclusive installer/VM slot is released. #52 remains NOT_VERIFIED and #53 lacks current package evidence.
+- M1 #51 and M8 #53 source/logging remain paused with their existing branches preserved. No M1 diagnosis or M8 issue-owner response was visible at the 07:20 read.
+- M3 is active 07:20–07:40 on #55, comparing PR #33 be3880298e1c6766024ecbce5f5dbc23c4d2daa1 against M1 PR #43 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. Acceptance is deny unpinned native Read with the M1 reason, retain all assertions and a supported-capability positive control, and do not edit M1-owned shared tests.
+- M6 is active 07:20–07:40 on #59 using PR #38 head c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 to confirm its E4 path owner boundary or state exact disputed paths/reviewer and M9 consumption plan. No exclusive VMware, installer, or real-model test is reserved.
+- M9 PR #36 remains at de3799aae540f58173acec4ab3f7a1fe98593aa7; composition run 38727481764 fails on Ubuntu and Windows. Issue #59 owner confirmations remain pending.
+- Issue comments: #29 6247111107; #52 6247111170; #53 6247111098; #55 6247111129; #59 6247111118. Queue receipts are recorded in #29 but prove delivery only.
+- Last M0 push was about 07:05 UTC. This docs checkpoint is in the 07:25+ batch; the next push after it is no earlier than 07:45 UTC after fresh quota, PR #24/#30, ancestry, and scope checks. No module source/tests, PR #24, main, merge, or Release changed.
