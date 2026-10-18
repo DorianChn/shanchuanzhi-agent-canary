@@ -1094,3 +1094,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #55 M1 contract pointer: inspected PR #43 `src/agent-hook.ts` lines 31-34 deny unpinned native Read/Write/Delete with `native_file_execution_not_pinned`; M3 received this contract reference plus the M1 shared-test review boundary in queue 01a14d66-d839-7950-90c6-aa0deafa8c4e; comment 6245931950.
 - #56 P2: M1 has not provided canonical disposition for the Hook-test overlap across #30/#33/#34/#47 versus #43. Preserve all assertions; comment 6245894448.
 - #29 scheduler: active M1 + M3 through 05:20; M2/M4/M5 remain paused by M0 scheduling only. No exclusive resource is reserved. Quota is 64% five-hour / 94% weekly; PR #30 head a53951e has 9/9 product CI and 1/1 coordination check; PR #24 is unchanged OPEN/Draft. Last M0 push 04:57; next no earlier than 05:17. Comment 6245894487.
+
+## M0 P0 audit readback — 2026-10-18 05:16 UTC
+
+- #52 P0 remains OPEN / NOT_VERIFIED: read-only M1/M5 exact-head review reports alias denial and generic file-callback blocking in synthetic junction cases when `verifyRealPaths` is enabled. First-party host consumption, held-object/protected-open behavior, and TOCTOU evidence are still absent; no production bypass is asserted.
+- #53 P0 remains OPEN / NOT_VERIFIED: source allowlisted metadata and synthetic caller-canary coverage do not establish the shipped installer contents. No exact Setup.exe/manifest hash, extracted-Hook byte comparison, or extracted-package harness result is visible; no real disclosure is asserted.
+- Scheduling implication: preserve the current M1 + M3 window through 05:20; next two lanes are M1 + M7 through 05:40, with M7 owning the exclusive installer/VM evidence slot. M7 must report the exact artifact/result or the named missing dependency; no results may be inferred from source fixtures.

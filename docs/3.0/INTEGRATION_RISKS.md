@@ -493,6 +493,15 @@ This checkpoint does not infer a production bypass, leak, data loss, successful 
 | M9 cross-module composition (#55 and #36) | P1 / M3 + M9; M1 interface owner | PR #36 product CI 9/9 and wrapper 2/2 pass; composition run 38727481764 still fails on Ubuntu and Windows. | M3 preserves fail-closed unpinned-read behavior and positive control; M9 pins reviewed heads and reruns both composition jobs. Do not mark integration PASS. |
 
 This checkpoint does not establish a production bypass, sensitive-data exposure, successful host integration, installer acceptance, or independent E4 result.
+
+## M0 P0 evidence checkpoint — 2026-10-18 05:16 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path alias / first-party host enforcement (#52) | P0 / M1 contract, M2 host adapter, M5 policy, M9 composition | Read-only exact-head audit reports synthetic junction denial with `verifyRealPaths` enabled and generic callback blocking. Real first-party host use, protected-open/held-object, and TOCTOU remain NOT_VERIFIED. No real bypass is asserted. | M1/M2/M5 provide exact host consumer and protected-object evidence; M9 reruns exact reviewed heads. Keep OPEN. |
+| Sensitive Hook log data in shipped package (#53) | P0 / M7 package evidence, M8 docs/source, M9 acceptance | Source allowlist and synthetic caller-canary checks exist, but no exact Setup.exe/manifest hashes, extracted-Hook byte comparison, or extracted-package harness result is visible. No real disclosure is asserted. | M7 uses the scheduled installer/VM slot to capture sanitized, hash-bound evidence or name the missing artifact; M8 reconciles source/docs. Keep OPEN. |
+
+M1 + M3 remain scheduled through 05:20 UTC. M1 + M7 are the next two lanes through 05:40 UTC; M7 alone owns the exclusive installer/VM slot. No P0 gate is closed by synthetic tests or source inspection.
 ## M0 #52 host-integration scheduling update — 2026-10-18 03:00 UTC
 
 | Risk | Priority / owners | Current evidence and status | Gate |

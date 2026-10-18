@@ -2795,3 +2795,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Active lanes remain M1 + M3 through 05:20 on existing tasks/branches. M2/M4/M5 remain paused by M0 scheduling only; preserve branches/work. Queue receipts do not prove work started. No VMware, real-model, or installation resource is reserved.
 - Checkpoint comments: #51 `6245894424`, #52 `6245897329`, #55 `6245894426`, #56 `6245894448`, scheduler #29 `6245894487`. The M3 log evidence and stale-pin gate are recorded in #55 `6245802617` and #36 `6245816378`.
 - Last M0 push was 04:57 UTC; next docs push no earlier than 05:17 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 P0 audit checkpoint — 2026-10-18 05:16 UTC
+
+- Read-only audit reports M1/M5 synthetic junction-alias denial when `verifyRealPaths` is enabled, but no first-party host/protected-open/held-object or TOCTOU proof. #52 stays OPEN/P0/NOT_VERIFIED; no real bypass is claimed.
+- M7/M8 source and synthetic caller-canary evidence does not validate the packaged Hook. Exact installer/manifest hashes, extracted-Hook comparison, and extracted-package harness evidence are absent. #53 stays OPEN/P0/NOT_VERIFIED; no real disclosure is claimed.
+- Active lanes remain M1 + M3 through 05:20. Proposed next slot: M1 + M7 through 05:40; reserve the exclusive installer/VM resource only for M7 in that slot. Queue receipts and audit findings are coordination evidence, not proof that module work or installation has started.
