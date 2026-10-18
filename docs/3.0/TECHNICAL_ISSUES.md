@@ -1018,3 +1018,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #56: no canonical Hook-test disposition; PRs #30 and #34 both touch M1-owned `test/agent-hook.test.ts`. Keep PR #30 Draft.
 - #60: no M4 focused console evidence or exact local path. PR #34 remains `fbf2090`; its old CI has one actual failure in M1-owned test 163 only. Do not attribute that failure to M4 or modify M1 paths from M4.
 - Both existing sessions were re-queued to provide path/branch/SHA plus evidence or blocker by 02:00 UTC; IDs are recorded in #29. The queue is not proof of work started.
+
+## M1/M4 owner checkpoint — 2026-10-18 02:00 UTC
+
+- **#51 / M1:** no new diagnostic evidence; retry trigger remains UNKNOWN. PR #43 stays at `9ef3dc2`, and the inspected worktree is clean.
+- **#56 / M1:** canonical Hook-test disposition remains pending; PR #30 and PR #34 both touch M1-owned `test/agent-hook.test.ts`. Keep PR #30 Draft.
+- **#60 / M4:** no worktree path, focused console test, or owner response is visible. The only actual failure in old PR #34 CI remains M1-owned Ubuntu Node 20 test 163; do not attribute it to M4.
+- M1/M4 were re-queued to provide exact path/branch/SHA with focused evidence or a precise blocker by 02:20 UTC. Queue delivery is not proof of work started.

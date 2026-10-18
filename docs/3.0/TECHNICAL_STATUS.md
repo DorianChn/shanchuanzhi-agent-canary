@@ -2681,3 +2681,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M1 #51 still has an UNKNOWN retry trigger; #56 canonical Hook-test disposition remains pending. M4 #60 is an integration gate only: the sole actual failure in old PR #34 CI is M1-owned Ubuntu Node 20 test 163; M4 causation is not established.
 - M9 #36 still has product CI 9/9 and wrapper 2/2 pass but composition run `38727481764` fails Ubuntu and Windows. P0 #52/#53 and P1 #55/#58/#59 remain open; #41/#57 stay unverified.
 - PR #24 unchanged and OPEN/Draft; PR #30 at `115c4ae` remains OPEN/Draft with exact CI 9/9 and coordination 1/1. Last M0 push 01:27 UTC; next no earlier than 01:47 UTC after fresh quota and scope preflight. No module source/tests or Release changed.
+
+## M0 02:00 UTC checkpoint — 2026-10-18
+
+- Usage Overview is readable but still displays “resetting”: 64% five-hour / 94% weekly; the tab remains open. The <=5% pause rule is not triggered.
+- Full PR scan: PR #24 is OPEN/Draft and unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 is OPEN/Draft at `10901ad0c675d96778dbf48fdb8a87823e2b44b5`; exact product CI `39087753861` passed 9/9 and coordination CI `39087753762` passed 1/1. M1–M9 module PR heads did not change.
+- M1/M4 missed the 02:00 checkpoint with no new owner commit, focused test, or reply visible. M1 worktree remains clean at `9ef3dc2`; M4 worktree remains unregistered in this clone and PR #34 remains `fbf2090`; other clones are UNKNOWN.
+- Existing M1/M4 sessions were re-queued for path/branch/SHA plus evidence or a blocker by 02:20 UTC: M1 `01a14cbd-2cdc-7a90-ba69-1e066ebc1a1d`; M4 `01a14cbd-2de8-7ff1-8a36-64b1a6defadc`. Queue receipt is not proof work started.
+- M9 #36 remains at the recorded exact head with composition still failing on Ubuntu and Windows; product and wrapper checks pass, but P0/P1 artifact/host/ownership gates remain open or unverified.
+- Last M0 push 01:47 UTC; next no earlier than 02:07 UTC after quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, main, merge, or Release changed.
