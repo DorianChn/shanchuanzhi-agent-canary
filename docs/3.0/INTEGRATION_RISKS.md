@@ -517,3 +517,13 @@ No production bypass or real exposure is claimed. Synthetic path-alias evidence 
 | First-party isolated host (#52) | P0 / M2 adapter, M1 Gateway, M5 policy, M9 composition | M5 #47 is green 9/9. M2 path and host consumer remain unverified; protected-open/held-handle and TOCTOU remain NOT_VERIFIED. | Resume M2 after exact existing path is reported; use current M1 contract; M9 composition and host evidence required. Keep #52 OPEN. |
 
 No production bypass, real disclosure, or installed-host enforcement is claimed.
+
+## M0 07:00 UTC cross-module risk checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| First-party host enforcement for protected paths (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 composition | Adapter call remains in a synthetic/check harness. First-party host callsite, protected-open/held-object, and TOCTOU are NOT_VERIFIED. No real bypass is claimed. | M2 supplies the exact consumer and deny-before-callback proof or named missing owner/path; M1 reviews contract changes; M9 composes exact reviewed SHAs. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package evidence, M8 source/logging, M9 acceptance | Source wrapper logs fixed fields and current reason tokens are static; no caller-data leak was reproduced. Actual Setup.exe/manifest/extracted-Hook evidence is still absent. | M7 provides hash-bound artifact and harness evidence or precise blocker. Do not treat source tests as package acceptance. |
+| M6–M8 Windows packaging overlap (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 composition | No exact path-owner acceptance is visible; M9 composition run 38727481764 failed on Ubuntu and Windows at the current recorded refs. | Owners confirm exact canonical paths and M9 pins the reviewed SHAs before composition rerun. Preserve each module's tests and semantics. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.

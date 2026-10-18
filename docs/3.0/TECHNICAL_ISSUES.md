@@ -1131,3 +1131,12 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #53: no M7 package artifact result appeared; M7 is paused with all work preserved and the exclusive installer/VM resource released. M8 now owns the source/logging half through 07:00; packaged artifact hashes and extracted-Hook proof remain missing.
 - Active lanes are M1 on #51 and M8 on source/logging #53 through 07:00. Scheduler and issue comments are `6246686042`, `6246686546`, and `6246686875`. Queue receipts are not proof that work started.
 - PR #30 `5e463ab` exact-head checks pass 10/10; PR #24 remains unchanged OPEN/Draft. Usage last read at 64% five-hour / 94% weekly. Last M0 push 06:20; next no earlier than 06:40 after fresh quota and scope preflight.
+
+## M0 scheduler and P0/P1 status — 2026-10-18 07:00 UTC
+
+- **#52 P0:** M2 is assigned through 07:20. PR #37's adapter is still only verified in a synthetic/check harness; no first-party host callsite, protected-open/held-object, or TOCTOU evidence is visible. Keep OPEN / NOT_VERIFIED; no production bypass is claimed. Owner checkpoint: 6246945058.
+- **#53 P0:** M7 holds the exclusive installer/VM slot through 07:20; M8 source/logging lane is paused with work preserved. No current Setup.exe/manifest/extracted-Hook/package-harness proof is visible. M8 source audit found fixed decision-reason tokens and no reproduced caller-data leak; source checks are not package acceptance. Keep OPEN / NOT_VERIFIED; no real disclosure is claimed. Owner checkpoint: 6246945041.
+- **#51 P1:** M1's 06:40–07:00 lane produced no visible diagnostic or PR-head result. Trigger for the one 500-retry STATE_STORE_BUSY failure remains UNKNOWN; no data loss is established. Paused by schedule, branch preserved. Owner checkpoint: 6246945001.
+- **#59 P1:** exact M6/M7/M8/M9 shared-path ownership remains unconfirmed. M9 composition run 38727481764 fails on Ubuntu and Windows. Keep all PRs Draft; no ownership transfer is inferred. Owner checkpoint: 6246945009.
+- **M0/PR #30:** before this checkpoint, head aa7813e had all 10 exact-head checks passing. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
+- Scheduler comment #29: 6246945104. M2 and M7 are active 07:00–07:20; M7 alone holds installer/VM testing. Queue receipts are not evidence of task start.
