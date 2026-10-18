@@ -3180,3 +3180,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - Usage read timed out at 15:34:57 UTC; current quota is UNKNOWN. The last confirmed value was 87% five-hour / 80% weekly at 15:29:32.
 - M2/M7 are paused with work preserved. The planned 15:44:26 push is frozen until a fresh quota read above 5% and a new M0 slot. Hold comments are recorded on #52, #53, and scheduler #29.
 - PR #30 published head 8cf0243 is exact-head green (product 9/9 and coordination 1/1); PR #24 remains unchanged OPEN/Draft.
+
+## M0 bounded M2/M7 resume — 2026-10-18 15:39 UTC
+
+- Usage read at 15:36:56 UTC: 76% five-hour / 78% weekly. The only active lanes are M2 (#52) and M7 (#53), each through 15:59 UTC; scheduler #29 records the slot.
+- Public receipts: #52 comment 6251792957, #53 comment 6251793240, scheduler #29 comment 6251793555. M2 continues the OBSERVE symlink/junction alias boundary. M7 continues packaged-hook log safety and release evidence, with no install/VM/clean-VM claim.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at 8cf0243cd97659a020c6a697b17c1443f3400de0. PR #37/#39 remain OPEN/Draft at 9db59ed8f2deae905edcb2179982f8bcb594167c / cf4b70f5130175582fffdfc65bd7c6847450867b.
+- A fresh quota read and PR/ref/scope review are required before the next docs push, no earlier than 15:44:26 UTC. If quota falls below 5% or becomes unreadable, pause all active work.
