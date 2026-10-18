@@ -3468,3 +3468,6 @@ PR #30 head b6e9624f8abf7db3e816096e3743391bb6eb6400 was actually pushed at 20:4
 ## Shared push timing correction — 2026-10-19 05:10 Asia/Shanghai
 
 PR #30 docs-only head a0421f7a72039eebd582899cde517e80f316fc68 was pushed at 21:10:04 UTC. At 21:10:13, no PR-triggered workflow run or commit status was visible for this exact head; CI remains pending verification. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4. The next shared push is no earlier than 21:30:04 UTC, after fresh Usage/ref/scope checks.
+## Exact-head CI readback — 2026-10-19 05:13 Asia/Shanghai
+
+The PR #30 docs-only head a0421f7a72039eebd582899cde517e80f316fc68 completed exact-head product CI [39166619143](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39166619143) and coordination CI [39166619087](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39166619087) successfully. PR #30 remains OPEN/Draft; PR #24 remains unchanged.
