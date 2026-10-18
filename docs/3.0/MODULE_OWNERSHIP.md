@@ -456,3 +456,15 @@ M3 remains the owner of its existing src/agent-hook.ts behavior and branch-local
 ## M0 exact-path ownership update — 2026-10-18 10:02 UTC
 
 The current PR #37 changed-file list includes `test/agent-hook.test.ts`, an M1-owned canonical Hook test also present in PRs #30/#33/#34/#47. The visible overlap set is therefore #30/#33/#34/#37/#47, with PR #43 the canonical M1 owner branch. This is a path-ownership finding only; it does not establish a semantic defect in PR #37 and is not grounds to remove tests or assertions. M1 must include #37 in the file-by-file disposition tracked by Issue #56. M2's #52 work remains restricted to M2-owned execution-isolation paths and the existing adapter contract; any shared-contract change requires the M1 owner.
+
+## M0 M6–M8 exact overlap matrix — 2026-10-18 10:25 UTC
+
+Current GitHub changed-file lists at PR heads #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`, #39 `cf4b70f5130175582fffdfc65bd7c6847450867b`, and #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad` show these exact intersections:
+
+| PR pair | Shared paths |
+| --- | --- |
+| #38 / #39 | `package.json`; `packaging/windows/auto-e4.mjs`; `security-lab/claude-native-hook.mjs`; `test/agent-hook.test.ts`; `test/auto-e4.test.mjs` |
+| #38 / #40 | `.gitattributes`; `security-lab/claude-native-hook.mjs`; `test/agent-hook.test.ts`; `test/auto-e4.test.mjs` |
+| #39 / #40 | `packaging/windows/README.md`; `packaging/windows/build.mjs`; `packaging/windows/e4-hook-faults.mjs`; `packaging/windows/prepare.mjs`; `security-lab/claude-native-hook.mjs`; `test/agent-hook.test.ts`; `test/auto-e4.test.mjs`; `test/windows-packaging.test.mjs` |
+
+All three PRs change `security-lab/claude-native-hook.mjs`, `test/agent-hook.test.ts`, and `test/auto-e4.test.mjs`. This inventory records path overlap only; M0 has not inferred primary owners for the M6–M8 paths or found a semantic defect. M1 remains canonical owner of Hook semantics and `test/agent-hook.test.ts`. Issue #59 asks M8 to propose a file-by-file primary owner/reviewer map and obtain M6/M7 confirmation before M9 pinning.
