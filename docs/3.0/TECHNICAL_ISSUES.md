@@ -1376,3 +1376,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#53 P0 / #59 P1:** M7's 17:05–17:25 slot ended without PR #39 movement or package evidence; private status UNKNOWN. M8 is assigned through 17:45 on existing PR #40 to report M8-owned Hook/logging blobs and whether an M8 copy is shipped; M7 alone owns packaging/windows/*.
 - All findings must preserve fixed-field log/privacy assertions and hard policy denials. Source CI is not package extraction or product-host acceptance.
 - Receipts: #52 6252888638, #53 6252888574, #59 6252888599, #29 6252888581. #52/#53 remain OPEN/P0 / NOT_VERIFIED.
+
+## M0 lane rotation — 2026-10-19 01:45 Asia/Shanghai
+
+- **#55 P1 / M3:** 16:45–17:05 ended without public update; M3 has a new 17:45–18:05 slot to make only the M3-owned unpinned native Read deny and retain positive control/M1 assertions.
+- **#61 P1 / M1:** no public source-pin confirmation from the prior slot; M1 has a new 17:45–18:05 slot to confirm the reviewed Hook/Gateway source SHA, distinct from owner-review SHA.
+- **#52 P0 / M5 and M2:** the 17:25–17:45 M5/M8 slot ended without public evidence. Both M5 and M8 are paused with private status UNKNOWN; the required host and package evidence is still missing.
+- **#53 P0 / #59 P1:** no public M8 artifact/blob/ownership evidence appeared; M8 is paused with private status UNKNOWN. M7 retains packaging/windows/* ownership.
+- Latest receipts: #52 6253091378, #53 6253091373, #59 6253091368, #55 6253091370, #61 6253091372, #29 6253091353. No issue was closed.

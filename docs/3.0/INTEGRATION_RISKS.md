@@ -756,3 +756,9 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M2/M7 public slots ended without PR-head movement or new evidence; private state UNKNOWN. Their work is preserved and paused by schedule.
 - M5 now checks its owned policy/consumer boundary for #52; M8 checks its owned Hook copies and responsibility boundary for #53/#59. No claim is made that these tasks have started privately.
 - The protected product host, held-open object/alias behavior, actual packaged Hook bytes/harness, and independent product E4 remain NOT_VERIFIED. M9 exact-ref composition stays blocked on #55/#61 plus packaging/owner gates.
+
+## M0 integration checkpoint — 2026-10-19 01:45 Asia/Shanghai
+
+- M9 remains BLOCKED / NOT_VERIFIED on #55 and #61: no M3 fix or M1 owner-confirmed exact source SHA is publicly available yet.
+- P0 host-path/held-object evidence (#52) and packaged-hook evidence (#53) remain missing after their scheduled M2/M5 and M7/M8 windows; private work is UNKNOWN.
+- M6 independent product E4 (#57), M6–M8 shared packaging signoff (#59), and M4 exact-head CI recovery (#60/#51) remain open. No security acceptance, release readiness, merge, or Release is claimed.

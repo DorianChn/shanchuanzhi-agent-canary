@@ -3301,3 +3301,20 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #30 head 8b635f0a6d9064ee93fa76023c3319301ee70798 passed product CI run 39149909813 at 17:32:14 UTC and coordination run 39149909796 at 17:30:46 UTC.
 - At 17:32 UTC, PR #47 remained at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c and PR #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; no module source movement is visible. Private task activity is UNKNOWN.
 - The next shared push gate remains 17:50:33 UTC, subject to fresh Usage/ref/scope preflight.
+
+## M4/M6 next-slot baseline — 2026-10-19 01:41 Asia/Shanghai
+
+- M4 PR #34 is OPEN/Draft at fbf20907c6accffc37246eddf04f8599060d99ea. Exact run 38698635434 has one actual failed job, Ubuntu Node 20 test 163 (bounded quarantine retry exhaustion / STATE_STORE_BUSY). Ubuntu Node 22, Docker, and sponsor-smoke pass; macOS/Windows jobs were cancelled and package-smoke was skipped. #51 remains an M1-owned diagnosis; M4 must not change the M1-owned shared test.
+- M6 PR #38 is OPEN/Draft at c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; hosted run 38686183313 and wrapper run 38686183315 pass all 11 listed checks. Independent product artifact verification #57 remains NOT_VERIFIED.
+- Neither M4 nor M6 is in the current 17:25–17:45 slot. This baseline is for the next scheduling decision only.
+
+## M0 lane rotation — 2026-10-19 01:45 Asia/Shanghai
+
+- Usage read at 17:45 UTC: 76% five-hour / 78% weekly; above the 5% stop threshold.
+- M5/#52 and M8/#53/#59 ended 17:25–17:45 with no public PR-head movement or evidence. Private state remains UNKNOWN; both are paused with local work preserved.
+- M1/#61 and M3/#55 are the only scheduled lanes for 17:45–18:05 UTC on existing PR #43/#33. M1 must confirm the source SHA separately from review SHA; M3 must fix unpinned native Read fail-closed behavior with the positive control intact. Task starts remain unverified.
+- Receipts: #52 6253091378, #53 6253091373, #59 6253091368, #55 6253091370, #61 6253091372, scheduler #29 6253091353.
+- PR #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M9 #36 remains blocked on exact owner refs and composition.
+- M0 PR #30 head 8b635f0a6d9064ee93fa76023c3319301ee70798 passed CI run 39149909813 and coordination run 39149909796. PR #24 remains unchanged OPEN/Draft.
+- P0 #52/#53 remain OPEN / NOT_VERIFIED; no VM, model, or installer test is scheduled.
+- Current shared push at 17:30:33 UTC; M0 next gate is 17:50:33 UTC. Next module publish batch is no earlier than 18:10:33 UTC, after fresh Usage/ref/scope checks.
