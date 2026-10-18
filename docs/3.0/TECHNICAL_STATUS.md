@@ -2335,6 +2335,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - PR #24 was verified OPEN/Draft and unchanged immediately before this push at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/tests, main, merge, or Release changes occurred.
 - Next M0 push is no earlier than 18:03 UTC after fresh quota, PR/remote ancestry, clean-worktree, allowed-path, and diff preflight.
 
+## M0 00:06 push and 00:09 exact-head CI readback — 2026-10-18
+
+- Pushed the 00:00 documentation-only checkpoint to PR #30 at exact head `3dda114f061ab69b30629546ee5bda166197c03d`. Product run `39081576690` passed 9/9 including package-smoke; coordination run `39081576692` passed 1/1. Readbacks: PR #30 `6243562016`; Issue #51 `6243562010`.
+- PR #30 remains OPEN/Draft on the AC3 base. Pre-push checks confirmed PR #24 remained OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- This batch changed coordination documents only. The new passing run does not explain or fix the intermittent #51 retry exhaustion; root remains UNKNOWN. No module source/tests, main, merge, or Release changes occurred.
+- M1/M4 owner evidence remains due 00:20 UTC. Next M0 push no earlier than 00:26:56 UTC after fresh quota, remote ancestry, PR #24, allowed-path, clean-worktree, and diff preflight.
 ## M0 00:00 UTC owner/status checkpoint — 2026-10-18
 
 - Usage Overview was readable at 00:00 UTC and remained above the 5% stop threshold. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
