@@ -1309,3 +1309,5 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - The delayed documentation-only batch was pushed at 15:24:26 UTC to PR #30, head 8cf0243cd97659a020c6a697b17c1443f3400de0. The scoped diff is limited to TECHNICAL_ISSUES.md and TECHNICAL_STATUS.md.
 - Immediate check: product workflow 39140339464 was pending; ownership-contract workflow 39140339460 passed 1/1. PR #24 remains unchanged OPEN/Draft; PR #37/#39 remain 9db59ed/cf4b70f. M2/M7 are assigned through 15:44; next push no earlier than 15:44:26 UTC after fresh preflight.
+
+- Exact-head readback at 15:26:05 UTC: PR #30 product run 39140339464 completed successfully on 8cf0243cd97659a020c6a697b17c1443f3400de0 with all 9 jobs passing; coordination run 39140339460 passed 1/1.

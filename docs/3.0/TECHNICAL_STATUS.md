@@ -3172,3 +3172,5 @@ This is a readback of the current PR heads and their attached check-run summarie
 - M0 pushed documentation-only commit stack through 8cf0243cd97659a020c6a697b17c1443f3400de0 to existing Draft PR #30 at 15:24:26 UTC; exact remote readback matched and the local worktree is clean.
 - Product run 39140339464 was still pending at the immediate check; coordination run 39140339460 passed 1/1. This is M0 documentation CI, not a module acceptance claim.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. M2/M7 are the only assigned lanes through 15:44 UTC; next shared push no earlier than 15:44:26 UTC after fresh quota/ref/scope preflight.
+
+- PR #30 exact-head product run 39140339464 completed successfully at 15:26:05 UTC on 8cf0243cd97659a020c6a697b17c1443f3400de0 (9/9); coordination run 39140339460 passed 1/1.
