@@ -3442,3 +3442,12 @@ PR #30 head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 was pushed at 20:08:11 UTC.
 - PR #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad changes M7-owned packaging paths, M6-owned test/auto-e4.test.mjs, M1-owned test/agent-hook.test.ts, and paths with unresolved ownership (packaging/windows/build-contract.mjs and .gitattributes). No M0 source/test edits were made.
 - M8 and M1 Hook copies both have blob d6f93249306b7966259cab463dd39475728ef338. Source parity is verified; shipped-payload inclusion and extracted identity remain NOT_VERIFIED.
 - PR #40 review list had no entries at 20:32 UTC. M1/M6/M7 signoff and M8's per-file disposition remain pending on #59. M0 reported exact paths in #59 comment 6254806342 and blob equality in #53 comment 6254806643.
+
+## M0 lane rotation — 2026-10-19 04:45 Asia/Shanghai
+
+- At 20:45 UTC, M5/#52 and M8/#53/#59 ended 20:25–20:45 without public PR-head movement or owner response. PR #47 remains 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; PR #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Their shared worktrees are clean; private activity is UNKNOWN. M5 is paused; #52 stays P0 NOT_VERIFIED.
+- M7/#59 and M8/#53/#59 are assigned 20:45–21:05 on existing PR #39/#40 to reconcile the actual cross-owner changes on PR #40. M7 must confirm packaging/build-contract paths; M8 must provide per-file intent and M1/M6/M7 signoff refs. No foreign path ownership is transferred by this assignment.
+- M0 verified Hook source blob parity: M1 and M8 security-lab/claude-native-hook.mjs both resolve to d6f93249306b7966259cab463dd39475728ef338. This does not establish shipped-package reachability or extracted identity. PR #40 has no submitted reviews recorded by the 20:32 UTC check.
+- Usage at 20:40 UTC was 85% five-hour / 74% weekly. PR #30 head b6aedd844cd1347f9f36d7d1660d69878d17b8f6 was pushed at 20:28:34 UTC; CI was queued at that check. PR #24 remains unchanged OPEN/Draft.
+- Receipts: #29 6254940117; #52 6254940503; #53 6254940799; #59 6254941096.
+- Next module publish no earlier than 20:48:34 UTC, after fresh Usage/ref/scope checks. No VM/installer test, merge, or Release.

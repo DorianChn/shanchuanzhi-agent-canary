@@ -1455,3 +1455,10 @@ Actual PR #30 push time was 20:08:11 UTC; the next shared module/push batch is n
 - security-lab/claude-native-hook.mjs has the same blob d6f93249306b7966259cab463dd39475728ef338 on M8 PR #40 and M1 PR #43. This does not prove shipment or extracted-package identity.
 - No PR review entries were returned at 20:32 UTC. M1/M6/M7 signoff remains pending; M8 must map each changed path, stop further foreign-owned edits, and establish the package consumer or blocker. #53 stays P0 NOT_VERIFIED; #59 stays OPEN.
 - GitHub evidence receipts: #59 comment 6254806342; #53 comment 6254806643.
+
+## M0 lane rotation — 2026-10-19 04:45 Asia/Shanghai
+
+- **#52 P0 / M5:** 20:25–20:45 ended without public result; PR #47 remains 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c and the shared tree is clean. Private state is UNKNOWN; M5 is paused and #52 remains NOT_VERIFIED.
+- **#53 P0 / #59 P1 / M8:** 20:25–20:45 ended without public M8 result; PR #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad and the shared tree is clean. M8 resumes 20:45–21:05 paired with M7 to resolve cross-owner paths and package provenance.
+- Actual PR #40 changed paths span M7 packaging/test files, M6 test/auto-e4.test.mjs, M1 test/agent-hook.test.ts, and unassigned packaging/windows/build-contract.mjs; .gitattributes purpose/owner also remains unresolved. Hook blob parity d6f93249306b7966259cab463dd39475728ef338 is source-only evidence.
+- Receipts: #29 6254940117; #52 6254940503; #53 6254940799; #59 6254941096. No signoff or issue closure is inferred.

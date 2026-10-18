@@ -508,3 +508,7 @@ PR #40 remains at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Its current changed-
 M8's security-lab/claude-native-hook.mjs and M1 PR #43's same path both resolve to blob d6f93249306b7966259cab463dd39475728ef338. This proves source-blob parity at those refs only, not packaged inclusion or installed/extracted identity.
 
 The PR review-list read returned no submitted reviews at 20:32 UTC; required issue-based M1/M6/M7 path signoff is still pending. M8 must provide a per-file intent/owner/reviewer map and shipment path, and stop further changes to other modules' owned files pending signoff. No ownership transfer is inferred by this inventory.
+
+## M7/M8 reconciliation slot — 2026-10-18 20:45 UTC
+
+Issue #59 assigns M7 and M8 together for 20:45–21:05 to reconcile PR #40's observed path overlap. M7 must confirm ownership and review disposition for packaging/windows/build-contract.mjs and the M7 package paths; M8 must identify the exact hunks, branch purpose and owner approvals. M1 retains test/agent-hook.test.ts and Hook semantics; M6 retains test/auto-e4.test.mjs/E4 semantics; .gitattributes purpose/owner remains pending. No ownership transfer or approval is assumed until the respective owner confirms in #59.
