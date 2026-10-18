@@ -3079,3 +3079,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #36 workflow evidence confirms stale M1 source pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` versus current M1 PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`. Historical run `38727481764` fails Ubuntu and Windows composition; its log shows the M3 unpinned native Read test failing. New issue #61 assigns the exact-pin correction to M9 after M1/M3 owner confirmation; #55 remains the M3 behavior issue and #59 the M6–M8 path-owner issue.
 - PR #38/#39/#40 remain at the exact refs in the M9 workflow. Full paginated path intersections and patch-level owner proposals are recorded locally in `MODULE_OWNERSHIP.md` and on #59; required owner confirmations are still pending.
 - M0 changed coordination docs only. The last PR #30 remote update is 12:54:54 UTC; next shared push is no earlier than 13:14:54 UTC after quota, PR #24, exact-ref, and path-scope preflight.
+
+## M0 scheduler checkpoint — 2026-10-18 13:10 UTC (usage read 13:09)
+
+- Usage reads 64% five-hour / 94% weekly. M6/M8's 12:49–13:09 #59 slot ended without public owner-map result or PR-head movement; they are schedule-paused with work preserved, and private activity remains UNKNOWN. M1 #51/M3 #55 remain paused.
+- M2 and M7 are the only assigned active lanes through 13:29: M2 #52 is limited to its existing adapter/first-party host callsite and M1/M5 contract boundary; M7 #53 is build/evidence only. No VM, installer, VMware, or real-model resource is reserved. Delivery receipts: #59 pause `6250309720`, #52 assignment `6250309915`, #53 assignment `6250310121`, scheduler #29 `6250310330`.
+- #52/#53 remain OPEN/P0/NOT_VERIFIED until their respective first-party protected-route evidence and hash-bound package chain are visible. #59 remains OPEN/P1 pending named M6/M7/M1 confirmations. #61 tracks M9's stale M1 pin; #55 remains the M3 native Read behavior gate.
+- PR #30's last remote exact head is `fef86635dbbf26004cac53265622b7e07d218517` with product CI 9/9 and coordination CI 1/1. PR #24 remains unchanged OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. Three local commits ahead of PR #30 touch coordination docs only.
+- Next shared push is no earlier than 13:14:54 UTC, after fresh quota, PR/ref, and path-scope preflight.

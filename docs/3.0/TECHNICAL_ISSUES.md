@@ -1225,3 +1225,12 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - P0 issues #52 and #53 remain OPEN/NOT_VERIFIED; no new first-party host callsite or current hash-bound installer/extracted-Hook chain is established. No scarce test resource is reserved.
 - PR #30 head `fef8663` has exact-head product CI 9/9 and coordination CI 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4` / base `dc8d009`. M0 changed coordination docs only.
 - PR #30 was last updated remotely at 12:54:54 UTC. Next shared push is no earlier than 13:14:54 UTC after fresh quota/ref/scope preflight.
+
+## M0 scheduler checkpoint — 2026-10-18 13:10 UTC
+
+- **#59 P1:** M6/M8's 12:49–13:09 assignment produced no visible owner map or PR-head change. Both are paused with work preserved; private execution UNKNOWN. The patch-level overlap and proposed owner map are recorded in `MODULE_OWNERSHIP.md` and #59. Pause receipt `6250309720`.
+- **#52 P0:** M2 is assigned 13:09–13:29 on its existing PR #37 for an exact supported first-party host callsite consuming the M1 held-descriptor contract, alias deny-before-approval/callback evidence, and registered-file positive control, or the precise blocker/API/path/owner. No M1/M5-owned edits; no synthetic-only acceptance. Assignment `6250309915`.
+- **#53 P0:** M7 is assigned 13:09–13:29 on existing PR #39 for build-only, hash-bound Setup.exe/source/tool/manifest/extracted-Hook/harness evidence or an exact missing input/blocker. No installation, VM, VMware, or clean-VM claim. Assignment `6250310121`.
+- **#51/#55:** M1 and M3 remain schedule-held; no private state is inferred. Preserve all assertions and fail-closed behavior.
+- **#61 P1:** M9 owns updating exact source pins only after M1/M3 owner confirmation. PR #36 run `38727481764` is a historical two-platform failure and is not current passing evidence.
+- **Scheduler #29:** only M2 and M7 are assigned active lanes to 13:29; receipt `6250310330`. Usage read 64%/94%. PR #30 remote head `fef8663` is 9/9 product + 1/1 coordination green; PR #24 remains unchanged OPEN/Draft. Next shared push no earlier than 13:14:54 UTC.

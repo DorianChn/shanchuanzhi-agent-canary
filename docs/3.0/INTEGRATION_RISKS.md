@@ -680,3 +680,7 @@ Paginated current-head patches confirm that #38/#39/#40 overlap on the Hook wrap
 ### M0 M9 exact-pin blocker — 2026-10-18 13:02 UTC
 
 Issue #61 tracks the M9 workflow's stale M1 source pin at PR #36 head `de3799a...` (`b1d7423...` versus current PR #43 head `9ef3dc2...`) and the exact-head remediation after M1/M3 confirmation. Run `38727481764` is historical and fails both composition platforms; its log identifies the M3 unpinned native Read assertion failure. Keep #61 OPEN/P1 and PR #36 Draft until the owner-reviewed M1 ref is pinned and #55 is fixed with the positive control preserved. M0 did not edit module code or weaken checks.
+
+### M0 P0 scheduler update — 2026-10-18 13:10 UTC
+
+M2 #52 and M7 #53 are assigned as the only two active lanes through 13:29. M2 must provide a real supported first-party protected-file host path and alias-denial/positive-control evidence, or a precise owner/API blocker. M7 must provide a source/tool/hash-bound build and extracted-Hook harness chain or a precise missing input; this slot authorizes no installation, VM, or VMware test. M6/M8 #59, M1 #51, and M3 #55 are paused with work preserved; private status remains UNKNOWN. The P0 issues stay OPEN/NOT_VERIFIED until evidence is visible.
