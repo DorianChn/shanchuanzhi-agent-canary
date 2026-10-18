@@ -3371,3 +3371,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #30 docs-only head c2a3f9c07cf77a48eb72e64a89ca66be79c67fd2 was pushed at 18:31:47 UTC. Product CI run 39154567926 is queued; coordination run 39154567943 is in progress.
 - PR #24 remains unchanged OPEN/Draft.
 - Corrected next shared publish gate to 18:51:47 UTC on #52/#53/#59/#29. Receipts: #52 6253570580, #53 6253570591, #59 6253570583, #29 6253570563.
+
+## M0 exact-head CI readback — 2026-10-19 02:33 Asia/Shanghai
+
+- PR #30 head c2a3f9c07cf77a48eb72e64a89ca66be79c67fd2 passed product CI run 39154567926 at 18:33:27 UTC and coordination run 39154567943 at 18:32:02 UTC.
+- At 18:33 UTC, PR #37 remained 9db59ed8f2deae905edcb2179982f8bcb594167c and PR #39 remained cf4b70f5130175582fffdfc65bd7c6847450867b. No module source movement is visible; private activity remains UNKNOWN.
+- PR #24 remains unchanged. Next shared push gate is 18:51:47 UTC.
