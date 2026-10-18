@@ -1045,3 +1045,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #52 P0: M5 PR #47 remains green 9/9 but has no new owner evidence; M5's active slot is paused pending M1 review. M2 is queued on existing PR #37 for host integration, but path/implementation is not verified. Keep OPEN; comment 6244980113.
 - #56 P2: M1 disposition for PR #30/#34/#47 Hook-test overlap is still missing. Keep open and retain all assertions; comment 6244980356.
 - #29 scheduler: M1 + M2 are the two scheduled lanes; M5/M4 paused by M0 pending review/evidence. Next checkpoint 03:20; next M0 push no earlier than 03:09; comment 6244980636.
+## M0 issue checkpoint — 2026-10-18 03:20 UTC
+
+- #51 P1: no M1 report or focused evidence; trigger UNKNOWN. M1 remains tasked through 03:40; queue 01a14d06-bd23-7453-ad0a-76f526e363df; comment 6245134176.
+- #52 P0: M5 #47 is green 9/9 but awaits M1 file-level review; M2 #37 has no verified path/implementation in the inspected clone. M2 evidence/blocker due 03:40; keep host/held-object/TOCTOU NOT_VERIFIED and issue OPEN. Comment 6245134399.
+- #56 P2: no M1 disposition for shared Hook test changes across #30/#34/#47. Preserve assertions and keep open; comment 6245134610.
+- #29 scheduler: M1 + M2 are the two active slots; M5/M4 paused by M0 pending evidence. Next checkpoint 03:40; next push no earlier than 03:30; comment 6245134842.

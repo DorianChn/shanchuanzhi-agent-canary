@@ -2727,3 +2727,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M9 #36 remains at de3799a with product CI 9/9 and wrapper 2/2 passing but composition run 38727481764 failing on Ubuntu and Windows. Integration is not accepted.
 - GitHub checkpoint comments: #51 6244979833, #52 6244980113, #56 6244980356, and scheduler #29 6244980636.
 - Last M0 push was around 02:49 UTC; next documentation push is no earlier than 03:09 UTC after fresh quota, ancestry, PR #24/#30, and scope preflight. No module source/tests, main, merge, or Release changed.
+## M0 03:20 UTC checkpoint — 2026-10-18
+
+- Usage Overview remains readable: 64% five-hour / 94% weekly. The <=5% or unreadable pause rule is not triggered.
+- PR #24 is OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 is OPEN/Draft at d335af28ed957f32446e967d0219eb36f7452c60; exact product CI 39092682063 passed 9/9 and coordination CI 39092682054 passed 1/1.
+- M1 missed the 03:20 evidence checkpoint: no new PR #43 head, owner evidence, focused result, or change in the inspected M1 worktree is visible. #51 remains UNKNOWN. M1 stays scheduled through 03:40 for a bounded trace/blocker and file-level disposition of M5 shared-path changes.
+- M2 missed the 03:20 evidence checkpoint: PR #37 remains 9db59ed; no M2 path/branch report, implementation evidence, or registered worktree is visible in the inspected clone. M2 stays scheduled through 03:40 for exact path/branch/SHA and host-integration evidence or a blocker. Do not create a new branch or change the M1 public contract.
+- M5 PR #47 remains 373e2c2 with its exact-head CI 9/9. Its active slot remains paused in M0's schedule pending M1 disposition; no M5 pause acknowledgement is visible. M4 also remains paused in M0's schedule. Branches are preserved.
+- Active two-lane schedule remains M1 + M2. Queue IDs: M1 01a14d06-bd23-7453-ad0a-76f526e363df; M2 01a14d06-be34-7530-9d49-58e173cf360b. Queue receipt does not prove work started.
+- M9 #36 remains at de3799a; product CI 9/9 and wrapper 2/2 pass, while composition run 38727481764 fails on Ubuntu and Windows. Integration remains unaccepted.
+- GitHub checkpoint comments: #51 6245134176, #52 6245134399, #56 6245134610, #29 6245134842.
+- Last M0 push was about 03:10 UTC; next docs push is no earlier than 03:30 UTC after fresh quota and scope preflight. No module source/tests, main, merge, or Release changed.
