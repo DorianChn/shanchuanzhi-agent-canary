@@ -1065,3 +1065,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #55 P1: M3 PR #33 has CI 9/9, but unpinned native Read still conflicts with M1 and M9 composition fails both platforms. M3 continues through 04:20 on its existing branch; queue 01a14d2b-3d9b-7601-8a0b-45d6ef4fdf2c; comment 6245439339.
 - #56 P2: M1 disposition of shared Hook tests remains missing; keep OPEN and preserve assertions; comment 6245439572.
 - #29 scheduler: active M1 + M3; M2/M4/M5 paused by M0 schedule pending path/review; next checkpoint 04:20, next push no earlier than 04:14; comment 6245439802.
+
+## M0 issue checkpoint — 2026-10-18 04:20 UTC
+
+- #51 P1: no new M1 diagnosis or owner report is visible after 04:00; PR #43 and the inspected clean worktree remain unchanged, so the retry trigger stays UNKNOWN. M1 is re-queued through 04:40 for a bounded test-only trace or blocker plus shared-path disposition; comment 6245618033.
+- #52 P0: M5 #47 remains at 373e2c2 with recorded exact-head CI 9/9 and awaits M1 path review. M2 remains paused pending exact path/worktree and host-integration evidence. Protected-open/held-handle, first-party wiring, TOCTOU, and current composition remain NOT_VERIFIED; no real exposure claimed. Comment 6245620415.
+- #55 P1: M3 #33 remains be38802 with recorded CI 9/9, but no new owner evidence or inspected worktree is visible and the unpinned native Read mismatch remains. M3 is re-queued on its existing task through 04:40 for denial, positive control, evidence, or blocker; comment 6245620372.
+- #56 P2: M1 canonical disposition of the M1-owned Hook-test overlap across #30/#34/#47 is still missing. Preserve assertions and keep OPEN; comment 6245620400.
+- #29 scheduler: active lanes M1 + M3 through 04:40; M2/M4/M5 paused by M0 scheduling only. No exclusive test resource is reserved. Quota is 64% five-hour / 94% weekly; PR #30 exact-head CI is 9/9 and PR #24 is unchanged OPEN/Draft. Last M0 push was 04:17; next no earlier than 04:37. Comment 6245620382.

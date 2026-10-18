@@ -2758,4 +2758,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M2 remains paused in M0's schedule: no exact path/branch/worktree report or implementation is visible in the inspected clone; preserve its existing branch. M5 awaits M1 review; M4 remains paused. No pause acknowledgement is visible.
 - Active two-lane schedule is M1 + M3. Queue IDs: M1 01a14d2b-3c4a-7f92-8aac-a9553e8ef500; M3 01a14d2b-3d9b-7601-8a0b-45d6ef4fdf2c. Queue delivery is not proof work started.
 - GitHub checkpoint comments: #51 6245438688, #52 6245439029, #55 6245439339, #56 6245439572, #29 6245439802.
-- Last M0 push was about 03:54 UTC; next documentation push is no earlier than 04:14 UTC after fresh quota and PR/scope preflight. No module source/tests, main, merge, or Release changed.
+- Last M0 push was 04:17 UTC; next documentation push is no earlier than 04:37 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 04:20 UTC checkpoint — 2026-10-18
+
+- Usage Overview is readable at 64% five-hour / 94% weekly; the <=5% or unreadable stop rule is not triggered.
+- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 is OPEN/Draft at `29afd65b78f7c93d4917c22bd42bb8156f5ee5ea`; exact-head product CI passed 9/9, including package-smoke.
+- M1 PR #43 remains at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; the inspected M1 worktree is clean. No new owner report or public diagnostic evidence is visible since 04:00. The historical 500 `STATE_STORE_BUSY` retry trigger remains UNKNOWN.
+- M3 PR #33 remains at `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`; no M3 worktree is registered in this coordinator clone and no new owner evidence is visible. The unpinned native Read mismatch remains; the recorded M9 composition run fails on Ubuntu and Windows.
+- M1 and M3 are the two scheduled lanes through 04:40 on their existing tasks/branches. M2, M4, and M5 remain paused by M0 scheduling only; their branches/work are preserved. Queue receipts do not prove work started. No VMware, real-model, or installation resource is reserved.
+- M0 checkpoint comments: #51 `6245618033`, #52 `6245620415`, #55 `6245620372`, #56 `6245620400`, and scheduler #29 `6245620382`.
+- Last M0 push was 04:17 UTC; next documentation push is no earlier than 04:37 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
