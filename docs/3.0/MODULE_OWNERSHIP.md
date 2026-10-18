@@ -480,3 +480,19 @@ All three PRs change `security-lab/claude-native-hook.mjs`, `test/agent-hook.tes
 | `.github/workflows/m9-cross-module-composition.yml` | M9 | Owns exact-source pins and composition gates; do not update workflow from an M2/M3 lane. |
 
 For Issue #52, the current proposed composition boundary is M3 host -> M5 router -> M2 fixed-resource adapter -> M1 Gateway held-file dispatch. This is a scheduling/interface candidate only, not an owner-approved public API or evidence that the route is implemented. M2 and M3 have separate 11:38–11:58 assignments; each must stay within its owned paths. #52 remains OPEN/P0/NOT_VERIFIED.
+
+## M0 M6–M8 patch-level ownership cross-check — 2026-10-18 12:59 UTC
+
+The current exact PR heads remain #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`, #39 `cf4b70f5130175582fffdfc65bd7c6847450867b`, and #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. A paginated GitHub changed-file read confirms the existing overlap matrix above; this patch review adds proposed boundaries, pending M6/M7/M8 confirmation:
+
+| Shared paths / patch behavior | Proposed primary owner | Required review / boundary |
+| --- | --- | --- |
+| `package.json`: #38 adds `e4:auto`, `e4:verify`, `e4:test`; #39 adds `reliability.test.mjs` to the test command | M6 owns the E4 script fields; M7 owns its reliability test-list addition | M6 and M7 confirm exact field ownership and the integrated command. |
+| `packaging/windows/auto-e4.mjs`: #38 adds create-once E4 artifact guards; #39 uses the durable writer | M6 owns E4 report/artifact semantics; M7 owns durable packaging writes | Cross-review the write contract; keep no-overwrite and atomicity guarantees. |
+| `security-lab/claude-native-hook.mjs` | M1 owns canonical Hook/log semantics; each module owns only its branch copy/consumer | The current PR patches use the same allowlisted log shape. M6/M7/M8 confirm copy and shipped-consumer use; M1 reviews any semantic change. |
+| `test/agent-hook.test.ts` | M1 owns canonical Hook/interruption assertions | All three PRs change this M1-owned path. M6/M7 interruption-harness and M8 canary-fixture edits require explicit M1 review; preserve all assertions. |
+| `test/auto-e4.test.mjs` | M6 owns the E4 test contract | M7 stale-lock recovery and M8 packaged-wrapper canary additions require M6 review; M1 also reviews any Hook semantic assertion. |
+| `packaging/windows/README.md`, `build.mjs`, `e4-hook-faults.mjs`, `prepare.mjs`, `test/windows-packaging.test.mjs` | M7 owns installer/package behavior | M8 documentation or wrapper-consumer changes route through M7; preserve lifecycle and package checks. |
+| `.gitattributes` | Pending M6/M8 path-purpose confirmation | Do not infer ownership from the shared path alone; record exact attribute and reason before any integration. |
+
+M9 remains the owner of its workflow pins. At this read, #36 pins M6/M7/M8 to the exact current #38/#39/#40 heads, but M1 remains pinned to `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` while current #43 is `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; the #55 native-Read contract also remains unresolved. Do not repin or merge M9 until owners confirm these boundaries and exact-ref composition passes.

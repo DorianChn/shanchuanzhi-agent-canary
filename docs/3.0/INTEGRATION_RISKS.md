@@ -672,3 +672,7 @@ No production bypass, real disclosure, data loss, successful installation, or in
 ### M0 scheduler update — 2026-10-18 12:54 UTC
 
 #59 has a visible 12:49–13:09 UTC read-only assignment to M6 and M8 for path-level primary-owner/reviewer mapping across PRs #38/#39/#40. The assigned comparison must state M9's exact consuming SHAs (`#38 c1fdf3c`, `#39 cf4b70f`, `#40 c1ff677`) and identify any missing M6/M7 confirmation. No result is visible yet and private execution is UNKNOWN; keep #59 OPEN/P1. M1 #51 and M3 #55 are schedule-held while this two-lane window runs. No install, VM, VMware, or real-model resource is reserved.
+
+### M0 #59 patch-level cross-check — 2026-10-18 12:59 UTC
+
+Paginated current-head patches confirm that #38/#39/#40 overlap on the Hook wrapper and two tests, and that each PR alters the M1-owned `test/agent-hook.test.ts`. M1 review is required for the shared test and Hook semantics; M6 owns the E4 test contract; M7 owns packaging/lifecycle behavior; M8's fixture/docs/consumer changes require the relevant owner review. `package.json` fields and the shared `.gitattributes` purpose still need named owner confirmation. M9 pins #38/#39/#40 exactly but has a stale M1 pin (`b1d7423...` vs current #43 `9ef3dc2...`). Keep #59 OPEN/P1 pending the owner map and confirmations; no source/test changes were made by M0.
