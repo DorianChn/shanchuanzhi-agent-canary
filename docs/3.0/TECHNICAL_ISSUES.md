@@ -991,3 +991,9 @@ The same test passed again on docs-only head `ef2a4e754c6f65f7f2b66226fb2efd4ba4
 It passed again on docs-only head `ba41be50d59f696e15e25bd97513af1d70383689` (CI `39063679149` 9/9 including package-smoke; coordination `39063679146` 1/1). Consecutive passes do not close #51 or explain the earlier `aecac2d` failure. Issue #51 follow-up: `6239866305`.
 
 On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI `39065088510` failed the same Ubuntu Node 22 test 163 again, this time with worker 1 exhausting 500 `STATE_STORE_BUSY` retries; five matrix jobs were cancelled and package-smoke skipped. Coordination run `39065088498` passed 1/1. The test passed on the preceding head `ba41be5` with no source/test diff. This is a repeated intermittent symptom with different worker IDs, not an identified lock-lifecycle cause or evidence of data loss. Issue #51 follow-up: `6240121065`.
+
+## M4 desktop security-center CI gate — 2026-10-18 00:49 UTC
+
+- **P1 #60 — M4 / PR #34:** unchanged OPEN/Draft head `fbf20907c6accffc37246eddf04f8599060d99ea` has exact-head CI run `38698635434` failed on Ubuntu Node 20, macOS Node 20/22, and Windows Node 20/22; package-smoke was skipped. Ubuntu Node 22, Docker, and sponsor smoke passed. No root cause is attributed from the job summary; failures may include shared/inherited test behavior and must be diagnosed from evidence.
+- M4 owns its desktop/security-center paths; M1 owns canonical `test/agent-hook.test.ts` and the separate #51 retry diagnosis. PR #34 changes the shared Hook path, so M1 disposition remains required by #56. No M0 module source/test edits.
+- Acceptance: exact M4 path/branch and failure diagnosis; focused console/security-center tests; green exact-head CI including package-smoke; preserve assertions and unsupported/unknown behavior. Keep PR #34 Draft until ownership and evidence are reviewable. No security incident is asserted.

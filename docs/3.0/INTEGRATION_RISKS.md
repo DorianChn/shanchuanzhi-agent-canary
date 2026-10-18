@@ -467,3 +467,11 @@ This snapshot uses exact PR/issue and inspected worktree evidence through the 14
 | Shared Hook test (#56) | P2 / M1 and consuming modules | M1/M3 test blobs encode different unpinned-Read behavior; no tests were removed or weakened. | M1 canonical disposition and owner-approved adapters; keep PR #30 Draft pending its shared-path scope. |
 
 At the 14:20 UTC scheduler readback, no owner-confirmed task or exclusive VMware/real-model/installer reservation was visible. PR #24 remains OPEN/Draft and unchanged. M0 PR #30 head d341932c3cfb589b3fe3ed6cb5ae3c761001f8e7 passed 10/10 exact-head checks; those checks do not close any product/host/installer/E4 gate.
+
+## M4 desktop security-center CI risk — 2026-10-18 00:49 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| M4 PR #34 exact-head CI (#60) | P1 / M4; M1 for canonical Hook-test semantics | Unchanged head `fbf2090` has failed Ubuntu Node 20, macOS Node 20/22, and Windows Node 20/22 checks in run `38698635434`; package-smoke was skipped. Ubuntu Node 22, Docker, and sponsor smoke passed. Root cause is UNKNOWN; no product/security incident is inferred. | M4 supplies exact worktree, failure diagnosis, focused console tests, and green exact-head CI incl. package-smoke; M1 disposition for shared `test/agent-hook.test.ts` is required by #56. Keep PR #34 Draft. |
+
+Do not conflate this CI gate with M1 quarantine retry diagnosis #51; preserve all assertions and unsupported/unknown states.
