@@ -3187,3 +3187,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - Public receipts: #52 comment 6251792957, #53 comment 6251793240, scheduler #29 comment 6251793555. M2 continues the OBSERVE symlink/junction alias boundary. M7 continues packaged-hook log safety and release evidence, with no install/VM/clean-VM claim.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at 8cf0243cd97659a020c6a697b17c1443f3400de0. PR #37/#39 remain OPEN/Draft at 9db59ed8f2deae905edcb2179982f8bcb594167c / cf4b70f5130175582fffdfc65bd7c6847450867b.
 - A fresh quota read and PR/ref/scope review are required before the next docs push, no earlier than 15:44:26 UTC. If quota falls below 5% or becomes unreadable, pause all active work.
+
+
+## M0 worktree isolation readback — 2026-10-18 15:42 UTC
+
+- The shared repository worktree registry contains separate clean M0, M1, M5, M8, and M9 worktrees. M0 is ahead of its remote by five documentation-only commits; no module worktree has local changes visible in this registry.
+- M2, M3, M4, M6, and M7 do not appear in this shared worktree registry. Their public PR refs are distinct (M3 #33, M4 #34, M2 #37, M6 #38, M7 #39, M8 #40, M1 #43), which confirms separate GitHub branch heads but does not prove local worktree separation in their own contexts.
+- M0 did not create or check out module branches. Private session and worktree state remains UNKNOWN; do not claim the all-module worktree acceptance criterion is verified until those contexts expose evidence.
