@@ -662,3 +662,9 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | Packaged Hook data disclosure (#53) | P0 / M7, M8, M9 | M7's checkpoint ended without current Setup.exe/manifest/extracted-Hook evidence; M7 is paused by schedule, private state UNKNOWN. | Keep OPEN/P0/NOT_VERIFIED; require source-bound build/hash/harness chain; no install or VM claim. |
 | Unpinned native Read contract (#55) | P1 / M3 behavior, M1 contract, M9 | M3 is active on PR #33 to deny unpinned native Read with the canonical reason and preserve a supported-capability positive control. | Keep OPEN until M3 exact-head evidence passes and M9 consumes the reviewed SHA; M3 does not edit M9 workflow or M1 shared Hook tests. |
 | Quarantine retry exhaustion (#51) | P1 / M1 store | M1 is active comparing M0 exact-head failure 39124717837 with pass 39126103158; trigger remains UNKNOWN and no data loss/corruption is established. | Preserve assertions, lock/fail-closed behavior, and retry cap; require bounded cause/diagnostic or precise blocker. |
+
+## M0 #51 CI confirmation — 2026-10-18 12:32 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M0 CI coordination | After failure on docs-only M0 head a1b0f8d (run 39124717837), two consecutive docs-only exact heads 2566220 and b7b6e14 passed 9/9, including the Ubuntu Node22 state-store test. Source/test did not change. | Trigger remains UNKNOWN despite passing reruns. Keep OPEN/P1 for M1 bounded diagnosis or blocker; preserve all assertions, production lock/fail-closed behavior, and retry cap. No data loss/corruption is established. |

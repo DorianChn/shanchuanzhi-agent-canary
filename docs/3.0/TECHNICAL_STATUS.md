@@ -3055,3 +3055,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 - No VMware, installation, or real-model resource is reserved. #52/#53 remain OPEN/P0/NOT_VERIFIED; #51/#55 remain OPEN/P1 until owner evidence and exact-head checks pass.
 - M0 docs-only commit b7b6e14 is on the existing branch and exact PR #30 head. AC3 coordination run 39127514323 passed; product CI run 39127514327 is in progress. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
 - M0 last verified PR-head update was 12:29:48 UTC; next M0 push is no earlier than 12:49:48 UTC after fresh quota/ref/scope preflight. No module source/tests, main, merge, or Release changed.
+
+## M0 scheduler checkpoint — 2026-10-18 12:32 UTC (quota read 12:32:47)
+
+- Usage read 64% five-hour / 94% weekly. M0 PR #30 exact head b7b6e14 passes its current product CI 9/9 (run 39127514327); AC3 coordination run 39127514323 passes. M0 changed only coordination docs.
+- M0's exact-head failure on a1b0f8d run 39124717837 is followed by 9/9 passes on docs-only heads 2566220 and b7b6e14 without changing the state-store source/test. Record as intermittent with UNKNOWN trigger; #51 remains OPEN/P1. Issue updates: #51 6249959802, #29 6249960099.
+- M1 #51 and M3 #55 are the only active module lanes through 12:49. No new visible PR-head or issue result since assignment; private activity remains UNKNOWN. M2 #52 and M7 #53 are paused with work preserved; both P0 risks remain OPEN/NOT_VERIFIED.
+- M0 last verified PR-head update was 12:29:48 UTC; next M0 push is no earlier than 12:49:48 UTC after fresh quota/ref/scope checks. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- No module source/tests, main, merge, or Release changed.
