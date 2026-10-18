@@ -3207,3 +3207,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - Exactly two active lanes are scheduled for 16:00–16:20 UTC: M2 (#52) and M7 (#53). Public resume receipts are #52 6252001481, #53 6252001757, and scheduler #29 6252002030. No VM, VMware, installer, or real-model resource is reserved.
 - M2 is limited to host-path/adapter evidence and must not edit M1/M5 files. M7 is limited to source-bound package and extracted-harness evidence; no install/VM claim.
 - PR #37/#39 remained at 9db59ed8f2deae905edcb2179982f8bcb594167c / cf4b70f5130175582fffdfc65bd7c6847450867b at the slot start. Next shared push is no earlier than 16:05:30 UTC and requires fresh preflight.
+
+## M0 second batch verification — 2026-10-18 16:07 UTC
+
+- PR #30 exact head d88cdff6c43b3748f1f14080f3f03a153932ab13 passed product CI run 39143446761 at 16:07:33 UTC and coordination run 39143446779 at 16:05:58 UTC.
+- The published batch remains limited to the three M0 coordination documents. PR #24 remains unchanged OPEN/Draft.
+- The next M0 push is no earlier than 16:25:44 UTC, after fresh Usage, PR/ref, and docs-only scope checks.

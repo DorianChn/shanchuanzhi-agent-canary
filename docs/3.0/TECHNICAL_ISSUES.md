@@ -1336,3 +1336,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - M2 #52 and M7 #53 were scheduled as the only active lanes for 16:00–16:20 UTC. Receipts: #52 comment 6252001481, #53 comment 6252001757, scheduler #29 comment 6252002030.
 - M2 scope remains host-path/adapter evidence; M5 owns policy implementation and M1 owns contract review. M7 scope remains source-bound packaged-hook evidence, with no install/VM claim.
 - Shared push is no earlier than 16:05:30 UTC after fresh quota, ref, and scope checks. PR #24 remains unchanged; P0 issues remain OPEN/NOT_VERIFIED.
+
+## M0 second batch exact-head CI — 2026-10-18 16:07 UTC
+
+- PR #30 remains OPEN/Draft at head d88cdff6c43b3748f1f14080f3f03a153932ab13, updated at 16:05:44 UTC.
+- Exact-head product CI run 39143446761 passed at 16:07:33 UTC; coordination run 39143446779 passed at 16:05:58 UTC.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
