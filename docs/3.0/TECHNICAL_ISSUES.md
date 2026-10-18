@@ -1304,3 +1304,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - The 15:19:57 pre-push Usage read failed; current quota is UNKNOWN. Last confirmed at 15:17:52 was 87% five-hour / 80% weekly. The scheduled push was held and M2/M7 were paused. Hold receipts: #52 6251606257, #53 6251606474, scheduler #29 6251606752.
 - Exact ref/scope preflight passed: PR #24 unchanged at 62496d4020bd90ba2eede49b2e80a2bbebb036b4; PR #30 remote remains e471b807d7f178944142dc07d80c4e97c772a889; PR #37/#39 remain 9db59ed / cf4b70f. M0 has six documentation-only commits queued locally; no push was made.
+
+## M0 delayed docs batch published — 2026-10-18 15:24 UTC
+
+- The delayed documentation-only batch was pushed at 15:24:26 UTC to PR #30, head 8cf0243cd97659a020c6a697b17c1443f3400de0. The scoped diff is limited to TECHNICAL_ISSUES.md and TECHNICAL_STATUS.md.
+- Immediate check: product workflow 39140339464 was pending; ownership-contract workflow 39140339460 passed 1/1. PR #24 remains unchanged OPEN/Draft; PR #37/#39 remain 9db59ed/cf4b70f. M2/M7 are assigned through 15:44; next push no earlier than 15:44:26 UTC after fresh preflight.

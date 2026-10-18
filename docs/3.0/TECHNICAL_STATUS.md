@@ -3166,3 +3166,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 
 - The scheduled pre-push Usage read failed at 15:19:57 UTC. Quota is UNKNOWN; last confirmed 15:17:52 was 87% five-hour / 80% weekly. M2/M7 were paused and the push was held. Receipts: #52 6251606257, #53 6251606474, scheduler #29 6251606752.
 - Read-only preflight confirmed PR #24 unchanged OPEN/Draft; PR #30 remains OPEN/Draft at published head e471b807d7f178944142dc07d80c4e97c772a889; PR #37 remains at 9db59ed; PR #39 at cf4b70f. Six M0 docs-only commits are preserved locally, with no push.
+
+## M0 delayed docs batch published — 2026-10-18 15:24 UTC
+
+- M0 pushed documentation-only commit stack through 8cf0243cd97659a020c6a697b17c1443f3400de0 to existing Draft PR #30 at 15:24:26 UTC; exact remote readback matched and the local worktree is clean.
+- Product run 39140339464 was still pending at the immediate check; coordination run 39140339460 passed 1/1. This is M0 documentation CI, not a module acceptance claim.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. M2/M7 are the only assigned lanes through 15:44 UTC; next shared push no earlier than 15:44:26 UTC after fresh quota/ref/scope preflight.
