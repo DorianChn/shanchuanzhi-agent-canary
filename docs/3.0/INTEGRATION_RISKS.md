@@ -668,3 +668,7 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | Risk | Priority / owners | Current evidence and status | Gate |
 | --- | --- | --- | --- |
 | Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M0 CI coordination | After failure on docs-only M0 head a1b0f8d (run 39124717837), two consecutive docs-only exact heads 2566220 and b7b6e14 passed 9/9, including the Ubuntu Node22 state-store test. Source/test did not change. | Trigger remains UNKNOWN despite passing reruns. Keep OPEN/P1 for M1 bounded diagnosis or blocker; preserve all assertions, production lock/fail-closed behavior, and retry cap. No data loss/corruption is established. |
+
+### M0 scheduler update — 2026-10-18 12:54 UTC
+
+#59 has a visible 12:49–13:09 UTC read-only assignment to M6 and M8 for path-level primary-owner/reviewer mapping across PRs #38/#39/#40. The assigned comparison must state M9's exact consuming SHAs (`#38 c1fdf3c`, `#39 cf4b70f`, `#40 c1ff677`) and identify any missing M6/M7 confirmation. No result is visible yet and private execution is UNKNOWN; keep #59 OPEN/P1. M1 #51 and M3 #55 are schedule-held while this two-lane window runs. No install, VM, VMware, or real-model resource is reserved.
