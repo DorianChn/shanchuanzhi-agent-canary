@@ -3087,3 +3087,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 - #52/#53 remain OPEN/P0/NOT_VERIFIED until their respective first-party protected-route evidence and hash-bound package chain are visible. #59 remains OPEN/P1 pending named M6/M7/M1 confirmations. #61 tracks M9's stale M1 pin; #55 remains the M3 native Read behavior gate.
 - PR #30's last remote exact head is `fef86635dbbf26004cac53265622b7e07d218517` with product CI 9/9 and coordination CI 1/1. PR #24 remains unchanged OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. Three local commits ahead of PR #30 touch coordination docs only.
 - Next shared push is no earlier than 13:14:54 UTC, after fresh quota, PR/ref, and path-scope preflight.
+
+## M0 quota recovery and lane checkpoint — 2026-10-18 13:30 UTC
+
+- Usage was unreadable after a 13:19:55 browser timeout, so M2/M7 and pushes were placed on hold. After refreshing the same open Usage tab, a successful read at 13:29:42 and a confirming read at 13:30:19 showed 5-hour remaining 92% and weekly remaining 81%; the five-hour window resets in about 3h13m. Browser MCP feedback was logged; no private quota is inferred between successful reads.
+- M2 #52 and M7 #53 resumed under a new explicit 13:30–13:50 assignment (receipts `6250497513`, `6250497802`; scheduler #29 `6250498030`). Pause receipts during the transient read failure: #52 `6250412745`, #53 `6250412964`, scheduler #29 `6250413183`. No code/test push was made during the hold. M1/M3/M6/M8 remain paused.
+- Seven earlier scheduler comments were found to contain a PowerShell placeholder due argument-expansion error and were repaired in place by their existing comment IDs; direct readback confirms the corrected bodies. No duplicate comments were created for those corrections.
+- PR #30 remains OPEN/Draft at `f2a152967b3b8349e33aeb865f562b8926e1b2e2`; exact-head product run `39130783784` and coordination run `39130783785` both succeed. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- #52/#53 remain OPEN/P0/NOT_VERIFIED. M9 exact-ref gate #61 and M3 behavior gate #55 remain OPEN/P1. Next shared push is no earlier than 13:35:54 UTC after fresh quota/ref/scope preflight.
