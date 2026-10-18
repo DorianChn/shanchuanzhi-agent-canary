@@ -1118,3 +1118,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - #52: no M2 host-path response or PR #37 head change appeared by 06:00. M2 is paused by scheduling only with its work preserved; M1 now owns the 06:00–06:20 contract/host-boundary trace. #53: M7 continues through 06:20 and retains the exclusive installer/VM slot. Issues #29/#52/#53 record the schedule in comments `6246347465`, `6246347774`, and `6246348058`.
 - PR #30 `158f3fa` exact-head checks pass 10/10; PR #24 remains unchanged OPEN/Draft. Usage last read at 64% five-hour / 94% weekly. Last M0 push was 05:40; next is no earlier than 06:00 after fresh quota and scope preflight. Queue receipts are not evidence of task start.
+
+## M0 scheduler checkpoint — 2026-10-18 06:20 UTC
+
+- #52: M1's registered worktree remained clean at `9ef3dc2` through 06:19, with no owner host-path result. M1 is paused by scheduling only, branch/work preserved. M2 is reactivated through 06:40 to add the smallest first-party native file-read callsite through the existing M1 contract, or name the exact missing owner/path by 06:25.
+- #53: M7 continues through 06:40 and retains the exclusive installer/VM slot. A candidate PR #24 Community ZIP was verified at 348,655 bytes / SHA-256 `011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed`, matching `DELIVERY_MANIFEST.json`; ZIP listing includes `dist/agent-hook.js` and `src/agent-hook.ts`, not `claude-native-hook.mjs`. M7 must confirm source suitability and inspect the actual built owned-file manifest/extracted package. Keep OPEN/P0 until then.
+- Issues #29/#52/#53 record this schedule in comments `6246520615`, `6246520938`, and `6246521264`. Queue receipts do not establish work start. PR #30 `6b5f356` exact-head checks pass 10/10; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly; last M0 push 06:00, next no earlier than 06:20.

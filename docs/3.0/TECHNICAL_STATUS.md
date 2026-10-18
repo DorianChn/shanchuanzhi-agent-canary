@@ -2823,3 +2823,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - No new M2/M7 head or owner evidence was visible. Active lanes are M1 on P0 #52 and M7 on P0 #53 through 06:20. M2 is paused by scheduling only; preserve its branch and work. M7 alone owns the installer/VM resource; M1 has no exclusive test slot.
 - Queue messages `01a14d99-4801-7960-b83e-f04feaaecc24`, `01a14d99-4a3c-75a1-9a14-db7d70635502`, and `01a14d99-4c73-7b81-a3f4-dbb2725663b6` record delivery to M2/M1/M7. Issue comments `6246347465`, `6246347774`, and `6246348058` record the 06:00 schedule.
 - PR #30 head `158f3fabbc2c6eff84b6088480c836751ec9473a` has 10/10 exact-head checks passing; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly. Last M0 push 05:40; next no earlier than 06:00 UTC.
+
+## M0 scheduler checkpoint — 2026-10-18 06:20 UTC
+
+- M1 worktree remains clean at `9ef3dc2` with no #52 host-path result visible; M1 is paused by scheduling only and its work preserved. M2 is active through 06:40 on #52, with a 06:25 checkpoint for the first-party host callsite or exact missing owner/path.
+- M7 is active through 06:40 on #53 and exclusively owns the installer/VM slot. M0 verified the PR #24 baseline Community ZIP hash `011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed` against its delivery manifest; the archive contains `dist/agent-hook.js` and `src/agent-hook.ts`, not `claude-native-hook.mjs`. This source candidate is not by itself current PR #39 package acceptance.
+- Scheduler and P0 issue comments are `6246520615`, `6246520938`, and `6246521264`. PR #30 head `6b5f3568cf3dec8e7dbd4223dd0414f61d135228` has 10/10 checks passing; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly. Last M0 push 06:00, next no earlier than 06:20.
