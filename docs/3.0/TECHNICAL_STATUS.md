@@ -3289,3 +3289,15 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #37 remains 9db59ed8f2deae905edcb2179982f8bcb594167c; PR #39 remains cf4b70f5130175582fffdfc65bd7c6847450867b. PR #24 remains unchanged OPEN/Draft.
 - M9 and both P0 issues remain OPEN / NOT_VERIFIED. No VM, model, or installer resource is reserved.
 - M0 PR #30 next push gate: 17:30:01 UTC. Next module publish batch: 17:50:01 UTC, after slot results and fresh Usage/ref/scope checks.
+
+## M0 push correction — 2026-10-19 01:30 Asia/Shanghai
+
+- PR #30 docs-only head 8b635f0a6d9064ee93fa76023c3319301ee70798 was pushed at 17:30:33 UTC; fresh pre-push Usage was 76% five-hour / 78% weekly and PR #24 remained unchanged.
+- PR #30 remains OPEN/Draft. Product CI run 39149909813 is queued; coordination run 39149909796 is in progress.
+- Corrected the shared module batch gate to 17:50:33 UTC on #52/#53/#59/#29. Receipts: #52 6252943496, #53 6252943581, #59 6252943564, #29 6252943517.
+
+## M0 exact-head CI readback — 2026-10-19 01:32 Asia/Shanghai
+
+- PR #30 head 8b635f0a6d9064ee93fa76023c3319301ee70798 passed product CI run 39149909813 at 17:32:14 UTC and coordination run 39149909796 at 17:30:46 UTC.
+- At 17:32 UTC, PR #47 remained at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c and PR #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; no module source movement is visible. Private task activity is UNKNOWN.
+- The next shared push gate remains 17:50:33 UTC, subject to fresh Usage/ref/scope preflight.
