@@ -3387,3 +3387,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 - M0 PR #30 head c2a3f9c07cf77a48eb72e64a89ca66be79c67fd2 passed CI. PR #24 remains unchanged OPEN/Draft.
 - P0 #52/#53 and M9 remain OPEN / NOT_VERIFIED. No VM/model/installer resource is reserved.
 - M0 next push gate 18:51:47 UTC; next module publish batch no earlier than 19:11:47 UTC.
+
+## M0 lane rotation and publish — 2026-10-19 03:05 Asia/Shanghai
+
+- At 19:05 UTC, M5/#52 and M8/#53/#59 ended their 18:45–19:05 slot with no public PR movement or owner evidence. Shared M5/M8 worktrees were clean at PR #47 head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c and PR #40 head c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; private activity is UNKNOWN. They are paused, preserving work; #52/#53 remain P0 NOT_VERIFIED and #59 stays open.
+- M1/#61 and M3/#55 are assigned 19:05–19:25 UTC on existing PR #43/#33. M1 must owner-confirm the exact Hook/Gateway source SHA, separate from owner-review SHA f14aab781c62db60ac241d2114f543f6cac223ae. M3 must deny unpinned native Read with native_file_execution_not_pinned, retain a supported-capability positive control and all M1 assertions.
+- Receipts: scheduler #29 6253915288; #52 6253915643; #53 6253915958; #59 6253916434; M3 #55 6253916759; M1 #61 6253917027.
+- Fresh Usage at 19:02 UTC was 90% five-hour / 75% weekly. PR #30 docs-only head 382d7b8b0a8c88e2d3b47b770977f78b3c936be5 was pushed at 18:52:40 UTC; product CI run 39156176855 and coordination run 39156176856 passed. PR #24 remains unchanged OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Next shared push/module batch is no earlier than 19:12:40 UTC, subject to fresh Usage/ref/scope checks. No merge or Release.

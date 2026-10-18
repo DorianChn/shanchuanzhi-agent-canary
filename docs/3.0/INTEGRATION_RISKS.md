@@ -780,3 +780,9 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M2/M7 produced no public host/package evidence in their latest slots; private state is UNKNOWN.
 - M5/M8 are assigned bounded owner-evidence tasks on their existing branches. The P0 acceptance remains unverified until real host-consumer/protected-open evidence (#52) and source-bound package/extracted-Hook evidence (#53) exist.
 - M9 exact-ref composition, packaging ownership #59, and independent E4 #57 remain open; no release readiness is claimed.
+
+## M0 evidence checkpoint — 2026-10-19 03:05 Asia/Shanghai
+
+- M5/M8 produced no public evidence in the 18:45–19:05 window; their shared worktrees remain clean at the recorded PR heads and private activity is UNKNOWN. P0 host-consumption and packaged-hook-log gates #52/#53 remain NOT_VERIFIED.
+- M1/M3 are assigned for 19:05–19:25 to resolve the exact M9 source-review ref and unpinned-native-Read contract. This does not authorize M9 pin refresh until the M1 source SHA is owner-confirmed and the M3 behavior/tests are verified.
+- M9 composition remains blocked by #55/#61 plus independent E4, packaging ownership, and exact-head CI. No release readiness is claimed.

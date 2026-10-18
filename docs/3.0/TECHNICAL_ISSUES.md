@@ -1404,3 +1404,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#53 P0 / #59 P1:** M7's 18:25–18:45 window ended without package evidence; private state UNKNOWN. M8 resumes through 19:05 on PR #40 to report exact M8 Hook/logging blob IDs and shipment boundary; M7 owns packaging/windows/*.
 - Preserve all hard-deny, zero-callback, and fixed-field logging assertions. Source CI does not equal product-host or package extraction acceptance.
 - Receipts: #52 6253710724 / 6253710675; #53 6253710765 / 6253710676; #59 6253710661; #29 6253710687.
+
+## M0 lane rotation — 2026-10-19 03:05 Asia/Shanghai
+
+- **#52 P0 / M5:** 18:45–19:05 slot ended without a new public head or owner evidence; the shared M5 worktree is clean at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. Private activity is UNKNOWN; M5 is paused and the issue remains NOT_VERIFIED.
+- **#53 P0 / M8 and #59 P1:** 18:45–19:05 slot ended without M8 evidence; the shared M8 worktree is clean at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Private activity is UNKNOWN; M8 is paused and M7 retains packaging/windows/* ownership.
+- **#55 P1 / M3:** assigned 19:05–19:25 on existing PR #33 to deny unpinned native Read with native_file_execution_not_pinned, retain the supported-capability positive control and M1 assertions, and report exact SHA/tests or blocker. M3 may not edit M1 files.
+- **#61 P1 / M1:** assigned 19:05–19:25 on existing PR #43 to owner-confirm the exact M9-consumed Hook/Gateway source SHA, distinct from owner-review SHA f14aab781c62db60ac241d2114f543f6cac223ae.
+- Module publish remains held until 19:12:40 UTC, after fresh quota/ref/scope verification. Receipts: #29 6253915288; #52 6253915643; #53 6253915958; #59 6253916434; #55 6253916759; #61 6253917027.
