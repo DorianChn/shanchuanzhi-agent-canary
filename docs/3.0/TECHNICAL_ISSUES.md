@@ -1412,3 +1412,7 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#55 P1 / M3:** assigned 19:05–19:25 on existing PR #33 to deny unpinned native Read with native_file_execution_not_pinned, retain the supported-capability positive control and M1 assertions, and report exact SHA/tests or blocker. M3 may not edit M1 files.
 - **#61 P1 / M1:** assigned 19:05–19:25 on existing PR #43 to owner-confirm the exact M9-consumed Hook/Gateway source SHA, distinct from owner-review SHA f14aab781c62db60ac241d2114f543f6cac223ae.
 - Module publish remains held until 19:12:40 UTC, after fresh quota/ref/scope verification. Receipts: #29 6253915288; #52 6253915643; #53 6253915958; #59 6253916434; #55 6253916759; #61 6253917027.
+
+### Shared publish gate correction — 2026-10-19 03:13 Asia/Shanghai
+
+Actual PR #30 push time was 19:13:05 UTC; next shared push/module batch is no earlier than 19:33:05 UTC. This supersedes the estimated 19:12:40 gate. M1/M3 may continue locally in their assigned slot; recheck quota/ref/scope before publishing.
