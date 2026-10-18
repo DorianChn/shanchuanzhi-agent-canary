@@ -3354,3 +3354,14 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #30 head 16cf002d997abe8a3b8d0f26690f8577fff23b57 passed product CI run 39153000598 at 18:12:53 UTC and coordination run 39153000580 at 18:11:24 UTC.
 - At 18:13 UTC, M4 PR #34 remained fbf20907c6accffc37246eddf04f8599060d99ea and M6 PR #38 remained c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; no source movement or owner result is visible yet.
 - PR #24 remains unchanged; M4/M6 slot ends 18:25 UTC. Next shared push gate remains 18:31:09 UTC.
+
+## M0 lane rotation — 2026-10-19 02:25 Asia/Shanghai
+
+- Usage read at 18:25 UTC: 76% five-hour / 78% weekly; above the 5% stop threshold.
+- M4/#60 and M6/#57 ended 18:05–18:25 without public PR-head movement or owner evidence. Private activity is UNKNOWN; both are paused with work preserved.
+- M2/#52 and M7/#53/#59 are the only lanes for 18:25–18:45 UTC on existing PR #37/#39. M2 must identify a real first-party host consumer or name the exact host dependency; M7 must provide source-bound package/extracted-Hook evidence or name the missing artifact. Starts remain unverified.
+- Receipts: #60 6253504583, #57 6253504576, #52 6253504597, #53 6253504677, #59 6253504639, scheduler #29 6253504577.
+- PR #34 remains fbf20907c6accffc37246eddf04f8599060d99ea; PR #38 remains c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9. No M4/M6 head movement is visible.
+- P0 #52/#53 and M9 integration remain OPEN / NOT_VERIFIED. No VM, model, or installer test is scheduled.
+- M0 PR #30 head 16cf002d997abe8a3b8d0f26690f8577fff23b57 passed product and coordination CI. PR #24 remains unchanged OPEN/Draft.
+- M0 next push gate is 18:31:09 UTC; next module publish is no earlier than 18:51:09 UTC.

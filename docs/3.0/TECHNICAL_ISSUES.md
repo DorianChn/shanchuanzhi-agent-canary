@@ -1391,3 +1391,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#60 P1 / M4:** 18:05–18:25 slot assigned on PR #34. Preserve the M1-owned canonical shared test and 500-retry bound; report only M4-owned progress or the #51 dependency.
 - **#57 P1 / M6:** 18:05–18:25 slot assigned on PR #38 to identify a source-bound product E4 artifact and independent run path, or name the missing owner/input. Do not claim E4 PASS from a fixture.
 - Receipts: #55 6253300584, #61 6253300586, #60 6253300588, #57 6253300658, #29 6253300600. No issue was closed.
+
+## M0 lane rotation — 2026-10-19 02:25 Asia/Shanghai
+
+- **#60 / M4 and #57 / M6:** 18:05–18:25 ended without public PR movement or evidence; private state UNKNOWN. Both paused with work preserved.
+- **#52 P0 / M2:** 18:25–18:45 slot assigned on PR #37 to identify a real first-party consumer of the M1 held-object route or record the exact host/dependency gap. Do not invent a mock or edit M1/M5 paths.
+- **#53 P0 / #59 P1 / M7:** 18:25–18:45 slot assigned on PR #39 for source-bound package hashes, extracted-Hook comparison/harness, or a concrete artifact blocker. No VM/install claim; preserve logging assertions.
+- Receipts: #60 6253504583, #57 6253504576, #52 6253504597, #53 6253504677, #59 6253504639, #29 6253504577. No issue closed.

@@ -769,3 +769,9 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M4 #60 remains open on one actual retry-exhaustion failure owned diagnostically by M1/#51; M4 may not edit the canonical M1 test or weaken retries.
 - M6 #57 lacks independent product E4 provenance and result; M6 is tasked to identify artifact/runner or block precisely.
 - P0 host and package evidence (#52/#53) and packaging owner signoff (#59) remain separate open gates.
+
+## M0 P0 checkpoint — 2026-10-19 02:25 Asia/Shanghai
+
+- M4/M6 slots ended without public evidence; M4 exact-head CI and M6 independent product E4 remain open. Private task status is UNKNOWN.
+- M2/M7 resume for bounded #52/#53 evidence. No product host consumer or actual extracted package result is established.
+- M9 exact-ref composition remains blocked on #55/#61 plus packaging-owner and independent E4 gates. No release readiness is claimed.
