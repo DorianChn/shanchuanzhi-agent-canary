@@ -559,3 +559,20 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M4 CI, M9 | Historical 4-process × 12-call test exhausted 500 retries on Ubuntu Node 20; current trigger remains UNKNOWN. | M1 supplies the bounded diagnostic/result while preserving all assertions, locks, fail-closed behavior, and retry cap. |
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
+
+## M0 08:20 UTC integration gate checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 composition | No new public result during M2's 08:00–08:20 lane; PR #37 remains `9db59ed`. Synthetic adapter checks do not prove first-party host enforcement. | Keep OPEN / NOT_VERIFIED; require exact host callsite and deny-before-callback proof or named missing owner/path. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package evidence, M8 source/logging, M9 acceptance | No new package result during M7's 08:00–08:20 lane; PR #39 remains `cf4b70f`. Current package/manifest/extracted-Hook chain remains unverified. | Keep OPEN / NOT_VERIFIED; require current hash-bound artifact evidence or a precise blocker. No daily-host install. |
+| Unpinned native Hook read (#55) | P1 / M3 behavior, M1 contract, M9 composition | PR #33 remains `be38802`; required unpinned normal Read denial and supported positive-control result are not newly verified. | M3 implements the exact denial and preserves assertions; M9 consumes the reviewed SHA and reruns unchanged composition. |
+| M6–M8 Windows/E4 ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | Exact path ownership remains unresolved; PR #38 remains `c1fdf3c`. | M6 confirms per-path primary owner/reviewer and M9 exact-SHA plan; preserve M7 installer and M1 Hook boundaries. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
+
+## M0 quota-gate recovery — 2026-10-18 08:27 UTC
+
+- The 08:25 quota read timed out twice and screenshot fallback was rejected, so the planned M0 push was held and M3/M6 were sent emergency stop messages. The existing Usage tab recovered at 08:27 UTC and showed 64% five-hour / 94% weekly; the remaining 08:20–08:40 M3/M6 slot was resumed. Queue delivery is not proof of work start.
+- Pause receipts: M3 `01a14e1f-2393-7910-a54b-094b8e44bb9d`, M6 `01a14e1f-25fc-7891-a6ea-8ed8959d98d9`. Resume receipts: M3 `01a14e20-16a8-7290-a844-fb7671c3e59b`, M6 `01a14e20-18e8-7a13-948c-086bc64ac4ff`.
+- No module source or PR #24 change occurred during the gate. The M0 docs batch remains local pending fresh push preflight; last M0 push is 08:05 UTC.

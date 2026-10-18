@@ -2882,3 +2882,19 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Both P0s #52 and #53 remain OPEN / NOT_VERIFIED; no production bypass or real disclosure is claimed. #59 remains OPEN/P1 with no exact M6/M7/M8/M9 ownership acceptance. M9 PR #36 remains `de3799aae540f58173acec4ab3f7a1fe98593aa7`; its recorded composition failure is not exact-current-M1 evidence because its M1 ref is stale.
 - Scheduler and P0 assignment comments: #29 `6247419174`, #52 `6247418631`, #53 `6247418900`. Queue messages for M1/M8 pause and M2/M7 activation are `01a14e08-c70b-7d62-bf9f-27e0befe9a94`, `01a14e08-c965-70b0-8774-8797f5f45d67`, `01a14e08-cbb5-74a3-b076-69a9bfc79695`, and `01a14e08-cdf4-7380-91b6-dcc3250e416b`; delivery is not proof of work start.
 - Last M0 push was 07:45 UTC. The 08:00 checkpoint is included in the next 08:05-or-later batch after fresh quota, PR #24/#30, ref, and scope preflight. After that batch, next publication is no earlier than 08:25 UTC. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 scheduler checkpoint — 2026-10-18 08:20 UTC (quota read 08:18)
+
+- Usage Overview recovered after a temporary browser read timeout and was readable at 64% five-hour / 94% weekly; stop threshold is not triggered. Existing tab remains open.
+- M2 #52 and M7 #53 ended their 08:00–08:20 lane without a visible new PR head, issue result, or package evidence. Both are paused by schedule with work preserved; public silence does not establish private-session activity. P0s remain OPEN / NOT_VERIFIED.
+- M3 #55 and M6 #59 are the only active module lanes through 08:40. M3 owns the minimal unpinned-native-Read denial with `native_file_execution_not_pinned`, preserving its positive control, assertions, and M1-owned shared files. M6 owns the E4 path-owner/reviewer boundary and M9 consumption plan, plus any concrete M6-owned E4 semantic fix/test. No VMware, installer, or real-model resource is reserved.
+- Current relevant heads at this scheduling check: PR #33 `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`; #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`; #37 `9db59ed8f2deae905edcb2179982f8bcb594167c`; #39 `cf4b70f5130175582fffdfc65bd7c6847450867b`; #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`.
+- M0 PR #30 head `1554dc9e58bcf536c27da9c116e2036d316b5790` passed all 10 checks by 08:09. PR #24 was last read at 08:05 OPEN/Draft, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; M0 made no changes to it.
+- Issue checkpoints: #29 `6247575489`, #52 `6247573187`, #53 `6247573432`, #55 `6247573719`, #59 `6247574043`. Queue receipts for M2/M7 pause and M3/M6 activation are in #29 and prove delivery only.
+- Last M0 push was 08:05 UTC. This checkpoint is prepared for the next batch, no earlier than 08:25 UTC, after fresh quota and PR #24/#30/ref/scope preflight. No module source/tests, main, merge, or Release changed.
+
+## M0 quota-gate recovery — 2026-10-18 08:27 UTC
+
+- The 08:25 quota read timed out twice and screenshot fallback was rejected, so the planned M0 push was held and M3/M6 were sent emergency stop messages. The existing Usage tab recovered at 08:27 UTC and showed 64% five-hour / 94% weekly; the remaining 08:20–08:40 M3/M6 slot was resumed. Queue delivery is not proof of work start.
+- Pause receipts: M3 `01a14e1f-2393-7910-a54b-094b8e44bb9d`, M6 `01a14e1f-25fc-7891-a6ea-8ed8959d98d9`. Resume receipts: M3 `01a14e20-16a8-7290-a844-fb7671c3e59b`, M6 `01a14e20-18e8-7a13-948c-086bc64ac4ff`.
+- No module source or PR #24 change occurred during the gate. The M0 docs batch remains local pending fresh push preflight; last M0 push is 08:05 UTC.

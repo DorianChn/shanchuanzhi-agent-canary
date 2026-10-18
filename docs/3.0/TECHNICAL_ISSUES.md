@@ -1168,3 +1168,18 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#53 P0:** M7 is active 08:00–08:20 on existing PR #39 (`cf4b70f`). Require current hash-bound Setup.exe/source-build/manifest/extracted-Hook evidence or precise artifact blocker. No daily-host installation; no exclusive VMware/installer resource is reserved. Keep OPEN / NOT_VERIFIED. Assignment comment: `6247418900`.
 - **#59 P1:** M8's 07:40–08:00 owner-disposition lane ended without visible exact path acceptance or PR #40 result. Paused by schedule. No ownership transfer is inferred; M9 remains blocked on owner acceptance and exact reviewed refs. PR #40 remains `c1ff677`.
 - **M0/PR #30:** current head `513012f` is OPEN/Draft and all 10 exact-head checks passed; PR #24 is unchanged OPEN/Draft at `62496d4` / base `dc8d009`. Scheduler comment #29: `6247419174`. Only M2 and M7 are active this interval; queue receipts confirm delivery only.
+
+## M0 scheduler checkpoint — 2026-10-18 08:20 UTC
+
+- **#52 P0:** M2's 08:00–08:20 lane ended without visible new PR #37 head or #52 evidence; paused by schedule, work preserved. No real host callsite is verified; keep OPEN / NOT_VERIFIED. Checkpoint: `6247573187`.
+- **#53 P0:** M7's 08:00–08:20 lane ended without visible new PR #39 head or current package evidence; paused by schedule, work preserved. No current artifact chain or install pass is verified; keep OPEN / NOT_VERIFIED. Checkpoint: `6247573432`.
+- **#55 P1:** M3 active 08:20–08:40 on PR #33 (`be388029`). Implement the exact unpinned normal native Read denial reason, preserve the supported positive control and assertions, and avoid M1-owned shared files. Checkpoint: `6247573719`.
+- **#59 P1:** M6 active 08:20–08:40 on PR #38 (`c1fdf3c`). Confirm exact E4 path owners/reviewers and M9 consumption, and test/fix M6-owned E4 semantics when a concrete gap exists. No ownership transfer is inferred. Checkpoint: `6247574043`.
+- **#51 P1:** M1 remains paused; no new diagnostic is visible and historical trigger remains UNKNOWN.
+- **M0/PR #30:** head `1554dc9` has 10/10 checks passing. PR #24 last verified OPEN/Draft at head `62496d4`, base `dc8d009`; no M0 change. Scheduler #29 checkpoint: `6247575489`.
+
+## M0 quota-gate recovery — 2026-10-18 08:27 UTC
+
+- The 08:25 quota read timed out twice and screenshot fallback was rejected, so the planned M0 push was held and M3/M6 were sent emergency stop messages. The existing Usage tab recovered at 08:27 UTC and showed 64% five-hour / 94% weekly; the remaining 08:20–08:40 M3/M6 slot was resumed. Queue delivery is not proof of work start.
+- Pause receipts: M3 `01a14e1f-2393-7910-a54b-094b8e44bb9d`, M6 `01a14e1f-25fc-7891-a6ea-8ed8959d98d9`. Resume receipts: M3 `01a14e20-16a8-7290-a844-fb7671c3e59b`, M6 `01a14e20-18e8-7a13-948c-086bc64ac4ff`.
+- No module source or PR #24 change occurred during the gate. The M0 docs batch remains local pending fresh push preflight; last M0 push is 08:05 UTC.
