@@ -1384,3 +1384,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#52 P0 / M5 and M2:** the 17:25–17:45 M5/M8 slot ended without public evidence. Both M5 and M8 are paused with private status UNKNOWN; the required host and package evidence is still missing.
 - **#53 P0 / #59 P1:** no public M8 artifact/blob/ownership evidence appeared; M8 is paused with private status UNKNOWN. M7 retains packaging/windows/* ownership.
 - Latest receipts: #52 6253091378, #53 6253091373, #59 6253091368, #55 6253091370, #61 6253091372, #29 6253091353. No issue was closed.
+
+## M0 lane rotation — 2026-10-19 02:05 Asia/Shanghai
+
+- **#55/#61:** M1/M3 slot ended without public results or PR head movement; private state UNKNOWN. Both are paused. Keep native Read fail-closed and owner-reviewed exact-ref requirements.
+- **#60 P1 / M4:** 18:05–18:25 slot assigned on PR #34. Preserve the M1-owned canonical shared test and 500-retry bound; report only M4-owned progress or the #51 dependency.
+- **#57 P1 / M6:** 18:05–18:25 slot assigned on PR #38 to identify a source-bound product E4 artifact and independent run path, or name the missing owner/input. Do not claim E4 PASS from a fixture.
+- Receipts: #55 6253300584, #61 6253300586, #60 6253300588, #57 6253300658, #29 6253300600. No issue was closed.

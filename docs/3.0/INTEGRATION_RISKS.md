@@ -762,3 +762,10 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M9 remains BLOCKED / NOT_VERIFIED on #55 and #61: no M3 fix or M1 owner-confirmed exact source SHA is publicly available yet.
 - P0 host-path/held-object evidence (#52) and packaged-hook evidence (#53) remain missing after their scheduled M2/M5 and M7/M8 windows; private work is UNKNOWN.
 - M6 independent product E4 (#57), M6–M8 shared packaging signoff (#59), and M4 exact-head CI recovery (#60/#51) remain open. No security acceptance, release readiness, merge, or Release is claimed.
+
+## M0 integration checkpoint — 2026-10-19 02:05 Asia/Shanghai
+
+- M1/M3 produced no public results during their slot; M9 #36 still lacks current owner-confirmed exact pins and the M3 fail-closed fix. Private status UNKNOWN.
+- M4 #60 remains open on one actual retry-exhaustion failure owned diagnostically by M1/#51; M4 may not edit the canonical M1 test or weaken retries.
+- M6 #57 lacks independent product E4 provenance and result; M6 is tasked to identify artifact/runner or block precisely.
+- P0 host and package evidence (#52/#53) and packaging owner signoff (#59) remain separate open gates.

@@ -3318,3 +3318,26 @@ This is a readback of the current PR heads and their attached check-run summarie
 - M0 PR #30 head 8b635f0a6d9064ee93fa76023c3319301ee70798 passed CI run 39149909813 and coordination run 39149909796. PR #24 remains unchanged OPEN/Draft.
 - P0 #52/#53 remain OPEN / NOT_VERIFIED; no VM, model, or installer test is scheduled.
 - Current shared push at 17:30:33 UTC; M0 next gate is 17:50:33 UTC. Next module publish batch is no earlier than 18:10:33 UTC, after fresh Usage/ref/scope checks.
+
+## M0 push timing correction — 2026-10-19 01:51 Asia/Shanghai
+
+- PR #30 docs-only head d23b7fcc008e118d3663c358aee9ce21d7b64480 was pushed at 17:50:55 UTC. PR #30 remains OPEN/Draft; product CI run 39151455757 is queued and coordination run 39151455666 is in progress.
+- PR #24 remains unchanged OPEN/Draft.
+- The next shared publish gate is 18:10:55 UTC, after the actual 17:50:55 push. Correction receipts: #55 6253151182, #61 6253151173, #29 6253151302.
+
+## M0 exact-head CI readback — 2026-10-19 01:52 Asia/Shanghai
+
+- PR #30 head d23b7fcc008e118d3663c358aee9ce21d7b64480 passed product CI run 39151455757 at 17:52:36 UTC and coordination run 39151455666 at 17:51:08 UTC.
+- At 17:52 UTC, PR #33 remained be3880298e1c6766024ecbce5f6dbc23c4d2daa1 and PR #43 remained 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. No public module change is visible; private activity remains UNKNOWN.
+- PR #24 remains unchanged OPEN/Draft. Next shared push gate is 18:10:55 UTC.
+
+## M0 lane rotation — 2026-10-19 02:05 Asia/Shanghai
+
+- Usage read at 18:05 UTC: 76% five-hour / 78% weekly; above the 5% stop threshold.
+- M1/#61 and M3/#55 ended the 17:45–18:05 slot without public PR-head movement or evidence; private worktree status remains UNKNOWN. Both are paused by schedule.
+- M4/#60 and M6/#57 are the only scheduled lanes for 18:05–18:25 UTC on existing PR #34/#38. M4 must preserve M1-owned tests and the retry bound; M6 must identify a source-bound product E4 artifact and an independent verification path or state the exact blocker. Starts remain unverified.
+- Receipts: #55 6253300584, #61 6253300586, #60 6253300588, #57 6253300658, scheduler #29 6253300600.
+- PR #34 remains fbf20907c6accffc37246eddf04f8599060d99ea; PR #38 remains c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9.
+- M9 remains blocked by #55/#61, packaging #59, and independent E4 #57. P0 #52/#53 remain OPEN / NOT_VERIFIED. No VM/model/installer resource is reserved.
+- PR #30 head d23b7fcc008e118d3663c358aee9ce21d7b64480 passed product and coordination CI. PR #24 remains unchanged OPEN/Draft.
+- Current shared push was 17:50:55 UTC; M0 next gate is 18:10:55 UTC. Next module batch is no earlier than 18:30:55 UTC.
