@@ -3155,3 +3155,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - The scoped Usage read failed at 15:14. Current quota is UNKNOWN; last confirmed at 15:10:49 UTC was 87% five-hour / 80% weekly.
 - M2 and M7 are paused with work preserved; the 15:19:44 push batch is held as well. No new tests, install, VM/VMware, or module task until a fresh read proves more than 5% remains and M0 issues another slot.
 - Hold receipts: #52 6251545266, #53 6251545494, scheduler #29 6251545748. M0 docs commits remain local and unpushed; PR #24 remains unchanged.
+
+## M0 quota hold and recovery — 2026-10-18 15:14–15:18 UTC
+
+- At 15:14 the scoped Usage read failed; last confirmed at 15:10:49 was 87% five-hour / 80% weekly. M2/M7 were paused with work preserved; hold receipts #52 6251545266, #53 6251545494, scheduler #29 6251545748.
+- A fresh scoped read recovered at 15:17:52 with 87% five-hour / 80% weekly. M2 (#52) and M7 (#53) resumed for 15:18–15:38; resume receipts #52 6251579559, #53 6251579849, scheduler #29 6251580063.
+- Browser Ctrl+R timed out and its landing state was left UNKNOWN; no repeat key was sent. The Usage page remained open and the scoped text read worked afterward. The next shared push is gated on a fresh quota/ref/scope preflight after 15:19:44 UTC.

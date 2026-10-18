@@ -1293,3 +1293,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - The 15:14 scoped Usage read failed; current quota is UNKNOWN. The last confirmed read was 15:10:49 UTC at 87% five-hour / 80% weekly.
 - M2 (#52) and M7 (#53) were paused again with work preserved; the 15:19:44 documentation batch is also held until a fresh quota/ref/scope preflight. Hold receipts: #52 6251545266, #53 6251545494, scheduler #29 6251545748.
+
+## M0 quota hold and recovery — 2026-10-18 15:14–15:18 UTC
+
+- The 15:14 scoped read failed; last confirmed at 15:10:49 was 87% five-hour / 80% weekly. M2/M7 paused and the push batch was held. Hold receipts: #52 6251545266, #53 6251545494, scheduler #29 6251545748.
+- The scoped Usage read recovered at 15:17:52 with 87% / 80%; M2/M7 resumed in a new 15:18–15:38 slot. Resume receipts: #52 6251579559, #53 6251579849, scheduler #29 6251580063.
+- A Ctrl+R action timed out without a landing result and was not repeated; scoped Usage text subsequently recovered. Next M0 push remains gated on a fresh quota/ref/scope preflight after 15:19:44 UTC.
