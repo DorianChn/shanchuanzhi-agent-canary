@@ -2690,3 +2690,16 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Existing M1/M4 sessions were re-queued for path/branch/SHA plus evidence or a blocker by 02:20 UTC: M1 `01a14cbd-2cdc-7a90-ba69-1e066ebc1a1d`; M4 `01a14cbd-2de8-7ff1-8a36-64b1a6defadc`. Queue receipt is not proof work started.
 - M9 #36 remains at the recorded exact head with composition still failing on Ubuntu and Windows; product and wrapper checks pass, but P0/P1 artifact/host/ownership gates remain open or unverified.
 - Last M0 push 01:47 UTC; next no earlier than 02:07 UTC after quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, main, merge, or Release changed.
+## M0 02:20 UTC checkpoint — 2026-10-18
+
+- Usage Overview is readable at 64% five-hour / 94% weekly; keep the usage tab open. Stop all work if the five-hour value is unreadable or at/below 5%.
+- PR #30 is OPEN/Draft at 78b7e06e8f668b826911308347af0aefc8fe14c3. Product CI run 39088986804 passed 9/9 including package-smoke; coordination contract run 39088986826 passed 1/1. PR #24 remains OPEN/Draft with unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Latest full M1-M9 PR scan at 02:10 showed no module-head movement; at 02:20, PR #43 remains 9ef3dc2, #34 fbf2090, #47 373e2c2, and #36 de3799a.
+- M1 missed the 02:20 evidence checkpoint: no new commit, test result, owner report, or visible M1 tree change. #51 trigger remains UNKNOWN. M1 is assigned the bounded failure-time trace or precise blocker and owner disposition for M5 shared-path changes by 02:40.
+- M5 PR #47 exact product run 38719884959 passes 9/9 including package-smoke; the inspected M5 worktree is clean at the remote head. P0 #52 remains OPEN: M1 review of M1-owned paths is pending and product-host wiring, protected-open/held-handle, TOCTOU, and exact composed behavior remain NOT_VERIFIED. Synthetic fixtures do not establish actual exposure.
+- M5 PR #47 changes M1-owned security-router and shared test paths. Its test/agent-hook.test.ts blob differs from M1 PR #43. M1 disposition is required under #51/#52/#56; no test may be removed or weakened.
+- M4 missed the 02:20 checkpoint: PR #34 remains unchanged, with no focused runtime-console evidence or owner report; no M4 worktree is registered in the inspected clone. M4 is paused from the shared schedule without touching its branch or work.
+- Active two-lane schedule is M1 + M5. M4 has been notified to preserve work and report its exact path/head for later rescheduling. Queue delivery does not prove work started. Queue IDs: M1 01a14ccf-c466-7ce0-a3ac-5ac0d966afaf; M5 01a14ccf-c574-7bc1-981c-ee5dc0752d4a; M4 pause notice 01a14ccf-c683-7b51-a337-36b9ca6345f3.
+- GitHub checkpoint comments: #51 6244669380, #52 6244669643, #56 6244669925, #60 6244670159, and scheduler #29 6244670374.
+- M9 #36 remains at de3799a: product CI 9/9 and wrapper CI 2/2 pass, but composition run 38727481764 fails on Ubuntu and Windows. Integration is not accepted; P0/P1 artifact, ownership, host, installer, and E4 gates remain open or NOT_VERIFIED.
+- Last M0 push was after 02:07 UTC; next docs push is no earlier than 02:28 UTC after quota, ancestry, PR #24/#30, scope, and diff-check preflight. No module source/tests, main, merge, or Release changed.

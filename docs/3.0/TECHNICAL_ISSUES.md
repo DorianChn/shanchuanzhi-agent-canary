@@ -1025,3 +1025,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#56 / M1:** canonical Hook-test disposition remains pending; PR #30 and PR #34 both touch M1-owned `test/agent-hook.test.ts`. Keep PR #30 Draft.
 - **#60 / M4:** no worktree path, focused console test, or owner response is visible. The only actual failure in old PR #34 CI remains M1-owned Ubuntu Node 20 test 163; do not attribute it to M4.
 - M1/M4 were re-queued to provide exact path/branch/SHA with focused evidence or a precise blocker by 02:20 UTC. Queue delivery is not proof of work started.
+## M0 issue refresh — 2026-10-18 02:20 UTC
+
+- #51 P1: M1 provided no new commit, focused result, owner report, or failure-time trace by 02:20. PR #43 remains 9ef3dc2 and the inspected tree is clean. Trigger UNKNOWN; preserve 48 assertions, 500 retries, and fail-closed behavior. M1 evidence/blocker due 02:40; comment 6244669380.
+- #52 P0: M5 PR #47 exact head 373e2c2 passes product CI 9/9 including package-smoke (run 38719884959); worktree is clean. The older issue text saying exact-head CI is pending is superseded. Keep OPEN because M1 review of shared files plus host/held-handle/TOCTOU and current composed evidence remain pending or NOT_VERIFIED. Synthetic repros only; no real exposure claimed. Comment 6244669643.
+- #56 P2: M5 PR #47 now joins PRs #30 and #34 in changing M1-owned test/agent-hook.test.ts; its blob differs from M1 PR #43. Require M1 disposition and preserve tests. Keep PR #30 Draft. Comment 6244669925.
+- #60 P1: M4 provided no exact path/head, focused console evidence, or owner report; PR #34 remains fbf2090. Its old CI's only actual failure is M1-owned Ubuntu Node 20 test 163; M4 causation is not established. M4 paused in the shared schedule, work preserved. Comment 6244670159.
+- #29 scheduler: two active lanes M1 + M5, M4 paused; next owner evidence due 02:40 and next M0 push window no earlier than 02:28. Comment 6244670374.

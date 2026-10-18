@@ -484,3 +484,12 @@ Do not conflate this CI gate with M1 quarantine retry diagnosis #51; preserve al
 | Remaining M9 release gates (#52/#53/#58/#59/#41/#57) | P0/P1 / M1–M9 owners by issue | Open issues still require protected-path/host evidence, real packaged-Hook evidence, reviewed ignore rules, M6–M8 shared-path ownership, clean-VM lifecycle, and independent E4. | Keep M9 Draft; do not mark final integration PASS until each owner-specific artifact/check is recorded. |
 
 This checkpoint does not infer a production bypass, leak, data loss, successful installation, or independent E4 result.
+## M0 integration risk update — 2026-10-18 02:20 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| M5 protected-path alias and shared-file contract (#52) | P0 / M5 implementation, M1 canonical contract, M9 composition | PR #47 head 373e2c2 product CI 9/9 including package-smoke; synthetic alias fixtures are documented. PR #47 also changes M1-owned router and shared test paths. Product-host wiring, held-object use, TOCTOU, and M1 disposition are NOT_VERIFIED/pending. No actual exposure is claimed. | M1 reviews shared-path semantics; M5 preserves hard denials and owner boundaries; M9 runs exact-head composition and records host evidence. Keep OPEN. |
+| M1/M4/M5 shared Hook tests (#56) | P2 / M1 canonical owner; M0 coordination | PR #30, #34, and #47 change M1-owned test/agent-hook.test.ts; M5 copy differs from M1 current head. | M1 records canonical test disposition; keep #30 Draft until its diff and scope are reconciled. |
+| M9 cross-module composition (#55 and #36) | P1 / M3 + M9; M1 interface owner | PR #36 product CI 9/9 and wrapper 2/2 pass; composition run 38727481764 still fails on Ubuntu and Windows. | M3 preserves fail-closed unpinned-read behavior and positive control; M9 pins reviewed heads and reruns both composition jobs. Do not mark integration PASS. |
+
+This checkpoint does not establish a production bypass, sensitive-data exposure, successful host integration, installer acceptance, or independent E4 result.

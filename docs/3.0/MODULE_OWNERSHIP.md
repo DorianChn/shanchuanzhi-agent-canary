@@ -443,3 +443,6 @@ A read-only search of dated immediate project folders under `C:\Users\36712\Docu
 | `test/agent-hook.test.ts` | M1 | PR #34 also changes this path. M1 owns canonical Hook/interruption semantics; any M4 adaptation must be M1-reviewed and preserve assertions. Reconcile the PR #30/#34 overlap through Issue #56. |
 
 This records the currently visible PR #34 file list; it does not confirm an unlisted local M4 worktree or transfer ownership. M0 does not edit these paths.
+## M0 observed shared-path overlap — 2026-10-18 02:20 UTC
+
+PR #47 changed files include M1-owned src/security-router.ts, test/security-router.test.ts, test/file-state-store.test.ts, and test/agent-hook.test.ts. Its src/agent-hook.ts blob matches the current M1 PR #43 blob, while test/agent-hook.test.ts differs. M1 owns canonical semantics for the shared paths listed above; #51/#52/#56 require owner disposition. This observation does not transfer ownership or authorize M0 to edit product code/tests. M1 was asked to review the exact changes or provide a blocker by 02:40 UTC.
