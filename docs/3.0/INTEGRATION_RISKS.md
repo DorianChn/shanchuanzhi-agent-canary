@@ -736,3 +736,10 @@ The 16:00 slot does not authorize a third lane or change the public PR #24 basel
 | Missing visible module worktrees | P2 | The common Documents repository registers M0, M1, M5, M8, and M9. M2/M3/M4/M6/M7 worktrees are not visible there. | Treat separate module worktrees as UNKNOWN until verifiable; do not claim all-worktree acceptance from distinct PR refs alone. |
 
 The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
+
+## M0 integration checkpoint — 2026-10-19 00:48 Asia/Shanghai
+
+- M9 PR #36 remains OPEN/Draft at de3799aae540f58173acec4ab3f7a1fe98593aa7. Historical exact run 38727481764 failed Ubuntu and Windows composition on the M3 unpinned native Read assertion.
+- #55 is assigned to M3 for the fail-closed behavior and positive control; #61 is assigned to M1 for the owner-confirmed source SHA. Neither has a new public result yet. M9 exact-ref composition remains BLOCKED / NOT_VERIFIED.
+- P0 #52 protected-host/held-handle and alias/TOCTOU evidence, and #53 packaged-hook log privacy evidence remain OPEN / NOT_VERIFIED. M2/M7 are paused this slot.
+- M6–M8 packaging ownership (#59), independent E4 (#57), and exact-head CI alignment (#60) remain separate open gates. No release readiness is claimed.

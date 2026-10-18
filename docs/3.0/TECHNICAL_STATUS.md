@@ -3232,3 +3232,12 @@ This is a readback of the current PR heads and their attached check-run summarie
 
 - Git 2.54.0.windows.1; GitHub CLI 2.102.0 authenticated to github.com as DorianChn; Node v22.23.1; Codex CLI 0.163.0-alpha.10.2.
 - The Python command resolves to the Windows Store execution alias and does not provide an interpreter. Python is unavailable in the current Git Bash environment; no Python-dependent work was run.
+
+## M0 coordination delta — 2026-10-19 00:48 Asia/Shanghai
+
+- Usage read at 16:48 UTC: 76% five-hour and 78% weekly; page still displays “resetting”. The remainder is above the 5% stop threshold.
+- M1 (#61, existing PR #43) and M3 (#55, existing PR #33) are the only scheduled lanes for 16:45–17:05 UTC. Assignment receipts: #61 6252489547 and #55 6252489466. No response or task start is independently verified yet.
+- M2 (#52) and M7 (#53) were paused after the 16:22–16:42 slot; receipts #52 6252489478 and #53 6252489471. Public PR heads have not moved; private worktree activity is UNKNOWN.
+- Scheduler #29 receipt: 6252489467. VMware, real-model, and installer work are not reserved or active.
+- At 16:48 UTC, PR #33 is still at be3880298e1c6766024ecbce5f6dbc23c4d2daa1; PR #43 at 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; PR #36 at de3799aae540f58173acec4ab3f7a1fe98593aa7. No M1/M3 source update is visible.
+- PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7.

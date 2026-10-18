@@ -1354,3 +1354,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - PR #30 remains OPEN/Draft at head 6632075e1fa3e10c31e1a7500920b73e31963914, updated at 16:26:22 UTC.
 - Exact-head product CI run 39144999455 passed at 16:27:57 UTC; coordination run 39144999581 passed at 16:26:34 UTC.
 - PR #24 remains unchanged OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+
+## M0 coordination delta — 2026-10-19 00:48 Asia/Shanghai
+
+- **#55 P1 / M3 native Read contract:** the 16:45–17:05 UTC M3 slot is assigned on existing PR #33. Required: deny an unpinned normal native Read with `native_file_execution_not_pinned`, keep the supported-capability positive control and existing assertions, and report SHA/files/focused validation/blocker. No M3 code change or task start is visible yet; Issue stays OPEN.
+- **#61 P1 / M1 exact pin:** the same slot is assigned to M1 on existing PR #43 to confirm the exact reviewed Hook/Gateway source SHA and distinguish it from the owner-review SHA. No response or source movement is visible yet; Issue stays OPEN.
+- **#52 and #53 P0:** M2 and M7 are paused by schedule after the prior slot. Existing P0 acceptance evidence is still missing; both remain OPEN / NOT_VERIFIED. Private worktree state is UNKNOWN.
+- GitHub schedule receipts: #55 6252489466, #61 6252489547, #52 6252489478, #53 6252489471, and #29 6252489467.
