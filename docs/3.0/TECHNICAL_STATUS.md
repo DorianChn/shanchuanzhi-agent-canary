@@ -3258,3 +3258,34 @@ This is a readback of the current PR heads and their attached check-run summarie
 - No VMware, real-model, or installer lifecycle resource is reserved. P0 #52/#53 remain OPEN / NOT_VERIFIED; M9 #36 remains blocked on #55/#61 and exact-head composition.
 - PR #30 head ad398a2f73251898a38eae05304b2e4478ecae69 passed product CI and coordination. PR #24 remains unchanged OPEN/Draft.
 - The next M0 push gate is 17:09:29 UTC; module work from this 17:05–17:25 slot is held for the 17:29:29 UTC shared batch, subject to a fresh Usage check.
+
+## M0 push batch — 2026-10-19 01:10 Asia/Shanghai
+
+- PR #30 documentation-only head f552798650e7d7c8be948ffda8a246adb957cdbd was pushed at 17:10:01 UTC after a fresh Usage read of 76% five-hour / 78% weekly, PR #24 and module-ref preflight, and docs-only scope/diff checks.
+- PR #30 remains OPEN/Draft. Product CI run 39148314520 is queued; AC3 coordination run 39148314521 is in progress. Prior exact-head checks on ad398a2 passed.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- M2/#52 and M7/#53 remain the only scheduled module lanes for 17:05–17:25 UTC. No task start or source movement is independently verified yet.
+- Next shared push is no earlier than 17:30:01 UTC. This supersedes the earlier planned 17:29:29 time.
+
+## M0 exact-head CI readback — 2026-10-19 01:12 Asia/Shanghai
+
+- PR #30 head f552798650e7d7c8be948ffda8a246adb957cdbd passed product CI run 39148314520 at 17:11:46 UTC and AC3 coordination run 39148314521 at 17:10:16 UTC.
+- At 17:12 UTC, PR #37 remained 9db59ed8f2deae905edcb2179982f8bcb594167c and PR #39 remained cf4b70f5130175582fffdfc65bd7c6847450867b. Issue #52/#53 were still at the 17:10 scheduling update; private activity remains UNKNOWN.
+- PR #24 remains unchanged OPEN/Draft; no product merge or release action occurred.
+
+## M5/M8 exact-head baseline — 2026-10-19 01:14 Asia/Shanghai
+
+- PR #47 M5 remains OPEN/Draft at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. Exact-head run 38719884959 shows all nine listed checks passing. This does not close #52 because real product-host/held-handle evidence remains missing.
+- PR #40 M8 remains OPEN/Draft at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Exact-head product run 38712038229 and wrapper-regression run 38712038305 show all listed checks passing. This does not replace M7 package extraction or M9 selected-ref verification.
+- Issue #59 remains OPEN; M6/M7/M8 shared Windows packaging files still need owner composition signoff and exact M9 refs.
+
+## M0 lane rotation — 2026-10-19 01:25 Asia/Shanghai
+
+- Usage read at 17:25 UTC: 76% five-hour / 78% weekly; above the 5% stop threshold.
+- M2/#52 and M7/#53 ended their 17:05–17:25 slots without public PR-head movement or owner evidence. Private activity remains UNKNOWN. Both are paused by schedule, not marked as having done no work.
+- The only scheduled lanes for 17:25–17:45 UTC are M5/#52 on existing PR #47 and M8/#53/#59 on existing PR #40. M5 is asked for M5-owned product-consumer/policy evidence; M8 for exact owned Hook-copy blobs and packaging ownership boundary. Task starts remain unverified.
+- Receipts: #52 6252888638, #53 6252888574, #59 6252888599, scheduler #29 6252888581.
+- PR #47 remains at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c with all nine listed checks passing. PR #40 remains at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad with its product and wrapper checks passing. These do not establish host or package extraction acceptance.
+- PR #37 remains 9db59ed8f2deae905edcb2179982f8bcb594167c; PR #39 remains cf4b70f5130175582fffdfc65bd7c6847450867b. PR #24 remains unchanged OPEN/Draft.
+- M9 and both P0 issues remain OPEN / NOT_VERIFIED. No VM, model, or installer resource is reserved.
+- M0 PR #30 next push gate: 17:30:01 UTC. Next module publish batch: 17:50:01 UTC, after slot results and fresh Usage/ref/scope checks.

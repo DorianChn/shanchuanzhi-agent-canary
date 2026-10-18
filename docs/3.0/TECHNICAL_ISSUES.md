@@ -1369,3 +1369,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#52 P0 / M2:** 17:05–17:25 slot assigned on existing PR #37 to identify a real host consumer of the approved held-object capability or name the concrete missing host/dependency. No mock product-host evidence; no M1/M5 edits.
 - **#53 P0 / M7:** 17:05–17:25 slot assigned on existing PR #39 to provide source-bound package hashes, extracted-Hook comparison, and extracted-harness evidence, or name the missing artifact/dependency. No VM or installer lifecycle is claimed.
 - GitHub receipts: #55 6252679138, #61 6252679109, #52 6252679136, #53 6252679128, #29 6252679130. All four technical issues remain OPEN; #52/#53 remain P0 / NOT_VERIFIED.
+
+## M0 lane rotation — 2026-10-19 01:25 Asia/Shanghai
+
+- **#52 P0:** M2's 17:05–17:25 public slot ended without PR #37 movement or evidence; private status UNKNOWN. M5 is assigned through 17:45 on its existing PR #47 branch to establish whether an M5-owned first-party consumer exists beyond the caller-supplied callback, or document the owner/dependency gap. No M1/M2 edits or mock host.
+- **#53 P0 / #59 P1:** M7's 17:05–17:25 slot ended without PR #39 movement or package evidence; private status UNKNOWN. M8 is assigned through 17:45 on existing PR #40 to report M8-owned Hook/logging blobs and whether an M8 copy is shipped; M7 alone owns packaging/windows/*.
+- All findings must preserve fixed-field log/privacy assertions and hard policy denials. Source CI is not package extraction or product-host acceptance.
+- Receipts: #52 6252888638, #53 6252888574, #59 6252888599, #29 6252888581. #52/#53 remain OPEN/P0 / NOT_VERIFIED.

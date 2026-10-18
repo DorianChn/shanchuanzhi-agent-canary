@@ -750,3 +750,9 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - #53 still lacks independently verified source-bound Setup.exe/payload hashes, extracted-Hook comparison, and extracted-harness result. M7 is assigned to gather those artifacts or name the concrete blocker. No clean-VM/install claim is made.
 - M1/#61 and M3/#55 had no public result by the slot end and are paused by schedule; private workspace activity remains UNKNOWN.
 - M9 #36 stays OPEN/Draft and BLOCKED / NOT_VERIFIED. The M1 source confirmation (#61), M3 behavior fix (#55), M6–M8 packaging owner map (#59), independent E4 (#57), and exact-head CI alignment (#60) remain open.
+
+## M0 P0 checkpoint — 2026-10-19 01:25 Asia/Shanghai
+
+- M2/M7 public slots ended without PR-head movement or new evidence; private state UNKNOWN. Their work is preserved and paused by schedule.
+- M5 now checks its owned policy/consumer boundary for #52; M8 checks its owned Hook copies and responsibility boundary for #53/#59. No claim is made that these tasks have started privately.
+- The protected product host, held-open object/alias behavior, actual packaged Hook bytes/harness, and independent product E4 remain NOT_VERIFIED. M9 exact-ref composition stays blocked on #55/#61 plus packaging/owner gates.
