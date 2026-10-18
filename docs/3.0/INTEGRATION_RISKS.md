@@ -630,3 +630,14 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | M6–M8 Windows/E4 ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | M8 path-owner result remains absent; exact reviewed refs still need owner acceptance. | M8 names exact paths/adapters; M6/M7 retain E4/installer semantics; M9 pins reviewed exact SHAs. |
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
+
+## M0 exact-head CI update — 2026-10-18 11:50 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M4 exact-head CI, M0 coordination | M0 PR #30 head `a1b0f8da79f9c0c3cd5e9dea365a0ab07928364e` run `39124717837` failed Ubuntu 24.04 / Node 22.23.3 test 163 in `test/file-state-store.test.ts`: 500 `STATE_STORE_BUSY` retries reached `RETRY_LIMIT`; build passed, 321 passed / 1 failed / 4 skipped. Other Node matrix jobs were cancelled and package-smoke skipped by fail-fast; sponsor-smoke, docker-build, and ownership check passed. No data loss or corruption is established. | Keep OPEN/P1; M1 preserves the retry cap, assertions, production lock and fail-closed behavior, and compares exact failure timing/lock diagnostics before any implementation change. |## M0 11:58 UTC active-lane checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 adapter, M3 host, M1 Gateway, M5 policy, M9 | The 11:38–11:58 M2/M3 slot ended without visible PR-head or Issue-result movement; private workspace activity remains UNKNOWN. M3 is paused by schedule, M2 continues in its owned adapter path. | M2 provides its exact seam/tests or a precise contract blocker; M3 later consumes the seam in its owned host path. Keep OPEN/P0/NOT_VERIFIED until deny-before-callback alias evidence and a registered-file positive control are composed. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package, M8 Hook copy, M9 acceptance | M7 is assigned a build-only provenance chain using the published candidate4 ZIP and pinned official NSIS/Node inputs. No fresh Setup.exe/manifest/extracted-Hook chain is yet verified. | Require source/input/tool hashes, exact Setup.exe hash, manifest, extracted Hook comparison, and packaged harness result. No install, VM, or VMware run is reserved. Keep OPEN/P0/NOT_VERIFIED. |
