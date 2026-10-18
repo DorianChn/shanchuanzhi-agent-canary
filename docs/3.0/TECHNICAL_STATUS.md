@@ -3039,3 +3039,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 - M2 #52 and M7 #53 remain the only active module lanes through 12:18. No visible module PR-head or Issue-result movement at 12:11; private activity remains UNKNOWN. #52/#53 remain OPEN/P0/NOT_VERIFIED; M3 is paused with work preserved.
 - The 12:08 shared upload window is open, but no M2/M7 push is visible. M0's last verified PR-head update was 12:09:07 UTC; next M0 push is no earlier than 12:29:07 UTC after fresh quota/ref/scope checks.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. No module source/tests, main, merge, or Release changed.
+
+## M0 scheduler checkpoint — 2026-10-18 12:18 UTC (quota read 12:18:35)
+
+- Usage read 64% five-hour / 94% weekly. M2/M7's 11:58–12:18 window ended without visible PR-head or Issue-result movement; private worktree state remains UNKNOWN.
+- M2 #52 and M7 #53 have a short final checkpoint through 12:29 because both P0 gates remain unresolved. M2 must post its exact adapter commit/files/tests or a precise contract blocker; M7 must post the current build/hash/manifest/extracted-Hook/harness chain or an exact input/tool blocker. Issue comments: #52 6249829468, #53 6249829745, scheduler #29 6249830009.
+- M3 is paused with work preserved; M1 #51 is queued and is not a third active lane. Active count remains 2/2 (M2, M7). No VM, installation, VMware, or real-model resource is reserved.
+- M0's last verified PR-head update remains 12:09:07 UTC at 2566220; exact-head CI and coordination workflow both passed. The unpushed local docs head will be released no earlier than 12:29:07 UTC after fresh quota/ref/scope checks.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. No module source/tests, main, merge, or Release changed.
