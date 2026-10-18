@@ -1262,3 +1262,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - The 14:17 batch was held because the Usage page timed out at 14:18:15. After a fresh 14:20 read (92% / 81%), M2/M7 resumed in a new 14:21–14:41 slot. Pause receipts: #52 `6250987128`, #53 `6250987344`, scheduler #29 `6250987604`; resume receipts: #52 `6251008569`, #53 `6251008780`, scheduler #29 `6251009022`.
 - No module-head movement was visible at the last pre-hold read; #52/#53 remain OPEN/P0/NOT_VERIFIED. M0 docs-only commit is pending a fresh push preflight; PR #24 remains unchanged.
+
+## M0 exact-head CI checkpoint — 2026-10-18 14:23 UTC
+
+- New PR #30 head `674836c` passes product CI 9/9 and coordination CI 1/1. PR #24 is unchanged OPEN/Draft.
+- M2/M7 remain scheduled through 14:41; at the 14:21 public ref read, PR #37/#39 were unchanged. #52/#53 remain OPEN/P0/NOT_VERIFIED until evidence is published.
+- Next M0 push no earlier than 14:41:54 UTC.

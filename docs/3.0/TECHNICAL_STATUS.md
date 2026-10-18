@@ -3122,3 +3122,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - The 14:17 pre-push Usage read timed out at 14:18:15, so the M0 docs push and both active P0 lanes were held. Pause comments: #52 `6250987128`, #53 `6250987344`, scheduler #29 `6250987604`. A fresh read recovered at 14:20 with 92% / 81%, matching the prior labelled five-hour / weekly values; M2/M7 resumed 14:21–14:41 with receipts #52 `6251008569`, #53 `6251008780`, and scheduler #29 `6251009022`.
 - PR #37 remains `9db59ed` and PR #39 `cf4b70f` at the last read; #52/#53 are still OPEN/P0/NOT_VERIFIED. Private task activity remains UNKNOWN. M1/M3/M6/M8 remain paused.
 - PR #30's remote head remains `d94f5454d296a0646449ae964683477d353cf766`, product CI 9/9 and coordination CI 1/1; PR #24 remains unchanged OPEN/Draft. The M0 docs batch is local and will be pushed only after a fresh quota/ref/scope preflight.
+
+## M0 exact-head CI update — 2026-10-18 14:23 UTC
+
+- PR #30 head `674836c7cc779d2eb2d1cae2831f6948eefee5a6` product CI run `39135656690` passed 9/9; coordination run `39135656714` passed 1/1. PR #24 remains unchanged OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- At the 14:21 ref check, M2 PR #37 remained `9db59ed` and M7 PR #39 `cf4b70f`; both P0 issues remain open pending evidence. M2/M7 continue only through the assigned 14:21–14:41 slot; private execution remains UNKNOWN absent public artifacts/results.
+- The last PR #30 update was 14:21:54 UTC. Next shared push is no earlier than 14:41:54 UTC after fresh quota/ref/scope preflight. M0 changes remain coordination docs only.
