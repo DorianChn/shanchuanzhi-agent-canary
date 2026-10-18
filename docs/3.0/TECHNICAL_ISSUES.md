@@ -994,6 +994,6 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 ## M4 desktop security-center CI gate — 2026-10-18 00:49 UTC
 
-- **P1 #60 — M4 / PR #34:** unchanged OPEN/Draft head `fbf20907c6accffc37246eddf04f8599060d99ea` has exact-head CI run `38698635434` failed on Ubuntu Node 20, macOS Node 20/22, and Windows Node 20/22; package-smoke was skipped. Ubuntu Node 22, Docker, and sponsor smoke passed. No root cause is attributed from the job summary; failures may include shared/inherited test behavior and must be diagnosed from evidence.
+- **P1 #60 — M4 / PR #34:** unchanged OPEN/Draft head `fbf20907c6accffc37246eddf04f8599060d99ea` has one actual failed job in exact-head CI `38698635434`: Ubuntu Node 20 test 163 in the M1-owned file-store test raised `RETRY_LIMIT` after 500 bounded retries (#51; trigger UNKNOWN). Ubuntu Node 22, Docker, and sponsor-smoke passed; macOS/Windows were cancelled after fail-fast, not failed; package-smoke was skipped. No M4 code cause is established.
 - M4 owns its desktop/security-center paths; M1 owns canonical `test/agent-hook.test.ts` and the separate #51 retry diagnosis. PR #34 changes the shared Hook path, so M1 disposition remains required by #56. No M0 module source/test edits.
 - Acceptance: exact M4 path/branch and failure diagnosis; focused console/security-center tests; green exact-head CI including package-smoke; preserve assertions and unsupported/unknown behavior. Keep PR #34 Draft until ownership and evidence are reviewable. No security incident is asserted.

@@ -472,6 +472,6 @@ At the 14:20 UTC scheduler readback, no owner-confirmed task or exclusive VMware
 
 | Risk | Priority / owners | Current evidence and status | Gate |
 | --- | --- | --- | --- |
-| M4 PR #34 exact-head CI (#60) | P1 / M4; M1 for canonical Hook-test semantics | Unchanged head `fbf2090` has failed Ubuntu Node 20, macOS Node 20/22, and Windows Node 20/22 checks in run `38698635434`; package-smoke was skipped. Ubuntu Node 22, Docker, and sponsor smoke passed. Root cause is UNKNOWN; no product/security incident is inferred. | M4 supplies exact worktree, failure diagnosis, focused console tests, and green exact-head CI incl. package-smoke; M1 disposition for shared `test/agent-hook.test.ts` is required by #56. Keep PR #34 Draft. |
+| M4 PR #34 exact-head CI (#60) | P1 / M4 integration; M1 owns the shared failing test | Unchanged head `fbf2090` has one actual failed job in `38698635434`: Ubuntu Node 20 test 163 (`RETRY_LIMIT` in M1-owned file-store test, #51). Ubuntu Node 22, Docker, sponsor-smoke passed; macOS/Windows cancelled after fail-fast; package-smoke skipped. Trigger UNKNOWN; no M4 cause or incident inferred. | M1 resolves/diagnoses #51; M4 supplies exact worktree and focused console tests; then rerun full exact-head matrix and package-smoke. Reconcile shared Hook test via #56; keep PR #34 Draft. |
 
 Do not conflate this CI gate with M1 quarantine retry diagnosis #51; preserve all assertions and unsupported/unknown states.
