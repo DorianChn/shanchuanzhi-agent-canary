@@ -1124,3 +1124,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #52: M1's registered worktree remained clean at `9ef3dc2` through 06:19, with no owner host-path result. M1 is paused by scheduling only, branch/work preserved. M2 is reactivated through 06:40 to add the smallest first-party native file-read callsite through the existing M1 contract, or name the exact missing owner/path by 06:25.
 - #53: M7 continues through 06:40 and retains the exclusive installer/VM slot. A candidate PR #24 Community ZIP was verified at 348,655 bytes / SHA-256 `011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed`, matching `DELIVERY_MANIFEST.json`; ZIP listing includes `dist/agent-hook.js` and `src/agent-hook.ts`, not `claude-native-hook.mjs`. M7 must confirm source suitability and inspect the actual built owned-file manifest/extracted package. Keep OPEN/P0 until then.
 - Issues #29/#52/#53 record this schedule in comments `6246520615`, `6246520938`, and `6246521264`. Queue receipts do not establish work start. PR #30 `6b5f356` exact-head checks pass 10/10; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly; last M0 push 06:00, next no earlier than 06:20.
+
+## M0 scheduler checkpoint — 2026-10-18 06:40 UTC
+
+- #52: no M2 head or host-path result appeared by the boundary; M2 is paused by schedule only with its branch/work preserved. The first-party host consumer and owner remain UNKNOWN / NOT_VERIFIED.
+- #53: no M7 package artifact result appeared; M7 is paused with all work preserved and the exclusive installer/VM resource released. M8 now owns the source/logging half through 07:00; packaged artifact hashes and extracted-Hook proof remain missing.
+- Active lanes are M1 on #51 and M8 on source/logging #53 through 07:00. Scheduler and issue comments are `6246686042`, `6246686546`, and `6246686875`. Queue receipts are not proof that work started.
+- PR #30 `5e463ab` exact-head checks pass 10/10; PR #24 remains unchanged OPEN/Draft. Usage last read at 64% five-hour / 94% weekly. Last M0 push 06:20; next no earlier than 06:40 after fresh quota and scope preflight.

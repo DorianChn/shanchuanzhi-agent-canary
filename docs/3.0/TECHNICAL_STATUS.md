@@ -2829,3 +2829,10 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M1 worktree remains clean at `9ef3dc2` with no #52 host-path result visible; M1 is paused by scheduling only and its work preserved. M2 is active through 06:40 on #52, with a 06:25 checkpoint for the first-party host callsite or exact missing owner/path.
 - M7 is active through 06:40 on #53 and exclusively owns the installer/VM slot. M0 verified the PR #24 baseline Community ZIP hash `011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed` against its delivery manifest; the archive contains `dist/agent-hook.js` and `src/agent-hook.ts`, not `claude-native-hook.mjs`. This source candidate is not by itself current PR #39 package acceptance.
 - Scheduler and P0 issue comments are `6246520615`, `6246520938`, and `6246521264`. PR #30 head `6b5f3568cf3dec8e7dbd4223dd0414f61d135228` has 10/10 checks passing; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly. Last M0 push 06:00, next no earlier than 06:20.
+
+## M0 scheduler checkpoint — 2026-10-18 06:40 UTC
+
+- M2 PR #37 remains `9db59ed` with no visible #52 host-path result; M2 is paused by schedule only, work preserved. First-party native file-read consumer and owner remain UNKNOWN / NOT_VERIFIED.
+- M7 PR #39 remains `cf4b70f` with no package artifact result. M7 is paused by schedule with work preserved; exclusive installer/VM slot is released. M8 is active through 07:00 on the source/logging half of #53; actual package and extracted-Hook verification remain outstanding.
+- M1 is active through 07:00 on #51's four-process quarantine failure, with all assertions and the retry cap preserved. Scheduler/issue comments: `6246686042`, `6246686546`, `6246686875`.
+- PR #30 head `5e463ab` has 10/10 exact-head checks passing; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly. Last M0 push 06:20; next no earlier than 06:40 UTC.
