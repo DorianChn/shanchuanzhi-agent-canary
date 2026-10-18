@@ -3109,3 +3109,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - M2 #52 and M7 #53 resumed under a new 13:55–14:15 window. Receipts: #52 `6250745203`, #53 `6250745412`, scheduler #29 `6250745671`. Only two lanes are assigned; M1/M3/M6/M8 remain paused. No VM, installation, VMware, or real-model resource is reserved.
 - PR #37 remains `9db59ed` and PR #39 remains `cf4b70f` at the last exact read; #52/#53 remain OPEN/P0/NOT_VERIFIED. Private task activity is UNKNOWN absent visible evidence.
 - PR #30 remote head remains `8e44dad`; its product CI passed 9/9 and coordination CI 1/1. PR #24 remains unchanged OPEN/Draft. The next shared push is no earlier than 13:56:57 UTC after fresh quota/ref/scope preflight.
+
+## M0 P0 lane checkpoint — 2026-10-18 14:15 UTC
+
+- Usage was read at 14:15:34 UTC: 92% five-hour / 81% weekly. A timeout at 14:05:52 had paused both P0 lanes; pause receipts: #52 `6250860057`, #53 `6250860257`, scheduler #29 `6250860484`. Reads recovered at 14:07:40; M2/M7 resumed 14:08–14:28 with receipts #52 `6250875430`, #53 `6250875644`, scheduler #29 `6250875883`.
+- At 14:15, M2 PR #37 remains `9db59ed` and M7 PR #39 remains `cf4b70f`; Issues #52/#53 show no update since resume and remain OPEN/P0/NOT_VERIFIED. Private task progress remains UNKNOWN. The two-lane cap is respected; M1/M3/M6/M8 remain paused.
+- PR #30 remote head `d94f5454d296a0646449ae964683477d353cf766` product CI run `39133862816` passed 9/9 and coordination run `39133862858` passed 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Last PR #30 update was 13:57:56 UTC. Next shared push is no earlier than 14:17:56 UTC after fresh quota/ref/scope preflight; this batch is M0 docs only.

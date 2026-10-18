@@ -696,3 +696,7 @@ PR #30's docs-only head `8e44dad` passes product CI 9/9 and coordination CI 1/1.
 ### M0 quota recovery checkpoint — 2026-10-18 13:55 UTC
 
 A second transient Usage timeout triggered a conservative hold. Two successful reads at 13:53:31 and 13:54 returned 92% / 81%, matching the prior 5-hour / weekly order, so M2/M7 were resumed for 13:55–14:15 under new Issue receipts. Their P0 issues remain OPEN/NOT_VERIFIED until evidence is visible; no product files were changed by M0.
+
+### M0 14:15 P0 status
+
+M2 #52 and M7 #53 are active through 14:28 after a quota-triggered pause and confirmed recovery. No public issue result or PR head movement is visible yet; keep both P0 risks OPEN/NOT_VERIFIED. No product source or test changes were made by M0.

@@ -1252,3 +1252,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - A Usage read timeout at 13:51 paused both active P0 lanes and pushes. Pause comments: #52 `6250713276`, #53 `6250719138`, scheduler #29 `6250714162`; the first #53 post returned EOF and was verified absent before the successful retry.
 - Fresh reads recovered at 13:53:31 and 13:54, returning 92% / 81% in the same 5-hour / weekly order as the previous labelled read. New M2/M7 slot is 13:55–14:15. Resume comments: #52 `6250745203`, #53 `6250745412`, scheduler #29 `6250745671`.
 - No module PR head change was visible at the 13:51 checkpoint; private worktree state remains UNKNOWN. P0 gates stay open until evidence is published.
+
+## M0 14:15 P0 lane checkpoint — 2026-10-18
+
+- M2/M7 remain the only assigned active lanes through 14:28 after quota recovery. Their pause/resume receipts are recorded in `TECHNICAL_STATUS.md`; current PR heads remain #37 `9db59ed` and #39 `cf4b70f`, with no public progress since 14:08. Keep #52/#53 OPEN/P0/NOT_VERIFIED; private activity UNKNOWN.
+- Usage at 14:15:34 was 92% five-hour / 81% weekly. PR #30 exact head `d94f545` is 9/9 product plus 1/1 coordination green. PR #24 remains unchanged OPEN/Draft. Next push no earlier than 14:17:56 UTC.
