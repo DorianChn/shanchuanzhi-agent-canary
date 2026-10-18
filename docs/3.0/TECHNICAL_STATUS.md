@@ -3487,3 +3487,6 @@ M1/M6 remains the only active lane through 21:25 UTC. The next lane is M1/M3 onl
 ## Shared push timing correction — 2026-10-19 05:30 Asia/Shanghai
 
 PR #30 docs-only head 5a39c59810c754bd567ec66a589da425b7c7e530 was pushed at 21:30:42 UTC. At 21:30:49, no PR-triggered workflow run or commit status was visible for this exact head; CI remains pending verification. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4. The next shared push is no earlier than 21:50:42 UTC, after fresh Usage/ref/scope checks. Scheduler receipt: #29 6255388985.
+## Exact-head CI readback — 2026-10-19 05:32 Asia/Shanghai
+
+PR #30 docs-only head 5a39c59810c754bd567ec66a589da425b7c7e530 passed product CI [39168160988](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39168160988) and AC3 coordination CI [39168161032](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39168161032). M1/M3 remain active to 21:45 UTC; no public response or PR #33 head movement was visible at 21:32. PR #24 remains unchanged.
