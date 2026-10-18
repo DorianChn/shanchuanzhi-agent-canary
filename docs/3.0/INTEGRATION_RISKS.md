@@ -647,3 +647,9 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | Risk | Priority / owners | Current evidence and status | Gate |
 | --- | --- | --- | --- |
 | Exact-ref M9 security composition (#36/#55) | P1 / M3 Hook, M1 contract, M9 workflow | Current PR #36 head de3799a has 11/13 checks green; both compose-current-module-refs jobs fail in run 38727481764 (Ubuntu and Windows). The reproduced mismatch remains M3 unpinned native Read expected deny / actual allow; M9 still pins stale M1 b1d7423 versus current M1 PR #43 head 9ef3dc2. | M3 retains the fail-closed denial and supported-capability positive control; M9 updates reviewed exact refs and reruns both OS jobs. Keep #55/#36 OPEN; host routing remains NOT_VERIFIED. |
+
+## M0 #51 exact-head follow-up — 2026-10-18 12:11 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M0 CI coordination | M0 PR #30 head 2566220 run 39126103158 passes 9/9, including the Ubuntu Node22 test 163 that failed on prior docs-only head a1b0f8d in run 39124717837. Store/test sources did not change between these M0 commits; the observed failure is intermittent, with trigger UNKNOWN. | Keep OPEN/P1 for M1 diagnosis; preserve lock, fail-closed behavior, assertions, and retry cap. No data loss/corruption is established. |

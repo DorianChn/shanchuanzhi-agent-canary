@@ -3031,3 +3031,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 | M8 | #40 / c1ff677 | 11/11 green | No file-level M6–M8 owner/reviewer disposition for #59 is visible. |
 | M9 | #36 / de3799a | 11/13 green; Ubuntu and Windows composition jobs fail in run 38727481764 | M3 #55 denial mismatch and stale M1 pin block exact-ref integration; no supported host protection is proven. |
 | M0 | #30 / a1b0f8d | New exact-head run 39124717837: build/three non-matrix checks passed; Ubuntu Node22 test 163 failed, five matrix jobs cancelled, package-smoke skipped | M1 owns #51 diagnosis; no data loss or corruption is established. PR #24 remains unchanged. |
+
+## M0 scheduler checkpoint — 2026-10-18 12:11 UTC (quota read 12:11:26)
+
+- Usage read 64% five-hour / 94% weekly. M0 commit 2566220713d469ed7cdeca32479e4d702981e13a is verified on PR #30; exact-head CI run 39126103158 passed 9/9 and AC3 coordination run 39126103167 passed.
+- Prior M0 docs-only head a1b0f8d failed Ubuntu Node22 state-store test 163 in run 39124717837; the source/test did not change before the 9/9 pass on 2566220. Classify as intermittent with UNKNOWN trigger; #51 remains OPEN/P1 for M1, with no data-loss/corruption claim. Issue records: #51 6249762654; scheduler #29 6249762926.
+- M2 #52 and M7 #53 remain the only active module lanes through 12:18. No visible module PR-head or Issue-result movement at 12:11; private activity remains UNKNOWN. #52/#53 remain OPEN/P0/NOT_VERIFIED; M3 is paused with work preserved.
+- The 12:08 shared upload window is open, but no M2/M7 push is visible. M0's last verified PR-head update was 12:09:07 UTC; next M0 push is no earlier than 12:29:07 UTC after fresh quota/ref/scope checks.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. No module source/tests, main, merge, or Release changed.
