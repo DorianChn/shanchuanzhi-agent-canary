@@ -2860,3 +2860,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M9 PR #36 remains at de3799aae540f58173acec4ab3f7a1fe98593aa7; composition run 38727481764 fails on Ubuntu and Windows. Issue #59 owner confirmations remain pending.
 - Issue comments: #29 6247111107; #52 6247111170; #53 6247111098; #55 6247111129; #59 6247111118. Queue receipts are recorded in #29 but prove delivery only.
 - Last M0 push was about 07:05 UTC. This docs checkpoint is in the 07:25+ batch; the next push after it is no earlier than 07:45 UTC after fresh quota, PR #24/#30, ancestry, and scope checks. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 scheduler checkpoint — 2026-10-18 07:40 UTC (read back 07:43)
+
+- Usage Overview is readable at 64% five-hour / 94% weekly; stop threshold not triggered and the browser tab remains open.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 is OPEN/Draft at d10e3d38df89bc93166df1d9d0a30650253d5f10; all 10 exact-head checks pass. M0 worktree is clean at this head before the checkpoint edit.
+- M3 #55 and M6 #59 ended their 07:20–07:40 lanes with no visible PR-head or issue-result change. Both are paused by schedule only, branches/work preserved. M1 #51 diagnostics and M8 #59 owner confirmation are active 07:40–08:00. No exclusive resource is reserved.
+- M2 #52 and M7 #53 remain paused; no first-party host callsite or current package artifact evidence is visible. M7's installer/VM slot remains released.
+- Current M9 PR #36 head is de3799aae540f58173acec4ab3f7a1fe98593aa7. A read-only workflow audit found the M1 checkout ref is b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc, an ancestor but not exact current M1 PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. The M3 workflow pin be3880298e1c6766024ecbce5f5dbc23c4d2daa1 matches current PR #33. Prior composition run 38727481764 failed both platforms; it is not exact-current-M1 evidence. M0 requested an unchanged-assertion rerun with exact SHAs at PR #36 comment 6247153551.
+- M0 exact overlap audit of PR files: #38/#39 share packaging/windows/auto-e4.mjs and test/auto-e4.test.mjs; #40 has a third test/auto-e4.test.mjs copy. #39/#40 overlap README.md, build.mjs, e4-hook-faults.mjs, prepare.mjs, and test/windows-packaging.test.mjs. PR #38/#39/#40 also list security-lab/claude-native-hook.mjs and test/agent-hook.test.ts, whose canonical semantics remain M1-owned.
+- Scheduler/issues: #29 comment 6247236961; #51 6247236643; #55 6247236737; #59 6247236712; #36 stale-pin evidence 6247153551. Queue receipts show message delivery only.
+- Last M0 push was about 07:25 UTC. This checkpoint is within the 07:45+ batch; next push after this batch is no earlier than 08:05 UTC after fresh quota, PR #24/#30, ancestry, and scope checks. No module source/tests, PR #24, main, merge, or Release changed.

@@ -538,3 +538,13 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | M3 native Hook unpinned-read contract (#55) | P1 / M3, M1, M9 | PR #33 current head be388029 does not yet have the requested owner correction; prior M9 run reports expected deny / actual allow. | M3-owned fix plus supported-capability positive control; rerun exact reviewed heads in M9 without changing the assertion. |
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred.
+
+## M0 07:40 UTC integration gate audit — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| M9 composition exact-source pin (#36/#55) | P1 / M9 integration, M1 contract, M3 Hook | M9 workflow checks out M1 ancestor b1d7423, not current PR #43 head 9ef3dc2; M3 pin be388029 matches PR #33. Prior run 38727481764 fails both platforms and does not prove exact-current-M1 behavior. | M9 reruns unchanged assertions against exact current reviewed heads and records all SHAs; M3 supplies native_file_execution_not_pinned deny plus positive control. |
+| M6–M8 Windows/E4 ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | PR file lists confirm shared packaging/test paths; no owner acceptance is visible. M1 retains canonical Hook wrapper/test semantics. | M6 confirms E4 paths; M7 owns installer semantics; M8 names its exact copies/adapters; M9 consumes reviewed refs. No transfer inferred. |
+| Quarantine retry exhaustion (#51) | P1 / M1 store, M4 CI, M9 | Historical four-process test exhausted 500 STATE_STORE_BUSY retries; trigger remains UNKNOWN. | M1 provides a bounded current-head reproduction/diagnostic without changing production locks or retry cap. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred.

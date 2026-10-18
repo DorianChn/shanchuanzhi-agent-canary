@@ -1150,3 +1150,13 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#51 P1:** M1 remains paused after no visible diagnostic at 07:00; retry trigger/root cause UNKNOWN, no data loss established.
 - **M0:** PR #30 head f877d43 is OPEN/Draft; ownership-contract-evidence passed and product CI is in progress. PR #24 remains unchanged OPEN/Draft.
 - Scheduler comment #29 is 6247111107; M3/M6 are active 07:20–07:40. No exclusive resource is reserved. Queue receipts do not prove task start.
+
+## M0 scheduler and M9 exact-pin checkpoint — 2026-10-18 07:40 UTC
+
+- **#51 P1:** M1 is active through 08:00 to reproduce/diagnose the historical Ubuntu Node 20 4x12 quarantine retry failure. Root cause remains UNKNOWN; preserve 48 assertions, lock behavior, fail-closed semantics, and the 500 retry cap. No data loss is established. Owner checkpoint: 6247236643.
+- **#55 P1:** M3's 07:20–07:40 lane ended without a visible PR #33 head/result; paused, work preserved. Keep open until the exact M1 Hook contract is implemented and current-head composition passes; no assertion weakening. Owner checkpoint: 6247236737.
+- **#59 P1:** M6's 07:20–07:40 lane ended without visible path-owner confirmation; M8 is active through 08:00 to confirm its exact paths/review boundary. No ownership transfer is inferred. Owner checkpoint: 6247236712.
+- **M9 PR #36:** workflow uses M1 SHA b1d7423, an ancestor but not the current PR #43 head 9ef3dc2; M3 pin be388029 matches current PR #33. The recorded run 38727481764 failed on both platforms and is not an exact-current-M1 composition result. Rerun with unchanged assertions and full SHA record; comment 6247153551.
+- **#52 P0 / #53 P0:** remain OPEN / NOT_VERIFIED. No host callsite or current installer/extracted-Hook evidence has appeared; no real bypass or disclosure is claimed. M2/M7 are paused by schedule with work preserved.
+- **M0/PR #30:** head d10e3d38 is OPEN/Draft with all 10 exact-head checks passing. PR #24 remains unchanged OPEN/Draft.
+- Scheduler comment #29: 6247236961. M1/M8 are active 07:40–08:00 with no exclusive resource. Queue receipts do not prove task start.
