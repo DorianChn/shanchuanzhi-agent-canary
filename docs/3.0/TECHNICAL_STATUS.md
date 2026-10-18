@@ -3128,3 +3128,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #30 head `674836c7cc779d2eb2d1cae2831f6948eefee5a6` product CI run `39135656690` passed 9/9; coordination run `39135656714` passed 1/1. PR #24 remains unchanged OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - At the 14:21 ref check, M2 PR #37 remained `9db59ed` and M7 PR #39 `cf4b70f`; both P0 issues remain open pending evidence. M2/M7 continue only through the assigned 14:21–14:41 slot; private execution remains UNKNOWN absent public artifacts/results.
 - The last PR #30 update was 14:21:54 UTC. Next shared push is no earlier than 14:41:54 UTC after fresh quota/ref/scope preflight. M0 changes remain coordination docs only.
+
+## M0 quota recovery and 15:00 lane checkpoint — 2026-10-18
+
+- At 14:59:21 UTC, the scoped Usage-page main read returned 87% five-hour / 80% weekly. The unscoped DOM call timed out and the screenshot route returned "Only screenshots from surface are allowed"; the scoped text read was the working route.
+- The 14:36–14:56 M2/M7 slot ended without public PR-head or Issue-result movement; private task state remains UNKNOWN. M2 (#52) and M7 (#53) were assigned 15:00–15:20 as the only two scheduled lanes. No VM, VMware, installer, or real-model resource is reserved.
+- M0 pushed docs-only e471b807d7f178944142dc07d80c4e97c772a889 to PR #30 at 14:59:44 UTC. Product workflow 39138459071 remained pending in the immediate check; ownership-contract workflow 39138459112 passed 1/1. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- M2 PR #37 remains 9db59ed and M7 PR #39 remains cf4b70f at the same ref read. Issues #52/#53 remain OPEN/P0/NOT_VERIFIED; exact acceptance evidence is still required. Next shared push no earlier than 15:19:44 UTC after fresh quota/ref/scope preflight.

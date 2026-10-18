@@ -1268,3 +1268,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - New PR #30 head `674836c` passes product CI 9/9 and coordination CI 1/1. PR #24 is unchanged OPEN/Draft.
 - M2/M7 remain scheduled through 14:41; at the 14:21 public ref read, PR #37/#39 were unchanged. #52/#53 remain OPEN/P0/NOT_VERIFIED until evidence is published.
 - Next M0 push no earlier than 14:41:54 UTC.
+
+## M0 quota recovery and 15:00 lane checkpoint — 2026-10-18
+
+- The 14:36–14:56 M2/M7 slot ended without new public PR heads or Issue evidence; private activity remains UNKNOWN. A full-page Usage DOM read timed out, but a scoped main read recovered at 14:59:21 with 87% five-hour / 80% weekly remaining. M2/M7 received a new 15:00–15:20 slot on #52/#53; no exclusive test resource is reserved.
+- M0 pushed docs-only commit e471b807d7f178944142dc07d80c4e97c772a889 to PR #30 at 14:59:44. Exact-head product CI run 39138459071 was pending at readback; ownership-contract run 39138459112 passed 1/1.
+- PR #24 remains unchanged OPEN/Draft at the verified prior head/base. PR #37/#39 remain OPEN/Draft at 9db59ed / cf4b70f; the P0 issues remain OPEN/NOT_VERIFIED. Next M0 push no earlier than 15:19:44 UTC after fresh quota/ref/scope preflight.
