@@ -3241,3 +3241,20 @@ This is a readback of the current PR heads and their attached check-run summarie
 - Scheduler #29 receipt: 6252489467. VMware, real-model, and installer work are not reserved or active.
 - At 16:48 UTC, PR #33 is still at be3880298e1c6766024ecbce5f6dbc23c4d2daa1; PR #43 at 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; PR #36 at de3799aae540f58173acec4ab3f7a1fe98593aa7. No M1/M3 source update is visible.
 - PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+
+## M0 exact-head CI readback — 2026-10-19 00:52 Asia/Shanghai
+
+- PR #30 head ad398a2f73251898a38eae05304b2e4478ecae69 passed product CI run 39146763931 at 16:51:14 UTC and AC3 coordination run 39146763920 at 16:49:42 UTC.
+- PR #24 remains OPEN/Draft at the unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- PR #33 and #43 showed no head movement at 16:52 UTC. M1/M3 task start remains unverified; the 16:45–17:05 assignment and 17:09:29 shared push gate remain active.
+
+## M0 lane rotation — 2026-10-19 01:05 Asia/Shanghai
+
+- Usage read at 17:05 UTC: 76% five-hour / 78% weekly; resetting banner remains; above the 5% stop threshold.
+- The 16:45–17:05 M1/M3 slot ended without public PR-head or issue-result movement. Their worktree state is UNKNOWN; M1/#61 and M3/#55 are paused by schedule with local work preserved.
+- The only scheduled lanes for 17:05–17:25 UTC are M2/#52 on existing PR #37 and M7/#53 on existing PR #39. They were asked for product-host/adapter evidence and source-bound package/extracted-Hook evidence respectively. Task starts remain unverified.
+- Receipts: #55 6252679138, #61 6252679109, #52 6252679136, #53 6252679128, scheduler #29 6252679130.
+- Public heads at the checkpoint: #33 be3880298e1c6766024ecbce5f6dbc23c4d2daa1; #43 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; #37 9db59ed8f2deae905edcb2179982f8bcb594167c; #39 cf4b70f5130175582fffdfc65bd7c6847450867b.
+- No VMware, real-model, or installer lifecycle resource is reserved. P0 #52/#53 remain OPEN / NOT_VERIFIED; M9 #36 remains blocked on #55/#61 and exact-head composition.
+- PR #30 head ad398a2f73251898a38eae05304b2e4478ecae69 passed product CI and coordination. PR #24 remains unchanged OPEN/Draft.
+- The next M0 push gate is 17:09:29 UTC; module work from this 17:05–17:25 slot is held for the 17:29:29 UTC shared batch, subject to a fresh Usage check.

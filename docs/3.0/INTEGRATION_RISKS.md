@@ -743,3 +743,10 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - #55 is assigned to M3 for the fail-closed behavior and positive control; #61 is assigned to M1 for the owner-confirmed source SHA. Neither has a new public result yet. M9 exact-ref composition remains BLOCKED / NOT_VERIFIED.
 - P0 #52 protected-host/held-handle and alias/TOCTOU evidence, and #53 packaged-hook log privacy evidence remain OPEN / NOT_VERIFIED. M2/M7 are paused this slot.
 - M6–M8 packaging ownership (#59), independent E4 (#57), and exact-head CI alignment (#60) remain separate open gates. No release readiness is claimed.
+
+## M0 P0 lane checkpoint — 2026-10-19 01:05 Asia/Shanghai
+
+- #52 still lacks independently verified first-party host consumption of the M1 held-object Gateway path and protected-open/alias evidence. M2 is assigned to a bounded host/adapter evidence task; synthetic seams remain insufficient.
+- #53 still lacks independently verified source-bound Setup.exe/payload hashes, extracted-Hook comparison, and extracted-harness result. M7 is assigned to gather those artifacts or name the concrete blocker. No clean-VM/install claim is made.
+- M1/#61 and M3/#55 had no public result by the slot end and are paused by schedule; private workspace activity remains UNKNOWN.
+- M9 #36 stays OPEN/Draft and BLOCKED / NOT_VERIFIED. The M1 source confirmation (#61), M3 behavior fix (#55), M6–M8 packaging owner map (#59), independent E4 (#57), and exact-head CI alignment (#60) remain open.

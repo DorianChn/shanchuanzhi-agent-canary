@@ -1361,3 +1361,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#61 P1 / M1 exact pin:** the same slot is assigned to M1 on existing PR #43 to confirm the exact reviewed Hook/Gateway source SHA and distinguish it from the owner-review SHA. No response or source movement is visible yet; Issue stays OPEN.
 - **#52 and #53 P0:** M2 and M7 are paused by schedule after the prior slot. Existing P0 acceptance evidence is still missing; both remain OPEN / NOT_VERIFIED. Private worktree state is UNKNOWN.
 - GitHub schedule receipts: #55 6252489466, #61 6252489547, #52 6252489478, #53 6252489471, and #29 6252489467.
+
+## M0 lane rotation — 2026-10-19 01:05 Asia/Shanghai
+
+- **#55 P1 / M3:** 16:45–17:05 slot ended without a public PR #33 update or new evidence. Private activity remains UNKNOWN. M3 is paused by schedule; preserve local work and keep the unpinned-read denial, positive control, and M1 assertions.
+- **#61 P1 / M1:** slot ended without a public PR #43 update or owner confirmation. Private activity remains UNKNOWN. M1 is paused by schedule; source SHA confirmation remains distinct from the owner-review SHA.
+- **#52 P0 / M2:** 17:05–17:25 slot assigned on existing PR #37 to identify a real host consumer of the approved held-object capability or name the concrete missing host/dependency. No mock product-host evidence; no M1/M5 edits.
+- **#53 P0 / M7:** 17:05–17:25 slot assigned on existing PR #39 to provide source-bound package hashes, extracted-Hook comparison, and extracted-harness evidence, or name the missing artifact/dependency. No VM or installer lifecycle is claimed.
+- GitHub receipts: #55 6252679138, #61 6252679109, #52 6252679136, #53 6252679128, #29 6252679130. All four technical issues remain OPEN; #52/#53 remain P0 / NOT_VERIFIED.
