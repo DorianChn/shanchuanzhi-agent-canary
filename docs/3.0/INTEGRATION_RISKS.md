@@ -676,3 +676,7 @@ No production bypass, real disclosure, data loss, successful installation, or in
 ### M0 #59 patch-level cross-check — 2026-10-18 12:59 UTC
 
 Paginated current-head patches confirm that #38/#39/#40 overlap on the Hook wrapper and two tests, and that each PR alters the M1-owned `test/agent-hook.test.ts`. M1 review is required for the shared test and Hook semantics; M6 owns the E4 test contract; M7 owns packaging/lifecycle behavior; M8's fixture/docs/consumer changes require the relevant owner review. `package.json` fields and the shared `.gitattributes` purpose still need named owner confirmation. M9 pins #38/#39/#40 exactly but has a stale M1 pin (`b1d7423...` vs current #43 `9ef3dc2...`). Keep #59 OPEN/P1 pending the owner map and confirmations; no source/test changes were made by M0.
+
+### M0 M9 exact-pin blocker — 2026-10-18 13:02 UTC
+
+Issue #61 tracks the M9 workflow's stale M1 source pin at PR #36 head `de3799a...` (`b1d7423...` versus current PR #43 head `9ef3dc2...`) and the exact-head remediation after M1/M3 confirmation. Run `38727481764` is historical and fails both composition platforms; its log identifies the M3 unpinned native Read assertion failure. Keep #61 OPEN/P1 and PR #36 Draft until the owner-reviewed M1 ref is pinned and #55 is fixed with the positive control preserved. M0 did not edit module code or weaken checks.

@@ -3071,3 +3071,11 @@ This is a readback of the current PR heads and their attached check-run summarie
 - M1 #51 and M3 #55 are on schedule hold during this slot with work preserved (comments `6250155818`, `6250156040`). Scheduler receipt is #29 comment `6250155563`. These comments record the public schedule and do not establish private worktree state.
 - Keep #59 OPEN/P1 until the path-by-path owner/reviewer map and required M6/M7 confirmations are visible. Module pushes remain held until a fresh shared-batch quota/ref/scope preflight; M0's docs-only push is eligible after the 12:49:48 UTC minimum interval.
 - No module source/tests, PR #24, main, merge, or Release were changed.
+
+## M0 scheduler checkpoint — 2026-10-18 13:02 UTC (usage read 13:02:40)
+
+- Usage remains 64% five-hour / 94% weekly. PR #30 is at exact head `fef86635dbbf26004cac53265622b7e07d218517`; product CI run `39129281870` passes 9/9 and coordination run `39129281922` passes 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- M6/M8 remain the only assigned active lanes through 13:09 on #59. No owner-map result is visible as of 13:02; private task execution is UNKNOWN. M1 #51/M3 #55 remain schedule-held with work preserved. No exclusive VM, install, VMware, or real-model resource is reserved.
+- PR #36 workflow evidence confirms stale M1 source pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` versus current M1 PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`. Historical run `38727481764` fails Ubuntu and Windows composition; its log shows the M3 unpinned native Read test failing. New issue #61 assigns the exact-pin correction to M9 after M1/M3 owner confirmation; #55 remains the M3 behavior issue and #59 the M6–M8 path-owner issue.
+- PR #38/#39/#40 remain at the exact refs in the M9 workflow. Full paginated path intersections and patch-level owner proposals are recorded locally in `MODULE_OWNERSHIP.md` and on #59; required owner confirmations are still pending.
+- M0 changed coordination docs only. The last PR #30 remote update is 12:54:54 UTC; next shared push is no earlier than 13:14:54 UTC after quota, PR #24, exact-ref, and path-scope preflight.
