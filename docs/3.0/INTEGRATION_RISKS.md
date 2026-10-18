@@ -604,3 +604,16 @@ No production bypass, real disclosure, data loss, successful installation, or in
 - The 09:10 pre-push Usage read timed out, so the planned push was held and M1/M8 received a temporary stop message. After switching back to the existing Usage tab, a fresh read at about 09:11 showed 64% five-hour / 94% weekly; M1/M8 resumed the remainder of their current slot, preserving their work.
 - Pause receipts: M1 `01a14e47-3b66-75b1-9e54-dcb99b736b65`, M8 `01a14e47-3da4-7f72-ad17-73ebced603b6`. Resume receipts: M1 `01a14e48-393c-7ad0-90f7-a843f17f2439`, M8 `01a14e48-3b71-7dc2-99e1-392b5b1040d6`. Delivery does not prove task start.
 - No module source or PR #24 write occurred during the gate. The M0 documentation batch may continue only after fresh quota and PR/ref/scope preflight.
+
+## M0 09:26 UTC integration gate checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 composition | No visible M2 result; PR #37 remains `9db59ed`. Synthetic harness is insufficient for first-party host enforcement. | Keep OPEN / NOT_VERIFIED until a real host callsite and deny-before-callback alias proof or exact missing API/owner. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package evidence, M8 source/logging, M9 acceptance | No visible M7 artifact; PR #39 remains `cf4b70f`. Current hash-bound artifact/manifest/extracted-Hook chain remains absent. | Keep OPEN / NOT_VERIFIED until current package evidence or precise blocker. |
+| Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M4 CI, M9 | Run `38698635434` has one actual failed Ubuntu Node 20 test 163; macOS/Windows Node 20/22 were cancelled, Ubuntu Node 22 passed. Trigger remains UNKNOWN. | M1 provides current exact-run bounded diagnostics; preserve locks, assertions, fail-closed behavior, and 500 cap. |
+| Unpinned native Hook read (#55) | P1 / M3 behavior, M1 contract, M9 composition | PR #33 still lacks visible exact correction/positive-control result. | M3-owned denial with exact reason and supported positive control; M9 consumes reviewed exact SHA. |
+| M4 security center exact-head verification (#60) | P1 / M4 UI/tests, M1 shared Hook test, M0 gate | PR #34 run has one M1-owned Ubuntu Node 20 failure; remaining platform checks were cancelled or passed, package-smoke skipped. No M4 causation established. | M4 provides focused M4-owned test evidence without editing M1 shared files; full exact-head matrix only after #51 owner resolves. |
+| M6–M8 Windows/E4 ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | M8 path-owner result remains absent; exact reviewed refs still need owner acceptance. | M8 names exact paths/adapters; M6/M7 retain E4/installer semantics; M9 pins reviewed exact SHAs. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.

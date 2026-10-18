@@ -1207,3 +1207,12 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - The 09:10 pre-push Usage read timed out, so the planned push was held and M1/M8 received a temporary stop message. After switching back to the existing Usage tab, a fresh read at about 09:11 showed 64% five-hour / 94% weekly; M1/M8 resumed the remainder of their current slot, preserving their work.
 - Pause receipts: M1 `01a14e47-3b66-75b1-9e54-dcb99b736b65`, M8 `01a14e47-3da4-7f72-ad17-73ebced603b6`. Resume receipts: M1 `01a14e48-393c-7ad0-90f7-a843f17f2439`, M8 `01a14e48-3b71-7dc2-99e1-392b5b1040d6`. Delivery does not prove task start.
 - No module source or PR #24 write occurred during the gate. The M0 documentation batch may continue only after fresh quota and PR/ref/scope preflight.
+
+## M0 scheduler checkpoint — 2026-10-18 09:26 UTC
+
+- **#51 P1:** M1's 09:02–09:25 lane ended without visible diagnostic or PR #43 head change; paused, work preserved. Historical Ubuntu Node 20 test 163 trigger remains UNKNOWN. Checkpoint `6248227384`.
+- **#52 P0 / #53 P0:** M2/M7 remain paused after no visible public result in their last lanes; no host callsite or current hash-bound package chain is verified. Both remain OPEN / NOT_VERIFIED.
+- **#55 P1:** M3 active 09:26–09:46 on PR #33 (`be38802`) to implement the exact unpinned native Read denial with supported positive control; preserve assertions and M1-owned paths. Checkpoint `6248227887`.
+- **#59 P1:** M8's 09:02–09:25 lane ended without visible owner matrix or PR #40 change; paused, work preserved. Checkpoint `6248227630`.
+- **#60 P1:** M4 active 09:26–09:46 on PR #34 (`fbf2090`) for focused M4 console/security-center tests or a concrete M4-owned fix. M0 verified run `38698635434`: only Ubuntu Node 20 test 163 failed; macOS/Windows jobs cancelled, Ubuntu Node 22/Docker/sponsor passed, package-smoke skipped. The failing test is M1-owned; do not attribute it to M4. Checkpoint `6248228139`.
+- **M0/PR #30:** head `493ef8e` passed all 10 checks. PR #24 remains OPEN/Draft at head `62496d4` / base `dc8d009`. Scheduler comment #29: `6248228339`.
