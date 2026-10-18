@@ -641,3 +641,9 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | --- | --- | --- | --- |
 | Protected-path first-party host enforcement (#52) | P0 / M2 adapter, M3 host, M1 Gateway, M5 policy, M9 | The 11:38–11:58 M2/M3 slot ended without visible PR-head or Issue-result movement; private workspace activity remains UNKNOWN. M3 is paused by schedule, M2 continues in its owned adapter path. | M2 provides its exact seam/tests or a precise contract blocker; M3 later consumes the seam in its owned host path. Keep OPEN/P0/NOT_VERIFIED until deny-before-callback alias evidence and a registered-file positive control are composed. |
 | Caller data in packaged Hook logs (#53) | P0 / M7 package, M8 Hook copy, M9 acceptance | M7 is assigned a build-only provenance chain using the published candidate4 ZIP and pinned official NSIS/Node inputs. No fresh Setup.exe/manifest/extracted-Hook chain is yet verified. | Require source/input/tool hashes, exact Setup.exe hash, manifest, extracted Hook comparison, and packaged harness result. No install, VM, or VMware run is reserved. Keep OPEN/P0/NOT_VERIFIED. |
+
+## M0 M9 composition status — 2026-10-18 12:04 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Exact-ref M9 security composition (#36/#55) | P1 / M3 Hook, M1 contract, M9 workflow | Current PR #36 head de3799a has 11/13 checks green; both compose-current-module-refs jobs fail in run 38727481764 (Ubuntu and Windows). The reproduced mismatch remains M3 unpinned native Read expected deny / actual allow; M9 still pins stale M1 b1d7423 versus current M1 PR #43 head 9ef3dc2. | M3 retains the fail-closed denial and supported-capability positive control; M9 updates reviewed exact refs and reruns both OS jobs. Keep #55/#36 OPEN; host routing remains NOT_VERIFIED. |

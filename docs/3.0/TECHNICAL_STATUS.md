@@ -3014,3 +3014,20 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - No installation, VM, VMware, or real-model resource is reserved. The M7 assignment explicitly requires fresh output, source/input/tool hashes, Setup.exe hash, manifest, extracted-Hook comparison, and packaged harness; it forbids claiming install acceptance.
 - #52 and #53 remain OPEN/P0/NOT_VERIFIED. M1 #51's exact-head Ubuntu Node22 retry exhaustion is OPEN/P1; M1 is queued for the next available slot and is not a third active lane.
 - All module pushes remain held for the shared batch no earlier than 12:08:23 UTC after fresh quota/ref/scope checks. M0 has not changed module source/tests, PR #24, main, merges, or Release state.
+
+## M0 exact-head module PR/CI snapshot — 2026-10-18 12:04 UTC
+
+This is a readback of the current PR heads and their attached check-run summaries, not evidence of module worktree activity. Historical checks remain historical.
+
+| Module | PR / exact head | Attached checks | Remaining gate |
+| --- | --- | --- | --- |
+| M1 | #43 / 9ef3dc2 | 11/11 green | #51 still has exact-head Ubuntu retry-exhaustion failures; keep diagnosis with M1 and preserve all guards. |
+| M2 | #37 / 9db59ed | 9/9 green | No product-host adapter composition or #52 alias deny-before-callback result is visible. |
+| M3 | #33 / be38802 | 9/9 green | #55 mismatch remains; unpinned native Read must deny and supported-capability control must pass. |
+| M4 | #34 / fbf2090 | 3/9 green; Ubuntu Node20 failed in historical run 38698635434, five jobs cancelled, package-smoke skipped | Failure belongs to the M1-owned #51 state-store path; no M4 causation is established. |
+| M5 | #47 / 373e2c2 | 9/9 green | Policy fixes do not establish a first-party protected-file host route for #52. |
+| M6 | #38 / c1fdf3c | 11/11 green | Independent external E4 and final package acceptance remain NOT_VERIFIED. |
+| M7 | #39 / cf4b70f | 11/11 green | No current Setup.exe/provenance/extracted-Hook evidence chain; assigned build-only #53 slot. |
+| M8 | #40 / c1ff677 | 11/11 green | No file-level M6–M8 owner/reviewer disposition for #59 is visible. |
+| M9 | #36 / de3799a | 11/13 green; Ubuntu and Windows composition jobs fail in run 38727481764 | M3 #55 denial mismatch and stale M1 pin block exact-ref integration; no supported host protection is proven. |
+| M0 | #30 / a1b0f8d | New exact-head run 39124717837: build/three non-matrix checks passed; Ubuntu Node22 test 163 failed, five matrix jobs cancelled, package-smoke skipped | M1 owns #51 diagnosis; no data loss or corruption is established. PR #24 remains unchanged. |
