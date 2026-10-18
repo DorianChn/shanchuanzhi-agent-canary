@@ -3221,3 +3221,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - The Git worktree registry in the Documents coordinator repository contains clean M0/M1/M5/M8/M9 worktrees. M2/M3/M4/M6/M7 are not registered there. The required Desktop/Agent-Canary-Dev directories exist, but main and agents are empty.
 - Desktop/Agent-Canary-Dev/coordinator is a separate clean clone whose local feature/ac3-m0-coordination commit 09924da is one commit ahead and 195 behind the actual d88cdff remote. It modifies six coordination documents and remains untouched. Do not push from that divergent clone.
 - The current Documents coordinator worktree has one local docs-only commit e8c222e pending. Next shared push is no earlier than 16:25:44 UTC after fresh quota/ref/scope preflight.
+
+## M0 third batch verification — 2026-10-18 16:28 UTC
+
+- PR #30 exact head 6632075e1fa3e10c31e1a7500920b73e31963914 passed product CI run 39144999455 at 16:27:57 UTC and coordination run 39144999581 at 16:26:34 UTC.
+- The push contained only the three M0 coordination documents. PR #24 remains unchanged.
+- The next M0 push is no earlier than 16:46:22 UTC, after fresh Usage, PR/ref, and docs-only scope checks.
