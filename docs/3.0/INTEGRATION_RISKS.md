@@ -493,3 +493,10 @@ This checkpoint does not infer a production bypass, leak, data loss, successful 
 | M9 cross-module composition (#55 and #36) | P1 / M3 + M9; M1 interface owner | PR #36 product CI 9/9 and wrapper 2/2 pass; composition run 38727481764 still fails on Ubuntu and Windows. | M3 preserves fail-closed unpinned-read behavior and positive control; M9 pins reviewed heads and reruns both composition jobs. Do not mark integration PASS. |
 
 This checkpoint does not establish a production bypass, sensitive-data exposure, successful host integration, installer acceptance, or independent E4 result.
+## M0 #52 host-integration scheduling update — 2026-10-18 03:00 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| First-party host use of execution isolation (#52) | P0 / M2 adapter + host integration; M1 Gateway contract; M5 policy; M9 composition | M5 PR #47 alias/path fix has exact-head CI 9/9. No M2 worktree or new M2 implementation is verified in the inspected clone; held-object use, protected-open, and TOCTOU remain NOT_VERIFIED. | M2 confirms existing path and wires through the current M1 contract; M1 reviews any public interface change; M9 runs exact-head composition. Keep OPEN. |
+
+No production bypass or real exposure is claimed. Synthetic path-alias evidence is not host-enforcement acceptance.

@@ -1039,3 +1039,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #56 P2: M1 has not dispositioned the PR #30/#34/#47 overlap on M1-owned Hook tests; keep OPEN and PR #30 Draft; comment 6244825569.
 - #60 P1: M4 remains paused in M0's schedule; PR #34 unchanged, no focused evidence visible. The existing failure is M1-owned test 163, not an established M4 defect; comment 6244825792.
 - #29: two active slots M1 + M5; next owner checkpoint 03:00, next M0 push no earlier than 02:49; comment 6244826049.
+## M0 issue checkpoint — 2026-10-18 03:00 UTC
+
+- #51 P1: no M1 owner evidence by 03:00; retry trigger UNKNOWN. M1 remains tasked through 03:20; queue 01a14cf4-978d-7800-ba6c-19a40278e815; comment 6244979833.
+- #52 P0: M5 PR #47 remains green 9/9 but has no new owner evidence; M5's active slot is paused pending M1 review. M2 is queued on existing PR #37 for host integration, but path/implementation is not verified. Keep OPEN; comment 6244980113.
+- #56 P2: M1 disposition for PR #30/#34/#47 Hook-test overlap is still missing. Keep open and retain all assertions; comment 6244980356.
+- #29 scheduler: M1 + M2 are the two scheduled lanes; M5/M4 paused by M0 pending review/evidence. Next checkpoint 03:20; next M0 push no earlier than 03:09; comment 6244980636.

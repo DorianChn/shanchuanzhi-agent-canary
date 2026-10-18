@@ -2714,3 +2714,16 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M9 #36 remains at de3799a: product CI 9/9 and wrapper 2/2 pass, but composition run 38727481764 fails on Ubuntu and Windows. M9 integration is not accepted.
 - GitHub checkpoint comments: #51 6244825116, #52 6244825348, #56 6244825569, #60 6244825792, #29 6244826049.
 - Last M0 push was at about 02:29 UTC; next documentation push is no earlier than 02:49 UTC after fresh quota and scope preflight. No module code/tests, main, merge, or Release changed.
+## M0 03:00 UTC checkpoint — 2026-10-18
+
+- Usage Overview is readable at 64% five-hour / 94% weekly; stop all work if it becomes unreadable or falls to 5% or below.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at e48d4f97b8493da20d3838a968dbe962e782dfba with product CI 39091590947 passing 9/9 and coordination check 39091591159 passing 1/1.
+- Full M1–M8 and M9 PR scan at 03:00 shows no module head movement. PR #37 M2 remains 9db59ed8; no M2 worktree is registered in the inspected clone.
+- M1 missed 03:00 with no visible owner report, focused result, commit, or inspected-tree change. #51 remains UNKNOWN; M1 continues in its existing branch through 03:20 for bounded diagnosis and M1-owned path review.
+- M5 missed 03:00 with no new evidence or code change. PR #47 remains 373e2c2 and its exact-head CI is 9/9. M0 paused its second-slot assignment pending M1 disposition; no M5 acknowledgment is visible. Preserve the branch.
+- M2 is queued in its existing PR #37 branch for P0 #52 host integration; exact path/branch/worktree and implementation are NOT_VERIFIED until owner evidence arrives. Use the existing M1 Gateway contract and do not change it without M1 signoff.
+- M4 remains paused in M0's schedule; no M4 worktree or focused console result is visible. No worktree or branch was deleted, reset, or rewritten.
+- Active two-lane schedule is M1 + M2. M5 and M4 are paused by M0 for scheduling only; queue receipts do not prove the agents acknowledged or started work. Queue IDs: M1 01a14cf4-978d-7800-ba6c-19a40278e815; M2 01a14cf4-989f-75b2-8acb-c6f908d75ca4; M5 schedule notice 01a14cf4-99ae-7b92-9903-a93a4e76ed8b.
+- M9 #36 remains at de3799a with product CI 9/9 and wrapper 2/2 passing but composition run 38727481764 failing on Ubuntu and Windows. Integration is not accepted.
+- GitHub checkpoint comments: #51 6244979833, #52 6244980113, #56 6244980356, and scheduler #29 6244980636.
+- Last M0 push was around 02:49 UTC; next documentation push is no earlier than 03:09 UTC after fresh quota, ancestry, PR #24/#30, and scope preflight. No module source/tests, main, merge, or Release changed.

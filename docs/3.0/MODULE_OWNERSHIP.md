@@ -446,3 +446,6 @@ This records the currently visible PR #34 file list; it does not confirm an unli
 ## M0 observed shared-path overlap — 2026-10-18 02:20 UTC
 
 PR #47 changed files include M1-owned src/security-router.ts, test/security-router.test.ts, test/file-state-store.test.ts, and test/agent-hook.test.ts. Its src/agent-hook.ts blob matches the current M1 PR #43 blob, while test/agent-hook.test.ts differs. M1 owns canonical semantics for the shared paths listed above; #51/#52/#56 require owner disposition. This observation does not transfer ownership or authorize M0 to edit product code/tests. M1 was asked to review the exact changes or provide a blocker by 02:40 UTC.
+## M0 M2 P0 integration assignment — 2026-10-18 03:00 UTC
+
+M2 remains owner of its existing execution-isolation adapter paths under PR #37 / branch feature/ac3-execution-isolation. No corresponding M2 worktree is registered in the inspected clone, so the exact local path and implementation state remain UNKNOWN. M0 queued M2 to report path/branch/SHA and work on first-party host integration through the existing M1 Gateway contract. M1 remains owner of the public Gateway/API; this assignment does not transfer shared-path ownership or authorize API changes.
