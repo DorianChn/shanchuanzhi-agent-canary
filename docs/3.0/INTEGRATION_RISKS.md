@@ -803,3 +803,9 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M4/M6 produced no public evidence in the 19:45–20:05 slot. Exact-head build status and independent product E4 remain unresolved; no result is inferred from private activity.
 - M1/M3 resumed 20:05–20:25 for the M9 source-ref and native Read contract gates. M9 exact-ref composition remains blocked until owner confirmation and a passing direct contract test exist.
 - P0 #52/#53, M9 composition, M4 exact-head CI, and independent E4 #57 remain open. No release readiness is claimed.
+
+## M0 evidence checkpoint — 2026-10-19 04:25 Asia/Shanghai
+
+- M1/M3 again produced no public result in 20:05–20:25; the M9 exact-source confirmation and native-Read contract remain open. Private activity is UNKNOWN.
+- M5/M8 resume for 20:25–20:45 to provide P0 policy-denial/host-consumer and Hook/logging provenance evidence. Synthetic policy tests alone cannot prove production host consumption or shipped-log privacy.
+- M9 and P0 #52/#53 remain blocked; M7 still owns Windows packaging and M6 independent E4 remains unverified. No release readiness is claimed.

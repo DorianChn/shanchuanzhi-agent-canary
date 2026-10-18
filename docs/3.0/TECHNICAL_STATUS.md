@@ -3428,3 +3428,11 @@ PR #30 head 043bd50c5b3486582317c746cc25755c118d60a4 was actually pushed at 19:1
 ### Actual shared push timing — 2026-10-19 04:08 Asia/Shanghai
 
 PR #30 head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 was pushed at 20:08:11 UTC. The next shared module/push batch is no earlier than 20:28:11 UTC, superseding any prior estimate. Product CI 39161927589 was queued and coordination CI 39161927584 was in progress at 20:08 UTC. PR #24 remains unchanged.
+
+## M0 lane rotation — 2026-10-19 04:25 Asia/Shanghai
+
+- At 20:25 UTC, M1/#61 and M3/#55 ended without a public result or PR movement. PR #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M1 shared worktree is clean; no M3 worktree is registered in this coordinator clone. Private activity is UNKNOWN; both are paused with work preserved.
+- M5/#52 and M8/#53/#59 are assigned 20:25–20:45 on existing PR #47 head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c and PR #40 head c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. M5 must confirm exact OBSERVE alias denial and first-party consumer/dependency boundary; M8 must report exact Hook/logging blobs, tests and shipment scope. M7 retains packaging/windows/* ownership.
+- Usage at 20:20 UTC was 87% five-hour / 74% weekly. PR #30 exact head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 passed product CI 39161927589 and coordination CI 39161927584. PR #24 remains unchanged OPEN/Draft.
+- Receipts: #29 6254734479; #55 6254734830; #61 6254735168; #52 6254735479; #53 6254735824; #59 6254736070.
+- Last shared push was 20:08:11 UTC; next batch is no earlier than 20:28:11 UTC, after fresh Usage/ref/scope checks. P0 #52/#53 remain NOT_VERIFIED; no merge or Release.
