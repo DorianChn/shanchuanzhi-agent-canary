@@ -1058,3 +1058,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #55 P1: M3 PR #33 has CI 9/9 but still disagrees with M1 on unpinned native Read; M9 composition fails Ubuntu/Windows. M3 assigned the existing-branch fix and positive control through 04:00; comment 6245288954.
 - #56 P2: M1 has not dispositioned shared Hook-test copies across #30/#34/#47; keep open and preserve assertions; comment 6245289176.
 - #29 scheduler: active M1 + M3; M2/M4/M5 paused by M0 schedule pending evidence/review. Next checkpoint 04:00; next M0 push no earlier than 03:54; comment 6245289422.
+## M0 issue checkpoint — 2026-10-18 04:00 UTC
+
+- #51 P1: M1 has no new diagnosis or evidence; trigger UNKNOWN. M1 continues through 04:20; queue 01a14d2b-3c4a-7f92-8aac-a9553e8ef500; comment 6245438688.
+- #52 P0: M5 PR #47 is green 9/9 but awaits M1 disposition; M2 still lacks a verified path/worktree and remains paused pending location evidence. Host/held-object/TOCTOU/composition remain NOT_VERIFIED; comment 6245439029.
+- #55 P1: M3 PR #33 has CI 9/9, but unpinned native Read still conflicts with M1 and M9 composition fails both platforms. M3 continues through 04:20 on its existing branch; queue 01a14d2b-3d9b-7601-8a0b-45d6ef4fdf2c; comment 6245439339.
+- #56 P2: M1 disposition of shared Hook tests remains missing; keep OPEN and preserve assertions; comment 6245439572.
+- #29 scheduler: active M1 + M3; M2/M4/M5 paused by M0 schedule pending path/review; next checkpoint 04:20, next push no earlier than 04:14; comment 6245439802.
