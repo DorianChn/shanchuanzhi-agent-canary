@@ -2672,3 +2672,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M9 PR #36 remains `de3799a`: product CI `38727481643` passed 9/9 and wrapper CI `38727481657` passed 2/2, while exact-head composition run `38727481764` failed on Ubuntu and Windows. P0 #52/#53 and P1 #55/#58/#59 remain open; separate install/E4 gates #41/#57 remain unverified.
 - M1/M4 were re-queued in existing sessions for path/branch/SHA and focused evidence or a concrete blocker by 01:40 UTC; queue IDs are recorded in #29. No VMware, real-model, or installer resource is reserved.
 - Last M0 push 01:07 UTC; next no earlier than 01:27 UTC after fresh preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 01:40 UTC checkpoint — 2026-10-18
+
+- Usage Overview readable at 01:40 UTC: 64% five-hour / 94% weekly; tab remains open. Stop if five-hour quota becomes unreadable or reaches 5% or below.
+- M1 and M4 missed the 01:40 evidence checkpoint: no new owner commit, focused test, or reply is visible. M1 #43 stays at `9ef3dc2` with a clean inspected tree; M4 #34 stays at `fbf2090` with no registered tree in the inspected common clone. Other clones remain UNKNOWN.
+- Existing M1/M4 sessions were re-queued through 02:00 UTC: M1 `01a14cab-1ba9-7f81-bc84-58199365bfac`; M4 `01a14cab-1cba-7a43-b423-bf02bbf72941`. Queue receipts do not prove work started. Issues #29/#51/#56/#60 have the checkpoint; PRs #43/#34 remain unchanged.
+- M1 #51 still has an UNKNOWN retry trigger; #56 canonical Hook-test disposition remains pending. M4 #60 is an integration gate only: the sole actual failure in old PR #34 CI is M1-owned Ubuntu Node 20 test 163; M4 causation is not established.
+- M9 #36 still has product CI 9/9 and wrapper 2/2 pass but composition run `38727481764` fails Ubuntu and Windows. P0 #52/#53 and P1 #55/#58/#59 remain open; #41/#57 stay unverified.
+- PR #24 unchanged and OPEN/Draft; PR #30 at `115c4ae` remains OPEN/Draft with exact CI 9/9 and coordination 1/1. Last M0 push 01:27 UTC; next no earlier than 01:47 UTC after fresh quota and scope preflight. No module source/tests or Release changed.

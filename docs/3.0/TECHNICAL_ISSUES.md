@@ -1011,3 +1011,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **P1 #60 / M4 integration:** no M4 focused result/path is visible. Old PR #34 run `38698635434` has only one actual failure, M1's Ubuntu Node 20 test 163; other matrix jobs cancelled and package-smoke skipped. Do not attribute #51 to M4.
 - **M9 gate:** PR #36 product CI 9/9 and wrapper 2/2 pass, but exact-head composition run `38727481764` fails Ubuntu and Windows. Issues #52/#53 (P0), #55/#58/#59 (P1), and #41/#57 remain OPEN or NOT_VERIFIED as applicable; no release/integration PASS is asserted.
 - No M1/M4 owner evidence arrived by 01:20. Both existing sessions were re-queued for exact path/branch/SHA and focused evidence or blocker by 01:40. Queue receipt is not evidence of work started.
+
+## M1/M4 checkpoint — 2026-10-18 01:40 UTC
+
+- #51: no M1 failure-time trace or owner response; retry trigger remains UNKNOWN. M1 worktree still clean at `9ef3dc2`.
+- #56: no canonical Hook-test disposition; PRs #30 and #34 both touch M1-owned `test/agent-hook.test.ts`. Keep PR #30 Draft.
+- #60: no M4 focused console evidence or exact local path. PR #34 remains `fbf2090`; its old CI has one actual failure in M1-owned test 163 only. Do not attribute that failure to M4 or modify M1 paths from M4.
+- Both existing sessions were re-queued to provide path/branch/SHA plus evidence or blocker by 02:00 UTC; IDs are recorded in #29. The queue is not proof of work started.
