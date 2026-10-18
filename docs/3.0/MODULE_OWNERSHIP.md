@@ -434,3 +434,12 @@ A read-only search of dated immediate project folders under `C:\Users\36712\Docu
 00:20 UTC delta (2026-10-18): the M1–M9 PR scan remains unchanged. The inspected M1 worktree is clean at origin; no M4 worktree is registered in this clone. Next owner checkpoint is 00:40 UTC.
 
 00:29 UTC delta (2026-10-18): PR #30 advanced to `44ef54f3ac8a4e2b82d6f15de1224c22f2bde0e1`; exact-head product CI 9/9 and coordination 1/1 passed. The next owner checkpoint is 00:40 UTC.
+
+## M4 desktop security-center ownership — 2026-10-18, pending owner confirmation
+
+| Paths | Primary owner | Coordination boundary |
+| --- | --- | --- |
+| `src/ai/console-page.ts`, `src/ai/security-center-adapter.ts`, `test/runtime-console.test.ts`, `docs/3.0/M4/*`, `security-lab/claude-native-hook.mjs` | M4 | M4 maintains the desktop security-center behavior and its focused UI/runtime verification. Preserve explicit unsupported/unknown states when host APIs are unavailable. Track the unchanged exact-head CI failure in Issue #60. |
+| `test/agent-hook.test.ts` | M1 | PR #34 also changes this path. M1 owns canonical Hook/interruption semantics; any M4 adaptation must be M1-reviewed and preserve assertions. Reconcile the PR #30/#34 overlap through Issue #56. |
+
+This records the currently visible PR #34 file list; it does not confirm an unlisted local M4 worktree or transfer ownership. M0 does not edit these paths.
