@@ -1083,3 +1083,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #36 / M9 integration: the same recorded composition failure is stale-pin evidence, not an exact-current-owner-head result. M9 was asked to wait for M3's owner change, then pin exact M1/M3 heads and rerun before any PASS; comment 6245816378.
 - #56 P2: canonical M1 disposition remains outstanding for the shared Hook-test copies across #30/#33/#34/#47 compared with #43. Preserve assertions; comments 6245774704, 6245654534, and 6245660906.
 - #29 scheduler: active M1 + M3 through 05:00; M2/M4/M5 remain paused by M0 scheduling only. No exclusive resource is reserved. Quota is 64% five-hour / 94% weekly. PR #30 head 2d01db2 has exact-head CI 9/9; PR #24 is unchanged OPEN/Draft. Last M0 push 04:37; next no earlier than 04:57 after fresh quota and scope preflight. Queue receipts do not prove work started. Comment 6245774598.
+
+## M0 issue checkpoint — 2026-10-18 05:00 UTC
+
+- #51 P1: no new M1 PR head, owner disposition, or trace is visible; PR #43 remains 9ef3dc2 and the inspected tree is clean. The trigger remains UNKNOWN. M1 continues through 05:20; the exact failure signature and task queue are recorded in comment 6245894424.
+- #52 P0: M5 #47 remains 373e2c2 with recorded CI 9/9 and awaits M1 review; M2 path/worktree and first-party host integration remain unverified in the inspected clone. Protected-open/held-handle, host wiring, TOCTOU, and current composition remain NOT_VERIFIED. No real exposure is claimed; comment 6245897329.
+- #55 P1: M3 #33 remains be3880298 with recorded CI 9/9 and no new owner evidence. The unpinned native Read failure remains; M3 continues through 05:20 on its existing task. Exact run/job/test evidence is in comments 6245802617 and 6245894426.
+- #56 P2: M1 has not provided canonical disposition for the Hook-test overlap across #30/#33/#34/#47 versus #43. Preserve all assertions; comment 6245894448.
+- #29 scheduler: active M1 + M3 through 05:20; M2/M4/M5 remain paused by M0 scheduling only. No exclusive resource is reserved. Quota is 64% five-hour / 94% weekly; PR #30 head a53951e has 9/9 product CI and 1/1 coordination check; PR #24 is unchanged OPEN/Draft. Last M0 push 04:57; next no earlier than 05:17. Comment 6245894487.

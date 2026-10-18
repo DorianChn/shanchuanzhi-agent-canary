@@ -2782,3 +2782,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Active lanes remain M1 + M3 on existing tasks through 05:00. M2/M4/M5 stay paused by M0 scheduling only, branches/work preserved. Queue receipts do not prove work started; no VMware, real-model, or installation resource is reserved.
 - Checkpoint comments: #51 `6245774606`, #52 `6245774620`, #55 `6245774603`, #56 `6245774704`, scheduler #29 `6245774598`. The later ownership clarification is recorded in #55 `6245660906` and #56 `6245654534`.
 - Last M0 push was 04:37 UTC; next docs push no earlier than 04:57 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 05:00 UTC checkpoint — 2026-10-18
+
+- Usage Overview is readable at 64% five-hour / 94% weekly; the <=5% or unreadable pause rule is not triggered.
+- Full open-PR scan shows M1-M9 heads unchanged. PR #24 remains OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 is OPEN/Draft at `a53951eae7249ee3d0b91ff02bf7632cbe2a6d98`; exact-head product CI passed 9/9 and coordination check passed 1/1.
+- M1 PR #43 remains `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; inspected worktree is clean, with no new owner report or diagnostic result. #51 root trigger remains UNKNOWN despite the now-recorded exact failing signature.
+- M3 PR #33 remains `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`; no M3 worktree is registered in this clone and no owner evidence is visible. #55 remains blocked on the unpinned native Read denial and supported-capability positive control.
+- Active lanes remain M1 + M3 through 05:20 on existing tasks/branches. M2/M4/M5 remain paused by M0 scheduling only; preserve branches/work. Queue receipts do not prove work started. No VMware, real-model, or installation resource is reserved.
+- Checkpoint comments: #51 `6245894424`, #52 `6245897329`, #55 `6245894426`, #56 `6245894448`, scheduler #29 `6245894487`. The M3 log evidence and stale-pin gate are recorded in #55 `6245802617` and #36 `6245816378`.
+- Last M0 push was 04:57 UTC; next docs push no earlier than 05:17 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
