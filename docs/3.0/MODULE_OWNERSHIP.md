@@ -449,3 +449,6 @@ PR #47 changed files include M1-owned src/security-router.ts, test/security-rout
 ## M0 M2 P0 integration assignment — 2026-10-18 03:00 UTC
 
 M2 remains owner of its existing execution-isolation adapter paths under PR #37 / branch feature/ac3-execution-isolation. No corresponding M2 worktree is registered in the inspected clone, so the exact local path and implementation state remain UNKNOWN. M0 queued M2 to report path/branch/SHA and work on first-party host integration through the existing M1 Gateway contract. M1 remains owner of the public Gateway/API; this assignment does not transfer shared-path ownership or authorize API changes.
+## M0 M3 contract lane — 2026-10-18 03:40 UTC
+
+M3 remains the owner of its existing src/agent-hook.ts behavior and branch-local Hook tests on PR #33 / feature/ac3-agent-onboarding. The current exact head is be3880298e1c6766024ecbce5f5dbc23c4d2daa1; no M3 worktree is registered in the inspected clone, so the owner's actual work path remains UNKNOWN. M3's assignment does not transfer M1's canonical fail-closed contract or shared-test ownership.

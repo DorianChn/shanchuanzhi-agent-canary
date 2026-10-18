@@ -1051,3 +1051,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - #52 P0: M5 #47 is green 9/9 but awaits M1 file-level review; M2 #37 has no verified path/implementation in the inspected clone. M2 evidence/blocker due 03:40; keep host/held-object/TOCTOU NOT_VERIFIED and issue OPEN. Comment 6245134399.
 - #56 P2: no M1 disposition for shared Hook test changes across #30/#34/#47. Preserve assertions and keep open; comment 6245134610.
 - #29 scheduler: M1 + M2 are the two active slots; M5/M4 paused by M0 pending evidence. Next checkpoint 03:40; next push no earlier than 03:30; comment 6245134842.
+## M0 issue checkpoint — 2026-10-18 03:40 UTC
+
+- #51 P1: no M1 diagnosis or owner evidence; trigger UNKNOWN. M1 continues through 04:00; queue 01a14d18-f514-7303-912d-05eabacdc068; comment 6245288489.
+- #52 P0: M5 PR #47 is green 9/9 but awaits M1 disposition. M2 has no verified path or implementation in the inspected clone; M0 paused that slot pending exact path/branch/SHA. Host/held-object/TOCTOU/composition remain NOT_VERIFIED; comment 6245288708.
+- #55 P1: M3 PR #33 has CI 9/9 but still disagrees with M1 on unpinned native Read; M9 composition fails Ubuntu/Windows. M3 assigned the existing-branch fix and positive control through 04:00; comment 6245288954.
+- #56 P2: M1 has not dispositioned shared Hook-test copies across #30/#34/#47; keep open and preserve assertions; comment 6245289176.
+- #29 scheduler: active M1 + M3; M2/M4/M5 paused by M0 schedule pending evidence/review. Next checkpoint 04:00; next M0 push no earlier than 03:54; comment 6245289422.

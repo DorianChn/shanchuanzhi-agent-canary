@@ -2738,3 +2738,14 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M9 #36 remains at de3799a; product CI 9/9 and wrapper 2/2 pass, while composition run 38727481764 fails on Ubuntu and Windows. Integration remains unaccepted.
 - GitHub checkpoint comments: #51 6245134176, #52 6245134399, #56 6245134610, #29 6245134842.
 - Last M0 push was about 03:10 UTC; next docs push is no earlier than 03:30 UTC after fresh quota and scope preflight. No module source/tests, main, merge, or Release changed.
+## M0 03:40 UTC checkpoint — 2026-10-18
+
+- Usage Overview remains readable at 64% five-hour / 94% weekly; the <=5%/unreadable stop rule is not triggered.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at e874fe5e8e6b25e562bcf1a7bdbb737ed974b7dc; exact product CI 39094043582 passed 9/9 and coordination CI 39094043583 passed 1/1.
+- M1 missed 03:40 with no visible report, focused evidence, commit, or inspected-tree change. #51 trigger remains UNKNOWN. M1 is scheduled through 04:00 for #51 diagnosis and M1 disposition on #52/#56 shared files.
+- M2 missed 03:40 with no path/branch/worktree report or implementation evidence visible in the inspected clone; PR #37 remains 9db59ed. M0 paused its slot pending exact location evidence; no branch was reset/deleted. No acknowledgement is visible.
+- M3 is assigned the second lane through 04:00 for P1 #55 on its existing PR #33 branch. Head be3880298e1c6766024ecbce5f5dbc23c4d2daa1 has exact-head CI 38706654588 passing 9/9, but its unpinned native Read behavior still disagrees with M1 and M9 composition run 38727481764 fails on Ubuntu/Windows. No M3 worktree is registered in the inspected clone; exact path remains UNKNOWN until reported.
+- M5 PR #47 remains 373e2c2 and 9/9 green; its slot is paused pending M1 review. M4 remains paused in M0's schedule; both branches/work are preserved.
+- Active two-lane schedule is M1 + M3. Queue IDs: M1 01a14d18-f514-7303-912d-05eabacdc068; M3 01a14d18-f664-7920-9871-3061b67d55e2; M2 pause notice 01a14d18-f7aa-7010-9c9a-73ee0662af01. Queue receipts do not prove work started or pauses acknowledged.
+- GitHub checkpoint comments: #51 6245288489, #52 6245288708, #55 6245288954, #56 6245289176, #29 6245289422.
+- Last M0 push was around 03:33 UTC; next documentation push is no earlier than 03:54 UTC after fresh quota and PR/scope preflight. No module source/tests, main, merge, or Release changed.

@@ -500,3 +500,11 @@ This checkpoint does not establish a production bypass, sensitive-data exposure,
 | First-party host use of execution isolation (#52) | P0 / M2 adapter + host integration; M1 Gateway contract; M5 policy; M9 composition | M5 PR #47 alias/path fix has exact-head CI 9/9. No M2 worktree or new M2 implementation is verified in the inspected clone; held-object use, protected-open, and TOCTOU remain NOT_VERIFIED. | M2 confirms existing path and wires through the current M1 contract; M1 reviews any public interface change; M9 runs exact-head composition. Keep OPEN. |
 
 No production bypass or real exposure is claimed. Synthetic path-alias evidence is not host-enforcement acceptance.
+## M0 cross-module status — 2026-10-18 03:40 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Unpinned native Hook read (#55) | P1 / M3 behavior, M1 contract, M9 composition | M3 #33 head be388029 exact CI passes 9/9, but the branch-local contract allows an unpinned normal Read; M1 requires native_file_execution_not_pinned denial. M9 run 38727481764 fails Ubuntu/Windows. | M3-owned fail-closed correction plus supported-capability positive control; M9 repins reviewed M3 SHA and reruns both composition jobs. Preserve M1 tests; keep #55 OPEN. |
+| First-party isolated host (#52) | P0 / M2 adapter, M1 Gateway, M5 policy, M9 composition | M5 #47 is green 9/9. M2 path and host consumer remain unverified; protected-open/held-handle and TOCTOU remain NOT_VERIFIED. | Resume M2 after exact existing path is reported; use current M1 contract; M9 composition and host evidence required. Keep #52 OPEN. |
+
+No production bypass, real disclosure, or installed-host enforcement is claimed.
