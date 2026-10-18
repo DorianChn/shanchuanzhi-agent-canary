@@ -692,3 +692,7 @@ A transient Usage-page timeout at 13:19:55 caused a hold on #52/#53 and all push
 ### M0 13:40 exact-head readback
 
 PR #30's docs-only head `8e44dad` passes product CI 9/9 and coordination CI 1/1. PR #24 remains unchanged. M2 #52 / M7 #53 are still assigned through 13:50; public PR refs are unchanged at this checkpoint, with private work status UNKNOWN. Both P0 gates remain OPEN/NOT_VERIFIED.
+
+### M0 quota recovery checkpoint — 2026-10-18 13:55 UTC
+
+A second transient Usage timeout triggered a conservative hold. Two successful reads at 13:53:31 and 13:54 returned 92% / 81%, matching the prior 5-hour / weekly order, so M2/M7 were resumed for 13:55–14:15 under new Issue receipts. Their P0 issues remain OPEN/NOT_VERIFIED until evidence is visible; no product files were changed by M0.

@@ -3102,3 +3102,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - Usage was freshly confirmed at 13:36:33 as 92% five-hour / 81% weekly. M2 #52 and M7 #53 are assigned through 13:50 after the 13:29 quota recovery. At the 13:39:56 read, PR #37 remains `9db59ed` and PR #39 remains `cf4b70f`; no public Issue or PR result is visible. This does not establish private task inactivity.
 - #52/#53 remain OPEN/P0/NOT_VERIFIED. M1 #51, M3 #55, and M6/M8 #59 remain schedule-paused. No exclusive VM, install, VMware, or real-model resource is reserved.
 - The last PR #30 remote update was 13:36:57 UTC. Next shared push is no earlier than 13:56:57 UTC after fresh quota/ref/scope preflight; only M0 coordination docs are staged locally.
+
+## M0 quota recovery and P0 resume — 2026-10-18 13:55 UTC
+
+- Usage read timed out at 13:51, so M2/M7 and pushes were held; pause receipts are #52 `6250713276`, #53 `6250719138` (the first post got EOF and was confirmed absent), and scheduler #29 `6250714162`. The Usage DOM query recovered at 13:53:31 and again at 13:54 with 92% / 81%, consistent with the earlier labelled 5-hour / weekly order.
+- M2 #52 and M7 #53 resumed under a new 13:55–14:15 window. Receipts: #52 `6250745203`, #53 `6250745412`, scheduler #29 `6250745671`. Only two lanes are assigned; M1/M3/M6/M8 remain paused. No VM, installation, VMware, or real-model resource is reserved.
+- PR #37 remains `9db59ed` and PR #39 remains `cf4b70f` at the last exact read; #52/#53 remain OPEN/P0/NOT_VERIFIED. Private task activity is UNKNOWN absent visible evidence.
+- PR #30 remote head remains `8e44dad`; its product CI passed 9/9 and coordination CI 1/1. PR #24 remains unchanged OPEN/Draft. The next shared push is no earlier than 13:56:57 UTC after fresh quota/ref/scope preflight.
