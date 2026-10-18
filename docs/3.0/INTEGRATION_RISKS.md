@@ -528,6 +528,19 @@ No production bypass, real disclosure, or installed-host enforcement is claimed.
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
 
+## M0 exact-head M9 readiness checkpoint — 2026-10-18 11:18 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 | At M2 PR #37 head `9db59ed`, the adapter is visibly consumed by check scripts, not a product `src/` host path. Gateway-held-file semantics are documented, but no first-party callsite is proven. | M2 provides the product host composition and alias deny-before-callback result, or identifies the exact absent path/API/owner. Keep OPEN / NOT_VERIFIED. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 packaging, M8 Hook copy, M9 acceptance | A published candidate4 Community ZIP input and pinned toolchain hashes are available, but no current M7-built Setup.exe, manifest, extracted-Hook comparison, or packaged harness readback is visible. | M7 supplies its own exact-source hash-bound build and extraction chain. Published candidate4 assets are inputs, not M7 acceptance evidence. Keep OPEN / NOT_VERIFIED. |
+| M9 cross-module native Read gate (#55/#36) | P1 / M3 Hook, M1 contract, M9 | M9 head `de3799a`; run `38727481764` fails Windows and Ubuntu because M3's unpinned normal Read returns allow instead of deny. The workflow pins M1 `b1d7423`, stale vs current PR #43 `9ef3dc2`. | M3 preserves the denial assertion and positive control; M9 then updates to exact reviewed heads and reruns both platforms. |
+| M6–M8 packaging ownership/pins (#59) | P1 / M6 E4, M7 packaging, M8 docs/copies, M9 | No visible per-path owner/reviewer confirmation from M8 or affected M6/M7 owners. Current M6/M7/M8 heads remain #38 `c1fdf3c`, #39 `cf4b70f`, and #40 `c1ff677`. | Confirm primary owner and reviewer per intersecting path, then M9 consumes exact reviewed SHAs. Do not infer signoff from CI. |
+| Root secret/temp ignore rules in M9 (#58) | P1 / M0 canonical rules, M9 integration | Current M9 diff still lacks the complete reviewed M0 secret/temp set; M0's narrow historical log exception does not establish broad log safety. No leak is confirmed. | M9 reconciles root rules while retaining only path-specific sanitized evidence exceptions; verify representative paths on exact head. |
+| M4 exact-head desktop checks (#60) | P1 / M4 UI/tests, M1 shared Hook test | PR #34 head `fbf2090`; run `38698635434` has one M1-owned Ubuntu Node 20 test failure, with other platform checks cancelled/passed and package-smoke skipped. No M4 causation is established. | M4 supplies focused M4-owned behavior evidence; rerun exact-head matrix after M1 resolves #51. |
+
+No production bypass, sensitive disclosure, successful package installation, external E4 acceptance, or fully green M9 composition is inferred by this checkpoint.
+
 ## M0 07:20 UTC integration readiness checkpoint — 2026-10-18
 
 | Risk | Priority / owners | Current evidence and status | Gate |
