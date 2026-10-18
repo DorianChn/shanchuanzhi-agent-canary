@@ -2803,3 +2803,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M1 + M3 reached the 05:20 boundary with no new remote PR head or owner evidence visible; preserve their existing branches/work. M2 + M7 are assigned through 05:40 for P0 #52/#53. M7 exclusively owns the installer/VM evidence slot; M2 has no exclusive test resource. Scheduler and issue acceptance gates are recorded in #29/#52/#53 comments 6246053972, 6246054226, and 6246054448. Queue receipts are not proof of task start.
 - After the 05:20 M0 push, PR #30 is OPEN/Draft at `d30f37b773773f47b78b221cc6b48974ce7ced3b`; Ubuntu Node 20/22, Docker, sponsor-smoke, and ownership-contract-evidence have passed, while macOS and Windows jobs remain pending. PR #24 remains unchanged OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
 - Usage Overview remains readable at 64% five-hour / 94% weekly. Next M0 docs push is no earlier than 05:40 UTC after fresh quota and scope/ancestry checks.
+
+## M0 owner evidence checkpoint — 2026-10-18 05:28 UTC
+
+- M2 PR #37 remains at `9db59ed`. Its current description explicitly leaves the Hook uninstalled/untrusted and native Shell UNPROTECTED; its AppContainer result is limited to specific child-process tests. The M2 worktree is absent from the inspected M0 clone, so the exact host consumer/path remains unverified.
+- M7 PR #39 remains at `cf4b70f`. Its body records 9/9 historical matrix checks and 2/2 wrapper checks but says clean-VM runtime acceptance remains NOT_VERIFIED; an older body snapshot uses `4267c61`. M7 was asked for exact current-head, hash-bound installer and extracted-Hook evidence or a named missing artifact.
+- PR #30 head `d30f37b773773f47b78b221cc6b48974ce7ced3b` now has all 10 exact-head checks passing. PR #24 is still OPEN/Draft and unchanged. Usage was last read as 64% five-hour / 94% weekly. No M2/M7 head change or owner result is visible yet; next docs push no earlier than 05:40 UTC.
