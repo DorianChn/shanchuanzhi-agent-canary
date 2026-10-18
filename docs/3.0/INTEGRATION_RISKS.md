@@ -727,3 +727,12 @@ No module code, tests, or workflow files were changed by M0.
 | Exact M9 composition (#55/#61) | P1 / M1, M3, M9 | PR #36 remains at de3799aae540f58173acec4ab3f7a1fe98593aa7; historical run 38727481764 failed both Ubuntu and Windows. #55/#61 remain OPEN. | M9 stays gated; current owner-reviewed exact refs and passing composition jobs are still required. |
 
 The 16:00 slot does not authorize a third lane or change the public PR #24 baseline.
+
+### M0 coordinator-clone divergence — 2026-10-19 00:22 Asia/Shanghai
+
+| Risk | Priority | Verified state | Required handling |
+| --- | --- | --- | --- |
+| Duplicate M0 coordinator clone | P2 | Desktop/Agent-Canary-Dev/coordinator is a separate clean Git clone. Its local HEAD 09924da is 195 commits behind current PR #30 remote d88cdff and one commit ahead; it changes six coordination documents. Desktop main and agents directories are empty. | Preserve the local commit and do not push/reset it. Continue from the Documents coordinator worktree aligned to PR #30. Reconcile any unique text deliberately before using the duplicate clone. |
+| Missing visible module worktrees | P2 | The common Documents repository registers M0, M1, M5, M8, and M9. M2/M3/M4/M6/M7 worktrees are not visible there. | Treat separate module worktrees as UNKNOWN until verifiable; do not claim all-worktree acceptance from distinct PR refs alone. |
+
+The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.

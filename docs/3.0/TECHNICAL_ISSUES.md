@@ -1342,3 +1342,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - PR #30 remains OPEN/Draft at head d88cdff6c43b3748f1f14080f3f03a153932ab13, updated at 16:05:44 UTC.
 - Exact-head product CI run 39143446761 passed at 16:07:33 UTC; coordination run 39143446779 passed at 16:05:58 UTC.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+
+## M0 16:22 lane and workspace readback — 2026-10-18 16:22 UTC
+
+- Fresh Usage read at 16:21:32 UTC showed 76% five-hour / 78% weekly. M2 #52 and M7 #53 were assigned as the only active lanes for 16:22–16:42 UTC. Receipts: #52 6252234016, #53 6252234313, scheduler #29 6252234646.
+- The prior two slots ended without visible public PR-head or issue-result movement; private activity remains UNKNOWN. The current lane requires either exact evidence or a specific blocker at the next batch.
+- A separate clone at Desktop/Agent-Canary-Dev/coordinator contains a clean local commit 09924da based on 2c6232c; after read-only fetch it is 195 commits behind current remote d88cdff and one commit ahead. It was preserved and not pushed.
