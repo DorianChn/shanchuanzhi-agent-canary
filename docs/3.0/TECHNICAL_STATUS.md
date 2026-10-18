@@ -2816,3 +2816,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M2 PR #37 remains `9db59ed`; M7 PR #39 remains `cf4b70f`; neither has a new public head or issue result. Both lanes continue through 06:00 on P0 #52/#53. M7 has the exclusive installer/VM slot; no other task may use VMware, real-model, or installer testing during it.
 - The owners were asked to add an issue checkpoint with exact evidence or a named blocker and to push only verified commits in the 06:00 batch. Queue messages `01a14d86-cdaa-7431-a681-e8901e26b9c0` and `01a14d86-cfe4-7aa2-9f5c-9436a374fae0` record delivery only.
 - Scheduler comment `6246193395`. Usage last read 64% five-hour / 94% weekly. PR #30 checks remain 10/10 passing; PR #24 unchanged OPEN/Draft. Last M0 push 05:20; next no earlier than 05:40 after quota and scope preflight.
+
+## M0 scheduler checkpoint — 2026-10-18 06:00 UTC
+
+- No new M2/M7 head or owner evidence was visible. Active lanes are M1 on P0 #52 and M7 on P0 #53 through 06:20. M2 is paused by scheduling only; preserve its branch and work. M7 alone owns the installer/VM resource; M1 has no exclusive test slot.
+- Queue messages `01a14d99-4801-7960-b83e-f04feaaecc24`, `01a14d99-4a3c-75a1-9a14-db7d70635502`, and `01a14d99-4c73-7b81-a3f4-dbb2725663b6` record delivery to M2/M1/M7. Issue comments `6246347465`, `6246347774`, and `6246348058` record the 06:00 schedule.
+- PR #30 head `158f3fabbc2c6eff84b6088480c836751ec9473a` has 10/10 exact-head checks passing; PR #24 remains unchanged OPEN/Draft. Usage last read 64% five-hour / 94% weekly. Last M0 push 05:40; next no earlier than 06:00 UTC.

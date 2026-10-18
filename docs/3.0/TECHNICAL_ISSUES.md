@@ -1112,3 +1112,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 
 - #52/#53: no new PR head or owner evidence is visible at this checkpoint. M2 + M7 continue on the same two P0 lanes through 06:00; M7 retains exclusive installer/VM resource. Both were asked to post concrete evidence or a named blocker to their issue. Scheduler comment `6246193395`; queue receipts do not prove task start.
 - PR #30 `d30f37b` exact-head checks pass 10/10; PR #24 is unchanged OPEN/Draft. Usage last read at 64% five-hour / 94% weekly. Last M0 push was 05:20; next push is due no earlier than 05:40 after fresh quota and scope preflight.
+
+## M0 scheduler checkpoint — 2026-10-18 06:00 UTC
+
+- #52: no M2 host-path response or PR #37 head change appeared by 06:00. M2 is paused by scheduling only with its work preserved; M1 now owns the 06:00–06:20 contract/host-boundary trace. #53: M7 continues through 06:20 and retains the exclusive installer/VM slot. Issues #29/#52/#53 record the schedule in comments `6246347465`, `6246347774`, and `6246348058`.
+- PR #30 `158f3fa` exact-head checks pass 10/10; PR #24 remains unchanged OPEN/Draft. Usage last read at 64% five-hour / 94% weekly. Last M0 push was 05:40; next is no earlier than 06:00 after fresh quota and scope preflight. Queue receipts are not evidence of task start.
