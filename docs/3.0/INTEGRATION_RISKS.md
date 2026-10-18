@@ -587,3 +587,20 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | M6–M8 Windows/E4 ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | No new M6 owner confirmation; M9 exact reviewed refs still depend on explicit path responsibility. | Preserve ownership boundaries and require exact per-path owner/reviewer plus M9 pin plan. |
 
 No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
+
+## M0 09:02 UTC integration gate checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 composition | No visible M2 PR/Issue result in the 08:40–09:00 lane; PR #37 remains `9db59ed`. A synthetic harness is insufficient. | Keep OPEN / NOT_VERIFIED until real host callsite and deny-before-callback alias proof or exact missing API/owner. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package evidence, M8 source/logging, M9 acceptance | No visible M7 package result in the 08:40–09:00 lane; PR #39 remains `cf4b70f`. Current artifact provenance/extracted-Hook chain remains unverified. | Keep OPEN / NOT_VERIFIED until hash-bound package and extracted-Hook evidence or precise blocker. |
+| Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M4 CI, M9 | Historical Ubuntu Node20 4x12 run exhausted 500 retries; current trigger remains UNKNOWN. | M1 runs current exact test with bounded diagnostics without changing locks, assertions, fail-closed behavior, or retry cap. |
+| M6–M8 Windows/E4 path ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | Exact M8 path-owner confirmation remains absent; M9 exact reviewed pins depend on explicit ownership. | M8 names its precise paths/adapters; M6/M7 retain E4/installer ownership; M9 pins reviewed exact SHAs. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
+
+## M0 quota-gate recovery — 2026-10-18 09:11 UTC
+
+- The 09:10 pre-push Usage read timed out, so the planned push was held and M1/M8 received a temporary stop message. After switching back to the existing Usage tab, a fresh read at about 09:11 showed 64% five-hour / 94% weekly; M1/M8 resumed the remainder of their current slot, preserving their work.
+- Pause receipts: M1 `01a14e47-3b66-75b1-9e54-dcb99b736b65`, M8 `01a14e47-3da4-7f72-ad17-73ebced603b6`. Resume receipts: M1 `01a14e48-393c-7ad0-90f7-a843f17f2439`, M8 `01a14e48-3b71-7dc2-99e1-392b5b1040d6`. Delivery does not prove task start.
+- No module source or PR #24 write occurred during the gate. The M0 documentation batch may continue only after fresh quota and PR/ref/scope preflight.

@@ -2907,3 +2907,19 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - Current module PR heads remain #37 `9db59ed8f2deae905edcb2179982f8bcb594167c`, #39 `cf4b70f5130175582fffdfc65bd7c6847450867b`, #33 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`, and #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`. PR #30 head `d0e5e33b3d133b079839619150f4ebd0a0a99c09` passed all 10 checks; PR #24 last verified OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - Issue checkpoints: #29 `6247743300`, #52 `6247742760`, #53 `6247743073`, #55 `6247742250`, #59 `6247742512`. Queue receipts show delivery only.
 - Last M0 push was 08:29 UTC; next docs batch is no earlier than 08:49 after fresh quota, PR #24/#30, ref, and scope preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 scheduler checkpoint — 2026-10-18 09:02 UTC
+
+- Usage Overview recovered at about 09:02 and was readable at 64% five-hour / 94% weekly. A transient read failure at the 09:00 boundary caused M2/M7 to be paused before activating new lanes; no module work was resumed until the fresh read succeeded.
+- M2 #52 and M7 #53 ended 08:40–09:00 without visible PR-head or issue-evidence changes; paused by schedule with work preserved. Their P0 gates remain OPEN / NOT_VERIFIED; no private-session activity is inferred.
+- M1 #51 and M8 #59 are the only active module lanes through 09:22. M1 is to run the current four-process x12 quarantine test on Ubuntu Node 20 using existing bounded diagnostics and report exact result. M8 is to confirm per-path owner/reviewer boundaries for its docs/Hook copies and M9 exact-SHA use, fixing only a concrete M8-owned defect. No VM/installer/real-model resource is reserved.
+- Current PR refs: #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; #37 `9db59ed8f2deae905edcb2179982f8bcb594167c`; #39 `cf4b70f5130175582fffdfc65bd7c6847450867b`. M1/M8 worktrees remain clean at their known PR heads; M0 does not claim their private session state.
+- M0 PR #30 head `9473ec27147cb15cb8f44f430ea1ad94c86ee9ec` passed all 10 checks. PR #24 was last verified 08:50 OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Issue comments: #29 `6247996863`, #51 `6247996343`, #52 `6247995836`, #53 `6247996079`, #59 `6247996628`. Queue receipts record delivery only.
+- Last M0 push was 08:50 UTC. This checkpoint is for the next batch, no earlier than 09:10 UTC after fresh quota, PR #24/#30, ref, and scope preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 quota-gate recovery — 2026-10-18 09:11 UTC
+
+- The 09:10 pre-push Usage read timed out, so the planned push was held and M1/M8 received a temporary stop message. After switching back to the existing Usage tab, a fresh read at about 09:11 showed 64% five-hour / 94% weekly; M1/M8 resumed the remainder of their current slot, preserving their work.
+- Pause receipts: M1 `01a14e47-3b66-75b1-9e54-dcb99b736b65`, M8 `01a14e47-3da4-7f72-ad17-73ebced603b6`. Resume receipts: M1 `01a14e48-393c-7ad0-90f7-a843f17f2439`, M8 `01a14e48-3b71-7dc2-99e1-392b5b1040d6`. Delivery does not prove task start.
+- No module source or PR #24 write occurred during the gate. The M0 documentation batch may continue only after fresh quota and PR/ref/scope preflight.

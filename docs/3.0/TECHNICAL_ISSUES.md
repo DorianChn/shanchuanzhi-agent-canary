@@ -1192,3 +1192,18 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#59 P1:** M6's 08:20–08:40 lane ended without visible exact path-owner result/head change; paused, work preserved. No ownership transfer inferred. Checkpoint: `6247742512`.
 - **#51 P1:** M1 remains paused with no new diagnostic; trigger for historical retry exhaustion remains UNKNOWN.
 - **M0/PR #30:** head `d0e5e33` has 10/10 checks passing. PR #24 last verified OPEN/Draft at head `62496d4`, base `dc8d009`. Scheduler comment #29: `6247743300`.
+
+## M0 scheduler checkpoint — 2026-10-18 09:02 UTC
+
+- **#52 P0:** M2's 08:40–09:00 lane ended without visible PR #37 or Issue evidence; paused by schedule, work preserved. Keep OPEN / NOT_VERIFIED; exact first-party callsite/alias-denial evidence or named API/path/owner remains required. Checkpoint `6247995836`.
+- **#53 P0:** M7's 08:40–09:00 lane ended without visible PR #39 or package evidence; paused by schedule, work preserved. Keep OPEN / NOT_VERIFIED; current hash-bound artifact chain or exact blocker remains required. Checkpoint `6247996079`.
+- **#51 P1:** M1 active 09:02–09:22 on PR #43 (`9ef3dc2`) to run the exact Ubuntu Node 20 concurrency test and report bounded diagnostics; preserve locks, assertions, fail-closed behavior, and 500 retry cap. Checkpoint `6247996343`.
+- **#59 P1:** M8 active 09:02–09:22 on PR #40 (`c1ff677`) to confirm exact M8-owned paths/reviewers and M9 consumption, and fix/test only concrete M8-owned defects. Checkpoint `6247996628`.
+- **#55 P1:** M3 remains paused without a visible correction; denial semantics/positive control are unverified.
+- **M0/PR #30:** head `9473ec2` passed all 10 checks. PR #24 last verified at 08:50 OPEN/Draft, unchanged head `62496d4` / base `dc8d009`. Scheduler comment #29 `6247996863`.
+
+## M0 quota-gate recovery — 2026-10-18 09:11 UTC
+
+- The 09:10 pre-push Usage read timed out, so the planned push was held and M1/M8 received a temporary stop message. After switching back to the existing Usage tab, a fresh read at about 09:11 showed 64% five-hour / 94% weekly; M1/M8 resumed the remainder of their current slot, preserving their work.
+- Pause receipts: M1 `01a14e47-3b66-75b1-9e54-dcb99b736b65`, M8 `01a14e47-3da4-7f72-ad17-73ebced603b6`. Resume receipts: M1 `01a14e48-393c-7ad0-90f7-a843f17f2439`, M8 `01a14e48-3b71-7dc2-99e1-392b5b1040d6`. Delivery does not prove task start.
+- No module source or PR #24 write occurred during the gate. The M0 documentation batch may continue only after fresh quota and PR/ref/scope preflight.
