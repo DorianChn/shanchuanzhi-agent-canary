@@ -704,3 +704,16 @@ M2 #52 and M7 #53 are active through 14:28 after a quota-triggered pause and con
 ### M0 14:21 quota recovery
 
 A transient Usage timeout held the scheduled docs push and both P0 lanes. A fresh read at 14:20 returned 92% / 81%, and M2/M7 resumed under new Issue receipts. No product source changes or P0 acceptance evidence were made during the hold.
+
+### M0 current M9 gate readback — 2026-10-18 15:41 UTC
+
+This checkpoint supersedes earlier live-state snapshots for the listed refs. GitHub issue titles/states and PR heads were read directly; private worktree activity remains UNKNOWN.
+
+| Gate | Priority / owners | Verified current state | M9 requirement |
+| --- | --- | --- | --- |
+| Exact module pin and Hook behavior composition (#55/#61) | P1 / M1, M3, M9 | #55 and #61 remain OPEN. PR #36 is OPEN/Draft at de3799aae540f58173acec4ab3f7a1fe98593aa7. Run 38727481764 failed both Ubuntu and Windows composition jobs. M3 PR #33 remains at be3880298e1c6766024ecbce5f6dbc23c4d2daa1; M1 PR #43 is at 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. The recorded run is historical and does not validate these current refs. | Obtain owner-reviewed exact pins, preserve the unpinned-Read deny and positive control, then pass both composition jobs on the reviewed refs. Keep #55/#61 and PR #36 open until evidence is attached. |
+| M6–M8 Windows packaging ownership (#59) | P1 / M6, M7, M8, M9 | #59 remains OPEN; no owner confirmation is recorded in this checkpoint. | Record path-level primary owner/reviewer and exact selected PR SHAs before M9 pins; pass combined Windows packaging and auto-E4 checks. |
+| Secret/temp ignore-rule alignment (#58) | P1 / M0, M9 | #58 remains OPEN. | Reconcile reviewed M0 rules in PR #36 and attach exact check-ignore evidence, preserving only reviewed E4 exceptions. |
+| Active P0 evidence (#52/#53) | P0 / M2, M7, M9 | #52 is currently titled OBSERVE symlink/junction alias denial; #53 is packaged native-hook log privacy. Both remain OPEN. The only active lanes are M2 and M7 for 15:39–15:59 UTC; no module-head change was visible at resume. | Keep both P0s NOT_VERIFIED until source-bound evidence is visible. Their active slot does not clear any M9 pin, packaging, host-path, or independent-E4 gate. |
+
+No module code, tests, or workflow files were changed by M0.
