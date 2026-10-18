@@ -1276,3 +1276,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - PR #24 remains unchanged OPEN/Draft at the verified prior head/base. PR #37/#39 remain OPEN/Draft at 9db59ed / cf4b70f; the P0 issues remain OPEN/NOT_VERIFIED. Next M0 push no earlier than 15:19:44 UTC after fresh quota/ref/scope preflight.
 
 - Exact-head readback at 15:01 UTC: PR #30 product workflow 39138459071 completed successfully on e471b807d7f178944142dc07d80c4e97c772a889 with all 9 jobs passing; coordination workflow 39138459112 had passed 1/1. This is M0 documentation CI, not a module acceptance result.
+
+## M0 quota hold — 2026-10-18 15:07 UTC
+
+- The Usage read failed at 15:07; current quota is UNKNOWN. The last confirmed read was 15:03:39 UTC at 87% five-hour / 80% weekly.
+- M2 (#52) and M7 (#53) were paused with work preserved; no new module tests or pushes are permitted until a fresh read proves remaining quota above 5% and M0 issues a new slot. Hold receipts: #52 6251474157, #53 6251474389, scheduler #29 6251474640.
+- PR #24 remains unchanged OPEN/Draft. M0 local report commits remain unpushed until the next eligible batch, no earlier than 15:19:44 UTC, and a fresh quota/ref/scope preflight.
