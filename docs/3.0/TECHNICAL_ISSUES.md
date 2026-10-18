@@ -1106,3 +1106,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - M2 #52: current PR #37 head remains `9db59ed`. Its description says the Hook fragment is not installed/trusted and native Codex Shell is UNPROTECTED; AppContainer evidence applies only to tested child-process operations. The M2 worktree is not registered in the inspected M0 clone. M2 was asked to identify the exact host consumer and not count these as #52 acceptance (queue `01a14d7a-66b1-7663-8c8a-8803f308ab3d`; #52 comment `6246094032`).
 - M7 #53: current PR #39 head remains `cf4b70f`; the current body records prior 9/9 CI and 2/2 wrapper checks but says clean-VM runtime lifecycle is NOT_VERIFIED. The body contains an older 4267c61 snapshot; M7 was told to bind evidence to current head and actual Setup.exe/manifest/extracted-Hook hashes (queue `01a14d7a-eda2-72a3-a915-079e3ff37537`). No package artifact result is visible yet.
 - PR #30 exact-head checks for `d30f37b` are now 10/10 passing. PR #24 remains unchanged OPEN/Draft. M2 + M7 remain scheduled through 05:40; M7 exclusively owns the installer/VM resource. Queue receipts do not verify work start.
+
+## M0 scheduler checkpoint — 2026-10-18 05:40 UTC
+
+- #52/#53: no new PR head or owner evidence is visible at this checkpoint. M2 + M7 continue on the same two P0 lanes through 06:00; M7 retains exclusive installer/VM resource. Both were asked to post concrete evidence or a named blocker to their issue. Scheduler comment `6246193395`; queue receipts do not prove task start.
+- PR #30 `d30f37b` exact-head checks pass 10/10; PR #24 is unchanged OPEN/Draft. Usage last read at 64% five-hour / 94% weekly. Last M0 push was 05:20; next push is due no earlier than 05:40 after fresh quota and scope preflight.

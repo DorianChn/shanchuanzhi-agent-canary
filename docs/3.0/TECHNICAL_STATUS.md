@@ -2809,3 +2809,9 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M2 PR #37 remains at `9db59ed`. Its current description explicitly leaves the Hook uninstalled/untrusted and native Shell UNPROTECTED; its AppContainer result is limited to specific child-process tests. The M2 worktree is absent from the inspected M0 clone, so the exact host consumer/path remains unverified.
 - M7 PR #39 remains at `cf4b70f`. Its body records 9/9 historical matrix checks and 2/2 wrapper checks but says clean-VM runtime acceptance remains NOT_VERIFIED; an older body snapshot uses `4267c61`. M7 was asked for exact current-head, hash-bound installer and extracted-Hook evidence or a named missing artifact.
 - PR #30 head `d30f37b773773f47b78b221cc6b48974ce7ced3b` now has all 10 exact-head checks passing. PR #24 is still OPEN/Draft and unchanged. Usage was last read as 64% five-hour / 94% weekly. No M2/M7 head change or owner result is visible yet; next docs push no earlier than 05:40 UTC.
+
+## M0 scheduler checkpoint — 2026-10-18 05:40 UTC
+
+- M2 PR #37 remains `9db59ed`; M7 PR #39 remains `cf4b70f`; neither has a new public head or issue result. Both lanes continue through 06:00 on P0 #52/#53. M7 has the exclusive installer/VM slot; no other task may use VMware, real-model, or installer testing during it.
+- The owners were asked to add an issue checkpoint with exact evidence or a named blocker and to push only verified commits in the 06:00 batch. Queue messages `01a14d86-cdaa-7431-a681-e8901e26b9c0` and `01a14d86-cfe4-7aa2-9f5c-9436a374fae0` record delivery only.
+- Scheduler comment `6246193395`. Usage last read 64% five-hour / 94% weekly. PR #30 checks remain 10/10 passing; PR #24 unchanged OPEN/Draft. Last M0 push 05:20; next no earlier than 05:40 after quota and scope preflight.
