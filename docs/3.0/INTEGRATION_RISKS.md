@@ -688,3 +688,7 @@ M2 #52 and M7 #53 are assigned as the only two active lanes through 13:29. M2 mu
 ### M0 quota hold/recovery — 2026-10-18 13:30 UTC
 
 A transient Usage-page timeout at 13:19:55 caused a hold on #52/#53 and all pushes. Two successful reads at 13:29:42 and 13:30:19 showed 92% five-hour / 81% weekly; M2/M7 then resumed under a fresh 13:30–13:50 assignment. The browser issue is reported; the Usage tab remains open. No module source was changed during the hold.
+
+### M0 13:40 exact-head readback
+
+PR #30's docs-only head `8e44dad` passes product CI 9/9 and coordination CI 1/1. PR #24 remains unchanged. M2 #52 / M7 #53 are still assigned through 13:50; public PR refs are unchanged at this checkpoint, with private work status UNKNOWN. Both P0 gates remain OPEN/NOT_VERIFIED.

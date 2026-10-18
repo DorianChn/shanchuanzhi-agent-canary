@@ -3095,3 +3095,10 @@ This is a readback of the current PR heads and their attached check-run summarie
 - Seven earlier scheduler comments were found to contain a PowerShell placeholder due argument-expansion error and were repaired in place by their existing comment IDs; direct readback confirms the corrected bodies. No duplicate comments were created for those corrections.
 - PR #30 remains OPEN/Draft at `f2a152967b3b8349e33aeb865f562b8926e1b2e2`; exact-head product run `39130783784` and coordination run `39130783785` both succeed. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - #52/#53 remain OPEN/P0/NOT_VERIFIED. M9 exact-ref gate #61 and M3 behavior gate #55 remain OPEN/P1. Next shared push is no earlier than 13:35:54 UTC after fresh quota/ref/scope preflight.
+
+## M0 exact-head CI and P0 lane check — 2026-10-18 13:40 UTC
+
+- PR #30 head `8e44dad44f081793444b3a147711c7273a103b1b` now has product CI `39132324386` passing 9/9 and coordination run `39132324416` passing 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Usage was freshly confirmed at 13:36:33 as 92% five-hour / 81% weekly. M2 #52 and M7 #53 are assigned through 13:50 after the 13:29 quota recovery. At the 13:39:56 read, PR #37 remains `9db59ed` and PR #39 remains `cf4b70f`; no public Issue or PR result is visible. This does not establish private task inactivity.
+- #52/#53 remain OPEN/P0/NOT_VERIFIED. M1 #51, M3 #55, and M6/M8 #59 remain schedule-paused. No exclusive VM, install, VMware, or real-model resource is reserved.
+- The last PR #30 remote update was 13:36:57 UTC. Next shared push is no earlier than 13:56:57 UTC after fresh quota/ref/scope preflight; only M0 coordination docs are staged locally.

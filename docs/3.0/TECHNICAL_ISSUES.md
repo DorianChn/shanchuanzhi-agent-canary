@@ -1240,3 +1240,9 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - At 13:19:55, the Usage read timed out; M2/M7 were paused via #52 `6250412745`, #53 `6250412964`, and scheduler #29 `6250413183`. The same open Usage page later recovered: 13:29:42 and 13:30:19 reads both showed 92% five-hour / 81% weekly. M2/M7 resumed only after that read with new explicit 13:30–13:50 slots; receipts #52 `6250497513`, #53 `6250497802`, scheduler #29 `6250498030`.
 - Seven earlier comments with malformed placeholder bodies were edited in place by ID and read back. No duplicate comments were created.
 - PR #30 exact head `f2a1529` passes product 9/9 and coordination 1/1. PR #24 is unchanged OPEN/Draft. No module source/tests were changed by M0.
+
+## M0 exact-head CI checkpoint — 2026-10-18 13:40 UTC
+
+- PR #30 head `8e44dad` product CI run `39132324386` passed 9/9; coordination run `39132324416` passed 1/1. PR #24 remains unchanged OPEN/Draft.
+- M2/M7 remain the only assigned active lanes until 13:50. The 13:39:56 public read shows no movement on #37 (`9db59ed`) or #39 (`cf4b70f`) and no Issue update since the 13:30 resume. Private activity remains UNKNOWN; #52/#53 remain OPEN/P0/NOT_VERIFIED.
+- Fresh usage read 13:36:33 was 92% five-hour / 81% weekly. Next shared push no earlier than 13:56:57 UTC.
