@@ -3365,3 +3365,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - P0 #52/#53 and M9 integration remain OPEN / NOT_VERIFIED. No VM, model, or installer test is scheduled.
 - M0 PR #30 head 16cf002d997abe8a3b8d0f26690f8577fff23b57 passed product and coordination CI. PR #24 remains unchanged OPEN/Draft.
 - M0 next push gate is 18:31:09 UTC; next module publish is no earlier than 18:51:09 UTC.
+
+## M0 push timing correction — 2026-10-19 02:31 Asia/Shanghai
+
+- PR #30 docs-only head c2a3f9c07cf77a48eb72e64a89ca66be79c67fd2 was pushed at 18:31:47 UTC. Product CI run 39154567926 is queued; coordination run 39154567943 is in progress.
+- PR #24 remains unchanged OPEN/Draft.
+- Corrected next shared publish gate to 18:51:47 UTC on #52/#53/#59/#29. Receipts: #52 6253570580, #53 6253570591, #59 6253570583, #29 6253570563.
