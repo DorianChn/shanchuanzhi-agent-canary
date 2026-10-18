@@ -1288,3 +1288,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - The 15:07 Usage read failed, so M2/M7 were held and pushes frozen; hold receipts: #52 6251474157, #53 6251474389, scheduler #29 6251474640.
 - Scoped Usage read recovered at 15:09:19 UTC with 87% five-hour / 80% weekly remaining. M2 (#52) and M7 (#53) resumed in a new 15:10–15:30 slot, with no exclusive test resource reserved. Resume receipts: #52 6251496309, #53 6251496537, scheduler #29 6251496843.
 - Next shared push is no earlier than 15:19:44 UTC after fresh quota/ref/scope preflight; PR #24 remains unchanged OPEN/Draft, and module P0 acceptance remains NOT_VERIFIED until owner evidence is visible.
+
+## M0 quota hold — 2026-10-18 15:14 UTC
+
+- The 15:14 scoped Usage read failed; current quota is UNKNOWN. The last confirmed read was 15:10:49 UTC at 87% five-hour / 80% weekly.
+- M2 (#52) and M7 (#53) were paused again with work preserved; the 15:19:44 documentation batch is also held until a fresh quota/ref/scope preflight. Hold receipts: #52 6251545266, #53 6251545494, scheduler #29 6251545748.

@@ -3149,3 +3149,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - At 15:07, quota became UNKNOWN after a failed Usage read; M2/M7 were paused with work preserved. Scoped Usage access recovered at 15:09:19 UTC and read 87% five-hour / 80% weekly. M2 (#52) and M7 (#53) resumed for 15:10–15:30; no VM, VMware, installer, or real-model resource is reserved.
 - Hold receipts: #52 6251474157, #53 6251474389, scheduler #29 6251474640. Resume receipts: #52 6251496309, #53 6251496537, scheduler #29 6251496843.
 - PR #30 published head e471b807d7f178944142dc07d80c4e97c772a889 has exact-head product CI 9/9 and coordination CI 1/1. Local M0 docs follow-ups are preserved for the next eligible batch; no push before 15:19:44 UTC and another fresh preflight.
+
+## M0 quota hold — 2026-10-18 15:14 UTC
+
+- The scoped Usage read failed at 15:14. Current quota is UNKNOWN; last confirmed at 15:10:49 UTC was 87% five-hour / 80% weekly.
+- M2 and M7 are paused with work preserved; the 15:19:44 push batch is held as well. No new tests, install, VM/VMware, or module task until a fresh read proves more than 5% remains and M0 issues another slot.
+- Hold receipts: #52 6251545266, #53 6251545494, scheduler #29 6251545748. M0 docs commits remain local and unpushed; PR #24 remains unchanged.
