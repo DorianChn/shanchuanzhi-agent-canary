@@ -468,3 +468,15 @@ Current GitHub changed-file lists at PR heads #38 `c1fdf3cfd936805c6888c7b1c3c56
 | #39 / #40 | `packaging/windows/README.md`; `packaging/windows/build.mjs`; `packaging/windows/e4-hook-faults.mjs`; `packaging/windows/prepare.mjs`; `security-lab/claude-native-hook.mjs`; `test/agent-hook.test.ts`; `test/auto-e4.test.mjs`; `test/windows-packaging.test.mjs` |
 
 All three PRs change `security-lab/claude-native-hook.mjs`, `test/agent-hook.test.ts`, and `test/auto-e4.test.mjs`. This inventory records path overlap only; M0 has not inferred primary owners for the M6–M8 paths or found a semantic defect. M1 remains canonical owner of Hook semantics and `test/agent-hook.test.ts`. Issue #59 asks M8 to propose a file-by-file primary owner/reviewer map and obtain M6/M7 confirmation before M9 pinning.
+
+## M0 P0 #52 per-path ownership update — 2026-10-18 11:38 UTC
+
+| Path / responsibility | Owner | Boundary and current state |
+| --- | --- | --- |
+| `src/runtime/gateway.ts`, canonical held-file API, canonical Hook semantics and `test/agent-hook.test.ts` | M1 | Owns public held-handle behavior and shared fail-closed assertions; no API change without M1 review. |
+| `execution-isolation/gateway-adapter/**` | M2 | Owns the fixed-resource adapter. Current visible calls are check scripts; M2 must not edit M1 or M3 paths. |
+| `src/codex-connection-mcp.ts`, `src/codex-connection-check.ts`, M3 onboarding tests | M3 | Owns the Codex onboarding test host. Its current Gateway self-test has `files: []` and fixed callbacks; it does not prove protected user-file access or native-tool coverage. |
+| `src/security-router.ts`, `src/risk-policy.ts`, their M5-owned policy tests | M5 | Owns policy/router semantics and alias decisions; the caller callback must not be treated as a held-file guarantee. |
+| `.github/workflows/m9-cross-module-composition.yml` | M9 | Owns exact-source pins and composition gates; do not update workflow from an M2/M3 lane. |
+
+For Issue #52, the current proposed composition boundary is M3 host -> M5 router -> M2 fixed-resource adapter -> M1 Gateway held-file dispatch. This is a scheduling/interface candidate only, not an owner-approved public API or evidence that the route is implemented. M2 and M3 have separate 11:38–11:58 assignments; each must stay within its owned paths. #52 remains OPEN/P0/NOT_VERIFIED.

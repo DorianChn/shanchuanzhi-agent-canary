@@ -180,3 +180,9 @@ flowchart LR
 - M9 PR #36 must consume reviewed exact M1/M3 refs for the native Hook Read contract. Current composition run `38727481764` fails on both Ubuntu and Windows while product CI and wrapper CI pass; M3's PR head has not advanced. Keep #55 OPEN until M3's deny and supported-capability positive control are composed on current refs.
 - M9 final pinning remains gated by P0 #52/#53, P1 #58/#59, and the separate installer/E4 evidence #41/#57. Product CI or wrapper CI cannot substitute for supported-host, real artifact, clean-VM, or independent E4 evidence.
 - M0 records the dependency only; module owners retain their paths and semantics. Keep PR #36 Draft until owner confirmations and exact composition checks pass.
+
+## P0 #52 candidate host composition — 2026-10-18 11:38 UTC
+
+M3 PR #33 contains a synthetic Gateway-backed MCP connection check at `src/codex-connection-mcp.ts:21,35`, but it constructs the Gateway with `files: []` and fixed callbacks. M3's integration result explicitly leaves native host tools OUT_OF_SCOPE. M2's adapter functions currently have visible check-script consumers, not a product host composition.
+
+The bounded candidate path for review is `M3 host -> M5 policy router -> M2 fixed-resource adapter -> M1 Gateway held-file dispatch`. M1 owns the held-file API, M2 the adapter, M3 the host callsite, and M5 policy semantics. This does not freeze a new public API or establish a protected file route. M2 and M3 are assigned separate path-bounded slots through 11:58; M9 remains responsible for exact-ref composition after owner changes and exact-head CI. Keep #52 OPEN/P0/NOT_VERIFIED until the alias denial occurs before callbacks and an allowed control reaches only the registered held file.
