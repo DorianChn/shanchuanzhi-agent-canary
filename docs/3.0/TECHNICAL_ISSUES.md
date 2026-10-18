@@ -1311,3 +1311,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - Immediate check: product workflow 39140339464 was pending; ownership-contract workflow 39140339460 passed 1/1. PR #24 remains unchanged OPEN/Draft; PR #37/#39 remain 9db59ed/cf4b70f. M2/M7 are assigned through 15:44; next push no earlier than 15:44:26 UTC after fresh preflight.
 
 - Exact-head readback at 15:26:05 UTC: PR #30 product run 39140339464 completed successfully on 8cf0243cd97659a020c6a697b17c1443f3400de0 with all 9 jobs passing; coordination run 39140339460 passed 1/1.
+
+## M0 quota hold — 2026-10-18 15:34 UTC
+
+- The scoped Usage read timed out at 15:34:57; current quota is UNKNOWN. Last confirmed at 15:29:32 was 87% five-hour / 80% weekly.
+- M2 (#52) and M7 (#53) were paused with work preserved, and the next M0 push batch was held. Hold receipts: #52 6251756888, #53 6251757119, scheduler #29 6251757425.

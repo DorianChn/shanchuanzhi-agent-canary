@@ -3174,3 +3174,9 @@ This is a readback of the current PR heads and their attached check-run summarie
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. M2/M7 are the only assigned lanes through 15:44 UTC; next shared push no earlier than 15:44:26 UTC after fresh quota/ref/scope preflight.
 
 - PR #30 exact-head product run 39140339464 completed successfully at 15:26:05 UTC on 8cf0243cd97659a020c6a697b17c1443f3400de0 (9/9); coordination run 39140339460 passed 1/1.
+
+## M0 quota hold — 2026-10-18 15:34 UTC
+
+- Usage read timed out at 15:34:57 UTC; current quota is UNKNOWN. The last confirmed value was 87% five-hour / 80% weekly at 15:29:32.
+- M2/M7 are paused with work preserved. The planned 15:44:26 push is frozen until a fresh quota read above 5% and a new M0 slot. Hold comments are recorded on #52, #53, and scheduler #29.
+- PR #30 published head 8cf0243 is exact-head green (product 9/9 and coordination 1/1); PR #24 remains unchanged OPEN/Draft.
