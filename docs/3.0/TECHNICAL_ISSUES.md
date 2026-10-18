@@ -1416,3 +1416,10 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 ### Shared publish gate correction — 2026-10-19 03:13 Asia/Shanghai
 
 Actual PR #30 push time was 19:13:05 UTC; next shared push/module batch is no earlier than 19:33:05 UTC. This supersedes the estimated 19:12:40 gate. M1/M3 may continue locally in their assigned slot; recheck quota/ref/scope before publishing.
+
+## M0 lane rotation — 2026-10-19 03:25 Asia/Shanghai
+
+- **#55 P1 / M3 and #61 P1 / M1:** 19:05–19:25 ended with no public result or head movement. PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1; PR #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4. M1's shared worktree is clean; M3 has no registered worktree in this coordinator clone. Private activity is UNKNOWN; both lanes are paused.
+- **#52 P0 / M2:** assigned 19:25–19:45 on existing PR #37 to establish the first-party consumer of M1's held-file Gateway/object route or name the exact owner/dependency gap. No synthetic host evidence or fallback route.
+- **#53 P0 / #59 P1 / M7:** assigned 19:25–19:45 on existing PR #39 to provide source-bound Windows package/Hook hashes and extracted-harness evidence if a real artifact exists. M7 owns packaging/windows/*; no VM/installer test is reserved.
+- Receipts: #29 6254133425; #55 6254133752; #61 6254134080; #52 6254134484; #53 6254134845; #59 6254135129. Next shared publish no earlier than 19:33:05 UTC; recheck quota/ref/scope before publishing.
