@@ -2898,3 +2898,12 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - The 08:25 quota read timed out twice and screenshot fallback was rejected, so the planned M0 push was held and M3/M6 were sent emergency stop messages. The existing Usage tab recovered at 08:27 UTC and showed 64% five-hour / 94% weekly; the remaining 08:20–08:40 M3/M6 slot was resumed. Queue delivery is not proof of work start.
 - Pause receipts: M3 `01a14e1f-2393-7910-a54b-094b8e44bb9d`, M6 `01a14e1f-25fc-7891-a6ea-8ed8959d98d9`. Resume receipts: M3 `01a14e20-16a8-7290-a844-fb7671c3e59b`, M6 `01a14e20-18e8-7a13-948c-086bc64ac4ff`.
 - No module source or PR #24 change occurred during the gate. The M0 docs batch remains local pending fresh push preflight; last M0 push is 08:05 UTC.
+
+## M0 scheduler checkpoint — 2026-10-18 08:40 UTC (quota read 08:39)
+
+- Usage Overview was readable at 64% five-hour / 94% weekly; stop threshold is not triggered.
+- M3 #55 and M6 #59 ended their scheduled 08:20–08:40 lane without a visible PR-head or issue-result change; paused by schedule with work preserved. No private-session activity is inferred.
+- M2 #52 and M7 #53 are the only active module lanes through 09:00. M2 must produce an M2-owned first-party host callsite/deny-before-callback proof for aliases or an exact absent-path/API/owner blocker. M7 must provide current hash-bound Setup.exe/source-build/manifest/extracted-Hook evidence or an exact missing-artifact blocker and M7-owned deliverable. No VM, installer, or real-model resource is reserved.
+- Current module PR heads remain #37 `9db59ed8f2deae905edcb2179982f8bcb594167c`, #39 `cf4b70f5130175582fffdfc65bd7c6847450867b`, #33 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`, and #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`. PR #30 head `d0e5e33b3d133b079839619150f4ebd0a0a99c09` passed all 10 checks; PR #24 last verified OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Issue checkpoints: #29 `6247743300`, #52 `6247742760`, #53 `6247743073`, #55 `6247742250`, #59 `6247742512`. Queue receipts show delivery only.
+- Last M0 push was 08:29 UTC; next docs batch is no earlier than 08:49 after fresh quota, PR #24/#30, ref, and scope preflight. No module source/tests, PR #24, main, merge, or Release changed.

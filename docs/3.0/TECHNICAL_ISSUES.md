@@ -1183,3 +1183,12 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - The 08:25 quota read timed out twice and screenshot fallback was rejected, so the planned M0 push was held and M3/M6 were sent emergency stop messages. The existing Usage tab recovered at 08:27 UTC and showed 64% five-hour / 94% weekly; the remaining 08:20–08:40 M3/M6 slot was resumed. Queue delivery is not proof of work start.
 - Pause receipts: M3 `01a14e1f-2393-7910-a54b-094b8e44bb9d`, M6 `01a14e1f-25fc-7891-a6ea-8ed8959d98d9`. Resume receipts: M3 `01a14e20-16a8-7290-a844-fb7671c3e59b`, M6 `01a14e20-18e8-7a13-948c-086bc64ac4ff`.
 - No module source or PR #24 change occurred during the gate. The M0 docs batch remains local pending fresh push preflight; last M0 push is 08:05 UTC.
+
+## M0 scheduler checkpoint — 2026-10-18 08:40 UTC
+
+- **#52 P0:** M2 active 08:40–09:00 on #37. Require M2-owned first-party host-path implementation and alias-denial evidence, or an exact absent path/API/owner blocker. No VM/model/installer use; keep OPEN / NOT_VERIFIED. Checkpoint: `6247742760`.
+- **#53 P0:** M7 active 08:40–09:00 on #39. Require a current hash-bound Setup.exe/source-build/manifest/extracted-Hook chain or precise missing artifact plus an M7-owned deliverable. No daily-host installation or scarce resource reservation; keep OPEN / NOT_VERIFIED. Checkpoint: `6247743073`.
+- **#55 P1:** M3's 08:20–08:40 lane ended without visible result/head change; paused, work preserved. Required unpinned native Read denial and supported positive control remain unverified. Checkpoint: `6247742250`.
+- **#59 P1:** M6's 08:20–08:40 lane ended without visible exact path-owner result/head change; paused, work preserved. No ownership transfer inferred. Checkpoint: `6247742512`.
+- **#51 P1:** M1 remains paused with no new diagnostic; trigger for historical retry exhaustion remains UNKNOWN.
+- **M0/PR #30:** head `d0e5e33` has 10/10 checks passing. PR #24 last verified OPEN/Draft at head `62496d4`, base `dc8d009`. Scheduler comment #29: `6247743300`.

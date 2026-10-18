@@ -576,3 +576,14 @@ No production bypass, real disclosure, data loss, successful installation, or in
 - The 08:25 quota read timed out twice and screenshot fallback was rejected, so the planned M0 push was held and M3/M6 were sent emergency stop messages. The existing Usage tab recovered at 08:27 UTC and showed 64% five-hour / 94% weekly; the remaining 08:20–08:40 M3/M6 slot was resumed. Queue delivery is not proof of work start.
 - Pause receipts: M3 `01a14e1f-2393-7910-a54b-094b8e44bb9d`, M6 `01a14e1f-25fc-7891-a6ea-8ed8959d98d9`. Resume receipts: M3 `01a14e20-16a8-7290-a844-fb7671c3e59b`, M6 `01a14e20-18e8-7a13-948c-086bc64ac4ff`.
 - No module source or PR #24 change occurred during the gate. The M0 docs batch remains local pending fresh push preflight; last M0 push is 08:05 UTC.
+
+## M0 08:40 UTC integration gate checkpoint — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path first-party host enforcement (#52) | P0 / M2 host adapter, M1 Gateway contract, M5 policy, M9 composition | No new public evidence in M2's prior lane; PR #37 remains `9db59ed`. A synthetic harness is not a product host callsite. | M2 implements the M2-owned call path with deny-before-callback alias proof or identifies the exact absent host API/owner. Keep OPEN / NOT_VERIFIED. |
+| Caller data in packaged Hook logs (#53) | P0 / M7 package evidence, M8 source/logging, M9 acceptance | No new package evidence in M7's prior lane; PR #39 remains `cf4b70f`. Current artifact provenance and extracted-Hook comparison remain absent. | M7 supplies current hash-bound artifact chain or precise blocker and owner deliverable. No daily-host install. Keep OPEN / NOT_VERIFIED. |
+| Unpinned native Hook read (#55) | P1 / M3 behavior, M1 contract, M9 composition | No new PR #33 result; required denial and positive-control proof remain unverified. | Resume M3 for the exact policy-preserving fix and rerun M9 against reviewed exact heads. |
+| M6–M8 Windows/E4 ownership (#59) | P1 / M6 E4, M7 packaging, M8 docs/Hook copy, M9 | No new M6 owner confirmation; M9 exact reviewed refs still depend on explicit path responsibility. | Preserve ownership boundaries and require exact per-path owner/reviewer plus M9 pin plan. |
+
+No production bypass, real disclosure, data loss, successful installation, or independent E4 result is inferred by this checkpoint.
