@@ -653,3 +653,12 @@ No production bypass, real disclosure, data loss, successful installation, or in
 | Risk | Priority / owners | Current evidence and status | Gate |
 | --- | --- | --- | --- |
 | Quarantine concurrency retry exhaustion (#51) | P1 / M1 store, M0 CI coordination | M0 PR #30 head 2566220 run 39126103158 passes 9/9, including the Ubuntu Node22 test 163 that failed on prior docs-only head a1b0f8d in run 39124717837. Store/test sources did not change between these M0 commits; the observed failure is intermittent, with trigger UNKNOWN. | Keep OPEN/P1 for M1 diagnosis; preserve lock, fail-closed behavior, assertions, and retry cap. No data loss/corruption is established. |
+
+## M0 12:29 UTC lane handoff — 2026-10-18
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| Protected-path host enforcement (#52) | P0 / M2 adapter, M3 host, M1 Gateway, M5 policy, M9 | M2's final checkpoint ended with no visible PR/Issue result; M2 is paused by schedule, private state UNKNOWN. No host route/alias evidence is established. | Keep OPEN/P0/NOT_VERIFIED; next M2 slot requires exact adapter files/tests or API blocker, then M3 composes without editing M1 shared tests. |
+| Packaged Hook data disclosure (#53) | P0 / M7, M8, M9 | M7's checkpoint ended without current Setup.exe/manifest/extracted-Hook evidence; M7 is paused by schedule, private state UNKNOWN. | Keep OPEN/P0/NOT_VERIFIED; require source-bound build/hash/harness chain; no install or VM claim. |
+| Unpinned native Read contract (#55) | P1 / M3 behavior, M1 contract, M9 | M3 is active on PR #33 to deny unpinned native Read with the canonical reason and preserve a supported-capability positive control. | Keep OPEN until M3 exact-head evidence passes and M9 consumes the reviewed SHA; M3 does not edit M9 workflow or M1 shared Hook tests. |
+| Quarantine retry exhaustion (#51) | P1 / M1 store | M1 is active comparing M0 exact-head failure 39124717837 with pass 39126103158; trigger remains UNKNOWN and no data loss/corruption is established. | Preserve assertions, lock/fail-closed behavior, and retry cap; require bounded cause/diagnostic or precise blocker. |
