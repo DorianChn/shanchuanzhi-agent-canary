@@ -1216,3 +1216,12 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - **#59 P1:** M8's 09:02–09:25 lane ended without visible owner matrix or PR #40 change; paused, work preserved. Checkpoint `6248227630`.
 - **#60 P1:** M4 active 09:26–09:46 on PR #34 (`fbf2090`) for focused M4 console/security-center tests or a concrete M4-owned fix. M0 verified run `38698635434`: only Ubuntu Node 20 test 163 failed; macOS/Windows jobs cancelled, Ubuntu Node 22/Docker/sponsor passed, package-smoke skipped. The failing test is M1-owned; do not attribute it to M4. Checkpoint `6248228139`.
 - **M0/PR #30:** head `493ef8e` passed all 10 checks. PR #24 remains OPEN/Draft at head `62496d4` / base `dc8d009`. Scheduler comment #29: `6248228339`.
+
+## M0 scheduler and M9 exact-pin checkpoint — 2026-10-18 13:02 UTC
+
+- Usage read at 13:02:40 UTC: 64% five-hour / 94% weekly. Current active assignment is M6/M8 only, 12:49–13:09 UTC on #59; as of 13:02 no owner map is visible, and private execution remains UNKNOWN. M1 #51 and M3 #55 are schedule-held with work preserved. The scheduler and pause receipts are #29 `6250155563`, #51 `6250155818`, and #55 `6250156040`.
+- M0's independent paginated PR/path and patch read is documented in `MODULE_OWNERSHIP.md`; #59 has the exact overlap and proposed boundary notes. The proposals are not owner signoff. M6/M7 confirmation is still required for package fields and E4 durable writes; M1 review remains required for shared Hook tests.
+- M0 created #61 for M9's stale source pin. At PR #36 head `de3799a`, workflow M1 pin `b1d7423` differs from current PR #43 `9ef3dc2`. Historical run `38727481764` fails both composition platforms and identifies M3's unpinned native Read assertion; #55 tracks M3 behavior, while #61 tracks M9 pin/record/re-run acceptance. Both issues remain OPEN/P1.
+- P0 issues #52 and #53 remain OPEN/NOT_VERIFIED; no new first-party host callsite or current hash-bound installer/extracted-Hook chain is established. No scarce test resource is reserved.
+- PR #30 head `fef8663` has exact-head product CI 9/9 and coordination CI 1/1. PR #24 remains OPEN/Draft at unchanged head `62496d4` / base `dc8d009`. M0 changed coordination docs only.
+- PR #30 was last updated remotely at 12:54:54 UTC. Next shared push is no earlier than 13:14:54 UTC after fresh quota/ref/scope preflight.
