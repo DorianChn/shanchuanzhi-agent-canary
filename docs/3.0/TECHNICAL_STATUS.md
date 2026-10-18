@@ -3443,15 +3443,6 @@ PR #30 head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 was pushed at 20:08:11 UTC.
 - M8 and M1 Hook copies both have blob d6f93249306b7966259cab463dd39475728ef338. Source parity is verified; shipped-payload inclusion and extracted identity remain NOT_VERIFIED.
 - PR #40 review list had no entries at 20:32 UTC. M1/M6/M7 signoff and M8's per-file disposition remain pending on #59. M0 reported exact paths in #59 comment 6254806342 and blob equality in #53 comment 6254806643.
 
-## 2026-10-19 05:05 Asia/Shanghai — M7/M8 slot result and M1/M6 rotation
-
-- At 21:05 UTC, no new M7/M8 owner response or PR movement was visible. PR #39 remains at cf4b70f5130175582fffdfc65bd7c6847450867b and #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; both remain OPEN/Draft.
-- Exact-head GitHub Actions completed successfully: PR #39 CI [38706662845](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38706662845) and Windows wrapper [38706663042](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38706663042); PR #40 CI [38712038229](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38712038229) and Windows wrapper [38712038305](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38712038305). PR #40 has no submitted review. Green CI does not supply owner signoff or package provenance.
-- #59 cross-owner disposition remains NOT_VERIFIED. #53 remains P0 / NOT_VERIFIED: no exact package payload/hash, package consumer proof, or extracted-harness result was supplied. The identical M1/M8 source blob d6f93249306b7966259cab463dd39475728ef338 remains source-only evidence. No VM/installer slot was reserved.
-- Receipts: #59 6255151599; #53 6255155805. The M7/M8 slot is paused with existing PRs unchanged; private-chat activity is not observable.
-- M1/#61 and M6/#57 are the only active lanes from 21:05–21:25 UTC. M1 must decide on PR #40's M1-owned test change and provide the exact M9-consumed Gateway/Hook SHA and evidence. M6 must decide on PR #40's M6-owned test change and provide an independent product E4 artifact/run or the named dependency. Receipts: #61 6255158279; #57 6255159719; scheduler #29 6255161732.
-- Usage at 21:05 UTC was 83% five-hour / 74% weekly. PR #30's next push is no earlier than 21:08:56 UTC after fresh Usage/ref/scope checks. PR #24 remains unchanged; no merge, main update, M0 module-code edit, or Release.
-
 ## M0 lane rotation — 2026-10-19 04:45 Asia/Shanghai
 
 - At 20:45 UTC, M5/#52 and M8/#53/#59 ended 20:25–20:45 without public PR-head movement or owner response. PR #47 remains 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; PR #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Their shared worktrees are clean; private activity is UNKNOWN. M5 is paused; #52 stays P0 NOT_VERIFIED.
@@ -3465,3 +3456,15 @@ PR #30 head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 was pushed at 20:08:11 UTC.
 ### Shared push gate correction — 2026-10-19 04:49 Asia/Shanghai
 
 PR #30 head b6e9624f8abf7db3e816096e3743391bb6eb6400 was actually pushed at 20:48:56 UTC. The next shared module/push batch is no earlier than 21:08:56 UTC, superseding the prior estimate. Product CI 39165028601 and coordination CI 39165028602 were queued. PR #24 remains unchanged.
+## 2026-10-19 05:05 Asia/Shanghai — M7/M8 slot result and M1/M6 rotation
+
+- At 21:05 UTC, no new M7/M8 owner response or PR movement was visible. PR #39 remains at cf4b70f5130175582fffdfc65bd7c6847450867b and #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; both remain OPEN/Draft.
+- Exact-head GitHub Actions completed successfully: PR #39 CI [38706662845](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38706662845) and Windows wrapper [38706663042](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38706663042); PR #40 CI [38712038229](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38712038229) and Windows wrapper [38712038305](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38712038305). PR #40 has no submitted review. Green CI does not supply owner signoff or package provenance.
+- #59 cross-owner disposition remains NOT_VERIFIED. #53 remains P0 / NOT_VERIFIED: no exact package payload/hash, package consumer proof, or extracted-harness result was supplied. The identical M1/M8 source blob d6f93249306b7966259cab463dd39475728ef338 remains source-only evidence. No VM/installer slot was reserved.
+- Receipts: #59 6255151599; #53 6255155805. The M7/M8 slot is paused with existing PRs unchanged; private-chat activity is not observable.
+- M1/#61 and M6/#57 are the only active lanes from 21:05–21:25 UTC. M1 must decide on PR #40's M1-owned test change and provide the exact M9-consumed Gateway/Hook SHA and evidence. M6 must decide on PR #40's M6-owned test change and provide an independent product E4 artifact/run or the named dependency. Receipts: #61 6255158279; #57 6255159719; scheduler #29 6255161732.
+- Usage at 21:05 UTC was 83% five-hour / 74% weekly. PR #24 remains unchanged; no merge, main update, M0 module-code edit, or Release.
+
+## Shared push timing correction — 2026-10-19 05:10 Asia/Shanghai
+
+PR #30 docs-only head a0421f7a72039eebd582899cde517e80f316fc68 was pushed at 21:10:04 UTC. At 21:10:13, no PR-triggered workflow run or commit status was visible for this exact head; CI remains pending verification. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4. The next shared push is no earlier than 21:30:04 UTC, after fresh Usage/ref/scope checks.
