@@ -174,3 +174,9 @@ flowchart LR
 - M4 desktop/security-center work on PR #34 consumes the M1 canonical Hook behavior. `test/agent-hook.test.ts` remains M1-owned; PR #34's change to it requires M1's canonical-lineage/reconciliation decision tracked in #56.
 - M4's unchanged exact head has a red CI run tracked by P1 #60. M9 should record the exact M4 source SHA but must not claim the desktop slice verified until M4 provides focused test evidence and exact-head CI including package-smoke is green.
 - The M1 quarantine retry in #51 is a separate P1 diagnosis; do not assign its root cause to M4 or mask it through M4 test edits.
+
+## M9 final-composition gate delta — 2026-10-18 01:20 UTC
+
+- M9 PR #36 must consume reviewed exact M1/M3 refs for the native Hook Read contract. Current composition run `38727481764` fails on both Ubuntu and Windows while product CI and wrapper CI pass; M3's PR head has not advanced. Keep #55 OPEN until M3's deny and supported-capability positive control are composed on current refs.
+- M9 final pinning remains gated by P0 #52/#53, P1 #58/#59, and the separate installer/E4 evidence #41/#57. Product CI or wrapper CI cannot substitute for supported-host, real artifact, clean-VM, or independent E4 evidence.
+- M0 records the dependency only; module owners retain their paths and semantics. Keep PR #36 Draft until owner confirmations and exact composition checks pass.

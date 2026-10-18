@@ -475,3 +475,12 @@ At the 14:20 UTC scheduler readback, no owner-confirmed task or exclusive VMware
 | M4 PR #34 exact-head CI (#60) | P1 / M4 integration; M1 owns the shared failing test | Unchanged head `fbf2090` has one actual failed job in `38698635434`: Ubuntu Node 20 test 163 (`RETRY_LIMIT` in M1-owned file-store test, #51). Ubuntu Node 22, Docker, sponsor-smoke passed; macOS/Windows cancelled after fail-fast; package-smoke skipped. Trigger UNKNOWN; no M4 cause or incident inferred. | M1 resolves/diagnoses #51; M4 supplies exact worktree and focused console tests; then rerun full exact-head matrix and package-smoke. Reconcile shared Hook test via #56; keep PR #34 Draft. |
 
 Do not conflate this CI gate with M1 quarantine retry diagnosis #51; preserve all assertions and unsupported/unknown states.
+
+## M9 composition and owner-response risk — 2026-10-18 01:20 UTC
+
+| Risk | Priority / owners | Current evidence and status | Gate |
+| --- | --- | --- | --- |
+| M9 exact-head security composition (#55) | P1 / M3 + M9; M1 contract owner | PR #36 head `de3799a` product CI 9/9 and wrapper 2/2 pass, but composition run `38727481764` fails on Ubuntu and Windows. The tracked issue identifies an unpinned native Read contract mismatch; no M3/M9 head change is visible. | M3 preserves explicit deny for unpinned reads and a supported-capability positive control; M9 pins reviewed M1/M3 refs and reruns exact composition. |
+| Remaining M9 release gates (#52/#53/#58/#59/#41/#57) | P0/P1 / M1–M9 owners by issue | Open issues still require protected-path/host evidence, real packaged-Hook evidence, reviewed ignore rules, M6–M8 shared-path ownership, clean-VM lifecycle, and independent E4. | Keep M9 Draft; do not mark final integration PASS until each owner-specific artifact/check is recorded. |
+
+This checkpoint does not infer a production bypass, leak, data loss, successful installation, or independent E4 result.

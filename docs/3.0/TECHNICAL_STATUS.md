@@ -2662,3 +2662,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M4's 01:00 evidence deadline passed with no new commit, focused test result, or owner comment. PR #34 remains at `fbf20907c6accffc37246eddf04f8599060d99ea`; no M4 worktree is registered in this common clone, and other clones remain UNKNOWN. Correction: CI `38698635434` has one actual failure, the M1-owned Ubuntu Node 20 test 163; Mac/Windows jobs were cancelled, not failed. Root cause remains tracked by #51; no M4 cause is established.
 - M1/M4 were re-queued in their existing sessions for exact path/branch/SHA + focused evidence or a concrete blocker by 01:20 UTC. Queue IDs: `01a14c86-47b9-7851-ab7d-ab5d5c8be208` (M1), `01a14c86-48cb-7de2-ba64-737b4f4fb10c` (M4). Queue receipt is not proof work started. No VMware, real-model, or installer slot is reserved.
 - Last M0 push was 00:47 UTC; next push no earlier than 01:07 UTC after fresh quota, PR #24/#30, ancestry, path-scope, and diff-check preflight. No module source/tests, main, merge, or Release changed.
+
+## M0 01:20 UTC checkpoint — 2026-10-18
+
+- Usage Overview remains readable: 64% five-hour / 94% weekly; the tab remains open. Stop if five-hour quota becomes unreadable or reaches 5% or below.
+- PR #24 is OPEN/Draft and unchanged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 is OPEN/Draft at `935eb71d947e42dfb9dfb1807a3e9eb544ee4aaa`; exact-head product CI `39085306400` passed 9/9 and coordination CI `39085306368` passed 1/1.
+- All tracked M1–M9 PR heads are unchanged since 01:00. M1 PR #43 remains `9ef3dc2`; the inspected worktree is clean. No M1 owner commit/test/result is visible by the 01:20 deadline; #51 trigger remains UNKNOWN and #56 lineage is pending.
+- M4 PR #34 remains `fbf2090`; no M4 commit/test/owner response is visible, and no M4 worktree is registered in this clone. Its old CI has one actual M1-owned Ubuntu Node 20 test-163 failure; other platform jobs were cancelled, package-smoke skipped. No M4 cause is established; #60 is the integration gate.
+- M9 PR #36 remains `de3799a`: product CI `38727481643` passed 9/9 and wrapper CI `38727481657` passed 2/2, while exact-head composition run `38727481764` failed on Ubuntu and Windows. P0 #52/#53 and P1 #55/#58/#59 remain open; separate install/E4 gates #41/#57 remain unverified.
+- M1/M4 were re-queued in existing sessions for path/branch/SHA and focused evidence or a concrete blocker by 01:40 UTC; queue IDs are recorded in #29. No VMware, real-model, or installer resource is reserved.
+- Last M0 push 01:07 UTC; next no earlier than 01:27 UTC after fresh preflight. No module source/tests, PR #24, main, merge, or Release changed.

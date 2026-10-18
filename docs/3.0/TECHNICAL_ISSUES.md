@@ -1003,3 +1003,11 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - M1 #51 remains OPEN/P1 with retry trigger UNKNOWN; M1 #56 remains OPEN/P2 with no canonical Hook-test disposition. PR #43 is unchanged at `9ef3dc2` and the inspected worktree is clean. No owner evidence arrived by 01:00; next evidence/blocker requested by 01:20.
 - M4 #60 remains OPEN/P1 as an exact-head integration gate for PR #34. Job-level readback of `38698635434` shows one actual failure (Ubuntu Node 20 test 163 in M1's file-store test), Ubuntu Node 22/Docker/sponsor-smoke passed, macOS/Windows cancelled by fail-fast, and package-smoke skipped. Do not attribute the failure to M4; #51 owns diagnosis. M4 worktree/path and focused console test evidence remain UNKNOWN/pending.
 - Both owners were re-queued in their existing sessions. No test or assertion was removed or weakened; no M0 module source/test edit occurred.
+
+## M0 owner and integration checkpoint — 2026-10-18 01:20 UTC
+
+- **P1 #51 / M1:** PR #43 and inspected M1 tree unchanged; no failure-time trace or root cause. Trigger UNKNOWN; preserve 48 assertions, the 500-retry bound, and fail-closed behavior.
+- **P2 #56 / M1:** canonical Hook-test disposition absent; PR #30 and #34 both carry edits to the M1-owned path. Keep #30 Draft.
+- **P1 #60 / M4 integration:** no M4 focused result/path is visible. Old PR #34 run `38698635434` has only one actual failure, M1's Ubuntu Node 20 test 163; other matrix jobs cancelled and package-smoke skipped. Do not attribute #51 to M4.
+- **M9 gate:** PR #36 product CI 9/9 and wrapper 2/2 pass, but exact-head composition run `38727481764` fails Ubuntu and Windows. Issues #52/#53 (P0), #55/#58/#59 (P1), and #41/#57 remain OPEN or NOT_VERIFIED as applicable; no release/integration PASS is asserted.
+- No M1/M4 owner evidence arrived by 01:20. Both existing sessions were re-queued for exact path/branch/SHA and focused evidence or blocker by 01:40. Queue receipt is not evidence of work started.
