@@ -1423,3 +1423,10 @@ Actual PR #30 push time was 19:13:05 UTC; next shared push/module batch is no ea
 - **#52 P0 / M2:** assigned 19:25–19:45 on existing PR #37 to establish the first-party consumer of M1's held-file Gateway/object route or name the exact owner/dependency gap. No synthetic host evidence or fallback route.
 - **#53 P0 / #59 P1 / M7:** assigned 19:25–19:45 on existing PR #39 to provide source-bound Windows package/Hook hashes and extracted-harness evidence if a real artifact exists. M7 owns packaging/windows/*; no VM/installer test is reserved.
 - Receipts: #29 6254133425; #55 6254133752; #61 6254134080; #52 6254134484; #53 6254134845; #59 6254135129. Next shared publish no earlier than 19:33:05 UTC; recheck quota/ref/scope before publishing.
+
+## M0 lane rotation — 2026-10-19 03:45 Asia/Shanghai
+
+- **#52 P0 / M2 and #53 P0 / #59 P1 / M7:** 19:25–19:45 ended without public evidence or head movement. PR #37 remains 9db59ed8f2deae905edcb2179982f8bcb594167c; PR #39 remains cf4b70f5130175582fffdfc65bd7c6847450867b. Private activity is UNKNOWN; both lanes are paused.
+- **#60 P1 / M4:** assigned 19:45–20:05 on PR #34 to provide exact-head check status and M4-owned focused tests. The known Ubuntu Node 20 failure is M1-owned #51; M4 must not edit the canonical test, delete it, or weaken its retry bound/assertions.
+- **#57 P1 / M6:** assigned 19:45–20:05 on PR #38 to identify a real product E4 artifact, producer commit/hash and independent run path, or name the owner/dependency and earliest delivery. Fixture checks are not product E4 acceptance. No VM/model/installer test is reserved.
+- Receipts: #29 6254331848; #52 6254332160; #53 6254332456; #59 6254332744; #60 6254333037; #57 6254333364.
