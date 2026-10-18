@@ -3471,3 +3471,10 @@ PR #30 docs-only head a0421f7a72039eebd582899cde517e80f316fc68 was pushed at 21:
 ## Exact-head CI readback — 2026-10-19 05:13 Asia/Shanghai
 
 The PR #30 docs-only head a0421f7a72039eebd582899cde517e80f316fc68 completed exact-head product CI [39166619143](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39166619143) and coordination CI [39166619087](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39166619087) successfully. PR #30 remains OPEN/Draft; PR #24 remains unchanged.
+## M9 exact-head P1 gate failure — 2026-10-19 05:15 Asia/Shanghai
+
+PR #36 remains OPEN/Draft at de3799aae540f58173acec4ab3f7a1fe98593aa7. Exact-head composition run [38727481764](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38727481764) failed on both Windows and Ubuntu. Both jobs fail test/m9-cross-module-composition.test.mjs:101: the exact M3 Hook returned allow for synthetic unpinned Read where the M1 contract requires deny. The other six composition tests passed in each job. This reproduces the existing P1 contract mismatch in #55; it does not establish exposure of a real protected file or production native host.
+
+The M9 workflow and assertion pin M1 at b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc. GitHub compare shows the current M1 PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 is four commits ahead; owner-review SHA f14aab781c62db60ac241d2114f543f6cac223ae is distinct. M9 pins M3 at be3880298e1c6766024ecbce5f6dbc23c4d2daa1. Receipts: #55 6255254068; PR #36 6255257146; #61 6255238837/6255258970; scheduler #29 6255260624.
+
+M1/M6 remains the only active lane through 21:25 UTC. The next lane is M1/M3 only for 21:25–21:45 UTC: preserve the M1 denial, resolve M3 on existing PR #33 with a positive control, and owner-confirm the exact M9 M1 source pin. No policy weakening, assertion removal, or PR merge.
