@@ -3415,3 +3415,11 @@ PR #30 head 043bd50c5b3486582317c746cc25755c118d60a4 was actually pushed at 19:1
 - Usage at 19:45 UTC was 88% five-hour / 75% weekly. PR #30 last pushed head 043bd50c5b3486582317c746cc25755c118d60a4 at 19:13:05 UTC; its product/coordination checks passed. PR #24 remains unchanged OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7.
 - Receipts: #29 6254331848; #52 6254332160; #53 6254332456; #59 6254332744; #60 6254333037; #57 6254333364.
 - The cadence gate has elapsed. Next M0 publish is planned after the 20:05 slot with fresh Usage/ref/scope checks. No merge or Release.
+
+## M0 lane rotation — 2026-10-19 04:05 Asia/Shanghai
+
+- At 20:05 UTC, M4/#60 and M6/#57 ended their slot without public evidence or PR-head movement. PR #34 remains fbf20907c6accffc37246eddf04f8599060d99ea and PR #38 remains c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9. Private activity is UNKNOWN; both lanes are paused with work preserved.
+- M1/#61 and M3/#55 are the only scheduled lanes for 20:05–20:25 UTC on existing PR #43/#33. M1 must confirm the exact M9-consumed Hook/Gateway source SHA separately from its owner-review SHA. M3 must deny unpinned native Read with native_file_execution_not_pinned, preserve the positive control and all M1 assertions, and report exact tests.
+- Usage at 19:45 UTC was 88% five-hour / 75% weekly. PR #30 last pushed head 043bd50c5b3486582317c746cc25755c118d60a4 at 19:13:05 UTC; exact-head product and coordination CI passed. PR #24 remains unchanged OPEN/Draft.
+- Receipts: #29 6254547321; #60 6254547648; #57 6254547984; #55 6254548346; #61 6254548718.
+- No merge, main update, module-code change, or Release.

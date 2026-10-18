@@ -797,3 +797,9 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M2/M7 produced no public host-consumer or package evidence in the 19:25–19:45 slot; their issue gates remain open and private activity is UNKNOWN.
 - M4/M6 are assigned for 19:45–20:05 to report M4-owned exact-head status and independent M6 product E4 provenance. Any M1-owned canonical CI failure must remain with M1; fixture evidence cannot be promoted to product E4 PASS.
 - P0 #52/#53 and M9 integration remain unresolved. No release readiness is claimed.
+
+## M0 evidence checkpoint — 2026-10-19 04:05 Asia/Shanghai
+
+- M4/M6 produced no public evidence in the 19:45–20:05 slot. Exact-head build status and independent product E4 remain unresolved; no result is inferred from private activity.
+- M1/M3 resumed 20:05–20:25 for the M9 source-ref and native Read contract gates. M9 exact-ref composition remains blocked until owner confirmation and a passing direct contract test exist.
+- P0 #52/#53, M9 composition, M4 exact-head CI, and independent E4 #57 remain open. No release readiness is claimed.

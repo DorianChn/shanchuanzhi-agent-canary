@@ -1430,3 +1430,9 @@ Actual PR #30 push time was 19:13:05 UTC; next shared push/module batch is no ea
 - **#60 P1 / M4:** assigned 19:45–20:05 on PR #34 to provide exact-head check status and M4-owned focused tests. The known Ubuntu Node 20 failure is M1-owned #51; M4 must not edit the canonical test, delete it, or weaken its retry bound/assertions.
 - **#57 P1 / M6:** assigned 19:45–20:05 on PR #38 to identify a real product E4 artifact, producer commit/hash and independent run path, or name the owner/dependency and earliest delivery. Fixture checks are not product E4 acceptance. No VM/model/installer test is reserved.
 - Receipts: #29 6254331848; #52 6254332160; #53 6254332456; #59 6254332744; #60 6254333037; #57 6254333364.
+
+## M0 lane rotation — 2026-10-19 04:05 Asia/Shanghai
+
+- **#60 P1 / M4 and #57 P1 / M6:** 19:45–20:05 ended without public result or PR-head movement. PR #34 remains fbf20907c6accffc37246eddf04f8599060d99ea; PR #38 remains c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9. Private activity is UNKNOWN; both are paused.
+- **#55 P1 / M3 and #61 P1 / M1:** resumed 20:05–20:25 on existing PR #33/#43. M3 owns its Hook behavior/test and must preserve M1 assertions; M1 owns exact reviewed source-SHA confirmation and must keep owner-review SHA distinct.
+- Receipts: #29 6254547321; #60 6254547648; #57 6254547984; #55 6254548346; #61 6254548718. The current shared cadence gate has elapsed; the next module publish must follow the next actual M0 push by 20 minutes and fresh Usage/ref/scope verification.
