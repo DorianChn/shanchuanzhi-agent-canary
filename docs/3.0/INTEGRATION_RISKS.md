@@ -809,3 +809,7 @@ The M2/M7 slot does not clear the M9 exact-pin or independent-E4 gates.
 - M1/M3 again produced no public result in 20:05–20:25; the M9 exact-source confirmation and native-Read contract remain open. Private activity is UNKNOWN.
 - M5/M8 resume for 20:25–20:45 to provide P0 policy-denial/host-consumer and Hook/logging provenance evidence. Synthetic policy tests alone cannot prove production host consumption or shipped-log privacy.
 - M9 and P0 #52/#53 remain blocked; M7 still owns Windows packaging and M6 independent E4 remains unverified. No release readiness is claimed.
+
+## M0 cross-owner risk — 2026-10-18 20:31 UTC
+
+PR #40's changed paths cross M1, M6, and M7 ownership boundaries; packaging/windows/build-contract.mjs has no explicit owner row, and .gitattributes purpose is unresolved. No submitted PR review was found at the audit time. Hook source blob equality across M1/M8 reduces source divergence risk but does not prove shipped-package inclusion. Keep #59 open and PR #40 Draft pending per-file owner signoff, package reachability evidence, and exact M9 checks.

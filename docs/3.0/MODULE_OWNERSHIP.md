@@ -496,3 +496,15 @@ The current exact PR heads remain #38 `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9`
 | `.gitattributes` | Pending M6/M8 path-purpose confirmation | Do not infer ownership from the shared path alone; record exact attribute and reason before any integration. |
 
 M9 remains the owner of its workflow pins. At this read, #36 pins M6/M7/M8 to the exact current #38/#39/#40 heads, but M1 remains pinned to `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` while current #43 is `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; the #55 native-Read contract also remains unresolved. Do not repin or merge M9 until owners confirm these boundaries and exact-ref composition passes.
+## Read-only PR #40 cross-owner audit — 2026-10-18 20:31 UTC
+
+PR #40 remains at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Its current changed-file list includes:
+- M7-owned packaging paths from the existing proposal: packaging/windows/README.md, build.mjs, e4-hook-faults.mjs, prepare.mjs, and test/windows-packaging.test.mjs.
+- M6-owned E4 path: test/auto-e4.test.mjs.
+- M1-owned canonical assertion path: test/agent-hook.test.ts.
+- packaging/windows/build-contract.mjs, which has no explicit file-level owner in the current table.
+- .gitattributes, whose path purpose/owner remains unconfirmed.
+
+M8's security-lab/claude-native-hook.mjs and M1 PR #43's same path both resolve to blob d6f93249306b7966259cab463dd39475728ef338. This proves source-blob parity at those refs only, not packaged inclusion or installed/extracted identity.
+
+The PR review-list read returned no submitted reviews at 20:32 UTC; required issue-based M1/M6/M7 path signoff is still pending. M8 must provide a per-file intent/owner/reviewer map and shipment path, and stop further changes to other modules' owned files pending signoff. No ownership transfer is inferred by this inventory.

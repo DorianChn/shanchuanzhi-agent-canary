@@ -3436,3 +3436,9 @@ PR #30 head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 was pushed at 20:08:11 UTC.
 - Usage at 20:20 UTC was 87% five-hour / 74% weekly. PR #30 exact head 5f7eb143bdcffd678d38e62e7ca0d43b2bae2b23 passed product CI 39161927589 and coordination CI 39161927584. PR #24 remains unchanged OPEN/Draft.
 - Receipts: #29 6254734479; #55 6254734830; #61 6254735168; #52 6254735479; #53 6254735824; #59 6254736070.
 - Last shared push was 20:08:11 UTC; next batch is no earlier than 20:28:11 UTC, after fresh Usage/ref/scope checks. P0 #52/#53 remain NOT_VERIFIED; no merge or Release.
+
+## M0 read-only cross-owner finding — 2026-10-18 20:31 UTC
+
+- PR #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad changes M7-owned packaging paths, M6-owned test/auto-e4.test.mjs, M1-owned test/agent-hook.test.ts, and paths with unresolved ownership (packaging/windows/build-contract.mjs and .gitattributes). No M0 source/test edits were made.
+- M8 and M1 Hook copies both have blob d6f93249306b7966259cab463dd39475728ef338. Source parity is verified; shipped-payload inclusion and extracted identity remain NOT_VERIFIED.
+- PR #40 review list had no entries at 20:32 UTC. M1/M6/M7 signoff and M8's per-file disposition remain pending on #59. M0 reported exact paths in #59 comment 6254806342 and blob equality in #53 comment 6254806643.

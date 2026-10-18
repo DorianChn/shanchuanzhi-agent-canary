@@ -1448,3 +1448,10 @@ Actual PR #30 push time was 20:08:11 UTC; the next shared module/push batch is n
 - **#52 P0 / M5:** resumed 20:25–20:45 on PR #47 to confirm the M5-owned OBSERVE alias denial, exact tests, and whether a real first-party host consumer exists beyond a supplied callback. No M1/M2 edits or synthetic host proof.
 - **#53 P0 / #59 P1 / M8:** resumed 20:25–20:45 on PR #40 to compare exact owned Hook/logging blobs with M1's canonical copy, report tests and shipment boundary, and make only M8-owned fixes if needed. M7 retains packaging/windows/*.
 - Receipts: #29 6254734479; #55 6254734830; #61 6254735168; #52 6254735479; #53 6254735824; #59 6254736070. Next shared publish no earlier than 20:28:11 UTC; recheck quota/ref/scope.
+
+## M0 evidence update — #53 / #59, 2026-10-18 20:31 UTC
+
+- PR #40 exact head c1ff677cc56cd159cc983042e5dfcec5dc93f3ad changes M7-proposed packaging paths, M6-owned test/auto-e4.test.mjs, and M1-owned test/agent-hook.test.ts. The current ownership map has no explicit owner row for packaging/windows/build-contract.mjs; .gitattributes remains purpose/owner-pending.
+- security-lab/claude-native-hook.mjs has the same blob d6f93249306b7966259cab463dd39475728ef338 on M8 PR #40 and M1 PR #43. This does not prove shipment or extracted-package identity.
+- No PR review entries were returned at 20:32 UTC. M1/M6/M7 signoff remains pending; M8 must map each changed path, stop further foreign-owned edits, and establish the package consumer or blocker. #53 stays P0 NOT_VERIFIED; #59 stays OPEN.
+- GitHub evidence receipts: #59 comment 6254806342; #53 comment 6254806643.
