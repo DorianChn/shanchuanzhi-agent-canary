@@ -2770,3 +2770,13 @@ Read against the open PR heads, which remain unchanged from the 14:59 snapshot:
 - M0 checkpoint comments: #51 `6245618033`, #52 `6245620415`, #55 `6245620372`, #56 `6245620400`, and scheduler #29 `6245620382`.
 - Exact PR-head overlap inventory was added for M1 review: `test/agent-hook.test.ts` differs on PRs #30/#33/#34/#43/#47, and `src/security-router.ts` differs between #43 and #47. M0 recorded the blob IDs in #56 without selecting a canonical patch; M1 follow-up queues `01a14d43-c8cf-71d0-8f1c-d2299d588768` and `01a14d44-ff7d-7ae1-8c62-59d3f45d1fb4`. M3 was asked to avoid independent edits to the M1-owned test path (queue `01a14d44-ff7f-7ad0-a940-6e9f53f4a1ab`).
 - Last M0 push was 04:17 UTC; next documentation push is no earlier than 04:37 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
+
+## M0 04:40 UTC checkpoint — 2026-10-18 (read at 04:44)
+
+- Usage Overview remains readable at 64% five-hour / 94% weekly; the <=5% or unreadable stop rule is not triggered.
+- Full open-PR scan shows M1-M9 heads unchanged. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 is OPEN/Draft at `2d01db21834d6249b96284d08dbce099d44996d2`; its exact-head product CI passed 9/9.
+- M1 PR #43 remains `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; inspected M1 worktree is clean. No M1 report or diagnostic evidence is visible. #51 trigger remains UNKNOWN.
+- M3 PR #33 remains `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`; no M3 worktree is registered in this clone and no owner report or focused result is visible. #55 mismatch remains.
+- Active lanes remain M1 + M3 on existing tasks through 05:00. M2/M4/M5 stay paused by M0 scheduling only, branches/work preserved. Queue receipts do not prove work started; no VMware, real-model, or installation resource is reserved.
+- Checkpoint comments: #51 `6245774606`, #52 `6245774620`, #55 `6245774603`, #56 `6245774704`, scheduler #29 `6245774598`. The later ownership clarification is recorded in #55 `6245660906` and #56 `6245654534`.
+- Last M0 push was 04:37 UTC; next docs push no earlier than 04:57 UTC after fresh quota, ancestry, PR #24/#30, path-scope, and diff-check preflight. No module source/tests, PR #24, main, merge, or Release changed.
