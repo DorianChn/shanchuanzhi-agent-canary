@@ -1299,3 +1299,8 @@ On the subsequent docs-only head `4f108d19bfcf711940fe8f98b5a722aaba61e811`, CI 
 - The 15:14 scoped read failed; last confirmed at 15:10:49 was 87% five-hour / 80% weekly. M2/M7 paused and the push batch was held. Hold receipts: #52 6251545266, #53 6251545494, scheduler #29 6251545748.
 - The scoped Usage read recovered at 15:17:52 with 87% / 80%; M2/M7 resumed in a new 15:18–15:38 slot. Resume receipts: #52 6251579559, #53 6251579849, scheduler #29 6251580063.
 - A Ctrl+R action timed out without a landing result and was not repeated; scoped Usage text subsequently recovered. Next M0 push remains gated on a fresh quota/ref/scope preflight after 15:19:44 UTC.
+
+## M0 pre-push quota hold — 2026-10-18 15:19 UTC
+
+- The 15:19:57 pre-push Usage read failed; current quota is UNKNOWN. Last confirmed at 15:17:52 was 87% five-hour / 80% weekly. The scheduled push was held and M2/M7 were paused. Hold receipts: #52 6251606257, #53 6251606474, scheduler #29 6251606752.
+- Exact ref/scope preflight passed: PR #24 unchanged at 62496d4020bd90ba2eede49b2e80a2bbebb036b4; PR #30 remote remains e471b807d7f178944142dc07d80c4e97c772a889; PR #37/#39 remain 9db59ed / cf4b70f. M0 has six documentation-only commits queued locally; no push was made.

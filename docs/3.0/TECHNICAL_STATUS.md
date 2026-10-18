@@ -3161,3 +3161,8 @@ This is a readback of the current PR heads and their attached check-run summarie
 - At 15:14 the scoped Usage read failed; last confirmed at 15:10:49 was 87% five-hour / 80% weekly. M2/M7 were paused with work preserved; hold receipts #52 6251545266, #53 6251545494, scheduler #29 6251545748.
 - A fresh scoped read recovered at 15:17:52 with 87% five-hour / 80% weekly. M2 (#52) and M7 (#53) resumed for 15:18–15:38; resume receipts #52 6251579559, #53 6251579849, scheduler #29 6251580063.
 - Browser Ctrl+R timed out and its landing state was left UNKNOWN; no repeat key was sent. The Usage page remained open and the scoped text read worked afterward. The next shared push is gated on a fresh quota/ref/scope preflight after 15:19:44 UTC.
+
+## M0 pre-push quota hold — 2026-10-18 15:19 UTC
+
+- The scheduled pre-push Usage read failed at 15:19:57 UTC. Quota is UNKNOWN; last confirmed 15:17:52 was 87% five-hour / 80% weekly. M2/M7 were paused and the push was held. Receipts: #52 6251606257, #53 6251606474, scheduler #29 6251606752.
+- Read-only preflight confirmed PR #24 unchanged OPEN/Draft; PR #30 remains OPEN/Draft at published head e471b807d7f178944142dc07d80c4e97c772a889; PR #37 remains at 9db59ed; PR #39 at cf4b70f. Six M0 docs-only commits are preserved locally, with no push.
