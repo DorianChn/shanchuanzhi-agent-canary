@@ -4057,11 +4057,32 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - PR #30 remains OPEN/Draft at this exact head; PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. These runs verify coordinator documentation only.
 - PR #37's current description explicitly limits AppContainer evidence to tested child-process operations and states that native Codex Shell remains UNPROTECTED and the Hook is not installed/trusted. Its passing CI does not close P0 #52's real-host held-file/alias acceptance.
 
+## M0 20:59 exact-head CI completion — 2026-10-19 21:01 UTC
+
+- Product workflow 39323877106 completed SUCCESS 9/9; AC3 coordination workflow 39323877217 completed SUCCESS 1/1 on exact coordinator head `34597a03fa453085ef9d6259a4770da59acbc435`. Public readback is #29/6277233029.
+- PR #30 remains OPEN/Draft at that head; PR #24 remains OPEN/Draft and unchanged. These runs verify coordinator documentation only.
+
 ## M1/M2 lane end and M7/M8 handoff — 2026-10-19 20:58 UTC
 
 - The 20:38–20:58 M1/M2 slot ended without a public M1 exact-SHA review on #47 or M2 product-host held-file consumer/blocker evidence. #43 remains `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; #37 remains `9db59ed8f2deae905edcb2179982f8bcb594167c`. M1/M2 pause with work preserved. #52 stays OPEN/P0/NOT_VERIFIED; lane-end receipt #52/6277183592.
 - M7 + M8 are the only active pair from 20:59–21:19 UTC on #53 and existing PRs #39/#40 (`cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`). VMware/Windows installer is reserved exclusively for them; scheduler receipt #29/6277184249. Acceptance requires one-build source/build SHA, actual Setup.exe SHA-256, bound manifest SHA-256, extracted-Hook identity compared with the approved sanitized blob, and retained harness output on extracted bytes; if #59 blocks, report exact path overlap/owner instead of editing shared packaging paths. No real credentials/model data.
 - Usage at 20:58 was 56% five-hour / 62% weekly. No quota pause; no PR #24 merge or Release.
+
+## M7/M8 slot midpoint preparation — 2026-10-19 21:05 UTC
+
+- Public heads #39/#40 remain `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; the latest listed runs remain the earlier October 15 runs, with no new artifact/report visible. M8's registered worktree is clean at its exact head; M7 local/VM state is not observable from M0. Reminder #53/6277303898 restates the actual package/extracted-Hook evidence and #59 ownership boundary for the active 20:59–21:19 slot.
+- Usage at 21:05 was 56% five-hour / 62% weekly. No quota pause is indicated; private activity/resource use remains UNKNOWN.
+
+## M7/M8 slot midpoint — 2026-10-19 21:09 UTC
+
+- PR #39/#40 remain at the scheduled heads with no new run, artifact, or package evidence public; M8's registered worktree remains clean at its public head, while M7 local/VM activity is not observable. M0 posted #53/6277383119 requesting the actual same-build installer/manifest/extracted-Hook/harness chain or the exact #59 path-owner blocker by 21:19.
+- #53 stays OPEN/P0/NOT_VERIFIED and no leak is claimed. Usage remains 56% five-hour / 62% weekly; private activity/resource use remains UNKNOWN.
+
+## M7/M8 lane end and M6/M7 ownership handoff — 2026-10-19 21:19 UTC
+
+- The 20:59–21:19 exclusive installer slot ended without same-build Setup.exe/manifest hashes, extracted-Hook proof, harness result, or a concrete #59 owner blocker. PR #39/#40 remained `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; M8's registered worktree was clean at its public head. Private state remains UNKNOWN. #53 stays OPEN/P0/NOT_VERIFIED; no real leak is claimed. Lane-end receipt #53/6277568497. VMware/installer reservation is released.
+- M7/M8 pause with work preserved. M6+M7 are the only active pair from 21:20–21:40 UTC on #59 and existing PRs #38/#39 (heads `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9` / `cf4b70f5130175582fffdfc65bd7c6847450867b`). M6 must confirm/correct auto-E4 semantics/test ownership and review boundary; M7 must confirm/correct its Windows packaging paths and identify owners for `build-contract.mjs` and `.gitattributes`. Ownership-only, no source edits, no inferred M8 approval. #53 package acceptance and M9 pinning stay blocked. Issue #59 receipt 6277569177; scheduler #29 receipt 6277569810. No VM/installer/real-model resource is reserved.
+- Usage at 21:18 remained 56% five-hour / 62% weekly. No quota pause; PR #24 remains unchanged and unmerged.
 
 ## M1/M2 slot midpoint — 2026-10-19 20:48 UTC
 
