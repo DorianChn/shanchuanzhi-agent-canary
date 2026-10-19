@@ -3578,3 +3578,24 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M1/M3 are the only assigned lanes for 08:50–09:10 UTC on existing PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and PR #33 head be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M3 is asked to deny synthetic unpinned native Read with native_file_execution_not_pinned while preserving the positive control and all assertions; M1 is asked to confirm the M9-consumed source SHA separately from the owner-review SHA. #55/#61 remain OPEN/P1; the last exact-head M9 composition run 38727481764 still fails on synthetic M3 allow versus M1 deny. Receipts: scheduler #29 6263403307; #55 6263420685; #61 6263428131.
 - No VM, installer, or real-model slot is reserved. No production-host exposure is established.
 - M0's previous push 96b7582474ee90b65423ba22f054ac67a1bea9c7 passed exact-head CI and AC3 coordination checks (39223426307 / 39223426300). The 20-minute cadence has elapsed; recheck Usage, PR #24/#30, remote head, and documentation-only scope before the next publish.
+
+## M0 coordinator push — 2026-10-19 08:55 UTC
+
+- Coordinator-only commit 322195854d4402a3be4a2181bde3ac9f0b535651 was pushed at 08:54:05 UTC. PR #30 and git ls-remote confirm this exact head; PR #30 remains OPEN/Draft.
+- Exact-head CI run 39226069371 and AC3 coordination run 39226069382 were QUEUED at initial readback. Recheck before claiming success.
+- PR #24 remains unchanged OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Scheduler receipt #29 comment 6263458395.
+- Usage was readable at 08:55 UTC: 94% five-hour / 72% weekly. Next M0 push no earlier than 09:14:05 UTC after fresh preflight.
+
+## Exact M0 head and M1/M3 midpoint — 2026-10-19 09:01 UTC
+
+- Coordinator commit 322195854d4402a3be4a2181bde3ac9f0b535651 passed exact-head product CI 39226069371 and AC3 coordination 39226069382. Scheduler readback is comment 6263564415. PR #30 remains OPEN/Draft at that head; PR #24 remains unchanged.
+- Usage at 09:00 was readable at 94% five-hour / 72% weekly; the Usage tab remains open.
+- M1/M3's 08:50–09:10 assignment has no visible owner response, review, or PR-head movement at the 09:00 checkpoint. Private activity remains UNKNOWN. M3's existing PR #33 and M1's PR #43 stay open/draft; #55/#61 remain unresolved.
+
+## M0 lane rotation — 2026-10-19 09:14 UTC
+
+- Usage at 09:10 UTC was readable at 93% five-hour / 72% weekly. The Usage page remains open. Pause all work and GitHub/browser operations if it becomes unreadable or falls below 5%.
+- The 08:50–09:10 M1/M3 assignment ended without public owner response, review, focused result, or PR #33/#43 head movement. Private activity is UNKNOWN. #55/#61 remain OPEN/P1; M1/M3 pause with work preserved. Receipts: scheduler #29 6263752658; #55 6263772538; #61 6263781560.
+- M2/M5 are the only assigned lanes for 09:12–09:32 UTC on existing PR #37 at 9db59ed8f2deae905edcb2179982f8bcb594167c and PR #47 at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. PR #37's current check run 38704118421 passes 9/9; M5 exact-head CI run 38719884959 passes. Both review lists are empty. Assignment asks M2 to establish held-object vs path-only adapter semantics and host-owner dependency, and M5 to confirm the OBSERVE hard-deny contract and exact tests without touching M1-owned files.
+- #52 remains OPEN/P0. Cross-owner M1 disposition and first-party host-consumer evidence remain NOT_VERIFIED; no production exposure is established. Assignment receipts: scheduler #29 6263752658 and #52 6263762084. No VMware/installer/real-model resource is reserved.
+- M0 exact head 322195854d4402a3be4a2181bde3ac9f0b535651 passed both workflows. Next M0 push no earlier than 09:14:05 UTC after fresh quota, PR/ref, and scope checks.
