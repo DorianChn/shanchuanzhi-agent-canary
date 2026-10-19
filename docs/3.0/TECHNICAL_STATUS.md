@@ -3818,3 +3818,40 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The only active pair is M7 PR #39 + M8 PR #40 on P0 #53 for 16:57–17:17 UTC. Exact slot-start heads: M7 cf4b70f5130175582fffdfc65bd7c6847450867b; M8 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Assignment receipts: PR #39 comment 6272574695; PR #40 comment 6272582320; Issue #53 comment 6272589409; scheduler Issue #29 comment 6272594041. Requests are limited to existing Setup.exe/manifest/extracted-Hook hashes, provenance, and sanitized harness evidence. No installer/VM/real-model resource is reserved; #53 stays OPEN/NOT_VERIFIED.
 - P1 #51 now records M0 exact-head product CI failure 39287817014 at Ubuntu Node 20, test/file-state-store.test.ts subtest 163, RETRY_LIMIT after 500 STATE_STORE_BUSY retries; exact evidence comment 6272452253. Root cause/data impact remain UNKNOWN. Preserve the test and bound; owner triage is deferred to a future M1 slot.
 - Usage Overview at 16:55 UTC showed 70% five-hour / 64% weekly. The Usage tab remains open as a separate browser tab. M0 last pushed 870f6c9f84ae14e3b1c3f7e70c4d9f40ae0cb020 at 16:43 UTC; next push no earlier than 17:03 UTC after refreshed quota/ref/scope preflight.
+## M0 17:03 push readback — 2026-10-19 17:04 UTC
+
+- Coordinator commit e8e4976cc931fd512e99fe4f0a478427ee73da18 was pushed on the existing feature/ac3-m0-coordination branch. PR #30 reads OPEN/Draft at this exact head; local worktree is clean after push.
+- PR #24 was verified with GitHub CLI after push: OPEN/Draft, unmerged, head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5dff42873584ed488e4ee7. The feature/agent-canary-3.0 remote ref is unchanged.
+- Exact-head checks for e8e4976cc931fd512e99fe4f0a478427ee73da18 are pending: coordination run 39290850824 is IN_PROGRESS; product CI run 39290850908 is QUEUED.
+- M7 #39 remains at cf4b70f5130175582fffdfc65bd7c6847450867b and M8 #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. As of 17:03 UTC, no owner response or remote-head movement was public after the slot assignment.
+- Usage Overview at 17:02 UTC showed 70% five-hour / 64% weekly; Usage tab remains open. M0 last push was 17:03 UTC; next no earlier than 17:23 UTC after fresh quota/ref/scope preflight.
+## M7/M8 exact-head evidence audit — 2026-10-19 17:05 UTC
+
+- Read-only PR-body audit shows M7 #39 metadata head is cf4b70f5130175582fffdfc65bd7c6847450867b, but its PR description cites an older head 4267c61 and older CI runs 38596572303/38596572179. Those entries do not prove evidence at the current exact head. No Setup.exe, manifest, or extracted-Hook SHA-256 chain is reported in the current body.
+- M8 #40 current metadata head is c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Its PR body reports source-wrapper/focused Hook checks and exact-head CI 38688462113, but does not state an extracted installer artifact hash or a harness run against extracted bytes. Keep P0 #53 OPEN/NOT_VERIFIED.
+- The 16:57–17:17 M7/M8 slot remains active. M0 has requested exact-head hashes/provenance and sanitized extracted-byte harness evidence; no owner result or remote-head movement is public as of 17:05.
+## M0 exact-head CI completion — 2026-10-19 17:09 UTC
+
+- For coordinator commit e8e4976cc931fd512e99fe4f0a478427ee73da18, product CI run 39290850908 completed 9/9 jobs SUCCESS (Ubuntu, Windows, macOS Node 20/22, Docker, Sponsor, package smoke). AC3 coordination audit run 39290850824 also completed SUCCESS.
+- This green run is for M0 coordinator commit e8e4976, which contains only coordination documentation. It does not resolve the separate Ubuntu Node 20 RETRY_LIMIT failure at earlier exact M0 head 870f6c9 or close Issue #51; that earlier failure remains documented with root cause UNKNOWN.
+- PR #30 remains OPEN/Draft at e8e4976cc931fd512e99fe4f0a478427ee73da18. No module source/tests were changed by M0.
+## Cross-module exact-head CI snapshot — 2026-10-19 17:12 UTC
+
+- Read-only exact PR metadata for additional readiness: M3 #33 head be3880298e1c6766024ecbce5f6dbc23c4d2daa1 has CI SUCCESS; M4 #34 head fbf20907c6accffc37246eddf04f8599060d99ea has CI FAILURE; M9 #36 head de3799aae540f58173acec4ab3f7a1fe98593aa7 has composition FAILURE while regular CI and Windows wrapper are SUCCESS; M2 #37 head 9db59ed8f2deae905edcb2179982f8bcb594167c has CI SUCCESS; M6 #38 head c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 has CI and Windows wrapper SUCCESS.
+- These states do not close their tracked gates: #55/#61 composition and exact-pin issues remain OPEN; M2 native Shell #45 remains UNPROTECTED; M6 independent external E4 #57 remains NOT_VERIFIED. No code or tests were changed during this read.
+- M7 #39/#M8 #40 remain the only active pair on P0 #53 until 17:17 UTC; their artifact and extracted-byte evidence is still pending.
+## Cross-module attribution for P1 #51 — 2026-10-19 17:14 UTC
+
+- M4 PR #34 current head fbf20907c6accffc37246eddf04f8599060d99ea has exact CI run 38698635434 failing only Ubuntu Node 20 at the same quarantine-store subtest 163 / RETRY_LIMIT. M4’s issue #34 correction comment 6243925282 explicitly identifies it as the M1-owned test tracked by #51; M4’s other reported Linux Node 22, Docker, and sponsor jobs passed before fail-fast cancelled the remaining matrix.
+- This matches the later M0 exact-head failure 39287817014 on the same bounded STATE_STORE_BUSY path. It strengthens cross-run reproducibility but does not identify the root trigger or establish data loss. Keep #51 assigned to M1; do not misattribute this CI failure to M4 or ask M4 to weaken/change the shared test.
+## M7/M8 lane-end and M6/M8 rotation — 2026-10-19 17:20 UTC
+
+- The 16:57–17:17 M7/M8 slot ended without public owner response, exact artifact hashes, extracted-byte harness evidence, or PR-head movement. M7 #39 remains cf4b70f5130175582fffdfc65bd7c6847450867b with a stale PR-body head reference; M8 #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad without extracted-artifact harness proof. P0 #53 remains OPEN/NOT_VERIFIED; no real leak is established. M7 pauses with work preserved.
+- The only active pair is M6 PR #38 + M8 PR #40 for 17:19–17:39 UTC on P1 #57 and P0 #53. Exact heads: M6 c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; M8 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Assignment receipts: PR #38 comment 6272975910; PR #40 comment 6272984008; Issue #57 comment 6272990603; Issue #53 comment 6272995420; scheduler #29 comment 6272999522.
+- M6 is asked for an existing product E4 artifact/producer/hash and independent verifier evidence or a named owner dependency; no fixture-only E4 PASS. M8 is asked for exact sanitized wrapper/harness evidence and whether it consumes extracted artifact bytes. No exclusive VMware/installer/real-model slot is reserved.
+- Usage at 17:17 UTC was 70% five-hour / 64% weekly; Usage tab remains open. M0 last pushed e8e4976cc931fd512e99fe4f0a478427ee73da18 at 17:03 UTC; next push no earlier than 17:23 UTC.
+## M0 17:24 batch preflight — 2026-10-19 17:24 UTC
+
+- Usage Overview is readable at 70% five-hour / 64% weekly; Usage tab remains open.
+- M6 #38 remains at c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 and M8 #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; no public owner response or remote head movement is visible as of 17:24.
+- M0's prior head e8e4976cc931fd512e99fe4f0a478427ee73da18 has green exact-head checks (product 9/9 and coordination success). Current local diff remains coordinator-only docs; PR #24/#30 and remote refs were preflighted at 17:21, before this scheduled push.
