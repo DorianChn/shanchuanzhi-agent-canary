@@ -4005,3 +4005,25 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M3/M9 ended without a public candidate SHA, PR movement, or composition result. #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; #36 remains `de3799aae540f58173acec4ab3f7a1fe98593aa7`. #55 lane-end comment 6275975242 records this and preserves P1/OPEN. M3 local state is not observable from M0's registered worktrees; M9's shared tree was clean. Private activity remains UNKNOWN.
 - M7/M8 are now the only active pair for 19:55–20:15 on P0 #53. Exact heads are #39 `cf4b70f5130175582fffdfc65bd7c6847450867b` and #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. Existing product/wrapper runs are green, but all four artifact queries returned zero artifacts. #53 assignment is comment 6275977763; #29 scheduler is 6275980193. The slot reserves VMware/Windows installer exclusively for M7/M8; real-model testing and other install/VM work are excluded. Acceptance requires same-build Setup.exe/manifest/extracted-Hook hashes and the retained harness against extracted bytes, not just source CI.
 - Usage at 19:54 was 56% five-hour / 62% weekly; the five-hour field displayed “resetting”, not below 5%. M0 last pushed at 19:34; current coordinator-only batch follows fresh preflight. No M0 module code/tests changed.
+
+## M0 19:55 push readback — 2026-10-19 19:56 UTC
+
+- Exact local/remote M0 coordinator head is `46f229d20cffa7121039a3f9a6db808636805c34`. PR #30 remains OPEN/Draft at that head / base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #24 remains OPEN/Draft and unmerged at unchanged head/base.
+- No exact-head CI run was listed at 19:55; no result is claimed. #29 readback comment is 6276001877. Next M0 push no earlier than 20:15 after fresh preflight.
+- M7+M8 remain the only active pair on #53 through 20:15; VMware/installer use is exclusive to them, no real-model test.
+
+## M0 19:55 exact-head CI — 2026-10-19 19:59 UTC
+
+- Product CI run 39315035044 passed 9/9 jobs and AC3 coordination run 39315034902 passed 1/1 on exact head `46f229d20cffa7121039a3f9a6db808636805c34`.
+- PR #30 remains OPEN/Draft at this SHA; PR #24 remains OPEN/Draft and unchanged. Public CI readback is #29 comment 6276061238. These checks cover only coordinator docs. Next M0 push no earlier than 20:15.
+
+## M7/M8 slot midpoint — 2026-10-19 20:05 UTC
+
+- PR #39/#40 remain at exact slot heads `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; no package/hash chain, extracted-Hook comparison, or harness result is public. M8's registered worktree remains clean at its exact head; M7/VM state is not observable from M0. Private activity is UNKNOWN.
+- M0 posted #53 midpoint reminder 6276180344: report Setup.exe/manifest/build hashes and extracted-Hook identity plus the retained harness result, or a concrete VMware/installer blocker by 20:15. Keep P0 open.
+
+## M7/M8 lane end and M1/M5 handoff — 2026-10-19 20:15 UTC
+
+- The 19:55–20:15 exclusive VMware/installer slot ended with no public Setup.exe/manifest/extracted-Hook hash chain or extracted-byte harness evidence. #39/#40 remain at `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; M8's registered tree was clean and M7 local/VM state is unobservable. Private activity remains UNKNOWN. #53 stays OPEN/P0/NOT_VERIFIED; lane-end receipt #53/6276365772. The exclusive resource window is closed; no real-model test was scheduled.
+- M1 + M5 are now the only active pair, 20:17–20:37 on #52. M1 owes exact-SHA APPROVE/BLOCK for #47; M5 owes an evidence-corrected PR description using run 38719884959 (9/9 on the current exact head) and explicit production-host/held-handle/TOCTOU limits. Assignment receipt #52/6276368527; scheduler #29/6276370798. Exact heads remain #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` and #47 `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. #52 remains OPEN/P0/NOT_VERIFIED.
+- Usage at 20:14 reads 56% five-hour / 62% weekly with the five-hour field showing “resetting”, not below 5%. M0 last pushed at 19:55; next coordinator-only batch follows fresh preflight. M0 did not edit module source or tests.
