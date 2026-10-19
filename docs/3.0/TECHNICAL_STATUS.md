@@ -3798,3 +3798,23 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - For coordinator commit fef342970a950e0d73bbbca8f98322560f0fe311, product CI run 39285487883 and AC3 coordination run 39285487559 both completed SUCCESS. This supersedes the 16:33 queued checkpoint.
 - PR #30 remains OPEN/Draft at the exact fef342970a950e0d73bbbca8f98322560f0fe311 head; PR #24 was verified OPEN/Draft, unmerged, with its prior head/base unchanged.
 - M1 #43 and M5 #47 remain at their slot-start remote heads as of 16:39 UTC. The M1 local candidate mentioned in its PR body is still not confirmed or visible as a remote commit. No module code/tests were changed by M0.
+## M0 16:43 push readback — 2026-10-19 16:43 UTC
+
+- Coordinator commit 870f6c9f84ae14e3b1c3f7e70c4d9f40ae0cb020 was pushed on the existing feature/ac3-m0-coordination branch. PR #30 reads OPEN/Draft at that exact head; the local worktree is clean after push.
+- PR #24 was re-read with GitHub CLI during preflight and after push: it remains OPEN/Draft, unmerged, head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5dff42873584ed488e4ee7. The feature/agent-canary-3.0 remote ref is unchanged.
+- Exact-head checks for 870f6c9f84ae14e3b1c3f7e70c4d9f40ae0cb020 are queued: product CI run 39287817014 and AC3 coordination run 39287816993.
+- M1 #43 and M5 #47 are still at slot-start heads 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c respectively at this read. The only public slot updates remain M0 comments #43/47; the reported M1 candidate d26a0c3 is still not visible as a remote head.
+- Usage Overview was readable at 16:42 UTC: 84% five-hour / 66% weekly, Usage tab left open. M0's last push is 16:43 UTC; next no earlier than 17:03 UTC after fresh preflight. No module source/tests were changed.
+## P1 #51 exact-head M0 CI failure — 2026-10-19 16:49 UTC
+
+- Product CI run 39287817014 for M0 coordinator head 870f6c9f84ae14e3b1c3f7e70c4d9f40ae0cb020 failed on Ubuntu Node 20, job 118180089674. In test/file-state-store.test.ts subtest 163, “four concurrent processes preserve every quarantine without lost writes” exhausted its bounded 500 STATE_STORE_BUSY retries and reported RETRY_LIMIT.
+- Three CI jobs succeeded, four matrix jobs were cancelled after fail-fast, and package-smoke was skipped. The coordination audit run 39287816993 succeeded. M0 changed only docs; this run does not identify the cause in M0. Root cause and any data impact remain UNKNOWN; no loss/corruption is established.
+- The exact evidence was added to existing Issue #51 as comment 6272452253. Preserve the failing test, its retry bound, and locking/security policy; queue owner diagnosis for a future M1 slot. No test was rerun or weakened.
+- At 16:49, M1 #43 remains at 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and M5 #47 at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; no owner result or remote head movement is public. The M1/M5 slot remains open until 16:55 UTC.
+- M0 last pushed 870f6c9f84ae14e3b1c3f7e70c4d9f40ae0cb020 at 16:43 UTC; next push no earlier than 17:03 UTC after fresh preflight.
+## M1/M5 lane-end and M7/M8 rotation — 2026-10-19 16:58 UTC
+
+- The 16:35–16:55 M1/M5 slot ended with no public owner response, exact-head review, or remote PR-head movement. M1 #43 remained 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; M5 #47 remained 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. P0 #52 remains OPEN/NOT_VERIFIED; lane-end receipt is Issue #52 comment 6272567796. M1’s d26a0c3 stays an unverified, unpushed PR-description report.
+- The only active pair is M7 PR #39 + M8 PR #40 on P0 #53 for 16:57–17:17 UTC. Exact slot-start heads: M7 cf4b70f5130175582fffdfc65bd7c6847450867b; M8 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Assignment receipts: PR #39 comment 6272574695; PR #40 comment 6272582320; Issue #53 comment 6272589409; scheduler Issue #29 comment 6272594041. Requests are limited to existing Setup.exe/manifest/extracted-Hook hashes, provenance, and sanitized harness evidence. No installer/VM/real-model resource is reserved; #53 stays OPEN/NOT_VERIFIED.
+- P1 #51 now records M0 exact-head product CI failure 39287817014 at Ubuntu Node 20, test/file-state-store.test.ts subtest 163, RETRY_LIMIT after 500 STATE_STORE_BUSY retries; exact evidence comment 6272452253. Root cause/data impact remain UNKNOWN. Preserve the test and bound; owner triage is deferred to a future M1 slot.
+- Usage Overview at 16:55 UTC showed 70% five-hour / 64% weekly. The Usage tab remains open as a separate browser tab. M0 last pushed 870f6c9f84ae14e3b1c3f7e70c4d9f40ae0cb020 at 16:43 UTC; next push no earlier than 17:03 UTC after refreshed quota/ref/scope preflight.
