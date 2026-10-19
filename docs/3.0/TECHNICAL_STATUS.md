@@ -4027,3 +4027,26 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The 19:55–20:15 exclusive VMware/installer slot ended with no public Setup.exe/manifest/extracted-Hook hash chain or extracted-byte harness evidence. #39/#40 remain at `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`; M8's registered tree was clean and M7 local/VM state is unobservable. Private activity remains UNKNOWN. #53 stays OPEN/P0/NOT_VERIFIED; lane-end receipt #53/6276365772. The exclusive resource window is closed; no real-model test was scheduled.
 - M1 + M5 are now the only active pair, 20:17–20:37 on #52. M1 owes exact-SHA APPROVE/BLOCK for #47; M5 owes an evidence-corrected PR description using run 38719884959 (9/9 on the current exact head) and explicit production-host/held-handle/TOCTOU limits. Assignment receipt #52/6276368527; scheduler #29/6276370798. Exact heads remain #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` and #47 `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. #52 remains OPEN/P0/NOT_VERIFIED.
 - Usage at 20:14 reads 56% five-hour / 62% weekly with the five-hour field showing “resetting”, not below 5%. M0 last pushed at 19:55; next coordinator-only batch follows fresh preflight. M0 did not edit module source or tests.
+
+## M0 20:16 push readback — 2026-10-19 20:17 UTC
+
+- Exact coordinator local/remote head is `06cf6bda3c3b77021e789c7cd25c5548cd1f3d01`. PR #30 remains OPEN/Draft at that head / base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #24 remains OPEN/Draft and unchanged.
+- Exact-head product CI run 39317955729 and AC3 coordination run 39317955494 were QUEUED at 20:16; no result was claimed. Public readback is #29/6276392412. Next M0 push no earlier than 20:36 UTC.
+
+## M0 20:16 exact-head CI completion — 2026-10-19 20:20 UTC
+
+- Product workflow 39317955729 completed SUCCESS with 9/9 jobs; AC3 coordination workflow 39317955494 completed SUCCESS with 1/1 job, both on exact head `06cf6bda3c3b77021e789c7cd25c5548cd1f3d01`. Public CI readback is #29/6276457805.
+- PR #30 remains OPEN/Draft at that head; PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. This verifies coordinator documentation only. The M1+M5 slot remains active through 20:37 UTC; no merge or release.
+- Public checkpoint at 20:19: #52 remains OPEN/P0; M1 #43 is still at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` with no submitted review, and M5 #47 remains at `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c` with its stale “checks have not reported” wording. Usage read 56% five-hour / 62% weekly; no quota pause is indicated. Private activity is UNKNOWN.
+
+## M1/M5 slot midpoint — 2026-10-19 20:27 UTC
+
+- Public readback again found no M1 review on #47 and the stale M5 exact-head-check statement. M0 posted midpoint comment #52/6276592254 with exact-SHA acceptance, no-rerun instruction, and the 20:37 lane-end boundary. #52 remains OPEN/P0/NOT_VERIFIED; lack of public update does not establish private inactivity.
+- Read-only filesystem check at 20:23 found the registered M1 and M5 worktrees clean at their respective public heads; this does not reveal private-chat work.
+- Usage at 20:27 remained 56% five-hour / 62% weekly. No quota pause is indicated.
+
+## M1/M5 lane end and M1/M2 handoff — 2026-10-19 20:37 UTC
+
+- The 20:17–20:37 M1/M5 slot ended without a public M1 review on #47 or M5's correction of the stale hosted-check statement. At 20:36 PR #43 remained `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`, PR #47 remained `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`, and both registered worktrees were clean. This is public/shared-filesystem evidence only; private activity remains UNKNOWN. #52 stays OPEN/P0/NOT_VERIFIED. Lane-end receipt #52/6276786829.
+- M5 pauses with its work preserved. M1 continues with M2 as the only active pair, 20:38–20:58 UTC, on #52 and existing PRs #43/#37. M1 owes exact-SHA APPROVE/BLOCK on #47 and a held-file contract/blocker statement; M2 owes a real product-host consumer/callsite using the held-file capability with exact evidence, or the named owner/dependency and next step. Scheduler receipt #29/6276787532. No tests, VM, installer, or real-model resource are scheduled.
+- Usage at 20:36 remained 56% five-hour / 62% weekly. The M0 push cadence had elapsed; next push contains coordinator docs only. PR #24 remains OPEN/Draft and unchanged; no merge or release.
