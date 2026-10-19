@@ -3599,3 +3599,25 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M2/M5 are the only assigned lanes for 09:12–09:32 UTC on existing PR #37 at 9db59ed8f2deae905edcb2179982f8bcb594167c and PR #47 at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. PR #37's current check run 38704118421 passes 9/9; M5 exact-head CI run 38719884959 passes. Both review lists are empty. Assignment asks M2 to establish held-object vs path-only adapter semantics and host-owner dependency, and M5 to confirm the OBSERVE hard-deny contract and exact tests without touching M1-owned files.
 - #52 remains OPEN/P0. Cross-owner M1 disposition and first-party host-consumer evidence remain NOT_VERIFIED; no production exposure is established. Assignment receipts: scheduler #29 6263752658 and #52 6263762084. No VMware/installer/real-model resource is reserved.
 - M0 exact head 322195854d4402a3be4a2181bde3ac9f0b535651 passed both workflows. Next M0 push no earlier than 09:14:05 UTC after fresh quota, PR/ref, and scope checks.
+
+## M0 exact-head CI readback — 2026-10-19 09:18 UTC
+
+- Product CI 39228597994 and AC3 coordination run 39228597964 both completed SUCCESS for exact M0 head a354f699e25f763c635b10ea30b8fbf8e887d66a.
+- The earlier 09:15 “product CI in progress” note was corrected in scheduler #29 comment 6263864652.
+- PR #30 remains OPEN/Draft at that exact head; PR #24 remains unchanged OPEN/Draft. Next shared push no earlier than 09:34:48 UTC.
+
+## M2/M5 midpoint — 2026-10-19 09:23 UTC
+
+- Usage at 09:22 UTC was readable at 91% five-hour / 71% weekly; the Usage page remains open.
+- M2/M5 remain the only assigned lanes through 09:32 on existing PR #37 head 9db59ed8f2deae905edcb2179982f8bcb594167c and #47 head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. At the 09:21 read, no owner response, PR review, or branch movement was visible; private activity remains UNKNOWN.
+- Midpoint request for adapter held-object/host dependency and current M5 OBSERVE hard-deny evidence is recorded at scheduler #29 comment 6263948822. #52 stays OPEN/P0; no production host acceptance is claimed.
+- M0 exact head a354f699e25f763c635b10ea30b8fbf8e887d66a passed product CI 39228597994 and coordination run 39228597964.
+
+## M0 lane rotation — 2026-10-19 09:39 UTC
+
+- Usage Overview readable at 09:37 UTC: 90% five-hour / 71% weekly; Usage tab remains open. Stop all work and browser/GitHub actions if unreadable or below 5%.
+- The 09:12–09:32 M2/M5 lane closed without a public owner result, review, or branch movement on #52 / PR #37 / PR #47. At closing, #37 remained OPEN/Draft at 9db59ed8f2deae905edcb2179982f8bcb594167c and #47 at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; reviews were empty. Private-session activity is UNKNOWN. #52 remains OPEN/P0: first-party host-consumer/protected-open evidence and M1 shared-test disposition remain NOT_VERIFIED. M2/M5 pause with work preserved; no production-host enforcement or incident claim.
+- M4 and M6 are the only active module lanes for 09:35–09:55 UTC, on existing PRs/worktrees. Receipts: scheduler #29 comment 6264208907; M4 issue #60 comment 6264222104; M6 issue #57 comment 6264230901.
+- M4 PR #34 remains OPEN/Draft at fbf20907c6accffc37246eddf04f8599060d99ea. Exact-head run 38698635434 has one actual failure: Ubuntu Node 20 test 163 reached RETRY_LIMIT; issue #60 identifies it as M1-owned and tracked by #51. Other jobs were cancelled after fail-fast and package-smoke was skipped. M4 causation is NOT_ESTABLISHED. M4-focused runtime-console evidence remains requested; preserve M1 tests and retry bound.
+- M6 PR #38 remains OPEN/Draft at c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; #57 remains OPEN/NOT_VERIFIED. M6 is asked for exact product artifact plus independent run/hash or a named dependency, and an explicit review disposition for the M6-owned test/auto-e4.test.mjs hunk on M8 PR #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. No real-model, VM, or installer resource is reserved. PR #40 exact-head product and wrapper checks pass; review list is empty.
+- No module branch, source, or test was changed by M0. Next M0 push requires fresh quota, PR #24/#30, remote-head, and documentation-only scope checks. The prior M0 push was at 09:14:48 UTC; the 20-minute minimum has elapsed.
