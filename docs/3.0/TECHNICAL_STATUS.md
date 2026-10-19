@@ -3638,3 +3638,40 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The M0 common worktree registry read at 09:46 contains no M4, M6, or M7 worktree entry; M8 is registered at head c1ff677. This only covers that common repository; other clones are UNKNOWN.
 - M7/M8 are the only active module lanes for 09:55–10:15 UTC on existing PR #39/#40, focused on P0 #53. M7 must identify the actual Windows packaging path and artifact/manifest hash plus extracted-Hook byte comparison to M1's approved wrapper blob, or name the missing artifact/resource dependency without starting an unreserved test. M8 must provide the current wrapper blob SHA, exact log/test paths, and redaction-canary evidence while preserving tests. Receipt: Issue #53 comment 6264564510. PR #39 remains OPEN/Draft at cf4b70f5130175582fffdfc65bd7c6847450867b; PR #40 remains OPEN/Draft at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; both review lists are empty.
 - Keep #53 OPEN/P0 until every shipped/reachable copy is reconciled or ruled out with evidence. No actual secret incident is established. M0 changed no module source or tests. Next shared push no earlier than 10:01:11 UTC after fresh quota, PR/ref, remote-head, and documentation-only scope checks.
+
+## M0 exact-head CI readback — 2026-10-19 10:03 UTC
+
+- Coordinator docs commit 3a26d08e74e2c8bb7f1ff7d2a74ce2f075656e2a was pushed; remote ref and PR #30 confirm the exact head. Local worktree was clean after push.
+- AC3 coordination run 39234652292 completed SUCCESS; product CI run 39234652243 was still IN_PROGRESS at readback.
+- PR #30 remains OPEN/Draft on base 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Usage at 10:03 UTC was readable: 89% five-hour / 71% weekly; Usage page remains open. Next M0 push no earlier than 10:23:35 UTC after fresh preflight.
+
+
+## M0 exact-head CI correction — 2026-10-19 10:06 UTC
+
+- Product CI run 39234652243 and AC3 coordination run 39234652292 both completed SUCCESS for exact commit 3a26d08e74e2c8bb7f1ff7d2a74ce2f075656e2a. This corrects the 10:03 readback that product CI was still in progress. Scheduler receipt #29 comment 6264724908.
+- PR #30 remains OPEN/Draft at that head; PR #24 remains unchanged OPEN/Draft at 62496d4020bd90ba2eede49b2e80a2bbebb036b4. Usage last read at 10:03 was 89% five-hour / 71% weekly; Usage tab remains open.
+- M7/M8 remain the only active module lanes through 10:15 UTC. Next shared M0 push no earlier than 10:23:35 UTC.
+
+
+## M0 read-only P0/package-overlap audit — 2026-10-19 10:10 UTC
+
+- At current PR heads, M1 #43, M7 #39, and M8 #40 all carry Hook source blob d6f93249306b7966259cab463dd39475728ef338 for security-lab/claude-native-hook.mjs. It persists only timestamp, fixed PreToolUse event, and permissionDecision enum; this is source parity, not extracted-package proof. Issue #53 evidence receipt: comment 6264759417.
+- At M7 #39 head cf4b70f, packaging/windows/build.mjs blob 070afc9e4dad382e638a7f1a43ee3eaf69a74469 copies the Hook to payload-root claude-native-hook.mjs (line 14), builds PAYLOAD_MANIFEST.json, and writes BUILD_RESULT.json plus installer .sha256 (lines 28–39). Exact-head Windows Community wrapper run 38706663042 and CI run 38706662845 succeeded, but both expose zero uploaded GitHub Actions artifacts. This establishes an intended build path, not the actual Setup.exe/manifest/extracted-Hook hashes. M7 was asked to locate an existing artifact elsewhere or name the artifact/installer dependency.
+- Exact current-head blob comparison on #38/#39/#40 finds distinct contents across all three candidates for seven overlapping paths: packaging/windows/README.md (bec961d0/f566deb6/3eb082d7), build.mjs (1f7efa10/070afc9e/da6594a4), e4-hook-faults.mjs (8d73bb9b/93015398/53a67cb3), prepare.mjs (a81cc5dc/9f4e5997/287aa6ce), test/windows-packaging.test.mjs (4a0f5e53/bd278f9f/4f4e6441), auto-e4.mjs (221deeda/e449b1da/43411dee), and test/auto-e4.test.mjs (7be5e1dd/6c1d0db6/5e18b50c), ordered M6/M7/M8. This confirms divergence only; no semantic winner is inferred. M7/M8 were asked to confirm/correct their ownership boundary in #59 comment 6264772023; M6 must separately confirm auto-E4 semantics.
+- M7/M8 remain the only active module lanes through 10:15 UTC. No M0 module source/test changes; #53 remains OPEN/P0, with no actual secret incident established. Usage last read at 10:06 was 89% five-hour / 71% weekly; Usage page remains open.
+
+
+## M0 current-head sensitive-log regression comparison — 2026-10-19 10:12 UTC
+
+- Read-only `test/agent-hook.test.ts` comparison found three different current blobs: M1 #43 82ca4662, M7 #39 d3b64fc2, M8 #40 6c2d8da1.
+- M1's test at this head supplies caller-argument and decision-reason canaries, asserts the persisted record's exact timestamp/event/permissionDecision key set, and asserts all markers absent. M7's current wrapper test checks a fixture read, destructive-command denial, and log line count but has no canary-absence or exact-schema assertion. M8 checks one fixed note marker is absent but does not supply a decision-reason marker or assert the exact schema.
+- This is a source-test coverage discrepancy, not evidence of an actual leak. `test/agent-hook.test.ts` is M1-owned; M7/M8 were told not to edit it without M1 review. Issue #53 receipt 6264816685. Keep #53 OPEN/P0 until branch/package reachability and regression ownership are resolved; no incident is established.
+
+## M0 M1/M7 slot assignment — 2026-10-19 10:18 UTC
+
+- The 09:55–10:15 M7/M8 slot ended without public owner evidence, review, or PR-head movement; private activity is UNKNOWN. The 10:15–10:35 UTC slot is assigned to M1 on existing PR #43 and M7 on existing PR #39. M8 is paused during this slot.
+- Verified heads at assignment: M1 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; M7 cf4b70f5130175582fffdfc65bd7c6847450867b. Both remain OPEN/Draft with no review.
+- M1 was asked to confirm the canonical M1-owned test/agent-hook.test.ts log contract and file-by-file disposition/integration route for overlapping copies, including M7's weaker test copy; M7 was told not to edit the M1-owned file without review. M7 was asked for actual Setup.exe, manifest, extracted-Hook hashes and package-harness evidence, or the exact artifact/installer dependency and earliest feasible reserved window. No unreserved VM/installer work.
+- Assignment receipts were verified in #29 comment 6264967746, #53 comment 6264982545, and #56 comment 6264989937. GitHub app comment writes returned 403; authenticated-browser submissions were verified through issue-comment readback.
+- Usage was readable at 10:17 UTC: 85% five-hour / 70% weekly; Usage tab remains open. #53 remains OPEN/P0; source parity is not installed-payload proof. No actual secret incident is established. M0 changes no module source/tests. No module push before the shared batch at/after 10:23:35 UTC.
