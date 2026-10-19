@@ -111,7 +111,7 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
     lines.push('No same-path overlap was found among the listed open PRs.');
   } else {
     lines.push('| Path | PRs/modules | Classification |', '|:---|:---|:---|');
-    for (const [file, entries] of overlaps.slice(0, 100)) {
+    for (const [file, entries] of overlaps) {
       const ownerRule = rules.pathOwners?.[file];
       const owner = typeof ownerRule === 'string' ? ownerRule : ownerRule?.owner;
       const exception = typeof ownerRule === 'object' ? ownerRule.branchLocalException : '';
@@ -157,7 +157,6 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
       const refs = entries.map((entry) => '#' + entry.number + ' ' + entry.module).join(', ');
       lines.push('| ' + clean(file) + ' | ' + clean(refs) + ' | ' + clean(classification) + ' |');
     }
-    if (overlaps.length > 100) lines.push('', 'Overlap table truncated at 100 paths; total overlaps: ' + overlaps.length + '.');
   }
 
   const unregistered = registered.filter((entry) => !entry.module);

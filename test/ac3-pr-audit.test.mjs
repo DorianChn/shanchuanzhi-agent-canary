@@ -124,3 +124,20 @@ test('marks missing test evidence and non-success completed checks without chang
   assert.match(report, /MISSING/);
   assert.match(report, /Unregistered PR branches/);
 });
+
+test('reports every overlapping file even when the PR set exceeds 100 paths', () => {
+  const pulls = [
+    pr(43, 'feature/ac3-security-core', 'aaa111', ''),
+    pr(36, 'feature/ac3-m9-integration', 'eee555', '')
+  ];
+  const sharedFiles = Array.from({ length: 101 }, (_, i) => 'overlap/file-' + String(i).padStart(3, '0') + '.md');
+  const report = summarizePrAudit(
+    pulls,
+    new Map([[43, sharedFiles], [36, sharedFiles]]),
+    new Map(),
+    new Map(),
+    rules
+  );
+  assert.match(report, /overlap\/file-100\.md/);
+  assert.doesNotMatch(report, /Overlap table truncated/);
+});
