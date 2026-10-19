@@ -3539,7 +3539,7 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 
 - Usage Overview at 08:28 UTC was readable: 100% five-hour / 73% weekly, reset in 4h37m. Keep the Usage tab open; pause all development and GitHub/browser activity if it becomes unreadable or falls below 5%.
 - The 08:08–08:28 M1/M5 slot closed with no public owner response or PR-head movement. Private activity is UNKNOWN. #52 remains OPEN/P0; M1/M5 pause with work preserved. Receipt: #52 comment 6263010733.
-- M7/M8 are now the only active modules for 08:29–08:49 UTC on their existing PRs: #39 cf4b70f5130175582fffdfc65bd7c6847450867b and #40 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Current PR reviews are empty and their last observed product/wrapper checks pass, but owner signoff and package provenance are not established.
+- M7/M8 are the only assigned lanes for 08:29–08:49 UTC on existing PRs #39 cf4b70f5130175582fffdfc65bd7c6847450867b and #40 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Current PR reviews are empty and the last observed product/wrapper checks pass. No owner-confirmed RUNNING state or new owner response is visible at 08:34; private activity is UNKNOWN.
 - On P0 #53, M7 must bind product artifact path/producer commit/hash to its install/extraction copy; M8 must verify the extracted consumer/harness reads those exact Hook bytes and retains sanitized log assertions. On P1 #59, M7 must confirm or route build-contract.mjs and the M7-owned packaging hunks; M8 must map PR #40 changes and required M1/M6/M7 reviewers. No cross-owner source edits or self-approval.
 - No VMware, installer, or real-model resource is reserved. Request exclusive use through #29 first. Receipts: scheduler #29 comment 6263021198; #53 comment 6263029076; #59 comment 6263038391.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 is OPEN/Draft at remote head 617f7fd4ee64be9f382c248b5e1cddb4df9dcf91 before this coordinator-doc batch.
@@ -3551,3 +3551,30 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Exact-head product CI run 39223426307 was QUEUED and AC3 coordination run 39223426300 was IN_PROGRESS at 08:31:59 UTC. No result is claimed until rechecked.
 - PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7.
 - Scheduler readback: issue #29 comment 6263073486. The next shared push is no earlier than 08:51:57 UTC, subject to fresh Usage, PR/ref, and scope checks.
+
+## Post-push exact-head readback — 2026-10-19 08:34 UTC
+
+- PR #30 exact head 96b7582474ee90b65423ba22f054ac67a1bea9c7 is on the remote. Product CI run 39223426307 remains IN_PROGRESS; AC3 coordination run 39223426300 completed SUCCESS. Do not report the batch fully green until product CI completes.
+- Usage was readable at 08:32: 97% five-hour / 72% weekly. The Usage tab remains open.
+- M7/M8 owner assignments are visible on #29/#53/#59; no new owner response or PR #39/#40 head movement is visible at this read. This is not confirmation of private-task inactivity.
+- Next M0 push no earlier than 08:51:57 UTC. PR #24 remains unchanged OPEN/Draft; no merge or Release.
+
+## Post-push exact-head readback — 2026-10-19 08:36 UTC
+
+- Product CI 39223426307 and AC3 coordination run 39223426300 both completed SUCCESS for exact head 96b7582474ee90b65423ba22f054ac67a1bea9c7. PR #30 remains OPEN/Draft at this head.
+- The 08:32 scheduler note was corrected with both results at issue #29 comment 6263139556.
+- PR #24 remains unchanged OPEN/Draft. Next shared push no earlier than 08:51:57 UTC after fresh preflight.
+
+## M7/M8 midpoint — 2026-10-19 08:40 UTC
+
+- M7/M8 assignment remains 08:29–08:49 UTC on existing PR #39/#40. At the 08:39 read, #53/#59 and PR #39/#40 had no owner reply/review or head movement since assignment; private activity remains UNKNOWN.
+- Midpoint request for package/hash/extraction evidence and file-level owner dispositions is recorded at scheduler #29 comment 6263215492. #53 stays OPEN/P0 and #59 stays OPEN/P1. No exclusive installer/VM slot is reserved.
+- M0 exact-head CI for 96b7582 remains green on both workflows (39223426307 and 39223426300). Next push no earlier than 08:51:57 UTC.
+
+## M0 lane rotation — 2026-10-19 08:53 UTC
+
+- Usage at 08:49 UTC was readable at 95% five-hour / 72% weekly. The Usage tab remains open. Pause all work and GitHub/browser activity if it becomes unreadable or drops below 5%.
+- M7/M8's 08:29–08:49 assignment closed without public owner evidence, per-file map, review, or PR-head movement. PR #39 remains cf4b70f5130175582fffdfc65bd7c6847450867b and PR #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; both review lists are empty. #53 remains OPEN/P0 and #59 OPEN/P1. Receipts: #53 6263392342; #59 6263397365. Private activity is UNKNOWN; M7/M8 pause with work preserved.
+- M1/M3 are the only assigned lanes for 08:50–09:10 UTC on existing PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and PR #33 head be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M3 is asked to deny synthetic unpinned native Read with native_file_execution_not_pinned while preserving the positive control and all assertions; M1 is asked to confirm the M9-consumed source SHA separately from the owner-review SHA. #55/#61 remain OPEN/P1; the last exact-head M9 composition run 38727481764 still fails on synthetic M3 allow versus M1 deny. Receipts: scheduler #29 6263403307; #55 6263420685; #61 6263428131.
+- No VM, installer, or real-model slot is reserved. No production-host exposure is established.
+- M0's previous push 96b7582474ee90b65423ba22f054ac67a1bea9c7 passed exact-head CI and AC3 coordination checks (39223426307 / 39223426300). The 20-minute cadence has elapsed; recheck Usage, PR #24/#30, remote head, and documentation-only scope before the next publish.
