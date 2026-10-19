@@ -4050,3 +4050,20 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The 20:17–20:37 M1/M5 slot ended without a public M1 review on #47 or M5's correction of the stale hosted-check statement. At 20:36 PR #43 remained `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`, PR #47 remained `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`, and both registered worktrees were clean. This is public/shared-filesystem evidence only; private activity remains UNKNOWN. #52 stays OPEN/P0/NOT_VERIFIED. Lane-end receipt #52/6276786829.
 - M5 pauses with its work preserved. M1 continues with M2 as the only active pair, 20:38–20:58 UTC, on #52 and existing PRs #43/#37. M1 owes exact-SHA APPROVE/BLOCK on #47 and a held-file contract/blocker statement; M2 owes a real product-host consumer/callsite using the held-file capability with exact evidence, or the named owner/dependency and next step. Scheduler receipt #29/6276787532. No tests, VM, installer, or real-model resource are scheduled.
 - Usage at 20:36 remained 56% five-hour / 62% weekly. The M0 push cadence had elapsed; next push contains coordinator docs only. PR #24 remains OPEN/Draft and unchanged; no merge or release.
+
+## M0 exact-head CI completion — 2026-10-19 20:41 UTC
+
+- Product workflow 39321010749 completed SUCCESS 9/9 and AC3 coordination workflow 39321010827 completed SUCCESS 1/1 on coordinator head `3cd450215f61677afe03b0e3f70afd9cf13663d4`. Public readback is #29/6276854988.
+- PR #30 remains OPEN/Draft at this exact head; PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. These runs verify coordinator documentation only.
+- PR #37's current description explicitly limits AppContainer evidence to tested child-process operations and states that native Codex Shell remains UNPROTECTED and the Hook is not installed/trusted. Its passing CI does not close P0 #52's real-host held-file/alias acceptance.
+
+## M1/M2 lane end and M7/M8 handoff — 2026-10-19 20:58 UTC
+
+- The 20:38–20:58 M1/M2 slot ended without a public M1 exact-SHA review on #47 or M2 product-host held-file consumer/blocker evidence. #43 remains `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; #37 remains `9db59ed8f2deae905edcb2179982f8bcb594167c`. M1/M2 pause with work preserved. #52 stays OPEN/P0/NOT_VERIFIED; lane-end receipt #52/6277183592.
+- M7 + M8 are the only active pair from 20:59–21:19 UTC on #53 and existing PRs #39/#40 (`cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`). VMware/Windows installer is reserved exclusively for them; scheduler receipt #29/6277184249. Acceptance requires one-build source/build SHA, actual Setup.exe SHA-256, bound manifest SHA-256, extracted-Hook identity compared with the approved sanitized blob, and retained harness output on extracted bytes; if #59 blocks, report exact path overlap/owner instead of editing shared packaging paths. No real credentials/model data.
+- Usage at 20:58 was 56% five-hour / 62% weekly. No quota pause; no PR #24 merge or Release.
+
+## M1/M2 slot midpoint — 2026-10-19 20:48 UTC
+
+- At midpoint, public PR heads remained M1 #43 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` and M2 #37 `9db59ed8f2deae905edcb2179982f8bcb594167c`; M1 has no submitted review on #47. M0 posted #52/6276998350 asking for M1's exact-SHA APPROVE/BLOCK or blocker and M2's real product-host held-file consumer/evidence or named dependency/next step by 20:58.
+- #52 stays OPEN/P0/NOT_VERIFIED. Usage at 20:48 was 56% five-hour / 62% weekly; no quota pause is indicated. Private activity remains UNKNOWN.
