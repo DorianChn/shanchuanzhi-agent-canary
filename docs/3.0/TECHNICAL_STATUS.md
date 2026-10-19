@@ -3740,3 +3740,20 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M7 #39 + M8 #40 are the only active module pair from 15:30–15:50 UTC on P0 #53. Exact-head task receipts: PR #39 comment 6271012035; PR #40 comment 6271030686; scheduler Issue #29 comment 6270977330. M7 is to identify an existing packaged artifact and compare manifest/extracted-Hook hashes or state the missing artifact dependency. M8 is to identify the exact harness/canary path and whether it exercises an extracted copy. No installer/VM run is authorized without a separate exclusive slot; preserve all tests and report no real secrets.
 - Reopened Issue #49 at current M9 PR #36 head de3799aae540f58173acec4ab3f7a1fe98593aa7: the clean M9 worktree's root docs/3.0/API_CONTRACTS.md SHA-256 B9464C61A4700FFCB56050800809B3A521AD2B1585628492C5BAB400A9691952 differs from M0's canonical SHA-256 BDA9C7B89633D943BBB9A57DF93831461ABC7170B2EB9B4BCD9F5F7D5C0AA4BF. The M9 nested M1 Gateway contract hash matches the inspected clean M1 worktree. Exact-head disposition is Issue #49 comment 6270938943. Keep PR #36 Draft; this contract collision is not evidence of runtime exposure.
 - The M0 reports now include post-push CI/audit results and current exact-head findings. Last M0 push was 15:05:13 UTC; next push is permitted after 15:25:13 UTC, subject to a fresh quota/ref/scope preflight. No module source or tests were edited.
+
+
+## M0 push/readback — 2026-10-19 15:40 UTC
+
+- Pushed coordinator-only commit 9335dfc67c87e179e5f31115c72e42b437c3eca9 to the existing feature/ac3-m0-coordination branch. PR #30 is OPEN/Draft at the exact pushed head on base 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
+- Product CI run 39279548241 and AC3 coordination run 39279548228 are QUEUED; no outcome is claimed yet. The local M0 worktree was clean after the push, and this commit changed only docs/3.0/TECHNICAL_STATUS.md.
+- PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Usage Overview was readable at 15:40 UTC: 84% five-hour / 66% weekly. The Usage tab remains open.
+- M7 #39 and M8 #40 remain the only active pair through 15:50 UTC. Next M0 push no earlier than 15:58 UTC after fresh quota/ref/scope preflight. No module source or tests were modified.
+
+## M7/M8 lane-end and M1/M5 rotation — 2026-10-19 15:56 UTC
+
+- Usage Overview was readable at 15:55 UTC: 84% five-hour / 66% weekly; the Usage tab remains open.
+- The 15:30–15:50 M7/M8 slot ended without a public owner reply, PR-head movement, or submitted review. M7 #39 remains cf4b70f5130175582fffdfc65bd7c6847450867b and M8 #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. No existing Setup.exe/manifest/extracted-Hook hashes or extracted-copy harness run were reported. P0 #53 remains OPEN / NOT_VERIFIED; no actual secret/exposure is confirmed. M0 recorded the lane end in #53 comment 6271364597.
+- M1 #43 + M5 #47 are the only active pair for 15:52–16:12 UTC on P0 #52. Exact task receipts: M1 PR #43 comment 6271388391; M5 PR #47 comment 6271401081; tracker Issue #52 comment 6271414895; scheduler Issue #29 comment 6271342868. M2 is paused pending an identified first-party host consumer or named dependency. No hard denial or test was weakened.
+- M0 commit 9335dfc67c87e179e5f31115c72e42b437c3eca9 remains PR #30's exact OPEN/Draft head. Product CI run 39279548241 has 9 queued jobs; coordination run 39279548228 has 1 queued job; neither has a result. PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5dff42873584ed488e4ee7.
+- Last M0 push was 15:38 UTC; next push is no earlier than 15:58 UTC after fresh quota/ref/scope preflight. This checkpoint is coordinator-only and changes no module source/tests.
