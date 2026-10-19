@@ -4159,3 +4159,19 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The 22:43–23:03 M1+M5 slot ended without a public M1 review, M5-owned PR-body correction/adapter contract, or path-specific blocker. PR #43 remains `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; PR #47 remains `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c` and still has the stale hosted-check sentence, although exact-head run 38719884959 is SUCCESS 9/9. #52 remains OPEN/P0/NOT_VERIFIED. Lane-end receipt #52/6279270127.
 - Only M7 + M8 are active from 23:03–23:23 UTC on P0 #53 using existing PRs #39/#40 at `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. Exclusive VMware/Windows-installer test slot is reserved in #29/6279270109; no real-model slot. By 23:08 establish and bind an exact candidate (producer/build SHA, Setup.exe SHA-256, manifest SHA-256); if absent or blocked by #59 path ownership, report the exact path/owner/next action and release the resource. If the exact artifact exists, M7 verifies same-build manifest/payload binding and M8 extracts/hooks/harnesses those bytes with SHA and sanitized result. No edits to unresolved shared paths or weakened tests; no real leak claimed. Assignment #53/6279271996.
 - Usage at 23:03 UTC was 56% five-hour / 62% weekly. No quota pause. PR #24 remains OPEN/Draft and unchanged.
+
+
+## M0 23:05 exact-head CI and M7/M8 readiness gate — 2026-10-19 23:08 UTC
+
+- Coordinator commit `8db05ee11e4da6a6e09882e898a4125fdc01af9b` completed product CI 39339334129 SUCCESS 9/9 and AC3 coordination 39339334130 SUCCESS 1/1. PR #30 remains OPEN/Draft at this head; PR #24 remains OPEN/Draft and unchanged. Public receipt #29/6279339445. M0 docs only.
+- By the 23:08 readiness gate, no public exact product candidate/build/Setup.exe/manifest provenance was posted for M7/M8. M0 released the exclusive VMware/Windows-installer slot; public receipt #29/6279339264. Private activity/resource use remains UNKNOWN. Only M7/M8 may continue non-exclusive, read-only source-to-output/path/blocker inventory through 23:23; no install/extraction tests without a new slot. #53 stays OPEN/P0/NOT_VERIFIED; no leak claimed. Follow-up #53/6279341518.
+- Usage at 23:03 was 56% five-hour / 62% weekly. No quota pause; no real-model reservation.
+
+
+
+## M7/M8 lane end and M1/M2 handoff — 2026-10-19 23:23 UTC
+
+- The 23:03–23:23 M7+M8 slot ended without a public actual installer path/hash, package-to-wrapper provenance, extracted-Hook result, or blocker. PR #39/#40 remain `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. #53 stays OPEN/P0/NOT_VERIFIED. Lane-end receipt #53/6279556228. Private activity/resource use is UNKNOWN.
+- The exclusive VMware/installer slot was released at 23:08 per #29/6279339264; M7/M8 did only non-exclusive inventory. M0 found a local-only prior candidate.3 BUILD_RESULT record with installer SHA `6c78620d249ec7e9f13ad929c4c1fb44c307f4b818751e7446f193a09a5d27e1`, manifest SHA `dc46af213ef4f4b3e81ce83639fbddb3ef9ccc6039fb9d8afba90d60df373df8`, but no corresponding Setup.exe bytes in the inspected worktree, no wrapperSourceSHA, and recorded E4/GUI install NOT_VERIFIED. This is not current M7 artifact proof. No real leak claimed.
+- Only M1 + M2 are active from 23:23–23:43 UTC on P0 #52 with existing PRs #43/#37 at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` / `9db59ed8f2deae905edcb2179982f8bcb594167c`. M1 owes exact-head canonical path/verifyRealPaths review on PR #47; M2 owes a real first-party host callsite through the adapter and held-file Gateway, or accountable host-owner blocker/next action. No cross-owner edits, CI reruns, or exclusive-resource use. Assignment #52/6279556220; scheduler #29/6279556214. #52 remains OPEN/P0/NOT_VERIFIED.
+- Usage at 23:23 UTC was 56% five-hour / 62% weekly. No quota pause. PR #24 remains OPEN/Draft and unchanged.
