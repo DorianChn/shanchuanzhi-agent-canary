@@ -4090,6 +4090,22 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The 21:20–21:40 M6/M7 ownership-only slot ended without public path ownership confirmations, a concrete blocker, PR movement, or review. #38/#39 remain `c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9` / `cf4b70f5130175582fffdfc65bd7c6847450867b`; no M0 source edits or inferred owner transfer. #59 stays OPEN/P1; `build-contract.mjs`, `.gitattributes`, and required M8 confirmation remain unresolved. Lane-end receipt #59/6278012285. No VM/installer resource was used.
 - M1 + M3 are the only active pair from 21:41–22:01 on P0 #52 using existing PRs #43/#33 at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` / `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. M1 owes exact-SHA APPROVE/BLOCK for M5 #47 plus the canonical held-file contract/blocker; M3 owes actual product-host consumer evidence through the held-file capability, or a named missing host/API dependency and next step. Empty file lists, synthetic callbacks, and sandbox-only results do not close P0. Assignment #52/6278012893; scheduler #29/6278013709. No exclusive resource reserved.
 - Usage at 21:39 was 56% five-hour / 62% weekly. #52 remains OPEN/P0/NOT_VERIFIED; PR #24 remains unchanged and unmerged.
+
+## M0 exact-head CI completion — 2026-10-19 21:43 UTC
+
+- Product workflow 39329508547 completed SUCCESS 9/9 and AC3 coordination workflow 39329508507 completed SUCCESS 1/1 on coordinator head `f0e7d17285baf35ea7b501a4908a57c1604a7512`. Public readback: #29/6278061369.
+- PR #30 remains OPEN/Draft at this exact head; PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. These runs verify the M0 coordination documents only.
+
+## M1/M3 slot midpoint — 2026-10-19 21:51 UTC
+
+- Public readback: PR #43 remains at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` with no review; PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. M0 posted #52/6278192629 restating M1's exact-SHA decision and M3's real-host held-file consumer/blocker due by 22:01.
+- #52 remains OPEN/P0/NOT_VERIFIED. Usage is 56% five-hour / 62% weekly; no quota pause. Private activity remains UNKNOWN.
+
+## M1/M3 lane end and M2/M5 handoff — 2026-10-19 22:01 UTC
+
+- The 21:41–22:01 M1/M3 slot ended without a public M1 review on #47 or M3 product-host held-file evidence/blocker. PR #43/#33 remain `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` / `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. #52 stays OPEN/P0/NOT_VERIFIED; lane-end receipt #52/6278351954. Private activity remains UNKNOWN; no tests were rerun.
+- M2 + M5 are the only active pair from 22:02–22:22 UTC on #52 and existing PRs #37/#47 at `9db59ed8f2deae905edcb2179982f8bcb594167c` / `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. M2 owes exact first-party host/callsite evidence using its adapter and M1 held-file Gateway, or the named owner/dependency and next action. M5 owes correction of the stale #47 hosted-check claim using run 38719884959, plus the policy-to-adapter contract/blocker and the production-host/held-handle/TOCTOU limits. No green check reruns or cross-owner edits. Scheduler receipt #29/6278352508. M1 remains an independent contract-review dependency.
+- Usage at 22:01 was 56% five-hour / 62% weekly. No resource is reserved; PR #24 remains unchanged and unmerged.
 - Usage at 21:18 remained 56% five-hour / 62% weekly. No quota pause; PR #24 remains unchanged and unmerged.
 
 ## M0 21:20 exact-head CI completion — 2026-10-19 21:24 UTC
