@@ -3855,3 +3855,21 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Usage Overview is readable at 70% five-hour / 64% weekly; Usage tab remains open.
 - M6 #38 remains at c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 and M8 #40 at c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; no public owner response or remote head movement is visible as of 17:24.
 - M0's prior head e8e4976cc931fd512e99fe4f0a478427ee73da18 has green exact-head checks (product 9/9 and coordination success). Current local diff remains coordinator-only docs; PR #24/#30 and remote refs were preflighted at 17:21, before this scheduled push.
+## M0 17:24 push readback — 2026-10-19 17:24 UTC
+
+- Coordinator commit b08508dc4634268401f9e8d83df0304075e188d2 was pushed to the existing feature/ac3-m0-coordination branch. PR #30 reads OPEN/Draft at that exact head; worktree is clean immediately after push.
+- PR #24 was rechecked: OPEN/Draft, unmerged, head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5dff42873584ed488e4ee7. Its base remote ref is unchanged.
+- Exact-head checks are pending: product CI run 39293837382 is QUEUED; AC3 coordination run 39293837380 is IN_PROGRESS.
+- M0 last push: 17:24 UTC; next no earlier than 17:44 UTC after fresh preflight. No module code/tests were changed.
+## M6/M8 midpoint and M0 CI completion — 2026-10-19 17:30 UTC
+
+- For M0 coordinator head b08508dc4634268401f9e8d83df0304075e188d2, product CI run 39293837382 completed 9/9 jobs SUCCESS; coordination run 39293837380 also completed SUCCESS. PR #30 remains OPEN/Draft at that head.
+- At 17:29, M6 #38 remained c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 and M8 #40 remained c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; no module-owner reply or head movement was public.
+- Midpoint reminders were posted/read back: Issue #57 comment 6273188460 asks for exact product E4 artifact/hash or owner blocker; Issue #53 comment 6273190114 asks whether the M8 harness consumes extracted bytes or source only. Both issues remain OPEN / NOT_VERIFIED.
+- M0 last push was 17:24 UTC; next no earlier than 17:44 UTC after fresh quota/ref/scope preflight. This log update changes no module source/tests.
+## M6/M8 lane-end and M1/M3 rotation — 2026-10-19 17:44 UTC
+
+- The 17:19–17:39 M6/M8 slot ended without product E4 artifact hashes, independent verification, extracted-byte harness result, or PR-head movement. M6 #38 remains c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; M8 #40 remains c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Issues #57/#53 stay OPEN / NOT_VERIFIED. Lane-end receipts: #57 comment 6273444338; #53 comment 6273451245. No installer/VM/real-model resource was used.
+- The only active pair is now M1 PR #43 + M3 PR #33 for 17:43–18:03 UTC on P1 #51/#55. Exact heads: M1 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; M3 be3880298e1c6766024ecbce5f6dbc23c4d2daa1. Assignment receipts: PR #43 comment 6273460117; PR #33 comment 6273466674; Issue #51 comment 6273474496; Issue #55 comment 6273476062; scheduler #29 comment 6273480003.
+- M1 is asked to confirm/publish its reported local d26a0c3 candidate if it still matches the tested tree, and diagnose the repeated bounded Ubuntu Node 20 RETRY_LIMIT path. M3 is asked to align its unpinned native Read denial to M1’s existing hard-deny contract, preserving its positive control. Both remain on existing branches; no owner files are crossed.
+- Usage at 17:44 UTC was 70% five-hour / 64% weekly; Usage tab remains open. M0 last pushed b08508dc4634268401f9e8d83df0304075e188d2 at 17:24 UTC; next no earlier than 17:44 UTC after this preflight.
