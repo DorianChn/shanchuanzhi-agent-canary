@@ -3908,3 +3908,22 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Exact-head CI runs are green: M7 #39 run 38706662845 (9/9) and Windows wrapper 38706663042; M8 #40 run 38712038229 (9/9) and Windows wrapper 38712038305. The artifact API returned an empty artifact list for all four runs. Therefore no Setup.exe/manifest/extracted-Hook hash chain or extracted-byte harness result is established; #53 stays OPEN/P0 / NOT_VERIFIED. M7/M8 are asked to provide a same-build artifact/hash chain and run the retained synthetic canary harness against extracted bytes, without claiming a real leak.
 - M0 coordinator commit bfbeb9ed7b79f7ef144813fcc1206baea2d2fa8a has exact-head product CI run 39300261400 (9/9 SUCCESS) and coordination run 39300261404 (1/1 SUCCESS). PR #30 remains OPEN/Draft at that head. PR #24 remains OPEN/Draft and unmerged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7; its target ref is unchanged.
 - Usage Overview at 18:29 UTC reads 70% five-hour / 64% weekly; the Usage tab remains open. M0 last pushed at 18:10 UTC; this coordinator-only batch is eligible at 18:30 UTC.
+
+## M0 18:30 push readback — 2026-10-19 18:31 UTC
+
+- Coordinator commit e1fd10ee77d759f0634a6083a1e788e7da2b3603 was pushed to the existing feature/ac3-m0-coordination branch. PR #30 is OPEN/Draft at the exact head; local HEAD and remote feature/ac3-m0-coordination ref both read e1fd10e.
+- PR #24 remains OPEN/Draft and unmerged, head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7. feature/agent-canary-3.0 ref is unchanged.
+- Exact-head CI is queued: product run 39303158000 and AC3 coordination run 39303158002. No result is claimed yet. The local worktree is clean immediately after push.
+- M0 last pushed at 18:30 UTC; next coordinator push no earlier than 18:50 UTC after fresh quota and ref preflight. The batch changed coordinator documentation only.
+
+## M7/M8 lane-end and M1/M2 rotation — 2026-10-19 18:48 UTC
+
+- The 18:23–18:43 M7/M8 slot ended without owner-authored artifact provenance or extracted-byte harness evidence. Public heads remain M7 #39 `cf4b70f5130175582fffdfc65bd7c6847450867b` and M8 #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. Their exact-head product/wrapper runs remain green (M7 38706662845, 38706663042; M8 38712038229, 38712038305), but artifact reads returned empty lists. No same-build Setup.exe, manifest, extracted-Hook SHA chain, or extracted-copy harness result is established. #53 stays OPEN/P0/NOT_VERIFIED; no real exposure is claimed. M7/M8 pause with work preserved. Lane-end receipt: #53 comment 6274664195.
+- Only M1 and M2 are assigned through 19:05 UTC on #52, using existing PRs #43 (`9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`) and #37 (`9db59ed8f2deae905edcb2179982f8bcb594167c`); M5 exact review target #47 is `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. M1 must submit an exact-SHA APPROVE/BLOCK review of shared paths and state the verifyRealPaths/protected-held-descriptor contract. M2 must show a first-party product callsite consuming that descriptor or identify the missing host owner/dependency; a synthetic adapter route is insufficient. Do not cross ownership or weaken tests. Assignment receipt: #52 comment 6274694148.
+- Scheduler receipt: #29 comment 6274702640. No VMware, installer, or real-model resource is reserved. Usage Overview at 18:44 UTC was readable at 70% five-hour / 64% weekly; Usage tab remains open. M0 last pushed at 18:30 UTC; PR #30 is OPEN/Draft at `e1fd10e`. PR #24 was last verified OPEN/Draft, unmerged and unchanged at 18:30; refresh it before the next push. The next M0 batch is no earlier than 18:50 UTC and requires fresh quota, remote-head, PR #24 and docs-only scope preflight.
+
+## M0 18:50 pre-batch state — read at 18:49 UTC
+
+- GitHub API confirms PR #30 is OPEN/Draft, unmerged, exact head `e1fd10ee77d759f0634a6083a1e788e7da2b3603`, base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Its exact-head CI run 39303158000 and coordination run 39303158002 both completed SUCCESS.
+- PR #24 remains OPEN/Draft and unmerged, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5dff42873584ed488e4ee7`. Fetch readback confirms both M0 and feature/agent-canary-3.0 refs are unchanged.
+- M0's tracked diff remains only docs/3.0/TECHNICAL_STATUS.md; `git diff --check` passed. Usage at 18:49 UTC was 70% five-hour / 64% weekly. Next push remains no earlier than 18:50 UTC and will be coordinator docs only.
