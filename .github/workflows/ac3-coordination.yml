@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
+  checks: read
+  actions: read
 
 jobs:
   ownership-contract-evidence:
@@ -23,3 +26,13 @@ jobs:
           AC3_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           AC3_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           AC3_HEAD_REF: ${{ github.head_ref }}
+      - name: Test open-PR audit report logic
+        if: github.head_ref == 'feature/ac3-m0-coordination'
+        run: node --test test/ac3-pr-audit.test.mjs
+      - name: Audit open AC3 PRs, check-runs, evidence, and overlaps
+        if: github.head_ref == 'feature/ac3-m0-coordination'
+        run: node scripts/ac3-pr-audit.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          AC3_BASE_REF: ${{ github.event.pull_request.base.ref }}

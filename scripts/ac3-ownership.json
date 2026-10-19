@@ -34,6 +34,12 @@
       "M6"
     ]
   },
+  "pathOwners": {
+    "test/agent-hook.test.ts": {
+      "owner": "M1",
+      "branchLocalException": "synthetic canary input/log-exclusion assertions only; preserve every fail-closed and interruption assertion; broader fixture or Hook semantics require M1 review"
+    }
+  },
   "publicApiCandidates": [
     "src/runtime/gateway.ts",
     "src/containment.ts",

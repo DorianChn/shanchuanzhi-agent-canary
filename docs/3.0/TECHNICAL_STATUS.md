@@ -3675,3 +3675,29 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M1 was asked to confirm the canonical M1-owned test/agent-hook.test.ts log contract and file-by-file disposition/integration route for overlapping copies, including M7's weaker test copy; M7 was told not to edit the M1-owned file without review. M7 was asked for actual Setup.exe, manifest, extracted-Hook hashes and package-harness evidence, or the exact artifact/installer dependency and earliest feasible reserved window. No unreserved VM/installer work.
 - Assignment receipts were verified in #29 comment 6264967746, #53 comment 6264982545, and #56 comment 6264989937. GitHub app comment writes returned 403; authenticated-browser submissions were verified through issue-comment readback.
 - Usage was readable at 10:17 UTC: 85% five-hour / 70% weekly; Usage tab remains open. #53 remains OPEN/P0; source parity is not installed-payload proof. No actual secret incident is established. M0 changes no module source/tests. No module push before the shared batch at/after 10:23:35 UTC.
+
+## M0 exact-head post-push readback — 2026-10-19 10:25 UTC
+
+- Commit 717e07f5e796a7e72b52290d486c6dca1ffebd82 is the exact remote head of feature/ac3-m0-coordination and PR #30. PR #30 remains OPEN/Draft on base 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- AC3 coordination run 39237172908 completed SUCCESS. Product CI run 39237172851 has eight of nine jobs complete SUCCESS; package-smoke is IN_PROGRESS. No full product-CI pass is claimed yet.
+- Push receipt is #29 comment 6265049768. Usage was last readable at 10:22 UTC: 85% five-hour / 70% weekly. Next M0 push no earlier than 10:43:35 UTC after fresh quota, PR/ref, remote-head, and docs-only scope checks.
+
+## M0 exact-head CI correction — 2026-10-19 10:27 UTC
+
+- For M0 commit 717e07f5e796a7e72b52290d486c6dca1ffebd82, product CI run 39237172851 completed SUCCESS (9/9 jobs) and AC3 coordination run 39237172908 completed SUCCESS. This supersedes the 10:25 snapshot that still showed package-smoke in progress.
+- PR #30 remains OPEN/Draft at the exact head; PR #24 remains OPEN/Draft and unchanged. Scheduler correction receipt: #29 comment 6265101263.
+- M1/M7 heads were unchanged at 10:27, and no owner response was public on #53/#56. This does not establish private inactivity. Next M0 push no earlier than 10:43:35 UTC.
+
+## M0 ownership-policy clarification — 2026-10-19 10:30 UTC
+
+- Existing MODULE_OWNERSHIP.md permits each module owner to add only a synthetic canary input/log-exclusion assertion in its own branch's existing CI test copy; all fail-closed/interruption assertions must remain, and M1's worktree stays untouched. Broader fixtures or Hook-semantic changes require M1 review.
+- The 10:18 M0 wording was corrected: M7 may use that narrow exception in the M7 PR #39 test copy while still providing actual installer/payload provenance or a named blocker. M1 remains canonical owner and must disposition the cross-PR copies.
+- Verified correction receipts: #56 comment 6265162850, #53 comment 6265172341, and scheduler #29 comment 6265179037. Next M0 push remains no earlier than 10:43:35 UTC.
+
+## M0 read-only open-PR audit implementation — 2026-10-19 10:41 UTC
+
+- Added scripts/ac3-pr-audit.mjs and a focused two-case unit test. The workflow grants read-only pull-request/check/artifact permissions and, on the M0 branch, reads all open PRs targeting feature/agent-canary-3.0. Its summary lists each PR head, latest check-run status (including pending/failing names), Test-Evidence/API declarations, exact-head artifact count, and same-file/public-API overlaps classified by the owner/shared-path policy.
+- The audit is warning/report-only: it does not modify module PRs, create/close issues, merge, or infer semantic conflicts. It selects the newest check-run attempt per app/name so a superseded failure is not reported as current. Audit steps are conditioned on the M0 branch so other module heads that do not contain the M0-only script continue to use their existing checks.
+- Focused verification passed: node --test test/ac3-pr-audit.test.mjs (2/2), Node syntax check, ownership-policy JSON parse, and git diff --check. The live GitHub API audit itself awaits the PR #30 workflow run after this batch is pushed.
+- M1/M7 remain at their assignment heads as of 10:41 UTC: #43 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; #39 cf4b70f5130175582fffdfc65bd7c6847450867b. No public response/review/head change is visible; private activity is UNKNOWN. Their pair remains assigned through the 10:43:35 UTC shared batch, with M7's narrow branch-local canary exception documented in #53/#56.
+- Usage was readable at 10:41 UTC: 83% five-hour / 70% weekly. Next M0 push no earlier than 10:43:35 UTC after fresh quota, PR #24/ref, remote-head, and scope preflight.
