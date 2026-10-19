@@ -3982,3 +3982,26 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The 19:13–19:33 M1/M5 slot ended with no public owner review, M5 PR-body correction, or remote head change. M1/M5 shared worktrees were clean at their exact public heads; private activity remains UNKNOWN. #52 stays OPEN/P0/NOT_VERIFIED. Lane-end receipt: #52 comment 6275589840.
 - M3 + M9 are now the only assigned pair, 19:33–19:53, on #55. Exact heads: M3 #33 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; M9 #36 `de3799aae540f58173acec4ab3f7a1fe98593aa7`. Run 38727481764 failed on Ubuntu and Windows at the preserved unpinned native Read assertion (expected deny, actual allow). Assignments: #55 comment 6275592999; scheduler #29 comment 6275595041. M3 owns its deny correction; M9 validates an exact M3 candidate without repinning M1 absent M1 owner confirmation. No exclusive VM/installer/real-model resource is reserved.
 - Usage at 19:30 reads 56% five-hour / 62% weekly, about 21 minutes to reset. M0 last pushed at 19:10; next docs-only batch requires fresh quota/ref/PR #24/scope preflight. M0 source/tests remain unchanged.
+
+## M0 19:34 push readback — 2026-10-19 19:35 UTC
+
+- Exact remote/local coordinator head is `89d84e6a5b445148fa029666326cb21c9b315936`; PR #30 is OPEN/Draft at that head, base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- PR #24 remains OPEN/Draft and unmerged, unchanged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` / base `dc8d0092b35141b295d5dff42873584ed488e4ee7`.
+- No exact-head CI run was listed at 19:35; no result is claimed. Public readback is #29 comment 6275616435. Next M0 push no earlier than 19:54 UTC after preflight.
+
+## M0 19:34 exact-head CI — 2026-10-19 19:38 UTC
+
+- Product CI run 39312182631 completed SUCCESS, 9/9 jobs, on exact head `89d84e6a5b445148fa029666326cb21c9b315936`; AC3 coordination run 39312182562 completed SUCCESS, 1/1.
+- PR #30 remains OPEN/Draft at this exact SHA; PR #24 remains OPEN/Draft and unchanged. Public CI readback comment: #29/6275680242. This is documentation CI only, not module/M9 acceptance. Next M0 push no earlier than 19:54 UTC.
+
+## M3/M9 slot midpoint — 2026-10-19 19:43 UTC
+
+- PR #33/#36 remain at their slot-start heads; no candidate SHA or new composition run is public. M9's M0-registered worktree is clean at `de3799aae540f58173acec4ab3f7a1fe98593aa7`; no M3 worktree is registered in this shared repository, so M3 local filesystem state is not observable. Private activity remains UNKNOWN.
+- M0 posted #55 midpoint comment 6275774977, requesting a concrete M3 candidate/CI or blocker by 19:53 and an exact-ref M9 rerun plan; do not repin M1 without M1 approval.
+- Usage at 19:43 is 56% five-hour / 62% weekly, about 7 minutes to reset.
+
+## M3/M9 lane end and exclusive M7/M8 slot — 2026-10-19 19:53 UTC
+
+- M3/M9 ended without a public candidate SHA, PR movement, or composition result. #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; #36 remains `de3799aae540f58173acec4ab3f7a1fe98593aa7`. #55 lane-end comment 6275975242 records this and preserves P1/OPEN. M3 local state is not observable from M0's registered worktrees; M9's shared tree was clean. Private activity remains UNKNOWN.
+- M7/M8 are now the only active pair for 19:55–20:15 on P0 #53. Exact heads are #39 `cf4b70f5130175582fffdfc65bd7c6847450867b` and #40 `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. Existing product/wrapper runs are green, but all four artifact queries returned zero artifacts. #53 assignment is comment 6275977763; #29 scheduler is 6275980193. The slot reserves VMware/Windows installer exclusively for M7/M8; real-model testing and other install/VM work are excluded. Acceptance requires same-build Setup.exe/manifest/extracted-Hook hashes and the retained harness against extracted bytes, not just source CI.
+- Usage at 19:54 was 56% five-hour / 62% weekly; the five-hour field displayed “resetting”, not below 5%. M0 last pushed at 19:34; current coordinator-only batch follows fresh preflight. No M0 module code/tests changed.
