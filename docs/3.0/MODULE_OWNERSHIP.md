@@ -512,3 +512,17 @@ The PR review-list read returned no submitted reviews at 20:32 UTC; required iss
 ## M7/M8 reconciliation slot — 2026-10-18 20:45 UTC
 
 Issue #59 assigns M7 and M8 together for 20:45–21:05 to reconcile PR #40's observed path overlap. M7 must confirm ownership and review disposition for packaging/windows/build-contract.mjs and the M7 package paths; M8 must identify the exact hunks, branch purpose and owner approvals. M1 retains test/agent-hook.test.ts and Hook semantics; M6 retains test/auto-e4.test.mjs/E4 semantics; .gitattributes purpose/owner remains pending. No ownership transfer or approval is assumed until the respective owner confirms in #59.
+
+## M6/M7 ownership-only slot — 2026-10-19 21:20 UTC
+
+Issue #59 assigns M6 and M7 for 21:20–21:40 on existing PRs #38/#39. This is a request for each module to confirm or correct its own boundary, not an ownership change by M0. M6 is asked to identify the exact auto-E4 semantic/test files it owns and the M7 wrapper changes requiring review; M7 is asked to confirm/correct the proposed Windows packaging paths and identify the owner of packaging/windows/build-contract.mjs and .gitattributes. As of the 21:24 public check, PR #38/#39 remained at c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9 / cf4b70f5130175582fffdfc65bd7c6847450867b with no new owner disposition visible. #59 remains OPEN/P1; #53 package acceptance and M9 pinning remain blocked pending M8/M1/M6/M7 decisions and actual Windows evidence. No shared-source edits are authorized in this slot.
+
+## M6/M7 ownership slot midpoint — 2026-10-19 21:30 UTC
+
+At midpoint, PR #38/#39 remain at their scheduled heads and have no submitted reviews. M0 posted #59/6277755621 restating the path-specific ACCEPT/CORRECT decisions due by 21:40. No shared code has changed and no M8 approval is inferred. #59 remains OPEN/P1; #53 acceptance and M9 pins remain gated.
+
+At 21:36, PR #38/#39 and their review lists were still unchanged. M0 posted #59/6277918396 with a four-minute reminder to provide path-specific confirmation or a named owner blocker. Usage was 56% five-hour / 62% weekly. Owner decisions remain NOT_VERIFIED.
+
+## M6/M7 lane end — 2026-10-19 21:40 UTC
+
+The 21:20–21:40 ownership-only slot ended with no public M6/M7 owner decision, blocker, PR movement, or review. No ownership transfer is recorded. The proposed M6 E4/test and M7 packaging boundaries remain unconfirmed; `packaging/windows/build-contract.mjs` lacks a named owner and `.gitattributes` purpose/owner is unresolved. M8's disposition remains separately required before closing #59 or allowing M9 to pin the combined sources. Issue receipt #59/6278012285; #59 remains OPEN/P1.
