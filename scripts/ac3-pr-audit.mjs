@@ -88,9 +88,17 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
 
   const paths = new Map();
   for (const { pr, module } of registered) {
-    for (const file of new Set(filesByPr.get(pr.number) ?? [])) {
+    const seen = new Set();
+    for (const changedFile of filesByPr.get(pr.number) ?? []) {
+      const file = typeof changedFile === 'string' ? changedFile : changedFile?.filename;
+      if (!file || seen.has(file)) continue;
+      seen.add(file);
       const entries = paths.get(file) ?? [];
-      entries.push({ number: pr.number, module: module ?? 'UNREGISTERED' });
+      entries.push({
+        number: pr.number,
+        module: module ?? 'UNREGISTERED',
+        sha: typeof changedFile === 'object' ? changedFile.sha : undefined
+      });
       paths.set(file, entries);
     }
   }
@@ -107,13 +115,45 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
       const ownerRule = rules.pathOwners?.[file];
       const owner = typeof ownerRule === 'string' ? ownerRule : ownerRule?.owner;
       const exception = typeof ownerRule === 'object' ? ownerRule.branchLocalException : '';
+      const branchLocalModules = typeof ownerRule === 'object' ? ownerRule.branchLocalModules ?? [] : [];
       const shared = rules.sharedPaths?.[file];
       const isPublicApi = (rules.publicApiCandidates ?? []).includes(file);
-      const classification = [
+      const tags = [
         isPublicApi ? 'public API candidate' : '',
         owner ? 'owner ' + owner + (exception ? '; scoped exception: ' + exception : '') : '',
         shared ? 'registered shared path ' + shared.join('/') : ''
-      ].filter(Boolean).join('; ') || 'UNCLASSIFIED overlap; owner review required';
+      ].filter(Boolean);
+      const hasIntegrationOverlay = entries.some((entry) =>
+        (rules.integrationModules ?? []).includes(entry.module)
+      );
+      const blobShas = [...new Set(entries.map((entry) => entry.sha).filter(Boolean))];
+      const hasCompleteBlobEvidence = entries.every((entry) => Boolean(entry.sha));
+      if (hasCompleteBlobEvidence && blobShas.length === 1) {
+        tags.push('exact-head blobs identical');
+      } else if (hasCompleteBlobEvidence && blobShas.length > 1) {
+        tags.push('exact-head blob divergence (' + blobShas.length + ' distinct blobs)');
+      }
+      if (owner) {
+        const ownerEntry = entries.find((entry) => entry.module === owner);
+        const otherEditors = [...new Set(entries
+          .filter((entry) => entry.module && entry.module !== owner && !branchLocalModules.includes(entry.module))
+          .filter((entry) => !ownerEntry?.sha || !entry.sha || entry.sha !== ownerEntry.sha)
+          .map((entry) => entry.module))];
+        if (otherEditors.length) {
+          tags.push('non-owner edits require ' + owner + ' review: ' + otherEditors.join('/'));
+        }
+      }
+      if (hasIntegrationOverlay) {
+        tags.push('M9 composition overlay; source ownership stays with module owner; verify exact source pin');
+      }
+      const nonIntegrationEntries = entries.filter((entry) =>
+        !(rules.integrationModules ?? []).includes(entry.module)
+      );
+      const hasKnownOwnership = Boolean(owner || shared || isPublicApi);
+      if (!hasKnownOwnership && (!hasIntegrationOverlay || nonIntegrationEntries.length > 1)) {
+        tags.push('UNCLASSIFIED overlap; owner review required');
+      }
+      const classification = tags.join('; ') || 'UNCLASSIFIED overlap; owner review required';
       const refs = entries.map((entry) => '#' + entry.number + ' ' + entry.module).join(', ');
       lines.push('| ' + clean(file) + ' | ' + clean(refs) + ' | ' + clean(classification) + ' |');
     }
@@ -165,7 +205,8 @@ export async function auditOpenPullRequests({ repository, baseRef, token, rules 
   const filesByPr = new Map();
   const checksByPr = new Map();
   for (const pr of branchPulls) {
-    filesByPr.set(pr.number, (await getPages(api + '/pulls/' + pr.number + '/files', null, headers, fetchImpl)).map((file) => file.filename));
+    filesByPr.set(pr.number, (await getPages(api + '/pulls/' + pr.number + '/files', null, headers, fetchImpl))
+      .map((file) => ({ filename: file.filename, sha: file.sha })));
     const checks = await getPages(api + '/commits/' + pr.head.sha + '/check-runs', 'check_runs', headers, fetchImpl);
     checksByPr.set(pr.number, checks);
   }

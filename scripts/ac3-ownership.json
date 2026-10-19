@@ -15,9 +15,39 @@
     "feature/ac3-reliability-ac3": "M7"
   },
   "sharedPaths": {
+    ".gitattributes": [
+      "M6",
+      "M8"
+    ],
     "src/runtime/gateway.ts": [
       "M1",
       "M7"
+    ],
+    "src/agent-hook.ts": [
+      "M1",
+      "M5"
+    ],
+    "src/security-router.ts": [
+      "M1",
+      "M5"
+    ],
+    "security-lab/claude-native-hook.mjs": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "M7",
+      "M8"
+    ],
+    "test/security-router.test.ts": [
+      "M1",
+      "M5"
+    ],
+    "test/file-state-store.test.ts": [
+      "M1",
+      "M5"
     ],
     "package.json": [
       "M3",
@@ -32,12 +62,124 @@
     "src/runtime/evidence.ts": [
       "M1",
       "M6"
+    ],
+    "src/containment.ts": [
+      "M1",
+      "M7"
+    ],
+    "test/containment.test.ts": [
+      "M1",
+      "M7"
+    ],
+    "test/gateway-acceptance.test.ts": [
+      "M1",
+      "M7"
+    ],
+    "test/gateway.test.ts": [
+      "M1",
+      "M7"
+    ],
+    "test/honeypot-runtime.test.ts": [
+      "M1",
+      "M7"
+    ],
+    "packaging/windows/auto-e4.mjs": [
+      "M6",
+      "M7"
+    ],
+    "test/auto-e4.test.mjs": [
+      "M6",
+      "M7",
+      "M8"
+    ],
+    "packaging/windows/README.md": [
+      "M7",
+      "M8"
+    ],
+    "packaging/windows/build.mjs": [
+      "M7",
+      "M8"
+    ],
+    "packaging/windows/e4-hook-faults.mjs": [
+      "M7",
+      "M8"
+    ],
+    "packaging/windows/prepare.mjs": [
+      "M7",
+      "M8"
+    ],
+    "test/windows-packaging.test.mjs": [
+      "M7",
+      "M8"
     ]
   },
   "pathOwners": {
+    ".gitignore": {
+      "owner": "M0"
+    },
+    "docs/3.0/API_CONTRACTS.md": {
+      "owner": "M0"
+    },
+    "src/runtime/gateway.ts": {
+      "owner": "M1"
+    },
+    "src/agent-hook.ts": {
+      "owner": "M1"
+    },
+    "security-lab/claude-native-hook.mjs": {
+      "owner": "M1"
+    },
+    "src/security-router.ts": {
+      "owner": "M1"
+    },
+    "src/containment.ts": {
+      "owner": "M1"
+    },
+    "test/containment.test.ts": {
+      "owner": "M1"
+    },
+    "test/gateway-acceptance.test.ts": {
+      "owner": "M1"
+    },
+    "test/gateway.test.ts": {
+      "owner": "M1"
+    },
+    "test/honeypot-runtime.test.ts": {
+      "owner": "M1"
+    },
+    "test/file-state-store.test.ts": {
+      "owner": "M1"
+    },
+    "test/security-router.test.ts": {
+      "owner": "M1"
+    },
+    "packaging/windows/auto-e4.mjs": {
+      "owner": "M6"
+    },
+    "test/auto-e4.test.mjs": {
+      "owner": "M6"
+    },
+    "packaging/windows/README.md": {
+      "owner": "M7"
+    },
+    "packaging/windows/build.mjs": {
+      "owner": "M7"
+    },
+    "packaging/windows/e4-hook-faults.mjs": {
+      "owner": "M7"
+    },
+    "packaging/windows/prepare.mjs": {
+      "owner": "M7"
+    },
+    "test/windows-packaging.test.mjs": {
+      "owner": "M7"
+    },
     "test/agent-hook.test.ts": {
       "owner": "M1",
-      "branchLocalException": "synthetic canary input/log-exclusion assertions only; preserve every fail-closed and interruption assertion; broader fixture or Hook semantics require M1 review"
+      "branchLocalModules": [
+        "M7"
+      ],
+      "branchLocalException": "M7 may add only synthetic canary input/log-exclusion assertions; preserve every fail-closed and interruption assertion; broader fixture or Hook semantics require M1 review"
     }
   },
   "publicApiCandidates": [
@@ -51,5 +193,8 @@
     "src/runtime/evidence.ts",
     "src/ai/console.ts"
   ],
-  "contractDocument": "docs/3.0/API_CONTRACTS.md"
+  "contractDocument": "docs/3.0/API_CONTRACTS.md",
+  "integrationModules": [
+    "M9"
+  ]
 }
