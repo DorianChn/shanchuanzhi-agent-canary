@@ -3757,3 +3757,24 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M1 #43 + M5 #47 are the only active pair for 15:52–16:12 UTC on P0 #52. Exact task receipts: M1 PR #43 comment 6271388391; M5 PR #47 comment 6271401081; tracker Issue #52 comment 6271414895; scheduler Issue #29 comment 6271342868. M2 is paused pending an identified first-party host consumer or named dependency. No hard denial or test was weakened.
 - M0 commit 9335dfc67c87e179e5f31115c72e42b437c3eca9 remains PR #30's exact OPEN/Draft head. Product CI run 39279548241 has 9 queued jobs; coordination run 39279548228 has 1 queued job; neither has a result. PR #24 remains OPEN/Draft and unchanged at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5dff42873584ed488e4ee7.
 - Last M0 push was 15:38 UTC; next push is no earlier than 15:58 UTC after fresh quota/ref/scope preflight. This checkpoint is coordinator-only and changes no module source/tests.
+
+## M1/M5 lane-end and M3/M9 rotation — 2026-10-19 16:19 UTC
+
+- Usage Overview was readable at 16:12 UTC: 84% five-hour / 66% weekly; the Usage tab remains open.
+- The 15:52–16:12 M1/M5 slot ended without a submitted review, remote PR-head movement, or module-owner reply. M1 #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and M5 #47 remains 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. P0 #52 remains OPEN / NOT_VERIFIED; no production exposure is established. Lane-end receipt: Issue #52 comment 6271775721.
+- M3 #33 + M9 #36 are the only active pair from 16:13–16:33 UTC on P1 #55/#61. Exact heads: M3 be3880298e1c6766024ecbce5f6dbc23c4d2daa1 and M9 de3799aae540f58173acec4ab3f7a1fe98593aa7. Assignment receipts: #55 comment 6271789778, #61 comment 6271805339, PR #33 comment 6271822742, PR #36 comment 6271836714; scheduler receipt #29 comment 6271743867. M3 owns its native unpinned-Read behavior/test; M9 owns exact source pins and composition CI. Preserve the failing assertion; do not repin M1 without owner confirmation. This synthetic failure does not prove production exposure.
+- M0 head d2ae3a9709623d5aa8ae2f363133b7d072d5e88c remains PR #30's OPEN/Draft head. At 16:12, product CI run 39281969565 had 9 queued jobs and coordination run 39281969671 had 1 queued job; no result is claimed. PR #24 remains OPEN/Draft and unchanged.
+- Last M0 push was 15:58 UTC; next no earlier than 16:18 UTC after fresh quota/ref/scope preflight. No module code/tests were edited by M0.
+
+## M0 CI status correction — 2026-10-19 16:19 UTC
+
+- For exact M0 commit d2ae3a9709623d5aa8ae2f363133b7d072d5e88c, product CI run 39281969565 is now 4/9 jobs SUCCESS, 2 IN_PROGRESS, 3 QUEUED, with 0 failed jobs. Coordination audit run 39281969671 is IN_PROGRESS. This supersedes the 16:12 queued-only snapshot; overall results remain pending.
+- PR #30 remains OPEN/Draft at the exact M0 head; PR #24 remains OPEN/Draft and unchanged. Usage at 16:19 UTC was 84% five-hour / 66% weekly; Usage tab remains open.
+- Last M0 push was 15:58 UTC; the 20-minute interval has elapsed. This is a coordinator-only status note; no module code/tests were changed.
+## M0 and M3/M9 evidence checkpoint — 2026-10-19 16:23 UTC
+
+- Exact M0 head d2ae3a9709623d5aa8ae2f363133b7d072d5e88c: product CI run 39281969565 now has 7/9 jobs SUCCESS, 2 IN_PROGRESS, 0 FAILED; the remaining jobs are Windows Node 22 and package-smoke. Coordination audit run 39281969671 remains IN_PROGRESS. This supersedes the earlier 16:19 interim counts; no overall pass is claimed.
+- M9 composition run 38727481764 failed on both Ubuntu and Windows. Both failures are the preserved assertion mismatch for the synthetic unpinned native Read: expected deny, actual allow. The run checked M1 source pin b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc and M3 head be3880298e1c6766024ecbce5f6dbc23c4d2daa1. This confirms P1 #55 only within the synthetic composition gate; it does not establish production exposure.
+- At this checkpoint, M3 #33 remains OPEN/Draft at be3880298e1c6766024ecbce5f6dbc23c4d2daa1 and M9 #36 remains OPEN/Draft at de3799aae540f58173acec4ab3f7a1fe98593aa7. No later exact-head or owner-result evidence is visible in GitHub.
+- M0 PR #30 remains OPEN/Draft at d2ae3a9709623d5aa8ae2f363133b7d072d5e88c. The remote feature/ac3-m0-coordination ref matches that head before this coordinator-doc batch. PR #24 was not altered; its configured base ref still resolves to 62496d4020bd90ba2eede49b2e80a2bbebb036b4. GitHub PR fetch for #24 returned a transport error in this read, so its live state could not be refreshed in this checkpoint.
+- Usage Overview was readable at 16:21 UTC: 84% five-hour / 66% weekly; Usage tab remains open. This coordinator-only update changes no module source/tests. The prior M0 push was 15:58 UTC; the 20-minute interval elapsed at 16:18 UTC.
