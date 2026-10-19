@@ -3953,3 +3953,32 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Proposed next two-module slot is M1 + M5, 19:07–19:27 UTC: M1 exact-SHA APPROVE/BLOCK review of M5 #47 head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; M5 updates its owned PR description with exact head/check evidence and explicit production-host/TOCTOU limits. This public assignment is not yet submitted: the GitHub integration returned HTTP 403; browser text is filled but the background-tab submit click was not delivered. M2 pauses pending a first-party host owner/callsite or a concrete dependency. Private work state is unknown.
 - Usage Overview at 19:05 reads 56% five-hour / 62% weekly, with 45 minutes to five-hour reset. M0 last pushed at 18:50 UTC; next push no earlier than 19:10 UTC after fresh quota/ref/scope preflight.
 - M0 changed no module source or tests and ran no tests. No exclusive VM, installer, or real-model resource is reserved.
+
+## M0 19:13 push readback and slot activation — 2026-10-19 19:13 UTC
+
+- Pushed docs-only commit `f8eaacb4cfee19bf11907539b739959b10ead4f2` on the existing M0 branch. PR #30 remains OPEN/Draft at this exact head, base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Exact-head product CI run 39308907928 passed all 9 jobs; AC3 coordination run 39308908401 passed its 1 job.
+- PR #24 remains OPEN/Draft and unmerged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5dff42873584ed488e4ee7`.
+- The proposed M1/M5 slot is now publicly assigned for 19:13–19:33 UTC: #52 comment 6275176887 and scheduler #29 comment 6275179179. M1 owes an exact-head APPROVE/BLOCK review of M5 #47 head `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`; M5 owes an evidence-bounded #47 description update. M2 is paused pending a named product-host owner/callsite or dependency. Public absence is not treated as proof of private inactivity.
+- Usage at 19:10 read 56% five-hour / 62% weekly with about 40 minutes to reset. Next M0 push is no earlier than 19:30 UTC after fresh quota/ref/scope preflight. M0 changed no module source/tests and ran no local tests; no main merge or Release.
+
+## M0 GitHub comment receipts — 2026-10-19 19:14 UTC
+
+- Verified the M1/M5 slot assignment in #52 comment 6275176887 and scheduler entry #29 comment 6275179179 using GitHub CLI readback.
+- Verified #29 post-push readback comment 6275204100: PR #30 exact head and both successful workflow runs are stated; PR #24 remains unchanged and unmerged. These are coordinator comments only; no module review or implementation result is implied.
+
+## M5 exact-head CI correction pointer — 2026-10-19 19:18 UTC
+
+- Re-read GitHub run 38719884959: completed SUCCESS on exact M5 PR #47 head `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`, 9/9 jobs.
+- PR #47 body still said its exact-head hosted checks had not reported. M0 posted this precise stale-claim correction request to #52 comment 6275294375: update the body to the current exact-head hosted result, while retaining NOT_VERIFIED for first-party host consumption, protected-open/held-handle use, and TOCTOU. Do not rerun the already-green head.
+- At 19:18, PR #43 head and #47 head had not moved; M1's review list remained empty. Private activity remains UNKNOWN.
+
+## M1/M5 slot midpoint — 2026-10-19 19:23 UTC
+
+- Re-read PR #43/#47 exact heads: unchanged at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` / `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. M1 review list on #47 is still empty.
+- M5 PR body still reports exact-head checks as pending although run 38719884959 is SUCCESS 9/9 on the exact current head. M0 posted midpoint reminder #52 comment 6275392736, asking for exact-SHA M1 APPROVE/BLOCK plus M5 evidence correction or a concrete blocker by 19:33. No private activity is inferred.
+
+## M1/M5 lane end and M3/M9 handoff — 2026-10-19 19:33 UTC
+
+- The 19:13–19:33 M1/M5 slot ended with no public owner review, M5 PR-body correction, or remote head change. M1/M5 shared worktrees were clean at their exact public heads; private activity remains UNKNOWN. #52 stays OPEN/P0/NOT_VERIFIED. Lane-end receipt: #52 comment 6275589840.
+- M3 + M9 are now the only assigned pair, 19:33–19:53, on #55. Exact heads: M3 #33 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; M9 #36 `de3799aae540f58173acec4ab3f7a1fe98593aa7`. Run 38727481764 failed on Ubuntu and Windows at the preserved unpinned native Read assertion (expected deny, actual allow). Assignments: #55 comment 6275592999; scheduler #29 comment 6275595041. M3 owns its deny correction; M9 validates an exact M3 candidate without repinning M1 absent M1 owner confirmation. No exclusive VM/installer/real-model resource is reserved.
+- Usage at 19:30 reads 56% five-hour / 62% weekly, about 21 minutes to reset. M0 last pushed at 19:10; next docs-only batch requires fresh quota/ref/PR #24/scope preflight. M0 source/tests remain unchanged.
