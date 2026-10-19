@@ -3518,3 +3518,29 @@ Usage at 22:05 UTC was 98% five-hour / 73% weekly. M0 docs branch 617f7fd4ee64be
 ## M5 #47 live candidate readback — 2026-10-19 06:08 Asia/Shanghai
 
 Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5-policy-recovery` is clean at branch `feature/ac3-policy-audit` / head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. PR #47's commit list includes `268c53c` and `dd74cbd` and later M5 changes; the issue's earlier local-only wording is superseded. Exact-head CI 38719884959 passed. PR #47 has no submitted reviews. #52 remains OPEN/P0 because explicit M1 review of the legacy verifyRealPaths/router contract and production-host consumer evidence remain NOT_VERIFIED; no real exposure is established. Receipts: #52 6255753031; scheduler #29 6255754082.
+
+## M0 live coordination checkpoint — 2026-10-19 08:11 UTC
+
+- Usage Overview is readable at 100% five-hour / 73% weekly; reset in 4h55m. The Usage tab remains open. Stop all active work if this becomes unreadable or falls below 5%.
+- PR #24 remains OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, based on dc8d0092b35141b295d5ff42873584ed488e4ee7. It is unchanged.
+- M1 and M5 are the only assigned lanes for 08:08–08:28 UTC on P0 #52. Their existing worktrees are clean and remote-matched: M1 PR #43 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; M5 PR #47 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. At 08:11 UTC, no post-assignment owner response or branch movement is visible; private chat activity remains UNKNOWN.
+- #52 is still OPEN/P0. M5's exact-head CI run 38719884959 passed, and its alias-fix commits are on PR #47. PR #47 has no submitted review. The M1/M5 versions of test/security-router.test.ts differ: M5 changes the realpath-mode read expectation, while M1's current head carries additional sensitive-alias, junction-write, and generic file-operation hard-deny assertions. Explicit M1 contract disposition and equal-or-stronger combined coverage are still required. No actual production data exposure is established.
+- M9 PR #36 is OPEN/Draft at de3799aae540f58173acec4ab3f7a1fe98593aa7. Its composition workflow pins M1 to b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc, behind current M1 PR #43; pins for M2/M3/M5/M6/M7/M8 match the observed remote heads. Latest exact-head composition run 38727481764 failed on synthetic unpinned native Read: M3 allowed while the M1 contract requires denial. This remains a P1 integration blocker, not a production-host incident.
+- M0 has two coordinator-documentation commits ahead of origin and an uncommitted coordinator-only status update; no module files are changed. Last M0 push was 2026-10-18 21:51:57 UTC; the 20-minute interval has elapsed. Recheck Usage, PR #24/#30, remote refs, and diff scope before publishing.
+- No merge, main update, module-code/test edit, or Release was made. Coordination receipts: P0 #52 comment 6262655715; scheduler #29 comment 6262658340.
+
+## M1/M5 midpoint evidence — 2026-10-19 08:16 UTC
+
+- Current M5 PR #47 tests in test/risk-policy.test.ts explicitly assert OBSERVE path aliases and hard-link aliases are denied before approval/callback, with the synthetic file contents and hash unchanged. This is source review plus passing exact-head PR CI, not a new local test run.
+- M1 PR #43 currently shows 11 passing check entries; its review list is empty. Both PR heads remain unchanged after the 08:08 lane start.
+- M0 added the exact-head evidence and owner-disposition request to P0 #52 (comment 6262798452). The blocker remains the M1/M5 same-file test contract disposition and first-party host-consumer evidence; production-host acceptance remains NOT_VERIFIED.
+
+## M0 lane rotation — 2026-10-19 08:30 UTC
+
+- Usage Overview at 08:28 UTC was readable: 100% five-hour / 73% weekly, reset in 4h37m. Keep the Usage tab open; pause all development and GitHub/browser activity if it becomes unreadable or falls below 5%.
+- The 08:08–08:28 M1/M5 slot closed with no public owner response or PR-head movement. Private activity is UNKNOWN. #52 remains OPEN/P0; M1/M5 pause with work preserved. Receipt: #52 comment 6263010733.
+- M7/M8 are now the only active modules for 08:29–08:49 UTC on their existing PRs: #39 cf4b70f5130175582fffdfc65bd7c6847450867b and #40 c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Current PR reviews are empty and their last observed product/wrapper checks pass, but owner signoff and package provenance are not established.
+- On P0 #53, M7 must bind product artifact path/producer commit/hash to its install/extraction copy; M8 must verify the extracted consumer/harness reads those exact Hook bytes and retains sanitized log assertions. On P1 #59, M7 must confirm or route build-contract.mjs and the M7-owned packaging hunks; M8 must map PR #40 changes and required M1/M6/M7 reviewers. No cross-owner source edits or self-approval.
+- No VMware, installer, or real-model resource is reserved. Request exclusive use through #29 first. Receipts: scheduler #29 comment 6263021198; #53 comment 6263029076; #59 comment 6263038391.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 is OPEN/Draft at remote head 617f7fd4ee64be9f382c248b5e1cddb4df9dcf91 before this coordinator-doc batch.
+- No module code/test edits, main merge, PR merge, or Release. The M0 push interval has elapsed; publish the coordinator-documentation-only batch after fresh Usage, ref, PR, and scope checks, then verify exact-head CI.
