@@ -3873,3 +3873,23 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The only active pair is now M1 PR #43 + M3 PR #33 for 17:43–18:03 UTC on P1 #51/#55. Exact heads: M1 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; M3 be3880298e1c6766024ecbce5f6dbc23c4d2daa1. Assignment receipts: PR #43 comment 6273460117; PR #33 comment 6273466674; Issue #51 comment 6273474496; Issue #55 comment 6273476062; scheduler #29 comment 6273480003.
 - M1 is asked to confirm/publish its reported local d26a0c3 candidate if it still matches the tested tree, and diagnose the repeated bounded Ubuntu Node 20 RETRY_LIMIT path. M3 is asked to align its unpinned native Read denial to M1’s existing hard-deny contract, preserving its positive control. Both remain on existing branches; no owner files are crossed.
 - Usage at 17:44 UTC was 70% five-hour / 64% weekly; Usage tab remains open. M0 last pushed b08508dc4634268401f9e8d83df0304075e188d2 at 17:24 UTC; next no earlier than 17:44 UTC after this preflight.
+## M0 17:45 push readback — 2026-10-19 17:45 UTC
+
+- Coordinator commit 474666e08a15ac7aa18172e1ac9c21e0a9613f44 was pushed to the existing feature/ac3-m0-coordination branch. PR #30 is OPEN/Draft at that exact head; worktree is clean after push.
+- PR #24 remains OPEN/Draft and unmerged, with head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5dff42873584ed488e4ee7. The target feature/agent-canary-3.0 remote ref is unchanged.
+- Exact-head checks are pending: product CI run 39296848930 is QUEUED; coordination run 39296848909 is IN_PROGRESS.
+- M1 #43 and M3 #33 remain at slot-start heads 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and be3880298e1c6766024ecbce5f6dbc23c4d2daa1; only M0 slot comments are visible as of 17:45.
+- Usage was 70% five-hour / 64% weekly at 17:44 UTC; Usage tab remains open. M0 last pushed at 17:45 UTC; next no earlier than 18:05 UTC after fresh preflight.
+## M0 exact-head CI completion — 2026-10-19 17:48 UTC
+
+- For coordinator commit 474666e08a15ac7aa18172e1ac9c21e0a9613f44, product CI run 39296848930 completed 9/9 jobs SUCCESS; coordination run 39296848909 completed SUCCESS.
+- This run validates the coordinator-only documentation batch; it does not close module risks #51/#53/#55/#57 or the open P0/P1 issues.
+- M1 #43 and M3 #33 remained at their 17:43 slot-start heads on the latest public read; no owner response or remote commit is visible yet.
+## M1/M3 lane-end and M1/M5 rotation — 2026-10-19 18:08 UTC
+
+- The 17:43–18:03 M1/M3 slot ended without a module-authored public result or remote PR-head advance. M1 PR #43 remains at 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; M3 PR #33 remains at be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M1 updated its PR description at 18:06, but it still reports local candidate d26a0c3; no remote commit or candidate verification is established. M3 has no result or blocker on #55. Lane-end comment receipts: #51 comment 6273873692; #55 comment 6273862339.
+- The only active pair is M1 + M5, 18:03–18:23 UTC, on P0 #52. M5 owns src/risk-policy.ts/tests; M1 owns the canonical-path/verifyRealPaths contract and exact-diff review. Assignment receipt: #52 comment 6273876933; scheduler #29 comment 6273916874. M0's PR #43 comment attempt did not land; the actionable task is recorded on #52 and scheduler #29.
+- At 18:08, PR #47 remains at remote head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. Its current description reports local candidate code fix 06fdbb060574e96e5d1eba5c77721014e0a81a3b, local report/head d578b1d93f2b71692ab76a5c3557f7779f2a6faf, focused tests 50/50 and build success, plus local M9 composition 3/3. These remain PR-description claims; exact-head hosted CI for that candidate is not reported. No first-party product-host consumption or TOCTOU acceptance is established. Keep #52 OPEN/P0 / NOT_VERIFIED.
+- #51 remains OPEN/P1: the proximate bounded RETRY_LIMIT path is known, but the underlying lock/timing trigger and data impact remain UNKNOWN. Preserve its test and 500-retry bound. #55 remains OPEN/P1 with the synthetic unpinned-native-Read composition mismatch; M3 pauses and M9 pins remain unchanged.
+- At 18:07, PR #24 was rechecked OPEN/Draft, unmerged, head 62496d4020bd90ba2eede49b2e80a2bbebb036b4, base dc8d0092b35141b295d5ff42873584ed488e4ee7. PR #30 remains OPEN/Draft at 474666e08a15ac7aa18172e1ac9c21e0a9613f44; both remote refs are unchanged. The M0 worktree has only the coordinator-status document modified and git diff --check passes.
+- Usage Overview at 18:07 UTC reads 70% five-hour / 64% weekly; Usage tab remains open. M0 last pushed at 17:45 UTC; the 18:05 minimum interval has elapsed. No source or test file was changed by M0.
