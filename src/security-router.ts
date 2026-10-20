@@ -55,8 +55,10 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   }
   function privateTarget(call:ToolCall){const d=trustedTools[call.name];if(d?.operation!=='http')return false;try{const u=new URL(String(call.args?.[d.urlArg??'url']));const h=u.hostname;return h==='localhost'||h==='[::1]'||/^127\.|^10\.|^192\.168\.|^169\.254\.|^0\.|^172\.(1[6-9]|2\d|3[01])\.|^\[f[cd]|^\[fe[89ab]/i.test(h);}catch{return true;}}
   async function review(call:ToolCall,d:Readonly<PolicyDecision>):Promise<'DENY'|'UNCHANGED'>{
-    // Deterministic hard denials and real-path confinement cannot be relaxed by OBSERVE.
-    if(d.action==='DENY'||pathDenied(call))return 'DENY';
+    // Preserve the policy router's original hard-deny reason. Additional host
+    // boundaries can only tighten an otherwise non-denied decision.
+    if(d.action==='DENY')return 'UNCHANGED';
+    if(pathDenied(call))return 'DENY';
     if(unpinnedFileOperation(call))return 'DENY';
     if(options.mode==='OBSERVE')return 'UNCHANGED';
     if(privateTarget(call)||trustedTools[call.name]?.operation==='http'&&flow.hasSensitiveSource())return 'DENY';
@@ -74,6 +76,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   async function dispatchReview(call:ToolCall,d:Readonly<PolicyDecision>):Promise<'DENY'|'UNCHANGED'>{
     // Preserve path-alias and policy denials; an otherwise safe path still cannot
     // authorize a generic callback that receives only the path string.
+    if(d.action==='DENY')return 'UNCHANGED';
     if(pathDenied(call))return review(call,d);
     if(unpinnedFileOperation(call))throw new PolicyBlockedError({action:'DENY',risks:[...d.risks],reason:'path_execution_not_pinned',mode:d.mode});
     return review(call,d);
@@ -91,7 +94,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     }finally{if(timer)clearTimeout(timer);abort.abort();}
   }});
   return {...router,
-    async decide(call:ToolCall):Promise<SecurityDecision>{const d=router.inspectPolicy(call),gd=options.guard.beforeToolCall(call),safe=Object.freeze({...call,name:call.name.toLowerCase()}),pathBlocked=pathDenied(safe);const denied=!gd.allowed||d.action==='DENY'||await review(safe,d)==='DENY';return {action:denied?'DENY':options.mode==='OBSERVE'?'OBSERVE_ONLY':d.action==='APPROVAL_REQUIRED'?'REQUIRE_APPROVAL':d.action==='ALLOW'&&options.executeSandboxTool?'SANDBOX':d.action,reason:!gd.allowed?'guard_quarantined':denied?unpinnedFileOperation(safe)&&!pathBlocked?'path_execution_not_pinned':'host_pre_execution_review_denied':d.reason,risks:d.risks,mode:d.mode,coverage:'REGISTERED_HOST_CALLBACKS_ONLY'};},
+    async decide(call:ToolCall):Promise<SecurityDecision>{const d=router.inspectPolicy(call),gd=options.guard.beforeToolCall(call),safe=Object.freeze({...call,name:call.name.toLowerCase()}),pathBlocked=pathDenied(safe),reviewDenied=gd.allowed&&await review(safe,d)==='DENY',denied=!gd.allowed||d.action==='DENY'||reviewDenied;return {action:denied?'DENY':options.mode==='OBSERVE'?'OBSERVE_ONLY':d.action==='APPROVAL_REQUIRED'?'REQUIRE_APPROVAL':d.action==='ALLOW'&&options.executeSandboxTool?'SANDBOX':d.action,reason:!gd.allowed?'guard_quarantined':d.action==='DENY'?d.reason:reviewDenied?unpinnedFileOperation(safe)&&!pathBlocked?'path_execution_not_pinned':'host_pre_execution_review_denied':d.reason,risks:d.risks,mode:d.mode,coverage:'REGISTERED_HOST_CALLBACKS_ONLY'};},
     dataflow:()=>flow.snapshot(),reviews:()=>reviews.map(r=>structuredClone(r)),
   };
 }

@@ -19,10 +19,22 @@ test('same-Guard taint from a safe read survives replacement and blocks unrelate
  assert.equal(readCalls,1);
  assert.equal(s.router.pendingApprovals().length,0);
  const other=createSecurityToolRouter({guard:s.guard,workspaceRoot:home,tools,allowedReadOrigins:['https://example.com'],executeRealTool:()=>{egressCalls++;throw Error('should not execute');}});
- await assert.rejects(other.dispatch({name:'http',args:{url:'https://example.com',method:'GET'}}),(error:any)=>error instanceof PolicyBlockedError&&error.decision.reason==='host_pre_execution_review_denied');
+ await assert.rejects(other.dispatch({name:'http',args:{url:'https://example.com',method:'GET'}}),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='possible_sensitive_egress');
  assert.equal(egressCalls,0);
  assert.equal(other.pendingApprovals().length,0);
  assert.equal(other.dataflow().length,1);
+});
+test('OBSERVE preserves the original hard-deny reason in preview and dispatch',async()=>{
+ const guard=createAgentGuard({alert:false});let callbacks=0;
+ const config={mode:'STRICT' as 'STRICT'|'OBSERVE',guard,workspaceRoot:home,tools,executeRealTool:()=>{callbacks++;return 'unexpected';}};
+ const router=createSecurityToolRouter(config);config.mode='OBSERVE';
+ const call={name:'http',args:{url:'http://example.invalid',method:'GET'}};
+ const original=router.inspectPolicy(call);
+ assert.equal(original.action,'DENY');assert.equal(original.reason,'unapproved_network_target');
+ const decision=await router.decide(call);
+ assert.equal(decision.action,'DENY');assert.equal(decision.reason,original.reason);
+ await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason===original.reason);
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
 });
 test('literal private network denied in balanced, observe records without blocking',async()=>{const s=setup();await assert.rejects(s.router.dispatch({name:'http',args:{url:'https://127.0.0.1',method:'GET'}}),PolicyBlockedError);assert.equal(s.count(),0);const o=setup({mode:'OBSERVE'});await o.router.dispatch({name:'http',args:{url:'https://127.0.0.1',method:'GET'}});assert.equal(o.count(),1);});
 test('OBSERVE keeps a legal public HTTPS GET observable',async()=>{const o=setup({mode:'OBSERVE'}),call={name:'http',args:{url:'https://docs.example.com',method:'GET'}};assert.equal((await o.router.decide(call)).action,'OBSERVE_ONLY');await o.router.dispatch(call);assert.equal(o.count(),1);assert.equal(o.router.pendingApprovals().length,0);});
