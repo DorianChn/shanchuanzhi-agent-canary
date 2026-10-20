@@ -51,15 +51,15 @@ test('native lab wrapper denies unpinned file operations and destructive command
 
 test('native lab wrapper decision log contains only the fixed allowlisted fields',()=>{
  const wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'allowlisted-hook-module.mjs'),log=path.join(root,'allowlisted.jsonl');
- const inputCanary='M3_SYNTHETIC_RAW_INPUT_CANARY_7f39',reasonCanary='M3_SYNTHETIC_REASON_CANARY_12ac';
+ const inputCanary='M3_SYNTHETIC_RAW_INPUT_CANARY_7f39',reasonCanary='M3_SYNTHETIC_REASON_CANARY_12ac',privateCallerPathCanary=path.join(root,'M3_SYNTHETIC_PRIVATE_CALLER_PATH_CANARY_91dd');
  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
- const r=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'allowlisted-state'),log],{input:JSON.stringify({session_id:'allowlist-fixture',tool_name:'Read',tool_input:{file_path:'normal.txt',marker:inputCanary}}),encoding:'utf8'});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecisionReason,reasonCanary);
+ const r=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'allowlisted-state'),log],{input:JSON.stringify({session_id:'allowlist-fixture',tool_name:'Read',tool_input:{file_path:privateCallerPathCanary,marker:inputCanary}}),encoding:'utf8'});
+ assert.equal(r.status,0);const output=JSON.parse(r.stdout);assert.equal(output.hookSpecificOutput.permissionDecision,'allow');assert.equal(output.hookSpecificOutput.permissionDecisionReason,reasonCanary);assert.equal(r.stdout.includes(privateCallerPathCanary),false);
  const lines=fs.readFileSync(log,'utf8').trim().split('\n');assert.equal(lines.length,1);
  const record=JSON.parse(lines[0]);assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
- assert.equal(record.hookEventName,'PreToolUse');assert.ok(['allow','deny','ask'].includes(record.permissionDecision));
- assert.ok(Number.isFinite(Date.parse(record.timestamp)));
- assert.equal(lines[0].includes(inputCanary),false);assert.equal(lines[0].includes(reasonCanary),false);
+ assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
+ assert.equal(record.timestamp,new Date(record.timestamp).toISOString());
+ assert.equal(lines[0].includes(inputCanary),false);assert.equal(lines[0].includes(reasonCanary),false);assert.equal(lines[0].includes(privateCallerPathCanary),false);
 });
 
 test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
@@ -83,10 +83,10 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
  assert.ok(Date.now()-started>=1900&&Date.now()-started<5000,'timeout returns a denial within the bounded hook budget');
 });
 
-test('native lab wrapper interruption emits no allow decision and invokes no tool callback',async(t)=>{
+test('native lab wrapper interruption terminates with no stdout or decision record',async(t)=>{
  const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs');
  const log=path.join(root,'interrupted.jsonl');
- // No native-host callback runs in this fixture; the wrapper must emit no allow result that could authorize one.
+ // This fixture observes the wrapper subprocess only; it does not observe a native-host callback.
  const moduleSource="import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync("+JSON.stringify(marker)+",'entered');Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,30000);return await new Promise(()=>{})}\n";
  fs.writeFileSync(modulePath,moduleSource);
  const child=spawn(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),log],{stdio:['pipe','pipe','pipe']});
