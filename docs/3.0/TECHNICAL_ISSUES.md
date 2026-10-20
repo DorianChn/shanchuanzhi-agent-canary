@@ -1,3 +1,9 @@
+## M1 exact failure trace — Issue #51 — 2026-10-20 22:39 UTC
+
+- **P1 / state-store contention:** M0 re-read Ubuntu Node 22 run `39497366090` at PR #43 head `5e9e22d`. Worker 2 reached `RETRY_LIMIT` at 500/500 in 1062 ms; all retries were `EEXIST`. Twenty lock-path samples showed no `ENOENT`, stat error, or lock-identity change, while state identity changed seven times. Workers 0 and 1 each acquired/released 12 times with `ownerMatch: true`; workers 2 and 3 never acquired and both exhausted, with the trace inferring holder transitions from worker 0 to worker 1. This is consistent with possible contention starvation, but cause remains UNKNOWN.
+- **Owner action:** M1 is instructed to inspect the lock implementation and reproduce on Ubuntu Node 22. Make a minimal correctness fix only if the evidence supports it; do not raise the retry limit alone, skip assertions, or weaken security. Preserve the test and require exact-head Ubuntu Node 22 x10 CI green before resolving #51.
+- **State:** #51 remains OPEN/P1; no data loss or production locking defect is established by this trace alone.
+
 ## M1 disposition update — Issue #56 — 2026-10-20 22:36 UTC
 
 - **Integrated `verifyRealPaths` guard:** M1 re-audited the exact PR #47 call chain and accepts M5's policy-level `nonOverridableDeny` as satisfying the integrated fail-closed contract. It throws `PolicyBlockedError` before execution/callback; the OBSERVE waiver cannot remove `path_execution_not_pinned`. The reviewed exact head is `e3662e9ca7363504eea7dd5e3262352018519a56`, with exact-head CI run `39500126875` passing 9/9. M1 found no reproducible callback path and withdrew the earlier implication that the missing duplicate router-local gate makes #47 fail open. This is a PR-specific behavior finding, not proof of real-host integration.
