@@ -4605,3 +4605,24 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Only M1+M5 are active 19:15–19:35 on P0 #52 via existing PR #43/#47. M1 must review M5's exact shared test/contract and give the fail-closed/positive-control disposition plus #56 ownership decision; M5 must provide focused alias/outside-workspace deny evidence or a precise blocker. Keep all M1/M5 ownership and hard-deny semantics intact. Assignment comments: #52/6299158874, PR #43/6299159796, PR #47/6299160719, #56/6299161649, scheduler #29/6299162474.
 - Quota at 19:14 UTC: 93% five-hour / 88% weekly. Next M0 push no earlier than 19:23:27 UTC.
 - At 19:18 UTC, no M1/M5 owner-authored result/review or PR-head movement was visible after assignment. PR #43/#47 remain at the same exact heads recorded above. Usage page re-read: 92% five-hour / 88% weekly.
+
+## M1+M5 midpoint and M0 CI — 2026-10-20 19:25 UTC
+
+- At midpoint, no M1/M5 owner response/review or source-head movement is visible. Comments: #52/6299386725, PR #43/6299387512, PR #47/6299388591, #56/6299389286, scheduler #29/6299389905.
+- For M0 PR #30 head `a1847bcf4ee20fd25b68a94084edaf452c59769f`, coordination check 39483081019 passed; product CI 39483080994 was in progress at 19:24 UTC. Quota at 19:24 UTC was 92% five-hour / 88% weekly.
+- Next M0 push no earlier than 19:43:39 UTC.
+
+## P1 #51 M0 CI recurrence — 2026-10-20 19:26 UTC
+
+- PR #30 exact head `a1847bcf4ee20fd25b68a94084edaf452c59769f` product CI run 39483080994 failed Ubuntu 22 / Node v22.23.3 job 118836402365 in the existing four-process quarantine test (`test/file-state-store.test.ts:22`). Worker 3 exhausted 500 bounded `STATE_STORE_BUSY` retries and raised `RETRY_LIMIT`; suite result 321 passed, 1 failed, 4 skipped; fail-fast canceled other matrix jobs and package-smoke. Coordination check 39483081019 passed.
+- M0's latest commit changes only this status document; that does not establish a documentation cause. No data loss/corruption is established. P1 #51 remains OPEN; recurrence evidence comment #51/6299414922. Preserve the test/retry bound; cause remains UNKNOWN.
+- Next M0 push no earlier than 19:43:39 UTC.
+
+## M3+M9 parallel lane — 2026-10-20 19:37 UTC
+
+- Only M3 and M9 are assigned for 19:35–19:55 UTC, using existing PRs #33 and #36; no module branch or worktree was created. Assignment receipts: #55/6299627704, PR #33/6299628561, PR #36/6299629534, #61/6299630501.
+- M3 owns the unpinned native Hook `Read` correction on PR #33 and must preserve M1's denial assertions plus a separate supported-capability positive control. Current PR #33 head remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; exact-head CI run 38706654588 passed.
+- M9 owns exact-source composition on PR #36. Current head remains `de3799aae540f58173acec4ab3f7a1fe98593aa7`; composition run 38727481764 failed both Ubuntu and Windows on the preserved M3 unpinned-Read mismatch, while product CI 38727481643 and wrapper check 38727481657 passed. Do not change the M1 pin absent its owner's exact-source confirmation; update the M3 pin only after its head advances.
+- #55 and #61 remain OPEN/P1. No production-host, installer, or external E4 acceptance is inferred. Browser usage page remains open; reads were 90% five-hour / 88% weekly at 19:36 UTC and 89% / 88% at 19:42 UTC, above the user's <5% pause threshold.
+- M9 also received an independent #49 root-contract sync assignment alongside M3: current M0 root blob `6bea2d681a716e1381a173b313a249a3f8325550` differs from M9 root blob `693d437856a2d879983de4fb16497090128aa1d9`; the M1 nested contract remains identical at `4574c872da3e239973903266710efd47bc3c5d38`. Comment receipts: #49/6299784082 and PR #36/6299783857; both were read back after the connector returned 403 and the authenticated GitHub CLI posted them.
+- Next M0 push no earlier than 19:43:39 UTC.
