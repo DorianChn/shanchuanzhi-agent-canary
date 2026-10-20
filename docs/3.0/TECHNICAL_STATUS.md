@@ -4278,6 +4278,22 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M2+M5 ended without a module-authored result, candidate SHA, or exact-current-source focused test. PR #37/#47 heads unchanged; #52 stays OPEN/P0/NOT_VERIFIED. M0 task comments on both PRs and lane-end comment #52 were read back. Private activity remains UNKNOWN.
 - Only M1+M3 are active 03:44–04:04 UTC: M1 traces P1 #51 bounded lock retries without weakening assertions/bound; M3 resolves P1 #55 unpinned native Read fail-closed with a supported-capability positive control. Instructions verified on PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and #33 head be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M9 must not repin early.
 - Usage read 03:44 UTC: 78% five-hour / 54% weekly. No VMware, installer, or real-model test is reserved. PR #24 remains unchanged.
+
 ## M1+M3 midpoint — 2026-10-20 03:49 UTC
 - PR #43/#33 exact heads remain 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 / be3880298e1c6766024ecbce5f6dbc23c4d2daa1; no candidate SHA or owner result is public. Existing green runs predate this slot and do not close #51/#55.
 - Usage 03:49 UTC: 78% five-hour / 54% weekly. No exclusive resource used.
+
+## M0 scheduled batch — 2026-10-20 03:53 UTC
+- Pushed docs-only commit a72066de8c989257c76df2fca7b6e02fa84601e2 to PR #30; exact-head product run 39366697702 passed 9/9, ownership run 39366697957 passed 1/1. PR #30 remains OPEN/Draft; receipt comment posted.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- At 03:57, M1/M3 PR heads remain unchanged; no owner result is public. Usage last read 03:55 UTC: 78% five-hour / 54% weekly.
+
+## 04:04 UTC handoff
+- M1+M3 ended with no module result or head movement; PR #43/#33 unchanged and #51/#55 remain OPEN/P1. Private activity remains UNKNOWN.
+- Only M2+M5 are active 04:04–04:24 on #52 through existing PRs #37/#47. Assignments verified at PR comments 6283123453 and 6283139947; scheduler comment 6283145177.
+- Usage 04:04 UTC: 78% five-hour / 54% weekly. No exclusive resource used.
+- M0 head a72066de8c989257c76df2fca7b6e02fa84601e2 passed product CI 9/9 and coordination CI 1/1. PR #24 remains OPEN/Draft, unchanged.
+
+## M2+M5 midpoint — 2026-10-20 04:14 UTC
+- PR #37/#47 remain at 9db59ed8f2deae905edcb2179982f8bcb594167c / 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; no module-authored reply or code movement is public. #52 remains OPEN/P0/NOT_VERIFIED.
+- Usage read 04:14 UTC: 78% five-hour / 54% weekly. M1/M3 remain paused; no exclusive resources used.
