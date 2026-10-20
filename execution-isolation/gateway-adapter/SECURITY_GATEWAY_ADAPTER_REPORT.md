@@ -140,28 +140,38 @@ protection is claimed here.
 ## 2026-10-21 M0 #52 host-connection checkpoint
 
 At M2 worktree `C:\Users\36712\Documents\Codex\2026-10-15\ac3-m2-execution-isolation`,
-branch `feature/ac3-execution-isolation`, HEAD
-`29386c312fd52d52e888c4633a1fef34ead69c09`, a source search found the adapter
-definition and M2-local checks only. `src/runtime/gateway.ts` provides the
-first-party M1 Gateway implementation, but no product source imports or calls
-`createSecurityGatewayAdapter`; the package manifest also excludes
-`execution-isolation/` from published files. No product-host consumer was
-added because no M2-owned callsite exists in this checkout.
+branch `feature/ac3-execution-isolation`, starting HEAD
+`6ad4303540499341b59a97db3b4ec4562fe5e29e`, the first-party host consumer was
+verified in source: `src/ai/cli.ts` registers `ai console`,
+`src/ai/console.ts` calls `createRuntimeDemo`, and `src/runtime/demo.ts` creates
+an M1 Gateway with registered temporary files and dispatches its fixed `read`
+action through `runtime.agent.dispatch({name:"read_file", args:{path:"public.txt"}})`.
+This is the console's first-party demo host; it consumes M1 Gateway but does
+not import or call `createSecurityGatewayAdapter`.
 
-The current M0 ownership map keeps Gateway/API semantics with M1, policy/router
-semantics with M5, and the adapter boundary with M2. The adapter passes a
-plain path string to `agent.dispatch`; M5's callback context is only
-`{ signal }`, so it cannot verify that the path is bound to M1's held file
-object. Under the supplied M1 contract this route must remain `DENY` until an
-owner-approved capability binds the exact registered file identity and that
-same held object is revalidated immediately before effects. M2 will not add a
-generic path fallback, reopen a user path, or disable strict verification.
+The M0 ownership map assigns `src/runtime/gateway.ts` to M1/M7,
+`src/ai/console.ts` to M3/M4, and `package.json` to M3/M5/M6/M7; M2 owns
+`execution-isolation/gateway-adapter/*`. The package file allowlist excludes
+`execution-isolation/`, so importing the current M2 `.mjs` adapter from the
+published TypeScript host would leave a missing runtime module unless a
+shared package/build owner approves a packaging change. The current M2-owned
+scope contains no product-host callsite that can consume the adapter.
 
-Required owner decision: M1 must define or approve an opaque host-only
-capability bound to its registered held object, including alias/replacement
-denial before side effects. M5 must review how its strict router receives and
-validates that capability for the specific callback. M0 coordinates any shared
-contract update. No M1 or M5 files or public interfaces were changed.
+The adapter forwards a plain path string to M1 `agent.dispatch`; it does not
+pass an M1-held-object identity capability into the strict router. The supplied
+M1 contract requires `DENY` until the callback is bound to the exact registered
+file identity and that same held object is revalidated immediately before
+effects. M1's strict router rejects generic path callbacks, so using
+`verifyRealPaths:false`, relabeling the read as another operation, or directly
+calling the adapter outside the router would weaken/bypass the boundary. M2
+will not take those paths or reopen a user path.
+
+Required owner review: M1 must decide whether its existing Gateway capability
+can be represented to the strict router for this exact callback or define an
+opaque host-only capability bound to the held object, including alias and
+replacement denial before side effects. M0 must coordinate any shared
+contract, host-callsite, or package change; M5 review is needed if its policy
+router contract is touched. No M1/M5 files or public interfaces were changed.
 
 Focused evidence on this HEAD: the following test passed 3/3.
 
@@ -170,9 +180,9 @@ node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs
 ```
 
 It verifies M2's exact fixed-path allowlist, unchanged signal forwarding, and
-pre-dispatch rejection using a mock dispatcher; it is not Gateway or product
-host evidence. The M2 integration checker could not run in this worktree
-because `dist/sdk.js` and `node_modules` are absent; dependencies were not
-installed. First-party host consumption, protected-open, and real-host
-alias/replacement behavior remain `NOT_VERIFIED`; native Codex Shell remains
-`UNPROTECTED`.
+pre-dispatch rejection using a mock dispatcher; it is not adapter-to-host
+integration evidence. The Gateway integration checker could not run in this
+worktree because `dist/sdk.js` and `node_modules` are absent; dependencies
+were not installed. First-party host consumption of the M2 adapter,
+protected-open at the product host, and real-host alias/replacement behavior
+remain `NOT_VERIFIED`; native Codex Shell remains `UNPROTECTED`.
