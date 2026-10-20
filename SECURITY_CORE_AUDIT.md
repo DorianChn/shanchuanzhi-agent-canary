@@ -97,3 +97,29 @@ M1 现在提供 `AgentGuard.subscribeQuarantine(listener: () => void): () => voi
 ## Hook interruption P1 #32 本地续作（2026-10-13）
 
 在合成复现中确认 wrapper 固定 2 秒 fail-closed timer 与父测试“marker 后立即外部 kill”的调度存在竞态：若父进程在 marker 后延迟 2.5 秒，wrapper 先输出固定 deny 并 code 0 退出，导致 interruption 专项断言失败。只修测试夹具，使 synthetic Hook 在 marker 后阻塞自身事件循环；测试再故意等待超过 2 秒并核验外部 kill、无 allow/日志。Node 20.20.2 和 22.23.1 定向回归均通过。该证据确认 harness 缺陷，不证明旧 CI 各失败都由它导致；历史 CI 根因仍需新 Windows CI 对照。详见 `SECURITY_REGRESSION_RESULTS.md` 与 `HOOK_FAILURE_MATRIX.md`。
+
+## M1 owner checkpoint — #51 / #52 / #56（2026-10-21 03:00 UTC）
+
+### #51：四进程 state-store 重试耗尽
+
+- 原始 Ubuntu Node 20 run 39072320332 / job 117512297915 的 test 163 在 worker 0 的 500 次 STATE_STORE_BUSY 循环后抛 RETRY_LIMIT；日志没有 AC3_LOCK_TRACE。Node 22 run 39073687546 / worker 2 同样在 500 次后 RETRY_LIMIT，也没有 trace。历史日志不能事后补采失败时锁状态。
+- 独立 instrumented Ubuntu Node 22 run 39497366090 / job 118885773068 捕获四个 worker：0/1 各完成 12 次 acquire/release。worker 0 前段持锁迭代 0–4 的区间约为 51.561259–52.293880 秒，之后在 worker 1 的 52.293971–52.816332 秒区间结束后，再完成迭代 5–11（52.816431–52.825108 秒）。worker 2/3 分别在约 1062/1067 ms 后以 500 次 EEXIST 耗尽，各有 20 次锁采样且无 stat error。owner 时序由独占 open/unlink 事件推断，不是锁内 owner 元数据；采样未显示 owner 区间重叠。这支持调度饥饿假设，不证明根因或数据丢失。
+- 当前 M1 Windows Node 22.23.1 聚焦复测通过 1/1；failure-only trace 未触发。生产锁、500 次上限、2 ms 退避、48 个 quarantine 检查及最终 48-state 检查未改动。Issue #51 保持 OPEN / P1 / UNKNOWN；下一证据是对当前 M1 trace 测试做 Ubuntu Node 20/22 定向 CI 复跑，不能把旧无 trace 日志当作已归因。
+
+### #52：M2 host 接线与 M1 Gateway 契约
+
+- canonical coordinator/docs/3.0/API_CONTRACTS.md 规定：verifyRealPaths:true 下通用 path-string 文件回调以 path_execution_not_pinned 在审批和 callback 前拒绝；false/未设置只保留旧 lexical policy，不构成 real-path 或 protected-open 保证。M1 Gateway 对登记资源先校验文件身份，以 O_NOFOLLOW 打开并持有 descriptor，之后经该 descriptor 操作。
+- M2 在 #52 的 owner 更新 6302184591 报告：createSecurityGatewayAdapter 目前只出现在定义和 checker，没有 first-party src/CLI/server 调用点；fixedFileReads 转发 path string，不是 M1 签发的 identity capability。因而它不能满足 M5 strict verifyRealPaths:true 回调边界；当前可验证范围仍是 synthetic adapter，first-party host/TOCTOU 未验证。
+- M1 不批准本轮增加或改变 public interface。M2 可继续定位真实 host callsite；若要让 M5 在 strict mode 接受该执行器，先由 M0/M1/M5 明确签核 capability 表达和验证契约。#52 维持 OPEN / P0 / NOT_VERIFIED。
+
+### #56：PR #47 的 M1-owned 路径 disposition
+
+PR #47 当前 head e3662e9ca7363504eea7dd5e3262352018519a56 与 PR #43 的共享 M1 路径如下，规范内容由 M1 的 PR #43 维护；本轮没有编辑 M5 文件：
+
+- src/security-router.ts（两边不同）：M5 增加别名分量检查与 OBSERVE 硬拒绝保持；M1 规范版本同时保留 generic unpinned operation 在审批/callback 前以 path_execution_not_pinned 拒绝。语义不接受任何放宽；M5 无共享路径例外。
+- test/security-router.test.ts（不同）：M1 保留 canonical deny-before-approval/callback、symlink/junction 和 pinned-execution 断言；M5 专属策略用例留在 M5 风险策略测试。
+- src/agent-hook.ts、security-lab/claude-native-hook.mjs（当前两边 blob 相同）：保留 M1 规范副本；native 文件操作未绑定 Gateway held-file capability 时拒绝，wrapper 日志不含原始参数/原因正文。
+- test/agent-hook.test.ts（不同）：M1 规范副本保留中断 marker、无 decision/output/log 断言及 Hook 策略/脱敏覆盖。中断子进程不能观测进程外 native host callback；不把该 fixture 描述成端到端 callback 计数证明。
+- test/file-state-store.test.ts（不同）：确认 M1 为 owner/canonical。M1 all-worker failure-only trace 汇总 child 状态、重试桶与 open/unlink owner 时序；保留 500/2 ms 和 48 状态断言。M5 的并行采样副本应由协调方移除或按 M1 版本协调，不能替换其诊断覆盖。
+
+当前 PR 路径清单：#30 不含 Hook 测试；#34 仍含 Hook wrapper 与 test/agent-hook.test.ts；#43/#47 含上述六个 M1 路径。#56 当前正文关于 PR #30 携带 Hook 测试的说法已过期，应由协调方更新；在 #34/#47 重复路径协调完成前保持 OPEN。
