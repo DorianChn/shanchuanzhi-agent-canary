@@ -4791,3 +4791,25 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M5 posted a six-path PR #43/#47 overlap table on #56. Exact changed-file lists confirm all six listed paths overlap. M5 requests no ownership exception; three paths still need M1 canonical-content disposition. PR #47 remains OPEN/Draft and still contains the overlap.
 - M0 added #52 evidence comment `6301691524`: PR #47 exact-head CI has seven passes and macOS Node 20 pending; local fixture evidence is synthetic; supported M2 host consumption of an identity-bound Gateway capability remains unverified. Issue #52 stays OPEN/P0/NOT_VERIFIED.
 - M0 and M5 have docs-only commits locally queued for the 21:24 UTC batch. M5's E4 changes remain uncommitted and excluded from its M5 commit. No PR #24 change; M9 integration remains held on #51/#52/#56 and exact-head CI.
+
+## M1/M2 双模块并行检查点 — 2026-10-20 21:37 UTC
+
+- 当前只安排 M1 与 M2 两个模块任务；通过 codex queue 控制原有线程，没有新建分支或线程。M5/M6 保持空闲，M5 工作树中的 M6 E4 两个未提交文件保持原样。
+- M1 PR #43 头提交 5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96 的标准 CI 通过。File Store Concurrency run 39497366090 attempt 2 在 Ubuntu Node 20 job 118897644470 和 Node 22 job 118897641785 分别连续运行完整文件测试 10 次；两边均为 17 tests、14 pass、0 fail、3 个平台跳过。此前 Node 22 失败后没有源码修改，因此结果是“未复现”，不是根因修复证明。M0 已在 Issue #51 追加证据 comment 6301961766；Issue 保持 OPEN/P1/UNKNOWN，等待 M1 保留断言的根因结论。
+- M2 现有 PR #37 仍 OPEN/Draft，head 9db59ed8f2deae905edcb2179982f8bcb594167c。M2 适配器和测试工作树在上一次检查时干净。其适配器工具描述仍为路径参数型 file-read；M5 PR #47 当前 strict verifyRealPaths 对此类文件操作 fail closed，因而当前接口无法直接视为已组合。M2 合成 SDK 测试不是产品宿主集成证明。
+- M0 在 API_CONTRACTS.md 新增 M1/M2/M5 固定文件适配兼容验收门槛，标明尚待接口所有者审阅；未改变任何 API 或产品源码。M2 正在被要求核验实际宿主入口并处理其所有权范围内的差距。P0 Issue #52 维持 OPEN/NOT_VERIFIED，M9 不得据合成测试声称宿主保护完成。
+- PR #30 远端头提交在本检查点仍为 d7d4e68e091380eb9cfa7af650d42827aa03fcad；M0 协调文档提交仍在本地且领先远端一笔，尚未推送，最早安排在 21:44 UTC 批次。PR #24 仍未修改。Usage 页最近读数 64% 五小时/84% 每周，tab 保持打开；最近推送批次为 21:24 UTC，下次不早于 21:44 UTC。
+
+## M1/M2 原有线程恢复 — 2026-10-20 21:39 UTC
+
+- M1 已完成证据复核，无代码修改：PR #43 保持 5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96，Issue #51 根因仍 UNKNOWN。M0 comment 6302119430 记录了 Node 20/22 x10 重跑通过与原始 Node 22 失败；M1 现已恢复到同一线程，继续仅测试侧公平等待实验，保留全部安全上限和断言。
+- M2 原线程此前等待 M0 恢复。M0 已恢复其同一 UUID、同一 PR #37 工作树，当前开始核对实际宿主和 M5 strict policy 组合；尚无新代码或提交。
+- 活动任务仍只有 M1 与 M2。M5/M6 IDLE。PR #24 未变。下次推送在不早于 21:44 UTC 的批次复查后进行；额度低于 5% 时硬暂停。
+
+## M2 #52 兼容性证据 — 2026-10-20 21:43 UTC
+
+- M2 在现有 PR #37 分支本地提交 dcfad35751c4c8ce74d5a32756b60698d9dc39ec，范围为 M2 报告、M2 checker 和 M2 call-shape test；尚未推送。新增调用形状测试经 M0 独立运行 3/3 通过，提交差异检查通过。
+- 该 checker 明确限于 M2 checkout 的 lexical synthetic fixture，不代表 PR #47 strict policy 或产品宿主兼容。当前 M5 PR #47 在 verifyRealPaths=true 时对 path-based filesystem callback 以 path_execution_not_pinned 拒绝，且零 callback；M2 仍未提供 M1-issued、供 M5 验证的 held-object identity capability。
+- M2 的代码搜索未发现产品 src/CLI/server 调用点；package 的 exports/file allowlist 也不包含 execution-isolation adapter。Issue #52 comment 已由 M2 更新，结论仍 OPEN/P0/NOT_VERIFIED，native Codex Shell 仍 UNPROTECTED。当前宿主支持状态仍待 M3/产品宿主所有者确认。
+- M2 本地未运行完整 build/checker（缺 node_modules 和 dist）；新 PR 头的 hosted CI 尚待 push 后核验。不能以旧 PR #37 exact-head CI 替代新 commit 验证。
+- M1 尚无本轮代码改动；M1 继续在原工作树评估 test-only fair scheduling experiment，生产锁、500 retry cap 和全部断言不变。

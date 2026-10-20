@@ -243,3 +243,24 @@ M1 owns the `verifyRealPaths` execution contract, M2 owns the fixed-resource ada
 - PR #36 must pin an exact M1 source commit that M1 confirms as reviewed for the Hook/Gateway contract. At 16:48 UTC, PR #43 source head was `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; Issue #61 still requires M1 owner confirmation before M9 treats it as the reviewed input.
 - The separate owner-review SHA recorded in Issue #61 (`f14aab781c62db60ac241d2114f543f6cac223ae`) is review evidence and must not be substituted for a source checkout pin unless M1 explicitly confirms that it identifies the same source commit.
 - M9 owns its workflow and exact consumed refs. M1 owns source-contract review; M0 verifies the resulting refs and both Ubuntu/Windows composition runs. Keep #61 OPEN until this distinction is confirmed in the issue.
+
+## M1/M2/M5 fixed-file adapter compatibility gate — 2026-10-20 21:37 UTC
+
+**Status: owner review required; no public API change is approved by this coordination note.** M1 owns Gateway registration and held-object enforcement; M2 owns the fixed-resource adapter; M5 owns policy classification, approval, and callback dispatch; M9 owns exact-head composition. Other modules must use an owner-approved adapter at their boundary.
+
+### Verified current seams
+
+- M1's Gateway accepts a trusted constructor-time GatewayOptions.files list and exposes agent.dispatch. The M2 adapter forwards an exact relative path through gateway.agent.dispatch({ name: "read_file", args: { path } }, signal) after checking its private fixed tool-to-path map.
+- M2's adapter exposes policy descriptors as { operation: "file-read", pathArg: "path" }. Its descriptor does not expose a separate bound-resource capability to policy preflight.
+- Current M5 PR #47 behavior with verifyRealPaths: true denies path-bearing filesystem operations as path_execution_not_pinned before executeRealTool. Therefore the existing M2 path descriptor cannot be assumed compatible with current strict M5 policy dispatch. Do not turn off strict mode or add a generic path callback to work around this.
+- M2's check-security-gateway-adapter.mjs creates synthetic files/aliases and an SDK Gateway in its checkout. It proves that fixture's path allowlist and Gateway dispatch behavior; it is not evidence of a first-party product host consuming the adapter or of current PR #47 integration.
+- M2 source search found the adapter definition and test plus an SDK demo, but no selected product-host consumer in the examined M2 source paths. Host adoption remains NOT_VERIFIED.
+
+### M9 integration acceptance contract
+
+1. The supported host/build entrypoint must be named and shown constructing a single immutable host manifest that binds each allowed resource to the same exact relative path registered with M1 Gateway and the M2 adapter.
+2. M5 must receive an owner-approved representation that identifies that trusted binding before policy/approval decisions, without trusting a model-supplied path or arbitrary capability token. M5 retains deny/approval authority; only the M1 Gateway can authorize and open the registered file.
+3. After approval, the M2 adapter must dispatch only the exact registered operation through M1 Gateway; it must not reopen a user-controlled path or fall back to a generic callback. Alias, replacement, stale-manifest, and mismatched-registration cases must fail before side effects.
+4. M9 must test the actual selected host composition at exact M1/M2/M5 commits and show denial, callback/approval counts, unchanged fixture bytes, and held-file identity behavior. Synthetic SDK-only fixtures remain supporting evidence, not host acceptance.
+
+If compatibility needs a public type or behavior change, M1 changes Gateway APIs, M5 changes policy/router APIs, or M2 changes its adapter API within its own ownership; the other modules adapt through their owned boundary and update this contract after review. Until then, strict path-based DENY is the safe behavior and #52 remains OPEN/P0/NOT_VERIFIED.
