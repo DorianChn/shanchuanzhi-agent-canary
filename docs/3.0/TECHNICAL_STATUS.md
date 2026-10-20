@@ -4315,3 +4315,23 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 ## M4+M6 midpoint — 2026-10-20 04:34 UTC
 - PR #34/#38 remain at fbf20907c6accffc37246eddf04f8599060d99ea / c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; latest public comments are M0 assignments, no owner result or code movement yet.
 - Usage 04:34 UTC: 78% five-hour / 54% weekly. M0 exact head 8e1f2df CI is green; PR #24 unchanged.
+
+## M0 batch — 2026-10-20 04:34 UTC
+- Pushed docs-only commit d7fdb252166151aa415f9eef9124fc165f4deaf5 to PR #30. PR #30 remains OPEN/Draft at that head; exact-head workflows were not visible at immediate readback.
+- PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
+- Coordinator clone is clean/synchronized. Next M0 push no earlier than 04:54 UTC.
+
+## M0 exact-head CI — 2026-10-20 04:39 UTC
+- PR #30 head d7fdb252166151aa415f9eef9124fc165f4deaf5 passed product CI 39370343373 (9/9) and coordination CI 39370343366 (1/1); receipt 6283515472 verified.
+- PR #24 remains unchanged. M4/M6 show no candidate SHA or owner result by 04:39; exact heads remain fbf2090 / c1fdf3c.
+- Usage last read 04:34 UTC: 78% five-hour / 54% weekly.
+
+## 04:44 UTC handoff
+- M4+M6 ended without module-authored result, focused test/provenance, or PR movement. #60/#57 remain OPEN/P1; private activity UNKNOWN.
+- Only M7+M8 are active 04:44–05:04 UTC on P0 #53 via existing PRs #39/#40. Verified assignments/comments: #39/6283587633, #40/6283588057, scheduler #29/6283588430, issue updates #60/6283588864 and #57/6283589282.
+- Usage 04:44 UTC: 78% five-hour / 54% weekly. No exclusive resource used.
+- M0 PR #30 exact head d7fdb252166151aa415f9eef9124fc165f4deaf5 passed product CI 9/9 and coordination 1/1; PR #24 remains unchanged. Next M0 push no earlier than 04:54 UTC.
+
+## M7+M8 midpoint — 2026-10-20 04:54 UTC
+- PR #39/#40 exact heads remain cf4b70f5130175582fffdfc65bd7c6847450867b / c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; latest public activity is M0 assignment. No current build/package provenance or extracted-Hook evidence is public.
+- Usage read 04:54 UTC: 78% five-hour / 54% weekly. M0 PR #30 head d7fdb25 is green; PR #24 remains unchanged.
