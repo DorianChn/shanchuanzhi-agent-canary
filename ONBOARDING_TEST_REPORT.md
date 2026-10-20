@@ -124,7 +124,7 @@ M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marke
 
 M3 `decideAgentHook` 对 native `Read`/`Write`/`Delete` 在没有 M1 held-file capability 时返回 `deny` 与 `native_file_execution_not_pinned`；更具体的既有策略硬拒绝仍保留。M3 Hook 输入不承载该 capability，因此原生 Hook 不可因 lexical/realpath workspace 路径而直接放行。测试另以 M1 Gateway 登记并持有临时 `normal.txt`，验证受支持的 `read_file` capability 仍 `ALLOW`，与 unpinned native Hook 拒绝分开。
 
-本地验证：`npm run build` 通过；`node --import tsx --test test/agent-hook.test.ts test/gateway.test.ts` 为 34/34 通过；其中覆盖 Claude/Cursor unpinned Read 的精确拒绝原因、Wrapper 对 Read/Write/Delete 的拒绝和内容不变，以及 registered held-file Gateway positive control。`9841bd8` 实际修改了 M1 所有的 `src/agent-hook.ts` 和 `test/agent-hook.test.ts`，M1 owner review pending；本次报告更正没有继续修改这两个 Hook 路径。此为合成函数/子进程与临时文件验证，不证明真实宿主 callback 或原生 I/O 已受保护；M9 需在重钉 corrected M3 exact head 后通过 Ubuntu 与 Windows composition checks。
+本地验证：`npm run build` 通过；`node --import tsx --test test/agent-hook.test.ts test/gateway.test.ts` 为 34/34 通过；exact-head CI run `39504984014` 为 9/9 通过。测试覆盖 Claude/Cursor unpinned Read 的精确拒绝原因、Wrapper 对 Read/Write/Delete 的拒绝和内容不变，以及 registered held-file Gateway positive control。上述结果不替代 M1 owner review，也不替代 M9 对当前 M3 exact ref 的 composition checks。PR #33 当前 head `9841bd8` 实际修改了 M1-owned `src/agent-hook.ts` 与 `test/agent-hook.test.ts`，M1 file-level review pending；PR #33 未修改 M9 workflow 文件。M9 run `38727481764` 固定 M1 `b1d7423` 与旧 M3 `be38802`，没有验证 `9841bd8`；M9 仍需对当前 M3 exact ref 重跑 composition checks。此为合成函数/子进程与临时文件验证，不证明真实宿主 callback 或原生 I/O 已受保护。
 
 ### M9 run 38727481764：历史 exact-pin failure 与 owner 边界（2026-10-21）
 
