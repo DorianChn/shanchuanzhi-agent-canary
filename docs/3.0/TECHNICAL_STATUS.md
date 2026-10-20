@@ -4580,3 +4580,14 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 
 - Read-only GitHub check confirms PRs #33, #34, #36, #37, #38, #39, #40, #43, and #47 are all OPEN/Draft and target `feature/agent-canary-3.0` at the same base SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
 - PR #24 remains OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with its separate base branch/ref unchanged. No PR was merged.
+
+## M2+M3 midpoint and M0 CI — 2026-10-20 18:45 UTC
+
+- At midpoint, PR #33/#37 had no owner result or source-head movement visible. Comments: #52/6298514701, PR #37/6298515418, PR #33/6298516079, scheduler #29/6298516733.
+- M0 commit `5bd366ebe719e87a4e60a4cee50321a0ccc05423` passed exact-head product CI run 39477134021 and coordination check 39477134024.
+
+## M2+M3 lane end / M7+M8 handoff — 2026-10-20 18:55 UTC
+
+- The 18:35–18:55 M2+M3 slot ended with no owner-authored result/review or source-head movement visible. PR #37 remains `9db59ed8f2deae905edcb2179982f8bcb594167c`; PR #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. #52 remains OPEN/P0/NOT_VERIFIED. Lane-end comments: #52/6298724103, PR #37/6298724763, PR #33/6298725411.
+- Only M7+M8 are active 18:55–19:15 on P0 #53 through existing PR #39/#40 at `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. M7 is assigned build-only Windows artifact creation/upload with exact SHA; M8 is assigned a synthetic caller-data log canary against that exact artifact. Keep disputed #59 paths and installer/VM/real-model work out of scope. Assignment comments: #53/6298726135, PR #39/6298726855, PR #40/6298727550, scheduler #29/6298728246.
+- Usage page at 18:55 UTC: 94% five-hour / 88% weekly. Next M0 push no earlier than 19:02:44 UTC.
