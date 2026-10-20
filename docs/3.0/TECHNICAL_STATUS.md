@@ -4297,3 +4297,21 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 ## M2+M5 midpoint — 2026-10-20 04:14 UTC
 - PR #37/#47 remain at 9db59ed8f2deae905edcb2179982f8bcb594167c / 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; no module-authored reply or code movement is public. #52 remains OPEN/P0/NOT_VERIFIED.
 - Usage read 04:14 UTC: 78% five-hour / 54% weekly. M1/M3 remain paused; no exclusive resources used.
+
+## M0 batch — 2026-10-20 04:14 UTC
+- Pushed docs-only commit 8e1f2df43c8b7ce45408966265156b34b9dd0334 to PR #30. Exact-head CI was not visible at immediate readback; record result only after it appears.
+- PR #30 remains OPEN/Draft on base 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Coordinator clone is clean/synchronized. Next M0 push no earlier than 04:34 UTC.
+## M0 exact-head CI — 2026-10-20 04:18 UTC
+- PR #30 head 8e1f2df43c8b7ce45408966265156b34b9dd0334 passed product run 39368666594 (9/9) and coordination run 39368666592 (1/1); receipt comment 6283280033 verified.
+- PR #24 remains OPEN/Draft at unchanged head/base. M2/M5 have no code movement or owner response as of 04:18; #52 remains OPEN/P0/NOT_VERIFIED.
+- Latest usage read 04:14 UTC: 78% five-hour / 54% weekly.
+## 04:24 UTC module handoff
+- M2+M5 ended without module-authored result, candidate SHA, or exact-source focused evidence. #52 remains OPEN/P0/NOT_VERIFIED; work is preserved and private activity remains UNKNOWN.
+- Only M4+M6 are active 04:24–04:44 UTC on #60/#57 through existing PRs #34/#38. Verified comments: M4 #34/6283353599, M6 #38/6283354040, scheduler #29/6283354521, #52 lane end 6283354932.
+- Usage 04:24 UTC: 78% five-hour / 54% weekly. No exclusive resources reserved.
+- M0 exact-head #30 8e1f2df passed product CI 9/9 and coordination 1/1. PR #24 remains OPEN/Draft and unchanged. Next M0 push no earlier than 04:34 UTC.
+
+## M4+M6 midpoint — 2026-10-20 04:34 UTC
+- PR #34/#38 remain at fbf20907c6accffc37246eddf04f8599060d99ea / c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; latest public comments are M0 assignments, no owner result or code movement yet.
+- Usage 04:34 UTC: 78% five-hour / 54% weekly. M0 exact head 8e1f2df CI is green; PR #24 unchanged.
