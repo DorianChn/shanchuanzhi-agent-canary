@@ -839,3 +839,27 @@ PR #43 head 5e9e22d fails exact-head Ubuntu Node 22 file-store x10 (run 39497366
 - **P1 / #51:** exact PR #43 head `5e9e22d` has a failing Ubuntu Node 22 file-store x10 run. Source inspection shows production lock acquisition fails closed immediately on `EEXIST`; the fixed 2 ms backoff and 500-attempt limit are in the test harness. The failure trace supports possible test-worker scheduling starvation, but does not prove root cause or data loss. Keep #51 OPEN until M1 establishes a cause or labels it unresolved, preserves every assertion, and exact-head Ubuntu Node 22 x10 plus standard CI pass.
 - **P0 / #52:** PR #47 has a local policy test/build pass but its exact-head CI still has macOS Node 20 pending. Synthetic path alias/recheck fixtures do not establish a first-party M2 callsite using a Gateway-issued identity-bound handle. Keep #52 OPEN/P0/NOT_VERIFIED pending owner-approved contract, M1 binding evidence, M2 host proof, safe-read control, and exact-head CI.
 - **P1 integration / #56:** PR #43/#47 have six overlapping changed paths confirmed by current GitHub file inventories. M5 has published its no-exception disposition. M1 canonical-content disposition and M0/M5 PR reconciliation remain outstanding; do not delete or weaken canonical security gates. M9 remains held until these ownership gates and #51/#52 acceptance are resolved.
+## 2026-10-20 21:57 UTC — exact-source Hook and M9 gate revalidation
+
+### P0 — #55 M3 native Hook permits an unpinned Read
+
+PR #36 head `de3799aae540f58173acec4ab3f7a1fe98593aa7`, run `38727481764`, fails the same exact-source subtest on Ubuntu (`116396823888`) and Windows (`116396823551`). With a synthetic normal file and no held-file capability, M1 returns `deny` and the M3 source snapshot returns `allow`. The workflow consumes old M1 SHA `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`; current PR #43 is `5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96`, and PR #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. This demonstrates a synthetic Hook decision failure, not a proven host data exposure. M1 owns canonical Hook semantics; do not let M0 or M3 modify M1-owned Hook paths without owner approval. #55 is OPEN/P0.
+
+### P1 — #61 M9 source/review pins are stale
+
+M1 previously approved source SHA `38a09a073ea8871036e60a62b160fdb376487b20`. Current M1 HEAD `5e9e22d` descends from it and changes only the lock diagnostic test and report; M1 confirmation is requested before M9 updates its source and review pins. Keep the M9 workflow's consumed SHAs explicit and rerun both platforms only after the M3/M1 behavior contract is resolved. #61 stays OPEN/P1; PR #36 remains Draft.
+
+### P0 — #52 alias/policy checks are not product-host proof
+
+M5 PR #47 exact-head CI run `39500126875` passed 9/9 at `e3662e9ca7363504eea7dd5e3262352018519a56`. This validates the PR's CI gate, not a first-party host consuming an M1 identity-bound held-file capability. The product host callsite and independent E4 status remain NOT_VERIFIED; #52 stays OPEN/P0. Do not infer protection from the synthetic adapter composition.
+### Pending local owner review — M3 Hook patch (2026-10-20 22:00 UTC)
+
+M3 has an uncommitted candidate fix in M1-owned `src/agent-hook.ts` and `test/agent-hook.test.ts`, while two docs-only commits are ahead on the existing PR #33 branch. The candidate appears to align unpinned native file operations with M1's deny contract and adds a synthetic Gateway positive control, but M1 has not yet reviewed it. Treat the patch as unaccepted and untested: do not publish it or claim #55/M9 acceptance until M1 explicitly approves the precise shared-path changes, focused tests pass, and M9 reruns both platforms on exact reviewed refs. Keep the current fail-closed gate intact.
+## 2026-10-20 22:02 UTC — M3 #33 candidate is published, owner review pending
+
+PR #33 moved from `be38802` to `9841bd8527af724664b70dc30b0c372878c81075`. Exact-head CI `39504984014` is 7/8 passing with Windows Node 22 pending. M3 reports local build and 34/34 focused tests passed. The commit changes M1-owned `src/agent-hook.ts` and `test/agent-hook.test.ts` to deny unpinned native file operations and add a Gateway positive control. M1 owner approval is pending; do not treat local/CI results as a file-ownership exception or production-host proof. M3's report needs correction because it currently says no M1/M9 files were edited.
+
+PR #36 still pins M1 `b1d7423` and M3 `be38802`; run `38727481764` failed the same unpinned Read comparison on both platforms. M9 must wait for M1 review, completed PR #33 CI and exact owner pins before rerunning both composition jobs. PR #36 remains Draft; #55 remains OPEN/P0 and #61 OPEN/P1.
+
+The M3 push occurred at 22:01:22 UTC, earlier than the scheduled 22:04 batch. No corrective force-push or rollback was made. Further publication is held until at least 22:21:22 UTC.
+**CI correction, 2026-10-20 22:03 UTC:** PR #33 exact-head run `39504984014` is now 9/9 successful at `9841bd8527af724664b70dc30b0c372878c81075`; the formerly pending Windows Node 22 job passed. The M1 owner disposition and M9 current-ref composition gate remain outstanding.

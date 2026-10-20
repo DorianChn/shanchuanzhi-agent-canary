@@ -1467,3 +1467,22 @@ Actual PR #30 push time was 20:08:11 UTC; the next shared module/push batch is n
 ### Module cadence correction — 2026-10-19 04:49 Asia/Shanghai
 
 Actual PR #30 push time is 20:48:56 UTC; module publication is no earlier than 21:08:56 UTC. M7/M8 may continue the current local owner review, but any publish requires a fresh Usage/ref/scope check.
+
+## M0 current cross-module readback — 2026-10-20 21:57 UTC
+
+- **#55 P0 / Hook fail-open:** PR #36 run `38727481764` fails on Ubuntu and Windows. Synthetic unpinned native Read decision is `deny` in M1 and `allow` in the consumed M3 source snapshot. #55 title/priority/body were updated to P0. M1/M3 remain responsible for an owner-approved correction; no tests may be deleted or weakened.
+- **#61 P1 / M9 exact refs:** Current PR #43 head is `5e9e22d`; prior M1-approved SHA `38a09a0` remains ancestor and no Hook/Gateway source changed after it, but M1 must reconfirm exact pin use. M9 PR #36 still consumes stale `b1d7423`; keep open until owner-confirmed pins and both Ubuntu/Windows composition jobs pass.
+- **#52 P0 / protected path boundary:** PR #47 exact-head CI run `39500126875` is 9/9 green. Product first-party host/held-file capability connection is still NOT_VERIFIED; M5 test success is not host integration proof. Issue received the CI update and remains open.
+- **Scheduling:** M1 + M3 are the two active module slots. Do not activate a third module until a slot frees. VMware/model/installer resources remain mutually exclusive. Next eligible push is no earlier than 22:04 UTC after a fresh quota and scope readback.
+## M3 candidate fix awaiting M1 owner review — 2026-10-20 22:00 UTC
+
+M3 has a local, uncommitted candidate edit to M1-owned Hook source/test paths after the M9 comparison failure. M0 has instructed M3 to preserve the diff and hold commit/push. M1 is reviewing the exact patch for explicit owner approval. Until that response and exact tests arrive, #55 remains P0 OPEN, PR #33 remains at remote head `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`, and M9 run `38727481764` remains a failure; do not count local changes as resolved.
+## 2026-10-20 22:02 UTC — M3 exact-head and ownership status
+
+- PR #33 is at `9841bd8527af724664b70dc30b0c372878c81075`; current CI `39504984014` is 7/8 successful, Windows Node 22 pending. M3 reports build + focused 34/34 pass locally.
+- The pushed commit changes M1-owned Hook source/test paths. M1 owner disposition remains pending; #55 is OPEN/P0. Preserve all denial assertions and do not infer approval from the push.
+- M9 PR #36 still pins old M1/M3 refs and its Ubuntu/Windows run `38727481764` remains failed. #61 remains OPEN/P1 until reviewed source pins and both reruns are green.
+- M3's latest report must be corrected because it says no M1/M9 files were edited. No push before 22:21:22 UTC; at most two module slots remain M1 + M3.
+### CI correction — 2026-10-20 22:03 UTC
+
+M3 PR #33 exact-head CI run `39504984014` completed 9/9 at `9841bd8527af724664b70dc30b0c372878c81075`. Windows Node 22 passed. This does not close #55: M1 owner review and current-ref M9 composition remain pending.
