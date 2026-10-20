@@ -44,6 +44,8 @@ const guard = createAgentGuard({
 });
 const evidence = new EvidenceRecorder();
 let gatewayDispatches = 0;
+let lastGatewayCall;
+let lastGatewaySignal;
 let gateway;
 
 try {
@@ -61,6 +63,8 @@ try {
     agent: Object.freeze({
       dispatch(call, signal) {
         gatewayDispatches += 1;
+        lastGatewayCall = call;
+        lastGatewaySignal = signal;
         return gateway.agent.dispatch(call, signal);
       },
     }),
@@ -72,7 +76,11 @@ try {
     guard,
     mode: "OBSERVE",
     workspaceRoot,
-    verifyRealPaths: true,
+    // PR #47's current strict mode rejects every generic path callback with
+    // path_execution_not_pinned. This checker covers only the fixed M2 adapter
+    // plus M1 Gateway route in lexical policy mode; it is not strict-mode or
+    // first-party-host evidence.
+    verifyRealPaths: false,
     eventsFile: path.join(tempRoot, "policy-events.jsonl"),
     tools: {
       read_public: { operation: "file-read", pathArg: "path" },
@@ -86,6 +94,12 @@ try {
   });
   assert.deepEqual(result, { content: "public fixture\n" });
   assert.equal(gatewayDispatches, 1, "registered file read must enter M1 Gateway once");
+  assert.deepEqual(lastGatewayCall, {
+    name: "read_file",
+    args: { path: "public/readable.txt" },
+  });
+  assert.equal(typeof lastGatewayCall.args.path, "string");
+  assert.equal(typeof lastGatewaySignal?.aborted, "boolean");
   assert.equal(router.pendingApprovals().length, 0);
   assert.equal(gateway.operator.pending().length, 0);
 
@@ -148,7 +162,7 @@ try {
   );
   assert.equal(evidenceAfterAllowedRead.length, 2, "only the allowed Gateway read is audited");
   process.stdout.write(
-    "M2_SECURITY_GATEWAY_ADAPTER_PASS (OBSERVE_ROUTER; EXACT_FIXED_PATH_MAP; M1_HELD_HANDLE_DISPATCH; ALIASES_DENIED_PRE_GATEWAY; NO_APPROVALS_OR_FILE_CHANGES)\n",
+    "M2_SECURITY_GATEWAY_ADAPTER_PASS (LEXICAL_POLICY_MODE; EXACT_FIXED_PATH_MAP; PLAIN_PATH_STRING_TO_M1_HELD_HANDLE_GATEWAY; ALIASES_DENIED_PRE_GATEWAY; NO_APPROVALS_OR_FILE_CHANGES)\n",
   );
 } finally {
   await gateway?.close();

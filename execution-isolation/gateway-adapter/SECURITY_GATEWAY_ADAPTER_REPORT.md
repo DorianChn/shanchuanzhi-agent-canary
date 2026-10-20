@@ -1,20 +1,31 @@
 # M2 Security Router to Gateway Adapter Report
 
-Date: 2026-10-15
+Date: 2026-10-21
 Scope: M2-owned adapter seam for Issue #52
-Status: `SYNTHETIC_ADAPTER_COMPATIBLE; NO_PRODUCT_HOST_INTEGRATION; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
+Status: `SYNTHETIC_ADAPTER_COMPATIBLE_IN_LEXICAL_MODE; STRICT_M5_MODE_FAILS_CLOSED; NO_PRODUCT_HOST_INTEGRATION; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
 
 ## Contract compatibility
 
 The current M5 `createSecurityToolRouter` contract accepts a fixed `tools` map
-and an `executeRealTool(call, { signal })` callback. The M2
+and an `executeRealTool(call, { signal })` callback. M2's
 `createSecurityGatewayAdapter(gateway, fixedFileReads)` returns that map and
-callback without changing either public API. For a registered tool ID and an
-exact allowlisted relative path, the callback constructs a new `read_file`
-call and forwards it, with the signal, to M1's public
-`gateway.agent.dispatch(call, signal)` API. M1's Gateway is constructed with
-the corresponding fixed file registration. This is a compatible synthetic
-adapter seam; no shared-interface change is needed.
+callback. The M2 `fixedFileReads` entries are relative path strings, not a
+path-handle descriptor or capability passed to M5. For a registered tool ID
+and exact allowlisted path, the callback constructs a `read_file` call whose
+`args.path` is still a string, then forwards it with the signal to M1's
+`gateway.agent.dispatch(call, signal)` API. M1 resolves that call through its
+registered-file Gateway and owns the held-handle check internally.
+
+This adapter is compatible with M5's lexical policy mode
+(`verifyRealPaths:false`) for this exact fixed-read route. It is **not
+compatible for successful reads with current strict `verifyRealPaths:true`**.
+M5 PR #47 at exact head
+`e3662e9ca7363504eea7dd5e3262352018519a56` denies generic file callbacks with
+`path_execution_not_pinned` before `executeRealTool`; its focused test also
+asserts zero callback invocations for a safe path. M2 currently provides no
+M1-issued, M5-verifiable identity capability that would distinguish this
+Gateway-backed callback from an arbitrary path-string callback. Strict mode
+therefore fails closed, but the allowed read is unavailable.
 
 The M2 adapter accepts only the registered tool ID, exactly one `path`
 argument, a path in its fixed allowlist, and a valid signal. Unknown IDs,
@@ -25,11 +36,12 @@ files itself or expose Gateway operator controls.
 ## Evidence
 
 `check-security-gateway-adapter.mjs` checks the M2 adapter with the M2
-branch-local compiled router and an M1 Gateway fixture. It verifies that an
-allowed file read goes through M1 Gateway once, while the adapter's own
-allowlist rejects tested sensitive/outside aliases and malformed or
-unregistered calls before M1 dispatch. Those alias results are M2 adapter
-rejections; this checker alone does not establish that M5 denied the calls.
+branch-local compiled router in lexical mode and an M1 Gateway fixture. It
+verifies that an allowed fixed read dispatches once through M1 with a plain
+string path and an AbortSignal. The adapter's own allowlist rejects tested
+sensitive/outside aliases and malformed or unregistered calls before M1
+dispatch. Those alias results are M2 adapter rejections; this checker does not
+establish M5 strict-mode behavior or that M5 denied the calls.
 
 The M9 synthetic composition test
 `exact M1/M2/M5 sources enforce OBSERVE hard-deny before adapter dispatch`
@@ -41,18 +53,45 @@ decisions for direct sensitive paths, workspace aliases, and an outside
 junction alias in OBSERVE raise M5 `PolicyBlockedError` before the M2 callback
 or M1 Gateway dispatch. The focused case passed 1/1. This test uses synthetic
 filesystem fixtures and its own scope comment explicitly says it does not
-prove a production host hookup.
+prove a production host hookup. It pins older M1/M2/M5 sources and is not
+current PR #47 strict-mode composition evidence.
 
-Focused M2 checks passed:
+The current M5 PR #47 source at `e3662e9` contains the regression
+`realpath mode fails closed for path-based file reads and keeps safe HTTPS GET
+available`; it asserts `path_execution_not_pinned` and zero file callback
+calls for `verifyRealPaths:true`. Exact-head CI run `39500126875` passed 9/9.
+The M2-only `test-adapter-call-shape.mjs` run verifies that M2 emits the plain
+path-string callback shape and denies unregistered inputs before its mock M1
+dispatcher. Together these are source- and test-based compatibility evidence,
+not a cross-branch runtime composition test.
+
+Previously recorded baseline M2 checks (before this report/checker update):
 
 - `npm run build`
 - `node execution-isolation/gateway-adapter/check-security-gateway-adapter.mjs`
 
+Current update verification on Node.js v22.23.1:
+
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs` — 3/3 passed.
+- `git diff --check` — passed.
+- The M2 branch-local build/checker was not rerun: this worktree has no
+  `node_modules` or `dist`. Dependencies were not installed.
+
+## Host/build call-site audit
+
+At M2 head `9db59ed8f2deae905edcb2179982f8bcb594167c`, a code-only search finds
+the adapter definition and its M2 checker; no `src/`, CLI, server, or other
+first-party product entry imports or calls it. Root `package.json` publishes
+`dist/index.js`, exports only `./sdk`, and its package file allowlist contains
+`dist` and documentation, not `execution-isolation/`. No supported in-repo
+host/build entry consuming this adapter was found. This does not rule out an
+external consumer; none is evidenced here.
+
 ## Limits and Issue #52 status
 
 The tested M2-to-M1 route delegates an allowed read to M1's registered
-Gateway held-fd path. This does not show that a first-party product host calls
-the adapter. No such production host consumer was found in the M2 source
+Gateway held-handle path. This does not show that a first-party product host
+calls the adapter. No such production host consumer was found in the M2 source
 search. It also does not establish protected-open behavior in a production
 host or prove that TOCTOU is eliminated.
 
@@ -64,6 +103,25 @@ equivalent to protected-open. It is separate from the M2-to-M1 Gateway route
 tested above and does not prove production exposure or that the product is
 wired through that generic callback.
 
-Accordingly, Issue #52 remains open. Production alias protection and
-first-party host integration remain `NOT_VERIFIED`; no AppContainer, native
-Shell, or installed-hook protection is claimed here.
+### Adapter plan and exact interface gap
+
+Without a shared API change, the bounded synthetic route is M5 lexical mode
+only for the M2 fixed-read callback, with M2 exact-path allowlisting and M1
+Gateway as the sole file executor. This does not satisfy strict M5
+`verifyRealPaths:true` and is not a product-host integration claim.
+
+To retain strict mode while permitting a registered read, the owner-approved
+contract needs an opaque, host-only M1-issued capability bound to a registered
+file identity/held object, plus an M5 router input that verifies that
+capability for that specific callback and revalidates it at execution. M2 can
+then adapt fixed tool IDs to the capability without exposing an OS handle or
+accepting model-supplied capability data. Current exact gaps: M5 callback
+context carries only `{ signal }`; M2 forwards a path string; and M1's held
+descriptor identity is not represented in a capability M5 can verify. M1 owns
+Gateway capability semantics, M5 owns policy/router semantics, and M0 must
+coordinate any public contract change. No M1/M5 code was changed here.
+
+Accordingly, Issue #52 remains OPEN/P0. Production alias protection,
+first-party host integration, protected-open evidence, and TOCTOU acceptance
+remain `NOT_VERIFIED`; no AppContainer, native Shell, or installed-hook
+protection is claimed here.
