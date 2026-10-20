@@ -4813,3 +4813,13 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M2 的代码搜索未发现产品 src/CLI/server 调用点；package 的 exports/file allowlist 也不包含 execution-isolation adapter。Issue #52 comment 已由 M2 更新，结论仍 OPEN/P0/NOT_VERIFIED，native Codex Shell 仍 UNPROTECTED。当前宿主支持状态仍待 M3/产品宿主所有者确认。
 - M2 本地未运行完整 build/checker（缺 node_modules 和 dist）；新 PR 头的 hosted CI 尚待 push 后核验。不能以旧 PR #37 exact-head CI 替代新 commit 验证。
 - M1 尚无本轮代码改动；M1 继续在原工作树评估 test-only fair scheduling experiment，生产锁、500 retry cap 和全部断言不变。
+
+## M1/M3 双模块与 M2 CI 回读 — 2026-10-20 21:48 UTC
+
+- 21:44 UTC 批次普通推送读回：PR #30 M0 协调头 f024f52fcd0efb7ff8c3778b5e5de74e73733459；PR #37 M2 头 29386c312fd52d52e888c4633a1fef34ead69c09。PR #24 仍 OPEN/Draft，base/head 与原值一致；无合并或 Release。
+- PR #30 精确头 run 39502783240 的 9 个产品检查和 1 个 ownership-contract-evidence 检查全部通过；PR #37 精确头 run 39502783402 的 9/9 检查全部通过。M2 call-shape 单测 M0 独立验证 3/3。此结果只验证文档/测试变更，不等于宿主集成。
+- M2 的代码审计和 #52 更新确认：PR #37 中没有 first-party host consumer；M2 固定 path map 最终仍发送普通 path string；当前 M5 PR #47 strict mode 以 path_execution_not_pinned 在 callback 前拒绝。Issue #52 仍 OPEN/P0/NOT_VERIFIED，M2 当前子任务已停在待 M1/M5 capability contract；M0 将宿主接线缺口交由 M3。
+- M3 PR #33 仍 OPEN/Draft，remote head be3880298e1c6766024ecbce5f6dbc23c4d2daa1，旧 exact-head CI 9/9。M3 原线程此前等待 M0 恢复；现在已在该 UUID 恢复，并挂接本地 worktree ac3-m3-agent-onboarding 到既有 branch feature/ac3-agent-onboarding，没有新建远端分支。M3/M1 是当前两个活动模块。
+- M1 本地新增报告 commit 19ccaceb3d558b4617a78840bbccaebe381a06be，仅改 SECURITY_CORE_AUDIT.md，尚未推送；issue #51 仍 OPEN/P1/UNKNOWN。M1 正被要求纳入 Ubuntu Node20/22 x10 attempt 2 已通过的精确证据，并做或说明 test-only fair-scheduling 实验；生产锁/500 retry/48 项断言不得改变。
+- M0 在 #56 comment 6302292252 纠正 PR #30 文件清单并记录 M1 所有权：#43 为 M1 规范版本，#34 与 #47 仍有重复 M1 文件，#56 继续 OPEN。
+- Usage 页 21:46 UTC 显示 64% 五小时、84% 周；tab 保持打开。最近推送批次 21:44 UTC；下一次不早于 22:04 UTC。M0 将本检查点保存到协调报告；此处文档提交等下一批次推送。
