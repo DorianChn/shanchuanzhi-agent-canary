@@ -4765,3 +4765,22 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M6 checkout is prepared at ac3-m6-e4-review, detached at existing remote PR #38 head c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; no branch was created. The original M6 thread saved CWD is not a Git checkout, so it was instructed not to write there. M6 is queued idle until M1/M5 frees a slot; the M6 worktree remains clean.
 - M0 coordinator worktree restores test/agent-hook.test.ts to PR #30 base; this cleanup is local and will remove the M1-owned file from PR #30 after the scheduled push. The remote PR #30 still includes it at present.
 - Quota re-read at 21:01 UTC: 78% five-hour / 86% weekly. Next push window no earlier than 21:04 UTC.
+## 21:04 UTC coordinated push readback — 2026-10-20 21:05 UTC
+
+- M0 pushed 91cb7cab1f2b7d05bf8bc65005283b863d30a707 to existing PR #30. GitHub readback confirms OPEN/Draft, 14 changed files, and test/agent-hook.test.ts absent from the PR diff.
+- M1 pushed 5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96 to PR #43. Focused test/file-state-store.test.ts passed 17/17 locally; exact-head CI is running.
+- M5 pushed 7ac04a7 and bc6c409 to PR #47. Only the four M5 policy files from those commits appear in the remote PR diff. Focused tests passed 49/49 and npm run build passed locally; exact-head CI is running. The M6-owned E4 source/test remain uncommitted in M5's worktree and absent from PR #47.
+- PR #24 remains OPEN/Draft at the original base/head. PR #43 and #47 remain Draft. M6 worktree is clean/detached at c1fdf3c with no new branch; M6 remains queued while M1/M5 occupy the two active slots.
+- Quota at 21:04 UTC is 78% five-hour / 86% weekly. Next push batch no earlier than 21:24 UTC.
+## M1 Issue #51 Ubuntu Node 22 failure — 2026-10-20 21:07 UTC
+
+- Exact PR #43 head 5e9e22d CI run 39497366090 failed the Ubuntu Node 22 file-store x10 gate. M0 read the failure trace: worker 2 exhausted 500/500 retries in 1062 ms with EEXIST; 20 lock observations showed no ENOENT/stat error/identity change; state identity changed 7 times. Workers 0 and 1 each acquired/released 12 times with ownerMatch true; workers 2 and 3 never acquired and exhausted at 500. The retry sampler inferred holder worker 0 then worker 1.
+- This is evidence for possible contention starvation, not a confirmed root cause, invalid owner transition, data corruption, or protected-path bypass. Windows Node 22 local repeated runs passed 10/10; that does not resolve the Ubuntu failure.
+- M0 left Issue #51 OPEN/P1/UNKNOWN and added the exact evidence and acceptance gate at #51/6301513318. M1 was queued to analyze the actual lock implementation, reproduce on Ubuntu Node 22, and fix correctness without only raising retry limits or weakening assertions. M9 must not treat PR #43 as fully CI-green until the exact-head Ubuntu Node 22 gate passes.
+
+## M1/M5 双线程恢复 — 2026-10-20 21:10 UTC
+
+- M0 已通过本机 Codex 队列向既有 M1、M5 线程下达继续工作的指令，没有新建会话或模块分支。M1 继续追查 Issue #51 的 Ubuntu Node 22 `RETRY_LIMIT`；M5 继续处理 Issue #52/#56 的证据与逐路径接口归属，保持 M1/M6 所有权边界。
+- 两个线程均获知下一次批量推送不早于 21:24 UTC；M5 worktree 当时仅有未提交的 M6 E4 源码/测试候选，PR #47 不包含它们。M1 本地 HEAD 与远端 PR #43 同为 `5e9e22d`。
+- PR #43 的专用 Ubuntu Node 22 文件存储 x10 job `39497366090` 在精确 head `5e9e22d` 失败；触发原因仍 UNKNOWN，Issue #51 保持 OPEN/P1。PR #43 标准 CI 尚在运行。
+- PR #47 精确 head `bc6c409` 的检查除 macOS Node 20 仍排队外均通过；PR #47 仍 OPEN/Draft。PR #24 仍 OPEN/Draft，base/head 未变。

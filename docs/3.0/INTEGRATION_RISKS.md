@@ -827,3 +827,9 @@ M5/M8 produced no public result in 20:25–20:45; P0 #52/#53 remain NOT_VERIFIED
 ## M5 exact local policy checkpoint — 2026-10-20 21:02 UTC
 
 M5 commits 7ac04a7 and bc6c409 now contain only M5-owned policy source/tests. M0 focused checks passed (49/49) and build passed at this local state. Exact-head CI is not yet available because the commits have not been pushed. Two M6-owned E4 files remain dirty in the M5 worktree and are excluded from both M5 commits. M9 must validate those M5 commits only after push/CI, then integrate M6 E4 ownership separately under Issue #63.
+## M1/M5 exact-head CI after the 21:04 UTC batch — 2026-10-20 21:05 UTC
+
+M1 PR #43 head 5e9e22d and M5 PR #47 head bc6c409 are pushed. M1 local focused file-state-store suite passed 17/17; M5 local focused policy tests passed 49/49 and build passed. Exact-head CI for both commits is running. PR #47 contains no M6 E4 paths; M5 worktree still has those two paths uncommitted. M9 integration remains held pending CI, Issue #56 path disposition, and M6 Issue #63 owner validation.
+## P1 M1 state-store contention remains an M9 gate — 2026-10-20 21:07 UTC
+
+PR #43 head 5e9e22d fails exact-head Ubuntu Node 22 file-store x10 (run 39497366090). Trace shows workers 0/1 completed 12 lock acquisitions/releases each, while workers 2/3 exhausted 500 retries; one retry trace shows EEXIST throughout and lock inode stable while state identity changes. Starvation is plausible but unconfirmed. Keep Issue #51 OPEN/P1 and M9 integration blocked on the owner finding, correctness fix, preserved assertions, and a passing exact-head Ubuntu Node 22 x10 check. Windows 10/10 does not substitute for the failing Ubuntu gate.
