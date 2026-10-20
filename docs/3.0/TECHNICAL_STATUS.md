@@ -4897,3 +4897,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M0 supplied M1 the exact Ubuntu Node 22 trace from run `39497366090`: two workers exhausted 500 `EEXIST` attempts while workers 0 and 1 each completed 12 lock cycles; 20 lock-path samples showed no `ENOENT`, stat errors, or lock identity change, while state identity changed seven times. This supports possible contention starvation but does not establish root cause or data loss.
 - M1 is now instructed to inspect the lock implementation and reproduce on Ubuntu Node 22, applying a minimal correctness fix only if supported by evidence. Retry-limit-only changes, removed assertions, and weaker security are prohibited; preserve the test and require exact-head Ubuntu Node 22 x10 green before #51 can close.
 - M1 remains the first assigned slot; its #56 re-audit is documented above and the queued PR #33 owner review remains pending. M2's #52 adapter task is still queued with no new session activity observed. M3 remains parked with report-only local commits at `2a3fe35`.
+
+## M1 #51 test-only experiment — 2026-10-20 22:44 UTC
+
+- M1 created local commit `34dc6685baaa0446d9adfebe490253c1c3b2ee2e` on `feature/ac3-security-core`, now four commits ahead of PR #43. It changes only `test/file-state-store.test.ts`: the existing 500 bounded retries remain, with delay varied by worker, operation, and attempt. The production lock implementation and assertions are unchanged.
+- This is a test-scheduling experiment only; no test result or Ubuntu Node 22 reproduction is confirmed yet, and #51 remains OPEN/P1/UNKNOWN. M1 was told to report exact OS/Node/test evidence, not claim resolution, and leave publication to M0's batch preflight.
+- Usage Overview at 22:44 UTC reads 25% five-hour remaining, 14 minutes to reset, 77% weekly remaining. M2's #52 assignment remains queued without observed session activity; M3's four report-only commits remain local. No branch was pushed.
