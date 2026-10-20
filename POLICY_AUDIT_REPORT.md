@@ -117,3 +117,42 @@ M5 证据事件仍由宿主显式调用 `policyManager.recordDecision()` 写入�
 - **组合影响**：任何 M9/M2 组合若将文件调用送入 M5 且启用 `verifyRealPaths: true`，包括可能安全的 M2→M1 held-fd adapter，当前都会被拒绝；M5 无法识别该 adapter 的稳定身份绑定。HTTPS GET 非文件正向路径仍可运行。恢复文件操作需由 M0 维护的共享契约明确 M1 Gateway 身份绑定，并由 M0/M1/M5 协调 M5 如何仅路由到这条受证明的入口。
 - 定向 `test/risk-policy.test.ts` 与 `test/security-router.test.ts`：50/50；新增覆盖 OBSERVE 硬链接别名、read/write/delete 两种 M5 Router 均零 callback / fixture 不变、无审批，以及 HTTPS GET 正向控制。`npm run build` 通过，`git diff --check` 通过。
 - 这些本地 fixture 不证明真实 M1+M5 host wiring、M2 adapter 在产品 host 中实际使用 held fd、生产文件副作用或 P0 产品暴露已修复；上述仍为 **NOT_VERIFIED**。此节记录本地候选，需检查其具体 commit 和新 head CI 后才可作为 PR head 证据。
+
+## 2026-10-21 Issue #56 / #52 owner 与接口复核
+
+本节更新 PR #47 的当前 M5 证据，并覆盖上文较早的 PR/CI 状态快照。复核时本地与远端 `feature/ac3-policy-audit` 均为 `bc6c40905c67f51c96fdce132500497894a52f2a`，PR #47 base 为 `feature/agent-canary-3.0`。本节新增的是本地 M5 报告，不代表该报告已进入远端 PR 或其 CI。
+
+### Issue #56 路径清单与归属
+
+| 路径 | PR #47 / owner 处置 | M5 边界与下一步 |
+|---|---|---|
+| `src/security-router.ts` | M1 在 PR #43 的 canonical shared source；M1 明确不批准 PR #47 的共享路径例外。M1 确认当前 PR #47 集成路由可由 M5 policy-level hard gate 拒绝文件操作，但 M1 router-local gate 对 M1 独立分支仍必需。 | 不改 M1 文件。M1 canonical 实现进入 PR #47 的目标基线/集成树后，协调删除 PR #47 的重复 M1 改动；不可直接恢复旧 base 内容而丢失已验证拒绝路径。 |
+| `test/security-router.test.ts` | M1 canonical router contract test；无 M5 例外。 | router contract 留在 PR #43。OBSERVE、alias、策略 recheck 的 policy-specific 覆盖留在 M5 `test/risk-policy.test.ts`，保持 DENY、approval=0、callback=0 和合成 marker/hash 不变。 |
+| `test/agent-hook.test.ts` | M1 canonical Hook test；无 M5 例外。 | Hook/process interruption 测试留在 PR #43；PR #47 不保留重复副本。此子进程夹具不能证明 native host callback count。 |
+| `src/agent-hook.ts`、`security-lab/claude-native-hook.mjs`、`test/file-state-store.test.ts` | 三条路径同时出现在 PR #43 与 PR #47 的 changed-file inventory 中；Issue #56 对这三条尚无逐路径 owner disposition。按 M1 review-gated shared paths 处理，不推定为 M5 可自由修改。 | 暂不编辑。M1 需逐路径确认 canonical 实现/是否有 PR #47 例外，再由 M0 协调保留、迁移或删除重复改动。 |
+| `package.json` | PR #47 的共享 manifest 路径；字段组合由 M0 协调各模块 owner。 | 本次不改。任何字段合并须先由 M0 确认字段 owner、冲突结果和组合验证。 |
+| `docs/SECURITY_ROUTER_2.md` | PR #47 有改动；PR #43 changed-file inventory 不含此文件，Issue #56 未记录该文档的 owner 裁定。 | 本次不改；如需保留或移除其改动，先由 M0 指定文档 owner 并确认与 canonical API contract 的关系。 |
+| `src/risk-policy.ts`、`src/policy-management.ts`、`test/risk-policy.test.ts`、`test/policy-management.test.ts` | M5 自有策略与测试路径。 | 保留策略 hard deny、M5 OBSERVE 语义和 Gateway-final-denial 回归；不得通过共享 router/Hooks 测试替代 policy-level 测试。 |
+| `POLICY_AUDIT_REPORT.md`、`docs/RISK_POLICY.md`、其他 M5 交付报告与 `test/false-positive.test.ts` | M5 交付路径。 | 当前 owner/interface 说明放在本报告；不复制或修改 M0 canonical `docs/3.0/API_CONTRACTS.md`。 |
+
+PR #47 当前 changed-file inventory 仍包含以上 M1 明确 canonical 的三个路径及另外三条 PR #43 overlap 路径。M5 不会在本分支擅自改写或删除这些 shared paths。完成清理的前置条件是 M1 对逐路径实现给出 canonical disposition，并由 M0 确认 PR #43 的内容如何进入 PR #47 的 base/integration tree；之后 PR #47 去除重复的 M1-owned hunks，M1 canonical files 保持原样。
+
+### 兼容适配方案与跨模块验收条件（提案，未获接口批准）
+
+当前通用 `executeRealTool(ToolCall)` 只带可变路径参数，不能证明后续 callback 打开的文件身份就是 `verifyRealPaths` 检查的对象。`verifyRealPaths: true` 下 `path_execution_not_pinned` 是 `nonOverridableDeny`；M5 保持所有 path-based file-read/write/delete 在 callback 前拒绝。不得用 `OBSERVE`、调用者提供的路径、布尔 flag 或 M5 日志替代稳定的文件身份绑定。`verifyRealPaths: false` 仅保留旧词法兼容行为，不具有真实路径/受保护打开保证。
+
+建议的兼容迁移顺序如下；这只是 M5 提案，本轮没有修改共享类型、Gateway、Hook 或 host adapter：
+
+1. **M0（canonical contract owner）**定义版本化的文件执行能力契约：由可信宿主生成的不透明、不可由模型伪造的 capability/handle；明确 read/write/delete 操作、资源身份绑定、请求关联字段、失效/重放规则、DENY 与 execution result 语义。保持原有 path-only callback 为 legacy 入口并标明不满足受保护文件执行验收。
+2. **M1（Gateway owner）**在最终授权后创建或消费该 capability，并保证实际 I/O 绑定到被验证的文件身份；路径变化、身份不匹配、能力缺失或过期都必须在副作用前 DENY。PR #43 的 router-local hard gate 与最终授权不能被 M5 ALLOW 绕过。
+3. **M5（policy adapter owner）**只在 M0/M1 接口经 owner review 后实现最小 adapter：保留 M5 确定性策略与 `nonOverridableDeny`，仅将 Gateway 颁发且与此次调用绑定的能力转交给受信执行入口；不能回落到 path-only callback。接口缺失/验证失败仍 fail closed。M5 继续在 `test/risk-policy.test.ts` 覆盖 OBSERVE 不豁免、别名拒绝、callback 前 recheck 和审计结果一致性。
+4. **M2（产品 host/adapter owner，待其确认）**证明受支持产品构建中的真实调用点消费该能力并走 M1 Gateway；合成 callback 或测试 adapter 不满足该项。
+
+跨模块变更只有在各 owner 确认对应项后才可开始。验收至少需要：M0 contract/type conformance；M1 对 alias、junction、路径替换/reopen 竞态的拒绝和绑定执行证据；M5 ALLOW 不覆盖最终 Gateway DENY 且失败不误记为执行成功；M2 first-party host callsite 的受支持构建集成；正向安全文件读取控制；拒绝前 approval/callback 为 0、拒绝后 synthetic marker/hash 不变；目标平台 exact-head CI 通过。受保护打开的具体 OS 原语由 M1 根据目标平台设计并由 M2 在产品 host 证明，M5 不在此指定未经审查的平台 API。
+
+### Issue #52 当前 M5 证据与限制
+
+- PR #47 exact head `bc6c40905c67f51c96fdce132500497894a52f2a` 的本地 M5 命令 `node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts` 为 49/49；`npm run build` 通过。该证据适用于此已推送 head，不代表本节未推送的报告提交。
+- Exact-head CI run `39497372437` 的本次读取为 7 项通过（Ubuntu Node 20/22、Windows Node 20/22、macOS Node 22、`docker-build`、`sponsor-smoke`）、1 项待完成（macOS Node 20）。CI 尚未全绿，不能标为最终完成。
+- sensitive alias、workspace-to-outside junction、hard-link alias、path recheck 测试使用 synthetic fixtures/callbacks；断言相应拒绝发生在 callback 前，approval/callback 不启动，且 synthetic marker/hash 未变。它们不证明 first-party host 已接入 M1 Gateway、实际消费已绑定文件身份或生产文件副作用受到保护。
+- 因此 Issue #52 仍为 OPEN/P0/NOT_VERIFIED；真实 host callsite、protected-open/handle 证据和生产 TOCTOU 边界均待 M2/M1 owner 验收。没有真实暴露结论。
