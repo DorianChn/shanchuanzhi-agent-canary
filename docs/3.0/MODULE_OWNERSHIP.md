@@ -476,7 +476,8 @@ All three PRs change `security-lab/claude-native-hook.mjs`, `test/agent-hook.tes
 | `src/runtime/gateway.ts`, canonical held-file API, canonical Hook semantics and `test/agent-hook.test.ts` | M1 | Owns public held-handle behavior and shared fail-closed assertions; no API change without M1 review. |
 | `execution-isolation/gateway-adapter/**` | M2 | Owns the fixed-resource adapter. Current visible calls are check scripts; M2 must not edit M1 or M3 paths. |
 | `src/codex-connection-mcp.ts`, `src/codex-connection-check.ts`, M3 onboarding tests | M3 | Owns the Codex onboarding test host. Its current Gateway self-test has `files: []` and fixed callbacks; it does not prove protected user-file access or native-tool coverage. |
-| `src/security-router.ts`, `src/risk-policy.ts`, their M5-owned policy tests | M5 | Owns policy/router semantics and alias decisions; the caller callback must not be treated as a held-file guarantee. |
+| `src/security-router.ts`, `test/security-router.test.ts` | M1 | Owns the canonical protected-path router and fail-closed tests; M5 changes to these shared paths require M1 review. |
+| `src/risk-policy.ts`, `test/risk-policy.test.ts` | M5 | Owns policy semantics and alias decisions; the caller callback is not a held-file guarantee. |
 | `.github/workflows/m9-cross-module-composition.yml` | M9 | Owns exact-source pins and composition gates; do not update workflow from an M2/M3 lane. |
 
 For Issue #52, the current proposed composition boundary is M3 host -> M5 router -> M2 fixed-resource adapter -> M1 Gateway held-file dispatch. This is a scheduling/interface candidate only, not an owner-approved public API or evidence that the route is implemented. M2 and M3 have separate 11:38–11:58 assignments; each must stay within its owned paths. #52 remains OPEN/P0/NOT_VERIFIED.
@@ -526,3 +527,9 @@ At 21:36, PR #38/#39 and their review lists were still unchanged. M0 posted #59/
 ## M6/M7 lane end — 2026-10-19 21:40 UTC
 
 The 21:20–21:40 ownership-only slot ended with no public M6/M7 owner decision, blocker, PR movement, or review. No ownership transfer is recorded. The proposed M6 E4/test and M7 packaging boundaries remain unconfirmed; `packaging/windows/build-contract.mjs` lacks a named owner and `.gitattributes` purpose/owner is unresolved. M8's disposition remains separately required before closing #59 or allowing M9 to pin the combined sources. Issue receipt #59/6278012285; #59 remains OPEN/P1.
+
+## M1/M5 canonical path clarification — 2026-10-20 20:10 UTC
+
+- The preceding P0 #52 table now separates M1 canonical ownership of src/security-router.ts and test/security-router.test.ts from M5 ownership of src/risk-policy.ts and test/risk-policy.test.ts. M1 continues to own test/agent-hook.test.ts.
+- PR #47 currently changes those three M1-owned paths also present in PR #43. The security-router implementation/test patches differ; this is an ownership and integration conflict, not a verified production exploit. Keep existing PR #47 contents for owner review; do not delete or weaken tests.
+- M1 was directly queued to record a per-path disposition on #56. Until that review is visible, new M5 edits stay within its policy-owned files; no ownership transfer is inferred.

@@ -4667,3 +4667,28 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - No M1/M5 owner response, blocker, review, or source-head movement is visible since the 19:55 assignment. PR #43 remains at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; PR #47 remains at `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. Issues #52/#56 remain OPEN.
 - #61 still has no M1 source confirmation. M9 checkout pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` is distinct from current M1 PR head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; M0 leaves it unchanged pending owner confirmation.
 - Usage page remains open; 19:59 read was 87% five-hour / 87% weekly. Next M0 push no earlier than 20:03:41 UTC.
+
+## M1+M5 midpoint and latest M0 CI — 2026-10-20 20:05 UTC
+
+- At midpoint, no M1/M5 owner-authored review/evidence, blocker, or source-head movement is visible since 19:55. PR #43/#47 remain at the assigned exact heads. Reminder comments were posted and read back: #52/6300323483, #56/6300323514, #61/6300323489, PR #43/6300323458, PR #47/6300323548, scheduler #29/6300323663.
+- M0 PR #30 commit `727bf68ed3a5bce6e7683814a2d227b6840bc6be`: coordination check 39488783029 passed; product CI 39488783222 is still in progress. PR #24 remains unchanged.
+- Usage page remains open; latest read at 20:05 UTC was 87% five-hour / 87% weekly. Next M0 push no earlier than 20:23:44 UTC.
+
+## M1+M5 现有会话直连与 CI 核验 — 2026-10-20 20:10 UTC
+
+- 已通过本机 Codex CLI 向既有 M1/M5 会话排队具体任务，均返回 accepted：M1 queue 01a15aef-4cb8-7120-976a-f786b8f9a198，M5 queue 01a15aef-4cb8-7e71-8f16-868b5f7aa7fa。消息要求继续原会话/原分支，M1 裁定 PR #43/#47 三个共享路径及 #56 ownership，并在 #61 给出 M9 可消费的精确 M1 SHA；M5 仅补自身 policy 路径的 symlink/junction 拒绝证据，未获 M1 review 前不再编辑共享路径。入队不等于已开始或已完成。
+- 20:08 本地只读核验：M1 ac3-m1-security-recovery 与 M5 ac3-m5-policy-recovery worktree 当时干净，分别为 PR #43 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 与 PR #47 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c。PR 均 OPEN/Draft；当前公开评论截至 20:06 未见模块负责人裁定/结果。
+- 精确 SHA 的 GitHub CI：M1 38786461156、file-store 38786461318 均成功；M5 38719884959 成功。M0 PR #30 head 727bf68ed3a5bce6e7683814a2d227b6840bc6be 的 CI 39488783222 与协调检查 39488783029 均成功。
+- PR #24 仍 OPEN/Draft，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4、base dc8d0092b35141b295d5ff42873584ed488e4ee7 未变。Usage 页保持打开；20:08 读数 86% 五小时 / 87% 每周，高于暂停阈值。M0 下一次推送不得早于 20:23:44 UTC；#52/#56/#61 保持 OPEN，未宣称生产宿主保护或 M9 验收通过。
+
+## M0 所有权表一致性修正 — 2026-10-20 20:12 UTC
+
+- 发现 MODULE_OWNERSHIP.md 的 P0 #52 路径表把 src/security-router.ts 错归 M5，与其自身前文及共享路径表中的 M1 归属矛盾。现已拆分为 M1 负责 src/security-router.ts / test/security-router.test.ts，M5 负责 src/risk-policy.ts / test/risk-policy.test.ts；M1 继续拥有 test/agent-hook.test.ts。
+- 保留 PR #47 已有共享路径内容供 M1 审查，不删除、不覆盖；仅修正 M0 文档，无产品源码/测试改动。git diff --check 通过。
+
+## M1+M5 slot continuation — 2026-10-20 20:15 UTC
+
+- 20:15 GitHub readback仍未见 M1/M5 负责人裁定、证据或 PR head 移动；PR #43/#47 仍分别为 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 / 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c。M1/M5 现有会话分别收到续跑到 20:35 的队列消息：M1 01a15af4-844e-7ca2-899f-a27f53fa834e，M5 01a15af4-844d-7ba3-82b0-d20d06cdded9；这仅证明消息排队，不证明已经开工或完成。
+- GitHub Issue 任务已续派且读回：#56 comment 6300519761 给 M1 逐路径 owner disposition 和 #61 精确 source SHA；#52 comment 6300519896 给 M5 指定自有路径 synthetic alias/junction 证据，保持硬拒绝与生产宿主 NOT_VERIFIED。
+- 额度页 20:15 读数 85% 五小时 / 87% 每周，页面保持打开。PR #30 的 exact-head CI/协调检查均成功；PR #24 仍 OPEN/Draft 且 head/base 未变。M0 下一次 push 不早于 20:23:44 UTC。
+- 本机 codex queue 可向既有会话排队；codex agents 概览因当前 CLI 缺少完整本地 package 未能启动，因此不从私聊推断任务已运行，仍以 GitHub 与文件系统证据确认进度。M0 未修改任何模块源码或测试。
