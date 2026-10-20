@@ -87,6 +87,17 @@ first-party product entry imports or calls it. Root `package.json` publishes
 host/build entry consuming this adapter was found. This does not rule out an
 external consumer; none is evidenced here.
 
+Selected remote host/build review found no adapter reference in M3 PR #33 or
+M7 PR #39. M9 PR #36 at head `de3799aae540f58173acec4ab3f7a1fe98593aa7` does
+contain a call site in `test/m9-cross-module-composition.test.mjs`; the test
+explicitly labels itself synthetic and says it does not prove production host
+hookup. It checks strict-mode denial before the M2 callback and a
+`verifyRealPaths:false` fixed-read positive control. Its pinned M2 is current
+`9db59ed`, but its M1/M5 pins are older (`b1d7423` / `373e2c2`); the M5
+`src/risk-policy.ts` blob differs from current PR #47 head `e3662e9`. This is
+useful synthetic composition evidence, not a current-exact-head host/build
+consumer.
+
 ## Limits and Issue #52 status
 
 The tested M2-to-M1 route delegates an allowed read to M1's registered
