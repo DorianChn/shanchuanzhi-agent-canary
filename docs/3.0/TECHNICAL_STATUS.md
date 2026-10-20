@@ -4551,3 +4551,32 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Only M1+M5 are active 18:15–18:35 on P0 #52 via existing PR #43/#47. M1 must state exact review/contract/#56 scope; M5 must provide exact owned-path evidence or blocker. M1 P1 #51 remains queued. Assignments: #52/6297910511, PR #43/6297910512, PR #47/6297910459, scheduler #29/6297910510.
 - Quota read at 18:15 UTC: 67% five-hour / 93% weekly; usage tab remains open. Next M0 docs push no earlier than 18:22 UTC.
 - M0 PR #30 exact-head CI completed by 18:20 UTC: product run 39471246919 passed all 9 jobs including package-smoke; coordination run 39471246505 passed. PR #30 remains OPEN/Draft at `bfa671bb1009a1335d07c59d828aaf21ce0ef898`.
+- Midpoint 18:25 UTC: PR #43/#47 remain at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` / `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`; no owner review/result is visible. Checkpoint IDs: #52/6298098234, PR #43/6298098270, PR #47/6298098235, scheduler #29/6298098299. Keep only M1+M5 active to 18:35; quota 67%/93%.
+- M0 PR #30 exact-head CI completed by 18:25 UTC for commit `1be8785abb72224c86266ea4ffb51083cd71d43f`: product run 39474156535 passed all 9 jobs including package-smoke; coordination run 39474156575 passed. PR #30 stays OPEN/Draft.
+
+## Thread access and 18:28 UTC checkpoint — 2026-10-20
+
+- The current execution tool inventory has no Codex private-thread read/send/wait API. Opening the supplied M1 thread ID in the authenticated ChatGPT web session returned “no permission to access this conversation”; it was not treated as read. The temporary tab was closed; the user's usage tab remains open.
+- Coordination therefore continues only through verified GitHub Issues/PRs and repository files. At 18:28 UTC, #52 remains OPEN/P0; PR #43 and #47 remain at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` and `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`; no module-authored response or code head movement is visible after the 18:25 checkpoint.
+- Usage page re-read at 18:32 UTC: five-hour remaining 96%, weekly remaining 89%, with about 4h26m until the five-hour reset. This remains above the user's 5% stop threshold.
+
+## M9 gate snapshot — 2026-10-20 18:29 UTC
+
+- PR #36 remains OPEN/Draft at `de3799aae540f58173acec4ab3f7a1fe98593aa7`; its latest `compose-current-module-refs` checks fail on Ubuntu and Windows (run `38727481764`). Product CI, package-smoke, and wrapper regressions pass on their separate runs; these do not replace the failing composition checks.
+- P1 issues #55 (M3 native Hook unpinned-read contract) and #61 (M9 exact module pins after owner review) remain OPEN. Keep M9 composition NOT_VERIFIED and do not advance source pins without owner confirmation and current exact-ref composition.
+
+## M1+M5 lane end / M2+M3 handoff — 2026-10-20 18:35 UTC
+
+- The 18:15–18:35 M1+M5 slot ended with no owner-authored response/review or source-head change visible in GitHub. PR #43 remains `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`, PR #47 remains `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`, and #52 remains OPEN/P0/NOT_VERIFIED. Lane-end comments: #52/6298337377, PR #43/6298337992, PR #47/6298338679.
+- Only M2+M3 are active 18:35–18:55 as dependency work for #52 through existing PR #37/#33, at exact heads `9db59ed8f2deae905edcb2179982f8bcb594167c` / `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. M2 must map the exact host/build/call path consuming the held-file identity through its fixed-resource adapter; M3 must trace the Hook callsite and state the unpinned-Read decision. Each must provide focused evidence or a named blocker. M1/M5 retain all contract, policy, test, and file ownership; no security denial may be weakened. Assignment comments: PR #37/6298339315, PR #33/6298340007, scheduler #29/6298340906.
+- Quota re-read 18:32 UTC: 96% five-hour / 89% weekly. No M0 module-code edits or local test runs were made in this slot; next M0 push is no earlier than 18:42:23 UTC.
+
+## Local module checkout inventory — 2026-10-20 18:38 UTC
+
+- Read-only `git worktree list` in the active M0 repository registers AC3 worktrees for M1, M5, M8, and M9. M2/M3/M4/M6/M7 checkout independence is NOT_VERIFIED in the inspected local locations; their existing GitHub PRs remain available for coordination.
+- The expected `main` and `agents` directories in the desktop coordination root contain no checkout content. A separate `coordinator` checkout there reports 274 commits behind its local origin-tracking ref and is not used for M0 publication. No module branches/worktrees were created or changed by this check.
+
+## Draft PR base consistency — 2026-10-20 18:41 UTC
+
+- Read-only GitHub check confirms PRs #33, #34, #36, #37, #38, #39, #40, #43, and #47 are all OPEN/Draft and target `feature/agent-canary-3.0` at the same base SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- PR #24 remains OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, with its separate base branch/ref unchanged. No PR was merged.
