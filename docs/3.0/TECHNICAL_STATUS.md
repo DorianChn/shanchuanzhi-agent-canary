@@ -4910,3 +4910,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M0 pushed only existing M1 branch `feature/ac3-security-core`; PR #43 is OPEN/Draft at `34dc6685baaa0446d9adfebe490253c1c3b2ee2e`. PR #24 was not modified. Exact-head Ubuntu Node 20/22 file-store x10 jobs are pending in run `39510559958`; the product matrix, Docker build, and sponsor-smoke checks are pending in run `39510560017`.
 - M1's Issue #51 comment `6303427087` records the Windows Node 22 x10 result (10/10, 17/17 each) and the lack of local Ubuntu/WSL. #51 remains OPEN/P1/UNKNOWN; the pushed delay change is a test-only scheduling experiment, not a production lock fix. The exact-head Ubuntu result is still required.
 - This push was at 22:48 UTC; the next push batch must be no earlier than 23:08 UTC. M2's #52 task remains queued without a new session log; M3's four documentation commits remain local pending M1 Hook owner review. Usage last read at 22:48 UTC was 24% five-hour remaining, about 12 minutes to reset, and 77% weekly remaining.
+
+## M1 #51 exact-head CI progress — 2026-10-20 22:49 UTC
+
+- On PR #43 exact head `34dc6685baaa0446d9adfebe490253c1c3b2ee2e`, Ubuntu Node 22 file-store x10 passed in run `39510559958`; Ubuntu Node 22 standard suite and sponsor-smoke also passed in run `39510560017`. Ubuntu Node 20 file-store x10 and remaining matrix/build checks were still pending at the latest read.
+- This validates the test-only stagger experiment on Ubuntu Node 22 with the 500-attempt bound and assertions intact. It does not change the production lock implementation or establish a production locking defect/fix. M1 was told to keep #51 open pending remaining exact-head checks, then record the owner disposition and continue PR #33 Hook ownership review.
+- The last push remains 22:48 UTC; no further push before 23:08 UTC. M2's #52 task remains queued without observed execution; M3's report-only branch remains local pending M1 review.
