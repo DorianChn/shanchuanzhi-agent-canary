@@ -4417,3 +4417,13 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - Only M1+M3 are active 13:30–13:50 UTC on #52/#55 via existing PRs #43/#33. M1 reviews the M5 alias-denial/shared-test contract and confirms its public Hook error; M3 changes only its Hook behavior/tests and preserves a valid capability positive control. M5/M6/M7/M8/M9 are paused.
 - Handoff comments verified: #52/6292028661, PR #47/6292029688, #55/6292030556, PR #43/6292031465, PR #33/6292032145, scheduler #29/6292032830. Keep all hard denial assertions and PRs Draft.
 - Usage read 13:30 UTC: 100% five-hour / 100% weekly. M0 PR #30 remains OPEN/Draft at d612e6c8600b117dafd9dccebd21f641d119f9d8 with exact-head product CI 9/9 and coordination CI 1/1 passed. PR #24 remains OPEN/Draft at unchanged head/base. Next M0 docs push no earlier than 13:32 UTC.
+
+## M1+M3 midpoint — 2026-10-20 13:40 UTC
+- PR #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1. No owner-authored review or candidate is visible; private activity UNKNOWN.
+- Midpoint requests verified at #52/6292240608, #55/6292241274, scheduler #29/6292242143. Usage was readable at 100% / 100%. M0 PR #30 commit 9b4e8867eaa02483c76f0afe0e06b2e1cc6f374c product CI passed 9/9 and coordination CI passed 1/1.
+
+## M1+M3 lane end / M7+M8 handoff — 2026-10-20 13:50 UTC
+- The 13:30–13:50 M1+M3 slot ended without owner-authored review/result, PR movement, or candidate. PR #43 remains 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; PR #33 remains be3880298e1c6766024ecbce5f6dbc23c4d2daa1. #52 OPEN/P0 and #55 OPEN/P1; private activity UNKNOWN.
+- Only M7+M8 are active 13:50–14:10 UTC on P0 #53 via existing PRs #39/#40. M7 produces a provenance-rich unsigned package artifact; M8 validates exact packaged Hook bytes and runs the extracted-copy canary. #59's unresolved ownership boundary prohibits edits to disputed shared packaging paths. M1/M3/M5/M6/M9 are paused.
+- Handoff comments verified: #52/6292439373, #55/6292440684, #53/6292441354, PR #39/6292442097, PR #40/6292442832, #59/6292443446, scheduler #29/6292444047. No installer execution, VM, or real-model operation.
+- Usage read 13:50 UTC: 100% five-hour / 100% weekly. M0 PR #30 remains OPEN/Draft at 9b4e8867eaa02483c76f0afe0e06b2e1cc6f374c with exact-head product CI 9/9 and coordination CI 1/1 passed. PR #24 remains OPEN/Draft at unchanged head/base. Next M0 docs push no earlier than 13:52 UTC.
