@@ -4851,3 +4851,6 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 ### M3 CI completion correction — 2026-10-20 22:03 UTC
 
 The pending Windows Node 22 job completed successfully. PR #33 head `9841bd8527af724664b70dc30b0c372878c81075` now has 9/9 exact-head CI jobs green (run `39504984014`). This validates that PR's current CI matrix, but does not replace M1 owner review of the two M1-owned Hook paths or M9 composition on updated current refs.
+## Ownership correction and current M9 pin state — 2026-10-20 22:04 UTC
+
+M0 posted a correction to #55: PR #33's exact changed-file list includes both M1-owned `src/agent-hook.ts` and M1-owned `test/agent-hook.test.ts`; M1 approval is pending. Current exact-head CI is 9/9 at `9841bd8527af724664b70dc30b0c372878c81075`, but does not grant a path-ownership exception. Comment receipts: #55 `6302776992`, #61 `6302777856`, PR #36 `6302778726`. PR #36 still needs an M1 source/review pin confirmation as well as an M3 pin refresh after owner disposition.

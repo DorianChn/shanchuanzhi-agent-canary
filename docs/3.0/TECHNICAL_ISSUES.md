@@ -1486,3 +1486,6 @@ M3 has a local, uncommitted candidate edit to M1-owned Hook source/test paths af
 ### CI correction — 2026-10-20 22:03 UTC
 
 M3 PR #33 exact-head CI run `39504984014` completed 9/9 at `9841bd8527af724664b70dc30b0c372878c81075`. Windows Node 22 passed. This does not close #55: M1 owner review and current-ref M9 composition remain pending.
+### 22:04 UTC M1/M3 owner disposition update
+
+M3 PR #33 is green 9/9 at `9841bd8`, but its exact changed-file list now includes M1 Hook source/test paths. M1 owner review is pending; no approval or final integration result is inferred. M9 PR #36 remains stale and its earlier composition failure is not rerun. M0 correction is recorded in #55/#61/PR #36 comments `6302776992`, `6302777856`, `6302778726`. Next publication window is at least 22:21:22 UTC following M3's 22:01:22 UTC push.
