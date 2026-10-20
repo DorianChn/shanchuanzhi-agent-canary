@@ -125,3 +125,13 @@ M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marke
 M3 `decideAgentHook` 对 native `Read`/`Write`/`Delete` 在没有 M1 held-file capability 时返回 `deny` 与 `native_file_execution_not_pinned`；更具体的既有策略硬拒绝仍保留。M3 Hook 输入不承载该 capability，因此原生 Hook 不可因 lexical/realpath workspace 路径而直接放行。测试另以 M1 Gateway 登记并持有临时 `normal.txt`，验证受支持的 `read_file` capability 仍 `ALLOW`，与 unpinned native Hook 拒绝分开。
 
 本地验证：`npm run build` 通过；`node --import tsx --test test/agent-hook.test.ts test/gateway.test.ts` 为 34/34 通过；其中覆盖 Claude/Cursor unpinned Read 的精确拒绝原因、Wrapper 对 Read/Write/Delete 的拒绝和内容不变，以及 registered held-file Gateway positive control。M1/M9 文件未编辑。此为合成函数/子进程与临时文件验证，不证明真实宿主 callback 或原生 I/O 已受保护；M9 需在重钉 corrected M3 exact head 后通过 Ubuntu 与 Windows composition checks。
+
+### M9 run 38727481764：历史 exact-pin failure 与 owner 边界（2026-10-21）
+
+M9 PR #36 head 为 `de3799aae540f58173acec4ab3f7a1fe98593aa7`。该 run 的 composition fixture pin 了 M1 `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` 和 M3 `be3880298e1c6766024ecbce5f5dbc23c4d2daa1`。GitHub run logs 显示 Ubuntu 与 Windows 均在 `M3 native Hook denies an unpinned normal Read like the current M1 Hook` 失败：M1 返回 `deny`，M3 返回 `allow`（期望 `deny`、实际 `allow`），失败点为 `test/m9-cross-module-composition.test.mjs:101`。这准确记录了旧 M3 pin 的决策不一致。
+
+该 M9 子测试只在临时 workspace 写入 `M9_SYNTHETIC_UNPINNED_READ_FIXTURE`，并调用 M1/M3 Hook decision functions 比较返回值；没有执行真实宿主文件 callback 或读取用户文件。因此该 run 没有证明发生真实数据暴露，也不能据此推断发生过用户数据读取。
+
+版本边界：上述失败针对 M9 固定的 M3 `be388…`，不能代表当前 M3 PR head。本次报告更新时，GitHub PR #33 与本地 M3 worktree 均为 `9841bd8527af724664b70dc30b0c372878c81075`；该 head 的 `src/agent-hook.ts` `decideAgentHook` 已将未 pin native 文件操作 fail closed，返回 `native_file_execution_not_pinned`。在该 exact head 的定向回归 `node --import tsx --test --test-name-pattern="native unpinned file reads deny|supported held-file Gateway capability" test/agent-hook.test.ts` 为 2/2 通过。M9 run `38727481764` 没有测试此 head，M9 owner 仍需在审核后更新 pin 并重跑 Ubuntu/Windows。
+
+M0 ownership 表将 Hook 语义与规范断言归 M1。当前 live PR #33 的 changed-file API 同时列出 `src/agent-hook.ts` 和 `test/agent-hook.test.ts`（以及其他 M3 文件）；本节只补充 M3 报告，没有修改 Hook 实现/测试。后续如需任何 Hook 行为适配，须先取得 M1 明确 owner disposition，再沿既有 PR #33 进行获批修改。真实宿主 Hook 生效与原生 I/O 覆盖仍为 `NOT_VERIFIED`；M5 `verifyRealPaths:true` 保持 fail closed，未关闭 strict mode 或加入通用路径回退。
