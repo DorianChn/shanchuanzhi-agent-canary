@@ -57,6 +57,21 @@ test('M5 OBSERVE policy blocks sensitive file aliases and canonical path variant
   assert.equal(fs.readFileSync(secret,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
  }
 });
+test('M5 verified real-path policy denies an outside-workspace junction before the file-read callback',async()=>{
+ const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'outside-junction-risk-policy-'));
+ const root=path.join(base,'workspace'),outside=path.join(base,'outside'),sentinel=path.join(outside,'sentinel.txt');
+ fs.mkdirSync(root);fs.mkdirSync(outside);fs.writeFileSync(sentinel,'SYNTHETIC_OUTSIDE_SENTINEL');
+ const sentinelBefore=createHash('sha256').update(fs.readFileSync(sentinel)).digest('hex');
+ fs.symlinkSync(outside,path.join(root,'public'),process.platform==='win32'?'junction':'dir');
+ let callbacks=0;const guard=createAgentGuard({sessionId:'test-risk-policy-outside-junction',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+ const call={name:'read',args:{file_path:'public/sentinel.txt'}};const decision=router.inspectPolicy(call);
+ assert.equal(decision.action,'DENY');assert.equal(decision.reason,'outside_workspace');
+ await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='outside_workspace');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
+ assert.equal(fs.readFileSync(sentinel,'utf8'),'SYNTHETIC_OUTSIDE_SENTINEL');
+ assert.equal(createHash('sha256').update(fs.readFileSync(sentinel)).digest('hex'),sentinelBefore);
+});
 test('M5 rejects hard-link file aliases before approval or callback in OBSERVE',async()=>{
  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-hardlink-alias-'));
  const secret=path.join(root,'secrets','fixture.txt'),alias=path.join(root,'public.txt');fs.mkdirSync(path.dirname(secret));fs.writeFileSync(secret,'M5_HARDLINK_SECRET');fs.linkSync(secret,alias);

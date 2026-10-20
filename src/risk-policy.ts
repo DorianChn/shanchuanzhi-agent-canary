@@ -115,6 +115,11 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     // No raw args, secret values, paths or approval authority in logs.
     logEvent({ts:new Date().toISOString(),kind,sessionId:guard.sessionId,toolName:call.name,reason:d.reason,metadata:{mode,action:d.action,risks:d.risks.join(',')}},options.eventsFile);
   }
+  async function recordRecheckedDenial(call:ToolCall,decision:PolicyDecision){
+    // Managed routers use this callback to add the final recheck result to the
+    // structured evidence chain. Its return value cannot override this DENY.
+    if(options.reviewDecision)await options.reviewDecision(call,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}));
+  }
   function sweep(){for(const [id,p]of pending)if(p.expires<Date.now())pending.delete(id);}
   function classify(call:ToolCall):PolicyDecision {
     const a=call.args??{},d=tools.get(call.name),risks:ToolRisk[]=[];
@@ -174,7 +179,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     if(options.verifyRealPaths){
       const current=classify(call);
       if(current.action!==decision.action||current.reason!==decision.reason||current.risks.length!==decision.risks.length||current.risks.some((risk,index)=>risk!==decision.risks[index])){
-        const changed={...current,action:'DENY' as const,reason:'execution_boundary_changed'};audit('policy_blocked',call,changed);throw new PolicyBlockedError(changed);
+        const changed={...current,action:'DENY' as const,reason:'execution_boundary_changed'};await recordRecheckedDenial(call,changed);audit('policy_blocked',call,changed);throw new PolicyBlockedError(changed);
       }
     }
     // A failed sensitive callback may have read data before throwing. Retain taint.
@@ -214,7 +219,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       pending.delete(requestId); // consumed before any asynchronous callback
       const gd=guard.beforeToolCall(p.call);if(!gd.allowed)throw new CanaryBlockedError(gd);
       // Reassess cross-tool taint after waiting; a previously safe network request may now be denied.
-      const fresh=classify(p.call);if(fresh.action==='DENY'){audit('policy_blocked',p.call,fresh);throw new PolicyBlockedError(fresh);}
+      const fresh=classify(p.call);if(fresh.action==='DENY'){await recordRecheckedDenial(p.call,fresh);audit('policy_blocked',p.call,fresh);throw new PolicyBlockedError(fresh);}
       audit('policy_approval_granted',p.call,p.decision);
       return execute(p.call,p.decision);
     });},
