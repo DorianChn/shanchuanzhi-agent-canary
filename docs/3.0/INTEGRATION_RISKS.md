@@ -817,3 +817,13 @@ PR #40's changed paths cross M1, M6, and M7 ownership boundaries; packaging/wind
 ## M0 checkpoint — 2026-10-19 04:45 Asia/Shanghai
 
 M5/M8 produced no public result in 20:25–20:45; P0 #52/#53 remain NOT_VERIFIED. The M8 Hook blob matches M1, but shipped payload is unknown. PR #40 still has cross-owner M1/M6/M7 path changes and no review entries as of the read-only audit. M7/M8 are paired for 20:45–21:05 to establish per-file disposition; M9 must remain Draft until M1/M6/M7 signoff and package evidence are present.
+## M9 integration hold: M1/M5 shared paths and M6 E4 handoff — 2026-10-20 20:51 UTC
+
+- Remote PR #43 head 38a09a073ea8871036e60a62b160fdb376487b20 is OPEN/Draft; M0 focused security-router test 21/21 and exact-head Actions checks 11/11 pass.
+- Remote PR #47 remains OPEN/Draft at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; its checks pass, but current M5 uncommitted edits have not been validated at a commit/CI head. The PR still overlaps M1-owned security-router, security-router tests, and agent-hook tests.
+- M1 reported PR #43 as canonical on Issue #56. M0 verified PR #47 has a policy-level path_execution_not_pinned DENY under verifyRealPaths that is non-overridable in OBSERVE; the earlier M0 claim that PR #47 lacked any effective gate was retracted publicly. M1 must confirm the full integrated call chain and whether a duplicate router guard is required. #56 remains OPEN for owner-contract reconciliation; no PR is approved to merge.
+- M5 currently has four policy-owned modified paths plus two M6-owned E4 paths in its local worktree. M0 opened P1 Issue #63 and instructed M5 to freeze/preserve the E4 patch, never stage it in PR #47, pending M6 owner review. Do not treat M5 dirty files as M6 evidence.
+- M9 entry gate: keep PR #43/#47 Draft; reconcile #56; hand off or resolve #63 within M6 ownership; validate only exact, clean module commits with focused tests and exact-head CI; then re-run M9 interface/packaging integration checks. No integrated release readiness is claimed.
+## M5 exact local policy checkpoint — 2026-10-20 21:02 UTC
+
+M5 commits 7ac04a7 and bc6c409 now contain only M5-owned policy source/tests. M0 focused checks passed (49/49) and build passed at this local state. Exact-head CI is not yet available because the commits have not been pushed. Two M6-owned E4 files remain dirty in the M5 worktree and are excluded from both M5 commits. M9 must validate those M5 commits only after push/CI, then integrate M6 E4 ownership separately under Issue #63.

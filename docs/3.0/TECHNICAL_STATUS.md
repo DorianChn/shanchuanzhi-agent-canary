@@ -4692,3 +4692,76 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - GitHub Issue 任务已续派且读回：#56 comment 6300519761 给 M1 逐路径 owner disposition 和 #61 精确 source SHA；#52 comment 6300519896 给 M5 指定自有路径 synthetic alias/junction 证据，保持硬拒绝与生产宿主 NOT_VERIFIED。
 - 额度页 20:15 读数 85% 五小时 / 87% 每周，页面保持打开。PR #30 的 exact-head CI/协调检查均成功；PR #24 仍 OPEN/Draft 且 head/base 未变。M0 下一次 push 不早于 20:23:44 UTC。
 - 本机 codex queue 可向既有会话排队；codex agents 概览因当前 CLI 缺少完整本地 package 未能启动，因此不从私聊推断任务已运行，仍以 GitHub 与文件系统证据确认进度。M0 未修改任何模块源码或测试。
+
+## M0 定时文档推送 — 2026-10-20 20:23:56 UTC
+
+- 按 20 分钟节奏推送 docs-only commit b7307c7208a804bac7c4ffb88ad6af3e01a88db3 至现有 PR #30；仅 MODULE_OWNERSHIP.md 与 TECHNICAL_STATUS.md 两份 M0 协调文档变更，推后工作区干净。
+- PR #30 读回 OPEN/Draft，head 为 b7307c7208a804bac7c4ffb88ad6af3e01a88db3，base 仍为 62496d4020bd90ba2eede49b2e80a2bbebb036b4。新 exact-head CI 39491647371 与协调检查 39491647395 已排队，暂不记通过。
+- PR #24 读回 OPEN/Draft，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4、base dc8d0092b35141b295d5ff42873584ed488e4ee7，均未变。Quota 20:24 为 85%/87%，usage tab 保持打开；下一次 M0 push 不早于 20:43:56 UTC。
+
+## M0 exact-head CI follow-up — 2026-10-20 20:26 UTC
+
+- PR #30 head b7307c7208a804bac7c4ffb88ad6af3e01a88db3 的产品 CI 39491647371 已于 20:25:56 UTC 完成并成功；协调检查 39491647395 已成功。只验证本次 M0 文档提交通过仓库工作流，不替代各模块验收。
+- 20:26 M1/M5 worktree head 仍分别为 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 / 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c，未见本地改动；GitHub 最新可见任务评论仍为 M0 的 20:15 指派，尚无模块负责人结果。双模块槽继续至 20:35。
+- PR #24 未动。M0 本地仅有本次 push 后 TECHNICAL_STATUS.md 的追加状态记录；下一次 push 不早于 20:43:56 UTC。
+
+## M1+M5 原线程恢复与 20:35 检查点 — 2026-10-20 20:35 UTC
+
+- 仅用 codex queue 时消息被接受但无可见执行。M0 改为恢复用户已有的原 M1/M5 会话（原 thread UUID、无新线程），分别在既有 ac3-m1-security-recovery / feature/ac3-security-core 与 ac3-m5-policy-recovery / feature/ac3-policy-audit worktree 运行。两边现已从已有队列接续任务；M1 TUI 已调用 GitHub 拉取 PR #47 src/security-router.ts 精确补丁并在核对共享测试，M5 TUI 已接收并解释 M0 续派任务。这里记录的是可见工具活动，不是任务完成。
+- M1 先要求 M0-RESUME 后才核实指定目录；M0 在 20:34 只读确认其 worktree 正确、clean、HEAD 为 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 后发送恢复令牌。M5 原线程也恢复到正确 M5 worktree。20:35 两边分支 head 仍原样，尚无新源码、提交、公开 owner 回复。
+- 额度页 20:35 读数 83% 五小时 / 87% 每周，页面保持打开。保持仅 M1+M5 两槽；模块 push 最早 20:43:56 UTC。PR #52/#56 与 #61 仍待模块负责人结果。
+
+## 现有 M1/M5 会话实际运行确认 — 2026-10-20 20:36 UTC
+
+- 通过本机 codex --no-daemon resume 恢复原 thread UUID，而非创建新任务；M1 会话确实调用 GitHub 拉取 PR #47 的 src/security-router.ts 精确 patch，随后进入共享测试审查。M5 会话当前进度显示在分析 risk-policy 路径和处理本地依赖检查；尚无新提交或公开 owner 结果。20:35 只读核对两边仍 clean、head 未变。
+- 为启动既有 worktree 接受了 Codex 文件夹信任提示；保存的信任范围是仓库根 C:/Users/36712/Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4，授权该项目代码按该 Codex 会话现有权限读取/编辑/运行，不涉及系统级或其他目录设置。
+- 20:35 额度读数 83% 五小时 / 86% 每周，usage tab 保持打开。M1+M5 继续为唯二活动模块；模块 push 最早 20:43:56 UTC。
+
+## M5 policy-path ownership expanded from PR inventory — 2026-10-20 20:38 UTC
+
+- Exact changed-file readback confirms PR #47 owns the unique M5 paths src/risk-policy.ts, src/policy-management.ts, test/risk-policy.test.ts, and test/policy-management.test.ts; PR #43 changes none of these. MODULE_OWNERSHIP now lists all four under M5, consistent with its broader policy/audit owner row.
+- M5's current uncommitted edits are confined to those four M5 paths. The earlier active instruction naming only risk-policy files is clarified: policy-management changes are in-scope for M5; all M1-owned shared paths remain protected pending M1 disposition.
+- No M0 product-code edits. M1 review remains active; M5 is gathering its exact test/evidence result. git diff --check will be rerun before the next M0 documentation push.
+
+## M5 所有路径说明公开更正 — 2026-10-20 20:38 UTC
+
+- 已在 PR #47 留下 M0 ownership correction comment 6300962497 并通过 GitHub 读回确认：M5 可继续修改其 PR 唯一路径 src/policy-management.ts 与 test/policy-management.test.ts，以及 risk-policy 对应文件；M1 shared paths 仍待 M1 disposition。没有要求回退 M5 当前本地改动。
+
+## M1+M5 live code progress — 2026-10-20 20:39 UTC
+
+- 原 M1 worktree 现有未提交改动仅在 M1 所有的 src/security-router.ts、test/security-router.test.ts；原 M5 worktree 未提交改动在已核实为 M5 独有的 src/risk-policy.ts、src/policy-management.ts 与两份对应测试。两边均未改变分支 HEAD，且未跨改对方所有路径。
+- M1/M5 当前正在原会话中并行处理，尚未有提交或公开 owner disposition/evidence。Quota 20:39 为 81% 五小时 / 86% 每周，usage tab 保持打开；模块 push 仍不得早于 20:43:56 UTC。
+## M1 batch pushed; M5/M6 ownership review opened — 2026-10-20 20:46 UTC
+
+- M1 local commit 38a09a073ea8871036e60a62b160fdb376487b20 was pushed at 20:43:58 UTC to the existing feature/ac3-security-core branch / PR #43. PR readback remains OPEN/Draft on that exact head. Local focused command node --import tsx --test test/security-router.test.ts passed 21/21; diff --check passed. Exact-head Actions run 39494532355 and file-store run 39494532475 are now all green (11 checks). No PR #24 change.
+- Opened cross-module owner-review Issue #63 for concurrent Auto E4 stage integrity. M5's worktree contains an uncommitted patch in M6-owned packaging/windows/auto-e4.mjs and test/auto-e4.test.mjs. M0 asked M5 to freeze those files and preserve the diff, not stage/commit/reset it. This is an owner-review request; M0 has not independently verified an external/released defect.
+- M5 continues its four policy-owned files; current worktree also has the two M6 E4 paths. M0 queued the ownership stop instruction. No commit or push includes the E4 paths. M1 continues only in its own paths and Issue #56 review.
+- Quota re-read at 20:46 UTC: 78% five-hour / 86% weekly. M1 and M5 remain the only active module slots; next batch no earlier than 21:04 UTC.
+## M1 shared-path review accepted — 2026-10-20 20:49 UTC
+
+- Read back M1 owner comment #56/6301069620. M1 confirms PR #43 is canonical for src/security-router.ts, test/security-router.test.ts, and test/agent-hook.test.ts; no M5 shared-path exception. M1 initially noted the router-local guard is absent from PR #47 src/security-router.ts. M0 then verified PR #47 src/risk-policy.ts has the effective nonOverridable path_execution_not_pinned DENY for verifyRealPaths filesystem operations, and OBSERVE does not waive it; dispatch blocks before the callback. M0 publicly corrected the earlier overstatement on #56/6301168041. M1 is re-auditing whether the policy-level gate satisfies the integrated contract or the additional router-local guard is required.
+- M0 acknowledged this disposition on #56/6301130536, read back successfully. Acceptance: M5 preserves the M1 pre-callback gate, keeps policy OBSERVE coverage in M5-owned policy tests, and records exact path reconciliation before #56 closes. PR #47 remains OPEN/Draft with shared paths pending reconciliation.
+- M0 queued the path-by-path guard and #63 E4 ownership hold to M5. No acknowledgement is visible yet; the two M6 paths remain uncommitted in the M5 worktree, with no commit or push including them. M5 continues reviewing its modified files.
+## Correction to M1 shared-path risk interpretation — 2026-10-20 20:50 UTC
+
+- M0 checked PR #47 head 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c directly. Although its shared security-router.ts lacks M1's router-local unpinned guard, its M5-owned risk-policy.ts classifies filesystem operations under verifyRealPaths as non-overridable DENY(path_execution_not_pinned); OBSERVE does not waive that denial and dispatch blocks before executeRealTool. PR #47 exact-head checks were green at the check.
+- M0 corrected its prior #56 comment in #56/6301168041 and queued M1 to re-audit the integrated call chain. No branch-level fail-open or production exposure is established by this evidence. #56 remains OPEN for owner-contract reconciliation, not an unverified P0 claim.
+- Current five-hour / weekly usage at 20:48 UTC was 78% / 86%; usage tab remains open. M1 and M5 stay the only active module sessions.
+## M0 PR #30 scope cleanup prepared — 2026-10-20 20:56 UTC
+
+- M1's follow-up owner review confirmed PR #30 still included M1-owned test/agent-hook.test.ts. M0 verified the exact PR #30 diff was +36/-6 against base 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
+- In the coordinator worktree only, M0 restored this file to the exact PR base version. This removes the M0 branch copy from PR #30 once pushed; it does not change the M1 worktree or M1 PR #43 canonical file. The restoration is local and pending the 21:04 UTC push batch.
+- The original test remains in the target base, and M1's canonical changes remain on PR #43. M0 did not remove tests from the main development branch.
+## Module checkpoints before the next batch — 2026-10-20 20:57 UTC
+
+- M1 posted follow-up #56/6301272432: the integrated PR #47 route is protected by M5 risk-policy's non-overridable path_execution_not_pinned denial; M1 router-local gate is still needed on standalone PR #43's base. M1's policy test proves zero callback/approval and unchanged markers across both router types and all three filesystem operations. M1 confirms the M0 correction and keeps #56 OPEN for M5/M0 reconciliation, including the M1-owned Hook file in PR #30.
+- M5 local commit bc6c409 contains exactly four M5-owned policy files and is one commit ahead of origin. The two E4 files remain uncommitted; no M6 path is in bc6c409. M0's focused M5 test attempt failed only during environment setup: M5 worktree lacks tsx; using M1 node_modules then lacked @modelcontextprotocol/sdk from the M5 source. No test assertion ran. M5 was queued to install the lockfile-defined dependencies locally, then run its focused suite/build and report before any push.
+- M0 restored test/agent-hook.test.ts in the coordinator worktree to PR #30's exact base version, removing the M0 branch copy from the eventual PR diff. The remote PR still includes it until the next scheduled batch. No M1 worktree or PR #43 file changed.
+- Quota 78% five-hour / 86% weekly at 20:55 UTC. Next push window remains 21:04 UTC; M5 push is gated on exact local test/build evidence.
+## 双模块 checkpoint 与 M6 checkout 待命 — 2026-10-20 21:02 UTC
+
+- M5 本地 branch feature/ac3-policy-audit ahead by 2 commits: 7ac04a7 and bc6c409. The committed diff contains exactly src/policy-management.ts, src/risk-policy.ts, test/policy-management.test.ts, and test/risk-policy.test.ts. M0 ran node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts from the M5 worktree: 49/49 passed; npm run build passed. These commits are local only; PR #47 remote remains at 373e2c2 and exact-head CI for the new commits is pending. packaging/windows/auto-e4.mjs and test/auto-e4.test.mjs remain uncommitted M6-owned paths in the M5 worktree.
+- M1 is actively changing only M1-owned test/file-state-store.test.ts for Issue #51 lock diagnostics; current diff is 14 additions / 10 deletions, with the existing assertion preserved and diagnostics expanded. M1 has been asked to run the focused regression and report; result is pending.
+- M6 checkout is prepared at ac3-m6-e4-review, detached at existing remote PR #38 head c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9; no branch was created. The original M6 thread saved CWD is not a Git checkout, so it was instructed not to write there. M6 is queued idle until M1/M5 frees a slot; the M6 worktree remains clean.
+- M0 coordinator worktree restores test/agent-hook.test.ts to PR #30 base; this cleanup is local and will remove the M1-owned file from PR #30 after the scheduled push. The remote PR #30 still includes it at present.
+- Quota re-read at 21:01 UTC: 78% five-hour / 86% weekly. Next push window no earlier than 21:04 UTC.
