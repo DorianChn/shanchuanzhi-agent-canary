@@ -122,4 +122,24 @@ PR #47 当前 head e3662e9ca7363504eea7dd5e3262352018519a56 与 PR #43 的共享
 - test/agent-hook.test.ts（不同）：M1 规范副本保留中断 marker、无 decision/output/log 断言及 Hook 策略/脱敏覆盖。中断子进程不能观测进程外 native host callback；不把该 fixture 描述成端到端 callback 计数证明。
 - test/file-state-store.test.ts（不同）：确认 M1 为 owner/canonical。M1 all-worker failure-only trace 汇总 child 状态、重试桶与 open/unlink owner 时序；保留 500/2 ms 和 48 状态断言。M5 的并行采样副本应由协调方移除或按 M1 版本协调，不能替换其诊断覆盖。
 
-当前 PR 路径清单：#30 不含 Hook 测试；#34 仍含 Hook wrapper 与 test/agent-hook.test.ts；#43/#47 含上述六个 M1 路径。#56 当前正文关于 PR #30 携带 Hook 测试的说法已过期，应由协调方更新；在 #34/#47 重复路径协调完成前保持 OPEN。
+当时的 PR 路径清单是早期快照；其中“#30 不含 Hook 测试”的结论已被下节 2026-10-21 的协调方 blob inventory 更正。当前文件级 owner disposition 以该 inventory 和下节的 ref/blob 一致性限制为准。
+
+## M1 owner checkpoint — #51 failure trace and shared-path disposition（2026-10-21）
+
+### #51：新增 M4 精确复现签名的对照
+
+- M4 run `38698635434` / Ubuntu 24.04 / Node `20.20.2` / job `116301121869` 使用 PR #34 merge SHA `0237411d3b63531b8164da9c04bfcbd140630afa`。test 163 的几何为 4 个独立进程各执行 12 次 quarantine 调用；worker 2 的外层 `STATE_STORE_BUSY` 循环达到 500 次、每次等待 2 ms 后以 `RETRY_LIMIT` 失败。日志没有 `AC3_LOCK_TRACE`，因此不能从该旧 job 重建失败瞬间的锁持有者或持有时长。
+- 同一几何的当前 M1 failure-only trace 已在测试代码中实现。当前 Windows Node `22.23.1` 定向运行通过 1/1（子测试 `980.9615 ms`，整个命令 `1432.9705 ms`），失败专属 trace 未触发。此前 Ubuntu Node 20/22 的有界重复也曾通过；另一次 instrumented Ubuntu Node 22 运行则记录 worker 2/3 各自耗尽 500 次 `EEXIST`，约 `1062/1067 ms`，20 个锁采样均未出现 stat error，owner 仅按独占 open/unlink 事件推断且未见区间重叠。这些不同结果说明触发间歇，不能证明根因或数据丢失。
+- 本次没有修改测试或生产代码；48 个 quarantine/state 检查、500 上限、2 ms 退避和 fail-closed 行为均保持。根因仍为 UNKNOWN。精确 blocker 是旧 M4 job 没有失败时 trace，当前可用本机是 Windows；下一步应在当前 M1 诊断测试上跑 Ubuntu Node 20/22 定向 CI，并保留失败时四 worker 汇总。不能把旧无 trace 失败与一次本机通过合并成已修复结论。
+
+### #56：M1-owned 重叠文件的 canonical disposition
+
+以下按协调方提供的当前 PR blob inventory 判定；blob 仅标识文件版本，不单独证明语义等价。M1 的 owner-canonical 变更来源为 PR #43；其他 PR 对同一路径的副本属于待协调快照，不得覆盖 M1 的硬拒绝和 deny-before-side-effect 语义。
+
+| M1-owned path | PR overlap / supplied blob | M1 disposition |
+| --- | --- | --- |
+| `test/agent-hook.test.ts` | #30 `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d`; #33 `4adf0827643fa7eedd865e9b550fab380a724b05`; #34 `e8ae8202492fc44fbb13c7ee855198ac8e62f436`; #43 `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`; #47 `15f42f7d647b5fc403cc312d7c7dbfc421fa86f1` | #43 is the M1 canonical source. Keep its interruption marker, no-allow/no-callback, hard-deny and redaction assertions. #30/#33/#34/#47 must reconcile by porting only needed distinct coverage onto the M1 version; do not delete or weaken the M1 assertions. |
+| `src/security-router.ts` | #43 supplied `8581ba8ed7df31bf1e9db1fcc707c1dbdcb209b3`; #47 `a9a3e9f8b90e7db6a466352c37e2dee066abaa47` | #43 is the M1 canonical owner path. Preserve hard deny before approval/callback, unpinned path rejection, and real-path checks. #47’s alias-component checks may be retained only if they compose without changing these deny semantics. No overlap was listed for #30/#33/#34. |
+| `test/security-router.test.ts`, `src/agent-hook.ts`, `security-lab/claude-native-hook.mjs`, `test/file-state-store.test.ts` | Previously reviewed as #43/#47 shared paths; no new blob IDs supplied in this checkpoint | Keep the M1 PR #43 behavior and assertions canonical. Reconcile #47 additions without replacing deny-before-effect, Hook failure, or all-worker lock diagnostics. |
+
+There is a ref/blob consistency blocker for an exact current-head review: the supplied #43 router blob `8581ba8...` differs from the blob read earlier from the live/local PR #43 head `5e9e22d...` (`183d1f8443498568e9d49143e746f0bc274faa2c`). The ownership disposition above is stable, but the canonical router blob must be rechecked against a single agreed PR head before declaring the content-level reconciliation complete. The earlier statement that #30 did not contain `test/agent-hook.test.ts` is superseded by the supplied inventory. No M5/M3 file was edited.
