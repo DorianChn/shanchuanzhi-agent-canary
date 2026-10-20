@@ -4591,3 +4591,17 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - The 18:35–18:55 M2+M3 slot ended with no owner-authored result/review or source-head movement visible. PR #37 remains `9db59ed8f2deae905edcb2179982f8bcb594167c`; PR #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. #52 remains OPEN/P0/NOT_VERIFIED. Lane-end comments: #52/6298724103, PR #37/6298724763, PR #33/6298725411.
 - Only M7+M8 are active 18:55–19:15 on P0 #53 through existing PR #39/#40 at `cf4b70f5130175582fffdfc65bd7c6847450867b` / `c1ff677cc56cd159cc983042e5dfcec5dc93f3ad`. M7 is assigned build-only Windows artifact creation/upload with exact SHA; M8 is assigned a synthetic caller-data log canary against that exact artifact. Keep disputed #59 paths and installer/VM/real-model work out of scope. Assignment comments: #53/6298726135, PR #39/6298726855, PR #40/6298727550, scheduler #29/6298728246.
 - Usage page at 18:55 UTC: 94% five-hour / 88% weekly. Next M0 push no earlier than 19:02:44 UTC.
+
+## M7+M8 midpoint and M0 CI — 2026-10-20 19:05 UTC
+
+- No M7/M8 owner result, source-head movement, Windows artifact, or same-artifact canary is visible at midpoint. Comments: #53/6298917521, PR #39/6298918483, PR #40/6298919333, scheduler #29/6298920060. The assignment remains active through 19:15; #53 stays OPEN/P0.
+- M0 PR #30 head `6dd86a3fc7cbd25d4115a5191d37dccb2ec94d71`: coordination check 39480166640 passed; product CI 39480166658 was still in progress at 19:04 UTC. Do not infer final CI until completion.
+- Next M0 push no earlier than 19:23:27 UTC.
+- Follow-up 19:06 UTC: product CI 39480166658 and coordination check 39480166640 both passed for the exact M0 head.
+
+## M7+M8 lane end / M1+M5 handoff — 2026-10-20 19:15 UTC
+
+- The 18:55–19:15 M7+M8 slot ended with no owner-authored result, PR-head movement, Windows artifact, or same-artifact canary visible. The latest branch workflow runs remain from 2026-10-15; #53 stays OPEN/P0/NOT_VERIFIED. Lane-end comments: #53/6299156068, PR #39/6299157195, PR #40/6299158082.
+- Only M1+M5 are active 19:15–19:35 on P0 #52 via existing PR #43/#47. M1 must review M5's exact shared test/contract and give the fail-closed/positive-control disposition plus #56 ownership decision; M5 must provide focused alias/outside-workspace deny evidence or a precise blocker. Keep all M1/M5 ownership and hard-deny semantics intact. Assignment comments: #52/6299158874, PR #43/6299159796, PR #47/6299160719, #56/6299161649, scheduler #29/6299162474.
+- Quota at 19:14 UTC: 93% five-hour / 88% weekly. Next M0 push no earlier than 19:23:27 UTC.
+- At 19:18 UTC, no M1/M5 owner-authored result/review or PR-head movement was visible after assignment. PR #43/#47 remain at the same exact heads recorded above. Usage page re-read: 92% five-hour / 88% weekly.
