@@ -4626,3 +4626,44 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - #55 and #61 remain OPEN/P1. No production-host, installer, or external E4 acceptance is inferred. Browser usage page remains open; reads were 90% five-hour / 88% weekly at 19:36 UTC and 89% / 88% at 19:42 UTC, above the user's <5% pause threshold.
 - M9 also received an independent #49 root-contract sync assignment alongside M3: current M0 root blob `6bea2d681a716e1381a173b313a249a3f8325550` differs from M9 root blob `693d437856a2d879983de4fb16497090128aa1d9`; the M1 nested contract remains identical at `4574c872da3e239973903266710efd47bc3c5d38`. Comment receipts: #49/6299784082 and PR #36/6299783857; both were read back after the connector returned 403 and the authenticated GitHub CLI posted them.
 - Next M0 push no earlier than 19:43:39 UTC.
+
+## M3+M9 midpoint — 2026-10-20 19:45 UTC
+
+- Since the 19:35 assignment, no owner-authored code result, blocker, or source-head movement is visible. PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; PR #36 remains at `de3799aae540f58173acec4ab3f7a1fe98593aa7`; both remain OPEN/Draft. #55 and #49 remain OPEN.
+- Midpoint reminders were posted and read back: #55/6299881982, PR #33/6299882225, #49/6299882055, PR #36/6299882072, #61/6299882014, scheduler #29/6299882279. M3 must report its exact candidate or blocker by 19:55; M9 is tasked to sync only the M0-owned root API contract and preserve the matching M1 nested blob, then report exact-head checks.
+- For M0 PR #30 commit `39223265ba49f62e78be09debb6f045c53f9b874`, coordination check 39485931842 passed; product CI 39485931787 remains queued. PR #24 head/base remain unchanged. Usage page read at 19:42 UTC: 89% five-hour / 88% weekly. Next M0 push no earlier than 20:03:41 UTC.
+
+## CI follow-up and next high-priority lane — 2026-10-20 19:48 UTC
+
+- M0 PR #30 exact-head product run 39485931787 remains queued overall; Ubuntu 20/22, Windows 20/22, Docker build, and sponsor-smoke jobs passed; macOS 20/22 jobs remain queued. No overall product-CI pass is claimed yet. Coordination check 39485931842 passed.
+- Existing M1 PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` has passing CI 38786461156 and file-store concurrency run 38786461318. Existing M5 PR #47 head `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c` has passing CI 38719884959. These are current exact-head results; no new source movement is implied.
+- P0 #52 remains OPEN/NOT_VERIFIED. M1+M5 are the next pair for 19:55–20:15, focused on M1 review of the shared M5/M1 test and canonical fail-closed contract, plus M5 alias-boundary evidence on owned paths. Preserve all security assertions and require owner review for M1-owned paths.
+- Usage remains above pause threshold at last read: 89% five-hour / 88% weekly at 19:42 UTC. Next M0 push no earlier than 20:03:41 UTC.
+
+## M3+M9 and M0 CI status — 2026-10-20 19:49 UTC
+
+- PR #33 remains at `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`; PR #36 remains at `de3799aae540f58173acec4ab3f7a1fe98593aa7`. No new M3/M9 owner response or source movement is visible since the 19:45 midpoint.
+- M0 product run 39485931787: Ubuntu 20/22, Windows 20/22, Docker, and sponsor-smoke pass; both macOS jobs are now in progress. Overall CI is not yet complete. Usage page remains open; 19:49 read was 89% five-hour / 87% weekly.
+- Keep next M0 push no earlier than 20:03:41 UTC.
+
+## M0 exact-head verification and lane handoff — 2026-10-20 19:51 UTC
+
+- M0 PR #30 commit `39223265ba49f62e78be09debb6f045c53f9b874`: product CI 39485931787 completed successfully (9/9 jobs, including package-smoke); coordination check 39485931842 passed. PR #24 remains OPEN/Draft at its unchanged head/base.
+- M3/M9 still have no owner-authored result, blocker, or source-head movement visible since 19:35; PR #33/#36 remain unchanged and #55/#49 remain OPEN. End the current pair at 19:55 and rotate to M1+M5 on P0 #52, preserving ownership constraints.
+- Usage page remains open; latest read at 19:51 UTC was 88% five-hour / 87% weekly. Next M0 push no earlier than 20:03:41 UTC.
+
+## M1+M5 P0 lane — 2026-10-20 19:55 UTC
+
+- M3+M9 ended the 19:35–19:55 slot with no public owner result/blocker or source-head movement; PR #33 remains `be3880298e1c6766024ecbce5f6dbc23c4d2daa1` and PR #36 remains `de3799aae540f58173acec4ab3f7a1fe98593aa7`. Lane-end receipts: #55/6300121067 and #49/6300120986. Both issues remain OPEN.
+- Only M1+M5 are active 19:55–20:15 on P0 #52, with M1-owned review/disposition also requested for #56 and exact source-SHA confirmation for #61. M5 is tasked for focused symlink/junction/outside-workspace denial evidence on owned paths. Assignment receipts: #52/6300121048, PR #43/6300121035, PR #47/6300121001, #56/6300121206, #61/6300121086, scheduler #29/6300120961.
+- Current source heads remain M1 `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` and M5 `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`; their latest CI runs pass (M1 38786461156 + 38786461318; M5 38719884959). No rerun unless a head changes. Keep #52 OPEN until both M1 review and M5 evidence are verified; synthetic results do not establish production-host protection.
+- M9 workflow direct readback at PR #36 head `de3799aae540f58173acec4ab3f7a1fe98593aa7` (workflow blob `af6873cb9af8a83a0f75a30b54125061ddb1e7f0`) checks out M1 source `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` but separately records owner-review SHA `f14aab781c62db60ac241d2114f543f6cac223ae`; they are not assumed equivalent. M1 exact-source confirmation requested via #61/6300139742 and PR #36/6300139765.
+- GitHub ancestry compares show `f14aab781c62db60ac241d2114f543f6cac223ae` is 4 commits behind the checked-out M1 pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc`; current M1 PR #43 head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4` is another 4 commits ahead of that pin. Owner confirmation is still required before M9 changes the consumed pin. Evidence comments: #61/6300172072, PR #36/6300172039.
+- M0 compared the exact PR #47/#43 patch for shared `test/agent-hook.test.ts`: both replace the unpinned-file fixture and interruption regression with identical denial/interruption assertions; PR #43 additionally adds the normalized allowlisted-log test. This identifies duplicated ownership, not a contradictory test result. M1 disposition requested on #56/6300157833; no assertion deletion or weakening is proposed.
+- Usage page remains open; 19:55 read was 88% five-hour / 87% weekly. Next M0 push no earlier than 20:03:41 UTC.
+
+## M1+M5 pre-push status — 2026-10-20 19:59 UTC
+
+- No M1/M5 owner response, blocker, review, or source-head movement is visible since the 19:55 assignment. PR #43 remains at `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; PR #47 remains at `373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c`. Issues #52/#56 remain OPEN.
+- #61 still has no M1 source confirmation. M9 checkout pin `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` is distinct from current M1 PR head `9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4`; M0 leaves it unchanged pending owner confirmation.
+- Usage page remains open; 19:59 read was 87% five-hour / 87% weekly. Next M0 push no earlier than 20:03:41 UTC.
