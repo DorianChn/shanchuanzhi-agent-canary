@@ -4916,3 +4916,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - On PR #43 exact head `34dc6685baaa0446d9adfebe490253c1c3b2ee2e`, Ubuntu Node 22 file-store x10 passed in run `39510559958`; Ubuntu Node 22 standard suite and sponsor-smoke also passed in run `39510560017`. Ubuntu Node 20 file-store x10 and remaining matrix/build checks were still pending at the latest read.
 - This validates the test-only stagger experiment on Ubuntu Node 22 with the 500-attempt bound and assertions intact. It does not change the production lock implementation or establish a production locking defect/fix. M1 was told to keep #51 open pending remaining exact-head checks, then record the owner disposition and continue PR #33 Hook ownership review.
 - The last push remains 22:48 UTC; no further push before 23:08 UTC. M2's #52 task remains queued without observed execution; M3's report-only branch remains local pending M1 review.
+
+## M1 #51 exact-head CI complete — 2026-10-20 22:51 UTC
+
+- Exact PR #43 head `34dc6685baaa0446d9adfebe490253c1c3b2ee2e` is green: Ubuntu Node 20 and Node 22 file-store x10 both passed in run `39510559958`; the full platform matrix, Docker build, package-smoke, and sponsor-smoke passed in run `39510560017`.
+- M1 has been asked to post a precise #51 owner disposition distinguishing the test-scheduling fix from production lock behavior, then perform the queued read-only ownership review of PR #33 Hook changes at `9841bd8`. #51 remains OPEN pending M1's final issue update; M9 remains blocked on the separate Hook ownership and real-host composition gates.
+- M2's Issue #52 adapter message remains queued with no observed session activity. M3's four report-only commits are still local and await M1's owner review. Last push: 22:48 UTC; next push no earlier than 23:08 UTC.
