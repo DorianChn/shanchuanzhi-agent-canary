@@ -867,3 +867,7 @@ The M3 push occurred at 22:01:22 UTC, earlier than the scheduled 22:04 batch. No
 ### M1 + M3 coordination delta — 2026-10-20 22:08 UTC
 
 M1's test-only lock trace is committed locally and the focused concurrency test passes 1/1, but the pre-existing M4 CI retry failure remains unresolved. M3 has documented the M1-owned Hook/test overlap in issue #55 comment `6302851065`; explicit M1 owner disposition and exact-ref M9 reruns remain required. PR #33's current exact-head CI is green, but does not resolve the ownership or product-host integration risks.
+
+### P0 host-path finding — 2026-10-20 22:14 UTC
+
+M1 confirmed the current OBSERVE console uses a virtual executor; the separate temporary-file demo reaches Gateway but not the product OBSERVE/M2/M5 path. A first-party host-to-held-file binding remains NOT_VERIFIED. M0 routed the desktop host entrypoint to M4 and retained M2/M5/M1 responsibilities for adapter, policy and Gateway respectively. Issue #52 evidence: comment `6302972946`. M9 exact-ref composition and alias/path-replacement no-side-effect evidence remain required.

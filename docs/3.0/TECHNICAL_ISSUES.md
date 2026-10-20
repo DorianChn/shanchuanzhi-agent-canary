@@ -1495,3 +1495,9 @@ M3 PR #33 is green 9/9 at `9841bd8`, but its exact changed-file list now include
 - **#51, P1 — quarantine lock retry exhaustion:** M1's focused diagnostic test passed 1/1 on its local branch (`4743771`). The existing M4 CI failure remains open; the new test result is not evidence that the CI failure or production lock behavior is fixed.
 - **#55, P0 — unpinned native Hook file access:** M3's comment `6302851065` now states the M1-owned path overlap and requires M1 file-level review. M1's ACCEPT/REJECT and exact M9 source SHA are still pending; PR #36 has not been repinned or rerun.
 - Publication stays held until the 22:21:22 UTC batch window. No issue is closed by this checkpoint.
+
+### 2026-10-20 22:14 UTC — #52 owner/path routing
+
+- **#52, P0:** M1's trace found no production OBSERVE host callback reaching M2/M5/M1's held-file path; the demo executor is virtual and the real temporary-file demo bypasses M2 and M5. M0 recorded evidence in comment `6302972946` and routed desktop console host selection to M4, adapter dispatch to M2, policy enforcement to M5, and Gateway/held-file semantics to M1. Keep OPEN / NOT_VERIFIED until the actual host/build entrypoint and exact-head security evidence exist.
+- **#55, P0:** M3 comment `6302902883` records PR #33 at `9841bd8`, 34/34 focused tests and CI 9/9; M1 review of M1-owned Hook/test changes remains a hard gate. Do not repin M9 yet.
+- **#51, P1:** M1's test-only diagnostic commit passes five repeated local runs; the prior M4 CI failure remains unresolved and root cause UNKNOWN.
