@@ -4264,3 +4264,20 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M0 PR #30 exact head 4df9586bbaa404685da78e3843ed6bcdff621dae: product workflow 39363159136 failed Ubuntu 22 test #163 with RETRY_LIMIT; AC3 workflow 39363159118 succeeded. Failure is linked to existing OPEN/P1 #51, comment 6282516076; no rerun or weakening.
 - Local Agent-Canary-Dev inventory at 03:19 showed main/agents/integration empty and only the coordinator worktree registered; that worktree is clean but 274 commits behind origin and contains 1 local-only commit. The separate active coordinator checkout is synchronized at 4df9586. No M1–M8 worktree status can be inferred from private sessions.
 - Usage 03:24 UTC: 96% five-hour / 57% weekly. Next M0 push no earlier than 03:33 UTC.
+
+## Midpoint checkpoint — 2026-10-20 03:35 UTC
+- M0 PR #30 exact head 37651fc45e0bbe79d157c725f05125e0c19e6d23 passed product CI 39364938291 (10/10 checks) and AC3 coordination CI 39364938270; receipt #30/6282731005. PR #24 remains unchanged.
+- M2+M5 #37/#47 remain at 9db59ed8f2deae905edcb2179982f8bcb594167c / 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c with no public owner response or current-slot workflow. #52 remains OPEN/P0/NOT_VERIFIED.
+- Usage read 03:35 UTC: 78% five-hour / 54% weekly. M2+M5 slot ends 03:44 UTC; M0 next docs push no earlier than 03:53 UTC.
+
+## Parallel M2+M5 task assignment — 2026-10-20 03:38 UTC
+- Posted and read back owner-scoped instructions on existing PR #37 and #47. M2 owns the fixed-read preflight contract/proposal and accurate callback-vs-Gateway counters; M5 owns safe consumption in router/policy/tests. Both retain hard-deny requirements and may not trust model-supplied or mutable authorization.
+- Exact heads remain #37 9db59ed8f2deae905edcb2179982f8bcb594167c and #47 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; no code movement yet. #52 stays OPEN/P0/NOT_VERIFIED. Private activity outside public GitHub/filesystem evidence is UNKNOWN.
+- Usage read 03:37 UTC: 78% five-hour / 54% weekly. No exclusive resource used; next slot review at 03:44 UTC.
+## Lane transition — 2026-10-20 03:44 UTC
+- M2+M5 ended without a module-authored result, candidate SHA, or exact-current-source focused test. PR #37/#47 heads unchanged; #52 stays OPEN/P0/NOT_VERIFIED. M0 task comments on both PRs and lane-end comment #52 were read back. Private activity remains UNKNOWN.
+- Only M1+M3 are active 03:44–04:04 UTC: M1 traces P1 #51 bounded lock retries without weakening assertions/bound; M3 resolves P1 #55 unpinned native Read fail-closed with a supported-capability positive control. Instructions verified on PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 and #33 head be3880298e1c6766024ecbce5f6dbc23c4d2daa1. M9 must not repin early.
+- Usage read 03:44 UTC: 78% five-hour / 54% weekly. No VMware, installer, or real-model test is reserved. PR #24 remains unchanged.
+## M1+M3 midpoint — 2026-10-20 03:49 UTC
+- PR #43/#33 exact heads remain 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4 / be3880298e1c6766024ecbce5f6dbc23c4d2daa1; no candidate SHA or owner result is public. Existing green runs predate this slot and do not close #51/#55.
+- Usage 03:49 UTC: 78% five-hour / 54% weekly. No exclusive resource used.
