@@ -4784,3 +4784,10 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - 两个线程均获知下一次批量推送不早于 21:24 UTC；M5 worktree 当时仅有未提交的 M6 E4 源码/测试候选，PR #47 不包含它们。M1 本地 HEAD 与远端 PR #43 同为 `5e9e22d`。
 - PR #43 的专用 Ubuntu Node 22 文件存储 x10 job `39497366090` 在精确 head `5e9e22d` 失败；触发原因仍 UNKNOWN，Issue #51 保持 OPEN/P1。PR #43 标准 CI 尚在运行。
 - PR #47 精确 head `bc6c409` 的检查除 macOS Node 20 仍排队外均通过；PR #47 仍 OPEN/Draft。PR #24 仍 OPEN/Draft，base/head 未变。
+## 21:20 UTC M1/M5 issue evidence checkpoint
+
+- M1's current #51 comments report a clean `feature/ac3-security-core` worktree at `5e9e22d`, one Windows Node 22 focused pass, and no product/test source change. The exact-head Ubuntu Node 22 x10 run remains failed; M1's diagnostic trace shows workers 0/1 acquired and released successfully while workers 2/3 exhausted retries. M1 still marks the underlying cause UNKNOWN.
+- M0's source-path observation is public in #51 comment `6301732663`: product `transaction()` maps `EEXIST` to `STATE_STORE_BUSY` immediately; the fixed 2 ms / 500-retry loop is in the test worker. Test-side scheduling starvation is a hypothesis only. M1 is asked to evaluate a minimal test retry-scheduling change without altering the 500 bound, four-process semantics, or all 48 assertions.
+- M5 posted a six-path PR #43/#47 overlap table on #56. Exact changed-file lists confirm all six listed paths overlap. M5 requests no ownership exception; three paths still need M1 canonical-content disposition. PR #47 remains OPEN/Draft and still contains the overlap.
+- M0 added #52 evidence comment `6301691524`: PR #47 exact-head CI has seven passes and macOS Node 20 pending; local fixture evidence is synthetic; supported M2 host consumption of an identity-bound Gateway capability remains unverified. Issue #52 stays OPEN/P0/NOT_VERIFIED.
+- M0 and M5 have docs-only commits locally queued for the 21:24 UTC batch. M5's E4 changes remain uncommitted and excluded from its M5 commit. No PR #24 change; M9 integration remains held on #51/#52/#56 and exact-head CI.
