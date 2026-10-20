@@ -138,12 +138,69 @@ jobs:
           $sourceHookBlobSha = (& git rev-parse "HEAD:$sourceHookPath").Trim()
           $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()
           if ($sourceHookBlobSha -ne $packagedHookBlobSha) { throw 'PACKAGED_HOOK_BLOB_MISMATCH' }
+          $canonicalHookBlobSha = 'd6f93249306b7966259cab463dd39475728ef338'
+          if ($sourceHookBlobSha -ne $canonicalHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }
+          $sourceHookBytes = [System.IO.File]::ReadAllBytes($sourceHookPath)
+          $packagedHookBytes = [System.IO.File]::ReadAllBytes($packagedHookPath)
+          $hookBytesIdentical = $sourceHookBytes.Length -eq $packagedHookBytes.Length
+          if ($hookBytesIdentical) {
+            for ($i = 0; $i -lt $sourceHookBytes.Length; $i++) {
+              if ($sourceHookBytes[$i] -ne $packagedHookBytes[$i]) { $hookBytesIdentical = $false; break }
+            }
+          }
+          if (-not $hookBytesIdentical) { throw 'PACKAGED_HOOK_BYTE_COMPARISON_FAILED' }
 
           New-Item -ItemType Directory -Path $artifactRoot | Out-Null
+          Copy-Item -LiteralPath $installerPath -Destination (Join-Path $artifactRoot 'AgentCanary-Community-Setup.exe')
           Copy-Item -LiteralPath $payloadManifestPath -Destination (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json')
+          $extractedHookRoot = Join-Path $artifactRoot 'extracted-hook'
+          New-Item -ItemType Directory -Path $extractedHookRoot | Out-Null
+          $hookArtifactPath = Join-Path $extractedHookRoot 'claude-native-hook.mjs'
+          $harnessArtifactPath = Join-Path $extractedHookRoot 'e4-hook-faults.mjs'
+          Copy-Item -LiteralPath $packagedHookPath -Destination $hookArtifactPath
+          Copy-Item -LiteralPath 'packaging/windows/e4-hook-faults.mjs' -Destination $harnessArtifactPath
+
+          $payloadNodeExe = Join-Path $payloadRoot 'runtime/node.exe'
+          if (-not (Test-Path -LiteralPath $payloadNodeExe -PathType Leaf)) { throw 'PACKAGED_NODE_MISSING' }
+          $rawCanaryOutputPath = Join-Path $workRoot 'canary-raw-output.json'
+          $rawCanaryErrorPath = Join-Path $workRoot 'canary-raw-error.txt'
+          $oldTemp = $env:TEMP
+          $oldTmp = $env:TMP
+          try {
+            $env:TEMP = $workRoot
+            $env:TMP = $workRoot
+            & $payloadNodeExe $harnessArtifactPath "--app-root=$payloadRoot" 1> $rawCanaryOutputPath 2> $rawCanaryErrorPath
+            $canaryExitCode = $LASTEXITCODE
+          } finally {
+            $env:TEMP = $oldTemp
+            $env:TMP = $oldTmp
+          }
+          if ($canaryExitCode -ne 0) { throw 'EXTRACTED_HOOK_CANARY_FAILED' }
+          $rawCanary = Get-Content -LiteralPath $rawCanaryOutputPath -Raw | ConvertFrom-Json
+          if ($rawCanary.status -ne 'PASS' -or $rawCanary.positiveControl.decision -ne 'allow' -or -not $rawCanary.positiveControl.logContractSatisfied -or -not $rawCanary.sideEffects.protectedVictimUnchanged -or $rawCanary.sideEffects.unsafeCallbackStarts -ne 0 -or $rawCanary.faultCases.Count -ne 7) { throw 'EXTRACTED_HOOK_CANARY_ASSERTION_FAILED' }
+          $workRootPrefix = [System.IO.Path]::GetFullPath($workRoot).TrimEnd([char[]]@('\','/')) + [System.IO.Path]::DirectorySeparatorChar
+          $fixtureRoot = [System.IO.Path]::GetFullPath([string]$rawCanary.root)
+          if (-not $fixtureRoot.StartsWith($workRootPrefix, [System.StringComparison]::OrdinalIgnoreCase)) { throw 'HARNESS_FIXTURE_PATH_OUTSIDE_BUILD_ROOT' }
+          Remove-Item -LiteralPath $fixtureRoot -Recurse -Force
+          $canaryReport = [ordered]@{
+            schemaVersion = 1
+            sourceSHA = $sourceSha
+            status = $rawCanary.status
+            scope = $rawCanary.scope
+            syntheticInput = 'JSONL with synthetic argument, reason, and path canaries'
+            callerCanariesAbsent = [bool]$rawCanary.positiveControl.logContractSatisfied
+            allowControlObserved = [bool]$rawCanary.positiveControl.sideEffectObserved
+            protectedFixtureUnchanged = [bool]$rawCanary.sideEffects.protectedVictimUnchanged
+            unsafeCallbackStarts = [int]$rawCanary.sideEffects.unsafeCallbackStarts
+            faultCaseCount = [int]$rawCanary.faultCases.Count
+          }
+          $canaryReportPath = Join-Path $artifactRoot 'CANARY_RESULT.json'
+          $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+          [System.IO.File]::WriteAllText($canaryReportPath, (($canaryReport | ConvertTo-Json -Depth 4) + "`n"), $utf8NoBom)
+          Write-Output "EXTRACTED_HOOK_CANARY=PASS; CALLER_CANARIES_ABSENT=True; SOURCE_SHA=$sourceSha"
           $report = [ordered]@{
             schemaVersion = 1
-            status = 'BUILT_NOT_INSTALLED_OR_EXECUTED'
+            status = 'BUILT_PACKAGED_HOOK_CANARY_EXECUTED_INSTALLER_NOT_RUN'
             sourceSHA = $sourceSha
             communityZipSHA256 = $communityZipSha256
             nsisVersion = $nsisVersion
@@ -151,22 +208,29 @@ jobs:
             installerSHA256 = $installerSha256
             installerBytes = [long]$buildResult.installerBytes
             payloadManifestSHA256 = $payloadManifestSha256
+            canonicalHookBlobSHA = $canonicalHookBlobSha
+            hookBytesIdenticalToCanonical = $hookBytesIdentical
             hook = [ordered]@{
               path = 'claude-native-hook.mjs'
               sha256 = $packagedHookSha256
               bytes = (Get-Item -LiteralPath $packagedHookPath).Length
               sourceBlobSHA = $sourceHookBlobSha
             }
+            canaryStatus = $canaryReport.status
+            callerCanariesAbsent = $canaryReport.callerCanariesAbsent
           }
           $reportPath = Join-Path $artifactRoot 'BUILD_REPORT.json'
-          $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
           [System.IO.File]::WriteAllText($reportPath, (($report | ConvertTo-Json -Depth 5) + "`n"), $utf8NoBom)
-          $reportSha256 = (Get-FileHash -LiteralPath $reportPath -Algorithm SHA256).Hash.ToLowerInvariant()
-          $manifestArtifactSha256 = (Get-FileHash -LiteralPath (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json') -Algorithm SHA256).Hash.ToLowerInvariant()
-          $checksums = "$reportSha256  BUILD_REPORT.json`n$manifestArtifactSha256  PAYLOAD_MANIFEST.json`n"
-          [System.IO.File]::WriteAllText((Join-Path $artifactRoot 'SHA256SUMS.txt'), $checksums, $utf8NoBom)
+          $artifactPaths = @('AgentCanary-Community-Setup.exe', 'BUILD_REPORT.json', 'PAYLOAD_MANIFEST.json', 'CANARY_RESULT.json', 'extracted-hook/claude-native-hook.mjs', 'extracted-hook/e4-hook-faults.mjs')
+          $checksums = foreach ($relativePath in $artifactPaths) {
+            $absolutePath = Join-Path $artifactRoot ($relativePath.Replace('/', '\'))
+            $digest = (Get-FileHash -LiteralPath $absolutePath -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$digest  $relativePath"
+          }
+          $checksumsText = ($checksums -join "`n") + "`n"
+          [System.IO.File]::WriteAllText((Join-Path $artifactRoot 'SHA256SUMS.txt'), $checksumsText, $utf8NoBom)
 
-      - name: Upload sanitized build evidence only
+      - name: Upload pinned Windows package and sanitized evidence
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: windows-community-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
