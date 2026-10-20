@@ -1,6 +1,6 @@
 # M3 Owner Contract：宿主发现与 Agent 接入
 
-本文是 M3 所有的宿主发现、MCP 配置预览/写入/回滚及 Codex 自检接口契约；共享契约由 M0 维护，本文件不替代 docs/3.0/API_CONTRACTS.md。首次完整源码审阅对应提交 `c404b6b`，不是当前分支 HEAD；2026-10-15 的 M1/M2/M5 兼容性复核见 [ONBOARDING_TEST_REPORT.md](../../../ONBOARDING_TEST_REPORT.md)。
+本文是 M3 所有的宿主发现、MCP 配置预览/写入/回滚及 Codex 自检接口契约；共享契约由 M0 维护，本文件不替代 docs/3.0/API_CONTRACTS.md。首次完整源码审阅对应提交 `c404b6b`；2026-10-21 的 first-party host/build callsite 复核及当前 M1/M2/M5 兼容性边界见 [ONBOARDING_TEST_REPORT.md](../../../ONBOARDING_TEST_REPORT.md)。
 
 **保护状态：** Codex 项目级 MCP 写入状态为 MCP_DECOY_INSTALLED，并不代表 VERIFIED_PROTECTED。Agent Canary Gateway 只覆盖可信宿主显式登记并转交的回调。宿主原生工具、未登记回调和其他 MCP 服务器均为 OUT_OF_SCOPE。真实宿主保护和 Hook 生效状态仍为 NOT_VERIFIED，除非相应运行证据明确证明该窄路径。
 
@@ -8,6 +8,7 @@
 
 - package.json 的 SDK export map 只声明 ./sdk；宿主发现、自检及接入辅助函数是内部模块导出，不构成稳定的包子路径 API。
 - 当前 package.json 的 bin 仅声明 agent-canary -> dist/index.js。M3 竞争构建 CLI 源码入口是 src/competition.ts，本地构建后可用 node dist/competition.js 调用。独立 agent-canary-competition 命令是否包含在 Windows/发布构建中，源码和包元数据未能确认，状态为 NOT_VERIFIED。
+- Codex onboarding 写入的 MCP entry 启动 `node dist/competition.js serve --stdio`，该 server 当前只处理 Agent Canary decoy tools；它没有消费 M2 `createSecurityGatewayAdapter` 或转交用户/原生 host callbacks。`connect-check` 运行的临时 Gateway MCP 是独立合成测试入口，不等于安装后的产品 callback path。
 - src/install.ts 中既有的 installServer / uninstallServer 与 integrate、onboard、connect-check CLI 及下列 Agent Integration API 是不同接口；添加 MCP 配置不代表 Gateway 或原生工具保护。
 
 ## 2. 宿主发现
@@ -96,3 +97,4 @@ restoreAgentIntegration(record) 要求回执字段、绝对路径和宿主配置
 - M3 是上述宿主发现、Agent Integration 和接入 CLI 的接口 owner。对这些调用形状、返回字段、状态或错误语义的变更，由 M3 先更新本文件和对应实现/测试。
 - M0 的共享契约文件只保留跨模块摘要；其他模块通过适配层消费这些接口，不在其 PR 中复制或修改本文件。
 - 当前 Codex 向导、隔离自检结果及所有兼容性声明均不得覆盖 NOT_VERIFIED / OUT_OF_SCOPE 限制。真实 Claude、Cursor、Cline 端到端兼容、Windows 发布命令和原生工具保护均需独立证据。
+- M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. Current M3 product entrypoints expose no such callback binding; no generic path fallback or strict-mode opt-out is part of this M3 contract. Native-host callback protection remains `NOT_VERIFIED`.

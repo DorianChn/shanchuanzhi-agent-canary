@@ -8,7 +8,7 @@
 
 ## 结论
 
-Codex 项目级 MCP 配置向导、检测、预览、备份/收据、保守回滚和真实 Codex CLI 自检已实现。真实 Codex 工具调用已通过 Agent Canary Gateway 测试桥并留下 `ALLOW` 证据。本次 Hook 探针没有被拦截，必须标为未生效。当前接入项只添加 Agent Canary 自身的 decoy MCP，不能据此声称 Codex 原生工具已经受保护。
+Codex 项目级 MCP 配置向导、检测、预览、备份/收据、保守回滚和真实 Codex CLI 自检已实现。真实 Codex CLI 在临时配置下调用了固定合成 MCP 工具；该测试桥内部使用 Agent Canary Gateway 并留下 `ALLOW` 证据。这只证明合成测试调用路径，不证明产品宿主回调已接线或受到保护。本次 Hook 探针没有被拦截，必须标为未生效。当前接入项只添加 Agent Canary 自身的 decoy MCP，不能据此声称 Codex 原生工具已经受保护。
 
 ## M0 公共接口契约
 
@@ -94,3 +94,27 @@ M3 责任项已存在：`test/onboarding.test.ts` 文件存在，并由根 `pack
 M3 自身的状态映射、配置写入和报告继续区分 `MCP_DECOY_INSTALLED`、`GATEWAY_AND_HOOK_CONFIRMED`（仅临时探针）、`GATEWAY_CONFIRMED_HOOK_NOT_EFFECTIVE` 与 `NOT_VERIFIED`。Hook 配置元数据不证明 Hook 实现可信、已被宿主加载或真实工具调用会执行它；Codex 原生 Shell、其他原生工具及其他 MCP 服务器始终 `OUT_OF_SCOPE`。本次兼容复核未发现可复现的 M3-owned 运行时 API 不一致，因此没有改动 M1/M2/M5 接口、降低拒绝行为或改写安全测试。
 
 本次本地验证：`npm run build` 通过；`node --import tsx --test test/onboarding.test.ts test/codex-connection-check.test.ts test/agent-hook.test.ts` 为 25/25 通过；`git diff --check` 通过。没有启动真实 Codex/模型调用，也没有做宿主安装或 M3+M1 精确源码树组合 CI。
+
+## Issue #32 与 Issue #52：当前宿主接线核对（2026-10-21）
+
+源码复核快照为 M3 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`；复核时 PR #33 也指向该 head，其 CI run `38706654588` 的 9 项检查均通过。模块对照快照：M1 PR #43 `5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96`，M2 PR #37 `29386c312fd52d52e888c4633a1fef34ead69c09`，M5 PR #47 `e3662e9ca7363504eea7dd5e3262352018519a56`。这些是独立 PR 快照，不代表其代码已合并进 M3。
+
+### Issue #32 的 M3 修复状态
+
+M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marker wait、确认子进程越过 wrapper timeout 后再中断，并检查进程终止、无 spawn error、stdout/stderr 为空及没有 decision log。Issue #32 记录了 M1 对等价 marker-wait/interruption 测试形状的接受，并已关闭该合成子进程时序回归。此测试不观察真实宿主回调；`native-host callback` 仍为 `NOT_VERIFIED`。本次没有重复覆盖该测试或改动其断言。
+
+### M3 产品入口与 M1/M2/M5 调用链
+
+- `package.json` 的 `agent-canary` bin 指向 `dist/index.js`，构建为 `tsc`。M3 向导生成的项目 MCP 入口为 `node dist/competition.js serve --stdio`；`src/competition.ts` 调用 `src/server.ts` 的 decoy MCP handler，工具表来自 `DECOY_TOOLS`，调用由 `handleDecoyCall` 处理。此受支持 Codex 接入入口不导入 M2 adapter，也不创建或消费 M1 Gateway capability。
+- `connect-check` 确实运行已安装 Codex CLI，但使用临时、ephemeral 配置与独立的 `dist/codex-connection-mcp.js`。该测试服务器直接创建 M1 `createTrustedExecutionGateway`，登记固定 `public_read`/`hook_probe` 合成回调，且 `files: []`；它没有调用 M2 adapter，也不消费用户文件、原生 Codex callback 或项目刚安装的配置。因此 `ALLOW` 仅是该合成路径证据。
+- `detectAgentHosts` 只报告 CLI/configuration/Hook 元数据。M3 `src/agent-hook.ts` 的 Hook adapter 使用 M5 `createSecurityToolRouter({verifyRealPaths:true})`，其 `executeRealTool` 为 `HOOK_NEVER_EXECUTES`；它不是产品宿主 callback dispatcher，也不能证明真实宿主已安装或加载该 Hook。
+- M2 当前 `createSecurityGatewayAdapter(gateway, fixedFileReads)` 绑定精确 tool ID 与相对路径白名单，随后以 `{name:'read_file', args:{path}}` 及 `AbortSignal` 调用 `gateway.agent.dispatch`。它向 M1 传递的是路径字符串；M1 Gateway 可在其自身注册资源映射中再验证并使用已持有文件句柄，但 M3 产品入口没有该 host-owned Gateway 实例或受控回调可消费该 adapter。
+- M5 `verifyRealPaths:true` 的 router contract 明确要求文件执行绑定到已检查文件身份；其通用 `executeRealTool(call, {signal})` 形状不携带一个可由 router 验证的 M1 资源身份。由当前接口形状可知，M2 的 path-string callback 不能单独证明 strict execution binding。把 `verifyRealPaths` 关闭会退回词法路径行为；增加通用 path fallback 会绕过该 fail-closed 边界，两者均不采用。
+
+### M3 处置及剩余 owner 决策
+
+当前没有安全的 M3-only 生产适配点：Codex 向导启动的是 decoy 服务，Codex 自检是 `files:[]` 的合成 Gateway 测试服务器。M3 未改变 M1/M2/M5 代码，不复制 M2 adapter，不关闭 strict mode，也不把测试调用标成产品宿主保护。`Codex native shell` 仍为 `OUT_OF_SCOPE / UNPROTECTED`；安装配置、Hook 元数据、MCP Gateway 自检均不改变此状态。
+
+继续实现前需要：M1 定义可由消费方验证的 host/resource identity 或等价的 held-resource capability 契约；M5 owner 确认 strict router 如何消费该能力并维持路径替换/别名时 fail closed；M2 提供与该能力兼容的 adapter/backend 产品调用形状；M3 再把它接入真实 first-party callback，并以实际宿主调用验证。M0 负责确认跨模块契约与验收基线。直到上述能力和宿主调用点存在，产品宿主 callback 与原生工具保护维持 `NOT_VERIFIED`。
+
+本次本地验证（源码无运行时代码修改）：`npm ci --no-audit --no-fund` 在 M3 worktree 按 lockfile 安装 102 个包；`npm run build` 通过；`node --import tsx --test test/agent-hook.test.ts` 为 11/11 通过；`node --import tsx --test test/agent-integrations.test.ts test/onboarding.test.ts test/codex-connection-check.test.ts` 为 25/25 通过；`git diff --check` 通过。未运行真实 Codex/模型调用，未编辑其他模块 worktree，未推送。
