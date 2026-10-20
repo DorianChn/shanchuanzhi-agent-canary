@@ -116,6 +116,40 @@ test('known risky development work waits for a human even when a reviewer return
   assert.ok(router.policyManager.evidence().some(e => e.event_type === 'EXECUTION_RESULT' && e.execution_status === 'SUCCEEDED' && e.side_effect_verification === 'NOT_VERIFIED'));
 });
 
+test('a taint denial during pending approval is recorded in structured policy evidence', async () => {
+  const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
+  let callbacks = 0;
+  const router = createManagedRiskPolicyRouter({
+    guard: createAgentGuard({ sessionId: 'managed-stale-egress-approval', alert: false }),
+    workspaceRoot: workspace(), policyStorageDirectory: storage(), mode: 'BALANCED',
+    tools: { fetch_docs: { operation: 'http' }, read_secret: { operation: 'sensitive-read' } },
+    allowedReadOrigins: ['https://docs.example.test'],
+    executeRealTool: call => { callbacks++; return call.name; },
+  });
+
+  await assert.rejects(router.dispatch({
+    name: 'fetch_docs', args: { url: 'https://docs.example.test/submit', method: 'POST', body: 'public fixture' },
+  }), (error: unknown) => error instanceof PolicyBlockedError && error.decision.action === 'APPROVAL_REQUIRED');
+  const networkRequestId = router.pendingApprovals().find(item => item.tool === 'fetch_docs')!.requestId;
+
+  await assert.rejects(router.dispatch({ name: 'read_secret' }), (error: unknown) =>
+    error instanceof PolicyBlockedError && error.decision.action === 'APPROVAL_REQUIRED');
+  const secretRequestId = router.pendingApprovals().find(item => item.tool === 'read_secret')!.requestId;
+  await router.approve(secretRequestId, 'host-operator');
+  const evidenceCountBeforeStaleApproval = router.policyManager.evidence().length;
+
+  await assert.rejects(router.approve(networkRequestId, 'host-operator'), (error: unknown) =>
+    error instanceof PolicyBlockedError && error.decision.reason === 'possible_sensitive_egress');
+
+  const staleApprovalEvidence = router.policyManager.evidence().slice(evidenceCountBeforeStaleApproval);
+  assert.ok(staleApprovalEvidence.some(event =>
+    event.event_type === 'DECISION' && event.decision_source === 'DETERMINISTIC_POLICY' &&
+    event.decision === 'DENY' && event.execution_status === 'NOT_STARTED' &&
+    event.reason_code === 'possible_sensitive_egress' && event.tool_id === 'fetch_docs'));
+  assert.equal(callbacks, 1, 'only the approved sensitive read may reach the executor');
+  assert.equal(router.policyManager.verifyEvidence().valid, true);
+});
+
 test('a project rule added after initial review is rechecked before the callback starts', async () => {
   const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
   let callbacks = 0;

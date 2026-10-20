@@ -630,7 +630,7 @@ export function createManagedRiskPolicyRouter<T>(options: ManagedRiskPolicyOptio
     ...riskOptions,
     reviewDecision: async (call, decision) => {
       reviewedCalls.set(call, decision);
-      if (await manager.reviewDecision(call, decision) === 'DENY') return 'DENY';
+      if (await manager.reviewDecision(call, decision) === 'DENY' || decision.action === 'DENY') return 'DENY';
       if (hostReview) {
         try {
           if (await hostReview(call, decision) === 'DENY') {
