@@ -4253,3 +4253,14 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - M9 remains queued; PR #36 stays at de3799aae540f58173acec4ab3f7a1fe98593aa7; its recorded 6/7 composition run has an unrelated M3 native unpinned-Read failure. Do not treat the M2/M5 cases as verified integration.
 - Usage 03:03:27 UTC: 96% five-hour / 57% weekly. Next M0 docs push no earlier than 03:13 UTC.
 - 03:09 UTC readback: PR #39/#40 remain at cf4b70f5130175582fffdfc65bd7c6847450867b / c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; no newer run, head movement, or owner report is visible. Existing exact-head CI is green and does not prove package provenance or extracted-copy acceptance. Usage read in this interval: 96% five-hour / 57% weekly.
+
+## M0 CI exception — 2026-10-20 03:17 UTC
+- PR #30 exact head 4df9586bbaa404685da78e3843ed6bcdff621dae is docs-only. Product run 39363159136 failed Ubuntu 22 / Node 22.23.3 in test #163, our concurrent processes preserve every quarantine without lost writes (	est/file-state-store.test.ts): RETRY_LIMIT; 321 passed, 1 failed, 4 skipped. Remaining matrix jobs were cancelled and package-smoke skipped. AC3 coordination/ownership workflow 39363159118 passed.
+- Linked to existing OPEN/P1 M1 tracker #51; evidence comment #51/6282516076 and PR #30 receipt #6282516380. Prior docs-only head 6174a58 product CI passed. Treat as recurrent/intermittent contention evidence; do not remove or weaken the test. No rerun was initiated by M0.
+
+## Live coordination checkpoint — 2026-10-20 03:24 UTC
+- M7+M8 03:04–03:24 slot ended without public owner report, head movement, or a newer workflow. PR #39/#40 remain at cf4b70f5130175582fffdfc65bd7c6847450867b / c1ff677cc56cd159cc983042e5dfcec5dc93f3ad. Existing CI is green; Setup.exe provenance and exact extracted-Hook evidence remain NOT_VERIFIED. Lane end #53/6282603568.
+- Only M2+M5 active 03:24–03:44 UTC on #52 through PR #37/#47. Acceptance and safety constraints are in #52/6282603917; scheduler #29/6282604218. M1 P1 #51 is queued, M7/M8 paused. No exclusive resource scheduled.
+- M0 PR #30 exact head 4df9586bbaa404685da78e3843ed6bcdff621dae: product workflow 39363159136 failed Ubuntu 22 test #163 with RETRY_LIMIT; AC3 workflow 39363159118 succeeded. Failure is linked to existing OPEN/P1 #51, comment 6282516076; no rerun or weakening.
+- Local Agent-Canary-Dev inventory at 03:19 showed main/agents/integration empty and only the coordinator worktree registered; that worktree is clean but 274 commits behind origin and contains 1 local-only commit. The separate active coordinator checkout is synchronized at 4df9586. No M1–M8 worktree status can be inferred from private sessions.
+- Usage 03:24 UTC: 96% five-hour / 57% weekly. Next M0 push no earlier than 03:33 UTC.
