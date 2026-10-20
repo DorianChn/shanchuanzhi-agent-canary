@@ -9,6 +9,7 @@ on:
       - 'scripts/stability-soak.mjs'
       - 'scripts/install-nsis-compiler.mjs'
       - 'scripts/verify-installer-template.mjs'
+      - 'security-lab/claude-native-hook.mjs'
       - 'test/reliability.test.mjs'
       - 'test/auto-e4.test.mjs'
       - 'test/windows-packaging.test.mjs'
@@ -50,4 +51,127 @@ jobs:
       - run: node --check scripts/benchmark-gateway.mjs
       - run: node --check scripts/stability-soak.mjs
       - run: node --check scripts/verify-installer-template.mjs
+
+  windows-community-build-evidence:
+    needs: wrapper-regressions
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    env:
+      AGENT_CANARY_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      COMMUNITY_SOURCE_URL: https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.2/Agent_Canary_3_0_Community_Preview_975d8384.zip
+      COMMUNITY_SOURCE_SHA256: e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - name: Install pinned NSIS compiler
+        run: node scripts/install-nsis-compiler.mjs
+      - name: Build Windows Community package and sanitized evidence
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sourceSha = $env:AGENT_CANARY_SOURCE_SHA
+          if ($sourceSha -notmatch '^[a-f0-9]{40}$') { throw 'SOURCE_SHA_INVALID' }
+          $checkoutSha = (& git rev-parse HEAD).Trim()
+          if ($checkoutSha -ne $sourceSha) { throw 'SOURCE_SHA_CHECKOUT_MISMATCH' }
+
+          $nsisExe = $env:NSIS_COMPILER_PATH
+          if (-not $nsisExe -or -not (Test-Path -LiteralPath $nsisExe -PathType Leaf)) { throw 'NSIS_COMPILER_MISSING' }
+          $nsisVersion = (& $nsisExe /VERSION).Trim()
+          if ($LASTEXITCODE -ne 0 -or $nsisVersion -notmatch '^v?3\.13(?:\.|$)') { throw 'NSIS_COMPILER_VERSION_INVALID' }
+          Write-Output "Pinned NSIS compiler version: $nsisVersion"
+
+          $workRoot = Join-Path $env:RUNNER_TEMP "agent-canary-windows-build-$sourceSha"
+          $artifactRoot = Join-Path $env:RUNNER_TEMP "agent-canary-build-evidence-$sourceSha"
+          if ((Test-Path -LiteralPath $workRoot) -or (Test-Path -LiteralPath $artifactRoot)) { throw 'BUILD_OUTPUT_ALREADY_EXISTS' }
+          New-Item -ItemType Directory -Path $workRoot | Out-Null
+
+          $communityZip = Join-Path $workRoot 'community.zip'
+          Invoke-WebRequest -Uri $env:COMMUNITY_SOURCE_URL -OutFile $communityZip
+          $communityZipSha256 = (Get-FileHash -LiteralPath $communityZip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($communityZipSha256 -ne $env:COMMUNITY_SOURCE_SHA256) { throw 'COMMUNITY_ZIP_SHA256_MISMATCH' }
+
+          $nodeExe = (Get-Command node.exe -ErrorAction Stop).Source
+          $npmCli = Join-Path (Split-Path -Parent $nodeExe) 'node_modules\npm\bin\npm-cli.js'
+          if (-not (Test-Path -LiteralPath $npmCli -PathType Leaf)) { throw 'NPM_CLI_MISSING' }
+          $pythonExe = (Get-Command python.exe -ErrorAction Stop).Source
+          $buildRoot = Join-Path $workRoot 'windows-build'
+          & $nodeExe packaging/windows/prepare.mjs $buildRoot $pythonExe $npmCli $communityZip $communityZipSha256
+          if ($LASTEXITCODE -ne 0) { throw 'COMMUNITY_PAYLOAD_PREPARE_FAILED' }
+
+          $payloadRoot = Join-Path $buildRoot 'payload'
+          & $nodeExe packaging/windows/build.mjs $payloadRoot (Split-Path -Parent $nsisExe) $communityZip $sourceSha
+          if ($LASTEXITCODE -ne 0) { throw 'WINDOWS_COMMUNITY_PACKAGE_BUILD_FAILED' }
+
+          $buildResultPath = Join-Path $buildRoot 'BUILD_RESULT.json'
+          $payloadManifestPath = Join-Path $payloadRoot 'PAYLOAD_MANIFEST.json'
+          $installerPath = Join-Path $buildRoot 'AgentCanary-Community-Setup.exe'
+          foreach ($required in @($buildResultPath, $payloadManifestPath, $installerPath, "$installerPath.sha256")) {
+            if (-not (Test-Path -LiteralPath $required -PathType Leaf)) { throw 'BUILD_OUTPUT_MISSING' }
+          }
+
+          $buildResult = Get-Content -LiteralPath $buildResultPath -Raw | ConvertFrom-Json
+          $payloadManifest = Get-Content -LiteralPath $payloadManifestPath -Raw | ConvertFrom-Json
+          if ($buildResult.version.wrapperSourceSHA -ne $sourceSha) { throw 'BUILD_SOURCE_SHA_MISMATCH' }
+          if ($buildResult.version.communityZIP_SHA256 -ne $communityZipSha256) { throw 'BUILD_COMMUNITY_SHA_MISMATCH' }
+
+          $installerSha256 = (Get-FileHash -LiteralPath $installerPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($installerSha256 -ne $buildResult.installerSHA256) { throw 'INSTALLER_SHA256_MISMATCH' }
+          $installerShaReceipt = (Get-Content -LiteralPath "$installerPath.sha256" -Raw).Trim()
+          if ($installerShaReceipt -ne "$installerSha256  AgentCanary-Community-Setup.exe") { throw 'INSTALLER_SHA256_RECEIPT_MISMATCH' }
+          $payloadManifestSha256 = (Get-FileHash -LiteralPath $payloadManifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($payloadManifestSha256 -ne $buildResult.manifestSHA256) { throw 'PAYLOAD_MANIFEST_SHA256_MISMATCH' }
+
+          $sourceHookPath = 'security-lab/claude-native-hook.mjs'
+          $packagedHookPath = Join-Path $payloadRoot 'claude-native-hook.mjs'
+          $hookEntries = @($payloadManifest.files | Where-Object { $_.path -match '(^|[\\/])claude-native-hook\.mjs$' })
+          if ($hookEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $packagedHookPath -PathType Leaf)) { throw 'PACKAGED_HOOK_MISSING_OR_AMBIGUOUS' }
+          $sourceHookSha256 = (Get-FileHash -LiteralPath $sourceHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($sourceHookSha256 -ne $packagedHookSha256 -or $packagedHookSha256 -ne $hookEntries[0].sha256) { throw 'PACKAGED_HOOK_HASH_MISMATCH' }
+          $sourceHookBlobSha = (& git rev-parse "HEAD:$sourceHookPath").Trim()
+          $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()
+          if ($sourceHookBlobSha -ne $packagedHookBlobSha) { throw 'PACKAGED_HOOK_BLOB_MISMATCH' }
+
+          New-Item -ItemType Directory -Path $artifactRoot | Out-Null
+          Copy-Item -LiteralPath $payloadManifestPath -Destination (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json')
+          $report = [ordered]@{
+            schemaVersion = 1
+            status = 'BUILT_NOT_INSTALLED_OR_EXECUTED'
+            sourceSHA = $sourceSha
+            communityZipSHA256 = $communityZipSha256
+            nsisVersion = $nsisVersion
+            packageVersion = [string]$buildResult.version.desktopVersion
+            installerSHA256 = $installerSha256
+            installerBytes = [long]$buildResult.installerBytes
+            payloadManifestSHA256 = $payloadManifestSha256
+            hook = [ordered]@{
+              path = 'claude-native-hook.mjs'
+              sha256 = $packagedHookSha256
+              bytes = (Get-Item -LiteralPath $packagedHookPath).Length
+              sourceBlobSHA = $sourceHookBlobSha
+            }
+          }
+          $reportPath = Join-Path $artifactRoot 'BUILD_REPORT.json'
+          $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+          [System.IO.File]::WriteAllText($reportPath, (($report | ConvertTo-Json -Depth 5) + "`n"), $utf8NoBom)
+          $reportSha256 = (Get-FileHash -LiteralPath $reportPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $manifestArtifactSha256 = (Get-FileHash -LiteralPath (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+          $checksums = "$reportSha256  BUILD_REPORT.json`n$manifestArtifactSha256  PAYLOAD_MANIFEST.json`n"
+          [System.IO.File]::WriteAllText((Join-Path $artifactRoot 'SHA256SUMS.txt'), $checksums, $utf8NoBom)
+
+      - name: Upload sanitized build evidence only
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-community-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/agent-canary-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: error
+          retention-days: 7
+
 # Building and GUI acceptance are separate evidence, not inferred from these tests.
