@@ -1489,3 +1489,9 @@ M3 PR #33 exact-head CI run `39504984014` completed 9/9 at `9841bd8527af724664b7
 ### 22:04 UTC M1/M3 owner disposition update
 
 M3 PR #33 is green 9/9 at `9841bd8`, but its exact changed-file list now includes M1 Hook source/test paths. M1 owner review is pending; no approval or final integration result is inferred. M9 PR #36 remains stale and its earlier composition failure is not rerun. M0 correction is recorded in #55/#61/PR #36 comments `6302776992`, `6302777856`, `6302778726`. Next publication window is at least 22:21:22 UTC following M3's 22:01:22 UTC push.
+
+### 2026-10-20 22:08 UTC checkpoint
+
+- **#51, P1 — quarantine lock retry exhaustion:** M1's focused diagnostic test passed 1/1 on its local branch (`4743771`). The existing M4 CI failure remains open; the new test result is not evidence that the CI failure or production lock behavior is fixed.
+- **#55, P0 — unpinned native Hook file access:** M3's comment `6302851065` now states the M1-owned path overlap and requires M1 file-level review. M1's ACCEPT/REJECT and exact M9 source SHA are still pending; PR #36 has not been repinned or rerun.
+- Publication stays held until the 22:21:22 UTC batch window. No issue is closed by this checkpoint.

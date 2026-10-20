@@ -863,3 +863,7 @@ PR #36 still pins M1 `b1d7423` and M3 `be38802`; run `38727481764` failed the sa
 
 The M3 push occurred at 22:01:22 UTC, earlier than the scheduled 22:04 batch. No corrective force-push or rollback was made. Further publication is held until at least 22:21:22 UTC.
 **CI correction, 2026-10-20 22:03 UTC:** PR #33 exact-head run `39504984014` is now 9/9 successful at `9841bd8527af724664b70dc30b0c372878c81075`; the formerly pending Windows Node 22 job passed. The M1 owner disposition and M9 current-ref composition gate remain outstanding.
+
+### M1 + M3 coordination delta — 2026-10-20 22:08 UTC
+
+M1's test-only lock trace is committed locally and the focused concurrency test passes 1/1, but the pre-existing M4 CI retry failure remains unresolved. M3 has documented the M1-owned Hook/test overlap in issue #55 comment `6302851065`; explicit M1 owner disposition and exact-ref M9 reruns remain required. PR #33's current exact-head CI is green, but does not resolve the ownership or product-host integration risks.
