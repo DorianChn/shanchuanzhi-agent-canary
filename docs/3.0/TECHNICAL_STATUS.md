@@ -4335,3 +4335,22 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 ## M7+M8 midpoint — 2026-10-20 04:54 UTC
 - PR #39/#40 exact heads remain cf4b70f5130175582fffdfc65bd7c6847450867b / c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; latest public activity is M0 assignment. No current build/package provenance or extracted-Hook evidence is public.
 - Usage read 04:54 UTC: 78% five-hour / 54% weekly. M0 PR #30 head d7fdb25 is green; PR #24 remains unchanged.
+
+
+## M0 batch — 2026-10-20 04:54 UTC
+- Pushed docs-only commit 8b2c0c71a57d2f6dfc92b4203ea951fdf72ce9fc to PR #30. Exact-head CI was not visible at immediate readback.
+- PR #30 remains OPEN/Draft on base 62496d4020bd90ba2eede49b2e80a2bbebb036b4. PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+- Coordinator clone is clean/synchronized. Next M0 push no earlier than 05:14 UTC.
+## M7+M8 lane end / M2+M5 handoff — 2026-10-20 05:05 UTC
+- M7+M8's 04:44–05:04 slot ended with no public owner-authored artifact result, PR-head movement, or new current-head workflow evidence. PR #39/#40 remain cf4b70f5130175582fffdfc65bd7c6847450867b / c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; #53 stays OPEN/P0/NOT_VERIFIED. No Setup.exe provenance/manifest/hash, extracted Hook hash, or extracted-copy canary result is verified. Private activity is UNKNOWN; no installer, VM, or real-model test occurred.
+- Public lane-end #53 comment 6283823926 and scheduler #29 comment 6283825503; exact M7/M8 assignments remain on PR #39/#40 as comments 6283587633 / 6283588057.
+- Only M2+M5 are active 05:05–05:25 UTC on P0 #52 through existing PRs #37/#47. Assignments are verified at PR #37 comment 6283824307, PR #47 comment 6283824680, and #52 comment 6283825081. M2 must prove the held-descriptor allowed-read / alias-deny boundary or identify the missing host-trusted callsite and owner. M5 must publish owner-scoped real-path fixes and exact-head focused/build/CI evidence; preserve M1-owned shared tests for M1 review.
+- #52 records M5 local commits 268c53c2a64c155416068c96ffa0ca5543e23ae8 and dd74cbd6116b18f9072a6f6fe1fcb378fccdd917, but PR #47's exact remote head is still 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; full exact-head CI remains pending. test/security-router.test.ts has an owner-contract mismatch; M5 must not edit the M1-owned file.
+- Usage Overview read 05:04 UTC: 78% five-hour / 54% weekly. No exclusive VMware, installer, or real-model resource is reserved. Module push window no earlier than 05:08:57 UTC; next M0 docs push no earlier than 05:14 UTC.
+- M0 PR #30 remains OPEN/Draft at 8b2c0c71a57d2f6dfc92b4203ea951fdf72ce9fc; PR #24 remains OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 / base dc8d0092b35141b295d5ff42873584ed488e4ee7.
+
+## M2+M5 midpoint and M9 composition basis — 2026-10-20 05:13 UTC
+- PR #37 remains at 9db59ed8f2deae905edcb2179982f8bcb594167c and PR #47 at 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c. Since the 05:05 assignment, no public module-authored result or head movement is visible; #52 remains OPEN/P0. Private activity is UNKNOWN.
+- M9 has a concrete synthetic composition base on PR #36, exact head de3799aae540f58173acec4ab3f7a1fe98593aa7. Its composition gate is not ready to pass: it consumes stale M1 source b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc versus current M1 PR #43 head 9ef3dc265f9f386508bbeec7ff6d9a264ab1a0a4; P1 #61 tracks the approved-pin dependency. P1 #55 remains OPEN because M3's unpinned native Read behavior expects allow while the canonical M1 contract requires deny; the pinned M9 composition run 38727481764 failed that assertion on Ubuntu and Windows. No production native-host exposure is established.
+- M9 remains queued while M2+M5 use the two active slots. Resume only after the current P0 handoff is settled; then resolve M3 behavior on its owned PR and obtain M1's reviewed exact source pin before M9 updates its owned workflow/test pins. Preserve the direct deny regression and all existing hard-deny tests.
+- Usage read 05:13 UTC: 78% five-hour / 54% weekly. PR #30 stays OPEN/Draft at 8b2c0c71a57d2f6dfc92b4203ea951fdf72ce9fc; PR #24 stays OPEN/Draft at unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4.
