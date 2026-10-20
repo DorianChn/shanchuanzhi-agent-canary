@@ -536,3 +536,10 @@ The 21:20–21:40 ownership-only slot ended with no public M6/M7 owner decision,
 ## M6 checkout addition — 2026-10-20 21:05 UTC
 
 The earlier dated snapshots remain historical. Since then M0 added the detached worktree C:/Users/36712/Documents/Codex/2026-10-15/ac3-m6-e4-review at the existing remote PR #38 head c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9. This is not a new branch; the worktree is clean and detached. M6 owns packaging/windows/auto-e4.mjs and test/auto-e4.test.mjs. M5 may preserve a candidate patch in its own worktree but must not commit those paths to PR #47.
+
+## M0 file-level owner routing — 2026-10-20 22:17 UTC
+
+- **M1 canonical security paths:** `src/agent-hook.ts`, `test/agent-hook.test.ts`, `src/file-state-store.ts`, and `test/file-state-store.test.ts`, plus the Gateway/held-file contract. Any cross-module diff to these paths requires explicit M1 file-level review before it is accepted for integration.
+- **M3 onboarding paths:** onboarding/host-detection and connection-check code, onboarding reports, and `docs/3.0/M3/*`. The earlier table shorthand “Hook copy/tests” does not transfer canonical M1 Hook/test ownership. PR #33 currently changes two M1-owned Hook paths; the M1 disposition remains pending.
+- **M4 desktop console paths:** `src/ai/console-page.ts`, `src/ai/security-center-adapter.ts`, `test/runtime-console.test.ts`, and `docs/3.0/M4/*` are within M4's existing PR #34 scope. For P0 #52, M4 is accountable for naming the actual desktop OBSERVE host/build entrypoint; the precise owner of any additional host callback file must be confirmed before that file is changed.
+- **Demo boundary:** `src/ai/policy-demo.ts` uses a virtual OBSERVE executor, and `src/runtime/demo.ts` is a temporary-file Gateway demo. Neither path is accepted as evidence of a first-party OBSERVE-to-M2/M5/M1 production host integration.
