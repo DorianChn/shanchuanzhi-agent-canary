@@ -119,3 +119,9 @@ M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marke
 若要把外部宿主文件 callback 接入 M5 strict router，继续实现前需要：M1 定义可由消费方验证的 host/resource identity 或等价的 held-resource capability 契约；M5 owner 确认 strict router 如何消费该能力并维持路径替换/别名时 fail closed；M2 提供与该能力兼容的 adapter/backend 调用形状；M3 再接入真实 first-party host callback，并以实际宿主调用验证。M0 负责确认跨模块契约与验收基线。AI Console 的直接 M1 临时演示路径不解决该外部宿主接线缺口。产品宿主 callback 与原生工具保护维持 `NOT_VERIFIED`。
 
 本次本地验证（源码无运行时代码修改）：`npm ci --no-audit --no-fund` 在 M3 worktree 按 lockfile 安装 102 个包；`npm run build` 通过；`node --import tsx --test test/agent-hook.test.ts` 为 11/11 通过；`node --import tsx --test test/agent-integrations.test.ts test/onboarding.test.ts test/codex-connection-check.test.ts` 为 25/25 通过；`git diff --check` 通过。未运行真实 Codex/模型调用，未编辑其他模块 worktree，未推送。
+
+## Issue #55：native file Hook fail-closed 对齐（2026-10-21）
+
+M3 `decideAgentHook` 对 native `Read`/`Write`/`Delete` 在没有 M1 held-file capability 时返回 `deny` 与 `native_file_execution_not_pinned`；更具体的既有策略硬拒绝仍保留。M3 Hook 输入不承载该 capability，因此原生 Hook 不可因 lexical/realpath workspace 路径而直接放行。测试另以 M1 Gateway 登记并持有临时 `normal.txt`，验证受支持的 `read_file` capability 仍 `ALLOW`，与 unpinned native Hook 拒绝分开。
+
+本地验证：`npm run build` 通过；`node --import tsx --test test/agent-hook.test.ts test/gateway.test.ts` 为 34/34 通过；其中覆盖 Claude/Cursor unpinned Read 的精确拒绝原因、Wrapper 对 Read/Write/Delete 的拒绝和内容不变，以及 registered held-file Gateway positive control。M1/M9 文件未编辑。此为合成函数/子进程与临时文件验证，不证明真实宿主 callback 或原生 I/O 已受保护；M9 需在重钉 corrected M3 exact head 后通过 Ubuntu 与 Windows composition checks。

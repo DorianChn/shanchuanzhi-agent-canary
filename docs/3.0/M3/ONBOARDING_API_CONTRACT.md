@@ -28,6 +28,7 @@
 - installed 只表示发现可执行 CLI，或发现 Cline VS Code 扩展。只有 MCP 配置文件存在时 installationSource 为 configuration-only，不据此宣称宿主仍已安装或能够运行。
 - configuration 是候选路径列表，不表示文件存在；记录不返回配置值。版本通过发现的命令运行 --version；失败或无输出时为 null。Cline 扩展不会提供 CLI 版本。
 - Codex Hook 元数据只检查可解析 TOML 中 hooks.PreToolUse 的 matcher 是否含 agent-canary；Claude 只检查可解析 JSON 中 hooks.PreToolUse 是否非空。Cursor/Cline 没有 M3 Hook 配置路径。configured 不证明 Hook 属于正确实现、被宿主加载或实际执行；配置不可安全读取或解析失败时可为 null。activation 恒为 unverified。
+- `decideAgentHook` 没有接收 M1 held-file capability 的参数，因此 native `Read`/`Write`/`Delete` 不得单凭 workspace 路径获准；无 capability 时返回 `deny` 与 `native_file_execution_not_pinned`，并保留更具体的策略硬拒绝。已登记 held-file 的正向文件访问仍通过独立 M1 Gateway capability 路径，不代表 native Hook callback 已接线。
 - hooks.supported 是接口能力元数据，不是接入结论；当前 Cline 只有发现 CLI 时才标为 supported，仍没有 M3 Hook 路径或 Hook 生效证明。
 
 ### 旧接口 detectAgents(home?)
