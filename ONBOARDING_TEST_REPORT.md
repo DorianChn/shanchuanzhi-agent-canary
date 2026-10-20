@@ -97,7 +97,7 @@ M3 自身的状态映射、配置写入和报告继续区分 `MCP_DECOY_INSTALLE
 
 ## Issue #32 与 Issue #52：当前宿主接线核对（2026-10-21）
 
-源码复核快照为 M3 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`；复核时 PR #33 也指向该 head，其 CI run `38706654588` 的 9 项检查均通过。模块对照快照：M1 PR #43 `5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96`，M2 PR #37 `29386c312fd52d52e888c4633a1fef34ead69c09`，M5 PR #47 `e3662e9ca7363504eea7dd5e3262352018519a56`。这些是独立 PR 快照，不代表其代码已合并进 M3。
+历史源码复核快照为 M3 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`；复核时 PR #33 也指向该 head，其 CI run `38706654588` 的 9 项检查均通过。模块对照快照：M1 PR #43 `5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96`，M2 PR #37 `29386c312fd52d52e888c4633a1fef34ead69c09`，M5 PR #47 `e3662e9ca7363504eea7dd5e3262352018519a56`。这些是历史独立 PR 快照，不代表其代码已合并进 M3；该 M3 状态已被下文记录的 PR #33 exact head `9841bd8…` 取代。
 
 ### Issue #32 的 M3 修复状态
 
@@ -114,7 +114,7 @@ M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marke
 
 ### M3 处置及剩余 owner 决策
 
-当前没有安全的 M3-only 外部宿主适配点：Codex 向导启动的是 decoy 服务，Codex 自检是 `files:[]` 的合成 Gateway 测试服务器；AI Console 是单独的隔离演示，直接使用 M1 Gateway 操作临时 fixture，但不接管外部宿主 callback。已识别的 M3 first-party 调用点没有消费 M2 adapter。M3 未改变 M1/M2/M5 代码，不复制 M2 adapter，不关闭 strict mode，也不把内置演示或自检标成外部宿主保护。`Codex native shell` 仍为 `OUT_OF_SCOPE / UNPROTECTED`；安装配置、Hook 元数据、MCP Gateway 自检均不改变此状态。
+M3 尚无经真实宿主工具调用验证的产品 callback 入口（`NOT_VERIFIED`），当前也没有安全的 M3-only 外部宿主适配点：Codex 向导启动的是 decoy 服务，Codex 自检是 `files:[]` 的合成 Gateway 测试服务器；AI Console 是单独的隔离演示，直接使用 M1 Gateway 操作临时 fixture，但不接管外部宿主 callback。已识别的 M3 first-party 调用点没有消费 M2 adapter。PR #33 的 `9841bd8` 已修改 M1-owned `src/agent-hook.ts` 与 `test/agent-hook.test.ts`，M1 owner review pending；本次宿主入口审计未改 M2/M5 API，不复制 M2 adapter、不关闭 strict mode，也不把内置演示或自检标成外部宿主保护。`Codex native shell` 仍为 `OUT_OF_SCOPE / UNPROTECTED`；安装配置、Hook 元数据、MCP Gateway 自检均不改变此状态。
 
 若要把外部宿主文件 callback 接入 M5 strict router，继续实现前需要：M1 定义可由消费方验证的 host/resource identity 或等价的 held-resource capability 契约；M5 owner 确认 strict router 如何消费该能力并维持路径替换/别名时 fail closed；M2 提供与该能力兼容的 adapter/backend 调用形状；M3 再接入真实 first-party host callback，并以实际宿主调用验证。M0 负责确认跨模块契约与验收基线。AI Console 的直接 M1 临时演示路径不解决该外部宿主接线缺口。产品宿主 callback 与原生工具保护维持 `NOT_VERIFIED`。
 
@@ -132,6 +132,6 @@ M9 PR #36 head 为 `de3799aae540f58173acec4ab3f7a1fe98593aa7`。该 run 的 comp
 
 该 M9 子测试只在临时 workspace 写入 `M9_SYNTHETIC_UNPINNED_READ_FIXTURE`，并调用 M1/M3 Hook decision functions 比较返回值；没有执行真实宿主文件 callback 或读取用户文件。因此该 run 没有证明发生真实数据暴露，也不能据此推断发生过用户数据读取。
 
-版本边界：上述失败针对 M9 固定的 M3 `be388…`，不能代表当前 M3 PR head。PR #33 head 为 `9841bd8527af724664b70dc30b0c372878c81075`；本地 M3 分支在该 PR head 之后只有文档提交，Hook 源码/测试未再变化。`9841bd8` 的 `src/agent-hook.ts` `decideAgentHook` 已将未 pin native 文件操作 fail closed，返回 `native_file_execution_not_pinned`。在该 exact head 的定向回归 `node --import tsx --test --test-name-pattern="native unpinned file reads deny|supported held-file Gateway capability" test/agent-hook.test.ts` 为 2/2 通过。M9 run `38727481764` 没有测试此 head，M9 owner 仍需在审核后更新 pin 并重跑 Ubuntu/Windows。
+版本边界：上述失败针对 M9 固定的 M3 `be388…`，不能代表当前 M3 PR head。PR #33 head 为 `9841bd8527af724664b70dc30b0c372878c81075`，该 exact head CI run `39504984014` 为 9/9 通过；本地 M3 分支在该 PR head 之后只有文档提交，Hook 源码/测试未再变化。`9841bd8` 的 `src/agent-hook.ts` `decideAgentHook` 已将未 pin native 文件操作 fail closed，返回 `native_file_execution_not_pinned`。在该 exact head 的定向回归 `node --import tsx --test --test-name-pattern="native unpinned file reads deny|supported held-file Gateway capability" test/agent-hook.test.ts` 为 2/2 通过。M9 run `38727481764` 没有测试此 head，M9 owner 仍需在审核后更新 pin 并重跑 Ubuntu/Windows。
 
 M0 ownership 表将 Hook 语义与规范断言归 M1。当前 live PR #33 的 changed-file API 同时列出 `src/agent-hook.ts` 和 `test/agent-hook.test.ts`（以及其他 M3 文件）；这两条 M1-owned 路径在提交 `9841bd8` 中已被修改，M1 owner review pending。本次仅更正 M3 报告，未继续写入 Hook 实现/测试。后续如需 Hook 行为适配，须先取得 M1 明确 owner disposition，再沿既有 PR #33 进行获批修改。真实宿主 Hook 生效与原生 I/O 覆盖仍为 `NOT_VERIFIED`；M5 `verifyRealPaths:true` 保持 fail closed，未关闭 strict mode 或加入通用路径回退。
