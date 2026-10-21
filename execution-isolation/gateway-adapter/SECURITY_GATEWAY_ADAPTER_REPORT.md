@@ -414,35 +414,38 @@ Disposition: **M2 adapter contract implemented locally; Issue #52 remains
 OPEN/P0 pending current M1/M5 owner acceptance, product host wiring, and
 end-to-end runtime evidence.** No push or GitHub update was performed.
 
-## 2026-10-22 approved strict-only package entry
+## 2026-10-22 packed strict-only gateway entry
 
 M5 rejected the earlier proposal to export `security-gateway-adapter.mjs`
 directly (Issue #52 comment `6320309631`): that module also exports the
 lower-level `createSecurityGatewayAdapter`, which can bypass the M5 router.
-The M2 branch adds `gateway-adapter.mjs` as the package-facing facade. Its
-module namespace exposes only `createSecurityGatewayHostAdapter`; the
-low-level adapter remains an internal dependency and is not a package export.
-The host-composition tests import through this facade.
+M1 review found that shipping `security-gateway-adapter.mjs` in `files` still
+allowed consumers to load it directly by filesystem path, regardless of the
+package `exports` map. M2 now bundles the adapter implementation into
+`gateway-adapter.mjs`, converts `createSecurityGatewayAdapter` to a private
+module function, and leaves only `createSecurityGatewayHostAdapter` exported.
+`bundle-gateway-adapter.mjs --check` detects drift from the M2 implementation
+source. The original source module is not included in the package allowlist.
 
-M5 and M6 accepted this exact package-entry shape; M7 gave conditional
-acceptance. The approved shared-manifest delta is now in the M2 branch:
+M5 and M6 accepted the public subpath/API shape, and M7 gave conditional
+acceptance before the M1 direct-file review. That earlier packaging shape still
+included the raw implementation dependency, so this revision removes it from
+the package. The revised manifest delta in the M2 branch is:
 
 - `exports["./gateway-adapter"]` →
   `./execution-isolation/gateway-adapter/gateway-adapter.mjs`
-- Add both runtime files to `files`: `execution-isolation/gateway-adapter/gateway-adapter.mjs`
-  and its private implementation dependency
-  `execution-isolation/gateway-adapter/security-gateway-adapter.mjs`.
+- Add only `execution-isolation/gateway-adapter/gateway-adapter.mjs` to `files`.
 - Do not add a package export for `security-gateway-adapter.mjs`.
 
 Local verification on Windows / Node.js v22.23.1:
 
-- `node --test execution-isolation/gateway-adapter/test-gateway-adapter-facade.mjs execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 13/13 passed. The package self-reference imports the public subpath, and the low-level package deep path rejects with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
-- `npm pack --dry-run --json` — 6 package entries; includes exactly the two approved M2 runtime files under `execution-isolation/gateway-adapter/`.
+- `node --test execution-isolation/gateway-adapter/test-gateway-adapter-facade.mjs execution-isolation/gateway-adapter/test-packed-gateway-adapter.mjs execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 14/14 passed. The packed artifact smoke test creates and extracts a real tarball, confirms that only the public M2 entry is included, imports the public subpath, and verifies that the low-level package path is not exported and its direct file path is absent.
+- `npm pack --dry-run --json` — 5 package entries; the only file under `execution-isolation/gateway-adapter/` is `gateway-adapter.mjs`.
 - `git diff --check` — passed.
 - `npm run pack:check` was not run because `scripts/check-package.mjs` remains the known M7-owned blocker. M2 did not edit that checker; no checker result is claimed.
 
 The facade still requires the trusted host to pass the actual M5 router
-factory. These checks do not prove a first-party host callsite, packed-tarball
-installation/import, or a successful strict real-file read. No M1/M5/M6/M7
-implementation paths or security policies were changed; the shared
-`package.json` delta above was applied after owner review.
+factory. The archive test proves package contents and module reachability, not a
+first-party host callsite or successful strict real-file read. The one-file
+packaging revision needs updated exact-diff owner readback; no M1/M5/M6/M7
+implementation paths or security policies were changed.

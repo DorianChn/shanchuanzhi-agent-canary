@@ -42,7 +42,6 @@
   "files": [
     "dist",
     "execution-isolation/gateway-adapter/gateway-adapter.mjs",
-    "execution-isolation/gateway-adapter/security-gateway-adapter.mjs",
     "README.md",
     "README.zh-CN.md",
     "LICENSE"
