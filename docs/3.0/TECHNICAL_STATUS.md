@@ -5418,3 +5418,7 @@ M0 refreshed Issue #52 to supersede its stale 10:40 exact-ref text. M2 d054cee i
 ## M0 M6 lock-contract clarification — 2026-10-21 11:31 UTC
 
 M0 added a contract clarification to Issue #66 comment 6314801303: release() during an active stage may fail and retain lock ownership, or defer release, but another run cannot acquire the same dataDir before the first stage settles and the run is terminal. The regression must verify lock retention and safe reacquisition. M6 owns the final API contract and implementation; M0 changed no M6 files.
+
+## M1/M6 midpoint checkpoint — 2026-10-21 11:38 UTC
+
+Public Issue #29 comment 6314972063 records that M1 + M6 have no visible new owner review, disposition, or PR head movement as of 11:38; private activity remains UNKNOWN. M1 is asked for exact M2 d054cee disposition and/or #62 classification; M6 for the #66 lock fix/regression on existing PR #38. By 11:42, report an exact public outcome or blocker. Preserve M5's unrelated E4 worktree patch and all assertions. M0 next push remains no earlier than 11:42 after fresh quota and remote-head preflight.
