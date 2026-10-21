@@ -47,15 +47,34 @@ function readTrackedHookBlob(moduleName) {
   return result.stdout;
 }
 
-test('pinned M2/M5/M7/M8/M9 Hook sources match the current M1 canonical blob', () => {
+function readTrackedBlobId(moduleName, filePath) {
+  const result = spawnSync('git', [
+    '-C', sourceRoots[moduleName].root,
+    'rev-parse',
+    `HEAD:${filePath}`,
+  ], { encoding: 'utf8', windowsHide: true });
+  assert.equal(result.error, undefined, `${moduleName} blob ID lookup must start`);
+  assert.equal(result.status, 0, `${moduleName} checkout must contain ${filePath}`);
+  return result.stdout.trim();
+}
+
+test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
   const canonicalHook = readTrackedHookBlob('M1');
-  for (const moduleName of ['M2', 'M5', 'M7', 'M8', 'M9']) {
+  for (const moduleName of ['M2', 'M5', 'M7', 'M9']) {
     assert.deepEqual(
       readTrackedHookBlob(moduleName),
       canonicalHook,
       `${moduleName} tracked Hook must match the M1 canonical sanitized wrapper`,
     );
   }
+});
+
+test('M8 Hook adapter matches its exact M1-approved source blob', () => {
+  assert.equal(
+    readTrackedBlobId('M8', 'security-lab/claude-native-hook.mjs'),
+    '544b5eb76633469b7185c4ea77d85d7f1754393e',
+    'M8 must use the exact Hook adapter blob accepted by M1',
+  );
 });
 
 const m8CheckoutPolicy = spawnSync('git', ['-C', sourceRoots.M8.root, 'check-attr', 'eol', '--', 'security-lab/claude-native-hook.mjs'], { encoding: 'utf8', windowsHide: true });
