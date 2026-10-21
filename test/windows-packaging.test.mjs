@@ -7,6 +7,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
+import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 
@@ -23,6 +24,31 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }finally{
     fs.rmSync(root,{recursive:true,force:true});
   }
+});
+
+test('package allowlist admits only the reviewed M2 gateway facade and runtime dependency',()=>{
+  for(const file of reviewedGatewayAdapterPackageFiles)assert.equal(isPublicPackageFile(file),true);
+  for(const file of [
+    'execution-isolation/gateway-adapter/extra.mjs',
+    'execution-isolation/gateway-adapter/test-secret.mjs',
+    'execution-isolation/other-module/runtime.mjs',
+    'sponsor/private.mjs',
+    'src/runtime/internal.mjs',
+  ])assert.equal(isPublicPackageFile(file),false,file);
+  assert.deepEqual(reviewedGatewayAdapterPackageFiles,[
+    'execution-isolation/gateway-adapter/gateway-adapter.mjs',
+    'execution-isolation/gateway-adapter/security-gateway-adapter.mjs',
+  ]);
+});
+
+test('package checker accepts only the reviewed strict gateway export and exact runtime files',()=>{
+  const manifest={exports:{'./sdk':'./dist/sdk.js','./gateway-adapter':'./execution-isolation/gateway-adapter/gateway-adapter.mjs'}};
+  validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles]);
+  validateGatewayAdapterPackage({exports:{'./sdk':'./dist/sdk.js'}},[]);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[reviewedGatewayAdapterPackageFiles[0]]),/missing .*security-gateway-adapter\.mjs/);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles,'execution-isolation/gateway-adapter/extra.mjs']),/unexpected gateway adapter package file/);
+  assert.throws(()=>validateGatewayAdapterPackage({exports:{...manifest.exports,'./security-gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/internals exposed/);
+  assert.throws(()=>validateGatewayAdapterPackage({exports:{'./gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/must target only the strict facade/);
 });
 
 test('payload inventory rejects symbolic links',t=>{

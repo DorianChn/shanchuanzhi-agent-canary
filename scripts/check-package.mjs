@@ -3,6 +3,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  isPublicPackageFile,
+  validateGatewayAdapterPackage,
+} from "./package-file-policy.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const npmCli = process.env.npm_execpath;
@@ -32,12 +36,18 @@ try {
   if (!pack?.filename || !Array.isArray(pack.files)) fail("npm pack returned no file manifest");
 
   const files = pack.files.map((entry) => entry.path).sort();
+  const packageManifest = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   const required = ["LICENSE", "README.md", "README.zh-CN.md", "package.json", "dist/index.js", "dist/sdk.js", "dist/sdk.d.ts", "dist/runtime/gateway.d.ts"];
   for (const file of required) if (!files.includes(file)) fail(`missing required file ${file}`);
 
+  try {
+    validateGatewayAdapterPackage(packageManifest, files);
+  } catch (error) {
+    fail(error instanceof Error ? error.message : "invalid gateway adapter package boundary");
+  }
+
   for (const file of files) {
-    const isPublicFile = file === "LICENSE" || file === "README.md" || file === "README.zh-CN.md" || file === "package.json" || file.startsWith("dist/");
-    if (!isPublicFile) fail(`unexpected package file ${file}`);
+    if (!isPublicPackageFile(file)) fail(`unexpected package file ${file}`);
     if (/(^|\/)(?:sponsor|test|src|docs|\.github)(\/|$)|(^|\/)\.env(?:\.|$)/i.test(file)) {
       fail(`sensitive or development path included: ${file}`);
     }
