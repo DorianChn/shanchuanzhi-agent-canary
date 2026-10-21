@@ -570,3 +570,19 @@ This clarification supersedes older dated ownership rows or snapshots that chara
 M1 remains the semantic owner of the canonical native Hook, Gateway denial behavior, and shared Hook security assertions. Exact current public refs show M1/M2/M4/M5/M6/M7/M9 Hook wrapper blob d6f93249306b7966259cab463dd39475728ef338. M3's wrapper blob ae23875d91c246c0fa833137e71c949bad9bd3cc differs only by omission of a non-functional explanatory comment; M3's current test/agent-hook.test.ts contains synthetic caller/body canaries and assertions that those values do not enter JSONL. M8's wrapper blob 544b5eb76633469b7185c4ea77d85d7f1754393e is a separately M1-accepted logging/consumer adapter; preserve permissionDecision and keep reason normalization non-authorizing.
 
 M1 owner disposition remains required before integration for M2 PR #37 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 and for M4 PR #34's changed M1-owned test/agent-hook.test.ts blob e8ae8202492fc44fbb13c7ee855198ac8e62f436. The latter is tracked by #60. No cross-module ownership transfer is inferred from a passing CI run or a branch copy.
+## M0 M1–M8 ownership and worktree readback — 2026-10-21 16:40 UTC
+
+All eight module paths are separate checkouts. Each local branch has the same merge base `62496d4020bd90ba2eede49b2e80a2bbebb036b4` with its recorded `origin/feature/agent-canary-3.0` ref. This is a filesystem snapshot; it does not expose private Codex thread activity.
+
+| Module | Existing branch | Local HEAD | Working tree | Current file ownership reminder |
+|---|---|---|---|---|
+| M1 | `feature/ac3-security-core` | `7279336` | clean | Gateway held-file and canonical Hook/security assertions. |
+| M2 | `feature/ac3-execution-isolation` | `be66cf8` | clean; 3 commits ahead of public PR #37 head `3ba2df7` | Public single-file Gateway facade and package manifest; M5 router is trusted host input. |
+| M3 | `feature/ac3-agent-onboarding` | `429cd73` | clean | Onboarding/host adapter and `test/codex-connection-check.test.ts`; current Windows Node 20 teardown fix belongs here. |
+| M4 | `feature/ac3-desktop-security-center` | `803a015` | clean | Desktop security-center/UI paths; M1 retains canonical Hook test semantics. |
+| M5 | `feature/ac3-policy-audit` | `bbce79a` | two modified M6-owned files preserved | Policy/router paths only; do not commit `packaging/windows/auto-e4.mjs` or `test/auto-e4.test.mjs` on M5. |
+| M6 | `feature/ac3-e4-validation-ac3` | `9880360` | clean | Auto E4 verifier and evidence semantics. |
+| M7 | `feature/ac3-reliability-ac3` | `cdae8ba` | clean | Installer/package policy; exact checker allows only M2 public facade. |
+| M8 | `feature/ac3-open-source-product` | `2d5a0ff` | clean | Open-source/product docs and reviewed logging adapter. |
+
+M9 remains on its existing `feature/ac3-m9-integration` branch; local candidate `24dcfd1aed2a9ba9ddd7aecd7b92e78f3947ee19` changes only its composition workflow/test and is not yet published. Do not move worktrees, create replacement branches, or commit cross-owned files. The M5 dirty E4 files remain untouched pending M6 ownership.

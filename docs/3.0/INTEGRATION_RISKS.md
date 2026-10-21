@@ -1152,3 +1152,9 @@ Issue #52 therefore remains OPEN/P0/NOT_VERIFIED pending: (1) M3/M4 route-owner 
 ## 2026-10-21 16:29 UTC M7 package-check dependency
 
 M7's local package checker candidate now admits only the M2 strict facade. M2's separate branch still has the older package-smoke policy, so publishing M2 alone would not validate the adapter artifact. Issue #68 tracks an isolated M9 run of the actual M2 pack with the exact M7 checker. Do not treat M7's own 90-file package smoke as evidence for M2's tarball; keep Issue #52 OPEN/P0 until the host path gates also pass.
+
+## 2026-10-21 16:45 UTC M9 exact-source candidate and remaining P0 boundaries
+
+M9's existing branch has local commit `24dcfd1aed2a9ba9ddd7aecd7b92e78f3947ee19`, pinning M1 `7279336`, M2 `be66cf8`, M3 `429cd73`, M5 `bbce79a`, M6 `9880360`, M7 `cdae8ba`, and M8 `2d5a0ff`. The real M2 packed artifact passes the exact M7 policy/checker in a disposable checkout, and local M9 packed-facade composition passes 8/8. M1 security-contract review and hosted exact-head CI remain pending; M2 `be66cf8` must be published before a PR #36 update triggers the pinned workflow.
+
+The M9 fixture proves a synthetic protected read through the packed public facade and injected exact M5 router, denies fixed-path aliases before callback, and denies a same-path replacement before Gateway evidence. Existing M1/M2/M5 tests retain junction/path-only deny controls. This is still source-fixture evidence: no first-party production host callsite, installed host behavior, or OS-atomic concurrent-mutation proof is established. Issue #52 stays OPEN/P0/NOT_VERIFIED. M3's separate Windows Node 20 CI failure is the fixture teardown ordering tracked in PR #33 comment `6321265739`; it is not classified as a protected-read assertion failure.
