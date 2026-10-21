@@ -5866,3 +5866,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 
 - PR #30’s new head `bb6cdc35e006b67dc96d094f6ef10947c123bd67` passed product CI run `39656393021` and AC3 coordination run `39656393035`. This is coordinator-doc validation only.
 - M1 #43 and M3 #33 remain on their assigned exact refs at this read; their 18:50–19:10 slot is still active. The next push is no earlier than 19:10 UTC.
+
+## M0 18:56 UTC M1/M3 evidence checkpoint — 2026-10-21
+
+- PR #33 remains at `429cd73c03273bc77f3781b489f541e396cd9361`. The Windows Node 20 job log for run `39635364781` confirms test 72 fails during teardown with `ENOTEMPTY` while removing the M3 temporary fixture root. This is the recorded cleanup-order failure; the failing test is not reporting a protected-file security assertion. M3 remains assigned to close the Gateway before removing the fixture root, preserve all assertions, and provide focused plus exact-head CI evidence.
+- PR #34 remains at `803a015f3e97ae69b7adeb4411f93defc0a06cfe`; M1 PR #43 remains at canonical head `7279336307fc7aacd46119405858d4fd91499757`. The #34 test patch changes the child-process import and interruption subtest: bounded ready-marker wait, SIGTERM, bounded shutdown, empty stdout/stderr, and no decision log. The fixture cannot observe a tool callback, despite the test title claiming callback suppression. M0 recorded this exact-diff note in Issue #60 comment `6324030585`; explicit M1 ACCEPT/REJECT remains pending.
+- The 18:50–19:10 two-module slot remains M1/M3. At the 18:54 Usage read, the page displayed 77% five-hour and 52% weekly. No module source was changed by M0. Next M0 push is no earlier than 19:10 UTC, after fresh quota, PR #24, remote-ref, and worktree checks.
