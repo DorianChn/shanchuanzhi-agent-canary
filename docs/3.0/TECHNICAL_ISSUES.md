@@ -1577,3 +1577,10 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **PR #30:** exact head 9ed7e9e6fa5d9e80447b33004de7e2c63d1e3974 product CI 39607537109 passed 9/9; ownership-contract checks 39607537093, 39607555150, and 39607848973 passed. The current docs-only head passed without M1 source/test changes; prior Windows marker failures remain recorded as intermittent.
 - **M1/M6:** at 13:23 there was no public owner review for #37/#62 and no M6 fix for #66. Keep #52/#62/#66 open as scoped; private session activity UNKNOWN. Reminder links remain on PR #37 comment 6315647526 and PR #38 comment 6315647508.
 - Next shared push no earlier than 13:43 UTC; PR #24 unchanged.
+
+
+## M0 13:36 M6 worktree note — 2026-10-21 13:36 UTC
+
+- **#66 remains OPEN / P1.** Unstaged M6-owned changes are visible in the M5 policy worktree at HEAD 99ab807: duplicate-stage and active-finish guards/tests are present, but release() remains unchanged and no pending-stage → release → second-run regression is present. This is filesystem evidence only; no M6 owner acceptance or public PR #38 commit is inferred. M0 preserved the files and updated PR #38 comment 6315647508.
+- **M1 / #52 / #62 remain pending:** PR #37 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 has no M1 review; #62 remains OPEN/UNKNOWN. Reminder is PR #37 comment 6315647526.
+- Next shared push no earlier than 13:43 UTC; PR #24 unchanged.

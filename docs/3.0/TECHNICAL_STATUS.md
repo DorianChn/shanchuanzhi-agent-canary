@@ -5474,3 +5474,11 @@ Public Issue #29 comment 6314972063 records that M1 + M6 have no visible new own
 - Earlier M0 heads `f3be0b2` and `44300a5` had intermittent failures in the unchanged Windows Node 22 Hook marker assertion; current `9ed7e9e` passes without M1 source/test changes. Preserve the historical failures and all assertions; do not infer a security bypass or real-host behavior. Issue #32 remains CLOSED on M1's owner disposition.
 - M1 still has no public review of PR #37 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` or #62 classification. M6 still has no public fix on PR #38 `560f724292d285a43fcc4a0b0c8f50f9f08a6f79` for #66. Reminders remain on PR #37 comment `6315647526` and PR #38 comment `6315647508`; private activity UNKNOWN.
 - Usage was readable before push at 13:23 UTC: 77% five-hour / 52% weekly. PR #24 remains OPEN/Draft and unchanged. Next shared push no earlier than 13:43 UTC.
+
+
+## M0 13:36 M6 filesystem checkpoint — 2026-10-21 13:36 UTC
+
+- Read-only filesystem inspection found unstaged M6-owned edits under the M5 recovery worktree `ac3-m5-policy-recovery`, branch `feature/ac3-policy-audit`, HEAD `99ab80770d8004ef85f13f2d5c0f48f934607603`: `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs` (9 and 40 changed lines). The diff adds duplicate-stage, active-finish, and post-finish guards/tests. It does not change `release()` or test release during a pending stage followed by second-run acquisition, so Issue #66 acceptance is not met.
+- M0 did not edit, stage, move, or commit these M5-worktree files. M0 updated PR #38 reminder comment `6315647508` with the exact gap and asked M6 to preserve the edits and continue on existing PR #38.
+- Public PR #38 remains at `560f724292d285a43fcc4a0b0c8f50f9f08a6f79`; the review checkout is detached and clean. Public PR #37 remains at M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` with no M1 review; Gateway #62 has no owner classification. Private session contents remain UNKNOWN.
+- Usage was readable at 13:36 UTC: 77% five-hour / 52% weekly. PR #24 remains unchanged. Next shared push no earlier than 13:43 UTC.
