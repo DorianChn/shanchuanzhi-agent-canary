@@ -329,3 +329,47 @@ read, strict positive control, M1/M5 identity binding, M4 host wiring, and
 end-to-end expiry/quarantine integration remain `NOT_VERIFIED`.** Native
 Codex Shell remains `UNPROTECTED`. No M1/M4/M5 paths or public contracts were
 changed; no push was performed.
+
+## 2026-10-21 Issue #52 deterministic replacement boundary
+
+At the M2-owned seam, `createSecurityGatewayAdapter` snapshots the approved
+relative path as a string, checks it against the fixed allowlist, and calls
+M1 with only `{name: "read_file", args: {path}}` plus the original signal.
+There is no M1 identity capability in this payload. A new deterministic
+synthetic regression triggers a same-name target replacement on the second
+signal `aborted` read, after M2's path check and immediately before its
+captured `agent.dispatch` call. Its synthetic M1 boundary models the reviewed
+held `fd/dev/ino` comparison and rejects `resource_not_bound`; the replacement
+remains unchanged and the allowed file callback count stays zero. The test
+also asserts the dispatch payload carries a plain path string and no identity
+capability. This proves the M2 interleaving and interface limit only; its M1
+boundary is a contract double, not the M1 runtime or a product host.
+
+The owner source checkpoints reviewed for this case are M1 PR #43 head
+`5cb57c9b1b61884ab06d10b2f8a40426941ad0bc` and M5 PR #47 head
+`99ab80770d8004ef85f13f2d5c0f48f934607603`. M1 stores held `fd/dev/ino`
+privately and rechecks the named and held objects in its Gateway. Its public
+`agent.dispatch(ToolCall, signal?)` accepts no identity capability. M5's
+`verifyRealPaths:true` strict route denies path-only file callbacks with
+`path_execution_not_pinned` before calling the adapter. M2 must preserve that
+denial until both owners review a shared contract.
+
+Required owner contract before a positive strict read can be enabled:
+
+1. M1 defines a host-only, opaque capability bound to one constructor-registered
+   file and its held object, with explicit lifetime/revocation rules; M1 still
+   owns the final identity revalidation before file effects. The capability
+   must not be model-controlled call data or an exposed raw file descriptor.
+2. M5 defines how that capability is supplied and checked for the exact
+   registered callback, and denies missing, mismatched, stale, or replaced
+   identities before callback or approval. M5 must not accept path strings as
+   a substitute in strict mode.
+3. M2 can adapt only the owner-reviewed capability shape. M0 coordinates the
+   shared API and the M4-owned product host callsite; this test does not create
+   or claim that callsite.
+
+Focused verification after this change on Windows / Node.js v22.23.1:
+
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs` — 6/6 passed, including the deterministic post-validation replacement denial.
+- `git diff --check` — passed.
+- No M1/M5 source or public API was changed; no product host or real M1 runtime was exercised. The issue remains `NOT_VERIFIED` pending owner contract review and product-host integration.
