@@ -5929,3 +5929,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - M4/M5’s 19:10–19:30 slot ended without visible branch movement or owner disposition. M4 #34 remains `803a015f3e97ae69b7adeb4411f93defc0a06cfe`; M5 #47 remains `bbce79aa086b39b51422cc72471c23c963778650`. M5's pre-existing uncommitted M6-owned E4 paths were preserved. Lane-end notes are #34 comment `6324715642` and #47 comment `6324716229`.
 - Only active modules for 19:30–19:50 are M2 and M7 on P1 #69. M2 #37 remains `be66cf8f4c1a60f093740577796ec5cd633e1d93`; M7 #39 remains `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a`. Assignments are #37 comment `6324720628` and #39 comment `6324721205`; scheduler readback is #29 comment `6324723953`. No exclusive test resource is scheduled.
 - Next M0 push is no earlier than 19:50 UTC after fresh quota, PR #24, remote-ref, and clean-worktree preflight.
+
+## M0 19:32 UTC PR #30 CI failure triage — 2026-10-21
+
+- At exact M0 head `54a49a253a5bd0d6231b27e0f859849b7aef0224`, coordination run `39662200855` passed. Product run `39662200876` failed only in Windows Node 20 job `119437869591`, test `test/agent-hook.test.ts:54`.
+- The failure is the unchanged base interruption fixture's fixed 1-second `spawnSync` timeout followed by `assert.equal(fs.existsSync(marker), true)`. The exact job log shows expected `true`, actual `false`; the subsequent empty-stdout assertion was not reached. M0's exact changes were coordinator documents only. This is the known readiness-handshake issue, not a product Hook or M0-doc regression.
+- M0 recorded the owner relay in Issue #60 comment `6324760486` and scheduler comment #29 `6324762582`. M1 remains parked while M2/M7 hold the only active slots; preserve this for M1's next slot. No rerun or source edit was performed.
