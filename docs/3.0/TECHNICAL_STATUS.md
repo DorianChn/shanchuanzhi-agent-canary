@@ -5554,3 +5554,8 @@ Public Issue #29 comment 6314972063 records that M1 + M6 have no visible new own
 
 - M9 completed local commit `128ae58644407453190a2e683083d4a20caa3c7c` on the existing `feature/ac3-m9-integration` branch, one commit ahead of upstream and not pushed. Its two-file diff updates only the workflow and composition-test M2 ref to M1-accepted `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4`; other pins remain unchanged, including M6 at `560f724292d285a43fcc4a0b0c8f50f9f08a6f79`.
 - M9 reports exact-checkout composition 8/8, `git diff --check`, `node --check`, and `git show --check` passing. The M9 worktree was independently read back clean at the exact commit; new hosted composition/product checks await the next push. Issue #52 remains OPEN/P0/NOT_VERIFIED. M5's existing uncommitted M6-owned Auto E4 edits were preserved.
+
+## M0 14:35 M4 ownership-boundary update — 2026-10-21 14:35 UTC
+
+- M4's M1-owner review found no M4-owned native Hook authorization callsite; its desktop security-center adapter only surfaces backend status and preserves missing values as UNKNOWN. M4's focused runtime-console suite passed 9/9.
+- M4 added a docs-only blocker record on its existing PR #34 branch, local commit `30a8600522d615984aa24bcdc7cc614a8663d0f8`, one commit ahead and not pushed. Following M1's REJECT, M4 is now restoring its unauthorized `test/agent-hook.test.ts` diff to the exact PR base blob; no M1 source/test semantics will be edited, and any M1 integration dependency stays explicit.
