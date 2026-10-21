@@ -1129,3 +1129,10 @@ Issue #52 therefore remains OPEN/P0/NOT_VERIFIED pending: (1) M3/M4 route-owner 
 - **M7 clean-VM lifecycle #41 remains OPEN / HOLD.** Static package extraction is not installer execution; `installerExecuted=false`; no exclusive VM/installer resource is reserved.
 - **M9 checks at `6c9c794` are GREEN** (product 9/9, wrapper 2/2, Ubuntu/Windows composition 2/2). This does not close #52, #41, native Shell #45, or independent E4 #57.
 - **Package manifest not changed.** M2's revised facade candidate and M5/M6/M7 bounded reviews are local/source-level evidence; M2 manifest update and M7 checker fix are the active two-lane work. No package export is published until all required owners accept the same exact delta.
+
+
+## 2026-10-21 16:05 UTC package boundary follow-up
+
+- M5/M6/M7 gave bounded ACCEPT for the same M2 strict-facade API shape. M2's final local package commits are `e312ab9` and `e312398`; M7's exact checker fix is local at `f1adbfd`. These are separate existing PR branches, not yet an exact combined hosted run.
+- M7's checker update allows only the facade and its runtime dependency and retains rejection for other unexpected package paths. Its local `pack:check` passed on the current package, which does not yet include M2's manifest delta. M2's dry-run confirms the two approved runtime paths, but its `pack:check` remains pending until the exact checker/package combination is tested.
+- #52 remains OPEN/P0/NOT_VERIFIED: no first-party protected host consumer exists. The M2 package subpath alone does not complete Console wiring, validate the injected factory as the actual M5 router, prove protected I/O effects, or establish OS-atomic TOCTOU. Require exact combined package checks and then real route positive/negative controls before reducing the gate.
