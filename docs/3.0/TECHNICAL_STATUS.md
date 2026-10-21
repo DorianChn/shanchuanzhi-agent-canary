@@ -5452,3 +5452,10 @@ Public Issue #29 comment 6314972063 records that M1 + M6 have no visible new own
 - Earlier PR #30 heads `f3be0b2` and `44300a5` failed the unchanged Windows Node 22 Hook interruption marker assertion; current `be90312` passes with no M1 source/test change. Keep those failures as intermittent test-fixture timing evidence. The failed assertion did not reach allow/callback assertions, and neither failure nor pass establishes real-host behavior. Issue #32 remains CLOSED on M1's accepted fixture disposition; preserve all assertions.
 - Issue #29 comment `6315417679` now records final checks. M1 still has no public exact-SHA review of PR #37 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` or #62 Gateway classification. M6 still has no public #66 fix on PR #38 `560f724292d285a43fcc4a0b0c8f50f9f08a6f79`. Reminders are PR #37 comment `6315647526` and PR #38 comment `6315647508`; private session activity remains UNKNOWN.
 - Usage was readable before the 12:22 push: 77% five-hour / 52% weekly. PR #24 remains OPEN/Draft and unchanged. Next shared push is no earlier than 12:42 UTC; no main merge or Release.
+
+
+## M0 12:45 post-CI checkpoint — 2026-10-21 12:45 UTC
+
+- PR #30 exact head `57de3301dcc4805e557d01ba119c4e5bde080bc9` was pushed by fast-forward at 12:42 UTC. Product CI `39601745638` passed 9/9, including Windows Node 20/22 and package-smoke. Ownership checks `39601745648`, `39601773484`, and the body-update check `39602055487` passed. PR #30 and scheduler Issue #29 now record the final result.
+- M1 PR #37 remains at candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` with no M1 review; M1 Gateway #62 remains OPEN / UNKNOWN. M6 PR #38 remains `560f724292d285a43fcc4a0b0c8f50f9f08a6f79` with no #66 fix. Direct reminders are on #37/#38; private session activity remains UNKNOWN.
+- Usage was readable before the push at 77% five-hour / 52% weekly. PR #24 remains OPEN/Draft and unchanged. Next shared push no earlier than 13:02 UTC. No main merge or Release.

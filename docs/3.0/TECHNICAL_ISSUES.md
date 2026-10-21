@@ -1556,3 +1556,10 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#32:** remains CLOSED on M1's documented accepted timing-fixture disposition. Current M1 PR #43 head c016431 has green exact CI 39519637615; PR #30's two failures are on older M0 refs and the latest is green. No real-host Hook behavior is claimed.
 - **M1/M6:** by the 12:22 snapshot, M1 had not posted PR #37/#62 disposition and M6 had not posted the #66 fix. Direct reminders are PR #37 comment 6315647526 and PR #38 comment 6315647508. Private session activity is UNKNOWN.
 - Next shared push no earlier than 12:42 UTC. PR #24 remains OPEN/Draft and unchanged.
+
+
+## M0 12:45 current-head status — 2026-10-21 12:45 UTC
+
+- **PR #30:** exact current head 57de3301dcc4805e557d01ba119c4e5bde080bc9 product CI 39601745638 passed 9/9; exact-head ownership checks 39601745648, 39601773484, and 39602055487 passed. Prior M0 heads had intermittent marker-test failures, while current exact head passes; preserve both classes of evidence and all assertions.
+- **M1/M6:** as of 12:42, no M1 review/classification on #37/#62 and no M6 code update on #38/#66. Direct reminders are PR #37 comment 6315647526 and PR #38 comment 6315647508. Private activity UNKNOWN. The two module slots remain M1 + M6.
+- Next shared push no earlier than 13:02 UTC; PR #24 is unchanged.
