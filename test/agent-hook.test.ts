@@ -19,11 +19,13 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
 test('native lab wrapper writes only normalized allowlisted log fields',()=>{
  const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  const modulePath=path.join(root,'normalized-hook-module.mjs');
- const callerCanaries=['SYNTHETIC_NATIVE_HOOK_ARGUMENT_CANARY','C:/synthetic/caller/private.txt'];
+ const callerCanaries=['SYNTHETIC_NATIVE_HOOK_COMMAND_CANARY','C:/synthetic/caller/private.txt'];
  const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
- const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',command:callerCanaries[0],path:callerCanaries[1],tool_input:{command:callerCanaries[0],path:callerCanaries[1],file_path:callerCanaries[1]}}),encoding:'utf8'});
+ assert.equal(r.status,0);assert.equal(r.stderr,'');
+ assert.deepEqual(JSON.parse(r.stdout),{hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:'Agent Canary: permission_allowed'}});
+ for(const marker of [...callerCanaries,reasonCanary]){assert.equal(r.stdout.includes(marker),false,`native decision stdout leaked ${marker}`);assert.equal(r.stderr.includes(marker),false,`native decision stderr leaked ${marker}`);}
  const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
  assert.equal(lines.length,1);
  const record=JSON.parse(lines[0]);
