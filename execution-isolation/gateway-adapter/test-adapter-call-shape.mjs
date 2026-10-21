@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { createSecurityGatewayAdapter } from "./security-gateway-adapter.mjs";
 
@@ -68,6 +71,33 @@ test("unregistered paths, tools, and model-controlled fields fail before M1 disp
       (error) => error.message === item.error,
     );
     assert.equal(calls.length, 0);
+  }
+});
+
+test("an actual symlink or junction alias outside the fixed allowlist fails before M1 dispatch", async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "ac3-m2-gateway-alias-"));
+  const publicDirectory = path.join(root, "public");
+  const targetDirectory = path.join(root, "target");
+  const aliasPath = path.join(publicDirectory, "linked");
+
+  try {
+    fs.mkdirSync(publicDirectory);
+    fs.mkdirSync(targetDirectory);
+    fs.writeFileSync(path.join(targetDirectory, "readable.txt"), "synthetic protected fixture");
+    fs.symlinkSync(targetDirectory, aliasPath, process.platform === "win32" ? "junction" : "dir");
+    assert.equal(fs.realpathSync(aliasPath), fs.realpathSync(targetDirectory));
+
+    const { adapter, calls } = setup();
+    await assert.rejects(
+      adapter.executeRealTool(
+        { name: "read_public", args: { path: "public/linked/readable.txt" } },
+        { signal: new AbortController().signal },
+      ),
+      (error) => error.message === "M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED",
+    );
+    assert.equal(calls.length, 0, "the alias is rejected before the M1 dispatcher callback");
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
   }
 });
 

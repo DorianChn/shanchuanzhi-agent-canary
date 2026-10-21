@@ -72,8 +72,9 @@ Previously recorded baseline M2 checks (before this report/checker update):
 
 Current update verification on Node.js v22.23.1:
 
-- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs` — 3/3 passed.
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs` — 4/4 passed.
 - `git diff --check` — passed.
+- The added fixture creates an actual temporary directory junction on Windows (directory symlink on other platforms) to a synthetic sibling file, verifies it resolves to the target, then asserts the M2 fixed-path allowlist rejects the alias with zero mock M1 dispatches. This proves only the M2 adapter's exact allowlist rejection; it does not test M5's strict router or a product host callback.
 - The M2 branch-local build/checker was not rerun: this worktree has no
   `node_modules` or `dist`. Dependencies were not installed.
 
@@ -86,6 +87,13 @@ first-party product entry imports or calls it. Root `package.json` publishes
 `dist` and documentation, not `execution-isolation/`. No supported in-repo
 host/build entry consuming this adapter was found. This does not rule out an
 external consumer; none is evidenced here.
+
+PR #24's `feature/agent-canary-3.0` source makes the registration boundary
+explicit in `src/agent-integrations.ts:31`: `planAgentIntegration()` returns
+`coverage: 'MCP server callbacks only; client-native tools OUT_OF_SCOPE'`.
+PR #24's own acceptance record also says native Codex/Claude/Cursor/Cline
+global coverage is `NOT VERIFIED`. This is MCP server configuration, not a
+native OBSERVE file-read callsite and not a consumer of the M2 adapter.
 
 Selected remote host/build review found no adapter reference in M3 PR #33 or
 M7 PR #39. M9 PR #36 at head `de3799aae540f58173acec4ab3f7a1fe98593aa7` does
