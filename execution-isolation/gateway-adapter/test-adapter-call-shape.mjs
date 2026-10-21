@@ -115,3 +115,42 @@ test("an aborted signal fails closed before M1 dispatch", async () => {
   );
   assert.equal(calls.length, 0);
 });
+
+test("quarantine and approval-required Gateway denials propagate without retry or auto-approval", async () => {
+  // This is a branch-local adapter seam fixture, not a live M1 Gateway integration test.
+  for (const message of [
+    "GATEWAY_DENY:guard_quarantined",
+    "GATEWAY_REQUIRE_APPROVAL:host_scoped_file_capability",
+  ]) {
+    const denial = new Error(message);
+    let dispatchCalls = 0;
+    let approvalCalls = 0;
+    const gateway = Object.freeze({
+      agent: Object.freeze({
+        dispatch() {
+          dispatchCalls += 1;
+          return Promise.reject(denial);
+        },
+      }),
+      operator: Object.freeze({
+        approve() {
+          approvalCalls += 1;
+          throw new Error("M2_MUST_NOT_AUTO_APPROVE");
+        },
+      }),
+    });
+    const adapter = createSecurityGatewayAdapter(gateway, {
+      read_public: ["public/readable.txt"],
+    });
+
+    await assert.rejects(
+      adapter.executeRealTool(
+        { name: "read_public", args: { path: "public/readable.txt" } },
+        { signal: new AbortController().signal },
+      ),
+      (error) => error === denial,
+    );
+    assert.equal(dispatchCalls, 1);
+    assert.equal(approvalCalls, 0);
+  }
+});

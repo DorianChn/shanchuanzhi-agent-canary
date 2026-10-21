@@ -18,7 +18,7 @@ registered-file Gateway and owns the held-handle check internally.
 
 The callback remains path-only, so it is **not compatible for successful
 reads with current strict `verifyRealPaths:true`**. M5 PR #47 at exact head
-`e3662e9ca7363504eea7dd5e3262352018519a56` denies generic file callbacks with
+`99ab80770d8004ef85f13f2d5c0f48f934607603` denies generic file callbacks with
 `path_execution_not_pinned` before `executeRealTool`; its focused test also
 asserts zero callback invocations for a safe path. M2 currently provides no
 M1-issued, M5-verifiable identity capability that would distinguish this
@@ -55,10 +55,10 @@ filesystem fixtures and its own scope comment explicitly says it does not
 prove a production host hookup. It pins older M1/M2/M5 sources and is not
 current PR #47 strict-mode composition evidence.
 
-The current M5 PR #47 source at `e3662e9` contains the regression
+The current M5 PR #47 source at `99ab807` contains the regression
 `realpath mode fails closed for path-based file reads and keeps safe HTTPS GET
 available`; it asserts `path_execution_not_pinned` and zero file callback
-calls for `verifyRealPaths:true`. Exact-head CI run `39500126875` passed 9/9.
+calls for `verifyRealPaths:true`. Exact-head CI run `39558618457` passed 9/9.
 The M2-only `test-adapter-call-shape.mjs` run verifies that M2 emits the plain
 path-string callback shape and denies unregistered inputs before its mock M1
 dispatcher. Together these are source- and test-based compatibility evidence,
@@ -101,7 +101,7 @@ explicitly labels itself synthetic and says it does not prove production host
 hookup. It checks strict-mode denial before the M2 callback and a
 `verifyRealPaths:false` fixed-read positive control. Its pinned M2 is current
 `9db59ed`, but its M1/M5 pins are older (`b1d7423` / `373e2c2`); the M5
-`src/risk-policy.ts` blob differs from current PR #47 head `e3662e9`. This is
+`src/risk-policy.ts` blob differs from current PR #47 head `99ab807`. This is
 useful synthetic composition evidence, not a current-exact-head host/build
 consumer.
 
@@ -151,8 +151,8 @@ protection is claimed here.
 The M2 checker uses `verifyRealPaths:false` only for its branch-local
 synthetic/lexical SDK fixture. Its positive read and alias/marker assertions
 cover only the M2 adapter-to-M1 Gateway seam in that checkout, not product
-policy or current M5 integration. At PR #47 head
-`e3662e9ca7363504eea7dd5e3262352018519a56`, strict OBSERVE rejects generic
+policy or current M5 integration. At current PR #47 head
+`99ab80770d8004ef85f13f2d5c0f48f934607603`, strict OBSERVE rejects generic
 path callbacks as `path_execution_not_pinned` before callback and approval.
 That remains the integration blocker and fail-closed behavior, independently
 evidenced by the current M5 source, focused test, and exact-head CI. No M5 code
@@ -251,3 +251,80 @@ Local focused verification for this M2 helper:
 - `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 7/7 passed on Node v22.23.1 / Windows. The existing case creates a real temporary junction and verifies pre-dispatch alias rejection. New host-composition cases require explicit OBSERVE strict mode, reject legacy/non-OBSERVE or callback/tool overrides, and verify safe-path and alias requests stop before the policy callback, M1 dispatch, or approval. The strict-router implementation in this test is a contract double; current PR #47 exact-head tests/CI remain the evidence for M5 behavior.
 - `git diff --check` — passed.
 - This is local M2 evidence. It does not establish that a supported product entry imports the helper, that a safe file read succeeds through current M5 strict mode, or that M1's private held identity is visible to M5. The M2 changes remain unpushed and have no exact-head hosted CI.
+
+## 2026-10-21 current M1 API and fail-closed denial checkpoint
+
+The current public M1 PR #43 head observed during this checkpoint is
+`c016431875a7783f579aa93cd135459ea954d560`. Its `src/runtime/gateway.ts`
+defines `GatewayOptions.files` as trusted file descriptors and privately
+stores each opened file's descriptor, `dev`, and `ino`. `stillBound` compares
+the current named path and held descriptor before policy and again before file
+effects; Gateway reads use the held descriptor. The returned public object is
+`{agent, operator, evidence, dataflow, provenance, close}`. It does not expose
+the held file identity as a capability M5 can validate.
+
+M1 expiry is an operator-approval boundary: `operator.approve(requestId)`
+sweeps expired pending requests and throws
+`GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED` when the request is missing, expired,
+or already consumed. The M2 adapter accepts only `gateway.agent.dispatch`; it
+does not receive or call the M1 operator capability. An M1 `REQUIRE_APPROVAL`
+or denial therefore propagates as a rejection and cannot become an M2 allow.
+M2 cannot independently inspect or complete the expired-approval path without
+an owner-reviewed host/API composition.
+
+The current M5 PR #47 head is
+`99ab80770d8004ef85f13f2d5c0f48f934607603`. Its strict router/policy denies a
+generic path-string callback with `path_execution_not_pinned` before the M2
+callback or approval. M2 preserves `verifyRealPaths:true` in the host adapter;
+the lexical `verifyRealPaths:false` setting remains confined to the separate
+branch-local synthetic SDK fixture above.
+
+## Current product host boundary and exact blockers
+
+The source call chain is `src/ai/cli.ts::registerAICommands` to
+`src/ai/console.ts::startAIConsole` to `src/runtime/demo.ts::createRuntimeDemo`.
+That demo constructs M1 Gateway and dispatches a fixed `read_file` call
+directly; a source search found no `src/` import or call of
+`createSecurityGatewayAdapter` or `createSecurityGatewayHostAdapter`. M4 PR
+#34 at `fbf20907c6accffc37246eddf04f8599060d99ea` describes
+`src/ai/console.ts` as unchanged and its host as the existing demo Console,
+not a production OBSERVE file-read consumer. M2 does not own that entrypoint.
+
+The remaining blockers are exact and owner-bound:
+
+1. **M1 capability gap:** M1 holds and revalidates file identity internally,
+   but its public Gateway result has no opaque per-file capability M2 can pass
+   to M5. M1 must review whether to expose a host-only identity capability
+   bound to a registered held object.
+2. **M5 strict-router gap:** M5 currently receives a path descriptor and
+   `{signal}` callback context only, so it cannot validate that the M2
+   callback consumes M1's held object. M5 must review capability validation
+   and revalidation before any positive strict-mode read.
+3. **Product host gap:** the repository's existing Console path is a demo and
+   has no M2 adapter callsite. M4 owns `src/ai/console.ts`; the task has not
+   identified a supported first-party OBSERVE read host that can be changed
+   within M2 ownership. M0 must coordinate the selected host owner/path.
+4. **Expiry routing gap:** M1's expiry rejection is on `operator.approve`,
+   while the current M2 adapter only routes `agent.dispatch`. M2 has no
+   approval bridge and must keep approval-required reads denied; do not add an
+   unreviewed bridge or synthesize a successful approval.
+
+`test-adapter-call-shape.mjs` adds a branch-local seam regression for
+quarantine and approval-required M1-style rejections: each rejection must
+propagate unchanged after one dispatch, with zero retry and zero auto-approval.
+This fixture does not execute current M1 code or prove M1 expiry behavior;
+the current M1 source handles expiry at `operator.approve`. Existing tests
+continue to reject unregistered tools/paths and the actual temporary junction
+alias before the mock M1 dispatcher. These are focused M2 adapter tests only.
+
+Local verification on Windows / Node.js v22.23.1:
+
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 8/8 passed.
+- `git diff --check` — passed with no whitespace errors.
+- No product build, M1 runtime, or M4 host integration was run or claimed; the change is limited to the M2 `.mjs` seam test and this report.
+
+Disposition: **M2 adapter fail-closed at its tested seam; product OBSERVE
+read, strict positive control, M1/M5 identity binding, M4 host wiring, and
+end-to-end expiry/quarantine integration remain `NOT_VERIFIED`.** Native
+Codex Shell remains `UNPROTECTED`. No M1/M4/M5 paths or public contracts were
+changed; no push was performed.
