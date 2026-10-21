@@ -5935,3 +5935,8 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - At exact M0 head `54a49a253a5bd0d6231b27e0f859849b7aef0224`, coordination run `39662200855` passed. Product run `39662200876` failed only in Windows Node 20 job `119437869591`, test `test/agent-hook.test.ts:54`.
 - The failure is the unchanged base interruption fixture's fixed 1-second `spawnSync` timeout followed by `assert.equal(fs.existsSync(marker), true)`. The exact job log shows expected `true`, actual `false`; the subsequent empty-stdout assertion was not reached. M0's exact changes were coordinator documents only. This is the known readiness-handshake issue, not a product Hook or M0-doc regression.
 - M0 recorded the owner relay in Issue #60 comment `6324760486` and scheduler comment #29 `6324762582`. M1 remains parked while M2/M7 hold the only active slots; preserve this for M1's next slot. No rerun or source edit was performed.
+
+## M0 19:34 UTC M2 package-smoke log refinement — 2026-10-21
+
+- Read-only job log inspection for M2 exact-head run `39638404097`, package-smoke job `119358211120`, confirms the sole failing reason is `unexpected package file execution-isolation/gateway-adapter/gateway-adapter.mjs` at `scripts/check-package.mjs:40`. M0 relayed this exact cause in PR #37 comment `6324791386`; preserve all other package rejection predicates.
+- M2 #37 remains at `be66cf8f4c1a60f093740577796ec5cd633e1d93` and M7 #39 at `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a` at this read; no new owner result or source movement is visible.
