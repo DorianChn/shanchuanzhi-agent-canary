@@ -26,9 +26,10 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }
 });
 
-test('package allowlist admits only the reviewed M2 gateway facade and runtime dependency',()=>{
+test('package allowlist admits only the reviewed M2 gateway facade',()=>{
   for(const file of reviewedGatewayAdapterPackageFiles)assert.equal(isPublicPackageFile(file),true);
   for(const file of [
+    'execution-isolation/gateway-adapter/security-gateway-adapter.mjs',
     'execution-isolation/gateway-adapter/extra.mjs',
     'execution-isolation/gateway-adapter/test-secret.mjs',
     'execution-isolation/other-module/runtime.mjs',
@@ -37,15 +38,16 @@ test('package allowlist admits only the reviewed M2 gateway facade and runtime d
   ])assert.equal(isPublicPackageFile(file),false,file);
   assert.deepEqual(reviewedGatewayAdapterPackageFiles,[
     'execution-isolation/gateway-adapter/gateway-adapter.mjs',
-    'execution-isolation/gateway-adapter/security-gateway-adapter.mjs',
   ]);
 });
 
-test('package checker accepts only the reviewed strict gateway export and exact runtime files',()=>{
+test('package checker accepts only the reviewed gateway facade and exact export target',()=>{
   const manifest={exports:{'./sdk':'./dist/sdk.js','./gateway-adapter':'./execution-isolation/gateway-adapter/gateway-adapter.mjs'}};
   validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles]);
   validateGatewayAdapterPackage({exports:{'./sdk':'./dist/sdk.js'}},[]);
-  assert.throws(()=>validateGatewayAdapterPackage(manifest,[reviewedGatewayAdapterPackageFiles[0]]),/missing .*security-gateway-adapter\.mjs/);
+  assert.throws(()=>validateGatewayAdapterPackage({exports:{'./sdk':'./dist/sdk.js'}},[...reviewedGatewayAdapterPackageFiles]),/require the reviewed export/);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[]),/missing .*gateway-adapter\.mjs/);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles,'execution-isolation/gateway-adapter/security-gateway-adapter.mjs']),/unexpected gateway adapter package file/);
   assert.throws(()=>validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles,'execution-isolation/gateway-adapter/extra.mjs']),/unexpected gateway adapter package file/);
   assert.throws(()=>validateGatewayAdapterPackage({exports:{...manifest.exports,'./security-gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/internals exposed/);
   assert.throws(()=>validateGatewayAdapterPackage({exports:{'./gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/must target only the strict facade/);

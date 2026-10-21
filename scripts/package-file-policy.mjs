@@ -3,7 +3,6 @@ const gatewayAdapterFacade = `${gatewayAdapterPath}gateway-adapter.mjs`;
 
 export const reviewedGatewayAdapterPackageFiles = Object.freeze([
   gatewayAdapterFacade,
-  `${gatewayAdapterPath}security-gateway-adapter.mjs`,
 ]);
 
 const reviewedGatewayAdapterFileSet = new Set(reviewedGatewayAdapterPackageFiles);
