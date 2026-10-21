@@ -5910,3 +5910,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - M2 `createSecurityGatewayHostAdapter` reserves the router's `tools`, `executeRealTool`, and `fileReadCapability`; its injected router options must set `mode: OBSERVE` and `verifyRealPaths: true`. M5 `src/security-router.ts` declares the file-read execution context and forwards the M1 capability to the host callback. M4's current `src/security-router.ts` has no `fileReadCapability` support, and its package manifest exports only `./sdk`; the M2 subpath is present on separate PR #37.
 - This makes the current M4 branch composition gap concrete: it cannot claim M1/M2-held-identity integration by using its local Gateway/router or by copying implementation files. The exact contract and branch-composition blocker were sent to M4/M5 in PR comments `6324397491` and `6324398295`.
 - M5's pre-existing two-file M6-owned worktree diff remains preserved and excluded from the M5 slot.
+
+## M0 19:20 UTC M4/M5 midpoint — 2026-10-21
+
+- Usage tab `336903978` remained open and active at 77% five-hour / 52% weekly. Only M4/M5 are active through 19:30; no exclusive resource is reserved.
+- M4 #34 and its checkout remain at `803a015f3e97ae69b7adeb4411f93defc0a06cfe`, clean, with no public owner result or source movement. M5 #47 remains at `bbce79aa086b39b51422cc72471c23c963778650`; its two pre-existing M6-owned E4 edits remain untouched and uncommitted. No M5 owner disposition is visible.
+- M0 posted bounded midpoint requests in PR #34 comment `6324522240`, PR #47 comment `6324522841`, and scheduler Issue #29 comment `6324523493`. The requests seek the M4-owned host integration or precise composition blocker and M5 policy contract disposition; no source is required if the existing policy contract suffices.
