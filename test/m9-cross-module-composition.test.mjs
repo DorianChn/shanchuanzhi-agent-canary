@@ -270,6 +270,159 @@ test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade,
   assert.equal(guard.state, 'SAFE');
 });
 
+test('packed M2 facade with active M1 capability and exact M5 router rejects sensitive and filesystem aliases', async (t) => {
+  const packedRoot = process.env.M2_PACKED_ROOT;
+  const consumerRoot = process.env.M2_CONSUMER_ROOT;
+  assert.ok(packedRoot, 'M2_PACKED_ROOT must point to the installed candidate tarball');
+  assert.ok(consumerRoot, 'M2_CONSUMER_ROOT must point to the disposable package consumer');
+
+  const packageRequire = createRequire(path.join(consumerRoot, 'package.json'));
+  const packedFacadePath = packageRequire.resolve('@dorianchn/agent-canary/gateway-adapter');
+  const expectedFacadePath = path.join(packedRoot, 'execution-isolation', 'gateway-adapter', 'gateway-adapter.mjs');
+  assert.equal(path.resolve(packedFacadePath), path.resolve(expectedFacadePath), 'the M2 public facade must come from the packed candidate');
+  const packedFacade = await import(pathToFileURL(packedFacadePath).href);
+
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-active-capability-aliases-'));
+  const workspace = path.join(base, 'workspace');
+  const publicDir = path.join(workspace, 'public');
+  const privateDir = path.join(workspace, 'private');
+  const outside = path.join(base, 'outside');
+  const publicPath = 'public/readable.txt';
+  const publicFile = path.join(workspace, publicPath);
+  const envFile = path.join(privateDir, '.env');
+  const outsideFile = path.join(outside, 'outside.txt');
+  const workspaceAlias = path.join(workspace, 'public-alias');
+  const outsideAlias = path.join(workspace, 'outside-alias');
+  const hardlinkDir = path.join(workspace, 'hardlink-alias');
+  const hardlinkAlias = path.join(hardlinkDir, '.env');
+  const publicMarker = 'M9_PACKED_M2_ACTIVE_CAPABILITY_OK';
+  const envMarker = 'M9_SYNTHETIC_ENV_FIXTURE_BYTES';
+  const outsideMarker = 'M9_SYNTHETIC_OUTSIDE_FIXTURE_BYTES';
+  fs.mkdirSync(publicDir, { recursive: true });
+  fs.mkdirSync(privateDir, { recursive: true });
+  fs.mkdirSync(outside, { recursive: true });
+  fs.mkdirSync(hardlinkDir, { recursive: true });
+  fs.writeFileSync(publicFile, publicMarker);
+  fs.writeFileSync(envFile, envMarker);
+  fs.writeFileSync(outsideFile, outsideMarker);
+  const linkType = process.platform === 'win32' ? 'junction' : 'dir';
+  fs.symlinkSync(publicDir, workspaceAlias, linkType);
+  fs.symlinkSync(outside, outsideAlias, linkType);
+  fs.linkSync(envFile, hardlinkAlias);
+  const envStat = fs.statSync(envFile);
+  const hardlinkStat = fs.statSync(hardlinkAlias);
+  assert.equal(hardlinkStat.dev, envStat.dev, 'the alias and .env fixture must be on the same device');
+  assert.equal(hardlinkStat.ino, envStat.ino, 'the .env alias must be an actual hard link');
+
+  const fixturePaths = [publicFile, envFile, hardlinkAlias, outsideFile];
+  const originalSnapshot = new Map(fixturePaths.map((fixturePath) => {
+    const bytes = fs.readFileSync(fixturePath);
+    return [fixturePath, { bytes, sha256: createHash('sha256').update(bytes).digest('hex') }];
+  }));
+  const assertFixturesUnchanged = () => {
+    for (const [fixturePath, snapshot] of originalSnapshot) {
+      const bytes = fs.readFileSync(fixturePath);
+      assert.deepEqual(bytes, snapshot.bytes, `${fixturePath} bytes must remain unchanged`);
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), snapshot.sha256, `${fixturePath} hash must remain unchanged`);
+    }
+  };
+
+  let gateway;
+  t.after(async () => {
+    if (gateway) await gateway.close();
+    for (const alias of [workspaceAlias, outsideAlias]) {
+      try {
+        fs.unlinkSync(alias);
+      } catch (error) {
+        if (error?.code !== 'ENOENT') throw error;
+      }
+    }
+    fs.rmSync(base, { recursive: true, force: true });
+  });
+
+  const guard = m1.createAgentGuard({ sessionId: 'm9-packed-m2-active-capability-aliases', alert: false });
+  gateway = m1.createTrustedExecutionGateway({
+    agentId: 'm9-packed-m2-active-capability-aliases',
+    guard,
+    workspaceRoot: workspace,
+    files: [{ path: publicPath }],
+    evidence: new m1.EvidenceRecorder(),
+  });
+
+  let m5Router;
+  let m2Executor;
+  let m5ToM2Callbacks = 0;
+  const host = packedFacade.createSecurityGatewayHostAdapter({
+    gateway,
+    fixedFileReads: { read: [publicPath] },
+    createSecurityToolRouter: (options) => {
+      m2Executor = options.executeRealTool;
+      m5Router = m5.createSecurityToolRouter({
+        ...options,
+        executeRealTool: (call, context) => {
+          m5ToM2Callbacks += 1;
+          return options.executeRealTool(call, context);
+        },
+      });
+      return m5Router;
+    },
+    routerOptions: { guard, workspaceRoot: workspace, mode: 'OBSERVE', verifyRealPaths: true },
+  });
+
+  assert.equal(typeof m2Executor, 'function', 'the injected exact M5 factory receives M2 capability wiring');
+  assert.ok(m5Router, 'the M2 facade fixture must inject the pinned M5 router');
+  assert.equal(typeof host.dispatch, 'function');
+  assert.equal(typeof host.pendingApprovals, 'function');
+
+  const positiveCall = { name: 'read', args: { path: publicPath } };
+  assert.equal((await m5Router.decide(positiveCall)).action, 'OBSERVE_ONLY');
+  const positive = await host.dispatch(positiveCall);
+  assert.ok(JSON.stringify(positive).includes(publicMarker), 'the registered held-file read reaches M1 through packed M2');
+  assert.equal(m5ToM2Callbacks, 1);
+  const evidenceAfterPositive = gateway.evidence().length;
+  assert.ok(evidenceAfterPositive > 0, 'the positive control records the M1 held-file Gateway read');
+  assert.deepEqual(host.pendingApprovals(), []);
+  assert.deepEqual(gateway.operator.pending(), []);
+
+  const deniedAliases = [
+    { label: 'sensitive .env path', path: 'private/.env' },
+    { label: 'workspace symlink/junction alias', path: 'public-alias/readable.txt' },
+    { label: 'outside symlink/junction alias', path: 'outside-alias/outside.txt' },
+    { label: 'hard link alias named .env', path: 'hardlink-alias/.env' },
+  ];
+  for (const { label, path: pathArg } of deniedAliases) {
+    const call = { name: 'read', args: { path: pathArg } };
+    assert.equal((await m5Router.decide(call)).action, 'DENY', `${label} is denied by the exact M5 fixture`);
+    await assert.rejects(
+      host.dispatch(call),
+      (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+      `${label} must fail before the M5-to-M2 execution callback`,
+    );
+    assert.equal(m5ToM2Callbacks, 1, `${label} must not enter the M5-to-M2 callback`);
+    assert.equal(gateway.evidence().length, evidenceAfterPositive, `${label} must not create new M1 Gateway evidence`);
+    assert.deepEqual(host.pendingApprovals(), [], `${label} must not create an M5 approval`);
+    assert.deepEqual(gateway.operator.pending(), [], `${label} must not create an M1 approval`);
+    assertFixturesUnchanged();
+  }
+
+  for (const { label, path: pathArg } of deniedAliases) {
+    await assert.rejects(
+      m2Executor({ name: 'read', args: { path: pathArg } }, { signal: new AbortController().signal }),
+      (error) => error?.message === 'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
+      `the direct M2 executor must reject ${label} outside its exact registration`,
+    );
+    assert.equal(gateway.evidence().length, evidenceAfterPositive, `direct M2 rejection for ${label} must not reach M1`);
+    assert.deepEqual(gateway.operator.pending(), [], `direct M2 rejection for ${label} must not create an M1 approval`);
+    assertFixturesUnchanged();
+  }
+
+  assert.equal(m5ToM2Callbacks, 1, 'only the positive control enters the M5-to-M2 execution callback');
+  assert.deepEqual(host.pendingApprovals(), []);
+  assert.deepEqual(gateway.operator.pending(), []);
+  assert.equal(guard.state, 'SAFE');
+  assertFixturesUnchanged();
+});
+
 test('exact M1/M2/M5 sources deny strict path-only reads when no M1 capability provider is wired', async (t) => {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-fixtures-'));
   const workspace = path.join(base, 'workspace');
