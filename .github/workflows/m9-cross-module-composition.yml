@@ -52,11 +52,11 @@ jobs:
           path: module-sources/m5
           fetch-depth: 0
 
-      - name: Checkout M6 PR #38 at M6 owner-accepted exact source SHA
+      - name: Checkout M6 PR #38 at candidate exact source SHA (owner acceptance pending)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 560f724292d285a43fcc4a0b0c8f50f9f08a6f79
+          ref: 98803607b89f11e24430c461bd91e9c1a0ece9d4
           path: module-sources/m6
 
       - name: Checkout M7 PR #39 at M7-accepted packaging/build source SHA
@@ -88,6 +88,8 @@ jobs:
             exit 1
           fi
           m6_sha="$(git -C module-sources/m6 rev-parse --verify HEAD)"
+          m6_owner_acceptance_status='PENDING'
+          m6_owner_acceptance_sha='98803607b89f11e24430c461bd91e9c1a0ece9d4'
           m7_sha="$(git -C module-sources/m7 rev-parse --verify HEAD)"
           m8_sha="$(git -C module-sources/m8 rev-parse --verify HEAD)"
           {
@@ -99,11 +101,13 @@ jobs:
             printf 'M5_SHA=%s\n' "$m5_sha"
             printf 'M5_CODE_SHA=%s\n' "$m5_code_sha"
             printf 'M6_SHA=%s\n' "$m6_sha"
+            printf 'M6_OWNER_ACCEPTANCE_STATUS=%s\n' "$m6_owner_acceptance_status"
+            printf 'M6_OWNER_ACCEPTANCE_SHA=%s\n' "$m6_owner_acceptance_sha"
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2: %s\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6: %s\nM7: %s\nM8: %s\n' \
-            "$m9_sha" "$m1_sha" "$m1_owner_review_sha" "$m2_sha" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2: %s\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 candidate: %s\nM6 owner acceptance: %s for %s\nM7: %s\nM8: %s\n' \
+            "$m9_sha" "$m1_sha" "$m1_owner_review_sha" "$m2_sha" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m6_owner_acceptance_status" "$m6_owner_acceptance_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -135,6 +139,10 @@ jobs:
         working-directory: module-sources/m6
         run: node --test security-lab/e4/verify-bundle.test.mjs
 
+      - name: Run M6 exact-source Auto E4 lifecycle regression
+        working-directory: module-sources/m6
+        run: node --test test/auto-e4.test.mjs
+
       - name: Run M7 exact-head package-contract and positive-control regressions
         working-directory: module-sources/m7
         run: node --test --test-name-pattern="prepare output and build instructions pass the pinned ZIP and required source commit SHA|Windows payload E4 checks the co-located privacy-safe hook wrapper" test/windows-packaging.test.mjs
@@ -165,12 +173,12 @@ jobs:
           {
             echo
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks; a registered read passes only when M5 resolves and verifies the M1-issued capability and M2 forwards it to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
-            echo 'Candidate exact sources: M1 7279336307fc7aacd46119405858d4fd91499757; M2 eed2c0884f524d37c25d317888e1d289122c440d; M5 ed304e399ec237a47e03830e5013695ddcc10dd6; M3 535d429faef7ae0e15bbf9b382d639280045f338; M6 560f724292d285a43fcc4a0b0c8f50f9f08a6f79; M7 b0581407def769946fa710f55cd1d0986ce0cf3b (packaging/build paths only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M1 owner-review evidence SHA 7279336307fc7aacd46119405858d4fd91499757 ACCEPTs M2 eed2c0884f524d37c25d317888e1d289122c440d at the exact adapter seam and M5 ed304e399ec237a47e03830e5013695ddcc10dd6 at the strict capability-verifier seam, including M5 src/security-router.ts strict-mode contract and its test double. This does not accept a product-host integration. M9 candidate 2fda9462acd9c40462fc04ff5583b30c31606223 is accepted only as synthetic fixture composition, not product host. M5 source-scope code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b remains the prior ancestry gate. M2 has a read-only adapter and no write/delete adapter; these source pins do not establish a production-host callsite or global host protection.'
+            echo 'Candidate exact sources: M1 7279336307fc7aacd46119405858d4fd91499757; M2 eed2c0884f524d37c25d317888e1d289122c440d; M5 ed304e399ec237a47e03830e5013695ddcc10dd6; M3 535d429faef7ae0e15bbf9b382d639280045f338; M6 98803607b89f11e24430c461bd91e9c1a0ece9d4 (owner acceptance PENDING; CI does not imply acceptance); M7 b0581407def769946fa710f55cd1d0986ce0cf3b (packaging/build paths only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M1 owner-review evidence SHA 7279336307fc7aacd46119405858d4fd91499757 ACCEPTs M2 eed2c0884f524d37c25d317888e1d289122c440d at the exact adapter seam and M5 ed304e399ec237a47e03830e5013695ddcc10dd6 at the strict capability-verifier seam, including M5 src/security-router.ts strict-mode contract and its test double. This does not accept a product-host integration. M9 candidate 2fda9462acd9c40462fc04ff5583b30c31606223 is accepted only as synthetic fixture composition, not product host. M5 source-scope code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b remains the prior ancestry gate. M2 has a read-only adapter and no write/delete adapter; these source pins do not establish a production-host callsite or global host protection.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
             echo 'M2 scope: registered adapter route and M5 policy fixture only; native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED.'
             echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3-wrapper JSONL regression requiring fixed fields, PreToolUse, a valid enum, canonical ISO time, and caller/reason/path/command canaries absent. M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
             echo 'M3 integration gate compares the pinned M1 candidate and M3 Hook source decisions for a synthetic unpinned normal Read; both must deny. The earlier M1 b1d7423 / M3 be38802 mismatch was observed only on those stale refs; retain and run this fail-closed comparison against the refreshed exact sources.'
-            echo 'M6 evidence: source-checkout bundle/sidecar verifier regression; security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
+            echo 'M6 candidate evidence: source-checkout bundle/sidecar verifier and full Auto E4 lifecycle regressions. M6 owner acceptance for exact SHA 98803607b89f11e24430c461bd91e9c1a0ece9d4 remains PENDING and is not inferred from green CI. security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
             echo 'M8 exact published PR head pin is 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. M7 is pinned to b0581407def769946fa710f55cd1d0986ce0cf3b for its owner-accepted packaging/build paths; this does not verify Setup.exe internals.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'

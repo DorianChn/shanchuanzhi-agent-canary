@@ -21,13 +21,15 @@ const pinnedSourceShas = {
   M2: 'eed2c0884f524d37c25d317888e1d289122c440d',
   M3: '535d429faef7ae0e15bbf9b382d639280045f338',
   M5: 'ed304e399ec237a47e03830e5013695ddcc10dd6',
-  M6: '560f724292d285a43fcc4a0b0c8f50f9f08a6f79',
+  M6: '98803607b89f11e24430c461bd91e9c1a0ece9d4',
   M7: 'b0581407def769946fa710f55cd1d0986ce0cf3b',
   M8: '2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3',
 };
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
+assert.equal(process.env.M6_OWNER_ACCEPTANCE_STATUS, 'PENDING', 'M6 owner acceptance must remain explicitly pending until public acceptance');
+assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, pinnedSourceShas.M6, 'pending M6 owner acceptance must name the exact candidate source SHA');
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 assert.equal(
@@ -85,6 +87,7 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
+console.log('[M6 owner acceptance]', `${process.env.M6_OWNER_ACCEPTANCE_STATUS} for ${process.env.M6_OWNER_ACCEPTANCE_SHA}`);
 console.log('[M9 separate evidence SHAs]', `M1_OWNER_REVIEW_SHA=${process.env.M1_OWNER_REVIEW_SHA}`, `M5_CODE_SHA=${process.env.M5_CODE_SHA}`);
 
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'));
