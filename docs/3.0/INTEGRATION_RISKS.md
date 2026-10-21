@@ -1059,3 +1059,24 @@ Usage was readable at 15:03 UTC (77% five-hour / 52% weekly). M2 adapter, M4 tes
 | #61 exact-source composition | M9 local commits `2fda9462acd9c40462fc04ff5583b30c31606223` and `222bb3e408f93a5122c4a9c5f7d83d814045245b` pin M1 `7279336307fc7aacd46119405858d4fd91499757`, M2 `eed2c0884f524d37c25d317888e1d289122c440d`, and M5 `ed304e399ec237a47e03830e5013695ddcc10dd6`. M1 accepted the adapter/verifier seams; exact-source test passed 8/8. | Obtain exact-head M9 composition and product CI after refs publish. M9 product run still has one explicit skip; this does not establish a production-host callsite. |
 
 All commits in this delta were local at the time of writing. The next push must wait until 15:23 UTC and a fresh readable Usage/ref preflight. PR #24 remains untouched; #53 closure remains limited to packaged-Hook logging/redaction evidence.
+
+## 2026-10-21 15:29 UTC post-push CI correction
+
+| Gate | Current verified state | Remaining acceptance |
+| --- | --- | --- |
+| #52 protected file identity / TOCTOU | Exact M2 `eed2c08` CI passed. Exact M5 `ed304e3` CI failed on macOS Node 22 because the contract-double fixture's lexical temp path differed from `realpath`; the runtime returned DENY. M9 Windows composition passed and the Ubuntu composition job was still in progress; full M9 product CI was also still in progress at this read. | M5 is normalizing only the test fixture path. Rerun exact M5 head after that fix. First-party host/callsite and production TOCTOU evidence remain missing; keep OPEN/P0/NOT_VERIFIED. |
+| #60 interruption fixture | M4 fix is public at `fde972c`; exact-head CI is still queued. | Wait for exact-head CI; preserve the minimal M1-approved test-only scope. |
+| #61 exact-source composition | M9 public head `222bb3e` contains exact M1/M2/M5 candidate pins and the updated owner-review SHA. Composition run `39625263712` and Windows wrapper `39625263762` report success, but the Ubuntu composition job remains in progress. Full product CI later completed successfully in run `39625263733`. | Record the final Ubuntu job result before closing #61. This proves synthetic source composition only, not product host integration. |
+
+This supersedes the previous paragraph stating the listed candidate commits were all local: all five branches above were pushed in the 15:23 UTC batch. The 15:23 quota read was 77% five-hour / 52% weekly. Next push is no earlier than 15:43:24 UTC after a new Usage and exact-ref preflight.
+
+## 2026-10-21 15:31 UTC exact-head and candidate update
+
+| Gate | Current verified state | Remaining acceptance |
+| --- | --- | --- |
+| #52 M5 strict-path test fixture | M5 local commit `bbce79aa086b39b51422cc72471c23c963778650` changes only the temporary test workspace to its canonical realpath; local target test 1/1, focused suite 61/61, build, and diff check passed. The public PR remains at `ed304e3`; the exact-head CI failure is run `39625248736` and the local fix has not yet been published or host-validated. | Publish in the next allowed batch, then require fresh macOS/all-platform CI. Runtime denial remains correct; first-party host/callsite and production TOCTOU remain NOT_VERIFIED. |
+| #59 / M6 candidate | M6 PR #38 exact head is `98803607b89f11e24430c461bd91e9c1a0ece9d4`; CI `39616422797` passed all nine jobs and wrapper `39616422793` passed both jobs. PR #38 has no review. M9 has been assigned the M9-owned candidate pin/full Auto E4 suite change; owner acceptance remains pending. | Require M6 owner ACCEPT/REJECT for this exact SHA and scope before marking the owner gate accepted. Do not infer acceptance from CI. |
+| #61 exact-source composition | Run `39625263712` reports overall success and Windows composition success, but its Ubuntu composition job is still in progress. M9 wrapper `39625263762` passed Ubuntu and Windows; product CI `39625263733` passed all nine jobs. | Wait for the Ubuntu composition job to reach a final conclusion; keep product-host and installer evidence claims separate. |
+| #60 interruption fixture | M4 run `39625260637` remains queued overall; macOS Node 20 is still queued and other listed jobs passed. | Wait for the queued job and overall run to finish. |
+
+Usage was readable at 15:29 UTC: 77% five-hour / 52% weekly; the Usage tab remains open. Do not push before 15:43:24 UTC; then re-read Usage, exact remote refs, and PR #24 before any batched fast-forward.
