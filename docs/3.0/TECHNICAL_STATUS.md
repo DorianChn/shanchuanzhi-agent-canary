@@ -5195,3 +5195,11 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - The payload manifest contains staged `claude-native-hook.mjs` (2,032 bytes, SHA-256 `325f070d425223c4c4d250e6ea2b0203a5b19daf263a34a68c602371cc80e315`); its exact M7 source blob is `d6f93249306b7966259cab463dd39475728ef338`. The sidecar hash equals the manifest entry and the canonical source blob was independently read from the M7 commit.
 - BUILD_REPORT records candidate.2, Community ZIP SHA-256 `e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7`, NSIS v3.13, canary PASS, and installer-not-run. CANARY_RESULT scopes PASS to the Hook wrapper with a controlled synthetic fixture; it is not a third-party host or VM test.
 - The Setup.exe was hashed but not internally extracted or executed. The Hook bytes inside the installer therefore remain NOT_VERIFIED; keep #53 OPEN/P0. The separate PR #24 candidate.1 ZIP is not the PR #39 candidate.2 input. No project files or module worktrees were changed by this artifact download.
+
+## M7 Setup.exe evidence-chain review — 2026-10-21 08:05 UTC
+
+- Read the exact `windows-community.yml` at M7 source SHA `b0581407def769946fa710f55cd1d0986ce0cf3b`. Lines 132–145 set `$packagedHookPath` under `$payloadRoot` and compare that staged file with the canonical Git blob and bytes.
+- Lines 154–161 copy Setup.exe to the artifact, then separately copy `$packagedHookPath` into `extracted-hook/claude-native-hook.mjs`; the workflow does not extract Setup.exe. Lines 163–180 run the staged `$payloadRoot/runtime/node.exe` and harness with `--app-root=$payloadRoot`.
+- Therefore `extracted-hook/` and CANARY_RESULT prove the prepared build payload and controlled fixture only. They do not establish the Hook bytes inside Setup.exe. This narrows the hosted artifact evidence but does not invalidate M7’s accepted packaging/build-source scope.
+- M0 recorded the source-chain finding and requested M7/M8 remediation at Issue #53 comment `6311103327`: add pinned Setup.exe extraction, compare the actual extracted Hook to the canonical blob, then run the controlled harness against that extracted copy. Do not execute/install Setup.exe; installer lifecycle remains a separately scheduled gate.
+- Issue #53 remains OPEN/P0; Setup.exe interior Hook remains NOT_VERIFIED. No installer, VM, or project product test was run by M0.
