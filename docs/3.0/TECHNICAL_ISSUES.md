@@ -1543,3 +1543,9 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **PR #30 / inherited Hook test:** run 39596446330 on head 44300a5 reproduced the same Windows Node 22 marker assertion failure at test/agent-hook.test.ts:54:53; six jobs passed, one failed, one Windows Node 20 job was cancelled, and package-smoke was skipped. No allow/callback assertion was reached. Current M1 PR #43 head c016431 has green CI 39519637615 (9/9). Issue #32 remains closed on the accepted M1 fixture disposition; the PR #30 run is tied to the unchanged older base. Preserve every fail-closed assertion.
 - **M1/M6 lane:** as of the 12:02 public snapshot, M1 has not posted its exact-SHA review for M2 PR #37 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 or a #62 classification; M6 has not posted a #66 fix commit on existing PR #38. Activity in private Codex sessions is UNKNOWN. Issue #29 comment 6315417679 records the request for exact outcomes or blockers.
 - Next shared push is no earlier than 12:22 UTC; PR #24 remains OPEN/Draft and unchanged.
+
+## M0 12:14 owner follow-up — 2026-10-21 12:14 UTC
+
+- **M1 / #52 / #62:** no owner review/classification was visible at the requested checkpoint. Reminder is on PR #37 comment 6315647526; M0 source audit is explicitly not owner acceptance. Keep #52 P0 NOT_VERIFIED and #62 OPEN / UNKNOWN until exact owner disposition and evidence.
+- **M6 / #66:** no fix movement was visible at the requested checkpoint. Reminder is on PR #38 comment 6315647508. Keep the release-during-active-stage race OPEN / P1 until an owner commit and exact regression/CI.
+- Private session activity is UNKNOWN. M0 created no branch and changed no module code. Next shared push no earlier than 12:22 UTC.
