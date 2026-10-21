@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
@@ -18,11 +19,11 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 
 const pinnedSourceShas = {
   M1: '7279336307fc7aacd46119405858d4fd91499757',
-  M2: 'eed2c0884f524d37c25d317888e1d289122c440d',
-  M3: '535d429faef7ae0e15bbf9b382d639280045f338',
-  M5: 'ed304e399ec237a47e03830e5013695ddcc10dd6',
+  M2: 'be66cf8f4c1a60f093740577796ec5cd633e1d93',
+  M3: '429cd73c03273bc77f3781b489f541e396cd9361',
+  M5: 'bbce79aa086b39b51422cc72471c23c963778650',
   M6: '98803607b89f11e24430c461bd91e9c1a0ece9d4',
-  M7: 'b0581407def769946fa710f55cd1d0986ce0cf3b',
+  M7: 'cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a',
   M8: '2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3',
 };
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
@@ -31,13 +32,12 @@ for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
 assert.equal(process.env.M6_OWNER_ACCEPTANCE_STATUS, 'ACCEPT', 'M6 owner acceptance must match the published exact-scope disposition');
 assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, pinnedSourceShas.M6, 'M6 owner acceptance must name the exact pinned source SHA');
 assert.equal(process.env.M6_OWNER_ACCEPTANCE_COMMENT, '6320039569', 'M6 acceptance must cite the exact public Issue #59 comment');
+assert.equal(process.env.M2_OWNER_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'M2 package acceptance retains the real-M5-router condition');
+assert.equal(process.env.M2_OWNER_DISPOSITION_SHA, pinnedSourceShas.M2, 'M2 disposition must name the exact packed candidate SHA');
+assert.equal(process.env.M2_OWNER_DISPOSITION_COMMENT, '6321070391', 'M1 actual-tarball review must match the public disposition');
+assert.equal(process.env.M2_OWNER_DISPOSITION_ISSUE, '68', 'M2/M7 package composition is tracked in Issue #68');
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
-assert.equal(
-  sourceRoots.M2.sha,
-  'eed2c0884f524d37c25d317888e1d289122c440d',
-  'M2 uses the exact candidate adapter source SHA',
-);
 
 function readTrackedHookBlob(moduleName) {
   const result = spawnSync('git', [
@@ -188,130 +188,86 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
   assert.equal(guard.state, 'SAFE');
 });
 
-test('M1 held-file Gateway and exact M2 adapter provide the constrained synthetic read route', async (t) => {
-  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m1-m2-m5-safe-read-'));
-  const workspace = path.join(base, 'workspace');
-  const outside = path.join(base, 'outside');
-  const publicDir = path.join(workspace, 'public');
-  const privateDir = path.join(workspace, 'private');
-  fs.mkdirSync(publicDir, { recursive: true });
-  fs.mkdirSync(privateDir, { recursive: true });
-  fs.mkdirSync(outside, { recursive: true });
+test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade, and exact M5 router', async (t) => {
+  const packedRoot = process.env.M2_PACKED_ROOT;
+  const consumerRoot = process.env.M2_CONSUMER_ROOT;
+  assert.ok(packedRoot, 'M2_PACKED_ROOT must point to the installed candidate tarball');
+  assert.ok(consumerRoot, 'M2_CONSUMER_ROOT must point to the disposable package consumer');
 
-  const publicFile = path.join(publicDir, 'readable.txt');
-  const envFile = path.join(privateDir, '.env');
-  const outsideFile = path.join(outside, 'outside.txt');
-  fs.writeFileSync(publicFile, 'M9_SYNTHETIC_HELD_HANDLE_PUBLIC_READ');
-  fs.writeFileSync(envFile, 'M9_SYNTHETIC_SENSITIVE_ALIAS_TARGET');
-  fs.writeFileSync(outsideFile, 'M9_SYNTHETIC_OUTSIDE_ALIAS_TARGET');
-  const aliases = [
-    path.join(workspace, 'public-alias'),
-    path.join(workspace, 'outside-alias'),
-  ];
-  const hardLinkAlias = path.join(publicDir, 'sensitive-alias.txt');
-  const linkType = process.platform === 'win32' ? 'junction' : 'dir';
-  const originalSnapshot = new Map([publicFile, envFile, outsideFile].map((filePath) => [
-    filePath,
-    {
-      contents: fs.readFileSync(filePath, 'utf8'),
-      sha256: createHash('sha256').update(fs.readFileSync(filePath)).digest('hex'),
-    },
-  ]));
-  const assertFixturesUnchanged = () => {
-    for (const [filePath, snapshot] of originalSnapshot) {
-      assert.equal(fs.readFileSync(filePath, 'utf8'), snapshot.contents);
-      assert.equal(createHash('sha256').update(fs.readFileSync(filePath)).digest('hex'), snapshot.sha256);
-    }
-  };
+  const packageRequire = createRequire(path.join(consumerRoot, 'package.json'));
+  const packedFacadePath = packageRequire.resolve('@dorianchn/agent-canary/gateway-adapter');
+  const expectedFacadePath = path.join(packedRoot, 'execution-isolation', 'gateway-adapter', 'gateway-adapter.mjs');
+  assert.equal(path.resolve(packedFacadePath), path.resolve(expectedFacadePath), 'the public export must resolve into the packed M2 candidate');
+  const packedFacade = await import(pathToFileURL(packedFacadePath).href);
+  assert.deepEqual(Object.keys(packedFacade), ['createSecurityGatewayHostAdapter'], 'only the reviewed public M2 host facade is exposed');
+
+  const m3Host = await import(pathToFileURL(path.join(sourceRoots.M3.root, 'src', 'codex-connection-mcp.ts')).href);
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-protected-read-host-'));
+  const workspace = path.join(base, 'workspace');
+  const relativePath = 'agent-canary-public.txt';
+  const publicFile = path.join(workspace, relativePath);
+  const marker = 'AGENT_CANARY_PROTECTED_FILE_READ_OK';
+  fs.mkdirSync(workspace, { recursive: true });
+  fs.writeFileSync(publicFile, marker);
 
   let gateway;
   t.after(async () => {
     if (gateway) await gateway.close();
-    for (const alias of aliases) {
-      try {
-        fs.unlinkSync(alias);
-      } catch (error) {
-        if (error?.code !== 'ENOENT') throw error;
-      }
-    }
     fs.rmSync(base, { recursive: true, force: true });
   });
-  fs.symlinkSync(publicDir, aliases[0], linkType);
-  fs.symlinkSync(outside, aliases[1], linkType);
-  fs.linkSync(envFile, hardLinkAlias);
 
-  const guard = m1.createAgentGuard({ sessionId: 'm9-m1-m2-m5-safe-read', alert: false });
+  const guard = m1.createAgentGuard({ sessionId: 'm9-m1-m2-m3-m5-protected-read', alert: false });
   gateway = m1.createTrustedExecutionGateway({
-    agentId: 'm9-m1-m2-m5-safe-read',
+    agentId: 'm9-m1-m2-m3-m5-protected-read',
     guard,
     workspaceRoot: workspace,
-    files: [{ path: 'public/readable.txt' }],
+    files: [{ path: relativePath }],
     evidence: new m1.EvidenceRecorder(),
   });
-  const adapter = m2.createSecurityGatewayAdapter(gateway, { read: ['public/readable.txt'] });
-  let adapterEntrances = 0;
-  const router = m5.createSecurityToolRouter({
-    guard,
-    workspaceRoot: workspace,
-    mode: 'OBSERVE',
-    verifyRealPaths: true,
-    fileReadCapability: adapter.fileReadCapability,
-    tools: adapter.tools,
-    executeRealTool: (call, context) => {
-      adapterEntrances += 1;
-      return adapter.executeRealTool(call, context);
+  let m5Router;
+  const host = await m3Host.createProtectedHostAdapter(gateway, guard, workspace, {
+    loadM2Facade: async () => packedFacade,
+    createSecurityToolRouter: (options) => {
+      m5Router = m5.createSecurityToolRouter(options);
+      return m5Router;
     },
   });
 
-  const publicCall = { name: 'read', args: { path: 'public/readable.txt' } };
-  assert.equal((await router.decide(publicCall)).action, 'OBSERVE_ONLY');
-  assert.deepEqual(await router.dispatch(publicCall), { content: 'M9_SYNTHETIC_HELD_HANDLE_PUBLIC_READ' });
-  assert.equal(adapterEntrances, 1);
-  const positiveEvidence = gateway.evidence();
-  assert.ok(positiveEvidence.length > 0, 'the positive control reaches the M1 Gateway');
-  const positiveEvidenceCount = positiveEvidence.length;
-  assert.equal(router.pendingApprovals().length, 0);
+  assert.equal(host.status, 'UNKNOWN', 'M3 keeps host status UNKNOWN until its fixed protected read is observed');
+  assert.equal(host.reason, 'POSITIVE_CONTROL_PENDING');
+  assert.equal(typeof host.dispatch, 'function', 'the exact M2 facade and M5 router must compose');
+  assert.ok(m5Router, 'M3 must construct the injected pinned M5 router');
+  assert.equal(host.m5Callbacks(), 0);
+
+  const positive = await m3Host.dispatchProtectedRead(host, { path: relativePath });
+  assert.deepEqual(positive, { status: 'ALLOW', reason: 'HELD_FILE_POSITIVE_CONTROL', markerMatched: true });
+  assert.equal(host.m5Callbacks(), 1);
+  const evidenceAfterPositive = gateway.evidence().length;
+  assert.ok(evidenceAfterPositive > 0, 'the packed facade path reaches the M1 held-file Gateway');
+  assert.equal(m5Router.pendingApprovals().length, 0);
   assert.deepEqual(gateway.operator.pending(), []);
-
-  const protectedPath = { name: 'read', args: { path: 'private/.env' } };
-  assert.equal((await router.decide(protectedPath)).action, 'DENY');
-  await assert.rejects(
-    router.dispatch(protectedPath),
-    (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
-  );
-  assert.equal(adapterEntrances, 1, 'M5 blocks the sensitive path before entering the M2 adapter');
-  assert.equal(gateway.evidence().length, positiveEvidenceCount);
-  assert.equal(router.pendingApprovals().length, 0);
-  assert.deepEqual(gateway.operator.pending(), []);
-  assertFixturesUnchanged();
-
-  const aliasPaths = [
-    'public-alias/readable.txt',
-    'public/sensitive-alias.txt',
-    'outside-alias/outside.txt',
-  ];
-  for (const pathArg of aliasPaths) {
-    const aliasCall = { name: 'read', args: { path: pathArg } };
-    assert.equal((await router.decide(aliasCall)).action, 'DENY', `${pathArg} is rejected by strict M5 checks`);
-    await assert.rejects(
-      router.dispatch(aliasCall),
-      (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
-      `${pathArg} must be denied before the M2 callback`,
-    );
-    await assert.rejects(
-      adapter.executeRealTool(aliasCall, { signal: new AbortController().signal }),
-      (error) => error?.message === 'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
-      `${pathArg} must also fail the M2 exact-path allowlist when reached directly`,
-    );
-    assert.equal(adapterEntrances, 1, `${pathArg} never enters the M2 callback`);
-    assert.equal(gateway.evidence().length, positiveEvidenceCount, `${pathArg} never dispatches into M1 Gateway`);
-    assert.equal(router.pendingApprovals().length, 0, `${pathArg} creates no policy approval`);
-    assert.deepEqual(gateway.operator.pending(), [], `${pathArg} creates no Gateway approval`);
-    assertFixturesUnchanged();
-  }
-
   assert.equal(guard.state, 'SAFE');
-  assertFixturesUnchanged();
+
+  const alias = await m3Host.dispatchProtectedRead(host, { path: `./${relativePath}` });
+  assert.deepEqual(alias, { status: 'DENY', reason: 'FIXED_PROBE_PATH_REQUIRED', markerMatched: false });
+  assert.equal(host.m5Callbacks(), 1, 'M3 rejects aliases before the trusted M5 callback');
+  assert.equal(gateway.evidence().length, evidenceAfterPositive, 'the rejected alias does not dispatch to M1');
+  assert.equal(fs.readFileSync(publicFile, 'utf8'), marker);
+  assert.equal(m5Router.pendingApprovals().length, 0);
+  assert.deepEqual(gateway.operator.pending(), []);
+
+  const heldFile = `${publicFile}.held`;
+  fs.renameSync(publicFile, heldFile);
+  fs.writeFileSync(publicFile, 'M9_SYNTHETIC_REPLACEMENT_BYTES');
+  const replaced = await m3Host.dispatchProtectedRead(host, { path: relativePath });
+  assert.equal(replaced.status, 'DENY', 'the synthetic path-replacement control remains fail-closed');
+  assert.equal(host.m5Callbacks(), 1, 'M1 capability verification rejects the replacement before M5 execution');
+  assert.equal(gateway.evidence().length, evidenceAfterPositive, 'the rejected replacement creates no M1 read event');
+  assert.equal(fs.readFileSync(publicFile, 'utf8'), 'M9_SYNTHETIC_REPLACEMENT_BYTES');
+  assert.equal(fs.readFileSync(heldFile, 'utf8'), marker);
+  assert.equal(m5Router.pendingApprovals().length, 0);
+  assert.deepEqual(gateway.operator.pending(), []);
+  assert.equal(guard.state, 'SAFE');
 });
 
 test('exact M1/M2/M5 sources deny strict path-only reads when no M1 capability provider is wired', async (t) => {

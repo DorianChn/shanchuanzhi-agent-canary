@@ -30,40 +30,40 @@ jobs:
           ref: 7279336307fc7aacd46119405858d4fd91499757
           path: module-sources/m1
 
-      - name: Checkout M2 PR #37 at candidate exact adapter source SHA
+      - name: Checkout M2 PR #37 at exact facade package candidate SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: eed2c0884f524d37c25d317888e1d289122c440d
+          ref: be66cf8f4c1a60f093740577796ec5cd633e1d93
           path: module-sources/m2
 
-      - name: Checkout M3 PR #33 at owner-accepted exact source SHA
+      - name: Checkout M3 PR #33 at exact fixed protected-read candidate SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 535d429faef7ae0e15bbf9b382d639280045f338
+          ref: 429cd73c03273bc77f3781b489f541e396cd9361
           path: module-sources/m3
 
-      - name: Checkout M5 PR #47 at candidate exact verifier source SHA
+      - name: Checkout M5 PR #47 at exact trusted router source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: ed304e399ec237a47e03830e5013695ddcc10dd6
+          ref: bbce79aa086b39b51422cc72471c23c963778650
           path: module-sources/m5
           fetch-depth: 0
 
-      - name: Checkout M6 PR #38 at candidate exact source SHA (owner acceptance pending)
+      - name: Checkout M6 PR #38 at owner-accepted exact source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
           ref: 98803607b89f11e24430c461bd91e9c1a0ece9d4
           path: module-sources/m6
 
-      - name: Checkout M7 PR #39 at M7-accepted packaging/build source SHA
+      - name: Checkout M7 PR #39 at exact single-facade package-policy SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: b0581407def769946fa710f55cd1d0986ce0cf3b
+          ref: cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a
           path: module-sources/m7
 
       - name: Checkout M8 PR #40 at exact M1/M6-reviewed source SHA
@@ -80,6 +80,10 @@ jobs:
           m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
           m1_owner_review_sha="7279336307fc7aacd46119405858d4fd91499757"
           m2_sha="$(git -C module-sources/m2 rev-parse --verify HEAD)"
+          m2_owner_disposition='ACCEPT_WITH_CONDITIONS'
+          m2_owner_disposition_sha='be66cf8f4c1a60f093740577796ec5cd633e1d93'
+          m2_owner_disposition_comment='6321070391'
+          m2_owner_disposition_issue='68'
           m3_sha="$(git -C module-sources/m3 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
           m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 06fdbb060574e96e5d1eba5c77721014e0a81a3b^{commit})"
@@ -98,6 +102,10 @@ jobs:
             printf 'M1_SHA=%s\n' "$m1_sha"
             printf 'M1_OWNER_REVIEW_SHA=%s\n' "$m1_owner_review_sha"
             printf 'M2_SHA=%s\n' "$m2_sha"
+            printf 'M2_OWNER_DISPOSITION=%s\n' "$m2_owner_disposition"
+            printf 'M2_OWNER_DISPOSITION_SHA=%s\n' "$m2_owner_disposition_sha"
+            printf 'M2_OWNER_DISPOSITION_COMMENT=%s\n' "$m2_owner_disposition_comment"
+            printf 'M2_OWNER_DISPOSITION_ISSUE=%s\n' "$m2_owner_disposition_issue"
             printf 'M3_SHA=%s\n' "$m3_sha"
             printf 'M5_SHA=%s\n' "$m5_sha"
             printf 'M5_CODE_SHA=%s\n' "$m5_code_sha"
@@ -108,8 +116,8 @@ jobs:
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2: %s\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 candidate: %s\nM6 owner acceptance: %s for %s (Issue #59 comment %s)\nM7: %s\nM8: %s\n' \
-            "$m9_sha" "$m1_sha" "$m1_owner_review_sha" "$m2_sha" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m6_owner_acceptance_status" "$m6_owner_acceptance_sha" "$m6_owner_acceptance_comment" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2: %s\nM2 owner disposition: %s for %s (Issue #52 comment %s; real M5 router required)\nIssue #68: exact M2/M7 package composition gate\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 candidate: %s\nM6 owner acceptance: %s for %s (Issue #59 comment %s)\nM7: %s\nM8: %s\n' \
+            "$m9_sha" "$m1_sha" "$m1_owner_review_sha" "$m2_sha" "$m2_owner_disposition" "$m2_owner_disposition_sha" "$m2_owner_disposition_comment" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m6_owner_acceptance_status" "$m6_owner_acceptance_sha" "$m6_owner_acceptance_comment" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -122,6 +130,42 @@ jobs:
       - name: Install M1 owner dependencies
         run: npm ci
         working-directory: module-sources/m1
+
+      - name: Install M2 exact-candidate dependencies
+        run: npm ci
+        working-directory: module-sources/m2
+
+      - name: Build M2 exact package candidate
+        run: npm run build
+        working-directory: module-sources/m2
+
+      - name: Run exact M7 checker against the packed M2 candidate
+        shell: bash
+        working-directory: module-sources/m2
+        run: |
+          m7_sha="$(git -C ../m7 rev-parse --verify HEAD)"
+          test "$m7_sha" = 'cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a'
+          test ! -e scripts/package-file-policy.mjs
+          cp ../m7/scripts/check-package.mjs scripts/m9-check-package.mjs
+          cp ../m7/scripts/package-file-policy.mjs scripts/package-file-policy.mjs
+          npm_execpath="$(node -e 'const fs=require("node:fs");const path=require("node:path");const root=path.dirname(process.execPath);const candidates=[path.join(root,"node_modules/npm/bin/npm-cli.js"),path.resolve(root,"../lib/node_modules/npm/bin/npm-cli.js")];const resolved=candidates.find(fs.existsSync);if(!resolved)process.exit(1);process.stdout.write(resolved)')"
+          test -f "$npm_execpath"
+          npm_execpath="$npm_execpath" node scripts/m9-check-package.mjs
+          printf 'M7 package checker SHA: %s\nM2 package SHA: %s\nM7 checker/policy were copied into this disposable M2 checkout only.\n' \
+            "$m7_sha" "$M2_SHA" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Pack M2 facade artifact for M3 fixed-host composition
+        shell: bash
+        working-directory: module-sources/m2
+        run: |
+          pack_dir="$RUNNER_TEMP/m9-m2-packed"
+          consumer_root="$RUNNER_TEMP/m9-m2-consumer"
+          mkdir -p "$pack_dir" "$consumer_root"
+          filename="$(npm pack --json --pack-destination "$pack_dir" | node -e 'let input="";process.stdin.on("data",chunk=>input+=chunk);process.stdin.on("end",()=>process.stdout.write(JSON.parse(input)[0].filename))')"
+          npm install --prefix "$consumer_root" --ignore-scripts --no-audit --no-fund "$pack_dir/$filename"
+          printf 'M2_PACKED_ROOT=%s/node_modules/@dorianchn/agent-canary\n' "$consumer_root" >> "$GITHUB_ENV"
+          printf 'M2_CONSUMER_ROOT=%s\n' "$consumer_root" >> "$GITHUB_ENV"
+          printf 'M2 packed candidate artifact: %s\n' "$filename" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Install M3 owner dependencies
         run: npm ci
@@ -166,6 +210,8 @@ jobs:
           M6_ROOT: ${{ github.workspace }}/module-sources/m6
           M7_ROOT: ${{ github.workspace }}/module-sources/m7
           M8_ROOT: ${{ github.workspace }}/module-sources/m8
+          M2_PACKED_ROOT: ${{ runner.temp }}/m9-m2-consumer/node_modules/@dorianchn/agent-canary
+          M2_CONSUMER_ROOT: ${{ runner.temp }}/m9-m2-consumer
         run: node --import tsx --test test/m9-cross-module-composition.test.mjs
 
       - name: Record evidence limits
@@ -174,15 +220,17 @@ jobs:
         run: |
           {
             echo
-            echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks; a registered read passes only when M5 resolves and verifies the M1-issued capability and M2 forwards it to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
-            echo 'Candidate exact sources: M1 7279336307fc7aacd46119405858d4fd91499757; M2 eed2c0884f524d37c25d317888e1d289122c440d; M5 ed304e399ec237a47e03830e5013695ddcc10dd6; M3 535d429faef7ae0e15bbf9b382d639280045f338; M6 98803607b89f11e24430c461bd91e9c1a0ece9d4 (ACCEPT by M6 in Issue #59 comment 6320039569 for Auto E4 implementation/tests only); M7 b0581407def769946fa710f55cd1d0986ce0cf3b (packaging/build paths only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M1 owner-review evidence SHA 7279336307fc7aacd46119405858d4fd91499757 ACCEPTs M2 eed2c0884f524d37c25d317888e1d289122c440d at the exact adapter seam and M5 ed304e399ec237a47e03830e5013695ddcc10dd6 at the strict capability-verifier seam, including M5 src/security-router.ts strict-mode contract and its test double. This does not accept a product-host integration. M9 candidate 2fda9462acd9c40462fc04ff5583b30c31606223 is accepted only as synthetic fixture composition, not product host. M5 source-scope code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b remains the prior ancestry gate. M2 has a read-only adapter and no write/delete adapter; these source pins do not establish a production-host callsite or global host protection.'
+            echo 'Issue #68 tracks the exact M2/M7 package gate. M1 comment 6321070391 records ACCEPT WITH CONDITIONS for exact M2 candidate be66cf8f4c1a60f093740577796ec5cd633e1d93 after actual-tarball review: the first-party host must inject the trusted M5 router through the strict public facade; OS-atomic TOCTOU remains unproven.'
+            echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks; the packed M2 public facade accepts only the trusted M5 router and M1-issued capability. A registered synthetic protected_read passes only when M5 resolves and verifies the M1 capability and M2 forwards that capability to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
+            echo 'Candidate exact sources: M1 7279336307fc7aacd46119405858d4fd91499757; M2 be66cf8f4c1a60f093740577796ec5cd633e1d93; M3 429cd73c03273bc77f3781b489f541e396cd9361; M5 bbce79aa086b39b51422cc72471c23c963778650; M6 98803607b89f11e24430c461bd91e9c1a0ece9d4 (ACCEPT by M6 in Issue #59 comment 6320039569 for Auto E4 implementation/tests only); M7 cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a (single-facade package policy only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M1 owner-review evidence SHA 7279336307fc7aacd46119405858d4fd91499757 and M5 source-scope code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b remain separate source gates. M2 has a read-only adapter and no write/delete adapter; these pins do not establish a production-host callsite or global host protection.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
-            echo 'M2 scope: registered adapter route and M5 policy fixture only; native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED.'
-            echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3-wrapper JSONL regression requiring fixed fields, PreToolUse, a valid enum, canonical ISO time, and caller/reason/path/command canaries absent. M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
-            echo 'M3 integration gate compares the pinned M1 candidate and M3 Hook source decisions for a synthetic unpinned normal Read; both must deny. The earlier M1 b1d7423 / M3 be38802 mismatch was observed only on those stale refs; retain and run this fail-closed comparison against the refreshed exact sources.'
+            echo 'M2/M3 scope: only the synthetic fixed protected_read route through the packed public facade and injected M5 router is covered; native Codex Shell remains UNPROTECTED / NOT_VERIFIED.'
+            echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3 protected_read host that loads the M2 packed public facade and injects the exact M5 router. The M3/M1 native Hook comparison still denies an unpinned normal Read; Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
+            echo 'M9 only observes fixed protected_read behavior in synthetic fixtures. Unsupported production-host integration and real concurrent/OS-atomic TOCTOU remain UNKNOWN; this does not close Issue #52.'
             echo 'M6 candidate evidence: source-checkout bundle/sidecar verifier and full Auto E4 lifecycle regressions. M6 explicitly ACCEPTed exact SHA 98803607b89f11e24430c461bd91e9c1a0ece9d4 for packaging/windows/auto-e4.mjs lifecycle semantics and the complete test/auto-e4.test.mjs suite only (Issue #59 comment 6320039569: https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/59#issuecomment-6320039569). This does not accept product-host integration, installer contents, VM/model execution, or independent external E4 validation. security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
-            echo 'M8 exact published PR head pin is 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. M7 is pinned to b0581407def769946fa710f55cd1d0986ce0cf3b for its owner-accepted packaging/build paths; this does not verify Setup.exe internals.'
+            echo 'M8 exact published PR head pin is 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. M7 is pinned to cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a for its single-facade package policy; this does not verify Setup.exe internals.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'
+            echo 'Issue #52 remains OPEN / P0 / NOT_VERIFIED for production-host held-identity consumption and TOCTOU.'
             echo 'Not established by this workflow: npm-installed E4, a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
           } >> "$GITHUB_STEP_SUMMARY"
