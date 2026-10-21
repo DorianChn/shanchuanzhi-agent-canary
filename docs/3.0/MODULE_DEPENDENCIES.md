@@ -201,3 +201,9 @@ The bounded candidate path for review is `M3 host -> M5 policy router -> M2 fixe
 M9 must pin immutable exact SHAs and record the resulting combined SHA. Eligibility above does not replace cross-owner path review or final composition checks. In particular, M2's local candidate is not a public or CI-validated input, and Setup.exe interior evidence remains separate from M7 source acceptance.
 
 Current PR #36 workflow still pins older refs (M1 `b1d7423`, M2 `9db59ed`, M3 `be38802`, M5 `373e2c2`, M6 `c1fdf3c`, M7 `cf4b70f`, M8 `c1ff677`). At exact M9 head `de3799aae540f58173acec4ab3f7a1fe98593aa7`, composition run `38727481764` fails on Ubuntu and Windows; product CI `38727481643` and wrapper run `38727481657` pass. The workflow also retains stale M1/M3 conflict commentary. M9's read-only pin audit recommends holding the refresh until M2 has an M1 disposition and hosted exact-head CI, then rerunning the complete matrix.
+
+## M9 exact-source follow-up — 2026-10-22 16:26 UTC
+
+The bounded candidate host route is recorded in `API_CONTRACTS.md` above. M1 reviewed M2 `be66cf8`'s real packed single-file facade as ACCEPT WITH CONDITIONS; M3 has local host-route commit `429cd73`. Neither candidate has yet been published and validated together. M7 is narrowing its package checker on the existing PR #39 branch to accept only the M2 facade artifact.
+
+M9 must keep PR #36 at its current pin until the package checker/facade candidate and M3 route are visible at exact public refs. Then make one isolated composition against immutable SHAs, record the combined candidate SHA, run the exact package and cross-module suites, and retain failures. This does not authorize merge, mainline update, installer/VM execution, Release, or changing another module's ownership.

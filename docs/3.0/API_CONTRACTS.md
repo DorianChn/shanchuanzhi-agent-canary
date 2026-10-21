@@ -281,3 +281,18 @@ If compatibility needs a public type or behavior change, M1 changes Gateway APIs
 - M7's hosted Setup.exe extraction evidence at PR #39 head 9330005b2e15c521b9645a728d34e9477d8d6340 confirms the package's extracted Hook Git blob equals the M1 canonical blob; its controlled package harness passed without executing the installer. See Issue #53 comment 6312265610.
 
 This current note supersedes older dated M9 status and Hook-copy statements in this file where those statements imply that M8's owner-approved adapter must be byte-identical to M1 canonical.
+## Candidate fixed protected-read host composition — 2026-10-22 16:26 UTC
+
+This records a reviewed candidate seam for M9 composition; it does not freeze a new public API or close Issue #52.
+
+- **M3 host tool:** fixed tool ID `protected_read`; fixed temporary probe path `agent-canary-public.txt`; the request must have exactly one own data property, `path`, with that exact value. M3 owns the host callsite and rejects aliases before the M5 callback.
+- **M1 Gateway:** required owner methods are `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability`. A held-file capability remains opaque and bound to the registered tool/path and object identity. Missing methods produce `UNKNOWN`; no generic path callback is permitted.
+- **M2 package boundary:** import the public `@dorianchn/agent-canary/gateway-adapter` subpath and call only exported `createSecurityGatewayHostAdapter`. The re-reviewed M2 candidate's packed artifact includes only `execution-isolation/gateway-adapter/gateway-adapter.mjs`; its low-level implementation is absent. M1 ACCEPTED this exact package boundary WITH CONDITIONS: the trusted host must supply the actual M5 router factory.
+- **M5 policy router:** trusted host supplies its owned `createSecurityToolRouter` and fixed router options including `mode: OBSERVE` and `verifyRealPaths: true`. Do not let model input select the router factory, callback, path map, or capability. OBSERVE never bypasses M1 containment.
+- **M9 acceptance:** compose exact public M1/M2/M3/M5 refs; prove a registered held-file positive read; prove alias and same-path inode replacement deny before callback/evidence/effect with unchanged bytes; exercise missing interfaces and malformed arguments as fail-closed/UNKNOWN. A source-composition pass is not production-host interception or OS-atomic TOCTOU evidence.
+
+## M9 candidate readiness — 2026-10-22 16:26 UTC
+
+- Current M9 branch/PR #36 remains at `6c9c794a83e3a3e8a1948661ae1e96728406a4d6`; do not refresh pins yet.
+- Candidate M2 `be66cf8f4c1a60f093740577796ec5cd633e1d93` has M1 package-boundary acceptance with conditions but is local, not public/hosted-CI validated. Candidate M3 `429cd73c03273bc77f3781b489f541e396cd9361` is local and its own branch deliberately reports UNKNOWN while owner interfaces are unavailable; its focused build/tests pass, but exact combined-source host validation remains M9 work.
+- M7 owns the one-file package checker adaptation in its existing PR #39 branch. M9 must use the checker and manifest together in an isolated exact-source composition after all candidate refs are published and current checks pass. Keep #52 OPEN/P0/NOT_VERIFIED until host-facing positive/negative controls pass; keep #41/#45/#57 at their separate HOLD/NOT_VERIFIED boundaries.
