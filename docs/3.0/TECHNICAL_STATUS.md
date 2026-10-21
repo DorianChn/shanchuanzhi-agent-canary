@@ -5318,3 +5318,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - PR #30 at `e8faf4aae0ba237ee59c14a20d65b8ef2df6dd98` has green product CI run `39578820644` and green AC3 metadata run `39579186615`; its description markers are verified. PR #30 remains OPEN/Draft.
 - M0 coordinator branch contains two local documentation checkpoint commits (`65dfd04`, `d86286d`) held for the next batch. Next publication is no earlier than 10:00:43 UTC; read Usage immediately before publishing and stop below 5%.
 - PR #24 remains OPEN/Draft at unchanged head/base; `main` is untouched. No module source, merge, or Release was changed by M0.
+## M0 10:05 PR #30 CI/body verification — 2026-10-21 10:05 UTC
+
+- Current PR #30 head is `e0b19e7557b27c67934b913cbf8c0dee1fa36bd5`. Exact-head product CI run `39581430905` passed all nine jobs; after the PR description refresh, AC3 ownership-contract run `39581841471` also passed.
+- The PR body now names the exact current head and current checks; `API-Contract-Change: no` and `Test-Evidence:` remain present. PR #30 remains OPEN/Draft.
+- At 10:05 UTC, the M1/M9 slot had no public M1 disposition, PR-head movement, or M9 local diff. M2 candidate `d054cee` remains held and unpinned. No inference is made about private task activity.
+- The next shared Git publication remains no earlier than 10:21:04 UTC; check Usage immediately before any push and pause below 5%.
