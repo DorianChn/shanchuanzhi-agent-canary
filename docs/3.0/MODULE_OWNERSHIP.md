@@ -551,3 +551,10 @@ M1 retains ownership of canonical Hook authorization/logging semantics and canon
 M9 owns the integration test boundary: compare byte-identical canonical copies only where that identity is an approved requirement, and validate the M8 adapter by its exact reviewed blob plus its owner-approved behavioral/logging contract. M7's actual Setup.exe payload currently uses the canonical M1 blob, verified by artifact 12332644890 and Issue #53 comment 6312265610.
 
 This clarification supersedes older dated ownership rows or snapshots that characterize M8's Hook file as an identical copy of the M1 canonical wrapper. It does not authorize changes to M1-owned security behavior or tests.
+
+## M0 worktree and shared-file readback — 2026-10-21 10:55 UTC
+
+- The common repository worktree inventory contains separate M1-M8 worktree paths, all with merge base `62496d4020bd90ba2eede49b2e80a2bbebb036b4` against `origin/feature/agent-canary-3.0`. M4 and M7 are inside `Agent-Canary-Dev/agents`; M1, M2, M3, M5, M6, and M8 remain in their existing `Documents/Codex` paths. No worktree was moved or replaced.
+- M6's existing PR #38 worktree is detached at `560f724292d285a43fcc4a0b0c8f50f9f08a6f79`; it has no working-tree edits. M0 did not create a new feature branch or attach it to a branch.
+- The M5 worktree has an uncommitted patch in M6-owned `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs`. Preserve it in place; M5 must not commit those paths to PR #47. The patch has not been attributed to an active M6 task and is not part of M6 PR #38 head `560f724`.
+- The current M4 path audit is recorded in M4-owned `docs/3.0/M4/DESKTOP_INTEGRATION_REPORT.md` by local docs commits `2b803c1` and `7ac3247`, pending the next shared push. This is M0-coordinated evidence, not M4 owner acceptance or a transfer of M1/M2/M5 interface ownership.

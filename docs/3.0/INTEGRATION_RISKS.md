@@ -1,13 +1,14 @@
-## Current integration delta — 2026-10-21 10:47 UTC
+## Current integration delta — 2026-10-21 10:55 UTC
 
 This delta supersedes publication and CI status in the 10:40 snapshot; the remaining host-integration limits there remain current.
 
 | Gate | Priority | Current verified state | Remaining acceptance |
 | --- | --- | --- | --- |
-| M2/M4 protected host path (#52) | P0 | M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` is public on existing PR #37; exact-head CI `39586551017` passed all 9 jobs. M4's current public UI/adapter sources still do not show a first-party OBSERVE file-read consumer. | M1 owner disposition on `d054cee` and M4 protected-identity host-path proof or exact API blocker are pending. Keep M9 on M2 baseline `9db59ed`; host-held identity and TOCTOU remain NOT_VERIFIED. |
+| M2/M4 protected host path (#52) | P0 | M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` is public on existing PR #37; exact-head CI `39586551017` passed all 9 jobs. M0's M4-owned report audit found the direct M1 Gateway path is only a controlled SDK fixture that bypasses M2/M5; the policy route is virtual. Local M4 docs commits `2b803c1` and `7ac3247` record the path-only M2 contract, M1-held identity boundary, and M5 strict rejection. | M1 owner disposition on `d054cee` is pending. M1/M5/M2 must agree an identity-verifiable capability before M4 can wire an OBSERVE consumer. Keep M9 on M2 baseline `9db59ed`; product host-held identity and TOCTOU remain NOT_VERIFIED. |
 | M0 PR #30 coordination evidence | M0 | Head `4ec96c78959b509f58111e87915583ca053f06e2` product CI `39586557635` passed all 9 jobs; AC3 runs `39586799242`, `39586898308`, and body-edit run `39587070549` passed. | Keep Draft; no merge or Release. |
 | M6 active-stage lock release (#66) | P1 | Exact M6 `560f724` reproduction confirms `release()` permits a second run to start while the first stage is pending. No source changed. | M6 owner fix and regression on existing PR #38, exact-head CI, and M9 composition if the pin changes. |
 | M6 duplicate-stage E4 race (#63) | P1 | Scoped issue closed after M6 exact CI and M9 Ubuntu/Windows composition passed at the accepted `560f724` source. | Independent product E4 remains NOT_VERIFIED and is tracked separately. |
+| M5 worktree foreign E4 edits | P1 | The M5 worktree is locally modified in M6-owned `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs` (48 insertions, 1 deletion) at M5 HEAD `99ab807`; M6 PR #38 remains at `560f724`. No M0 changes were made. | Preserve the uncommitted patch; identify its owner/provenance before M6 #66 work. Do not treat it as M6 branch progress or cherry-pick it without owner review. |
 
 ## Current integration delta — 2026-10-21 10:40 UTC
 
