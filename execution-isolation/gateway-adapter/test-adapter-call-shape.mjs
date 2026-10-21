@@ -116,11 +116,12 @@ test("an aborted signal fails closed before M1 dispatch", async () => {
   assert.equal(calls.length, 0);
 });
 
-test("quarantine and approval-required Gateway denials propagate without retry or auto-approval", async () => {
+test("quarantine, approval-required, and stale-approval denials propagate without retry or auto-approval", async () => {
   // This is a branch-local adapter seam fixture, not a live M1 Gateway integration test.
   for (const message of [
     "GATEWAY_DENY:guard_quarantined",
     "GATEWAY_REQUIRE_APPROVAL:host_scoped_file_capability",
+    "GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED",
   ]) {
     const denial = new Error(message);
     let dispatchCalls = 0;

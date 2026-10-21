@@ -310,16 +310,17 @@ The remaining blockers are exact and owner-bound:
    unreviewed bridge or synthesize a successful approval.
 
 `test-adapter-call-shape.mjs` adds a branch-local seam regression for
-quarantine and approval-required M1-style rejections: each rejection must
-propagate unchanged after one dispatch, with zero retry and zero auto-approval.
-This fixture does not execute current M1 code or prove M1 expiry behavior;
-the current M1 source handles expiry at `operator.approve`. Existing tests
-continue to reject unregistered tools/paths and the actual temporary junction
-alias before the mock M1 dispatcher. These are focused M2 adapter tests only.
+quarantine, approval-required, and stale/expired M1-style rejection markers:
+each rejection must propagate unchanged after one dispatch, with zero retry
+and zero auto-approval. The stale/expired marker is a synthetic adapter-boundary
+input, not an execution of M1's expiry path. Current M1 source handles actual
+expiry at `operator.approve`, which M2 does not call. Existing tests continue
+to reject unregistered tools/paths and the actual temporary junction alias
+before the mock M1 dispatcher. These are focused M2 adapter tests only.
 
 Local verification on Windows / Node.js v22.23.1:
 
-- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 8/8 passed.
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 8/8 passed; the added denial-propagation case checks quarantine, approval-required, and stale/expired rejection markers.
 - `git diff --check` — passed with no whitespace errors.
 - No product build, M1 runtime, or M4 host integration was run or claimed; the change is limited to the M2 `.mjs` seam test and this report.
 
