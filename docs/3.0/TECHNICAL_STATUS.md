@@ -5304,3 +5304,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M0 updated Issues #56 (closed resolution), #58 (current raw-log rule), #59 (current M6–M8 refs), #60 (M4 exact CI green but shared-test review open), #62 (expired-approval failure not reproduced; cause unknown), and #65 (historical M8 regression corrected; M9 composition still fails).
 - Pre-push Usage read showed five-hour 95%, weekly 55%. The next shared Git push is no earlier than 10:00:43 UTC; reread Usage then and pause below 5%.
 - M0 worktree is clean after publication. PR #24 remains OPEN/Draft and unchanged; `main` is untouched. No merge or Release.
+## M0 09:45 PR metadata verification — 2026-10-21 09:45 UTC
+
+- Exact-head product CI at PR #30 head `e8faf4aae0ba237ee59c14a20d65b8ef2df6dd98` completed with all nine jobs passing in run `39578820644`.
+- The PR-description edit retained `API-Contract-Change: no` and `Test-Evidence:` and triggered AC3 ownership-contract run `39579186615`, which also passed. PR #30 remains OPEN/Draft.
+- M1 and M9 existing worktrees were clean and unchanged at 09:44 UTC. No public M1 ACCEPT/REJECT for M2 candidate `d054cee` is visible; M2 remains held and unpinned.
+- M0 coordinator worktree has one local documentation checkpoint commit `65dfd04` held for the next shared batch. Next eligible shared Git push is no earlier than 10:00:43 UTC, subject to a fresh Usage read and the 5% stop threshold.
