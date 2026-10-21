@@ -52,9 +52,9 @@ No **src/ai/console.ts**, **package.json**, M1 Gateway/Hook code, M2 isolation c
 - M6/M7 coordination needs to expose a safe E4 run/status capability if Console is expected to launch the full automation.
 - The headless browser emitted the diagnostic download request and generated the JSON payload, but cancelled the final file write. The UI now says to check the browser download list; an ordinary interactive browser download was not verified.
 
-## 2026-10-21 OBSERVE protected-read host callsite assessment
+## 2026-10-21 M0 source audit for M4: OBSERVE protected-read host boundary
 
-Decision: the current first-party desktop Console has no supported OBSERVE file-read callsite that consumes the M1-bound protected identity through the M2 adapter. No safe M4 wiring change is available against the current contracts. Do not connect a path-only callback by disabling strict path checks or label a demo read as product protection.
+This source/contract audit was conducted for M0 integration coordination and is recorded here under M4 file ownership; it is not a disposition from the M4 owner. The current first-party desktop Console has no supported OBSERVE file-read callsite that consumes the M1-bound protected identity through the M2 adapter. No safe M4 wiring change is available against the current contracts. Do not connect a path-only callback by disabling strict path checks or label a demo read as product protection.
 
 ### M4 entrypoint evidence
 
