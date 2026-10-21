@@ -5843,3 +5843,8 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 ## M0 18:33 UTC post-push CI verification — 2026-10-21
 
 - New M0 head `3cc9943ae27cedb0e25eded73282547d5eb4bd78` passed PR #30 product CI run `39653318816` and AC3 coordination run `39653318819`; both runs completed successfully. These checks validate coordinator documentation only.
+
+## M0 18:40 UTC M2/M7 package-smoke midpoint — 2026-10-21
+
+- M2’s existing worktree remains clean at `be66cf8f4c1a60f093740577796ec5cd633e1d93`; M7 #39 remains at `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a`. No new public owner disposition or source movement is visible; private activity remains UNKNOWN.
+- M2 package-smoke is still failed on exact run `39638404097` (eight other product jobs passed). M7 exact CI `39635364669` and wrapper `39635364779` passed. M0 asked for exact checker change/result or blocker and M7 ACCEPT/REJECT by 18:50 in #69 comment `6323712846`.
