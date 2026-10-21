@@ -264,3 +264,9 @@ M1 owns the `verifyRealPaths` execution contract, M2 owns the fixed-resource ada
 4. M9 must test the actual selected host composition at exact M1/M2/M5 commits and show denial, callback/approval counts, unchanged fixture bytes, and held-file identity behavior. Synthetic SDK-only fixtures remain supporting evidence, not host acceptance.
 
 If compatibility needs a public type or behavior change, M1 changes Gateway APIs, M5 changes policy/router APIs, or M2 changes its adapter API within its own ownership; the other modules adapt through their owned boundary and update this contract after review. Until then, strict path-based DENY is the safe behavior and #52 remains OPEN/P0/NOT_VERIFIED.
+
+### M9 source-scope status — 2026-10-21 07:36 UTC
+
+- M7 ACCEPTed `b0581407def769946fa710f55cd1d0986ce0cf3b` as the M7 packaging-source reference only. M7 owns packaging/build invocation and reliability paths; M6 owns E4 verifier/evidence semantics. M9 still needs a final composed SHA and exact-tree packaging, auto-E4, and integration checks.
+- M5 `99ab80770d8004ef85f13f2d5c0f48f934607603` has M1 source-scope acceptance in Issue #61 comment `6309875503` and exact-head CI success in run `39558618457`; this is eligible as a source input, not whole-tree composition approval.
+- M2 local `d054cee` remains unpinned until M1's explicit review and exact-head hosted CI are available. Strict `verifyRealPaths:true` denial remains fail-closed; neither the local synthetic adapter fixture nor the current M2 branch establishes a first-party product-host safe-read path.

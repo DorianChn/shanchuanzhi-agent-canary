@@ -186,3 +186,16 @@ flowchart LR
 M3 PR #33 contains a synthetic Gateway-backed MCP connection check at `src/codex-connection-mcp.ts:21,35`, but it constructs the Gateway with `files: []` and fixed callbacks. M3's integration result explicitly leaves native host tools OUT_OF_SCOPE. M2's adapter functions currently have visible check-script consumers, not a product host composition.
 
 The bounded candidate path for review is `M3 host -> M5 policy router -> M2 fixed-resource adapter -> M1 Gateway held-file dispatch`. M1 owns the held-file API, M2 the adapter, M3 the host callsite, and M5 policy semantics. This does not freeze a new public API or establish a protected file route. M2 and M3 are assigned separate path-bounded slots through 11:58; M9 remains responsible for exact-ref composition after owner changes and exact-head CI. Keep #52 OPEN/P0/NOT_VERIFIED until the alias denial occurs before callbacks and an allowed control reaches only the registered held file.
+# M9 exact-source pin eligibility — 2026-10-21 07:36 UTC
+
+| Module | Candidate exact SHA | Owner evidence | Exact-head evidence | M9 pin status |
+|---|---|---|---|---|
+| M1 | `c016431875a7783f579aa93cd135459ea954d560` | Existing exact-source ACCEPT in Issue #61 | CI passed | Eligible for its reviewed source scope |
+| M2 | `d054cee` local-only candidate | M1 review still active/pending | No hosted exact-head CI | Blocked; do not pin |
+| M3 | `535d429faef7ae0e15bbf9b382d639280045f338` | Existing exact-source ACCEPT in Issue #61 | CI passed | Eligible for its reviewed source scope |
+| M5 | `99ab80770d8004ef85f13f2d5c0f48f934607603` | M1 source-scope ACCEPT, Issue #61 comment `6309875503` | CI run `39558618457` passed | Eligible as M5 input; composition remains pending |
+| M6 | `560f724` | Existing owner ACCEPT | Exact-head CI passed | Eligible for its reviewed source scope |
+| M7 | `b0581407def769946fa710f55cd1d0986ce0cf3b` | M7 ACCEPT recorded 2026-10-21; packaging scope only | Windows CI run `39517510296` passed | Eligible for M7 packaging input; not whole-PR signoff |
+| M8 | `2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3` | Existing M1/M6 owner reviews | CI and Windows wrapper passed | Eligible for its reviewed source scope |
+
+M9 must pin immutable exact SHAs and record the resulting combined SHA. Eligibility above does not replace cross-owner path review or final composition checks. In particular, M2's local candidate is not a public or CI-validated input, and Setup.exe interior evidence remains separate from M7 source acceptance.
