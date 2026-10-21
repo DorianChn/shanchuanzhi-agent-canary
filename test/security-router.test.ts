@@ -79,7 +79,7 @@ test('verifyRealPaths denies generic file callbacks but false/omitted keeps lega
  const missing=setup({verifyRealPaths:true,workspaceRoot:path.join(home,'missing-root')});await assert.rejects(missing.router.dispatch({name:'read',args:{path:'public.txt'}}));assert.equal(missing.count(),0);
 });
 test('strict OBSERVE read passes only a live trusted capability through callback context',async()=>{
- const workspace=fs.mkdtempSync(path.join(home,'m1-read-capability-context-')),target=path.join(workspace,'public.txt'),content='M5_M1_CAPABILITY_READ_FIXTURE';fs.writeFileSync(target,content);
+ const workspace=fs.realpathSync(fs.mkdtempSync(path.join(home,'m1-read-capability-context-'))),target=path.join(workspace,'public.txt'),content='M5_M1_CAPABILITY_READ_FIXTURE';fs.writeFileSync(target,content);
  const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');const capability=Object.freeze(Object.create(null));let verifierCalls=0,callbacks=0;
  // Contract double for the M1-owned verifier; M1 runtime identity checks are tested by its own Gateway suite.
  const provider={resolve:(call:any)=>call.name==='read'&&call.args.path==='public.txt'?capability:undefined,verify:(candidate:any,call:any,operation:string)=>{
