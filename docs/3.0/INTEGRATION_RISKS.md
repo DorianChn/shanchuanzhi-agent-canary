@@ -979,3 +979,35 @@ M7's hosted artifact from PR #39 head 9330005b2e15c521b9645a728d34e9477d8d6340 (
 - #59 remains OPEN/P1: M9 composition passes on the accepted pin set, but M6's review of M8's shared auto-E4 test contribution and the active-stage lifecycle fix #66 remain pending.
 - #60 remains OPEN/P1: M1's exact review is still needed for M4's changed M1-owned Hook test. PR #34's current run 39589011257 failed once in the unchanged M1 Gateway expiry test before the expiry/no-callback assertions. Track cause under #62 as UNKNOWN; do not infer M4 regression.
 - #62 remains OPEN/P1 / UNKNOWN after one new CI reproduction; retain the expiry-denial and zero-callback assertions.
+## Current integration delta — 2026-10-21 14:11 UTC
+
+| Gate | Priority | Current verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| #62 M1 expired-approval failure | P1 | Read-only diagnosis: PR #34 failure used TTL=5 ms and stopped at `pending()[0].requestId`; M1 `pending()` sweeps expired entries. The current M1 regression asserts REQUIRE_APPROVAL, EXPIRED, and callback=0. Timing/setup race is plausible, not proven; Issue #62 remains OPEN/UNKNOWN and M1 source was not changed. | M1 owner disposition citing whether this is a test-setup race or remains unknown; retain all denial and no-side-effect assertions. |
+| #66 M6 active-stage lock | P1 | Local M6 candidate `c7c19e2` adds an active-stage guard to `release()` and tests lock retention, blocked reacquisition, and reacquisition after safe completion. Module-reported focused test 1/1 and Auto E4 9/9 pass. Public PR #38 is still at `560f724`. | Push through existing PR #38 at the next scheduled batch; exact-head hosted CI and M9 composition after accepted pin update. Product E4/VM remains NOT_VERIFIED. |
+| #52 product OBSERVE identity path | P0 | M2 candidate `d054cee` and CI are available, but there is no M1 owner review or first-party product host consuming a Gateway-bound held identity. | M1 exact candidate disposition and a supported M2/M4/M5 product call path with alias/path-replacement and TOCTOU evidence. Keep OPEN/NOT_VERIFIED. |
+| M0 exact-head CI | M0 | PR #30 at `54a2d6b`; ownership runs `39613426714` and `39613440990` pass. `gh pr checks` still reports macOS Node 22 pending on product run `39613426261`; other listed jobs pass. | Await exact job completion; keep PR #30 Draft and report pending honestly. |
+
+## M0 Hook-test ownership delta — 2026-10-21 14:16 UTC
+
+Issue #60 remains OPEN/P1. M0's read-only comparison found PR #34's shared M1-owned Hook test blob `e8ae8202492fc44fbb13c7ee855198ac8e62f436` removes the normalized-log allowlist/redaction test, permits Read where M1's PR #43 blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39` denies it, and drops Write/Delete deny plus log/canary/unchanged-file assertions. The interruption test title claims no tool callback without a callback-counting fixture. No runtime bypass is established; the evidence shows the current test blob does not preserve M1's reviewed security contract. M0 recorded the exact review in Issue #60 comment `6318294814`; M1 owner disposition or M4 reconciliation remains required before promotion.
+
+Issue #62 remains OPEN/P1 / UNKNOWN. The 5 ms test fixture and Gateway pending sweep are consistent with a timing/setup race, but the failed dispatch type is not recorded. M0 posted this bounded diagnosis in Issue #62 comment `6318299115`; no test deletion, policy weakening, or product source fix is claimed.
+
+## 2026-10-21 14:19 UTC integration delta
+
+| Gate | Current verified state | Remaining acceptance |
+| --- | --- | --- |
+| #65 M8 fail-closed adapter | CLOSED for exact-source M9 composition. M1's existing Issue #65 comment accepts M8 Hook blob `544b5eb…` as a distinct display-reason/logging adapter; M1 canonical blob is `d6f9324…`. No formal PR review is recorded. | Keep the acceptance scoped to the named path and behavior; no native-host or whole-PR claim. |
+| #59 shared M6–M8 E4 inputs | M6 reviewed M8's test addition as additive but not an Auto E4 lifecycle or artifact-write regression. M6 fix `c7c19e2` is local only; M9 plan is to add the exact M6 Auto E4 suite after public exact-head M6 CI passes. | Push M6 via existing PR #38, obtain exact-head CI, then update/run existing M9 PR #36 pins and Ubuntu/Windows composition. |
+| #62 M1 expired approval | One historical failure stopped at `pending()[0].requestId` with 5 ms TTL before EXPIRED/no-callback assertions. Timing/setup race plausible, not proven. M1 is now investigating deterministic setup while retaining all assertions. | Review minimal M1-owned change and exact targeted test evidence; keep OPEN/UNKNOWN until evidence supports a disposition. |
+| #58 M6 raw.log ignore scope | M0's exact exception is the reviewed 20261013 fixture; M6 and M9 formerly had broad `raw.log` exceptions. M6 is adjusting only its existing branch and will prove named-path vs future-sibling behavior. | Exact M6 validation, then exact M9 counterpart; do not broaden log exceptions. |
+| #52 protected identity / host path | Still OPEN/P0 / NOT_VERIFIED; synthetic alias denials do not establish a product host consuming an M1-bound held identity or TOCTOU resistance. | Require first-party host/callsite and exact alias/replacement controls; keep hard denials meanwhile. |
+
+Quota at this checkpoint was readable: 77% five-hour / 52% weekly. Next push no earlier than 14:23 UTC after re-reading the Usage tab and checking current PR #24 and branch heads.
+
+## 2026-10-21 14:21 UTC status correction
+
+- M0 PR #30 run `39613426261` has now completed all 9/9 jobs successfully; the 14:11 “macOS Node 22 pending” note is superseded. Ownership runs `39613426714` and `39613440990` also pass 1/1 each.
+- M6 local commits `c7c19e2` (#66) and `9880360` (#58) are clean and ready for ordinary fast-forward delivery on the existing PR #38 branch; hosted checks have not yet run on either new commit.
+- M1 is still examining #62; no M1 owner root-cause claim or source patch exists. Keep the issue open unless deterministic evidence changes that state.
