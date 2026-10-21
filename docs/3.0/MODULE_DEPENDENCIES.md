@@ -207,3 +207,13 @@ Current PR #36 workflow still pins older refs (M1 `b1d7423`, M2 `9db59ed`, M3 `b
 The bounded candidate host route is recorded in `API_CONTRACTS.md` above. M1 reviewed M2 `be66cf8`'s real packed single-file facade as ACCEPT WITH CONDITIONS; M3 has local host-route commit `429cd73`. Neither candidate has yet been published and validated together. M7 is narrowing its package checker on the existing PR #39 branch to accept only the M2 facade artifact.
 
 M9 must keep PR #36 at its current pin until the package checker/facade candidate and M3 route are visible at exact public refs. Then make one isolated composition against immutable SHAs, record the combined candidate SHA, run the exact package and cross-module suites, and retain failures. This does not authorize merge, mainline update, installer/VM execution, Release, or changing another module's ownership.
+
+## Live P0 #52 M4/M5 integration dependency — 2026-10-21 19:16 UTC
+
+The intended product route is `M4 host -> M5 policy router -> M2 fixed-resource facade -> M1 Gateway held-file dispatch`. Ownership follows the API contract: M4 host callsite, M5 policy/callback context, M2 facade and exact tool/path map, M1 held-file capability, M9 exact-source composition.
+
+At PR #34 head `803a015f3e97ae69b7adeb4411f93defc0a06cfe`, M4 still uses a separate Gateway/router implementation: its Gateway blob differs from M1's same-path blob, and its router has no `fileReadCapability` context. M5 current `src/security-router.ts` does forward that context. M4's branch manifest exports only `./sdk`; the facade subpath exists on M2 PR #37 and must be validated after the branches are composed. Current demos do not establish a first-party protected-read callsite.
+
+M0's 19:10–19:30 slot assigns only M4 and M5 to this P0 gate. Assignment and exact interface trace are recorded in PR #34 comments `6324321655`, `6324355802`, `6324397491` and PR #47 comments `6324322381`, `6324337735`, `6324356936`, `6324398295`. M5's existing uncommitted `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs` changes are M6-owned; preserve them and do not stage them on #47.
+
+M9 must compose exact reviewed/public M1, M2, M4, and M5 commits before claiming #52. Require safe-read positive control, alias/workspace-escape/path-replacement denials before callback or file effect, with expected redacted denial evidence, and exact Ubuntu/Windows CI. Until then #52 stays OPEN/P0/NOT_VERIFIED for product-host consumption and TOCTOU.

@@ -296,3 +296,25 @@ This records a reviewed candidate seam for M9 composition; it does not freeze a 
 - Current M9 branch/PR #36 remains at `6c9c794a83e3a3e8a1948661ae1e96728406a4d6`; do not refresh pins yet.
 - Candidate M2 `be66cf8f4c1a60f093740577796ec5cd633e1d93` has M1 package-boundary acceptance with conditions but is local, not public/hosted-CI validated. Candidate M3 `429cd73c03273bc77f3781b489f541e396cd9361` is local and its own branch deliberately reports UNKNOWN while owner interfaces are unavailable; its focused build/tests pass, but exact combined-source host validation remains M9 work.
 - M7 owns the one-file package checker adaptation in its existing PR #39 branch. M9 must use the checker and manifest together in an isolated exact-source composition after all candidate refs are published and current checks pass. Keep #52 OPEN/P0/NOT_VERIFIED until host-facing positive/negative controls pass; keep #41/#45/#57 at their separate HOLD/NOT_VERIFIED boundaries.
+
+## Current M4/M5 host-adapter contract — 2026-10-21 19:16 UTC
+
+**Status:** source-verified contract for integration review; this note does not approve a public API change. Preserve the M1 capability boundary and use the M2 facade as the only adapter.
+
+### Ownership
+
+- M1 owns registration and issuance of the opaque held-file capability from the Gateway.
+- M2 owns the fixed tool/path map and `createSecurityGatewayHostAdapter` facade.
+- M5 owns policy decisions and forwarding of M2's `fileReadCapability` through the host callback context.
+- M4 owns the first-party host callsite and must consume the composed adapter; its local Gateway/router is not evidence of M1 capability use.
+- M9 owns immutable exact-source composition and cross-module verification.
+
+### M2 facade input contract
+
+`createSecurityGatewayHostAdapter` accepts `gateway`, `fixedFileReads`, `createSecurityToolRouter`, and `routerOptions`. `routerOptions` must set `mode: "OBSERVE"` and `verifyRealPaths: true`; the caller must not supply `tools`, `executeRealTool`, or `fileReadCapability`. M2 injects those reserved fields from its fixed tool/path map and the M1 Gateway. The facade then exposes only `dispatch` and `pendingApprovals`.
+
+M5's `createSecurityToolRouter` must accept the injected `fileReadCapability` provider through router options and preserve the resulting capability context to its reserved `executeRealTool`. M2's reserved executor re-verifies the exact tool/path and opaque M1 capability, then calls M1's `readFileWithCapability`; the host cannot replace this file-read executor with a generic callback. A sensitive alias, workspace escape, mismatched capability, replaced path, or stale capability must deny before approval creation, callback dispatch, or file effect. Expected denial evidence must remain accurate without recording raw file contents or secrets. A registered safe file is the positive control.
+
+### Current branch compatibility blocker
+
+At M4 PR #34 head `803a015f3e97ae69b7adeb4411f93defc0a06cfe`, `src/runtime/gateway.ts` blob `02cf0ec02c75e0368d70472038af892b1280a21f` differs from M1 PR #43's blob `40bfe437ea70f0cc21a5a5dbc2bcdf304f0d486c`. M4's `src/security-router.ts` has no `fileReadCapability` support, and M4 `package.json` currently exports only `./sdk`. M4's local `runtime/demo.ts` and virtual `ai/policy-demo.ts` do not prove first-party use of the M1/M2 contract. Do not copy M1/M5 implementations or claim compatibility by matching function names. The contract must be validated in an exact-source composition that includes the reviewed M1, M2, M4, and M5 commits.
