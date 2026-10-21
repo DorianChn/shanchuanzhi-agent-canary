@@ -1,11 +1,11 @@
-## Current integration delta — 2026-10-21 10:46 UTC
+## Current integration delta — 2026-10-21 10:47 UTC
 
 This delta supersedes publication and CI status in the 10:40 snapshot; the remaining host-integration limits there remain current.
 
 | Gate | Priority | Current verified state | Remaining acceptance |
 | --- | --- | --- | --- |
 | M2/M4 protected host path (#52) | P0 | M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` is public on existing PR #37; exact-head CI `39586551017` passed all 9 jobs. M4's current public UI/adapter sources still do not show a first-party OBSERVE file-read consumer. | M1 owner disposition on `d054cee` and M4 protected-identity host-path proof or exact API blocker are pending. Keep M9 on M2 baseline `9db59ed`; host-held identity and TOCTOU remain NOT_VERIFIED. |
-| M0 PR #30 coordination evidence | M0 | Head `4ec96c78959b509f58111e87915583ca053f06e2` product CI `39586557635` passed all 9 jobs; AC3 run `39586799242` passed. A later PR-body edit triggered AC3 run `39586898308`, still in progress at the last check. | Keep Draft; record the run result when available. |
+| M0 PR #30 coordination evidence | M0 | Head `4ec96c78959b509f58111e87915583ca053f06e2` product CI `39586557635` passed all 9 jobs; AC3 runs `39586799242`, `39586898308`, and body-edit run `39587070549` passed. | Keep Draft; no merge or Release. |
 | M6 active-stage lock release (#66) | P1 | Exact M6 `560f724` reproduction confirms `release()` permits a second run to start while the first stage is pending. No source changed. | M6 owner fix and regression on existing PR #38, exact-head CI, and M9 composition if the pin changes. |
 | M6 duplicate-stage E4 race (#63) | P1 | Scoped issue closed after M6 exact CI and M9 Ubuntu/Windows composition passed at the accepted `560f724` source. | Independent product E4 remains NOT_VERIFIED and is tracked separately. |
 

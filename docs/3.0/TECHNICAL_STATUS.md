@@ -5360,3 +5360,11 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - Issue #29 comment `6314039705` keeps the two assigned tasks as M1 exact-SHA review and M4 first-party host-path proof/blocker. M6/#66 remains QUEUED; M9 is IDLE after exact-source composition. The dispatch does not claim private tasks have started.
 - M6 issue #63 is closed for duplicate-stage/finalization scope; P1 issue #66 tracks the reproduced early-release race. No M6 files were modified. PR #24 remains unchanged; `main` untouched; no merge or Release.
 - Usage Overview read at approximately 10:42 UTC showed 80% five-hour / 53% weekly remaining; the Usage tab remains open. Next shared push is no earlier than 11:02 UTC; recheck Usage, PR #24, and remote heads immediately before it.
+
+## M0 10:47 exact-head checks and owner-review wait — 2026-10-21 10:47 UTC
+
+- M2 PR #37 `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` passed all 9 exact-head product CI jobs in run `39586551017`. It is public and reviewable; PR #37 has no submitted review yet. M1 owner disposition remains pending and M9 stays pinned to `9db59ed`.
+- M0 PR #30 `4ec96c78959b509f58111e87915583ca053f06e2` passed all 9 product CI jobs in `39586557635`. AC3 ownership runs `39586799242`, `39586898308`, and `39587070549` passed after successive PR description refreshes.
+- Issue #61 body now distinguishes the passing M9 composition for accepted refs from pending M1 review of the now-public M2 candidate. Issue #52 body records M2 CI pass and leaves M4 host-path proof as a separate P0 requirement.
+- Latest scheduler entry is Issue #29 comment `6314092000`: M1 exact-SHA review and M4 protected desktop callsite/blocker are the two assigned tasks; M6/#66 remains queued; M9 is idle. No M1 submitted review or M4 evidence was visible at this 10:47 checkpoint; private-session activity remains UNKNOWN.
+- PR #24 is still OPEN/Draft at unchanged head/base; `main` remains untouched. No merge or Release.
