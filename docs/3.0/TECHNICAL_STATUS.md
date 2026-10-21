@@ -5754,3 +5754,8 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - Issue #58's older body referenced stale M6/M9 SHAs. Current exact heads are M6 #38 `98803607b89f11e24430c461bd91e9c1a0ece9d4` and M9 #36 `7c8d808457ddd6dc22382ce9b65e2e4aa3ebffa2`; both worktrees are clean and `.gitignore` blob `20550d670f403b335047472c5c02694b42983f52` is identical.
 - At each worktree, `git check-ignore -v --no-index` matches the named historical E4 `raw.log` to the exact negation rule, while the future sibling `20990101T000000Z/raw.log` matches `*.log` and remains ignored. M6 exact-head CI `39616422797`, M9 CI `39638415573`, Windows wrapper `39638415625`, and cross-module composition `39638415567` passed; M9 composition passed on Ubuntu and Windows.
 - M0 posted the refreshed evidence as Issue #58 comment `6322038697`. The issue remains OPEN pending PR review/merge, consistent with its earlier coordination decision. This gate does not establish independent E4, installer, or VM acceptance.
+
+## M0 17:17 UTC AI-retry evidence refresh — 2026-10-21
+
+- Issue #54's body also references an older M9 ref. Current M9 PR #36 head `7c8d808457ddd6dc22382ce9b65e2e4aa3ebffa2` passes all 9 product jobs in run `39638415573`, including Windows Node 22; wrapper `39638415625` and Ubuntu/Windows composition `39638415567` pass.
+- The current green head does not explain the historical Windows Node 22 HTTP 503 failure in run `38717318171`. No focused failure reproduction or safe error/request-count diagnostics are recorded, and ownership of `src/ai/provider.ts` / `src/ai/transport.ts` remains unresolved for any source change. M0 refreshed Issue #54 comment `6322056333`; it remains OPEN/P1 under the existing acceptance.
