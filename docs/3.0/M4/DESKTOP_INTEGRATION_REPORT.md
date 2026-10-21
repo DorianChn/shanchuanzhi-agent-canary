@@ -116,3 +116,33 @@ On M4 commit `91d46e9807e796f83c709d35bf4b04ed7e9df97c`, `test/agent-hook.test.t
 After this restoration, `npm run build` passed, `node --import tsx --test test/agent-hook.test.ts` passed **10/10**, and `node --import tsx --test test/runtime-console.test.ts` passed **9/9**. The 10/10 Hook result exercises the older common-base test contract, which allows an in-workspace native `Read`; it does **not** validate M1's newer unpinned-file denial contract. M1's accepted Hook test blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39` and corresponding denial implementation are not yet in the common base. Therefore the green M4-base suite does not resolve #60 or establish the M1 contract on the M4 integration ref.
 
 Before M9 treats the combined branch as accepted, M1 must provide the exact integrated source and canonical-test refs, and M5 must confirm any policy-owned decision/status interface preserves M1's hard-denial precedence. M4's UI continues to report missing live Hook status as `UNKNOWN`. The temporary dependency junction and build output used for local tests were removed; no M5 worktree or remote PR state was changed.
+
+## 2026-10-21 15:38 UTC Issue #52 first-party Console route recheck
+
+M4 PR #34 is still at `fde972cd8d4c17ead4a18187fa4b273482bddd2d`, clean, with merge base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. The exact candidate refs checked for this audit are M1 PR #43 `7279336307fc7aacd46119405858d4fd91499757`, M2 PR #37 `eed2c0884f524d37c25d317888e1d289122c440d`, and M5 PR #47 `ed304e399ec237a47e03830e5013695ddcc10dd6`.
+
+### Current M4 call chain
+
+- `src/ai/cli.ts::registerAICommands` starts `src/ai/console.ts::startAIConsole`. The Console handler at `src/ai/console.ts` constructs both `createRuntimeDemo()` and `createPolicySandbox()`; `POST /api/runtime3/action` calls `runtime3.action`, and `POST /api/policy/action` calls `sandbox.action`.
+- `src/runtime/demo.ts::createRuntimeDemo` makes a real read only from its own synthetic temporary workspace by directly constructing `createTrustedExecutionGateway`. Its `read` action dispatches the fixed `public.txt` fixture; it does not call the M2 adapter or M5 OBSERVE router.
+- `src/ai/policy-demo.ts::createPolicySandbox` calls this M4 checkout's `src/security-router.ts::createSecurityToolRouter`, but its `executeRealTool` is virtual and returns static `Public README`; it performs no filesystem read.
+- The M4 checkout has no `createSecurityGatewayAdapter` / `createSecurityGatewayHostAdapter`, `bindFileReadCapability`, `verifyFileReadCapability`, `readFileWithCapability`, or `fileReadCapability` references. Its local router predates the exact M5 strict capability contract.
+
+### Dependency and ownership blocker
+
+- M1's current candidate adds the host-only Gateway methods that issue, verify, and consume the opaque capability, but those methods are absent from M4's checked-out `src/runtime/gateway.ts`.
+- M2's exact adapter exists at `execution-isolation/gateway-adapter/security-gateway-adapter.mjs` only on PR #37's candidate tree; that path is absent from the M4 tree. The candidate package manifest exports only `./sdk` and its published `files` allowlist omits `execution-isolation/`, so there is no currently declared package import boundary that exposes this adapter to a packaged consumer.
+- M5's exact strict router accepts the verified capability provider and forwards the verified capability in callback context, while M4's checked-out `src/security-router.ts` has no such API. Importing the local M4 router would not implement the accepted strict contract.
+- Ownership remains split: M4 owns `src/ai/console-page.ts`, `src/ai/security-center-adapter.ts`, `test/runtime-console.test.ts`, and `docs/3.0/M4/*`. The coordinator map assigns `src/ai/console.ts` route integration to M3 with M4 as the Security Center companion, marked tentative; it also requires confirming the owner of any additional host callback file before editing it. M4 can identify the Console entrypoint but cannot safely implement this backend route without the missing dependency import boundary and route-owner confirmation.
+
+No implementation was added: wiring a direct path callback, the demo Gateway, or the virtual sandbox would bypass at least one accepted security boundary. #52 remains `OPEN/P0/NOT_VERIFIED`.
+
+### #52 acceptance needed to resume M4 host wiring
+
+1. Confirm M3 as owner of the `src/ai/console.ts` host route (or record an explicit M3/M4 shared-file handoff), and keep M4 responsible for the Console UI behavior.
+2. Pin the exact M1/M2/M5 candidate refs in an integration source tree that the supported desktop build/package actually includes; agree on and test an import/export boundary for the M2 adapter rather than reaching into an omitted source-only path.
+3. Through the real Console request path, demonstrate one registered safe read using M1's bound capability through M2 and M5 strict `OBSERVE` with `verifyRealPaths:true`.
+4. Preserve hard denial for path-only, sensitive-alias, symlink/junction-alias, and path-replacement cases. Each negative case must show no file-effect callback and no approval creation, with target content/hash unchanged.
+5. Run focused owner tests and exact-head hosted CI on the composed refs, then let M9 pin that exact composition. This remains bounded synthetic/product-route evidence; it must not be described as an OS-wide atomic path/open guarantee or as closed TOCTOU without separate evidence.
+
+This recheck used public candidate source and the existing M4 checkout only. No host user-file read, installer, VM, or real-model test was performed; no M1/M2/M5 source or tests were changed.
