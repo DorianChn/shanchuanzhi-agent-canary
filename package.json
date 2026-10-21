@@ -36,10 +36,13 @@
       "types": "./dist/sdk.d.ts",
       "import": "./dist/sdk.js",
       "default": "./dist/sdk.js"
-    }
+    },
+    "./gateway-adapter": "./execution-isolation/gateway-adapter/gateway-adapter.mjs"
   },
   "files": [
     "dist",
+    "execution-isolation/gateway-adapter/gateway-adapter.mjs",
+    "execution-isolation/gateway-adapter/security-gateway-adapter.mjs",
     "README.md",
     "README.zh-CN.md",
     "LICENSE"
