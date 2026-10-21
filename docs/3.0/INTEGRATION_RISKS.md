@@ -875,3 +875,21 @@ M1 confirmed the current OBSERVE console uses a virtual executor; the separate t
 ### M7 installer payload evidence update — 2026-10-21 07:54 UTC
 
 The exact M7 hosted build artifact `12309135499` from run `39517510296` at source `b0581407def769946fa710f55cd1d0986ce0cf3b` contains a hashed Setup.exe, build report, payload manifest, canary result, and staged Hook sidecar. The staged Hook hash matches its canonical M7 source blob; the controlled wrapper canary passes with zero unsafe callback starts and unchanged protected fixture. This establishes staged-payload/build evidence only. Setup.exe's internal Hook was not extracted, and no installer or VM test was run; issue #53 therefore remains OPEN/P0/NOT_VERIFIED for the installed artifact.
+
+## 2026-10-21 09:10 UTC - M7 Setup extraction evidence and M9/M2 gates
+
+### P0 - #53 packaged Hook/logging evidence
+
+M7 PR #39 exact head 9330005b2e15c521b9645a728d34e9477d8d6340 passed product CI run 39573529208 and Windows Community wrapper run 39573529232. Artifact 12332644890 was downloaded and all SHA256SUMS entries were checked. The workflow tested and extracted the actual Setup.exe archive without executing the installer. The extracted Hook Git blob is the canonical M1 blob d6f93249306b7966259cab463dd39475728ef338; the package-derived controlled canary passed with no caller canaries, unchanged protected fixture, zero unsafe callback starts, and seven fault cases. This supersedes the 07:54 entry for the newer M7 exact head. No VM lifecycle or third-party host test is claimed. #53 remains OPEN until the composed exact refs pass and reachable-copy acceptance is complete.
+
+M8 PR #40 at 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 carries the M1-approved distinct adapter blob 544b5eb76633469b7185c4ea77d85d7f1754393e, accepted in #65 comment 6308270032. It preserves permissionDecision; reason normalization is display metadata only. M9 must verify this owner-approved variant by its exact blob and behavioral/log-schema contract, not require canonical byte identity.
+
+### P0 - #52 product host protection remains NOT_VERIFIED
+
+M2 exact local candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 passes the existing focused synthetic adapter tests 8/8 on Windows Node 22.23.1. Its five changed paths are within the M2 adapter, tests, and report; no first-party product-host callsite was added. M2's audit found no supported shipping consumer and the package allowlist excludes execution-isolation/**; M4 found only a virtual console read. This is not protected desktop OBSERVE file access or TOCTOU evidence. M1 exact disposition and d054 hosted CI are absent; keep it unpublished and keep #52 OPEN/P0.
+
+### P1 - #61 current M9 exact-head composition failure
+
+PR #36 head 72249c617687571f88f5c3a8a688245cbace65e6 run 39573535645 fails the same Hook byte-identity assertion on Ubuntu and Windows because it incorrectly includes M8's owner-approved distinct adapter. The canonical M1/M2/M5/M7/M9 files match; M8's accepted blob differs. Keep all security assertions; M9 should scope byte identity to canonical copies and verify M8 by its reviewed blob and contract. M2 candidate d054 remains unpinned pending M1 ACCEPT/REJECT or a concrete blocker and exact-head hosted CI. Keep #61 OPEN/P1 until these gates and both-platform composition pass.
+
+PR #24 remains OPEN/Draft at the unchanged base/head; main was not modified. No merge or Release was made.
