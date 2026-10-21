@@ -78,3 +78,23 @@ test('verifyRealPaths denies generic file callbacks but false/omitted keeps lega
  const https=setup({verifyRealPaths:true,allowedReadOrigins:['https://docs.example.com']});await https.router.dispatch({name:'http',args:{url:'https://docs.example.com/guide',method:'GET'}});assert.equal(https.count(),1);
  const missing=setup({verifyRealPaths:true,workspaceRoot:path.join(home,'missing-root')});await assert.rejects(missing.router.dispatch({name:'read',args:{path:'public.txt'}}));assert.equal(missing.count(),0);
 });
+test('strict OBSERVE read passes only a live trusted capability through callback context',async()=>{
+ const workspace=fs.mkdtempSync(path.join(home,'m1-read-capability-context-')),target=path.join(workspace,'public.txt'),content='M5_M1_CAPABILITY_READ_FIXTURE';fs.writeFileSync(target,content);
+ const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');const capability=Object.freeze(Object.create(null));let verifierCalls=0,callbacks=0;
+ // Contract double for the M1-owned verifier; M1 runtime identity checks are tested by its own Gateway suite.
+ const provider={resolve:(call:any)=>call.name==='read'&&call.args.path==='public.txt'?capability:undefined,verify:(candidate:any,call:any,operation:string)=>{
+  verifierCalls++;try{return candidate===capability&&call.name==='read'&&call.args.path==='public.txt'&&operation==='file-read'&&fs.lstatSync(target).isFile()&&!fs.lstatSync(target).isSymbolicLink()&&fs.realpathSync(target)===target;}catch{return false;}
+ }};
+ const guard=createAgentGuard({sessionId:'m1-read-capability-context',alert:false});
+ const router=createSecurityToolRouter({guard,workspaceRoot:workspace,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read'}},fileReadCapability:provider,executeRealTool:(call:any,context:any)=>{
+  callbacks++;assert.ok(context.signal);assert.equal(context.fileReadCapability,capability);
+  if(!provider.verify(context.fileReadCapability,call,'file-read'))throw Error('M1_CAPABILITY_INVALID');
+  return fs.readFileSync(target,'utf8');
+ }});
+ const call={name:'read',args:{path:'public.txt'}};
+ assert.equal((await router.decide(call)).action,'OBSERVE_ONLY');
+ assert.equal(await router.dispatch(call),content);
+ assert.ok(verifierCalls>=5,'preview, dispatch, pre-approval, execution, and callback boundaries must validate the capability');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,1);
+ assert.equal(fs.readFileSync(target,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+});

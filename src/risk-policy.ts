@@ -3,18 +3,28 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { logEvent } from './alerts.js';
-import { createGuardedToolRouter, isDecoy, type RealToolExecutor } from './sdk.js';
+import { createGuardedToolRouter, isDecoy } from './sdk.js';
 import { CanaryBlockedError, type AgentGuard, type ToolCall } from './containment.js';
 
 export type ProtectionMode = 'OBSERVE' | 'BALANCED' | 'STRICT';
 export type ToolRisk = 'READ_ONLY' | 'WRITE' | 'EXECUTE' | 'NETWORK' | 'SENSITIVE_DATA' | 'DESTRUCTIVE';
 export type ToolOperation = 'file-read' | 'file-write' | 'shell' | 'http' | 'delete' | 'sensitive-read' | 'static-read';
 export interface RiskToolDescriptor { operation: ToolOperation; pathArg?: string; commandArg?: string; urlArg?: string; bodyArg?: string }
+/** Host-only resolver for an M1-issued capability bound to one registered read. */
+export interface TrustedFileReadCapabilityProvider {
+  resolve(call: Readonly<ToolCall>): unknown;
+  verify(capability: unknown, call: Readonly<ToolCall>, operation: 'file-read'): boolean;
+}
+/** Passed only to the trusted host callback for a validated strict file read. */
+export interface RiskPolicyExecutionContext { readonly fileReadCapability?: unknown }
+export type PolicyRealToolExecutor<T> = (call: ToolCall, context?: Readonly<RiskPolicyExecutionContext>) => T | Promise<T>;
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
-  /** Opt in to realpath classification. Filesystem callbacks fail closed because executeRealTool receives a path-bearing call and cannot prove it consumes the checked file identity. */
+  /** Opt in to real-path checks. Only file reads with a valid trusted M1 capability may execute; path-only reads, writes, and deletes fail closed. */
   verifyRealPaths?: boolean;
+  /** Trusted host lookup and M1 verification for a constructor-registered, safe file-read capability. Path strings alone never satisfy verifyRealPaths. */
+  fileReadCapability?: TrustedFileReadCapabilityProvider;
   /** Trusted host registration; never accept these descriptors from model arguments. */
   tools: Record<string, RiskToolDescriptor>;
   /** Exact host-reviewed HTTPS origins for read-only GET requests. No wildcard. */
@@ -92,7 +102,7 @@ function snapshot(call: ToolCall): ToolCall {
   return Object.freeze({name:call.name.toLowerCase(),args});
 }
 
-export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: AgentGuard; executeRealTool: RealToolExecutor<T> }) {
+export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: AgentGuard; executeRealTool: PolicyRealToolExecutor<T> }) {
   const guard=options.guard;
   const mode=options.mode??'BALANCED';
   if(!['OBSERVE','BALANCED','STRICT'].includes(mode))throw new Error('POLICY_MODE_INVALID');
@@ -107,10 +117,22 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   const origins=new Set((options.allowedReadOrigins??[]).map(s=>{const u=new URL(s);if(u.protocol!=='https:'||u.origin!==s)throw new Error('POLICY_ORIGIN_INVALID');return s;}));
   const ttl=options.approvalTtlMs??60_000,limit=options.maxPending??100;
   if(!Number.isInteger(ttl)||ttl<1||ttl>300_000||!Number.isInteger(limit)||limit<1||limit>100)throw new Error('POLICY_APPROVAL_LIMIT_INVALID');
+  if(options.fileReadCapability&&(
+    typeof options.fileReadCapability.resolve!=='function'||
+    typeof options.fileReadCapability.verify!=='function'
+  ))throw new Error('POLICY_FILE_READ_CAPABILITY_PROVIDER_INVALID');
   const riskState=riskStates.get(guard)??{sensitiveRead:false,tail:Promise.resolve(),queued:0};riskStates.set(guard,riskState);
-  const pending=new Map<string,{call:ToolCall;decision:PolicyDecision;expires:number}>();
+  const pending=new Map<string,{call:ToolCall;decision:PolicyDecision;expires:number;executionContext?:RiskPolicyExecutionContext}>();
   const serialize=<R>(operation:()=>Promise<R>):Promise<R>=>{if(riskState.queued>=100)return Promise.reject(new Error('POLICY_QUEUE_LIMIT'));riskState.queued++;const result=riskState.tail.then(operation).finally(()=>{riskState.queued--;});riskState.tail=result.catch(()=>{});return result;};
-  const router=createGuardedToolRouter({guard,executeRealTool:options.executeRealTool});
+  const callbackContexts=new WeakMap<object,RiskPolicyExecutionContext>();
+  const router=createGuardedToolRouter({guard,executeRealTool:async(call)=>{
+    const executionContext=callbackContexts.get(call);
+    if(isStrictFileRead(call)&&!hasValidFileReadCapability(call,executionContext)){
+      const decision:PolicyDecision={action:'DENY',risks:['READ_ONLY'],reason:'path_execution_not_pinned',mode};
+      await recordRecheckedDenial(call,decision);audit('policy_blocked',call,decision);throw new PolicyBlockedError(decision);
+    }
+    return executionContext?options.executeRealTool(call,executionContext):options.executeRealTool(call);
+  }});
   function audit(kind:'policy_allowed'|'policy_blocked'|'policy_approval_required'|'policy_approval_granted',call:ToolCall,d:PolicyDecision){
     // No raw args, secret values, paths or approval authority in logs.
     logEvent({ts:new Date().toISOString(),kind,sessionId:guard.sessionId,toolName:call.name,reason:d.reason,metadata:{mode,action:d.action,risks:d.risks.join(',')}},options.eventsFile);
@@ -121,7 +143,20 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     if(options.reviewDecision)await options.reviewDecision(call,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}));
   }
   function sweep(){for(const [id,p]of pending)if(p.expires<Date.now())pending.delete(id);}
-  function classify(call:ToolCall):PolicyDecision {
+  function isStrictFileRead(call:ToolCall):boolean{return options.verifyRealPaths===true&&tools.get(call.name)?.operation==='file-read';}
+  function resolveExecutionContext(call:ToolCall):RiskPolicyExecutionContext|undefined {
+    if(!isStrictFileRead(call)||!options.fileReadCapability)return undefined;
+    try{
+      const capability=options.fileReadCapability.resolve(call);
+      return capability===undefined||capability===null?undefined:Object.freeze({fileReadCapability:capability});
+    }catch{return undefined;}
+  }
+  function hasValidFileReadCapability(call:ToolCall,context:RiskPolicyExecutionContext|undefined):boolean {
+    const capability=context?.fileReadCapability;
+    if(!isStrictFileRead(call)||capability===undefined||capability===null||!options.fileReadCapability)return false;
+    try{return options.fileReadCapability.verify(capability,call,'file-read')===true;}catch{return false;}
+  }
+  function classify(call:ToolCall,executionContext?:RiskPolicyExecutionContext):PolicyDecision {
     const a=call.args??{},d=tools.get(call.name),risks:ToolRisk[]=[];
     const unknownTool=!d;
     let reason='read_only',action:PolicyDecision['action']='ALLOW';
@@ -149,7 +184,9 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
         if(outside)deny('outside_workspace');
         else if(mode==='OBSERVE'&&sensitivePath)deny('observe_sensitive_data_blocked');
         else if(pathAlias)deny('path_alias_rejected');
-        else if(filesystemOperation&&options.verifyRealPaths)deny('path_execution_not_pinned');
+        else if(filesystemOperation&&options.verifyRealPaths&&(
+          d.operation!=='file-read'||!hasValidFileReadCapability(call,executionContext)
+        ))deny('path_execution_not_pinned');
         else if(sensitivePath)requireApproval('sensitive_path');
         else if(d.operation!=='file-read')requireApproval(d.operation==='delete'?'destructive_write':'workspace_write');
       }
@@ -175,16 +212,18 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     if(mode==='OBSERVE'&&action!=='ALLOW'&&!nonOverridableDeny&&!unknownTool)return {action:'ALLOW',risks,reason:'observe_only:'+reason,mode};
     return {action,risks,reason,mode};
   }
-  async function execute(call:ToolCall,decision:PolicyDecision){
+  async function execute(call:ToolCall,decision:PolicyDecision,executionContext?:RiskPolicyExecutionContext){
     if(options.verifyRealPaths){
-      const current=classify(call);
+      const current=classify(call,executionContext);
       if(current.action!==decision.action||current.reason!==decision.reason||current.risks.length!==decision.risks.length||current.risks.some((risk,index)=>risk!==decision.risks[index])){
-        const changed={...current,action:'DENY' as const,reason:'execution_boundary_changed'};await recordRecheckedDenial(call,changed);audit('policy_blocked',call,changed);throw new PolicyBlockedError(changed);
+        const changed={...current,action:'DENY' as const,reason:current.action==='DENY'&&current.reason==='path_execution_not_pinned'?'path_execution_not_pinned':'execution_boundary_changed'};await recordRecheckedDenial(call,changed);audit('policy_blocked',call,changed);throw new PolicyBlockedError(changed);
       }
     }
     // A failed sensitive callback may have read data before throwing. Retain taint.
     if(decision.risks.includes('SENSITIVE_DATA'))riskState.sensitiveRead=true;
-    const result=await router.dispatch(call); // final Guard check directly before callback
+    if(executionContext)callbackContexts.set(call,executionContext);
+    let result:T|Awaited<ReturnType<typeof router.dispatch>>;
+    try{result=await router.dispatch(call);}finally{callbackContexts.delete(call);} // final capability and Guard checks directly before callback
     if(decision.risks.includes('SENSITIVE_DATA')||SECRET_CONTENT.test(typeof result==='string'?result:JSON.stringify(result)??''))riskState.sensitiveRead=true;
     guard.inspect(typeof result==='string'?result:JSON.stringify(result)??'', 'policy-tool-output');
     return result;
@@ -198,19 +237,24 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       return serialize(async()=>{
       guard.inspect(JSON.stringify(safe.args),'policy-tool-arguments');
       const gd=guard.beforeToolCall(safe);if(!gd.allowed)throw new CanaryBlockedError(gd);
-      const decision=classify(safe);sweep();
+      const executionContext=resolveExecutionContext(safe);
+      const decision=classify(safe,executionContext);sweep();
       if(options.reviewDecision && await options.reviewDecision(safe,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}))==='DENY'){
         decision.action='DENY';decision.reason='host_pre_execution_review_denied';
+      }
+      // Recheck before creating any approval request or starting an execution.
+      if(decision.action!=='DENY'&&isStrictFileRead(safe)&&!hasValidFileReadCapability(safe,executionContext)){
+        decision.action='DENY';decision.reason='path_execution_not_pinned';
       }
       if(decision.action==='APPROVAL_REQUIRED'){
         if(pending.size>=limit)throw new PolicyBlockedError({...decision,action:'DENY',reason:'approval_capacity'});
         const requestId=randomUUID();decision.requestId=requestId;
-        pending.set(requestId,{call:safe,decision:Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}),expires:Date.now()+ttl});
+        pending.set(requestId,{call:safe,decision:Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}),expires:Date.now()+ttl,executionContext});
         audit('policy_approval_required',safe,decision);throw new PolicyBlockedError(decision);
       }
       audit(decision.action==='DENY'?'policy_blocked':'policy_allowed',safe,decision);
       if(decision.action==='DENY')throw new PolicyBlockedError(decision);
-      return execute(safe,decision);
+      return execute(safe,decision,executionContext);
     });},
     /** HOST ONLY. Never expose this method as an Agent/MCP tool. No args token can call it. */
     approve(requestId:string,acknowledgedBy:string){return serialize(async()=>{
@@ -219,12 +263,12 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       pending.delete(requestId); // consumed before any asynchronous callback
       const gd=guard.beforeToolCall(p.call);if(!gd.allowed)throw new CanaryBlockedError(gd);
       // Reassess cross-tool taint after waiting; a previously safe network request may now be denied.
-      const fresh=classify(p.call);if(fresh.action==='DENY'){await recordRecheckedDenial(p.call,fresh);audit('policy_blocked',p.call,fresh);throw new PolicyBlockedError(fresh);}
+      const fresh=classify(p.call,p.executionContext);if(fresh.action==='DENY'){await recordRecheckedDenial(p.call,fresh);audit('policy_blocked',p.call,fresh);throw new PolicyBlockedError(fresh);}
       audit('policy_approval_granted',p.call,p.decision);
-      return execute(p.call,p.decision);
+      return execute(p.call,p.decision,p.executionContext);
     });},
     pendingApprovals(){sweep();return [...pending].map(([requestId,p])=>({requestId,tool:p.call.name,risks:[...p.decision.risks],reason:p.decision.reason,expiresAt:p.expires}));},
-    inspectPolicy(call:ToolCall){return classify(snapshot(call));},
+    inspectPolicy(call:ToolCall){const safe=snapshot(call);return classify(safe,resolveExecutionContext(safe));},
     denyApproval(requestId:string){const p=pending.get(requestId);if(!p)throw new Error('POLICY_APPROVAL_MISSING_OR_EXPIRED');pending.delete(requestId);audit('policy_blocked',p.call,{...p.decision,action:'DENY',reason:'host_approval_rejected'});},
   };
 }

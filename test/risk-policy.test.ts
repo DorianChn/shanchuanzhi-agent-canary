@@ -98,6 +98,69 @@ test('verifyRealPaths blocks path-based file callbacks before read/write/delete 
   assert.equal(await router.dispatch({name:'http',args:{url:'https://docs.example.com/guide',method:'GET'}}),'M5_SAFE_HTTP_FIXTURE');assert.equal(filesystemCallbacks,0);assert.equal(safeCallbacks,1);
  }
 });
+test('verifyRealPaths hard-denies missing, mismatched, or expired read capabilities before approval or callback',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'strict-read-capability-deny-'));
+ const target=path.join(root,'config','.env');fs.mkdirSync(path.dirname(target));fs.writeFileSync(target,'M5_CAPABILITY_SECRET_FIXTURE');
+ const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+ const capability=Object.freeze(Object.create(null)),wrongCapability=Object.freeze(Object.create(null));
+ for(const scenario of ['missing','mismatched','expired-during-review'] as const){
+  let live=true,callbacks=0;
+  const provider={
+   resolve:()=>scenario==='missing'?undefined:scenario==='mismatched'?wrongCapability:capability,
+   verify:(candidate:any,call:any,operation:string)=>candidate===capability&&live&&operation==='file-read'&&call.name==='read'&&call.args.path==='config/.env',
+  };
+  const guard=createAgentGuard({sessionId:'test-read-capability-'+scenario,alert:false});
+  const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'BALANCED',verifyRealPaths:true,tools:{read:{operation:'file-read'}},fileReadCapability:provider,reviewDecision:async()=>{if(scenario==='expired-during-review')live=false;return 'UNCHANGED';},executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+  const call={name:'read',args:{path:'config/.env'}};
+  if(scenario!=='expired-during-review'){const preview=router.inspectPolicy(call);assert.equal(preview.action,'DENY');assert.equal(preview.reason,'path_execution_not_pinned');}
+  await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
+  assert.equal(router.pendingApprovals().length,0,scenario+' must not create an approval');
+  assert.equal(callbacks,0,scenario+' must not enter the registered callback');
+  assert.equal(fs.readFileSync(target,'utf8'),'M5_CAPABILITY_SECRET_FIXTURE');
+  assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+ }
+});
+test('OBSERVE cannot downgrade a mismatched read capability',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-mismatched-read-capability-'));
+ const target=path.join(root,'public.txt');fs.writeFileSync(target,'M5_OBSERVE_CAPABILITY_FIXTURE');const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+ const forged=Object.freeze(Object.create(null));let callbacks=0;
+ const guard=createAgentGuard({sessionId:'observe-mismatched-read-capability',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read'}},fileReadCapability:{resolve:()=>forged,verify:()=>false},executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+ const call={name:'read',args:{path:'public.txt'}};
+ const preview=router.inspectPolicy(call);assert.equal(preview.action,'DENY');assert.equal(preview.reason,'path_execution_not_pinned');
+ await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);assert.equal(fs.readFileSync(target,'utf8'),'M5_OBSERVE_CAPABILITY_FIXTURE');assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+});
+test('trusted read token is rechecked at the final callback boundary and passed unchanged',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'strict-read-capability-callback-'));
+ const target=path.join(root,'public.txt');fs.writeFileSync(target,'M5_PUBLIC_CAPABILITY_FIXTURE');
+ const capability=Object.freeze(Object.create(null));let verifyCalls=0,callbacks=0;
+ const fileReadCapability={resolve:()=>capability,verify:(candidate:any,call:any,operation:string)=>{
+  verifyCalls++;return verifyCalls<5&&candidate===capability&&operation==='file-read'&&call.name==='read'&&call.args.path==='public.txt';
+ }};
+ const guard=createAgentGuard({sessionId:'test-read-capability-final-check',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read'}},fileReadCapability,executeRealTool:(_call:any,context:any)=>{callbacks++;assert.equal(context.fileReadCapability,capability);return 'must-not-run';}});
+ const call={name:'read',args:{path:'public.txt'}};
+ assert.equal(router.inspectPolicy(call).action,'ALLOW');
+ await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
+ assert.equal(verifyCalls,5,'M5 must revalidate the same opaque token immediately before the host callback');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
+ assert.equal(fs.readFileSync(target,'utf8'),'M5_PUBLIC_CAPABILITY_FIXTURE');
+});
+test('read capability cannot authorize strict writes or deletes',async()=>{
+ for(const operation of ['file-write','delete'] as const){
+  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'read-capability-'+operation+'-'));
+  const target=path.join(root,'public.txt'),content=`M5_${operation}_UNCHANGED`;fs.writeFileSync(target,content);const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+  const capability=Object.freeze(Object.create(null));let callbacks=0;
+  const fileReadCapability={resolve:()=>capability,verify:()=>true};
+  const guard=createAgentGuard({sessionId:'read-capability-'+operation,alert:false});
+  const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{file:{operation}},fileReadCapability,executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+  const call={name:'file',args:{path:'public.txt'}};
+  assert.equal(router.inspectPolicy(call).reason,'path_execution_not_pinned');
+  await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
+  assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);assert.equal(fs.readFileSync(target,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+ }
+});
 test('M1 pre-execution denial reason is accepted only for the OBSERVE symlink alias',async()=>{
  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-router-path-alias-'));
  const secret=path.join(root,'secrets','fixture.txt'),content='M5_ROUTER_CANARY_SECRET';fs.mkdirSync(path.dirname(secret),{recursive:true});fs.writeFileSync(secret,content);

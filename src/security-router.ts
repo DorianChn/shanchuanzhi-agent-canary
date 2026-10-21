@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {createRiskPolicyRouter,PolicyBlockedError,type RiskPolicyOptions,type PolicyDecision} from './risk-policy.js';
+import {createRiskPolicyRouter,PolicyBlockedError,type RiskPolicyExecutionContext,type RiskPolicyOptions,type PolicyDecision} from './risk-policy.js';
 import {type AgentGuard,type ToolCall} from './containment.js';
 import {SessionDataFlow} from './dataflow.js';
 import {previewAnalysis} from './ai/provider.js';
@@ -9,14 +9,14 @@ export type SecurityAction='ALLOW'|'DENY'|'REQUIRE_APPROVAL'|'SANDBOX'|'OBSERVE_
 export interface SecurityDecision {action:SecurityAction;reason:string;risks:PolicyDecision['risks'];mode:PolicyDecision['mode'];coverage:'REGISTERED_HOST_CALLBACKS_ONLY'}
 export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
   guard:AgentGuard;
-  executeRealTool:(call:ToolCall,context:{signal:AbortSignal})=>T|Promise<T>;
+  executeRealTool:(call:ToolCall,context:{signal:AbortSignal}&RiskPolicyExecutionContext)=>T|Promise<T>;
   /** Optional stronger execution path, supplied by trusted host, not AI. */
-  executeSandboxTool?: (call:ToolCall,context:{signal:AbortSignal})=>T|Promise<T>;
+  executeSandboxTool?: (call:ToolCall,context:{signal:AbortSignal}&RiskPolicyExecutionContext)=>T|Promise<T>;
   provider?:AIProvider;
   cloudConsent?:boolean;
   reviewTimeoutMs?:number;
   callbackTimeoutMs?:number;
-  /** Enable M5 real-path checks; file-read/write/delete callbacks fail closed until the host can bind execution to a checked file identity. False retains legacy lexical checks only. */
+  /** Enable M5 real-path checks; file reads require a verified host-bound M1 capability, while path-only reads, writes, and deletes fail closed. False retains legacy lexical checks only. */
   verifyRealPaths?:boolean;
   dataflowTtlMs?:number;
   onReview?:(record:{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number})=>void;
@@ -68,12 +68,12 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     const record={tool:call.name,result,status,durationMs:Date.now()-start};reviews.push(record);if(reviews.length>100)reviews.shift();options.onReview?.(record);
     return status==='AI_SUGGESTED_DENY'?'DENY':'UNCHANGED';
   }
-  const router=createRiskPolicyRouter({...options,reviewDecision:review,executeRealTool:async(call)=>{
+  const router=createRiskPolicyRouter({...options,reviewDecision:review,executeRealTool:async(call,executionContext)=>{
     // Recheck realpath immediately before execution; a prior approval is not a path capability.
     if(pathDenied(call)||options.mode!=='OBSERVE'&&privateTarget(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'execution_boundary_changed',mode:options.mode??'BALANCED'});
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
     try{const execute=options.executeSandboxTool??options.executeRealTool;
-      const result=await Promise.race([Promise.resolve(execute(call,{signal:abort.signal})),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'callback_timeout'});reject(new Error('SECURITY_CALLBACK_TIMEOUT_STARTED_EFFECTS_NOT_UNDONE'));},callbackMs);})]);
+      const result=await Promise.race([Promise.resolve(execute(call,{signal:abort.signal,...(executionContext?.fileReadCapability===undefined?{}:{fileReadCapability:executionContext.fileReadCapability})})),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'callback_timeout'});reject(new Error('SECURITY_CALLBACK_TIMEOUT_STARTED_EFFECTS_NOT_UNDONE'));},callbackMs);})]);
       const d=trustedTools[call.name],text=typeof result==='string'?result:JSON.stringify(result)??'';
       if(d?.operation==='sensitive-read'||/(?:NOT_A_REAL_CREDENTIAL|api[_-]?key\s*[:=]|BEGIN .*PRIVATE KEY)/i.test(text))flow.record('sensitive-source',text);
       return result;
