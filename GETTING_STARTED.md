@@ -1,6 +1,6 @@
 # Getting started
 
-No GitHub Release is currently published. This guide uses the v3.0.0 CLI package from GitHub Packages or builds from the `v3.0.0` source tag; GitHub Packages distribution is separate from GitHub Releases. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from that source tag. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
+The v3.0.0 GitHub Release is published, but it has no attached Release assets. This guide uses the v3.0.0 CLI package from GitHub Packages or builds from the `v3.0.0` source tag; GitHub Packages distribution is separate from GitHub Releases. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from that source tag. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
 
 ## Five-minute quick start: v3.0.0 package
 
@@ -16,7 +16,7 @@ agent-canary self-test --json
 
 The CLI self-test reports its result as JSON. The v3.0.0 source verification receipt records four passing self-test checks. A self-test verifies only its local code path; it does not connect Codex or establish protection of Codex's built-in tools.
 
-The npm token is managed by npm in the user's configuration. Use a personal account, keep the token out of project files, and remove credentials you no longer need. The v3.0.0 source tag is available in the repository; it is not a published GitHub Release.
+The npm token is managed by npm in the user's configuration. Use a personal account, keep the token out of project files, and remove credentials you no longer need. The v3.0.0 source tag is available and corresponds to the published GitHub Release; that Release has no attached assets.
 
 ### Build from the v3.0.0 source tag
 

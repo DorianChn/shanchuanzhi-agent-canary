@@ -1,16 +1,16 @@
 # E4 evidence index
 
-**Status as of 2026-10-13: independent E4 remains NOT_VERIFIED and its evidence gate remains BLOCKED.** No GitHub Release is currently published. The repository's v3.0.0 source tag does not change the E4 result. This page indexes the recorded evidence and limits and does not claim an external certification or independent audit.
+**Status as of 2026-10-13: independent E4 remains NOT_VERIFIED and its evidence gate remains BLOCKED.** The v3.0.0 GitHub Release is published but has no attached assets; the competition Release and candidate.4 prerelease have separate candidate/community assets. Publication status does not change the E4 result. This page indexes the recorded evidence and limits and does not claim an external certification or independent audit.
 
 ## v3.0.0 source-tag verification
 
 The `v3.0.0` source tag points to commit `42d1d4d9f42fdc89a9c38c338310679afb924e54`. Its [mainline verification receipt](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/MAINLINE_VERIFY_2026-10-13.json) records `npm run verify` on a Windows host with Node.js 22.23.1: build passed, 100/100 automated tests passed, offline self-test 4/4, SDK type checks 5/5, source manifest 181 files with 0 mismatches, and packed-package smoke 72 files passed.
 
-These are bounded source checks from the recorded host. They do not verify an independent operator/environment, a clean Windows VM, or global protection of native host tools. A source tag and verification receipt are not a published Release or evidence that E4 is complete.
+These are bounded source checks from the recorded host. They do not verify an independent operator/environment, a clean Windows VM, or global protection of native host tools. The published v3.0.0 Release and its source verification receipt are not evidence that E4 is complete.
 
-## Competition source tags
+## Competition releases and source tags
 
-The `v3.0.0-competition` and `v3.0.0-competition-candidate.4` repository tags are source snapshots, not published GitHub Releases. This index makes no claim that either tag has downloadable Release assets or that asset metadata establishes equivalence. Candidate-specific validation remains tied to its exact recorded source and artifact and does not become v3.0.0 evidence.
+The `v3.0.0-competition` Release and `v3.0.0-competition-candidate.4` prerelease are published with separate candidate/community assets. Their publication and asset metadata do not establish equivalence to v3.0.0 or independent E4. Candidate-specific validation remains tied to its exact recorded source and artifact and does not become v3.0.0 evidence.
 
 ## Current external packet review
 

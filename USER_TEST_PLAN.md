@@ -12,7 +12,7 @@ Recruit participants only after the test artifact and instructions are frozen. R
 
 - Use a disposable OS account or VM and a scratch project with synthetic files.
 - Never connect production accounts, real secrets, payment systems, or non-loopback network targets.
-- No GitHub Release is currently published. If the study uses the v3.0.0 source tag or a separately obtained package, record the exact version, source commit, distribution channel, and artifact hash. The `v3.0.0-competition` and `v3.0.0-competition-candidate.4` tags are source snapshots, not published Release bundles; record them as separate study arms and never substitute one silently. Treat moving development builds as separate arms too.
+- The v3.0.0 GitHub Release is published but has no attached assets. If the study uses the v3.0.0 source tag or a separately obtained package, record the exact version, source commit, distribution channel, and artifact hash. The v3.0.0-competition Release and candidate.4 prerelease have separate published assets; record them as separate study arms and never substitute one silently. Treat moving development builds as separate arms too.
 - GitHub Packages installation requires a GitHub token with `read:packages`. Do not ask participants to create, reveal, or share a maintainer token. If install friction is part of the study, the organizer must prepare an isolated environment and document its credential setup without exposing the token; otherwise, make install prerequisites explicit before recruitment.
 - Explain what will be observed before the session. Recording is optional and requires separate consent; a participant may stop at any time.
 - Do not bypass SmartScreen, UAC, host sandboxing, or other security warnings for the study.

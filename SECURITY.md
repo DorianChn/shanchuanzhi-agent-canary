@@ -4,7 +4,7 @@ Agent Canary is an open-source tool for narrow, host-integrated tripwire and cal
 
 ## Supported source and package scope
 
-No GitHub Release is currently published. The repository contains a `v3.0.0` source tag, and GitHub Packages distribution is a separate channel. Report security issues against the exact tag, commit, package, and host configuration involved. Preview and development builds may differ from a source tag or package. E4 independent reproduction remains NOT_VERIFIED; see [the evidence index](E4_EVIDENCE_INDEX.md).
+The `v3.0.0` GitHub Release is published but has no attached Release assets. The repository contains the corresponding `v3.0.0` source tag, and GitHub Packages distribution is a separate channel. Report security issues against the exact tag, commit, package, and host configuration involved. Preview and development builds may differ from a source tag or package. E4 independent reproduction remains NOT_VERIFIED; see [the evidence index](E4_EVIDENCE_INDEX.md).
 
 ## What is in scope
 

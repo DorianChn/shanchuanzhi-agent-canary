@@ -8,8 +8,8 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 |---|---|---|
 | Agent Canary CLI, MCP stdio server, SDK Gateway, decoys/canary checks, offline self-test, doctor, project MCP integration helper, and local risk-policy console | **v3.0.0 GitHub Release published** | The release is tied to the `v3.0.0` source snapshot. Recorded source checks are tied to that exact source; protection remains limited to registered Agent Canary callbacks. |
 | V1.2.7 | **Historical version/tag** | This matrix does not claim a currently published GitHub Release for this version. Follow its tag-specific package metadata and documentation when reproducing old results. |
-| v3.0.0-competition | **Competition source tag; no published Release asset claimed** | A repository tag does not establish that a GitHub Release or downloadable bundle is published. Candidate evidence remains tied to its exact source and artifact. |
-| v3.0.0-competition-candidate.4 | **Candidate source tag** | Candidate-specific installer and evidence are not a published Release or a stable v3.0.0 package. |
+| v3.0.0-competition | **Published competition Release with community/candidate assets** | This is a separate source and artifact set; publication does not establish equivalence to the v3.0.0 package or independent E4. |
+| v3.0.0-competition-candidate.4 | **Published prerelease with candidate assets** | Candidate-specific installer and evidence do not establish a stable v3.0.0 install path or independent E4. |
 | `feature/agent-canary-3.0` and other moving branches | **Development** | Pin a full commit SHA. Branch contents and package metadata can change and are not release artifacts. |
 | Independent security benefit from AI/risk-policy analysis or adaptive decoys | **Experimental / not verified** | The local console is present in v3.0.0, but independent AI benefit and adaptive-versus-static gain are not established. |
 | Candidate desktop installer, native-host hooks, and Auto E4 | **Candidate-specific / partial** | These are not general guarantees of the v3.0.0 source snapshot. The earlier installer is unsigned and clean-VM validation remains blocked. See [security limitations](docs/3.0/SECURITY_LIMITATIONS.md) and the [E4 evidence index](E4_EVIDENCE_INDEX.md). |
@@ -24,7 +24,7 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 | Windows source build | **Verified for a bounded v3.0.0 source run** | The immutable mainline receipt records `npm run verify` on a Windows host with Node.js 22.23.1. It is not a clean-VM or all-editions result. |
 | Ubuntu/WSL2 and cross-platform CI | **Candidate-specific evidence** | Earlier candidate-source records include WSL2 checks and a Windows/Linux/macOS Node 20/22 CI matrix. Those records are not a rerun of the v3.0.0 tag. |
 | Docker | **GHCR tags `3.0.0` and `latest` published; local pull/runtime NOT_VERIFIED here** | The public package listing confirms those tags. This does not establish a successful local pull, container startup, or protection of host processes or other MCP servers. |
-| Windows desktop installer | **No stable install path claimed** | No published Release asset is claimed; the earlier installer is unsigned and clean-VM validation remains blocked. |
+| Windows desktop installer | **Candidate/community installer assets published; no stable v3.0.0 install path claimed** | Setup assets are attached to the competition/candidate releases. Their presence does not establish a supported stable install or clean-VM acceptance; see the [E4 evidence index](E4_EVIDENCE_INDEX.md). |
 
 ## Agent hosts and integration paths
 

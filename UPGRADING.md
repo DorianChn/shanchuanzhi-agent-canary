@@ -2,7 +2,7 @@
 
 ## Current source and package boundary
 
-No GitHub Release is currently published. The repository has a `v3.0.0` source tag; the `v3.0.0-competition` and `v3.0.0-competition-candidate.4` tags are separate source snapshots, not published Release assets. The reviewed v3.0.0 source records do not provide a verified in-place V1.2.7-to-v3.0.0 state migration procedure.
+The `v3.0.0` GitHub Release is published but has no attached assets. The `v3.0.0-competition` Release and `v3.0.0-competition-candidate.4` prerelease have separate candidate/community assets; they are not substitutes for the v3.0.0 package. The reviewed v3.0.0 source records do not provide a verified in-place V1.2.7-to-v3.0.0 state migration procedure.
 
 Do not treat a moving branch or candidate archive as the v3.0.0 source snapshot. Keep the current V1 installation and host configuration untouched while evaluating the exact v3.0.0 tag in a separate source checkout and scratch project. Installing the v3.0.0 package globally may replace the existing `agent-canary` command; no side-by-side global package procedure is verified here.
 

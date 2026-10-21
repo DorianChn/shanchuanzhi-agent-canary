@@ -4,7 +4,7 @@ This guide runs Agent Canary code with synthetic inputs. It does not test a live
 
 ## 1. Pin what you are testing
 
-No GitHub Release is currently published. Use the immutable `v3.0.0` source tag for a reproducible source check; it is not a stable Release artifact. The `v3.0.0-competition` and `v3.0.0-competition-candidate.4` repository tags are also source snapshots, not published Releases. Keep any candidate result bound to its exact source tag and recorded artifact SHA-256. The moving `feature/agent-canary-3.0` branch is a different artifact; record its full commit SHA.
+The `v3.0.0` GitHub Release is published but has no attached assets. Use its immutable `v3.0.0` source tag for a reproducible source check; this does not establish package equivalence or independent E4. The `v3.0.0-competition` Release and `v3.0.0-competition-candidate.4` prerelease are published with separate candidate/community assets. Keep each candidate result bound to its exact source tag and artifact SHA-256; do not substitute it for v3.0.0. The moving `feature/agent-canary-3.0` branch is a different artifact; record its full commit SHA.
 
 Record:
 

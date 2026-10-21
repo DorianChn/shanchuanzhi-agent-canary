@@ -1,6 +1,6 @@
 # Agent Canary — future release notes draft
 
-> **DRAFT — NOT FOR PUBLISHING.** No GitHub Release is currently published. This document is a template for a future release; it does not describe the existing v3.0.0 source tag or create a release.
+> **DRAFT — NOT FOR PUBLISHING.** The v3.0.0 GitHub Release is already published. This template is for a future version; it does not describe or amend the existing v3.0.0 Release or create another release.
 
 ## Release identity (maintainer must fill after freeze)
 
@@ -11,7 +11,7 @@
 - Release date: **TBD**
 - Release owner/reviewer: **TBD**
 
-The repository has `v3.0.0`, `v3.0.0-competition`, and `v3.0.0-competition-candidate.4` source tags. These tags are not published GitHub Releases or downloadable Release assets. Do not reuse this draft for an existing package or attach it to a moving branch.
+The repository has source tags for `v3.0.0`, `v3.0.0-competition`, and `v3.0.0-competition-candidate.4`. The v3.0.0 Release has no attached assets; the competition Release and candidate.4 prerelease have separate published candidate/community assets. This draft is not for any of those existing releases. Do not reuse it for an existing package or attach it to a moving branch.
 
 ## Proposed release summary
 
