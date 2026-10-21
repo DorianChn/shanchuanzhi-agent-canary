@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createSecurityGatewayHostAdapter } from "./security-gateway-adapter.mjs";
+import { createSecurityGatewayHostAdapter } from "./gateway-adapter.mjs";
 
 function setup(overrides = {}, { beforeFinalCapabilityCheck } = {}) {
   const gatewayCalls = [];

@@ -413,3 +413,29 @@ Local verification on Windows / Node.js v22.23.1:
 Disposition: **M2 adapter contract implemented locally; Issue #52 remains
 OPEN/P0 pending current M1/M5 owner acceptance, product host wiring, and
 end-to-end runtime evidence.** No push or GitHub update was performed.
+
+## 2026-10-21 strict-only package facade candidate
+
+M5 rejected the earlier proposal to export `security-gateway-adapter.mjs`
+directly (Issue #52 comment `6320309631`): that module also exports the
+lower-level `createSecurityGatewayAdapter`, which can bypass the M5 router.
+The M2 candidate now adds `gateway-adapter.mjs` as the package-facing facade.
+Its module namespace exposes only `createSecurityGatewayHostAdapter`; the
+low-level adapter remains an internal dependency and is not a package export.
+The host-composition tests now import through this facade.
+
+The exact shared-manifest candidate for owner review is:
+
+- `exports["./gateway-adapter"]` →
+  `./execution-isolation/gateway-adapter/gateway-adapter.mjs`
+- Add both runtime files to `files`: `execution-isolation/gateway-adapter/gateway-adapter.mjs`
+  and its private implementation dependency
+  `execution-isolation/gateway-adapter/security-gateway-adapter.mjs`.
+- Do not add a package export for `security-gateway-adapter.mjs`.
+
+`package.json` remains unchanged pending M5/M6/M7 review. A pack from the
+unchanged manifest still omits both modules, so installed-package resolution
+has not been established. The facade still requires the trusted host to pass
+the actual M5 router factory; the local contract-double tests do not prove
+first-party host wiring or a successful strict real-file read. No M1/M5/M6/M7
+files or security policies were changed.
