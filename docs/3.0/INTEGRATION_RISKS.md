@@ -1,3 +1,17 @@
+## Current integration risk snapshot — 2026-10-21 10:32 UTC
+
+This exact-ref snapshot supersedes earlier snapshots. Hosted checks apply only to the refs consumed by each workflow; they do not prove production-host enforcement, installed-package lifecycle, or independent product E4.
+
+| Gate | Priority | Current verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M2 protected file path / aliases (#52) | P0 | Candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` remains clean and local-only, six commits ahead of public PR #37 head `2398daee4d0bb3de010f07afe2b79a6fb45df440`; its focused adapter suite passes 8/8. The 10:21 UTC push attempt failed with a GitHub temporary-pack rename/storage error. Internal source review found no adapter path converting M1 denial into allow, but this is not M1 owner acceptance. | Retry on a later 20-minute push batch without force; require exact-head hosted CI and public M1 disposition. First-party host held-identity and TOCTOU remain NOT_VERIFIED. M9 continues to use M2 baseline `9db59ed`. |
+| Packaged Hook log privacy (#53) | P0 | M7 PR #39 head `9330005` has hosted build/package evidence; Setup.exe archive extraction and controlled Hook harness passed with matching canonical hash. Installer and clean-VM lifecycle were not run. | Keep #53 OPEN until reachable shipped-copy reconciliation and approved package evidence; reserve the exclusive installer/VM slot through Issue #29 before execution. |
+| M3 native Hook denial (#55) | P0 | M9 PR #36 exact head `85b598adfbb168b51e81b1c56e7be8d846784f8d` passes cross-module composition on Ubuntu and Windows (run `39584019108`); M3 deny and positive-control assertions remain in the selected refs. | Keep the Issue open until owner-approved refs and all shipped Hook copies are reconciled; hosted composition does not establish native-host interception. |
+| M8 fail-closed Hook contract (#65) | P0 | M9 composition checks the M8 owner-approved distinct Hook blob separately and passes on both platforms in run `39584019108`. | Preserve the reviewed blob and behavior assertions in subsequent exact-ref runs. |
+| Exact M9 composition / approved refs (#61) | P1 | PR #36 head `85b598adfbb168b51e81b1c56e7be8d846784f8d` passes composition on Ubuntu/Windows, product CI run `39584019131`, and wrapper run `39584019133`. Its M2 pin is the accepted baseline; candidate `d054cee` is excluded. | Keep #61 OPEN until M1 reviews the public M2 candidate and the accepted exact refs are intentionally updated and rerun. |
+| Native Codex Shell, clean-VM installer, independent E4 (#45/#41/#57) | P1 | Native Shell remains UNPROTECTED; clean-VM lifecycle and independent product E4 remain NOT_VERIFIED. No VMware, real-model, or installer execution was initiated by this checkpoint. | Require evidence from the actual supported host, exclusive VM slot, and independent product verification respectively. |
+| Protected PR #24 and Release boundary | M0 | PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; `main` is untouched. | Preserve boundary: no merge and no Release. |
+
 ## Current integration risk snapshot — 2026-10-21 10:12 UTC
 
 This exact-ref snapshot supersedes earlier snapshots. Local focused evidence is separated from exact-head hosted CI; neither establishes native-host interception, clean-VM installation, or independent E4.
