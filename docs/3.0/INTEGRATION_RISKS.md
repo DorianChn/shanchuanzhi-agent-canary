@@ -1,3 +1,16 @@
+## Current integration risk snapshot — 2026-10-21 10:12 UTC
+
+This exact-ref snapshot supersedes earlier snapshots. Local focused evidence is separated from exact-head hosted CI; neither establishes native-host interception, clean-VM installation, or independent E4.
+
+| Gate | Priority | Current verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M2 protected file path / aliases (#52) | P0 | Existing local M2 candidate d054cee is clean, six commits ahead of PR #37, and its focused adapter tests pass 8/8. No hosted CI at that SHA. Coordinator review holds promotion because the candidate is not public; this is not a code-defect finding or official M1 owner review. | Publish the exact candidate on existing Draft PR #37, obtain exact-head hosted CI and public M1 review; keep M9 on baseline 9db59ed meanwhile. Production-host held-file identity and TOCTOU remain NOT_VERIFIED. |
+| Packaged Hook log privacy (#53) | P0 | M7 PR #39 head 9330005 has green product/wrapper/package evidence; extracted Setup.exe Hook matches canonical, checksum checks and controlled harness pass; installer was not run. | Resolve hosted M9 composition, reconcile shipped copies, keep clean-VM and independent E4 separate. |
+| M3 native Hook denial (#55) | P0 | M3 exact-source checks pass. M9 local composition now passes 8/8 at pinned sources on Windows; exact-head Linux/Windows hosted composition has not run. | Publish the M9 source-scope fix and pass both hosted platforms while retaining deny and positive-control tests. |
+| M8 fail-closed Hook contract (#65) | P0 | M8 head 2d5a0ff remains the reviewed source; M9 now checks its distinct Hook blob separately and local composition passes 8/8. | Verify exact-head Linux/Windows M9 jobs and keep M8's accepted blob and behavior assertions. |
+| Exact M9 composition / approved refs (#61) | P1 | Local M9 commit 85b598a changes only .gitignore and composition assertions; 8/8 local Windows tests pass using exact workflow source pins. M2 d054cee remains unapproved and excluded. | Publish existing PR #36 update, pass Ubuntu and Windows hosted composition, preserve M2 baseline until public review and CI. |
+| Native Codex Shell, clean-VM installer, independent E4 (#45/#41/#57) | P1 | Native Shell UNPROTECTED; clean-VM lifecycle and independent E4 remain NOT_VERIFIED. | Require actual supported-host, exclusive VM, and independent product evidence respectively. |
+| Protected PR #24 and Release boundary | M0 | PR #24 remains OPEN/Draft at unchanged head/base; main unchanged; no merge or Release. | Preserve boundary. |
 ## Current integration risk snapshot — 2026-10-21 09:38 UTC
 
 This exact-ref snapshot supersedes the older dated snapshots below. Green source CI does not establish native-host interception, clean-VM installation, or independent E4.
