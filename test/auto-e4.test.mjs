@@ -135,6 +135,44 @@ test('Auto E4 rejects concurrent duplicate stages and keeps active-stage state i
   }
 });
 
+test('Auto E4 release preserves the lock while a stage is active',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-active-release-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const first=createAutoE4Run({dataDir:data});
+  const lock=path.join(data,'auto-e4.lock');
+  let resolveStage;
+  const pendingStageResult=new Promise(resolve=>{resolveStage=resolve;});
+  const pendingStage=first.stage('environment',()=>pendingStageResult);
+  let second;
+  try{
+    assert.throws(()=>first.release(),/AUTO_E4_STAGE_IN_PROGRESS/);
+    assert.equal(JSON.parse(fs.readFileSync(lock,'utf8')).runId,first.runId);
+    assert.throws(()=>createAutoE4Run({dataDir:data}),/AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED/);
+    assert.equal(JSON.parse(fs.readFileSync(lock,'utf8')).runId,first.runId);
+
+    resolveStage({status:'PASS',detail:{summary:'pending stage settled'}});
+    const stage=await pendingStage;
+    assert.equal(stage.status,'PASS');
+    const report=first.finish();
+    assert.equal(report.coverage.verified,1);
+    first.release();
+    first.release();
+    assert.equal(fs.existsSync(lock),false);
+
+    second=createAutoE4Run({dataDir:data});
+    assert.notEqual(second.runId,first.runId);
+  }finally{
+    resolveStage({status:'PASS',detail:{summary:'cleanup settlement'}});
+    await pendingStage;
+    if(!first.report.completedAt)first.finish();
+    first.release();
+    if(second){
+      if(!second.report.completedAt)second.finish();
+      second.release();
+    }
+  }
+});
+
 test('Auto E4 finalization prevents later stages or event mutation',async t=>{
   const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-finished-'));
   t.after(()=>fs.rmSync(data,{recursive:true,force:true}));

@@ -54,6 +54,7 @@ export function createAutoE4Run({dataDir,now=()=>new Date(),emit=()=>{},sanitize
     return report;
   }
   function release(){
+    if(activeStages.size>0)throw Error('AUTO_E4_STAGE_IN_PROGRESS');
     try{const current=fs.readFileSync(lock,'utf8');if(current.includes(runId)){fs.closeSync(lockFd);lockFd=undefined;fs.unlinkSync(lock);}}
     catch{}
   }
