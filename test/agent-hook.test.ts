@@ -1,4 +1,4 @@
-import {spawnSync} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-hook-'));process.env.AGENT_CANARY_HOME=root;
 const {decideAgentHook}=await import('../src/agent-hook.js');
@@ -48,8 +48,24 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
 });
 
 test('native lab wrapper interruption emits no allow decision and invokes no tool callback',async()=>{
- const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs');
+ const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs'),log=path.join(root,'interrupted.jsonl');
  fs.writeFileSync(modulePath,`import fs from 'node:fs';export async function decideAgentHook(){fs.writeFileSync(${JSON.stringify(marker)},'entered');return await new Promise(()=>{})}\n`);
- const child=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),path.join(root,'interrupted.jsonl')],{input:JSON.stringify({session_id:'interrupt-fixture',tool_name:'Bash',tool_input:{command:'touch never-run'}}),encoding:'utf8',timeout:1000});
- assert.equal(child.error?.code,'ETIMEDOUT');assert.equal(fs.existsSync(marker),true);assert.equal(child.stdout,'');
+ const child=spawn(process.execPath,[wrapper,modulePath,root,path.join(root,'interrupted-state'),log],{stdio:['pipe','pipe','pipe']});
+ let stdout='',stderr='',closed=false,spawnError:Error|undefined;
+ child.stdout.setEncoding('utf8').on('data',chunk=>stdout+=chunk);child.stderr.setEncoding('utf8').on('data',chunk=>stderr+=chunk);
+ const exited=new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>{child.once('error',error=>{spawnError=error;});child.once('close',(code,signal)=>{closed=true;resolve({code,signal});});});
+ child.stdin.end(JSON.stringify({session_id:'interrupt-fixture',tool_name:'Bash',tool_input:{command:'touch never-run'}}));
+ try {
+  const readyDeadline=Date.now()+5000;
+  while(!fs.existsSync(marker)&&!closed&&Date.now()<readyDeadline)await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(spawnError,undefined);assert.equal(fs.existsSync(marker),true,'hook ready marker appears before the bounded startup deadline');
+  const interruptedAt=Date.now();assert.equal(child.kill('SIGTERM'),true,'ready child accepts external interruption');
+  const exitedInTime=await new Promise<boolean>(resolve=>{const timer=setTimeout(()=>resolve(false),2000);exited.then(()=>{clearTimeout(timer);resolve(true);});});
+  assert.equal(exitedInTime,true,'interrupted wrapper exits within the bounded shutdown deadline');
+  const result=await exited;assert.equal(result.signal,'SIGTERM');assert.ok(Date.now()-interruptedAt<2000,'external interruption remains bounded');
+  assert.equal(stdout,'','interrupted wrapper emits no decision');assert.equal(stderr,'','interrupted wrapper emits no stderr');
+  assert.equal(fs.existsSync(log),false,'interrupted wrapper writes no decision log');
+ } finally {
+  if(!closed){child.kill('SIGKILL');await exited;}
+ }
 });
