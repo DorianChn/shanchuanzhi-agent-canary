@@ -5759,3 +5759,8 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 
 - Issue #54's body also references an older M9 ref. Current M9 PR #36 head `7c8d808457ddd6dc22382ce9b65e2e4aa3ebffa2` passes all 9 product jobs in run `39638415573`, including Windows Node 22; wrapper `39638415625` and Ubuntu/Windows composition `39638415567` pass.
 - The current green head does not explain the historical Windows Node 22 HTTP 503 failure in run `38717318171`. No focused failure reproduction or safe error/request-count diagnostics are recorded, and ownership of `src/ai/provider.ts` / `src/ai/transport.ts` remains unresolved for any source change. M0 refreshed Issue #54 comment `6322056333`; it remains OPEN/P1 under the existing acceptance.
+
+## M0 17:22 UTC M2/M7 owner checkpoint — 2026-10-21
+
+- Issue #69 still has no M2/M7 owner reply or candidate ref movement after the exact policy request. Read-only checks show the existing M2 worktree clean at `be66cf8` and M7 worktree clean at `cdae8ba`; this is visible Git/filesystem state only.
+- M0 requested the owner-selected M2 adaptation + exact commit/package-smoke result and M7's exact policy disposition, or a named blocker, in comment `6322162161`. The issue remains OPEN/P1; no module implementation is claimed complete.
