@@ -1080,3 +1080,19 @@ This supersedes the previous paragraph stating the listed candidate commits were
 | #60 interruption fixture | M4 run `39625260637` remains queued overall; macOS Node 20 is still queued and other listed jobs passed. | Wait for the queued job and overall run to finish. |
 
 Usage was readable at 15:29 UTC: 77% five-hour / 52% weekly; the Usage tab remains open. Do not push before 15:43:24 UTC; then re-read Usage, exact remote refs, and PR #24 before any batched fast-forward.
+
+## 2026-10-21 15:35 UTC M1 host-callsite owner review
+
+M1 reviewed its exact public head `7279336307fc7aacd46119405858d4fd91499757` without changes. Its Gateway issues and verifies opaque capabilities bound to the registered file/tool/path and held identity, with a recheck before reading. The current CLI → Console → demo path is not evidence of a product M1/M2/M5 strict composition; the protected MCP entry constructs M5 routing without an M1 capability consumer. M2's adapter has no product-source caller and is not exposed through the package export/files boundary. M1 also states its held-FD check is not an OS-atomic path/effect transaction; cross-process mutation remains a residual TOCTOU limit.
+
+Issue #52 remains OPEN/P0/NOT_VERIFIED; M0 recorded this evidence and owner routing in verified comment `6319888766`. M2 is tasked with resolving the M2-owned adapter import boundary without editing shared unapproved package metadata. M3/M4 must identify the owner of the actual CLI/Console callsite; M4 Console-page ownership is tentative in the ownership table. Acceptance requires a supported M1 → M2 → M5 strict read, safe-read positive control, alias and path-replacement denial before callback/effect, path-only hard DENY in OBSERVE, and exact-head tests/CI. A product bypass or incident is not established.
+
+M9 #59 candidate commit `e2114a12b1e5bfcefd2932fef06bb6ae44116c14` is local on the existing branch only: M6 pin `9880360`, complete Auto E4 suite added beside the retained bundle verifier, and explicit `M6_OWNER_ACCEPTANCE_STATUS=PENDING`. Agent-reported local checks passed: M9 8/8, M6 bundle 16/16, Auto E4 9/9, M3 27/27, M7 2/2, M8 3/3, syntax and diff check. YAML parser validation and hosted CI remain pending; no M6 acceptance is inferred from these checks.
+
+## 2026-10-21 15:39 UTC M2/M4 owner-boundary result
+
+M2's existing clean PR #37 worktree at `eed2c0884f524d37c25d317888e1d289122c440d` confirms there is no safe M2-only package-export change: the adapter is in `execution-isolation/gateway-adapter/`, while package `exports` only exposes `./sdk` and `files` omits the adapter. A package dry-run confirms it is absent. The proposed subpath export and files inclusion affect shared `package.json`, whose current owners are M3/M5/M6/M7; M2 must approve the adapter target, and M3/M4 own/confirm the host callsite. M2 made no source change.
+
+M4's existing #34 branch has local documentation commit `803a015` only (not yet published). Its source audit records that `/api/runtime3/action` exercises a synthetic temporary-file Gateway but bypasses M2/M5; `/api/policy/action` uses a virtual static-text callback and performs no filesystem read. The M4 checkout lacks M1 capability APIs, the M2 adapter, and M5 strict-router context. M4 owns Console page/UI/support tests; `src/ai/console.ts` host routing is tentatively assigned to M3 with M4 as companion. No partial or path-only integration was added.
+
+Issue #52 therefore remains OPEN/P0/NOT_VERIFIED pending: (1) M3/M4 route-owner confirmation, (2) M3/M5/M6/M7 review of any shared package metadata export plus M2 approval of the adapter, (3) supported M1 → M2 → M5 strict host composition with positive safe-read and alias/path-replacement denials before effect, and (4) exact-head tests/CI. Cross-process TOCTOU remains a separate unproven boundary.
