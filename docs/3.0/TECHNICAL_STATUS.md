@@ -5404,3 +5404,8 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - PR #30 product run `39591446687` was queued and AC3 ownership run `39591446868` in progress at readback. The PR description now records current refs, closure of scoped #53, remaining gates, and the pending exact-head checks.
 - Public scheduler checkpoint is Issue #29 comment `6314697681`. M1 + M6 remain the only assigned module lane; public M1 review and M6 fix are not yet visible. Private activity remains UNKNOWN.
 - No M1–M8 branch, PR #24, `main`, merge, or Release was changed. Next shared push is no earlier than 11:42 UTC, after fresh Usage and remote-head checks.
+## M0 PR-description/CI correction — 2026-10-21 11:27 UTC
+
+PR #30 remains OPEN/Draft at exact head `ffbb664fbbedd8d14f135fdaa4c29a7b9640dc4b`. Product CI run `39591446687` passed all 9 jobs. Two intermediate AC3 ownership runs (`39591502474`, `39591729629`) failed because a PR-body edit collapsed line breaks and the checker could not recognize required metadata. M0 rewrote the description with standalone `API-Contract-Change` and `Test-Evidence` lines; AC3 run `39591927904` passed. No product code or test/security assertion changed. Scheduler correction is Issue #29 comment `6314781213`.
+
+At 11:24 UTC, Usage remained 77% five-hour / 52% weekly. M1 PR #37 still has no submitted owner review; M6 PR #38 remains at `560f724` with no public fix commit visible. The two-module lane remains M1 + M6 and next shared push is no earlier than 11:42 UTC.
