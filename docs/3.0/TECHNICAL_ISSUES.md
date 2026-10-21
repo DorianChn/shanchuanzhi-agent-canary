@@ -1513,3 +1513,21 @@ M3 PR #33 is green 9/9 at `9841bd8`, but its exact changed-file list now include
 - **#52, P0:** M1's trace found no production OBSERVE host callback reaching M2/M5/M1's held-file path; the demo executor is virtual and the real temporary-file demo bypasses M2 and M5. M0 recorded evidence in comment `6302972946` and routed desktop console host selection to M4, adapter dispatch to M2, policy enforcement to M5, and Gateway/held-file semantics to M1. Keep OPEN / NOT_VERIFIED until the actual host/build entrypoint and exact-head security evidence exist.
 - **#55, P0:** M3 comment `6302902883` records PR #33 at `9841bd8`, 34/34 focused tests and CI 9/9; M1 review of M1-owned Hook/test changes remains a hard gate. Do not repin M9 yet.
 - **#51, P1:** M1's test-only diagnostic commit passes five repeated local runs; the prior M4 CI failure remains unresolved and root cause UNKNOWN.
+
+## M0 issue register refresh — 2026-10-21 11:32 UTC
+
+### P0
+- **#52 — OPEN / NOT_VERIFIED.** M2 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 is public and exact-head CI run 39586551017 passed 9/9. M1 owner review remains pending. M4's existing Console audit found no supported OBSERVE callsite consuming M1-bound held-file identity through M2/M5; strict M5 rejects the path-only callback. M9 composition passes on accepted baseline pins but does not prove product-host identity consumption or TOCTOU. Current issue body was refreshed at 11:28.
+- **#53 — CLOSED for scoped packaged-Hook logging/redaction.** M7 artifact 12332644890/run 39573529232 verifies static Setup.exe extraction without executing it; extracted Hook matches canonical M1 blob and package-derived 7-case controlled harness passes. M9 exact composition run 39584019108 passes Ubuntu/Windows. Clean VM, real host activation, protected held identity, and independent E4 remain separate.
+- **#65 — CLOSED for M8 fail-closed Hook composition.** Exact M9 head 85b598a composition passes; M8's distinct adapter is checked against its M1-reviewed blob/contract.
+
+### P1
+- **#59 — OPEN.** M9 exact composition is green on accepted refs. M6 review of M8's shared auto-E4 test remains pending, and #66 is open.
+- **#60 — OPEN.** M1 disposition remains required for the exact M4 change to M1-owned test/agent-hook.test.ts. PR #34 run 39589011257 failed once in unchanged M1 Gateway expiry test; M4 regression is not established.
+- **#61 — OPEN / owner review pending.** M9 PR #36 head 85b598a composition passes; M2 candidate d054cee remains excluded pending M1 disposition and any required rerun.
+- **#62 — OPEN / REPRODUCED ONCE / UNKNOWN.** PR #34 run 39589011257 failed before expiry-denial and zero-callback assertions. M1 owns classification; no assertions may be weakened. Issue body was normalized to remove contradictory stale status.
+- **#66 — OPEN.** M6 owns the release-while-stage-active lock race on existing PR #38. M0 acceptance guidance is comment 6314801303; no M6 source change is recorded yet.
+- **#41 / #57 — OPEN / NOT_VERIFIED.** Clean-VM lifecycle and independent product E4 remain unverified; no exclusive install/VM/model test is currently scheduled.
+
+### Scheduler and release boundary
+Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 UTC (77% five-hour / 52% weekly). PR #24 remains OPEN/Draft unchanged. No main merge or Release.
