@@ -1049,3 +1049,13 @@ Usage was readable at 14:28 UTC (77% five-hour / 52% weekly). The current parall
 | #58 raw-log exception | M6 exact-head CI `39616422797` and M9 exact-source composition `39619376708` passed; both use the exact historical-path exception. | Keep OPEN until the PRs are reviewed/merged. These source checks do not establish an E4 artifact, installer, or clean-VM result. |
 
 Usage was readable at 15:03 UTC (77% five-hour / 52% weekly). M2 adapter, M4 test patch, and M5 verifier commits are locally complete; the next batch is no earlier than 15:23 UTC after fresh quota/ref preflight. M7 confirmed #53 remains CLOSED within the packaged-Hook evidence scope. No main merge, PR #24 edit, Release, or exclusive VMware/real-model/installer use is authorized or claimed.
+
+## 2026-10-21 15:21 UTC candidate owner-review delta
+
+| Gate | Current verified state | Remaining acceptance |
+| --- | --- | --- |
+| #52 protected file identity / TOCTOU | M1 ACCEPTED exact M2 adapter `eed2c0884f524d37c25d317888e1d289122c440d` and M5 strict verifier `ed304e399ec237a47e03830e5013695ddcc10dd6`; M9 synthetic composition candidate passed 8/8. These refs are still local and not covered by hosted CI. | First-party host/callsite and production held-identity/TOCTOU evidence are missing. Keep OPEN/P0/NOT_VERIFIED and preserve hard denies. |
+| #60 M4 interruption fixture | M1 ACCEPTED only the bounded readiness-handshake excerpt. M4's local commit `fde972cd8d4c17ead4a18187fa4b273482bddd2d` changes only the shared test file and passes build + Hook 10/10. | Publish at the next quota/ref-cleared batch and require exact-head hosted CI; no Hook product defect is established by the prior fixture race. |
+| #61 exact-source composition | M9 local commits `2fda9462acd9c40462fc04ff5583b30c31606223` and `222bb3e408f93a5122c4a9c5f7d83d814045245b` pin M1 `7279336307fc7aacd46119405858d4fd91499757`, M2 `eed2c0884f524d37c25d317888e1d289122c440d`, and M5 `ed304e399ec237a47e03830e5013695ddcc10dd6`. M1 accepted the adapter/verifier seams; exact-source test passed 8/8. | Obtain exact-head M9 composition and product CI after refs publish. M9 product run still has one explicit skip; this does not establish a production-host callsite. |
+
+All commits in this delta were local at the time of writing. The next push must wait until 15:23 UTC and a fresh readable Usage/ref preflight. PR #24 remains untouched; #53 closure remains limited to packaged-Hook logging/redaction evidence.
