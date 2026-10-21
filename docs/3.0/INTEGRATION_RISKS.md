@@ -1,3 +1,14 @@
+## Current integration delta — 2026-10-21 10:40 UTC
+
+The following exact-ref changes supersede the corresponding rows in the 10:32 snapshot; unlisted gates there remain in effect.
+
+| Gate | Priority | Current verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M2/M4 protected host path (#52) | P0 | Issue body now names M1 Gateway identity, M2 adapter, M4 desktop consumer, and M5 policy ownership. M2 candidate `d054cee` remains local after a remote pack-storage failure; no exact-head hosted CI or public M1 owner disposition. M4's available read-path trace found virtual-console/SDK reads, not a first-party protected OBSERVE consumer. | Publish the candidate in the next allowed batch; M1 reviews its exact public SHA, while M4 supplies the real consumer path and held-identity proof or a concrete host/API blocker. Alias/path-replacement denial, production host binding, and TOCTOU remain NOT_VERIFIED. |
+| M6 duplicate-stage E4 race (#63) | P1 | Scoped acceptance is complete and #63 is closed: M6 `560f724` passes exact M6 CI and is consumed by passing M9 Ubuntu/Windows composition run `39584019108`. | No further work for the closed scope. Independent E4 remains NOT_VERIFIED. |
+| M6 active-stage lock release (#66) | P1 | Read-only reproduction against exact M6 `560f724` on Windows Node 22.23.1 confirmed that `release()` followed by a second run creation succeeds while the first stage is pending. The temporary directory was removed; no M6 files changed. | M6 records the release contract, adds a preserving regression/fix on existing PR #38, and passes focused, exact-head CI plus M9 composition if the source changes. |
+| M9 approved-source composition (#61) | P1 | Exact PR #36 head `85b598a` passes Ubuntu and Windows and pins M6 `560f724`; the composition uses accepted M2 baseline `9db59ed` and excludes candidate `d054cee`. | Keep #61 open for M2 exact public review/CI and any approved pin update. |
+
 ## Current integration risk snapshot — 2026-10-21 10:32 UTC
 
 This exact-ref snapshot supersedes earlier snapshots. Hosted checks apply only to the refs consumed by each workflow; they do not prove production-host enforcement, installed-package lifecycle, or independent product E4.
