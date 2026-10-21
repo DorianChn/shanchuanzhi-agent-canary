@@ -5410,3 +5410,7 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 PR #30 remains OPEN/Draft at exact head `ffbb664fbbedd8d14f135fdaa4c29a7b9640dc4b`. Product CI run `39591446687` passed all 9 jobs. Two intermediate AC3 ownership runs (`39591502474`, `39591729629`) failed because a PR-body edit collapsed line breaks and the checker could not recognize required metadata. M0 rewrote the description with standalone `API-Contract-Change` and `Test-Evidence` lines; AC3 run `39591927904` passed. No product code or test/security assertion changed. Scheduler correction is Issue #29 comment `6314781213`.
 
 At 11:24 UTC, Usage remained 77% five-hour / 52% weekly. M1 PR #37 still has no submitted owner review; M6 PR #38 remains at `560f724` with no public fix commit visible. The two-module lane remains M1 + M6 and next shared push is no earlier than 11:42 UTC.
+
+## M0 P0 #52 body refresh — 2026-10-21 11:30 UTC
+
+M0 refreshed Issue #52 to supersede its stale 10:40 exact-ref text. M2 d054cee is public with exact-head CI 9/9, but M1 owner disposition remains pending; M4's source audit records the missing first-party OBSERVE held-identity callsite and M5's strict path-only rejection. M9's accepted baseline composition remains green. The issue body explicitly preserves the P0 NOT_VERIFIED boundary and no-secret-exposure claim.
