@@ -30,11 +30,11 @@ jobs:
           ref: c016431875a7783f579aa93cd135459ea954d560
           path: module-sources/m1
 
-      - name: Checkout M2 PR #37 at prior fixed baseline; local candidate remains unpinned
+      - name: Checkout M2 PR #37 at M1-accepted exact adapter source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 9db59ed8f2deae905edcb2179982f8bcb594167c
+          ref: d054ceea39a0e4dd040131b4ca2789b85f2c9fe4
           path: module-sources/m2
 
       - name: Checkout M3 PR #33 at owner-accepted exact source SHA
@@ -165,7 +165,7 @@ jobs:
           {
             echo
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-based read/write/delete before generic callbacks; verifyRealPaths=false is lexical policy only, with M5 denying sensitive .env paths, M2 fixed-path validation rejecting aliases before M1 dispatch, and a registered M1 held-file read as the synthetic positive control.'
-            echo 'Owner-approved exact sources: M1 c016431875a7783f579aa93cd135459ea954d560 (separate historical owner-review evidence SHA f14aab781c62db60ac241d2114f543f6cac223ae); M3 535d429faef7ae0e15bbf9b382d639280045f338; M5 99ab80770d8004ef85f13f2d5c0f48f934607603 (M1 source-scope ACCEPT); M6 560f724292d285a43fcc4a0b0c8f50f9f08a6f79; M7 b0581407def769946fa710f55cd1d0986ce0cf3b (packaging/build paths only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M2 remains on fixed baseline 9db59ed8f2deae905edcb2179982f8bcb594167c; local candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 is intentionally unpinned pending M1 disposition and exact-head hosted CI. M2 has a read-only adapter and no write/delete adapter. M5 code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be an ancestor of the pin.'
+            echo 'Owner-approved exact sources: M1 c016431875a7783f579aa93cd135459ea954d560 (separate historical owner-review evidence SHA f14aab781c62db60ac241d2114f543f6cac223ae); M2 d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 (M1 ACCEPT is limited to the adapter seam in Issue #61 comment 6318542125; exact-head product CI 39586551017 passed 9/9); M3 535d429faef7ae0e15bbf9b382d639280045f338; M5 99ab80770d8004ef85f13f2d5c0f48f934607603 (M1 source-scope ACCEPT); M6 560f724292d285a43fcc4a0b0c8f50f9f08a6f79; M7 b0581407def769946fa710f55cd1d0986ce0cf3b (packaging/build paths only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M2 has a read-only adapter and no write/delete adapter; this pin does not establish a product-host callsite or global host protection. M5 code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be an ancestor of the pin.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
             echo 'M2 scope: registered adapter route and M5 policy fixture only; native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED.'
             echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3-wrapper JSONL regression requiring fixed fields, PreToolUse, a valid enum, canonical ISO time, and caller/reason/path/command canaries absent. M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'

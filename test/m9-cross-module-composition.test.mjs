@@ -18,7 +18,7 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 
 const pinnedSourceShas = {
   M1: 'c016431875a7783f579aa93cd135459ea954d560',
-  M2: '9db59ed8f2deae905edcb2179982f8bcb594167c',
+  M2: 'd054ceea39a0e4dd040131b4ca2789b85f2c9fe4',
   M3: '535d429faef7ae0e15bbf9b382d639280045f338',
   M5: '99ab80770d8004ef85f13f2d5c0f48f934607603',
   M6: '560f724292d285a43fcc4a0b0c8f50f9f08a6f79',
@@ -30,10 +30,10 @@ for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
 }
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, 'f14aab781c62db60ac241d2114f543f6cac223ae');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
-assert.notEqual(
+assert.equal(
   sourceRoots.M2.sha,
   'd054ceea39a0e4dd040131b4ca2789b85f2c9fe4',
-  'M2 candidate stays unpinned until M1 disposition and exact-head hosted CI are complete',
+  'M2 uses the exact M1-accepted adapter source with exact-head hosted CI',
 );
 
 function readTrackedHookBlob(moduleName) {
