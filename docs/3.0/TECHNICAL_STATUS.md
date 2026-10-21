@@ -5095,3 +5095,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M6 is performing the requested read-only owner review. M5's preserved candidate remains exactly 48 added lines across M6-owned `packaging/windows/auto-e4.mjs` (8 additions, 1 deletion) and `test/auto-e4.test.mjs` (40 additions); M5's worktree is still uncommitted and M6's review worktree remains detached/clean at `c1fdf3c`.
 - PR #38, #39, and #40 each have zero submitted GitHub reviews. PR #36 remains OPEN/Draft at `de3799aae540f58173acec4ab3f7a1fe98593aa7`; its exact-ref composition is still only a candidate because no owner-reviewed source combination has been established. Issue #59 remains OPEN/P1.
 - No push was made in this batch. The 20-minute interval since M2's 04:08 UTC push has elapsed, but M8's CI-wiring owner decision and M1's file-level review remain gates. Only M8 and M6 are active module lanes.
+
+## M9 exact-source pin audit — 2026-10-21 04:37 UTC
+
+- PR #36 remains OPEN/Draft at candidate head `de3799aae540f58173acec4ab3f7a1fe98593aa7`. Its workflow pins M1 `b1d7423`, M2 `9db59ed`, M3 `be38802`, M5 `373e2c2`, M6 `c1fdf3c`, M7 `cf4b70f`, and M8 `c1ff677`.
+- Current GitHub PR heads are M1 #43 `c016431`, M2 #37 `e382db9`, M3 #33 `535d429`, M5 #47 `e3662e9`, M6 #38 `c1fdf3c`, M7 #39 `b058140`, and M8 #40 `c1ff677`; M8 also has three unpushed local commits through `9b92f01`. Thus #36 pins are stale for M1/M2/M3/M5/M7 and omit M8's local candidate. The composition job has not yet been checked against that current exact-ref set.
+- The existing M9 workflow describes an unpinned-read disagreement on its older M1/M3 refs. Treat that only as an existing regression signal: current M1/M3 heads must be checked on exact SHAs before claiming the conflict still reproduces. Issue #55 remains OPEN/P0, and #59 remains OPEN/P1; no owner-approved combination SHA is established.
