@@ -17,19 +17,24 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 }));
 
 const pinnedSourceShas = {
-  M1: 'b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc',
+  M1: 'c016431875a7783f579aa93cd135459ea954d560',
   M2: '9db59ed8f2deae905edcb2179982f8bcb594167c',
-  M3: 'be3880298e1c6766024ecbce5f6dbc23c4d2daa1',
-  M5: '373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c',
-  M6: 'c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9',
-  M7: 'cf4b70f5130175582fffdfc65bd7c6847450867b',
-  M8: 'c1ff677cc56cd159cc983042e5dfcec5dc93f3ad',
+  M3: '535d429faef7ae0e15bbf9b382d639280045f338',
+  M5: '99ab80770d8004ef85f13f2d5c0f48f934607603',
+  M6: '560f724292d285a43fcc4a0b0c8f50f9f08a6f79',
+  M7: 'b0581407def769946fa710f55cd1d0986ce0cf3b',
+  M8: '2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3',
 };
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the reviewed source commit`);
 }
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, 'f14aab781c62db60ac241d2114f543f6cac223ae');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
+assert.notEqual(
+  sourceRoots.M2.sha,
+  'd054ceea39a0e4dd040131b4ca2789b85f2c9fe4',
+  'M2 candidate stays unpinned until M1 disposition and exact-head hosted CI are complete',
+);
 
 function readTrackedHookBlob(moduleName) {
   const result = spawnSync('git', [

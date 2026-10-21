@@ -23,54 +23,54 @@ jobs:
           ref: refs/pull/36/head
           path: module-sources/m9
 
-      - name: Checkout M1 PR #43 at current PR head pin
+      - name: Checkout M1 PR #43 at owner-accepted exact source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc
+          ref: c016431875a7783f579aa93cd135459ea954d560
           path: module-sources/m1
 
-      - name: Checkout M2 PR #37 at reviewed SHA
+      - name: Checkout M2 PR #37 at prior fixed baseline; local candidate remains unpinned
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
           ref: 9db59ed8f2deae905edcb2179982f8bcb594167c
           path: module-sources/m2
 
-      - name: Checkout M3 PR #33 at reviewed SHA
+      - name: Checkout M3 PR #33 at owner-accepted exact source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: be3880298e1c6766024ecbce5f6dbc23c4d2daa1
+          ref: 535d429faef7ae0e15bbf9b382d639280045f338
           path: module-sources/m3
 
-      - name: Checkout M5 PR #47 at current PR head pin
+      - name: Checkout M5 PR #47 at exact M1-reviewed source-scope SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c
+          ref: 99ab80770d8004ef85f13f2d5c0f48f934607603
           path: module-sources/m5
           fetch-depth: 0
 
-      - name: Checkout M6 PR #38 at reviewed SHA
+      - name: Checkout M6 PR #38 at M6 owner-accepted exact source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: c1fdf3cfd936805c6888c7b1c3c5603797b4cbc9
+          ref: 560f724292d285a43fcc4a0b0c8f50f9f08a6f79
           path: module-sources/m6
 
-      - name: Checkout M7 PR #39 at reviewed SHA
+      - name: Checkout M7 PR #39 at M7-accepted packaging/build source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: cf4b70f5130175582fffdfc65bd7c6847450867b
+          ref: b0581407def769946fa710f55cd1d0986ce0cf3b
           path: module-sources/m7
 
-      - name: Checkout M8 PR #40 at reviewed SHA
+      - name: Checkout M8 PR #40 at exact M1/M6-reviewed source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: c1ff677cc56cd159cc983042e5dfcec5dc93f3ad
+          ref: 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3
           path: module-sources/m8
 
       - name: Record checked-out commits and review evidence
@@ -165,14 +165,14 @@ jobs:
           {
             echo
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-based read/write/delete before generic callbacks; verifyRealPaths=false is lexical policy only, with M5 denying sensitive .env paths, M2 fixed-path validation rejecting aliases before M1 dispatch, and a registered M1 held-file read as the synthetic positive control.'
-            echo 'M1 checkout/head pin is b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc; M1 owner-review evidence SHA is separately recorded as f14aab781c62db60ac241d2114f543f6cac223ae. M2 exact source 9db59ed8f2deae905edcb2179982f8bcb594167c provides a read-only adapter with no write/delete adapter. M5 checkout/head pin is 373e2c2c16e404ad6fc1c28170d7ccc5f5e8c13c; code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be its ancestor.'
+            echo 'Owner-approved exact sources: M1 c016431875a7783f579aa93cd135459ea954d560 (separate historical owner-review evidence SHA f14aab781c62db60ac241d2114f543f6cac223ae); M3 535d429faef7ae0e15bbf9b382d639280045f338; M5 99ab80770d8004ef85f13f2d5c0f48f934607603 (M1 source-scope ACCEPT); M6 560f724292d285a43fcc4a0b0c8f50f9f08a6f79; M7 b0581407def769946fa710f55cd1d0986ce0cf3b (packaging/build paths only); M8 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 (M1/M6 reviewed paths only). M2 remains on fixed baseline 9db59ed8f2deae905edcb2179982f8bcb594167c; local candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 is intentionally unpinned pending M1 disposition and exact-head hosted CI. M2 has a read-only adapter and no write/delete adapter. M5 code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b is required to be an ancestor of the pin.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
             echo 'M2 scope: registered adapter route and M5 policy fixture only; native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED.'
             echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3-wrapper JSONL regression requiring fixed fields, PreToolUse, a valid enum, canonical ISO time, and caller/reason/path/command canaries absent. M3 does not connect the M2 backend or a production host. Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
-            echo 'M3 integration gate compares exact M1/M3 Hook source decisions for a synthetic unpinned normal Read; both must deny. At M1 b1d7423 and M3 be38802 the owner tests conflict (M1 deny, M3 allow), so this gate remains red until M3 aligns its Hook source and test with the fail-closed contract and advances its pinned head.'
+            echo 'M3 integration gate compares exact M1/M3 Hook source decisions for a synthetic unpinned normal Read; both must deny. The earlier M1 b1d7423 / M3 be38802 mismatch was observed only on those stale refs; the current owner-accepted M1 c016431 and M3 535d429 sources both deny. This historical mismatch is not claimed to reproduce at the refreshed refs; retain and run the fail-closed comparison.'
             echo 'M6 evidence: source-checkout bundle/sidecar verifier regression; security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
-            echo 'M8 exact published PR head pin is c1ff677cc56cd159cc983042e5dfcec5dc93f3ad; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. The exact M7 source pin and strict M7 byte comparer are unchanged.'
+            echo 'M8 exact published PR head pin is 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. M7 is pinned to b0581407def769946fa710f55cd1d0986ce0cf3b for its owner-accepted packaging/build paths; this does not verify Setup.exe internals.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'
             echo 'Not established by this workflow: npm-installed E4, a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
           } >> "$GITHUB_STEP_SUMMARY"
