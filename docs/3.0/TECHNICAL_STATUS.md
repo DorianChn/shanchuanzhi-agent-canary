@@ -5787,3 +5787,8 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - M2 #37 `be66cf8` and M7 #39 `cdae8ba` had no visible reply or source movement by 17:50; Issue #69 remains OPEN/P1 with the package-smoke mismatch unresolved. These modules are waiting for owner response.
 - The two active module slots moved to M1 and M3. M1's exact M4 shared-test disposition is requested on #60 comment `6322730549` for PR #34 head `803a015` / test blob `40cc3762...` versus M1 canonical blob `82ca4662...`. M3's narrow Windows Node 20 teardown-order fix, focused test and exact CI rerun are requested on PR #33 comment `6322731345` at head `429cd73`.
 - No module code was changed by M0, and no branch merge, PR #24 edit, or Release was performed. Next push is no earlier than 18:10 UTC after fresh quota and exact-ref checks.
+
+## M0 17:52 UTC shared Hook test recurrence — 2026-10-21
+
+- PR #30 head `6a7ca51ae91a3de9c8a4316a198e8a5a376e495b` CI run `39647340703` has 7 passing jobs and one Windows Node 20 failure; package-smoke was skipped. The exact failure is again the M1-owned interruption marker assertion at `test/agent-hook.test.ts:54` (`false !== true`) before no-output/allow assertions. The same docs-only source path passed 9/9 in the previous run `39644399938`, so the test remains intermittent; this is not evidence of a product Hook allow/callback.
+- M0 recorded the run and requested M1 disposition for both PR #30 and the M4 shared-test blob in Issue #60 comment `6322782696`. Preserve bounded readiness, timeout, and no-output checks; the fixture does not directly observe host callbacks.
