@@ -5210,3 +5210,12 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M1 owner confirmation at Issue #56 comment `6303981288` keeps that canonical test in PR #43 and approves no shared-path exception for PR #30. The exact current M1 head `c016431875a7783f579aa93cd135459ea954d560` contains the wrapper interruption test at `test/agent-hook.test.ts` lines 69–98; it asserts child termination with no stdout, stderr, or decision log. This evidence is limited to the wrapper fixture and does not prove native-host callback behavior.
 - Issue #56's code/ownership acceptance criteria are met once PR #30's stale description is corrected to match its actual 14-file diff. M0 will update the PR description in the next shared batch, then close #56 with this evidence.
 - Exact-head PR #30 CI `39565883545` and AC3 coordination `39565883502` both passed on `a5581d1`. The additional M0 documentation commit is local at `6a629bf` and awaits the next push batch. PR #30 remains OPEN/Draft; PR #24 and `main` remain untouched.
+
+## M0 08:24 checkpoint — 2026-10-21 08:24 UTC
+
+- M0 published documentation commits through exact PR #30 head `f19e5ac52344b45aaa234c041344067049a1f676` in the 08:19 batch. The current changed-file list remains 14 coordinator-owned paths and excludes M1 product tests. PR #30 remains OPEN/Draft.
+- Exact-head product CI `39568378927`, AC3 ownership check `39568767151`, and final PR-description edit check `39568947069` all succeeded. Intermediate description-only checks `39568426345` and `39568588697` failed because mandatory metadata was omitted or placed in bullets; the PR body now has line-start `API-Contract-Change` and `Test-Evidence` fields. No tests or security assertions were changed or removed.
+- P2 Issue #56 was closed at comment `6311416511` after confirming M1's canonical wrapper interruption test remains in PR #43 and is absent from the M0 diff.
+- M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` remains local-only with M1 disposition pending; M9 pins and exact composition remain blocked. No M1 verdict was visible at 08:23.
+- M7/M8 have not supplied the requested Setup.exe extraction evidence by 08:23. The workflow's `extracted-hook` sidecar is copied from `$payloadRoot`, not extracted from Setup.exe; #53 remains OPEN/P0 and package interior NOT_VERIFIED.
+- Usage was 19% at 08:19. Next shared push is no earlier than 08:39 UTC. No merge, PR #24 update, or Release.
