@@ -1036,3 +1036,15 @@ Quota at this checkpoint was readable: 77% five-hour / 52% weekly. Next push no 
 | #58 raw.log scope | M6 exact exception is pushed; M9 already has the exact exception and verified both paths locally. | Keep open until M6 current-head CI passes and re-read both branch rules. |
 
 Usage was readable at 14:28 UTC (77% five-hour / 52% weekly). The current parallel pair is M9 #61 pin/composition and M4 #60 test-contract reconciliation. M0 monitors M6 exact-head CI; no exclusive VMware/installer/real-model slot is reserved.
+
+## 2026-10-21 14:47 UTC integration delta
+
+| Gate | Current verified state | Remaining acceptance |
+| --- | --- | --- |
+| #52 protected file identity / TOCTOU | OPEN/P0/NOT_VERIFIED. M2 local candidate `2dcaedd0a368a99b4b0e14bbcd2416d2dc6ea33a` deterministically replaces the target after fixed-path verification and proves the synthetic held-identity checker denies before read and callback (6/6 focused tests). M2 dispatch still carries only a path string; this is not a real M1 host test. | M1 must define/implement the host-only opaque capability on its existing PR #43 branch; M5 must specify pre-callback identity validation/revalidation; M2 then adapts only after both owners agree; M4 must show the product host consumes the protected handle. Preserve hard denies until each gate is evidenced. |
+| #60 shared M1 Hook test ownership | M4 PR #34 restores the shared test blob exactly to the PR base. M1 accepted only this narrow ownership correction. Current Windows Node 22 CI run `39619445389` fails in the base `test/agent-hook.test.ts:54` interruption assertion (`expected true`, `actual false`); macOS Node 22 was cancelled. | Keep OPEN/P1. Triage the exact base-test failure under its actual owner; do not attribute it to M4's empty test-file diff. M1 native deny-contract integration remains blocked. |
+| #61 M9 source composition | M9 PR #36 exact-source composition `39619376708` and Windows wrapper `39619376801` passed with M1-accepted M2 public SHA `d054ceea...`. | Keep OPEN until the open PR path is fully reviewed; this pin does not cover M2's newer unpushed local commit or establish host identity/TOCTOU under #52. |
+| #62 expiry test | M1 exact-head test and concurrency runs `39616423430` / `39616423352` passed at `5cb57c9...`. Root cause of the historical failure remains UNKNOWN; no production bypass is established. | Keep OPEN/P1 with unknown historical cause; preserve EXPIRED and zero-callback assertions. |
+| #58 raw-log exception | M6 exact-head CI `39616422797` and M9 exact-source composition `39619376708` passed; both use the exact historical-path exception. | Keep OPEN until the PRs are reviewed/merged. These source checks do not establish an E4 artifact, installer, or clean-VM result. |
+
+Usage was readable at 14:45 UTC (77% five-hour / 52% weekly). Current paired owner work is M1 capability definition/implementation and M5 strict-contract review; next push is no earlier than 15:03 UTC after a fresh Usage read and exact PR #24/ref preflight. No main merge, PR #24 edit, Release, or exclusive VMware/real-model/installer use is authorized or claimed.
