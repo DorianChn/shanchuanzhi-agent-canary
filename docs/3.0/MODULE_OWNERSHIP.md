@@ -558,3 +558,9 @@ This clarification supersedes older dated ownership rows or snapshots that chara
 - M6's existing PR #38 worktree is detached at `560f724292d285a43fcc4a0b0c8f50f9f08a6f79`; it has no working-tree edits. M0 did not create a new feature branch or attach it to a branch.
 - The M5 worktree has an uncommitted patch in M6-owned `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs`. Preserve it in place; M5 must not commit those paths to PR #47. The patch has not been attributed to an active M6 task and is not part of M6 PR #38 head `560f724`.
 - The current M4 path audit is recorded in M4-owned `docs/3.0/M4/DESKTOP_INTEGRATION_REPORT.md` by local docs commits `2b803c1` and `7ac3247`, pending the next shared push. This is M0-coordinated evidence, not M4 owner acceptance or a transfer of M1/M2/M5 interface ownership.
+
+## M1/M6 lane and exact CI ownership update — 2026-10-21 11:07 UTC
+
+- M1 retains ownership of `src/runtime/gateway.ts` and `test/gateway.test.ts`. PR #34 exact-head run `39589011257` failed once in unchanged `test/gateway.test.ts:22:322` before the expired-approval and zero-callback assertions; Issue #62 was updated to one current reproduction with unknown cause. This does not transfer the test or API ownership to M4.
+- M6/#66 is publicly dispatched on existing PR #38 branch `feature/ac3-e4-validation-ac3` at `560f724`. M6 owns `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs`; preserve the existing M5 worktree patch and resolve its provenance before any reuse.
+- M4 report commit `7ac3247` remains a documentation-only M0 audit recorded in an M4-owned path; it does not constitute owner acceptance or alter shared-file ownership.
