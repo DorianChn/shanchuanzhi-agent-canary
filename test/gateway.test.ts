@@ -11,6 +11,41 @@ function setup(extra:any={}){
   return{root,runtime,guard,evidence};
 }
 test('gateway uses real held handles for authorized read and write and verifies bytes',async()=>{const s=setup();try{assert.deepEqual(await s.runtime.agent.dispatch({name:'read_file',args:{path:'public.txt'}}),{content:'hello'});await s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'正常任务'}});assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'正常任务');assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'VERIFIED');assert.equal(verifyEvidenceChain(s.evidence.snapshot()).valid,true);}finally{await s.runtime.close();}});
+test('host-only file-read capability is opaque, exact-bound, and uses the M1 Gateway',async()=>{
+ const s=setup(),other=setup(),binding={toolName:'read_public',operation:'file-read' as const,path:'public.txt'},call={name:'read_public',args:{path:'public.txt'}};
+ try{
+  const capability=s.runtime.bindFileReadCapability(binding);
+  assert.equal(Object.getPrototypeOf(capability),null);assert.deepEqual(Reflect.ownKeys(capability),[]);assert.equal(JSON.stringify(capability),'{}');
+  assert.equal(s.runtime.verifyFileReadCapability(capability,call,'file-read'),true);
+  assert.equal(other.runtime.verifyFileReadCapability(capability,call,'file-read'),false,'a capability cannot cross Gateway instances');
+  await assert.rejects(other.runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_FILE_CAPABILITY_INVALID/);
+  assert.equal(s.runtime.verifyFileReadCapability(capability,{name:'other_tool',args:{path:'public.txt'}},'file-read'),false);
+  assert.equal(s.runtime.verifyFileReadCapability(capability,{name:'read_public',args:{path:'result.txt'}},'file-read'),false);
+  assert.equal(s.runtime.verifyFileReadCapability(capability,{name:'read_public',args:{path:'public.txt',extra:true}},'file-read'),false);
+  assert.equal(s.runtime.verifyFileReadCapability(capability,call,'file-write'),false);
+  assert.equal(s.runtime.verifyFileReadCapability({} as any,call,'file-read'),false);
+  assert.throws(()=>s.runtime.bindFileReadCapability({toolName:'read_secret',operation:'file-read',path:'.env'}),/GATEWAY_FILE_CAPABILITY_UNAVAILABLE/);
+  const before=s.evidence.snapshot().length;
+  await assert.rejects(s.runtime.readFileWithCapability(capability,{name:'read_public',args:{path:'result.txt'}},'file-read'),/GATEWAY_FILE_CAPABILITY_INVALID/);
+  assert.equal(s.evidence.snapshot().length,before,'a mismatched capability is rejected before M1 dispatch');
+  assert.deepEqual(await s.runtime.readFileWithCapability(capability,call,'file-read'),{content:'hello'});
+  assert.equal(s.evidence.snapshot().at(-1)!.tool_id,'read_file');
+  await s.runtime.close();
+  assert.equal(s.runtime.verifyFileReadCapability(capability,call,'file-read'),false,'gateway close revokes issued capabilities');
+  await assert.rejects(s.runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_FILE_CAPABILITY_INVALID/);
+ }finally{await s.runtime.close();await other.runtime.close();}
+});
+test('file-read capability revalidates held identity immediately before reading',async()=>{
+ const s=setup(),binding={toolName:'read_public',operation:'file-read' as const,path:'public.txt'},call={name:'read_public',args:{path:'public.txt'}};
+ const original=path.join(s.root,'public.txt'),held=path.join(s.root,'public.held.txt');
+ try{
+  const capability=s.runtime.bindFileReadCapability(binding);assert.equal(s.runtime.verifyFileReadCapability(capability,call,'file-read'),true);
+  const record=s.evidence.record.bind(s.evidence);s.evidence.record=(event:any)=>{if(event.tool_id==='read_file'&&event.execution_status==='RUNNING'){fs.renameSync(original,held);fs.writeFileSync(original,'replacement target');}return record(event);};
+  await assert.rejects(s.runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.equal(fs.readFileSync(original,'utf8'),'replacement target');assert.equal(fs.readFileSync(held,'utf8'),'hello');
+  assert.equal(s.guard.state,'QUARANTINED');assert.equal(s.evidence.snapshot().at(-1)!.execution_status,'FAILED');
+ }finally{await s.runtime.close();}
+});
 test('first unauthorized credential read rejected before real content is returned',async()=>{const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),/credential_resource_denied/);assert.equal(s.guard.state,'SAFE');assert.equal(s.evidence.snapshot()[0].execution_status,'NOT_STARTED');assert.ok(!JSON.stringify(s.evidence.snapshot()).includes('NOT_A_REAL_CREDENTIAL'));}finally{await s.runtime.close();}});
 test('path traversal and forged grant cannot write outside capability',async()=>{const s=setup();const outside=path.join(home,'outside.txt');try{for(const args of [{path:'../outside.txt',content:'bad'},{path:'result.txt',content:'bad',approved:true}])await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args}));assert.equal(fs.existsSync(outside),false);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');}finally{await s.runtime.close();}});
 test('replacement after gateway initialization never writes replacement inode',async()=>{const s=setup();const original=path.join(s.root,'result.txt');try{fs.renameSync(original,original+'.old');fs.writeFileSync(original,'replacement');await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'forbidden'}}),/resource_not_bound/);assert.equal(fs.readFileSync(original,'utf8'),'replacement');assert.equal(fs.readFileSync(original+'.old','utf8'),'before');}finally{await s.runtime.close();}});

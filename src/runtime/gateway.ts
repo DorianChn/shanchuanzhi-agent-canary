@@ -12,6 +12,10 @@ import {executePinnedJSONTool} from '../network-tool.js';
 import {canonicalJSON,EvidenceRecorder,type EvidenceDecision,type ExecutionStatus,type SideEffectVerification} from './evidence.js';
 
 export interface GatewayFile {path:string; writable?:boolean; approvalRequired?:boolean; sensitive?:boolean; decoyId?:string}
+export interface GatewayFileReadBinding {toolName:string; operation:'file-read'; path:string; pathArg?:string}
+declare const gatewayFileReadCapabilityBrand:unique symbol;
+/** Opaque host-only handle. It contains no path or OS descriptor and is not model call data. */
+export type GatewayFileReadCapability={readonly [gatewayFileReadCapabilityBrand]:never};
 export interface GatewayCommand {executable:string; args:readonly string[]; approvalRequired?:boolean}
 export interface GatewayOptions {
   agentId:string; guard:AgentGuard; workspaceRoot:string; files:readonly GatewayFile[];
@@ -26,6 +30,8 @@ export class GatewayDeniedError extends Error {
   constructor(readonly reason:string,readonly requestId:string,readonly decision:EvidenceDecision='DENY'){super('GATEWAY_'+decision+':'+reason);}
 }
 type Resource={descriptor:Readonly<GatewayFile>;fd:number;dev:number;ino:number;absolute:string};
+type FileReadCapabilityRecord={owner:symbol;toolName:string;pathArg:string;relativePath:string;resource:Resource};
+const fileReadCapabilityRecords=new WeakMap<object,FileReadCapabilityRecord>();
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
@@ -67,6 +73,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
   }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
   let closed=false,closePromise:Promise<void>|undefined,unsubscribeQuarantine=()=>{};
+  const capabilityOwner=Symbol('gateway-file-read-owner'),issuedCapabilities=new Set<object>();
   const activeControllers=new Set<AbortController>();
   const pending=new Map<string,{request:Request;expires:number}>();
   function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
@@ -94,6 +101,51 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   function blocked(r:Request,reason:string,decision:EvidenceDecision='DENY'):never {audit(r,decision,reason,'NOT_STARTED','NOT_STARTED');throw new GatewayDeniedError(reason,r.id,decision);}
   function resource(r:Request):Resource|undefined{return typeof r.args.path==='string'?resources.get(filePath(r.args.path)):undefined;}
   function stillBound(r:Resource):boolean{try{const named=fs.lstatSync(r.absolute),held=fs.fstatSync(r.fd);return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1&&sameFile(r,named)&&sameFile(r,held)&&fs.realpathSync(r.absolute)===r.absolute;}catch{return false;}}
+  function normalizeFileReadBinding(value:unknown):{toolName:string;operation:'file-read';path:string;pathArg:string}|undefined{
+    try{
+      if(!value||typeof value!=='object'||Array.isArray(value))return undefined;
+      const prototype=Object.getPrototypeOf(value);
+      if(prototype!==Object.prototype&&prototype!==null)return undefined;
+      const descriptors=Object.getOwnPropertyDescriptors(value);
+      const keys=Object.keys(descriptors).sort();
+      if(!['operation','path','toolName'].every(key=>keys.includes(key))||keys.some(key=>!['operation','path','pathArg','toolName'].includes(key))||keys.length<3||keys.length>4||keys.some(key=>descriptors[key].get||descriptors[key].set||!('value'in descriptors[key])))return undefined;
+      const binding=value as GatewayFileReadBinding;
+      if(binding.operation!=='file-read'||typeof binding.toolName!=='string'||!/^[A-Za-z0-9_.-]{1,100}$/.test(binding.toolName)||typeof binding.path!=='string')return undefined;
+      const pathArg=binding.pathArg??'path';
+      if(typeof pathArg!=='string'||!/^[A-Za-z0-9_.-]{1,100}$/.test(pathArg))return undefined;
+      const relativePath=binding.path;
+      if(!relativePath||relativePath!==filePath(relativePath)||relativePath.includes('\0')||relativePath.includes(':')||path.isAbsolute(relativePath)||path.posix.normalize(relativePath)!==relativePath||relativePath.split('/').some(part=>part===''||part==='..'))return undefined;
+      return{toolName:binding.toolName.toLowerCase(),operation:'file-read',path:relativePath,pathArg};
+    }catch{return undefined;}
+  }
+  function registeredFileReadCapability(bindingValue:GatewayFileReadBinding):GatewayFileReadCapability{
+    const binding=normalizeFileReadBinding(bindingValue),target=binding&&resources.get(binding.path);
+    if(closed||!binding||!target||target.descriptor.sensitive||target.descriptor.decoyId||dangerousPath.test(target.descriptor.path)||!stillBound(target))throw Error('GATEWAY_FILE_CAPABILITY_UNAVAILABLE');
+    const capability=Object.freeze(Object.create(null)) as GatewayFileReadCapability;
+    fileReadCapabilityRecords.set(capability,{owner:capabilityOwner,toolName:binding.toolName,pathArg:binding.pathArg,relativePath:binding.path,resource:target});
+    issuedCapabilities.add(capability);
+    return capability;
+  }
+  function matchingFileReadCapability(value:unknown,call:unknown,operation:unknown):FileReadCapabilityRecord|undefined{
+    try{
+      if(!value||typeof value!=='object'||operation!=='file-read')return undefined;
+      const record=fileReadCapabilityRecords.get(value);
+      if(!record||record.owner!==capabilityOwner||closed||resources.get(record.relativePath)!==record.resource)return undefined;
+      if(!call||typeof call!=='object')return undefined;
+      const callDescriptors=Object.getOwnPropertyDescriptors(call);
+      if(callDescriptors.name?.get||callDescriptors.name?.set||!callDescriptors.name||callDescriptors.args?.get||callDescriptors.args?.set||!callDescriptors.args)return undefined;
+      const toolName=callDescriptors.name.value;
+      const args=callDescriptors.args.value;
+      if(typeof toolName!=='string'||toolName.toLowerCase()!==record.toolName||!args||typeof args!=='object'||Array.isArray(args))return undefined;
+      const argDescriptors=Object.getOwnPropertyDescriptors(args);
+      const argKeys=Object.keys(argDescriptors);
+      if(argKeys.length!==1||argKeys[0]!==record.pathArg||argDescriptors[record.pathArg].get||argDescriptors[record.pathArg].set||!('value'in argDescriptors[record.pathArg]))return undefined;
+      if(argDescriptors[record.pathArg].value!==record.relativePath)return undefined;
+      const target=record.resource;
+      if(target.descriptor.sensitive||target.descriptor.decoyId||dangerousPath.test(target.descriptor.path)||!stillBound(target))return undefined;
+      return record;
+    }catch{return undefined;}
+  }
   function policy(r:Request):{decision:EvidenceDecision;reason:string}{
     const schemas:Record<string,string[]>={read_file:['path'],write_file:['path','content'],run_command:['command'],http_request:['url'],mcp_tool:['tool','arguments']};
     if(!schemas[r.name]||Object.keys(r.args).some(k=>!schemas[r.name].includes(k)))return{decision:'DENY',reason:'unregistered_tool_or_parameter'};
@@ -230,6 +282,16 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       });
     }
   });
+  function verifyFileReadCapability(capability:GatewayFileReadCapability,call:ToolCall,operation:string):boolean{
+    return matchingFileReadCapability(capability,call,operation)!==undefined;
+  }
+  function readFileWithCapability(capability:GatewayFileReadCapability,call:ToolCall,operation:string,signal?:AbortSignal):Promise<unknown>{
+    const record=matchingFileReadCapability(capability,call,operation);
+    if(!record)return Promise.reject(Error('GATEWAY_FILE_CAPABILITY_INVALID'));
+    // Dispatch through the ordinary M1 boundary using the path bound at registration;
+    // policy, Guard, queue, and held-fd identity checks still run before the read.
+    return agent.dispatch({name:'read_file',args:{path:record.relativePath}},signal);
+  }
   /** This object is a host capability; identity comes from possession, not model parameters. */
   const operator=Object.freeze({
     pending(){sweep();return [...pending].map(([requestId,p])=>({requestId,tool:p.request.name,expiresAt:p.expires}));},
@@ -239,6 +301,8 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   function close():Promise<void>{
     if(closePromise)return closePromise;
     closed=true;pending.clear();
+    for(const capability of issuedCapabilities)fileReadCapabilityRecords.delete(capability);
+    issuedCapabilities.clear();
     let resolveClose!:()=>void,rejectClose!:(error:Error)=>void;
     const result=new Promise<void>((resolve,reject)=>{resolveClose=resolve;rejectClose=reject;});
     // Publish before abort listeners or the Guard disposer can re-enter close().
@@ -264,5 +328,12 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     for(const f of resources.values())if(f.fd>=0){try{fs.closeSync(f.fd);}catch{}f.fd=-1;}
     throw Error('GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED');
   }
-  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),close});
+  return Object.freeze({agent,operator,
+    /** Host-only issuance for one safe, constructor-registered file read and exact M5 tool binding. */
+    bindFileReadCapability:registeredFileReadCapability,
+    /** M5 calls this immediately before its callback; it rechecks the registered path and held identity. */
+    verifyFileReadCapability,
+    /** Executes through M1's normal Gateway using the capability-bound path, never a model-supplied path. */
+    readFileWithCapability,
+    evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),close});
 }
