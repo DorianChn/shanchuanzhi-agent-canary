@@ -191,11 +191,13 @@ The bounded candidate path for review is `M3 host -> M5 policy router -> M2 fixe
 | Module | Candidate exact SHA | Owner evidence | Exact-head evidence | M9 pin status |
 |---|---|---|---|---|
 | M1 | `c016431875a7783f579aa93cd135459ea954d560` | Existing exact-source ACCEPT in Issue #61 | CI passed | Eligible for its reviewed source scope |
-| M2 | `d054cee` local-only candidate | M1 review still active/pending | No hosted exact-head CI | Blocked; do not pin |
+| M2 | `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` local-only candidate | M1 review still active/pending | No hosted exact-head CI | Blocked; do not pin |
 | M3 | `535d429faef7ae0e15bbf9b382d639280045f338` | Existing exact-source ACCEPT in Issue #61 | CI passed | Eligible for its reviewed source scope |
 | M5 | `99ab80770d8004ef85f13f2d5c0f48f934607603` | M1 source-scope ACCEPT, Issue #61 comment `6309875503` | CI run `39558618457` passed | Eligible as M5 input; composition remains pending |
-| M6 | `560f724` | Existing owner ACCEPT | Exact-head CI passed | Eligible for its reviewed source scope |
+| M6 | `560f724292d285a43fcc4a0b0c8f50f9f08a6f79` | Existing owner ACCEPT | CI `39546652388` and Windows wrapper `39546652426` passed | Eligible for its reviewed source scope |
 | M7 | `b0581407def769946fa710f55cd1d0986ce0cf3b` | M7 ACCEPT recorded 2026-10-21; packaging scope only | Windows CI run `39517510296` passed | Eligible for M7 packaging input; not whole-PR signoff |
 | M8 | `2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3` | Existing M1/M6 owner reviews | CI and Windows wrapper passed | Eligible for its reviewed source scope |
 
 M9 must pin immutable exact SHAs and record the resulting combined SHA. Eligibility above does not replace cross-owner path review or final composition checks. In particular, M2's local candidate is not a public or CI-validated input, and Setup.exe interior evidence remains separate from M7 source acceptance.
+
+Current PR #36 workflow still pins older refs (M1 `b1d7423`, M2 `9db59ed`, M3 `be38802`, M5 `373e2c2`, M6 `c1fdf3c`, M7 `cf4b70f`, M8 `c1ff677`). At exact M9 head `de3799aae540f58173acec4ab3f7a1fe98593aa7`, composition run `38727481764` fails on Ubuntu and Windows; product CI `38727481643` and wrapper run `38727481657` pass. The workflow also retains stale M1/M3 conflict commentary. M9's read-only pin audit recommends holding the refresh until M2 has an M1 disposition and hosted exact-head CI, then rerunning the complete matrix.
