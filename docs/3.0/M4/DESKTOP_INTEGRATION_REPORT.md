@@ -51,3 +51,33 @@ No **src/ai/console.ts**, **package.json**, M1 Gateway/Hook code, M2 isolation c
 - M1/M3/M5 owners need to provide a real read-only Console status response for Gateway, Hook, connected Agents, current policy, Canary isolation, protected tools, and unprotected paths.
 - M6/M7 coordination needs to expose a safe E4 run/status capability if Console is expected to launch the full automation.
 - The headless browser emitted the diagnostic download request and generated the JSON payload, but cancelled the final file write. The UI now says to check the browser download list; an ordinary interactive browser download was not verified.
+
+## 2026-10-21 OBSERVE protected-read host callsite assessment
+
+Decision: the current first-party desktop Console has no supported OBSERVE file-read callsite that consumes the M1-bound protected identity through the M2 adapter. No safe M4 wiring change is available against the current contracts. Do not connect a path-only callback by disabling strict path checks or label a demo read as product protection.
+
+### M4 entrypoint evidence
+
+- The desktop entry remains `src/ai/cli.ts::registerAICommands` → `src/ai/console.ts::startAIConsole`. `startAIConsole` constructs `createRuntimeDemo()` and `createPolicySandbox()`.
+- `POST /api/runtime3/action` calls `runtime3.action`. `src/runtime/demo.ts::createRuntimeDemo` performs real temporary-file I/O through a directly constructed `createTrustedExecutionGateway`; its `read` action dispatches the fixed `public.txt` fixture. The demo is explicitly `DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL` with `REGISTERED_CAPABILITIES_ONLY` coverage. It bypasses both the M2 adapter and the OBSERVE policy router, so it is not the required first-party OBSERVE consumer.
+- `POST /api/policy/action` calls `sandbox.action`. `src/ai/policy-demo.ts::createPolicySandbox` sets up `VIRTUAL_EXECUTORS`; its `read` callback returns the static value `Public README` and performs no file read. OBSERVE in this sandbox does not establish a real host read.
+- The existing `src/protected-mcp.ts::serveProtectedMCP` is a standalone STDIO server built around caller-supplied callbacks. It does not import or compose the M2 Gateway adapter and has no callsite from the desktop Console.
+- `src/ai/console.ts` does not register `/api/security-center` or `/api/e4/status`; the earlier M4 local API check recorded both as 404. There is therefore no live desktop API route that supplies or executes the required capability.
+
+### Adapter and identity contract evidence
+
+At the reviewed public Draft PR heads, M2 #37 is `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4`, M1 #43 is `c016431875a7783f579aa93cd135459ea954d560`, and M5 #47 is `99ab80770d8004ef85f13f2d5c0f48f934607603`.
+
+- M2's `execution-isolation/gateway-adapter/security-gateway-adapter.mjs::createSecurityGatewayAdapter` accepts fixed relative path strings and forwards `gateway.agent.dispatch({ name: "read_file", args: { path } }, signal)`. Its `createSecurityGatewayHostAdapter` requires `mode: OBSERVE` and `verifyRealPaths: true`, but the M2 PR report states the adapter has no first-party product caller and the binder/backend are not integrated.
+- M1's public Gateway holds and revalidates registered file identity internally, but its returned object does not expose an opaque per-file identity capability for M5 to validate. The M2 callback supplies only a path string.
+- M5's current strict router rejects generic path-based file callbacks with `path_execution_not_pinned` before invoking the callback. The M2 host helper preserves that strict setting, so the current adapter shape cannot provide a successful strict-mode safe-read control. Weakening that check would invalidate the security boundary.
+
+### Required dependencies and acceptance
+
+1. M1 must review and define a host-only capability bound to a registered held file identity, or an equivalent identity-verifiable API.
+2. M5 must review a contract that validates that capability and continue rejecting unverified path-only callbacks.
+3. M2 must update its adapter/host composition contract to carry the reviewed capability, then demonstrate its exact call shape and fail-closed behavior.
+4. After those dependencies are available and pinned, M4 can wire the supported Console OBSERVE entrypoint and add an end-to-end positive safe-read control plus negative sensitive-alias, symlink/junction, and path-replacement controls. Rejections must occur before callback dispatch and before any approval is created.
+5. M0 coordinates the owner-reviewed contract and M9 pin/check sequence. Until then, product OBSERVE file-read consumption remains `NOT_VERIFIED`.
+
+This assessment is a source/contract audit only. No host file-read, installer, VM, or real-model action was performed, and no M4 runtime test was run for this report-only update.
