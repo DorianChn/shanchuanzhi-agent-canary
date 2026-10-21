@@ -871,3 +871,7 @@ M1's test-only lock trace is committed locally and the focused concurrency test 
 ### P0 host-path finding — 2026-10-20 22:14 UTC
 
 M1 confirmed the current OBSERVE console uses a virtual executor; the separate temporary-file demo reaches Gateway but not the product OBSERVE/M2/M5 path. A first-party host-to-held-file binding remains NOT_VERIFIED. M0 routed the desktop host entrypoint to M4 and retained M2/M5/M1 responsibilities for adapter, policy and Gateway respectively. Issue #52 evidence: comment `6302972946`. M9 exact-ref composition and alias/path-replacement no-side-effect evidence remain required.
+
+### M7 installer payload evidence update — 2026-10-21 07:54 UTC
+
+The exact M7 hosted build artifact `12309135499` from run `39517510296` at source `b0581407def769946fa710f55cd1d0986ce0cf3b` contains a hashed Setup.exe, build report, payload manifest, canary result, and staged Hook sidecar. The staged Hook hash matches its canonical M7 source blob; the controlled wrapper canary passes with zero unsafe callback starts and unchanged protected fixture. This establishes staged-payload/build evidence only. Setup.exe's internal Hook was not extracted, and no installer or VM test was run; issue #53 therefore remains OPEN/P0/NOT_VERIFIED for the installed artifact.
