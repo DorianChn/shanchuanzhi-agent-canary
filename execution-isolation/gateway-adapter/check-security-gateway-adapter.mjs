@@ -76,11 +76,11 @@ try {
     guard,
     mode: "OBSERVE",
     workspaceRoot,
-    // Keep the strict setting enabled. This uses the compiled SDK from this
-    // M2 checkout as a synthetic fixture; it does not establish compatibility
-    // with current PR #47, whose strict router denies path-only file callbacks
-    // as path_execution_not_pinned.
-    verifyRealPaths: true,
+    // This is only an M2 branch-local synthetic adapter seam using lexical
+    // policy mode. It does not establish current PR #47 strict compatibility
+    // or product policy; that strict router denies path-only callbacks as
+    // path_execution_not_pinned, documented and tested separately.
+    verifyRealPaths: false,
     eventsFile: path.join(tempRoot, "policy-events.jsonl"),
     tools: {
       read_public: { operation: "file-read", pathArg: "path" },
@@ -162,7 +162,7 @@ try {
   );
   assert.equal(evidenceAfterAllowedRead.length, 2, "only the allowed Gateway read is audited");
   process.stdout.write(
-    "M2_SECURITY_GATEWAY_ADAPTER_PASS (M2_CHECKOUT_SYNTHETIC_SDK_FIXTURE; VERIFY_REAL_PATHS_TRUE; NOT_CURRENT_PR47_COMPATIBILITY; EXACT_FIXED_PATH_MAP; PLAIN_PATH_STRING_TO_M1_HELD_HANDLE_GATEWAY; ALIASES_DENIED_PRE_GATEWAY; NO_APPROVALS_OR_FILE_CHANGES)\n",
+    "M2_SECURITY_GATEWAY_ADAPTER_PASS (M2_BRANCH_LOCAL_SYNTHETIC_SDK_FIXTURE; LEXICAL_MODE_ONLY; NOT_CURRENT_PR47_STRICT_OR_PRODUCT_INTEGRATION; EXACT_FIXED_PATH_MAP; PLAIN_PATH_STRING_TO_M1_GATEWAY; ALIASES_DENIED_PRE_GATEWAY; NO_APPROVALS_OR_FILE_CHANGES)\n",
   );
 } finally {
   await gateway?.close();

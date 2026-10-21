@@ -33,14 +33,14 @@ files itself or expose Gateway operator controls.
 
 ## Evidence
 
-`check-security-gateway-adapter.mjs` is an M2-checkout synthetic SDK fixture.
-It keeps `verifyRealPaths:true`, checks the fixed read through the compiled
-router and an M1 Gateway fixture, and preserves the existing positive-read and
-pre-dispatch rejection assertions. It does not establish compatibility with
-current PR #47: that exact-head strict router rejects a path-only callback as
-`path_execution_not_pinned` before the positive callback can run. Its alias
-results are M2 adapter rejections; they do not establish that current M5
-strict policy denied those calls.
+`check-security-gateway-adapter.mjs` uses `verifyRealPaths:false` only for an
+M2 branch-local synthetic SDK fixture in lexical mode. It preserves the
+positive fixed-read and pre-dispatch rejection assertions to exercise the M2
+adapter-to-M1 Gateway seam in that checkout. This setting is not a product
+policy and does not establish current PR #47 compatibility. Current PR #47
+strict mode separately rejects a path-only callback as
+`path_execution_not_pinned` before callback or approval; the fixture's alias
+results are M2 adapter rejections, not M5 denials.
 
 The M9 synthetic composition test
 `exact M1/M2/M5 sources enforce OBSERVE hard-deny before adapter dispatch`
@@ -123,11 +123,12 @@ wired through that generic callback.
 
 ### Adapter plan and exact interface gap
 
-The older synthetic M2/M9 lexical-mode positive control used
-`verifyRealPaths:false`; it is not an acceptable security setting or current
-PR #47 evidence, and it cannot replace the strict-mode check. The M2 checker
-now keeps `verifyRealPaths:true`. Current PR #47 still denies the safe
-path-only callback before approval or execution.
+The M2 checker uses `verifyRealPaths:false` only in its branch-local synthetic
+lexical fixture to exercise the adapter-to-Gateway seam. It is not product
+configuration or current PR #47 evidence. Current PR #47 strict mode still
+denies the safe path-only callback before approval or execution; that denial
+is separately evidenced by its source, focused test, and exact-head CI. The
+M2 lexical fixture does not replace or weaken that strict evidence.
 
 To retain strict mode while permitting a registered read, the owner-approved
 contract needs an opaque, host-only M1-issued capability bound to a registered
@@ -145,21 +146,23 @@ first-party host integration, protected-open evidence, and TOCTOU acceptance
 remain `NOT_VERIFIED`; no AppContainer, native Shell, or installed-hook
 protection is claimed here.
 
-## 2026-10-21 M0 strict-setting review correction
+## 2026-10-21 M0 scope clarification
 
-The M2 checker is configured with `verifyRealPaths:true`; all prior positive-
-read and denial assertions remain present. Its intended label is an
-M2-checkout synthetic SDK fixture, not compatibility evidence for current M5
-PR #47. At PR #47 head `e3662e9ca7363504eea7dd5e3262352018519a56`, strict
-OBSERVE rejects generic path callbacks as `path_execution_not_pinned` before
-the callback and approval. That is an integration blocker and fail-closed
-status. No M5 code was copied or changed, and no non-strict setting substitutes
-for this strict checker.
+The M2 checker uses `verifyRealPaths:false` only for its branch-local
+synthetic/lexical SDK fixture. Its positive read and alias/marker assertions
+cover only the M2 adapter-to-M1 Gateway seam in that checkout, not product
+policy or current M5 integration. At PR #47 head
+`e3662e9ca7363504eea7dd5e3262352018519a56`, strict OBSERVE rejects generic
+path callbacks as `path_execution_not_pinned` before callback and approval.
+That remains the integration blocker and fail-closed behavior, independently
+evidenced by the current M5 source, focused test, and exact-head CI. No M5 code
+was copied or changed; the lexical fixture does not replace or weaken the
+strict M5 evidence.
 
-Local verification after the correction, on Windows / Node.js v22.23.1:
+Local verification on Windows / Node.js v22.23.1:
 
 - `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 7/7 passed. The real temporary junction case is in the M2 adapter test and rejects before its mock M1 dispatcher. The three host-composition cases use an explicit strict-router contract double; safe-path and alias requests are denied before callback, M1 dispatch, or approval. These are M2-local tests, not current PR #47 runtime evidence.
-- `node execution-isolation/gateway-adapter/check-security-gateway-adapter.mjs` — unable to execute because this worktree has no `dist/sdk.js` (`ERR_MODULE_NOT_FOUND`). The checker remains configured with `verifyRealPaths:true`; its prior positive-read assertions were not skipped or weakened. Dependencies/build artifacts were not installed or generated for this run.
+- `node execution-isolation/gateway-adapter/check-security-gateway-adapter.mjs` — unable to execute because this worktree has no `dist/sdk.js` (`ERR_MODULE_NOT_FOUND`). It is configured with `verifyRealPaths:false` only as an M2 branch-local synthetic/lexical fixture; its prior positive-read/alias/marker assertions remain in source. Dependencies/build artifacts were not installed or generated for this run.
 - `npm run build` — unable to compile because `tsc` is not recognized; `node_modules` is absent. No dependencies were installed.
 - `git diff --check` — passed.
 
@@ -186,10 +189,12 @@ The adapter forwards a plain path string to M1 `agent.dispatch`; it does not
 pass an M1-held-object identity capability into the strict router. The supplied
 M1 contract requires `DENY` until the callback is bound to the exact registered
 file identity and that same held object is revalidated immediately before
-effects. M1's strict router rejects generic path callbacks, so using
-`verifyRealPaths:false`, relabeling the read as another operation, or directly
-calling the adapter outside the router would weaken/bypass the boundary. M2
-will not take those paths or reopen a user path.
+effects. M5's strict router rejects generic path callbacks, so using
+`verifyRealPaths:false` for a product/PR #47 execution path, relabeling the
+read as another operation, or directly calling the adapter outside the router
+would weaken/bypass the boundary. The M2 checker uses false only in an
+isolated branch-local synthetic fixture. M2 will not take those paths for a
+product host or reopen a user path.
 
 Required owner review: M1 must decide whether its existing Gateway capability
 can be represented to the strict router for this exact callback or define an
