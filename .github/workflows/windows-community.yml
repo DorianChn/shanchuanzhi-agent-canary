@@ -128,40 +128,105 @@ jobs:
           $payloadManifestSha256 = (Get-FileHash -LiteralPath $payloadManifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($payloadManifestSha256 -ne $buildResult.manifestSHA256) { throw 'PAYLOAD_MANIFEST_SHA256_MISMATCH' }
 
+          $toolchain = Get-Content -LiteralPath 'packaging/windows/TOOLCHAIN_PROVENANCE.json' -Raw | ConvertFrom-Json
+          $setupExtractor = $toolchain.setupExtractor
+          if ($setupExtractor.name -ne '7-Zip' -or $setupExtractor.version -ne '26.04' -or $setupExtractor.sha256 -notmatch '^[a-f0-9]{64}$') { throw 'SETUP_EXTRACTOR_PIN_INVALID' }
+          $extractorMsi = Join-Path $workRoot '7zip-extractor.msi'
+          $extractorRoot = Join-Path $workRoot '7zip-admin-image'
+          if ((Test-Path -LiteralPath $extractorMsi) -or (Test-Path -LiteralPath $extractorRoot)) { throw 'SETUP_EXTRACTOR_OUTPUT_ALREADY_EXISTS' }
+          Invoke-WebRequest -Uri $setupExtractor.source -OutFile $extractorMsi
+          $extractorMsiSha256 = (Get-FileHash -LiteralPath $extractorMsi -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractorMsiSha256 -ne $setupExtractor.sha256) { throw 'SETUP_EXTRACTOR_MSI_SHA256_MISMATCH' }
+          New-Item -ItemType Directory -Path $extractorRoot | Out-Null
+          $msiexec = Join-Path $env:WINDIR 'System32/msiexec.exe'
+          $msiStartInfo = [System.Diagnostics.ProcessStartInfo]::new($msiexec)
+          $msiStartInfo.ArgumentList.Add('/a')
+          $msiStartInfo.ArgumentList.Add($extractorMsi)
+          $msiStartInfo.ArgumentList.Add('/qn')
+          $msiStartInfo.ArgumentList.Add("TARGETDIR=$extractorRoot")
+          $msiStartInfo.UseShellExecute = $false
+          $msiStartInfo.CreateNoWindow = $true
+          $msiProcess = [System.Diagnostics.Process]::Start($msiStartInfo)
+          if (-not $msiProcess) { throw 'SETUP_EXTRACTOR_ADMIN_EXTRACTION_START_FAILED' }
+          $msiProcess.WaitForExit()
+          $msiExitCode = $msiProcess.ExitCode
+          $msiProcess.Dispose()
+          if ($msiExitCode -ne 0) { throw 'SETUP_EXTRACTOR_ADMIN_EXTRACTION_FAILED' }
+          $extractorCandidates = @(Get-ChildItem -LiteralPath $extractorRoot -Filter '7z.exe' -File -Recurse)
+          if ($extractorCandidates.Count -ne 1) { throw 'SETUP_EXTRACTOR_BINARY_MISSING_OR_AMBIGUOUS' }
+          $extractorExe = $extractorCandidates[0].FullName
+          $extractorExeSha256 = (Get-FileHash -LiteralPath $extractorExe -Algorithm SHA256).Hash.ToLowerInvariant()
+          $extractorVersionText = (& $extractorExe -h 2>&1 | Out-String)
+          if ($LASTEXITCODE -ne 0 -or $extractorVersionText -notmatch "(?m)^7-Zip\s+$([regex]::Escape([string]$setupExtractor.version))\b") { throw 'SETUP_EXTRACTOR_VERSION_MISMATCH' }
+          Write-Output "Pinned Setup extractor: $($setupExtractor.name) $($setupExtractor.version); MSI_SHA256=$extractorMsiSha256; EXE_SHA256=$extractorExeSha256"
+
+          $setupExtractRoot = Join-Path $workRoot 'setup-extracted'
+          if (Test-Path -LiteralPath $setupExtractRoot) { throw 'SETUP_EXTRACTION_OUTPUT_ALREADY_EXISTS' }
+          New-Item -ItemType Directory -Path $setupExtractRoot | Out-Null
+          $extractorTestOutput = & $extractorExe t $installerPath -bd -bb0 -bso0 -bsp0 -bse0 2>&1
+          $extractorTestExitCode = $LASTEXITCODE
+          if ($extractorTestExitCode -ne 0) { throw 'SETUP_ARCHIVE_INTEGRITY_CHECK_FAILED' }
+          $extractorOutput = & $extractorExe x $installerPath "-o$setupExtractRoot" -y -bd -bb0 -bso0 -bsp0 -bse0 2>&1
+          $extractorExitCode = $LASTEXITCODE
+          if ($extractorExitCode -ne 0) { throw 'SETUP_ARCHIVE_EXTRACTION_FAILED' }
+
+          $extractedManifestPath = Join-Path $setupExtractRoot 'PAYLOAD_MANIFEST.json'
+          if (-not (Test-Path -LiteralPath $extractedManifestPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_MANIFEST_MISSING' }
+          $extractedManifestSha256 = (Get-FileHash -LiteralPath $extractedManifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractedManifestSha256 -ne $payloadManifestSha256) { throw 'SETUP_EXTRACTED_MANIFEST_MISMATCH' }
+          $extractedManifest = Get-Content -LiteralPath $extractedManifestPath -Raw | ConvertFrom-Json
+
           $sourceHookPath = 'security-lab/claude-native-hook.mjs'
           $packagedHookPath = Join-Path $payloadRoot 'claude-native-hook.mjs'
-          $hookEntries = @($payloadManifest.files | Where-Object { $_.path -match '(^|[\\/])claude-native-hook\.mjs$' })
-          if ($hookEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $packagedHookPath -PathType Leaf)) { throw 'PACKAGED_HOOK_MISSING_OR_AMBIGUOUS' }
+          $extractedHookCandidates = @(Get-ChildItem -LiteralPath $setupExtractRoot -Filter 'claude-native-hook.mjs' -File -Recurse)
+          if ($extractedHookCandidates.Count -ne 1) { throw 'SETUP_EXTRACTED_HOOK_MISSING_OR_AMBIGUOUS' }
+          $extractedHookPath = $extractedHookCandidates[0].FullName
+          $extractedHookRelativePath = [System.IO.Path]::GetRelativePath($setupExtractRoot, $extractedHookPath).Replace('\','/')
+          $hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq $extractedHookRelativePath })
+          if ($extractedHookRelativePath -ne 'claude-native-hook.mjs' -or $hookEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $packagedHookPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HOOK_MANIFEST_MISMATCH' }
           $sourceHookSha256 = (Get-FileHash -LiteralPath $sourceHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
           $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
-          if ($sourceHookSha256 -ne $packagedHookSha256 -or $packagedHookSha256 -ne $hookEntries[0].sha256) { throw 'PACKAGED_HOOK_HASH_MISMATCH' }
+          $extractedHookSha256 = (Get-FileHash -LiteralPath $extractedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($sourceHookSha256 -ne $packagedHookSha256 -or $packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }
           $sourceHookBlobSha = (& git rev-parse "HEAD:$sourceHookPath").Trim()
           $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()
-          if ($sourceHookBlobSha -ne $packagedHookBlobSha) { throw 'PACKAGED_HOOK_BLOB_MISMATCH' }
+          $extractedHookBlobSha = (& git hash-object $extractedHookPath).Trim()
+          if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw 'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH' }
           $canonicalHookBlobSha = 'd6f93249306b7966259cab463dd39475728ef338'
           if ($sourceHookBlobSha -ne $canonicalHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }
           $sourceHookBytes = [System.IO.File]::ReadAllBytes($sourceHookPath)
           $packagedHookBytes = [System.IO.File]::ReadAllBytes($packagedHookPath)
-          $hookBytesIdentical = $sourceHookBytes.Length -eq $packagedHookBytes.Length
+          $extractedHookBytes = [System.IO.File]::ReadAllBytes($extractedHookPath)
+          $hookBytesIdentical = $sourceHookBytes.Length -eq $packagedHookBytes.Length -and $sourceHookBytes.Length -eq $extractedHookBytes.Length
           if ($hookBytesIdentical) {
             for ($i = 0; $i -lt $sourceHookBytes.Length; $i++) {
-              if ($sourceHookBytes[$i] -ne $packagedHookBytes[$i]) { $hookBytesIdentical = $false; break }
+              if ($sourceHookBytes[$i] -ne $packagedHookBytes[$i] -or $sourceHookBytes[$i] -ne $extractedHookBytes[$i]) { $hookBytesIdentical = $false; break }
             }
           }
-          if (-not $hookBytesIdentical) { throw 'PACKAGED_HOOK_BYTE_COMPARISON_FAILED' }
+          if (-not $hookBytesIdentical) { throw 'SETUP_EXTRACTED_HOOK_BYTE_COMPARISON_FAILED' }
+
+          $extractedHarnessPath = Join-Path $setupExtractRoot 'e4-hook-faults.mjs'
+          $extractedNodePath = Join-Path $setupExtractRoot 'runtime/node.exe'
+          $harnessEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq 'e4-hook-faults.mjs' })
+          $nodeEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq 'runtime/node.exe' })
+          if ($harnessEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $extractedHarnessPath -PathType Leaf) -or $nodeEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $extractedNodePath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HARNESS_OR_NODE_MISSING' }
+          $extractedHarnessSha256 = (Get-FileHash -LiteralPath $extractedHarnessPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $sourceHarnessSha256 = (Get-FileHash -LiteralPath 'packaging/windows/e4-hook-faults.mjs' -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractedHarnessSha256 -ne $sourceHarnessSha256 -or $extractedHarnessSha256 -ne $harnessEntries[0].sha256) { throw 'SETUP_EXTRACTED_HARNESS_MISMATCH' }
+          $extractedNodeSha256 = (Get-FileHash -LiteralPath $extractedNodePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractedNodeSha256 -ne $nodeEntries[0].sha256 -or $extractedNodeSha256 -ne $toolchain.node.sha256) { throw 'SETUP_EXTRACTED_NODE_MISMATCH' }
 
           New-Item -ItemType Directory -Path $artifactRoot | Out-Null
           Copy-Item -LiteralPath $installerPath -Destination (Join-Path $artifactRoot 'AgentCanary-Community-Setup.exe')
-          Copy-Item -LiteralPath $payloadManifestPath -Destination (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json')
+          Copy-Item -LiteralPath $extractedManifestPath -Destination (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json')
           $extractedHookRoot = Join-Path $artifactRoot 'extracted-hook'
           New-Item -ItemType Directory -Path $extractedHookRoot | Out-Null
           $hookArtifactPath = Join-Path $extractedHookRoot 'claude-native-hook.mjs'
           $harnessArtifactPath = Join-Path $extractedHookRoot 'e4-hook-faults.mjs'
-          Copy-Item -LiteralPath $packagedHookPath -Destination $hookArtifactPath
-          Copy-Item -LiteralPath 'packaging/windows/e4-hook-faults.mjs' -Destination $harnessArtifactPath
+          Copy-Item -LiteralPath $extractedHookPath -Destination $hookArtifactPath
+          Copy-Item -LiteralPath $extractedHarnessPath -Destination $harnessArtifactPath
 
-          $payloadNodeExe = Join-Path $payloadRoot 'runtime/node.exe'
-          if (-not (Test-Path -LiteralPath $payloadNodeExe -PathType Leaf)) { throw 'PACKAGED_NODE_MISSING' }
+          $payloadNodeExe = $extractedNodePath
           $rawCanaryOutputPath = Join-Path $workRoot 'canary-raw-output.json'
           $rawCanaryErrorPath = Join-Path $workRoot 'canary-raw-error.txt'
           $oldTemp = $env:TEMP
@@ -169,7 +234,7 @@ jobs:
           try {
             $env:TEMP = $workRoot
             $env:TMP = $workRoot
-            & $payloadNodeExe $harnessArtifactPath "--app-root=$payloadRoot" 1> $rawCanaryOutputPath 2> $rawCanaryErrorPath
+            & $payloadNodeExe $extractedHarnessPath "--app-root=$setupExtractRoot" 1> $rawCanaryOutputPath 2> $rawCanaryErrorPath
             $canaryExitCode = $LASTEXITCODE
           } finally {
             $env:TEMP = $oldTemp
@@ -185,6 +250,11 @@ jobs:
           $canaryReport = [ordered]@{
             schemaVersion = 1
             sourceSHA = $sourceSha
+            workflowRunId = $env:GITHUB_RUN_ID
+            workflowRunAttempt = $env:GITHUB_RUN_ATTEMPT
+            installerSHA256 = $installerSha256
+            extractedHookSHA256 = $extractedHookSha256
+            extractedHookSourceBlobSHA = $extractedHookBlobSha
             status = $rawCanary.status
             scope = $rawCanary.scope
             syntheticInput = 'JSONL with synthetic argument, reason, and path canaries'
@@ -200,21 +270,40 @@ jobs:
           Write-Output "EXTRACTED_HOOK_CANARY=PASS; CALLER_CANARIES_ABSENT=True; SOURCE_SHA=$sourceSha"
           $report = [ordered]@{
             schemaVersion = 1
-            status = 'BUILT_PACKAGED_HOOK_CANARY_EXECUTED_INSTALLER_NOT_RUN'
+            status = 'SETUP_EXTRACTED_HOOK_CANARY_EXECUTED_INSTALLER_NOT_RUN'
+            installerExecuted = $false
             sourceSHA = $sourceSha
+            workflowRunId = $env:GITHUB_RUN_ID
+            workflowRunAttempt = $env:GITHUB_RUN_ATTEMPT
             communityZipSHA256 = $communityZipSha256
             nsisVersion = $nsisVersion
+            setupExtractor = [ordered]@{
+              name = [string]$setupExtractor.name
+              version = [string]$setupExtractor.version
+              source = [string]$setupExtractor.source
+              packageSHA256 = $extractorMsiSha256
+              executableSHA256 = $extractorExeSha256
+              commands = @(
+                '7z.exe t AgentCanary-Community-Setup.exe -bd -bb0 -bso0 -bsp0 -bse0',
+                '7z.exe x AgentCanary-Community-Setup.exe -o<runner-temp>/setup-extracted -y -bd -bb0 -bso0 -bsp0 -bse0'
+              )
+              archiveIntegrityCheck = 'PASS'
+              extraction = 'PASS'
+            }
             packageVersion = [string]$buildResult.version.desktopVersion
             installerSHA256 = $installerSha256
             installerBytes = [long]$buildResult.installerBytes
             payloadManifestSHA256 = $payloadManifestSha256
+            extractedPayloadManifestSHA256 = $extractedManifestSha256
             canonicalHookBlobSHA = $canonicalHookBlobSha
             hookBytesIdenticalToCanonical = $hookBytesIdentical
             hook = [ordered]@{
               path = 'claude-native-hook.mjs'
-              sha256 = $packagedHookSha256
-              bytes = (Get-Item -LiteralPath $packagedHookPath).Length
+              sha256 = $extractedHookSha256
+              bytes = (Get-Item -LiteralPath $extractedHookPath).Length
               sourceBlobSHA = $sourceHookBlobSha
+              setupExtractedBlobSHA = $extractedHookBlobSha
+              setupExtractedHarnessSHA256 = $extractedHarnessSha256
             }
             canaryStatus = $canaryReport.status
             callerCanariesAbsent = $canaryReport.callerCanariesAbsent
