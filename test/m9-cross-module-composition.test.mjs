@@ -28,8 +28,9 @@ const pinnedSourceShas = {
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
-assert.equal(process.env.M6_OWNER_ACCEPTANCE_STATUS, 'PENDING', 'M6 owner acceptance must remain explicitly pending until public acceptance');
-assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, pinnedSourceShas.M6, 'pending M6 owner acceptance must name the exact candidate source SHA');
+assert.equal(process.env.M6_OWNER_ACCEPTANCE_STATUS, 'ACCEPT', 'M6 owner acceptance must match the published exact-scope disposition');
+assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, pinnedSourceShas.M6, 'M6 owner acceptance must name the exact pinned source SHA');
+assert.equal(process.env.M6_OWNER_ACCEPTANCE_COMMENT, '6320039569', 'M6 acceptance must cite the exact public Issue #59 comment');
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 assert.equal(
@@ -87,7 +88,7 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
-console.log('[M6 owner acceptance]', `${process.env.M6_OWNER_ACCEPTANCE_STATUS} for ${process.env.M6_OWNER_ACCEPTANCE_SHA}`);
+console.log('[M6 owner acceptance]', `${process.env.M6_OWNER_ACCEPTANCE_STATUS} for ${process.env.M6_OWNER_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_OWNER_ACCEPTANCE_COMMENT}; Auto E4 paths/tests only)`);
 console.log('[M9 separate evidence SHAs]', `M1_OWNER_REVIEW_SHA=${process.env.M1_OWNER_REVIEW_SHA}`, `M5_CODE_SHA=${process.env.M5_CODE_SHA}`);
 
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'));
