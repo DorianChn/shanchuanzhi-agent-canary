@@ -5203,3 +5203,10 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - Therefore `extracted-hook/` and CANARY_RESULT prove the prepared build payload and controlled fixture only. They do not establish the Hook bytes inside Setup.exe. This narrows the hosted artifact evidence but does not invalidate M7’s accepted packaging/build-source scope.
 - M0 recorded the source-chain finding and requested M7/M8 remediation at Issue #53 comment `6311103327`: add pinned Setup.exe extraction, compare the actual extracted Hook to the canonical blob, then run the controlled harness against that extracted copy. Do not execute/install Setup.exe; installer lifecycle remains a separately scheduled gate.
 - Issue #53 remains OPEN/P0; Setup.exe interior Hook remains NOT_VERIFIED. No installer, VM, or project product test was run by M0.
+
+## M0 PR #30 ownership-scope reconciliation — 2026-10-21 08:06 UTC
+
+- Public PR #30 at `a5581d1ae9847e72c581c666d93eb3d848e489eb` changes 14 coordinator files only; its current changed-file list excludes M1-owned `test/agent-hook.test.ts`.
+- M1 owner confirmation at Issue #56 comment `6303981288` keeps that canonical test in PR #43 and approves no shared-path exception for PR #30. The exact current M1 head `c016431875a7783f579aa93cd135459ea954d560` contains the wrapper interruption test at `test/agent-hook.test.ts` lines 69–98; it asserts child termination with no stdout, stderr, or decision log. This evidence is limited to the wrapper fixture and does not prove native-host callback behavior.
+- Issue #56's code/ownership acceptance criteria are met once PR #30's stale description is corrected to match its actual 14-file diff. M0 will update the PR description in the next shared batch, then close #56 with this evidence.
+- Exact-head PR #30 CI `39565883545` and AC3 coordination `39565883502` both passed on `a5581d1`. The additional M0 documentation commit is local at `6a629bf` and awaits the next push batch. PR #30 remains OPEN/Draft; PR #24 and `main` remain untouched.
