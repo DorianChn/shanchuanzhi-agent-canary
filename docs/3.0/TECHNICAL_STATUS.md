@@ -5466,3 +5466,11 @@ Public Issue #29 comment 6314972063 records that M1 + M6 have no visible new own
 - PR #30 exact head `4e7149286aa1497623405d465925c351da674d75` was pushed by fast-forward at 13:03 UTC. Product CI `39604689075` passed 9/9, including Windows Node 20/22 and package-smoke. Ownership-contract checks `39604689215`, `39604709505`, and the description-update check `39604981265` passed.
 - M1/M6 public results remain unchanged at the 13:03 snapshot: no M1 review of PR #37 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` or #62 disposition; no M6 fix commit on PR #38 `560f724292d285a43fcc4a0b0c8f50f9f08a6f79` for #66. Direct reminders remain #37 comment `6315647526` and #38 comment `6315647508`. Private session activity is UNKNOWN.
 - Usage was readable pre-push at 13:03 UTC: 77% five-hour / 52% weekly. PR #24 remains OPEN/Draft and unchanged. Next shared push no earlier than 13:23 UTC. No main merge or Release.
+
+
+## M0 13:26 post-CI checkpoint — 2026-10-21 13:26 UTC
+
+- PR #30 exact head `9ed7e9e6fa5d9e80447b33004de7e2c63d1e3974` was fast-forward pushed at 13:23 UTC. Product CI `39607537109` passed 9/9, including Windows Node 20/22 and package-smoke. Ownership checks `39607537093`, `39607555150`, and the description-update check `39607848973` passed.
+- Earlier M0 heads `f3be0b2` and `44300a5` had intermittent failures in the unchanged Windows Node 22 Hook marker assertion; current `9ed7e9e` passes without M1 source/test changes. Preserve the historical failures and all assertions; do not infer a security bypass or real-host behavior. Issue #32 remains CLOSED on M1's owner disposition.
+- M1 still has no public review of PR #37 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` or #62 classification. M6 still has no public fix on PR #38 `560f724292d285a43fcc4a0b0c8f50f9f08a6f79` for #66. Reminders remain on PR #37 comment `6315647526` and PR #38 comment `6315647508`; private activity UNKNOWN.
+- Usage was readable before push at 13:23 UTC: 77% five-hour / 52% weekly. PR #24 remains OPEN/Draft and unchanged. Next shared push no earlier than 13:43 UTC.
