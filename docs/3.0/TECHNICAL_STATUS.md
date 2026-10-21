@@ -5940,3 +5940,10 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 
 - Read-only job log inspection for M2 exact-head run `39638404097`, package-smoke job `119358211120`, confirms the sole failing reason is `unexpected package file execution-isolation/gateway-adapter/gateway-adapter.mjs` at `scripts/check-package.mjs:40`. M0 relayed this exact cause in PR #37 comment `6324791386`; preserve all other package rejection predicates.
 - M2 #37 remains at `be66cf8f4c1a60f093740577796ec5cd633e1d93` and M7 #39 at `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a` at this read; no new owner result or source movement is visible.
+
+## M0 19:40 UTC M2/M7 midpoint — 2026-10-21
+
+- Usage tab `336903978` remained open and active at 77% five-hour / 52% weekly; only M2/M7 are active through 19:50 on P1 #69. No exclusive test resource is active.
+- M2 #37 remains at `be66cf8f4c1a60f093740577796ec5cd633e1d93`, clean, with no visible checker candidate. M7 #39 remains at `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a`, clean, with no visible review disposition. The exact smoke error is relayed in #37 comment `6324791386`.
+- M0 posted midpoint requests to #37 comment `6324903043`, #39 comment `6324903937`, and scheduler #29 comment `6324904909`. Requested result/blocker by 19:50; M0 does not alter module source.
+- The unrelated but known M0 PR #30 Windows Node 20 shared-fixture failure remains recorded in Issue #60; M1 is not activated in this slot.
