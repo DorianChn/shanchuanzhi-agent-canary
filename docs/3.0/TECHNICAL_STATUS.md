@@ -5878,3 +5878,10 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - PR #43 remains at `7279336307fc7aacd46119405858d4fd91499757`; PR #33 remains at `429cd73c03273bc77f3781b489f541e396cd9361`. Their inspected worktrees are clean and unchanged. No M1 or M3 owner response or code movement is visible in the public channels at this checkpoint.
 - M0 posted midpoint evidence requests to Issue #60 comment `6324109477` and PR #33 comment `6324110145`. The exact M1 disposition and M3 teardown fix remain due by 19:10 UTC. Scheduler readback is Issue #29 comment `6324113697`.
 - The Usage tab `336903978` remained open and active and displayed 77% five-hour / 52% weekly. Only M1/M3 hold module slots. No exclusive test resource is scheduled. The next push remains no earlier than 19:10 UTC after fresh preflight; PR #24 remains protected.
+
+## M0 19:02 UTC P0 #52 exact-ref refresh — 2026-10-21
+
+- Issue #52 remains OPEN / P0 / NOT_VERIFIED for first-party production consumption of the M1-bound protected identity and for TOCTOU; no actual secret exposure is claimed. M0 posted the live exact-ref summary in comment `6324158959`.
+- Current public refs: M1 #43 `7279336307fc7aacd46119405858d4fd91499757`; M2 #37 `be66cf8f4c1a60f093740577796ec5cd633e1d93`; M3 #33 `429cd73c03273bc77f3781b489f541e396cd9361`; M4 #34 `803a015f3e97ae69b7adeb4411f93defc0a06cfe`; M5 #47 `bbce79aa086b39b51422cc72471c23c963778650`; M9 #36 `7c8d808457ddd6dc22382ce9b65e2e4aa3ebffa2`.
+- Exact-head CI `39628588520` passes for M4, but no shipping first-party protected-read callsite is established. M2 exact-head run `39638404097` fails package-smoke. M3 run `39635364781` fails Windows Node 20 test 72 only during fixture teardown (`ENOTEMPTY`). M9 composition run `39638415567` passes with its recorded M6/M8 pins, but does not establish product-host held-identity consumption or TOCTOU.
+- Keep all deny assertions and the product NOT_VERIFIED boundary. These are public PR/workflow observations only.
