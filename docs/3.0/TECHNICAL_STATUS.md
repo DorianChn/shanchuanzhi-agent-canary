@@ -5954,3 +5954,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - M2/M7's 19:30–19:50 slot ended without public source movement or owner disposition. M2 #37 remains `be66cf8f4c1a60f093740577796ec5cd633e1d93`; M7 #39 remains `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a`; both inspected worktrees are clean. Lane-end notes are #37 comment `6325099435` and #39 comment `6325100104`.
 - Only active modules for 19:50–20:10 are M1 and M3. M1's exact shared-test review is Issue #60 comment `6325102424`; M3's Windows Node 20 teardown fix is PR #33 comment `6325103598`. Scheduler readback is #29 comment `6325105872`. No exclusive test resource is scheduled.
 - Next M0 push is no earlier than 20:10 UTC after fresh quota, PR #24, remote-ref, and clean-worktree preflight.
+
+## M0 19:54 UTC exact-head CI readback — 2026-10-21
+
+- PR #30 exact head `40bbfeb138c9a3151079a2971a363746311ea8a4` passed product CI run `39665116358` (9/9) and coordination run `39665116257` (1/1). This validates the M0 docs batch only.
+- M1 #43 remains at `7279336307fc7aacd46119405858d4fd91499757`; M3 #33 remains at `429cd73c03273bc77f3781b489f541e396cd9361`. Their inspected worktrees are clean and no public owner response or code movement is visible in the active slot.
+- Scheduler readback is Issue #29 comment `6325178073`. No merge or Release was performed.
