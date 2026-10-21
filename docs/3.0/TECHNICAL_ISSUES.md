@@ -1584,3 +1584,11 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#66 remains OPEN / P1.** Unstaged M6-owned changes are visible in the M5 policy worktree at HEAD 99ab807: duplicate-stage and active-finish guards/tests are present, but release() remains unchanged and no pending-stage → release → second-run regression is present. This is filesystem evidence only; no M6 owner acceptance or public PR #38 commit is inferred. M0 preserved the files and updated PR #38 comment 6315647508.
 - **M1 / #52 / #62 remain pending:** PR #37 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 has no M1 review; #62 remains OPEN/UNKNOWN. Reminder is PR #37 comment 6315647526.
 - Next shared push no earlier than 13:43 UTC; PR #24 unchanged.
+
+
+## M0 13:52 exact-head and M6 note — 2026-10-21 13:52 UTC
+
+- **PR #30:** exact head 5f8ec3c0b98db2dae3bac895636e6e8eb4984a74 product CI 39610548376 passed 9/9; ownership checks 39610548287, 39610600699, and 39611620008 passed. M0 changes only coordination docs.
+- **#66:** M6-owned unstaged edits are visible in the M5 policy branch, but they do not change release() or test release during a pending stage then second acquisition. Preserve; do not count as #66 fix. PR #38 remains at 560f724. M0 documented this in comment 6315647508.
+- **M1 / #52 / #62:** no PR #37 owner review or #62 classification. Keep #52 NOT_VERIFIED and #62 OPEN / UNKNOWN.
+- Next shared push no earlier than 14:03 UTC; PR #24 unchanged.
