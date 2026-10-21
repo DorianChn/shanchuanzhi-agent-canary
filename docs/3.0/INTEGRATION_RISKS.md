@@ -968,3 +968,14 @@ M2 exact local candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 passes the exi
 PR #36 head 72249c617687571f88f5c3a8a688245cbace65e6 run 39573535645 fails the same Hook byte-identity assertion on Ubuntu and Windows because it incorrectly includes M8's owner-approved distinct adapter. The canonical M1/M2/M5/M7/M9 files match; M8's accepted blob differs. Keep all security assertions; M9 should scope byte identity to canonical copies and verify M8 by its reviewed blob and contract. M2 candidate d054 remains unpinned pending M1 ACCEPT/REJECT or a concrete blocker and exact-head hosted CI. Keep #61 OPEN/P1 until these gates and both-platform composition pass.
 
 PR #24 remains OPEN/Draft at the unchanged base/head; main was not modified. No merge or Release was made.
+
+## M0 2026-10-21 11:14 UTC exact-source gate update
+
+### Closed scoped gate — P0 #53 packaged Hook logging
+M7's hosted artifact from PR #39 head 9330005b2e15c521b9645a728d34e9477d8d6340 (run 39573529232, artifact 12332644890) passed verified checksums and static Setup.exe extraction with installerExecuted=false. The extracted Hook is the canonical M1 blob d6f93249306b7966259cab463dd39475728ef338; its package-derived synthetic harness passed seven fault cases with caller canaries absent, zero unsafe callback starts, and an unchanged protected fixture. Exact M9 composition at PR #36 head 85b598adfbb168b51e81b1c56e7be8d846784f8d passed Ubuntu/Windows in run 39584019108. Branch-copy comparison found M1/M2/M4/M5/M6/M7/M9 canonical blobs, M3 only omitted a non-functional comment and retains canary tests, while M8's distinct adapter has exact M1 acceptance. #53 is CLOSED for this scoped logging/composition gate only; #41 clean VM, #52 host/held-identity/TOCTOU, and #57 independent E4 remain separate.
+
+### Open P1/P0 gates
+- #52 remains OPEN/P0: no first-party desktop OBSERVE path has been verified consuming an M1-bound held-file identity through M2/M5; alias/path-replacement controls remain required.
+- #59 remains OPEN/P1: M9 composition passes on the accepted pin set, but M6's review of M8's shared auto-E4 test contribution and the active-stage lifecycle fix #66 remain pending.
+- #60 remains OPEN/P1: M1's exact review is still needed for M4's changed M1-owned Hook test. PR #34's current run 39589011257 failed once in the unchanged M1 Gateway expiry test before the expiry/no-callback assertions. Track cause under #62 as UNKNOWN; do not infer M4 regression.
+- #62 remains OPEN/P1 / UNKNOWN after one new CI reproduction; retain the expiry-denial and zero-callback assertions.

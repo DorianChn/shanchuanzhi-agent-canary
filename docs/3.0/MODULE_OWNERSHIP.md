@@ -564,3 +564,9 @@ This clarification supersedes older dated ownership rows or snapshots that chara
 - M1 retains ownership of `src/runtime/gateway.ts` and `test/gateway.test.ts`. PR #34 exact-head run `39589011257` failed once in unchanged `test/gateway.test.ts:22:322` before the expired-approval and zero-callback assertions; Issue #62 was updated to one current reproduction with unknown cause. This does not transfer the test or API ownership to M4.
 - M6/#66 is publicly dispatched on existing PR #38 branch `feature/ac3-e4-validation-ac3` at `560f724`. M6 owns `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs`; preserve the existing M5 worktree patch and resolve its provenance before any reuse.
 - M4 report commit `7ac3247` remains a documentation-only M0 audit recorded in an M4-owned path; it does not constitute owner acceptance or alter shared-file ownership.
+
+## M0 exact Hook-copy and shared-test readback — 2026-10-21 11:14 UTC
+
+M1 remains the semantic owner of the canonical native Hook, Gateway denial behavior, and shared Hook security assertions. Exact current public refs show M1/M2/M4/M5/M6/M7/M9 Hook wrapper blob d6f93249306b7966259cab463dd39475728ef338. M3's wrapper blob ae23875d91c246c0fa833137e71c949bad9bd3cc differs only by omission of a non-functional explanatory comment; M3's current test/agent-hook.test.ts contains synthetic caller/body canaries and assertions that those values do not enter JSONL. M8's wrapper blob 544b5eb76633469b7185c4ea77d85d7f1754393e is a separately M1-accepted logging/consumer adapter; preserve permissionDecision and keep reason normalization non-authorizing.
+
+M1 owner disposition remains required before integration for M2 PR #37 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 and for M4 PR #34's changed M1-owned test/agent-hook.test.ts blob e8ae8202492fc44fbb13c7ee855198ac8e62f436. The latter is tracked by #60. No cross-module ownership transfer is inferred from a passing CI run or a branch copy.
