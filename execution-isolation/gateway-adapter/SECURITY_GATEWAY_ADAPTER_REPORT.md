@@ -414,17 +414,18 @@ Disposition: **M2 adapter contract implemented locally; Issue #52 remains
 OPEN/P0 pending current M1/M5 owner acceptance, product host wiring, and
 end-to-end runtime evidence.** No push or GitHub update was performed.
 
-## 2026-10-21 strict-only package facade candidate
+## 2026-10-22 approved strict-only package entry
 
 M5 rejected the earlier proposal to export `security-gateway-adapter.mjs`
 directly (Issue #52 comment `6320309631`): that module also exports the
 lower-level `createSecurityGatewayAdapter`, which can bypass the M5 router.
-The M2 candidate now adds `gateway-adapter.mjs` as the package-facing facade.
-Its module namespace exposes only `createSecurityGatewayHostAdapter`; the
+The M2 branch adds `gateway-adapter.mjs` as the package-facing facade. Its
+module namespace exposes only `createSecurityGatewayHostAdapter`; the
 low-level adapter remains an internal dependency and is not a package export.
-The host-composition tests now import through this facade.
+The host-composition tests import through this facade.
 
-The exact shared-manifest candidate for owner review is:
+M5 and M6 accepted this exact package-entry shape; M7 gave conditional
+acceptance. The approved shared-manifest delta is now in the M2 branch:
 
 - `exports["./gateway-adapter"]` →
   `./execution-isolation/gateway-adapter/gateway-adapter.mjs`
@@ -433,9 +434,15 @@ The exact shared-manifest candidate for owner review is:
   `execution-isolation/gateway-adapter/security-gateway-adapter.mjs`.
 - Do not add a package export for `security-gateway-adapter.mjs`.
 
-`package.json` remains unchanged pending M5/M6/M7 review. A pack from the
-unchanged manifest still omits both modules, so installed-package resolution
-has not been established. The facade still requires the trusted host to pass
-the actual M5 router factory; the local contract-double tests do not prove
-first-party host wiring or a successful strict real-file read. No M1/M5/M6/M7
-files or security policies were changed.
+Local verification on Windows / Node.js v22.23.1:
+
+- `node --test execution-isolation/gateway-adapter/test-gateway-adapter-facade.mjs execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 13/13 passed. The package self-reference imports the public subpath, and the low-level package deep path rejects with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+- `npm pack --dry-run --json` — 6 package entries; includes exactly the two approved M2 runtime files under `execution-isolation/gateway-adapter/`.
+- `git diff --check` — passed.
+- `npm run pack:check` was not run because `scripts/check-package.mjs` remains the known M7-owned blocker. M2 did not edit that checker; no checker result is claimed.
+
+The facade still requires the trusted host to pass the actual M5 router
+factory. These checks do not prove a first-party host callsite, packed-tarball
+installation/import, or a successful strict real-file read. No M1/M5/M6/M7
+implementation paths or security policies were changed; the shared
+`package.json` delta above was applied after owner review.
