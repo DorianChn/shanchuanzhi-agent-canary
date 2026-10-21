@@ -5414,3 +5414,7 @@ At 11:24 UTC, Usage remained 77% five-hour / 52% weekly. M1 PR #37 still has no 
 ## M0 P0 #52 body refresh — 2026-10-21 11:30 UTC
 
 M0 refreshed Issue #52 to supersede its stale 10:40 exact-ref text. M2 d054cee is public with exact-head CI 9/9, but M1 owner disposition remains pending; M4's source audit records the missing first-party OBSERVE held-identity callsite and M5's strict path-only rejection. M9's accepted baseline composition remains green. The issue body explicitly preserves the P0 NOT_VERIFIED boundary and no-secret-exposure claim.
+
+## M0 M6 lock-contract clarification — 2026-10-21 11:31 UTC
+
+M0 added a contract clarification to Issue #66 comment 6314801303: release() during an active stage may fail and retain lock ownership, or defer release, but another run cannot acquire the same dataDir before the first stage settles and the run is terminal. The regression must verify lock retention and safe reacquisition. M6 owns the final API contract and implementation; M0 changed no M6 files.
