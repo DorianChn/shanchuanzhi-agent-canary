@@ -81,3 +81,30 @@ At the reviewed public Draft PR heads, M2 #37 is `d054ceea39a0e4dd040131b4ca2789
 5. M0 coordinates the owner-reviewed contract and M9 pin/check sequence. Until then, product OBSERVE file-read consumption remains `NOT_VERIFIED`.
 
 This assessment is a source/contract audit only. No host file-read, installer, VM, or real-model action was performed, and no M4 runtime test was run for this report-only update.
+
+## 2026-10-21 Issue #60: M1 canonical Hook contract dependency
+
+M1 rejected PR #34's shared Hook-test blob `e8ae8202492fc44fbb13c7ee855198ac8e62f436`: it changes a native unpinned `Read` from deny to allow and removes the `Write`/`Delete`, normalized-log redaction, caller-canary absence, and fixture-preservation assertions. M1's accepted test blob remains `82ca4662e0a6c4269011ff8eba9470f2a26ccc39` on branch head `5cb57c9b1b61884ab06d10b2f8a40426941ad0bc`.
+
+### Reproduction and source comparison
+
+In an isolated, reverted comparison, I temporarily ran the M1 test blob against PR #34's current source after `npm run build`, then ran `node --import tsx --test test/agent-hook.test.ts`. The focused suite produced **10/11 passing**; the unpinned native-file test failed on `Read` with actual `allow`, expected `deny` (test line 41). The M4 worktree was restored afterward; its canonical M1-owned test path was not retained as a change.
+
+The failure matches the exact source-ref difference:
+
+| Ref | `src/agent-hook.ts` blob | `src/security-router.ts` blob | Relevant behavior |
+| --- | --- | --- | --- |
+| PR #34 base `7ac32473a2b15207d6d88e0884d5d5271599a7c7` | `f1bd9916255be22c9dc69aebec3b4448d571b118` | `6add375324f909e83da1fd2c14fc181ed738e535` | No unpinned-native-operation denial is present; the reproduced in-workspace native `Read` receives `ALLOW`. |
+| M1 branch `5cb57c9b1b61884ab06d10b2f8a40426941ad0bc` | `76f7bf6314046777ee1615873e5de4621671ea15` | `183d1f8443498568e9d49143e746f0bc274faa2c` | Adds `native_file_execution_not_pinned` denial and preserves path/policy-denial precedence. |
+
+### M4 boundary and required decisions
+
+M4's owned `src/ai/security-center-adapter.ts` is a presentation adapter: it consumes an optional read-only security-center payload, accepts only exact status values, and keeps missing protection data `UNKNOWN`. The current Console has no native Hook invocation or `/api/security-center` backend route. The M4-owned `test/runtime-console.test.ts` passed **9/9**; its absent-backend cases confirm the UI does not infer Hook protection from demo or configuration data. Therefore an M4 UI adapter cannot supply the missing Hook authorization behavior or make the canonical Hook test pass on PR #34's current source ref.
+
+Required owner decisions before integration:
+
+1. **M1:** identify the exact source ref that provides canonical unpinned `Read`/`Write`/`Delete` denial and its accepted shared Hook-test blob; M4 will not change the canonical test or Hook/Gateway implementation.
+2. **M5:** confirm how its policy-owned risk rules preserve M1's hard-denial precedence and how that state is exposed to the optional read-only security-center response. The UI will continue to show `UNKNOWN` until a backend owner supplies verified state.
+3. **M0/M9:** compose only after those owner decisions are recorded, then rerun the exact PR #34 source/test combination.
+
+No M4 source adapter can resolve this branch dependency without taking ownership of M1 authorization or inventing backend status. No cross-module code change, GitHub comment, or push was made for this finding.
