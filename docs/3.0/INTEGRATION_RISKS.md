@@ -1011,3 +1011,15 @@ Quota at this checkpoint was readable: 77% five-hour / 52% weekly. Next push no 
 - M0 PR #30 run `39613426261` has now completed all 9/9 jobs successfully; the 14:11 “macOS Node 22 pending” note is superseded. Ownership runs `39613426714` and `39613440990` also pass 1/1 each.
 - M6 local commits `c7c19e2` (#66) and `9880360` (#58) are clean and ready for ordinary fast-forward delivery on the existing PR #38 branch; hosted checks have not yet run on either new commit.
 - M1 is still examining #62; no M1 owner root-cause claim or source patch exists. Keep the issue open unless deterministic evidence changes that state.
+
+## 2026-10-21 14:28 UTC integration delta
+
+| Gate | Current verified state | Remaining acceptance |
+| --- | --- | --- |
+| #61 M1/M2 adapter seam | M1 posted exact-SHA ACCEPT for M2 d054ceea on Issue #61 comment 6318542125; M2 exact-head CI run 39586551017 passed 9/9. Scope is adapter mapping and denial propagation only. | M9 must update the existing M2 pin and pass exact-source composition; product host/held identity/TOCTOU remain NOT_VERIFIED under #52. |
+| #60 M4 shared Hook tests | M0 comparison identified weakened assertions; M4 is working in its existing PR #34 branch to reconcile the file. No M4 commit or new hosted run yet. | Preserve unpinned Read/Write/Delete deny, policy precedence, redaction/canaries, fixture preservation, timeout/failure/interruption assertions, and actual callback counting. |
+| #62 M1 expiry test | M1 pushed a controlled-clock test-only fix at `5cb57c9`; local Gateway suite passed 32/32. | Exact-head M1 CI runs 39616423430 and 39616423352 are queued; retain OPEN until those complete. |
+| #66 M6 active-stage lock | M6 pushed the release guard/regression as `c7c19e2` on PR #38; M6's second commit `9880360` addresses #58. Local focus 1/1, Auto E4 9/9. | M6 exact-head CI 39616422797 and wrapper 39616422793 are queued. After pass, M9 may update the M6 pin and add its full Auto E4 test. Product E4 remains NOT_VERIFIED. |
+| #58 raw.log scope | M6 exact exception is pushed; M9 already has the exact exception and verified both paths locally. | Keep open until M6 current-head CI passes and re-read both branch rules. |
+
+Usage was readable at 14:28 UTC (77% five-hour / 52% weekly). The current parallel pair is M9 #61 pin/composition and M4 #60 test-contract reconciliation. M0 monitors M6 exact-head CI; no exclusive VMware/installer/real-model slot is reserved.
