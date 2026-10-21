@@ -2,7 +2,7 @@
 
 Date: 2026-10-21
 Scope: M2-owned adapter seam for Issue #52
-Status: `SYNTHETIC_ADAPTER_COMPATIBLE_IN_LEXICAL_MODE; STRICT_M5_MODE_FAILS_CLOSED; NO_PRODUCT_HOST_INTEGRATION; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
+Status: `M2_FAIL_CLOSED_HOST_COMPOSITION_HELPER_ADDED; STRICT_M5_MODE_FAILS_CLOSED; NO_PRODUCT_HOST_INTEGRATION; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
 
 ## Contract compatibility
 
@@ -193,3 +193,38 @@ worktree because `dist/sdk.js` and `node_modules` are absent; dependencies
 were not installed. First-party host consumption of the M2 adapter,
 protected-open at the product host, and real-host alias/replacement behavior
 remain `NOT_VERIFIED`; native Codex Shell remains `UNPROTECTED`.
+
+## 2026-10-21 M2 strict host-composition adapter
+
+`createSecurityGatewayHostAdapter` is an M2-owned composition helper for a
+trusted host that supplies the M5 `createSecurityToolRouter` factory, M1
+Gateway, and fixed read map. It requires the host to explicitly select
+`mode: "OBSERVE"` and `verifyRealPaths: true`, reserves `tools` and
+`executeRealTool` for the M2 adapter, and returns only `dispatch` plus the
+read-only pending-approval view. It never selects lexical mode or calls M1
+outside the policy router.
+
+The current M5 strict router still denies both a safe fixed path and an alias
+before invoking the path-only callback. The focused M2 host-composition test
+uses a strict-router contract double to assert the wiring and zero callbacks,
+zero M1 dispatches, and zero approvals. The existing adapter call-shape test
+retains the fixed-path positive control and actual temporary symlink/junction
+rejection before its mock M1 dispatcher. These are adapter/contract tests,
+not a callsite in a supported product host and not actual M1/M5 cross-branch
+runtime evidence.
+
+The host-composition adapter cannot make the fixed M1 `GatewayOptions.files`
+identity visible to M5: M1 retains the held fd/dev/ino privately, while the
+M2 callback and current M5 callback context expose only a path and `{ signal }`.
+An M1-issued opaque capability bound to one held registered file, and M5
+strict-router validation/revalidation of that capability, remain owner API
+work. M3/M4 must identify and wire the selected product OBSERVE consumer, and
+M0 must coordinate those owner reviews. No shared path or public contract was
+changed. Until then a strict safe file read correctly fails closed with
+`path_execution_not_pinned`.
+
+Local focused verification for this M2 helper:
+
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 7/7 passed on Node v22.23.1 / Windows. The existing case creates a real temporary junction and verifies pre-dispatch alias rejection. New host-composition cases require explicit OBSERVE strict mode, reject legacy/non-OBSERVE or callback/tool overrides, and verify safe-path and alias requests stop before the policy callback, M1 dispatch, or approval. The strict-router implementation in this test is a contract double; current PR #47 exact-head tests/CI remain the evidence for M5 behavior.
+- `git diff --check` — passed.
+- This is local M2 evidence. It does not establish that a supported product entry imports the helper, that a safe file read succeeds through current M5 strict mode, or that M1's private held identity is visible to M5. The M2 changes remain unpushed and have no exact-head hosted CI.

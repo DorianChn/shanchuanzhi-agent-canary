@@ -176,3 +176,86 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
 
   return Object.freeze({ tools, executeRealTool });
 }
+
+const hostAdapterOptionKeys = new Set([
+  "gateway",
+  "fixedFileReads",
+  "createSecurityToolRouter",
+  "routerOptions",
+]);
+
+/**
+ * Compose the M2 fixed-read adapter with the host-supplied M5 policy router.
+ *
+ * This boundary accepts only OBSERVE plus verifyRealPaths:true and reserves
+ * the router's tool map/callback for the M2 adapter. The current M5 strict
+ * router intentionally rejects path-only file callbacks as
+ * path_execution_not_pinned, including safe fixed paths. This helper preserves
+ * that denial; it does not mint or imply an M1 held-file identity capability.
+ * A product host must pass its real M5 router factory and still needs the
+ * M1/M5 capability contract before a strict safe read can be allowed.
+ */
+export function createSecurityGatewayHostAdapter(options) {
+  const inputValues = new Map(
+    readOwnDataEntries(options, "HOST_ADAPTER_OPTIONS", hostAdapterOptionKeys),
+  );
+  if (
+    inputValues.size !== hostAdapterOptionKeys.size ||
+    typeof inputValues.get("createSecurityToolRouter") !== "function"
+  ) {
+    throw new TypeError("M2_SECURITY_GATEWAY_HOST_ADAPTER_OPTIONS_INVALID");
+  }
+
+  const routerOptionEntries = readOwnDataEntries(
+    inputValues.get("routerOptions"),
+    "HOST_ROUTER_OPTIONS",
+    null,
+  );
+  const routerOptionValues = new Map(routerOptionEntries);
+  if (
+    routerOptionValues.get("mode") !== "OBSERVE" ||
+    routerOptionValues.get("verifyRealPaths") !== true
+  ) {
+    throw new TypeError("M2_SECURITY_GATEWAY_STRICT_OBSERVE_REQUIRED");
+  }
+  if (routerOptionValues.has("tools") || routerOptionValues.has("executeRealTool")) {
+    throw new TypeError("M2_SECURITY_GATEWAY_HOST_ROUTER_CALLBACKS_RESERVED");
+  }
+
+  const adapter = createSecurityGatewayAdapter(
+    inputValues.get("gateway"),
+    inputValues.get("fixedFileReads"),
+  );
+  const wiredRouterOptions = Object.create(null);
+  for (const [key, value] of routerOptionEntries) {
+    wiredRouterOptions[key] = value;
+  }
+  wiredRouterOptions.tools = adapter.tools;
+  wiredRouterOptions.executeRealTool = adapter.executeRealTool;
+
+  const router = Reflect.apply(
+    inputValues.get("createSecurityToolRouter"),
+    undefined,
+    [Object.freeze(wiredRouterOptions)],
+  );
+  if (!isPlainRecord(router)) {
+    throw new TypeError("M2_SECURITY_GATEWAY_POLICY_ROUTER_INVALID");
+  }
+  const dispatch = Object.getOwnPropertyDescriptor(router, "dispatch")?.value;
+  const pendingApprovals = Object.getOwnPropertyDescriptor(
+    router,
+    "pendingApprovals",
+  )?.value;
+  if (typeof dispatch !== "function" || typeof pendingApprovals !== "function") {
+    throw new TypeError("M2_SECURITY_GATEWAY_POLICY_ROUTER_INVALID");
+  }
+
+  return Object.freeze({
+    dispatch(call) {
+      return Reflect.apply(dispatch, router, [call]);
+    },
+    pendingApprovals() {
+      return Reflect.apply(pendingApprovals, router, []);
+    },
+  });
+}
