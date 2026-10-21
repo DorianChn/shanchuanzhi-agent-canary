@@ -1,7 +1,7 @@
 import path from "node:path";
 
 const toolIdPattern = /^[a-z0-9_.-]{1,100}$/;
-const contextKeys = new Set(["signal"]);
+const contextKeys = new Set(["signal", "fileReadCapability"]);
 const callKeys = new Set(["name", "args", "traceId"]);
 const argsKeys = new Set(["path"]);
 
@@ -72,9 +72,9 @@ function abortError() {
  * Adapt M5's host-owned executeRealTool callback to M1's Gateway capability.
  *
  * fixedFileReads maps exact, lowercase M5 tool IDs to relative paths that the
- * trusted host also registered in GatewayOptions.files. The adapter exposes
- * file-read policy descriptors only and forwards an allowlisted path through
- * gateway.agent.dispatch({ name: "read_file", args: { path } }, signal).
+ * trusted host also registered in GatewayOptions.files. The adapter asks M1
+ * to bind an opaque capability to each exact tool/path pair, exposes M5's
+ * resolver/verifier contract, and uses M1's capability-bound read method.
  *
  * It intentionally does not classify aliases or duplicate M5 policy. The
  * exact M2 allowlist prevents unregistered paths from reaching Gateway; M1
@@ -84,23 +84,22 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
   if (!isPlainRecord(gateway)) {
     throw new TypeError("M2_SECURITY_GATEWAY_HANDLE_INVALID");
   }
-  const gatewayAgentDescriptor = Object.getOwnPropertyDescriptor(gateway, "agent");
-  const gatewayAgent = gatewayAgentDescriptor?.value;
-  if (!isPlainRecord(gatewayAgent)) {
-    throw new TypeError("M2_SECURITY_GATEWAY_HANDLE_INVALID");
+  const gatewayMethods = new Map();
+  for (const name of [
+    "bindFileReadCapability",
+    "verifyFileReadCapability",
+    "readFileWithCapability",
+  ]) {
+    const descriptor = Object.getOwnPropertyDescriptor(gateway, name);
+    if (
+      !descriptor ||
+      !Object.hasOwn(descriptor, "value") ||
+      typeof descriptor.value !== "function"
+    ) {
+      throw new TypeError("M2_SECURITY_GATEWAY_HANDLE_INVALID");
+    }
+    gatewayMethods.set(name, descriptor.value);
   }
-  const dispatchDescriptor = Object.getOwnPropertyDescriptor(
-    gatewayAgent,
-    "dispatch",
-  );
-  if (
-    !dispatchDescriptor ||
-    !Object.hasOwn(dispatchDescriptor, "value") ||
-    typeof dispatchDescriptor.value !== "function"
-  ) {
-    throw new TypeError("M2_SECURITY_GATEWAY_HANDLE_INVALID");
-  }
-  const gatewayDispatch = dispatchDescriptor.value;
 
   const toolEntries = readOwnDataEntries(
     fixedFileReads,
@@ -113,18 +112,34 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
 
   const policyTools = Object.create(null);
   const allowedPaths = new Map();
+  const capabilities = new Map();
   for (const [toolId, paths] of toolEntries) {
     if (!toolIdPattern.test(toolId) || !Array.isArray(paths) || paths.length === 0) {
       throw new TypeError("M2_SECURITY_GATEWAY_FIXED_FILE_READ_INVALID");
     }
 
     const pathSet = new Set();
+    const pathCapabilities = new Map();
     for (const candidate of paths) {
       const relativePath = fixedRelativePath(candidate);
       if (pathSet.has(relativePath)) {
         throw new TypeError("M2_SECURITY_GATEWAY_FIXED_FILE_READ_INVALID");
       }
       pathSet.add(relativePath);
+      let capability;
+      try {
+        capability = Reflect.apply(
+          gatewayMethods.get("bindFileReadCapability"),
+          gateway,
+          [{ toolName: toolId, operation: "file-read", path: relativePath, pathArg: "path" }],
+        );
+      } catch {
+        throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE");
+      }
+      if (capability === null || typeof capability !== "object") {
+        throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE");
+      }
+      pathCapabilities.set(relativePath, capability);
     }
 
     policyTools[toolId] = Object.freeze({
@@ -132,10 +147,10 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
       pathArg: "path",
     });
     allowedPaths.set(toolId, pathSet);
+    capabilities.set(toolId, pathCapabilities);
   }
 
-  const tools = Object.freeze(policyTools);
-  const executeRealTool = async (call, context) => {
+  function parseBoundCall(call) {
     const callValues = new Map(
       readOwnDataEntries(call, "CALL", callKeys),
     );
@@ -156,6 +171,50 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
       throw new TypeError("M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED");
     }
 
+    const relativePath = argumentValues.get("path");
+    return {
+      toolId,
+      call: Object.freeze({
+        name: toolId,
+        args: Object.freeze({ path: relativePath }),
+      }),
+      capability: capabilities.get(toolId).get(relativePath),
+    };
+  }
+
+  const fileReadCapability = Object.freeze({
+    resolve(call) {
+      try {
+        const bound = parseBoundCall(call);
+        const valid = Reflect.apply(
+          gatewayMethods.get("verifyFileReadCapability"),
+          gateway,
+          [bound.capability, bound.call, "file-read"],
+        );
+        return valid === true ? bound.capability : undefined;
+      } catch {
+        return undefined;
+      }
+    },
+    verify(capability, call, operation) {
+      if (operation !== "file-read") return false;
+      try {
+        const bound = parseBoundCall(call);
+        if (capability !== bound.capability) return false;
+        return Reflect.apply(
+          gatewayMethods.get("verifyFileReadCapability"),
+          gateway,
+          [capability, bound.call, "file-read"],
+        ) === true;
+      } catch {
+        return false;
+      }
+    },
+  });
+
+  const tools = Object.freeze(policyTools);
+  const executeRealTool = async (call, context) => {
+    const bound = parseBoundCall(call);
     const contextValues = new Map(
       readOwnDataEntries(context, "CONTEXT", contextKeys),
     );
@@ -167,14 +226,23 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
       throw abortError();
     }
 
-    const gatewayCall = Object.freeze({
-      name: "read_file",
-      args: Object.freeze({ path: argumentValues.get("path") }),
-    });
-    return Reflect.apply(gatewayDispatch, gatewayAgent, [gatewayCall, signal]);
+    const capability = contextValues.get("fileReadCapability");
+    if (
+      capability === undefined ||
+      capability !== bound.capability ||
+      !fileReadCapability.verify(capability, bound.call, "file-read")
+    ) {
+      throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_INVALID");
+    }
+
+    return Reflect.apply(
+      gatewayMethods.get("readFileWithCapability"),
+      gateway,
+      [capability, bound.call, "file-read", signal],
+    );
   };
 
-  return Object.freeze({ tools, executeRealTool });
+  return Object.freeze({ tools, executeRealTool, fileReadCapability });
 }
 
 const hostAdapterOptionKeys = new Set([
@@ -188,12 +256,10 @@ const hostAdapterOptionKeys = new Set([
  * Compose the M2 fixed-read adapter with the host-supplied M5 policy router.
  *
  * This boundary accepts only OBSERVE plus verifyRealPaths:true and reserves
- * the router's tool map/callback for the M2 adapter. The current M5 strict
- * router intentionally rejects path-only file callbacks as
- * path_execution_not_pinned, including safe fixed paths. This helper preserves
- * that denial; it does not mint or imply an M1 held-file identity capability.
- * A product host must pass its real M5 router factory and still needs the
- * M1/M5 capability contract before a strict safe read can be allowed.
+ * the router's tool map, callback, and M1 capability provider for the M2
+ * adapter. M5 receives only capabilities issued and checked by M1 for the
+ * exact registered tool/path pair. Missing, mismatched, or stale capabilities
+ * remain denied before M1's file effect.
  */
 export function createSecurityGatewayHostAdapter(options) {
   const inputValues = new Map(
@@ -221,6 +287,9 @@ export function createSecurityGatewayHostAdapter(options) {
   if (routerOptionValues.has("tools") || routerOptionValues.has("executeRealTool")) {
     throw new TypeError("M2_SECURITY_GATEWAY_HOST_ROUTER_CALLBACKS_RESERVED");
   }
+  if (routerOptionValues.has("fileReadCapability")) {
+    throw new TypeError("M2_SECURITY_GATEWAY_HOST_ROUTER_CALLBACKS_RESERVED");
+  }
 
   const adapter = createSecurityGatewayAdapter(
     inputValues.get("gateway"),
@@ -232,6 +301,7 @@ export function createSecurityGatewayHostAdapter(options) {
   }
   wiredRouterOptions.tools = adapter.tools;
   wiredRouterOptions.executeRealTool = adapter.executeRealTool;
+  wiredRouterOptions.fileReadCapability = adapter.fileReadCapability;
 
   const router = Reflect.apply(
     inputValues.get("createSecurityToolRouter"),

@@ -2,15 +2,30 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createSecurityGatewayHostAdapter } from "./security-gateway-adapter.mjs";
 
-function setup(overrides = {}) {
+function setup(overrides = {}, { beforeFinalCapabilityCheck } = {}) {
   const gatewayCalls = [];
+  const records = new WeakMap();
+  let resourceCurrent = true;
   const gateway = Object.freeze({
-    agent: Object.freeze({
-      dispatch(call, signal) {
-        gatewayCalls.push({ call, signal });
-        return Promise.resolve({ content: "synthetic fixed read" });
-      },
-    }),
+    bindFileReadCapability(binding) {
+      const capability = Object.freeze(Object.create(null));
+      records.set(capability, Object.freeze({ ...binding }));
+      return capability;
+    },
+    verifyFileReadCapability(capability, call, operation) {
+      const binding = records.get(capability);
+      return Boolean(
+        resourceCurrent && binding && operation === "file-read" &&
+          call?.name === binding.toolName && call?.args?.path === binding.path,
+      );
+    },
+    readFileWithCapability(capability, call, operation, signal) {
+      if (!this.verifyFileReadCapability(capability, call, operation)) {
+        throw new Error("GATEWAY_FILE_CAPABILITY_INVALID");
+      }
+      gatewayCalls.push({ capability, call, operation, signal });
+      return Promise.resolve({ content: "synthetic fixed read" });
+    },
   });
   let routerOptions;
   let callbackCalls = 0;
@@ -19,18 +34,24 @@ function setup(overrides = {}) {
     const executeRealTool = options.executeRealTool;
     return Object.freeze({
       async dispatch(call) {
-        const tool = options.tools[call?.name];
-        if (
-          options.mode === "OBSERVE" &&
-          options.verifyRealPaths === true &&
-          tool?.operation === "file-read"
-        ) {
+        const provider = options.fileReadCapability;
+        const capability = provider.resolve(call);
+        if (!provider.verify(capability, call, "file-read")) {
+          const error = new Error("path_execution_not_pinned");
+          error.decision = { action: "DENY", reason: error.message };
+          throw error;
+        }
+        beforeFinalCapabilityCheck?.();
+        if (!provider.verify(capability, call, "file-read")) {
           const error = new Error("path_execution_not_pinned");
           error.decision = { action: "DENY", reason: error.message };
           throw error;
         }
         callbackCalls += 1;
-        return executeRealTool(call, { signal: new AbortController().signal });
+        return executeRealTool(call, {
+          signal: new AbortController().signal,
+          fileReadCapability: capability,
+        });
       },
       pendingApprovals() {
         return [];
@@ -49,10 +70,18 @@ function setup(overrides = {}) {
       ...overrides,
     },
   });
-  return { host, gatewayCalls, routerOptions, callbackCalls: () => callbackCalls };
+  return {
+    host,
+    gatewayCalls,
+    routerOptions,
+    callbackCalls: () => callbackCalls,
+    replaceRegisteredResource() {
+      resourceCurrent = false;
+    },
+  };
 }
 
-test("host composition pins M5 OBSERVE strict mode and denies before callback or approval", async () => {
+test("host composition passes the exact M1 capability through M5 and keeps aliases denied", async () => {
   const { host, gatewayCalls, routerOptions, callbackCalls } = setup();
   assert.equal(routerOptions.mode, "OBSERVE");
   assert.equal(routerOptions.verifyRealPaths, true);
@@ -60,19 +89,41 @@ test("host composition pins M5 OBSERVE strict mode and denies before callback or
     operation: "file-read",
     pathArg: "path",
   });
+  assert.equal(typeof routerOptions.fileReadCapability.resolve, "function");
+  assert.equal(typeof routerOptions.fileReadCapability.verify, "function");
 
-  for (const filePath of [
-    "public/readable.txt",
-    "public/linked/readable.txt",
-  ]) {
-    await assert.rejects(
-      host.dispatch({ name: "read_public", args: { path: filePath } }),
-      (error) => error.message === "path_execution_not_pinned",
-    );
-    assert.equal(callbackCalls(), 0);
-    assert.equal(gatewayCalls.length, 0);
-    assert.equal(host.pendingApprovals().length, 0);
-  }
+  const call = { name: "read_public", args: { path: "public/readable.txt" } };
+  const capability = routerOptions.fileReadCapability.resolve(call);
+  assert.deepEqual(await host.dispatch(call), { content: "synthetic fixed read" });
+  assert.equal(callbackCalls(), 1);
+  assert.equal(gatewayCalls.length, 1);
+  assert.equal(gatewayCalls[0].capability, capability);
+  assert.equal(gatewayCalls[0].call.name, "read_public");
+  assert.equal(host.pendingApprovals().length, 0);
+
+  await assert.rejects(
+    host.dispatch({ name: "read_public", args: { path: "public/linked/readable.txt" } }),
+    (error) => error.message === "path_execution_not_pinned",
+  );
+  assert.equal(callbackCalls(), 1);
+  assert.equal(gatewayCalls.length, 1);
+  assert.equal(host.pendingApprovals().length, 0);
+});
+
+test("replacement after capability resolution is denied before M5 callback or M1 read", async () => {
+  let composition;
+  composition = setup({}, {
+    beforeFinalCapabilityCheck() {
+      composition.replaceRegisteredResource();
+    },
+  });
+  await assert.rejects(
+    composition.host.dispatch({ name: "read_public", args: { path: "public/readable.txt" } }),
+    (error) => error.message === "path_execution_not_pinned",
+  );
+  assert.equal(composition.callbackCalls(), 0);
+  assert.equal(composition.gatewayCalls.length, 0);
+  assert.equal(composition.host.pendingApprovals().length, 0);
 });
 
 test("host composition rejects legacy or non-OBSERVE policy settings", () => {
@@ -91,6 +142,7 @@ test("host composition rejects caller-supplied callback or tool overrides", () =
   for (const overrides of [
     { tools: { read_public: { operation: "http" } } },
     { executeRealTool: () => "untrusted override" },
+    { fileReadCapability: { resolve: () => Object.freeze(Object.create(null)), verify: () => true } },
   ]) {
     assert.throws(
       () => setup(overrides),

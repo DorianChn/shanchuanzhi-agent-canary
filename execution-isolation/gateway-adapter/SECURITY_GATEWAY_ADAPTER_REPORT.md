@@ -2,12 +2,16 @@
 
 Date: 2026-10-21
 Scope: M2-owned adapter seam for Issue #52
-Status: `M2_FAIL_CLOSED_HOST_COMPOSITION_HELPER_ADDED; STRICT_M5_MODE_FAILS_CLOSED; NO_PRODUCT_HOST_INTEGRATION; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
+Status: `M2_M1_M5_OPAQUE_CAPABILITY_ADAPTER_IMPLEMENTED_LOCALLY; PRODUCT_HOST_INTEGRATION_NOT_VERIFIED; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
+
+> **Latest checkpoint:** The baseline notes below document earlier M2/M1/M5
+> snapshots. The 2026-10-21 checkpoint at the end records the current local
+> adapter candidate against M1 commit `7279336` and M5 commit `ed304e3`.
 
 ## Contract compatibility
 
-The current M5 `createSecurityToolRouter` contract accepts a fixed `tools` map
-and an `executeRealTool(call, { signal })` callback. M2's
+At the original adapter baseline, M5 `createSecurityToolRouter` accepted a
+fixed `tools` map and an `executeRealTool(call, { signal })` callback. M2's
 `createSecurityGatewayAdapter(gateway, fixedFileReads)` returns that map and
 callback. The M2 `fixedFileReads` entries are relative path strings, not a
 path-handle descriptor or capability passed to M5. For a registered tool ID
@@ -292,22 +296,18 @@ not a production OBSERVE file-read consumer. M2 does not own that entrypoint.
 
 The remaining blockers are exact and owner-bound:
 
-1. **M1 capability gap:** M1 holds and revalidates file identity internally,
-   but its public Gateway result has no opaque per-file capability M2 can pass
-   to M5. M1 must review whether to expose a host-only identity capability
-   bound to a registered held object.
-2. **M5 strict-router gap:** M5 currently receives a path descriptor and
-   `{signal}` callback context only, so it cannot validate that the M2
-   callback consumes M1's held object. M5 must review capability validation
-   and revalidation before any positive strict-mode read.
+1. **Owner contract wiring:** M1 commit `7279336` exposes a host-only
+   registered-file capability, and M5 commit `ed304e3` resolves/verifies it
+   and passes it in callback context. The M2 adapter candidate now wires these
+   APIs locally; exact shared-branch composition and owner acceptance remain
+   pending.
 3. **Product host gap:** the repository's existing Console path is a demo and
    has no M2 adapter callsite. M4 owns `src/ai/console.ts`; the task has not
    identified a supported first-party OBSERVE read host that can be changed
    within M2 ownership. M0 must coordinate the selected host owner/path.
-4. **Expiry routing gap:** M1's expiry rejection is on `operator.approve`,
-   while the current M2 adapter only routes `agent.dispatch`. M2 has no
-   approval bridge and must keep approval-required reads denied; do not add an
-   unreviewed bridge or synthesize a successful approval.
+4. **Approval routing gap:** M2 exposes no approval bridge. It propagates
+   M1 denials and does not call `operator.approve`; approval-required reads
+   remain denied unless an owner-reviewed host flow handles them.
 
 `test-adapter-call-shape.mjs` adds a branch-local seam regression for
 quarantine, approval-required, and stale/expired M1-style rejection markers:
@@ -330,7 +330,10 @@ end-to-end expiry/quarantine integration remain `NOT_VERIFIED`.** Native
 Codex Shell remains `UNPROTECTED`. No M1/M4/M5 paths or public contracts were
 changed; no push was performed.
 
-## 2026-10-21 Issue #52 deterministic replacement boundary
+## 2026-10-21 Issue #52 deterministic replacement boundary (baseline)
+
+This section records the pre-capability adapter and is superseded by the
+capability checkpoint below.
 
 At the M2-owned seam, `createSecurityGatewayAdapter` snapshots the approved
 relative path as a string, checks it against the fixed allowlist, and calls
@@ -373,3 +376,40 @@ Focused verification after this change on Windows / Node.js v22.23.1:
 - `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs` — 6/6 passed, including the deterministic post-validation replacement denial.
 - `git diff --check` — passed.
 - No M1/M5 source or public API was changed; no product host or real M1 runtime was exercised. The issue remains `NOT_VERIFIED` pending owner contract review and product-host integration.
+
+## 2026-10-21 M1/M5 opaque-capability adapter checkpoint
+
+M2's local adapter candidate was updated against the exact owner commits M1
+`7279336307fc7aacd46119405858d4fd91499757` and M5
+`ed304e399ec237a47e03830e5013695ddcc10dd6`. Source inspection confirmed the
+M1 host-only methods `bindFileReadCapability`, `verifyFileReadCapability`,
+and `readFileWithCapability`, plus M5's
+`fileReadCapability.resolve/verify` provider and callback context
+`{signal, fileReadCapability}`.
+
+At adapter construction, M2 requests an M1 opaque capability for each exact
+fixed M5 tool/path pair. It passes the M1-backed resolver/verifier provider to
+M5 and reserves that option against caller override. Before forwarding the
+callback, M2 rechecks the exact tool, path, signal, capability identity, and
+M1 verification result. It then invokes M1's capability-bound read method
+with the same capability object. There is no path-only fallback; missing,
+substituted, stale, revoked, and replaced capabilities fail closed. The M2
+adapter remains read-only and exposes no write or delete mapping.
+
+Focused tests now cover unchanged capability forwarding, missing/substituted/
+stale denial, an actual temporary symlink/junction allowlist denial, and a
+synthetic held-identity replacement denied before the M5 callback or M1 read.
+The host-composition tests use M1/M5 contract doubles; they are not a live
+execution of the owner implementations. No first-party product host currently
+imports this adapter, and no runtime integration, protected-open guarantee,
+TOCTOU elimination, or installed native-hook protection is claimed.
+
+Local verification on Windows / Node.js v22.23.1:
+
+- `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 11/11 passed.
+- `npm run build` — could not run because `tsc` is unavailable in this worktree (`node_modules` is absent); no dependencies were installed.
+- `git diff --check` — passed.
+
+Disposition: **M2 adapter contract implemented locally; Issue #52 remains
+OPEN/P0 pending current M1/M5 owner acceptance, product host wiring, and
+end-to-end runtime evidence.** No push or GitHub update was performed.
