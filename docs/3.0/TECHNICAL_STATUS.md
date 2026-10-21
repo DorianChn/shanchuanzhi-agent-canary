@@ -5219,3 +5219,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` remains local-only with M1 disposition pending; M9 pins and exact composition remain blocked. No M1 verdict was visible at 08:23.
 - M7/M8 have not supplied the requested Setup.exe extraction evidence by 08:23. The workflow's `extracted-hook` sidecar is copied from `$payloadRoot`, not extracted from Setup.exe; #53 remains OPEN/P0 and package interior NOT_VERIFIED.
 - Usage was 19% at 08:19. Next shared push is no earlier than 08:39 UTC. No merge, PR #24 update, or Release.
+
+## Exclusive M7 lifecycle slot — 2026-10-21 08:25 UTC
+
+- M0 reserved Issue #29 comment `6311520332`: 08:40–09:10 UTC / 16:40–17:10 Asia/Shanghai, exclusive to M7 for Issue #41 clean-VM install, first launch, upgrade, uninstall, and user-cancel rollback on the exact Setup.exe artifact ID `12309135499`, SHA-256 `b23bc4cffb42e0f021dc49ef83190b35475f2fdd9500a3ff42b3b4d89f2e8270`.
+- No other VMware, real-model, or installer tests are scheduled in that window. M7 must confirm availability by 08:39 or report a concrete blocker/earliest alternative; M0 will not execute the installer.
+- This lifecycle slot does not prove the Hook inside Setup.exe and does not close #53. Both #41 and #53 remain OPEN pending their separate acceptance evidence.
