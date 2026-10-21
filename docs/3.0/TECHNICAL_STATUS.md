@@ -5225,3 +5225,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - M0 reserved Issue #29 comment `6311520332`: 08:40–09:10 UTC / 16:40–17:10 Asia/Shanghai, exclusive to M7 for Issue #41 clean-VM install, first launch, upgrade, uninstall, and user-cancel rollback on the exact Setup.exe artifact ID `12309135499`, SHA-256 `b23bc4cffb42e0f021dc49ef83190b35475f2fdd9500a3ff42b3b4d89f2e8270`.
 - No other VMware, real-model, or installer tests are scheduled in that window. M7 must confirm availability by 08:39 or report a concrete blocker/earliest alternative; M0 will not execute the installer.
 - This lifecycle slot does not prove the Hook inside Setup.exe and does not close #53. Both #41 and #53 remain OPEN pending their separate acceptance evidence.
+
+## M7 VM slot availability correction — 2026-10-21 08:34 UTC
+
+- The 08:40–09:10 UTC M7 slot is released per Issue #29 comment `6311687926`: M7's existing environment has no `vmrun.exe`, `vmware.exe`, or `vmware-vmx.exe`, no VMware/VMX environment variables, and no available `.vmx` path. No clean-VM, installer lifecycle, or real-model test ran.
+- Issue #41 stays OPEN / NOT_VERIFIED; next feasible exclusive window is UNKNOWN until an actual VM path and owner availability are established.
+- M7 continues local, existing-branch work on PR #39 to make hosted evidence extract the Hook from Setup.exe; it has not published an exact remediation head yet. #53 stays OPEN/P0.
