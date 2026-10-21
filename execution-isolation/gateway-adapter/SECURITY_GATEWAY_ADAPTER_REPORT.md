@@ -168,7 +168,7 @@ Local verification on Windows / Node.js v22.23.1:
 
 ## 2026-10-21 M0 #52 host-connection checkpoint
 
-In the existing M2 worktree, branch `feature/ac3-execution-isolation`, starting HEAD
+In the repository worktree for branch `feature/ac3-execution-isolation`, starting HEAD
 `6ad4303540499341b59a97db3b4ec4562fe5e29e`, the first-party host consumer was
 verified in source: `src/ai/cli.ts` registers `ai console`,
 `src/ai/console.ts` calls `createRuntimeDemo`, and `src/runtime/demo.ts` creates
