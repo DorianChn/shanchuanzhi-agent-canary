@@ -50,7 +50,24 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
  assert.ok(Date.now()-started>=1900&&Date.now()-started<5000,'timeout returns a denial within the bounded hook budget');
 });
 
-test('native lab wrapper interruption emits no decision or output',async(t)=>{
+test('native lab wrapper writes only normalized allowlisted log fields',()=>{
+ const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'normalized-hook-module.mjs');
+ const callerCanaries=['SYNTHETIC_NATIVE_HOOK_ARGUMENT_CANARY','C:/synthetic/caller/private.txt'];
+ const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
+ fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
+ const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
+ assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
+ assert.equal(lines.length,1);
+ const record=JSON.parse(lines[0]);
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
+ assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
+ for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
+});
+
+test('native lab wrapper interruption fixture observed no decision, output, or log',async(t)=>{
  // The native host dispatches tool callbacks outside this subprocess; this fixture cannot count that callback.
  const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs'),log=path.join(root,'interrupted.jsonl');
  // Hold this synthetic child after entry so the wrapper's own 2s timeout cannot win if the parent is briefly descheduled.
@@ -77,9 +94,9 @@ test('native lab wrapper interruption emits no decision or output',async(t)=>{
   assert.ok(result,'interrupted hook child did not close: '+diagnostic());
   assert.equal(spawnError,undefined,'hook child failed to spawn: '+diagnostic());
   assert.ok(result.signal!==null||(result.code!==null&&result.code!==0),'hook child did not terminate from interruption: '+diagnostic());
-  assert.equal(stdout,'','interrupted hook emitted a permission decision or output: '+diagnostic());
-  assert.equal(stderr,'','interrupted hook wrote unexpected stderr: '+diagnostic());
-  assert.ok(!fs.existsSync(log),'interrupted hook wrote a decision record: '+diagnostic());
+  assert.equal(stdout,'','observed child stdout contained a decision or output: '+diagnostic());
+  assert.equal(stderr,'','observed child stderr was non-empty: '+diagnostic());
+  assert.ok(!fs.existsSync(log),'observed decision log exists after synthetic interruption: '+diagnostic());
   t.diagnostic('interruption diagnostics: '+diagnostic());
  }finally{
   if(!closed)child.kill();
