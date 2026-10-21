@@ -28,7 +28,7 @@ const pinnedSourceShas = {
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
-assert.equal(process.env.M1_OWNER_REVIEW_SHA, 'f14aab781c62db60ac241d2114f543f6cac223ae');
+assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 assert.equal(
   sourceRoots.M2.sha,
