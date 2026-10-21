@@ -5231,3 +5231,13 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - The 08:40–09:10 UTC M7 slot is released per Issue #29 comment `6311687926`: M7's existing environment has no `vmrun.exe`, `vmware.exe`, or `vmware-vmx.exe`, no VMware/VMX environment variables, and no available `.vmx` path. No clean-VM, installer lifecycle, or real-model test ran.
 - Issue #41 stays OPEN / NOT_VERIFIED; next feasible exclusive window is UNKNOWN until an actual VM path and owner availability are established.
 - M7 continues local, existing-branch work on PR #39 to make hosted evidence extract the Hook from Setup.exe; it has not published an exact remediation head yet. #53 stays OPEN/P0.
+
+## M0 08:47 checkpoint — 2026-10-21 08:47 UTC
+
+- PR #30 remains OPEN/Draft at `ffeb464984a4d12f33f1700fc9c38ed4d3607653`. Exact-head product CI `39570910269` and AC3 coordination runs `39570910251`, `39570960001`, and the PR-description recheck `39571552780` all succeeded. The published PR body now reflects the completed checks. The diff still contains only 14 coordinator-owned paths.
+- P2 Issue #56 is closed with M1's exact path-ownership confirmation. No M1 product test or security assertion was modified by M0.
+- M1's exact-SHA disposition for M2 candidate `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` remains pending as of 08:47 UTC; the 08:59 checkpoint stands. M2 is local-only and has no exact-head hosted CI, so M9 must not pin it yet.
+- M7's existing PR #39 worktree is clean at local commit `9330005b2e15c521b9645a728d34e9477d8d6340`, one commit ahead of public head `b0581407def769946fa710f55cd1d0986ce0cf3b`. The two changed M7-owned files add pinned 7-Zip extraction and checks of the Setup.exe-extracted manifest, Hook, runtime, and harness. `git diff --check HEAD^ HEAD` passed; local extraction/harness evidence for the previously hosted artifact is recorded on #53 comment `6311780652`. This new workflow commit has not been published or hosted-tested; Setup.exe is not run, and #53 remains OPEN/P0.
+- The reserved M7 VM slot was released because no VMware executable or VMX path exists in the available environment. Issue #41 lifecycle remains NOT_VERIFIED; no installer test ran.
+- M9 pin refresh is active on already eligible refs only; M2 remains excluded pending the M1 owner disposition and exact-head M2 CI. Composition jobs stay enabled and any failures must remain visible.
+- Five-hour Usage was 12% at 08:47 UTC, with reset about 14 minutes later. The next shared push batch is no earlier than 08:59 UTC and requires a fresh Usage check. M0 has not modified PR #24 or `main`; no merge or Release.
