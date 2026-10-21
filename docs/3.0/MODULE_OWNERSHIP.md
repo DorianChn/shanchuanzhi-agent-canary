@@ -543,3 +543,11 @@ The earlier dated snapshots remain historical. Since then M0 added the detached 
 - **M3 onboarding paths:** onboarding/host-detection and connection-check code, onboarding reports, and `docs/3.0/M3/*`. The earlier table shorthand “Hook copy/tests” does not transfer canonical M1 Hook/test ownership. PR #33 currently changes two M1-owned Hook paths; the M1 disposition remains pending.
 - **M4 desktop console paths:** `src/ai/console-page.ts`, `src/ai/security-center-adapter.ts`, `test/runtime-console.test.ts`, and `docs/3.0/M4/*` are within M4's existing PR #34 scope. For P0 #52, M4 is accountable for naming the actual desktop OBSERVE host/build entrypoint; the precise owner of any additional host callback file must be confirmed before that file is changed.
 - **Demo boundary:** `src/ai/policy-demo.ts` uses a virtual OBSERVE executor, and `src/runtime/demo.ts` is a temporary-file Gateway demo. Neither path is accepted as evidence of a first-party OBSERVE-to-M2/M5/M1 production host integration.
+
+## Current Hook adapter ownership clarification - 2026-10-21 09:06 UTC
+
+M1 retains ownership of canonical Hook authorization/logging semantics and canonical shared security assertions. M8 owns its separate logging/consumer adapter and its branch-local tests. M1's exact acceptance of M8 blob 544b5eb76633469b7185c4ea77d85d7f1754393e is recorded in Issue #65 comment 6308270032; M8 must preserve the decision field and cannot use reason normalization to grant authorization. This is an approved variant, not a transfer of M1 semantics or a canonical byte-copy claim.
+
+M9 owns the integration test boundary: compare byte-identical canonical copies only where that identity is an approved requirement, and validate the M8 adapter by its exact reviewed blob plus its owner-approved behavioral/logging contract. M7's actual Setup.exe payload currently uses the canonical M1 blob, verified by artifact 12332644890 and Issue #53 comment 6312265610.
+
+This clarification supersedes older dated ownership rows or snapshots that characterize M8's Hook file as an identical copy of the M1 canonical wrapper. It does not authorize changes to M1-owned security behavior or tests.

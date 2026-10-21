@@ -270,3 +270,14 @@ If compatibility needs a public type or behavior change, M1 changes Gateway APIs
 - M7 ACCEPTed `b0581407def769946fa710f55cd1d0986ce0cf3b` as the M7 packaging-source reference only. M7 owns packaging/build invocation and reliability paths; M6 owns E4 verifier/evidence semantics. M9 still needs a final composed SHA and exact-tree packaging, auto-E4, and integration checks.
 - M5 `99ab80770d8004ef85f13f2d5c0f48f934607603` has M1 source-scope acceptance in Issue #61 comment `6309875503` and exact-head CI success in run `39558618457`; this is eligible as a source input, not whole-tree composition approval.
 - M2 local `d054cee` remains unpinned until M1's explicit review and exact-head hosted CI are available. Strict `verifyRealPaths:true` denial remains fail-closed; neither the local synthetic adapter fixture nor the current M2 branch establishes a first-party product-host safe-read path.
+
+## Current Hook adapter contract and M9 byte-check boundary - 2026-10-21 09:06 UTC
+
+- M1 owns the canonical sanitized Hook wrapper contract. Its current approved source blob is d6f93249306b7966259cab463dd39475728ef338.
+- M8 PR #40 at 2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3 carries distinct adapter blob 544b5eb76633469b7185c4ea77d85d7f1754393e. M1 explicitly accepted this exact blob as a distinct logging/consumer adapter in Issue #65 comment 6308270032. This is not byte-identical to the canonical M1 copy by design.
+- M8's adapter must preserve permissionDecision. Any reason normalization is fixed display/consumer metadata only; it must not infer, grant, or alter authorization.
+- M9 must require byte equality only for copies that are approved as canonical. For M8, pin the exact M1-reviewed blob and assert the M8 contract through its behavioral and log-schema tests. Keep the M8 provenance, LF checkout, JSONL allowlist, and canary checks.
+- At M9 PR #36 head 72249c617687571f88f5c3a8a688245cbace65e6, exact Ubuntu/Windows run 39573535645 failed only the broad equality assertion at test/m9-cross-module-composition.test.mjs:50; the M8-specific provenance/LF/JSONL step passed. This identifies a composition-test scope defect, not a confirmed log leak. Preserve all fail-closed, redaction, and canary assertions while correcting the owner-approved variant boundary.
+- M7's hosted Setup.exe extraction evidence at PR #39 head 9330005b2e15c521b9645a728d34e9477d8d6340 confirms the package's extracted Hook Git blob equals the M1 canonical blob; its controlled package harness passed without executing the installer. See Issue #53 comment 6312265610.
+
+This current note supersedes older dated M9 status and Hook-copy statements in this file where those statements imply that M8's owner-approved adapter must be byte-identical to M1 canonical.
