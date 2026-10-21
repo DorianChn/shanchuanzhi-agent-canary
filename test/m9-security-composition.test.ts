@@ -31,7 +31,7 @@ test('M5 non-overridable sensitive egress stays DENY in OBSERVE with no approval
  assert.equal(callbacks,0);
 });
 
-test('M5 OBSERVE trusted read adapter composes with M1 held-handle Gateway and denies aliased paths before dispatch',async(t)=>{
+test('M5 strict path-only read denies without the M1 capability provider',async(t)=>{
  const base=fs.mkdtempSync(path.join(os.tmpdir(),'m9-gateway-router-composition-'));
  t.after(()=>fs.rmSync(base,{recursive:true,force:true}));
  const workspace=path.join(base,'workspace'),privateDir=path.join(workspace,'private'),outside=path.join(base,'outside');
@@ -50,6 +50,11 @@ test('M5 OBSERVE trusted read adapter composes with M1 held-handle Gateway and d
   agentId:'m9-gateway-router-composition',guard,workspaceRoot:workspace,
   files:[{path:'public.txt'},{path:'private/.env',sensitive:true}],evidence:new EvidenceRecorder(),
  });
+ if(typeof (gateway as any).bindFileReadCapability!=='function'){
+  await gateway.close();
+  t.skip('local M9 product source predates the M1 capability API; exact candidate behavior is covered by m9-cross-module-composition.test.mjs');
+  return;
+ }
  let gatewayDispatches=0;
  const router=createSecurityToolRouter({
   guard,workspaceRoot:workspace,mode:'OBSERVE',verifyRealPaths:true,
@@ -61,19 +66,20 @@ test('M5 OBSERVE trusted read adapter composes with M1 held-handle Gateway and d
  });
  try{
   const publicCall={name:'read',args:{path:'public.txt'}};
-  assert.equal((await router.decide(publicCall)).action,'OBSERVE_ONLY');
+  const publicDecision=await router.decide(publicCall);
+  assert.equal(publicDecision.action,'DENY');
+  assert.equal(publicDecision.reason,'path_execution_not_pinned');
+  await assert.rejects(router.dispatch(publicCall),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
   assert.equal(gatewayDispatches,0);
-  assert.deepEqual(await router.dispatch(publicCall),{content:publicContent});
-  assert.equal(gatewayDispatches,1);
-  assert.deepEqual(gateway.evidence().map(record=>record.tool_id),['read_file','read_file']);
+  assert.equal(gateway.evidence().length,0);
   assert.equal(router.pendingApprovals().length,0);
 
-  for(const pathArg of [path.join('sensitive-alias','.env'),path.join('outside-alias','outside.txt')]){
+  for(const pathArg of [path.join('private','.env'),path.join('sensitive-alias','.env'),path.join('outside-alias','outside.txt')]){
    const aliasedRead={name:'read',args:{path:pathArg}};
    assert.equal((await router.decide(aliasedRead)).action,'DENY');
    await assert.rejects(router.dispatch(aliasedRead),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY');
    assert.equal(router.pendingApprovals().length,0);
-   assert.equal(gatewayDispatches,1);
+   assert.equal(gatewayDispatches,0);
   }
   assert.equal(guard.state,'SAFE');
   assert.equal(fs.readFileSync(privateFile,'utf8'),privateContent);

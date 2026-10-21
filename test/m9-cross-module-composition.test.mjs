@@ -17,23 +17,23 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 }));
 
 const pinnedSourceShas = {
-  M1: 'c016431875a7783f579aa93cd135459ea954d560',
-  M2: 'd054ceea39a0e4dd040131b4ca2789b85f2c9fe4',
+  M1: '7279336307fc7aacd46119405858d4fd91499757',
+  M2: 'eed2c0884f524d37c25d317888e1d289122c440d',
   M3: '535d429faef7ae0e15bbf9b382d639280045f338',
-  M5: '99ab80770d8004ef85f13f2d5c0f48f934607603',
+  M5: 'ed304e399ec237a47e03830e5013695ddcc10dd6',
   M6: '560f724292d285a43fcc4a0b0c8f50f9f08a6f79',
   M7: 'b0581407def769946fa710f55cd1d0986ce0cf3b',
   M8: '2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3',
 };
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
-  assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the reviewed source commit`);
+  assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, 'f14aab781c62db60ac241d2114f543f6cac223ae');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 assert.equal(
   sourceRoots.M2.sha,
-  'd054ceea39a0e4dd040131b4ca2789b85f2c9fe4',
-  'M2 uses the exact M1-accepted adapter source with exact-head hosted CI',
+  'eed2c0884f524d37c25d317888e1d289122c440d',
+  'M2 uses the exact candidate adapter source SHA',
 );
 
 function readTrackedHookBlob(moduleName) {
@@ -250,7 +250,8 @@ test('M1 held-file Gateway and exact M2 adapter provide the constrained syntheti
     guard,
     workspaceRoot: workspace,
     mode: 'OBSERVE',
-    verifyRealPaths: false,
+    verifyRealPaths: true,
+    fileReadCapability: adapter.fileReadCapability,
     tools: adapter.tools,
     executeRealTool: (call, context) => {
       adapterEntrances += 1;
@@ -285,15 +286,20 @@ test('M1 held-file Gateway and exact M2 adapter provide the constrained syntheti
     'public/sensitive-alias.txt',
     'outside-alias/outside.txt',
   ];
-  for (const [index, pathArg] of aliasPaths.entries()) {
+  for (const pathArg of aliasPaths) {
     const aliasCall = { name: 'read', args: { path: pathArg } };
-    assert.equal((await router.decide(aliasCall)).action, 'OBSERVE_ONLY', `${pathArg} stays lexical-only in M5`);
+    assert.equal((await router.decide(aliasCall)).action, 'DENY', `${pathArg} is rejected by strict M5 checks`);
     await assert.rejects(
       router.dispatch(aliasCall),
-      (error) => error instanceof Error && !(error instanceof m5.PolicyBlockedError),
-      `${pathArg} must be rejected by M2's exact-path adapter`,
+      (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+      `${pathArg} must be denied before the M2 callback`,
     );
-    assert.equal(adapterEntrances, index + 2);
+    await assert.rejects(
+      adapter.executeRealTool(aliasCall, { signal: new AbortController().signal }),
+      (error) => error?.message === 'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
+      `${pathArg} must also fail the M2 exact-path allowlist when reached directly`,
+    );
+    assert.equal(adapterEntrances, 1, `${pathArg} never enters the M2 callback`);
     assert.equal(gateway.evidence().length, positiveEvidenceCount, `${pathArg} never dispatches into M1 Gateway`);
     assert.equal(router.pendingApprovals().length, 0, `${pathArg} creates no policy approval`);
     assert.deepEqual(gateway.operator.pending(), [], `${pathArg} creates no Gateway approval`);
@@ -304,7 +310,7 @@ test('M1 held-file Gateway and exact M2 adapter provide the constrained syntheti
   assertFixturesUnchanged();
 });
 
-test('exact M1/M2/M5 sources fail closed before adapter dispatch without host-bound file execution', async (t) => {
+test('exact M1/M2/M5 sources deny strict path-only reads when no M1 capability provider is wired', async (t) => {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-fixtures-'));
   const workspace = path.join(base, 'workspace');
   const outside = path.join(base, 'outside');
