@@ -76,11 +76,11 @@ try {
     guard,
     mode: "OBSERVE",
     workspaceRoot,
-    // PR #47's current strict mode rejects every generic path callback with
-    // path_execution_not_pinned. This checker covers only the fixed M2 adapter
-    // plus M1 Gateway route in lexical policy mode; it is not strict-mode or
-    // first-party-host evidence.
-    verifyRealPaths: false,
+    // Keep the strict setting enabled. This uses the compiled SDK from this
+    // M2 checkout as a synthetic fixture; it does not establish compatibility
+    // with current PR #47, whose strict router denies path-only file callbacks
+    // as path_execution_not_pinned.
+    verifyRealPaths: true,
     eventsFile: path.join(tempRoot, "policy-events.jsonl"),
     tools: {
       read_public: { operation: "file-read", pathArg: "path" },
@@ -162,7 +162,7 @@ try {
   );
   assert.equal(evidenceAfterAllowedRead.length, 2, "only the allowed Gateway read is audited");
   process.stdout.write(
-    "M2_SECURITY_GATEWAY_ADAPTER_PASS (LEXICAL_POLICY_MODE; EXACT_FIXED_PATH_MAP; PLAIN_PATH_STRING_TO_M1_HELD_HANDLE_GATEWAY; ALIASES_DENIED_PRE_GATEWAY; NO_APPROVALS_OR_FILE_CHANGES)\n",
+    "M2_SECURITY_GATEWAY_ADAPTER_PASS (M2_CHECKOUT_SYNTHETIC_SDK_FIXTURE; VERIFY_REAL_PATHS_TRUE; NOT_CURRENT_PR47_COMPATIBILITY; EXACT_FIXED_PATH_MAP; PLAIN_PATH_STRING_TO_M1_HELD_HANDLE_GATEWAY; ALIASES_DENIED_PRE_GATEWAY; NO_APPROVALS_OR_FILE_CHANGES)\n",
   );
 } finally {
   await gateway?.close();
