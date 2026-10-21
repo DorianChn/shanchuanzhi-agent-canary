@@ -5060,3 +5060,10 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - At 04:01 UTC, M2 was clean at local commit `eef815f` (two commits ahead of PR #37's remote head `29386c3`); its owned report still contains one absolute workstation path at line 142, so no push is safe. M8 was clean at `c1ff677`, identical to PR #40's head; no P0 code/test correction is visible and Issue #65 remains OPEN/P0.
 - The active module limit remains two: M2 and M8. M1 is paused pending candidate review; M7 is not assigned a lane and its worktree is clean at `b058140`.
 - PR #24 was rechecked OPEN/Draft, unmerged, unchanged at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. No PR was pushed in this check. The 20-minute batch interval has elapsed since the last M1/M3 push, but a batch still requires owned, corrected, reviewed changes.
+
+## Existing M2 and M8 sessions resumed directly — 2026-10-21 04:07 UTC
+
+- `codex resume <existing thread> --no-daemon` successfully opened the original M2 and M8 sessions against their existing worktrees; the TUI identified the sessions as M2 and M8. This bypassed the unavailable shared daemon without installing software or creating branches.
+- M2 now has a one-file, three-line report-only diff removing the workstation-specific path; M0 reviewed the hunk and found it within the assigned scope. M0 `git diff --check` passes, but M2 has not yet committed or reported its own targeted validation.
+- M8 is resumed in its existing worktree, but no visible file delta exists yet; Issue #65 remains OPEN/P0 until the fail-closed adapter and security assertions are restored and exact-head checks pass.
+- At 04:05 UTC, the Usage page remained at 98% five-hour / 70% weekly. M2 and M8 are the only active module lanes. No PR push was made.
