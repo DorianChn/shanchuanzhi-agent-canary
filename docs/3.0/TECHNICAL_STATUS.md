@@ -1019,6 +1019,7 @@ Only two owner lanes remain active: M3 on #55 and M7/M8 on #53. The 22:32 eviden
 - #51 M0 source audit at M1 head `9ef3dc2`: the quarantine regression now captures worker/PID/iteration, monotonic time, lock open/unlink events, and bounded retry diagnostics. Path run 38786461318 passed, so it supplies no trace for earlier #38 failures. Root trigger remains UNKNOWN; no data-loss claim. Clarification comment 6206031784 requests owner confirmation of the next diagnostic by 01:52.
 - #53 M7/M8 exact heads `cf4b70f`/`c1ff677` have synthetic co-located Hook/payload harness coverage, but no built Windows Setup.exe or workflow artifact. M7 only compiled a synthetic NSIS payload without running the installer; M8 has no NSIS step. Real package hashes, extracted-Hook comparison, and extracted-harness evidence remain NOT_VERIFIED. Clarification comment 6206032101 requests evidence or blocker by 01:52; no VM/installer run without #29 reservation.
 
+
 ## M0 exact-head CI follow-up — 2026-10-16 01:41 UTC
 
 - Pushed M0 head `fd2387c` exact-head product CI run 38836282658 passed all nine jobs. Coordination runs 38836282548, 38836326039, and 38836350534 passed.
@@ -4699,6 +4700,7 @@ Read-only worktree/GitHub verification at 22:07 UTC confirms M5 worktree `ac3-m5
 - PR #30 读回 OPEN/Draft，head 为 b7307c7208a804bac7c4ffb88ad6af3e01a88db3，base 仍为 62496d4020bd90ba2eede49b2e80a2bbebb036b4。新 exact-head CI 39491647371 与协调检查 39491647395 已排队，暂不记通过。
 - PR #24 读回 OPEN/Draft，head 62496d4020bd90ba2eede49b2e80a2bbebb036b4、base dc8d0092b35141b295d5ff42873584ed488e4ee7，均未变。Quota 20:24 为 85%/87%，usage tab 保持打开；下一次 M0 push 不早于 20:43:56 UTC。
 
+
 ## M0 exact-head CI follow-up — 2026-10-20 20:26 UTC
 
 - PR #30 head b7307c7208a804bac7c4ffb88ad6af3e01a88db3 的产品 CI 39491647371 已于 20:25:56 UTC 完成并成功；协调检查 39491647395 已成功。只验证本次 M0 文档提交通过仓库工作流，不替代各模块验收。
@@ -5429,3 +5431,11 @@ Public Issue #29 comment 6314972063 records that M1 + M6 have no visible new own
 - PR #30's 14 changed paths are M0 coordination files; it does not change Hook source or tests. The failure is on its unchanged base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. M1 PR #43 is at `c016431875a7783f579aa93cd135459ea954d560`; exact run `39519637615` passed its 9 jobs, including Windows Node 20/22 and package-smoke. Issue #32 remains CLOSED on M1's accepted timing-fixture disposition; this older-base PR #30 failure is recorded as inherited CI evidence and is not attributed to current M1 source or treated as a security bypass.
 - No public M1 review is visible on candidate PR #37; M1's review of exact M2 head `d054ceea39a0e4dd040131b4ca2789b85f2c9fe4` and Gateway issue #62 disposition remain pending. M6 PR #38 remains at `560f724292d285a43fcc4a0b0c8f50f9f08a6f79`; no public fix movement on #66 is visible. Private session activity is UNKNOWN.
 - Usage Overview was readable at 11:45 UTC: 77% five-hour / 52% weekly remaining. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No main merge or Release. Next shared push batch is no earlier than 12:02 UTC.
+
+## M0 12:04 exact-head CI result — 2026-10-21 12:04 UTC
+
+- Shared push 44300a5dad6231535e7f1e28702d66c7d8c6d239 fast-forwarded the existing M0 branch at 12:02 UTC. PR #24 remains OPEN/Draft with unchanged head/base.
+- Exact-head PR #30 product run 39596446330 completed: six jobs passed, Windows Node 22 failed, Windows Node 20 was cancelled, and package-smoke was skipped. The failure repeats the unchanged M1 interruption marker assertion at test/agent-hook.test.ts:54:53 (false !== true); it did not reach the allow/callback assertions. Exact-head AC3 ownership checks 39596446295 and 39596456087 both passed. PR #30 description and scheduler Issue #29 comment 6315417679 were updated to the final result.
+- M1 PR #43 remains at c016431875a7783f579aa93cd135459ea954d560 with exact CI 39519637615 green 9/9; PR #30's source remains unchanged and inherits the older fixture from PR #24 base 62496d4. Issue #32 remains closed on the M1 owner disposition; this does not claim Hook behavior in a real host.
+- Public M1 review of PR #37 candidate d054ceea39a0e4dd040131b4ca2789b85f2c9fe4 and Gateway #62 disposition are still not visible. M6 PR #38 remains at 560f724292d285a43fcc4a0b0c8f50f9f08a6f79 with no public #66 fix. Private session activity is UNKNOWN. The two active slots remain M1 + M6.
+- Usage was readable pre-push at 12:01 UTC: 77% five-hour / 52% weekly. Next shared push is no earlier than 12:22 UTC. No main merge, PR #24 merge, or Release.
