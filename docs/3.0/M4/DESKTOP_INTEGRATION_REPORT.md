@@ -108,3 +108,11 @@ Required owner decisions before integration:
 3. **M0/M9:** compose only after those owner decisions are recorded, then rerun the exact PR #34 source/test combination.
 
 No M4 source adapter can resolve this branch dependency without taking ownership of M1 authorization or inventing backend status. No cross-module code change, GitHub comment, or push was made for this finding.
+
+## 2026-10-21 Issue #60: PR #34 base-file restoration
+
+On M4 commit `91d46e9807e796f83c709d35bf4b04ed7e9df97c`, `test/agent-hook.test.ts` was restored byte-for-byte to the requested common-base blob `1ecb3ee8b45f1fbe942a25bcd5ce696f82534601` from `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. `git diff 62496d4020bd90ba2eede49b2e80a2bbebb036b4...HEAD -- test/agent-hook.test.ts` is empty; M4 no longer changes the M1-owned test in its PR diff.
+
+After this restoration, `npm run build` passed, `node --import tsx --test test/agent-hook.test.ts` passed **10/10**, and `node --import tsx --test test/runtime-console.test.ts` passed **9/9**. The 10/10 Hook result exercises the older common-base test contract, which allows an in-workspace native `Read`; it does **not** validate M1's newer unpinned-file denial contract. M1's accepted Hook test blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39` and corresponding denial implementation are not yet in the common base. Therefore the green M4-base suite does not resolve #60 or establish the M1 contract on the M4 integration ref.
+
+Before M9 treats the combined branch as accepted, M1 must provide the exact integrated source and canonical-test refs, and M5 must confirm any policy-owned decision/status interface preserves M1's hard-denial precedence. M4's UI continues to report missing live Hook status as `UNKNOWN`. The temporary dependency junction and build output used for local tests were removed; no M5 worktree or remote PR state was changed.
