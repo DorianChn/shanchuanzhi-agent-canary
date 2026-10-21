@@ -5792,3 +5792,7 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 
 - PR #30 head `6a7ca51ae91a3de9c8a4316a198e8a5a376e495b` CI run `39647340703` has 7 passing jobs and one Windows Node 20 failure; package-smoke was skipped. The exact failure is again the M1-owned interruption marker assertion at `test/agent-hook.test.ts:54` (`false !== true`) before no-output/allow assertions. The same docs-only source path passed 9/9 in the previous run `39644399938`, so the test remains intermittent; this is not evidence of a product Hook allow/callback.
 - M0 recorded the run and requested M1 disposition for both PR #30 and the M4 shared-test blob in Issue #60 comment `6322782696`. Preserve bounded readiness, timeout, and no-output checks; the fixture does not directly observe host callbacks.
+
+## M0 18:00 UTC M1/M3 midpoint — 2026-10-21
+
+- At the midpoint, exact M1/M3 refs still had no visible movement or owner reply. M0 reiterated the M1 exact-blob disposition and M3 teardown fix requests, keeping their 18:10 checkpoint, in Issue #60 comment `6322917532` and PR #33 comment `6322918329`.
