@@ -5286,3 +5286,12 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - Public M1 #43 and M2 #37 heads showed no new owner-authored code movement during this checkpoint. Product-host OBSERVE enforcement, desktop held-file identity, TOCTOU, native-shell coverage, and clean-VM lifecycle remain NOT_VERIFIED.
 - Usage page read at 09:26 UTC showed five-hour remainder 96% and weekly remainder 55%. The next shared Git push remains no earlier than 09:40:11 UTC; recheck Usage then and hold all pushes below 5%.
 - M0 coordinator worktree has only the local status checkpoint ahead of PR #30; no PR #24, `main`, or module implementation files were changed. PR #30 remains OPEN/Draft.
+## M0 09:38 risk-register reconciliation — 2026-10-21 09:38 UTC
+
+- Updated the current `INTEGRATION_RISKS.md` snapshot with exact open P0/P1 gates and current PR heads; archived October 15 snapshots remain below as history.
+- Refreshed Issue #65 to remove its stale claim that current M8 head regresses the Hook. The historical `c1ff677` issue is corrected at M8 `2d5a0ff`; M1-reviewed assertions/adapter are green, while exact M9 composition still fails both platforms at the broader M8 byte-equality check.
+- Refreshed Issue #60: M4 PR #34 `fbf2090` exact-head CI run `38698635434` attempt 2 passes all nine checks. The remaining gate is M1's exact review of M4's differing M1-owned `test/agent-hook.test.ts` blob (`e8ae820` vs canonical `82ca466`).
+- Updated Issue #56's closed body with the M0/M1 resolution; refreshed Issue #58 with the current broad M6/M9 `raw.log` exceptions; refreshed #59 with exact M6/M7/M8/M9 refs and the pending M6 E4 shared-test disposition; refreshed #62 to state that the historical expired-approval failure is not reproduced and its root cause remains UNKNOWN.
+- Issue #52 review slot comment `6312657048` remains pending as of this checkpoint. M1 PR #43 is still `c016431`; M2 candidate `d054cee` remains clean/local-only, six commits ahead of PR #37, with 8/8 local focused tests and no hosted exact-head CI.
+- The coordinator changes are documentation only. `git diff --check` passed. M0 PR #30 local worktree is being held for the shared push at or after 09:40:11 UTC; read Usage immediately before publishing and hold below 5%.
+- PR #24 remains OPEN/Draft and unchanged; `main` remains untouched. No module code, merge, or Release was performed.
