@@ -5861,3 +5861,8 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - PR #24 remains OPEN/Draft with unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. Push preflight Usage was 77% five-hour / 52% weekly. Scheduler readback is Issue #29 comment `6323925036`.
 - M2/M7’s 18:30–18:50 slot produced no visible branch or owner change; #69 remains OPEN/P1. The only active modules for 18:50–19:10 are M1 and M3, assigned in #60 comment `6323912162` and PR #33 comment `6323913532`. No exclusive VM/installer/model work is scheduled or running.
 - Next push no earlier than 19:10 UTC after fresh Usage, PR #24, and remote-ref checks. No module code, merge, or Release was changed/performed by M0.
+
+## M0 18:52 UTC exact-head CI readback — 2026-10-21
+
+- PR #30’s new head `bb6cdc35e006b67dc96d094f6ef10947c123bd67` passed product CI run `39656393021` and AC3 coordination run `39656393035`. This is coordinator-doc validation only.
+- M1 #43 and M3 #33 remain on their assigned exact refs at this read; their 18:50–19:10 slot is still active. The next push is no earlier than 19:10 UTC.
