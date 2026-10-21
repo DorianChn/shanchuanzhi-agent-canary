@@ -5892,3 +5892,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - The 18:50–19:10 M1/M3 slot ended without visible module commit or response. M1 #43 remains `7279336307fc7aacd46119405858d4fd91499757`; M3 #33 remains `429cd73c03273bc77f3781b489f541e396cd9361`. Branches were preserved and lane-end notes were posted in #60 comment `6324320109` and PR #33 comment `6324320912`. Private activity remains UNKNOWN.
 - Only active modules for 19:10–19:30 are M4 and M5 on P0 #52: M4 on existing PR #34 head `803a015f3e97ae69b7adeb4411f93defc0a06cfe`, M5 on existing PR #47 head `bbce79aa086b39b51422cc72471c23c963778650`. Their bounded assignments are PR comments `6324321655` and `6324322381`; scheduler readback is Issue #29 comment `6324327394`. No exclusive test resource is reserved.
 - Next M0 push is no earlier than 19:30 UTC after a fresh Usage read, PR #24 check, remote-ref check, and clean coordinator worktree check.
+
+## M0 19:11 UTC M4/M5 worktree boundary check — 2026-10-21
+
+- M4's existing checkout was located at `C:/Users/36712/Desktop/Agent-Canary-Dev/agents/M4`, branch `feature/ac3-desktop-security-center`, clean at PR #34 head `803a015f3e97ae69b7adeb4411f93defc0a06cfe`.
+- M5's existing checkout is `C:/Users/36712/Documents/Codex/2026-10-15/ac3-m5-policy-recovery`, branch `feature/ac3-policy-audit` at PR #47 head `bbce79aa086b39b51422cc72471c23c963778650`. It has pre-existing uncommitted edits in M6-owned `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs`. Per ownership record, these were preserved; M5 was told not to stage or commit them and to keep this slot within M5-owned policy/router paths. Follow-up is PR #47 comment `6324337735`.
+- This is an ownership boundary, not evidence of M6 progress or authorization to transfer files. M0 changed no module checkout.
