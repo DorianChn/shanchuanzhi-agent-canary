@@ -5904,3 +5904,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - Read-only inspection of the existing M4 checkout shows `src/runtime/gateway.ts` blob `02cf0ec02c75e0368d70472038af892b1280a21f`, while the same M1 PR #43 path is blob `40bfe437ea70f0cc21a5a5dbc2bcdf304f0d486c`; these are distinct implementations.
 - M4 `src/runtime/demo.ts` invokes its local `createTrustedExecutionGateway`. `src/protected-mcp.ts:2,5` routes host callbacks through M4 `createSecurityToolRouter`; `src/ai/policy-demo.ts:12-14` explicitly uses virtual executors. These callsites do not establish M1-bound protected-identity consumption through M2's strict facade.
 - M0 supplied this exact trace to M4/M5 in PR #34 comment `6324355802` and PR #47 comment `6324356936`. The assigned M4/M5 work remains bounded to the existing branches; no source was changed by M0.
+
+## M0 19:15 UTC M2/M5 host-adapter contract trace — 2026-10-21
+
+- M2 `createSecurityGatewayHostAdapter` reserves the router's `tools`, `executeRealTool`, and `fileReadCapability`; its injected router options must set `mode: OBSERVE` and `verifyRealPaths: true`. M5 `src/security-router.ts` declares the file-read execution context and forwards the M1 capability to the host callback. M4's current `src/security-router.ts` has no `fileReadCapability` support, and its package manifest exports only `./sdk`; the M2 subpath is present on separate PR #37.
+- This makes the current M4 branch composition gap concrete: it cannot claim M1/M2-held-identity integration by using its local Gateway/router or by copying implementation files. The exact contract and branch-composition blocker were sent to M4/M5 in PR comments `6324397491` and `6324398295`.
+- M5's pre-existing two-file M6-owned worktree diff remains preserved and excluded from the M5 slot.
