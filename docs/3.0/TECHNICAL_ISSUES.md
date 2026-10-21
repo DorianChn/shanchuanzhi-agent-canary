@@ -1592,3 +1592,9 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#66:** M6-owned unstaged edits are visible in the M5 policy branch, but they do not change release() or test release during a pending stage then second acquisition. Preserve; do not count as #66 fix. PR #38 remains at 560f724. M0 documented this in comment 6315647508.
 - **M1 / #52 / #62:** no PR #37 owner review or #62 classification. Keep #52 NOT_VERIFIED and #62 OPEN / UNKNOWN.
 - Next shared push no earlier than 14:03 UTC; PR #24 unchanged.
+
+## M0 package integration update — 2026-10-21 16:29 UTC
+
+- GitHub Issue #68 is OPEN/P1 for the cross-PR M2/M7 package-check dependency. M2 candidate `be66cf8f4c1a60f093740577796ec5cd633e1d93` ships only the M1-reviewed public facade; its current branch checker does not contain M7's policy and cannot validate this new path.
+- M7 completed local commit `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a` on its existing branch. Only `scripts/package-file-policy.mjs` and its package tests changed. Focused policy tests 2/2, build, `pack:check` on M7's current package, and diff check pass. Its new exact-head hosted CI has not run yet; the prior `f1adbfd` CI conclusion was failure because one macOS Node 20 matrix job was cancelled, with other jobs successful.
+- M9 is preparing exact-ref composition in its existing branch. Acceptance for #68 requires running M7's exact checker against the actual packed M2 manifest/artifact in a disposable M9 composition. No broad allowlist, test removal, or cross-module code copy is permitted.

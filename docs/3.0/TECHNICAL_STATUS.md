@@ -5690,3 +5690,9 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - M3 committed protected-read host wiring locally at `429cd73` on its existing branch. Its own branch fails closed as `UNKNOWN` while owner APIs are unavailable. Build and focused tests passed (4/4); a separate cross-worktree candidate probe is not unified host/CI evidence. Issue #52 remains OPEN/P0/NOT_VERIFIED.
 - M7's existing PR #39 remains at `f1adbfd`; the package checker is being narrowed to the exact single-file M2 package policy. Exact-head CI run `39632431622` was still queued; no green claim until completion.
 - Five-hour/weekly quota is 77%/52%; Usage tab `336903978` remains open. PR #24 is still OPEN/Draft with unchanged base/head. Latest push batch was 16:10 UTC; next eligible batch is 16:30 UTC or later, after fresh quota/PR/remote checks. No module-owned code was changed by M0.
+
+## 2026-10-21 16:29 UTC package gate update
+
+- Issue #68 is OPEN/P1, owned by M2/M7/M9. M7 local candidate `cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a` now permits only the public facade file and rejects the omitted implementation/unexpected files. Focused tests 2/2, build, and M7's current-package `pack:check` pass; the M2 candidate artifact was not included in that branch-local run.
+- M2 candidate `be66cf8` remains local pending exact combined package validation. M9 is preparing a disposable exact-source composition to run the M7 checker against M2's real package artifact. The previous M7 CI failure at `f1adbfd` was due to a cancelled macOS Node 20 job; it did not report a failing assertion. New candidate CI is pending publication.
+- Next push batch is no earlier than 16:30 UTC, after fresh Usage, protected PR #24, and remote-ref checks. No module code has been modified by M0.
