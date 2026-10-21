@@ -5776,3 +5776,7 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 
 - PR #30 head `6688c0320b2ca6f40740390878aede08572cc699` product CI run `39644399938` completed successfully with 9/9 jobs; coordination contract run `39644399582` also passed. The batch contains M0 coordination documentation only.
 - Issue #69 remains OPEN/P1 with no M2/M7 owner reply or candidate movement as of 17:32 UTC. M2 #37 and M7 #39 remain at `be66cf8` and `cdae8ba`; the package-policy mismatch is unresolved.
+
+## M0 17:39 UTC M2/M7 delivery checkpoint — 2026-10-21
+
+- Exact M2 #37 and M7 #39 refs remain `be66cf8` and `cdae8ba`, with no visible owner response or candidate movement. M0 asked for the exact M2 adaptation commit/package-smoke result and M7 review, or a concrete blocker, by 17:50 UTC in Issue #69 comment `6322515103`.
