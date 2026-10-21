@@ -20,18 +20,30 @@ export function createAutoE4Run({dataDir,now=()=>new Date(),emit=()=>{},sanitize
   catch(error){try{if(lockFd!==undefined)fs.closeSync(lockFd);}catch{};try{fs.rmSync(runDir,{recursive:true,force:true});}catch{};if(error.code==='EEXIST')throw Error('AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED');throw error;}
   const eventsFile=path.join(runDir,'events.jsonl');
   const report={schemaVersion:'agent-canary.auto-e4.v1',runId,startedAt:now().toISOString(),mode:'AUTOMATED_BOUNDED_ACCEPTANCE',stages:[],commands:[],logs:[],externalIndependence:{status:'NOT_VERIFIED',reason:'No separate human operator and independent environment attestation has been reviewed.'},overallE4:'E4 EXTERNAL INDEPENDENCE NOT VERIFIED'};
-  const record=(event)=>{const cleaned=sanitize({at:now().toISOString(),...event});const line=JSON.stringify(cleaned)+'\n';fs.appendFileSync(eventsFile,line,{mode:0o600,flag:'a'});emit(cleaned);};
+  const startedStages=new Set(),activeStages=new Set();let finished=false;
+  const record=(event)=>{if(finished)throw Error('AUTO_E4_RUN_FINISHED');const cleaned=sanitize({at:now().toISOString(),...event});const line=JSON.stringify(cleaned)+'\n';fs.appendFileSync(eventsFile,line,{mode:0o600,flag:'a'});emit(cleaned);};
   async function stage(id,action){
     if(!AUTO_E4_STAGES.includes(id))throw Error('UNKNOWN_AUTO_E4_STAGE');
-    record({type:'progress',stageId:id,status:'RUNNING',message:'Stage started'});
-    const started=Date.now();let status='NOT_VERIFIED',detail={};
-    try{const result=await action();status=result?.status??'NOT_VERIFIED';detail=sanitize(result?.detail??{});if(!VALID.has(status))throw Error('INVALID_STAGE_STATUS');}
-    catch(error){status='FAIL';detail={error:String(error?.message??error).slice(0,500)};}
-    const item={id,status,durationMs:Date.now()-started,detail};report.stages.push(item);
-    record({type:'progress',stageId:id,status,durationMs:item.durationMs,message:detail.summary??detail.reason??status,detail});
-    return item;
+    if(finished)throw Error('AUTO_E4_RUN_FINISHED');
+    if(startedStages.has(id))throw Error('DUPLICATE_AUTO_E4_STAGE');
+    startedStages.add(id);
+    activeStages.add(id);
+    try{
+      record({type:'progress',stageId:id,status:'RUNNING',message:'Stage started'});
+      const started=Date.now();let status='NOT_VERIFIED',detail={};
+      try{const result=await action();status=result?.status??'NOT_VERIFIED';detail=sanitize(result?.detail??{});if(!VALID.has(status))throw Error('INVALID_STAGE_STATUS');}
+      catch(error){status='FAIL';detail={error:String(error?.message??error).slice(0,500)};}
+      const item={id,status,durationMs:Date.now()-started,detail};report.stages.push(item);
+      record({type:'progress',stageId:id,status,durationMs:item.durationMs,message:detail.summary??detail.reason??status,detail});
+      return item;
+    }finally{
+      activeStages.delete(id);
+    }
   }
   function finish(){
+    if(finished)return report;
+    if(activeStages.size>0)throw Error('AUTO_E4_STAGE_IN_PROGRESS');
+    finished=true;
     for(const id of AUTO_E4_STAGES)if(!report.stages.some(s=>s.id===id))report.stages.push({id,status:'SKIPPED',durationMs:0,detail:{reason:'Not run because its required prerequisite was unavailable.'}});
     const counts=Object.fromEntries([...VALID].map(s=>[s,report.stages.filter(x=>x.status===s).length]));
     report.coverage={verified:counts.PASS,failed:counts.FAIL,blocked:counts.BLOCKED,skipped:counts.SKIPPED,notVerified:counts.NOT_VERIFIED,total:report.stages.length,label:'Stage coverage only; not a security score or protection rate.'};

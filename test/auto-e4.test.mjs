@@ -105,3 +105,50 @@ test('Auto E4 artifact writer refuses to overwrite a prior report',t=>{
   assert.equal(fs.readFileSync(files.mdFile,'utf8'),originalMarkdown);
   assert.equal(fs.readFileSync(files.indexFile,'utf8'),originalIndex);
 });
+
+test('Auto E4 rejects concurrent duplicate stages and keeps active-stage state internal',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-duplicate-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data});
+  let completeFirst;
+  const firstGate=new Promise(resolve=>{completeFirst=resolve;});
+  try{
+    const first=run.stage('environment',()=>firstGate);
+    try{
+      await assert.rejects(run.stage('environment',async()=>({status:'PASS',detail:{summary:'duplicate'}})),/DUPLICATE_AUTO_E4_STAGE/);
+      run.report.stages.push({id:'environment',status:'PASS',durationMs:0,detail:{summary:'synthetic projection only'}});
+      try{
+        assert.throws(()=>run.finish(),/AUTO_E4_STAGE_IN_PROGRESS/);
+      }finally{
+        run.report.stages.pop();
+      }
+    }finally{
+      completeFirst({status:'PASS',detail:{summary:'first attempt'}});
+    }
+    await first;
+    const report=run.finish();
+    assert.equal(report.stages.filter(stage=>stage.id==='environment').length,1);
+    assert.equal(report.coverage.verified,1);
+    assert.equal(report.coverage.total,AUTO_E4_STAGES.length);
+  }finally{
+    run.release();
+  }
+});
+
+test('Auto E4 finalization prevents later stages or event mutation',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-finished-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data});
+  try{
+    const report=run.finish();
+    const completedAt=report.completedAt;
+    await assert.rejects(run.stage('environment',async()=>({status:'PASS'})),/AUTO_E4_RUN_FINISHED/);
+    assert.throws(()=>run.record({type:'late-event'}),/AUTO_E4_RUN_FINISHED/);
+    assert.equal(run.finish(),report);
+    assert.equal(report.completedAt,completedAt);
+    assert.equal(report.stages.length,AUTO_E4_STAGES.length);
+    assert.equal(new Set(report.stages.map(stage=>stage.id)).size,AUTO_E4_STAGES.length);
+  }finally{
+    run.release();
+  }
+});
