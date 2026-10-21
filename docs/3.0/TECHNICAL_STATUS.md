@@ -5295,3 +5295,12 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 - Issue #52 review slot comment `6312657048` remains pending as of this checkpoint. M1 PR #43 is still `c016431`; M2 candidate `d054cee` remains clean/local-only, six commits ahead of PR #37, with 8/8 local focused tests and no hosted exact-head CI.
 - The coordinator changes are documentation only. `git diff --check` passed. M0 PR #30 local worktree is being held for the shared push at or after 09:40:11 UTC; read Usage immediately before publishing and hold below 5%.
 - PR #24 remains OPEN/Draft and unchanged; `main` remains untouched. No module code, merge, or Release was performed.
+## M0 09:41 publication and lane switch — 2026-10-21 09:41 UTC
+
+- At 09:40:43 UTC M0 pushed coordinator-only commits through `e8faf4aae0ba237ee59c14a20d65b8ef2df6dd98` to the existing PR #30 branch. No module branch was published in this batch.
+- Exact-head CI run `39578820644` is in progress; Ubuntu Node 20/22, macOS Node 22, Docker, sponsor-smoke, and ownership-contract evidence have passed so far. macOS Node 20 and Windows Node 20/22 were pending at 09:41 UTC. Do not update the PR description with final green status until the run completes.
+- The 09:26–09:40 Issue #52 review slot ended without a public M1 ACCEPT/REJECT or PR-head movement. M2 `d054cee` remains held and unpinned; public/private activity beyond GitHub is UNKNOWN. Lane-end evidence is #52 comment `6312890056`.
+- The 09:40–10:00 two-lane assignment is M1 + M9, recorded in Issue #61 comment `6312890818`. M1 continues the exact d054 SHA review. M9 owns the M8 assertion-scope correction and exact `.gitignore` exception on existing PR #36. M2 is paused pending M1 disposition.
+- M0 updated Issues #56 (closed resolution), #58 (current raw-log rule), #59 (current M6–M8 refs), #60 (M4 exact CI green but shared-test review open), #62 (expired-approval failure not reproduced; cause unknown), and #65 (historical M8 regression corrected; M9 composition still fails).
+- Pre-push Usage read showed five-hour 95%, weekly 55%. The next shared Git push is no earlier than 10:00:43 UTC; reread Usage then and pause below 5%.
+- M0 worktree is clean after publication. PR #24 remains OPEN/Draft and unchanged; `main` is untouched. No merge or Release.
