@@ -1531,3 +1531,9 @@ M3 PR #33 is green 9/9 at `9841bd8`, but its exact changed-file list now include
 
 ### Scheduler and release boundary
 Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 UTC (77% five-hour / 52% weekly). PR #24 remains OPEN/Draft unchanged. No main merge or Release.
+
+## M0 CI follow-up — 2026-10-21 11:46 UTC
+
+- PR #30 run `39593907907` is a partial failure on its unchanged base: Windows Node 22 failed the marker assertion in the M1-owned Hook interruption test; six jobs passed, Windows Node 20 was cancelled, and package-smoke was skipped. The failing test did not reach any allow/callback assertion.
+- M1 PR #43 exact head `c016431875a7783f579aa93cd135459ea954d560` has green run `39519637615`, including both Windows versions and package-smoke. Issue #32 stays closed on the recorded owner fix/disposition; PR #30 retains an older fixture from base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Treat this as inherited stale-base CI, not a new M1 security failure. Preserve all assertions.
+- The separate M1-owned Gateway expiry report #62 is still OPEN / UNKNOWN. The active two-module lane remains M1 (#37 review + #62) and M6 (#66 fix); no owner result is visible yet.
