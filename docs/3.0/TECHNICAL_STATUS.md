@@ -5046,3 +5046,9 @@ M0 posted a correction to #55: PR #33's exact changed-file list includes both M1
 
 - No safe module update was ready at the scheduled window. M8 remained at `c1ff677` with no code delta; M2 remained at `eef815f` with the two local commits still containing a workstation-specific absolute path in its report. M0 therefore skipped the batch and made no push.
 - The last remote push remains M3 at `00:09:46 UTC`; the 20-minute interval is now satisfied, but the next push still requires a clean, owner-approved branch diff. M8 issue #65 stays OPEN/P0; M2 PR #37 stays at `29386c3` until its path is sanitized. Current queue delivery is confirmed; module execution is not.
+
+## M0-RESUME retry and execution blocker — 2026-10-21 00:37 UTC
+
+- M0 sent explicit `M0-RESUME` messages to the existing M8 and M2 threads (queue IDs `01a15be1-b701-7513-b047-aabcc1a167c7` and `01a15be1-b70c-78a0-99b2-c1ed8da17da3`). At the 00:36 UTC filesystem/GitHub check, M8 remained clean at `c1ff677` with PR #40 unchanged and M2 remained clean at `eef815f` with PR #37 unchanged. Queue delivery succeeded; no module execution is confirmed.
+- `codex agents` and `codex app-server daemon start` both report that the available CLI lacks a complete local package. M0 did not install software or enable remote control, and may not alter M2/M8-owned files. Further progress on the open #65 P0 repair and M2 report sanitization now requires the existing sessions to execute or an available full session-control channel.
+- Quota last read at 00:36 UTC remains 70% five-hour / 72% weekly. No push was made at the 00:29:46 UTC window because the only M2 changes still contain the workstation path and M8 has no correction. PR #24 remains OPEN/Draft at its unchanged head. Issue #64 is CLOSED with exact-head CI evidence; #51 remains OPEN/UNKNOWN; #52, #53, #55, #59, #61, and #65 remain open.
