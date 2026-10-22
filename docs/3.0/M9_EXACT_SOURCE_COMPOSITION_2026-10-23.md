@@ -4,7 +4,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 | Module | PR | Exact source SHA | M9 coverage |
 | --- | --- | --- | --- |
-| M1 Gateway | #43 | `a5eff766ebe041bc2c6cc13758827d5a96205de9` | Held-Gateway regression and synthetic protected-read composition |
+| M1 Gateway | #43 | `c67b15f76973a2333ce523dd58d5b7439ab40702` | Held-Gateway regression and synthetic protected-read composition |
 | M2 isolation | #37 | `099ad64e4a09330920cbd40847adec3fe631e91e` | Package build, tarball facade, package policy and synthetic composition |
 | M3 onboarding | #33 | `fcaa24f8479c7072da0a51e96100ddfb3b2774c8` | Build, focused Hook/onboarding regressions, fail-closed trusted dependency seam, and synthetic fixed-read host |
 | M4 desktop security center | #34 | `6d5b05b4ca634dd5727b62f621f783f8e56586b5` | Build, `runtime-console` regressions and exact-source adapter redaction check |
@@ -15,8 +15,8 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 ## Owner-review boundaries
 
-- M1 Issue #52 comment `6349691761` approves the exact M2 source above for the M1 Gateway/M2 adapter API contract only. It does not accept a first-party host integration or TOCTOU protection.
-- M1 Issue #72 comment `6347268881` reviewed M3 source `27d4a20a20894c7b779edf68d8bf79685bc0e69b` for three Hook-related blobs only. M9 checks those same blobs remain unchanged in the current M3 source; this is not an M1 review of the newer M3 Console route or its tests.
+- M1 Issue #52 comment `6349691761` approves the exact M2 source above for the M1 Gateway/M2 adapter API contract only, with historical M1 review base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. Current M1 `c67b15f76973a2333ce523dd58d5b7439ab40702` descends from that base; the comment does not accept the new M1 read implementation, a first-party host integration or TOCTOU protection.
+- M1 Issue #72 comment `6347268881` reviewed M3 source `27d4a20a20894c7b779edf68d8bf79685bc0e69b` for three Hook-related blobs only, with the same historical M1 review base. M9 checks those same blobs remain unchanged in the current M3 source; this is not an M1 review of the newer M3 Console route or its tests.
 - M6 Issue #59 comment `6346660246` reviewed an M8 test hunk and the M6 lifecycle contract at M6 source `2cebabc81d7908c04ddfa10378fa1d3427b92cf4`. The current M6 source is newer; the old source remains an ancestry check, not acceptance of every change in the current M6 head.
 - M6 exact-head hosted CI for `ef4679b276a90767bb1a6d7bd852aadc45b2d1cb` is green across its 11 checks. This does not establish installer, clean-VM, real-model or external E4 behavior.
 

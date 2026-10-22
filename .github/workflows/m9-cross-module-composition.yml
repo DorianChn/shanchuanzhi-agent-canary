@@ -27,8 +27,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: a5eff766ebe041bc2c6cc13758827d5a96205de9
+          ref: c67b15f76973a2333ce523dd58d5b7439ab40702
           path: module-sources/m1
+          fetch-depth: 0
 
       - name: Checkout M2 PR #37 at exact package candidate SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -91,12 +92,16 @@ jobs:
           m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
           m2_sha="$(git -C module-sources/m2 rev-parse --verify HEAD)"
           m1_m2_review_status='APPROVE'
-          m1_m2_review_sha="$m1_sha"
+          m1_m2_review_sha='a5eff766ebe041bc2c6cc13758827d5a96205de9'
           m1_m2_review_target_sha="$m2_sha"
           m1_m2_review_comment='6349691761'
           m1_m2_review_issue='52'
           m1_m2_review_scope='adapter-to-Gateway contract only'
           m1_m2_review_condition='API contract only; no first-party product-host or TOCTOU acceptance'
+          if ! git -C module-sources/m1 merge-base --is-ancestor "$m1_m2_review_sha" "$m1_sha"; then
+            echo 'Historical M1-to-M2 API review SHA is not an ancestor of the exact M1 source candidate.' >&2
+            exit 1
+          fi
           m2_prior_m1_disposition='ACCEPT_WITH_CONDITIONS'
           m2_prior_m1_disposition_sha='be66cf8f4c1a60f093740577796ec5cd633e1d93'
           m2_prior_m1_disposition_comment='6321070391'
@@ -109,10 +114,14 @@ jobs:
           fi
           m3_sha="$(git -C module-sources/m3 rev-parse --verify HEAD)"
           m1_m3_review_status='ACCEPT'
-          m1_m3_review_sha="$m1_sha"
+          m1_m3_review_sha='a5eff766ebe041bc2c6cc13758827d5a96205de9'
           m1_m3_review_target_sha='27d4a20a20894c7b779edf68d8bf79685bc0e69b'
           m1_m3_review_comment='6347268881'
           m1_m3_review_issue='72'
+          if ! git -C module-sources/m1 merge-base --is-ancestor "$m1_m3_review_sha" "$m1_sha"; then
+            echo 'Historical M1 Hook review SHA is not an ancestor of the exact M1 source candidate.' >&2
+            exit 1
+          fi
           m4_sha="$(git -C module-sources/m4 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
           m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 06fdbb060574e96e5d1eba5c77721014e0a81a3b^{commit})"
@@ -175,9 +184,9 @@ jobs:
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M1-to-M3 reviewed Hook source: %s (M1 %s; reviewed M3 commit %s; current M3 source %s; Issue #72 comment %s; Hook blobs checked unchanged)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_m3_review_target_sha" "$m3_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M1-to-M3 reviewed Hook source: %s (historical M1 review SHA %s; current M1 %s; reviewed M3 commit %s; current M3 source %s; Issue #72 comment %s; Hook blobs checked unchanged)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_sha" "$m1_m3_review_target_sha" "$m3_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'Exact source SHAs: M9=%s M1=%s M2=%s M3=%s M4=%s M5=%s M6=%s M7=%s M8=%s\n' "$m9_sha" "$m1_sha" "$m2_sha" "$m3_sha" "$m4_sha" "$m5_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
-          printf 'M1-to-M2 Issue #52: %s (M1 %s; M2 %s; comment %s; scope %s; boundary %s)\n' "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_m2_review_target_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M1-to-M2 Issue #52: %s (historical M1 review SHA %s; current M1 %s; M2 %s; comment %s; scope %s; boundary %s)\n' "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_sha" "$m1_m2_review_target_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M3 Hook disposition: %s (reviewed commit %s; current M3 %s; blobs rechecked; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_target_sha" "$m3_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M6-to-M8 scoped disposition: %s (reviewed M6 contract %s; current M6 %s; M8 %s; Issue #59 comment %s)\n' "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_sha" "$m8_sha" "$m6_m8_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
 
@@ -301,7 +310,7 @@ jobs:
             echo 'Issue #69 closure applies only to its historical exact M2/M7 candidate; Issue #68 remains historical. M1 comment 6349691761 APPROVES M2 099ad64e4a09330920cbd40847adec3fe631e91e for the adapter-to-Gateway API contract only. This source composition does not establish product-host wiring or TOCTOU.'
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks. This fixture injects the exact pinned M5 router into the packed M2 public facade; M2 reserves and injects its tools, callback, and M1 capability wiring but does not authenticate router identity. A registered synthetic protected_read passes only when M5 resolves and verifies the M1 capability and M2 forwards that capability to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
             echo 'Active-capability negative controls cover a sensitive .env path, workspace and outside symlink/junction aliases, and a hard link alias named .env. M5 denies these before its M2 callback; direct packed-M2 executor calls reject all unregistered aliases before M1. No M1 runtime evidence or approval effect is added and fixture bytes/hashes remain unchanged.'
-            echo 'Current pinned exact sources: M1 a5eff766ebe041bc2c6cc13758827d5a96205de9; M2 099ad64e4a09330920cbd40847adec3fe631e91e; M3 fcaa24f8479c7072da0a51e96100ddfb3b2774c8; M4 6d5b05b4ca634dd5727b62f621f783f8e56586b5; M5 e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2; M6 ef4679b276a90767bb1a6d7bd852aadc45b2d1cb; M7 868842b1b7d76cf94a8d84a5f76c6acd4ca67f50; M8 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db. M1 comment 6347268881 reviewed M3 source 27d4a20a20894c7b779edf68d8bf79685bc0e69b Hook blobs only; current M3 Hook blobs are asserted unchanged. Historical M2/M6 dispositions remain scoped to their original exact revisions.'
+            echo 'Current pinned exact sources: M1 c67b15f76973a2333ce523dd58d5b7439ab40702; M2 099ad64e4a09330920cbd40847adec3fe631e91e; M3 fcaa24f8479c7072da0a51e96100ddfb3b2774c8; M4 6d5b05b4ca634dd5727b62f621f783f8e56586b5; M5 e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2; M6 ef4679b276a90767bb1a6d7bd852aadc45b2d1cb; M7 868842b1b7d76cf94a8d84a5f76c6acd4ca67f50; M8 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db. M1 historical review SHA a5eff766ebe041bc2c6cc13758827d5a96205de9 is an ancestor of the current M1 pin. Comment 6347268881 reviewed M3 source 27d4a20a20894c7b779edf68d8bf79685bc0e69b Hook blobs only; current M3 Hook blobs are asserted unchanged. Historical M2/M6 dispositions remain scoped to their original exact revisions.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
             echo 'M2/M3 scope: only the synthetic fixed protected_read route through the packed public facade and injected M5 router is covered; native Codex Shell remains UNPROTECTED / NOT_VERIFIED.'
             echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3 protected_read host that loads the M2 packed public facade and injects the exact M5 router. The M3/M1 native Hook comparison still denies an unpinned normal Read; Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
