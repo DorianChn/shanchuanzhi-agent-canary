@@ -7117,3 +7117,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - The candidate pins M2 67428139, M5 12b2499, M8 35aa22f plus already-green M1/M3/M4/M6/M7 heads. M9 composition tests passed 11/11; the focused security composition suite passed 3 with 1 existing skip because the local M9 snapshot predates the M1 capability API. Diff-check passed.
 - Public PR #36 remains at 129075c until the next eligible push batch. Exact hosted M9 Ubuntu/Windows composition is therefore pending; local scratch/commit results are not presented as hosted acceptance.
 - Issue #52 remains OPEN/P0: the real first-party host identity/TOCTOU path is unverified. Issue #41 remains OPEN/P1 pending clean-VM installer lifecycle. PR #24 remains untouched.
+
+## M6/M7 lifecycle audit — 2026-10-22 22:55 UTC
+
+- M6 exact head `15e1663eac9c3932165fca9b39587115345f289c` was independently audited with M8 index head `35aa22f3087ed1859da19acbf12cc4c767dd4f3d`. The M6 verifier hashes and parses the same archive Buffer; focused tests passed 18/18. The saved evidence remains `productE4Accepted=false`, `e4Status=NOT_VERIFIED`; Issue #57 stays OPEN/P1. The M7 Hook canonical blob and the M8 adapter blob are distinct; the verifier does not accept Hook/E4 evidence. The M7 artifact ZIP download hung and was stopped, so its contents were not independently rechecked.
+- M7 lifecycle audit found that a separate isolated `windows-latest` job could add actual install/uninstall smoke evidence, but cannot establish the full Windows 11 clean-VM/cancel-rollback matrix. No installer or VM was run; Issue #41 stays OPEN/P1/HOLD, with upgrade, GUI cancellation rollback, EFS, and clean Windows 11 evidence unresolved.
+- Neither audit changed module code or created a module commit. M0 remains coordination-only; M9 candidate `219d74e17dab061e2e97fa31c7c27c00fa633c34` still awaits publication and hosted exact-source CI.

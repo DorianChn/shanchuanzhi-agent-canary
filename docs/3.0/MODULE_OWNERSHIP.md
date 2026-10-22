@@ -756,3 +756,7 @@ M9's uncommitted scratch composition passed 11/11 using the public exact candida
 ## M9 owner candidate delta — 2026-10-22 22:52 UTC
 
 M9 local commit 219d74e17dab061e2e97fa31c7c27c00fa633c34 pins the exact public M2/M5/M8 candidates and the previously green M1/M3/M4/M6/M7 refs. It changes only the M9 workflow, composition test SHA map, and exact-source report. Local composition is 11/11; focused security suite is 3 pass / 1 existing skip. It remains one commit ahead of public PR #36, and hosted exact M9 CI is pending publication.
+
+## M6/M7 integration audit — 2026-10-22 22:55 UTC
+
+M6 exact head `15e1663eac9c3932165fca9b39587115345f289c` remains unchanged; its verifier's same-Buffer hash/parse boundary passed 18/18 focused tests, but product E4 remains NOT_VERIFIED and Issue #57 stays OPEN/P1. M7 canonical Hook and M8 adapter blobs are distinct; the M6 verifier does not conflate them. M7's lifecycle audit found hosted Windows install/uninstall smoke can supplement evidence but cannot replace a Windows 11 clean-VM/cancel-rollback matrix. No installer or VM ran; Issue #41 stays OPEN/P1/HOLD. No module ownership or module source changed.
