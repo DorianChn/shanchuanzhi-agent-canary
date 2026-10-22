@@ -113,7 +113,7 @@ export function recordAutoE4BundleFailure(report,runDir,reason,{now=()=>new Date
   }
   const stage=report.stages.find(item=>item.id==='materials');
   if(!stage)throw Error('AUTO_E4_MATERIALS_STAGE_MISSING');
-  const detail={reason:String(reason??'EVIDENCE_BUNDLE_CREATE_FAILED').slice(0,500),summary:'Reports exist, but a verified ZIP bundle could not be created.'};
+  const detail={reason:String(sanitize(String(reason??'EVIDENCE_BUNDLE_CREATE_FAILED').slice(0,500))),summary:'Reports exist, but a verified ZIP bundle could not be created.'};
   const priorStage=previous.stages?.find(item=>item.id==='materials');
   const changed=priorStage?.status!=='BLOCKED'||priorStage?.detail?.reason!==detail.reason;
   stage.status='BLOCKED';stage.detail=detail;

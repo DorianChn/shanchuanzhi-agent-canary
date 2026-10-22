@@ -41,3 +41,42 @@ test('Auto E4 bundle failure persists a blocked final report without weakening r
     assert.throws(()=>writeAutoE4Artifacts(report,run.runDir),/AUTO_E4_ARTIFACT_ALREADY_EXISTS/);
   }finally{run.release();}
 });
+
+test('Auto E4 bundle failure sanitizes local paths in every persisted artifact',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'ac-e4-bundle-redaction-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data,sanitize:value=>redact(value)});
+  const marker='E4_BUNDLE_FAILURE_LOCAL_PATH_MARKER';
+  const localPath=`C:\\Users\\fixture\\${marker}\\sidecar.json`;
+  const reason=`EACCES: permission denied, open '${localPath}'`;
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    run.finish();
+    const {artifacts,bundle}=finalizeAutoE4Artifacts(run,()=>{throw Error(reason);});
+    assert.equal(bundle,null);
+
+    const json=fs.readFileSync(artifacts.jsonFile,'utf8');
+    const markdown=fs.readFileSync(artifacts.mdFile,'utf8');
+    const eventText=fs.readFileSync(path.join(run.runDir,'events.jsonl'),'utf8');
+    for(const persisted of [json,markdown,eventText]){
+      assert(!persisted.includes(localPath));
+      assert(!persisted.includes(marker));
+    }
+
+    const report=JSON.parse(json);
+    const stage=report.stages.find(item=>item.id==='materials');
+    assert.equal(stage.status,'BLOCKED');
+    assert.match(stage.detail.reason,/EACCES: permission denied/);
+    assert(stage.detail.reason.includes('[ABSOLUTE_PATH_REDACTED]'));
+    const events=eventText.trim().split(/\r?\n/).map(line=>JSON.parse(line));
+    assert.equal(events.at(-1).detail.reason,stage.detail.reason);
+    assert.match(events.at(-1).detail.reason,/EACCES: permission denied/);
+    const index=JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8'));
+    for(const file of [artifacts.jsonFile,artifacts.mdFile,path.join(run.runDir,'events.jsonl')]){
+      const bytes=fs.readFileSync(file);
+      const entry=index.artifacts.find(item=>item.name===path.basename(file));
+      assert.equal(entry.bytes,bytes.length);
+      assert.equal(entry.sha256,sha(bytes));
+    }
+  }finally{run.release();}
+});
