@@ -6575,3 +6575,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 is updating its existing workflow because run `39818864712` passed only the workflow's pinned refs, which were stale for current M1/M3/M5/M8 heads. Current refs are recorded above; no all-current-head composition pass is claimed. Keep #69 OPEN until M9 reruns successfully on the corrected exact pins and review evidence.
 - M6 and M7 owner dispositions on #59 are recorded (`6346660246`, `6346555941`) for bounded synthetic test/helper scope. #59 remains OPEN pending corrected M9 composition; missing fault logs still mean zero records/PASS.
 - PR #30 head `2ee8680874eab5d9dea61e808687b6a7f421145a` has successful product CI run `39820847142` and coordination workflow `39820847061`. PR remains OPEN/Draft and reports UNSTABLE; no merge was attempted.
+
+## M0 exact-head delta — 2026-10-22 17:19 UTC
+
+- M1 completed its P0 #52 owner review in comment `6346736001`: CONDITIONAL ACCEPT for exact M2 PR #37 `868b12a…` only with M1 PR #43 APIs at `a5eff766…` actually injected. The M2 base lacks those APIs; synthetic adapter checks do not prove first-party host wiring, held-identity use, or OS-atomic TOCTOU. #52 remains OPEN/P0 and production status NOT_VERIFIED.
+- M9 updated the existing composition workflow/test locally to current PR heads for M1/M2/M3/M5/M6/M7/M8. Its first 10/10 local composition run used the prior PENDING M1 metadata. M9 must first record M1's exact current disposition and M6's bounded current-scope comment, then rerun the full target composition. No current-head composition pass is claimed yet; #69 remains OPEN.
+- M4 owner review for the first-party OBSERVE callsite in #52 remains in progress. It will provide either a real host-path proof or a precise host/API blocker; no production integration claim is made.
