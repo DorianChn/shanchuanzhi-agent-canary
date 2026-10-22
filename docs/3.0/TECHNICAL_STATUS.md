@@ -6094,3 +6094,53 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - Last M0 documentation-only push was 45156b8ab796d080c0ac528759559c32cdc2ebe8 at 23:40 UTC. Local coordinator status at 23:52 showed only this report modified. Next push is no earlier than 00:00 UTC after fresh Usage, PR #24, remote-ref, and git diff-check preflight. PR #24 remains OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7; no PR #24, main, module-source, or Release changes are being made by M0.
 - M0 exact-head product CI run 39694968072 remains 7 successful / 1 failed / package-smoke skipped; the sole failure was unchanged M1-owned test/agent-hook.test.ts test 10, line 54, Windows Node 20 readiness assertion after 2.623 seconds. M0 coordination run 39694968062 passed 1/1. This is not a product Hook regression finding; root cause remains UNKNOWN. Evidence is logged in Issue #60 6329051883 and PR #30 6329052386.
 - Scheduler snapshot was also posted to #29 in comment 6329222661; it records the 23:51 quota read and the two-slot assignment.
+
+
+## M0 00:02 UTC push receipt and M2/M7 midpoint — 2026-10-22
+
+- M0 documentation-only commit 039cf0a6fc24c66cfc0377da4043801babce5ef2 was pushed at 00:00 and verified on origin plus exact PR #30 head; PR #30 remains OPEN/Draft. Worktree is clean after push except for this new report update. Coordination run 39697024555 passed 1/1; product CI run 39697024527 was still in progress at 00:02. Do not report final product CI until exact-head completion is read back.
+- PR #24 remains OPEN/Draft at head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. No change to PR #24, main, module code, or Release was made.
+- Usage reset was verified at 00:00 UTC: five-hour 100%, weekly 30%, reset in 5 hours; the Usage tab was restored and remains open. Continue stopping if a readable five-hour value falls below 5% or the meter is unavailable.
+- At the 00:00 midpoint, M2 PR #37 remained at be66cf8f4c1a60f093740577796ec5cd633e1d93 and M7 PR #39 at cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a. No new source blob, focused package-smoke result, or M7 disposition was visible. Midpoint asks: Issue #69 6329294133, PR #37 6329294985, PR #39 6329296169; scheduler Issue #29 6329297333. Keep this lane marked ASSIGNED / PROGRESS NOT VERIFIED until exact code/check evidence appears. Slot end remains 00:10 UTC.
+- The next M0 documentation push is no earlier than 00:20 UTC after a fresh Usage read, PR #24 check, remote-ref/worktree preflight, and diff check.
+
+
+## M0 00:05 UTC ownership correction for M2/M7 package-smoke — 2026-10-22
+
+- Correction: the earlier M0 slot wording that said M2 owns the facade-only checker policy was inaccurate. The actual file ownership in P1 #69 and PR #39 is M7 owns package-file policy/checker; M2 owns its adapter artifact and package manifest and must consume the owner-approved policy unchanged. I posted corrections to #69 comment 6329326165, PR #37 comment 6329327267, PR #39 comment 6329328466, and scheduler #29 comment 6329329617. The exact-ref correction is #69 comment 6329346679.
+- Read-only source inspection at M7 PR #39 head cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a verified policy blob f5156cb81f96e8485ab8624390a24ed721f08871 and checker blob 4b551fed7b4e4f6599c8870263c2ff4e0d26be20. M7's policy lists exactly execution-isolation/gateway-adapter/gateway-adapter.mjs as public and rejects other adapter files/exports. M2's current package.json adds that same file and subpath export. M7 is asked for an isolated owner-authored transferable commit/adapter; M2 must consume those exact checker blobs unchanged and pass its own package-smoke. The exact transfer SHA and focused result are still pending.
+- At 00:04:39 UTC, the M2/M7 PR heads were unchanged from activation, and no owner result was visible. This lane remains ASSIGNED / PROGRESS NOT VERIFIED until the owner-authored transfer, M2 exact-head smoke, and M7 review are recorded. Issue #69 stays OPEN/P1; P0 #52 stays OPEN/NOT_VERIFIED.
+
+
+- Final exact-head readback at 00:05 UTC: product CI run 39697024527 passed 9/9 jobs (Ubuntu, Windows, and macOS Node 20/22; Docker; sponsor-smoke; package-smoke). Coordination run 39697024555 passed ownership-contract-evidence 1/1. Scheduler receipt is Issue #29 comment 6329356398. This supersedes the 00:02 note that product CI was still in progress.
+- At 00:05, M2 PR #37 remained be66cf8f4c1a60f093740577796ec5cd633e1d93 and M7 PR #39 remained cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a; no candidate transfer, package-smoke result, or M7 disposition was visible. M7 policy blob f5156cb81f96e8485ab8624390a24ed721f08871 and check-package blob 4b551fed7b4e4f6599c8870263c2ff4e0d26be20 remain the exact proposed source. #69 stays OPEN/P1 until M7 supplies a transferable owner-authored commit and M2 passes exact-head package-smoke. Next M0 push remains no earlier than 00:20 UTC.
+
+
+## M0 00:11 UTC M2/M7 lane end and M1/M4 P0 rotation — 2026-10-22
+
+- The 23:50–00:10 M2/M7 lane ended without a checker transfer, exact M2 package-smoke result, or M7 review disposition. At 00:10:57, M2 PR #37 remained be66cf8f4c1a60f093740577796ec5cd633e1d93 and M7 PR #39 remained cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a; both inspected worktrees were clean. This is only Git-visible evidence, not a claim about private-session activity. Lane-end record: Issue #69 comment 6329435074. Keep #69 OPEN/P1.
+- Only M1 and M4 are assigned from 00:10–00:30 on P0 #52. M1 owns the exact owner disposition for M2's existing candidate and the Gateway capability contract; M4 owns first-party host consumption evidence or a precise blocker. Assignments: Issue #52 comment 6329436190, PR #43 comment 6329438614, PR #34 comment 6329439814. No cross-owner edits; do not represent virtual/UI reads as protected file access. Keep #52 OPEN/P0/NOT_VERIFIED absent the required exact host proof.
+- Scheduler entry: Issue #29 comment 6329440949. Usage at 00:10 was 99% five-hour / 30% weekly, Usage tab open. No exclusive VM, installer, or real-model slot is scheduled.
+- M0 commit 039cf0a6fc24c66cfc0377da4043801babce5ef2 remains verified on origin and exact PR #30 head; product CI run 39697024527 passed 9/9 and coordination run 39697024555 passed 1/1. PR #24 remains OPEN/Draft with unchanged head 62496d4020bd90ba2eede49b2e80a2bbebb036b4 and base dc8d0092b35141b295d5ff42873584ed488e4ee7. Next M0 push is no earlier than 00:20 UTC after fresh quota, PR #24, remote/worktree, and diff-check preflight.
+
+
+## M0 00:13 UTC worktree ownership observation — 2026-10-22
+
+- The shared worktree registry confirms distinct module worktree paths and branch refs. Fresh status reads found M1, M2, M3, M4, M6, M7, and M8 clean at their registered branches; their paths are separate. M5 is the exception: branch feature/ac3-policy-audit at HEAD bbce79aa086b39b51422cc72471c23c963778650 has an unstaged 48-line diff in M6-owned paths packaging/windows/auto-e4.mjs and test/auto-e4.test.mjs. The M6 worktree is separately clean at PR #38 head 98803607b89f11e24430c461bd91e9c1a0ece9d4.
+- M0 did not stage, copy, move, or revert the M5 diff and does not infer its author or purpose. Preserve it until the owner reconciles it; M6 changes belong on the existing M6 worktree/PR #38, not committed from M5. The previous observation is PR #38 comment 6315647508; current readback is PR #38 comment 6329474019 and scheduler #29 comment 6329475008. This is a local ownership exception, not proof of a public change or incident.
+- Only M1+M4 are assigned through 00:30 on P0 #52. The M5 worktree observation does not create a third assigned module slot. Usage at 00:12 was 98% five-hour / 30% weekly, and the Usage tab remains open.
+
+
+## M0 00:30 UTC M1/M4 lane close and M1/M2 rotation — 2026-10-22
+
+- The 00:10–00:30 M1/M4 slot ended with no Git-visible code change or owner disposition. At 00:29:58, PR #43 remained at `7279336307fc7aacd46119405858d4fd91499757` and PR #34 at `803a015f3e97ae69b7adeb4411f93defc0a06cfe`; both worktrees were clean at 00:28:51. This records GitHub/filesystem evidence only and does not infer private-session activity. Issue #52 remains OPEN/P0/NOT_VERIFIED. Lane close and next slot are recorded in #52 comment 6329700215.
+- The 00:30–00:50 active pair is M1+M2 only. M1 owns ACCEPT/REJECT of M2 PR #37 exact head `be66cf8f4c1a60f093740577796ec5cd633e1d93` plus the Gateway file-read capability contract; M2 owns the adapter/package implementation and focused package-smoke evidence, consuming M1’s approved capability unchanged. Assignments are PR #43 comment 6329705429 and PR #37 comment 6329707675. Do not cross-edit or weaken denials; keep #52 NOT_VERIFIED until actual first-party host evidence passes.
+- Usage at 00:30 was 96% five-hour / 30% weekly. The Usage page remains open. No exclusive VM, installer, or real-model test is assigned.
+- M0’s next documentation batch will be no earlier than 00:40 UTC; target the 00:50 batch after fresh Usage, PR #24, remote/head, worktree, and `git diff --check` preflight. No M0 product-source changes are included.
+
+
+## M0 00:50 UTC M1/M2 lane close and M3/M4 activation — 2026-10-22
+
+- The 00:30–00:50 M1/M2 slot ended without a Git-visible M1 owner disposition or M2 source/package-smoke change. At 00:49:36, PR #43 remained at `7279336307fc7aacd46119405858d4fd91499757` and PR #37 at `be66cf8f4c1a60f093740577796ec5cd633e1d93`; the two worktrees were clean at 00:48:28. This is GitHub/filesystem evidence only. Keep M2 pin approval pending and P0 #52 OPEN/NOT_VERIFIED. The lane assignments and midpoint are comments 6329705429, 6329707675, and 6329827545.
+- The 00:50–01:10 active pair is M3+M4 only. M3 owns the existing backend/host route on PR #33, including a real OBSERVE callsite consuming the supported M1/M2/M5 path and safe-read plus alias/path-replacement negative controls, or an exact API blocker. M4 owns its existing desktop adapter/UI path on PR #34 and may consume only a documented M3 request/response contract; keep UI/virtual/demo reads distinct from protected file access. Assignments are Issue #52 comment 6329961429, PR #33 comment 6329966164, and PR #34 comment 6329967157. Do not cross-edit; preserve every hard DENY assertion.
+- At 00:50, PR #24 remained OPEN/Draft at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #30 remained OPEN/Draft at exact head `039cf0a6fc24c66cfc0377da4043801babce5ef2`; local branch and remote ref matched. Usage was 93% five-hour / 29% weekly; keep the Usage tab open. No VM, installer, or real-model task is scheduled.
