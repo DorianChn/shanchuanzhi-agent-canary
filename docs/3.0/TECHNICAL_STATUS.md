@@ -6660,3 +6660,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - P0 #52 remains OPEN / production held-identity and OS-atomic TOCTOU NOT_VERIFIED. PR #24 remains OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, unchanged. No main merge or Release.
 
 - Per the latest user instruction, shared Git pushes are batched about every five minutes, only when a validated non-empty change is ready. The two active owner follow-ups are M1's one-shot Windows #32 fixture diagnosis (no CI/code change) and M7's #41 clean-VM inventory/lifecycle gate; M7 exclusively owns the VMware/installer slot, and no other exclusive-resource task is running.
+
+## M0 exact-head delta — 2026-10-22 18:12 UTC
+
+- On M0 head `e3999c8ef079927da3e4415aa5c868ac4e4ffdfe`, product CI run `39828910304` passed all 9 jobs, including package-smoke; ownership-contract workflow `39828910313` also passed. PR #30 remains OPEN/Draft.
+- M1 owner comment `6347868720` records one exact-old-fixture test in a clean temporary worktree: base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, Hook test blob `1ecb3ee8b45f1fbe942a25bcd5ce696f82534601`, wrapper blob `88c1003f0ab4a027f3b4ad576c312888862eb202`, Windows Node `v22.23.1`, exit 0 / 1 of 1 / 1018.6652 ms. The unchanged assertions observed the expected 1 s `ETIMEDOUT`, readiness marker present, and empty stdout. This confirms one local pass only; hosted-runner cause remains UNKNOWN and #32 stays OPEN/P1. No source/test change or CI rerun.
