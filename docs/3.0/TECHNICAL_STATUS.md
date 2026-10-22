@@ -6876,3 +6876,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M1 prepared commit `c67b15f76973a2333ce523dd58d5b7439ab40702` is based on public PR #43 head `a5eff766ebe041bc2c6cc13758827d5a96205de9`; it adds a post-read held-identity check and Windows junction-replacement regression. Windows Node 22 Gateway suite 36/36, build and diff-check passed locally. It is not yet on GitHub at this snapshot. The contract explicitly makes no OS-wide atomic path-transaction claim.
 - M3 default connection-check still fail-closes as UNKNOWN with its branch-local Gateway; Issue #52 remains OPEN/P0/NOT_VERIFIED until exact-source integration and a supported identity guarantee are verified. M1/M3/M4/M9 claims remain scoped to their recorded source SHAs.
 - Usage page last read at 20:42 UTC: 41% five-hour, 91% weekly, 113 credits, above the 5% stop threshold. PR #24 remains OPEN/Draft and unchanged.
+
+## M0 five-minute batch — 2026-10-22 20:49 UTC
+
+- Published M1 commit `c67b15f76973a2333ce523dd58d5b7439ab40702` to the existing PR #43 branch; GitHub readback confirms the exact head. Hosted CI is running for that exact commit (run `39852097851`; file-store stress run `39852097984`). The local Windows Node 22 Gateway suite passed 36/36, build and diff-check passed; hosted evidence is still pending.
+- Published M0 coordination note `2b874a8aed7c0def25c8ce64d2f73e886ffc2e66` to the existing Draft PR #30; GitHub readback confirms the exact head. Its exact-head checks are pending (runs `39852109168` and `39852109135`).
+- M9 PR #36 stays at `bd4d47de1dfa9674ab9635ca17767511143c88f8` with 13/13 checks green. Local candidate `18b60684c7d59dd70c80fc299c346c6b449a0dbe` pins M1 `c67b15f`; it passed local focused 2/2 and full 11/11 and remains gated on M1's exact-head hosted checks.
+- Issue #52 remains OPEN/P0/NOT_VERIFIED. M3 default connection-check still fails closed as UNKNOWN; exact-source M9 composition is synthetic evidence and does not establish first-party host adoption or OS-wide atomic path/operation semantics.
+- Usage page read at 20:48 UTC showed 40% five-hour, 91% weekly and 113 credits, above the 5% stop threshold. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and was not modified.
