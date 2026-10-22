@@ -212,6 +212,9 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
         if(r.name==='read_file'){
           const f=resource(r)!;const stat=fs.fstatSync(f.fd);if(stat.size>65_536)throw Error('GATEWAY_READ_LIMIT');
           const buffer=Buffer.alloc(stat.size);let offset=0;while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
+          // Reads use only the already-held descriptor, so a path swap cannot redirect I/O.
+          // Recheck after the descriptor read as well; this is detection, not an OS-wide atomic transaction.
+          if(!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
           const text=buffer.subarray(0,offset).toString('utf8');
           if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}

@@ -97,6 +97,30 @@ the Gateway cannot force-stop a callback that ignores it or roll back external
 effects already performed by that callback. This contract does not claim to
 protect native shell, file, or network operations that bypass the Gateway.
 
+## Held-file read identity checks
+
+Gateway file resources are opened once during construction. The constructor
+checks the configured path and compares its `lstat` identity with the opened
+descriptor's `fstat` identity before retaining the descriptor. Capability bind
+and verification check the exact registered path, link count, resolved path,
+and held descriptor identity. The serialized file read repeats those checks
+immediately before I/O and after the read. File bytes are read only from the
+already-held descriptor; a pathname or directory-junction replacement cannot
+redirect that read to the replacement object's descriptor. A replacement that
+is still observable after the read causes failure and quarantine, and its bytes
+are not returned.
+
+These checks do not create an OS-wide atomic transaction between pathname
+validation and reading. Node.js on Windows does not expose `O_NOFOLLOW`
+(`fs.constants.O_NOFOLLOW` is undefined in the tested Node 22.23.1 runtime), so
+the open flag is omitted there; the identity checks and held-descriptor read
+remain in force. A path change that is introduced and reverted entirely between
+the checks is not reported as an atomic pathname revocation. The Windows
+junction regression replaces a workspace directory at the `readSync` boundary
+and verifies that the call fails, returns no content, and leaves the outside
+fixture SHA-256 unchanged. It does not prove behavior for every filesystem or
+claim general kernel-level path locking.
+
 ## Contract regression coverage
 
 The Guard notification lifecycle is covered by

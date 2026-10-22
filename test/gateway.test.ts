@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
 const home=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-'));process.env.AGENT_CANARY_HOME=home;
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain,canonicalJSON}=await import('../src/sdk.js');
@@ -50,7 +51,7 @@ test('file-read capability blocks sensitive aliases and replaced paths before th
   assert.deepEqual(await registeredRead(call),{content:'hello'});
   assert.equal(callbacks,1);
   const afterSafeRead=s.evidence.snapshot().length;
-  const secretBytes=fs.readFileSync(secret);
+  const secretBytes=fs.readFileSync(secret),secretHash=createHash('sha256').update(secretBytes).digest('hex');
   const alias={name:'read_public',args:{path:'.env'}};
   assert.equal(s.runtime.verifyFileReadCapability(capability,alias,'file-read'),false);
   await assert.rejects(registeredRead(alias),/GATEWAY_FILE_CAPABILITY_INVALID/);
@@ -58,6 +59,7 @@ test('file-read capability blocks sensitive aliases and replaced paths before th
   assert.equal(s.evidence.snapshot().length,afterSafeRead,'a sensitive path alias never reaches M1 file I/O');
   assert.equal(s.runtime.operator.pending().length,0,'a sensitive path alias creates no approval');
   assert.deepEqual(fs.readFileSync(secret),secretBytes);
+  assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),secretHash,'the protected fixture SHA-256 is unchanged');
 
   fs.renameSync(original,held);
   fs.writeFileSync(original,'replacement target');
@@ -71,6 +73,7 @@ test('file-read capability blocks sensitive aliases and replaced paths before th
   assert.deepEqual(fs.readFileSync(original),replacementBytes);
   assert.equal(fs.readFileSync(held,'utf8'),'hello');
   assert.deepEqual(fs.readFileSync(secret),secretBytes);
+  assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),secretHash,'the protected fixture SHA-256 remains unchanged after the replacement denial');
  }finally{await s.runtime.close();}
 });
 test('file-read capability revalidates held identity immediately before reading',async()=>{
@@ -83,6 +86,30 @@ test('file-read capability revalidates held identity immediately before reading'
   assert.equal(fs.readFileSync(original,'utf8'),'replacement target');assert.equal(fs.readFileSync(held,'utf8'),'hello');
   assert.equal(s.guard.state,'QUARANTINED');assert.equal(s.evidence.snapshot().at(-1)!.execution_status,'FAILED');
  }finally{await s.runtime.close();}
+});
+test('Windows directory-junction replacement during a held read never returns content', {skip:process.platform!=='win32'}, async()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-held-junction-')),boundDir=path.join(root,'workspace'),heldDir=path.join(root,'workspace-held'),outsideDir=path.join(root,'outside');
+ fs.mkdirSync(boundDir);fs.mkdirSync(outsideDir);fs.writeFileSync(path.join(boundDir,'public.txt'),'authorized original');fs.writeFileSync(path.join(outsideDir,'public.txt'),'NOT_A_REAL_CREDENTIAL');
+ const secretPath=path.join(outsideDir,'public.txt'),secretBefore=fs.readFileSync(secretPath),secretHashBefore=createHash('sha256').update(secretBefore).digest('hex');
+ const evidence=new EvidenceRecorder(64),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),runtime=createTrustedExecutionGateway({agentId:'windows-junction-fixture',guard,workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence});
+ const binding={toolName:'read_public',operation:'file-read' as const,path:'workspace/public.txt'},call={name:'read_public',args:{path:'workspace/public.txt'}};
+ const capability=runtime.bindFileReadCapability(binding),originalReadSync=fs.readSync;let replaced=false;
+ try{
+  (fs as any).readSync=(...args:any[])=>{
+   if(!replaced){replaced=true;fs.renameSync(boundDir,heldDir);fs.symlinkSync(outsideDir,boundDir,'junction');}
+   return (originalReadSync as any)(...args);
+  };
+  await assert.rejects(runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.equal(replaced,true,'junction replacement happened after the pre-read path check');
+  const secretAfter=fs.readFileSync(secretPath);
+  assert.equal(secretAfter.toString('hex'),secretBefore.toString('hex'));
+  assert.equal(createHash('sha256').update(secretAfter).digest('hex'),secretHashBefore,'the external target remains byte-for-byte unchanged');
+  assert.equal(evidence.snapshot().at(-1)?.execution_status,'FAILED','a detected mid-read path replacement is never reported as successful');
+ }finally{
+  (fs as any).readSync=originalReadSync;
+  await runtime.close();
+  fs.rmSync(root,{recursive:true,force:true});
+ }
 });
 test('first unauthorized credential read rejected before real content is returned',async()=>{const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),/credential_resource_denied/);assert.equal(s.guard.state,'SAFE');assert.equal(s.evidence.snapshot()[0].execution_status,'NOT_STARTED');assert.ok(!JSON.stringify(s.evidence.snapshot()).includes('NOT_A_REAL_CREDENTIAL'));}finally{await s.runtime.close();}});
 test('path traversal and forged grant cannot write outside capability',async()=>{const s=setup();const outside=path.join(home,'outside.txt');try{for(const args of [{path:'../outside.txt',content:'bad'},{path:'result.txt',content:'bad',approved:true}])await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args}));assert.equal(fs.existsSync(outside),false);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');}finally{await s.runtime.close();}});
