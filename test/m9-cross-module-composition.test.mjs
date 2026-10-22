@@ -52,7 +52,8 @@ assert.equal(process.env.M2_OWNER_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'M2 pac
 assert.equal(process.env.M2_OWNER_DISPOSITION_SHA, m2OwnerDispositionSha, 'M2 disposition must retain the exact SHA reviewed by M1');
 assert.equal(process.env.M2_OWNER_DISPOSITION_COMMENT, '6321070391', 'M1 actual-tarball review must match the public disposition');
 assert.equal(process.env.M2_OWNER_DISPOSITION_ISSUE, '52', 'M1 disposition comment 6321070391 is recorded on Issue #52');
-assert.equal(process.env.M2_PACKAGE_GATE_ISSUE, '68', 'M2/M7 reproducible package gate is tracked separately in Issue #68');
+assert.equal(process.env.M2_PACKAGE_ALIGNMENT_GATE_ISSUE, '69', 'Issue #69 is the active M2/M7 package alignment gate');
+assert.equal(process.env.M2_PACKAGE_COMPOSITION_HISTORY_ISSUE, '68', 'Issue #68 is retained only as the closed historical composition gate');
 assertAncestor('M2', m2OwnerDispositionSha, pinnedSourceShas.M2, 'M1-reviewed M2 disposition');
 assertAncestor('M6', m6OwnerAcceptanceSha, pinnedSourceShas.M6, 'M6 owner acceptance');
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');

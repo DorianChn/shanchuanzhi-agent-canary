@@ -86,7 +86,8 @@ jobs:
           m2_owner_disposition_sha='be66cf8f4c1a60f093740577796ec5cd633e1d93'
           m2_owner_disposition_comment='6321070391'
           m2_owner_disposition_issue='52'
-          m2_package_gate_issue='68'
+          m2_package_alignment_gate_issue='69'
+          m2_package_composition_history_issue='68'
           if ! git -C module-sources/m2 merge-base --is-ancestor "$m2_owner_disposition_sha" "$m2_sha"; then
             echo 'M1-reviewed M2 disposition SHA is not an ancestor of the exact package candidate.' >&2
             exit 1
@@ -117,7 +118,8 @@ jobs:
             printf 'M2_OWNER_DISPOSITION_SHA=%s\n' "$m2_owner_disposition_sha"
             printf 'M2_OWNER_DISPOSITION_COMMENT=%s\n' "$m2_owner_disposition_comment"
             printf 'M2_OWNER_DISPOSITION_ISSUE=%s\n' "$m2_owner_disposition_issue"
-            printf 'M2_PACKAGE_GATE_ISSUE=%s\n' "$m2_package_gate_issue"
+            printf 'M2_PACKAGE_ALIGNMENT_GATE_ISSUE=%s\n' "$m2_package_alignment_gate_issue"
+            printf 'M2_PACKAGE_COMPOSITION_HISTORY_ISSUE=%s\n' "$m2_package_composition_history_issue"
             printf 'M3_SHA=%s\n' "$m3_sha"
             printf 'M5_SHA=%s\n' "$m5_sha"
             printf 'M5_CODE_SHA=%s\n' "$m5_code_sha"
@@ -128,7 +130,7 @@ jobs:
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2 package candidate: %s\nM2 prior owner disposition: %s for %s (Issue #52 comment %s; real M5 router required)\nIssue #68: exact M2/M7 package composition gate\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 source candidate: %s\nM6 prior owner acceptance: %s for %s (Issue #59 comment %s)\nM7: %s\nM8: %s\n' \
+          printf 'M9: %s\nM1 head: %s\nM1 owner-review evidence: %s\nM2 package candidate: %s\nM2 prior owner disposition: %s for %s (Issue #52 comment %s; real M5 router required)\nIssue #69 OPEN: active M2/M7 package alignment gate; Issue #68 CLOSED: historical composition gate\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 source candidate: %s\nM6 prior owner acceptance: %s for %s (Issue #59 comment %s)\nM7: %s\nM8: %s\n' \
             "$m9_sha" "$m1_sha" "$m1_owner_review_sha" "$m2_sha" "$m2_owner_disposition" "$m2_owner_disposition_sha" "$m2_owner_disposition_comment" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m6_owner_acceptance_status" "$m6_owner_acceptance_sha" "$m6_owner_acceptance_comment" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -229,7 +231,7 @@ jobs:
         run: |
           {
             echo
-            echo 'Issue #68 tracks the M2/M7 reproducible package gate. M1 comment 6321070391 on Issue #52 records ACCEPT WITH CONDITIONS only for exact M2 candidate be66cf8f4c1a60f093740577796ec5cd633e1d93 after actual-tarball review; exact M2 candidate 868b12a4688282c28091b731f6548d5535c0c37c is checked with the exact M7 167ebe81b76cc434facdaa3ddc62b42b9843951a pack:check contract below, but is not covered by that disposition: the first-party host must inject the trusted M5 router through the strict public facade; M2 does not authenticate router identity; OS-atomic TOCTOU remains unproven.'
+            echo 'Issue #69 is OPEN and is the active M2/M7 package alignment gate; Issue #68 is CLOSED as the historical M2 facade-package composition gate. M1 comment 6321070391 on Issue #52 records ACCEPT WITH CONDITIONS only for exact M2 candidate be66cf8f4c1a60f093740577796ec5cd633e1d93 after actual-tarball review; exact M2 candidate 868b12a4688282c28091b731f6548d5535c0c37c is checked with the exact M7 167ebe81b76cc434facdaa3ddc62b42b9843951a pack:check contract below, but is not covered by that disposition: the first-party host must inject the trusted M5 router through the strict public facade; M2 does not authenticate router identity; OS-atomic TOCTOU remains unproven.'
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks. This fixture injects the exact pinned M5 router into the packed M2 public facade; M2 reserves and injects its tools, callback, and M1 capability wiring but does not authenticate router identity. A registered synthetic protected_read passes only when M5 resolves and verifies the M1 capability and M2 forwards that capability to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
             echo 'Active-capability negative controls cover a sensitive .env path, workspace and outside symlink/junction aliases, and a hard link alias named .env. M5 denies these before its M2 callback; direct packed-M2 executor calls reject all unregistered aliases before M1. No M1 evidence or approval is added and fixture bytes/hashes remain unchanged.'
             echo 'Candidate exact sources: M1 7279336307fc7aacd46119405858d4fd91499757; M2 package candidate 868b12a4688282c28091b731f6548d5535c0c37c; M3 429cd73c03273bc77f3781b489f541e396cd9361; M5 bbce79aa086b39b51422cc72471c23c963778650; M6 source candidate 2cebabc81d7908c04ddfa10378fa1d3427b92cf4; M7 167ebe81b76cc434facdaa3ddc62b42b9843951a (single-facade package policy only); M8 35ab804d9729590a572c01d16391e63472992622. Prior M1 disposition remains scoped to M2 be66cf8f4c1a60f093740577796ec5cd633e1d93 (Issue #52 comment 6321070391); prior M6 ACCEPT remains scoped to 98803607b89f11e24430c461bd91e9c1a0ece9d4 (Issue #59 comment 6320039569). Neither disposition accepts the later exact candidate. M1 owner-review evidence SHA 7279336307fc7aacd46119405858d4fd91499757 and M5 source-scope code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b remain separate source gates. M2 has a read-only adapter and no write/delete adapter; these pins do not establish a production-host callsite or global host protection.'
