@@ -6842,3 +6842,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - This is a recurrence of the fixed-delay concurrent test failure on the latest M0 head. It confirms retry-budget exhaustion, but still gives no lock-owner/hold-time trace and does not establish data loss. M1's PR #43 diagnostic run passed 10/10 only with staggered 2–8 ms waits; this is not a fix or a root-cause explanation for the M0 fixture. Keep #51 OPEN/P1, and retain the failing status for PR #30 until its exact integration source/test path is corrected and CI is green.
 - M1 rechecked this failure read-only: it is at least the fourth recent M0 #30 recurrence after runs `39821805470`, `39822773136`, and `39846973393`. The underlying lock/timing trigger remains UNKNOWN; M1 recommends no production-store change without matching-runner trace evidence.
 - Issue #51 update is comment `6350459619`. No test/assertion weakening or rerun was requested.
+
+## M0 post-push exact-head CI — 2026-10-22 20:28 UTC
+
+- M0 PR #30 exact head `cccee50e968ece7e0f8c39017be285653dffacc2` has all 10 listed checks passing, including Ubuntu Node 20 and package smoke, in runs `39848575286` and `39848575010`. The commit only changes M0 coordination documentation; it does not change the store or fixed-500×2 ms quarantine fixture.
+- The parent head `fd70beff74074953e109dd0b25ab84957ff51be1` failed the same Ubuntu Node 20 test in run `39847779407`. Treat this newer green run as a non-reproduction, not a fix or root-cause explanation; keep #51 OPEN/P1 and the underlying trigger UNKNOWN. This supersedes the earlier “current PR #30 is failing” status for the exact current head, while preserving the historical failure.
+- Issue #51 readback is comment `6350601802`.
