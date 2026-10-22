@@ -12,7 +12,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const verifier = path.join(scriptDir, 'verify-bundle.mjs');
 const sha256 = data => createHash('sha256').update(data).digest('hex');
 
-function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4', extraPayload = []} = {}) {
+function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4', extraPayload = [], reportOverrides = {}} = {}) {
   fs.mkdirSync(runDir, { recursive: true });
   const cases = [
     'GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION',
@@ -29,7 +29,8 @@ function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4'
     classification,
     operatorRole: 'author',
     source: { commit: '1'.repeat(40) },
-    cases
+    cases,
+    ...reportOverrides
   };
   const payload = [
     ['report.json', Buffer.from(`${JSON.stringify(report, null, 2)}\n`)],
@@ -65,6 +66,29 @@ function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4'
 function runVerifier(runDir) {
   return spawnSync(process.execPath, [verifier, runDir], { encoding: 'utf8', windowsHide: true });
 }
+
+test('missing product provenance can verify bundle integrity only, never product E4 acceptance', t => {
+  const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-verifier-'));
+  t.after(() => fs.rmSync(runDir, { recursive: true, force: true }));
+  createValidRun(runDir, {
+    reportOverrides: {
+      source: {},
+      artifact: undefined,
+      independentVerifier: undefined,
+      evidenceRetention: undefined
+    }
+  });
+
+  const result = runVerifier(runDir);
+  assert.equal(result.status, 0, result.stderr);
+  const summary = JSON.parse(result.stdout);
+  assert.equal(summary.bundleIntegrityVerified, true);
+  assert.equal(summary.evidenceScope, 'BUNDLE_INTEGRITY_ONLY');
+  assert.equal(summary.productE4Accepted, false);
+  assert.equal(summary.e4Status, 'NOT_VERIFIED');
+  assert.equal(summary.sourceCommit, undefined);
+  assert.equal(Object.hasOwn(summary, 'valid'), false);
+});
 
 function crc32(data) {
   let crc = 0xffffffff;

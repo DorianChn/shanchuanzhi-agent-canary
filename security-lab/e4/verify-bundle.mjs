@@ -114,4 +114,16 @@ if (shell.status === 'PASS' || shell.details.countsAsGatewayPass !== false || sh
 const modelCase = report.cases.find(row => row.id === 'MODEL-REAL-TOOLCALL');
 if (modelCase.reason?.includes('MODEL_REFUSAL') && modelCase.status.startsWith('PASS')) throw new Error('E4_MODEL_REFUSAL_MUST_NOT_COUNT_AS_GATEWAY_DENIAL');
 
-process.stdout.write(JSON.stringify({ valid: true, e4Status: report.e4Status, classification: report.classification, archiveSha256: archiveHash, entries: files.size, payloadFiles: payloadNames.length, sourceCommit: report.source.commit, shellStatus: shell.status, modelStatus: modelCase.status }) + '\n');
+process.stdout.write(JSON.stringify({
+  bundleIntegrityVerified: true,
+  evidenceScope: 'BUNDLE_INTEGRITY_ONLY',
+  productE4Accepted: false,
+  e4Status: report.e4Status,
+  classification: report.classification,
+  archiveSha256: archiveHash,
+  entries: files.size,
+  payloadFiles: payloadNames.length,
+  sourceCommit: report.source.commit,
+  shellStatus: shell.status,
+  modelStatus: modelCase.status
+}) + '\n');
