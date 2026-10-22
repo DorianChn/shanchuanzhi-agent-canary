@@ -243,7 +243,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       const gd=guard.beforeToolCall(safe);if(!gd.allowed)throw new CanaryBlockedError(gd);
       const executionContext=resolveExecutionContext(safe);
       const decision=classify(safe,executionContext);sweep();
-      if(options.reviewDecision && await options.reviewDecision(safe,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}))==='DENY'){
+      if(decision.action!=='DENY'&&options.reviewDecision && await options.reviewDecision(safe,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}))==='DENY'){
         decision.action='DENY';decision.reason='host_pre_execution_review_denied';
       }
       // Recheck before creating any approval request or starting an execution.

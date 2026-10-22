@@ -43,6 +43,13 @@ test('OBSERVE blocks registered sensitive-read operations without creating an ap
  assert.equal(s.router.pendingApprovals().length,0);
  assert.equal(s.calls.length,0);
 });
+test('hard denials skip host review, approval creation, and the execution callback',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'hard-deny-before-review-'));
+ let reviews=0,callbacks=0;const guard=createAgentGuard({sessionId:'hard-deny-before-review',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',tools:{read:{operation:'file-read'}},reviewDecision:async()=>{reviews++;return 'UNCHANGED';},executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+ await assert.rejects(router.dispatch({name:'read',args:{path:'.env'}}),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='observe_sensitive_data_blocked');
+ assert.equal(reviews,0);assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
+});
 test('M5 OBSERVE policy blocks sensitive file aliases and canonical path variants before approval or callback',async()=>{
  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-path-alias-'));
  const secret=path.join(root,'secrets','fixture.txt'),content='M5_CANARY_SECRET';fs.mkdirSync(path.dirname(secret));fs.writeFileSync(secret,content);
