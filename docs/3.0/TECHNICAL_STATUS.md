@@ -6813,3 +6813,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - M1's read-only triage is recorded in Issue #62 comment `6350288076`: both historical failures occurred at `pending()[0].requestId` before the expiry-denial/zero-callback assertions; a 5 ms timing/setup race is plausible but not proven. No bypass or callback execution is established. Owner disposition is `ROOT CAUSE UNKNOWN`; issue remains OPEN/P1.
 - The current M1 exact head `a5eff766ebe041bc2c6cc13758827d5a96205de9` has green hosted checks; its controlled-clock regression validates the expected approval classification/request ID and retains EXPIRED, cleared-pending, and zero-callback assertions. No M1 code change or local rerun was made.
+
+## M1 issue #32 disposition — 2026-10-22 20:14 UTC
+
+- M1's wrapper-test audit is recorded in Issue #32 comment `6350337307`. The legacy fixture used synchronous child startup plus a fixed 1-second readiness window; one Windows Node 22 run missed the marker, while the same old fixture passed on retry. The logs lack child startup timestamps, so the historical runner trigger remains unknown.
+- Current M1 blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39` replaces the fixed startup assumption with asynchronous marker polling and still checks interruption, empty output, and no decision log. PR #43 exact head `a5eff766ebe041bc2c6cc13758827d5a96205de9` is green 9/9, including Windows Node 20/22. This proves wrapper-fixture behavior only, not real-host callback behavior; keep #32 OPEN/P1 until the updated test reaches the authorized integration baseline.
