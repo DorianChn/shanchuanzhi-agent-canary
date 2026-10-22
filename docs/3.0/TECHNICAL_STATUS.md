@@ -6821,7 +6821,7 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 ## M0 CI failure triage — 2026-10-22 20:17 UTC
 
-- M0 PR #30 head `6d0d5e4db49fdac4d4d2ce118852549a59ec0a55` product run `39846973393` had one actual test failure: Ubuntu Node 20 job `120062707554`, in “four concurrent processes preserve every quarantine without lost writes.” Worker 0 exhausted 500 attempts with 2 ms delay and raised `RETRY_LIMIT` (321 passed, 1 failed, 4 skipped). The other five test-matrix jobs were cancelled by fail-fast, not independent failures; Docker, sponsor, and ownership-contract checks passed.
+- M0 PR #30 head `6d0d5e4db49fdac4d4d2ce118852549a59ec0a55` product run `39846973393` had one actual test failure: Ubuntu Node 20 job `120062707554`, in “four concurrent processes preserve every quarantine without lost writes.” The serialized failure scope is `worker:1:` (the parent worker index is not identifiable); after 500 retries at 2 ms it raised `RETRY_LIMIT` (321 passed, 1 failed, 4 skipped). The other five test-matrix jobs were cancelled by fail-fast, not independent failures; Docker, sponsor, and ownership-contract checks passed.
 - The event is recorded on existing P1 Issue #51 in comment `6350375823`. It reproduces the direct retry-exhaustion path but adds no lock-owner/timing trace, so underlying cause and data-loss status remain UNKNOWN. M1 is reviewing the current store and prior ten-run evidence. No rerun, test weakening, or module-code edit was made by M0.
 - PR #30 must remain CI-failing until an exact-head fix or owner disposition makes the required checks green; do not call this a docs-only pass. The `retry_limit` failure is the only confirmed failing job in this run.
 
@@ -6829,3 +6829,16 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - M9 PR #36 exact head `0932e63f89b08f6adff4b918904137110bf138ad` passes 13/13 hosted checks, including Ubuntu and Windows current-module-ref composition at run `39846980139`, cross-platform Node 20/22, wrapper regressions, package smoke, Docker, and sponsor checks.
 - The pinned M4 source is exact public PR #34 head `83a3abc0b85e783c34d79392e50015ed8f24e184`, whose own exact-head checks also passed 9/9. M9 evidence remains synthetic/source composition and does not close Issue #52's product-host/OS-atomic TOCTOU gate.
+
+## M1 Issue #51 owner disposition correction — 2026-10-22 20:21 UTC
+
+- M1's read-only review confirms the direct failure path: the current lock store returned `STATE_STORE_BUSY` until the bounded loop raised `RETRY_LIMIT`. It does not establish a persistent store defect, lock starvation, long lock hold, or data loss. The underlying holder/timing trigger remains UNKNOWN. M1 made no code/test change and did not rerun; exact PR #43 checks are 9/9 green and its diagnostic workflow passed 10/10 under a staggered retry schedule, which is non-reproduction rather than a historical root-cause explanation.
+- Corrected the serialized run description: its scope label is `worker:1:`; the parent worker index is not identified. This supersedes the earlier “worker 0” wording, which was not established by the raw trace. The correction was posted in Issue #51 comment `6350438055`.
+- Keep Issue #51 OPEN/P1. No source defect, data loss, or allow-path is established; do not weaken the retry bound or assertions to force a green result.
+
+## M0 PR #30 repeated quarantine retry failure — 2026-10-22 20:22 UTC
+
+- Exact M0 head `fd70beff74074953e109dd0b25ab84957ff51be1` run `39847779407` failed in one job only: Ubuntu Node 20 job `120065552734`, test `four concurrent processes preserve every quarantine without lost writes`. The serialized child uses fixed 500 × 2 ms retries, receives `STATE_STORE_BUSY`, then raises `RETRY_LIMIT`; scope label is `worker:1:`. Other test matrix jobs were cancelled by fail-fast. Sponsor smoke passed; package smoke was skipped after failure.
+- This is a recurrence of the fixed-delay concurrent test failure on the latest M0 head. It confirms retry-budget exhaustion, but still gives no lock-owner/hold-time trace and does not establish data loss. M1's PR #43 diagnostic run passed 10/10 only with staggered 2–8 ms waits; this is not a fix or a root-cause explanation for the M0 fixture. Keep #51 OPEN/P1, and retain the failing status for PR #30 until its exact integration source/test path is corrected and CI is green.
+- M1 rechecked this failure read-only: it is at least the fourth recent M0 #30 recurrence after runs `39821805470`, `39822773136`, and `39846973393`. The underlying lock/timing trigger remains UNKNOWN; M1 recommends no production-store change without matching-runner trace evidence.
+- Issue #51 update is comment `6350459619`. No test/assertion weakening or rerun was requested.
