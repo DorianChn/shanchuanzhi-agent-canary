@@ -6336,3 +6336,16 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - The 13:20–13:40 M3+M4 slot closed without owner-authored evidence or a new module head. PR #33 still lacks GET `/api/security-center`; PR #34's current Console test still asserts 404 for that route. #52 remains OPEN/P0/NOT_VERIFIED.
 - Exactly M3+M4 continue 13:40–14:00 UTC on #52. M3 implements the read-only route/capability binding through current M1/M2/M5 APIs on existing PR #33. M4 updates only its owned security-center test expectation after the route exists, preserving `UNKNOWN` when protection is unavailable and leaving E4 behavior unchanged. Evidence/blocker due 13:55; close 14:00. M1/M2/M5/M6/M7/M8 remain queued.
 - M0 comments: #52 `6342218283`, scheduler #29 `6342219161`, PR #33 `6342219975`, PR #34 `6342220845`. No module source was edited by M0.
+- M0 pushed docs-only commit `87f5d0c` to existing Draft PR #30 at 13:41 UTC. Product CI run `39789103492` and ownership-contract run `39789103203` were pending immediately after push. PR #24 remains OPEN/Draft at unchanged base `dc8d0092b35141b295d5ff42873584ed488e4ee7` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Usage at 13:41 was 100% five-hour / 23% weekly; Usage tab remains open.
+
+## M0 Windows Hook CI cross-reference — 2026-10-22 13:44 UTC
+
+- PR #30 docs-only head `87f5d0c` run `39789103492` failed Windows Node 20 job `119860034962` in the existing interruption-marker test at `test/agent-hook.test.ts:54:53` (`expected true`, actual false). All other matrix jobs passed; package-smoke was skipped after fail-fast.
+- Exact file readback: PR #30 head and base both contain test blob `1ecb3ee8b45f1fbe942a25bcd5ce696f82534601`; M1 PR #43 head `7279336307fc7aacd46119405858d4fd91499757` contains changed test blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`. This maps to the already-open P1 #32 stale-base/fixture history. It does not establish a product Hook failure or show the PR #43 change fails. Preserve all interruption assertions; M1 stays queued behind P0 #52. Evidence comment: #32 `6342308676`.
+
+## M0 14:00 UTC M3/M4 close and M2/M3 P0 slot — 2026-10-22
+
+- The 13:40–14:00 M3+M4 slot closed without owner-authored evidence or a new module head. M3 still lacks GET `/api/security-center`; M4's current test still expects 404. P0 #52 remains OPEN/P0/NOT_VERIFIED.
+- Exactly M2+M3 are active 14:00–14:20 UTC on #52. M2 validates the current public `gateway-adapter` package/import path on existing PR #37; M3 implements the backend route/capability binding through that facade and the current M1/M5 contracts on existing PR #33. Evidence/blocker due 14:15; close 14:20. Preserve `UNKNOWN`, safe-read/alias/replacement controls, zero side effects and all denials. M1/M4/M5/M6/M7/M8 remain queued.
+- M0 comments: #52 `6342642133`, scheduler #29 `6342643194`, PR #33 `6342644274`, PR #37 `6342645117`, PR #34 `6342645827`. No M0 module source change.
+- PR #30 docs head `87f5d0c` exact CI run `39789103492` failed only Windows Node 20 on the old interruption-marker fixture tracked by P1 #32; other matrix jobs passed and package-smoke was skipped. The separate ownership-contract check passed. PR #24 remains unchanged.
