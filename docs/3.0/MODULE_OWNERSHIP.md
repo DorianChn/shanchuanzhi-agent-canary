@@ -632,3 +632,20 @@ All module changes remain on existing Draft PR branches. PR #24 stays untouched 
 | M9 | `feature/ac3-m9-integration` / #36 | `8ebb206` | Exact-ref composition only; working tree has local integration-owned candidate edits, not yet committed. |
 
 Each M1–M8 directory is a distinct worktree with its existing PR branch attached; local HEADs match their remote owner branch commits. This snapshot records ownership; it does not claim native host, installer lifecycle, product-host protected-read, or independent E4 acceptance.
+
+## M0 ownership refresh — 2026-10-22 21:58 UTC
+
+| Module | Existing PR branch | Public/local head | Scope / current state |
+|---|---|---:|---|
+| M0 | `feature/ac3-m0-coordination` / #30 | `fa1f8ae` | Coordination docs/contracts; exact product CI 9/9 and coordination check pass. |
+| M1 | `feature/ac3-security-core` / #43 | `6886d6e` | Gateway, Guard, Hook, state store; exact CI 9/9 and concurrency 2/2 pass. #51 remains open because the original trigger is unknown. |
+| M2 | `feature/ac3-execution-isolation` / #37 | `92a9562` | Execution isolation and host-hook adapter; native host remains UNPROTECTED/NOT_VERIFIED. |
+| M3 | `feature/ac3-agent-onboarding` / #33 | `34b526d` | Onboarding and Hook docs/tests; protected-read POST remains blocked/not active; exact CI 9/9 pass. |
+| M4 | `feature/ac3-desktop-security-center` / #34 | `264bc28` | Desktop UI/tests; exact CI 9/9 pass on updated M1 base; targeted tests 11/11. |
+| M5 | `feature/ac3-policy-audit` / #47 | `c900323` | Policy/router variants and alias-denial regressions; canonical shared files require M1 review. |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 | `5f1649f` | E4 verifier/schema/bundle; independent product E4 remains NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / #39 | `868842b` | Reliability, Windows installer/payload and lifecycle evidence; VM/install execution remains gated. |
+| M8 | `feature/ac3-open-source-product` / #40 | `5bf5d4f` | Open-source/docs and shipped Hook/logging copy. |
+| M9 | `feature/ac3-m9-integration` / #36 | `8ebb206` | Scratch exact composition passed 11/11 on current M1/M3/M4 pins; M9 local commit `8506fef` updates only the workflow pins, composition assertions, and exact-source report; it is not yet published. |
+
+All module branches remain separate Draft PRs; the current exact composition is test evidence, not a merge or product-host/E4 acceptance. M1–M8 source ownership is unchanged.
