@@ -5,6 +5,7 @@ const toolIdPattern = /^[a-z0-9_.-]{1,100}$/;
 const contextKeys = new Set(["signal", "fileReadCapability"]);
 const callKeys = new Set(["name", "args", "traceId"]);
 const argsKeys = new Set(["path"]);
+const fixedReadBindingsByAdapter = new WeakMap();
 
 function isPlainRecord(value) {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -114,6 +115,7 @@ function createSecurityGatewayAdapter(gateway, fixedFileReads) {
   const policyTools = Object.create(null);
   const allowedPaths = new Map();
   const capabilities = new Map();
+  const fixedReadBindings = [];
   for (const [toolId, paths] of toolEntries) {
     if (!toolIdPattern.test(toolId) || !Array.isArray(paths) || paths.length === 0) {
       throw new TypeError("M2_SECURITY_GATEWAY_FIXED_FILE_READ_INVALID");
@@ -141,6 +143,15 @@ function createSecurityGatewayAdapter(gateway, fixedFileReads) {
         throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE");
       }
       pathCapabilities.set(relativePath, capability);
+      fixedReadBindings.push(Object.freeze({
+        toolId,
+        relativePath,
+        call: Object.freeze({
+          name: toolId,
+          args: Object.freeze({ path: relativePath }),
+        }),
+        capability,
+      }));
     }
 
     policyTools[toolId] = Object.freeze({
@@ -243,7 +254,9 @@ function createSecurityGatewayAdapter(gateway, fixedFileReads) {
     );
   };
 
-  return Object.freeze({ tools, executeRealTool, fileReadCapability });
+  const adapter = Object.freeze({ tools, executeRealTool, fileReadCapability });
+  fixedReadBindingsByAdapter.set(adapter, fixedReadBindings);
+  return adapter;
 }
 
 const hostAdapterOptionKeys = new Set([
@@ -296,6 +309,7 @@ export function createSecurityGatewayHostAdapter(options) {
     inputValues.get("gateway"),
     inputValues.get("fixedFileReads"),
   );
+  const fixedReadBindings = fixedReadBindingsByAdapter.get(adapter);
   const wiredRouterOptions = Object.create(null);
   for (const [key, value] of routerOptionEntries) {
     wiredRouterOptions[key] = value;
@@ -317,8 +331,78 @@ export function createSecurityGatewayHostAdapter(options) {
     router,
     "pendingApprovals",
   )?.value;
-  if (typeof dispatch !== "function" || typeof pendingApprovals !== "function") {
+  const inspectPolicy = Object.getOwnPropertyDescriptor(router, "inspectPolicy")?.value;
+  if (
+    typeof dispatch !== "function" ||
+    typeof pendingApprovals !== "function" ||
+    typeof inspectPolicy !== "function"
+  ) {
     throw new TypeError("M2_SECURITY_GATEWAY_POLICY_ROUTER_INVALID");
+  }
+
+  function securityCenterStatusProvider() {
+    let protectedBindings = 0;
+    const toolsWithBindings = new Map();
+    for (const binding of fixedReadBindings) {
+      let gatewayValid;
+      let decision;
+      try {
+        gatewayValid = adapter.fileReadCapability.verify(
+          binding.capability,
+          binding.call,
+          "file-read",
+        );
+        decision = Reflect.apply(inspectPolicy, router, [binding.call]);
+      } catch {
+        throw new TypeError("M2_SECURITY_GATEWAY_STATUS_UNAVAILABLE");
+      }
+      let decisionValues;
+      try {
+        decisionValues = new Map(
+          readOwnDataEntries(decision, "STATUS_DECISION", null),
+        );
+      } catch {
+        throw new TypeError("M2_SECURITY_GATEWAY_STATUS_INVALID");
+      }
+      const action = decisionValues.get("action");
+      const mode = decisionValues.get("mode");
+      if (
+        typeof action !== "string" ||
+        typeof mode !== "string" ||
+        !["ALLOW", "DENY", "APPROVAL_REQUIRED"].includes(action) ||
+        mode !== "OBSERVE"
+      ) {
+        throw new TypeError("M2_SECURITY_GATEWAY_STATUS_INVALID");
+      }
+      const protectedRead = gatewayValid && action === "ALLOW";
+      if (protectedRead) protectedBindings += 1;
+      if (!toolsWithBindings.has(binding.toolId)) toolsWithBindings.set(binding.toolId, true);
+      if (!protectedRead) toolsWithBindings.set(binding.toolId, false);
+    }
+
+    const statusFor = (healthy, total) => {
+      if (healthy === 0) return "UNKNOWN";
+      return healthy === total ? "PROTECTED" : "PARTIALLY_PROTECTED";
+    };
+    const protectedToolCount = [...toolsWithBindings.values()].filter(Boolean).length;
+    const toolCount = toolsWithBindings.size;
+    const scopedStatus = statusFor(protectedBindings, fixedReadBindings.length);
+    return Object.freeze({
+      protectionStatus: protectedToolCount > 0 ? "PARTIALLY_PROTECTED" : "UNKNOWN",
+      gateway: Object.freeze({
+        protectionStatus: scopedStatus,
+        connectionStatus: protectedBindings > 0 ? "CONNECTED" : "UNKNOWN",
+      }),
+      hook: Object.freeze({ protectionStatus: "UNKNOWN" }),
+      canaryIsolation: Object.freeze({ protectionStatus: "UNKNOWN" }),
+      policy: Object.freeze({
+        name: "M2 fixed file reads / M5 OBSERVE",
+        protectionStatus: statusFor(protectedToolCount, toolCount),
+      }),
+      protectedToolCount,
+      unprotectedExecutionPaths: null,
+      coverage: "M2_FIXED_FILE_READS_ONLY",
+    });
   }
 
   return Object.freeze({
@@ -328,5 +412,6 @@ export function createSecurityGatewayHostAdapter(options) {
     pendingApprovals() {
       return Reflect.apply(pendingApprovals, router, []);
     },
+    securityCenterStatusProvider,
   });
 }
