@@ -6581,3 +6581,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M1 completed its P0 #52 owner review in comment `6346736001`: CONDITIONAL ACCEPT for exact M2 PR #37 `868b12a…` only with M1 PR #43 APIs at `a5eff766…` actually injected. The M2 base lacks those APIs; synthetic adapter checks do not prove first-party host wiring, held-identity use, or OS-atomic TOCTOU. #52 remains OPEN/P0 and production status NOT_VERIFIED.
 - M9 updated the existing composition workflow/test locally to current PR heads for M1/M2/M3/M5/M6/M7/M8. Its first 10/10 local composition run used the prior PENDING M1 metadata. M9 must first record M1's exact current disposition and M6's bounded current-scope comment, then rerun the full target composition. No current-head composition pass is claimed yet; #69 remains OPEN.
 - M4 owner review for the first-party OBSERVE callsite in #52 remains in progress. It will provide either a real host-path proof or a precise host/API blocker; no production integration claim is made.
+
+## M0 exact-head delta — 2026-10-22 17:22 UTC
+
+- M4 completed the #52 host-path owner review in comment `6346854552` at PR #34 head `b586bc70…`: no current desktop OBSERVE file-read callsite consumes the M1-bound identity. `/api/runtime3/action` reads only its own temporary public file via direct Gateway dispatch, while `/api/policy/action` is virtual/static. M1 identity APIs are not used by the current M4 Console; M2's adapter subpath is not wired into it. M3 onboarding does not provide the real-host positive control. Issue #52 remains OPEN/P0 and production protection NOT_VERIFIED.
+- M9 updated its local exact-source references and owner metadata for current M1/M2/M3/M5/M6/M7/M8 heads; the corrected full composition is being rerun. No current-pin pass is claimed until that run completes successfully.
+- Latest usage-page read remains 77% five-hour, 19% weekly, 113 credits (17:18 UTC); still above the 5% stop threshold.
