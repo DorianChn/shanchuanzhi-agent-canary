@@ -23,7 +23,7 @@ const pinnedSourceShas = {
   M3: '429cd73c03273bc77f3781b489f541e396cd9361',
   M5: 'bbce79aa086b39b51422cc72471c23c963778650',
   M6: '2cebabc81d7908c04ddfa10378fa1d3427b92cf4',
-  M7: '167ebe81b76cc434facdaa3ddc62b42b9843951a',
+  M7: '868842b1b7d76cf94a8d84a5f76c6acd4ca67f50',
   M8: '35ab804d9729590a572c01d16391e63472992622',
 };
 
@@ -52,7 +52,7 @@ assert.equal(process.env.M2_OWNER_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'M2 pac
 assert.equal(process.env.M2_OWNER_DISPOSITION_SHA, m2OwnerDispositionSha, 'M2 disposition must retain the exact SHA reviewed by M1');
 assert.equal(process.env.M2_OWNER_DISPOSITION_COMMENT, '6321070391', 'M1 actual-tarball review must match the public disposition');
 assert.equal(process.env.M2_OWNER_DISPOSITION_ISSUE, '52', 'M1 disposition comment 6321070391 is recorded on Issue #52');
-assert.equal(process.env.M2_PACKAGE_ALIGNMENT_GATE_ISSUE, '69', 'Issue #69 is the active M2/M7 package alignment gate');
+assert.equal(process.env.M2_PACKAGE_ALIGNMENT_GATE_ISSUE, '69', 'Issue #69 tracks the M2/M7 package alignment gate');
 assert.equal(process.env.M2_PACKAGE_COMPOSITION_HISTORY_ISSUE, '68', 'Issue #68 is retained only as the closed historical composition gate');
 assertAncestor('M2', m2OwnerDispositionSha, pinnedSourceShas.M2, 'M1-reviewed M2 disposition');
 assertAncestor('M6', m6OwnerAcceptanceSha, pinnedSourceShas.M6, 'M6 owner acceptance');
@@ -81,6 +81,17 @@ function readTrackedBlobId(moduleName, filePath) {
   return result.stdout.trim();
 }
 
+function readBlobIdAt(moduleName, revision, filePath) {
+  const result = spawnSync('git', [
+    '-C', sourceRoots[moduleName].root,
+    'rev-parse',
+    `${revision}:${filePath}`,
+  ], { encoding: 'utf8', windowsHide: true });
+  assert.equal(result.error, undefined, `${moduleName} blob ID lookup must start`);
+  assert.equal(result.status, 0, `${moduleName} revision ${revision} must contain ${filePath}`);
+  return result.stdout.trim();
+}
+
 test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
   const canonicalHook = readTrackedHookBlob('M1');
   for (const moduleName of ['M2', 'M5', 'M7', 'M9']) {
@@ -94,16 +105,23 @@ test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () =>
 
 test('exact M2 candidate delegates package smoke to the exact pinned M7 workflow and policy', () => {
   const workflow = fs.readFileSync(path.join(sourceRoots.M2.root, '.github', 'workflows', 'ci.yml'), 'utf8');
-  assert.match(
-    workflow,
-    new RegExp(`uses:\\s*DorianChn/shanchuanzhi-agent-canary/\\.github/workflows/m7-package-smoke\\.yml@${pinnedSourceShas.M7}`),
-    'M2 CI must call the exact M7 reusable package-smoke workflow',
-  );
-  assert.match(
-    workflow,
-    new RegExp(`policy-ref:\\s*${pinnedSourceShas.M7}`),
-    'M2 CI must pass that same exact M7 revision as the package policy',
-  );
+  const workflowRef = workflow.match(/uses:\s*DorianChn\/shanchuanzhi-agent-canary\/\.github\/workflows\/m7-package-smoke\.yml@([a-f0-9]{40})/);
+  const policyRef = workflow.match(/policy-ref:\s*([a-f0-9]{40})/);
+  assert.ok(workflowRef, 'M2 CI must call the reusable M7 package-smoke workflow at a full commit SHA');
+  assert.ok(policyRef, 'M2 CI must pass a full M7 policy commit SHA');
+  assert.equal(workflowRef[1], policyRef[1], 'M2 CI must use the same exact M7 workflow and policy revision');
+  assertAncestor('M7', workflowRef[1], pinnedSourceShas.M7, 'M2 package-policy revision');
+  for (const filePath of [
+    '.github/workflows/m7-package-smoke.yml',
+    'scripts/check-package.mjs',
+    'scripts/package-file-policy.mjs',
+  ]) {
+    assert.equal(
+      readBlobIdAt('M7', workflowRef[1], filePath),
+      readBlobIdAt('M7', pinnedSourceShas.M7, filePath),
+      `M7 package-policy file ${filePath} must remain byte-identical between the M2 CI pin and M9 source pin`,
+    );
+  }
 });
 
 test('M8 Hook adapter matches its exact M1-approved source blob', () => {
