@@ -62,18 +62,35 @@ function canonicalPath(candidate:string):string {
   }
 }
 
-function hasPathAlias(root:string,target:string):boolean {
+function hasPathAlias(root:string,target:string,rawPath?:string):boolean {
   try {
     let component=path.resolve(root);
     if(fs.lstatSync(component).isSymbolicLink())return true;
     const relative=path.relative(root,target);
     if(relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative))return true;
-    for(const part of relative.split(path.sep).filter(Boolean)){
+    // Do not derive the walk only from `target`: path.resolve has already
+    // collapsed `alias/..`, hiding a symlink/junction that the caller supplied.
+    // Preserve those components so OBSERVE and verifyRealPaths reject the alias
+    // before a host callback can interpret the original path differently.
+    let walkPath=relative;
+    if(typeof rawPath==='string'){
+      const supplied=rawPath.replaceAll('\\','/');
+      if(!path.isAbsolute(supplied)&&!/^[a-z]:|^\/\//i.test(supplied))walkPath=supplied;
+      else {
+        const rootPrefix=path.resolve(root).replaceAll('\\','/').replace(/\/+$/,'')+'/';
+        const foldedRoot=process.platform==='win32'?rootPrefix.toLowerCase():rootPrefix;
+        const foldedSupplied=process.platform==='win32'?supplied.toLowerCase():supplied;
+        if(foldedSupplied.startsWith(foldedRoot))walkPath=supplied.slice(rootPrefix.length);
+      }
+    }
+    for(const part of walkPath.split(/[\\/]+/).filter(Boolean)){
+      if(part==='.')continue;
+      if(part==='..'){component=path.dirname(component);continue;}
       component=path.join(component,part);
       try{
         const stat=fs.lstatSync(component);
         if(stat.isSymbolicLink()||stat.isFile()&&stat.nlink>1)return true;
-      }catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')break;return true;}
+      }catch(error){const code=(error as NodeJS.ErrnoException).code;if(code!=='ENOENT'&&code!=='ENOTDIR')return true;}
     }
     return false;
   }catch{return true;}
@@ -178,7 +195,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       const normalized=typeof raw==='string'?raw.replaceAll('\\','/'):'\0';
       const filesystemOperation=['file-read','file-write','delete'].includes(d.operation);
       const target=path.resolve(root,normalized);let policyTarget=target,policyRoot=root,pathAlias=false;
-      if(filesystemOperation&&checkRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);pathAlias=hasPathAlias(root,target);}catch{deny('path_resolution_failed');}
+      if(filesystemOperation&&checkRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);pathAlias=hasPathAlias(root,target,normalized);}catch{deny('path_resolution_failed');}
       const relative=path.relative(root,target),policyRelative=path.relative(policyRoot,policyTarget);
       const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||policyRelative==='..'||policyRelative.startsWith('..'+path.sep)||path.isAbsolute(policyRelative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
       risks.push(d.operation==='file-read'?'READ_ONLY':d.operation==='delete'?'DESTRUCTIVE':'WRITE');

@@ -84,6 +84,22 @@ test('M5 OBSERVE blocks sensitive aliases and workspace escapes by default and w
   }
  }
 });
+test('M5 OBSERVE rejects a symlink alias before a following dot-dot can hide it from path resolution',async()=>{
+ const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-alias-dotdot-'));
+ const root=path.join(base,'workspace'),outside=path.join(base,'outside'),sub=path.join(outside,'sub');
+ fs.mkdirSync(root);fs.mkdirSync(sub,{recursive:true});
+ fs.writeFileSync(path.join(root,'victim.txt'),'M5_WORKSPACE_VICTIM');fs.writeFileSync(path.join(outside,'victim.txt'),'M5_OUTSIDE_VICTIM');
+ fs.symlinkSync(sub,path.join(root,'linked'),process.platform==='win32'?'junction':'dir');
+ const before=createHash('sha256').update(fs.readFileSync(path.join(outside,'victim.txt'))).digest('hex');let callbacks=0;
+ const guard=createAgentGuard({sessionId:'test-observe-alias-dotdot',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',tools:{read:{operation:'file-read'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(root+path.sep+String(call.args.path),'utf8');}});
+ const call={name:'read',args:{path:'linked/../victim.txt'}};
+ const decision=router.inspectPolicy(call);assert.equal(decision.action,'DENY');assert.equal(decision.reason,'path_alias_rejected');
+ await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_alias_rejected');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);assert.equal(guard.state,'SAFE');
+ assert.equal(fs.readFileSync(path.join(outside,'victim.txt'),'utf8'),'M5_OUTSIDE_VICTIM');
+ assert.equal(createHash('sha256').update(fs.readFileSync(path.join(outside,'victim.txt'))).digest('hex'),before);
+});
 test('M5 verified real-path policy denies an outside-workspace junction before the file-read callback',async()=>{
  const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'outside-junction-risk-policy-'));
  const root=path.join(base,'workspace'),outside=path.join(base,'outside'),sentinel=path.join(outside,'sentinel.txt');
