@@ -6824,3 +6824,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M0 PR #30 head `6d0d5e4db49fdac4d4d2ce118852549a59ec0a55` product run `39846973393` had one actual test failure: Ubuntu Node 20 job `120062707554`, in “four concurrent processes preserve every quarantine without lost writes.” Worker 0 exhausted 500 attempts with 2 ms delay and raised `RETRY_LIMIT` (321 passed, 1 failed, 4 skipped). The other five test-matrix jobs were cancelled by fail-fast, not independent failures; Docker, sponsor, and ownership-contract checks passed.
 - The event is recorded on existing P1 Issue #51 in comment `6350375823`. It reproduces the direct retry-exhaustion path but adds no lock-owner/timing trace, so underlying cause and data-loss status remain UNKNOWN. M1 is reviewing the current store and prior ten-run evidence. No rerun, test weakening, or module-code edit was made by M0.
 - PR #30 must remain CI-failing until an exact-head fix or owner disposition makes the required checks green; do not call this a docs-only pass. The `retry_limit` failure is the only confirmed failing job in this run.
+
+## M9 M4-pin exact-head CI — 2026-10-22 20:17 UTC
+
+- M9 PR #36 exact head `0932e63f89b08f6adff4b918904137110bf138ad` passes 13/13 hosted checks, including Ubuntu and Windows current-module-ref composition at run `39846980139`, cross-platform Node 20/22, wrapper regressions, package smoke, Docker, and sponsor checks.
+- The pinned M4 source is exact public PR #34 head `83a3abc0b85e783c34d79392e50015ed8f24e184`, whose own exact-head checks also passed 9/9. M9 evidence remains synthetic/source composition and does not close Issue #52's product-host/OS-atomic TOCTOU gate.
