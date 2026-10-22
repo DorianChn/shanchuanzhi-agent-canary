@@ -20,7 +20,7 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: 'c67b15f76973a2333ce523dd58d5b7439ab40702',
   M2: '099ad64e4a09330920cbd40847adec3fe631e91e',
-  M3: 'bf40d1309e571338b3f36152226ec44b082e5037',
+  M3: 'aa6f1a5f0ee410b3c883fbe0c60e89020273966a',
   M4: '6d5b05b4ca634dd5727b62f621f783f8e56586b5',
   M5: 'c9003234913a0ccccca56fe2a36fb1ce3dacb2de',
   M6: 'ef4679b276a90767bb1a6d7bd852aadc45b2d1cb',
@@ -310,7 +310,7 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
   assert.equal(guard.state, 'SAFE');
 });
 
-// Keep this exact-source integration red on the current M3/M1 Guard contract mismatch; do not mask it with an M9 shim.
+// Exercise the exact M3 runtime and M1 quarantine subscription contract without an M9 shim.
 test('M3 connection-check runtime composes M1 held Gateway, packed M2 public facade, and exact M5 router', async (t) => {
   const packedRoot = process.env.M2_PACKED_ROOT;
   const consumerRoot = process.env.M2_CONSUMER_ROOT;
