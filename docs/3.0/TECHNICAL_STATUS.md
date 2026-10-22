@@ -6802,3 +6802,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Issue #73 was updated with the exact M6 fix and synthetic regression evidence in comment `6350216307`, then closed after confirming PR #38 exact-head checks green (11/11). This closes the source-level local-path disclosure path only; no production disclosure is claimed. Independent product E4 Issue #57 remains OPEN/P1/NOT_VERIFIED.
 - M9 is waiting for the current exact-head run to finish before updating its M4 pin to `83a3abc`; M4 is eligible based on its own green exact-head CI. Issue #52 remains OPEN/P0/NOT_VERIFIED because first-party protected file-read and OS-atomic TOCTOU evidence remain absent.
 - PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. The usage page last read at 20:06 UTC showed 50% five-hour, 92% weekly, and 113 credits. Next push batch is no earlier than five minutes after the 20:06 batch.
+
+## M9 exact-current composition gate — 2026-10-22 20:11 UTC
+
+- M9 PR #36 head `d2002e90bb381744488ef4de319dabf4846c3c7d` completed all 13/13 exact-head checks successfully across Ubuntu and Windows composition, platform matrix, package, wrapper, Docker, and sponsor checks. Its current pins now have M3 `465bd606...` and M4 public head `83a3abc0b85e783c34d79392e50015ed8f24e184`.
+- M9 prepared local follow-up commit `0932e63f89b08f6adff4b918904137110bf138ad`, changing only its M4 ref in workflow/test/snapshot. The focused M4-source test passed 1/1; complete local M9 composition passed 11/11; syntax and diff checks passed. This candidate has not yet been pushed and still requires hosted exact-head checks.
+- M1 is investigating Issue #62 in its existing Gateway worktree. No M1 code change or conclusion is claimed yet; expired-approval denial and zero-callback assertions remain required.
