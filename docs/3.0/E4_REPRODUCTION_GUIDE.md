@@ -71,7 +71,7 @@ Review the generated `report.json` and `report.md`; retain `raw.log`, all `evide
 npm run e4:verify -- "security-lab/e4-runs/<run-id>"
 ```
 
-The verifier must exit successfully. Record the complete run directory and ZIP SHA-256 in the independent receipt. The local bundle verifier is in the same software trust domain as the generator and is not a digital signature.
+The verifier must exit successfully. This confirms archive integrity only; the output uses `bundleIntegrityVerified=true`, `evidenceScope=BUNDLE_INTEGRITY_ONLY`, `productE4Accepted=false`, and `e4Status=NOT_VERIFIED`. Missing product source/artifact provenance, an independent verifier, or an evidence-retention location remains an unmet E4 acceptance requirement. Record the complete run directory and ZIP SHA-256 in the independent receipt. The local bundle verifier is in the same software trust domain as the generator and is not a digital signature.
 
 ## 5. Optional real GPT-6 Luna Max tool call
 

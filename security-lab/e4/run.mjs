@@ -600,7 +600,7 @@ async function main() {
   const tempBase = path.resolve(os.tmpdir());
   const resolvedTemp = path.resolve(tempRoot);
   if (resolvedTemp.startsWith(`${tempBase}${path.sep}`) && path.basename(resolvedTemp).startsWith('agent-canary-e4-synthetic-')) fs.rmSync(resolvedTemp, { recursive: true, force: true });
-  process.stdout.write(JSON.stringify({ runDirectory: path.relative(repoRoot, runDir).split(path.sep).join('/'), overall: report.overall, e4Status: report.e4Status, caseCount: report.cases.length, statusCounts: report.statusCounts, model: report.model, bundleSha256: archiveHash, bundleVerified: manifestResult.valid }) + '\n');
+  process.stdout.write(JSON.stringify({ runDirectory: path.relative(repoRoot, runDir).split(path.sep).join('/'), overall: report.overall, e4Status: report.e4Status, caseCount: report.cases.length, statusCounts: report.statusCounts, model: report.model, bundleSha256: archiveHash, bundleIntegrityVerified: manifestResult.valid, evidenceScope: 'BUNDLE_INTEGRITY_ONLY', productE4Accepted: false }) + '\n');
   if (failed) process.exitCode = 1;
 }
 
