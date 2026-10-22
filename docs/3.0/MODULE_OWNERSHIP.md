@@ -736,3 +736,15 @@ The remaining M1, M4, M6, M7, and M9 public heads remain those in the 22:30 UTC 
 | M8 / #40 | 35aa22f3087ed1859da19acbf12cc4c767dd4f3d | exact CI and Windows wrapper in progress |
 
 M1, M3, M4, M6, M7, and M9 public heads are unchanged from the 22:30 snapshot. M1 is reviewing the M5-owned candidate without transferring M5 file ownership. M9 scratch composition is being prepared against candidate refs; it must not promote them to integration pins before their exact hosted checks finish.
+
+## Exact validation delta — 2026-10-22 22:47 UTC
+
+| Module / PR | Public head | Exact hosted result | Local owner result |
+|---|---|---|---|
+| M0 / #30 | 0f197f51df4de071c62d94a48a0e62619caddd62 | CI 39867084564 9/9; coordination 39867084565 1/1 | Coordination docs only |
+| M2 / #37 | 67428139e53c3f63a1101b4f94e84b291cbb1196 | CI 39866513817 9/9 | Focused Hook protocol/build/diff-check pass |
+| M5 / #47 | 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed | CI 39867073839 9/9 | Risk-policy 42/42; router 23/23; build/diff-check pass |
+| M8 / #40 | 35aa22f3087ed1859da19acbf12cc4c767dd4f3d | CI 39867080161 9/9; wrapper 39867080178 2/2 | Docs 14/14 checks; Auto E4 5/5; extracted harness pass |
+| M1 / #43 | 6886d6eef3beb972bc8f4c797584b0f522483870 | CI 39860277883 9/9 | Gateway suite 36/36; alias denied; no source change |
+
+All remain separate OPEN/Draft PRs except that this table does not change PR state. Issue #52 remains OPEN/P0. M9 exact-candidate composition is still pending.

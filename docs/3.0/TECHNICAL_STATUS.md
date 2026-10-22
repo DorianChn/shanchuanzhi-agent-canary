@@ -7095,3 +7095,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Readback confirms M2 PR #37 remains at 67428139e53c3f63a1101b4f94e84b291cbb1196 with exact CI green 9/9. M1 owner review of M5's path-alias candidate and M9 scratch composition against the updated module candidates are in progress.
 - Issue #52 stays OPEN/P0: M5's before/after policy-level result is relevant but does not establish M1 held-identity use or real-host callback identity. Do not close until independent M1 review, hosted exact CI, and exact-source composition are recorded.
 - The 22:43 UTC usage preflight showed 91% five-hour remaining; PR #24 remained OPEN/Draft at its fixed head/base. Next remote write is no earlier than 22:48 UTC after a fresh preflight; no merge, Release, or change to PR #24.
+
+## M0 exact security-candidate validation — 2026-10-22 22:47 UTC
+
+- Exact public checks are green: M0 #30 product CI 39867084564 (9/9) and coordination 39867084565 (1/1); M2 #37 CI 39866513817 (9/9); M5 #47 CI 39867073839 (9/9); M8 #40 CI 39867080161 (9/9) and Windows wrapper 39867080178 (2/2).
+- M1 independently reviewed M5's linked/../victim boundary against the coordinated worktree at HEAD 6886d6eef3beb972bc8f4c797584b0f522483870. On a Windows junction fixture, the bound capability rejected the alias as DENY/resource_not_bound before callback; legitimate callback count stayed one, and workspace/outside hashes stayed unchanged. M1 gateway suite passed 36/36. No M1 change was needed.
+- M5 exact CI passing establishes the policy-layer regression for its current PR candidate; M1 review confirms no matching normalization gap in the exact M1 Gateway candidate. Issue #52 remains OPEN/P0 pending M9 exact-source composition and real first-party host/callback identity evidence; do not claim global host protection.
+- M8's artifact/index candidate and M7's artifact wrapper are green; this does not establish independent E4, clean-VM install lifecycle, or native-host enforcement.
+- M9 is now authorized to compose the exact public M2/M5/M8 candidates with the other green module refs in an isolated scratch copy. It may update its existing integration branch locally only after composition passes; no merge or Release.
