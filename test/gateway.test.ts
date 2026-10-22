@@ -35,6 +35,44 @@ test('host-only file-read capability is opaque, exact-bound, and uses the M1 Gat
   await assert.rejects(s.runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_FILE_CAPABILITY_INVALID/);
  }finally{await s.runtime.close();await other.runtime.close();}
 });
+test('file-read capability blocks sensitive aliases and replaced paths before the host callback',async()=>{
+ const s=setup(),binding={toolName:'read_public',operation:'file-read' as const,path:'public.txt'},call={name:'read_public',args:{path:'public.txt'}};
+ const original=path.join(s.root,'public.txt'),held=path.join(s.root,'public.held.txt'),secret=path.join(s.root,'.env');
+ let callbacks=0;
+ try{
+  const capability=s.runtime.bindFileReadCapability(binding);
+  const registeredRead=async(candidate:any)=>{
+   if(!s.runtime.verifyFileReadCapability(capability,candidate,'file-read'))throw Error('GATEWAY_FILE_CAPABILITY_INVALID');
+   callbacks++;
+   return s.runtime.readFileWithCapability(capability,candidate,'file-read');
+  };
+
+  assert.deepEqual(await registeredRead(call),{content:'hello'});
+  assert.equal(callbacks,1);
+  const afterSafeRead=s.evidence.snapshot().length;
+  const secretBytes=fs.readFileSync(secret);
+  const alias={name:'read_public',args:{path:'.env'}};
+  assert.equal(s.runtime.verifyFileReadCapability(capability,alias,'file-read'),false);
+  await assert.rejects(registeredRead(alias),/GATEWAY_FILE_CAPABILITY_INVALID/);
+  assert.equal(callbacks,1,'a sensitive path alias is denied before the registered callback');
+  assert.equal(s.evidence.snapshot().length,afterSafeRead,'a sensitive path alias never reaches M1 file I/O');
+  assert.equal(s.runtime.operator.pending().length,0,'a sensitive path alias creates no approval');
+  assert.deepEqual(fs.readFileSync(secret),secretBytes);
+
+  fs.renameSync(original,held);
+  fs.writeFileSync(original,'replacement target');
+  const replacementBytes=fs.readFileSync(original);
+  assert.equal(s.runtime.verifyFileReadCapability(capability,call,'file-read'),false);
+  await assert.rejects(registeredRead(call),/GATEWAY_FILE_CAPABILITY_INVALID/);
+  assert.equal(callbacks,1,'a replaced registered path is denied before the registered callback');
+  assert.equal(s.evidence.snapshot().length,afterSafeRead,'a replaced path never reaches M1 file I/O');
+  assert.equal(s.runtime.operator.pending().length,0,'a replaced path creates no approval');
+  assert.equal(s.guard.state,'SAFE');
+  assert.deepEqual(fs.readFileSync(original),replacementBytes);
+  assert.equal(fs.readFileSync(held,'utf8'),'hello');
+  assert.deepEqual(fs.readFileSync(secret),secretBytes);
+ }finally{await s.runtime.close();}
+});
 test('file-read capability revalidates held identity immediately before reading',async()=>{
  const s=setup(),binding={toolName:'read_public',operation:'file-read' as const,path:'public.txt'},call={name:'read_public',args:{path:'public.txt'}};
  const original=path.join(s.root,'public.txt'),held=path.join(s.root,'public.held.txt');
