@@ -8,7 +8,14 @@ import {
   validateGatewayAdapterPackage,
 } from "./package-file-policy.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const policyRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const packageRootIndex = process.argv.indexOf("--package-root");
+if (packageRootIndex !== -1 && (process.argv.indexOf("--package-root", packageRootIndex + 1) !== -1 || !process.argv[packageRootIndex + 1] || process.argv[packageRootIndex + 1].startsWith("--"))) {
+  throw new Error("--package-root requires exactly one path");
+}
+const root = packageRootIndex === -1
+  ? policyRoot
+  : path.resolve(process.argv[packageRootIndex + 1]);
 const npmCli = process.env.npm_execpath;
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-package-"));
 
@@ -58,7 +65,7 @@ try {
   fs.mkdirSync(installDir);
   runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
 
-  run(process.execPath, [path.join(root, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
+  run(process.execPath, [path.join(policyRoot, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
 
   const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "index.js");
   if (!fs.existsSync(cli)) fail("installed CLI entrypoint was not found");

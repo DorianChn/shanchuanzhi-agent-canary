@@ -1,0 +1,68 @@
+name: M7 reviewed package smoke
+
+on:
+  workflow_call:
+    inputs:
+      policy-ref:
+        description: Full 40-character M7 commit SHA used for this workflow and checker.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  package-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Require an immutable M7 policy revision
+        env:
+          POLICY_REF: ${{ inputs.policy-ref }}
+        run: |
+          if [[ ! "$POLICY_REF" =~ ^[[:xdigit:]]{40}$ ]]; then
+            echo "policy-ref must be a full commit SHA" >&2
+            exit 1
+          fi
+
+      - name: Check out the caller's exact candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: candidate
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: candidate/package-lock.json
+
+      - name: Install candidate dependencies
+        working-directory: candidate
+        run: npm ci
+
+      - name: Build candidate
+        working-directory: candidate
+        run: npm run build
+
+      - name: Check out the pinned M7 policy implementation
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: ${{ inputs.policy-ref }}
+          path: policy
+          persist-credentials: false
+
+      - name: Install checker dependencies
+        working-directory: policy
+        run: npm ci
+
+      - name: Pack, install, and smoke-test with the pinned M7 facade policy
+        working-directory: policy
+        env:
+          PACKAGE_ROOT: ${{ github.workspace }}/candidate
+        run: npm run pack:check -- --package-root "$PACKAGE_ROOT"

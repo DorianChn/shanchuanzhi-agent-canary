@@ -53,6 +53,22 @@ test('package checker accepts only the reviewed gateway facade and exact export 
   assert.throws(()=>validateGatewayAdapterPackage({exports:{'./gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/must target only the strict facade/);
 });
 
+test('M7 reusable package smoke pins and applies its checker to the caller candidate',()=>{
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/m7-package-smoke.yml'),'utf8');
+  const checker=fs.readFileSync(path.join(repo,'scripts/check-package.mjs'),'utf8');
+  assert.match(workflow,/workflow_call:/);
+  assert.match(workflow,/policy-ref:[\s\S]*?required: true[\s\S]*?type: string/);
+  assert.match(workflow,/github\.event\.pull_request\.head\.sha \|\| github\.sha/);
+  assert.match(workflow,/ref: \$\{\{ inputs\.policy-ref \}\}/);
+  assert.match(workflow,/POLICY_REF[\s\S]*?\[\[:xdigit:\]\]\{40\}/);
+  assert.match(workflow,/permissions:\s+contents: read/);
+  assert.equal((workflow.match(/persist-credentials: false/g)??[]).length,2);
+  assert.match(workflow,/npm run pack:check -- --package-root "\$PACKAGE_ROOT"/);
+  assert.match(checker,/process\.argv\.indexOf\("--package-root"\)/);
+  assert.match(checker,/path\.join\(policyRoot, 'scripts', 'check-sdk-types\.mjs'\)/);
+  assert.doesNotMatch(workflow,/execution-isolation\/\*\*/);
+});
+
 test('payload inventory rejects symbolic links',t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-payload-link-'));
   try{
