@@ -6889,3 +6889,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - PR #30 run `39852109168` failed Windows Node 22 job `120080730007`: the existing interruption test `test/agent-hook.test.ts:54` did not observe its marker (`false !== true`; 321 passed, 1 failed, 4 skipped). This is the already tracked Issue #32 failure; M0 did not alter the test or runtime. Keep #30 Draft and report this as a P1 CI failure until the owning M1 fixture change is reconciled.
 - PR #43 exact-head run `39852097851` has its Windows Node 20/22, macOS, Ubuntu, and file-store stress jobs passing; `package-smoke` is still pending at this check. Do not unlock M9's pin update until all required exact-head checks finish successfully.
+
+## M0 next-batch verification — 2026-10-22 20:53 UTC
+
+- PR #43 exact head `c67b15f76973a2333ce523dd58d5b7439ab40702` is now 11/11 green across the standard matrix, package smoke, and Ubuntu file-store x10 jobs (runs `39852097851` and `39852097984`).
+- PR #30 exact head `2b874a8aed7c0def25c8ce64d2f73e886ffc2e66` run `39852109168`: the Windows Node 22 interruption test failed as above; Windows Node 20 and macOS Node 20 were cancelled, package-smoke skipped, while the other matrix jobs and ownership evidence passed. Issue #32 remains OPEN/P1; no test or policy was weakened.
+- M9 `18b60684c7d59dd70c80fc299c346c6b449a0dbe` is now eligible for publication because exact M1 c67 hosted checks are green; its own exact-head checks remain to be run after push.
+- PR #24 read at 20:53 UTC remains OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
