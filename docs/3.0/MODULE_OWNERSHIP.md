@@ -595,3 +595,8 @@ This ruling resolves the prior tentative ownership of the desktop route. It is a
 - **M4 Security Center consumer:** owns `src/ai/console-page.ts`, `src/ai/security-center-adapter.ts`, and `test/runtime-console.test.ts`; it consumes the M3 route and displays missing or invalid protection data as `UNKNOWN`.
 - **Owner-controlled interfaces:** M1 retains Gateway/Hook semantics and held-file capability; M2 retains the public Gateway adapter/fixed file map and package export; M5 retains strict OBSERVE/router semantics; M6 owns E4 verification/status schema; M7 owns installer and shipped-payload evidence; M9 owns exact-source integration. M3/M4 use adapters and do not edit these owner APIs or files.
 - For #52, the route is read-only. It may expose only status fields already accepted by `docs/3.0/API_CONTRACTS.md`; no raw arguments, file contents, secrets, tokens, or absolute user paths. Do not substitute a demo or path-only fallback. Keep #52 OPEN/P0/NOT_VERIFIED until exact M1/M2/M3/M5 composition and M4 consumer checks pass.
+
+## M0 owner-routing addendum — 2026-10-22 18:05 UTC
+
+- M9 owns diagnostics and regression assertions in `test/ai.test.ts` for Issue #54. On current M9 head `c8bf076a5520e2831fb561bf5680351f745de85a`, the 503-then-success loopback fixture passes and asserts exactly two requests; the historical Windows Node 22 failure at old head `1f577c56ea89cc362db66ebf3ca18ad05962c898` remains unexplained from available logs.
+- No module owner is currently assigned for `src/ai/provider.ts` or `src/ai/transport.ts`. This is an ownership gap, not an implicit M9/M1 transfer. Do not change these source files until an explicit component owner is named. M0 records and routes the gap only.
