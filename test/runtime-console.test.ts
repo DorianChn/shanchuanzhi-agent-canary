@@ -65,6 +65,35 @@ test('missing live security and E4 providers stay unavailable behind the existin
  }finally{await console.close();}
 });
 
+test('missing security-center endpoint leaves the UI protection summary UNKNOWN',async()=>{
+ const console=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(console.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
+  const response=await fetch(console.url+'/api/security-center',{headers:{'x-canary-csrf':csrf!}});
+  assert.equal(response.status,404,'the current backend has no authoritative security-center provider');
+
+  const source=classifyDataSourceFailure(response.status,'Error');
+  assert.equal(source,'UNSUPPORTED');
+  const view=adaptSecuritySnapshot({securityCenter:null});
+  assert.deepEqual([
+   view.protectionStatus,view.gateway.protectionStatus,view.hook.protectionStatus,
+   view.canaryIsolation.protectionStatus,view.policy.protectionStatus,
+  ],['UNKNOWN','UNKNOWN','UNKNOWN','UNKNOWN','UNKNOWN']);
+  assert.equal(view.protectedToolCount,null);assert.equal(view.unprotectedExecutionPaths,null);
+  const diagnostic=buildSecurityDiagnostic(view,{securityCenter:source});
+  assert.equal(diagnostic.protection.overall,'UNKNOWN');
+  assert.equal(diagnostic.dataSources.securityCenter,'UNSUPPORTED');
+
+  assert.match(html,/id="overallProtectionStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
+  assert.match(html,/id="gatewayProtectionStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
+  assert.match(html,/id="hookProtectionStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
+  assert.match(html,/id="canaryIsolationStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
+  assert.match(html,/id="currentPolicyStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
+  assert.match(html,/function renderSecurityCenter\(\)\{[\s\S]*?setProtectionNode\('overallProtectionStatus',securitySnapshot\.protectionStatus\)/);
+  assert.match(html,/securitySnapshot=securityCenterAdapter\.adaptSecuritySnapshot\(values\)/);
+ }finally{await console.close();}
+});
+
 
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({
