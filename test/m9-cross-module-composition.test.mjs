@@ -19,23 +19,42 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 
 const pinnedSourceShas = {
   M1: '7279336307fc7aacd46119405858d4fd91499757',
-  M2: 'be66cf8f4c1a60f093740577796ec5cd633e1d93',
+  M2: '868b12a4688282c28091b731f6548d5535c0c37c',
   M3: '429cd73c03273bc77f3781b489f541e396cd9361',
   M5: 'bbce79aa086b39b51422cc72471c23c963778650',
-  M6: '98803607b89f11e24430c461bd91e9c1a0ece9d4',
-  M7: 'cdae8baf13a4ee2f06cc7655a684b7eab0b6ed3a',
-  M8: '2d5a0ffe1e93dcc93673a3fd2de5a6bf71ac09d3',
+  M6: '2cebabc81d7908c04ddfa10378fa1d3427b92cf4',
+  M7: '167ebe81b76cc434facdaa3ddc62b42b9843951a',
+  M8: '35ab804d9729590a572c01d16391e63472992622',
 };
+
+const m2OwnerDispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
+const m6OwnerAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
+
+function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
+  const result = spawnSync('git', [
+    '-C', sourceRoots[moduleName].root,
+    'merge-base',
+    '--is-ancestor',
+    ancestorSha,
+    candidateSha,
+  ], { encoding: 'utf8', windowsHide: true });
+  assert.equal(result.error, undefined, `${description} ancestry check must start`);
+  assert.equal(result.status, 0, `${description} must remain an ancestor of the exact candidate`);
+}
+
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
 assert.equal(process.env.M6_OWNER_ACCEPTANCE_STATUS, 'ACCEPT', 'M6 owner acceptance must match the published exact-scope disposition');
-assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, pinnedSourceShas.M6, 'M6 owner acceptance must name the exact pinned source SHA');
+assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, m6OwnerAcceptanceSha, 'M6 owner acceptance must retain its original exact-scope source SHA');
 assert.equal(process.env.M6_OWNER_ACCEPTANCE_COMMENT, '6320039569', 'M6 acceptance must cite the exact public Issue #59 comment');
 assert.equal(process.env.M2_OWNER_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'M2 package acceptance retains the real-M5-router condition');
-assert.equal(process.env.M2_OWNER_DISPOSITION_SHA, pinnedSourceShas.M2, 'M2 disposition must name the exact packed candidate SHA');
+assert.equal(process.env.M2_OWNER_DISPOSITION_SHA, m2OwnerDispositionSha, 'M2 disposition must retain the exact SHA reviewed by M1');
 assert.equal(process.env.M2_OWNER_DISPOSITION_COMMENT, '6321070391', 'M1 actual-tarball review must match the public disposition');
-assert.equal(process.env.M2_OWNER_DISPOSITION_ISSUE, '68', 'M2/M7 package composition is tracked in Issue #68');
+assert.equal(process.env.M2_OWNER_DISPOSITION_ISSUE, '52', 'M1 disposition comment 6321070391 is recorded on Issue #52');
+assert.equal(process.env.M2_PACKAGE_GATE_ISSUE, '68', 'M2/M7 reproducible package gate is tracked separately in Issue #68');
+assertAncestor('M2', m2OwnerDispositionSha, pinnedSourceShas.M2, 'M1-reviewed M2 disposition');
+assertAncestor('M6', m6OwnerAcceptanceSha, pinnedSourceShas.M6, 'M6 owner acceptance');
 assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 
@@ -72,6 +91,20 @@ test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () =>
   }
 });
 
+test('exact M2 candidate delegates package smoke to the exact pinned M7 workflow and policy', () => {
+  const workflow = fs.readFileSync(path.join(sourceRoots.M2.root, '.github', 'workflows', 'ci.yml'), 'utf8');
+  assert.match(
+    workflow,
+    new RegExp(`uses:\\s*DorianChn/shanchuanzhi-agent-canary/\\.github/workflows/m7-package-smoke\\.yml@${pinnedSourceShas.M7}`),
+    'M2 CI must call the exact M7 reusable package-smoke workflow',
+  );
+  assert.match(
+    workflow,
+    new RegExp(`policy-ref:\\s*${pinnedSourceShas.M7}`),
+    'M2 CI must pass that same exact M7 revision as the package policy',
+  );
+});
+
 test('M8 Hook adapter matches its exact M1-approved source blob', () => {
   assert.equal(
     readTrackedBlobId('M8', 'security-lab/claude-native-hook.mjs'),
@@ -88,7 +121,8 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
-console.log('[M6 owner acceptance]', `${process.env.M6_OWNER_ACCEPTANCE_STATUS} for ${process.env.M6_OWNER_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_OWNER_ACCEPTANCE_COMMENT}; Auto E4 paths/tests only)`);
+console.log('[M2 prior owner disposition]', `${process.env.M2_OWNER_DISPOSITION} for ${process.env.M2_OWNER_DISPOSITION_SHA} (Issue #52 comment ${process.env.M2_OWNER_DISPOSITION_COMMENT}); current candidate ${pinnedSourceShas.M2} is a later exact package candidate, not covered by that disposition`);
+console.log('[M6 prior owner acceptance]', `${process.env.M6_OWNER_ACCEPTANCE_STATUS} for ${process.env.M6_OWNER_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_OWNER_ACCEPTANCE_COMMENT}; Auto E4 paths/tests only); current candidate ${pinnedSourceShas.M6} is a later source revision, not covered by that acceptance`);
 console.log('[M9 separate evidence SHAs]', `M1_OWNER_REVIEW_SHA=${process.env.M1_OWNER_REVIEW_SHA}`, `M5_CODE_SHA=${process.env.M5_CODE_SHA}`);
 
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'));
