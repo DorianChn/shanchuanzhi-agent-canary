@@ -649,3 +649,19 @@ Each M1–M8 directory is a distinct worktree with its existing PR branch attach
 | M9 | `feature/ac3-m9-integration` / #36 | `8ebb206` | Scratch exact composition passed 11/11 on current M1/M3/M4 pins; M9 local commit `8506fef` updates only the workflow pins, composition assertions, and exact-source report; it is not yet published. |
 
 All module branches remain separate Draft PRs; the current exact composition is test evidence, not a merge or product-host/E4 acceptance. M1–M8 source ownership is unchanged.
+## M0 ownership refresh — 2026-10-22 22:02 UTC
+
+| Module | Existing PR branch | Current public/local head | Scope / current state |
+|---|---|---:|---|
+| M0 | `feature/ac3-m0-coordination` / #30 | `b7a0fe2` | Coordination docs/contracts; coordination check passed and exact product CI 9/9 is green. |
+| M1 | `feature/ac3-security-core` / #43 | `6886d6e` | Gateway/Guard/Hook/store; exact CI 9/9 and concurrency 2/2 pass. #51 stays open due original trigger UNKNOWN. |
+| M2 | `feature/ac3-execution-isolation` / #37 | `92a9562` | Host-hook adapter; native host remains UNPROTECTED/NOT_VERIFIED. |
+| M3 | `feature/ac3-agent-onboarding` / #33 | `34b526d` | Onboarding/Hook docs; protected-read POST blocked; exact CI 9/9 pass. |
+| M4 | `feature/ac3-desktop-security-center` / #34 | `264bc28` | Desktop UI/tests; exact CI 9/9 pass on updated M1 base. |
+| M5 | `feature/ac3-policy-audit` / #47 | `c900323` | Policy/router variants and alias-denial tests; shared files require M1 review. |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 | `5f1649f` | E4 verifier/schema/bundle; independent product E4 NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / #39 | `4f986cc` local | Invalid installer compile outputs now fail closed; local tests/build green; awaiting push and exact CI. Clean-VM lifecycle remains gated. |
+| M8 | `feature/ac3-open-source-product` / #40 | `5bf5d4f` | Open-source/docs and shipped Hook/logging copy. |
+| M9 | `feature/ac3-m9-integration` / #36 | `8506fef` | Exact current source pins pushed; CI 9/9, wrapper 2/2, and exact-source composition 2/2 green; composition pins M7 at 868842b pending the new M7 candidate. |
+
+No module source ownership changed. M4/M7 are isolated worktrees in the separate Windows-E4 Git common directory; other listed coordinator branches remain on their own worktrees.
