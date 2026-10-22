@@ -217,3 +217,7 @@ At PR #34 head `803a015f3e97ae69b7adeb4411f93defc0a06cfe`, M4 still uses a separ
 M0's 19:10–19:30 slot assigns only M4 and M5 to this P0 gate. Assignment and exact interface trace are recorded in PR #34 comments `6324321655`, `6324355802`, `6324397491` and PR #47 comments `6324322381`, `6324337735`, `6324356936`, `6324398295`. M5's existing uncommitted `packaging/windows/auto-e4.mjs` and `test/auto-e4.test.mjs` changes are M6-owned; preserve them and do not stage them on #47.
 
 M9 must compose exact reviewed/public M1, M2, M4, and M5 commits before claiming #52. Require safe-read positive control, alias/workspace-escape/path-replacement denials before callback or file effect, with expected redacted denial evidence, and exact Ubuntu/Windows CI. Until then #52 stays OPEN/P0/NOT_VERIFIED for product-host consumption and TOCTOU.
+
+## Current P0 #52 integration path — 2026-10-22 12:40 UTC
+
+M3's Console status route depends on the owner-controlled M2 public `./gateway-adapter` facade and M5 strict OBSERVE router, with M1 providing held-file capability semantics. M4 consumes only the M3-owned read-only `GET /api/security-center` status payload and displays absent protection data as UNKNOWN. M9 pins and exercises the synthetic M1→M2→M5 composition; the current M3 backend route is still absent, so the production UI/status chain is not complete. M2 P1 #69 package-smoke remains separate from this P0 dependency path.

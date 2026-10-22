@@ -1625,3 +1625,11 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#71 P1 — Windows Node 20 fixture teardown:** OPEN / queued. The exact #33 run fails cleanup with `ENOTEMPTY`; retain security assertions and require exact Windows Node 20/22 and package-smoke reruns.
 - **#72 P1 — M1 exact-blob review of M3 Hook files:** OPEN / queued. Review current exact PR blobs; do not infer review transfer.
 - **#53 P0 scoped logging gate:** CLOSED for packaged Hook logging/redaction and exact-source composition only; it does not close #52 or establish installer execution, host activation, clean-VM lifecycle, or product E4.
+
+## M0 verified disposition — 2026-10-22 12:40 UTC
+
+- **#52 P0:** OPEN / NOT_VERIFIED. M4 UI request exists, M3 backend route is absent. M9 synthetic M1/M2/M5 composition passes at exact head `7c8d808`, but does not establish the product Console path or OS-atomic TOCTOU. M3+M5 active 12:40–13:00; M4 queued.
+- **#69 P1:** OPEN / queued behind #52. M2 public facade boundary is verified; package-smoke compatibility remains a separate gate.
+- **#70 P1:** OPEN / queued to M7. Existing Dependabot PR #67 updates Hono 4.13.7 to 4.13.13; exact package-smoke and non-applicability review remain required. No reachable `serveStatic` callsite or actual exposure is confirmed.
+- **#71 P1:** OPEN / queued M3 for Windows Node 20 fixture teardown `ENOTEMPTY`; preserve all security assertions.
+- **#72 P1:** OPEN / queued M1 exact-blob review of M3 Hook changes.
