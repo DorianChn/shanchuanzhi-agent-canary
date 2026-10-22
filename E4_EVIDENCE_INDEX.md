@@ -61,29 +61,30 @@ This workflow maps the bounded verifier currently in M6 PR #38 at source head [`
 | `evidence-review` | Consistency review of this run's release, SDK, and hook results | It reviews same-run evidence only and cannot establish independent operator/environment status. |
 | `uninstall-reinstall` | Records whether lifecycle prerequisites are available | No VM installer lifecycle operation is performed; this stage is `BLOCKED`. |
 | `github-pr` | Records that the packaged app lacks a source checkout and GitHub write credential | It performs no GitHub writes and does not create or update a PR. |
-| `materials` | Run-specific report/index/event artifacts and, if the local archive tool succeeds, the ZIP and digest sidecar | A bundle is not a complete competition submission or an independent evidence signature. Archive-failure recovery is not covered by the cited tests: the worker attempts to write the reports a second time after the no-overwrite writer has already created them. Until that path is fixed and tested, a ZIP failure may abort report finalization; preserve any files produced and record the actual error rather than claiming a finalized `BLOCKED` report. |
+| `materials` | Run-specific report/index/event artifacts and, if the local archive tool succeeds, the ZIP and digest sidecar | A bundle is not a complete competition submission or an independent evidence signature. At the M6 source head below, archive-failure recovery has a targeted regression: it preserves a finalized `BLOCKED` report, appends and re-indexes the failure event, and leaves ordinary no-overwrite behavior intact. CI for that exact source commit is pending; if bundle creation fails, no verified ZIP exists and `materials` must remain `BLOCKED`. |
 
 The generated report distinguishes technical execution from external E4: `technicalResult` can be `FAIL`, `BLOCKED`, `PARTIAL`, or `READY_FOR_EXTERNAL_REVIEW`, while `overallE4` remains **E4 EXTERNAL INDEPENDENCE NOT VERIFIED**. A user-run pass of these fixtures is not an independent E4 result, real-model test, installation/lifecycle acceptance, or clean-VM acceptance. The missing gates are listed in [the Auto E4 scope](docs/3.0/AUTO_E4.md) and in the future-E4 gate below.
 
 ### Exact M6 source and test objects checked
 
-The file contents below were read from the exact M6 source head above. Blob IDs identify the exact Git objects used for this mapping; use the source commit links, not a moving branch name.
+The file contents below were read from the exact M6 source head [`6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a`](https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a). Blob IDs identify the exact Git objects used for this mapping; use the source commit links, not a moving branch name. M6 reported 32 targeted checks passing, 2 skipped, and 0 failing; GitHub CI for this exact commit is pending, so the previous remote-head CI result does not validate this recovery change.
 
 | Role | File at M6 source head | Blob ID |
 |---|---|---|
-| Run state, stages, report and evidence-index contract | [`packaging/windows/auto-e4.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/auto-e4.mjs) | `255f96fbfd546503ec9d0f997e1806bc2b5b2f07` |
-| Windows runner orchestration, bounded stages, ZIP and sidecar | [`packaging/windows/worker.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/worker.mjs) | `49bed19b4a34a95bceb586f8ad921ee7bdd636ce` |
-| SDK side-effect fixture | [`packaging/windows/verification.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/verification.mjs) | `4652a88117f017a533460259ce5fc0b9df157bc1` |
-| Packaged Hook fault fixture and scope | [`packaging/windows/e4-hook-faults.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/e4-hook-faults.mjs) | `8d73bb9b59da787fde13b73ba6d2277e82b7bb1c` |
-| Stage/status/artifact regression tests | [`test/auto-e4.test.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/test/auto-e4.test.mjs) | `18fcc4b91e229d029f0f55c420ca3d0580d2c68d` |
-| Windows UI/package contract tests | [`test/windows-packaging.test.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/test/windows-packaging.test.mjs) | `4a0f5e53f2e7569a947ac277f32d67d353ffa006` |
-| Desktop Auto E4 button and report-location contract | [`packaging/windows/Launcher.cs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/Launcher.cs) | `b9f91b0872228a94d42890b18fa1a252b0c7ac3a` |
+| Run state, stages, report and evidence-index contract | [`packaging/windows/auto-e4.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/packaging/windows/auto-e4.mjs) | `e2539df287a2ac88628792a59371dd7b075512ba` |
+| Windows runner orchestration, bounded stages, ZIP and sidecar | [`packaging/windows/worker.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/packaging/windows/worker.mjs) | `b21ddf67ac84f8c5203f758399335d3482153990` |
+| SDK side-effect fixture | [`packaging/windows/verification.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/packaging/windows/verification.mjs) | `4652a88117f017a533460259ce5fc0b9df157bc1` |
+| Packaged Hook fault fixture and scope | [`packaging/windows/e4-hook-faults.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/packaging/windows/e4-hook-faults.mjs) | `8d73bb9b59da787fde13b73ba6d2277e82b7bb1c` |
+| Stage/status/artifact regression tests | [`test/auto-e4.test.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/test/auto-e4.test.mjs) | `18fcc4b91e229d029f0f55c420ca3d0580d2c68d` |
+| Bundle-failure recovery regression | [`packaging/windows/test-worker.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/packaging/windows/test-worker.mjs) | `ecb9c3401fa0e42ae0e58ab7df9666ef99a29bb7` |
+| Windows UI/package contract tests | [`test/windows-packaging.test.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/test/windows-packaging.test.mjs) | `4a0f5e53f2e7569a947ac277f32d67d353ffa006` |
+| Desktop Auto E4 button and report-location contract | [`packaging/windows/Launcher.cs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/6f81ca48c3ecc8f92bfe70bd501ee2a5062b76a/packaging/windows/Launcher.cs) | `b9f91b0872228a94d42890b18fa1a252b0c7ac3a` |
 
 For a source-level regression check (maintainer evidence only, not a user E4 run), run this from a checkout with dependencies installed:
 
 ```sh
 npm run build
-node --test test/auto-e4.test.mjs
+node --test test/auto-e4.test.mjs packaging/windows/test-worker.mjs test/windows-packaging.test.mjs
 ```
 
 This tests the bounded harness contract and does not install the Windows candidate or exercise an independent environment.
