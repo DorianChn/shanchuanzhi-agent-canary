@@ -57,6 +57,26 @@ test('M5 OBSERVE policy blocks sensitive file aliases and canonical path variant
   assert.equal(fs.readFileSync(secret,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),before);
  }
 });
+test('M5 OBSERVE blocks sensitive aliases and workspace escapes by default and when real-path checks are explicitly false',async()=>{
+ const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'observe-default-path-boundary-'));
+ const root=path.join(base,'workspace'),outside=path.join(base,'outside'),secret=path.join(root,'secrets','.env'),sentinel=path.join(outside,'sentinel.txt');
+ fs.mkdirSync(path.dirname(secret),{recursive:true});fs.mkdirSync(outside);fs.writeFileSync(secret,'M5_DEFAULT_OBSERVE_SECRET');fs.writeFileSync(sentinel,'M5_DEFAULT_OBSERVE_OUTSIDE');
+ fs.symlinkSync(path.dirname(secret),path.join(root,'linked'),process.platform==='win32'?'junction':'dir');
+ fs.symlinkSync(outside,path.join(root,'escaped'),process.platform==='win32'?'junction':'dir');
+ const secretBefore=createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),outsideBefore=createHash('sha256').update(fs.readFileSync(sentinel)).digest('hex');
+ for(const verifyRealPaths of [undefined,false]){
+  let callbacks=0;const guard=createAgentGuard({sessionId:'test-observe-default-path-boundary-'+String(verifyRealPaths),alert:false});
+  const config:any={guard,workspaceRoot:root,mode:'OBSERVE',tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}};
+  if(verifyRealPaths!==undefined)config.verifyRealPaths=verifyRealPaths;
+  const router=createRiskPolicyRouter(config);
+  for(const [file_path,reason] of [['linked/.env','observe_sensitive_data_blocked'],['secrets/../secrets/.env','observe_sensitive_data_blocked'],['escaped/sentinel.txt','outside_workspace'],['../outside/sentinel.txt','outside_workspace']] as const){
+   const call={name:'read',args:{file_path}},decision=router.inspectPolicy(call);assert.equal(decision.action,'DENY');assert.equal(decision.reason,reason);
+   await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason===reason);
+   assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);assert.equal(guard.state,'SAFE');
+   assert.equal(createHash('sha256').update(fs.readFileSync(secret)).digest('hex'),secretBefore);assert.equal(createHash('sha256').update(fs.readFileSync(sentinel)).digest('hex'),outsideBefore);
+  }
+ }
+});
 test('M5 verified real-path policy denies an outside-workspace junction before the file-read callback',async()=>{
  const base=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'outside-junction-risk-policy-'));
  const root=path.join(base,'workspace'),outside=path.join(base,'outside'),sentinel=path.join(outside,'sentinel.txt');
@@ -207,7 +227,7 @@ test('M5 verifyRealPaths rejects in-workspace non-sensitive symlink aliases; leg
   assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
   assert.equal(fs.readFileSync(target,'utf8'),'M5_PUBLIC_FIXTURE');assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
  }
- let legacyCallbacks=0;const legacy=createSecurityToolRouter({guard:createAgentGuard({sessionId:'test-in-workspace-alias-legacy',alert:false}),workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:false,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{legacyCallbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
+ let legacyCallbacks=0;const legacy=createSecurityToolRouter({guard:createAgentGuard({sessionId:'test-in-workspace-alias-legacy',alert:false}),workspaceRoot:root,mode:'BALANCED',verifyRealPaths:false,tools:{read:{operation:'file-read',pathArg:'file_path'}},executeRealTool:(call:any)=>{legacyCallbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
  assert.equal(await legacy.dispatch({name:'read',args:{file_path:'public/fixture.txt'}}),'M5_PUBLIC_FIXTURE');assert.equal(legacyCallbacks,1);
 });
 test('file-read through an in-workspace junction cannot escape workspace in any mode',async()=>{

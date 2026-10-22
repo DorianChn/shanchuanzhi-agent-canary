@@ -21,7 +21,7 @@ export type PolicyRealToolExecutor<T> = (call: ToolCall, context?: Readonly<Risk
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
-  /** Opt in to real-path checks. Only file reads with a valid trusted M1 capability may execute; path-only reads, writes, and deletes fail closed. */
+  /** Opt in to M1-pinned reads and fail-closed writes/deletes. OBSERVE always rejects canonical aliases/escapes, even when omitted or false. */
   verifyRealPaths?: boolean;
   /** Trusted host lookup and M1 verification for a constructor-registered, safe file-read capability. Path strings alone never satisfy verifyRealPaths. */
   fileReadCapability?: TrustedFileReadCapabilityProvider;
@@ -106,6 +106,10 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   const guard=options.guard;
   const mode=options.mode??'BALANCED';
   if(!['OBSERVE','BALANCED','STRICT'].includes(mode))throw new Error('POLICY_MODE_INVALID');
+  // OBSERVE must not turn a lexically in-workspace symlink/junction into a read.
+  // Keep the legacy lexical option for other modes, but never let it downgrade
+  // OBSERVE's sensitive-path and workspace-boundary checks.
+  const checkRealPaths=options.verifyRealPaths===true||mode==='OBSERVE';
   if(!options.workspaceRoot||!path.isAbsolute(options.workspaceRoot))throw new Error('POLICY_ROOT_INVALID');
   const root=path.resolve(options.workspaceRoot);
   const tools=new Map<string,RiskToolDescriptor>();
@@ -174,7 +178,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       const normalized=typeof raw==='string'?raw.replaceAll('\\','/'):'\0';
       const filesystemOperation=['file-read','file-write','delete'].includes(d.operation);
       const target=path.resolve(root,normalized);let policyTarget=target,policyRoot=root,pathAlias=false;
-      if(filesystemOperation&&options.verifyRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);pathAlias=hasPathAlias(root,target);}catch{deny('path_resolution_failed');}
+      if(filesystemOperation&&checkRealPaths)try{policyTarget=canonicalPath(target);policyRoot=fs.realpathSync(root);pathAlias=hasPathAlias(root,target);}catch{deny('path_resolution_failed');}
       const relative=path.relative(root,target),policyRelative=path.relative(policyRoot,policyTarget);
       const outside=relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative)||policyRelative==='..'||policyRelative.startsWith('..'+path.sep)||path.isAbsolute(policyRelative)||normalized.includes('\0')||/^[a-z]:|^\/\//i.test(normalized);
       risks.push(d.operation==='file-read'?'READ_ONLY':d.operation==='delete'?'DESTRUCTIVE':'WRITE');
@@ -213,7 +217,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     return {action,risks,reason,mode};
   }
   async function execute(call:ToolCall,decision:PolicyDecision,executionContext?:RiskPolicyExecutionContext){
-    if(options.verifyRealPaths){
+    if(checkRealPaths){
       const current=classify(call,executionContext);
       if(current.action!==decision.action||current.reason!==decision.reason||current.risks.length!==decision.risks.length||current.risks.some((risk,index)=>risk!==decision.risks[index])){
         const changed={...current,action:'DENY' as const,reason:current.action==='DENY'&&current.reason==='path_execution_not_pinned'?'path_execution_not_pinned':'execution_boundary_changed'};await recordRecheckedDenial(call,changed);audit('policy_blocked',call,changed);throw new PolicyBlockedError(changed);
