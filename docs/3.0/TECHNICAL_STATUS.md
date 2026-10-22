@@ -6949,3 +6949,12 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - **M7 / PR #39 / Issue #41:** static artifact recovery verified ZIP digest/CRC and six manifest hashes; contained Setup.exe hash matches BUILD_REPORT. VMware lifecycle is still blocked by the missing verifiable clean-VM baseline/snapshot and authorized recovery path; no VM or installer was run. #41 remains OPEN.
 - **M9 / PR #36 / Issue #52:** exact-source CI, Ubuntu/Windows composition, and Windows wrapper are green at `8ebb206e124e76501441690e3da9249472244503`. This is synthetic source-composition evidence, not first-party product-host proof or OS-level TOCTOU evidence. #52 remains OPEN/P0/NOT_VERIFIED.
 - No main merge, PR #24 edit, Release, VM, installer, or real-model run occurred. Next M0 publication batch will carry the M2/M3 commits and this checkpoint only after fresh preflight.
+
+## M0 2026-10-22 21:29 UTC post-push readback
+
+- At the 21:26 UTC five-minute batch, exact fast-forward pushes/readbacks succeeded: M2 PR #37 `92a9562a44ad395ec33d5afd74c394d7f0863c85`; M3 PR #33 `545958391c44e4a8207e77881e76b615476adf6c`; M8 PR #40 `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d`; M0 PR #30 `e51a0e65d8c2a2fa272cf0b0334b2ff388786199`. All remain OPEN/Draft.
+- Exact-head hosted checks: M2 CI `39857312439` success; M8 CI `39857326053` and Windows wrapper `39857325939` success; M0 product CI `39857332583` and coordination `39857332558` success. M3 CI `39857317515` is still queued (remaining macOS Node 20 job); do not pin that M3 head into M9 until the required check finishes.
+- Issue follow-ups were posted and read back by GitHub comment receipts: #45 `6351693312`; #41 `6351694073`; #57 `6351694607`. The issues remain open with their existing P1/P0 severity and NOT_VERIFIED lifecycle/host/E4 boundaries.
+- M9 is waiting for the M3 exact-head CI gate before refreshing integration pins. It will update current M6 `5f1649f`, M8 `5bf5d4f`, M2 `92a9562`, and the final validated M3 head, then run its exact-source composition; no M9 source changes or pushes yet.
+- Usage page re-read at 21:26 UTC showed 28% five-hour, 89% weekly, 113 credits; 44 minutes to reset. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Next remote write is no earlier than 21:31 UTC, after refreshed usage, PR #24, and ref/ancestry checks. No merge, Release, VM, installer, or real-model run occurred.

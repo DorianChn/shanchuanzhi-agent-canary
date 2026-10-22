@@ -600,3 +600,19 @@ This ruling resolves the prior tentative ownership of the desktop route. It is a
 
 - M9 owns diagnostics and regression assertions in `test/ai.test.ts` for Issue #54. On current M9 head `c8bf076a5520e2831fb561bf5680351f745de85a`, the 503-then-success loopback fixture passes and asserts exactly two requests; the historical Windows Node 22 failure at old head `1f577c56ea89cc362db66ebf3ca18ad05962c898` remains unexplained from available logs.
 - No module owner is currently assigned for `src/ai/provider.ts` or `src/ai/transport.ts`. This is an ownership gap, not an implicit M9/M1 transfer. Do not change these source files until an explicit component owner is named. M0 records and routes the gap only.
+
+## M0 exact module-head refresh — 2026-10-22 21:29 UTC
+
+| Module | Existing Draft PR branch | Exact public head at this readback | Ownership/status reminder |
+|---|---|---|---|
+| M1 | #43 `feature/ac3-security-core` | `c67b15f76973a2333ce523dd58d5b7439ab40702` | Held identity/Gateway and canonical Hook semantics; CI previously green. |
+| M2 | #37 `feature/ac3-execution-isolation` | `92a9562a44ad395ec33d5afd74c394d7f0863c85` | Candidate Hook now says native Shell UNPROTECTED; exact CI green; no host proof. |
+| M3 | #33 `feature/ac3-agent-onboarding` | `545958391c44e4a8207e77881e76b615476adf6c` | Docs boundary synced; exact CI queued; M3 owns connection-check route and tests. |
+| M4 | #34 `feature/ac3-desktop-security-center` | `6d5b05b4ca634dd5727b62f621f783f8e56586b5` | UI consumes status; first-party protected-read result remains NOT_VERIFIED. |
+| M5 | #47 `feature/ac3-policy-audit` | `c9003234913a0ccccca56fe2a36fb1ce3dacb2de` | OBSERVE hard-denial/policy owner; preserve existing hard-deny assertions. |
+| M6 | #38 `feature/ac3-e4-validation-ac3` | `5f1649f600a7038d4688cdf703d1e502f3af3a91` | Artifact report published; independent product E4 remains NOT_VERIFIED. |
+| M7 | #39 `feature/ac3-reliability-ac3` | `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50` | Package static hash proof available; clean-VM lifecycle remains blocked. |
+| M8 | #40 `feature/ac3-open-source-product` | `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d` | Latest M7 artifact indexed; exact CI and wrapper green. |
+| M9 | #36 `feature/ac3-m9-integration` | `8ebb206e124e76501441690e3da9249472244503` | Prior exact composition green; waiting to pin current M2/M3/M6/M8 heads. |
+
+All module changes remain on existing Draft PR branches. PR #24 stays untouched at its fixed head/base; this refresh records GitHub heads only and does not claim merge, product-host, VM, or release acceptance.
