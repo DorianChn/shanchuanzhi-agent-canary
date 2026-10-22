@@ -681,3 +681,19 @@ No module source ownership changed. M4/M7 are isolated worktrees in the separate
 | M9 | `feature/ac3-m9-integration` / #36 | `8506fef` | Exact CI 9/9, wrapper 2/2, composition 2/2; next required repin is M7 `4f986cc` after exact M7 CI.
 
 M4 and M7 remain isolated worktrees in the separate Windows-E4 Git common directory. No file ownership changed.
+## M0 ownership refresh — 2026-10-22 22:13 UTC
+
+| Module | Existing PR branch | Current public/local head | Scope / exact state |
+|---|---|---:|---|
+| M0 | `feature/ac3-m0-coordination` / #30 | refreshed in this batch | Coordination docs/contracts; preceding exact CI 9/9 and coordination check green. |
+| M1 | `feature/ac3-security-core` / #43 | `6886d6e` | Windows symlink scenario denied; focused tests 21/21; #52 remains P0/NOT_VERIFIED for host/TOCTOU. |
+| M2 | `feature/ac3-execution-isolation` / #37 | `92a9562` | Host-hook adapter; exact CI 9/9; native host UNPROTECTED/NOT_VERIFIED. |
+| M3 | `feature/ac3-agent-onboarding` / #33 | `34b526d` | Onboarding/Hook docs; exact CI 9/9; protected-read POST blocked. |
+| M4 | `feature/ac3-desktop-security-center` / #34 | `264bc28` | Desktop UI/tests; updated-base exact CI 9/9. |
+| M5 | `feature/ac3-policy-audit` / #47 | `c900323` | Policy/router alias denials; shared canonical files require M1 review. |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 | `5f1649f` | E4 verifier/schema/bundle; Issue #57 verifier audit in progress; independent product E4 NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / #39 | `4f986cc` | Non-regular NSIS output fix; exact CI 9/9 + Windows wrapper 3/3 green. Clean-VM lifecycle remains blocked. |
+| M8 | `feature/ac3-open-source-product` / #40 | `5bf5d4f` | Open-source/docs and shipped Hook/logging copy. |
+| M9 | `feature/ac3-m9-integration` / #36 | `8506fef` public; `f63adc7` local | M7=4f exact-source scratch 11/11; M7 package contract 2/2; local pin/report candidate not pushed pending cadence.
+
+No module source ownership changed. M4/M7 remain isolated in the Windows-E4 Git common directory; M9 and M0 use separate worktrees.
