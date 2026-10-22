@@ -6348,4 +6348,25 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - The 13:40–14:00 M3+M4 slot closed without owner-authored evidence or a new module head. M3 still lacks GET `/api/security-center`; M4's current test still expects 404. P0 #52 remains OPEN/P0/NOT_VERIFIED.
 - Exactly M2+M3 are active 14:00–14:20 UTC on #52. M2 validates the current public `gateway-adapter` package/import path on existing PR #37; M3 implements the backend route/capability binding through that facade and the current M1/M5 contracts on existing PR #33. Evidence/blocker due 14:15; close 14:20. Preserve `UNKNOWN`, safe-read/alias/replacement controls, zero side effects and all denials. M1/M4/M5/M6/M7/M8 remain queued.
 - M0 comments: #52 `6342642133`, scheduler #29 `6342643194`, PR #33 `6342644274`, PR #37 `6342645117`, PR #34 `6342645827`. No M0 module source change.
+- Exact package boundary: PR #33 head `429cd73` exports only `./sdk`; M2 PR #37 head `be66cf8` additionally exports `./gateway-adapter`. M3 cannot self-import that facade while it is absent from its package tree. M0 requested M2's supported dependency-injection/package-tree pattern and instructed M3 not to edit the M2-owned export or import internal paths. Comments: #52 `6342676479`, PR #33 `6342677268`, PR #37 `6342678175`.
+- Exact call-contract readback: M3 `startAIConsole` has no status-provider injection option. M2 `createSecurityGatewayHostAdapter` takes Gateway, fixed-file registrations, M5 router factory, and strict router options; it returns only dispatch and pending-approvals operations, not a Security Center snapshot. M0 proposed an owner-confirmed M3 status-provider boundary defaulting UNKNOWN, or an explicit M2 status API if one exists. M3 owns the route/options; M2 owns its facade. Comments: #52 `6342759125`, PR #33 `6342759846`, PR #37 `6342760517`.
+
+## M0 coordinator CI pass — 2026-10-22 14:07 UTC
+
+- Docs-only PR #30 head `feb2f97` product run `39792162770` passed all 9 jobs, including Windows Node 20/22 and package-smoke; ownership-contract run `39792162773` passed 1/1. This passing run does not close P1 #32; the earlier same-base Windows interruption-marker result is intermittent and its root cause is not established.
+- M2/M3 remain active on #52 through 14:20. No code head change or owner-authored implementation/blocker is visible at 14:07. Usage last read at 14:01 was 100% five-hour / 23% weekly; re-read before the 14:21 push.
 - PR #30 docs head `87f5d0c` exact CI run `39789103492` failed only Windows Node 20 on the old interruption-marker fixture tracked by P1 #32; other matrix jobs passed and package-smoke was skipped. The separate ownership-contract check passed. PR #24 remains unchanged.
+
+## M0 14:15 UTC exact-head checkpoint — 2026-10-22
+
+- At the 14:15 UTC evidence cutoff, M2 PR #37 remained at `be66cf8f4c1a60f093740577796ec5cd633e1d93` and M3 PR #33 at `429cd73c03273bc77f3781b489f541e396cd9361`; no owner-authored response or public code head movement is visible. The M2+M3 slot remains open until 14:20.
+- Exact-head CI is red on both candidates. M3 CI `39635364781` fails Windows Node 20 test 72 because its `afterEach` cleanup gets `ENOTEMPTY` while removing the protected-host temp fixture (`test/codex-connection-check.test.ts:47`), tracked by P1 #71. M2 CI `39638404097` fails `package-smoke`: the package contains unallowlisted `execution-isolation/gateway-adapter/gateway-adapter.mjs`, tracked by P1 #69. Preserve both tests and package policy; these P1s do not replace the outstanding P0 route/injection acceptance.
+- M0 posted the exact-head evidence and 14:20 deadline to #52 in comment `6342974825`. P0 remains OPEN/NOT_VERIFIED; PR #33/#37 remain Draft.
+- Usage page read at 14:14 UTC showed 100% five-hour and 23% weekly remaining. Usage tab remains open. The next coordinator docs push remains scheduled no earlier than 14:21 UTC.
+
+## M0 14:17 UTC early lane switch — 2026-10-22
+
+- Closed M2+M3 early at 14:17 to avoid waiting on an unresolved package boundary. No author-owned result or code head change was visible at the cutoff. M2's exact-head package-smoke failure remains existing P1 #69; M3's Windows cleanup failure remains P1 #71.
+- Exactly M3+M4 are active 14:17–14:37 UTC on P0 #52. M3 owns the read-only `GET /api/security-center` route and an injectable M3-owned status provider defaulting to `UNKNOWN`; M4 owns changing only its current 404 expectation after the route exists, asserting readable UNKNOWN behavior while preserving E4 tests. Evidence/blocker due 14:32. No unowned API changes, internal imports, path-only fallback, weakened denial, or removed test. #52 stays OPEN/NOT_VERIFIED; #33/#34 stay Draft.
+- Posted lane switch/assignments: #52 `6343003592`, PR #33 `6343004361`, PR #34 `6343005128`. M0 changed no product source.
+- Coordination index cross-reference: scheduler #29 comment `6343012102`; M2 PR #37 lane-close comment `6343012814`.
