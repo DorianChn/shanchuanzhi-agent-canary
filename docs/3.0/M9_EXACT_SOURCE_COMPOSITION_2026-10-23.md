@@ -6,9 +6,9 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 | --- | --- | --- | --- |
 | M1 Gateway | #43 | `c67b15f76973a2333ce523dd58d5b7439ab40702` | Held-Gateway regression and synthetic protected-read composition |
 | M2 isolation | #37 | `099ad64e4a09330920cbd40847adec3fe631e91e` | Package build, tarball facade, package policy and synthetic composition |
-| M3 onboarding | #33 | `fcaa24f8479c7072da0a51e96100ddfb3b2774c8` | Build, focused Hook/onboarding regressions, fail-closed trusted dependency seam, and synthetic fixed-read host |
+| M3 onboarding | #33 | `bf40d1309e571338b3f36152226ec44b082e5037` | Build and focused Hook/onboarding regressions pass; exact M3 runtime to M1 Gateway composition is blocked by a Guard interface mismatch |
 | M4 desktop security center | #34 | `6d5b05b4ca634dd5727b62f621f783f8e56586b5` | Build, `runtime-console` regressions and exact-source adapter redaction check |
-| M5 policy | #47 | `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2` | Risk-policy regression and synthetic router composition |
+| M5 policy | #47 | `c9003234913a0ccccca56fe2a36fb1ce3dacb2de` | Risk-policy regression; deterministic DENY skips optional review, approval and execution callbacks |
 | M6 E4 | #38 | `ef4679b276a90767bb1a6d7bd852aadc45b2d1cb` | Bundle verifier and Auto E4 lifecycle regressions |
 | M7 reliability | #39 | `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50` | Package contract and positive-control regressions |
 | M8 open-source product | #40 | `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` | Hook provenance, LF checkout and sanitized JSONL regressions |
@@ -24,6 +24,16 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 M4 coverage verifies the exact desktop adapter's redacted snapshot shape and conservative `UNKNOWN` values using synthetic input. The M9 protected-read composition also uses test fixtures and explicit adapters. These checks do not prove the first-party product host wires M1's held-file capability, M2's public facade and M5's router into a live execution path. They do not establish OS-atomic or concurrent TOCTOU safety. Issue #52 remains OPEN / P0 / NOT_VERIFIED until that product-host evidence exists.
 
-The M3 `fcaa24f` source exposes typed, construction-time seams for the M2 facade and M5 router. The exact-source M9 composition injects the packed M2 facade and M5 implementation with the held M1 Gateway, verifies the fixed safe-read positive control, denies alias and replaced-path controls before another M5 callback or M1 read event, leaves approval queues empty, and checks fixture SHA-256 values. This remains synthetic API composition; it is not a live product-host or OS-atomic TOCTOU acceptance.
+The M3 `bf40d13` source exposes `createConnectionCheckRuntime()` with typed, construction-time seams. The exact-source M9 test invokes that runtime builder with the real M1 Gateway factory, packed M2 facade and M5 router from the pinned source roots, but currently stops during Gateway construction; it does not establish the M3-to-M1 positive read or the runtime's alias/replacement controls.
+
+### P1 blocker: M3 Guard lacks the M1 quarantine subscription contract
+
+At exact pins M1 `c67b15f76973a2333ce523dd58d5b7439ab40702` and M3 `bf40d1309e571338b3f36152226ec44b082e5037`, the focused M9 selection is 1/2 passing and the full exact-source composition suite is 10/11 passing. The failing test is `M3 connection-check runtime composes M1 held Gateway, packed M2 public facade, and exact M5 router`; the actual error is `GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED`.
+
+The call path is specific: M3 `createConnectionCheckRuntime()` creates its own guard at `agents/M3/src/codex-connection-mcp.ts:151`, then passes it to the injected M1 `createTrustedExecutionGateway()` at lines 159–161. M3's public `AgentGuard` interface in `agents/M3/src/containment.ts:122–135` has no `subscribeQuarantine` method. M1 calls `options.guard.subscribeQuarantine(quarantineSession)` in `agents/M1/src/runtime/gateway.ts:327`; the catch at lines 330–332 closes held resources and throws the reported error. M9 does not add a shim or change either module interface, because substituting or detaching guards would invalidate quarantine and cancellation evidence.
+
+M3's isolated connection-check suite passes 6/6 and M5's exact `risk-policy` suite passes 41/41, including the deterministic hard-DENY no-review/no-approval/no-callback regression. Those isolated results do not resolve this cross-module contract. The M9 exact-source composition remains blocked until the M1/M3 owners provide compatible synchronous quarantine-subscription semantics; then rerun the safe-read positive control, alias/path-replacement DENY controls, side-effect assertions, and fixture hashes. This blocker is synthetic API composition evidence, not a product-host or OS-atomic TOCTOU assessment.
+
+M5 `c900323` preserves deterministic hard DENY behavior without invoking optional `reviewDecision`; the exact M5 policy regression asserts zero review-hook, approval and execution-callback side effects. This strengthens the policy boundary without changing the M3/M1 product-host evidence limit.
 
 The M6 source-checkout E4 tests do not prove a built installer, clean-VM lifecycle, real-model execution or independent external E4 validation.

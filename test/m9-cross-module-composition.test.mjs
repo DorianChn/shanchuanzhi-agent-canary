@@ -20,9 +20,9 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: 'c67b15f76973a2333ce523dd58d5b7439ab40702',
   M2: '099ad64e4a09330920cbd40847adec3fe631e91e',
-  M3: 'fcaa24f8479c7072da0a51e96100ddfb3b2774c8',
+  M3: 'bf40d1309e571338b3f36152226ec44b082e5037',
   M4: '6d5b05b4ca634dd5727b62f621f783f8e56586b5',
-  M5: 'e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2',
+  M5: 'c9003234913a0ccccca56fe2a36fb1ce3dacb2de',
   M6: 'ef4679b276a90767bb1a6d7bd852aadc45b2d1cb',
   M7: '868842b1b7d76cf94a8d84a5f76c6acd4ca67f50',
   M8: '72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db',
@@ -310,7 +310,8 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
   assert.equal(guard.state, 'SAFE');
 });
 
-test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade, and exact M5 router', async (t) => {
+// Keep this exact-source integration red on the current M3/M1 Guard contract mismatch; do not mask it with an M9 shim.
+test('M3 connection-check runtime composes M1 held Gateway, packed M2 public facade, and exact M5 router', async (t) => {
   const packedRoot = process.env.M2_PACKED_ROOT;
   const consumerRoot = process.env.M2_CONSUMER_ROOT;
   assert.ok(packedRoot, 'M2_PACKED_ROOT must point to the installed candidate tarball');
@@ -340,26 +341,30 @@ test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade,
     fs.rmSync(base, { recursive: true, force: true });
   });
 
-  const guard = m1.createAgentGuard({ sessionId: 'm9-m1-m2-m3-m5-protected-read', alert: false });
-  gateway = m1.createTrustedExecutionGateway({
-    agentId: 'm9-m1-m2-m3-m5-protected-read',
-    guard,
-    workspaceRoot: workspace,
-    files: [{ path: relativePath }],
-    evidence: new m1.EvidenceRecorder(),
-  });
   let m5Router;
-  const host = await m3Host.createProtectedHostAdapter(gateway, guard, workspace, {
+  const runtime = await m3Host.createConnectionCheckRuntime({
+    workspaceRoot: workspace,
+    createGateway: (options) => {
+      gateway = m1.createTrustedExecutionGateway(options);
+      return gateway;
+    },
     loadM2Facade: async () => packedFacade,
     createSecurityToolRouter: (options) => {
       m5Router = m5.createSecurityToolRouter(options);
       return m5Router;
     },
   });
+  gateway = runtime.gateway;
+  const guard = runtime.guard;
+  const host = runtime.protectedHost;
 
   assert.equal(host.status, 'UNKNOWN', 'M3 keeps host status UNKNOWN until its fixed protected read is observed');
   assert.equal(host.reason, 'POSITIVE_CONTROL_PENDING');
   assert.equal(typeof host.dispatch, 'function', 'the exact M2 facade and M5 router must compose');
+  assert.equal(runtime.root, workspace, 'M3 runtime builder retains the trusted workspace root');
+  assert.deepEqual(runtime.files, [{ path: relativePath }], 'M3 runtime builder registers only its fixed protected-read file');
+  assert.equal(runtime.guard, guard);
+  assert.equal(runtime.gateway, gateway, 'M3 runtime builder must return the exact injected M1 Gateway');
   assert.ok(m5Router, 'M3 must construct the injected pinned M5 router');
   assert.equal(host.m5Callbacks(), 0);
 
