@@ -26,6 +26,88 @@ const UNKNOWN_SECURITY_CENTER_STATUS = Object.freeze({
   policy: Object.freeze({ protectionStatus: 'UNKNOWN' }),
 });
 
+const SECURITY_CENTER_PROTECTION_STATUSES = new Set(['PROTECTED', 'PARTIALLY_PROTECTED', 'NOT_PROTECTED', 'UNKNOWN']);
+const SECURITY_CENTER_CONNECTION_STATUSES = new Set(['CONNECTED', 'DISCONNECTED', 'UNKNOWN']);
+const SECURITY_CENTER_AGENT_IDS = new Set(['claude', 'cursor', 'cline', 'codex']);
+
+function ownDataValue(value: unknown, key: string): unknown {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(value, key);
+  return descriptor && Object.hasOwn(descriptor, 'value') ? descriptor.value : undefined;
+}
+
+function securityCenterProtectionStatus(value: unknown): string {
+  return typeof value === 'string' && SECURITY_CENTER_PROTECTION_STATUSES.has(value) ? value : 'UNKNOWN';
+}
+
+function securityCenterConnectionStatus(value: unknown): string {
+  return typeof value === 'string' && SECURITY_CENTER_CONNECTION_STATUSES.has(value) ? value : 'UNKNOWN';
+}
+
+function securityCenterArrayValues(value: unknown, limit = 100): unknown[] {
+  if (!Array.isArray(value)) return [];
+  const length = Object.getOwnPropertyDescriptor(value, 'length')?.value;
+  if (!Number.isSafeInteger(length) || length < 0) return [];
+  const values: unknown[] = [];
+  for (let index = 0; index < Math.min(length, limit); index++) {
+    const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+    if (descriptor && Object.hasOwn(descriptor, 'value')) values.push(descriptor.value);
+  }
+  return values;
+}
+
+function normalizeSecurityCenterSnapshot(value: unknown) {
+  const gateway = ownDataValue(value, 'gateway');
+  const policy = ownDataValue(value, 'policy');
+  const normalized: Record<string, unknown> = {
+    // The only current provider scope is fixed M2 reads, so it cannot claim full-product protection.
+    protectionStatus: ownDataValue(value, 'protectionStatus') === 'PARTIALLY_PROTECTED'
+      || ownDataValue(value, 'protectionStatus') === 'NOT_PROTECTED'
+      ? ownDataValue(value, 'protectionStatus')
+      : 'UNKNOWN',
+    gateway: {
+      protectionStatus: securityCenterProtectionStatus(ownDataValue(gateway, 'protectionStatus')),
+      connectionStatus: securityCenterConnectionStatus(ownDataValue(gateway, 'connectionStatus')),
+    },
+    // The M2 status provider has no evidence for native Hook or Canary isolation.
+    hook: { protectionStatus: 'UNKNOWN' },
+    canaryIsolation: { protectionStatus: 'UNKNOWN' },
+    policy: {
+      protectionStatus: securityCenterProtectionStatus(ownDataValue(policy, 'protectionStatus')),
+    },
+  };
+
+  const policyName = ownDataValue(policy, 'name');
+  if (policyName === 'M2 fixed file reads / M5 OBSERVE') {
+    (normalized.policy as Record<string, unknown>).name = 'M2_FIXED_FILE_READS';
+  } else if (policyName === 'OBSERVE' || policyName === 'M2_FIXED_FILE_READS') {
+    (normalized.policy as Record<string, unknown>).name = policyName;
+  }
+
+  const protectedToolCount = ownDataValue(value, 'protectedToolCount');
+  if (Number.isSafeInteger(protectedToolCount) && (protectedToolCount as number) >= 0) {
+    normalized.protectedToolCount = protectedToolCount;
+  }
+
+  const paths = securityCenterArrayValues(ownDataValue(value, 'unprotectedExecutionPaths'))
+    .filter((item): item is string => item === 'NATIVE_SHELL');
+  if (paths.length > 0) normalized.unprotectedExecutionPaths = [...new Set(paths)];
+
+  const agents = securityCenterArrayValues(ownDataValue(value, 'agents'))
+    .map(item => ({ agent: ownDataValue(item, 'agent'), detected: ownDataValue(item, 'detected') }))
+    .filter(item => typeof item.agent === 'string' && SECURITY_CENTER_AGENT_IDS.has(item.agent))
+    .map(item => ({
+      agent: item.agent,
+      detected: typeof item.detected === 'boolean' ? item.detected : null,
+      // Configuration detection is not evidence of a live connection or protected native tools.
+      connectionStatus: 'UNKNOWN',
+      protectionStatus: 'UNKNOWN',
+    }));
+  if (agents.length > 0) normalized.agents = agents;
+
+  return normalized;
+}
+
 export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number; securityCenterStatusProvider?: SecurityCenterStatusProvider } = {}) {
   const port = options.port ?? 4318;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('AI_CONSOLE_PORT_INVALID');
@@ -71,10 +153,9 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         if (!options.securityCenterStatusProvider) { reply(UNKNOWN_SECURITY_CENTER_STATUS); return; }
         try {
           const snapshot = await options.securityCenterStatusProvider();
-          if (snapshot === undefined) { reply({ error: 'SECURITY_CENTER_STATUS_INVALID' }, 503); return; }
-          reply(snapshot);
+          reply(normalizeSecurityCenterSnapshot(snapshot));
         } catch {
-          reply({ error: 'SECURITY_CENTER_STATUS_UNAVAILABLE' }, 503);
+          reply(UNKNOWN_SECURITY_CENTER_STATUS);
         }
         return;
       }
