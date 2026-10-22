@@ -19,7 +19,7 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 
 const pinnedSourceShas = {
   M1: 'a5eff766ebe041bc2c6cc13758827d5a96205de9',
-  M2: '2e3b87a63113cbfece864e7b889a313fcbe1f56a',
+  M2: '099ad64e4a09330920cbd40847adec3fe631e91e',
   M3: 'b98cb1847a764b9055a6e3b9f489b7e37d595715',
   M4: 'd5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84',
   M5: 'e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2',
@@ -74,7 +74,7 @@ assert.equal(process.env.M6_M8_REVIEW_SCOPE, 'M8 exact test hunk and M6 lifecycl
 assert.equal(process.env.M1_M2_REVIEW_STATUS, 'APPROVE', 'M1 approves the exact M2 adapter contract on Issue #52');
 assert.equal(process.env.M1_M2_REVIEW_SHA, pinnedSourceShas.M1, 'M1 disposition must identify the exact current M1 review head');
 assert.equal(process.env.M1_M2_REVIEW_TARGET_SHA, pinnedSourceShas.M2, 'M1 disposition must identify the exact current M2 candidate');
-assert.equal(process.env.M1_M2_REVIEW_COMMENT, '6349293985', 'current M1 disposition must cite its exact Issue #52 comment');
+assert.equal(process.env.M1_M2_REVIEW_COMMENT, '6349691761', 'current M1 disposition must cite its exact Issue #52 comment');
 assert.equal(process.env.M1_M2_REVIEW_ISSUE, '52', 'current M1-to-M2 disposition is tracked on Issue #52');
 assert.equal(process.env.M1_M2_REVIEW_SCOPE, 'adapter-to-Gateway contract only', 'M1 disposition is limited to the adapter-to-Gateway contract');
 assert.equal(process.env.M1_M2_REVIEW_CONDITION, 'API contract only; no first-party product-host or TOCTOU acceptance', 'M1 approval must remain within its stated interface scope');
@@ -515,8 +515,8 @@ test('packed M2 facade with active M1 capability and exact M5 router rejects sen
     assert.equal((await m5Router.decide(call)).action, 'DENY', `${label} is denied by the exact M5 fixture`);
     await assert.rejects(
       host.dispatch(call),
-      (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
-      `${label} must fail before the M5-to-M2 execution callback`,
+      (error) => error instanceof TypeError && error.message === 'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
+      `${label} must fail the exact M2 path preflight before the M5-to-M2 execution callback`,
     );
     assert.equal(m5ToM2Callbacks, 1, `${label} must not enter the M5-to-M2 callback`);
     assert.equal(gateway.evidence().length, evidenceAfterPositive, `${label} must not create new M1 Gateway evidence`);
