@@ -764,3 +764,5 @@ M6 exact head `15e1663eac9c3932165fca9b39587115345f289c` remains unchanged; its 
 ## Hosted integration and CI triage — 2026-10-22 23:00 UTC
 
 M9 PR #36 exact head `219d74e17dab061e2e97fa31c7c27c00fa633c34` passed CI run `39868531791` (9/9), wrapper run `39868531597` (2/2), and exact-source composition run `39868531673` (Ubuntu/Windows 2/2). M0 PR #30 exact head `0953bcfa2dc1968b09979dc88769ad46b85511d9` passed coordination run `39868523446` (1/1); product CI `39868523458` has 7 success, 1 Windows Node 20 fixture failure, and 1 skipped package-smoke. M1 triage reproduced the inherited 1-second marker timing race in old blob `1ecb3ee`; current owner PR #43 uses async marker polling at blob `82ca466`. No module code changed. Issues #32 and #52 remain open in their respective owner scopes.
+
+M0 documentation-only successor head `fa8b83cd69eaf66c294d9f011c1a618ab7bd3312` passed exact product CI run `39869440716` 9/9 with the same inherited fixture blob. Preserve the earlier failure record as an intermittent timing regression; #32 remains open pending propagation of the owner-authored robust test to affected branch snapshots.
