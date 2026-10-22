@@ -748,3 +748,7 @@ M1, M3, M4, M6, M7, and M9 public heads are unchanged from the 22:30 snapshot. M
 | M1 / #43 | 6886d6eef3beb972bc8f4c797584b0f522483870 | CI 39860277883 9/9 | Gateway suite 36/36; alias denied; no source change |
 
 All remain separate OPEN/Draft PRs except that this table does not change PR state. Issue #52 remains OPEN/P0. M9 exact-candidate composition is still pending.
+
+## M9 exact-source scratch result — 2026-10-22 22:49 UTC
+
+M9's uncommitted scratch composition passed 11/11 using the public exact candidates M1 6886d6e, M2 6742813, M3 34b526d, M4 264bc28, M5 12b2499, M6 15e1663, M7 4f986cc, and M8 35aa22f against M9 baseline 129075c. This is not yet a public M9 pin or hosted M9 CI result. Only after its owner-scoped pin/report change is locally validated should the existing M9 branch advance; the synthetic composition does not establish product-host enforcement.

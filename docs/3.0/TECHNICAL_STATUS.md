@@ -7103,3 +7103,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M5 exact CI passing establishes the policy-layer regression for its current PR candidate; M1 review confirms no matching normalization gap in the exact M1 Gateway candidate. Issue #52 remains OPEN/P0 pending M9 exact-source composition and real first-party host/callback identity evidence; do not claim global host protection.
 - M8's artifact/index candidate and M7's artifact wrapper are green; this does not establish independent E4, clean-VM install lifecycle, or native-host enforcement.
 - M9 is now authorized to compose the exact public M2/M5/M8 candidates with the other green module refs in an isolated scratch copy. It may update its existing integration branch locally only after composition passes; no merge or Release.
+
+## M9 scratch composition result — 2026-10-22 22:49 UTC
+
+- M9 ran the existing exact-source composition in an isolated scratch copy and passed all 11/11 subtests using M1 6886d6e, M2 6742813 (packed npm artifact), M3 34b526d, M4 264bc28, M5 12b2499, M6 15e1663, M7 4f986cc, M8 35aa22f, and M9 baseline 129075c. This is synthetic fixture composition, not production-host hookup.
+- M9 is inspecting only its integration-owned pin/report files. The public M9 PR #36 still points to 129075c, so the new candidate refs are not yet pinned on the M9 branch; exact M9 hosted CI remains pending.
+- Issue #52 remains OPEN/P0. The M1/M5 security boundary and scratch composition are now supported by exact local and hosted evidence, but no first-party product-host callback identity or native host protection was observed.
+- No module source ownership changed. No merge, Release, PR #24 modification, installer, VMware, or real-model execution occurred.
