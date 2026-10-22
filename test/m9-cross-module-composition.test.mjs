@@ -9,7 +9,7 @@ import { pathToFileURL } from 'node:url';
 import { after, test } from 'node:test';
 
 // Synthetic fixture-level API composition only; this does not prove a production host hookup.
-const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7', 'M8'].map((moduleName) => {
+const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8'].map((moduleName) => {
   const root = process.env[`${moduleName}_ROOT`];
   const sha = process.env[`${moduleName}_SHA`];
   assert.ok(root, `${moduleName}_ROOT must point to its independent checkout`);
@@ -19,21 +19,24 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 
 const pinnedSourceShas = {
   M1: 'a5eff766ebe041bc2c6cc13758827d5a96205de9',
-  M2: '868b12a4688282c28091b731f6548d5535c0c37c',
-  M3: '27d4a20a20894c7b779edf68d8bf79685bc0e69b',
-  M5: '6c16a08c6db26e548dcf63cb845f00ceb5a576ad',
-  M6: '2cebabc81d7908c04ddfa10378fa1d3427b92cf4',
+  M2: '2e3b87a63113cbfece864e7b889a313fcbe1f56a',
+  M3: 'b98cb1847a764b9055a6e3b9f489b7e37d595715',
+  M4: 'd5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84',
+  M5: 'e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2',
+  M6: 'ef4679b276a90767bb1a6d7bd852aadc45b2d1cb',
   M7: '868842b1b7d76cf94a8d84a5f76c6acd4ca67f50',
   M8: '72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db',
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
+const m1M3ReviewedSourceSha = '27d4a20a20894c7b779edf68d8bf79685bc0e69b';
 const m1M3ReviewedBlobs = {
   'src/agent-hook.ts': '0dc597783386e9273d7167172aa933b17f663e72',
   'test/agent-hook.test.ts': 'cc4e03b939ea6b18f427bb2f9ac026cca5314c63',
   'security-lab/claude-native-hook.mjs': 'ae23875d91c246c0fa833137e71c949bad9bd3cc',
 };
 const m6PriorAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
+const m6M8ReviewedContractSha = '2cebabc81d7908c04ddfa10378fa1d3427b92cf4';
 
 function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
   const result = spawnSync('git', [
@@ -50,30 +53,31 @@ function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
-assert.equal(process.env.M1_M3_REVIEW_STATUS, 'ACCEPT', 'M1 owner review must accept the current exact M3 Hook candidate');
+assert.equal(process.env.M1_M3_REVIEW_STATUS, 'ACCEPT', 'M1 owner review must retain its exact Hook-file disposition');
 assert.equal(process.env.M1_M3_REVIEW_SHA, pinnedSourceShas.M1, 'M1 review must name the exact current M1 source head');
-assert.equal(process.env.M1_M3_REVIEW_TARGET_SHA, pinnedSourceShas.M3, 'M1 review must name the exact current M3 candidate');
+assert.equal(process.env.M1_M3_REVIEW_TARGET_SHA, m1M3ReviewedSourceSha, 'M1 review must name the M3 source commit it actually reviewed');
 assert.equal(process.env.M1_M3_REVIEW_COMMENT, '6347268881', 'M1 review must cite the exact Issue #72 owner comment');
 assert.equal(process.env.M1_M3_REVIEW_ISSUE, '72', 'M1-to-M3 Hook review is tracked on Issue #72');
+assertAncestor('M3', m1M3ReviewedSourceSha, pinnedSourceShas.M3, 'M1-reviewed M3 Hook source');
 for (const [filePath, expectedBlob] of Object.entries(m1M3ReviewedBlobs)) {
-  assert.equal(readBlobIdAt('M3', pinnedSourceShas.M3, filePath), expectedBlob, `M3 reviewed blob ${filePath} must remain exact`);
+  assert.equal(readBlobIdAt('M3', pinnedSourceShas.M3, filePath), expectedBlob, `M3 reviewed Hook blob ${filePath} must remain exact at the current source`);
 }
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_STATUS, 'ACCEPT', 'historical M6 acceptance must retain its original scoped disposition');
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_SHA, m6PriorAcceptanceSha, 'historical M6 acceptance must retain its original source SHA');
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_COMMENT, '6320039569', 'historical M6 acceptance must cite its original Issue #59 comment');
 assert.equal(process.env.M6_M8_REVIEW_STATUS, 'ACCEPT_WITH_CONDITIONS', 'current M6 owner comment accepts only the exact M8 test hunk and M6 lifecycle contract');
-assert.equal(process.env.M6_M8_REVIEW_M6_CONTRACT_SHA, pinnedSourceShas.M6, 'M6 contract check must identify the exact current M6 source head');
+assert.equal(process.env.M6_M8_REVIEW_M6_CONTRACT_SHA, m6M8ReviewedContractSha, 'M6 contract check must identify the source revision actually reviewed');
 assert.equal(process.env.M6_M8_REVIEW_TARGET_SHA, pinnedSourceShas.M8, 'M6 review must identify the exact M8 test target');
 assert.equal(process.env.M6_M8_REVIEW_COMMENT, '6346660246', 'current M6 disposition must cite its exact Issue #59 comment');
 assert.equal(process.env.M6_M8_REVIEW_ISSUE, '59', 'current M6 disposition is recorded on Issue #59');
 assert.equal(process.env.M6_M8_REVIEW_SCOPE, 'M8 exact test hunk and M6 lifecycle contract checks only', 'M6 disposition remains narrowly scoped');
-assert.equal(process.env.M1_M2_REVIEW_STATUS, 'CONDITIONAL_ACCEPT', 'current M1 review conditionally accepts the exact M2 candidate on Issue #52');
+assert.equal(process.env.M1_M2_REVIEW_STATUS, 'APPROVE', 'M1 approves the exact M2 adapter contract on Issue #52');
 assert.equal(process.env.M1_M2_REVIEW_SHA, pinnedSourceShas.M1, 'M1 disposition must identify the exact current M1 review head');
 assert.equal(process.env.M1_M2_REVIEW_TARGET_SHA, pinnedSourceShas.M2, 'M1 disposition must identify the exact current M2 candidate');
-assert.equal(process.env.M1_M2_REVIEW_COMMENT, '6346736001', 'current M1 disposition must cite its exact Issue #52 comment');
+assert.equal(process.env.M1_M2_REVIEW_COMMENT, '6349293985', 'current M1 disposition must cite its exact Issue #52 comment');
 assert.equal(process.env.M1_M2_REVIEW_ISSUE, '52', 'current M1-to-M2 disposition is tracked on Issue #52');
 assert.equal(process.env.M1_M2_REVIEW_SCOPE, 'adapter-to-Gateway contract only', 'M1 disposition is limited to the adapter-to-Gateway contract');
-assert.equal(process.env.M1_M2_REVIEW_CONDITION, 'M1 API must actually be injected in the composition', 'M1 conditional acceptance requires the reviewed M1 API to be injected');
+assert.equal(process.env.M1_M2_REVIEW_CONDITION, 'API contract only; no first-party product-host or TOCTOU acceptance', 'M1 approval must remain within its stated interface scope');
 assert.equal(process.env.M2_PRIOR_M1_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'historical M1 disposition remains scoped to its reviewed M2 candidate');
 assert.equal(process.env.M2_PRIOR_M1_DISPOSITION_SHA, m2PriorM1DispositionSha, 'historical disposition must retain its original exact M2 SHA');
 assert.equal(process.env.M2_PRIOR_M1_DISPOSITION_COMMENT, '6321070391', 'historical disposition must retain its exact Issue #52 comment');
@@ -82,6 +86,7 @@ assert.equal(process.env.M2_PACKAGE_ALIGNMENT_GATE_ISSUE, '69', 'Issue #69 track
 assert.equal(process.env.M2_PACKAGE_COMPOSITION_HISTORY_ISSUE, '68', 'Issue #68 is retained only as the closed historical composition gate');
 assertAncestor('M2', m2PriorM1DispositionSha, pinnedSourceShas.M2, 'historical M1-reviewed M2 disposition');
 assertAncestor('M6', m6PriorAcceptanceSha, pinnedSourceShas.M6, 'historical M6 owner acceptance');
+assertAncestor('M6', m6M8ReviewedContractSha, pinnedSourceShas.M6, 'historically reviewed M6/M8 lifecycle contract');
 assert.equal(process.env.M1_M2_REVIEW_SHA, pinnedSourceShas.M1);
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 
@@ -167,7 +172,7 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
 console.log('[M1-to-M2 current review]', `${process.env.M1_M2_REVIEW_STATUS} on Issue #52: M1 ${process.env.M1_M2_REVIEW_SHA} reviewed exact M2 ${process.env.M1_M2_REVIEW_TARGET_SHA} (comment ${process.env.M1_M2_REVIEW_COMMENT}; condition: ${process.env.M1_M2_REVIEW_CONDITION})`);
-console.log('[M1-to-M3 exact Hook review]', `${process.env.M1_M3_REVIEW_STATUS} on Issue #72: M1 ${process.env.M1_M3_REVIEW_SHA} reviewed M3 ${process.env.M1_M3_REVIEW_TARGET_SHA} blobs ${Object.keys(m1M3ReviewedBlobs).join(', ')} (comment ${process.env.M1_M3_REVIEW_COMMENT})`);
+console.log('[M1-to-M3 Hook file review]', `${process.env.M1_M3_REVIEW_STATUS} on Issue #72: M1 ${process.env.M1_M3_REVIEW_SHA} reviewed M3 source ${process.env.M1_M3_REVIEW_TARGET_SHA} blobs ${Object.keys(m1M3ReviewedBlobs).join(', ')}; current M3 ${pinnedSourceShas.M3} is checked for unchanged reviewed blobs (comment ${process.env.M1_M3_REVIEW_COMMENT})`);
 console.log('[M2 prior owner disposition]', `${process.env.M2_PRIOR_M1_DISPOSITION} for older M2 ${process.env.M2_PRIOR_M1_DISPOSITION_SHA} (Issue #52 comment ${process.env.M2_PRIOR_M1_DISPOSITION_COMMENT}); current candidate ${pinnedSourceShas.M2} is not covered by that historical disposition`);
 console.log('[M6 current scoped disposition]', `${process.env.M6_M8_REVIEW_STATUS} for M6 contract ${process.env.M6_M8_REVIEW_M6_CONTRACT_SHA} and M8 target ${process.env.M6_M8_REVIEW_TARGET_SHA} (Issue #59 comment ${process.env.M6_M8_REVIEW_COMMENT}; ${process.env.M6_M8_REVIEW_SCOPE})`);
 console.log('[M6 prior owner acceptance]', `${process.env.M6_PRIOR_ACCEPTANCE_STATUS} for older M6 ${process.env.M6_PRIOR_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_PRIOR_ACCEPTANCE_COMMENT}; Auto E4 lifecycle only); current candidate ${pinnedSourceShas.M6} is not generally covered by that historical acceptance`);
@@ -177,7 +182,7 @@ const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'))
 process.env.AGENT_CANARY_HOME = testHome;
 after(() => fs.rmSync(testHome, { recursive: true, force: true }));
 
-const [m1, m2, m5] = await Promise.all([
+const [m1, m2, m4, m5] = await Promise.all([
   import(pathToFileURL(path.join(sourceRoots.M1.root, 'src', 'sdk.ts')).href),
   import(pathToFileURL(path.join(
     sourceRoots.M2.root,
@@ -185,8 +190,41 @@ const [m1, m2, m5] = await Promise.all([
     'gateway-adapter',
     'security-gateway-adapter.mjs',
   )).href),
+  import(pathToFileURL(path.join(sourceRoots.M4.root, 'src', 'ai', 'security-center-adapter.ts')).href),
   import(pathToFileURL(path.join(sourceRoots.M5.root, 'src', 'sdk.ts')).href),
 ]);
+
+test('M4 exact security-center adapter redacts path details and preserves UNKNOWN protection status', () => {
+  const privateValues = [
+    'C:\\private\\unsafe-tool.exe',
+    'D:\\secrets\\report.txt?token=cnry_m4_private',
+    '--argument=M9_M4_PRIVATE_ARGUMENT',
+  ];
+  const view = m4.adaptSecuritySnapshot({
+    securityCenter: { unprotectedExecutionPaths: privateValues },
+  });
+
+  assert.equal(view.protectionStatus, 'UNKNOWN');
+  assert.equal(view.gateway.protectionStatus, 'UNKNOWN');
+  assert.equal(view.hook.protectionStatus, 'UNKNOWN');
+  assert.deepEqual(
+    view.unprotectedExecutionPaths,
+    privateValues.map(() => 'UNPROTECTED_EXECUTION_PATH'),
+  );
+
+  const diagnostic = m4.buildSecurityDiagnostic(
+    view,
+    { securityCenter: 'AVAILABLE', e4: 'UNSUPPORTED' },
+    '2026-10-23T00:00:00.000Z',
+  );
+  assert.equal(diagnostic.protection.overall, 'UNKNOWN');
+  assert.equal(diagnostic.protection.unprotectedExecutionPathCount, privateValues.length);
+  assert.equal(diagnostic.dataSources.e4, 'UNSUPPORTED');
+  const serialized = JSON.stringify(diagnostic);
+  for (const privateValue of privateValues) assert.equal(serialized.includes(privateValue), false);
+  assert.equal(serialized.includes('cnry_m4_private'), false);
+  assert.equal(serialized.includes('M9_M4_PRIVATE_ARGUMENT'), false);
+});
 
 test('M3 native Hook denies an unpinned normal Read like the current M1 Hook', async () => {
   const [m1Hook, m3Hook] = await Promise.all([

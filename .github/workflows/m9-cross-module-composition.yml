@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 868b12a4688282c28091b731f6548d5535c0c37c
+          ref: 2e3b87a63113cbfece864e7b889a313fcbe1f56a
           path: module-sources/m2
           fetch-depth: 0
 
@@ -42,14 +42,22 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 27d4a20a20894c7b779edf68d8bf79685bc0e69b
+          ref: b98cb1847a764b9055a6e3b9f489b7e37d595715
           path: module-sources/m3
+          fetch-depth: 0
+
+      - name: Checkout M4 PR #34 at exact desktop security-center source SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: d5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84
+          path: module-sources/m4
 
       - name: Checkout M5 PR #47 at exact trusted router source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 6c16a08c6db26e548dcf63cb845f00ceb5a576ad
+          ref: e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2
           path: module-sources/m5
           fetch-depth: 0
 
@@ -57,7 +65,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 2cebabc81d7908c04ddfa10378fa1d3427b92cf4
+          ref: ef4679b276a90767bb1a6d7bd852aadc45b2d1cb
           path: module-sources/m6
           fetch-depth: 0
 
@@ -82,13 +90,13 @@ jobs:
           m9_sha="$(git -C module-sources/m9 rev-parse --verify HEAD)"
           m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
           m2_sha="$(git -C module-sources/m2 rev-parse --verify HEAD)"
-          m1_m2_review_status='CONDITIONAL_ACCEPT'
+          m1_m2_review_status='APPROVE'
           m1_m2_review_sha="$m1_sha"
           m1_m2_review_target_sha="$m2_sha"
-          m1_m2_review_comment='6346736001'
+          m1_m2_review_comment='6349293985'
           m1_m2_review_issue='52'
           m1_m2_review_scope='adapter-to-Gateway contract only'
-          m1_m2_review_condition='M1 API must actually be injected in the composition'
+          m1_m2_review_condition='API contract only; no first-party product-host or TOCTOU acceptance'
           m2_prior_m1_disposition='ACCEPT_WITH_CONDITIONS'
           m2_prior_m1_disposition_sha='be66cf8f4c1a60f093740577796ec5cd633e1d93'
           m2_prior_m1_disposition_comment='6321070391'
@@ -102,9 +110,10 @@ jobs:
           m3_sha="$(git -C module-sources/m3 rev-parse --verify HEAD)"
           m1_m3_review_status='ACCEPT'
           m1_m3_review_sha="$m1_sha"
-          m1_m3_review_target_sha="$m3_sha"
+          m1_m3_review_target_sha='27d4a20a20894c7b779edf68d8bf79685bc0e69b'
           m1_m3_review_comment='6347268881'
           m1_m3_review_issue='72'
+          m4_sha="$(git -C module-sources/m4 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
           m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 06fdbb060574e96e5d1eba5c77721014e0a81a3b^{commit})"
           if ! git -C module-sources/m5 merge-base --is-ancestor "$m5_code_sha" "$m5_sha"; then
@@ -122,7 +131,7 @@ jobs:
           m7_sha="$(git -C module-sources/m7 rev-parse --verify HEAD)"
           m8_sha="$(git -C module-sources/m8 rev-parse --verify HEAD)"
           m6_m8_review_status='ACCEPT_WITH_CONDITIONS'
-          m6_m8_review_m6_contract_sha="$m6_sha"
+          m6_m8_review_m6_contract_sha='2cebabc81d7908c04ddfa10378fa1d3427b92cf4'
           m6_m8_review_target_sha="$m8_sha"
           m6_m8_review_comment='6346660246'
           m6_m8_review_issue='59'
@@ -150,6 +159,7 @@ jobs:
             printf 'M2_PACKAGE_ALIGNMENT_GATE_ISSUE=%s\n' "$m2_package_alignment_gate_issue"
             printf 'M2_PACKAGE_COMPOSITION_HISTORY_ISSUE=%s\n' "$m2_package_composition_history_issue"
             printf 'M3_SHA=%s\n' "$m3_sha"
+            printf 'M4_SHA=%s\n' "$m4_sha"
             printf 'M5_SHA=%s\n' "$m5_sha"
             printf 'M5_CODE_SHA=%s\n' "$m5_code_sha"
             printf 'M6_SHA=%s\n' "$m6_sha"
@@ -165,9 +175,11 @@ jobs:
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
-          printf 'M1-to-M3 exact Hook review: %s (M1 %s; M3 %s; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_m3_review_target_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
-          printf 'M9: %s\nM1 exact head: %s\nM1-to-M2 Issue #52 review: %s (M1 review head %s; exact M2 target %s; comment %s; scope: %s; condition: %s)\nM2 package candidate: %s\nPrior M1 disposition: %s for older M2 SHA %s (Issue #52 comment %s; real M5 router required only for that reviewed candidate)\nIssue #69: CLOSED for the exact current M2/M7 package-alignment candidate (comment 6347136623); reopen if the pinned refs change. Issue #68 CLOSED: historical composition gate\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 source candidate: %s\nM6-to-M8 Issue #59 disposition: %s (M6 contract %s; exact M8 target %s; comment %s; limited test/lifecycle scope)\nPrior M6 owner acceptance: %s for %s (Issue #59 comment %s; older M6 revision only)\nM7: %s\nM8: %s\n' \
-            "$m9_sha" "$m1_sha" "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_m2_review_target_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" "$m2_sha" "$m2_prior_m1_disposition" "$m2_prior_m1_disposition_sha" "$m2_prior_m1_disposition_comment" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_m8_review_target_sha" "$m6_m8_review_comment" "$m6_prior_acceptance_status" "$m6_prior_acceptance_sha" "$m6_prior_acceptance_comment" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M1-to-M3 reviewed Hook source: %s (M1 %s; reviewed M3 commit %s; current M3 source %s; Issue #72 comment %s; Hook blobs checked unchanged)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_m3_review_target_sha" "$m3_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'Exact source SHAs: M9=%s M1=%s M2=%s M3=%s M4=%s M5=%s M6=%s M7=%s M8=%s\n' "$m9_sha" "$m1_sha" "$m2_sha" "$m3_sha" "$m4_sha" "$m5_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M1-to-M2 Issue #52: %s (M1 %s; M2 %s; comment %s; scope %s; boundary %s)\n' "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_m2_review_target_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M1-to-M3 Hook disposition: %s (reviewed commit %s; current M3 %s; blobs rechecked; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_target_sha" "$m3_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M6-to-M8 scoped disposition: %s (reviewed M6 contract %s; current M6 %s; M8 %s; Issue #59 comment %s)\n' "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_sha" "$m8_sha" "$m6_m8_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -232,6 +244,16 @@ jobs:
           npm run build
           node --import tsx --test test/onboarding.test.ts test/codex-connection-check.test.ts test/agent-hook.test.ts test/security-center-route-m3.test.ts
 
+      - name: Install M4 owner dependencies
+        run: npm ci
+        working-directory: module-sources/m4
+
+      - name: Run exact M4 security-center build and focused desktop regressions
+        working-directory: module-sources/m4
+        run: |
+          npm run build
+          node --import tsx --test test/runtime-console.test.ts
+
       - name: Run exact M5 risk-policy regression
         working-directory: module-sources/m5
         run: node --import tsx --test test/risk-policy.test.ts
@@ -254,13 +276,14 @@ jobs:
           node --test --test-name-pattern="prepare build command carries the same Community ZIP and exact Hook source commit in documented argument order|Windows Hook provenance keeps LF checkout bytes equal to the tracked blob" test/windows-packaging.test.mjs
           node --test --test-name-pattern="co-located E4 payload wrapper logs only allowlisted metadata" test/auto-e4.test.mjs
 
-      - name: Run exact-source M1/M2/M3/M5/M6/M7/M8 M9 composition regressions
+      - name: Run exact-source M1/M2/M3/M4/M5/M6/M7/M8 M9 composition regressions
         working-directory: module-sources/m9
         env:
           M9_ROOT: ${{ github.workspace }}/module-sources/m9
           M1_ROOT: ${{ github.workspace }}/module-sources/m1
           M2_ROOT: ${{ github.workspace }}/module-sources/m2
           M3_ROOT: ${{ github.workspace }}/module-sources/m3
+          M4_ROOT: ${{ github.workspace }}/module-sources/m4
           M5_ROOT: ${{ github.workspace }}/module-sources/m5
           M6_ROOT: ${{ github.workspace }}/module-sources/m6
           M7_ROOT: ${{ github.workspace }}/module-sources/m7
@@ -275,16 +298,17 @@ jobs:
         run: |
           {
             echo
-            echo 'Issue #69 is CLOSED for the exact current M2/M7 package-alignment candidate by comment 6347136623 after exact M2 package-smoke and M9 Ubuntu/Windows composition passed; reopen if pinned refs change. Issue #68 is CLOSED as the historical M2 facade-package composition gate. M1 comment 6321070391 on Issue #52 records ACCEPT WITH CONDITIONS only for exact M2 candidate be66cf8f4c1a60f093740577796ec5cd633e1d93 after actual-tarball review; exact M2 candidate 868b12a4688282c28091b731f6548d5535c0c37c is checked with the exact M7 868842b1b7d76cf94a8d84a5f76c6acd4ca67f50 pack:check contract below, but is not covered by that disposition: the first-party host must inject the trusted M5 router through the strict public facade; M2 does not authenticate router identity; OS-atomic TOCTOU remains unproven.'
+            echo 'Issue #69 closure applies only to its historical exact M2/M7 candidate; Issue #68 remains historical. M1 comment 6349293985 APPROVES M2 2e3b87a63113cbfece864e7b889a313fcbe1f56a for the adapter-to-Gateway API contract only. This source composition does not establish product-host wiring or TOCTOU.'
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks. This fixture injects the exact pinned M5 router into the packed M2 public facade; M2 reserves and injects its tools, callback, and M1 capability wiring but does not authenticate router identity. A registered synthetic protected_read passes only when M5 resolves and verifies the M1 capability and M2 forwards that capability to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
             echo 'Active-capability negative controls cover a sensitive .env path, workspace and outside symlink/junction aliases, and a hard link alias named .env. M5 denies these before its M2 callback; direct packed-M2 executor calls reject all unregistered aliases before M1. No M1 runtime evidence or approval effect is added and fixture bytes/hashes remain unchanged.'
-            echo 'Candidate exact sources: M1 a5eff766ebe041bc2c6cc13758827d5a96205de9; M2 package candidate 868b12a4688282c28091b731f6548d5535c0c37c; M3 27d4a20a20894c7b779edf68d8bf79685bc0e69b; M5 6c16a08c6db26e548dcf63cb845f00ceb5a576ad; M6 source candidate 2cebabc81d7908c04ddfa10378fa1d3427b92cf4; M7 868842b1b7d76cf94a8d84a5f76c6acd4ca67f50 (updated E4 privacy-audit source; package policy unchanged from M2 CI pin 167ebe81b76cc434facdaa3ddc62b42b9843951a); M8 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db. M1 Issue #52 comment 6346736001 is CONDITIONAL ACCEPT for M2 868b12a4688282c28091b731f6548d5535c0c37c, pairing M1 review head a5eff766ebe041bc2c6cc13758827d5a96205de9; it is limited to the adapter-to-Gateway contract and applies only when that M1 API is actually injected. Production host consumption and OS-atomic TOCTOU remain NOT_VERIFIED; Issue #52 remains OPEN/P0. The prior M1 disposition stays scoped to older M2 SHA be66cf8f4c1a60f093740577796ec5cd633e1d93 (Issue #52 comment 6321070391). M6 Issue #59 comment 6346660246 conditionally accepts only the M8 PR #40 test hunk and checks the M6 PR #38 lifecycle contract at M6 SHA 2cebabc81d7908c04ddfa10378fa1d3427b92cf4 against M8 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db; it does not generally accept the M6 source candidate. The earlier M6 acceptance 98803607b89f11e24430c461bd91e9c1a0ece9d4 remains scoped to its older M6 revision and Auto E4 lifecycle semantics. M5 source-scope code SHA 06fdbb060574e96e5d1eba5c77721014e0a81a3b remains a separate source gate. M2 has a read-only adapter and no write/delete adapter; these pins do not establish a production-host callsite or global host protection.'
+            echo 'Current pinned exact sources: M1 a5eff766ebe041bc2c6cc13758827d5a96205de9; M2 2e3b87a63113cbfece864e7b889a313fcbe1f56a; M3 b98cb1847a764b9055a6e3b9f489b7e37d595715; M4 d5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84; M5 e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2; M6 ef4679b276a90767bb1a6d7bd852aadc45b2d1cb; M7 868842b1b7d76cf94a8d84a5f76c6acd4ca67f50; M8 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db. M1 comment 6347268881 reviewed M3 source 27d4a20a20894c7b779edf68d8bf79685bc0e69b Hook blobs only; current M3 Hook blobs are asserted unchanged. Historical M2/M6 dispositions remain scoped to their original exact revisions.'
             echo 'No host callback reopens a path in the positive control; rejected calls create no approval and leave Gateway evidence and fixture bytes unchanged. This does not establish a production host integration.'
             echo 'M2/M3 scope: only the synthetic fixed protected_read route through the packed public facade and injected M5 router is covered; native Codex Shell remains UNPROTECTED / NOT_VERIFIED.'
             echo 'M3 evidence: exact-source build and focused onboarding/Gateway-connection/Hook tests, plus an M9 synthetic M3 protected_read host that loads the M2 packed public facade and injects the exact M5 router. The M3/M1 native Hook comparison still denies an unpinned normal Read; Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
             echo 'M9 only observes fixed protected_read behavior in synthetic fixtures. Unsupported production-host integration and real concurrent/OS-atomic TOCTOU remain UNKNOWN; this does not close Issue #52.'
-            echo 'M6 source-candidate evidence: latest exact SHA 2cebabc81d7908c04ddfa10378fa1d3427b92cf4 runs the source-checkout bundle/sidecar verifier and full Auto E4 lifecycle regressions. Earlier M6 acceptance comment 6320039569 applies only to older exact SHA 98803607b89f11e24430c461bd91e9c1a0ece9d4 and its packaging/windows/auto-e4.mjs lifecycle semantics plus the complete test/auto-e4.test.mjs suite. Current M6 comment 6346660246 covers the exact M8 test hunk and checks the M6 lifecycle contract at the latest exact M6 SHA; it does not generally accept all M6 source changes. Neither comment accepts product-host integration, installer contents, VM/model execution, or independent external E4 validation. security-lab/e4 is outside the npm tarball and no npm-installed E4 was tested.'
+            echo 'M6 source-candidate evidence: exact SHA ef4679b276a90767bb1a6d7bd852aadc45b2d1cb runs the bundle/sidecar verifier and Auto E4 lifecycle regressions. Exact-head hosted CI still has Ubuntu Node 22 and macOS Node 20 pending. M6 comment 6346660246 reviews the M8 test hunk and M6 lifecycle contract at older M6 SHA 2cebabc81d7908c04ddfa10378fa1d3427b92cf4 only; prior acceptance 98803607b89f11e24430c461bd91e9c1a0ece9d4 is likewise historical. No product-host, installer, VM/model, or external E4 claim is made.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
+            echo 'M4 exact PR #34 source is independently built and its runtime-console tests run; M9 adds a synthetic check of redacted security-center output and conservative UNKNOWN states. It does not verify a live product host or backend data provenance.'
             echo 'M8 exact published PR head pin is 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db; the workflow runs its LF checkout provenance assertion and sanitized JSONL positive control. M7 is pinned to 868842b1b7d76cf94a8d84a5f76c6acd4ca67f50 for its updated E4 privacy audit and package smoke; M2 CI uses the older 167ebe81b76cc434facdaa3ddc62b42b9843951a pin whose relevant package-policy files are verified unchanged; this does not verify Setup.exe internals.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'
             echo 'Issue #52 remains OPEN / P0 / NOT_VERIFIED for production-host held-identity consumption and TOCTOU.'

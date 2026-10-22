@@ -1,5 +1,11 @@
 # M9 最终集成计划
 
+## 当前 exact-source composition 快照（2026-10-23）
+
+- 当前 M1–M8 exact source pins、模块级覆盖、owner 审阅范围及证据限制见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md)。
+- 本轮更新 M2/M3/M6 pin，并新增 M4 #34 独立 checkout、build、桌面回归和安全中心脱敏适配器合成检查。M3 的 M1 review 仅覆盖已审阅 Hook blobs；M2 的 M1 approval 仅覆盖 Gateway/adapter API contract。
+- Issue #52 仍 OPEN / P0 / NOT_VERIFIED。合成接口通过不代表 first-party product-host wiring 或 OS-atomic TOCTOU 已验收。M6 当前 exact-head hosted CI 的 Ubuntu Node 22 和 macOS Node 20 job 仍待完成。
+
 ## M9 精确 head 与契约/风险复核（2026-10-15 00:38 UTC）
 
 > GitHub API 只读核对；本节更新 M9/M0 的精确 head 与 checks。下方 00:18 UTC 快照现作为历史记录；本轮不重跑本地测试。
