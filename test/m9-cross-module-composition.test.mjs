@@ -20,7 +20,7 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: 'a5eff766ebe041bc2c6cc13758827d5a96205de9',
   M2: '099ad64e4a09330920cbd40847adec3fe631e91e',
-  M3: 'b98cb1847a764b9055a6e3b9f489b7e37d595715',
+  M3: '465bd606ed376054e5d9ae63b30f090dab7aec75',
   M4: 'd5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84',
   M5: 'e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2',
   M6: 'ef4679b276a90767bb1a6d7bd852aadc45b2d1cb',
