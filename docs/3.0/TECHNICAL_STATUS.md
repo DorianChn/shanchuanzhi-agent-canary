@@ -6808,3 +6808,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 PR #36 head `d2002e90bb381744488ef4de319dabf4846c3c7d` completed all 13/13 exact-head checks successfully across Ubuntu and Windows composition, platform matrix, package, wrapper, Docker, and sponsor checks. Its current pins now have M3 `465bd606...` and M4 public head `83a3abc0b85e783c34d79392e50015ed8f24e184`.
 - M9 prepared local follow-up commit `0932e63f89b08f6adff4b918904137110bf138ad`, changing only its M4 ref in workflow/test/snapshot. The focused M4-source test passed 1/1; complete local M9 composition passed 11/11; syntax and diff checks passed. This candidate has not yet been pushed and still requires hosted exact-head checks.
 - M1 is investigating Issue #62 in its existing Gateway worktree. No M1 code change or conclusion is claimed yet; expired-approval denial and zero-callback assertions remain required.
+
+## M1 issue disposition — 2026-10-22 20:12 UTC
+
+- M1's read-only triage is recorded in Issue #62 comment `6350288076`: both historical failures occurred at `pending()[0].requestId` before the expiry-denial/zero-callback assertions; a 5 ms timing/setup race is plausible but not proven. No bypass or callback execution is established. Owner disposition is `ROOT CAUSE UNKNOWN`; issue remains OPEN/P1.
+- The current M1 exact head `a5eff766ebe041bc2c6cc13758827d5a96205de9` has green hosted checks; its controlled-clock regression validates the expected approval classification/request ID and retains EXPIRED, cleared-pending, and zero-callback assertions. No M1 code change or local rerun was made.
