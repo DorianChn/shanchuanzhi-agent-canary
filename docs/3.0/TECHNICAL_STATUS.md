@@ -6896,3 +6896,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - PR #30 exact head `2b874a8aed7c0def25c8ce64d2f73e886ffc2e66` run `39852109168`: the Windows Node 22 interruption test failed as above; Windows Node 20 and macOS Node 20 were cancelled, package-smoke skipped, while the other matrix jobs and ownership evidence passed. Issue #32 remains OPEN/P1; no test or policy was weakened.
 - M9 `18b60684c7d59dd70c80fc299c346c6b449a0dbe` is now eligible for publication because exact M1 c67 hosted checks are green; its own exact-head checks remain to be run after push.
 - PR #24 read at 20:53 UTC remains OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+
+## M0 next-batch verification — 2026-10-22 20:58 UTC
+
+- M9 PR #36 exact head `18b60684c7d59dd70c80fc299c346c6b449a0dbe` has 11/12 checks green. Ubuntu and Windows exact-source composition both pass; the only remaining check is macOS Node 20, still pending. No failure is reported.
+- M5 prepared local commit `c9003234913a0ccccca56fe2a36fb1ce3dacb2de`, parent exact public M5 head `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2`. It changes only M5 `src/risk-policy.ts`, its policy regression test, and M5 audit report. Focused M5 tests pass 56/56; build and diff-check pass. This candidate prevents optional review hooks from running after deterministic DENY; hosted exact-head checks will be required after publication.
+- M5 confirmed the M2 standalone router copy drops capability context, but the M2 host adapter uses its separate trusted injection seam and validates/consumes the M1 capability; M9 exact-source composition has exercised that seam. Do not classify the standalone copy as the composed path. Product first-party host evidence remains NOT_VERIFIED; M3 is checking its callsite.
+- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
