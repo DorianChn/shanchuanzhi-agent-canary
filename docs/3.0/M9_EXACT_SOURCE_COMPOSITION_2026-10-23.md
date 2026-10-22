@@ -7,7 +7,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 | M1 Gateway | #43 | `a5eff766ebe041bc2c6cc13758827d5a96205de9` | Held-Gateway regression and synthetic protected-read composition |
 | M2 isolation | #37 | `099ad64e4a09330920cbd40847adec3fe631e91e` | Package build, tarball facade, package policy and synthetic composition |
 | M3 onboarding | #33 | `465bd606ed376054e5d9ae63b30f090dab7aec75` | Build, focused Hook/onboarding regressions and synthetic fixed-read host |
-| M4 desktop security center | #34 | `d5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84` | Build, `runtime-console` regressions and exact-source adapter redaction check |
+| M4 desktop security center | #34 | `83a3abc0b85e783c34d79392e50015ed8f24e184` | Build, `runtime-console` regressions and exact-source adapter redaction check |
 | M5 policy | #47 | `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2` | Risk-policy regression and synthetic router composition |
 | M6 E4 | #38 | `ef4679b276a90767bb1a6d7bd852aadc45b2d1cb` | Bundle verifier and Auto E4 lifecycle regressions |
 | M7 reliability | #39 | `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50` | Package contract and positive-control regressions |
