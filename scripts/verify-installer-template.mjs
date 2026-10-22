@@ -6,6 +6,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
+import {inspectInstallerCompileOutput} from '../packaging/windows/installer-compile-evidence.mjs';
 
 if(process.platform!=='win32')throw Error('INSTALLER_COMPILER_CHECK_REQUIRES_WINDOWS');
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -30,8 +31,8 @@ try{
   });
   const script=path.join(root,'installer.nsi');fs.writeFileSync(script,rendered,{flag:'wx'});
   const compiled=spawnSync(makensis,['/V2',script],{cwd:root,encoding:'utf8',windowsHide:true,timeout:120000,maxBuffer:2*1024*1024});
-  const outputExists=fs.existsSync(output);
-  if(compiled.error||compiled.status!==0||!outputExists)throw Error('NSIS_TEMPLATE_COMPILE_FAILED: '+JSON.stringify({exitCode:compiled.status,outputExists,error:compiled.error?.message??null,stdout:compiled.stdout,stderr:compiled.stderr}));
-  const result={status:'COMPILED_ONLY_INSTALL_NOT_RUN',expectedNSISVersion:provenance.version,makensisVersion:compilerVersion,makensisSHA256:sha(fs.readFileSync(makensis)),compileExitCode:compiled.status,outputExists,installerBytes:fs.statSync(output).size,installerSHA256:sha(fs.readFileSync(output)),templateSHA256:sha(Buffer.from(rendered,'utf8')),fixture:{pathIncludesUnicodeAndSpaces:true,syntheticPayload:true},installerExecuted:false};
+  const outputEvidence=inspectInstallerCompileOutput(output);
+  if(compiled.error||compiled.status!==0||!outputEvidence.outputValid)throw Error('NSIS_TEMPLATE_COMPILE_FAILED: '+JSON.stringify({exitCode:compiled.status,...outputEvidence,error:compiled.error?.message??null,stdout:compiled.stdout,stderr:compiled.stderr}));
+  const result={status:'COMPILED_ONLY_INSTALL_NOT_RUN',expectedNSISVersion:provenance.version,makensisVersion:compilerVersion,makensisSHA256:sha(fs.readFileSync(makensis)),compileExitCode:compiled.status,...outputEvidence,installerSHA256:sha(fs.readFileSync(output)),templateSHA256:sha(Buffer.from(rendered,'utf8')),fixture:{pathIncludesUnicodeAndSpaces:true,syntheticPayload:true},installerExecuted:false};
   process.stdout.write(JSON.stringify(result)+'\n');
 }finally{fs.rmSync(root,{recursive:true,force:true});}

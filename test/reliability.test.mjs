@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {writeFileAtomically} from '../packaging/windows/durable-files.mjs';
+import {inspectInstallerCompileOutput} from '../packaging/windows/installer-compile-evidence.mjs';
 import {loadState,saveReport} from '../packaging/windows/worker.mjs';
 
 // macOS can expose the temp tree through /var -> /private/var; keep fixtures canonical
@@ -35,9 +36,45 @@ test('NSIS compile acceptance keeps its Windows, compiler, and template failure 
   assert.ok(installer.includes("status:'NSIS_COMPILER_READY',expectedVersion:provenance.version,makensisVersion:compilerVersion"),'the runner must record the executable compiler version');
   assert.ok(source.includes("if(versionCheck.error||versionCheck.status!==0||!compilerVersion.includes(provenance.version))throw Error('NSIS_COMPILER_VERSION_MISMATCH:"),'compile acceptance must reject an unexpected compiler version');
   assert.ok(source.includes("expectedNSISVersion:provenance.version,makensisVersion:compilerVersion"),'compile result must record the expected and observed compiler versions');
-  assert.ok(source.includes('const outputExists=fs.existsSync(output);'),'compile acceptance must inspect the emitted installer artifact');
-  assert.ok(source.includes("if(compiled.error||compiled.status!==0||!outputExists)throw Error('NSIS_TEMPLATE_COMPILE_FAILED:"),'compiler errors or missing output must fail the check');
-  assert.ok(source.includes("compileExitCode:compiled.status,outputExists"),'successful compiler output must record the exit code and artifact presence');
+  assert.ok(source.includes('const outputEvidence=inspectInstallerCompileOutput(output);'),'compile acceptance must inspect the emitted installer artifact');
+  assert.ok(source.includes('!outputEvidence.outputValid'),'compiler output must be a non-empty regular file');
+  assert.ok(source.includes('...outputEvidence'),'successful compiler output must record its checked artifact evidence');
+});
+test('NSIS compile evidence rejects missing, empty, and non-regular outputs',()=>{
+  const root=makeCanonicalTempRoot('agent-canary-installer-compile-evidence-');
+  try {
+    const missing=inspectInstallerCompileOutput(path.join(root,'missing.exe'));
+    assert.equal(missing.outputExists,false);
+    assert.equal(missing.outputValid,false);
+    assert.equal(missing.inspectionErrorCode,'ENOENT');
+
+    const empty=path.join(root,'empty.exe');
+    fs.writeFileSync(empty,'');
+    assert.deepEqual(inspectInstallerCompileOutput(empty),{
+      outputExists:true,outputBytes:0,outputValid:false,inspectionErrorCode:null,
+    });
+
+    const valid=path.join(root,'valid.exe');
+    fs.writeFileSync(valid,'synthetic compiled artifact');
+    assert.deepEqual(inspectInstallerCompileOutput(valid),{
+      outputExists:true,outputBytes:27,outputValid:true,inspectionErrorCode:null,
+    });
+
+    const symbolicLinkStat={size:27,isFile:()=>false,isSymbolicLink:()=>true};
+    assert.deepEqual(inspectInstallerCompileOutput(valid,{lstatSync:()=>symbolicLinkStat}),{
+      outputExists:true,outputBytes:27,outputValid:false,inspectionErrorCode:null,
+    });
+
+    const linked=path.join(root,'linked.exe');
+    try {
+      fs.symlinkSync(valid,linked,'file');
+      assert.equal(inspectInstallerCompileOutput(linked).outputValid,false);
+    } catch (error) {
+      if (!['EPERM','EACCES','ENOTSUP'].includes(error?.code)) throw error;
+    }
+  } finally {
+    fs.rmSync(root,{recursive:true,force:true});
+  }
 });
 test('Windows community workflow installs and compiles with NSIS only on Windows',()=>{
   const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
