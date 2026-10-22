@@ -24,6 +24,10 @@ The packet self-attests to the separate computer/operator. Its security matrix d
 
 The recorded Windows 11 VM run was BLOCKED before product testing: the guest remained at network setup, VMware NAT was stopped, and guest operations required an unlock credential. No candidate installation, SDK/MCP side-effect test, real-model call, or uninstall/reinstall was completed. Do not count this as a failed product test or as E4.
 
+## 2026-10-22 21:18 UTC — latest M7 product-artifact review
+
+M6's [GitHub product-artifact audit](docs/3.0/E4_GITHUB_PRODUCT_ARTIFACT_AUDIT_2026-10-22.md) records the newest unexpired M7 Actions artifact as ID `12442531312`, from run [`39815479411`](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39815479411), source commit `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50`. The ZIP SHA-256 is `ecc4a73543a08216f30deb894cdbd4a57dc562fa35e79c7dc56dd484b027e62d`; the contained Setup.exe SHA-256 is `7f04419e9250ec03fa5c936e7caac46b7c641ad1290c054a99bfb2d206998843`, matching the recorded build report. That report explicitly says `installerExecuted=false`; the passing canary is a controlled Hook fixture, not an installed-product or clean-VM test. This artifact is useful build/provenance evidence, but it does **not** change independent E4 from **NOT_VERIFIED** or clear its blocked gate.
+
 ## Evidence map
 
 | Record | What it supports | What it does not support |
