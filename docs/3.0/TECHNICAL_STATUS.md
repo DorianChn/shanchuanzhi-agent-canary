@@ -7110,3 +7110,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 is inspecting only its integration-owned pin/report files. The public M9 PR #36 still points to 129075c, so the new candidate refs are not yet pinned on the M9 branch; exact M9 hosted CI remains pending.
 - Issue #52 remains OPEN/P0. The M1/M5 security boundary and scratch composition are now supported by exact local and hosted evidence, but no first-party product-host callback identity or native host protection was observed.
 - No module source ownership changed. No merge, Release, PR #24 modification, installer, VMware, or real-model execution occurred.
+
+## M9 local pin candidate — 2026-10-22 22:52 UTC
+
+- M9 owner committed exact source pins locally as 219d74e17dab061e2e97fa31c7c27c00fa633c34 on existing PR #36 branch. The clean worktree is one commit ahead of origin. The diff contains only M9-owned workflow pin/evidence, cross-module SHA map, and exact-source report files.
+- The candidate pins M2 67428139, M5 12b2499, M8 35aa22f plus already-green M1/M3/M4/M6/M7 heads. M9 composition tests passed 11/11; the focused security composition suite passed 3 with 1 existing skip because the local M9 snapshot predates the M1 capability API. Diff-check passed.
+- Public PR #36 remains at 129075c until the next eligible push batch. Exact hosted M9 Ubuntu/Windows composition is therefore pending; local scratch/commit results are not presented as hosted acceptance.
+- Issue #52 remains OPEN/P0: the real first-party host identity/TOCTOU path is unverified. Issue #41 remains OPEN/P1 pending clean-VM installer lifecycle. PR #24 remains untouched.

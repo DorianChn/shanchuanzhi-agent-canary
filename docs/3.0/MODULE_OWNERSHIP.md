@@ -752,3 +752,7 @@ All remain separate OPEN/Draft PRs except that this table does not change PR sta
 ## M9 exact-source scratch result — 2026-10-22 22:49 UTC
 
 M9's uncommitted scratch composition passed 11/11 using the public exact candidates M1 6886d6e, M2 6742813, M3 34b526d, M4 264bc28, M5 12b2499, M6 15e1663, M7 4f986cc, and M8 35aa22f against M9 baseline 129075c. This is not yet a public M9 pin or hosted M9 CI result. Only after its owner-scoped pin/report change is locally validated should the existing M9 branch advance; the synthetic composition does not establish product-host enforcement.
+
+## M9 owner candidate delta — 2026-10-22 22:52 UTC
+
+M9 local commit 219d74e17dab061e2e97fa31c7c27c00fa633c34 pins the exact public M2/M5/M8 candidates and the previously green M1/M3/M4/M6/M7 refs. It changes only the M9 workflow, composition test SHA map, and exact-source report. Local composition is 11/11; focused security suite is 3 pass / 1 existing skip. It remains one commit ahead of public PR #36, and hosted exact M9 CI is pending publication.
