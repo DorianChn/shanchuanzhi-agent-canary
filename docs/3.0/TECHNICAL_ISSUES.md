@@ -1633,3 +1633,11 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#70 P1:** OPEN / queued to M7. Existing Dependabot PR #67 updates Hono 4.13.7 to 4.13.13; exact package-smoke and non-applicability review remain required. No reachable `serveStatic` callsite or actual exposure is confirmed.
 - **#71 P1:** OPEN / queued M3 for Windows Node 20 fixture teardown `ENOTEMPTY`; preserve all security assertions.
 - **#72 P1:** OPEN / queued M1 exact-blob review of M3 Hook changes.
+
+## M0 verified disposition — 2026-10-22 13:00 UTC
+
+- **#52 P0:** OPEN / NOT_VERIFIED. M4 UI request exists; M3 backend route is absent. Exact M1/M2/M5 APIs and M9 synthetic integration are verified, but first-party Console route/host wiring and OS-atomic TOCTOU are not. M1+M3 active 13:00–13:20; M4 queued pending route.
+- **#69 P1:** OPEN / queued; M2 package-smoke gate remains separate from P0.
+- **#70 P1:** OPEN / queued to M7; existing Dependabot PR #67 upgrades Hono 4.13.7 to 4.13.13. No `serveStatic` callsite or actual exposure confirmed; require exact package-smoke and applicability review.
+- **#71 P1:** OPEN / queued M3 for Windows Node 20 fixture teardown `ENOTEMPTY`.
+- **#72 P1:** OPEN / queued M1 for exact-blob review of M3 Hook changes.

@@ -221,3 +221,7 @@ M9 must compose exact reviewed/public M1, M2, M4, and M5 commits before claiming
 ## Current P0 #52 integration path — 2026-10-22 12:40 UTC
 
 M3's Console status route depends on the owner-controlled M2 public `./gateway-adapter` facade and M5 strict OBSERVE router, with M1 providing held-file capability semantics. M4 consumes only the M3-owned read-only `GET /api/security-center` status payload and displays absent protection data as UNKNOWN. M9 pins and exercises the synthetic M1→M2→M5 composition; the current M3 backend route is still absent, so the production UI/status chain is not complete. M2 P1 #69 package-smoke remains separate from this P0 dependency path.
+
+## 2026-10-22 13:00 UTC P0 refinement
+
+For the active M3 backend route, dependency order is M1 held-file capability → M5 strict OBSERVE router → M2 public host facade and registered fixed-path map → M3 Console route/capability binding → M4 read-only UI status consumer. M9 verifies the synthetic composition of exact current sources, but M3's Console route is still absent. Exactly M1+M3 are active to confirm held-identity use and implement that route; M4 waits for the backend path.

@@ -1165,3 +1165,10 @@ The M9 fixture proves a synthetic protected read through the packed public facad
 - **P1 #69 — M2 package-smoke:** OPEN; the exact public facade exists, but its separate package-smoke policy gate remains unresolved. Do not widen allowlists or skip checks.
 - **P1 #70 — Hono GHSA-5r4p-p66f-jhc7:** OPEN with existing Dependabot PR #67. Current default lock has vulnerable Hono 4.13.7 via runtime MCP SDK dependency; GitHub code search found no `serveStatic` use in repository source, so exploitability in this app is unconfirmed. M7 owns package/release verification.
 - **M9 PR description:** stale against current head `7c8d808`; it still says the packed M2 candidate is not included, although current exact-head composition tests it. Refresh the PR evidence text before final review.
+
+## M0 exact-source checkpoint — 2026-10-22 13:00 UTC
+
+- **#52 P0 remains OPEN / NOT_VERIFIED.** Current M3 Console backend lacks `/api/security-center`; M4's UI request exists. M1 held-file, M2 public-facade, and M5 strict-router contracts are individually present and exercised in M9 synthetic composition, but first-party Console host wiring and OS-atomic TOCTOU remain unverified.
+- The 12:40–13:00 M3+M5 slot ended with no owner-authored response/head movement. Exactly M1+M3 are active 13:00–13:20 to confirm held identity and implement the route.
+- M9 PR #36 exact head `7c8d808` has successful Ubuntu/Windows composition, product CI 9/9, and wrapper 2/2. Its PR body still contains stale claims and needs an owner refresh before final integration review.
+- P1 #69 (M2 package smoke), #70 (Hono GHSA), #71 (M3 Windows teardown), and #72 (M1 exact Hook review) remain queued behind P0. #53 remains closed only for its packaged Hook logging scope.
