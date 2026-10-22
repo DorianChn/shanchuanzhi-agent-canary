@@ -100,3 +100,73 @@ restoreAgentIntegration(record) 要求回执字段、绝对路径和宿主配置
 - M0 的共享契约文件只保留跨模块摘要；其他模块通过适配层消费这些接口，不在其 PR 中复制或修改本文件。
 - 当前 Codex 向导、隔离自检结果及所有兼容性声明均不得覆盖 NOT_VERIFIED / OUT_OF_SCOPE 限制。真实 Claude、Cursor、Cline 端到端兼容、Windows 发布命令和原生工具保护均需独立证据。
 - M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. M3's connection-check MCP now attempts this narrow binding through only the public `@dorianchn/agent-canary/gateway-adapter` facade and the M5 router factory. Its fixed-file positive control and alias/path-replacement zero-callback regressions are in `test/codex-connection-check.test.ts`; if M1/M2/M5 owner APIs are absent or the positive control does not succeed, M3 reports `UNKNOWN` and keeps the route unavailable or denied. The current M3 branch does not yet contain the M1 held-file methods, M2 facade package export, or M5 capability-provider implementation; see [PROTECTED_HOST_STATUS.md](PROTECTED_HOST_STATUS.md). The built-in AI Console remains a separate demo and does not provide an external-host callback binding. No generic path fallback or strict-mode opt-out is part of this M3 contract. Native Codex tool coverage remains `OUT_OF_SCOPE`.
+
+## 6. Planned Console fixed-probe action — blocked, not an active route
+
+There is currently **no** `/api/security-center/protected-read` endpoint. The
+existing `GET /api/security-center` remains a status-only read and must not run
+file I/O. This section records the M3-owned contract proposal for a future
+fixed synthetic probe; it is not evidence that the Console or a product host is
+protected.
+
+### Proposed request and response
+
+- Method/path: `POST /api/security-center/protected-read`.
+- The request must pass the Console's existing same-origin and CSRF checks and
+  its configured operator check. The operator code is supplied only through
+  `x-canary-operator-code` and compared with the existing constant-time check;
+  it is never accepted in the body. If no operator code was configured, reject
+  with HTTP 403 before creating a file, directory, Gateway, or adapter.
+- The JSON body must be exactly `{}`. It has no path, tool, workspace, or other
+  caller-controlled fields. Any extra field, including a path alias, is
+  rejected before probe dispatch.
+- The host may create one process-owned `mkdtemp` directory and one fixed
+  `agent-canary-public.txt` marker file only after authorization succeeds. The
+  resolved directory must be strictly contained under the resolved OS temp
+  root and verified as the non-link directory created by this process. The
+  fixed M1/M2/M5 route must use the opaque held-file capability and M5
+  `OBSERVE` with strict real-path checks. Missing APIs, setup errors, dispatch
+  errors without an explicit owner `DENY`, and unknown outcomes return
+  `UNKNOWN`; there is no direct filesystem-read fallback.
+- `ALLOW` requires the owner route to return the exact fixed marker. A result
+  that claims ALLOW without an exact marker match is `UNKNOWN` with the fixed
+  reason `integrity_mismatch`. Only an explicit M1 or M5 `DENY` is reported as
+  `DENY`; other failures remain `UNKNOWN`.
+- The action response contains only
+  `{scope: "M3_FIXED_TEMP_PROBE_ONLY", status, reason, markerMatched}` where
+  status is `ALLOW | DENY | UNKNOWN` and reason is a fixed enum. It never
+  returns a path, file bytes, exception text, Gateway evidence, or adapter
+  object. Wrong/missing operator authorization or an invalid body is rejected
+  before probe work with a fixed HTTP error and the same sanitized envelope
+  using `UNKNOWN` plus a fixed authorization/request reason. Probe `DENY` is
+  reserved for an explicit M1/M5 `DENY` result.
+- On Console shutdown, close the Gateway first. Remove only the exact
+  process-created temp directory after rechecking temp-root containment, its
+  real path, and the identities of the expected probe objects. Do not recurse
+  into or remove unexpected/replaced objects. A cleanup failure remains
+  `UNKNOWN` and records only a fixed security-audit code.
+
+### Current public dependency gap and acceptance gate
+
+The proposed action is blocked until the product build can load all owner
+components through supported package/runtime dependencies. In the checked
+worktrees, M1's held-file factory is only in internal `src/runtime/gateway.ts`,
+M5's router is only in internal `src/security-router.ts`, M2's candidate
+`./gateway-adapter` export is absent from the M3 package manifest, and the M3
+Console CLI does not supply the existing test-only trusted composition seam.
+M3 must not add private source-path imports, copy M1/M2/M5 policy code, or
+pretend an injected test seam is a product callsite. Owner modules must publish
+or wire a supported composition; M3 can then add the Console adapter and
+consumer regression tests within this contract.
+
+Acceptance must cover the authorized exact-marker positive control; missing
+M1/M2/M5 component and unclassified-error `UNKNOWN`; explicit M1/M5 denial;
+wrong-marker `integrity_mismatch`; wrong/missing operator code and CSRF with no
+probe filesystem or Gateway work; extra-body/path-alias rejection with no
+dispatch; and owner-composed symlink/junction alias plus same-path replacement
+denials with zero M5 execution callback / M1 read evidence and unchanged
+fixture bytes. The latter are controlled synthetic-fixture cases only. M4 may
+label a successful result only as a “fixed synthetic probe”; Issue #52 and
+product arbitrary-file / symlink-junction protection remain `OPEN / P0 /
+NOT_VERIFIED` until the real product-host configuration and attacker-controlled
+alias acceptance run succeeds.
