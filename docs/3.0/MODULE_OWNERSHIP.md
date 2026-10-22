@@ -616,3 +616,19 @@ This ruling resolves the prior tentative ownership of the desktop route. It is a
 | M9 | #36 `feature/ac3-m9-integration` | `8ebb206e124e76501441690e3da9249472244503` | Prior exact composition green; waiting to pin current M2/M3/M6/M8 heads. |
 
 All module changes remain on existing Draft PR branches. PR #24 stays untouched at its fixed head/base; this refresh records GitHub heads only and does not claim merge, product-host, VM, or release acceptance.
+## M0 current branch and ownership snapshot — 2026-10-22 21:53 UTC
+
+| Module | Existing PR branch | Local worktree head | Scope / current state |
+|---|---|---:|---|
+| M0 | `feature/ac3-m0-coordination` / #30 | `fc42a78` | Coordination docs, issue tracking, ownership and API contracts. |
+| M1 | `feature/ac3-security-core` / #43 | `6886d6e` | Gateway, Guard, canonical Hook and state-store contracts; #51 owner. Exact CI 9/9 and concurrency workflow 2/2 green. |
+| M2 | `feature/ac3-execution-isolation` / #37 | `92a9562` | Execution isolation and host-hook adapter; native host remains unprotected/unverified. |
+| M3 | `feature/ac3-agent-onboarding` / #33 | `34b526d` | Onboarding and Hook copy/tests; protected-read route is explicitly blocked pending supported owner APIs. Exact CI 9/9 green. |
+| M4 | `feature/ac3-desktop-security-center` / #34 | `264bc28` (local) | Desktop Security Center UI/tests; owner merged latest M1 base, 11/11 targeted tests/build/diff-check green; hosted CI pending publication. |
+| M5 | `feature/ac3-policy-audit` / #47 | `c900323` | Policy/router variants and alias-denial regressions; canonical shared files require M1 review. |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 | `5f1649f` | E4 verifier/schema/bundle; independent product E4 remains NOT_VERIFIED. |
+| M7 | `feature/ac3-reliability-ac3` / #39 | `868842b` | Reliability, Windows installer/payload and lifecycle evidence; VM/install execution is gated. |
+| M8 | `feature/ac3-open-source-product` / #40 | `5bf5d4f` | Open-source/docs and shipped Hook/logging copy. |
+| M9 | `feature/ac3-m9-integration` / #36 | `8ebb206` | Exact-ref composition only; working tree has local integration-owned candidate edits, not yet committed. |
+
+Each M1–M8 directory is a distinct worktree with its existing PR branch attached; local HEADs match their remote owner branch commits. This snapshot records ownership; it does not claim native host, installer lifecycle, product-host protected-read, or independent E4 acceptance.
