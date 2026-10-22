@@ -8,6 +8,17 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const hook = path.join(here, "pre-tool-use.mjs");
+const hookFragment = JSON.parse(
+  fs.readFileSync(path.join(here, "codex-hooks.fragment.json"), "utf8"),
+);
+assert.match(
+  hookFragment.description,
+  /Native Codex Shell remains UNPROTECTED \/ BLOCKED_NOT_VERIFIED/,
+);
+assert.match(
+  hookFragment.hooks.PreToolUse[0].hooks[0].statusMessage,
+  /Native Codex Shell: UNPROTECTED \/ BLOCKED_NOT_VERIFIED/,
+);
 const command =
   "Set-Content -LiteralPath 'M2-SYNTHETIC-PROTECTED-SENTINEL' -Value 'CHANGED'";
 const event = {
