@@ -105,6 +105,12 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   assert.ok(smoke.includes('BUILD_REPORT_SOURCE_SHA_MISMATCH'),'the report source SHA must match the expected workflow SHA');
   assert.ok(smoke.includes('BUILD_REPORT_INSTALLER_SHA256_MISMATCH'),'the setup hash must match the exact build report');
   assert.ok(smoke.includes('SHA256SUMS_INSTALLER_MISMATCH'),'the setup hash must match SHA256SUMS');
+  const processStart=smoke.indexOf('if (-not $process.Start())');
+  const processStartedRecord=smoke.indexOf('$result.installerProcessStarted = $true',processStart);
+  const processWait=smoke.indexOf('if (-not $process.WaitForExit($TimeoutMs))',processStart);
+  assert.ok(processStart>=0&&processStart<processStartedRecord&&processStartedRecord<processWait,'timeout evidence must record a started setup process before waiting');
+  assert.ok(smoke.includes('$result.installerProcessCompleted = $true')&&smoke.includes('$result.installerExitCode = $process.ExitCode'),'process completion and exit code must only be recorded after wait succeeds');
+  assert.ok(smoke.includes('Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess'),'primary setup execution must populate process evidence');
   assert.ok(smoke.includes('INSTALLED_LAUNCHER_SHA256_MISMATCH'),'the installed launcher must match the build report');
   assert.ok(smoke.includes('"/S /D=$installRoot"'),'install must be silent and confined to the runner temp directory');
   assert.ok(smoke.includes('"/S _?=$installRoot"'),'uninstall must be silent and bound to the exact target');

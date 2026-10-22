@@ -11,6 +11,9 @@ $result = [ordered]@{
   schemaVersion = 1
   status = 'NOT_RUN'
   installerExecuted = $false
+  installerProcessStarted = $false
+  installerProcessCompleted = $false
+  installerExitCode = $null
   sourceSHA = $ExpectedSourceSHA
   installerSHA256 = $null
   candidateId = $null
@@ -57,7 +60,7 @@ function Assert-RegularFile([string]$Path) {
   return $item
 }
 
-function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs = 180000) {
+function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs = 180000, [switch]$RecordSetupProcess) {
   $startInfo = [Diagnostics.ProcessStartInfo]::new()
   $startInfo.FileName = $Executable
   # NSIS requires /D= and _?= paths to be unquoted and last. Keep Arguments raw.
@@ -70,9 +73,16 @@ function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs
   $clock = [Diagnostics.Stopwatch]::StartNew()
   try {
     if (-not $process.Start()) { throw 'NSIS_PROCESS_START_FAILED' }
+    if ($RecordSetupProcess) {
+      $result.installerProcessStarted = $true
+    }
     if (-not $process.WaitForExit($TimeoutMs)) {
       try { $process.Kill($true) } catch {}
       throw 'NSIS_PROCESS_TIMEOUT'
+    }
+    if ($RecordSetupProcess) {
+      $result.installerProcessCompleted = $true
+      $result.installerExitCode = $process.ExitCode
     }
     return [ordered]@{ exitCode = $process.ExitCode; durationMs = $clock.ElapsedMilliseconds }
   } finally {
@@ -186,7 +196,7 @@ try {
   Assert-Condition (-not (Test-Path -LiteralPath $startMenuFolder)) 'START_MENU_TARGET_NOT_CLEAN'
   Assert-Condition (-not (Test-Path -LiteralPath $desktopShortcut)) 'DESKTOP_SHORTCUT_ALREADY_EXISTS'
 
-  $installResult = Invoke-Nsis $installerPath "/S /D=$installRoot"
+  $installResult = Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess
   Assert-Condition ($installResult.exitCode -eq 0) 'INSTALLER_EXIT_NOT_ZERO'
   $result.installerExecuted = $true
   $result.installPath = '<RUNNER_TEMP>/Agent Canary 安装目录'
