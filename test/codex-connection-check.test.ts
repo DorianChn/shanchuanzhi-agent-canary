@@ -41,15 +41,19 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   const file=path.join(root,'agent-canary-public.txt');
   const marker='AGENT_CANARY_PROTECTED_FILE_READ_OK';
   fs.writeFileSync(file,marker,{flag:'wx',mode:0o600});
-  t.after(()=>{
-    const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
-    assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
-    fs.rmSync(realRoot,{recursive:true,force:true});
+  let closeGateway:(()=>Promise<void>)|undefined;
+  t.after(async()=>{
+    try{await closeGateway?.();}
+    finally{
+      const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
+      assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
+      fs.rmSync(realRoot,{recursive:true,force:true});
+    }
   });
   const guard=createAgentGuard({sessionId:'m3-protected-host-test',alert:false});
   const evidence=new EvidenceRecorder();
   const gateway=createTrustedExecutionGateway({agentId:'m3-protected-host-test',guard,workspaceRoot:root,files:[{path:'agent-canary-public.txt'}],evidence});
-  t.after(()=>gateway.close());
+  closeGateway=()=>gateway.close();
   const host=await createProtectedHostAdapter(gateway,guard,root);
   let rejectedAliasCallbacks=0;
   const alias=await dispatchProtectedRead({status:'UNKNOWN',reason:'TEST_ROUTE',m5Callbacks:()=>rejectedAliasCallbacks,dispatch:async()=>{rejectedAliasCallbacks++;return{content:marker};}},{path:'./agent-canary-public.txt'});
