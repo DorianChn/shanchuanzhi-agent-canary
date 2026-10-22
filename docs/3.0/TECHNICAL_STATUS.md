@@ -6665,3 +6665,17 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - On M0 head `e3999c8ef079927da3e4415aa5c868ac4e4ffdfe`, product CI run `39828910304` passed all 9 jobs, including package-smoke; ownership-contract workflow `39828910313` also passed. PR #30 remains OPEN/Draft.
 - M1 owner comment `6347868720` records one exact-old-fixture test in a clean temporary worktree: base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, Hook test blob `1ecb3ee8b45f1fbe942a25bcd5ce696f82534601`, wrapper blob `88c1003f0ab4a027f3b4ad576c312888862eb202`, Windows Node `v22.23.1`, exit 0 / 1 of 1 / 1018.6652 ms. The unchanged assertions observed the expected 1 s `ETIMEDOUT`, readiness marker present, and empty stdout. This confirms one local pass only; hosted-runner cause remains UNKNOWN and #32 stays OPEN/P1. No source/test change or CI rerun.
+
+## M0 exact-head delta — 2026-10-22 18:15 UTC
+
+- M1 read-only comparison comment `6347936854` adds exact runner metadata for #32's failed run `39826209833`: Windows Server 2025 image `windows-2025-vs2026` version `20261007.264.1`, Node `v22.23.3`, target subtest duration 1438.7154 ms, marker assertion failed at `test/agent-hook.test.ts:54:53`; later no-output assertions were not reached. Hosted logs lack child-start/marker timestamps, stdout/stderr, and real callback evidence. Compared with the single local exact-baseline pass (Node `v22.23.1`, 1018.6652 ms), this does not establish the cause. #32 remains OPEN/P1 / root cause UNKNOWN; no rerun or source/test edits.
+- M0 head `408a0f3e8dab3e8d98123d4b50d88be7ba0a61b3` is OPEN/Draft in PR #30. Product CI `39829627743` is in progress; no pass is claimed yet. Coordination workflow `39829627665` passed.
+- Usage page read at 18:15 UTC: 77% five-hour, 19% weekly, 113 credits; above the 5% pause threshold. PR #24 remains OPEN/Draft and unchanged.
+
+## M0 exact-head delta — 2026-10-22 18:22 UTC
+
+- M7 owner preflight comment `6347953947` confirms #41 remains OPEN / BLOCKED / NOT_VERIFIED. PR #39 exact head `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50` wrapper run `39815479411` passes 2/2 but is compile/template-only (`installerExecuted=false`). A hosted artifact is available (`12442531312`, archive SHA-256 `ecc4a73543a08216f30deb894cdbd4a57dc562fa35e79c7dc56dd484b027e62d`); the local Setup.exe is an older candidate.4, SHA-256 `567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6`.
+- M7's VM inventory found no running VM (`vmrun list`=0), no verifiable clean snapshot, an unresolved old VMX lock, and stopped VMware NAT/DHCP services. Historical records note OOBE and VM-encryption-password blockers. No VM, lock, service, installer, or file was changed. M7 has a follow-up to inspect the exact hosted artifact and Setup.exe hash without execution.
+- M0 scheduler comment `6348017604` records the exclusive VMware/installer slot as RELEASED/UNUSED; #41 can resume only with a verified clean clone/snapshot, an authorized recovery path, and the exact installer hash bound to the current artifact.
+- On M0 head `408a0f3e8dab3e8d98123d4b50d88be7ba0a61b3`, product CI `39829627743` passed all 9 jobs and coordination workflow `39829627665` passed. PR #30 remains OPEN/Draft.
+- Usage page read at 18:22 UTC: 74% five-hour and 96% weekly, above the 5% stop threshold. PR #24 remains OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4` against base `dc8d0092b35141b295d5ff42873584ed488e4ee7`, unchanged.
