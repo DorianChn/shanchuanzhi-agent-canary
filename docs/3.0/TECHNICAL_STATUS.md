@@ -6884,3 +6884,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 PR #36 stays at `bd4d47de1dfa9674ab9635ca17767511143c88f8` with 13/13 checks green. Local candidate `18b60684c7d59dd70c80fc299c346c6b449a0dbe` pins M1 `c67b15f`; it passed local focused 2/2 and full 11/11 and remains gated on M1's exact-head hosted checks.
 - Issue #52 remains OPEN/P0/NOT_VERIFIED. M3 default connection-check still fails closed as UNKNOWN; exact-source M9 composition is synthetic evidence and does not establish first-party host adoption or OS-wide atomic path/operation semantics.
 - Usage page read at 20:48 UTC showed 40% five-hour, 91% weekly and 113 credits, above the 5% stop threshold. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and was not modified.
+
+## M0 CI follow-up — 2026-10-22 20:50 UTC
+
+- PR #30 run `39852109168` failed Windows Node 22 job `120080730007`: the existing interruption test `test/agent-hook.test.ts:54` did not observe its marker (`false !== true`; 321 passed, 1 failed, 4 skipped). This is the already tracked Issue #32 failure; M0 did not alter the test or runtime. Keep #30 Draft and report this as a P1 CI failure until the owning M1 fixture change is reconciled.
+- PR #43 exact-head run `39852097851` has its Windows Node 20/22, macOS, Ubuntu, and file-store stress jobs passing; `package-smoke` is still pending at this check. Do not unlock M9's pin update until all required exact-head checks finish successfully.
