@@ -26,16 +26,10 @@ jobs:
       - run: npm test
 
   package-smoke:
-    runs-on: ubuntu-latest
     needs: test
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 20
-      - run: npm ci
-      - run: npm run build
-      - run: npm run pack:check
+    uses: DorianChn/shanchuanzhi-agent-canary/.github/workflows/m7-package-smoke.yml@167ebe81b76cc434facdaa3ddc62b42b9843951a
+    with:
+      policy-ref: 167ebe81b76cc434facdaa3ddc62b42b9843951a
 
   docker-build:
     runs-on: ubuntu-latest
