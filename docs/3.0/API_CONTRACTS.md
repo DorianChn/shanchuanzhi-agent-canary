@@ -194,6 +194,8 @@ The owner-reviewed file-operation rules above are authoritative for the current 
 - 当前 `AgentClient` 为 `claude|cursor|cline|codex|custom`；状态为 `MCP_DECOY_INSTALLED|GUARD_INTEGRATED|VERIFIED_PROTECTED|PARTIAL|UNSUPPORTED`。MCP 配置不证明宿主原生工具已受保护。
 - 配置先 `previewAgentIntegration`，再以预览 `baseHash` 调 `installAgentIntegration`；hash 不符须拒绝写入。安装生成用户配置备份。`restoreAgentIntegration` 仅在当前完整配置 hash 等于安装 hash 时恢复；用户后续编辑必须保留。
 - `src/install.ts` 的既有 `installServer/uninstallServer` 是 CLI 安装 API，需保留原行为；不要与带 preview/hash/restore 的 Agent Integration API 混为一个接口。
+- **Trusted connection-check construction seam (M3 PR #33 candidate `bf40d1309e571338b3f36152226ec44b082e5037`):** `createConnectionCheckRuntime()` factors the existing first-party `cwd` / fixed `agent-canary-public.txt` binding / registered callback construction. Its optional Gateway factory, M2 facade loader, M5 router factory, and absolute workspace root are trusted construction-time dependencies only; MCP request/model arguments cannot supply or replace them. `runConnectionCheckMcp()` uses the same builder with existing defaults. This internal seam lets M9 exercise the actual M3 builder with exact M1/M2/M5 sources; it is not a public request-facing capability API and does not by itself establish product protection.
+- **Fail-closed default:** the M3 branch-local Gateway still lacks M1 held-file methods. Until the exact M1/M2/M5 composition is verified through the M3 builder, protected status must remain `UNKNOWN` (`M1_HELD_FILE_CAPABILITY_UNAVAILABLE`); there is no path-string fallback. Structural wiring tests do not count as a protected read.
 
 ## 桌面安全中心与 Console — M4
 

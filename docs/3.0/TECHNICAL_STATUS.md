@@ -6903,3 +6903,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M5 prepared local commit `c9003234913a0ccccca56fe2a36fb1ce3dacb2de`, parent exact public M5 head `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2`. It changes only M5 `src/risk-policy.ts`, its policy regression test, and M5 audit report. Focused M5 tests pass 56/56; build and diff-check pass. This candidate prevents optional review hooks from running after deterministic DENY; hosted exact-head checks will be required after publication.
 - M5 confirmed the M2 standalone router copy drops capability context, but the M2 host adapter uses its separate trusted injection seam and validates/consumes the M1 capability; M9 exact-source composition has exercised that seam. Do not classify the standalone copy as the composed path. Product first-party host evidence remains NOT_VERIFIED; M3 is checking its callsite.
 - PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+
+## M0 five-minute batch — 2026-10-22 21:01 UTC
+
+- M9 PR #36 exact head `18b60684c7d59dd70c80fc299c346c6b449a0dbe` is terminal and all 12 listed checks pass, including Windows/Ubuntu exact-source composition and package-smoke. This run pins M1 `c67b15f` and M5 `e6bb5cf`; it predates the latest M5/M3 commits.
+- M5 PR #47 exact head `c9003234913a0ccccca56fe2a36fb1ce3dacb2de` has 8/9 checks green; only package-smoke remains pending. M5 local 56/56 focused tests, build and diff-check pass. Keep M9's follow-up unpublished until M5 exact-head CI reaches a successful terminal state.
+- M3 prepared local commit `bf40d1309e571338b3f36152226ec44b082e5037` on existing PR #33 head `fcaa24f8479c7072da0a51e96100ddfb3b2774c8`. It adds a trusted construction seam around the actual connection-check runtime, keeps defaults fail-closed, and enables M9 to test the real M3 builder with exact M1/M2/M5 sources. M3 reports build, focused 6/6 and diff-check pass; no product-host safe read is claimed.
+- M0 updated the canonical API contract to define the M3 construction seam as trusted/internal and preserve `UNKNOWN` until exact-source M9 evidence exists. Issue #52 remains OPEN/P0/NOT_VERIFIED.
+- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
