@@ -100,6 +100,11 @@ jobs:
             exit 1
           fi
           m3_sha="$(git -C module-sources/m3 rev-parse --verify HEAD)"
+          m1_m3_review_status='ACCEPT'
+          m1_m3_review_sha="$m1_sha"
+          m1_m3_review_target_sha="$m3_sha"
+          m1_m3_review_comment='6347268881'
+          m1_m3_review_issue='72'
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
           m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 06fdbb060574e96e5d1eba5c77721014e0a81a3b^{commit})"
           if ! git -C module-sources/m5 merge-base --is-ancestor "$m5_code_sha" "$m5_sha"; then
@@ -125,6 +130,11 @@ jobs:
           {
             printf 'M9_SHA=%s\n' "$m9_sha"
             printf 'M1_SHA=%s\n' "$m1_sha"
+            printf 'M1_M3_REVIEW_STATUS=%s\n' "$m1_m3_review_status"
+            printf 'M1_M3_REVIEW_SHA=%s\n' "$m1_m3_review_sha"
+            printf 'M1_M3_REVIEW_TARGET_SHA=%s\n' "$m1_m3_review_target_sha"
+            printf 'M1_M3_REVIEW_COMMENT=%s\n' "$m1_m3_review_comment"
+            printf 'M1_M3_REVIEW_ISSUE=%s\n' "$m1_m3_review_issue"
             printf 'M1_M2_REVIEW_STATUS=%s\n' "$m1_m2_review_status"
             printf 'M1_M2_REVIEW_SHA=%s\n' "$m1_m2_review_sha"
             printf 'M1_M2_REVIEW_TARGET_SHA=%s\n' "$m1_m2_review_target_sha"
@@ -155,6 +165,7 @@ jobs:
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
           } >> "$GITHUB_ENV"
+          printf 'M1-to-M3 exact Hook review: %s (M1 %s; M3 %s; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_m3_review_target_sha" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M9: %s\nM1 exact head: %s\nM1-to-M2 Issue #52 review: %s (M1 review head %s; exact M2 target %s; comment %s; scope: %s; condition: %s)\nM2 package candidate: %s\nPrior M1 disposition: %s for older M2 SHA %s (Issue #52 comment %s; real M5 router required only for that reviewed candidate)\nIssue #69: CLOSED for the exact current M2/M7 package-alignment candidate (comment 6347136623); reopen if the pinned refs change. Issue #68 CLOSED: historical composition gate\nM3: %s\nM5 head: %s\nM5 code ancestor: %s\nM6 source candidate: %s\nM6-to-M8 Issue #59 disposition: %s (M6 contract %s; exact M8 target %s; comment %s; limited test/lifecycle scope)\nPrior M6 owner acceptance: %s for %s (Issue #59 comment %s; older M6 revision only)\nM7: %s\nM8: %s\n' \
             "$m9_sha" "$m1_sha" "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_m2_review_target_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" "$m2_sha" "$m2_prior_m1_disposition" "$m2_prior_m1_disposition_sha" "$m2_prior_m1_disposition_comment" "$m3_sha" "$m5_sha" "$m5_code_sha" "$m6_sha" "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_m8_review_target_sha" "$m6_m8_review_comment" "$m6_prior_acceptance_status" "$m6_prior_acceptance_sha" "$m6_prior_acceptance_comment" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 

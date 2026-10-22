@@ -28,6 +28,11 @@ const pinnedSourceShas = {
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
+const m1M3ReviewedBlobs = {
+  'src/agent-hook.ts': '0dc597783386e9273d7167172aa933b17f663e72',
+  'test/agent-hook.test.ts': 'cc4e03b939ea6b18f427bb2f9ac026cca5314c63',
+  'security-lab/claude-native-hook.mjs': 'ae23875d91c246c0fa833137e71c949bad9bd3cc',
+};
 const m6PriorAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
 
 function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
@@ -44,6 +49,14 @@ function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
 
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
+}
+assert.equal(process.env.M1_M3_REVIEW_STATUS, 'ACCEPT', 'M1 owner review must accept the current exact M3 Hook candidate');
+assert.equal(process.env.M1_M3_REVIEW_SHA, pinnedSourceShas.M1, 'M1 review must name the exact current M1 source head');
+assert.equal(process.env.M1_M3_REVIEW_TARGET_SHA, pinnedSourceShas.M3, 'M1 review must name the exact current M3 candidate');
+assert.equal(process.env.M1_M3_REVIEW_COMMENT, '6347268881', 'M1 review must cite the exact Issue #72 owner comment');
+assert.equal(process.env.M1_M3_REVIEW_ISSUE, '72', 'M1-to-M3 Hook review is tracked on Issue #72');
+for (const [filePath, expectedBlob] of Object.entries(m1M3ReviewedBlobs)) {
+  assert.equal(readBlobIdAt('M3', pinnedSourceShas.M3, filePath), expectedBlob, `M3 reviewed blob ${filePath} must remain exact`);
 }
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_STATUS, 'ACCEPT', 'historical M6 acceptance must retain its original scoped disposition');
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_SHA, m6PriorAcceptanceSha, 'historical M6 acceptance must retain its original source SHA');
@@ -154,6 +167,7 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
 console.log('[M1-to-M2 current review]', `${process.env.M1_M2_REVIEW_STATUS} on Issue #52: M1 ${process.env.M1_M2_REVIEW_SHA} reviewed exact M2 ${process.env.M1_M2_REVIEW_TARGET_SHA} (comment ${process.env.M1_M2_REVIEW_COMMENT}; condition: ${process.env.M1_M2_REVIEW_CONDITION})`);
+console.log('[M1-to-M3 exact Hook review]', `${process.env.M1_M3_REVIEW_STATUS} on Issue #72: M1 ${process.env.M1_M3_REVIEW_SHA} reviewed M3 ${process.env.M1_M3_REVIEW_TARGET_SHA} blobs ${Object.keys(m1M3ReviewedBlobs).join(', ')} (comment ${process.env.M1_M3_REVIEW_COMMENT})`);
 console.log('[M2 prior owner disposition]', `${process.env.M2_PRIOR_M1_DISPOSITION} for older M2 ${process.env.M2_PRIOR_M1_DISPOSITION_SHA} (Issue #52 comment ${process.env.M2_PRIOR_M1_DISPOSITION_COMMENT}); current candidate ${pinnedSourceShas.M2} is not covered by that historical disposition`);
 console.log('[M6 current scoped disposition]', `${process.env.M6_M8_REVIEW_STATUS} for M6 contract ${process.env.M6_M8_REVIEW_M6_CONTRACT_SHA} and M8 target ${process.env.M6_M8_REVIEW_TARGET_SHA} (Issue #59 comment ${process.env.M6_M8_REVIEW_COMMENT}; ${process.env.M6_M8_REVIEW_SCOPE})`);
 console.log('[M6 prior owner acceptance]', `${process.env.M6_PRIOR_ACCEPTANCE_STATUS} for older M6 ${process.env.M6_PRIOR_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_PRIOR_ACCEPTANCE_COMMENT}; Auto E4 lifecycle only); current candidate ${pinnedSourceShas.M6} is not generally covered by that historical acceptance`);
