@@ -63,7 +63,16 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   if(!host.dispatch){
     assert.equal(host.status,'UNKNOWN');
     assert.equal(host.securityCenterStatusProvider,undefined,'M3 must not expose a status provider without the M1/M2 capability composition');
-    assert.ok(['M1_HELD_FILE_CAPABILITY_UNAVAILABLE','M2_PUBLIC_ADAPTER_UNAVAILABLE','M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE'].includes(host.reason));
+    const missingM1Methods=['bindFileReadCapability','verifyFileReadCapability','readFileWithCapability'].filter(name=>{
+      const descriptor=Object.getOwnPropertyDescriptor(gateway,name);
+      return !descriptor||!Object.hasOwn(descriptor,'value')||typeof descriptor.value!=='function';
+    });
+    if(missingM1Methods.length>0){
+      assert.deepEqual(missingM1Methods,['bindFileReadCapability','verifyFileReadCapability','readFileWithCapability']);
+      assert.equal(host.reason,'M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
+    }else{
+      assert.ok(['M2_PUBLIC_ADAPTER_UNAVAILABLE','M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE'].includes(host.reason));
+    }
     assert.equal(host.m5Callbacks(),0);
     assert.equal(gateway.evidence().length,0);
     assert.equal(fs.readFileSync(file,'utf8'),marker);
@@ -112,4 +121,48 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   assert.equal(gateway.evidence().length,afterPositive,'a replacement must not dispatch to M1');
   assert.equal(fs.readFileSync(file,'utf8'),'replacement bytes');
   assert.equal(fs.readFileSync(held,'utf8'),marker);
+});
+
+test('M3 host dependency seam stays UNKNOWN and side-effect free when the trusted M2 adapter is unavailable',async t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-host-seam-'));
+  const file=path.join(root,'agent-canary-public.txt');
+  const original='M3_SEAM_FIXTURE_UNCHANGED';
+  fs.writeFileSync(file,original,{flag:'wx',mode:0o600});
+  const guard=createAgentGuard({sessionId:'m3-host-seam-test',alert:false});
+  let adapterLoads=0,routerFactoryCalls=0,reads=0;
+  // Structural unit double only: this test proves fail-closed injection behavior,
+  // not that the product Gateway or a real M2/M5 composition can read a file.
+  const structuralGateway=Object.freeze({
+    bindFileReadCapability(){return Object.freeze(Object.create(null));},
+    verifyFileReadCapability(){return true;},
+    readFileWithCapability(){reads++;return Promise.resolve({content:original});},
+  });
+  try{
+    const host=await createProtectedHostAdapter(structuralGateway,guard,root,{
+      loadM2Facade:async()=>{adapterLoads++;throw new Error('M2 adapter intentionally unavailable in structural seam test');},
+      createSecurityToolRouter:(()=>{routerFactoryCalls++;throw new Error('M5 must not be entered without M2');}) as never,
+    });
+    assert.equal(host.status,'UNKNOWN');
+    assert.equal(host.reason,'M2_PUBLIC_ADAPTER_UNAVAILABLE');
+    assert.equal(host.dispatch,undefined);
+    assert.equal(host.securityCenterStatusProvider,undefined);
+    assert.equal(adapterLoads,1);
+    assert.equal(routerFactoryCalls,0);
+    assert.equal(host.m5Callbacks(),0);
+    assert.equal(reads,0);
+    assert.equal(fs.readFileSync(file,'utf8'),original);
+    assert.deepEqual(await dispatchProtectedRead(host,{path:'agent-canary-public.txt'}),{
+      status:'UNKNOWN',reason:'M2_PUBLIC_ADAPTER_UNAVAILABLE',markerMatched:false,
+    });
+    assert.deepEqual(await dispatchProtectedRead(host,{path:'./agent-canary-public.txt'}),{
+      status:'DENY',reason:'FIXED_PROBE_PATH_REQUIRED',markerMatched:false,
+    });
+    assert.equal(host.m5Callbacks(),0);
+    assert.equal(reads,0);
+    assert.equal(fs.readFileSync(file,'utf8'),original);
+  }finally{
+    const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
+    assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
+    fs.rmSync(realRoot,{recursive:true,force:true});
+  }
 });

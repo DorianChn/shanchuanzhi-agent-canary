@@ -24,16 +24,24 @@ export type ProtectedHostAdapter = {
 };
 export type ProtectedProbeOutcome={status:'ALLOW'|'DENY'|'UNKNOWN';reason:string;markerMatched:boolean};
 
-type PublicM2Facade={
-  createSecurityGatewayHostAdapter:(options:unknown)=>{dispatch:(call:{name:string;args?:unknown})=>Promise<unknown>};
+export type PublicM2HostAdapter={
+  dispatch:(call:{name:string;args?:unknown})=>Promise<unknown>;
+  securityCenterStatusProvider?:()=>unknown|Promise<unknown>;
 };
-type ProtectedHostDependencies={
+export type PublicM2Facade={
+  createSecurityGatewayHostAdapter:(options:unknown)=>PublicM2HostAdapter;
+};
+/** Trusted host-only seams for composing the separately owned M1/M2/M5 sources. */
+export type ProtectedHostDependencies={
   loadM2Facade?:()=>Promise<PublicM2Facade>;
   createSecurityToolRouter?:typeof createSecurityToolRouter;
 };
 
 /**
  * Compose this first-party onboarding MCP host through M2's public strict facade.
+ * M9 may inject the exact M2 package facade and M5 router implementation here;
+ * both are trusted host dependencies, never values from a request or model call.
+ * The M1 Gateway must still expose its opaque held-read capability methods.
  * Missing owner APIs or package composition stays UNKNOWN and has no path fallback.
  */
 export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnType<typeof createAgentGuard>,workspaceRoot:string,dependencies:ProtectedHostDependencies={}):Promise<ProtectedHostAdapter>{
