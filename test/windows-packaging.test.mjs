@@ -189,6 +189,12 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
     const result=runHookFaultChecks({appRoot:path.join(payload,'app','dist'),fixturesRoot:payload});
     assert.equal(result.status,'PASS');
     assert.equal(result.positiveControl.logContractSatisfied,true);
+    assert.equal(result.positiveControl.logAudit.status,'PASS');
+    assert.equal(result.positiveControl.logAudit.records,1);
+    assert.equal(result.logAudit.status,'PASS');
+    assert.equal(result.logAudit.records,1);
+    assert.equal(result.logAudit.callerInputCanaryAbsent,true);
+    assert.ok(result.faultCases.every(fault=>fault.logAudit.status==='PASS'));
     assert.equal(result.positiveControl.decision,'allow');
     assert.equal(result.sideEffects.protectedVictimUnchanged,true);
     const log=fs.readFileSync(path.join(result.root,'positive-control.jsonl'),'utf8').trim().split(/\r?\n/);
