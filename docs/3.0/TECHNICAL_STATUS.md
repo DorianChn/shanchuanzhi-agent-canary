@@ -6763,3 +6763,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M6 PR #38 remains at `ef4679b276a90767bb1a6d7bd852aadc45b2d1cb`; `gh pr checks` still reports macOS Node 20 and Ubuntu Node 22 as IN_PROGRESS even though the associated run summary is completed/success. Keep the displayed job-level state as unresolved until reconciled.
 - M9 pin/M4 coverage edits are active but uncommitted on its existing worktree; no push until the exact diff and focused workflow/tests are reviewed.
 - Usage page read at 19:30 UTC: 62% five-hour, 94% weekly, 113 credits; above the 5% pause threshold. The Usage tab remains open. Next eligible push batch is after 19:30 UTC, five minutes after M5's prior remote update.
+
+## M0 five-minute batch — 2026-10-22 19:39 UTC
+
+- M9 commit `cda4bdc4bce9e8f5cc2cf5f387db4d01b02f082c` is pushed to existing PR #36 branch `feature/ac3-m9-integration`; PR remains OPEN/Draft. Exact-head hosted checks are queued. The workflow now pins the current M1–M8 source SHAs and checks out M4 #34 independently; local M9 M4 composition test passed 1/1. This remains synthetic/source-level evidence, not first-party desktop host or TOCTOU acceptance.
+- M2 has identified an adapter wiring gap: the current router supplies only `AbortSignal` to `executeRealTool`, while the fixed-read adapter needs M1-bound capability context; the current path therefore fails closed. M2 is implementing the correction on its existing PR #37 branch. No new M2 commit is claimed; obtain M1 owner review for any resulting candidate SHA before repinning M9.
+- M5 PR #47 exact head `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2` remains green 9/9. M6 PR #38 still shows macOS Node 20 and Ubuntu Node 22 IN_PROGRESS despite the associated run-level SUCCESS; retain the job-level uncertainty.
+- Usage page read at 19:38 UTC: 57% five-hour and 93% weekly; above the 5% pause threshold. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
