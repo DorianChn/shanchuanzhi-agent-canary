@@ -86,11 +86,14 @@ test('Windows community workflow installs and compiles with NSIS only on Windows
 test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited to install/uninstall',()=>{
   const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   const lifecycleJob=workflow.slice(workflow.indexOf('  windows-community-installer-lifecycle:'));
+  const lifecycleJobEnv=lifecycleJob.slice(lifecycleJob.indexOf('    env:\n'),lifecycleJob.indexOf('    steps:\n'));
   const buildJob=workflow.slice(workflow.indexOf('  windows-community-build-evidence:'),workflow.indexOf('  windows-community-installer-lifecycle:'));
   const smoke=fs.readFileSync(new URL('../packaging/windows/installer-lifecycle-smoke.ps1',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   assert.ok(lifecycleJob.includes('needs: windows-community-build-evidence'),'lifecycle must consume the package from this workflow run');
   assert.ok(lifecycleJob.includes('runs-on: windows-latest'),'lifecycle must run on a fresh hosted Windows VM');
   assert.ok(lifecycleJob.includes('permissions: {}'),'untrusted package execution must have no repository permissions');
+  assert.doesNotMatch(lifecycleJobEnv, /\$\{\{\s*runner\.temp\s*\}\}/, 'runner.temp is unavailable in job-level env');
+  assert.ok(lifecycleJob.includes('$env:RUNNER_TEMP'), 'runtime paths must use the runner temp environment inside the step');
   assert.ok(lifecycleJob.includes('actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c'),'artifact download must be SHA pinned');
   assert.doesNotMatch(lifecycleJob,/actions\/checkout/,'the lifecycle job must not check out source');
   assert.ok(buildJob.includes('installer-lifecycle-smoke.ps1'),'the verifier must come from the exact build source artifact');
