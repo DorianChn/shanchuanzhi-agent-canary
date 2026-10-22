@@ -6539,3 +6539,23 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M4 synchronization commit `b586bc70b5351548b9debc7583103bcc03c4377b` is now pushed to PR #34, which remains OPEN/Draft against M1 PR #43 and reports MERGEABLE. Exact run `39817857926` is in progress: all eight platform/build/sponsor jobs have passed; package-smoke is still running.
 - M9 exact run `39817727417` wrapper passed on pushed head `638951837f229402beb5ba551543d1cac0e236cb`; composition run `39817727273` is in progress and product CI `39817727168` is queued.
 - M0 product CI and coordination workflow are both green at `c776c2a`; M7 CI plus wrapper are green at `868842b`; M8 CI plus wrapper are green at `72b4aab`.
+
+## M0 exact-head delta — 2026-10-22 16:56 UTC
+
+- M0 batch commit `a0eb27537ca3f079e6af6c0fe85a137c6f332479` is pushed to PR #30. Its exact coordination workflow `39818211978` passed; product CI `39818211974` is still in progress.
+- M4 exact stacked candidate `b586bc70b5351548b9debc7583103bcc03c4377b` completed CI run `39817857926` with 9/9 success, including package-smoke. Issue #60 remains OPEN with stale-base and exact-head evidence comment `6346349228`.
+- M9 exact composition run `39817727273` failed only at the ancestry check because the M7 checkout was shallow and Git exited 128; wrapper `39817727417` passed, product CI `39817727168` is still queued. M9-only fix commit `d3d23758a331d2bacf5bb0c2fbfb7d94b0d62c23` adds full history to the M7 checkout; it is held for the next push batch and requires fresh exact-head checks.
+- M9 fix `d3d23758` has passed local syntax, diff-check, full-history ancestry, and pinned workflow/checker/policy blob-identity verification; its worktree is clean and one commit ahead.
+
+## M0 exact-head delta — 2026-10-22 17:03 UTC
+
+- M9 shallow-history fix `1ffb41dcd4553b081ec7b0b847f586cb0cad6901` is pushed. Exact product CI `39818864508` and Windows wrapper `39818864496` passed; exact M9 composition run `39818864712` is still in progress. No M9 composition pass is claimed yet.
+- M0 PR #30 remains OPEN/Draft at `a0eb27537ca3f079e6af6c0fe85a137c6f332479`. Coordination workflow `39818211978` passed; product CI `39818211974` failed in the old-base expiry test described in #62. M0 posted and read back a corrected cross-base evidence comment `6346461102`; current M1 exact head `a5eff766ebe041bc2c6cc13758827d5a96205de9` passed exact CI `39798992187` with its controlled-clock fixture. #62 remains OPEN/P1, root cause of historical old-fixture failures UNKNOWN.
+- M4 PR #34 exact stacked run `39817857926` completed 9/9 successfully; M4 tree remained unchanged by its ancestry-only merge commit.
+
+## M0 exact-head delta — 2026-10-22 17:06 UTC
+
+- Latest quota read from the open usage page: 77% five-hour, 19% weekly, 113 credits. This is above the user's 5% hard-pause threshold.
+- M9 PR #36 head `1ffb41dcd4553b081ec7b0b847f586cb0cad6901` is OPEN/Draft. Exact composition run `39818864712` passed Ubuntu and Windows; product CI `39818864508` and Windows wrapper `39818864496` passed. The `fetch-depth: 0` fix addresses the shallow-history-only failure. Issue #69 remains OPEN because the pinned refs changed and require re-evaluation; no real host, VM, model, installer, or P0 #52 evidence is established by this synthetic fixture.
+- M7 reviewed M8 PR #40 helper at exact head `72b4aab0...` and accepted it under a bounded contract; helper blob matches M7 PR #39 helper at `868842b...`. M8 exact tests and wrapper passed (`39816691572`, `39816691598`), and M7 posted owner disposition `6346555941`. Issue #59 remains OPEN: missing per-fault log files still count as PASS, so this does not establish log-presence coverage for every fail-closed path.
+- M0 local docs are being appended to the already-pushed PR #30 history with a new ordinary commit; PR #24 remains untouched. PR #30 is OPEN/Draft at its previously pushed head until the next normal fast-forward push and fresh exact-head checks.
