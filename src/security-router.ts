@@ -16,7 +16,7 @@ export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
   cloudConsent?:boolean;
   reviewTimeoutMs?:number;
   callbackTimeoutMs?:number;
-  /** Enable M5 real-path checks; file reads require a verified host-bound M1 capability, while path-only reads, writes, and deletes fail closed. False retains legacy lexical checks only. */
+  /** In any mode, true requires a verified host-bound M1 capability for file reads and fails closed for path writes/deletes. OBSERVE also canonicalizes paths and rejects sensitive aliases/workspace escapes regardless of this flag. In other modes, false/omitted retains legacy lexical policy. Path checks alone do not prove the host reads a held descriptor or eliminate TOCTOU. */
   verifyRealPaths?:boolean;
   dataflowTtlMs?:number;
   onReview?:(record:{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number})=>void;
@@ -34,9 +34,10 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     const raw=call.args?.[d.pathArg??'path'];if(typeof raw!=='string'||raw.includes('\0'))return true;
     try{const realRoot=fs.realpathSync(root);let candidate=path.resolve(root,raw.replaceAll('\\','/'));
       const rel=path.relative(root,candidate);if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel))return true;
-      // M1's canonical file boundary rejects aliases even when their targets
-      // remain inside the workspace. Keep M5 preview and dispatch semantics
-      // aligned; verifyRealPaths=false retains the legacy lexical behavior.
+      // This adapter-level check is enabled with M1 capability mode. OBSERVE's
+      // M5 policy independently rejects canonical aliases and workspace escapes
+      // even when this function is skipped; path checks alone do not prove the
+      // host consumes a held descriptor or eliminate TOCTOU.
       let component=root;
       for(const part of rel.split(path.sep).filter(Boolean)){
         component=path.join(component,part);
