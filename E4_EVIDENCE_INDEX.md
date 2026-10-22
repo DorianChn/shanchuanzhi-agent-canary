@@ -37,6 +37,57 @@ The recorded Windows 11 VM run was BLOCKED before product testing: the guest rem
 | [Candidate-specific reproduction guide](competition-submission/3.0-typefix/E4_REPRODUCTION.md) | Instructions and hashes for the named historical candidate artifact | Equivalence to candidate.4, current branch code, or external E4 completion |
 | [Host coverage matrix](docs/3.0/AGENT_COVERAGE_MATRIX.md) | Dated, host- and tool-specific records | Coverage beyond the versions/tools actually listed |
 
+## M6 Auto E4 workflow for an M8 evidence record
+
+This workflow maps the bounded verifier currently in M6 PR #38 at source head [`98803607b89f11e24430c461bd91e9c1a0ece9d4`](https://github.com/DorianChn/shanchuanzhi-agent-canary/tree/98803607b89f11e24430c461bd91e9c1a0ece9d4) to a user-run evidence packet. The Auto E4 UI is available only in a Windows Community candidate built from reviewed source that contains this implementation. Do not assume an older public installer has it; this documentation change does not rebuild or replace any published artifact.
+
+### Run and retain one bounded check
+
+1. Build and identify the Windows Community candidate from the reviewed source. Record its exact source commit, candidate/version, installer SHA-256, Windows version, and architecture. A locally computed hash identifies the bytes you checked; it is not publisher authentication.
+2. On Windows, launch that candidate and click **自动 E4 / Auto E4** once. Let all stages finish; the UI disables concurrent actions during the run. Do not mark an unrun stage as passing, rerun to erase a failure, or omit `FAIL`, `BLOCKED`, `SKIPPED`, or `NOT_VERIFIED` results.
+3. Use **打开最终报告 / Open final report** and review the Markdown and structured JSON. The run directory is `%LOCALAPPDATA%\AgentCanaryCommunityData\auto-e4-runs\<run-id>\`. Retain `AUTO_E4_REPORT.md`, `AUTO_E4_REPORT.json`, `events.jsonl`, `EVIDENCE_INDEX.json`, and, when bundle creation succeeds, `AgentCanary-Auto-E4-Evidence.zip` with its `.sha256` sidecar. The index binds the generated report/event files by SHA-256; the sidecar hashes the ZIP. Review the contents and redact any remaining identifying material before sharing.
+4. For a human-readable M8 evidence entry, report the exact source/artifact identity and run date, each stage's recorded status, `technicalResult`, the `overallE4` field, and the ZIP SHA-256 if present. Preserve failures and blocked prerequisites as observed. The `coverage.verified / coverage.total` value is stage coverage only, not a protection rate or security score.
+
+### What each stage can establish
+
+| Auto E4 stage | Evidence this run can record | Boundary to keep in the M8 report |
+|---|---|---|
+| `environment` | Host OS, architecture, Node version, and presence checks for `vmrun` / Codex CLI | CLI presence does not identify the active model or prove a model call; no credentials or machine fingerprint are collected. |
+| `clean-vm` | Read-only VMware VM/snapshot inspection for the configured VMX | It never starts, restores, or edits a VM. A listed clean snapshot is still not guest execution or clean-VM acceptance; the stage remains `BLOCKED` in this implementation. |
+| `release-package` | Public candidate Release digest compared with a local installer receipt when both exist | Digest equality is not a publisher signature; missing or unrecognized candidate/receipt remains unverified or blocked. |
+| `sdk-side-effects` | Operator-triggered SDK fixture with temporary synthetic file writes, callback observations, loopback receiver, before/after hashes, and evidence-chain verification | This is a controlled same-host fixture, not a model-selected attack or third-party Agent host test. Report observed side effects, not a `DENY` log alone. |
+| `gpt6-agent` | Whether the prerequisites were present for the planned path | This runner makes no model API call. The stage is `BLOCKED`; a detected Codex executable is not GPT-6 evidence. |
+| `hook-failures` | Packaged hook wrapper subprocess checks, including a positive control and synthetic victim hash/callback observations | The host is a cooperative fixture. It does not establish live Codex/Claude/Cursor native-hook coverage, VM failure behavior, or global protection. |
+| `evidence-review` | Consistency review of this run's release, SDK, and hook results | It reviews same-run evidence only and cannot establish independent operator/environment status. |
+| `uninstall-reinstall` | Records whether lifecycle prerequisites are available | No VM installer lifecycle operation is performed; this stage is `BLOCKED`. |
+| `github-pr` | Records that the packaged app lacks a source checkout and GitHub write credential | It performs no GitHub writes and does not create or update a PR. |
+| `materials` | Run-specific report/index/event artifacts and, if the local archive tool succeeds, the ZIP and digest sidecar | A bundle is not a complete competition submission or an independent evidence signature. Archive-failure recovery is not covered by the cited tests: the worker attempts to write the reports a second time after the no-overwrite writer has already created them. Until that path is fixed and tested, a ZIP failure may abort report finalization; preserve any files produced and record the actual error rather than claiming a finalized `BLOCKED` report. |
+
+The generated report distinguishes technical execution from external E4: `technicalResult` can be `FAIL`, `BLOCKED`, `PARTIAL`, or `READY_FOR_EXTERNAL_REVIEW`, while `overallE4` remains **E4 EXTERNAL INDEPENDENCE NOT VERIFIED**. A user-run pass of these fixtures is not an independent E4 result, real-model test, installation/lifecycle acceptance, or clean-VM acceptance. The missing gates are listed in [the Auto E4 scope](docs/3.0/AUTO_E4.md) and in the future-E4 gate below.
+
+### Exact M6 source and test objects checked
+
+The file contents below were read from the exact M6 source head above. Blob IDs identify the exact Git objects used for this mapping; use the source commit links, not a moving branch name.
+
+| Role | File at M6 source head | Blob ID |
+|---|---|---|
+| Run state, stages, report and evidence-index contract | [`packaging/windows/auto-e4.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/auto-e4.mjs) | `255f96fbfd546503ec9d0f997e1806bc2b5b2f07` |
+| Windows runner orchestration, bounded stages, ZIP and sidecar | [`packaging/windows/worker.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/worker.mjs) | `49bed19b4a34a95bceb586f8ad921ee7bdd636ce` |
+| SDK side-effect fixture | [`packaging/windows/verification.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/verification.mjs) | `4652a88117f017a533460259ce5fc0b9df157bc1` |
+| Packaged Hook fault fixture and scope | [`packaging/windows/e4-hook-faults.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/e4-hook-faults.mjs) | `8d73bb9b59da787fde13b73ba6d2277e82b7bb1c` |
+| Stage/status/artifact regression tests | [`test/auto-e4.test.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/test/auto-e4.test.mjs) | `18fcc4b91e229d029f0f55c420ca3d0580d2c68d` |
+| Windows UI/package contract tests | [`test/windows-packaging.test.mjs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/test/windows-packaging.test.mjs) | `4a0f5e53f2e7569a947ac277f32d67d353ffa006` |
+| Desktop Auto E4 button and report-location contract | [`packaging/windows/Launcher.cs`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/98803607b89f11e24430c461bd91e9c1a0ece9d4/packaging/windows/Launcher.cs) | `b9f91b0872228a94d42890b18fa1a252b0c7ac3a` |
+
+For a source-level regression check (maintainer evidence only, not a user E4 run), run this from a checkout with dependencies installed:
+
+```sh
+npm run build
+node --test test/auto-e4.test.mjs
+```
+
+This tests the bounded harness contract and does not install the Windows candidate or exercise an independent environment.
+
 ## Gate for a future E4 claim
 
 Before marking E4 verified, publish a protocol and evidence tied to one immutable release artifact and require:
