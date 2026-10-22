@@ -6505,3 +6505,37 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M7 owner review of PR #40's helper was recorded on #59 as ACCEPT_WITH_CONDITIONS, comment `6345814291`: current PR #40 omitted the existing synthetic private-path marker assertion. M7 has locally committed a fix on its existing PR #39 branch: candidate `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50`, helper blob `89e8a04ed026af146a712517144f560aefe92a0d`, direct test blob `f87b87e265c31ca6dbced69a788916942359b61f`; focused Node 22 test 1/1 and diff-check passed. It is not pushed; #59 remains OPEN.
 - M6's #59 ACCEPT_WITH_CONDITIONS `6345678295` and #73 scoped ACCEPT `6345684693` remain limited to synthetic candidate behavior/CI. No real E4, clean-VM, real-model, installer, or product-host acceptance is claimed. #52/#73/#59/#60/#51 remain OPEN.
 - PR #24 remains OPEN/Draft at base `competition/shanchuanzhi-release-readiness`, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; no merge, release, or force push.
+## M0 exact-head follow-up — 2026-10-22 16:47 UTC — five-minute push batches
+
+- Usage Overview was read at 16:42 UTC: 77% five-hour remaining (reset in about 15 minutes), 19% weekly, 113 credits. Continue the user's stop rule below 5%; the Usage tab remains open.
+- M0 PR #30 remains OPEN/Draft at `c776c2aad91f15c2c74066da07fc23ec9e71116d`. Exact product CI run `39814848885` completed successfully at 16:43 UTC. The ownership workflow `39814848766` is still in progress; no overall PR pass is claimed until it completes.
+- M7 PR #39 is OPEN/Draft at `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50`. Exact CI run `39815479316` passed; Windows wrapper run `39815479411` remains in progress. Keep Issue #59 open pending full reconciliation; the synthetic and wrapper evidence does not establish real product-host behavior.
+- M8 pushed `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` to existing PR #40. It changes only `packaging/windows/e4-hook-faults.mjs` and `test/auto-e4.test.mjs`; targeted E4 tests passed 5/5 and diff-check passed. Exact-head CI `39816691572` is queued and wrapper run `39816691598` is in progress.
+- M4 PR #34 at `325234caaa8eb0bb926750dce75782c8d3b72b62` has a failed run `39814706832`, but its checkout used stale merge commit `faf05e5` with old base `62496d4`, before the PR was stacked on M1 base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. The macOS Node 22 test then expected `deny` but got `allow` at `test/agent-hook.test.ts:41`. This does not establish a defect in the current stacked candidate; M4 is validating the exact new M1+M4 tree and will obtain fresh CI evidence.
+- M9 found its exact-source composition workflow and test still pin M7 at `167ebe81b76cc434facdaa3ddc62b42b9843951a`. Per closure comment `6345386655`, Issue #69 was reopened after M7 advanced to `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50`; M0 comment `6346142010` records the new M9 rerun requirement. Ref refresh is in progress; no refreshed acceptance is claimed.
+- PR #24 was re-read OPEN/Draft with unchanged base `competition/shanchuanzhi-release-readiness` and head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. No merge, main edit, or release. Current push batch began with M8's normal fast-forward; next batch is no earlier than 16:52 UTC.
+
+## M0 exact-head delta — 2026-10-22 16:50 UTC
+
+- M4 exact M1+M4 merge tree `3a369159452cf2ab0648f84e7668959973c57fda` now matches the preserved isolated candidate, has no conflicts, builds successfully, passes Hook tests 11/11, and passes diff-check. The failed hosted run was based on stale tree `faf05e5`; M4 is preparing an ancestry-only synchronization merge to trigger fresh CI, with push held until the next batch.
+- M9 prepared local candidate `4d72118c229483824443e54d18e3f6bf37679990` on PR #36's existing branch. `node --check`, diff-check, M7 ancestry, and byte-identity checks passed; M9 is holding push for the next batch. PR #36 remains on its prior pushed head until readback confirms the update.
+
+## M0 exact-head delta — 2026-10-22 16:51 UTC
+
+- M4 completed local synchronization commit `b586bc70b5351548b9debc7583103bcc03c4377b`, with parents M4 `325234c` and M1 `a5eff766`; tree remains exactly `3a369159452cf2ab0648f84e7668959973c57fda`. The PR diff from M1 remains limited to six M4-owned files; canonical M1 `test/agent-hook.test.ts` is no longer in the M4 diff. Hook tests 11/11 and diff-check passed. Push held for 16:52 UTC.
+- M9 candidate `4d72118c229483824443e54d18e3f6bf37679990` passed `node --check`, diff-check, M7 ancestry, and workflow/checker/policy byte-identity checks. Push held for 16:52 UTC.
+
+## M0 exact-head delta — 2026-10-22 16:53 UTC — batch status
+
+- Usage Overview read at 16:52 UTC: 77% five-hour remaining (reset in about 5 minutes), 19% weekly, 113 credits.
+- M0 PR #30 exact-head product CI `39814848885` and coordination workflow `39814848766` both completed successfully at `c776c2a`; the documentation checkpoint prepared for this batch is pending its push.
+- M7 PR #39 exact CI `39815479316` and Windows Community wrapper `39815479411` both completed successfully at `868842b`.
+- M8 PR #40 exact CI `39816691572` and Windows Community wrapper `39816691598` both completed successfully at `72b4aab`; targeted E4 tests also passed 5/5.
+- M9 fast-forward pushed `638951837f229402beb5ba551543d1cac0e236cb` to PR #36. Exact M9 composition run `39817727273` and wrapper `39817727417` are in progress; product CI `39817727168` is queued. Keep #69 OPEN pending this exact candidate.
+- M4 ancestry-only synchronization commit is prepared locally for the next PR #34 update; no remote update is claimed yet.
+
+## M0 exact-head delta — 2026-10-22 16:55 UTC — fresh-base CI
+
+- M4 synchronization commit `b586bc70b5351548b9debc7583103bcc03c4377b` is now pushed to PR #34, which remains OPEN/Draft against M1 PR #43 and reports MERGEABLE. Exact run `39817857926` is in progress: all eight platform/build/sponsor jobs have passed; package-smoke is still running.
+- M9 exact run `39817727417` wrapper passed on pushed head `638951837f229402beb5ba551543d1cac0e236cb`; composition run `39817727273` is in progress and product CI `39817727168` is queued.
+- M0 product CI and coordination workflow are both green at `c776c2a`; M7 CI plus wrapper are green at `868842b`; M8 CI plus wrapper are green at `72b4aab`.
