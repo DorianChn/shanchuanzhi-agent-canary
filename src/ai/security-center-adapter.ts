@@ -138,8 +138,9 @@ export function adaptSecuritySnapshot(input: {
 
   return {
     protectionStatus: normalizeProtectionStatus(securityCenter.protectionStatus),
-    // Binding health does not prove that the first-party Console invokes a
-    // capability-backed OBSERVE file-read path. Keep this pending that proof.
+    // This adapter consumes status snapshots, not a Console read-action result.
+    // Ignore provider-supplied first-party read claims until the host route is
+    // wired to M1/M2/M5 and its callback-bound evidence is independently tested.
     firstPartyObserveReadStatus: 'NOT_VERIFIED' as const,
     gateway: {
       protectionStatus: normalizeProtectionStatus(gateway.protectionStatus),
