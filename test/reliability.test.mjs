@@ -101,6 +101,7 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   assert.ok(buildJob.includes('launcherSHA256 = [string]$buildResult.launcherSHA256'),'build evidence must bind the launcher identity');
   assert.ok(buildJob.includes("'installer-lifecycle-smoke.ps1'"),'the verifier itself must be checksum-covered');
   assert.ok(smoke.includes("$env:RUNNER_ENVIRONMENT -eq 'github-hosted'"),'local and self-hosted execution must fail closed');
+  assert.ok(smoke.includes("Assert-Condition (-not [string]::IsNullOrWhiteSpace($env:RUNNER_TEMP)) 'RUNNER_TEMP_MISSING'"),'required environment paths must be converted to boolean predicates before assertion binding');
   assert.ok(smoke.includes('BUILD_REPORT_SOURCE_SHA_MISMATCH'),'the report source SHA must match the expected workflow SHA');
   assert.ok(smoke.includes('BUILD_REPORT_INSTALLER_SHA256_MISMATCH'),'the setup hash must match the exact build report');
   assert.ok(smoke.includes('SHA256SUMS_INSTALLER_MISMATCH'),'the setup hash must match SHA256SUMS');

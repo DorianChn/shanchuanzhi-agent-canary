@@ -99,7 +99,7 @@ try {
   Assert-Condition ($env:GITHUB_ACTIONS -eq 'true' -and $env:RUNNER_ENVIRONMENT -eq 'github-hosted') 'GITHUB_HOSTED_RUNNER_REQUIRED'
   Assert-Condition ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT -and [Environment]::Is64BitOperatingSystem) 'WINDOWS_X64_REQUIRED'
   Assert-Condition ($ExpectedSourceSHA -match '^[a-f0-9]{40}$') 'EXPECTED_SOURCE_SHA_INVALID'
-  Assert-Condition ($env:RUNNER_TEMP) 'RUNNER_TEMP_MISSING'
+  Assert-Condition (-not [string]::IsNullOrWhiteSpace($env:RUNNER_TEMP)) 'RUNNER_TEMP_MISSING'
 
   $runnerTemp = [IO.Path]::GetFullPath($env:RUNNER_TEMP).TrimEnd([char[]]@([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)) + [IO.Path]::DirectorySeparatorChar
   $artifactFull = [IO.Path]::GetFullPath($ArtifactRoot)
