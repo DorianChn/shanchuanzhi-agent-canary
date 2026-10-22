@@ -6370,3 +6370,44 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - Exactly M3+M4 are active 14:17–14:37 UTC on P0 #52. M3 owns the read-only `GET /api/security-center` route and an injectable M3-owned status provider defaulting to `UNKNOWN`; M4 owns changing only its current 404 expectation after the route exists, asserting readable UNKNOWN behavior while preserving E4 tests. Evidence/blocker due 14:32. No unowned API changes, internal imports, path-only fallback, weakened denial, or removed test. #52 stays OPEN/NOT_VERIFIED; #33/#34 stay Draft.
 - Posted lane switch/assignments: #52 `6343003592`, PR #33 `6343004361`, PR #34 `6343005128`. M0 changed no product source.
 - Coordination index cross-reference: scheduler #29 comment `6343012102`; M2 PR #37 lane-close comment `6343012814`.
+
+## M0 14:21 UTC docs push — 2026-10-22
+
+- At 14:21 UTC pushed docs-only commit `806392535cbc1eade38c5855ed1ac154946c0db2` to existing Draft PR #30 after the 20-minute push interval. The coordinator worktree is clean and based on the latest `origin/feature/ac3-m0-coordination`; `git diff --check` passed before commit.
+- Exact current-head CI run `39794941391` (nine product jobs) and ownership-contract run `39794941154` were pending at 14:21. No CI pass is claimed yet.
+- Re-read PR #24: OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; unchanged by M0. Usage at 14:20 UTC was 100% five-hour / 23% weekly; Usage tab remains open.
+
+## 2026-10-22 14:40 UTC — five-minute push cadence and M2/M3 evidence
+
+- The user's latest push instruction supersedes the earlier 20-minute cadence: prepare meaningful checkpoints and push existing Draft PRs at most once per five-minute interval; do not create empty commits. Overall completion target remains 2026-10-31.
+- M0 PR #30 remains OPEN/Draft at `806392535cbc1eade38c5855ed1ac154946c0db2`; exact product CI `39794941391` passed 9/9 and coordination contract CI `39794941154` passed 1/1. Coordinator has docs-only local changes pending; no product files changed.
+- M3 PR #33 was advanced to `d29f5afe0002c949f7183b2bc6733b6e02e2ca38`; exact CI `39797232107` is queued. M4 PR #34 was advanced to `d9a537e520c6f157d08d6c5111eb72875ba383c9`; exact CI `39796861794` is queued. Their local test/build evidence is recorded in the coordinator checkpoint report.
+- M3 local checks: build passed, route tests 3/3, and full test run 343 passed / 5 skipped / 0 failed (348 total). M4 local checks: focused route test 10/10 and build passed. Hosted CI is still the final check for both exact heads.
+- M2+M3 are the only active module tasks on P0 #52 through 14:57 UTC. M2 is implementing a read-only status provider that reports at most the exact intersection of M1 held-file capability and M5 side-effect-free policy inspection; no callback/dispatch execution is allowed. M3 confirmed `src/ai/cli.ts:51` has no first-party Gateway/M5 host composition to inject, so the route remains UNKNOWN until a real composition exists. No aggregate PROTECTED claim is supported.
+- M3 is also assigned the M3-owned Windows Node 20 fixture-cleanup regression in P1 #71 after reporting the composition blocker; M2 remains on the P0 status-provider contract. Evidence is due by 14:50 UTC; the lane closes 14:57.
+- Issue #52 remains OPEN/P0/NOT_VERIFIED. M1/M2/M5 positive and negative controls and an actual first-party host composition are still required for acceptance. No failed test or security denial was removed or weakened.
+- PR #24 remains OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; M0 has not changed it. Quota read at 14:39 UTC: 100% five-hour, 23% weekly, 113 credits; the existing Usage tab remains open.
+
+## 2026-10-22 14:43 UTC — M3 cleanup and CI refresh
+
+- M3 pushed `27d4a20a20894c7b779edf68d8bf79685bc0e69b` to its existing Draft PR #33, changing only `test/codex-connection-check.test.ts`. The cleanup now closes Gateway before removing the realpath-bounded test root in `finally`; local Windows Node 22 targeted test 4/4, build, and `git diff --check` passed. Node 20 was unavailable locally, so original-version reproduction is still unverified.
+- New exact-head M3 CI run `39798128488` is queued. Prior run `39797232107` reports overall failure, while its job API still lists queued/in-progress jobs and no failure detail; no root cause is inferred from that inconsistent snapshot.
+- M4 PR #34 exact-head CI `39796861794` completed successfully. Its local focused test was 10/10 and build passed.
+- M2's M2-owned status-provider implementation is in progress on its existing detached PR #37 worktree; the reviewed local adapter diff is not yet complete or validated. M3 is auditing whether an existing public first-party host composition can be safely wired; the known CLI callsite alone has no Gateway/M5 host instance. P0 #52 remains OPEN/NOT_VERIFIED.
+- Next meaningful push window is no earlier than 14:47 UTC after the 14:42 M3 push. M0 has not merged PRs, created module branches, changed other module source, or changed PR #24.
+
+## 2026-10-22 14:46 UTC — M2 status-provider candidate verified locally
+
+- M2 PR #37 worktree remains detached at exact existing head `be66cf8f4c1a60f093740577796ec5cd633e1d93`. Local M2-owned changes are limited to the public `gateway-adapter.mjs`, its source mirror `security-gateway-adapter.mjs`, and `test-security-gateway-host-adapter.mjs`; no branch, commit, or push yet.
+- M2 reports `host.securityCenterStatusProvider()` checks only exact fixed-read bindings against M1 capability verification and M5 side-effect-free `inspectPolicy`; no read/dispatch/approval/callback. Its aggregate is at most PARTIALLY_PROTECTED, with Hook/isolation UNKNOWN. Tests cover a positive safe read, sensitive alias denial, replacement denial, zero effects, no approval, and unchanged fixture bytes.
+- After lockfile install, M2 reports `npm run build` PASS, adapter/package tests 14/14 PASS, bundle consistency check PASS, and `git diff --check` PASS. The dependency install reported one moderate audit finding; no automatic audit fix was applied.
+- M1 audit is now the second active module slot, checking Gateway alias/replacement controls against the M2 API from a new detached worktree at the existing PR #43 head. No M1 files have been changed yet.
+- The first-party Console blocker remains: `ai console` lacks a trusted host/root/fixed-file map and does not instantiate M1 Gateway/M5 router; M3 must keep its route UNKNOWN. API_CONTRACTS now records the candidate provider boundary and remaining M9 acceptance checks. #52 remains OPEN/P0/NOT_VERIFIED.
+
+## 2026-10-22 14:49 UTC — M1/M2 changes pushed to existing PRs
+
+- M1 PR #43 advanced from `7279336307fc7aacd46119405858d4fd91499757` to `a5eff766ebe041bc2c6cc13758827d5a96205de9`; only `test/gateway.test.ts` changed. It adds a safe registered read, `.env` alias and replaced-path denial checks before callbacks, and unchanged bytes/no new evidence/no approval. Local Gateway tests 35/35, build and diff check passed. Exact CI `39798992187` and file-store concurrency run `39798992159` are queued.
+- M2 PR #37 advanced from `be66cf8f4c1a60f093740577796ec5cd633e1d93` to `23d1647151119eab02cf752a1bd34cfad197cb9c`; only the public adapter, its source mirror, and host-adapter tests changed. Exact CI `39799086549` is queued. The first push attempt was rejected without changing remote state; the same fast-forward ref succeeded on retry.
+- M2 local verification before push: build passed after lockfile `npm ci`; adapter/package tests 14/14; bundle consistency and diff checks passed. Dependency audit showed one moderate advisory; no automatic dependency fixes.
+- Both PRs remain OPEN/Draft. User quota at 14:48 UTC was 77% five-hour / 19% weekly with 113 credits; Usage tab remains open. PR #24 remains untouched. P0 #52 remains OPEN/NOT_VERIFIED because no real M3 first-party Console host composition exists; M9 acceptance is still pending.
+- Cross-module checkpoint posted to P0 Issue #52 as comment `6343704231`; it names current PR heads, pending CI runs, and exact M9 acceptance without closing the issue or claiming first-party protection.
