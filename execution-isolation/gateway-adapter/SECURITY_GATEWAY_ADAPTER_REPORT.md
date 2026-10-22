@@ -4,6 +4,13 @@ Date: 2026-10-21
 Scope: M2-owned adapter seam for Issue #52
 Status: `M2_M1_M5_OPAQUE_CAPABILITY_ADAPTER_IMPLEMENTED_LOCALLY; PRODUCT_HOST_INTEGRATION_NOT_VERIFIED; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
 
+Native Codex Shell boundary (Issue #45): **`UNPROTECTED / BLOCKED_NOT_VERIFIED`**.
+Codex documents supported Windows command enforcement through MXC or the
+legacy `elevated` / `unelevated` sandbox and filesystem permission profiles,
+but this adapter does not inspect or prove the active Desktop session's
+effective policy or native Shell call path. A repository Hook fixture is not
+host-enforcement evidence.
+
 > **Latest checkpoint:** The baseline notes below document earlier M2/M1/M5
 > snapshots. The 2026-10-21 checkpoint at the end records the current local
 > adapter candidate against M1 commit `7279336` and M5 commit `ed304e3`.
@@ -323,6 +330,34 @@ Local verification on Windows / Node.js v22.23.1:
 - `node --test execution-isolation/gateway-adapter/test-adapter-call-shape.mjs execution-isolation/gateway-adapter/test-security-gateway-host-adapter.mjs` — 8/8 passed; the added denial-propagation case checks quarantine, approval-required, and stale/expired rejection markers.
 - `git diff --check` — passed with no whitespace errors.
 - No product build, M1 runtime, or M4 host integration was run or claimed; the change is limited to the M2 `.mjs` seam test and this report.
+
+## 2026-10-23 native Codex Shell boundary recheck
+
+Supported native enforcement APIs exist: Codex's Windows sandbox can enforce
+filesystem and network permissions for commands and child processes using
+MXC, `elevated`, or `unelevated`; permission profiles support scoped filesystem
+`deny` rules. This establishes platform capability, not the active policy for
+any particular Desktop session. The documented MXC CLI compatibility probe
+starts a separate CLI command and is not evidence about the Desktop native
+Shell call path.
+
+Codex `PreToolUse` can deny a matching supported Bash call when its callback
+returns the documented denial shape. Callback errors, timeouts, or malformed
+responses may fail without blocking the tool, so the candidate Hook alone is
+not a fail-closed boundary. The M2 project fragment remains a candidate and
+has not been installed/trusted or exercised through the actual Desktop native
+Shell. No effective session policy, native callback decision, or sentinel
+hash pair is available from this adapter task.
+
+**Disposition:** native Codex Shell remains `UNPROTECTED / BLOCKED_NOT_VERIFIED`
+under Issue #45. Acceptance requires a host owner to
+expose the effective sandbox/permission profile, then run a unique synthetic
+sentinel through the actual native Shell and observe an OS-level denial with
+an unchanged hash. Keep the status unchanged if the active policy, host
+decision, or callback cannot be observed. M2 did not change host/global
+configuration, install/trust a hook, or attempt a native-shell sentinel.
+
+Sources rechecked 2026-10-23: [Codex Windows sandbox](https://learn.chatgpt.com/docs/windows/windows-sandbox), [Codex permissions](https://learn.chatgpt.com/docs/permissions), and [Codex Hooks](https://learn.chatgpt.com/docs/hooks).
 
 Disposition: **M2 adapter fail-closed at its tested seam; product OBSERVE
 read, strict positive control, M1/M5 identity binding, M4 host wiring, and

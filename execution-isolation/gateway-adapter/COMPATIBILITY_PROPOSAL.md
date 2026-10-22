@@ -74,7 +74,7 @@ If the existing registration seam is confirmed and current approval cancellation
 
 `contract-fixture.json` and `check-contract-fixture.mjs` pin the observed public callback shape, authorization/cancellation order, M0/M1 public PR heads, and `BINDER_IMPLEMENTED_BACKEND_NOT_INTEGRATED` status. `check-gateway-mcp-tools.mjs` asserts fixed IDs and metadata plus strict identity forwarding for args and `AbortSignal`. These checks do not import M1’s separate worktree, run a Gateway call, simulate approval as real authorization, or prove that a worker is isolated.
 
-Until the broker, resource map, cancellation bridge, and combined M1/M2 test are implemented and reviewed, mark Gateway integration `NOT_INTEGRATED` and native Codex Shell `UNPROTECTED`.
+Until the broker, resource map, cancellation bridge, and combined M1/M2 test are implemented and reviewed, mark Gateway integration `NOT_INTEGRATED` and native Codex Shell `UNPROTECTED / BLOCKED_NOT_VERIFIED` (#45).
 
 ## Approval cancellation nuance
 
