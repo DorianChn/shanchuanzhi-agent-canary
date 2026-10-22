@@ -121,10 +121,11 @@ test('security-center adapter keeps absent backend data UNKNOWN and ignores demo
 
 test('Gateway binding status and temporary demo reads do not verify a first-party OBSERVE consumer',()=>{
  const view=adaptSecuritySnapshot({
-  securityCenter:{protectionStatus:'PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},coverage:'M2_FIXED_FILE_READS_ONLY'},
+  securityCenter:{protectionStatus:'PARTIALLY_PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},hook:{protectionStatus:'UNKNOWN'},canaryIsolation:{protectionStatus:'UNKNOWN'},policy:{name:'M2_FIXED_FILE_READS',protectionStatus:'PROTECTED'},protectedToolCount:1,unprotectedExecutionPaths:null,coverage:'M2_FIXED_FILE_READS_ONLY'},
   runtime3:{mode:'DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL',agent:'controlled-sdk-demo',coverage:'REGISTERED_CAPABILITIES_ONLY',guard:'SAFE'},
   policyState:{mode:'OBSERVE',scope:'VIRTUAL_EXECUTORS'},
  });
+ assert.equal(view.protectionStatus,'PARTIALLY_PROTECTED','retain M3 scoped overall status');
  assert.equal(view.gateway.protectionStatus,'PROTECTED','show the backend-reported Gateway binding status faithfully');
  assert.equal(view.runtimeDemo.scope,'REGISTERED_CAPABILITIES_ONLY');
  assert.equal(view.consoleSandboxPolicy.scope,'VIRTUAL_EXECUTORS');

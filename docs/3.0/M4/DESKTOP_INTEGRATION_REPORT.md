@@ -172,3 +172,19 @@ To move the M4 consumer field from `NOT_VERIFIED`, all of the following must be 
 5. M9 pins the exact M1/M2/M3/M4/M5 source refs and records hosted checks. Do not interpret this bounded host composition as an OS-wide atomic file-open/TOCTOU guarantee.
 
 Focused M4 verification is required for the UI/adapter assertions. This checkpoint did not run a protected product file read and does not close Issue #52. Issue #52 remains `OPEN/P0/NOT_VERIFIED` for first-party consumer and host/TOCTOU evidence.
+
+## 2026-10-22 20:29 UTC Issue #52 post-M3-route consumer recheck
+
+Exact hosted heads rechecked: M4 PR #34 `83a3abc0b85e783c34d79392e50015ed8f24e184`, M3 PR #33 `465bd606ed376054e5d9ae63b30f090dab7aec75`, M2 PR #37 `099ad64e4a09330920cbd40847adec3fe631e91e`, M1 PR #43 `a5eff766ebe041bc2c6cc13758827d5a96205de9`, and M5 PR #47 `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2`.
+
+### Observed route/API boundary
+
+- M3's `src/ai/console.ts::startAIConsole` now accepts `securityCenterStatusProvider` and serves it through `GET /api/security-center`. It sanitizes scoped Gateway/policy status and falls back to `UNKNOWN`. Its route exposes status only: the exact source has no `file-read` API or protected read `POST` callsite.
+- On the same M3 ref, `src/runtime/gateway.ts` does not expose M1's `bindFileReadCapability`, `verifyFileReadCapability`, or `readFileWithCapability`. M3's existing `POST /api/runtime3/action` still calls the temporary Runtime demo, and `POST /api/policy/action` calls the virtual policy sandbox. Neither is a product OBSERVE file read.
+- M1 #43 supplies the three Gateway capability methods. M2 #37's public package subpath `@dorianchn/agent-canary/gateway-adapter` exports `createSecurityGatewayHostAdapter`, which accepts a trusted Gateway, fixed file-read bindings, and the strict M5 router factory/options and returns `dispatch` plus `securityCenterStatusProvider`. M5 #47's current strict router consumes the verified file-read capability context and preserves hard denial. These candidate contracts are available separately, but the current M3 host source does not instantiate that exact M1/M2/M5 composition for an action route.
+- M4's current `src/ai/console.ts` has no file-read POST route and no import/call of M2's host adapter. M4's UI already polls `GET /api/security-center` and runs `securityCenterAdapter.adaptSecuritySnapshot`; it can display M3's scoped status when composed. A `PROTECTED` Gateway binding/status is not evidence that a user-facing M4 read action dispatched through M2 and returned data using M1's held identity.
+- The existing M4 UI field and diagnostic keep product OBSERVE file reading `NOT_VERIFIED`; the M4 test fixture now matches M3's sanitized scoped provider response (`PARTIALLY_PROTECTED` overall, `PROTECTED` Gateway) and asserts the consumer remains `NOT_VERIFIED`. Missing M3 route and M3 route-without-provider remain distinct (404 versus 200/UNKNOWN), both non-proof states. The denial display test keeps `DENY` and its risk list intact.
+
+### Next owner and blocker
+
+Next owner is **M3 for the first-party host/read route**, after **M0/M9 pin an exact-source integration of M1 Gateway + M2 host adapter + M5 strict router into the supported M3 host build**. M1 owns the Gateway capability source, M2 owns the adapter/package contract, and M5 owns strict policy behavior. M4 owns only the UI display/consumer contract and keeps `NOT_VERIFIED` until the real M3 Console route has positive safe-read and zero-side-effect negative controls for path-only input, sensitive aliases, symlink/junction escapes, and path replacement. No M4 runtime or shared API was changed for this recheck; no product file read was performed. Issue #52 remains `OPEN/P0/NOT_VERIFIED`.
