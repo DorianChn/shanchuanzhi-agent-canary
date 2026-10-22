@@ -697,3 +697,19 @@ M4 and M7 remain isolated worktrees in the separate Windows-E4 Git common direct
 | M9 | `feature/ac3-m9-integration` / #36 | `8506fef` public; `f63adc7` local | M7=4f exact-source scratch 11/11; M7 package contract 2/2; local pin/report candidate not pushed pending cadence.
 
 No module source ownership changed. M4/M7 remain isolated in the Windows-E4 Git common directory; M9 and M0 use separate worktrees.
+## Current public module refs — 2026-10-22 22:30 UTC
+
+| Module | Owner scope | Open PR / branch | Exact public head | Integration state |
+|---|---|---|---|---|
+| M0 | Coordination, contracts, ownership, CI/issue evidence | #30 `feature/ac3-m0-coordination` | `7c481fb216c5e26ad638c23d621f89755122eea2` | Coordination audit green; product Windows Node 20 fails only on stale M1 Issue #32 fixture. |
+| M1 | Security core, Hook/Gateway, protected reads | #43 `feature/ac3-security-core` | `6886d6eef3beb972bc8f4c797584b0f522483870` | Corrected interruption fixture, exact CI 9/9; #32/#52 acceptance boundaries remain open. |
+| M2 | Execution isolation and host adapter | #37 `feature/ac3-execution-isolation` | `92a9562a44ad395ec33d5afd74c394d7f0863c85` | Exact package composition validated; native Codex Shell remains UNPROTECTED/NOT_VERIFIED. |
+| M3 | Agent onboarding and Hook setup | #33 `feature/ac3-agent-onboarding` | `34b526d4d63f28c09400e0130b09ead13d394aca` | Exact CI 9/9; protected-read POST remains unsupported/blocked. |
+| M4 | Desktop security-center UI | #34 `feature/ac3-desktop-security-center` | `264bc288dc92a75e424e366a070420f8d7e2e131` | Based on M1 `6886d6e`; exact CI 9/9. |
+| M5 | Policy and audit | #47 `feature/ac3-policy-audit` | `c9003234913a0ccccca56fe2a36fb1ce3dacb2de` | Existing public candidate; shared canonical-path decisions remain M1-owned. |
+| M6 | E4 bundle verifier and lifecycle | #38 `feature/ac3-e4-validation-ac3` | `15e1663eac9c3932165fca9b39587115345f289c` | Exact CI 9/9 + Windows wrapper 2/2; independent product-level E4 still NOT_VERIFIED. |
+| M7 | Reliability and Windows packaging | #39 `feature/ac3-reliability-ac3` | `4f986cc83bc62a1d2b23175ee5a0a77b82837310` | Exact CI 9/9 + Windows wrapper 3/3; clean-VM lifecycle remains OPEN/P1. |
+| M8 | Open-source UX and documentation | #40 `feature/ac3-open-source-product` | `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d` | Exact source is covered by M9 composition; no ownership changes. |
+| M9 | Cross-module source pins, contracts and composition | #36 `feature/ac3-m9-integration` | `129075c8c01588c872c0f8c96c343bff7ee35358` | Exact CI 9/9 + wrapper 2/2 + composition Ubuntu/Windows 2/2; pins current M1–M8 heads including M6 `15e1663`. |
+
+All listed module PRs are OPEN/Draft and target PR #24 head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, except M4 #34 which is intentionally based on the current M1 #43 head `6886d6eef3beb972bc8f4c797584b0f522483870`. PR #24 itself remains OPEN/Draft and unchanged. M4/M7 retain their separate shared Git common directory; M0/M9 and the other owner worktrees remain isolated by existing worktree/branch ownership.
