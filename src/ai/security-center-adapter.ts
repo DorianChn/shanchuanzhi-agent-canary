@@ -170,7 +170,7 @@ export function adaptSecuritySnapshot(input: {
       ? securityCenter.unprotectedExecutionPaths
         .filter((item: unknown) => typeof item === 'string')
         .slice(0, 100)
-        .map((item: string) => sanitizeText(item, 300))
+        .map(() => 'UNPROTECTED_EXECUTION_PATH')
       : null,
     agents,
     events,

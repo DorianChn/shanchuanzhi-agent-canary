@@ -136,19 +136,21 @@ test('security-center adapter accepts only exact live statuses and exports a red
    hook:{protectionStatus:'NOT_PROTECTED'},
    canaryIsolation:{protectionStatus:'UNKNOWN'},
    policy:{name:'strict-runtime',protectionStatus:'PARTIALLY_PROTECTED'},
-   protectedToolCount:3,unprotectedExecutionPaths:['C:\\unsafe\\tool.exe'],
+   protectedToolCount:3,unprotectedExecutionPaths:['C:\\unsafe\\tool.exe','D:\\private\\secret.txt?token=cnry_supersecret','--argument=PRIVATE_ARGUMENT'],
    agents:[{agent:'cursor',detected:true,connectionStatus:'CONNECTED',protectionStatus:'PROTECTED'}],
   },
  });
  assert.equal(view.protectionStatus,'PARTIALLY_PROTECTED');assert.equal(view.gateway.protectionStatus,'PROTECTED');
  assert.equal(view.hook.protectionStatus,'NOT_PROTECTED');assert.equal(view.policy.name,'strict-runtime');
- assert.equal(view.protectedToolCount,3);assert.equal(view.unprotectedExecutionPaths.length,1);
+ assert.equal(view.protectedToolCount,3);assert.deepEqual(view.unprotectedExecutionPaths,['UNPROTECTED_EXECUTION_PATH','UNPROTECTED_EXECUTION_PATH','UNPROTECTED_EXECUTION_PATH']);
+ const snapshotJson=JSON.stringify(view);
+ for(const sensitive of ['C:\\unsafe','D:\\private','cnry_supersecret','PRIVATE_ARGUMENT','--argument='])assert.equal(snapshotJson.includes(sensitive),false,'sensitive execution-path detail leaked: '+sensitive);
  assert.equal(view.agents[0].protectionStatus,'PROTECTED');
  assert.match(explainSecurityEvent(view.events[0]),/后端原因：\[REDACTED\]/);
  const report=buildSecurityDiagnostic(view,{state:'AVAILABLE',agents:'AVAILABLE',policyState:'AVAILABLE',runtime3:'AVAILABLE',securityCenter:'AVAILABLE',e4:'UNSUPPORTED'},'2026-10-13T00:00:00.000Z');
  const json=JSON.stringify(report);
- assert.equal(report.protection.unprotectedExecutionPathCount,1);
- assert.equal(json.includes('cnry_secret'),false);assert.equal(json.includes('C:\\private'),false);assert.equal(json.includes('C:\\unsafe'),false);assert.equal(json.includes('token='),false);
+ assert.equal(report.protection.unprotectedExecutionPathCount,3);
+ assert.equal(json.includes('cnry_secret'),false);assert.equal(json.includes('C:\\private'),false);assert.equal(json.includes('C:\\unsafe'),false);assert.equal(json.includes('D:\\private'),false);assert.equal(json.includes('cnry_supersecret'),false);assert.equal(json.includes('PRIVATE_ARGUMENT'),false);assert.equal(json.includes('token='),false);
  assert.equal(report.dataSources.e4,'UNSUPPORTED');
 });
 
