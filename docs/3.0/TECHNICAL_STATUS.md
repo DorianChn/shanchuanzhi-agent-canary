@@ -6625,3 +6625,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M1 review issue #72 remains OPEN until the new M9 exact-source gate passes. #51 remains OPEN/P1 with M1's repeated-contention disposition; no retry is scheduled.
 - M7 is triaging #70 on existing Dependabot branch `dependabot/npm_and_yarn/hono-4.13.13`; current mismatch is package-manifest verification only, with 8/9 checks passing. No branch modification or push reported yet.
 - The 17:43 quota read was 77% five-hour / 19% weekly / 113 credits; no pause threshold reached. PR #24 remains untouched.
+
+## M0 exact-head delta — 2026-10-22 17:48 UTC
+
+- M9 PR #36 is at exact head `c8bf076a5520e2831fb561bf5680351f745de85a`. Current-ref composition run `39825401400` passed on Ubuntu; Windows is still in progress. Product CI run `39825401495` passed package-smoke, Docker, macOS 20/22, Ubuntu 20/22 and Windows 22; Windows 20 and sponsor-smoke are still pending. Wrapper run `39825401380` passed on Ubuntu and Windows. Do not close #72 or claim full exact-head CI until the remaining jobs finish green.
+- M0 PR #30 is at exact head `1c028043b428be5708a608709eac2f96543b80dc`. Ownership-contract evidence, package-smoke, sponsor-smoke and all six OS/Node matrix jobs passed; Docker is still pending. No merge was attempted.
+- M1’s exact M3 hook review remains pinned in M9, but #72 stays OPEN pending the Windows composition and remaining PR #36 checks. P0 #52 remains OPEN / production NOT_VERIFIED; synthetic CI does not prove first-party host wiring, held-identity use, or OS-atomic TOCTOU.
+- M7’s #70 investigation remains on existing Dependabot PR #67 only; the branch is unchanged in the M7 worktree at this check. Keep the package-smoke gate intact.
+- Usage page last read at 17:45 UTC: 77% five-hour, 19% weekly and 113 credits, above the 5% pause threshold. PR #24 remains OPEN/Draft at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, untouched.
