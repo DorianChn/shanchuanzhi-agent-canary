@@ -131,6 +131,27 @@ test('OBSERVE cannot downgrade a mismatched read capability',async()=>{
  await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
  assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);assert.equal(fs.readFileSync(target,'utf8'),'M5_OBSERVE_CAPABILITY_FIXTURE');assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
 });
+test('inspectPolicy previews an OBSERVE held-capability read without callback, audit, review, or approval effects',()=>{
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'inspect-policy-preview-')));
+ const target=path.join(root,'public.txt'),secret=path.join(root,'.env'),eventsFile=path.join(root,'events.jsonl');
+ fs.writeFileSync(target,'M5_INSPECT_POLICY_PUBLIC_FIXTURE');fs.writeFileSync(secret,'M5_INSPECT_POLICY_SECRET_FIXTURE');
+ const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex'),capability=Object.freeze(Object.create(null));
+ let resolves=0,verifies=0,reviews=0,callbacks=0;
+ const fileReadCapability={resolve:(call:any)=>{resolves++;return call.args.path==='public.txt'?capability:undefined;},verify:(candidate:any,call:any,operation:string)=>{verifies++;return candidate===capability&&call.name==='read'&&call.args.path==='public.txt'&&operation==='file-read';}};
+ const guard=createAgentGuard({sessionId:'inspect-policy-preview',eventsFile,alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read:{operation:'file-read'},write:{operation:'file-write'}},fileReadCapability,eventsFile,reviewDecision:async()=>{reviews++;return 'UNCHANGED';},executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+ const safe=router.inspectPolicy({name:'READ',args:{path:'public.txt'}});
+ assert.equal(safe.action,'ALLOW');assert.equal(safe.reason,'read_only');assert.equal(safe.mode,'OBSERVE');
+ assert.equal(resolves,1);assert.equal(verifies,1,'preview validates the held-file capability');
+ const sensitive=router.inspectPolicy({name:'read',args:{path:'.env'}});
+ assert.equal(sensitive.action,'DENY');assert.equal(sensitive.reason,'observe_sensitive_data_blocked');
+ const strict=createRiskPolicyRouter({guard:createAgentGuard({sessionId:'inspect-policy-strict',alert:false}),workspaceRoot:root,mode:'STRICT',verifyRealPaths:true,tools:{write:{operation:'file-write'}},fileReadCapability,executeRealTool:()=>{callbacks++;return 'must-not-run';}});
+ const write=strict.inspectPolicy({name:'write',args:{path:'public.txt'}});
+ assert.equal(write.action,'DENY');assert.equal(write.reason,'path_execution_not_pinned');
+ assert.equal(router.pendingApprovals().length,0);assert.equal(strict.pendingApprovals().length,0);
+ assert.equal(reviews,0);assert.equal(callbacks,0);assert.equal(guard.state,'SAFE');assert.equal(fs.existsSync(eventsFile),false,'preview must not append an audit event');
+ assert.equal(fs.readFileSync(target,'utf8'),'M5_INSPECT_POLICY_PUBLIC_FIXTURE');assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+});
 test('trusted read token is rechecked at the final callback boundary and passed unchanged',async()=>{
  const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'strict-read-capability-callback-'));
  const target=path.join(root,'public.txt');fs.writeFileSync(target,'M5_PUBLIC_CAPABILITY_FIXTURE');
