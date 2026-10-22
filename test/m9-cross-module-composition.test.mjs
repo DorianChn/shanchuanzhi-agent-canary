@@ -18,17 +18,17 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M5', 'M6', 'M7'
 }));
 
 const pinnedSourceShas = {
-  M1: '7279336307fc7aacd46119405858d4fd91499757',
+  M1: 'a5eff766ebe041bc2c6cc13758827d5a96205de9',
   M2: '868b12a4688282c28091b731f6548d5535c0c37c',
-  M3: '429cd73c03273bc77f3781b489f541e396cd9361',
-  M5: 'bbce79aa086b39b51422cc72471c23c963778650',
+  M3: '27d4a20a20894c7b779edf68d8bf79685bc0e69b',
+  M5: '6c16a08c6db26e548dcf63cb845f00ceb5a576ad',
   M6: '2cebabc81d7908c04ddfa10378fa1d3427b92cf4',
   M7: '868842b1b7d76cf94a8d84a5f76c6acd4ca67f50',
-  M8: '35ab804d9729590a572c01d16391e63472992622',
+  M8: '72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db',
 };
 
-const m2OwnerDispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
-const m6OwnerAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
+const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
+const m6PriorAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
 
 function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
   const result = spawnSync('git', [
@@ -45,18 +45,31 @@ function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
-assert.equal(process.env.M6_OWNER_ACCEPTANCE_STATUS, 'ACCEPT', 'M6 owner acceptance must match the published exact-scope disposition');
-assert.equal(process.env.M6_OWNER_ACCEPTANCE_SHA, m6OwnerAcceptanceSha, 'M6 owner acceptance must retain its original exact-scope source SHA');
-assert.equal(process.env.M6_OWNER_ACCEPTANCE_COMMENT, '6320039569', 'M6 acceptance must cite the exact public Issue #59 comment');
-assert.equal(process.env.M2_OWNER_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'M2 package acceptance retains the real-M5-router condition');
-assert.equal(process.env.M2_OWNER_DISPOSITION_SHA, m2OwnerDispositionSha, 'M2 disposition must retain the exact SHA reviewed by M1');
-assert.equal(process.env.M2_OWNER_DISPOSITION_COMMENT, '6321070391', 'M1 actual-tarball review must match the public disposition');
-assert.equal(process.env.M2_OWNER_DISPOSITION_ISSUE, '52', 'M1 disposition comment 6321070391 is recorded on Issue #52');
+assert.equal(process.env.M6_PRIOR_ACCEPTANCE_STATUS, 'ACCEPT', 'historical M6 acceptance must retain its original scoped disposition');
+assert.equal(process.env.M6_PRIOR_ACCEPTANCE_SHA, m6PriorAcceptanceSha, 'historical M6 acceptance must retain its original source SHA');
+assert.equal(process.env.M6_PRIOR_ACCEPTANCE_COMMENT, '6320039569', 'historical M6 acceptance must cite its original Issue #59 comment');
+assert.equal(process.env.M6_M8_REVIEW_STATUS, 'ACCEPT_WITH_CONDITIONS', 'current M6 owner comment accepts only the exact M8 test hunk and M6 lifecycle contract');
+assert.equal(process.env.M6_M8_REVIEW_M6_CONTRACT_SHA, pinnedSourceShas.M6, 'M6 contract check must identify the exact current M6 source head');
+assert.equal(process.env.M6_M8_REVIEW_TARGET_SHA, pinnedSourceShas.M8, 'M6 review must identify the exact M8 test target');
+assert.equal(process.env.M6_M8_REVIEW_COMMENT, '6346660246', 'current M6 disposition must cite its exact Issue #59 comment');
+assert.equal(process.env.M6_M8_REVIEW_ISSUE, '59', 'current M6 disposition is recorded on Issue #59');
+assert.equal(process.env.M6_M8_REVIEW_SCOPE, 'M8 exact test hunk and M6 lifecycle contract checks only', 'M6 disposition remains narrowly scoped');
+assert.equal(process.env.M1_M2_REVIEW_STATUS, 'CONDITIONAL_ACCEPT', 'current M1 review conditionally accepts the exact M2 candidate on Issue #52');
+assert.equal(process.env.M1_M2_REVIEW_SHA, pinnedSourceShas.M1, 'M1 disposition must identify the exact current M1 review head');
+assert.equal(process.env.M1_M2_REVIEW_TARGET_SHA, pinnedSourceShas.M2, 'M1 disposition must identify the exact current M2 candidate');
+assert.equal(process.env.M1_M2_REVIEW_COMMENT, '6346736001', 'current M1 disposition must cite its exact Issue #52 comment');
+assert.equal(process.env.M1_M2_REVIEW_ISSUE, '52', 'current M1-to-M2 disposition is tracked on Issue #52');
+assert.equal(process.env.M1_M2_REVIEW_SCOPE, 'adapter-to-Gateway contract only', 'M1 disposition is limited to the adapter-to-Gateway contract');
+assert.equal(process.env.M1_M2_REVIEW_CONDITION, 'M1 API must actually be injected in the composition', 'M1 conditional acceptance requires the reviewed M1 API to be injected');
+assert.equal(process.env.M2_PRIOR_M1_DISPOSITION, 'ACCEPT_WITH_CONDITIONS', 'historical M1 disposition remains scoped to its reviewed M2 candidate');
+assert.equal(process.env.M2_PRIOR_M1_DISPOSITION_SHA, m2PriorM1DispositionSha, 'historical disposition must retain its original exact M2 SHA');
+assert.equal(process.env.M2_PRIOR_M1_DISPOSITION_COMMENT, '6321070391', 'historical disposition must retain its exact Issue #52 comment');
+assert.equal(process.env.M2_PRIOR_M1_DISPOSITION_ISSUE, '52', 'historical disposition comment 6321070391 is on Issue #52');
 assert.equal(process.env.M2_PACKAGE_ALIGNMENT_GATE_ISSUE, '69', 'Issue #69 tracks the M2/M7 package alignment gate');
 assert.equal(process.env.M2_PACKAGE_COMPOSITION_HISTORY_ISSUE, '68', 'Issue #68 is retained only as the closed historical composition gate');
-assertAncestor('M2', m2OwnerDispositionSha, pinnedSourceShas.M2, 'M1-reviewed M2 disposition');
-assertAncestor('M6', m6OwnerAcceptanceSha, pinnedSourceShas.M6, 'M6 owner acceptance');
-assert.equal(process.env.M1_OWNER_REVIEW_SHA, '7279336307fc7aacd46119405858d4fd91499757');
+assertAncestor('M2', m2PriorM1DispositionSha, pinnedSourceShas.M2, 'historical M1-reviewed M2 disposition');
+assertAncestor('M6', m6PriorAcceptanceSha, pinnedSourceShas.M6, 'historical M6 owner acceptance');
+assert.equal(process.env.M1_M2_REVIEW_SHA, pinnedSourceShas.M1);
 assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
 
 function readTrackedHookBlob(moduleName) {
@@ -140,9 +153,11 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
-console.log('[M2 prior owner disposition]', `${process.env.M2_OWNER_DISPOSITION} for ${process.env.M2_OWNER_DISPOSITION_SHA} (Issue #52 comment ${process.env.M2_OWNER_DISPOSITION_COMMENT}); current candidate ${pinnedSourceShas.M2} is a later exact package candidate, not covered by that disposition`);
-console.log('[M6 prior owner acceptance]', `${process.env.M6_OWNER_ACCEPTANCE_STATUS} for ${process.env.M6_OWNER_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_OWNER_ACCEPTANCE_COMMENT}; Auto E4 paths/tests only); current candidate ${pinnedSourceShas.M6} is a later source revision, not covered by that acceptance`);
-console.log('[M9 separate evidence SHAs]', `M1_OWNER_REVIEW_SHA=${process.env.M1_OWNER_REVIEW_SHA}`, `M5_CODE_SHA=${process.env.M5_CODE_SHA}`);
+console.log('[M1-to-M2 current review]', `${process.env.M1_M2_REVIEW_STATUS} on Issue #52: M1 ${process.env.M1_M2_REVIEW_SHA} reviewed exact M2 ${process.env.M1_M2_REVIEW_TARGET_SHA} (comment ${process.env.M1_M2_REVIEW_COMMENT}; condition: ${process.env.M1_M2_REVIEW_CONDITION})`);
+console.log('[M2 prior owner disposition]', `${process.env.M2_PRIOR_M1_DISPOSITION} for older M2 ${process.env.M2_PRIOR_M1_DISPOSITION_SHA} (Issue #52 comment ${process.env.M2_PRIOR_M1_DISPOSITION_COMMENT}); current candidate ${pinnedSourceShas.M2} is not covered by that historical disposition`);
+console.log('[M6 current scoped disposition]', `${process.env.M6_M8_REVIEW_STATUS} for M6 contract ${process.env.M6_M8_REVIEW_M6_CONTRACT_SHA} and M8 target ${process.env.M6_M8_REVIEW_TARGET_SHA} (Issue #59 comment ${process.env.M6_M8_REVIEW_COMMENT}; ${process.env.M6_M8_REVIEW_SCOPE})`);
+console.log('[M6 prior owner acceptance]', `${process.env.M6_PRIOR_ACCEPTANCE_STATUS} for older M6 ${process.env.M6_PRIOR_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_PRIOR_ACCEPTANCE_COMMENT}; Auto E4 lifecycle only); current candidate ${pinnedSourceShas.M6} is not generally covered by that historical acceptance`);
+console.log('[M9 separate evidence SHAs]', `M1_M2_REVIEW_SHA=${process.env.M1_M2_REVIEW_SHA}`, `M5_CODE_SHA=${process.env.M5_CODE_SHA}`);
 
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'));
 process.env.AGENT_CANARY_HOME = testHome;
@@ -677,6 +692,7 @@ test('pinned M7/M8 positive-control JSONL contract stays sanitized in a co-locat
     assert.equal(result.positiveControl.decision, 'allow');
     assert.equal(result.positiveControl.logAudit.status, 'PASS');
     assert.equal(result.positiveControl.logAudit.records, 1);
+    assert.equal(result.positiveControl.logContractSatisfied, true);
     assert.equal(result.logAudit.status, 'PASS');
     assert.equal(result.logAudit.callerInputCanaryAbsent, true);
 
@@ -691,6 +707,8 @@ test('pinned M7/M8 positive-control JSONL contract stays sanitized in a co-locat
     for (const canary of [
       'SYNTHETIC_E4_HOOK_ARGUMENT_MARKER',
       'SYNTHETIC_E4_HOOK_REASON_MARKER',
+      'M8_SYNTHETIC_INPUT_CANARY_NOT_SECRET',
+      'M8_SYNTHETIC_REASON_CANARY_NOT_SECRET',
       'C:/synthetic/caller/private.txt',
       'write victim',
     ]) {
