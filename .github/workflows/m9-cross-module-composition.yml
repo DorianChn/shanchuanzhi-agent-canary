@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 264bc288dc92a75e424e366a070420f8d7e2e131
+          ref: 0a1fc1393c2ae837e7cecbb59e9c935380fa4930
           path: module-sources/m4
 
       - name: Checkout M5 PR #47 at exact trusted router source SHA
@@ -74,7 +74,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 4f986cc83bc62a1d2b23175ee5a0a77b82837310
+          ref: 15aaeb369f843414ffd0fa1c733c461e698ea07b
           path: module-sources/m7
           fetch-depth: 0
 
@@ -228,7 +228,7 @@ jobs:
         working-directory: module-sources/m7
         run: |
           m7_sha="$(git rev-parse --verify HEAD)"
-          test "$m7_sha" = '4f986cc83bc62a1d2b23175ee5a0a77b82837310'
+          test "$m7_sha" = '15aaeb369f843414ffd0fa1c733c461e698ea07b'
           npm ci
           PACKAGE_ROOT="$GITHUB_WORKSPACE/module-sources/m2"
           npm run pack:check -- --package-root "$PACKAGE_ROOT"
@@ -319,7 +319,7 @@ jobs:
             echo 'Issue #69 closure applies only to its historical exact M2/M7 candidate; Issue #68 remains historical. M1 comment 6349691761 APPROVES M2 099ad64e4a09330920cbd40847adec3fe631e91e for the adapter-to-Gateway API contract only. This source composition does not establish product-host wiring or TOCTOU.'
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks. This fixture injects the exact pinned M5 router into the packed M2 public facade; M2 reserves and injects its tools, callback, and M1 capability wiring but does not authenticate router identity. A registered synthetic protected_read passes only when M5 resolves and verifies the M1 capability and M2 forwards that capability to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
             echo 'Active-capability negative controls cover a sensitive .env path, workspace and outside symlink/junction aliases, and a hard link alias named .env. M5 denies these before its M2 callback; direct packed-M2 executor calls reject all unregistered aliases before M1. No M1 runtime evidence or approval effect is added and fixture bytes/hashes remain unchanged.'
-            echo 'Current pinned exact sources: M1 6886d6eef3beb972bc8f4c797584b0f522483870; M2 67428139e53c3f63a1101b4f94e84b291cbb1196; M3 34b526d4d63f28c09400e0130b09ead13d394aca; M4 264bc288dc92a75e424e366a070420f8d7e2e131; M5 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed; M6 15e1663eac9c3932165fca9b39587115345f289c; M7 4f986cc83bc62a1d2b23175ee5a0a77b82837310; M8 35aa22f3087ed1859da19acbf12cc4c767dd4f3d. M1 historical review SHA a5eff766ebe041bc2c6cc13758827d5a96205de9 is an ancestor of the current M1 pin. Comment 6347268881 reviewed M3 source 27d4a20a20894c7b779edf68d8bf79685bc0e69b Hook blobs only; current M3 Hook blobs are asserted unchanged. Historical M1/M2 and M6/M8 dispositions remain scoped to the exact reviewed source revisions.'
+            echo 'Current pinned exact sources: M1 6886d6eef3beb972bc8f4c797584b0f522483870; M2 67428139e53c3f63a1101b4f94e84b291cbb1196; M3 34b526d4d63f28c09400e0130b09ead13d394aca; M4 0a1fc1393c2ae837e7cecbb59e9c935380fa4930; M5 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed; M6 15e1663eac9c3932165fca9b39587115345f289c; M7 15aaeb369f843414ffd0fa1c733c461e698ea07b; M8 35aa22f3087ed1859da19acbf12cc4c767dd4f3d. M1 historical review SHA a5eff766ebe041bc2c6cc13758827d5a96205de9 is an ancestor of the current M1 pin. Comment 6347268881 reviewed M3 source 27d4a20a20894c7b779edf68d8bf79685bc0e69b Hook blobs only; current M3 Hook blobs are asserted unchanged. Historical M1/M2 and M6/M8 dispositions remain scoped to the exact reviewed source revisions.'
             echo 'M3 runtime composition now constructs the M1 Gateway using M3 Guard synchronous subscribeQuarantine semantics. Exact M1/M2/M3/M5 positive-read and DENY controls pass without an M9 shim; separate M1/M2/M5 fixture controls retain no-reopen, DENY-before-callback, no-approval, and unchanged-fixture assertions.'
             echo 'M2/M3 scope: M9 invokes exact M3 createConnectionCheckRuntime() with exact M1/M2/M5 sources and verifies the synthetic fixed protected_read composition. This does not establish product-host wiring; native Codex Shell remains UNPROTECTED / NOT_VERIFIED.'
             echo 'M3 historical evidence: exact-source M9 composition passed at prior M3 aa6f1a5f0ee410b3c883fbe0c60e89020273966a. Current M3 34b526d4d63f28c09400e0130b09ead13d394aca is a docs-only child of 42559bc and preserves the status-only protected-read regression. Its Issue #52 audit states there is no supported POST route and the proposed Console consumer contract is BLOCKED; the GET remains status-only. M9 runs the same runtime contract at this exact source. M3 Guard exposes synchronous subscribeQuarantine; the previous bf40d13 pin failed closed with GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED. The M3/M1 native Hook comparison still denies an unpinned normal Read; Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
@@ -328,7 +328,7 @@ jobs:
             echo 'M6 current exact PR #38 head 15e1663eac9c3932165fca9b39587115345f289c passed exact-head CI run 39864322034 and wrapper run 39864322029 (9/9 CI, 2/2 wrapper). The commit binds ZIP parsing to the bytes whose hash was verified; M9 runs the bundle/sidecar verifier and Auto E4 lifecycle regressions at this exact head. M6 comment 6346660246 reviews the exact M8 test source 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db and the M6 lifecycle contract at older M6 SHA 2cebabc81d7908c04ddfa10378fa1d3427b92cf4 only; prior acceptance 98803607b89f11e24430c461bd91e9c1a0ece9d4 is likewise historical. No product-host, installer, VM/model, or external E4 claim is made.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
             echo 'M4 exact PR #34 source is independently built and its runtime-console tests run; M9 adds a synthetic check of redacted security-center output and conservative UNKNOWN states. It does not verify a live product host or backend data provenance.'
-            echo 'M2 candidate 67428139e53c3f63a1101b4f94e84b291cbb1196 passed exact PR #37 CI run 39866513817 (9/9); its M9 diff from the prior pin is documentation-only. M5 candidate 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed passed exact PR #47 CI run 39867073839 (9/9), including risk-policy regression; the source/test change is exercised again by M9. M8 candidate 35aa22f3087ed1859da19acbf12cc4c767dd4f3d passed exact PR #40 CI run 39867080161 (9/9) and wrapper run 39867080178 (2/2); its M9 diff is documentation-only, and the M6-reviewed test/auto-e4.test.mjs blob remains identical. M7 current exact PR #39 head is 4f986cc83bc62a1d2b23175ee5a0a77b82837310; its owner CI and Windows Community checks passed, and M9 reruns the exact package contract and positive-control tests. These checks do not verify Setup.exe internals or close Issue #41 clean-VM installer lifecycle.'
+            echo 'M2 candidate 67428139e53c3f63a1101b4f94e84b291cbb1196 passed exact PR #37 CI run 39866513817 (9/9); its M9 diff from the prior pin is documentation-only. M5 candidate 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed passed exact PR #47 CI run 39867073839 (9/9), including risk-policy regression; the source/test change is exercised again by M9. M8 candidate 35aa22f3087ed1859da19acbf12cc4c767dd4f3d passed exact PR #40 CI run 39867080161 (9/9) and wrapper run 39867080178 (2/2); its M9 diff is documentation-only, and the M6-reviewed test/auto-e4.test.mjs blob remains identical. M7 current exact PR #39 head is 15aaeb369f843414ffd0fa1c733c461e698ea07b; this commit fixes invalid job-level runner.temp references and hosted reruns are pending. Prior 4f986cc checks are historical, and M9 reruns the exact package contract and positive-control tests. These checks do not verify Setup.exe internals or close Issue #41 clean-VM installer lifecycle.'
             echo 'Scope: synthetic/co-located source-fixture composition only.'
             echo 'Issue #52 remains OPEN / P0 / NOT_VERIFIED for production-host held-identity consumption and TOCTOU.'
             echo 'Not established by this workflow: npm-installed E4, a built installer, clean-VM lifecycle, production native-host hookup, or external E4 independence.'
