@@ -78,3 +78,8 @@ The M6 source-checkout E4 tests do not prove a built installer, clean-VM lifecyc
 - The documentation-only M9 successor `dd9397d6acae54665f1729caa3f1f6bf220dc881` has green exact checks: product CI `39873559666` (9/9), Windows Community wrapper `39873559661` (2/2), and cross-module composition `39873559792` (Ubuntu and Windows).
 - M7 run `39872617770` attempt 2 now has a successful package/build-evidence artifact (`12467527001`); exact lifecycle job `120154658964` is still running. No lifecycle acceptance is claimed until its terminal artifact and result are inspected.
 - Issue #52 remains OPEN/P0/NOT_VERIFIED for live host consumption and OS-atomic/concurrent TOCTOU gaps.
+## Hosted exact-source readback — 2026-10-22 23:56 UTC
+
+- M9 PR #36 exact head `3caa11662bfb100befff7e4539796a92494699a6` passed product CI run `39874157638` (9/9), Windows Community wrapper `39874157655` (2/2), and cross-module composition `39874157553` (Ubuntu and Windows).
+- The composition still pins M7 `28aa87378a1682b0dca6b28178955ad5a7fc6e84`. M7 has since pushed test-only lifecycle evidence instrumentation at `d1bc00b0f1d2b1c8e108ed83dafc27ede1eb1bd8`; refresh the exact M7 pin after its current hosted result is inspected. These checks are synthetic source/fixture composition, not live first-party host adoption or OS-atomic/concurrent TOCTOU proof; Issue #52 remains OPEN/P0/NOT_VERIFIED.
+- M7's next exact CI run `39874915884` and the single Windows Community lifecycle run `39874915881` are active. The prior attempt-2 evidence confirms the setup process started and timed out after 180 seconds; the new instrumentation records that accurately. Issue #41 remains OPEN/P1/HOLD until a valid lifecycle result and separate VM acceptance exist.
