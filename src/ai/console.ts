@@ -16,7 +16,17 @@ import os from 'node:os';
 import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient} from '../agent-integrations.js';
 import {createRuntimeDemo} from '../runtime/demo.js';
 
-export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number } = {}) {
+export type SecurityCenterStatusProvider = () => unknown | Promise<unknown>;
+
+const UNKNOWN_SECURITY_CENTER_STATUS = Object.freeze({
+  protectionStatus: 'UNKNOWN',
+  gateway: Object.freeze({ protectionStatus: 'UNKNOWN', connectionStatus: 'UNKNOWN' }),
+  hook: Object.freeze({ protectionStatus: 'UNKNOWN' }),
+  canaryIsolation: Object.freeze({ protectionStatus: 'UNKNOWN' }),
+  policy: Object.freeze({ protectionStatus: 'UNKNOWN' }),
+});
+
+export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number; securityCenterStatusProvider?: SecurityCenterStatusProvider } = {}) {
   const port = options.port ?? 4318;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('AI_CONSOLE_PORT_INVALID');
   const csrf = randomBytes(32).toString('hex');
@@ -56,6 +66,17 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
           experiments = { generatedAt: data.analysisGeneratedAt, caveat: '按运行文件 UTC 时间排序的完整组，真实模型选择工具，执行器为虚拟工具；非 AI 分析准确率。', cohorts: data.cohorts?.filter((c: any) => c.promptSha256).sort((a: any,b: any)=>String(a.runStamp||'').localeCompare(String(b.runStamp||''))).map((c: any) => ({ sourceFile:c.sourceFile,runStamp:c.runStamp,profile: c.profile, model: c.model, trials: c.totalTrials, arms: c.arms })) };
         }
         reply({ presets: PROVIDER_PRESETS, events, counts: { signals: events.filter(e => e.kind === 'decoy_called' || e.kind === 'token_found').length, sessions: new Set(events.filter(e => e.kind === 'session_quarantined').map(e => e.sessionId)).size, blocked: events.filter(e => e.kind === 'action_blocked').length }, countScope: 'latest 100 recorded events only', experiments }); return;
+      }
+      if (req.method === 'GET' && req.url === '/api/security-center') {
+        if (!options.securityCenterStatusProvider) { reply(UNKNOWN_SECURITY_CENTER_STATUS); return; }
+        try {
+          const snapshot = await options.securityCenterStatusProvider();
+          if (snapshot === undefined) { reply({ error: 'SECURITY_CENTER_STATUS_INVALID' }, 503); return; }
+          reply(snapshot);
+        } catch {
+          reply({ error: 'SECURITY_CENTER_STATUS_UNAVAILABLE' }, 503);
+        }
+        return;
       }
       if (req.method === 'GET' && req.url === '/api/job') { reply(job); return; }
       if (req.method === 'GET' && req.url === '/api/policy/state') { reply(sandbox.state()); return; }
