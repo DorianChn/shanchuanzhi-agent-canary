@@ -6617,3 +6617,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 commit `42c1c8515698a4963b41155b0908462ac833561c` updated its report to reflect #69 closure. Its exact CI passed all seen jobs; at 17:43 UTC the Windows current-ref composition job was still running. A follow-up M9 owner-review pin commit is being prepared; no final green claim is made for that follow-up yet.
 - #59 and #69 are CLOSED for their explicitly bounded synthetic/package candidate gates. #41/#57 and P0 #52 remain OPEN. M7 is reviewing existing Dependabot PR #67 for #70's package-smoke mismatch on the existing branch only.
 - Usage page read at 17:43 UTC: 77% five-hour, 19% weekly, 113 credits; above the 5% pause threshold. PR #24 remains OPEN/Draft and unchanged.
+
+## M0 exact-head delta — 2026-10-22 17:45 UTC
+
+- M9 exact owner-review record is prepared on existing branch `feature/ac3-m9-integration`, commit `c8bf076a5520e2831fb561bf5680351f745de85a`. It pins M1 ACCEPT on Issue #72 comment `6347268881`, asserts the exact M3 PR #33 head and all three reviewed blobs, and emits the owner review in the hosted run summary. `node --check test/m9-cross-module-composition.test.mjs` and `git diff --check` passed locally; hosted exact-head CI is pending this push.
+- Prior M9 head `42c1c8515698a4963b41155b0908462ac833561c` has all product CI, package-smoke, wrapper, and Ubuntu composition checks green; its Windows exact-source composition was still IN_PROGRESS at the last read (17:43 UTC). No final green claim is made for the new review-pinning commit until its run completes.
+- M1 review issue #72 remains OPEN until the new M9 exact-source gate passes. #51 remains OPEN/P1 with M1's repeated-contention disposition; no retry is scheduled.
+- M7 is triaging #70 on existing Dependabot branch `dependabot/npm_and_yarn/hono-4.13.13`; current mismatch is package-manifest verification only, with 8/9 checks passing. No branch modification or push reported yet.
+- The 17:43 quota read was 77% five-hour / 19% weekly / 113 credits; no pause threshold reached. PR #24 remains untouched.
