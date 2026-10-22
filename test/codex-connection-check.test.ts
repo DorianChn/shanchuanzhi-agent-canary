@@ -7,7 +7,7 @@ import {assessCodexConnection,assessProtectedHostProbe} from '../src/codex-conne
 import {createAgentGuard} from '../src/containment.js';
 import {createTrustedExecutionGateway} from '../src/runtime/gateway.js';
 import {EvidenceRecorder} from '../src/runtime/evidence.js';
-import {createProtectedHostAdapter,dispatchProtectedRead} from '../src/codex-connection-mcp.js';
+import {createConnectionCheckRuntime,createProtectedHostAdapter,dispatchProtectedRead} from '../src/codex-connection-mcp.js';
 
 test('confirmed synthetic Hook result has no false non-blocking limit',()=>{
   const result=assessCodexConnection(true,true);
@@ -161,6 +161,59 @@ test('M3 host dependency seam stays UNKNOWN and side-effect free when the truste
     assert.equal(reads,0);
     assert.equal(fs.readFileSync(file,'utf8'),original);
   }finally{
+    const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
+    assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
+    fs.rmSync(realRoot,{recursive:true,force:true});
+  }
+});
+
+test('first-party connection-check runtime passes only its fixed trusted inputs into the M1/M2/M5 seam',async t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-runtime-seam-'));
+  const file=path.join(root,'agent-canary-public.txt');
+  fs.writeFileSync(file,'M3_RUNTIME_FIXTURE',{flag:'wx',mode:0o600});
+  const structuralGateway=Object.freeze({
+    bindFileReadCapability(){return Object.freeze(Object.create(null));},
+    verifyFileReadCapability(){return true;},
+    readFileWithCapability(){throw new Error('structural gateway must not read');},
+  });
+  let gatewayOptions:Record<string,unknown>|undefined;
+  let adapterOptions:Record<string,unknown>|undefined;
+  let defaultGateway:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+  try{
+    const defaultRuntime=await createConnectionCheckRuntime({workspaceRoot:root});
+    defaultGateway=defaultRuntime.gateway;
+    assert.equal(defaultRuntime.protectedHost.status,'UNKNOWN');
+    assert.equal(defaultRuntime.protectedHost.reason,'M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
+    assert.equal(defaultRuntime.protectedHost.m5Callbacks(),0);
+    assert.equal(defaultRuntime.evidence.snapshot().length,0);
+    assert.equal(fs.readFileSync(file,'utf8'),'M3_RUNTIME_FIXTURE');
+    await defaultGateway.close();
+    defaultGateway=undefined;
+
+    const runtime=await createConnectionCheckRuntime({
+      workspaceRoot:root,
+      createGateway:((options:Record<string,unknown>)=>{gatewayOptions=options;return structuralGateway as never;}) as never,
+      loadM2Facade:async()=>({createSecurityGatewayHostAdapter:(options:unknown)=>{
+        adapterOptions=options as Record<string,unknown>;
+        return{dispatch:async()=>{throw new Error('structural adapter must not dispatch');}};
+      }}),
+      createSecurityToolRouter:(()=>{throw new Error('M5 must remain behind the trusted M2 adapter');}) as never,
+    });
+    assert.equal(gatewayOptions?.workspaceRoot,root);
+    assert.deepEqual(gatewayOptions?.files,[{path:'agent-canary-public.txt'}]);
+    assert.equal(adapterOptions?.gateway,structuralGateway);
+    assert.deepEqual(adapterOptions?.fixedFileReads,{protected_read:['agent-canary-public.txt']});
+    const routerOptions=adapterOptions?.routerOptions as Record<string,unknown>;
+    assert.equal(routerOptions.guard,runtime.guard);
+    assert.equal(routerOptions.workspaceRoot,root);
+    assert.equal(routerOptions.mode,'OBSERVE');
+    assert.equal(routerOptions.verifyRealPaths,true);
+    assert.equal(typeof adapterOptions?.createSecurityToolRouter,'function');
+    assert.equal(runtime.protectedHost.status,'UNKNOWN');
+    assert.equal(runtime.protectedHost.reason,'POSITIVE_CONTROL_PENDING');
+    assert.equal(fs.readFileSync(file,'utf8'),'M3_RUNTIME_FIXTURE');
+  }finally{
+    await defaultGateway?.close();
     const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
     assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
     fs.rmSync(realRoot,{recursive:true,force:true});

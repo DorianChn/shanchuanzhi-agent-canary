@@ -37,6 +37,22 @@ export type ProtectedHostDependencies={
   createSecurityToolRouter?:typeof createSecurityToolRouter;
 };
 
+/** Trusted first-party runtime inputs. These are construction-time dependencies,
+ * never request/model data; the fixed probe path and callback set stay owned by M3. */
+export type ConnectionCheckRuntimeDependencies=ProtectedHostDependencies&{
+  workspaceRoot?:string;
+  createGateway?:typeof createTrustedExecutionGateway;
+};
+export type ConnectionCheckRuntime={
+  root:string;
+  guard:ReturnType<typeof createAgentGuard>;
+  evidence:EvidenceRecorder;
+  callbacks:Record<string,()=>Promise<{content:string;sideEffects:number}>>;
+  files:readonly {path:string}[];
+  gateway:ReturnType<typeof createTrustedExecutionGateway>;
+  protectedHost:ProtectedHostAdapter;
+};
+
 /**
  * Compose this first-party onboarding MCP host through M2's public strict facade.
  * M9 may inject the exact M2 package facade and M5 router implementation here;
@@ -128,10 +144,10 @@ function appendTrace(traceFile:string,event:Record<string,unknown>){
   fs.appendFileSync(traceFile,JSON.stringify(event)+'\n',{encoding:'utf8',mode:0o600});
 }
 
-export async function runConnectionCheckMcp(){
-  const traceFile=process.env.AGENT_CANARY_CONNECTION_TRACE;
-  if(!traceFile||!path.isAbsolute(traceFile))throw Error('CONNECTION_CHECK_TRACE_PATH_REQUIRED');
-  const root=process.cwd();
+/** Build the actual first-party connection-check host route from trusted host inputs. */
+export async function createConnectionCheckRuntime(dependencies:ConnectionCheckRuntimeDependencies={}):Promise<ConnectionCheckRuntime>{
+  const root=dependencies.workspaceRoot??process.cwd();
+  if(!path.isAbsolute(root))throw Error('CONNECTION_CHECK_WORKSPACE_ROOT_INVALID');
   const guard=createAgentGuard({sessionId:'codex-onboarding-connection-check',alert:false});
   const evidence=new EvidenceRecorder();
   const callbacks={
@@ -139,13 +155,21 @@ export async function runConnectionCheckMcp(){
     hook_probe:async()=>({content:'AGENT_CANARY_HOOK_WAS_NOT_EFFECTIVE',sideEffects:0}),
   };
   const files=fs.existsSync(path.join(root,protectedRelativePath))?[{path:protectedRelativePath}]:[];
-  const gateway=createTrustedExecutionGateway({
+  const gatewayFactory=dependencies.createGateway??createTrustedExecutionGateway;
+  const gateway=gatewayFactory({
     agentId:'codex-onboarding-check',guard,workspaceRoot:root,files,evidence,
     mcpTools:Object.fromEntries(Object.entries(callbacks).map(([name,execute])=>[name,{risk:'READ_ONLY' as const,approvalRequired:false,execute:async()=>execute()}])),
   });
   const protectedHost=files.length===1
-    ?await createProtectedHostAdapter(gateway,guard,root)
+    ?await createProtectedHostAdapter(gateway,guard,root,dependencies)
     :{status:'UNKNOWN' as const,reason:'FIXED_PROBE_FILE_UNAVAILABLE',m5Callbacks:()=>0};
+  return{root,guard,evidence,callbacks,files,gateway,protectedHost};
+}
+
+export async function runConnectionCheckMcp(dependencies:ConnectionCheckRuntimeDependencies={}){
+  const traceFile=process.env.AGENT_CANARY_CONNECTION_TRACE;
+  if(!traceFile||!path.isAbsolute(traceFile))throw Error('CONNECTION_CHECK_TRACE_PATH_REQUIRED');
+  const {root,guard,evidence,callbacks,gateway,protectedHost}=await createConnectionCheckRuntime(dependencies);
   const server=new Server({name:'agent-canary-gateway-connection-check',version:'3.0.0'},{capabilities:{tools:{}}});
   const tools=[...Object.keys(callbacks).map(name=>({
     name,description:name==='public_read'?'Return a fixed local onboarding check marker. Does not access user data.':'Return a fixed Hook validation marker. Does not access user data.',
