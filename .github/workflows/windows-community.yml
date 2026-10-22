@@ -225,6 +225,7 @@ jobs:
           $harnessArtifactPath = Join-Path $extractedHookRoot 'e4-hook-faults.mjs'
           Copy-Item -LiteralPath $extractedHookPath -Destination $hookArtifactPath
           Copy-Item -LiteralPath $extractedHarnessPath -Destination $harnessArtifactPath
+          Copy-Item -LiteralPath 'packaging/windows/installer-lifecycle-smoke.ps1' -Destination (Join-Path $artifactRoot 'installer-lifecycle-smoke.ps1')
 
           $payloadNodeExe = $extractedNodePath
           $rawCanaryOutputPath = Join-Path $workRoot 'canary-raw-output.json'
@@ -291,6 +292,8 @@ jobs:
               extraction = 'PASS'
             }
             packageVersion = [string]$buildResult.version.desktopVersion
+            candidateId = [string]$buildResult.version.candidateId
+            launcherSHA256 = [string]$buildResult.launcherSHA256
             installerSHA256 = $installerSha256
             installerBytes = [long]$buildResult.installerBytes
             payloadManifestSHA256 = $payloadManifestSha256
@@ -310,7 +313,7 @@ jobs:
           }
           $reportPath = Join-Path $artifactRoot 'BUILD_REPORT.json'
           [System.IO.File]::WriteAllText($reportPath, (($report | ConvertTo-Json -Depth 5) + "`n"), $utf8NoBom)
-          $artifactPaths = @('AgentCanary-Community-Setup.exe', 'BUILD_REPORT.json', 'PAYLOAD_MANIFEST.json', 'CANARY_RESULT.json', 'extracted-hook/claude-native-hook.mjs', 'extracted-hook/e4-hook-faults.mjs')
+          $artifactPaths = @('AgentCanary-Community-Setup.exe', 'BUILD_REPORT.json', 'PAYLOAD_MANIFEST.json', 'CANARY_RESULT.json', 'extracted-hook/claude-native-hook.mjs', 'extracted-hook/e4-hook-faults.mjs', 'installer-lifecycle-smoke.ps1')
           $checksums = foreach ($relativePath in $artifactPaths) {
             $absolutePath = Join-Path $artifactRoot ($relativePath.Replace('/', '\'))
             $digest = (Get-FileHash -LiteralPath $absolutePath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -325,6 +328,40 @@ jobs:
           name: windows-community-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/agent-canary-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
           if-no-files-found: error
+          retention-days: 7
+
+  windows-community-installer-lifecycle:
+    needs: windows-community-build-evidence
+    runs-on: windows-latest
+    permissions: {}
+    timeout-minutes: 15
+    env:
+      AGENT_CANARY_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      LIFECYCLE_ARTIFACT_ROOT: ${{ runner.temp }}/agent-canary-lifecycle-input-${{ github.event.pull_request.head.sha || github.sha }}
+      LIFECYCLE_REPORT_PATH: ${{ runner.temp }}/agent-canary-lifecycle-result/INSTALLER_LIFECYCLE_RESULT.json
+    steps:
+      - name: Download exact package from this workflow run
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: windows-community-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/agent-canary-lifecycle-input-${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Install, verify, and uninstall exact candidate in disposable runner
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          'GITHUB_TOKEN', 'ACTIONS_RUNTIME_TOKEN', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN', 'ACTIONS_ID_TOKEN_REQUEST_URL' | ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+          New-Item -ItemType Directory -Path (Split-Path -Parent $env:LIFECYCLE_REPORT_PATH) -Force | Out-Null
+          & "$env:LIFECYCLE_ARTIFACT_ROOT/installer-lifecycle-smoke.ps1" `
+            -ArtifactRoot $env:LIFECYCLE_ARTIFACT_ROOT `
+            -ExpectedSourceSHA $env:AGENT_CANARY_SOURCE_SHA `
+            -EvidencePath $env:LIFECYCLE_REPORT_PATH
+      - name: Upload bounded installer lifecycle result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-community-installer-lifecycle-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/agent-canary-lifecycle-result/INSTALLER_LIFECYCLE_RESULT.json
+          if-no-files-found: warn
           retention-days: 7
 
 # Building and GUI acceptance are separate evidence, not inferred from these tests.

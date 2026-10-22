@@ -83,6 +83,30 @@ test('Windows community workflow installs and compiles with NSIS only on Windows
   assert.ok(workflow.indexOf('run: node scripts/verify-installer-template.mjs')<workflow.indexOf('- run: npm ci --no-audit --no-fund'),'compiler evidence should run before unrelated tests can fail-fast the Windows job');
   assert.ok(workflow.includes('fail-fast: false'),'all OS matrix results should finish after one platform fails');
 });
+test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited to install/uninstall',()=>{
+  const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const lifecycleJob=workflow.slice(workflow.indexOf('  windows-community-installer-lifecycle:'));
+  const buildJob=workflow.slice(workflow.indexOf('  windows-community-build-evidence:'),workflow.indexOf('  windows-community-installer-lifecycle:'));
+  const smoke=fs.readFileSync(new URL('../packaging/windows/installer-lifecycle-smoke.ps1',import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  assert.ok(lifecycleJob.includes('needs: windows-community-build-evidence'),'lifecycle must consume the package from this workflow run');
+  assert.ok(lifecycleJob.includes('runs-on: windows-latest'),'lifecycle must run on a fresh hosted Windows VM');
+  assert.ok(lifecycleJob.includes('permissions: {}'),'untrusted package execution must have no repository permissions');
+  assert.ok(lifecycleJob.includes('actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c'),'artifact download must be SHA pinned');
+  assert.doesNotMatch(lifecycleJob,/actions\/checkout/,'the lifecycle job must not check out source');
+  assert.ok(buildJob.includes('installer-lifecycle-smoke.ps1'),'the verifier must come from the exact build source artifact');
+  assert.ok(buildJob.includes('candidateId = [string]$buildResult.version.candidateId'),'build evidence must bind installer identity');
+  assert.ok(buildJob.includes('launcherSHA256 = [string]$buildResult.launcherSHA256'),'build evidence must bind the launcher identity');
+  assert.ok(buildJob.includes("'installer-lifecycle-smoke.ps1'"),'the verifier itself must be checksum-covered');
+  assert.ok(smoke.includes("$env:RUNNER_ENVIRONMENT -eq 'github-hosted'"),'local and self-hosted execution must fail closed');
+  assert.ok(smoke.includes('BUILD_REPORT_SOURCE_SHA_MISMATCH'),'the report source SHA must match the expected workflow SHA');
+  assert.ok(smoke.includes('BUILD_REPORT_INSTALLER_SHA256_MISMATCH'),'the setup hash must match the exact build report');
+  assert.ok(smoke.includes('SHA256SUMS_INSTALLER_MISMATCH'),'the setup hash must match SHA256SUMS');
+  assert.ok(smoke.includes('INSTALLED_LAUNCHER_SHA256_MISMATCH'),'the installed launcher must match the build report');
+  assert.ok(smoke.includes('"/S /D=$installRoot"'),'install must be silent and confined to the runner temp directory');
+  assert.ok(smoke.includes('"/S _?=$installRoot"'),'uninstall must be silent and bound to the exact target');
+  assert.ok(smoke.includes('UNKNOWN_FILE_NOT_PRESERVED'),'uninstall must preserve an unknown-file sentinel');
+  assert.ok(smoke.includes("cancelRollback = 'NOT_TESTED'")&&smoke.includes("efs = 'NOT_TESTED'"),'the result must retain explicit non-claims');
+});
 test('atomic replacement preserves the old file when a disk-full write fails',()=>{
   const root=makeCanonicalTempRoot('agent-canary-atomic-write-');
   const target=path.join(root,'latest.json');
