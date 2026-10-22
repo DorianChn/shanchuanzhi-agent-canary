@@ -6441,3 +6441,12 @@ M6 PR #38 advanced fast-forward from `98803607b89f11e24430c461bd91e9c1a0ece9d4` 
 M5 PR #47 is OPEN/Draft at pushed head `6c16a08c6db26e548dcf63cb845f00ceb5a576ad`; its exact CI run `39800669809` succeeded. The `inspectPolicy` regression passed locally 39/39. Issue #69 remains OPEN until M2's pinned workflow change receives exact PR CI. M1/M2/M5 first-party composition gate #52 remains OPEN / NOT_VERIFIED. M9 exact pins must be rerun when M6/M7/M8 owner acceptance is final.
 
 Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains open. PR #24 was re-read OPEN/Draft at unchanged base `competition/shanchuanzhi-release-readiness` / head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. No merge or Release.
+
+## M0 exact-head follow-up — 2026-10-22 15:22 UTC
+
+- M2 PR #37 head `868b12a4688282c28091b731f6548d5535c0c37c`: exact CI run `39803623574` passed all 9 jobs, including the pinned M7 package-smoke. Issue #69 stays OPEN until exact M9 composition is validated.
+- M6 PR #38 head `2cebabc81d7908c04ddfa10378fa1d3427b92cf4`: exact CI `39803635193` passed 9/9 and Windows wrapper `39803634879` passed. The targeted author regression passed 20 / 0 failed / 1 skipped; external E4 and independent installation remain unverified.
+- M7 PR #39 head `167ebe81b76cc434facdaa3ddc62b42b9843951a`: exact CI `39802355230` passed 9/9 and Windows wrapper `39802355210` passed 2/2.
+- M8 local docs-only commit `35ab804d9729590a572c01d16391e63472992622` points its E4 index at the exact M6 source/test blobs. It is not yet pushed; PR #40 remote remains `38bee88539d4ebc0e3584e103d0203c669b487e9`. That exact head's first CI attempt failed only in the M1-owned quarantine concurrency test (328 pass / 1 fail / 4 skipped, `RETRY_LIMIT`); rerun passed Ubuntu Node 22 but fail-fast cancelled sibling jobs and package-smoke. Wrapper jobs passed 2/2. No full M8 CI pass is claimed.
+- M1 is still triaging Issue #51; the underlying lock contention trigger is not yet confirmed. No retry/assertion weakening or test deletion is accepted.
+- Push batching is now at least five minutes apart; the next batch is due no earlier than 15:23 UTC. Usage at 15:22 UTC: 77% five-hour, 19% weekly, 113 credits. PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `competition/shanchuanzhi-release-readiness`; no merge or Release.
