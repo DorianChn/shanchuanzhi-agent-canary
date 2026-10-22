@@ -7087,3 +7087,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M0 PR #30 head 713ba6f7a91de389bd3ab5fe651fcb0ae4521b83 is now exact CI green: product run 39866499759 completed 9/9 and coordination run 39866623192 completed 1/1.
 - M2 PR #37 head 67428139e53c3f63a1101b4f94e84b291cbb1196 is exact CI green: run 39866513817 completed 9/9, including Windows Node 20/22 and package smoke.
 - The 22:41 section's "in progress" state is superseded by this terminal job readback. PR #24 remains untouched; no merge or Release.
+
+## M0 five-minute publication readback — 2026-10-22 22:44 UTC
+
+- After the 22:43 UTC preflight, PR #47/M5 was pushed to 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed; exact CI run 39867073839 is in progress. PR #40/M8 was pushed to 35aa22f3087ed1859da19acbf12cc4c767dd4f3d; CI 39867080161 and Windows Community wrapper 39867080178 are in progress.
+- The two pending M0 report commits were pushed to PR #30 head 0f197f51df4de071c62d94a48a0e62619caddd62; product CI 39867084564 is queued and coordination run 39867084565 is in progress. All three PRs remain OPEN/Draft on the same candidate base.
+- Readback confirms M2 PR #37 remains at 67428139e53c3f63a1101b4f94e84b291cbb1196 with exact CI green 9/9. M1 owner review of M5's path-alias candidate and M9 scratch composition against the updated module candidates are in progress.
+- Issue #52 stays OPEN/P0: M5's before/after policy-level result is relevant but does not establish M1 held-identity use or real-host callback identity. Do not close until independent M1 review, hosted exact CI, and exact-source composition are recorded.
+- The 22:43 UTC usage preflight showed 91% five-hour remaining; PR #24 remained OPEN/Draft at its fixed head/base. Next remote write is no earlier than 22:48 UTC after a fresh preflight; no merge, Release, or change to PR #24.

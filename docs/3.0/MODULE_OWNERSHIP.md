@@ -725,3 +725,14 @@ All listed module PRs are OPEN/Draft and target PR #24 head `62496d4020bd90ba2ee
 | M8 / #40 | 5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d | 35aa22f3087ed1859da19acbf12cc4c767dd4f3d | Local evidence-index correction; hosted exact CI pending. Issue #53 closed only for its narrow acceptance scope. |
 
 The remaining M1, M4, M6, M7, and M9 public heads remain those in the 22:30 UTC snapshot above. M5/M8 local commits are owner work on their existing branches and have not been published as of this delta. No M0 action modifies module-owned product files.
+
+## Published candidate delta — 2026-10-22 22:44 UTC
+
+| Module | Public PR head | Exact checks |
+|---|---|---|
+| M0 / #30 | 0f197f51df4de071c62d94a48a0e62619caddd62 | product CI queued; coordination in progress |
+| M2 / #37 | 67428139e53c3f63a1101b4f94e84b291cbb1196 | exact CI 9/9 success |
+| M5 / #47 | 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed | exact CI in progress; P0 issue #52 remains open |
+| M8 / #40 | 35aa22f3087ed1859da19acbf12cc4c767dd4f3d | exact CI and Windows wrapper in progress |
+
+M1, M3, M4, M6, M7, and M9 public heads are unchanged from the 22:30 snapshot. M1 is reviewing the M5-owned candidate without transferring M5 file ownership. M9 scratch composition is being prepared against candidate refs; it must not promote them to integration pins before their exact hosted checks finish.
