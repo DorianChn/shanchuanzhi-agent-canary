@@ -10,7 +10,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 | M4 desktop security center | #34 | `0a1fc1393c2ae837e7cecbb59e9c935380fa4930` (current PR head; docs-only checkpoint on the previously green source) | Existing build, `runtime-console` regressions and exact-source adapter redaction check remain at prior source; new report records first-party host blocker; no runtime behavior changed |
 | M5 policy | #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | Exact CI run `39867073839` passed 9/9; risk-policy source and regression changes verify deterministic DENY skips optional review, approval and execution callbacks |
 | M6 E4 | #38 | `15e1663eac9c3932165fca9b39587115345f289c` (current PR head; exact CI 9/9 and wrapper 2/2 green) | ZIP parsing uses the bytes whose digest was verified; bundle verifier and Auto E4 lifecycle regressions |
-| M7 reliability | #39 | `28aa87378a1682b0dca6b28178955ad5a7fc6e84` (local owner fix; hosted rerun pending) | Fixes the PowerShell Boolean binding that stopped the prior lifecycle run before installer execution; prior green `4f986cc` checks are historical; Issue #41 remains OPEN/HOLD |
+| M7 reliability | #39 | `28aa87378a1682b0dca6b28178955ad5a7fc6e84` (current PR head; exact CI and Windows Community reruns in progress) | Fixes the PowerShell Boolean binding that stopped the prior lifecycle run before installer execution; prior green `4f986cc` checks are historical; Issue #41 remains OPEN/HOLD pending a PASS artifact |
 | M8 open-source product | #40 | `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` | Exact CI run `39867080161` passed 9/9 and wrapper `39867080178` passed 2/2; docs-only delta from the prior pin; Hook provenance, LF checkout and sanitized JSONL regressions |
 
 ## Owner-review boundaries
@@ -41,8 +41,14 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 ## M7 lifecycle failure and follow-up — 2026-10-22 23:31 UTC
 
 - Windows Community run `39871737372` parsed and all wrapper/build-artifact jobs passed, but lifecycle job `120148781596` failed before executing the installer. Artifact `windows-community-installer-lifecycle-15aaeb369f843414ffd0fa1c733c461e698ea07b` reports `installerExecuted=false`, `installerSHA256=null`, and a PowerShell Boolean parameter conversion failure. No installation or uninstall was performed in this run; Issue #41 remains OPEN / P1 / HOLD.
-- M7 owner fixed the cause in local commit `28aa87378a1682b0dca6b28178955ad5a7fc6e84`: validate `RUNNER_TEMP` with an explicit non-empty string predicate, and add a regression. Focused Node test, PowerShell AST, Boolean-binding smoke with a real path string, and `git diff --check` passed locally. The fix is not yet published; exact-head hosted CI and lifecycle rerun remain pending.
-- M9 workflow and test pins now target M4 `0a1fc1393c2ae837e7cecbb59e9c935380fa4930` and M7 `28aa87378a1682b0dca6b28178955ad5a7fc6e84`. The refreshed exact-source composition passed locally 11/11 on Windows after packing and installing the M2 candidate tarball; exact hosted M9 checks remain pending.
+- M7 owner fixed the cause in commit `28aa87378a1682b0dca6b28178955ad5a7fc6e84`: validate `RUNNER_TEMP` with an explicit non-empty string predicate, and add a regression. Focused Node test, PowerShell AST, Boolean-binding smoke with a real path string, and `git diff --check` passed locally. The fix is pushed; exact-head hosted CI and lifecycle rerun are in progress.
+- M9 workflow and test pins now target M4 `0a1fc1393c2ae837e7cecbb59e9c935380fa4930` and M7 `28aa87378a1682b0dca6b28178955ad5a7fc6e84`. The refreshed exact-source composition passed locally 11/11 on Windows after packing and installing the M2 candidate tarball; exact hosted M9 checks are in progress.
+
+## Publication and hosted verification — 2026-10-22 23:32 UTC
+
+- M7 PR #39 exact head `28aa87378a1682b0dca6b28178955ad5a7fc6e84` triggered CI run `39872617730` and Windows Community wrapper run `39872617770`; both are currently in progress. The earlier run `39871737372` remains a failure before installer execution, so Issue #41 stays OPEN / P1 / HOLD until the new artifact is checked.
+- M9 PR #36 exact head `92b987eee16e1a0e3467b74fa2f14158a96bd951` triggers exact-source composition run `39872622190`, product CI `39872622179`, and Windows Community wrapper `39872622221`; all are currently in progress. Its local exact-source composition at the pinned M4/M7 refs passed 11/11.
+- Issue #41 comment `6353684141` records the prior lifecycle failure and M7 fix. PR #24 remains untouched; no merge or Release was performed.
 
 ## Evidence limits
 
