@@ -67,3 +67,9 @@ At the prior M2 source pin `099ad64e4a09330920cbd40847adec3fe631e91e`, with exac
 The prior M5 pin `c900323` preserved deterministic hard DENY behavior without invoking optional `reviewDecision`. The current candidate `12b2499` changes the policy source and its regression; exact hosted CI passed 9/9 and the refreshed M9 composition passed 11/11. No exact owner-approval claim is made for this candidate. These results do not change the M3/M1 product-host evidence limit.
 
 The M6 source-checkout E4 tests do not prove a built installer, clean-VM lifecycle, real-model execution or independent external E4 validation.
+
+## Hosted exact-source readback — 2026-10-22 23:41 UTC
+
+- Public M9 PR #36 head `92b987eee16e1a0e3467b74fa2f14158a96bd951` completed all three checks: composition run `39872622190` passed on Ubuntu and Windows, product CI `39872622179` passed, and Windows Community wrapper `39872622221` passed.
+- The exact-source pins include M4 `0a1fc1393c2ae837e7cecbb59e9c935380fa4930` and M7 `28aa87378a1682b0dca6b28178955ad5a7fc6e84`. This hosted composition verifies the synthetic fixture/source boundary only. It does not prove live product-host adoption, held-file identity in the production callback, or OS-atomic/concurrent TOCTOU safety; Issue #52 remains OPEN/P0/NOT_VERIFIED.
+- M7's exact CI passed (`39872617730`), but its Windows Community run (`39872617770`) hit a 10-second SourceForge NSIS download timeout before artifact creation; the lifecycle job was skipped. Issue #41 remains OPEN/P1/HOLD. A one-time full rerun is scheduled so the dependent installer lifecycle job can run if its build succeeds.
