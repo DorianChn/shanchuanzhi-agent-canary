@@ -61,12 +61,23 @@ test('co-located E4 payload wrapper logs only allowlisted metadata',async()=>{
   const {runHookFaultChecks:runPackagedHookFaultChecks}=await import(pathToFileURL(packagedFaults).href);
   const result=runPackagedHookFaultChecks({appRoot:path.join(repo,'dist'),fixturesRoot:payload});
   assert.equal(result.status,'PASS');
+  assert.equal(result.positiveControl.logContractSatisfied,true);
   assert.equal(result.positiveControl.logAudit.status,'PASS');
   assert.equal(result.positiveControl.logAudit.records,1);
   assert.equal(result.logAudit.status,'PASS');
   assert.equal(result.logAudit.records,1);
   assert.equal(result.logAudit.callerInputCanaryAbsent,true);
   assert.ok(result.faultCases.every(x=>x.logAudit.status==='PASS'));
+  const controlLines=fs.readFileSync(path.join(result.root,'positive-control.jsonl'),'utf8').trim().split(/\r?\n/);
+  assert.equal(controlLines.length,1);
+  const controlRecord=JSON.parse(controlLines[0]);
+  assert.deepEqual(Object.keys(controlRecord).sort(),['hookEventName','permissionDecision','timestamp']);
+  assert.equal(controlRecord.hookEventName,'PreToolUse');
+  assert.equal(controlRecord.permissionDecision,'allow');
+  assert.equal(new Date(controlRecord.timestamp).toISOString(),controlRecord.timestamp);
+  for(const marker of ['SYNTHETIC_E4_HOOK_ARGUMENT_MARKER','SYNTHETIC_E4_HOOK_REASON_MARKER','C:/synthetic/caller/private.txt','M8_SYNTHETIC_INPUT_CANARY_NOT_SECRET','M8_SYNTHETIC_REASON_CANARY_NOT_SECRET','write victim']){
+    assert.equal(controlLines[0].includes(marker),false,`packaged decision log leaked ${marker}`);
+  }
 });
 
 test('Auto E4 rejects invalid stage status rather than treating it as PASS',async()=>{
