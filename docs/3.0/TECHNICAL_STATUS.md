@@ -6848,3 +6848,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M0 PR #30 exact head `cccee50e968ece7e0f8c39017be285653dffacc2` has all 10 listed checks passing, including Ubuntu Node 20 and package smoke, in runs `39848575286` and `39848575010`. The commit only changes M0 coordination documentation; it does not change the store or fixed-500×2 ms quarantine fixture.
 - The parent head `fd70beff74074953e109dd0b25ab84957ff51be1` failed the same Ubuntu Node 20 test in run `39847779407`. Treat this newer green run as a non-reproduction, not a fix or root-cause explanation; keep #51 OPEN/P1 and the underlying trigger UNKNOWN. This supersedes the earlier “current PR #30 is failing” status for the exact current head, while preserving the historical failure.
 - Issue #51 readback is comment `6350601802`.
+## M0 Issue #52 exact-source integration checkpoint — 2026-10-22 20:29 UTC
+
+- Current exact source heads for M1–M8 and M9 remain pinned on M9 PR #36 head `0932e63f89b08f6adff4b918904137110bf138ad`; its exact-source Ubuntu/Windows composition and full 13/13 CI passed. Each current module PR's required checks were read back green.
+- Issue #52 received current ref/acceptance readback in comment `6350582877`: the first-party M4 OBSERVE file-read callsite consuming M1's bound held identity and OS-atomic replacement proof remain absent; product status stays NOT_VERIFIED / P0. No real secret access is claimed.
+- M4 is documenting its owned call path and exact consumer blocker on existing PR #34. M3 is now implementing the M3-owned host route against current M1/M2/M5 contracts where possible, with no shared API edits and no path-only fallback. Exact issue status remains open pending first-party evidence.
