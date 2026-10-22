@@ -62,12 +62,25 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
 
   if(!host.dispatch){
     assert.equal(host.status,'UNKNOWN');
+    assert.equal(host.securityCenterStatusProvider,undefined,'M3 must not expose a status provider without the M1/M2 capability composition');
     assert.ok(['M1_HELD_FILE_CAPABILITY_UNAVAILABLE','M2_PUBLIC_ADAPTER_UNAVAILABLE','M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE'].includes(host.reason));
     assert.equal(host.m5Callbacks(),0);
     assert.equal(gateway.evidence().length,0);
     assert.equal(fs.readFileSync(file,'utf8'),marker);
     return;
   }
+
+  const statusProvider=host.securityCenterStatusProvider;
+  assert.equal(typeof statusProvider,'function','the first-party M3 host must expose M2 live status to the Security Center route');
+  if(typeof statusProvider!=='function')throw new Error('M3_SECURITY_CENTER_STATUS_PROVIDER_UNAVAILABLE');
+  const statusEvidenceBefore=gateway.evidence().length;
+  const liveStatus=await statusProvider() as any;
+  assert.equal(liveStatus.gateway?.protectionStatus,'PROTECTED');
+  assert.equal(liveStatus.gateway?.connectionStatus,'CONNECTED');
+  assert.equal(liveStatus.policy?.protectionStatus,'PROTECTED');
+  assert.equal(liveStatus.coverage,'M2_FIXED_FILE_READS_ONLY');
+  assert.equal(gateway.evidence().length,statusEvidenceBefore,'status inspection must not dispatch a read or write evidence');
+  assert.equal(host.m5Callbacks(),0,'status inspection must not enter M5 execution');
 
   const beforeProbeEvidence=gateway.evidence().length;
   const safeRead=await dispatchProtectedRead(host,{path:'agent-canary-public.txt'});

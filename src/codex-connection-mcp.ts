@@ -18,6 +18,8 @@ export type ProtectedHostAdapter = {
   status:'UNKNOWN';
   reason:string;
   dispatch?:(call:{name:string;args:unknown})=>Promise<unknown>;
+  /** Live M2 capability and M5 OBSERVE status for the real bound Gateway. */
+  securityCenterStatusProvider?:()=>unknown|Promise<unknown>;
   m5Callbacks:()=>number;
 };
 export type ProtectedProbeOutcome={status:'ALLOW'|'DENY'|'UNKNOWN';reason:string;markerMatched:boolean};
@@ -75,7 +77,16 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
       createSecurityToolRouter:observedM5Factory,
       routerOptions:{guard,workspaceRoot,mode:'OBSERVE',verifyRealPaths:true},
     });
-    return{status:'UNKNOWN',reason:'POSITIVE_CONTROL_PENDING',dispatch:call=>host.dispatch(call as never),m5Callbacks:()=>m5CallbackCount};
+    const statusDescriptor=Object.getOwnPropertyDescriptor(host,'securityCenterStatusProvider');
+    const securityCenterStatusProvider=statusDescriptor&&Object.hasOwn(statusDescriptor,'value')&&typeof statusDescriptor.value==='function'
+      ?statusDescriptor.value as ()=>unknown|Promise<unknown>
+      :undefined;
+    return{
+      status:'UNKNOWN',reason:'POSITIVE_CONTROL_PENDING',
+      dispatch:call=>host.dispatch(call as never),
+      securityCenterStatusProvider,
+      m5Callbacks:()=>m5CallbackCount,
+    };
   }catch(error){
     const code=error instanceof Error?error.message:'';
     const reason=code==='M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE'||code==='M2_SECURITY_GATEWAY_HANDLE_INVALID'
