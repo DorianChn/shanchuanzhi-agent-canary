@@ -32,6 +32,7 @@ function setup(overrides = {}, { beforeFinalCapabilityCheck } = {}) {
   let callbackCalls = 0;
   let approvalCalls = 0;
   let policyInspectionCalls = 0;
+  let routerDispatchCalls = 0;
   const createSecurityToolRouter = (options) => {
     routerOptions = options;
     const executeRealTool = options.executeRealTool;
@@ -44,6 +45,7 @@ function setup(overrides = {}, { beforeFinalCapabilityCheck } = {}) {
         return { action: allowed ? "ALLOW" : "DENY", mode: options.mode };
       },
       async dispatch(call) {
+        routerDispatchCalls += 1;
         const provider = options.fileReadCapability;
         const decision = this.inspectPolicy(call);
         if (decision.action !== "ALLOW") {
@@ -94,6 +96,7 @@ function setup(overrides = {}, { beforeFinalCapabilityCheck } = {}) {
     callbackCalls: () => callbackCalls,
     approvalCalls: () => approvalCalls,
     policyInspectionCalls: () => policyInspectionCalls,
+    routerDispatchCalls: () => routerDispatchCalls,
     readFixtureBytes: () => Buffer.from(fixtureBytes),
     replaceRegisteredResource() {
       resourceCurrent = false;
@@ -144,16 +147,16 @@ test("host composition passes the exact M1 capability through M5 and keeps alias
   assert.equal(host.pendingApprovals().length, 0);
 
   await assert.rejects(
-    host.dispatch({ name: "read_public", args: { path: "public/linked/readable.txt" } }),
-    (error) => error.message === "path_execution_not_pinned",
+    () => host.dispatch({ name: "read_public", args: { path: "public/linked/readable.txt" } }),
+    (error) => error.message === "M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED",
   );
   assert.equal(callbackCalls(), 1);
   assert.equal(gatewayCalls.length, 1);
   assert.equal(host.pendingApprovals().length, 0);
 
   await assert.rejects(
-    host.dispatch({ name: "read_public", args: { path: "public/sensitive-alias/credentials.txt" } }),
-    (error) => error.message === "path_execution_not_pinned",
+    () => host.dispatch({ name: "read_public", args: { path: "public/sensitive-alias/credentials.txt" } }),
+    (error) => error.message === "M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED",
   );
   assert.equal(callbackCalls(), 1, "sensitive aliases must be denied before the callback");
   assert.equal(approvalCalls(), 0, "hard-denied aliases must not request approval");
@@ -224,4 +227,31 @@ test("host composition rejects caller-supplied callback or tool overrides", () =
       (error) => error.message === "M2_SECURITY_GATEWAY_HOST_ROUTER_CALLBACKS_RESERVED",
     );
   }
+});
+
+test("OBSERVE host adapter checks fixed M1 capability before policy dispatch", async () => {
+  const composition = setup();
+  const call = { name: "read_public", args: { path: "public/readable.txt" } };
+
+  await assert.rejects(
+    () => composition.host.dispatch({ name: "read_public", args: { path: "public/linked/readable.txt" } }),
+    (error) => error.message === "M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED",
+  );
+  assert.equal(composition.routerDispatchCalls(), 0);
+  assert.equal(composition.policyInspectionCalls(), 0);
+  assert.equal(composition.callbackCalls(), 0);
+  assert.equal(composition.approvalCalls(), 0);
+  assert.equal(composition.gatewayCalls.length, 0);
+
+  composition.replaceRegisteredResource();
+  await assert.rejects(
+    () => composition.host.dispatch(call),
+    (error) => error.message === "M2_SECURITY_GATEWAY_CAPABILITY_INVALID",
+  );
+  assert.equal(composition.routerDispatchCalls(), 0, "a stale owner binding is denied before OBSERVE policy dispatch");
+  assert.equal(composition.policyInspectionCalls(), 0);
+  assert.equal(composition.callbackCalls(), 0);
+  assert.equal(composition.approvalCalls(), 0);
+  assert.equal(composition.gatewayCalls.length, 0, "stale identity cannot reach M1 read");
+  assert.deepEqual(composition.readFixtureBytes(), Buffer.from("synthetic fixed read"));
 });

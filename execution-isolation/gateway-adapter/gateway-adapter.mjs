@@ -6,6 +6,7 @@ const contextKeys = new Set(["signal", "fileReadCapability"]);
 const callKeys = new Set(["name", "args", "traceId"]);
 const argsKeys = new Set(["path"]);
 const fixedReadBindingsByAdapter = new WeakMap();
+const fixedReadPreflightByAdapter = new WeakMap();
 
 function isPlainRecord(value) {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -238,11 +239,10 @@ function createSecurityGatewayAdapter(gateway, fixedFileReads) {
       throw abortError();
     }
 
-    const capability = contextValues.get("fileReadCapability");
+    const suppliedCapability = contextValues.get("fileReadCapability");
     if (
-      capability === undefined ||
-      capability !== bound.capability ||
-      !fileReadCapability.verify(capability, bound.call, "file-read")
+      (suppliedCapability !== undefined && suppliedCapability !== bound.capability) ||
+      !fileReadCapability.verify(bound.capability, bound.call, "file-read")
     ) {
       throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_INVALID");
     }
@@ -250,12 +250,19 @@ function createSecurityGatewayAdapter(gateway, fixedFileReads) {
     return Reflect.apply(
       gatewayMethods.get("readFileWithCapability"),
       gateway,
-      [capability, bound.call, "file-read", signal],
+      [bound.capability, bound.call, "file-read", signal],
     );
   };
 
   const adapter = Object.freeze({ tools, executeRealTool, fileReadCapability });
   fixedReadBindingsByAdapter.set(adapter, fixedReadBindings);
+  fixedReadPreflightByAdapter.set(adapter, (call) => {
+    const bound = parseBoundCall(call);
+    if (!fileReadCapability.verify(bound.capability, bound.call, "file-read")) {
+      throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_INVALID");
+    }
+    return bound.call;
+  });
   return adapter;
 }
 
@@ -310,6 +317,7 @@ export function createSecurityGatewayHostAdapter(options) {
     inputValues.get("fixedFileReads"),
   );
   const fixedReadBindings = fixedReadBindingsByAdapter.get(adapter);
+  const preflight = fixedReadPreflightByAdapter.get(adapter);
   const wiredRouterOptions = Object.create(null);
   for (const [key, value] of routerOptionEntries) {
     wiredRouterOptions[key] = value;
@@ -406,8 +414,11 @@ export function createSecurityGatewayHostAdapter(options) {
   }
 
   return Object.freeze({
-    dispatch(call) {
-      return Reflect.apply(dispatch, router, [call]);
+    async dispatch(call) {
+      // Reject unregistered paths and stale M1 held identities before entering
+      // the policy router. OBSERVE cannot turn these adapter capability failures
+      // into a callback or an approval request.
+      return Reflect.apply(dispatch, router, [preflight(call)]);
     },
     pendingApprovals() {
       return Reflect.apply(pendingApprovals, router, []);

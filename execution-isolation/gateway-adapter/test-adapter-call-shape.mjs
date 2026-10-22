@@ -134,17 +134,15 @@ test("an aborted signal fails closed before M1 dispatch", async () => {
   assert.equal(calls.length, 0);
 });
 
-test("missing, substituted, and stale M1 capabilities fail before any read", async () => {
+test("M2 resolves the fixed owner capability when OBSERVE omits context; substituted and stale capabilities fail", async () => {
   let current = true;
   const { adapter, calls } = setup({ isCurrent: () => current });
   const call = { name: "read_public", args: { path: "public/readable.txt" } };
   const capability = adapter.fileReadCapability.resolve(call);
   const signal = new AbortController().signal;
 
-  await assert.rejects(
-    adapter.executeRealTool(call, { signal }),
-    (error) => error.message === "M2_SECURITY_GATEWAY_CAPABILITY_INVALID",
-  );
+  assert.deepEqual(await adapter.executeRealTool(call, { signal }), { content: "synthetic public fixture" });
+  assert.equal(calls.length, 1, "the actual policy-router context need not carry a private capability");
   await assert.rejects(
     adapter.executeRealTool(call, { signal, fileReadCapability: Object.freeze(Object.create(null)) }),
     (error) => error.message === "M2_SECURITY_GATEWAY_CAPABILITY_INVALID",
@@ -155,7 +153,7 @@ test("missing, substituted, and stale M1 capabilities fail before any read", asy
     adapter.executeRealTool(call, { signal, fileReadCapability: capability }),
     (error) => error.message === "M2_SECURITY_GATEWAY_CAPABILITY_INVALID",
   );
-  assert.equal(calls.length, 0);
+  assert.equal(calls.length, 1, "substitution and stale identity do not add a read");
 });
 
 test("synthetic M1 held-identity check denies a target replacement after M2 path validation", async () => {
