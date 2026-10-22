@@ -713,3 +713,15 @@ No module source ownership changed. M4/M7 remain isolated in the Windows-E4 Git 
 | M9 | Cross-module source pins, contracts and composition | #36 `feature/ac3-m9-integration` | `129075c8c01588c872c0f8c96c343bff7ee35358` | Exact CI 9/9 + wrapper 2/2 + composition Ubuntu/Windows 2/2; pins current M1–M8 heads including M6 `15e1663`. |
 
 All listed module PRs are OPEN/Draft and target PR #24 head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, except M4 #34 which is intentionally based on the current M1 #43 head `6886d6eef3beb972bc8f4c797584b0f522483870`. PR #24 itself remains OPEN/Draft and unchanged. M4/M7 retain their separate shared Git common directory; M0/M9 and the other owner worktrees remain isolated by existing worktree/branch ownership.
+
+## Exact refs and owner activity delta — 2026-10-22 22:41 UTC
+
+| Module | Public PR head | Current local owner ref | Disposition |
+|---|---|---|---|
+| M0 / #30 | 713ba6f7a91de389bd3ab5fe651fcb0ae4521b83 | same | Coordination only; product CI and coordination audit are pending on this head. |
+| M2 / #37 | 67428139e53c3f63a1101b4f94e84b291cbb1196 | same | Owner docs clarify platform API vs active native-host evidence; exact CI is pending. |
+| M3 / #33 | 34b526d4d63f28c09400e0130b09ead13d394aca | same | Audit/targeted tests/build pass; no new change. Issue #55 is closed. |
+| M5 / #47 | c9003234913a0ccccca56fe2a36fb1ce3dacb2de | 12b2499a1f7b8525f3bf2d7659249c1bd8e881ed | Local alias-before-.. fix; M1 review and hosted exact CI pending. Issue #52 stays OPEN/P0. |
+| M8 / #40 | 5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d | 35aa22f3087ed1859da19acbf12cc4c767dd4f3d | Local evidence-index correction; hosted exact CI pending. Issue #53 closed only for its narrow acceptance scope. |
+
+The remaining M1, M4, M6, M7, and M9 public heads remain those in the 22:30 UTC snapshot above. M5/M8 local commits are owner work on their existing branches and have not been published as of this delta. No M0 action modifies module-owned product files.
