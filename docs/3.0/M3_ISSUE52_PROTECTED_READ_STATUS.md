@@ -60,6 +60,61 @@ evidence only and do not verify a product read.
    OS-atomic path-and-operation transaction.
 
 The existing M3 acceptance test remains fail-closed on this worktree's default
-M1 Gateway. The new test only verifies trusted input wiring. No result here
-claims that the exact M1/M2/M5 route has been exercised from the M3 runtime
-factory or that a real product-host protected read has occurred.
+Gateway. The M3 runtime factory's trusted input test is wiring evidence only.
+The later exact-source M9 composition and current Console consumer boundary are
+recorded below; neither establishes a real product-host protected read.
+
+## M3/M4 consumer recheck — 2026-10-22 21:32 UTC
+
+### Exact M3 runtime result
+
+M9 PR #36 at `8ebb206e124e76501441690e3da9249472244503` ran the M3
+`createConnectionCheckRuntime()` with exact M1
+`c67b15f76973a2333ce523dd58d5b7439ab40702`, M2
+`099ad64e4a09330920cbd40847adec3fe631e91e`, M3
+`aa6f1a5f0ee410b3c883fbe0c60e89020273966a`, and M5
+`c9003234913a0ccccca56fe2a36fb1ce3dacb2de` sources. Hosted composition run
+`39855082035` passed on Ubuntu and Windows; CI run `39855081975` and wrapper run
+`39855081991` also passed.
+
+The composition test uses M3's fixed `agent-canary-public.txt` binding and
+`dispatchProtectedRead()` entry point. A positive read reaches the M1 held-file
+Gateway through M2 and M5 and returns only `{status, reason, markerMatched}`
+from the M3 helper. Alias and same-path replacement attempts are denied before
+another M5 callback or M1 read event; the fixture hashes remain unchanged.
+M9's exact M5 regressions also confirm sensitive path aliases remain hard-denied
+in `OBSERVE`, without optional review, approval, or execution callbacks. This is
+exact-source synthetic fixture evidence, not a live Desktop Console read or an
+OS-atomic identity guarantee.
+
+The M3 onboarding MCP caller returns only its fixed probe marker after an
+`ALLOW`; it does not relay arbitrary file bytes. A focused M3 regression now
+also asserts that `dispatchProtectedRead()` drops synthetic file contents from
+its result and returns `DENY` or `UNKNOWN` without path fallback when the host
+denies or lacks the M1/M2 composition.
+
+### Exact remaining consumer blocker
+
+M3's `/api/security-center` route does not call
+`createConnectionCheckRuntime()` or `dispatchProtectedRead()`. Its optional
+`securityCenterStatusProvider` is not wired by the `startAIConsole()` CLI
+callsite. When supplied, the M2 provider reports binding and `OBSERVE` policy
+status only; it does not perform the positive held-file read. The route's
+normalizer returns an allowlisted status snapshot and drops arbitrary path,
+argument, token, and file-content fields. Without a provider the route returns
+`UNKNOWN`.
+
+M4's current `adaptSecuritySnapshot()` still hardcodes
+`firstPartyObserveReadStatus: NOT_VERIFIED`; its own test states that a live
+Gateway binding or demo is not a Console consumer callsite. Thus the remaining
+Issue #52 blocker is specifically the M4/first-party Console consumer path:
+there is no supported Desktop Console callsite that invokes the fixed M3 probe
+through the exact M1/M2/M5 composition and consumes only its sanitized status.
+The default M3 branch also lacks the separate M1 held-read methods and M2
+package facade, so it correctly remains `UNKNOWN`; no path-string fallback was
+added. A polled status GET was not changed to execute file I/O, and no M4 file
+was modified.
+
+Keep Issue #52 OPEN / P0 / `NOT_VERIFIED` for the Desktop Console consumer and
+product-host identity boundary. Do not promote M9 synthetic composition to
+product protection or OS-atomic TOCTOU acceptance.

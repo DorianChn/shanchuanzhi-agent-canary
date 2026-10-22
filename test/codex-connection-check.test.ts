@@ -36,6 +36,38 @@ test('protected-host status stays UNKNOWN until the fixed M1/M2/M5 read is obser
   assert.equal(assessProtectedHostProbe([{kind:'protected-host',status:'ALLOW',m5Callbacks:0,markerMatched:true}]).status,'UNKNOWN');
 });
 
+test('fixed protected-read probe returns only a sanitized status and fails closed on deny or unknown',async()=>{
+  const privateContents='M3_SYNTHETIC_PRIVATE_FILE_CONTENT';
+  let allowedCalls=0,deniedCalls=0,unknownCalls=0;
+  const allowed=await dispatchProtectedRead({
+    status:'UNKNOWN',reason:'POSITIVE_CONTROL_PENDING',m5Callbacks:()=>allowedCalls,
+    dispatch:async()=>{allowedCalls++;return{content:'AGENT_CANARY_PROTECTED_FILE_READ_OK\n'+privateContents};},
+  },{path:'agent-canary-public.txt'});
+  assert.deepEqual(allowed,{status:'ALLOW',reason:'HELD_FILE_POSITIVE_CONTROL',markerMatched:true});
+  assert.equal(JSON.stringify(allowed).includes(privateContents),false,'the probe result must not expose file contents');
+  assert.equal(allowedCalls,1);
+
+  const denied=await dispatchProtectedRead({
+    status:'UNKNOWN',reason:'POSITIVE_CONTROL_PENDING',m5Callbacks:()=>deniedCalls,
+    dispatch:async()=>{deniedCalls++;throw new Error('synthetic M5 hard deny');},
+  },{path:'agent-canary-public.txt'});
+  assert.deepEqual(denied,{status:'DENY',reason:'PROTECTED_HOST_DISPATCH_DENIED',markerMatched:false});
+  assert.equal(deniedCalls,1);
+
+  const unknown=await dispatchProtectedRead({
+    status:'UNKNOWN',reason:'M1_HELD_FILE_CAPABILITY_UNAVAILABLE',m5Callbacks:()=>unknownCalls,
+  },{path:'agent-canary-public.txt'});
+  assert.deepEqual(unknown,{status:'UNKNOWN',reason:'M1_HELD_FILE_CAPABILITY_UNAVAILABLE',markerMatched:false});
+  assert.equal(unknownCalls,0,'an unavailable host must not dispatch or fall back to a path read');
+
+  const alias=await dispatchProtectedRead({
+    status:'UNKNOWN',reason:'POSITIVE_CONTROL_PENDING',m5Callbacks:()=>unknownCalls,
+    dispatch:async()=>{unknownCalls++;return{content:'AGENT_CANARY_PROTECTED_FILE_READ_OK'};},
+  },{path:'./agent-canary-public.txt'});
+  assert.deepEqual(alias,{status:'DENY',reason:'FIXED_PROBE_PATH_REQUIRED',markerMatched:false});
+  assert.equal(unknownCalls,0,'an alias must not reach the host callback');
+});
+
 test('M3 protected-file host is fail-closed until composed and rejects aliases or replaced paths before M5 callback',async t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-protected-host-'));
   const file=path.join(root,'agent-canary-public.txt');
