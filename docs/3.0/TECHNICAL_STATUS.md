@@ -6411,3 +6411,10 @@ This update supersedes the 15:50 queued/running CI and open #55/#61 statuses abo
 - M2 local verification before push: build passed after lockfile `npm ci`; adapter/package tests 14/14; bundle consistency and diff checks passed. Dependency audit showed one moderate advisory; no automatic dependency fixes.
 - Both PRs remain OPEN/Draft. User quota at 14:48 UTC was 77% five-hour / 19% weekly with 113 credits; Usage tab remains open. PR #24 remains untouched. P0 #52 remains OPEN/NOT_VERIFIED because no real M3 first-party Console host composition exists; M9 acceptance is still pending.
 - Cross-module checkpoint posted to P0 Issue #52 as comment `6343704231`; it names current PR heads, pending CI runs, and exact M9 acceptance without closing the issue or claiming first-party protection.
+
+## 2026-10-22 14:53 UTC — M3 CI pass; M5/M7 pair started
+
+- M3 PR #33 exact-head CI `39798128488` passed on `27d4a20a20894c7b779edf68d8bf79685bc0e69b`; this validates route/default UNKNOWN and the M3 cleanup test on hosted CI. It does not resolve the absent first-party Console host composition.
+- M1 PR #43 exact CI `39798992187` and concurrency CI `39798992159` remain queued. M2 PR #37 run `39799086549` reports an overall failure while the job API still shows package-smoke queued and other jobs queued/in progress; no failed-job cause is yet visible. Do not claim package-smoke failure or success until a job-level result exists.
+- Exactly M5+M7 are active 14:52–14:57 UTC: M5 checks the `inspectPolicy` side-effect-free/OBSERVE contract consumed by M2; M7 runs its existing package checker against exact M2 candidate #37 for P1 #69. Neither may weaken policy or broaden the allowlist. Evidence due 14:57.
+- Quota read at 14:50:56 UTC was 77% five-hour / 19% weekly, 113 credits. PR #24 remains OPEN/Draft at unchanged base/head. Next push window is no earlier than 14:54:26 UTC after M2's 14:49:26 PR update.
