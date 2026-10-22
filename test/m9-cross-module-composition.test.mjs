@@ -20,8 +20,8 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: 'a5eff766ebe041bc2c6cc13758827d5a96205de9',
   M2: '099ad64e4a09330920cbd40847adec3fe631e91e',
-  M3: '465bd606ed376054e5d9ae63b30f090dab7aec75',
-  M4: '83a3abc0b85e783c34d79392e50015ed8f24e184',
+  M3: 'fcaa24f8479c7072da0a51e96100ddfb3b2774c8',
+  M4: '6d5b05b4ca634dd5727b62f621f783f8e56586b5',
   M5: 'e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2',
   M6: 'ef4679b276a90767bb1a6d7bd852aadc45b2d1cb',
   M7: '868842b1b7d76cf94a8d84a5f76c6acd4ca67f50',
@@ -327,8 +327,10 @@ test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade,
   const relativePath = 'agent-canary-public.txt';
   const publicFile = path.join(workspace, relativePath);
   const marker = 'AGENT_CANARY_PROTECTED_FILE_READ_OK';
+  const markerBytes = Buffer.from(marker, 'utf8');
+  const markerSha256 = createHash('sha256').update(markerBytes).digest('hex');
   fs.mkdirSync(workspace, { recursive: true });
-  fs.writeFileSync(publicFile, marker);
+  fs.writeFileSync(publicFile, markerBytes);
 
   let gateway;
   t.after(async () => {
@@ -364,6 +366,7 @@ test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade,
   assert.equal(host.m5Callbacks(), 1);
   const evidenceAfterPositive = gateway.evidence().length;
   assert.ok(evidenceAfterPositive > 0, 'the packed facade path reaches the M1 held-file Gateway');
+  assert.equal(createHash('sha256').update(fs.readFileSync(publicFile)).digest('hex'), markerSha256, 'the positive control leaves fixture bytes unchanged');
   assert.equal(m5Router.pendingApprovals().length, 0);
   assert.deepEqual(gateway.operator.pending(), []);
   assert.equal(guard.state, 'SAFE');
@@ -372,19 +375,21 @@ test('M3 fixed protected_read composes M1 held Gateway, packed M2 public facade,
   assert.deepEqual(alias, { status: 'DENY', reason: 'FIXED_PROBE_PATH_REQUIRED', markerMatched: false });
   assert.equal(host.m5Callbacks(), 1, 'M3 rejects aliases before the trusted M5 callback');
   assert.equal(gateway.evidence().length, evidenceAfterPositive, 'the rejected alias does not dispatch to M1');
-  assert.equal(fs.readFileSync(publicFile, 'utf8'), marker);
+  assert.equal(createHash('sha256').update(fs.readFileSync(publicFile)).digest('hex'), markerSha256, 'the rejected alias leaves fixture hash unchanged');
   assert.equal(m5Router.pendingApprovals().length, 0);
   assert.deepEqual(gateway.operator.pending(), []);
 
   const heldFile = `${publicFile}.held`;
   fs.renameSync(publicFile, heldFile);
-  fs.writeFileSync(publicFile, 'M9_SYNTHETIC_REPLACEMENT_BYTES');
+  const replacementBytes = Buffer.from('M9_SYNTHETIC_REPLACEMENT_BYTES', 'utf8');
+  const replacementSha256 = createHash('sha256').update(replacementBytes).digest('hex');
+  fs.writeFileSync(publicFile, replacementBytes);
   const replaced = await m3Host.dispatchProtectedRead(host, { path: relativePath });
   assert.equal(replaced.status, 'DENY', 'the synthetic path-replacement control remains fail-closed');
   assert.equal(host.m5Callbacks(), 1, 'M1 capability verification rejects the replacement before M5 execution');
   assert.equal(gateway.evidence().length, evidenceAfterPositive, 'the rejected replacement creates no M1 read event');
-  assert.equal(fs.readFileSync(publicFile, 'utf8'), 'M9_SYNTHETIC_REPLACEMENT_BYTES');
-  assert.equal(fs.readFileSync(heldFile, 'utf8'), marker);
+  assert.equal(createHash('sha256').update(fs.readFileSync(publicFile)).digest('hex'), replacementSha256, 'the path-replacement fixture remains unchanged');
+  assert.equal(createHash('sha256').update(fs.readFileSync(heldFile)).digest('hex'), markerSha256, 'the held original fixture remains unchanged');
   assert.equal(m5Router.pendingApprovals().length, 0);
   assert.deepEqual(gateway.operator.pending(), []);
   assert.equal(guard.state, 'SAFE');
