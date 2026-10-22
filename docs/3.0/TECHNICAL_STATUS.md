@@ -6486,3 +6486,22 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M1 posted owner disposition ACCEPT_WITH_CONDITIONS to Issue #60, comment `6345646810`. It records PR #34 head `d9a537e520c6f157d08d6c5111eb72875ba383c9` / candidate blob `40cc3762a630367b1beff24c42a4e85e1ccbafcd` versus PR #43 canonical blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`. Conditions: limit claims to child-process behavior, correct external callback wording, preserve canonical timeout scheduling guard and fail-closed/redaction assertions, and reconcile only against the exact reviewed blob. Issue #60 remains OPEN.
 - M6 owner review is still active for candidate `2cebabc81d7908c04ddfa10378fa1d3427b92cf4` on #59 and #73; no new acceptance is claimed. #52/#73 remain OPEN P0; #59/#51 remain OPEN. #69 is the CLOSED exact candidate package gate; #68 is historical.
 - At the 16:16 UTC filesystem check, the M0 coordinator, registered M1/M2/M3/M5/M6/M8 worktrees, and M9 integration worktree were clean and detached at existing PR heads. M4 and M7 were not registered in this coordinator clone; this says nothing about other Codex sessions.
+
+
+## M0 exact-head follow-up — 2026-10-22 16:24 UTC
+
+- M6's issue comments are live and verified: #59 ACCEPT_WITH_CONDITIONS comment `6345678295` accepts only the synthetic co-located payload/log-audit test at PR #40 head `35ab804d9729590a572c01d16391e63472992622`; M7 must separately accept its helper blob `53a67cb3e224d7bf292d0264725773147124eaa2`. #73 ACCEPT comment `6345684693` is scoped to sanitizer behavior at M6 SHA `2cebabc81d7908c04ddfa10378fa1d3427b92cf4` and synthetic tests/CI only. Both issues remain OPEN for broader integration/product gates.
+- M4 confirmed PR #34's current shared-test patch drops canonical normalized allowlist/synthetic-canary redaction assertions and the post-marker 30-second scheduling guard, changes an unpinned Read into an allow, and overstates callback coverage. M4 is restoring the canonical M1 test and adjusting the interruption subtest under the conditions recorded in #60; candidate tests and local commit are pending. No push has been made.
+- M7 owner review of the helper dependency for #59 is in progress. No clean-VM, external E4, real-model, or installer acceptance is claimed.
+- M0 PR #30 current head is `fd8e2cc06dd73f37d66521a0b23cc498180ddb1e`; as last checked, nine CI jobs passed and package-smoke remained pending. Recheck exact head before reporting final status.
+- M0's previous remote push was commit `fd8e2cc` (commit time 16:22:26 UTC); next push window begins no earlier than five minutes after that batch completes. Quota was 77% five-hour at 16:16 UTC; reread Usage Overview before that next push.
+
+
+## M0 exact-head follow-up — 2026-10-22 16:31 UTC
+
+- Coordinator quota read at 16:30 UTC: 77% five-hour remaining (about 28 minutes to reset), 19% weekly, 113 credits. The Usage Overview tab remains open; next push batches require a fresh coordinator read.
+- M0 PR #30 head `fd8e2cc06dd73f37d66521a0b23cc498180ddb1e` was rechecked at 16:27 UTC: all 10 listed checks passed, including package-smoke. PR #24 remains untouched and must remain OPEN/Draft.
+- M4's verified local candidate `325234caaa8eb0bb926750dce75782c8d3b72b62` was pushed fast-forward to existing PR #34, which is now OPEN/Draft with base `feature/ac3-security-core` (M1 PR #43 branch). The isolated M1+M4 merge tree `3a369159452cf2ab0648f84e7668959973c57fda` built successfully and passed Hook tests 11/11 plus diff-check. Exact hosted CI run `39814706832` is pending (8 checks queued at last read). Issue #60 remains OPEN pending hosted results/reconciliation.
+- M7 owner review of PR #40's helper was recorded on #59 as ACCEPT_WITH_CONDITIONS, comment `6345814291`: current PR #40 omitted the existing synthetic private-path marker assertion. M7 has locally committed a fix on its existing PR #39 branch: candidate `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50`, helper blob `89e8a04ed026af146a712517144f560aefe92a0d`, direct test blob `f87b87e265c31ca6dbced69a788916942359b61f`; focused Node 22 test 1/1 and diff-check passed. It is not pushed; #59 remains OPEN.
+- M6's #59 ACCEPT_WITH_CONDITIONS `6345678295` and #73 scoped ACCEPT `6345684693` remain limited to synthetic candidate behavior/CI. No real E4, clean-VM, real-model, installer, or product-host acceptance is claimed. #52/#73/#59/#60/#51 remain OPEN.
+- PR #24 remains OPEN/Draft at base `competition/shanchuanzhi-release-readiness`, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; no merge, release, or force push.
