@@ -122,6 +122,8 @@ export interface AgentGuardOptions {
 export interface AgentGuard {
   readonly sessionId: string;
   readonly state: CircuitState;
+  /** Subscribe to synchronous quarantine transitions; the disposer is idempotent. */
+  subscribeQuarantine(listener: () => void): () => void;
   beforeToolCall(call: ToolCall): ToolDecision;
   executeToolCall<T>(call: ToolCall, operation: () => T | Promise<T>): Promise<T>;
   /** Safely answer a decoy call while tripping this session before its fake reply is created. */
@@ -171,6 +173,8 @@ export function createAgentGuard(options: AgentGuardOptions = {}): AgentGuard {
 class SessionCircuitBreaker implements AgentGuard {
   readonly sessionId: string;
   private currentState: CircuitState = "SAFE";
+  private quarantineEpoch = 0;
+  private readonly quarantineSubscribers = new Set<{ listener: () => void; notifiedEpoch: number }>();
   private readonly allowAfterQuarantine: Set<string>;
   private readonly classify: (call: ToolCall) => RiskLevel;
   private readonly eventsFile?: string;
@@ -193,6 +197,20 @@ class SessionCircuitBreaker implements AgentGuard {
     this.stateStore = options.stateStore;
   }
 
+  subscribeQuarantine(listener: () => void): () => void {
+    if (typeof listener !== "function") throw new Error("GUARD_QUARANTINE_LISTENER_INVALID");
+    const subscriber = { listener, notifiedEpoch: 0 };
+    this.quarantineSubscribers.add(subscriber);
+    // Reading state also latches and synchronously notifies shared quarantine.
+    if (this.state === "QUARANTINED") this.notifyQuarantineSubscriber(subscriber);
+    let active = true;
+    return () => {
+      if (!active) return;
+      active = false;
+      this.quarantineSubscribers.delete(subscriber);
+    };
+  }
+
   get state(): CircuitState {
     if (!this.stateStore) return this.currentState;
     try {
@@ -202,11 +220,12 @@ class SessionCircuitBreaker implements AgentGuard {
       // A stale or failed shared store may not roll back this guard's local
       // quarantine. Conversely, a shared identity quarantine still applies
       // to a newly-created local session.
+      if (sharedState === "QUARANTINED" && this.currentState !== "QUARANTINED") this.latchQuarantine();
       return severity[this.currentState] >= severity[sharedState] ? this.currentState : sharedState;
     } catch {
       // A shared-store outage must not create a new allow path.
       // Latch this guard closed so recovery cannot silently restore SAFE.
-      this.currentState = "QUARANTINED";
+      this.latchQuarantine();
       return "QUARANTINED";
     }
   }
@@ -339,7 +358,7 @@ class SessionCircuitBreaker implements AgentGuard {
       try {
         const sharedState = this.stateStore.get(this.scopeKey);
         if (sharedState !== undefined && sharedState !== "SAFE") {
-          this.currentState = "QUARANTINED";
+          this.latchQuarantine();
           return { changed: false, sessionId: this.sessionId, state: this.currentState, traceId };
         }
       } catch {
@@ -351,7 +370,7 @@ class SessionCircuitBreaker implements AgentGuard {
     // Complete both state assignments before *any* I/O. Logging and alert
     // delivery are best-effort side effects and can never delay quarantine.
     this.currentState = "TRIPPED";
-    this.currentState = "QUARANTINED";
+    this.latchQuarantine();
     if (this.stateStore) {
       try {
         if (!this.stateStore.quarantine(this.scopeKey)) {
@@ -397,6 +416,23 @@ class SessionCircuitBreaker implements AgentGuard {
     this.alert(tripped);
     this.alert(quarantined);
     return { changed: true, sessionId: this.sessionId, state: this.currentState, traceId };
+  }
+
+  private latchQuarantine(): void {
+    if (this.currentState === "QUARANTINED") return;
+    this.currentState = "QUARANTINED";
+    this.quarantineEpoch += 1;
+    for (const subscriber of this.quarantineSubscribers) this.notifyQuarantineSubscriber(subscriber);
+  }
+
+  private notifyQuarantineSubscriber(subscriber: { listener: () => void; notifiedEpoch: number }): void {
+    if (subscriber.notifiedEpoch === this.quarantineEpoch) return;
+    subscriber.notifiedEpoch = this.quarantineEpoch;
+    try {
+      subscriber.listener();
+    } catch {
+      // Observer failures cannot undo quarantine or prevent later observers.
+    }
   }
 
   private block(name: string, riskLevel: RiskLevel, reason: string, traceId: string): ToolDecision {

@@ -49,6 +49,72 @@ test("3: a quarantined session blocks a dangerous real tool", () => {
   assert.ok(eventsFor("block-session").some((event) => event.kind === "action_blocked"));
 });
 
+test("quarantine subscribers are synchronous, isolated from observer errors, and unsubscribe idempotently", () => {
+  const guard = sdk.createAgentGuard({ sessionId: "quarantine-subscriber-session", eventsFile: containmentEvents, alert: false });
+  const notifications: string[] = [];
+  const unsubscribe = guard.subscribeQuarantine(() => notifications.push(guard.state));
+  const unsubscribeThrower = guard.subscribeQuarantine(() => { throw new Error("synthetic observer failure"); });
+  const unsubscribeAfterThrower = guard.subscribeQuarantine(() => notifications.push("after-thrower"));
+
+  const trip = guard.trip({ reason: "synthetic_external_trip" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower"]);
+  assert.equal(trip.state, "QUARANTINED");
+  assert.equal(guard.state, "QUARANTINED");
+  guard.trip({ reason: "duplicate_synthetic_trip" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower"]);
+
+  guard.reset({ acknowledgedBy: "test host" });
+  guard.trip({ reason: "second_synthetic_trip" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower", "QUARANTINED", "after-thrower"]);
+
+  unsubscribe();
+  unsubscribe();
+  unsubscribeThrower();
+  unsubscribeAfterThrower();
+  guard.reset({ acknowledgedBy: "test host" });
+  guard.trip({ reason: "trip_after_unsubscribe" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower", "QUARANTINED", "after-thrower"]);
+
+  const alreadyQuarantined = sdk.createAgentGuard({ sessionId: "already-quarantined-subscriber-session", eventsFile: containmentEvents, alert: false });
+  alreadyQuarantined.trip({ reason: "preexisting_synthetic_quarantine" });
+  let lateNotifications = 0;
+  const unsubscribeLate = alreadyQuarantined.subscribeQuarantine(() => { lateNotifications += 1; });
+  assert.equal(lateNotifications, 1, "a new subscriber is called synchronously when quarantine already exists");
+  assert.equal(alreadyQuarantined.state, "QUARANTINED");
+  assert.equal(lateNotifications, 1, "state reads do not duplicate a notification in the same quarantine epoch");
+  alreadyQuarantined.reset({ acknowledgedBy: "test host" });
+  alreadyQuarantined.trip({ reason: "post-reset_synthetic_quarantine" });
+  assert.equal(lateNotifications, 2);
+  unsubscribeLate();
+});
+
+test("a shared quarantine is synchronously latched and delivered when observed", () => {
+  const stateStore = sdk.createContainmentStateStore();
+  const first = sdk.createAgentGuard({
+    sessionId: "shared-notify-first-session",
+    principalId: "shared-notify-principal",
+    stateStore,
+    eventsFile: containmentEvents,
+    alert: false,
+  });
+  const retried = sdk.createAgentGuard({
+    sessionId: "shared-notify-retry-session",
+    principalId: "shared-notify-principal",
+    stateStore,
+    eventsFile: containmentEvents,
+    alert: false,
+  });
+  const notifications: string[] = [];
+  retried.subscribeQuarantine(() => notifications.push(retried.state));
+
+  first.trip({ reason: "shared_synthetic_trip" });
+  assert.deepEqual(notifications, [], "the shared store has no push channel; observation happens synchronously on the retry guard");
+  assert.equal(retried.state, "QUARANTINED");
+  assert.deepEqual(notifications, ["QUARANTINED"]);
+  assert.equal(retried.state, "QUARANTINED");
+  assert.deepEqual(notifications, ["QUARANTINED"], "the local quarantine latch prevents duplicate notifications");
+});
+
 test("4: a blocked callback is never executed", async () => {
   const guard = sdk.createAgentGuard({ sessionId: "callback-session", eventsFile: containmentEvents, alert: false });
   guard.trip({ reason: "test_compromise" });
