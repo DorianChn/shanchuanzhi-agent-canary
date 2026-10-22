@@ -586,3 +586,12 @@ All eight module paths are separate checkouts. Each local branch has the same me
 | M8 | `feature/ac3-open-source-product` | `2d5a0ff` | clean | Open-source/product docs and reviewed logging adapter. |
 
 M9 remains on its existing `feature/ac3-m9-integration` branch; local candidate `24dcfd1aed2a9ba9ddd7aecd7b92e78f3947ee19` changes only its composition workflow/test and is not yet published. Do not move worktrees, create replacement branches, or commit cross-owned files. The M5 dirty E4 files remain untouched pending M6 ownership.
+
+## M0 P0 #52 route-owner ruling — 2026-10-22 06:04 UTC
+
+This ruling resolves the prior tentative ownership of the desktop route. It is a file assignment, not an API or security-semantics transfer.
+
+- **M3 backend/host route:** owns `src/ai/console.ts` read-only status handler and capability binding, plus the existing M3 protected-host adapter/probe and its tests.
+- **M4 Security Center consumer:** owns `src/ai/console-page.ts`, `src/ai/security-center-adapter.ts`, and `test/runtime-console.test.ts`; it consumes the M3 route and displays missing or invalid protection data as `UNKNOWN`.
+- **Owner-controlled interfaces:** M1 retains Gateway/Hook semantics and held-file capability; M2 retains the public Gateway adapter/fixed file map and package export; M5 retains strict OBSERVE/router semantics; M6 owns E4 verification/status schema; M7 owns installer and shipped-payload evidence; M9 owns exact-source integration. M3/M4 use adapters and do not edit these owner APIs or files.
+- For #52, the route is read-only. It may expose only status fields already accepted by `docs/3.0/API_CONTRACTS.md`; no raw arguments, file contents, secrets, tokens, or absolute user paths. Do not substitute a demo or path-only fallback. Keep #52 OPEN/P0/NOT_VERIFIED until exact M1/M2/M3/M5 composition and M4 consumer checks pass.
