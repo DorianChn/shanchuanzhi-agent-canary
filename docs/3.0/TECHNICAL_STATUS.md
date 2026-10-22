@@ -6756,3 +6756,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 work is active on the existing `feature/ac3-m9-integration` worktree. It is refreshing M2/M3/M6 exact public pins and adding M4 exact-source coverage, without editing M1–M8 or changing security assertions. Current M6 exact-head CI still had two matrix jobs in progress at the latest read; M9's source composition cannot substitute for independent E4 CI.
 - M0 PR #30's newly pushed `c9ba247d82e2d6db11b6e6361a1ecf510b501548` is OPEN/Draft; product CI run `39839071807` passed 9/9 and ownership-contract run `39839071847` passed. PR #24 remains OPEN/Draft, exact head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`, unchanged.
 - Issue #52 remains OPEN/P0/NOT_VERIFIED pending exact-source first-party host use of M1-bound identity, safe-read positive control, alias/replacement denials before callback/read, zero side effects and unchanged fixture bytes. No production secret exposure is claimed.
+
+## M0 five-minute batch — 2026-10-22 19:30 UTC
+
+- M5 PR #47 exact head `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2` now has all 9/9 checks SUCCESS in run `39839881316`.
+- M6 PR #38 remains at `ef4679b276a90767bb1a6d7bd852aadc45b2d1cb`; `gh pr checks` still reports macOS Node 20 and Ubuntu Node 22 as IN_PROGRESS even though the associated run summary is completed/success. Keep the displayed job-level state as unresolved until reconciled.
+- M9 pin/M4 coverage edits are active but uncommitted on its existing worktree; no push until the exact diff and focused workflow/tests are reviewed.
+- Usage page read at 19:30 UTC: 62% five-hour, 94% weekly, 113 credits; above the 5% pause threshold. The Usage tab remains open. Next eligible push batch is after 19:30 UTC, five minutes after M5's prior remote update.
