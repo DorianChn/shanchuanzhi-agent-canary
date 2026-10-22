@@ -146,3 +146,29 @@ No implementation was added: wiring a direct path callback, the demo Gateway, or
 5. Run focused owner tests and exact-head hosted CI on the composed refs, then let M9 pin that exact composition. This remains bounded synthetic/product-route evidence; it must not be described as an OS-wide atomic path/open guarantee or as closed TOCTOU without separate evidence.
 
 This recheck used public candidate source and the existing M4 checkout only. No host user-file read, installer, VM, or real-model test was performed; no M1/M2/M5 source or tests were changed.
+
+## 2026-10-22 Issue #52 current M4 consumer gate
+
+This checkpoint supersedes older dependency hashes in the Issue #52 notes above. Exact refs checked: M4 PR #34 `d5b84c4e035e8e51ab383d03c0b8ba0cb7bf9c84`; M3 PR #33 `465bd606ed376054e5d9ae63b30f090dab7aec75`; M1 PR #43 `a5eff766ebe041bc2c6cc13758827d5a96205de9`; M2 PR #37 `099ad64e4a09330920cbd40847adec3fe631e91e`; M5 PR #47 `e6bb5cfaf5e3a55497ab300da3bf14bbb4b4b3d2`. All are open Draft PRs at this checkpoint.
+
+### Current callsite and supported seam
+
+- M4's first-party entry remains `src/ai/cli.ts::registerAICommands` → `src/ai/console.ts::startAIConsole`. In this exact M4 source, `POST /api/runtime3/action` calls `runtime3.action`; that runtime performs a read only against its fixed temporary demo fixture. `POST /api/policy/action` calls `sandbox.action`; its read result comes from a virtual callback. There is no M4 Console file-read route and its `GET /api/security-center` returns 404. The current M3 candidate adds that GET status route, but no M4 read action route.
+- M1's exact PR #43 candidate exposes `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability` on its Gateway. M2's exact PR #37 `createSecurityGatewayAdapter` binds the exact fixed tool/path to that M1 capability, verifies it at dispatch and callback time, and reads through `readFileWithCapability`. Its `createSecurityGatewayHostAdapter` composes this with M5's strict `OBSERVE` router. This is a supported candidate seam, but it is not called by M4's product Console route.
+- M2's exact PR #37 candidate bundles the protected adapter behind the public `./gateway-adapter` subpath and exports only `createSecurityGatewayHostAdapter`; its low-level `createSecurityGatewayAdapter` remains private. M4's current PR #34 package manifest and Console source do not import or call that public M2 adapter. M4's checked-out route/router sources also do not compose the exact M2/M5 host adapter contract.
+- The M2 `securityCenterStatusProvider` is a status provider for its candidate fixed bindings. Exposing it through a GET route can report binding/policy state or `UNKNOWN`; that status does not prove that a first-party file-read action called the adapter or that a callback returned bytes through M1's held identity.
+- M3 PR #33 at `465bd606ed376054e5d9ae63b30f090dab7aec75` exposes `securityCenterStatusProvider` through `GET /api/security-center`; its route tests cover default `UNKNOWN`, status sanitization, and failed/invalid-provider fallback. The same exact M3 `src/runtime/gateway.ts` lacks all three M1 capability methods, and M3's `src/ai/console.ts` has no `file-read` callsite. Its status-only route does not itself execute a protected file read. M0 additionally reports a local exact-M1/M2/M3 composition harness with safe-read success and alias denial/zero side effects; treat that as synthetic cross-worktree evidence, not a first-party M4 Console callsite.
+
+### M4 UI behavior and minimum consumer contract
+
+M4 now presents `产品 OBSERVE 文件读取 · NOT_VERIFIED` separately from the backend Gateway status. The M4 adapter keeps this field `NOT_VERIFIED` even when a supplied snapshot says the Gateway binding is `PROTECTED`; neither that summary nor the temporary runtime/virtual policy demos can promote it. A backend `DENY` remains `DENY` in the policy result, while contradictory allow/executed fields are rendered as `POLICY_CONFLICT`. Missing, unsupported, or malformed security-center data remains `UNKNOWN`.
+
+To move the M4 consumer field from `NOT_VERIFIED`, all of the following must be demonstrated on a composed source ref:
+
+1. M3 owns the real Console route and retains one trusted M1 Gateway, exact M2 security adapter, and M5 strict `OBSERVE` router instance; the adapter must be reachable through a reviewed host/package import seam.
+2. The UI action submits only an allowlisted fixed tool/path. The route calls M2's adapter dispatch; no direct `fs` callback, path-only route callback, virtual policy callback, or runtime demo is presented as the product read.
+3. An end-to-end positive safe-read case returns the expected fixture through `readFileWithCapability`. Path-only input, sensitive aliases, symlink/junction escapes, and path replacement must deny before the file-effect callback and before approval creation; each negative case preserves target bytes/hash.
+4. M4's existing security-center UI consumes M3's GET status route when that route is composed, preserving its scoped/UNKNOWN fields. M4 displays real request results (`DENY` stays denied; unavailable or unrecognized data stays `UNKNOWN`) and keeps the separate product-consumer status `NOT_VERIFIED` until the above read-route tests and exact source pins pass.
+5. M9 pins the exact M1/M2/M3/M4/M5 source refs and records hosted checks. Do not interpret this bounded host composition as an OS-wide atomic file-open/TOCTOU guarantee.
+
+Focused M4 verification is required for the UI/adapter assertions. This checkpoint did not run a protected product file read and does not close Issue #52. Issue #52 remains `OPEN/P0/NOT_VERIFIED` for first-party consumer and host/TOCTOU evidence.

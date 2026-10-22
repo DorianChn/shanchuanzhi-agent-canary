@@ -138,6 +138,9 @@ export function adaptSecuritySnapshot(input: {
 
   return {
     protectionStatus: normalizeProtectionStatus(securityCenter.protectionStatus),
+    // Binding health does not prove that the first-party Console invokes a
+    // capability-backed OBSERVE file-read path. Keep this pending that proof.
+    firstPartyObserveReadStatus: 'NOT_VERIFIED' as const,
     gateway: {
       protectionStatus: normalizeProtectionStatus(gateway.protectionStatus),
       connectionStatus: normalizeConnectionStatus(gateway.connectionStatus),
@@ -248,6 +251,7 @@ export function buildSecurityDiagnostic(
     scope: 'Local Console read-only snapshot. UNKNOWN means the backend did not provide a verifiable value.',
     protection: {
       overall: view.protectionStatus,
+      firstPartyObserveRead: view.firstPartyObserveReadStatus,
       gateway: view.gateway.protectionStatus,
       hook: view.hook.protectionStatus,
       canaryIsolation: view.canaryIsolation.protectionStatus,

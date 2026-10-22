@@ -16,6 +16,7 @@ export const CONSOLE_PAGE = String.raw`<!doctype html>
 <p id="securityHealthStatus" class="status" role="status" aria-live="polite">正在读取本地安全状态…</p>
 <div class="security-facts" aria-label="防护组件与覆盖情况">
 <div class="security-fact"><span>Gateway</span><strong id="gatewayProtectionStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small id="gatewayConnectionDetail">连接状态 UNKNOWN</small></div>
+<div class="security-fact"><span>产品 OBSERVE 文件读取</span><strong id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证</strong><small>当前 Console 没有真实文件读取 OBSERVE 路由；Runtime 临时文件演示与虚拟策略读取不计入。</small></div>
 <div class="security-fact"><span>Hook 健康</span><strong id="hookProtectionStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small>需后端 Hook 健康接口提供实时状态</small></div>
 <div class="security-fact"><span>Canary 隔离</span><strong id="canaryIsolationStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small id="canaryIsolationScopeDetail">历史隔离事件不代表当前隔离状态</small></div>
 <div class="security-fact"><span>当前策略</span><strong id="currentPolicyName">UNKNOWN</strong><small>策略保护状态 <span id="currentPolicyStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</span></small><small id="currentPolicyScopeDetail">产品策略未知；Console 沙箱数据不代表真实 Agent 策略</small></div>
@@ -135,6 +136,8 @@ function renderSecurityEvents(){
 }
 function renderSecurityCenter(){
  setProtectionNode('overallProtectionStatus',securitySnapshot.protectionStatus);
+ getEl('firstPartyObserveReadStatus').dataset.status='UNKNOWN';
+ getEl('firstPartyObserveReadStatus').textContent=securitySnapshot.firstPartyObserveReadStatus+' · 未验证';
  setProtectionNode('gatewayProtectionStatus',securitySnapshot.gateway.protectionStatus);
  setProtectionNode('hookProtectionStatus',securitySnapshot.hook.protectionStatus);
  setProtectionNode('canaryIsolationStatus',securitySnapshot.canaryIsolation.protectionStatus);

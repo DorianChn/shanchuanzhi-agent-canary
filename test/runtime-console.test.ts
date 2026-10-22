@@ -27,9 +27,11 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
  try{
   assert.equal((await fetch(console.url+'/api/runtime3')).status,403);
   const html=await (await fetch(console.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
-  for(const route of ['security-center','e4/status'])assert.equal((await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!}})).status,404);
+  const securityCenterResponse=await fetch(console.url+'/api/security-center',{headers:{'x-canary-csrf':csrf!}});assert.ok([200,404].includes(securityCenterResponse.status));if(securityCenterResponse.status===200){const snapshot=await securityCenterResponse.json() as any;assert.equal(snapshot.protectionStatus,'UNKNOWN');assert.equal(snapshot.gateway.protectionStatus,'UNKNOWN');}
+  assert.equal((await fetch(console.url+'/api/e4/status',{headers:{'x-canary-csrf':csrf!}})).status,404);
   assert.match(html,/Agent Canary 安全控制中心/);assert.match(html,/自动 E4 测试入口/);assert.match(html,/PARTIALLY_PROTECTED/);assert.match(html,/security-center/);assert.match(html,/currentPolicyScopeDetail/);assert.match(html,/canaryIsolationScopeDetail/);assert.match(html,/Console 虚拟执行器策略/);assert.match(html,/受控 Runtime 示例 Guard/);assert.match(html,/显式 DENY 和 SENSITIVE_DATA 仍会拒绝/);assert.match(html,/preparePolicyResultForDisplay/);assert.match(html,/POLICY_CONFLICT/);assert.match(html,/catch\(e\)\{status\('policyStatus',warning\|\|e\.message,true\);\}/);assert.match(html,/policyResult/);
   assert.match(html,/id="nativeCodexShellBoundary"[^>]*role="note"/);assert.match(html,/id="nativeCodexShellStatus" class="security-status" data-status="NOT_PROTECTED">UNPROTECTED \/ BLOCKED_NOT_VERIFIED<\/span>/);assert.match(html,/尚未完成 Codex 原生 Shell 路径的端到端验证，也未控制该路径/);assert.match(html,/MCP 或 Gateway 中受保护的回调不代表原生 Shell 已受保护/);
+  assert.match(html,/id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证<\/strong>/);assert.match(html,/当前 Console 没有真实文件读取 OBSERVE 路由/);
   assert.match(html,/const readable=\['state','agents','policyState','runtime3'\]\.filter\(k=>securitySources\[k\]==='AVAILABLE'\)\.length/);
   assert.match(html,/readable\+'\/4 个已有只读接口可读/);
   const get=async()=>{const r=await fetch(console.url+'/api/runtime3',{headers:{'x-canary-csrf':csrf!}});return r.json();};
@@ -46,35 +48,41 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
  }finally{await console.close();}
 });
 
-test('missing live security and E4 providers stay unavailable behind the existing Host/Origin/CSRF boundary',async()=>{
+test('security and E4 status stay unknown or unavailable behind the existing Host/Origin/CSRF boundary',async()=>{
  const console=await startAIConsole({port:0});
  try{
   const html=await (await fetch(console.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
   for(const route of ['security-center','e4/status']){
    assert.equal((await fetch(console.url+'/api/'+route)).status,403,route+' must still require CSRF');
-   assert.equal((await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!}})).status,404,route+' has no authoritative provider');
+   const response=await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!}});
+   if(route==='security-center'){
+    assert.ok([200,404].includes(response.status),'route may be absent or exposed by M3');
+    if(response.status===200){const snapshot=await response.json() as any;assert.equal(snapshot.protectionStatus,'UNKNOWN');assert.equal(snapshot.gateway.protectionStatus,'UNKNOWN');}
+   }else assert.equal(response.status,404,route+' has no authoritative provider');
    assert.equal((await fetch(console.url+'/api/'+route,{headers:{'x-canary-csrf':csrf!,origin:'https://attacker.example'}})).status,403,route+' must reject cross-origin reads');
    const mismatchedHostStatus=await new Promise<number>((resolve,reject)=>{const request=http.request(new URL('/api/'+route,console.url),{method:'GET',headers:{'x-canary-csrf':csrf!,host:'attacker.example'}},response=>{response.resume();response.on('end',()=>resolve(response.statusCode??0));});request.on('error',reject);request.end();});
    assert.equal(mismatchedHostStatus,403,route+' must reject a mismatched Host');
   }
   const unknown=adaptSecuritySnapshot({});
   assert.equal(unknown.protectionStatus,'UNKNOWN');assert.equal(unknown.gateway.protectionStatus,'UNKNOWN');
+  assert.equal(unknown.firstPartyObserveReadStatus,'NOT_VERIFIED');
   assert.equal(unknown.hook.protectionStatus,'UNKNOWN');assert.equal(unknown.canaryIsolation.protectionStatus,'UNKNOWN');
   const diagnostic=buildSecurityDiagnostic(unknown,{securityCenter:'UNSUPPORTED',e4:'UNSUPPORTED'});
   assert.equal(diagnostic.protection.overall,'UNKNOWN');assert.equal(diagnostic.dataSources.securityCenter,'UNSUPPORTED');assert.equal(diagnostic.dataSources.e4,'UNSUPPORTED');
+  assert.equal(diagnostic.protection.firstPartyObserveRead,'NOT_VERIFIED');
  }finally{await console.close();}
 });
 
-test('missing security-center endpoint leaves the UI protection summary UNKNOWN',async()=>{
+test('missing security-center provider leaves UI protection UNKNOWN whether the status route is absent or present',async()=>{
  const console=await startAIConsole({port:0});
  try{
   const html=await (await fetch(console.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
   const response=await fetch(console.url+'/api/security-center',{headers:{'x-canary-csrf':csrf!}});
-  assert.equal(response.status,404,'the current backend has no authoritative security-center provider');
-
-  const source=classifyDataSourceFailure(response.status,'Error');
-  assert.equal(source,'UNSUPPORTED');
-  const view=adaptSecuritySnapshot({securityCenter:null});
+  let source:'AVAILABLE'|'UNSUPPORTED'='UNSUPPORTED',securityCenter:null|unknown=null;
+  if(response.status===200){source='AVAILABLE';securityCenter=await response.json();const snapshot=securityCenter as any;assert.equal(snapshot.protectionStatus,'UNKNOWN');assert.equal(snapshot.gateway.protectionStatus,'UNKNOWN');}
+  else assert.equal(response.status,404,'the route may be absent on M4 or return UNKNOWN without a provider on M3');
+  if(response.status===404)assert.equal(classifyDataSourceFailure(response.status,'Error'),'UNSUPPORTED');
+  const view=adaptSecuritySnapshot({securityCenter});
   assert.deepEqual([
    view.protectionStatus,view.gateway.protectionStatus,view.hook.protectionStatus,
    view.canaryIsolation.protectionStatus,view.policy.protectionStatus,
@@ -82,7 +90,7 @@ test('missing security-center endpoint leaves the UI protection summary UNKNOWN'
   assert.equal(view.protectedToolCount,null);assert.equal(view.unprotectedExecutionPaths,null);
   const diagnostic=buildSecurityDiagnostic(view,{securityCenter:source});
   assert.equal(diagnostic.protection.overall,'UNKNOWN');
-  assert.equal(diagnostic.dataSources.securityCenter,'UNSUPPORTED');
+  assert.equal(diagnostic.dataSources.securityCenter,source);
 
   assert.match(html,/id="overallProtectionStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
   assert.match(html,/id="gatewayProtectionStatus"[^>]*data-status="UNKNOWN"[^>]*>UNKNOWN/);
@@ -109,6 +117,19 @@ test('security-center adapter keeps absent backend data UNKNOWN and ignores demo
  assert.equal(view.events.length,1);assert.equal(view.events[0].reason,'[REDACTED]');
  assert.equal(JSON.stringify(view).includes('args'),false);assert.equal(JSON.stringify(view).includes('C:\\private'),false);
  assert.equal(normalizeProtectionStatus('PARTIAL'),'UNKNOWN');assert.equal(normalizeProtectionStatus('protected'),'UNKNOWN');
+});
+
+test('Gateway binding status and temporary demo reads do not verify a first-party OBSERVE consumer',()=>{
+ const view=adaptSecuritySnapshot({
+  securityCenter:{protectionStatus:'PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},coverage:'M2_FIXED_FILE_READS_ONLY'},
+  runtime3:{mode:'DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL',agent:'controlled-sdk-demo',coverage:'REGISTERED_CAPABILITIES_ONLY',guard:'SAFE'},
+  policyState:{mode:'OBSERVE',scope:'VIRTUAL_EXECUTORS'},
+ });
+ assert.equal(view.gateway.protectionStatus,'PROTECTED','show the backend-reported Gateway binding status faithfully');
+ assert.equal(view.runtimeDemo.scope,'REGISTERED_CAPABILITIES_ONLY');
+ assert.equal(view.consoleSandboxPolicy.scope,'VIRTUAL_EXECUTORS');
+ assert.equal(view.firstPartyObserveReadStatus,'NOT_VERIFIED','binding health and demos do not establish a Console consumer callsite');
+ assert.equal(buildSecurityDiagnostic(view,{securityCenter:'AVAILABLE'}).protection.firstPartyObserveRead,'NOT_VERIFIED');
 });
 
 test('existing policy and Runtime APIs are shown only within their backend-declared demo scope',()=>{
@@ -173,7 +194,7 @@ test('diagnostic distinguishes an empty audit feed from an unavailable source',(
 
 test('OBSERVE denial, sensitive-data allow, and Guard quarantine are not rendered as successful policy results',()=>{
  const denied=preparePolicyResultForDisplay({mode:'OBSERVE',status:'DENY',guardState:'SAFE',decision:{action:'DENY',mode:'OBSERVE',risks:['SENSITIVE_DATA']}});
- assert.equal(denied.status,'DENY');assert.equal(denied.displayWarning,undefined);
+ assert.equal(denied.status,'DENY');assert.equal(denied.decision.action,'DENY');assert.deepEqual(denied.decision.risks,['SENSITIVE_DATA']);assert.equal(denied.displayWarning,undefined);
 
  const staleObserveResult=preparePolicyResultForDisplay({mode:'OBSERVE',status:'EXECUTED',guardState:'SAFE',callbacks:1,events:[{kind:'policy_allowed',metadata:{mode:'OBSERVE',action:'ALLOW',risks:'SENSITIVE_DATA'}}]});
  assert.equal(staleObserveResult.status,'POLICY_CONFLICT');assert.equal(staleObserveResult.backendReportedStatus,'EXECUTED');
