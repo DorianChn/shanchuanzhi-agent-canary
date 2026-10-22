@@ -73,3 +73,8 @@ The M6 source-checkout E4 tests do not prove a built installer, clean-VM lifecyc
 - Public M9 PR #36 head `92b987eee16e1a0e3467b74fa2f14158a96bd951` completed all three checks: composition run `39872622190` passed on Ubuntu and Windows, product CI `39872622179` passed, and Windows Community wrapper `39872622221` passed.
 - The exact-source pins include M4 `0a1fc1393c2ae837e7cecbb59e9c935380fa4930` and M7 `28aa87378a1682b0dca6b28178955ad5a7fc6e84`. This hosted composition verifies the synthetic fixture/source boundary only. It does not prove live product-host adoption, held-file identity in the production callback, or OS-atomic/concurrent TOCTOU safety; Issue #52 remains OPEN/P0/NOT_VERIFIED.
 - M7's exact CI passed (`39872617730`), but its Windows Community run (`39872617770`) hit a 10-second SourceForge NSIS download timeout before artifact creation; the lifecycle job was skipped. Issue #41 remains OPEN/P1/HOLD. A one-time full rerun is scheduled so the dependent installer lifecycle job can run if its build succeeds.
+## Follow-up hosted commit verification — 2026-10-22 23:47 UTC
+
+- The documentation-only M9 successor `dd9397d6acae54665f1729caa3f1f6bf220dc881` has green exact checks: product CI `39873559666` (9/9), Windows Community wrapper `39873559661` (2/2), and cross-module composition `39873559792` (Ubuntu and Windows).
+- M7 run `39872617770` attempt 2 now has a successful package/build-evidence artifact (`12467527001`); exact lifecycle job `120154658964` is still running. No lifecycle acceptance is claimed until its terminal artifact and result are inspected.
+- Issue #52 remains OPEN/P0/NOT_VERIFIED for live host consumption and OS-atomic/concurrent TOCTOU gaps.
