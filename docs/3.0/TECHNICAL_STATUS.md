@@ -7002,14 +7002,6 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M0 PR #30 remains at `fa1f8ae786de0f3e77190be0b6111540bcb3122f`. Product CI `39861063739` completed 9/9 and coordination evidence run `39861063743` passed. This snapshot will be included in the next cadence batch after fresh quota/ref preflight.
 - No main merge, PR #24 edit, Release, VMware, installer execution, or real-model run occurred.
 
-## M0 accelerated coordination snapshot — 2026-10-22 22:18 UTC
-
-- User-requested remote-write cadence: one grouped batch at least every 5 minutes. Last confirmed GitHub writes were PR #36 at 22:15:23 UTC and PR #30 at 22:15:24 UTC; the next batch is no earlier than 22:20:24 UTC. Usage page currently shows 98% five-hour and 86% weekly remaining, 113 credits; the usage tab remains open and is above the 5% pause threshold.
-- PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no merge or PR #24 edit.
-- M9 PR #36 is now at `f63adc72466e9034631619b5040a185c209788d5`. Exact-head product CI `39863596994` passed 9/9, wrapper `39863596974` passed 2/2, and exact-source composition `39863596989` completed success on both Ubuntu and Windows. M9 pins M7 `4f986cc`; it still pins public M6 `5f1649f` because the next M6 fix is not yet public.
-- M6 has a locally committed P1 integrity fix `15e1663eac9c3932165fca9b39587115345f289c`, parent exact public M6 `5f1649f600a7038d4688cdf703d1e502f3af3a91`; it is not pushed yet. The verifier now parses the same captured ZIP bytes it hashes, preventing a deterministic archive-swap race. Independent review and repeated `npm run e4:test` passed 18/18; path-based `readZip` compatibility was verified. Issue #57 remains OPEN/P1/NOT_VERIFIED until independent product-level E4 acceptance evidence is complete.
-- M7 PR #39 remains at exact head `4f986cc83bc62a1d2b23175ee5a0a77b82837310`, with product CI 9/9 and Windows Community 3/3 green. Clean-VM install/upgrade/uninstall/cancel/rollback acceptance is still outstanding; Issue #41 remains OPEN/P1/NOT_VERIFIED.
-- The next eligible cadence batch may publish the reviewed M6 candidate and this M0 evidence update together, subject to a fresh quota check and exact PR/ref preflight. M9 must repin to M6 `15e1663` only after its exact-head hosted CI passes, then rerun composition. No release, main merge, installer execution, VMware, or real-model test occurred.
 ## M0 2026-10-22 22:02 UTC — post-batch readback
 
 - The 22:01 UTC cadence batch pushed M0 PR #30 to `b7a0fe2756684fc20fa83a7e86978da83c1878a7` and M9 PR #36 to `8506fef52afae6919624c4705f383923e438b20c`. `git ls-remote` read back both exact refs; both worktrees are clean, and both PRs remain OPEN/Draft on base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
@@ -7036,3 +7028,19 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M1 owner reproduced the specific Windows symlink alias denial for Issue #52 (DENY; callback 0; approvals 0; sentinel unchanged; focused tests 21/21), with bounded scope documented in comment `6352377964`. No M1 code change was justified; #52 stays OPEN/P0/NOT_VERIFIED.
 - M6 has started a separate M6-owned audit of Issue #57's E4 verifier integrity; no code result or external E4 claim exists yet.
 - No main merge, PR #24 edit, Release, VMware, installer execution, or real-model run occurred.
+
+## M0 cadence batch readback — 2026-10-22 22:21 UTC
+
+- At 22:21 UTC, the reviewed M6 fix and M0 coordination report were pushed together. Remote readback: M6 PR #38 `15e1663eac9c3932165fca9b39587115345f289c`; M0 PR #30 `269287d72b00e75ed05185e2051306a0967e1386`. Both remain OPEN/Draft on base `62496d4020bd90ba2eede49b2e80a2bbebb036b4`.
+- Fresh quota preflight immediately before push showed 97% five-hour, 86% weekly remaining and 113 credits; the usage tab remains open. PR #24 remains OPEN/Draft, head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no merge/edit/retarget.
+- M6 exact-head CI `39864322034` and Windows wrapper `39864322029` were queued at the new head. The wrapper completed 2/2 success; generic CI is still in progress (Ubuntu 20, macOS 20/22, and Windows 20/22 pending at last check). Do not claim the full M6 CI green until terminal readback.
+- M0 exact-head CI `39864322344` and coordination audit `39864322442` were queued; both require terminal readback.
+- M9 PR #36 remains `f63adc72466e9034631619b5040a185c209788d5`, exact CI 9/9, wrapper 2/2, and composition Ubuntu+Windows success. It still pins the previous public M6 head. M9 is frozen until both M6 exact-head workflows pass; then M9 will update its pin, run local exact composition, and prepare a candidate for the next 5-minute batch.
+- M6's verifier now hashes and parses the same archive buffer, closing the deterministic archive replacement race. Independent review passed and focused tests passed 18/18; Issue #57 remains OPEN/P1/NOT_VERIFIED pending independent product-level E4 acceptance.
+- No main merge, Release, installer execution, VMware, or real-model test occurred.
+
+## M0 CI failure triage — 2026-10-22 22:23 UTC
+
+- M6 PR #38 exact CI run `39864322034` completed 9/9 success at head `15e1663eac9c3932165fca9b39587115345f289c`; Windows Community wrapper `39864322029` completed 2/2 success at the same SHA. Local E4 targeted tests passed 18/18. M9 has been authorized to repin to this exact public M6 commit and prepare an integration candidate; no M9 push yet.
+- M0 PR #30 exact CI `39864322344` failed only on Windows Node 20 (321 pass, 1 fail, 4 skipped); the M0 coordination audit `39864322442` passed. The failing assertion is the known M1-owned interruption fixture at `test/agent-hook.test.ts:54`, Issue #32: marker file was absent (`false !== true`) in `native lab wrapper interruption emits no allow decision and invokes no tool callback`. M0 commit `269287d` changed only coordinator docs; the same Windows Node 20 check on previous M0 head `c9d80ba` passed. Treat this as a recurring M1 P1 race, not as a documentation regression. Issue #32 remains OPEN/P1; M1 owner-scoped diagnosis is in progress. No test was removed or weakened.
+- The M0 failure does not establish an actual allow decision; it establishes a missing test marker under the Windows process interruption fixture. The expected security acceptance remains that an interrupted hook never permits or calls the tool, with deterministic Windows Node 20/22 evidence.
