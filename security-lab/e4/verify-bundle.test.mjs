@@ -5,14 +5,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createZip } from './zip.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const verifier = path.join(scriptDir, 'verify-bundle.mjs');
 const sha256 = data => createHash('sha256').update(data).digest('hex');
 
-function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4', extraPayload = [], reportOverrides = {}} = {}) {
+function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4', extraPayload = [], reportOverrides = {}, evidenceData = '{"event":"synthetic-evidence"}\n'} = {}) {
   fs.mkdirSync(runDir, { recursive: true });
   const cases = [
     'GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION',
@@ -36,7 +36,7 @@ function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4'
     ['report.json', Buffer.from(`${JSON.stringify(report, null, 2)}\n`)],
     ['report.md', Buffer.from('# Synthetic verification fixture\n')],
     ['raw.log', Buffer.from('{"event":"synthetic"}\n')],
-    ['evidence/synthetic.jsonl', Buffer.from('{"event":"synthetic-evidence"}\n')],
+    ['evidence/synthetic.jsonl', Buffer.from(evidenceData)],
     ...extraPayload.map(([name, data]) => [name, Buffer.from(data)])
   ];
   const manifest = Buffer.from(`${payload.map(([name, data]) => `${sha256(data)}  ${name}`).join('\n')}\n`);
@@ -63,8 +63,9 @@ function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4'
   }));
 }
 
-function runVerifier(runDir) {
-  return spawnSync(process.execPath, [verifier, runDir], { encoding: 'utf8', windowsHide: true });
+function runVerifier(runDir, {preload, env = process.env} = {}) {
+  const args = preload ? ['--import', pathToFileURL(preload).href, verifier, runDir] : [verifier, runDir];
+  return spawnSync(process.execPath, args, { encoding: 'utf8', windowsHide: true, env });
 }
 
 test('missing product provenance can verify bundle integrity only, never product E4 acceptance', t => {
@@ -88,6 +89,49 @@ test('missing product provenance can verify bundle integrity only, never product
   assert.equal(summary.e4Status, 'NOT_VERIFIED');
   assert.equal(summary.sourceCommit, undefined);
   assert.equal(Object.hasOwn(summary, 'valid'), false);
+});
+
+test('E4 verifier rejects an archive swapped after its outer hash is read', t => {
+  const parentDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-swap-'));
+  t.after(() => fs.rmSync(parentDir, { recursive: true, force: true }));
+  const runDir = path.join(parentDir, 'run');
+  const replacementDir = path.join(parentDir, 'replacement');
+  createValidRun(runDir);
+  createValidRun(replacementDir, {evidenceData: '{"event":"swapped-evidence"}\n'});
+  assert.notEqual(
+    sha256(fs.readFileSync(path.join(runDir, 'evidence.zip'))),
+    sha256(fs.readFileSync(path.join(replacementDir, 'evidence.zip')))
+  );
+
+  const preload = path.join(parentDir, 'swap-after-first-archive-read.mjs');
+  fs.writeFileSync(preload, `
+    import fs from 'node:fs';
+    import path from 'node:path';
+    const runDir = path.resolve(process.env.AC_E4_SWAP_RUN);
+    const replacementDir = path.resolve(process.env.AC_E4_REPLACEMENT_RUN);
+    const archivePath = path.join(runDir, 'evidence.zip');
+    const originalReadFileSync = fs.readFileSync.bind(fs);
+    let swapped = false;
+    fs.readFileSync = (file, ...args) => {
+      const data = originalReadFileSync(file, ...args);
+      if (!swapped && typeof file === 'string' && path.resolve(file) === archivePath) {
+        swapped = true;
+        for (const name of ['evidence.zip', 'SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log', 'evidence']) {
+          const target = path.join(runDir, name);
+          fs.rmSync(target, { recursive: true, force: true });
+          fs.cpSync(path.join(replacementDir, name), target, { recursive: true });
+        }
+      }
+      return data;
+    };
+  `);
+
+  const result = runVerifier(runDir, {
+    preload,
+    env: {...process.env, AC_E4_SWAP_RUN: runDir, AC_E4_REPLACEMENT_RUN: replacementDir}
+  });
+  assert.equal(result.status, 1, result.stdout);
+  assert.match(result.stderr, /E4_EXTERNAL_COPY_MISMATCH:SHA256SUMS\.txt/);
 });
 
 function crc32(data) {

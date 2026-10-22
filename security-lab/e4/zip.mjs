@@ -95,8 +95,8 @@ export function createZip(entries, outputPath) {
   return { bytes: bytes.length, files: entries.length };
 }
 
-export function readZip(zipPath) {
-  const bytes = fs.readFileSync(zipPath);
+export function readZip(zipPathOrBytes) {
+  const bytes = Buffer.isBuffer(zipPathOrBytes) ? zipPathOrBytes : fs.readFileSync(zipPathOrBytes);
   const min = Math.max(0, bytes.length - 65_557);
   let endOffset = -1;
   for (let i = bytes.length - 22; i >= min; i--) {

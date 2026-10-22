@@ -16,7 +16,6 @@ catch { throw new Error('E4_RUN_DIRECTORY_NOT_FOUND'); }
 if (runDirStat?.isSymbolicLink()) throw new Error('E4_RUN_DIRECTORY_SYMLINK');
 if (!runDirStat?.isDirectory()) throw new Error('E4_RUN_DIRECTORY_NOT_FOUND');
 
-const archivePath = path.join(runDir, 'evidence.zip');
 const sha256 = data => createHash('sha256').update(data).digest('hex');
 
 function readRunFile(name, { required = true, externalCopy = false } = {}) {
@@ -53,7 +52,9 @@ if (shaLine !== `${archiveHash}  evidence.zip`) throw new Error('E4_OUTER_ZIP_SH
 const metadata = JSON.parse(readRunFile('bundle.json').toString('utf8'));
 if (metadata.sha256 !== archiveHash || metadata.e4Status !== 'NOT_VERIFIED') throw new Error('E4_BUNDLE_METADATA_MISMATCH_OR_PROMOTED');
 
-const files = readZip(archivePath);
+// Parse the exact byte snapshot whose outer digest was checked above; reopening
+// the path here would permit a concurrent replacement between hashing and parsing.
+const files = readZip(archive);
 for (const name of files.keys()) {
   const segments = name.split('/');
   if (
