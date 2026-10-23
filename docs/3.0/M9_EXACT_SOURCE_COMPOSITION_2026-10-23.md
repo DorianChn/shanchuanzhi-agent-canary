@@ -10,16 +10,16 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 | M4 desktop security center | #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` (current PR head) | Security-center copy/status assertions clarified against the M3 fixed-probe boundary; first-party host read remains NOT_VERIFIED |
 | M5 policy | #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | Exact CI run `39867073839` passed 9/9; risk-policy source and regression changes verify deterministic DENY skips optional review, approval and execution callbacks |
 | M6 E4 | #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` (current PR head) | Adds a failure when a model fixture mutates its target; M9 now checks the historical lifecycle assertions remain intact while allowing additive regression coverage |
-| M7 reliability | #39 | `f4a7f91815236a87e81319d0c3512d57031b149e` (current PR head) | Adds installer lifecycle phase diagnostics. M9 package-contract regressions passed 2/2 locally; Issue #41 remains OPEN/HOLD pending valid lifecycle and clean-VM evidence |
-| M8 open-source product | #40 | `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` | Exact CI run `39867080161` passed 9/9 and wrapper `39867080178` passed 2/2; docs-only delta from the prior pin; Hook provenance, LF checkout and sanitized JSONL regressions |
+| M7 reliability | #39 | `f20e307458f4c703459621fd48e44a9e806f03bb` (current public PR head) | Bounded installer receipt phase markers; M9 reruns exact-toggle unit regressions. No real installer/VM acceptance; Issue #41 remains OPEN/HOLD |
+| M8 open-source product | #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` (current public PR head) | Documents first-party Security Center protected-read as NOT_VERIFIED; existing Hook provenance, LF checkout and sanitized JSONL regressions remain pinned |
 
 ## Owner-review boundaries
 
 - M1 Issue #52 comment `6349691761` approves the exact historical M2 source `099ad64e4a09330920cbd40847adec3fe631e91e` for the M1 Gateway/M2 adapter API contract only, with historical M1 review base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. Current M2 `67428139e53c3f63a1101b4f94e84b291cbb1196` descends from that reviewed source, but the exact-source approval does not cover later M2 changes. Current M1 `6886d6eef3beb972bc8f4c797584b0f522483870` descends from the historical review base; the comment does not accept the new M1 read implementation, a first-party host integration or TOCTOU protection.
 - M1 Issue #72 comment `6347268881` reviewed M3 source `27d4a20a20894c7b779edf68d8bf79685bc0e69b` for three Hook-related blobs only, with the same historical M1 review base. M9 checks those same blobs remain unchanged in the current M3 source; this is not an M1 review of the newer M3 Console route or its tests.
-- M6 Issue #59 comment `6346660246` reviewed exact M8 source `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` and M6 lifecycle contract source `2cebabc81d7908c04ddfa10378fa1d3427b92cf4`. Current M8 `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` is a descendant with only `E4_EVIDENCE_INDEX.md` changed since prior pin `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d`, and the M6-reviewed `test/auto-e4.test.mjs` blob remains identical. The former M6 pin `15e1663eac9c3932165fca9b39587115345f289c` retained the full reviewed lifecycle test blob. Current M6 `3578e7ba10b2fd160efa0e4683aba863c666db8a` adds regression tests to that file; M9 checks every previously reviewed line remains in order. These scoped dispositions do not accept unrelated changes in current module heads.
+- M6 Issue #59 comment `6346660246` reviewed exact M8 source `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` and M6 lifecycle contract source `2cebabc81d7908c04ddfa10378fa1d3427b92cf4`. Historical M8 `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` is a descendant with only `E4_EVIDENCE_INDEX.md` changed since prior pin `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d`; latest M8 `854de50d94637caf3f334de7d28dcdcaddd88f9f` adds documentation only, and the M6-reviewed `test/auto-e4.test.mjs` blob remains identical. The former M6 pin `15e1663eac9c3932165fca9b39587115345f289c` retained the full reviewed lifecycle test blob. Current M6 `3578e7ba10b2fd160efa0e4683aba863c666db8a` adds regression tests to that file; M9 checks every previously reviewed line remains in order. These scoped dispositions do not accept unrelated changes in current module heads.
 - M6 current exact-head hosted CI run `39864322034` and wrapper run `39864322029` are green (9/9 CI, 2/2 wrapper). This does not establish installer, clean-VM, real-model or external E4 behavior.
-- M2 candidate `67428139e53c3f63a1101b4f94e84b291cbb1196` exact CI run `39866513817` passed all nine checks. M5 candidate `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` exact CI run `39867073839` passed all nine checks. M8 candidate `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` exact CI run `39867080161` passed all nine checks and wrapper run `39867080178` passed 2/2. These owner CI runs do not replace the final M9 hosted exact-source composition run.
+- M2 candidate `67428139e53c3f63a1101b4f94e84b291cbb1196` exact CI run `39866513817` passed all nine checks. M5 candidate `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` exact CI run `39867073839` passed all nine checks. Historical M8 candidate `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` exact CI run `39867080161` passed all nine checks and wrapper run `39867080178` passed 2/2; current M8 head `854de50d94637caf3f334de7d28dcdcaddd88f9f` has exact CI run `39878036234` and wrapper run `39878038319` passed. These owner CI runs do not replace the final M9 hosted exact-source composition run.
 
 ## Current-head pre-integration checks
 
@@ -96,9 +96,9 @@ The M6 source-checkout E4 tests do not prove a built installer, clean-VM lifecyc
 - The pin map still references M4 `0a1fc13` and M7 `28aa873`. Current public M4 is `db3c0ee11d989a25b73a2d65246142a780f3ef6a`; current public M7 is `d1bc00b0f1d2b1c8e108ed83dafc27ede1eb1bd8`. M3's new route is local/unpushed and needs review. Refresh the exact-source pins only after those owner heads are stable, then rerun composition.
 - M7's current lifecycle artifact still fails with a confirmed started-but-incomplete setup process; M3's probe route is not yet pinned. Issue #52 stays OPEN/P0/NOT_VERIFIED and Issue #41 stays OPEN/P1/HOLD.
 
-## Exact source refresh — 2026-10-23
+## First exact-source refresh — 2026-10-23 (previous M7/M8 pins)
 
-PR #36 remains OPEN and Draft at `fe246f1d97a06149d366989ac9dd169b05006754`; its base remains `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. The composition harness and workflow now pin the current public owner heads below. M1/M2/M5/M8 remained at their previous exact refs; M3/M4/M6/M7 advanced to their public PR heads.
+At this earlier snapshot, PR #36 was OPEN and Draft at `fe246f1d97a06149d366989ac9dd169b05006754`; its base was `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. The following M7/M8 refs are historical and were superseded by the latest exact-source refresh below.
 
 | Module | Exact public owner ref |
 | --- | --- |
@@ -124,3 +124,30 @@ Local Windows validation used newly created detached worktrees whose `HEAD` valu
 During the first exact-source run, the M9 gate failed because it required the complete historical M6 test-file blob to remain byte-identical. Current M6 `3578e7b` added two security regressions to that same file, changing the blob while retaining its prior content. M9 now checks that every historical line remains present, in order, in the current candidate file, while permitting additive regression cases. The exact M6 regression suite passed 11/11, and the full exact-source composition then passed 11/11. No M6 test was removed or weakened.
 
 These are local fixture/source and owner-regression results. They do not establish a live Desktop/host bootstrap, native Codex Shell protection, OS-atomic or concurrent TOCTOU safety, installer lifecycle acceptance, clean-VM acceptance, or independent external E4. Keep Issue #52 OPEN / P0 / NOT_VERIFIED and Issue #41 OPEN / P1 / HOLD.
+
+## Latest exact-source refresh — 2026-10-23
+
+M7 and M8 advanced to new public refs. The M9 harness and workflow now pin these exact owner heads:
+
+| Module | Exact public owner ref |
+| --- | --- |
+| M1 / PR #43 | `6886d6eef3beb972bc8f4c797584b0f522483870` |
+| M2 / PR #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` |
+| M3 / PR #33 | `c7b7772c9d62e138e1cc6deed7c43104eaccafa6` |
+| M4 / PR #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` |
+| M5 / PR #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` |
+| M6 / PR #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` |
+| M7 / PR #39 | `f20e307458f4c703459621fd48e44a9e806f03bb` |
+| M8 / PR #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` |
+
+M7 adds fixed-path, bounded lifecycle phase telemetry for installer receipt creation and tests exact-toggle behavior. The M9 workflow now executes the telemetry-off positive control, exact-toggle marker test, non-exact-toggle negative control, and lifecycle smoke contract regression at the pinned M7 SHA. These are unit/source checks; they do not run Setup.exe, an installer, or a VM. M8's update is documentation-only and explicitly states the first-party protected-read route remains NOT_VERIFIED unless a trusted composition bootstrap is present and an end-to-end read is proven.
+
+The exact detached M7/M8 worktrees were checked at the two SHAs above. After the refresh began, live GitHub status showed M7 exact CI run `39878031913` passed while its wrapper run `39878031868` remained in progress; M8 exact CI run `39878036234` and wrapper run `39878038319` passed. Local test outcomes are:
+
+- Exact M7 receipt telemetry cases in `packaging/windows/test-worker.mjs`: **3/3 passed**; the targeted lifecycle smoke contract in `test/reliability.test.mjs`: **1/1 passed** using the repository's `--import tsx` loader.
+- Exact M7 `npm run pack:check -- --package-root <exact M2 worktree>`: passed for **91 files**.
+- Exact M8 provenance/LF cases: **2/2 passed**; sanitized co-located JSONL positive control: **1/1 passed**.
+- Exact-source `node --import tsx --test test/m9-cross-module-composition.test.mjs`: **11/11 passed** with all eight source roots detached at their listed SHAs and the exact M2 packed artifact.
+- `node --import tsx --test test/m9-security-composition.test.ts`: **3 passed, 1 existing skip**. The skipped M9 product-source case predates the M1 capability API; the exact source behavior is covered by the cross-module composition harness.
+
+Hosted M9 Ubuntu/Windows exact-source composition remains required. Issue #41 remains OPEN / P1 / HOLD; Issue #52 remains OPEN / P0 / NOT_VERIFIED. No live installer, VM, model, production host hookup, or OS-atomic acceptance was performed.
