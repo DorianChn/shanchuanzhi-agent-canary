@@ -75,3 +75,20 @@ The newest archive was inspected in detail. The other six are identified by live
 Keep Issue #57 OPEN / NOT_VERIFIED. M6 owns E4 verifier semantics and reporting; M7 owns the installer, shipped payload, and build provenance. The current M7 artifact supplies a Setup.exe and build evidence, but says the installer was not run. The required missing evidence is an installed build tested in a clean independent Windows environment, product/host actions bound to the exact build and hashes, the required provider-confirmed real-model call where applicable, and an identity-verifiable independent operator receipt. Any VMware, real-model, or installer execution must use the exclusive reservation process on Issue #29.
 
 The latest Issue #57 comment is the M0 lane-end entry from 2026-10-21 18:30 UTC; no M6/M7 owner response or delivery date is recorded there. **Earliest delivery cannot be confirmed from this repository or current Issue #57 history.** No fixture, source CI, extracted Hook result, or package metadata should be presented as product E4 PASS.
+
+## Follow-up snapshot — 2026-10-23 03:20 UTC
+
+This follow-up supersedes the time-sensitive PR, Actions inventory, and Issue #57 statements above. The 2026-10-22 release-archive inspection remains a historical snapshot.
+
+M6 PR [#38](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/38) is OPEN/Draft at `3578e7ba10b2fd160efa0e4683aba863c666db8a`, based on `62496d4020bd90ba2eede49b2e80a2bbebb036b4`. Its exact-head CI run `39877189592` passed 9/9 jobs and Windows Community wrapper run `39877189739` passed 2/2. These remain verifier/source checks, not product E4 acceptance.
+
+M7 PR [#39](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/39) is OPEN/Draft at `1448a46ce43a2211e14be70fcd9c256b21d74c1f`. Exact-head workflow run `39893792191` completed successfully. It uploaded:
+
+| Artifact | ID | Size | GitHub artifact digest |
+|---|---:|---:|---|
+| `windows-community-build-evidence-1448a46ce43a2211e14be70fcd9c256b21d74c1f` | 12476161230 | 38,195,763 bytes | `sha256:d2a322e4b19e9ae2782e735a26a4377fda8b60f5245fd8e34dde2ea600054d8b` |
+| `windows-community-installer-lifecycle-1448a46ce43a2211e14be70fcd9c256b21d74c1f` | 12475873203 | 1,308 bytes | `sha256:08f9ae288a316625e34fed019ea4cc91be85c4fb57c658e884042e9b6527a3a2` |
+
+The lifecycle artifact was downloaded and its sanitized `INSTALLER_LIFECYCLE_RESULT.json` read. It reports `PASS_BOUNDED_GITHUB_HOSTED_INSTALL_UNINSTALL`, source SHA `1448a46ce43a2211e14be70fcd9c256b21d74c1f`, and installer SHA-256 `25442c5e350225cea8f2c33bc8d09bc9e4008734a38ccbcca87dc1caa9eb086f`. All four recorded checks passed: artifact provenance, silent install to a Unicode/space path, duplicate-candidate refusal, and silent uninstall. The recorded runner was GitHub-hosted Windows Server 2025 Datacenter, build `26100`; the report says its execution context does not assert a standard-user token. It also explicitly leaves EFS, in-place upgrade, Windows 11 client, real model/native agent, cancellation/rollback, and ordinary-user-token behavior untested or unverified.
+
+This is new bounded hosted installer-lifecycle evidence and improves artifact traceability. It does not establish a Windows 11 clean-VM reproduction by an independent operator, real-model/host actions against the installed package, or an authenticated independent receipt. M6 has not run its verifier positive and mismatch controls against a qualifying product E4 bundle because none is identified in the current public inventory. Issue #57 therefore remains OPEN/P1/NOT_VERIFIED; no E4 PASS is claimed, and earliest delivery remains unconfirmed.
