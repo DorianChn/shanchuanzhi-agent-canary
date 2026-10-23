@@ -18,11 +18,11 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 }));
 
 const pinnedSourceShas = {
-  M1: 'fa369069241bf81d32c7f39d31a61806efa55fe4',
-  M2: 'db98c7d5d409aa390ef539c96a209d6daba8d793',
+  M1: 'daa17efb70ba8c67b485e9269ec461138fd86f7c',
+  M2: 'daa17efb70ba8c67b485e9269ec461138fd86f7c',
   M3: 'cac8f4627aceb5dd3732036129e42ade7e4790e9',
   M4: '721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2',
-  M5: '8bb14c6b38dc2cc76bdf915442dc8048d30ff76d',
+  M5: 'f33b4a770f6c6f05a3d291c0bd2f4f01989d9964',
   M6: '98a4833250434de905611ace71bfe8094554d417',
   M7: '5a7540b0b041d10e6d562aa528f79a2cfdea987a',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
@@ -192,7 +192,7 @@ assertAncestor('M8', m6M8ReviewedSourceSha, pinnedSourceShas.M8, 'historical M6-
 assert.equal(readBlobIdAt('M8', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M6-reviewed M8 test hunk must remain exact at the reviewed source');
 assert.equal(readBlobIdAt('M8', pinnedSourceShas.M8, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M8 current head must preserve the exact M6-reviewed test hunk');
 assert.equal(readTrackedBlobId('M7', 'packaging/windows/e4-hook-faults.mjs'), m7AcceptedE4HelperBlob, 'M7 helper accepted as a condition of the M6 review must remain exact');
-assert.equal(process.env.M5_CODE_SHA, '06fdbb060574e96e5d1eba5c77721014e0a81a3b');
+assert.equal(process.env.M5_CODE_SHA, '6695e0470d7ceef1485f912ac61237fc91860cd8');
 
 function readTrackedHookBlob(moduleName) {
   const result = spawnSync('git', [
@@ -672,8 +672,9 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
   assert.equal(guard.state, 'SAFE');
 });
 
-// Exercise the exact M3 runtime and M1 quarantine subscription contract without an M9 shim.
-test('M3 connection-check runtime composes M1 held Gateway, packed M2 public facade, and exact M5 router', async (t) => {
+// PR #47 carries the coordinated M3 adapter patch; exercise that exact source
+// with the merged M1/M2 feature baseline and packed public M2 facade.
+test('M3 adapter from exact M5 PR #47 source composes M1 held Gateway and packed M2 facade', async (t) => {
   const packedRoot = process.env.M2_PACKED_ROOT;
   const consumerRoot = process.env.M2_CONSUMER_ROOT;
   assert.ok(packedRoot, 'M2_PACKED_ROOT must point to the installed candidate tarball');
@@ -686,7 +687,7 @@ test('M3 connection-check runtime composes M1 held Gateway, packed M2 public fac
   const packedFacade = await import(pathToFileURL(packedFacadePath).href);
   assert.deepEqual(Object.keys(packedFacade), ['createSecurityGatewayHostAdapter'], 'only the reviewed public M2 host facade is exposed');
 
-  const m3Host = await import(pathToFileURL(path.join(sourceRoots.M3.root, 'src', 'codex-connection-mcp.ts')).href);
+  const m3Host = await import(pathToFileURL(path.join(sourceRoots.M5.root, 'src', 'codex-connection-mcp.ts')).href);
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-protected-read-host-'));
   const workspace = path.join(base, 'workspace');
   const relativePath = 'agent-canary-public.txt';

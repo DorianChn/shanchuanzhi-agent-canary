@@ -23,19 +23,19 @@ jobs:
           ref: refs/pull/36/head
           path: module-sources/m9
 
-      - name: Checkout M1 PR #43 at candidate exact source SHA
+      - name: Checkout merged M1/M2 feature baseline for exact Gateway source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: fa369069241bf81d32c7f39d31a61806efa55fe4
+          ref: daa17efb70ba8c67b485e9269ec461138fd86f7c
           path: module-sources/m1
           fetch-depth: 0
 
-      - name: Checkout M2 PR #37 at exact package candidate SHA
+      - name: Checkout merged M1/M2 feature baseline for exact adapter source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: db98c7d5d409aa390ef539c96a209d6daba8d793
+          ref: daa17efb70ba8c67b485e9269ec461138fd86f7c
           path: module-sources/m2
           fetch-depth: 0
 
@@ -54,11 +54,11 @@ jobs:
           ref: 721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2
           path: module-sources/m4
 
-      - name: Checkout M5 PR #47 at exact trusted router source SHA
+      - name: Checkout M5 PR #47 exact coordinated source candidate
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 8bb14c6b38dc2cc76bdf915442dc8048d30ff76d
+          ref: f33b4a770f6c6f05a3d291c0bd2f4f01989d9964
           path: module-sources/m5
           fetch-depth: 0
 
@@ -129,7 +129,7 @@ jobs:
           fi
           m4_sha="$(git -C module-sources/m4 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
-          m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 06fdbb060574e96e5d1eba5c77721014e0a81a3b^{commit})"
+          m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 6695e0470d7ceef1485f912ac61237fc91860cd8^{commit})"
           if ! git -C module-sources/m5 merge-base --is-ancestor "$m5_code_sha" "$m5_sha"; then
             echo 'Pinned M5 code SHA is not an ancestor of the checked-out M5 head.' >&2
             exit 1
@@ -289,13 +289,17 @@ jobs:
           npm run build
           node --import tsx --test test/risk-policy.test.ts test/policy-router-export.test.ts test/policy-management.test.ts
 
-      - name: Run M3 exact-source packaged owner-consumer contract
+      - name: Run M3 adapter regressions in the exact coordinated M5 candidate
+        working-directory: module-sources/m5
+        run: node --import tsx --test test/codex-connection-check.test.ts
+
+      - name: Run exact M5-source M3 packaged owner-consumer contract
         shell: pwsh
-        working-directory: module-sources/m3
+        working-directory: module-sources/m5
         env:
           M1_ROOT: ${{ github.workspace }}/module-sources/m1
           M2_PACKED_ROOT: ${{ runner.temp }}/m9-m2-consumer/node_modules/@dorianchn/agent-canary
-          M3_ROOT: ${{ github.workspace }}/module-sources/m3
+          M3_ROOT: ${{ github.workspace }}/module-sources/m5
           M5_ROOT: ${{ github.workspace }}/module-sources/m5
         run: |
           if ($env:RUNNER_OS -eq 'Windows') {
@@ -350,7 +354,8 @@ jobs:
             echo 'Issue #69 closure applies only to its historical exact M2/M7 candidate; Issue #68 remains historical. M1 comment 6349691761 APPROVES M2 099ad64e4a09330920cbd40847adec3fe631e91e for the adapter-to-Gateway API contract only. This source composition does not establish product-host wiring or TOCTOU.'
             echo 'M1/M2/M5 evidence: verifyRealPaths=true denies path-only reads, writes, and deletes before callbacks. This fixture injects the exact pinned M5 router into the packed M2 public facade; M2 reserves and injects its tools, callback, and M1 capability wiring but does not authenticate router identity. A registered synthetic protected_read passes only when M5 resolves and verifies the M1 capability and M2 forwards that capability to M1 held-file execution. Sensitive paths and aliases remain denied before execution; verifyRealPaths=false is lexical policy only.'
             echo 'Active-capability negative controls cover a sensitive .env path, workspace and outside symlink/junction aliases, and a hard link alias named .env. M5 denies these before its M2 callback; direct packed-M2 executor calls reject all unregistered aliases before M1. No M1 runtime evidence or approval effect is added and fixture bytes/hashes remain unchanged.'
-            echo 'Current pinned exact sources: M1 fa369069241bf81d32c7f39d31a61806efa55fe4; M2 db98c7d5d409aa390ef539c96a209d6daba8d793; M3 cac8f4627aceb5dd3732036129e42ade7e4790e9; M4 721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2; M5 8bb14c6b38dc2cc76bdf915442dc8048d30ff76d; M6 98a4833250434de905611ace71bfe8094554d417; M7 5a7540b0b041d10e6d562aa528f79a2cfdea987a; M8 84ee6a7a8d65706f694b7949e82fd8c83cc11523. The exact M3 standalone package gate remains expected NOT_READY: 96 packed files, missing ./gateway-adapter and ./policy-router exports, and an M1 ./sdk declaration-byte mismatch. Historical M1 review SHA a5eff766ebe041bc2c6cc13758827d5a96205de9 remains an ancestor of the exact M1 source pin; comment 6347268881 reviewed M3 source 27d4a20a20894c7b779edf68d8bf79685bc0e69b Hook blobs only, which remain asserted unchanged.'
+            echo 'Current exact M1/M2 source is merged feature base daa17efb70ba8c67b485e9269ec461138fd86f7c; current exact M5 source is PR #47 head f33b4a770f6c6f05a3d291c0bd2f4f01989d9964. The M5 tree contains M5 STRICT fix 6695e0470d7ceef1485f912ac61237fc91860cd8 and the coordinated M3 adapter change 243b83e893960e02a3a6348995dd417b29b3b320. M9 runs M3 adapter and packaged-consumer regressions against that exact candidate tree. These are synthetic package and fixture tests, not first-party host acceptance.'
+            echo 'Other exact-source pins for this run: M3 cac8f4627aceb5dd3732036129e42ade7e4790e9 (standalone fail-closed fixture); M4 721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2; M6 98a4833250434de905611ace71bfe8094554d417; M7 5a7540b0b041d10e6d562aa528f79a2cfdea987a; M8 84ee6a7a8d65706f694b7949e82fd8c83cc11523. Historical M1 review SHA a5eff766ebe041bc2c6cc13758827d5a96205de9 remains an ancestor of the merged feature baseline; comment 6347268881 reviewed only three M3 Hook blobs, not the newer M3 protected-read adapter.'
             echo 'M3 synthetic runtime composition constructs the M1 Gateway using M3 Guard synchronous subscribeQuarantine semantics. M9 resolves M1 Gateway from exact M1 ./sdk and M5 router from M5 exact public ./policy-router; injected fixed-marker positive and DENY controls remain fixture-only. The ordinary M3 ai console CLI route is separately spawned with no injection; its loader requires M1 ./sdk, M5 ./policy-router, and M2 ./gateway-adapter. The M3-only package lacks the M5 and M2 exports, so the ordinary CLI must return sanitized UNKNOWN before protected-read probe/Gateway/router/callback work. No product bootstrap or positive production route is established.'
             echo 'M2/M3 scope: M9 invokes exact M3 createConnectionCheckRuntime() with exact M1/M2/M5 sources and verifies the synthetic fixed protected_read composition. This does not establish product-host wiring; native Codex Shell remains UNPROTECTED / NOT_VERIFIED.'
             echo 'M3 historical evidence: exact-source M9 composition passed at prior M3 aa6f1a5f0ee410b3c883fbe0c60e89020273966a. Previously published M3 f8c4092de804ff32639c92caef4f2615f0a37347 added a snapshot-only status-provider type and GET path; CSRF failures do not invoke the provider, and status reads do not load protected-read dependencies. Prior M3 head 8104ab30eed5245eb61eeebb1075b915e8557b46 added the direct no-probe-directory assertion for the missing-export route. M3 e3e7584 added the packaged owner-consumer regression; published M3 b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b added the incompatible-provider fail-closed regression. Current published M3 PR #33 head cac8f4627aceb5dd3732036129e42ade7e4790e9 updates the route test's gateway/quarantine integration controls. No hosted workflow run was reported for this exact SHA at refresh; historical run 39919260164 applies only to M3 b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b. M9 builds exact M1/M3/M5, packs exact M2, and runs synthetic owner-consumer checks against those roots; this is not real Agent user-file access or product-host protection. The standalone M3 package gate at current pin cac8f4627aceb5dd3732036129e42ade7e4790e9 remains NOT_READY because the M3 package export map is unchanged. The separate M3 GET status route is paired with M4 display-only code in a sanitized fixture. M3 Guard exposes synchronous subscribeQuarantine; Hook trust/effectiveness and Native Codex Shell remain NOT_VERIFIED / OUT_OF_SCOPE.'
@@ -360,10 +365,10 @@ jobs:
             echo 'M6 historical exact PR #38 head 15e1663eac9c3932165fca9b39587115345f289c passed exact-head CI run 39864322034 and wrapper run 39864322029 (9/9 CI, 2/2 wrapper). Prior M6 head 3578e7ba10b2fd160efa0e4683aba863c666db8a added a model-fixture target-mutation failure and regression. Public M6 code head 82d4e25a210a4c6d1f2c7f8e6d94ce56af1cd56b rejects ambiguous E4 report cases with a focused regression; its exact-head CI run 39899528596 reported 11/11 successful checks. Public M6 head 418d25862d0849e99b620c9610bd5dd7809f3648 added an independent acceptance audit document; exact-head CI run 39903623790 and wrapper run 39903623779 reported 11/11 successful checks. Prior M6 test-only head 032ecfdbc107e5afd11d17ccc250a11f5aa9c3fc added archived-source immutability assertions; prior exact pin 392a7c24697fd8925e3022616aad054922efb38f was the receipt-verifier package-boundary candidate. Current M6 exact pin 98a4833250434de905611ace71bfe8094554d417 binds the independent E4 receipt to product-run identity; exact-head CI run 39920790310 and wrapper run 39920790439 succeeded. M6 comment 6346660246 reviews the exact M8 test source 72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db and M6 lifecycle contract at older M6 SHA 2cebabc81d7908c04ddfa10378fa1d3427b92cf4 only; prior acceptance 98803607b89f11e24430c461bd91e9c1a0ece9d4 is likewise historical. Hosted source CI, verifier fixtures, and this package-boundary assertion do not establish external E4, real-model, or product-host behavior. No product-host, installer, VM/model, or independent E4 claim is made.'
             echo 'M7/M8 evidence: exact-owner build-command/provenance regressions, M8 LF checkout-policy assertion for the Hook source, and packaged/co-located JSONL positive-control tests. M7 byte comparison remains strict; M8 .gitattributes scopes LF normalization to its Hook source. Historical M7 f20e307 adds bounded installer receipt phase markers and exact-toggle unit regressions; M7 436d95c packages the durable-files worker dependency and selects a default for silent receipt failures while still rolling back and aborting. Its hosted lifecycle run failed because the ordinary NSIS temporary-copy uninstall had not completed before residue assertions. M7 runtime source 7c3486 waits for bounded uninstall completion and avoids launching a second failure cleanup after uninstall was attempted. Prior public M7 PR #39 head 97bb8de added the product-E4 artifact provenance audit. Current public M7 PR #39 head 5a7540b0b041d10e6d562aa528f79a2cfdea987a refreshes that provenance document; exact-head CI run 39920944820 and wrapper run 39920944771 succeeded. The M7 helper accepted as a condition of the M6 review is byte-identical at this new head. M9 runs the unchanged M7 package and receipt regressions at this exact source. These are source/test checks, not a real installer or VM acceptance result. M8 854de50 documents first-party Security Center protected-read as NOT_VERIFIED. M9 evidence: raw JSONL assertions for allowlisted fields, PreToolUse, enum allow, canonical ISO time, and caller/reason/path/command canaries absent.'
             echo 'Current M4 PR #34 source candidate is 721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2; its only change from the previous M4 pin is a host-ownership route-audit document. Its browser adapter remains read-only: it validates status-only snapshots, redacts path/token data, and will not promote scope-free PROTECTED data. The exact M3 GET status route/M4 display composition remains a synthetic UI fixture; the M4 page does not call M3 POST /api/security-center/protected-read. This verifies display behavior only, not live product protection or backend data provenance.'
-            echo 'Exact M1 candidate fa369069241bf81d32c7f39d31a61806efa55fe4 changes Gateway resolution to fs.realpathSync.native so NTFS short-name aliases expand before the protected-resource identity check; its exact hosted PR checks, including Windows Node 20/22, passed in runs 39903113558 and 39903113727. This does not establish product-host integration.'
-            echo 'Prior M2 PR #37 head b4aae52340e5eff5d9da4929f1bd59133048930c passed 9/9 checks. This owner report commit records ACCEPT_WITH_CONDITIONS for M3 test blob a01e1f75d360eed45a3789bb27722c6dd17ecf30 only; M3 12ab8c9 adds a distinct denial case outside that exact prior M2 disposition. The current pinned M2 facade is db98c7d5d409aa390ef539c96a209d6daba8d793 and is checked out separately.'
+            echo 'Historical standalone M1 candidate fa369069241bf81d32c7f39d31a61806efa55fe4 changes Gateway resolution to fs.realpathSync.native so NTFS short-name aliases expand before protected-resource identity checks; its exact hosted PR checks passed in runs 39903113558 and 39903113727. M9 now checks the merged feature tree at daa17efb70ba8c67b485e9269ec461138fd86f7c, which includes the integrated M1/M2 sources.'
+            echo 'Prior M2 PR #37 head b4aae52340e5eff5d9da4929f1bd59133048930c passed 9/9 checks. Its owner report records ACCEPT_WITH_CONDITIONS for M3 test blob a01e1f75d360eed45a3789bb27722c6dd17ecf30 only. M9 now checks the merged feature tree daa17efb70ba8c67b485e9269ec461138fd86f7c for the public M2 facade; the historical owner disposition does not extend to first-party host wiring.'
             echo 'The prior M3 local candidate 12ab8c9056a4f8d35c2508d966352f72950fd895 added the packaged M5 policy-denial case; published M3 b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b adds an incompatible-provider fail-closed regression. Current published M3 head cac8f4627aceb5dd3732036129e42ade7e4790e9 isolates the route test gateway/quarantine controls and still reports NOT_READY for its standalone package; no hosted run was reported for this exact SHA when refreshed. The synthetic owner-consumer test is not a shipped package result.'
-            echo 'Historical M5 PR #47 head 7fa47e8d82e4b92307a4429ea743931b4600ac90 passed its then-current checks. Current exact M5 head 8bb14c6b38dc2cc76bdf915442dc8048d30ff76d adds the held-file capability adapter and focused regressions. M9 exercises this owner API/source composition, but that fixture and owner CI do not establish real product-host wiring or user-file protection.'
+            echo 'Historical M5 PR #47 head 7fa47e8d82e4b92307a4429ea743931b4600ac90 passed its then-current checks. Current exact PR #47 head f33b4a770f6c6f05a3d291c0bd2f4f01989d9964 includes the held-file capability adapter, STRICT omitted/false correction, M3 adapter candidate, and M0 contract. M9 source and packaged-consumer fixtures do not establish real product-host wiring or user-file protection.'
             echo 'Prior M8 PR #40 candidate f321df3041e2a101661da686a6ccbe6a222b4d24 passed 11/11 checks and validated generated dist examples only after the documented build prerequisite. Current M8 pin 84ee6a7a8d65706f694b7949e82fd8c83cc11523 has its own hosted checks and is tested separately here; M9 keeps the exact-owner provenance, LF checkout, and sanitized JSONL tests. Historical M7 candidates and bounded Windows Server 2025 installer lifecycle evidence are documented above; Issue #41 remains OPEN/P1/HOLD pending broader acceptance.'
             echo 'Windows M3 consumer extraction uses the Windows-native System32 tar ahead of Git for Windows tar. This avoids drive-letter parsing by MSYS tar; exact M3 owner test remains unchanged.'
             echo 'M9 run 39901460198 failed only at the M3 packed-consumer extraction because Git for Windows tar parsed the C: archive path as a remote host; the workflow shell/path selection is corrected here. A hosted rerun is still required to establish M9 CI on this source set.'
