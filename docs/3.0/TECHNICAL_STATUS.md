@@ -7581,3 +7581,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 product CI run `39901460199` passed 9/9; Windows wrapper run `39901460241` passed 2/2. These do not supersede the failed Windows composition gate. P1 Issue #75 remains open for the earlier intermittent Sponsor smoke failure; no root cause or fix claimed.
 - Before this batch, remote preflight read M2 `c43e7ba33e29d9097ac68b444137b65aeaa92acc`, M5 `f05edaeeabff2e261bf563fb0782d7b9bc500645`, and M0 `5c8e2af6bab4b16dea5489d3960895d73d25f8db`, matching the expected tracked tips. M2, M5, and M0 review/report commits are queued for this batch. No main/PR merge or Release.
 - Next shared push batch is due approximately 04:51 UTC after fresh quota, PR #24, and target-ref preflight. The Usage page remains open for quota checks.
+
+## 04:50 UTC exact CI closeout and P0 tracking
+
+- Exact-head hosted CI passed for the 04:46 publication batch: M2 run `39902160058` at `b4aae52340e5eff5d9da4929f1bd59133048930c`, M5 run `39902163975` at `7fa47e8d82e4b92307a4429ea743931b4600ac90`, and M0 run `39902168652` at `10a3ba06426a558f6af488abb70a0cdc96723743`. All three PRs remain OPEN/Draft.
+- M0 posted Issue #52 evidence update comment `6357649098`: M2 ACCEPT_WITH_CONDITIONS, M5 CONDITIONAL, and the M9 Windows tar-path failure/root cause. Issue #52 remains OPEN/P0/NOT_VERIFIED; synthetic package results do not demonstrate a real Agent protected-file read or OS-atomic path identity.
+- Exactly two module slots are active: M1 owner-led P0 alias-gate investigation/fix if reproducible, and M9 integration workflow repair for the Windows exact-source composition gate. Shared VMware/real-model/installer slot remains unused and unreserved.
+- Usage at 04:49 UTC was 65% five-hour / 69% weekly / 113 credits. PR #24 remained OPEN/Draft with unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. The next shared push batch is due about 04:51 UTC after fresh quota and target-ref preflight.
