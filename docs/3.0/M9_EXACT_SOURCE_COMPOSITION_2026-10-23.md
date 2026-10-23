@@ -372,3 +372,37 @@ Local validation at these exact source heads:
 - `git diff --check` passed for the M9 workflow, exact-source test, and this report.
 
 At this verification snapshot, PR #36 remains OPEN/Draft at remote head `9f3b7d8c7617be84859a7f9d480b83328f05475b`; this M9 pin successor is local and has not been pushed or hosted. The integration work does not change Issue #52's OPEN/P0/NOT_VERIFIED disposition or Issue #41's OPEN/P1/HOLD status. It does not establish real Agent user-file protection, first-party host wiring, native Shell enforcement, OS-atomic TOCTOU, clean-VM installation, or external E4 acceptance.
+
+## Exact public-candidate composition and receipt-tool package boundary — 2026-10-23
+
+This section supersedes the earlier exact-source table above for the M2, M3, and M6 pins. M9's exact-source test and workflow now target these published owner PR heads:
+
+| Module / PR | Exact candidate SHA | Candidate-specific note |
+| --- | --- | --- |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` | Gateway protected-resource identity candidate |
+| M2 / #37 | `3a60813e90d470cb2e5d609444aba0ffc240411c` | Exact public head; its exact-head CI run `39907522136` contains the file-state concurrency failure tracked as Issue #51 |
+| M3 / #33 | `47474e3ea71b8a3ab0f175a74e2970ee52150878` | Exact public head; exact-head CI run `39911107983` passed 9/9 |
+| M4 / #34 | `d62557a03883c459cce6bec60b36686128ccf73d` | Existing read-only Security Center consumer candidate |
+| M5 / #47 | `7fa47e8d82e4b92307a4429ea743931b4600ac90` | Exact public policy-router candidate |
+| M6 / #38 | `392a7c24697fd8925e3022616aad054922efb38f` | Exact public receipt-verifier candidate |
+| M7 / #39 | `97bb8de315f2c19edbaa4d6536abc50876fecffd` | Existing exact source pin |
+| M8 / #40 | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` | Exact public candidate; includes sponsor smoke isolation/cleanup changes as well as documentation |
+
+M3's current `package.json` exports only `./sdk`. It does not publish `./gateway-adapter` or `./policy-router`. M2 owns the former export and M5 owns the latter. The M3 `test/packaged-owner-consumer.test.mjs` creates a temporary synthetic manifest by additively combining the M3, M1, M2, and M5 export maps, copies exact owner bytes, packs that temporary tree, and then exercises the unpacked result. That test artifact is not the M3 PR package or an already-supported aggregate npm package. The separate M9 runtime composition tests also compose independently checked-out owner modules and an exact packed M2 facade under dependency injection; they do not make the M3 package manifest additive.
+
+At the exact M3/M1/M2/M5 heads, the synthetic consumer test covers: package resolution and byte identity for the M1 `./sdk`, M2 `./gateway-adapter`, and M5 `./policy-router` entries; a fixed temporary marker positive read with cleanup; a stale M1 capability denied by the M5 router before either the M5 callback or M1 held-file read; `UNKNOWN` with no probe when either the M2 or M5 export is absent; M2 rejection of a lexical alias and a replaced held-file path before policy callback dispatch; and M1 capability-binding rejection of a sensitive symlink alias before M5 router creation. These are exact-source, synthetic package/fixture cases. They do not establish a shipped composite package, real Codex/product-host wiring, reads of users' real files, native Shell enforcement, OS-atomic race prevention, or external E4 acceptance.
+
+M6's exact `package.json` keeps `security-lab/e4/verify-bundle.mjs` behind the repository-only `e4:verify` script. Its published `exports` contains only `./sdk`, and its npm `files` allowlist is `dist`, `README.md`, `README.zh-CN.md`, and `LICENSE`. A dry-run package preview at M6 `392a7c2` listed no `security-lab/e4` files, including the independent receipt schema and verifier tests. Therefore consumers of the npm package do not receive the receipt verifier CLI or receipt schema; those remain checkout tooling. A verifier unit-test pass would establish verifier logic against test fixtures only, not the existence or validity of an independent reviewer receipt.
+
+M9's focused gate now asserts the exact M3 export boundary, the owner-export distinction, and the M6 npm allowlist/package-preview exclusion. Issue #52 remains OPEN/P0/NOT_VERIFIED until supported product-host wiring and real protected-resource behavior are independently demonstrated; the M1 API disposition does not satisfy that gate. Issue #57 remains OPEN/P1/NOT_VERIFIED until a separately produced and reviewed E4 receipt is present and verified. Synthetic composition, M6's verifier code, and the fact that the verifier itself is excluded from npm must not be used to close either issue.
+
+### Local exact-source rerun
+
+- `npm run build` passed in the exact M1 `fa369069`, M2 `3a60813`, M3 `47474e3`, and M5 `7fa47e8` worktrees.
+- M3 `test/packaged-owner-consumer.test.mjs` passed **6/6** with the exact M1/M2/M3/M5 sources. The test consumed a real npm tarball created from exact M2 `3a60813`; its six cases include the positive marker, M5 denial, missing-M2/M5 fail-closed controls, replaced-path/alias denial, and sensitive symlink rejection.
+- M6 `node --test security-lab/e4/verify-bundle.test.mjs` passed **26/26** at `392a7c2`. These are verifier fixture regressions; no independent reviewer ran E4 here.
+- M9 `node --import tsx --test test/m9-cross-module-composition.test.mjs` passed **15/15** with exact roots M1 `fa369069`, M2 `3a60813`, M3 `47474e3`, M4 `d62557a`, M5 `7fa47e8`, M6 `392a7c2`, M7 `97bb8de`, and current public M8 `84ee6a7`. This run includes M6 `npm pack --dry-run --json` and confirmed 90 candidate package files with no `security-lab/e4` entry.
+- M8 PR #40 was verified at public head `84ee6a7a8d65706f694b7949e82fd8c83cc11523`; the M9 pin is advanced from `f321df3` to that exact commit. At the time of the hosted check snapshot, M8's MacOS Node 20 and Windows Node 20/22 jobs were still pending; its other listed jobs had passed.
+- M2 exact head `3a60813` remains subject to its hosted concurrency failure in run `39907522136` (Issue #51). M3 exact head `47474e3` passed its owner workflow run `39911107983` (9/9). M9's changes here are local only; PR #36 has not been pushed or hosted on this refreshed pin set.
+
+The exact M3 package remains SDK-only even though its temporary test tarball adds owner export entries. The M6 verifier remains repository-only despite its passing fixture tests. These package boundaries and evidence limits are now enforced by M9-owned assertions.

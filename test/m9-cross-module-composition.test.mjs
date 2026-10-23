@@ -19,13 +19,13 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 
 const pinnedSourceShas = {
   M1: 'fa369069241bf81d32c7f39d31a61806efa55fe4',
-  M2: 'b4aae52340e5eff5d9da4929f1bd59133048930c',
-  M3: '12ab8c9056a4f8d35c2508d966352f72950fd895',
+  M2: '3a60813e90d470cb2e5d609444aba0ffc240411c',
+  M3: '47474e3ea71b8a3ab0f175a74e2970ee52150878',
   M4: 'd62557a03883c459cce6bec60b36686128ccf73d',
   M5: '7fa47e8d82e4b92307a4429ea743931b4600ac90',
-  M6: '032ecfdbc107e5afd11d17ccc250a11f5aa9c3fc',
+  M6: '392a7c24697fd8925e3022616aad054922efb38f',
   M7: '97bb8de315f2c19edbaa4d6536abc50876fecffd',
-  M8: 'f321df3041e2a101661da686a6ccbe6a222b4d24',
+  M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
@@ -59,6 +59,56 @@ function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
 for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
+
+test('exact M3 package stays SDK-only while the M3 consumer fixture composes owner exports synthetically', () => {
+  const readPackage = (moduleName) => JSON.parse(fs.readFileSync(path.join(sourceRoots[moduleName].root, 'package.json'), 'utf8'));
+  const m1Package = readPackage('M1');
+  const m2Package = readPackage('M2');
+  const m3Package = readPackage('M3');
+  const m5Package = readPackage('M5');
+  assert.deepEqual(Object.keys(m3Package.exports ?? {}).sort(), ['./sdk'], 'the exact M3 package must not publish a merged M1/M2/M5 export map');
+  assert.deepEqual(m3Package.exports['./sdk'], m1Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M1 public SDK entry');
+  assert.deepEqual(m3Package.exports['./sdk'], m2Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M2 public SDK entry');
+  assert.deepEqual(m3Package.exports['./sdk'], m5Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M5 public SDK entry');
+  assert.equal(m3Package.exports['./gateway-adapter'], undefined, 'M2 adapter is not exported by the exact M3 package');
+  assert.equal(m3Package.exports['./policy-router'], undefined, 'M5 policy router is not exported by the exact M3 package');
+  assert.equal(typeof m2Package.exports?.['./gateway-adapter'], 'string', 'M2 owns the public gateway-adapter export');
+  assert.ok(m5Package.exports?.['./policy-router'], 'M5 owns the public policy-router export');
+
+  const ownerConsumer = fs.readFileSync(path.join(sourceRoots.M3.root, 'test', 'packaged-owner-consumer.test.mjs'), 'utf8');
+  assert.match(ownerConsumer, /const composedExports\s*=\s*\{[\s\S]*?\.\.\.m1\.exports,[\s\S]*?\.\.\.m2\.exports,[\s\S]*?\.\.\.m5\.exports/);
+  assert.match(ownerConsumer, /npm pack/, 'the M3 owner-consumer contract builds its own temporary tarball');
+});
+
+test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the npm package', () => {
+  const m6PackagePath = path.join(sourceRoots.M6.root, 'package.json');
+  const m6Package = JSON.parse(fs.readFileSync(m6PackagePath, 'utf8'));
+  const verifierRelativePath = 'security-lab/e4/verify-bundle.mjs';
+  const receiptSchemaRelativePath = 'security-lab/e4/independent-review-receipt.schema.json';
+  assert.ok(fs.statSync(path.join(sourceRoots.M6.root, verifierRelativePath)).isFile(), 'the exact M6 checkout must contain its verifier');
+  assert.ok(fs.statSync(path.join(sourceRoots.M6.root, receiptSchemaRelativePath)).isFile(), 'the exact M6 checkout must contain its receipt schema');
+  assert.match(m6Package.scripts?.['e4:verify'] ?? '', /security-lab\/e4\/verify-bundle\.mjs/);
+  assert.deepEqual(Object.keys(m6Package.exports ?? {}).sort(), ['./sdk'], 'M6 publishes only its SDK package subpath');
+  assert.equal(JSON.stringify(m6Package.exports).includes('verify-bundle'), false, 'the receipt verifier is not a public package export');
+  assert.ok(m6Package.files?.includes('dist'), 'the published package allowlist includes dist');
+  assert.equal(m6Package.files?.some((entry) => entry.replace(/\\/g, '/').startsWith('security-lab/')), false, 'the npm allowlist excludes checkout-only security-lab tooling');
+
+  const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const packed = spawnSync(npmCommand, ['pack', '--dry-run', '--json'], {
+    cwd: sourceRoots.M6.root,
+    encoding: 'utf8',
+    windowsHide: true,
+    shell: process.platform === 'win32',
+  });
+  assert.equal(packed.error, undefined, `M6 package preview must start: ${packed.error?.message ?? ''}`);
+  assert.equal(packed.status, 0, `M6 package preview must succeed: ${packed.stderr}`);
+  const packagePreview = JSON.parse(packed.stdout)[0];
+  const packagedPaths = packagePreview.files.map((file) => file.path.replace(/\\/g, '/'));
+  assert.equal(packagedPaths.includes(verifierRelativePath), false, 'npm pack must omit the E4 verifier');
+  assert.equal(packagedPaths.includes(receiptSchemaRelativePath), false, 'npm pack must omit the independent receipt schema');
+  assert.equal(packagedPaths.some((file) => file.startsWith('security-lab/e4/')), false, 'npm pack must omit the E4 repository tooling directory');
+});
+
 assert.equal(process.env.M1_M3_REVIEW_STATUS, 'ACCEPT', 'M1 owner review must retain its exact Hook-file disposition');
 assert.equal(process.env.M1_M3_REVIEW_SHA, m1HistoricalReviewSha, 'M1-to-M3 Hook disposition must preserve its historical M1 review SHA');
 assertAncestor('M1', m1HistoricalReviewSha, pinnedSourceShas.M1, 'historical M1-to-M3 review source');

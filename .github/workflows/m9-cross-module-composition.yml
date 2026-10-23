@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: b4aae52340e5eff5d9da4929f1bd59133048930c
+          ref: 3a60813e90d470cb2e5d609444aba0ffc240411c
           path: module-sources/m2
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 12ab8c9056a4f8d35c2508d966352f72950fd895
+          ref: 47474e3ea71b8a3ab0f175a74e2970ee52150878
           path: module-sources/m3
           fetch-depth: 0
 
@@ -66,7 +66,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 032ecfdbc107e5afd11d17ccc250a11f5aa9c3fc
+          ref: 392a7c24697fd8925e3022616aad054922efb38f
           path: module-sources/m6
           fetch-depth: 0
 
@@ -82,7 +82,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: f321df3041e2a101661da686a6ccbe6a222b4d24
+          ref: 84ee6a7a8d65706f694b7949e82fd8c83cc11523
           path: module-sources/m8
           fetch-depth: 0
 
