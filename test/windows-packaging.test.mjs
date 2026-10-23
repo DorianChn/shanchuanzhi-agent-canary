@@ -92,6 +92,9 @@ test('Community source build transfers the patched dependency tree and keeps can
   assert.equal(lock.packages['node_modules/fast-uri'].version,'3.1.9');
   assert.match(source,/\['audit','--json'\]/);
   assert.doesNotMatch(source,/\['audit','--json','--audit-level'/);
+  assert.match(source,/failed_steps=\[\(name,result\['exitCode'\]\) for name,result in logs\.items\(\) if result\['exitCode'\]!=0\]/);
+  assert.match(source,/print\(f'Community validation failed at: \{details\}',file=sys\.stderr\)/);
+  assert.match(source,/print\(f'Community validation log: \{logfile\.relative_to\(root\)\}',file=sys\.stderr\)/);
 });
 
 test('payload inventory rejects symbolic links',t=>{

@@ -61,7 +61,12 @@ if not out.is_relative_to(root/'competition-submission'):raise SystemExit('Outpu
 out.mkdir(parents=True,exist_ok=True)
 logfile=out/('community-build-'+a.sha[:8]+'.json')
 with logfile.open('x',encoding='utf-8')as f:json.dump({'version':version,'temporaryBuild':str(stage),'steps':logs},f,ensure_ascii=False,indent=2)
-if any(v['exitCode']for v in logs.values()):raise SystemExit('Community validation failed; logs preserved')
+failed_steps=[(name,result['exitCode']) for name,result in logs.items() if result['exitCode']!=0]
+if failed_steps:
+ details=', '.join(f'{name} (exit {code})' for name,code in failed_steps)
+ print(f'Community validation failed at: {details}',file=sys.stderr)
+ print(f'Community validation log: {logfile.relative_to(root)}',file=sys.stderr)
+ raise SystemExit('Community validation failed; logs preserved')
 if not (stage/'dist/sdk.d.ts').is_file():raise SystemExit('Public SDK declaration missing')
 included=[]
 for file in sorted(stage.rglob('*')):
