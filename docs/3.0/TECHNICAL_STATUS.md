@@ -7256,3 +7256,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Issue #41 remains OPEN/P1/HOLD. Comment `6354688355` records exact artifact and boundaries. M7 is locating the residual paths and preparing a targeted regression/fix; no second installer run is scheduled before that change.
 - M9 exact-source composition against M7 `436d95c` passed 11/11; targeted worker 4/4, Windows packaging 3/3, and exact M2 package check covered 91 files. The M9 local report/commit is being finalized and explicitly retains the failed M7 lifecycle gate.
 - Usage readback at 00:49 UTC: 59% five-hour / 80% weekly / 113 credits. PR #24 remains OPEN/Draft and unchanged at head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No merge or Release.
+
+## M9 exact-source pin refresh staged — 2026-10-23 00:50 UTC
+
+- M9 committed `33506f1aa895b8124e8521c4303b1469dd2beb5c` locally on existing PR #36 branch (ahead 1, clean); it updates only the M7 source pin, workflow guard/regressions, and exact-source report. M1–M6/M8 pins are unchanged. Exact 8-source composition passed 11/11; M7 worker 4/4, Windows packaging 3/3, exact M2 `pack:check` 91 files, and lifecycle workflow smoke 1/1 passed locally. The report includes the hosted M7 lifecycle FAIL after uninstall and makes no installer acceptance claim. Next publication is scheduled for the next five-minute batch.
+- M7 agent is inspecting the existing uninstall implementation to identify residual owned paths; no second installer/VM run is authorized until a targeted change exists. #41 remains OPEN/P1/HOLD.
+- M0 PR #30 now points to `856dd687e0f37a62fdb702dd3de4aa34ae95d8d8`; ownership-contract evidence and Linux product CI passed while Windows/macOS matrix jobs were still running at readback.
