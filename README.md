@@ -23,6 +23,7 @@ In particular, Agent Canary does **not** claim to prevent prompt injection, stop
 
 - **Native Codex Shell — UNPROTECTED:** Agent Canary does not intercept Codex's built-in Shell; MCP/Guard setup does not change that.
 - **AppContainer — LIMITED:** Verified coverage is limited to the tested child-process operations; this is not evidence of whole-host or general shell protection.
+- **First-party Security Center protected read — NOT_VERIFIED:** The default route fails closed without a trusted composition bootstrap. An end-to-end read through the trusted Gateway, host facade, and strict policy router has not been verified.
 - **Security Center / E4 backend runtime — UNKNOWN:** An HTTP 404 does not establish success or failure.
 - **E4 — NOT_VERIFIED:** Fixture-only evidence is not a product pass. Independent E4 remains NOT_VERIFIED.
 

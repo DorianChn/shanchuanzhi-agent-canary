@@ -23,6 +23,7 @@ Agent Canary 只保护可信宿主实际接入 Guard、Router 或已登记 Gatew
 
 - **Codex 原生 Shell — UNPROTECTED（未受保护）：** Agent Canary 不会拦截 Codex 内置 Shell；MCP/Guard 接入不会改变这一点。
 - **AppContainer — LIMITED（范围有限）：** 已验证的覆盖仅限已测试的子进程操作；不能据此推断整个宿主或通用 Shell 得到保护。
+- **第一方 Security Center 受保护读取 — NOT_VERIFIED（未验证）：** 缺少可信组合引导时，默认路由会 fail-closed（拒绝执行）。尚未验证通过可信 Gateway、宿主 facade 和严格策略路由的端到端读取。
 - **Security Center / E4 后端运行状态 — UNKNOWN（未知）：** HTTP 404 不能证明成功或失败。
 - **E4 — NOT_VERIFIED（未验证）：** 仅有 fixture 的证据不代表产品通过；独立 E4 仍为 NOT_VERIFIED。
 

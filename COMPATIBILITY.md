@@ -13,6 +13,7 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 | `feature/agent-canary-3.0` and other moving branches | **Development** | Pin a full commit SHA. Branch contents and package metadata can change and are not release artifacts. |
 | Independent security benefit from AI/risk-policy analysis or adaptive decoys | **Experimental / not verified** | The local console is present in v3.0.0, but independent AI benefit and adaptive-versus-static gain are not established. |
 | Candidate desktop installer, native-host hooks, and Auto E4 | **Candidate-specific / partial** | These are not general guarantees of the v3.0.0 source snapshot. The earlier installer is unsigned and clean-VM validation remains blocked. See [security limitations](docs/3.0/SECURITY_LIMITATIONS.md) and the [E4 evidence index](E4_EVIDENCE_INDEX.md). |
+| First-party Security Center protected read route | **NOT_VERIFIED** | The default route fails closed without a trusted composition bootstrap. An end-to-end read through the trusted Gateway, host facade, and strict policy router has not been verified. |
 | Codex built-in Shell | **UNPROTECTED** | Agent Canary does not intercept Codex's native Shell. MCP registration does not change that. |
 | Claude/Cursor/Cline built-in tools | **Not verified as general coverage** | An MCP server or hook configuration does not imply global interception. |
 
