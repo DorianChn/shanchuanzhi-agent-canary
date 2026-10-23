@@ -32,3 +32,4 @@ __pycache__/
 /security-lab/competition-freeze/local-only/
 /security-lab/competition-freeze/local-video-player.html
 /security-lab/competition-freeze/pdf-qa/*.png
+!/security-lab/e4-runs/20261013T084123Z/raw.log
