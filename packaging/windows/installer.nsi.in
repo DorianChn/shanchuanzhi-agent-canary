@@ -22,6 +22,11 @@ ShowUninstDetails show
 !insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "English"
 Var InstallTxn
+Var M7LifecycleMarkerPath
+Var M7LifecycleMarkerHandle
+Var M7LifecyclePhase
+Var M7LifecycleMarkerEnabled
+Var M7LifecyclePreviousError
 Function RollbackInstall
  StrCmp $InstallTxn 1 0 rollback_done
  StrCpy $InstallTxn 0
@@ -54,7 +59,23 @@ FunctionEnd
 Function .onInstFailed
  Call RollbackInstall
 FunctionEnd
+Function WriteM7LifecyclePhase
+ StrCpy $M7LifecyclePreviousError 0
+ IfErrors 0 +2
+  StrCpy $M7LifecyclePreviousError 1
+ StrCmp $M7LifecycleMarkerPath "" m7_lifecycle_phase_done
+ ClearErrors
+ FileOpen $M7LifecycleMarkerHandle "$M7LifecycleMarkerPath" w
+ IfErrors m7_lifecycle_phase_done
+ FileWrite $M7LifecycleMarkerHandle "$M7LifecyclePhase$\r$\n"
+ FileClose $M7LifecycleMarkerHandle
+ m7_lifecycle_phase_done:
+ ClearErrors
+ StrCmp $M7LifecyclePreviousError "1" 0 +2
+  SetErrors
+FunctionEnd
 Function .onInit
+ ReadEnvStr $M7LifecycleMarkerEnabled "AGENT_CANARY_M7_PHASE_MARKER"
  SetShellVarContext current
  ; EFS-encrypted install paths fail NSIS uninstaller startup in the tested
  ; Windows profile. Keep LocalAppData untouched and choose a user-writable,
@@ -131,18 +152,29 @@ Section "Community"
  ${EndIf}
  StrCpy $InstallTxn 1
  SetOutPath "$INSTDIR"
+ StrCmp $M7LifecycleMarkerEnabled "1" 0 m7_lifecycle_marker_disabled
+ StrCpy $M7LifecycleMarkerPath "$INSTDIR\.m7-installer-lifecycle-phase"
+m7_lifecycle_marker_disabled:
+ StrCpy $M7LifecyclePhase "FILE_COPY_STARTED"
+ Call WriteM7LifecyclePhase
  ClearErrors
  File /r "__PAYLOAD__\*"
  IfErrors install_failed
+ StrCpy $M7LifecyclePhase "FILE_COPY_COMPLETE"
+ Call WriteM7LifecyclePhase
+ StrCpy $M7LifecyclePhase "RECORD_INSTALL_STARTED"
+ Call WriteM7LifecyclePhase
  ClearErrors
  nsExec::ExecToStack '"$INSTDIR\runtime\node.exe" "$INSTDIR\worker.mjs" record-install "$LOCALAPPDATA\AgentCanaryCommunityData" unspecified __ANCHOR__ "$EXEPATH"'
  Pop $0
  Pop $1
  ${If} $0 != 0
-  MessageBox MB_ICONSTOP "Integrity receipt failed. Installation was not registered / 完整性记录失败，安装未登记。"
+  MessageBox MB_ICONSTOP "Integrity receipt failed. Installation was not registered / 完整性记录失败，安装未登记。" /SD IDOK
   Call RollbackInstall
   Abort
  ${EndIf}
+ StrCpy $M7LifecyclePhase "RECORD_INSTALL_COMPLETE"
+ Call WriteM7LifecyclePhase
  ClearErrors
  WriteUninstaller "$INSTDIR\Uninstall.exe"
  CreateDirectory "__START_MENU__"
@@ -156,6 +188,8 @@ Section "Community"
  WriteRegDWORD HKCU "__REGISTRY_KEY__" "NoModify" 1
  WriteRegDWORD HKCU "__REGISTRY_KEY__" "NoRepair" 1
  IfErrors install_failed
+ StrCpy $M7LifecyclePhase "INSTALL_REGISTERED"
+ Call WriteM7LifecyclePhase
  StrCpy $InstallTxn 0
  Goto install_done
  install_failed:

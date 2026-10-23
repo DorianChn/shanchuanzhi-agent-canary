@@ -97,3 +97,65 @@ M1 现在提供 `AgentGuard.subscribeQuarantine(listener: () => void): () => voi
 ## Hook interruption P1 #32 本地续作（2026-10-13）
 
 在合成复现中确认 wrapper 固定 2 秒 fail-closed timer 与父测试“marker 后立即外部 kill”的调度存在竞态：若父进程在 marker 后延迟 2.5 秒，wrapper 先输出固定 deny 并 code 0 退出，导致 interruption 专项断言失败。只修测试夹具，使 synthetic Hook 在 marker 后阻塞自身事件循环；测试再故意等待超过 2 秒并核验外部 kill、无 allow/日志。Node 20.20.2 和 22.23.1 定向回归均通过。该证据确认 harness 缺陷，不证明旧 CI 各失败都由它导致；历史 CI 根因仍需新 Windows CI 对照。详见 `SECURITY_REGRESSION_RESULTS.md` 与 `HOOK_FAILURE_MATRIX.md`。
+
+## M1 owner checkpoint — #51 / #52 / #56（2026-10-21 03:00 UTC）
+
+### #51：四进程 state-store 重试耗尽
+
+- 原始 Ubuntu Node 20 run 39072320332 / job 117512297915 的 test 163 在 worker 0 的 500 次 STATE_STORE_BUSY 循环后抛 RETRY_LIMIT；日志没有 AC3_LOCK_TRACE。Node 22 run 39073687546 / worker 2 同样在 500 次后 RETRY_LIMIT，也没有 trace。历史日志不能事后补采失败时锁状态。
+- 独立 instrumented Ubuntu Node 22 run 39497366090 / job 118885773068 捕获四个 worker：0/1 各完成 12 次 acquire/release。worker 0 前段持锁迭代 0–4 的区间约为 51.561259–52.293880 秒，之后在 worker 1 的 52.293971–52.816332 秒区间结束后，再完成迭代 5–11（52.816431–52.825108 秒）。worker 2/3 分别在约 1062/1067 ms 后以 500 次 EEXIST 耗尽，各有 20 次锁采样且无 stat error。owner 时序由独占 open/unlink 事件推断，不是锁内 owner 元数据；采样未显示 owner 区间重叠。这支持调度饥饿假设，不证明根因或数据丢失。
+- 当前 M1 Windows Node 22.23.1 聚焦复测通过 1/1；failure-only trace 未触发。生产锁、500 次上限、2 ms 退避、48 个 quarantine 检查及最终 48-state 检查未改动。Issue #51 保持 OPEN / P1 / UNKNOWN；下一证据是对当前 M1 trace 测试做 Ubuntu Node 20/22 定向 CI 复跑，不能把旧无 trace 日志当作已归因。
+
+### #52：M2 host 接线与 M1 Gateway 契约
+
+- canonical coordinator/docs/3.0/API_CONTRACTS.md 规定：verifyRealPaths:true 下通用 path-string 文件回调以 path_execution_not_pinned 在审批和 callback 前拒绝；false/未设置只保留旧 lexical policy，不构成 real-path 或 protected-open 保证。M1 Gateway 对登记资源先校验文件身份，以 O_NOFOLLOW 打开并持有 descriptor，之后经该 descriptor 操作。
+- M2 在 #52 的 owner 更新 6302184591 报告：createSecurityGatewayAdapter 目前只出现在定义和 checker，没有 first-party src/CLI/server 调用点；fixedFileReads 转发 path string，不是 M1 签发的 identity capability。因而它不能满足 M5 strict verifyRealPaths:true 回调边界；当前可验证范围仍是 synthetic adapter，first-party host/TOCTOU 未验证。
+- M1 不批准本轮增加或改变 public interface。M2 可继续定位真实 host callsite；若要让 M5 在 strict mode 接受该执行器，先由 M0/M1/M5 明确签核 capability 表达和验证契约。#52 维持 OPEN / P0 / NOT_VERIFIED。
+
+### #56：PR #47 的 M1-owned 路径 disposition
+
+PR #47 当前 head e3662e9ca7363504eea7dd5e3262352018519a56 与 PR #43 的共享 M1 路径如下，规范内容由 M1 的 PR #43 维护；本轮没有编辑 M5 文件：
+
+- src/security-router.ts（两边不同）：M5 增加别名分量检查与 OBSERVE 硬拒绝保持；M1 规范版本同时保留 generic unpinned operation 在审批/callback 前以 path_execution_not_pinned 拒绝。语义不接受任何放宽；M5 无共享路径例外。
+- test/security-router.test.ts（不同）：M1 保留 canonical deny-before-approval/callback、symlink/junction 和 pinned-execution 断言；M5 专属策略用例留在 M5 风险策略测试。
+- src/agent-hook.ts、security-lab/claude-native-hook.mjs（当前两边 blob 相同）：保留 M1 规范副本；native 文件操作未绑定 Gateway held-file capability 时拒绝，wrapper 日志不含原始参数/原因正文。
+- test/agent-hook.test.ts（不同）：M1 规范副本保留中断 marker、无 decision/output/log 断言及 Hook 策略/脱敏覆盖。中断子进程不能观测进程外 native host callback；不把该 fixture 描述成端到端 callback 计数证明。
+- test/file-state-store.test.ts（不同）：确认 M1 为 owner/canonical。M1 all-worker failure-only trace 汇总 child 状态、重试桶与 open/unlink owner 时序；保留 500/2 ms 和 48 状态断言。M5 的并行采样副本应由协调方移除或按 M1 版本协调，不能替换其诊断覆盖。
+
+当时的 PR 路径清单是早期快照；其中“#30 不含 Hook 测试”的结论已被下节 2026-10-21 的协调方 blob inventory 更正。当前文件级 owner disposition 以该 inventory 和下节的 ref/blob 一致性限制为准。
+
+## M1 owner checkpoint — #51 failure trace and shared-path disposition（2026-10-21）
+
+### #51：新增 M4 精确复现签名的对照
+
+- M4 run `38698635434` / Ubuntu 24.04 / Node `20.20.2` / job `116301121869` 使用 PR #34 merge SHA `0237411d3b63531b8164da9c04bfcbd140630afa`。test 163 的几何为 4 个独立进程各执行 12 次 quarantine 调用；worker 2 的外层 `STATE_STORE_BUSY` 循环达到 500 次、每次等待 2 ms 后以 `RETRY_LIMIT` 失败。日志没有 `AC3_LOCK_TRACE`，因此不能从该旧 job 重建失败瞬间的锁持有者或持有时长。
+- 同一几何的当前 M1 failure-only trace 已在测试代码中实现。当前 Windows Node `22.23.1` 定向运行通过 1/1（子测试 `980.9615 ms`，整个命令 `1432.9705 ms`），失败专属 trace 未触发。此前 Ubuntu Node 20/22 的有界重复也曾通过；另一次 instrumented Ubuntu Node 22 运行则记录 worker 2/3 各自耗尽 500 次 `EEXIST`，约 `1062/1067 ms`，20 个锁采样均未出现 stat error，owner 仅按独占 open/unlink 事件推断且未见区间重叠。这些不同结果说明触发间歇，不能证明根因或数据丢失。
+- 本次没有修改测试或生产代码；48 个 quarantine/state 检查、500 上限、2 ms 退避和 fail-closed 行为均保持。根因仍为 UNKNOWN。精确 blocker 是旧 M4 job 没有失败时 trace，当前可用本机是 Windows；下一步应在当前 M1 诊断测试上跑 Ubuntu Node 20/22 定向 CI，并保留失败时四 worker 汇总。不能把旧无 trace 失败与一次本机通过合并成已修复结论。
+
+### #56：M1-owned 重叠文件的 canonical disposition
+
+以下按协调方提供的当前 PR blob inventory 判定；blob 仅标识文件版本，不单独证明语义等价。M1 的 owner-canonical 变更来源为 PR #43；其他 PR 对同一路径的副本属于待协调快照，不得覆盖 M1 的硬拒绝和 deny-before-side-effect 语义。
+
+| M1-owned path | PR overlap / supplied blob | M1 disposition |
+| --- | --- | --- |
+| `test/agent-hook.test.ts` | #30 `d3b64fc265da5c24e45cbdd1c24abecc467c4a5d`; #33 `4adf0827643fa7eedd865e9b550fab380a724b05`; #34 `e8ae8202492fc44fbb13c7ee855198ac8e62f436`; #43 `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`; #47 `15f42f7d647b5fc403cc312d7c7dbfc421fa86f1` | #43 is the M1 canonical source. Keep its interruption marker, no-allow/no-callback, hard-deny and redaction assertions. #30/#33/#34/#47 must reconcile by porting only needed distinct coverage onto the M1 version; do not delete or weaken the M1 assertions. |
+| `src/security-router.ts` | #43 supplied `8581ba8ed7df31bf1e9db1fcc707c1dbdcb209b3`; #47 `a9a3e9f8b90e7db6a466352c37e2dee066abaa47` | #43 is the M1 canonical owner path. Preserve hard deny before approval/callback, unpinned path rejection, and real-path checks. #47’s alias-component checks may be retained only if they compose without changing these deny semantics. No overlap was listed for #30/#33/#34. |
+| `test/security-router.test.ts`, `src/agent-hook.ts`, `security-lab/claude-native-hook.mjs`, `test/file-state-store.test.ts` | Previously reviewed as #43/#47 shared paths; no new blob IDs supplied in this checkpoint | Keep the M1 PR #43 behavior and assertions canonical. Reconcile #47 additions without replacing deny-before-effect, Hook failure, or all-worker lock diagnostics. |
+
+There is a ref/blob consistency blocker for an exact current-head review: the supplied #43 router blob `8581ba8...` differs from the blob read earlier from the live/local PR #43 head `5e9e22d...` (`183d1f8443498568e9d49143e746f0bc274faa2c`). The ownership disposition above is stable, but the canonical router blob must be rechecked against a single agreed PR head before declaring the content-level reconciliation complete. The earlier statement that #30 did not contain `test/agent-hook.test.ts` is superseded by the supplied inventory. No M5/M3 file was edited.
+
+## M1 owner checkpoint — #51 non-reproduction and test-only fairness experiment（2026-10-21）
+
+- **Baseline rerun: non-reproduction.** Run `39497366090` attempt 2 used the unchanged baseline SHA `5e9e22d3feb4c3be4d4e7e50e0b34ec5a8803c96`. Ubuntu Node 22 job `118897641785` and Ubuntu Node 20 job `118897644470` each passed all ten complete `test/file-state-store.test.ts` iterations. Each iteration reported 17 tests, 14 passed, 0 failed, and 3 platform skips; the four-process test passed 10/10 on each runtime. The failure-only trace did not trigger. This contrasts with attempt 1's confirmed worker 2/3 `EEXIST` retry exhaustion, but does not explain that intermittent event.
+- **Test-only fairness experiment.** Existing M1 commit `34dc6685baaa0446d9adfebe490253c1c3b2ee2e` changes only `test/file-state-store.test.ts`: after `STATE_STORE_BUSY`, the test varies its delay deterministically from 2–8 ms using worker, operation, and retry indices, instead of fixed 2 ms polling. All four child processes remain concurrent; each must complete 12 quarantine writes. The 500-attempt ceiling is unchanged. Per-worker assertions still require 12 distinct lock acquisitions and 12 matching lock cleanups; the owner/failure trace remains; all 48 final quarantined scopes and the aggregate count of 48 remain asserted. No production lock, retry, or fail-closed behavior changed.
+- **Candidate verification.** Ubuntu Node 20 and Node 22 x10 jobs passed on commit `34dc6685baaa0446d9adfebe490253c1c3b2ee2e` in run `39510559958` (jobs `118930226542` and `118930226013`). The full PR CI run `39510560017` also passed. The stagger is a bounded test-harness experiment, not evidence that it fixed or caused the historical failure.
+- **Disposition.** The original contention failure is confirmed in the instrumented baseline attempt 1; attempt 2 on that same baseline is a non-reproduction. Fixed-polling/worker-scheduling starvation remains a plausible, unproven hypothesis. Root cause remains **UNKNOWN**; no production defect or data loss is established. Issue #51 remains **OPEN / P1**. This evidence and disposition are recorded in [the M1 #51 owner comment](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/51#issuecomment-6303579304). The earlier #51 checkpoint's proposed Ubuntu rerun is superseded by attempt 2; preserve the trace and failure signal for any later recurrence.
+
+- **M1 local continuation (2026-10-21).** Worktree was clean at `466a6409ff47067ddfe414f049a604bcd81eb209`; `src/file-state-store.ts` and `test/file-state-store.test.ts` are unchanged from the already verified `34dc6685baaa0446d9adfebe490253c1c3b2ee2e` candidate. The local host is Windows/MSYS with Node `22.23.1`; `wsl.exe --list --verbose` and `wsl.exe -e uname -s` both exit `127` and report that no WSL distribution is installed. Ubuntu Node 20 reproduction is therefore blocked locally; no Windows rerun was made because it would not add evidence beyond the earlier runs. The committed failure-only trace already separates exclusive `open('wx')` acquisition/contention (including the Windows lstat fallback), rename retry/wait while holding the lock, and lock cleanup/hold duration; it samples lock/state metadata every 25 retries and prints all worker traces on failure without file contents or absolute paths. The 500 retry ceiling, four concurrent workers, 12 writes per worker, 48 final state checks, and production lock behavior remain unchanged. The next useful reproduction is an Ubuntu Node 20 run of the current instrumented M1 test; until a failure trace identifies a different mechanism, retain **UNKNOWN** and do not infer a production lock defect from the prior 2 ms polling signature.
+
+## M1 owner follow-up — #61 source pin and #36 native Read mismatch（2026-10-21）
+
+- **M9 source pin reaffirmed.** M1 re-confirms exact source SHA `38a09a073ea8871036e60a62b160fdb376487b20` as the M1 Hook/Gateway source input M9 may consume. This is an explicit owner approval, separate from the current PR head and any review-evidence SHA. Immediately before this report-only change, local M1 HEAD was `7b0b72b668a11fb20dcad05a5189c39e86e73d37`; the live PR #43 head read for this review is `34dc6685baaa0446d9adfebe490253c1c3b2ee2e`. From `38a09a0` to that pre-report HEAD, the only changed paths are `SECURITY_CORE_AUDIT.md` and `test/file-state-store.test.ts`. Blob IDs are identical for `src/agent-hook.ts` (`76f7bf6`), `src/security-router.ts` (`183d1f8`), `src/runtime/gateway.ts` (`d54f40f`), `src/containment.ts` (`e9c8ba1`), `security-lab/claude-native-hook.mjs` (`d6f9324`), `test/agent-hook.test.ts` (`82ca466`), and `test/security-router.test.ts` (`576400e`). The later #51 test-only fairness work and audit updates do not alter the approved Hook/Gateway snapshot.
+- **#36 evidence.** PR #36 head `de3799aae540f58173acec4ab3f7a1fe98593aa7`, run `38727481764`, fails the same M9 subtest on Windows job `116396823551` and Ubuntu job `116396823888`: `Read normal.txt`, with no held-file capability, expected `deny` and got `allow` from the M3 source. The run consumed M1 `b1d7423e70f2d47f43a5ec42e63a650ff93f6dcc` and M3 `be3880298e1c6766024ecbce5f6dbc23c4d2daa1`. It establishes a cross-module Hook decision mismatch; it does not by itself prove that a native file-read callback completed or disclose file contents.
+- **M1 disposition for M3 resolution.** M1's canonical behavior is a hard deny for native file reads without a held-file Gateway capability. `src/agent-hook.ts` returns `native_file_execution_not_pinned` for that case; M1's `test/agent-hook.test.ts` retains the ordinary `Read normal.txt` denial and unchanged synthetic-file assertions. M3 should make its own Hook source deny this input before the host can perform the read, and retain the M9 comparison as a hard assertion. A generic policy `ALLOW`, OBSERVE mode, or a lexically safe path is not a held-file capability. If M3 has no held-object route for this operation, deny native reads; do not weaken the expected decision. M1 does not edit or approve M3-owned files.
+- **Separate gates.** M9 should replace its stale M1 source pin with the exact approved `38a09...` SHA while keeping source and owner-review refs distinct. This pin refresh alone does not resolve the observed M3 `allow`; M3 must supply a corrected exact source SHA, after which M9 must rerun both composition jobs on the recorded refs. Issue #61 remains open until pin consumption and composition pass; #51 remains **OPEN / P1 / UNKNOWN** independently.

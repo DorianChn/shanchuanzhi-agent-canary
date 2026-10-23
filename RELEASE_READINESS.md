@@ -5,11 +5,12 @@
 
 ## 已完成
 
-- 按 M0 的隔离约定在 `feature/ac3-reliability` 工作；只添加 SDK Gateway 清理、包装器持久化、Windows 安装器模板、CI、基准/Soak 工具和报告；未改变既有 CLI/MCP/SDK 接口。
-- 修复并为并发 `Gateway.close()`、持久化写入的原子发布、损坏 session 恢复、陈旧 Auto E4 锁回收、安装包输入摘要固定和精确回滚增加回归覆盖。
+- 按 M0 的隔离约定在 `feature/ac3-reliability` 工作；M7 增补可靠性、包装器持久化、Windows 安装器模板、CI、基准/Soak 工具和报告；未改变既有 CLI/MCP/SDK 接口。
+- 持久化写入的原子发布、损坏 session 恢复、陈旧 Auto E4 锁回收、安装包输入摘要固定和精确回滚有回归覆盖。M7 本地提交已纳入 M1 owner 的 Gateway close/quarantine 实现与回归测试，并通过 M1 owner review；该提交未推送，PR #39 远端仍为 `5c7d95d`（OPEN/DRAFT），Issue #28 的 combined GitHub CI 待候选进入 PR 后运行。
 - Windows 包装器 CI 扩展到依赖安装、TypeScript 构建、可靠性/包装器测试、依赖审计、包检查及 NSIS 3.13 模板编译。NSIS 编译使用一次性合成载荷；CI 不运行编译出的 EXE。该工作流需在 Draft PR 创建后读取真实运行结果。
 - 上一轮基线：`npm run verify` 334 项、329 通过、0 失败、5 跳过；包检查 90 个文件；`npm audit --audit-level=high` 报告 0 vulnerabilities。本轮没有重跑全量 `verify` 或依赖审计。
-- 本轮本机定向结果：`npm run test:reliability` 43 项、40 通过、0 失败、3 跳过；`git diff --check` 通过。覆盖安装器模板目录清理、清单路径负例、会话恢复与报告指针 ENOSPC/EACCES 注入。
+- 集成前基线定向结果（Node `v22.23.1`）：`npm run test:reliability` 46 项、43 通过、0 失败、3 跳过；Gateway/containment 定向测试 40 项、40 通过、0 失败、0 跳过。这些旧基线结果不覆盖 M1 handoff 的完整 close/quarantine 契约。
+- 2026-10-14 M1→M7 本地候选定向结果（Node `v22.23.1`）：Gateway/containment/acceptance 66 项通过；`npm run test:reliability` 46 项、43 通过、0 失败、3 跳过。候选待 combined GitHub CI；尚未完成完整构建与发布验收。
 - Gateway 3 轮合成微基准：每轮 1,000 次调用、并发 16；吞吐中位数 1,685.626 ops/s，延迟中位数 p50/p95/p99 为 4.924/9.020/10.353 ms，0 错误。完整数据见 [`PERFORMANCE_BENCHMARK.md`](PERFORMANCE_BENCHMARK.md)。
 
 ## 发布阻断项
@@ -20,6 +21,7 @@
 4. **长时可靠性证据缺失。** 24 小时与 7 天 Soak 均为 `NOT RUN`。本机 10.813 秒是工具冒烟，不是长稳结果。
 5. **共享 Windows VM 当前状态未验证。** 本轮仅恢复本地开发槽，没有申请或占用 VMware/安装资源；不修改系统安全设置，也不在真实用户目录进行破坏性安装测试。
 6. **发行身份与信誉未解决。** 目前候选为 unsigned；SmartScreen 下载体验、签名验证与发布者身份尚未验证。
+7. **Gateway close/quarantine 契约尚未进入 PR #39。** M1 owner 审阅通过的 M7 集成候选已在本地提交，涉及 Gateway、Guard 与对应测试五个文件；本地定向测试通过，但候选未推送。PR #39 远端仍为 `5c7d95d`（OPEN/DRAFT）；Issue #28 保持 OPEN，候选进入 PR 后等待 M7+M1 combined GitHub CI 再评估；Issue #44 也保持 OPEN。
 
 ## 依赖和构建完整性
 
@@ -31,6 +33,7 @@
 ## 下一步转为 READY 的证据
 
 - Draft PR 的 Windows CI 全绿，包括真实 NSIS 3.13 模板编译；记录运行链接和提交 SHA。
+- 按协调安排将本地候选送入 PR #39 后运行 M7+M1 组合验证；M1 单独 CI 或当前定向测试不能替代 combined GitHub CI 证据。
 - M0 协调的可丢弃 VM 中，针对与发布相同的源码/ZIP/NSIS 构建实际 EXE；进行普通用户首次安装、路径与 EFS、崩溃/失败回滚、重复安装、所定义的升级策略、卸载和重装；保存安装前后差分和哈希。
 - 同一隔离环境完成 24 小时测试；若基础设施允许，再完成独立 7 天测试。报告运行时长、环境、参数、错误与内存趋势，不以短测替代。
 - 由发布责任方决定并验证签名/下载信誉要求。未满足这些项目之前保持 `HOLD`。

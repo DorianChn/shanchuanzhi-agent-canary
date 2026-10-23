@@ -1,31 +1,31 @@
 name: Feature request
-description: Propose a focused user-facing improvement
+description: Propose a focused, compatible improvement
 title: "feature: "
-labels: [enhancement]
+labels: [enhancement, triage]
 body:
   - type: textarea
     id: problem
     attributes:
       label: User problem
-      description: Describe the workflow and who encounters the problem.
+      description: Describe the real workflow or failure this would address.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Expected behavior
-      description: Include the inputs, outputs, and failure behavior you expect.
+      label: Proposed behavior
+      description: Include expected inputs, outputs, and failure behavior.
     validations:
       required: true
   - type: textarea
     id: compatibility
     attributes:
       label: Compatibility and security impact
-      description: Note host, OS, data, permissions, network, and fail-closed implications.
+      description: Note API, state, platform, privacy, and fail-closed considerations.
   - type: checkboxes
     id: safety
     attributes:
-      label: Safety
+      label: Safety confirmation
       options:
-        - label: I did not include credentials, customer data, or payment records.
+        - label: I did not include real credentials, customer data, or payment records.
           required: true

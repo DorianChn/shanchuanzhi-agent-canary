@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -8,6 +9,7 @@ import {
   createProjectPolicyManager,
   verifyPolicyEvidenceExport,
 } from '../src/policy-management.js';
+import { evidenceDigest } from '../src/runtime/evidence.js';
 
 function workspace() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'canary-policy-project-'));
@@ -113,6 +115,40 @@ test('known risky development work waits for a human even when a reviewer return
   assert.equal(callbacks, 1);
   assert.ok(router.policyManager.evidence().some(e => e.decision === 'REQUIRE_CONFIRMATION'));
   assert.ok(router.policyManager.evidence().some(e => e.event_type === 'EXECUTION_RESULT' && e.execution_status === 'SUCCEEDED' && e.side_effect_verification === 'NOT_VERIFIED'));
+});
+
+test('a taint denial during pending approval is recorded in structured policy evidence', async () => {
+  const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
+  let callbacks = 0;
+  const router = createManagedRiskPolicyRouter({
+    guard: createAgentGuard({ sessionId: 'managed-stale-egress-approval', alert: false }),
+    workspaceRoot: workspace(), policyStorageDirectory: storage(), mode: 'BALANCED',
+    tools: { fetch_docs: { operation: 'http' }, read_secret: { operation: 'sensitive-read' } },
+    allowedReadOrigins: ['https://docs.example.test'],
+    executeRealTool: call => { callbacks++; return call.name; },
+  });
+
+  await assert.rejects(router.dispatch({
+    name: 'fetch_docs', args: { url: 'https://docs.example.test/submit', method: 'POST', body: 'public fixture' },
+  }), (error: unknown) => error instanceof PolicyBlockedError && error.decision.action === 'APPROVAL_REQUIRED');
+  const networkRequestId = router.pendingApprovals().find(item => item.tool === 'fetch_docs')!.requestId;
+
+  await assert.rejects(router.dispatch({ name: 'read_secret' }), (error: unknown) =>
+    error instanceof PolicyBlockedError && error.decision.action === 'APPROVAL_REQUIRED');
+  const secretRequestId = router.pendingApprovals().find(item => item.tool === 'read_secret')!.requestId;
+  await router.approve(secretRequestId, 'host-operator');
+  const evidenceCountBeforeStaleApproval = router.policyManager.evidence().length;
+
+  await assert.rejects(router.approve(networkRequestId, 'host-operator'), (error: unknown) =>
+    error instanceof PolicyBlockedError && error.decision.reason === 'possible_sensitive_egress');
+
+  const staleApprovalEvidence = router.policyManager.evidence().slice(evidenceCountBeforeStaleApproval);
+  assert.ok(staleApprovalEvidence.some(event =>
+    event.event_type === 'DECISION' && event.decision_source === 'DETERMINISTIC_POLICY' &&
+    event.decision === 'DENY' && event.execution_status === 'NOT_STARTED' &&
+    event.reason_code === 'possible_sensitive_egress' && event.tool_id === 'fetch_docs'));
+  assert.equal(callbacks, 1, 'only the approved sensitive read may reach the executor');
+  assert.equal(router.policyManager.verifyEvidence().valid, true);
 });
 
 test('a project rule added after initial review is rechecked before the callback starts', async () => {
@@ -257,6 +293,7 @@ test('evidence export verifies its chain and expected head, and rejects mutation
   assert.ok(head);
   const bundle = manager.exportEvidence();
   assert.equal(manager.verifyEvidence(head).valid, true);
+  assert.equal(verifyPolicyEvidenceExport(bundle).reason, 'VALID_LOCAL_CHAIN_UNANCHORED');
   assert.equal(verifyPolicyEvidenceExport(bundle, head).valid, true);
   assert.equal(verifyPolicyEvidenceExport(bundle, '0'.repeat(64)).reason, 'HEAD_MISMATCH');
   const changed = bundle.replace('project_network_restricted', 'policy_network_restricted');
@@ -264,6 +301,21 @@ test('evidence export verifies its chain and expected head, and rejects mutation
   const data = JSON.parse(bundle);
   data.events.pop();
   assert.equal(verifyPolicyEvidenceExport(JSON.stringify(data)).valid, false);
+
+  const rewritten = JSON.parse(bundle);
+  rewritten.events.at(-1).decision = 'ALLOW';
+  rewritten.events.at(-1).reason_code = 'policy_allowed';
+  let previous: string | null = null;
+  for (const event of rewritten.events) {
+    delete event.event_digest;
+    event.previous_event_digest = previous;
+    event.event_digest = evidenceDigest(event);
+    previous = event.event_digest;
+  }
+  rewritten.anchored_head = previous;
+  const rewrittenBundle = JSON.stringify(rewritten);
+  assert.equal(verifyPolicyEvidenceExport(rewrittenBundle).reason, 'VALID_LOCAL_CHAIN_UNANCHORED', 'a self-recomputed bundle must never claim an independent anchor');
+  assert.equal(verifyPolicyEvidenceExport(rewrittenBundle, head).reason, 'HEAD_MISMATCH', 'the separately retained trusted head must detect a rewritten chain');
 });
 
 test('corrupt policy audit fails closed before a real callback starts', async () => {
@@ -293,4 +345,73 @@ test('missing policy log with a retained checkpoint fails closed in warm and fre
 
   const fresh = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });
   assert.throws(() => fresh.currentRules(), /POLICY_AUDIT_HEAD_MISMATCH/);
+});
+
+test('native lab hook logs only the fixed allowlist and drops synthetic sensitive canaries', t => {
+  const tempParent = path.resolve(os.tmpdir());
+  const root = fs.mkdtempSync(path.join(tempParent, 'canary-policy-native-hook-'));
+  t.after(() => {
+    const resolvedRoot = path.resolve(root);
+    assert.equal(path.dirname(resolvedRoot), tempParent, 'synthetic fixture must remain directly under the temp directory');
+    const stat = fs.lstatSync(resolvedRoot);
+    assert.equal(stat.isDirectory(), true);
+    assert.equal(stat.isSymbolicLink(), false);
+    fs.rmSync(resolvedRoot, { recursive: true });
+  });
+
+  const canaries = {
+    session: 'M5_SESSION_SHOULD_NOT_PERSIST',
+    toolName: 'M5_TOOL_NAME_SHOULD_NOT_PERSIST',
+    command: 'M5_TOOL_ARGUMENT_SHOULD_NOT_PERSIST',
+    filePath: 'M5_FILE_PATH_SHOULD_NOT_PERSIST',
+    callerData: 'M5_CALLER_CONTROLLED_SHOULD_NOT_PERSIST',
+    reason: 'M5_REASON_SHOULD_NOT_PERSIST',
+    decisionMetadata: 'M5_DECISION_METADATA_SHOULD_NOT_PERSIST',
+  };
+  const modulePath = path.join(root, 'synthetic-hook.mjs');
+  const logFile = path.join(root, 'hook.jsonl');
+  const wrapper = path.resolve('security-lab/claude-native-hook.mjs');
+  const moduleSource = `export async function decideAgentHook() {
+    return { hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: ${JSON.stringify(canaries.reason)},
+      callerControlledMetadata: ${JSON.stringify(canaries.decisionMetadata)}
+    } };
+  }\n`;
+  fs.writeFileSync(modulePath, moduleSource, { flag: 'wx' });
+
+  const input = {
+    session_id: canaries.session,
+    tool_name: canaries.toolName,
+    tool_input: {
+      command: canaries.command,
+      file_path: path.join(root, canaries.filePath),
+      caller_value: canaries.callerData,
+    },
+  };
+  const result = spawnSync(process.execPath, [wrapper, modulePath, root, path.join(root, 'state'), logFile], {
+    input: JSON.stringify(input), encoding: 'utf8', timeout: 5000,
+  });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0);
+  const response = JSON.parse(result.stdout);
+  assert.equal(response.hookSpecificOutput.permissionDecision, 'deny');
+  assert.equal(response.hookSpecificOutput.permissionDecisionReason, 'Agent Canary: permission_denied');
+  for (const canary of Object.values(canaries)) {
+    assert.equal(result.stdout.includes(canary), false, `hook output contains synthetic canary ${canary}`);
+    assert.equal(result.stderr.includes(canary), false, `hook stderr contains synthetic canary ${canary}`);
+  }
+
+  const log = fs.readFileSync(logFile, 'utf8');
+  const lines = log.trim().split(/\r?\n/);
+  assert.equal(lines.length, 1);
+  const record = JSON.parse(lines[0]);
+  assert.deepEqual(Object.keys(record), ['timestamp', 'hookEventName', 'permissionDecision']);
+  assert.equal(new Date(record.timestamp).toISOString(), record.timestamp);
+  assert.equal(record.hookEventName, 'PreToolUse');
+  assert.equal(record.permissionDecision, 'deny');
+  for (const canary of Object.values(canaries)) {
+    assert.equal(log.includes(canary), false, `persisted hook log contains synthetic canary ${canary}`);
+  }
 });

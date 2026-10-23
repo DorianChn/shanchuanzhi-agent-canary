@@ -1,18 +1,25 @@
 # Windows 安装器验收记录（M7）
 
-日期：2026-10-13
-本地候选复核：2026-10-14
-结论：**HOLD。源码与模板渲染检查通过；NSIS 编译检查尚无通过证据，实际安装验收未执行。**
+证据刷新：2026-10-23
+历史本机候选复核：2026-10-14
+结论：**HOLD。被测 source SHA 的 NSIS 模板编译、Windows Community 包静态构建/提取，以及 GitHub 托管 Windows runner 中的限界安装、重复目标拒绝检查与卸载 smoke 均通过；干净 Windows 11 VM、标准用户令牌、EFS 和失败回滚仍未验证。**
+
+## Hosted run 证据（2026-10-23，精确 PR head）
+
+- PR [#39](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/39) 核验时为 OPEN / Draft，分支 `feature/ac3-reliability-ac3`，head 为 `1448a46ce43a2211e14be70fcd9c256b21d74c1f`。CI run [39893792149](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39893792149) 在该 head 上 9/9 job 成功；Windows Community wrapper run [39893792191](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39893792191) 的 4/4 job 成功，包括 build-evidence 与 installer-lifecycle。
+- lifecycle 结果 artifact [12475873203](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39893792191) 记录 `PASS_BOUNDED_GITHUB_HOSTED_INSTALL_UNINSTALL`、`installerExecuted=true`，source SHA `1448a46ce43a2211e14be70fcd9c256b21d74c1f`，候选 `competition-candidate.2`，安装器 SHA-256 `25442c5e350225cea8f2c33bc8d09bc9e4008734a38ccbcca87dc1caa9eb086f`。它在 GitHub-hosted Windows Server 2025 Datacenter build 26100 runner 上运行，使用 runner account；报告明确没有断言 standard-user token。
+- 该 smoke 对同一 run 构建出的包执行中文/空格临时路径静默安装并校验 3,848 个清单文件、收据和注册项；重复候选安装到第二目标时进程退出码为 2、原安装保留且第二目标为空；静默卸载退出码为 0，清除了受管文件、注册表及快捷方式，等待 NSIS 临时副本完成 1,107 ms，保留未知 sentinel，残留计数为 0。
+- 上述是受限的 hosted install/uninstall smoke，不是 clean Windows 11 VM 验收；它不证明 standard-user token、EFS、首次启动、失败/取消回滚、原位升级或真实 Agent/模型集成。较早 run `39882121777` / `39882121780` 为历史证据，当前结果以精确 head 的 `39893792191` artifact 为准。
 
 ## 边界和证据级别
 
-当前 M7 AC3 候选位于独立分支 `feature/ac3-reliability-ac3`，以 `feature/agent-canary-3.0` 为基线。2026-10-14 本轮获分配 VMware/安装验收资源，但没有启动 VM、修复磁盘或运行安装器。检查到候选 VM `候选 Windows 11 clean-test VM` 已关机（`vmrun -T ws list` 显示 0 台运行中的 VM），仍留有 `.lck` 目录，VMX 为 `cleanShutdown = FALSE`。只读磁盘链检查返回 VMware 偏好文件锁 `Access is denied`，并报告 `The specified virtual disk needs repair (0x3e86)` / `Disk chain is not consistent`。为保留原始 VM 状态，本轮未清锁、修盘或启动该 VM；访客系统的当前状态无法确认。没有更改共享 Git 引用、系统安全设置或真实用户安装目录。
+当前 M7 AC3 候选位于独立分支 `feature/ac3-reliability-ac3`，以 `feature/agent-canary-3.0` 为基线。2026-10-14 的 VMware/安装验收复核没有启动 VM、修复磁盘或运行安装器。检查到候选 VM `候选 Windows 11 clean-test VM` 已关机（`vmrun -T ws list` 显示 0 台运行中的 VM），仍留有 `.lck` 目录，VMX 为 `cleanShutdown = FALSE`。只读磁盘链检查返回 VMware 偏好文件锁 `Access is denied`，并报告 `The specified virtual disk needs repair (0x3e86)` / `Disk chain is not consistent`。截至 2026-10-23 02:25 UTC 的 M0 只读记录，M7 测试槽仍保留，但未建立安全 clean baseline；另一次检查确认 VMX `cleanShutdown = FALSE` 且 `.vmsd` 没有快照条目。为保留原始 VM 状态，没有清锁、修盘或启动 VM；访客系统状态无法确认（见 [Issue #41 的 M0 只读记录](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41#issuecomment-6355913185) 和[基线补查](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41#issuecomment-6355939380)）。没有更改共享 Git 引用、系统安全设置或真实用户安装目录。
 
 本记录区分三类证据：
 
-- **本轮源码测试**：`npm run verify` 及 Windows 包装器专项回归；这些结果不代表已运行安装程序。
-- **编译检查**：Windows CI 候选流程下载并校验 NSIS 3.13 安装包，安装到临时目录，强制要求 `makensis.exe` 存在并匹配预期版本，再用它编译渲染后的模板；编译输出是使用合成 payload 的临时 smoke-fixture EXE，不是发行包，且不会运行。安装步骤记录安装包与编译器 SHA-256，编译步骤记录实际版本及输出/模板 SHA-256。PR #39 在旧 head `65ce028` 的 run `38415886978` 曾因 `NSIS_COMPILER_MISSING` 失败。更新后的 head `4f3a2c5` 在 run `38430069038` 的 Windows wrapper job 更早于 `npm run test:reliability` 失败，故 NSIS 安装和模板编译步骤被跳过；该 run 没有可核实的 makensis 版本或编译产物证据。当前本地修复将 compiler/install steps 移到 `npm ci` 和 reliability 测试之前，并关闭 matrix fail-fast；新一轮 CI 尚未运行。
-- **实际安装验收**：本轮未执行。公开或本机构建的真实安装包没有在 M7 环境中运行；VMware 安装测试资源现已释放，没有留下运行中的 VM 或访客安装进程。
+- **本轮源码测试**：本机 `npm run test:reliability` 为 58 项，55 通过、0 失败、3 跳过（均为符号链接权限/能力未假设相关）；这是临时 fixture、源码和包装器回归，不会执行 NSIS 安装器。另有下述精确 PR head 的 hosted lifecycle smoke，两者证明范围不同。本轮未运行完整 `npm run verify`。
+- **编译检查**：Windows CI 候选流程下载并校验 NSIS 3.13 安装包，安装到临时目录，强制要求 `makensis.exe` 存在并匹配预期版本，再用它编译渲染后的模板；编译输出是使用合成 payload 的临时 smoke-fixture EXE，不是发行包，且不会运行。安装步骤记录安装包与编译器 SHA-256，编译步骤记录实际版本及输出/模板 SHA-256。历史 run `38415886978`（旧 head `65ce028`）曾因 `NSIS_COMPILER_MISSING` 失败，run `38430069038`（head `4f3a2c5`）则在此前测试步骤失败导致编译被跳过；这些已被后续 M7 workflow 修复覆盖。精确 head `1448a46` 的 wrapper run `39893792191` 中 Windows build-evidence 和 installer-lifecycle 均成功。
+- **限界安装验收**：精确 head `1448a46` 同 run 构建的 Community Setup 已在 GitHub-hosted 临时 Windows runner 中实际运行并完成安装、重复目标拒绝检查和卸载，见上方 run `39893792191` artifact `12475873203`。这不是 M7 本机 clean VM 或 Windows 11 标准用户会话；M0 记录的 VMware 槽仍保留，但 VM 锁/快照及 cleanShutdown 状态不提供安全 clean baseline。没有清锁、修盘或启动该 VM。
 
 历史 Windows 记录见 [`docs/3.0/INSTALLATION_ACCEPTANCE.md`](../../docs/3.0/INSTALLATION_ACCEPTANCE.md)：公开 candidate.4 曾在 EFS LocalAppData 环境卸载失败；随后本机 NSIS 3.10 诊断构建完成了两轮生命周期，但它不是公开 candidate，也不是发行工具链 NSIS 3.13。该历史结果没有被挪作本轮证明。
 
@@ -20,28 +27,28 @@
 
 | 场景 | 本轮状态 | 证据与限制 |
 |---|---|---|
-| 普通用户安装 | **源码配置通过；实际未验证** | NSIS `RequestExecutionLevel user`，注册信息写入 HKCU，快捷方式与默认路径为当前用户。没有用标准用户令牌运行 EXE。 |
-| 中文路径、空格路径 | **模板渲染通过；编译与实际安装未验证** | 回归测试以 `Agent Canary 安装` 和空格路径渲染输出、载荷及 License 路径。远端 Windows CI 在 `65ce028` 上未通过 NSIS 编译器检查；本地 `68e7caa` 尚未在有可运行 NSIS 的环境中完成编译。 |
-| EFS 路径 | **源码检查通过；实际未验证** | 模板检测 LocalAppData 的 `FILE_ATTRIBUTE_ENCRYPTED` 并将默认位置改到当前用户目录；对自定义目标检查最近的现存祖先。没有在 EFS 目录中运行本轮安装器。不得通过改变宿主机 EFS/安全设置制造测试环境。 |
-| 首次启动 | **未验证** | 本轮没有构建和启动真实 M7 安装包。 |
-| 重复安装同一候选 | **拒绝逻辑有源码测试；实际未验证** | 非空目录、已登记候选或冲突快捷方式会被拒绝。 |
+| 普通用户安装 | **源码配置通过；实际未验证** | NSIS `RequestExecutionLevel user`，注册信息写入 HKCU，快捷方式与默认路径为当前用户。尚未用标准用户令牌运行候选安装包。 |
+| 中文路径、空格路径 | **GitHub-hosted 临时 runner 生命周期通过；clean Windows 11 VM 未验证** | run `39893792191`（source SHA `1448a46ce43a2211e14be70fcd9c256b21d74c1f`）用实际 Community Setup 安装到 `Agent Canary 验收 …\Agent Canary 安装目录`，并校验清单、收据和卸载。它不是 M7 clean VM 或标准用户令牌验收。 |
+| EFS 路径 | **源码检查通过；实际未验证** | 模板检测 LocalAppData 的 `FILE_ATTRIBUTE_ENCRYPTED` 并将默认位置改到当前用户目录；对自定义目标检查最近的现存祖先。尚未在 EFS 目录中运行候选安装包。不得通过改变宿主机 EFS/安全设置制造测试环境。 |
+| 首次启动 | **未验证** | 生成包的 `BUILD_REPORT.json` 明确 `installerExecuted=false`，表示静态构建步骤本身没有执行安装器；后续 lifecycle job 实际运行安装器并检查安装文件，但没有启动已安装的 Agent Canary 应用。 |
+| 重复安装同一候选到第二目标 | **GitHub-hosted runner 拒绝检查通过；clean Windows 11 VM 未验证** | run `39893792191` 调用同一安装器到第二目录后，进程退出码为 2，原安装及注册项保留、第二目录为空；这是 hosted runner 的结果，不是 clean Windows 11 VM 验收。 |
 | 升级 | **未实现原位升级 / 未验证** | 候选号对应独立安装目录、注册项和快捷方式；不同候选可并存。当前源码没有旧版本迁移或原位升级事务。发行前需明确支持的升级方式并验证。 |
-| 卸载与重装 | **源码清单逻辑通过；实际未验证** | 只删除清单中的精确文件和空目录，不递归删除目录；对目录重解析点做拒绝检查。不能据此宣称公开安装包已卸载或重装成功。 |
+| 卸载与重装 | **hosted runner 卸载通过；clean Windows 11 VM 未验证** | source SHA `1448a46ce43a2211e14be70fcd9c256b21d74c1f` 对应的 Community Setup 静默卸载退出码为 0，清除了受管文件、注册表项和快捷方式，并保留未知 sentinel；结果报告残留数为 0。独立重装循环、clean VM 生命周期仍未验证；卸载仅按清单删除精确文件和空目录，并拒绝目录重解析点。 |
 | 安装失败回滚 | **模板逻辑已补；实际未验证** | 复制载荷、安装收据或注册失败时按精确清单回滚；取消/失败回调也尝试回滚。回滚遇到重解析目录会保留目录并报告不完整。未用 NSIS 安装器注入失败、磁盘耗尽或中断。 |
-| 卸载残留 | **未验证** | 无真实安装目录树、注册表和快捷方式的安装前后差分。未知文件及应用报告按设计保留。 |
+| 卸载残留 | **hosted runner 安装目录检查通过；clean VM 未验证** | run `39893792191` 检查受管文件、注册表、快捷方式及未知文件 sentinel，受管文件残留数为 0；没有 M7 clean VM 的安装前后差分。未知文件及应用报告按设计保留。 |
 | 签名 / SmartScreen | **未验证 / 构建为 unsigned** | M7 没有代码签名证书，也未测下载信誉提示。哈希只证明字节一致，不证明发布者身份。 |
 
-## 本轮修复
+## 截至 2026-10-14 的实现记录（历史说明）
 
 - `prepare.mjs` 现在要求调用者明确提供 Community ZIP 与 SHA-256；拒绝符号链接/非普通文件和摘要不匹配，不再静默回退到历史 candidate.2 包。
 - 安装器模板按候选号生成独立身份；对路径中的 `$` 做 NSIS 转义，检查未展开占位符。
 - 增加精确文件/目录清单回滚；回滚和正常卸载均检查目录重解析点，保持非递归删除。
 - 回滚与卸载在目录删除前显式将 NSIS 当前目录切换到 `$TEMP`；安装过程把输出目录设为 `$INSTDIR`，避免回滚时根目录仍被当前目录占用。卸载在清单删除失败时提前退出并报告，保留后续重试路径。该行为有渲染模板回归覆盖，尚无真实 EXE 生命周期证据。
-- Windows Community workflow 新增 Windows-only NSIS 3.13 安装步骤：按仓库 provenance 校验下载 SHA-256，验证实际 `makensis /VERSION` 后将可执行路径传给编译步骤；模板验收再次核对版本，并只在真实编译成功且输出文件存在时报告成功。该候选尚未触发 hosted Windows CI，不能记作编译通过。
+- Windows Community workflow 新增 Windows-only NSIS 3.13 安装步骤：按仓库 provenance 校验下载 SHA-256，验证实际 `makensis /VERSION` 后将可执行路径传给编译步骤；模板验收再次核对版本，并只在真实编译成功且输出文件存在时报告成功。此项已在历史 run `39573529232` 通过；更新的源码 SHA `7c348622e6c94e6f583044832c4a415c6a19c209` 对应编译结果见 run `39882121777`。
 - `worker.mjs` 的报告、最新指针和安装收据使用同目录临时文件后发布；损坏的会话状态先保留为 `.corrupt.*.bak`，再创建新会话；不安全符号链接仍然失败关闭。
 - 为会话恢复和报告发布加入可选文件系统注入点；新增损坏状态备份拒绝、恢复 ENOSPC、最新报告指针替换 ENOSPC、清理清单路径穿越等负面回归。包装器测试 fixture 现于每个测试后清理。
 
-## 本轮执行结果
+## 截至 2026-10-14 的执行结果（历史快照）
 
 - `npm run verify`：**334 项，329 通过、0 失败、5 跳过**；构建通过，包检查通过（90 个文件）。
 - 上一轮 `npm run test:reliability`：**36 项，34 通过、0 失败、2 跳过**。

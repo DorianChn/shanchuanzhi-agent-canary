@@ -71,7 +71,15 @@ Review the generated `report.json` and `report.md`; retain `raw.log`, all `evide
 npm run e4:verify -- "security-lab/e4-runs/<run-id>"
 ```
 
-The verifier must exit successfully. Record the complete run directory and ZIP SHA-256 in the independent receipt. The local bundle verifier is in the same software trust domain as the generator and is not a digital signature.
+The verifier must exit successfully. This confirms archive integrity only; the output uses `bundleIntegrityVerified=true`, `evidenceScope=BUNDLE_INTEGRITY_ONLY`, `productE4Accepted=false`, and `e4Status=NOT_VERIFIED`. Missing product source/artifact provenance, an independent verifier, or an evidence-retention location remains an unmet E4 acceptance requirement. Record the complete run directory and ZIP SHA-256 in the independent receipt. The local bundle verifier is in the same software trust domain as the generator and is not a digital signature.
+
+For a detached independent-review receipt, use the schema in [`security-lab/e4/independent-review-receipt.schema.json`](../../security-lab/e4/independent-review-receipt.schema.json) and pass the receipt and reviewer's Ed25519 public key explicitly:
+
+```bash
+npm run e4:verify -- "security-lab/e4-runs/<run-id>" --independent-receipt "/path/to/independent-review-receipt.json" --reviewer-public-key "/path/to/reviewer-public-key.pem"
+```
+
+The verifier binds the receipt to the exact archive SHA-256, reported source commit/tree, and reported artifact SHA-256; requires distinct independent-operator and independent-reviewer roles; checks the clean-environment claim and required positive/mismatch-control results; and verifies the Ed25519 signature against the supplied key. It does not download or re-read product artifact bytes. A valid signature proves only that the matching private key signed these bytes: the key fingerprint, human identity, relationship, and independence still require out-of-band review. Consequently `independentReceipt.status`, `productE4Accepted`, and `e4Status` remain `NOT_VERIFIED` even when the signature verifies. If no receipt is supplied, the JSON output explicitly records missing independent-review and clean-environment receipts as NOT_VERIFIED reasons.
 
 ## 5. Optional real GPT-6 Luna Max tool call
 

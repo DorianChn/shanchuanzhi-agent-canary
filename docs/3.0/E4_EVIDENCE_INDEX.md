@@ -30,13 +30,13 @@ Historical release identity was `v3.0.0-competition-candidate.4`, with installer
 | VM | No VM receipt or installed artifact supplied; no shared VMware test started or changed because the M0 coordination thread could not be read in this session |
 | Case counts | 10 total: 5 `PASS_FIXTURE`, 1 `PASS_CONTROL`, 1 `OBSERVED_BYPASS`, 3 `BLOCKED`, 0 `FAIL` |
 | Raw files | `raw.log`, `evidence/*.jsonl`, `report.json`, `report.md`, `SHA256SUMS.txt` |
-| ZIP and verification | `evidence.zip` SHA-256 `f1cda41498f984cddf54c19b096ec5e7f4ab6f98ed1b2e806129d233bf017a6a`; `npm run e4:verify -- security-lab/e4-runs/20261013T084123Z` returned valid with 13 ZIP entries |
+| ZIP and verification | `evidence.zip` SHA-256 `f1cda41498f984cddf54c19b096ec5e7f4ab6f98ed1b2e806129d233bf017a6a`; `npm run e4:verify -- security-lab/e4-runs/20261013T084123Z` verified bundle integrity with 13 ZIP entries. This result is integrity-only; it does not accept product E4. |
 | E4 classification | `AUTHOR_AUTOMATION_RUN_NOT_E4`; `e4Status=NOT_VERIFIED` |
 
 This is an author-run synthetic harness record. It does not establish an installed-app result, a clean-VM result, a real-model result, or independent testing. The bundle and report preserve the exact source and each case outcome. The model case was intentionally run with `--real-model` so the absence of a configured target is recorded as `BLOCKED` with zero requests; no replacement model was used.
 ## Integrity and limitations
 
-- `npm run e4:verify -- <run-directory>` checks the ZIP central/local records, CRC-32 values, internal SHA-256 manifest, expected result files, required case IDs, and the rule that automation must not promote E4.
+- `npm run e4:verify -- <run-directory>` checks the ZIP central/local records, CRC-32 values, internal SHA-256 manifest, expected result files, required case IDs, and the rule that automation must not promote E4. A successful summary says `bundleIntegrityVerified=true`, `evidenceScope=BUNDLE_INTEGRITY_ONLY`, `productE4Accepted=false`, and `e4Status=NOT_VERIFIED`; missing product provenance, an independent verifier, or an evidence-retention location is not product E4 acceptance.
 - `bundle.sha256` and `bundle.json` are sidecars and are not self-included in `evidence.zip`; `SHA256SUMS.txt` covers all files inside the ZIP other than itself.
 - The local evidence writer and verifier are ordinary software in the same trust domain. They do not provide a signature, independent timestamp, immutable storage, or protection from an administrator rewriting the entire bundle.
 - A third-party signature/receipt must be kept separately and reviewed against the artifact and environment. It is not inferred from `operatorRole=external-claim`.

@@ -1,6 +1,6 @@
 # M4 UX Acceptance — Windows Security Center
 
-Date: 2026-10-13
+Date: 2026-10-23
 Product surface: existing local Agent Canary Console at **src/ai/console-page.ts**
 
 ## Status rules
@@ -24,6 +24,7 @@ Only the optional live security-center response may set protection statuses. Mis
 | Agent list | Shows actual detected Agent configuration records separately from connection and protection status. | **/api/agents** reports configuration detection. Its demo **installed** entries are ignored; connection/protection remain **UNKNOWN**. |
 | Protected tool count | Shows only a non-negative integer from the live status payload. | No current field; **UNKNOWN**. |
 | Unprotected execution paths | Shows only paths returned by the live status payload. | No current field; **UNKNOWN**. |
+| Native Codex Shell boundary | Persistently labels the native shell path **UNPROTECTED / BLOCKED_NOT_VERIFIED** and explains Agent Canary neither controls nor has verified that path end to end; MCP/Gateway callback coverage cannot imply native-shell coverage. The static boundary warning is not derived from or overwritten by an optional status payload. | No native-shell enforcement or E2E verification endpoint; remains **UNPROTECTED / BLOCKED_NOT_VERIFIED**. |
 | Security events | Polls **/api/state** every 10 seconds and displays only the latest 100 real audit records. Empty data says “no recorded event in this range”; it does not claim the system is safe. | **/api/state** is available and returns recorded events. |
 | Intercept explanation | Maps known event kinds to Chinese explanations and appends the sanitized backend reason when present. | Based on actual event records; no synthetic alerts are added. |
 | Canary isolation | Keeps product-wide isolation **UNKNOWN** unless a dedicated live status is returned. Shows the Runtime demo Guard separately with its explicit scope. | **/api/runtime3** reports only the controlled SDK demo session; it is not product-wide isolation evidence. |
@@ -39,7 +40,7 @@ Only the optional live security-center response may set protection statuses. Mis
 - The security center is the first section in the incumbent Console page; no second product shell is created.
 - Buttons have direct action labels, keyboard focus uses the existing visible focus ring, and changing health/event state is announced with live regions.
 - The overview collapses to one column at narrow widths. The 390 CSS-pixel browser check measured a 390-pixel document width with no horizontal overflow.
-- Event rows are selectable by keyboard and pointer; the explanation area reports the selected real record.
+- Event rows are selectable by keyboard and pointer; periodic refresh keeps focus, selection, and the explanation for a still-visible record. If that record leaves the latest-100 window, focus returns to the event list.
 - Demo policy/runtime sections remain visibly labeled as virtual demonstrations.
 
 ## Acceptance boundary

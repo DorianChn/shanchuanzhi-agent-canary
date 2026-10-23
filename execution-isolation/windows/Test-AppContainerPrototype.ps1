@@ -274,7 +274,9 @@ const fs=require('fs'),childProcess=require('child_process'),path=require('path'
     [System.IO.File]::WriteAllText($evidenceFull, $evidenceJson, [System.Text.UTF8Encoding]::new())
 }
 if ($evidence.failure -or -not $evidence.protectedWriteBlocked -or -not $evidence.workspaceAclVerified -or
-    -not $evidence.normalProgrammingTask.Equals('PASS') -or -not $evidence.appContainerTokenConfirmed -or -not $evidence.lowIntegrityConfirmed -or
+    -not $evidence.normalProgrammingTask.Equals('PASS') -or
+    -not $evidence.jobObjectChildResult.Equals('CHILD_TERMINATED_ON_JOB_CLOSE') -or
+    -not $evidence.appContainerTokenConfirmed -or -not $evidence.lowIntegrityConfirmed -or
     -not $evidence.timeoutResult.Equals('PASS_PARENT_AND_JOB_CHILD_TERMINATED') -or -not $evidence.launchFailureHandled -or
     -not $evidence.profileDeleted -or -not $evidence.tempRootRemoved -or $evidence.cleanupErrors.Count -gt 0) {
     throw ('Isolation prototype test failed; inspect evidence: ' + $evidenceFull)

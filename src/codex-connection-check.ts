@@ -29,11 +29,20 @@ export function assessCodexConnection(connectionPassed:boolean,hookConfirmed:boo
     :hookConfirmed?'GATEWAY_AND_HOOK_CONFIRMED':'GATEWAY_CONFIRMED_HOOK_NOT_EFFECTIVE';
   return {
     status,
+    protectedHost:{status:'UNKNOWN' as const,reason:'FIRST_PARTY_PROTECTED_READ_NOT_CHECKED'},
     limits:[
       'This isolated self-test does not verify the installed project config or native Codex tools.',
       'The synthetic PreToolUse probe covers only this test MCP call path and does not establish coverage for native tools or other host calls.',
+      'The temporary protected-file probe is reported separately and does not establish coverage for the user workspace or native Codex tools.',
     ],
   };
+}
+
+export function assessProtectedHostProbe(events:Record<string,unknown>[]){
+  const passed=events.some(event=>event.kind==='protected-host'&&event.status==='ALLOW'&&event.markerMatched===true&&event.m5Callbacks===1);
+  if(passed)return{status:'FIXED_TEMP_FILE_READ_CONFIRMED' as const,reason:'HELD_FILE_POSITIVE_CONTROL'};
+  const blocked=events.find(event=>event.kind==='protected-host');
+  return{status:'UNKNOWN' as const,reason:typeof blocked?.reason==='string'?blocked.reason:'PROTECTED_HOST_PROBE_NOT_OBSERVED'};
 }
 
 /** Use the installed Codex CLI with a temporary MCP config; never edits the user's Codex config. */
@@ -51,6 +60,7 @@ export function runCodexConnectionCheck(){
   const hookLog=path.join(tempDirectory,'hook.jsonl');
   const hookScript=path.join(tempDirectory,'codex-hook-probe.mjs');
   fs.writeFileSync(traceFile,'',{flag:'wx',mode:0o600});
+  fs.writeFileSync(path.join(tempDirectory,'agent-canary-public.txt'),'AGENT_CANARY_PROTECTED_FILE_READ_OK',{flag:'wx',mode:0o600});
   fs.writeFileSync(hookLog,'',{flag:'wx',mode:0o600});
   const expectedHookTool=toolPrefix+'hook_probe';
   const hookProgram=`import fs from 'node:fs';\n`+
@@ -73,7 +83,7 @@ export function runCodexConnectionCheck(){
       '-c',`mcp_servers.agent_canary_m3.default_tools_approval_mode="approve"`,
       '-c',`features.hooks=true`,
       '-c',`hooks.PreToolUse=${hookConfig}`,
-      'Call the MCP tool public_read exactly once, then call hook_probe exactly once. Use no other tools. Afterward state whether each call returned or was blocked.'
+      'Call the MCP tool protected_read exactly once with path agent-canary-public.txt, then call public_read exactly once, then call hook_probe exactly once. Use no other tools. Afterward state whether each call returned or was blocked.'
     ];
     const result=spawnSync(host.executable,args,{cwd:tempDirectory,env:{...process.env,AGENT_CANARY_CONNECTION_TRACE:traceFile},encoding:'utf8',timeout:150_000,maxBuffer:2_000_000,windowsHide:true});
     if(result.error)throw Error((result.error as NodeJS.ErrnoException).code==='ETIMEDOUT'?'CONNECTION_CODEX_TIMEOUT':'CONNECTION_CODEX_START_FAILED');
@@ -83,6 +93,7 @@ export function runCodexConnectionCheck(){
     }
 
     const gateway=parseLines(traceFile).filter(event=>event.kind==='gateway');
+    const protectedEvents=parseLines(traceFile).filter(event=>event.kind==='protected-host');
     const hook=parseLines(hookLog);
     const allowed=gateway.filter(event=>event.tool==='public_read'&&Array.isArray(event.events)&&event.events.some((record:any)=>record.decision==='ALLOW'));
     const deniedHook=hook.filter(event=>event.tool_name===expectedHookTool&&event.decision==='deny');
@@ -91,12 +102,14 @@ export function runCodexConnectionCheck(){
     const connectionPassed=result.status===0&&allowed.length===1;
     const hookConfirmed=deniedHook.length===1&&!probeReachedGateway&&markerSeen;
     const assessment=assessCodexConnection(connectionPassed,hookConfirmed);
+    const protectedHost=assessProtectedHostProbe(protectedEvents);
     return {
       agent:'codex',version:host.version,passed:connectionPassed,
       status:assessment.status,
+      protectedHost,
       checks:{codexProcess:result.status===0,gatewayBackedMcpCall:allowed.length===1,preToolUseHookFired:deniedHook.length===1,hookDeniedBeforeGateway:deniedHook.length===1&&!probeReachedGateway,hookDenialObserved:markerSeen,hookProbeReachedGateway:probeReachedGateway},
-      evidence:{gatewayCallbacks:gateway.map(event=>event.tool),hookToolNames:hook.map(event=>event.tool_name).filter(Boolean)},
-      persistentConfigModified:false,temporaryMcpApproval:'approve for synthetic read-only test tools only',nativeToolsProtection:'OUT_OF_SCOPE',
+      evidence:{gatewayCallbacks:gateway.map(event=>event.tool),protectedHost:protectedEvents.map(event=>({status:event.status,reason:event.reason,m5Callbacks:event.m5Callbacks,markerMatched:event.markerMatched})),hookToolNames:hook.map(event=>event.tool_name).filter(Boolean)},
+      persistentConfigModified:false,temporaryMcpApproval:'approve for fixed read-only connection-check tools only',nativeToolsProtection:'OUT_OF_SCOPE',
       limits:assessment.limits,
     };
   }finally{
