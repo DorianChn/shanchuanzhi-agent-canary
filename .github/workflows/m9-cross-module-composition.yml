@@ -55,11 +55,11 @@ jobs:
           path: module-sources/m4
           fetch-depth: 0
 
-      - name: Checkout M5 PR #47 actual merge commit
+      - name: Checkout exact current M5 follow-up PR #94 head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: f0e90c99033a6304748ac79fe106439ca4bd2e06
+          ref: cca42cd1762f995e92454d55ffa5e63951e39144
           path: module-sources/m5
           fetch-depth: 0
 

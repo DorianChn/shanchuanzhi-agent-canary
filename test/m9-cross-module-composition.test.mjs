@@ -22,7 +22,7 @@ const pinnedSourceShas = {
   M2: '92dd42b900b10ce0294e9e3faa7e175d728228b3',
   M3: 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e',
   M4: 'd0f61987c2a06acb47a7187142bc303101af0ad4',
-  M5: 'f0e90c99033a6304748ac79fe106439ca4bd2e06',
+  M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
   M6: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd',
   M7: '8689d8fbbcdded4735d0e5aa328805f398a2862a',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
@@ -42,6 +42,7 @@ const mergedSourceProvenance = {
 const currentCandidateProvenance = {
   M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '92dd42b900b10ce0294e9e3faa7e175d728228b3', prTree: '78c60440662a3dcd15d86e9d3c09d3fa9a3769d3' },
   M3: { ownerHead: '9ea681894627e073e7720e9c2fca22f9351fb02b', ownerTree: '53627df0a9dedee0496d5e87d741c2162d1d13f3', prHead: 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e', prTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9' },
+  M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
