@@ -18,14 +18,24 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 }));
 
 const pinnedSourceShas = {
-  M1: 'daa17efb70ba8c67b485e9269ec461138fd86f7c',
-  M2: 'daa17efb70ba8c67b485e9269ec461138fd86f7c',
-  M3: 'cac8f4627aceb5dd3732036129e42ade7e4790e9',
-  M4: '721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2',
-  M5: 'f33b4a770f6c6f05a3d291c0bd2f4f01989d9964',
-  M6: '98a4833250434de905611ace71bfe8094554d417',
-  M7: '5a7540b0b041d10e6d562aa528f79a2cfdea987a',
+  M1: '7cd34454c4bd6aa7176e0e076f5333639e3ccd5d',
+  M2: '49af6d3dd57d9f091c95f489ead27f4f03c941a9',
+  M3: '611f9fca14706a1110a1f0a39e8488f4ff28d2a9',
+  M4: 'd0f61987c2a06acb47a7187142bc303101af0ad4',
+  M5: 'f0e90c99033a6304748ac79fe106439ca4bd2e06',
+  M6: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd',
+  M7: '8689d8fbbcdded4735d0e5aa328805f398a2862a',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
+};
+
+const mergedSourceProvenance = {
+  M1: { ownerHead: 'afd049246e027f414c6a53ee3e4355444718efd7', ownerTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9', mergeTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9' },
+  M2: { ownerHead: 'db98c7d5d409aa390ef539c96a209d6daba8d793', ownerTree: 'e2c81e61a72ecc472a7988f26e0b2614d4995f0d', mergeTree: 'add5837de7426566e124756b052ad1686d6ed308' },
+  M3: { ownerHead: '96d688d725292092dfc4e7ba940e9edfa8354e1e', ownerTree: '66a2baf3568aa65e5d5a423a8c215545a4293c39', mergeTree: '66a2baf3568aa65e5d5a423a8c215545a4293c39' },
+  M4: { ownerHead: '721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2', ownerTree: '490c8629beb1c93f8c133c4adf5948fd58f71802', mergeTree: '991354de1703fd0d72dac36f5c07c8369d12134f' },
+  M5: { ownerHead: '688f4bf4acd9a46a5bbaed622c71a64ef788e551', ownerTree: 'aa102e622a14abb5fc484f0a1ed777da289bc141', mergeTree: '6c83bcb4ffe226bc3a52f5fcfac485c6b8324fdd' },
+  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', mergeTree: 'bbb5eea8678ebfaaa1826bd529079cf16e6bdeda' },
+  M7: { ownerHead: 'a0b2968ca18bf4264ff93789abb65c1dc1c2e4cf', ownerTree: 'ed48c9630a2c083f8fed3781a8dd550ce84f119c', mergeTree: 'e1916366719310e1f912a6802bc3040df8fe512f' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
@@ -60,18 +70,36 @@ for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
   assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
 }
 
-test('exact M3 package stays SDK-only while the M3 consumer fixture composes owner exports synthetically', () => {
+function readTreeIdAt(moduleName, commitSha) {
+  const result = spawnSync('git', ['-C', sourceRoots[moduleName].root, 'rev-parse', '--verify', `${commitSha}^{tree}`], { encoding: 'utf8', windowsHide: true });
+  assert.equal(result.error, undefined, `${moduleName} tree lookup must start`);
+  assert.equal(result.status, 0, `${moduleName} tree must exist at ${commitSha}`);
+  return result.stdout.trim();
+}
+
+for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
+  const sourceTree = readTreeIdAt(moduleName, pinnedSourceShas[moduleName]);
+  assert.equal(sourceTree, provenance.mergeTree, `${moduleName} source root must use the recorded actual merge tree`);
+  assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} owner PR head tree must retain its recorded provenance`);
+  assert.equal(
+    provenance.ownerTree === provenance.mergeTree,
+    ['M1', 'M3'].includes(moduleName),
+    `${moduleName} owner-head versus merge-tree relation must remain explicitly recorded`,
+  );
+}
+
+test('exact M3 merge package includes the M2 facade but not the M5 policy export', () => {
   const readPackage = (moduleName) => JSON.parse(fs.readFileSync(path.join(sourceRoots[moduleName].root, 'package.json'), 'utf8'));
   const m1Package = readPackage('M1');
   const m2Package = readPackage('M2');
   const m3Package = readPackage('M3');
   const m5Package = readPackage('M5');
-  assert.deepEqual(Object.keys(m3Package.exports ?? {}).sort(), ['./sdk'], 'the exact M3 package must not publish a merged M1/M2/M5 export map');
+  assert.deepEqual(Object.keys(m3Package.exports ?? {}).sort(), ['./gateway-adapter', './sdk'], 'the exact M3 merge tree includes the already integrated M2 facade');
   assert.deepEqual(m3Package.exports['./sdk'], m1Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M1 public SDK entry');
   assert.deepEqual(m3Package.exports['./sdk'], m2Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M2 public SDK entry');
   assert.deepEqual(m3Package.exports['./sdk'], m5Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M5 public SDK entry');
-  assert.equal(m3Package.exports['./gateway-adapter'], undefined, 'M2 adapter is not exported by the exact M3 package');
-  assert.equal(m3Package.exports['./policy-router'], undefined, 'M5 policy router is not exported by the exact M3 package');
+  assert.equal(m3Package.exports['./gateway-adapter'], m2Package.exports?.['./gateway-adapter'], 'the M3 merge tree retains the exact M2 public facade path');
+  assert.equal(m3Package.exports['./policy-router'], undefined, 'M3 owner source does not claim the M5 policy export');
   assert.equal(typeof m2Package.exports?.['./gateway-adapter'], 'string', 'M2 owns the public gateway-adapter export');
   assert.ok(m5Package.exports?.['./policy-router'], 'M5 owns the public policy-router export');
   assert.deepEqual(m5Package.exports['./policy-router'], {
@@ -90,45 +118,28 @@ test('exact M3 package stays SDK-only while the M3 consumer fixture composes own
   assert.match(ownerConsumer, /synthetic composition fixture/i, 'M3 labels its merged package consumer as a synthetic fixture');
 });
 
-test('M3 real-package integration gate reports the exact standalone candidate as NOT_READY', () => {
-  const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-  const result = spawnSync(npmCommand, ['run', '--silent', 'check:integrated-package'], {
-    cwd: sourceRoots.M3.root,
-    env: {
-      ...process.env,
-      M1_ROOT: sourceRoots.M1.root,
-      M2_ROOT: sourceRoots.M2.root,
-      M5_ROOT: sourceRoots.M5.root,
-    },
-    encoding: 'utf8',
-    windowsHide: true,
-    shell: process.platform === 'win32',
-  });
-  assert.equal(result.error, undefined, `M3 real-package gate must start: ${result.error?.message ?? ''}`);
-  assert.equal(result.status, 1, `the exact standalone M3 candidate is not ready; output: ${result.stdout}\n${result.stderr}`);
-  const jsonStart = result.stdout.indexOf('{');
-  const jsonEnd = result.stdout.lastIndexOf('}');
-  assert.ok(jsonStart >= 0 && jsonEnd > jsonStart, `M3 gate must return machine-readable JSON: ${result.stdout}`);
-  const report = JSON.parse(result.stdout.slice(jsonStart, jsonEnd + 1));
-  assert.equal(report.status, 'NOT_READY');
-  assert.equal(report.packageHead, pinnedSourceShas.M3);
-  assert.equal(report.packedFileCount, 96, 'M3 exact standalone npm pack contains 96 files');
-  assert.deepEqual(report.issues, [
-    'M1: integrated target bytes differ from the exact owner (./dist/sdk.d.ts)',
-    'M2: integrated package does not export ./gateway-adapter',
-    'M5: integrated package does not export ./policy-router',
-  ]);
+test('exact M3 merge package is incomplete for combined M1/M2/M5 package use', () => {
+  const m3Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M3.root, 'package.json'), 'utf8'));
+  const m2Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M2.root, 'package.json'), 'utf8'));
+  const m5Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M5.root, 'package.json'), 'utf8'));
+  assert.ok(m2Package.exports?.['./gateway-adapter'], 'M2 defines its public gateway facade');
+  assert.equal(m3Package.exports?.['./gateway-adapter'], m2Package.exports['./gateway-adapter'], 'M3 source includes the exact merged M2 facade');
+  assert.ok(m5Package.exports?.['./policy-router'], 'M5 defines its public policy router');
+  assert.equal(m3Package.exports?.['./policy-router'], undefined, 'M3 source alone does not publish the M5 policy router');
+  assert.equal(typeof m3Package.scripts?.['check:integrated-package'], 'undefined', 'the M3 merge tree does not claim a separate integrated-package acceptance gate');
 });
 
 test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the npm package', () => {
   const m6PackagePath = path.join(sourceRoots.M6.root, 'package.json');
   const m6Package = JSON.parse(fs.readFileSync(m6PackagePath, 'utf8'));
+  const m2Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M2.root, 'package.json'), 'utf8'));
   const verifierRelativePath = 'security-lab/e4/verify-bundle.mjs';
   const receiptSchemaRelativePath = 'security-lab/e4/independent-review-receipt.schema.json';
   assert.ok(fs.statSync(path.join(sourceRoots.M6.root, verifierRelativePath)).isFile(), 'the exact M6 checkout must contain its verifier');
   assert.ok(fs.statSync(path.join(sourceRoots.M6.root, receiptSchemaRelativePath)).isFile(), 'the exact M6 checkout must contain its receipt schema');
   assert.match(m6Package.scripts?.['e4:verify'] ?? '', /security-lab\/e4\/verify-bundle\.mjs/);
-  assert.deepEqual(Object.keys(m6Package.exports ?? {}).sort(), ['./sdk'], 'M6 publishes only its SDK package subpath');
+  assert.deepEqual(Object.keys(m6Package.exports ?? {}).sort(), ['./gateway-adapter', './sdk'], 'the actual M6 merge tree contains the already merged M2 facade and the M6 SDK');
+  assert.deepEqual(m6Package.exports['./gateway-adapter'], m2Package.exports?.['./gateway-adapter'], 'the M6 merge tree preserves the exact M2 facade package mapping');
   assert.equal(JSON.stringify(m6Package.exports).includes('verify-bundle'), false, 'the receipt verifier is not a public package export');
   assert.ok(m6Package.files?.includes('dist'), 'the published package allowlist includes dist');
   assert.equal(m6Package.files?.some((entry) => entry.replace(/\\/g, '/').startsWith('security-lab/')), false, 'the npm allowlist excludes checkout-only security-lab tooling');
@@ -149,15 +160,22 @@ test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the 
   assert.equal(packagedPaths.some((file) => file.startsWith('security-lab/e4/')), false, 'npm pack must omit the E4 repository tooling directory');
 });
 
-assert.equal(process.env.M1_M3_REVIEW_STATUS, 'ACCEPT', 'M1 owner review must retain its exact Hook-file disposition');
 assert.equal(process.env.M1_M3_REVIEW_SHA, m1HistoricalReviewSha, 'M1-to-M3 Hook disposition must preserve its historical M1 review SHA');
 assertAncestor('M1', m1HistoricalReviewSha, pinnedSourceShas.M1, 'historical M1-to-M3 review source');
 assert.equal(process.env.M1_M3_REVIEW_TARGET_SHA, m1M3ReviewedSourceSha, 'M1 review must name the M3 source commit it actually reviewed');
 assert.equal(process.env.M1_M3_REVIEW_COMMENT, '6347268881', 'M1 review must cite the exact Issue #72 owner comment');
 assert.equal(process.env.M1_M3_REVIEW_ISSUE, '72', 'M1-to-M3 Hook review is tracked on Issue #72');
 assertAncestor('M3', m1M3ReviewedSourceSha, pinnedSourceShas.M3, 'M1-reviewed M3 Hook source');
+const currentM1M3ReviewMismatches = Object.entries(m1M3ReviewedBlobs)
+  .filter(([filePath, expectedBlob]) => readBlobIdAt('M3', pinnedSourceShas.M3, filePath) !== expectedBlob)
+  .map(([filePath]) => filePath);
+assert.equal(
+  process.env.M1_M3_REVIEW_STATUS,
+  currentM1M3ReviewMismatches.length === 0 ? 'ACCEPT' : 'NOT_VERIFIED',
+  'the current M3 Hook disposition must reflect exact reviewed-blob equality',
+);
 for (const [filePath, expectedBlob] of Object.entries(m1M3ReviewedBlobs)) {
-  assert.equal(readBlobIdAt('M3', pinnedSourceShas.M3, filePath), expectedBlob, `M3 reviewed Hook blob ${filePath} must remain exact at the current source`);
+  assert.equal(readBlobIdAt('M3', m1M3ReviewedSourceSha, filePath), expectedBlob, `the historical M3 source reviewed by M1 must retain its exact ${filePath} blob`);
 }
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_STATUS, 'ACCEPT', 'historical M6 acceptance must retain its original scoped disposition');
 assert.equal(process.env.M6_PRIOR_ACCEPTANCE_SHA, m6PriorAcceptanceSha, 'historical M6 acceptance must retain its original source SHA');
@@ -193,17 +211,6 @@ assert.equal(readBlobIdAt('M8', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'),
 assert.equal(readBlobIdAt('M8', pinnedSourceShas.M8, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M8 current head must preserve the exact M6-reviewed test hunk');
 assert.equal(readTrackedBlobId('M7', 'packaging/windows/e4-hook-faults.mjs'), m7AcceptedE4HelperBlob, 'M7 helper accepted as a condition of the M6 review must remain exact');
 assert.equal(process.env.M5_CODE_SHA, '6695e0470d7ceef1485f912ac61237fc91860cd8');
-
-function readTrackedHookBlob(moduleName) {
-  const result = spawnSync('git', [
-    '-C', sourceRoots[moduleName].root,
-    'show',
-    'HEAD:security-lab/claude-native-hook.mjs',
-  ], { encoding: null, windowsHide: true });
-  assert.equal(result.error, undefined, `${moduleName} Hook blob read must start`);
-  assert.equal(result.status, 0, `${moduleName} checkout must contain the Hook source`);
-  return result.stdout;
-}
 
 function readTrackedBlobId(moduleName, filePath) {
   const result = spawnSync('git', [
@@ -250,26 +257,29 @@ function assertHistoricalTextPreserved(moduleName, historicalRevision, candidate
 }
 
 test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
-  const canonicalHook = readTrackedHookBlob('M1');
+  const canonicalHookBlob = readTrackedBlobId('M1', 'security-lab/claude-native-hook.mjs');
   for (const moduleName of ['M2', 'M5', 'M7', 'M9']) {
-    assert.deepEqual(
-      readTrackedHookBlob(moduleName),
-      canonicalHook,
+    assert.equal(
+      readTrackedBlobId(moduleName, 'security-lab/claude-native-hook.mjs'),
+      canonicalHookBlob,
       `${moduleName} tracked Hook must match the M1 canonical sanitized wrapper`,
     );
   }
 });
 
-test('exact M2 candidate delegates package smoke to the exact pinned M7 workflow and policy', () => {
+test('exact M2 merge tree pins M7 package policy while current M7 merge adds reliability checks', () => {
   const workflow = fs.readFileSync(path.join(sourceRoots.M2.root, '.github', 'workflows', 'ci.yml'), 'utf8');
   const workflowRef = workflow.match(/uses:\s*DorianChn\/shanchuanzhi-agent-canary\/\.github\/workflows\/m7-package-smoke\.yml@([a-f0-9]{40})/);
   const policyRef = workflow.match(/policy-ref:\s*([a-f0-9]{40})/);
   assert.ok(workflowRef, 'M2 CI must call the reusable M7 package-smoke workflow at a full commit SHA');
   assert.ok(policyRef, 'M2 CI must pass a full M7 policy commit SHA');
   assert.equal(workflowRef[1], policyRef[1], 'M2 CI must use the same exact M7 workflow and policy revision');
-  assertAncestor('M7', workflowRef[1], pinnedSourceShas.M7, 'M2 package-policy revision');
+  assertAncestor('M7', workflowRef[1], mergedSourceProvenance.M7.ownerHead, 'M2 package-policy revision in the exact M7 owner PR history');
+  const pinnedWorkflow = readTrackedTextAt('M7', workflowRef[1], '.github/workflows/m7-package-smoke.yml').join('\n');
+  const currentWorkflow = fs.readFileSync(path.join(sourceRoots.M7.root, '.github', 'workflows', 'm7-package-smoke.yml'), 'utf8');
+  assert.match(pinnedWorkflow, /npm run build/, 'the exact M2-pinned M7 workflow still builds the candidate package');
+  assert.match(currentWorkflow, /Run M7-owned reliability regressions/, 'current M7 workflow includes its added owner reliability checks');
   for (const filePath of [
-    '.github/workflows/m7-package-smoke.yml',
     'scripts/check-package.mjs',
     'scripts/package-file-policy.mjs',
   ]) {
@@ -297,8 +307,10 @@ assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(re
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
   .map(([moduleName, source]) => `${moduleName}=${source.sha}`).join(' '));
+console.log('[M9 merge provenance]', Object.entries(mergedSourceProvenance)
+  .map(([moduleName, provenance]) => `${moduleName}: owner=${provenance.ownerHead} tree=${provenance.ownerTree === provenance.mergeTree ? 'MATCH' : 'DIFFERENT'} merge=${pinnedSourceShas[moduleName]}`).join(' '));
 console.log('[M1-to-M2 scoped review]', `${process.env.M1_M2_REVIEW_STATUS} on Issue #52: historical M1 ${process.env.M1_M2_REVIEW_SHA} reviewed exact M2 ${process.env.M1_M2_REVIEW_TARGET_SHA}; current M2 ${pinnedSourceShas.M2} descends from that source but is not covered by the exact-source approval (comment ${process.env.M1_M2_REVIEW_COMMENT}; condition: ${process.env.M1_M2_REVIEW_CONDITION})`);
-console.log('[M1-to-M3 Hook file review]', `${process.env.M1_M3_REVIEW_STATUS} on Issue #72: historical M1 ${process.env.M1_M3_REVIEW_SHA} reviewed M3 source ${process.env.M1_M3_REVIEW_TARGET_SHA} blobs ${Object.keys(m1M3ReviewedBlobs).join(', ')}; current M1 ${pinnedSourceShas.M1} descends from the reviewed source and current M3 ${pinnedSourceShas.M3} is checked for unchanged reviewed blobs (comment ${process.env.M1_M3_REVIEW_COMMENT})`);
+console.log('[M1-to-M3 Hook file review]', `${process.env.M1_M3_REVIEW_STATUS} on Issue #72: historical M1 ${process.env.M1_M3_REVIEW_SHA} reviewed M3 source ${process.env.M1_M3_REVIEW_TARGET_SHA}; current M3 ${pinnedSourceShas.M3} changed reviewed blobs ${currentM1M3ReviewMismatches.join(', ') || 'none'} (comment ${process.env.M1_M3_REVIEW_COMMENT})`);
 console.log('[M2 prior owner disposition]', `${process.env.M2_PRIOR_M1_DISPOSITION} for older M2 ${process.env.M2_PRIOR_M1_DISPOSITION_SHA} (Issue #52 comment ${process.env.M2_PRIOR_M1_DISPOSITION_COMMENT}); current candidate ${pinnedSourceShas.M2} is not covered by that historical disposition`);
 console.log('[M6 current scoped disposition]', `${process.env.M6_M8_REVIEW_STATUS} for M6 contract ${process.env.M6_M8_REVIEW_M6_CONTRACT_SHA} and exact M8 test source ${process.env.M6_M8_REVIEW_TARGET_SHA}; current M8 ${pinnedSourceShas.M8} preserves the reviewed test blob (Issue #59 comment ${process.env.M6_M8_REVIEW_COMMENT}; ${process.env.M6_M8_REVIEW_SCOPE})`);
 console.log('[M6 prior owner acceptance]', `${process.env.M6_PRIOR_ACCEPTANCE_STATUS} for older M6 ${process.env.M6_PRIOR_ACCEPTANCE_SHA} (Issue #59 comment ${process.env.M6_PRIOR_ACCEPTANCE_COMMENT}; Auto E4 lifecycle only); current candidate ${pinnedSourceShas.M6} is not generally covered by that historical acceptance`);
@@ -344,18 +356,18 @@ function isPolicyBlocked(error, predicate) {
     && predicate(error.decision);
 }
 
-test('M3 ordinary ai console CLI fails closed when public M5 and M2 subpaths are absent', async (t) => {
+test('M3 merged package CLI fails closed when the public M5 subpath is absent', async (t) => {
   const m3Root = sourceRoots.M3.root;
   const m3Package = JSON.parse(fs.readFileSync(path.join(m3Root, 'package.json'), 'utf8'));
   assert.ok(m3Package.exports?.['./sdk'], 'the M3 package must expose its reviewed SDK self-reference');
-  assert.equal(m3Package.exports?.['./gateway-adapter'], undefined, 'the M3-only package must not invent the M2 public export');
+  assert.equal(m3Package.exports?.['./gateway-adapter'], JSON.parse(fs.readFileSync(path.join(sourceRoots.M2.root, 'package.json'), 'utf8')).exports?.['./gateway-adapter'], 'the exact merged M3 tree retains the M2 public facade path');
   assert.equal(m3Package.exports?.['./policy-router'], undefined, 'the M3-only package must not invent the M5 public export');
 
   const requireFromM3 = createRequire(path.join(m3Root, 'package.json'));
-  assert.throws(
-    () => requireFromM3.resolve('@dorianchn/agent-canary/gateway-adapter'),
-    (error) => error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED',
-    'the exact M3-only package must fail to resolve the M2 public subpath',
+  assert.equal(
+    requireFromM3.resolve('@dorianchn/agent-canary/gateway-adapter'),
+    path.resolve(m3Root, m3Package.exports['./gateway-adapter']),
+    'the exact M3 merged package resolves its retained M2 facade export',
   );
   assert.throws(
     () => requireFromM3.resolve('@dorianchn/agent-canary/policy-router'),
@@ -437,7 +449,7 @@ test('M3 ordinary ai console CLI fails closed when public M5 and M2 subpaths are
   assert.deepEqual(
     fs.readdirSync(isolatedTemp).filter((name) => name.startsWith('agent-canary-console-probe-')),
     [],
-    'M3 ordinary CLI must not create a protected-read probe directory when the M2 public export is absent',
+    'M3 ordinary CLI must not create a protected-read probe directory when the M5 public export is absent',
   );
 });
 
@@ -674,7 +686,7 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
 
 // PR #47 carries the coordinated M3 adapter patch; exercise that exact source
 // with the merged M1/M2 feature baseline and packed public M2 facade.
-test('M3 adapter from exact M5 PR #47 source composes M1 held Gateway and packed M2 facade', async (t) => {
+test('M3 adapter from exact M5 PR #47 merge source composes M1 held Gateway and packed M2 facade', async (t) => {
   const packedRoot = process.env.M2_PACKED_ROOT;
   const consumerRoot = process.env.M2_CONSUMER_ROOT;
   assert.ok(packedRoot, 'M2_PACKED_ROOT must point to the installed candidate tarball');
@@ -870,7 +882,8 @@ test('packed M2 facade with active M1 capability and exact M5 router rejects sen
   assert.equal(typeof host.pendingApprovals, 'function');
 
   const positiveCall = { name: 'read', args: { path: publicPath } };
-  assert.equal((await m5Router.decide(positiveCall)).action, 'OBSERVE_ONLY');
+  const positiveDecision = await m5Router.decide(positiveCall);
+  assert.equal(positiveDecision.action, 'OBSERVE_ONLY', `the exact M5 router must accept its M1-registered positive read in OBSERVE mode: ${JSON.stringify(positiveDecision)}`);
   const positive = await host.dispatch(positiveCall);
   assert.ok(JSON.stringify(positive).includes(publicMarker), 'the registered held-file read reaches M1 through packed M2');
   assert.equal(m5ToM2Callbacks, 1);
