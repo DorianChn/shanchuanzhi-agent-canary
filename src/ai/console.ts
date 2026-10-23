@@ -330,7 +330,7 @@ function normalizeSecurityCenterSnapshot(value: unknown) {
     .filter(item => typeof item.agent === 'string' && SECURITY_CENTER_AGENT_IDS.has(item.agent))
     .map(item => ({
       agent: item.agent,
-      detected: typeof item.detected === 'boolean' ? item.detected : null,
+      ...(typeof item.detected === 'boolean' ? { detected: item.detected } : {}),
       // Configuration detection is not evidence of a live connection or protected native tools.
       connectionStatus: 'UNKNOWN',
       protectionStatus: 'UNKNOWN',

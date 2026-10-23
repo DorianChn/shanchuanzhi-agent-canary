@@ -8,6 +8,7 @@ import { createAgentGuard, createContainmentStateStore } from '../src/containmen
 import { EvidenceRecorder } from '../src/runtime/evidence.js';
 import { createTrustedExecutionGateway } from '../src/sdk.js';
 import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
+import { isValidSecurityCenterStatusPayload } from '../src/ai/security-center-adapter.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-security-center-route-'));
@@ -305,6 +306,8 @@ test('security-center route preserves scoped provider status and filters unsafe 
     unprotectedExecutionPaths: ['NATIVE_SHELL', privatePath, '/home/alice/.ssh/id_rsa', '--token=' + privateToken, 'TOKEN_SECRET'],
     agents: [
       { agent: 'codex', detected: true, connectionStatus: 'CONNECTED', protectionStatus: 'PROTECTED', path: privatePath },
+      { agent: 'claude', connectionStatus: 'CONNECTED', protectionStatus: 'PROTECTED' },
+      { agent: 'cursor', detected: null, connectionStatus: 'CONNECTED', protectionStatus: 'PROTECTED' },
       { agent: 'user-supplied-name', detected: true, connectionStatus: 'CONNECTED', protectionStatus: 'PROTECTED' },
     ],
     coverage: 'M2_FIXED_FILE_READS_ONLY',
@@ -321,7 +324,11 @@ test('security-center route preserves scoped provider status and filters unsafe 
     policy: { protectionStatus: 'PROTECTED', name: 'M2_FIXED_FILE_READS' },
     protectedToolCount: 1,
     unprotectedExecutionPaths: ['NATIVE_SHELL'],
-    agents: [{ agent: 'codex', detected: true, connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' }],
+    agents: [
+      { agent: 'codex', detected: true, connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
+      { agent: 'claude', connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
+      { agent: 'cursor', connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
+    ],
   };
   let providerCalls = 0;
   const console = await startAIConsole({
@@ -339,6 +346,7 @@ test('security-center route preserves scoped provider status and filters unsafe 
     assert.equal(response.status, 200);
     const body = await response.json();
     assert.deepEqual(body, expected);
+    assert.equal(isValidSecurityCenterStatusPayload(body), true, 'M3 must omit unsupported detected values so the M4 consumer accepts the snapshot');
     const serialized = JSON.stringify(body);
     assert.equal(serialized.includes(privatePath), false);
     assert.equal(serialized.includes(privateToken), false);
