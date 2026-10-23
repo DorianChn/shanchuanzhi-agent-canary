@@ -3,8 +3,19 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  isPublicPackageFile,
+  validateGatewayAdapterPackage,
+} from "./package-file-policy.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const policyRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const packageRootIndex = process.argv.indexOf("--package-root");
+if (packageRootIndex !== -1 && (process.argv.indexOf("--package-root", packageRootIndex + 1) !== -1 || !process.argv[packageRootIndex + 1] || process.argv[packageRootIndex + 1].startsWith("--"))) {
+  throw new Error("--package-root requires exactly one path");
+}
+const root = packageRootIndex === -1
+  ? policyRoot
+  : path.resolve(process.argv[packageRootIndex + 1]);
 const npmCli = process.env.npm_execpath;
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-package-"));
 
@@ -32,12 +43,18 @@ try {
   if (!pack?.filename || !Array.isArray(pack.files)) fail("npm pack returned no file manifest");
 
   const files = pack.files.map((entry) => entry.path).sort();
+  const packageManifest = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   const required = ["LICENSE", "README.md", "README.zh-CN.md", "package.json", "dist/index.js", "dist/sdk.js", "dist/sdk.d.ts", "dist/runtime/gateway.d.ts"];
   for (const file of required) if (!files.includes(file)) fail(`missing required file ${file}`);
 
+  try {
+    validateGatewayAdapterPackage(packageManifest, files);
+  } catch (error) {
+    fail(error instanceof Error ? error.message : "invalid gateway adapter package boundary");
+  }
+
   for (const file of files) {
-    const isPublicFile = file === "LICENSE" || file === "README.md" || file === "README.zh-CN.md" || file === "package.json" || file.startsWith("dist/");
-    if (!isPublicFile) fail(`unexpected package file ${file}`);
+    if (!isPublicPackageFile(file)) fail(`unexpected package file ${file}`);
     if (/(^|\/)(?:sponsor|test|src|docs|\.github)(\/|$)|(^|\/)\.env(?:\.|$)/i.test(file)) {
       fail(`sensitive or development path included: ${file}`);
     }
@@ -48,7 +65,7 @@ try {
   fs.mkdirSync(installDir);
   runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
 
-  run(process.execPath, [path.join(root, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
+  run(process.execPath, [path.join(policyRoot, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
 
   const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "index.js");
   if (!fs.existsSync(cli)) fail("installed CLI entrypoint was not found");

@@ -3,6 +3,23 @@ dist/
 *.log
 *.tgz
 .env
+.env.*
+!.env.example
+# Private keys and local credential stores. Sanitized fixtures should use an
+# explicit `.example` suffix or a narrowly reviewed force-add.
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*.tmp
+*.temp
+*.swp
 .agent-canary/
 package-lock.json.bak
 /competition-submission/Agent_Canary_演示视频.mp4
@@ -13,6 +30,24 @@ __pycache__/
 /competition-submission/evidence/round4-free-artifact-location.txt
 /competition-submission/evidence/v2-free-build-location.txt
 /competition-submission/evidence/v2-final-head.local.json
+
+# Local M0 workspaces and nested checkouts are not repository source.
+/main/
+/agents/
+/coordinator/
+/integration/
+/reports/
+/logs/
+
+# Additional local credentials not covered by key/container patterns above.
+*.token
+*.secret
+*.secrets
+
+# Additional temporary editor artifacts.
+*.swo
+*.bak
+*~
 
 # Retain local master recording and intermediate Community builds outside normal Git
 /competition-submission/3.0/Agent_Canary_3_0_Engineering_Demo.webm
@@ -32,3 +67,23 @@ __pycache__/
 /security-lab/competition-freeze/local-only/
 /security-lab/competition-freeze/local-video-player.html
 /security-lab/competition-freeze/pdf-qa/*.png
+
+# Local M0/M9 coordination workspaces and outputs; keep exact top-level scope.
+/agents/M1-security/
+/agents/M1-security-f2f2d10-scratch/
+/agents/M2-isolation/
+/agents/M3-onboarding/
+/agents/M4-desktop-security-center/
+/agents/M5-policy/
+/agents/M6-e4/
+/agents/M6-e4-ac3/
+/agents/M7-reliability/
+/agents/M7-reliability-ac3/
+/agents/M8-ecosystem/
+/main/
+/coordinator/
+/integration/
+/reports/
+/logs/
+# Keep only the reviewed synthetic E4 audit record; all other generated logs remain ignored.
+!/security-lab/e4-runs/20261013T084123Z/raw.log
