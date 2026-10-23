@@ -110,9 +110,19 @@ function Read-InstallerPhase {
     return
   }
   try {
-    $null = Assert-RegularFile $phaseMarkerPath
+    $phaseItem = Assert-RegularFile $phaseMarkerPath
+    if ($phaseItem.Length -gt 64) {
+      $result.installerPhase = 'INVALID_MARKER'
+      return
+    }
     $phaseValue = [IO.File]::ReadAllText($phaseMarkerPath).Trim()
-    $knownPhases = @('FILE_COPY_STARTED', 'FILE_COPY_COMPLETE', 'RECORD_INSTALL_STARTED', 'RECORD_INSTALL_COMPLETE', 'INSTALL_REGISTERED')
+    $knownPhases = @(
+      'FILE_COPY_STARTED', 'FILE_COPY_COMPLETE', 'RECORD_INSTALL_STARTED', 'RECORD_INSTALL_COMPLETE', 'INSTALL_REGISTERED',
+      'WORKER_ENTRY', 'MANIFEST_INSPECT_STARTED', 'MANIFEST_INSPECT_COMPLETE',
+      'INSTALLER_VALIDATION_STARTED', 'INSTALLER_VALIDATION_COMPLETE',
+      'INSTALLER_HASH_STARTED', 'INSTALLER_HASH_COMPLETE',
+      'RECEIPT_ATOMIC_WRITE_STARTED', 'RECEIPT_ATOMIC_WRITE_COMPLETE'
+    )
     $result.installerPhase = if ($phaseValue -in $knownPhases) { $phaseValue } else { 'INVALID_MARKER' }
   } catch {
     $result.installerPhase = 'UNREADABLE_MARKER'

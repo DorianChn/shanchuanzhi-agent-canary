@@ -90,6 +90,7 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   const buildJob=workflow.slice(workflow.indexOf('  windows-community-build-evidence:'),workflow.indexOf('  windows-community-installer-lifecycle:'));
   const smoke=fs.readFileSync(new URL('../packaging/windows/installer-lifecycle-smoke.ps1',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   const installer=fs.readFileSync(new URL('../packaging/windows/installer.nsi.in',import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const worker=fs.readFileSync(new URL('../packaging/windows/worker.mjs',import.meta.url),'utf8');
   assert.ok(lifecycleJob.includes('needs: windows-community-build-evidence'),'lifecycle must consume the package from this workflow run');
   assert.ok(lifecycleJob.includes('runs-on: windows-latest'),'lifecycle must run on a fresh hosted Windows VM');
   assert.ok(lifecycleJob.includes('permissions: {}'),'untrusted package execution must have no repository permissions');
@@ -113,6 +114,12 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   assert.ok(smoke.includes('$result.installerProcessCompleted = $true')&&smoke.includes('$result.installerExitCode = $process.ExitCode'),'process completion and exit code must only be recorded after wait succeeds');
   assert.ok(smoke.includes('Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess -EnablePhaseMarkers'),'primary setup execution must populate process evidence and enable bounded phase markers');
   assert.ok(smoke.includes("$startInfo.EnvironmentVariables['AGENT_CANARY_M7_PHASE_MARKER'] = '1'")&&smoke.includes("$result.installerPhase = if ($phaseValue -in $knownPhases)"),'the smoke result must read a bounded lifecycle phase marker from the exact setup process');
+  const workerPhases=['WORKER_ENTRY','MANIFEST_INSPECT_STARTED','MANIFEST_INSPECT_COMPLETE','INSTALLER_VALIDATION_STARTED','INSTALLER_VALIDATION_COMPLETE','INSTALLER_HASH_STARTED','INSTALLER_HASH_COMPLETE','RECEIPT_ATOMIC_WRITE_STARTED','RECEIPT_ATOMIC_WRITE_COMPLETE'];
+  const workerMain=worker.slice(worker.indexOf('export async function main(){'));
+  const workerPhasePositions=workerPhases.map(phase=>workerMain.indexOf("writeM7LifecyclePhase('"+phase+"')"));
+  assert.ok(worker.includes("process.env.AGENT_CANARY_M7_PHASE_MARKER!=='1'")&&worker.includes("path.join(ROOT,'.m7-installer-lifecycle-phase')")&&!worker.includes('AGENT_CANARY_M7_PHASE_MARKER_PATH'),'worker telemetry must require the exact M7 toggle and use a fixed install-root marker');
+  assert.ok(workerPhasePositions.every((position,index)=>position>=0&&(index===0||position>workerPhasePositions[index-1])),'worker subphase markers must bracket manifest inspection, setup hashing, and receipt writing in order');
+  assert.ok(workerPhases.every(phase=>smoke.includes("'"+phase+"'") )&&smoke.includes('$phaseItem.Length -gt 64'),'the smoke must accept only the finite worker phase set and bound marker reads');
   const phaseMarkers=[
     'StrCpy $M7LifecyclePhase "FILE_COPY_STARTED"',
     'StrCpy $M7LifecyclePhase "FILE_COPY_COMPLETE"',
