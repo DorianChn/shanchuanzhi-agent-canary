@@ -177,45 +177,59 @@ function renderSecurityCenter(){
 async function refreshSecurityCenter(reason='manual'){
  if(securityRefreshBusy)return false;
  securityRefreshBusy=true;
- getEl('securityHealthButton').disabled=true;getEl('securityExportButton').disabled=true;
- status('securityHealthStatus',reason==='automatic'?'正在刷新最近审计记录…':'正在检查本地 Console API；此检查不验证保护效果…');
- const routes=[['state','state'],['agents','agents'],['policyState','policy/state'],['runtime3','runtime3'],['securityCenter','security-center'],['e4','e4/status']];
- const results=await Promise.allSettled(routes.map(item=>securityGet(item[1])));
- const values={state:null,agents:null,policyState:null,runtime3:null,securityCenter:null};
- for(let i=0;i<routes.length;i++){
-  const key=routes[i][0],result=results[i];
-  if(result.status==='fulfilled'){
-   const data=result.value;
-   const valid=key==='state'?Array.isArray(data.events)
-    :key==='agents'?Array.isArray(data.agents)
-    :key==='policyState'?typeof data.mode==='string'&&typeof data.scope==='string'
-    :key==='runtime3'?typeof data.mode==='string'&&typeof data.agent==='string'&&typeof data.coverage==='string'&&typeof data.guard==='string'
-    :key==='securityCenter'?securityCenterAdapter.isValidSecurityCenterStatusPayload(data)
-    :key==='e4'?typeof data.status==='string'
-    :false;
-   if(valid){if(key in values)values[key]=data;securitySources[key]='AVAILABLE';}
-   else securitySources[key]='INVALID_RESPONSE';
-  }else{
-   securitySources[key]=securityCenterAdapter.classifyDataSourceFailure(result.reason?.status,result.reason?.name);
+ try{
+  getEl('securityHealthButton').disabled=true;getEl('securityExportButton').disabled=true;
+  status('securityHealthStatus',reason==='automatic'?'正在刷新最近审计记录…':'正在检查本地 Console API；此检查不验证保护效果…');
+  const routes=[['state','state'],['agents','agents'],['policyState','policy/state'],['runtime3','runtime3'],['securityCenter','security-center'],['e4','e4/status']];
+  const results=await Promise.allSettled(routes.map(item=>securityGet(item[1])));
+  const values={state:null,agents:null,policyState:null,runtime3:null,securityCenter:null};
+  for(let i=0;i<routes.length;i++){
+   const key=routes[i][0],result=results[i];
+   if(result.status==='fulfilled'){
+    const data=result.value;
+    const valid=key==='state'?Array.isArray(data.events)
+     :key==='agents'?Array.isArray(data.agents)
+     :key==='policyState'?typeof data.mode==='string'&&typeof data.scope==='string'
+     :key==='runtime3'?typeof data.mode==='string'&&typeof data.agent==='string'&&typeof data.coverage==='string'&&typeof data.guard==='string'
+     :key==='securityCenter'?securityCenterAdapter.isValidSecurityCenterStatusPayload(data)
+     :key==='e4'?typeof data.status==='string'
+     :false;
+    if(valid){if(key in values)values[key]=data;securitySources[key]='AVAILABLE';}
+    else securitySources[key]='INVALID_RESPONSE';
+   }else{
+    securitySources[key]=securityCenterAdapter.classifyDataSourceFailure(result.reason?.status,result.reason?.name);
+   }
   }
+  securitySnapshot=securityCenterAdapter.adaptSecuritySnapshot(values);
+  securityLastChecked=new Date();
+  renderSecurityCenter();
+  const stamp=securityLastChecked.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const readable=['state','agents','policyState','runtime3'].filter(k=>securitySources[k]==='AVAILABLE').length;
+  status('securityHealthStatus',(reason==='automatic'?'已刷新':'健康检查完成')+' · '+stamp+' · '+readable+'/4 个已有只读接口可读。API 可读不等于真实执行路径已受保护。',readable<4);
+  return true;
+ }finally{
+  securityRefreshBusy=false;getEl('securityHealthButton').disabled=false;getEl('securityExportButton').disabled=false;
  }
- securitySnapshot=securityCenterAdapter.adaptSecuritySnapshot(values);
- securityLastChecked=new Date();
- renderSecurityCenter();
- const stamp=securityLastChecked.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
- const readable=['state','agents','policyState','runtime3'].filter(k=>securitySources[k]==='AVAILABLE').length;
- status('securityHealthStatus',(reason==='automatic'?'已刷新':'健康检查完成')+' · '+stamp+' · '+readable+'/4 个已有只读接口可读。API 可读不等于真实执行路径已受保护。',readable<4);
- securityRefreshBusy=false;getEl('securityHealthButton').disabled=false;getEl('securityExportButton').disabled=false;
- return true;
 }
-getEl('securityHealthButton').onclick=()=>refreshSecurityCenter('manual');
+function showSecurityRefreshFailure(error){
+ const securityCenterFailure=securityCenterAdapter.classifyDataSourceFailure(error?.status,error?.name);
+ securitySources={state:'UNKNOWN',agents:'UNKNOWN',policyState:'UNKNOWN',runtime3:'UNKNOWN',securityCenter:securityCenterFailure,e4:'UNKNOWN'};
+ securitySnapshot=securityCenterAdapter.adaptSecuritySnapshot({});
+ renderSecurityCenter();
+ status('securityHealthStatus','健康检查异常：'+sourceStateLabel(securityCenterFailure)+'。防护状态保持 UNKNOWN。',true);
+}
+getEl('securityHealthButton').onclick=()=>refreshSecurityCenter('manual').catch(showSecurityRefreshFailure);
 getEl('securityExportButton').onclick=async()=>{
  if(securityRefreshBusy)return;
- await refreshSecurityCenter('report');
- const report=securityCenterAdapter.buildSecurityDiagnostic(securitySnapshot,securitySources,new Date().toISOString());
- const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
- const anchor=document.createElement('a');anchor.href=url;anchor.download='agent-canary-security-diagnostic.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
- status('securityHealthStatus','诊断报告已生成下载请求；请检查浏览器下载列表。报告省略事件参数、原因文本、配置路径和原始密钥；UNKNOWN 状态保持原样。');
+ try{
+  if(!await refreshSecurityCenter('report'))return;
+ }catch(error){showSecurityRefreshFailure(error);return;}
+ try{
+  const report=securityCenterAdapter.buildSecurityDiagnostic(securitySnapshot,securitySources,new Date().toISOString());
+  const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
+  const anchor=document.createElement('a');anchor.href=url;anchor.download='agent-canary-security-diagnostic.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  status('securityHealthStatus','诊断报告已生成下载请求；请检查浏览器下载列表。报告省略事件参数、原因文本、配置路径和原始密钥；UNKNOWN 状态保持原样。');
+ }catch{status('securityHealthStatus','诊断报告导出失败；防护状态仍按最近一次后端读取结果显示。',true);}
 };
 getEl('securityE4EntryButton').onclick=()=>{
  const panel=getEl('securityE4Panel'),opening=panel.hidden;
@@ -228,8 +242,8 @@ getEl('securityE4CopyButton').onclick=async()=>{
  try{await navigator.clipboard.writeText(command);status('securityE4Status','已复制本地测试命令；它不是完整外部 E4 结果。');}
  catch{status('securityE4Status','浏览器未授予剪贴板权限。请手动复制上方命令；E4 运行状态仍为 UNKNOWN。',true);}
 };
-refreshSecurityCenter('initial').catch(error=>{securitySources.state=securityCenterAdapter.classifyDataSourceFailure(error?.status,error?.name);renderSecurityCenter();status('securityHealthStatus','健康检查异常：'+(error?.message||'未知错误')+'。防护状态保持 UNKNOWN。',true);});
-setInterval(()=>{if(!document.hidden)refreshSecurityCenter('automatic').catch(()=>{});},10000);
+refreshSecurityCenter('initial').catch(showSecurityRefreshFailure);
+setInterval(()=>{if(!document.hidden)refreshSecurityCenter('automatic').catch(showSecurityRefreshFailure);},10000);
 
 function renderPolicy(s){$('policyStatus').textContent='模式 '+s.mode+' · Guard '+s.guardState+' · 实际虚拟 callback '+s.callbacks+' · 待批准 '+s.pending.length;$('pendingApproval').replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='选择待批请求';$('pendingApproval').append(empty);s.pending.forEach(p=>{const o=document.createElement('option');o.value=p.requestId;o.textContent=p.tool+' · '+p.reason;$('pendingApproval').append(o);});$('approveConfirm').checked=false;$('approvePolicy').disabled=true;if(s.events)renderEvents(s.events,'sandbox');}
 async function policyAction(action){let warning;try{const s=securityCenterAdapter.preparePolicyResultForDisplay(await api('policy/action',{action}));warning=s.displayWarning?'POLICY_CONFLICT · '+s.displayWarning:undefined;renderPolicy(s);if(warning)status('policyStatus',warning,true);$('policyResult').textContent=JSON.stringify(s,null,2);await refreshV2State();if(warning)status('policyStatus',warning,true);if(s.events?.length)await choose([{id:'policy-actual-log',text:JSON.stringify(s.events.slice(-4)).slice(0,5900)}]);}catch(e){status('policyStatus',warning||e.message,true);}}

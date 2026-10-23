@@ -1,6 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import os from 'node:os';import fs from 'node:fs';import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import http from 'node:http';
+import {Script} from 'node:vm';
 import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
@@ -222,6 +223,29 @@ test('security-center data-source failures preserve timeout, permission, missing
  assert.equal(classifyDataSourceFailure(404,'Error'),'UNSUPPORTED');
  assert.equal(classifyDataSourceFailure(undefined,'InvalidResponseError'),'INVALID_RESPONSE');
  assert.equal(classifyDataSourceFailure(503,'Error'),'UNAVAILABLE');
+});
+
+test('unexpected security refresh errors release controls and keep protection UNKNOWN',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)];
+  assert.ok(scripts.length,'Console should include its local UI script');
+  for(const [,source] of scripts)assert.doesNotThrow(()=>new Script(source),'Console client script should parse');
+  const start=html.indexOf("async function refreshSecurityCenter(reason='manual')");
+  const end=html.indexOf('function showSecurityRefreshFailure',start);
+  assert.ok(start>=0&&end>start,'refresh implementation and its failure handler should be present');
+  const refresh=html.slice(start,end);
+  assert.match(refresh,/finally\s*\{\s*securityRefreshBusy=false;getEl\('securityHealthButton'\)\.disabled=false;getEl\('securityExportButton'\)\.disabled=false;/);
+  assert.ok(html.includes("function showSecurityRefreshFailure(error){"));
+  assert.ok(html.includes("securitySources={state:'UNKNOWN',agents:'UNKNOWN',policyState:'UNKNOWN',runtime3:'UNKNOWN',securityCenter:securityCenterFailure,e4:'UNKNOWN'};"),'unexpected refresh errors must not preserve stale source availability');
+  assert.ok(html.includes("securitySnapshot=securityCenterAdapter.adaptSecuritySnapshot({});"),'unexpected refresh errors must discard stale protection values');
+  assert.ok(html.includes("status('securityHealthStatus','健康检查异常：'+sourceStateLabel(securityCenterFailure)+'。防护状态保持 UNKNOWN。',true);"),'unexpected backend error text must not be copied into the status banner');
+  assert.ok(html.includes("getEl('securityHealthButton').onclick=()=>refreshSecurityCenter('manual').catch(showSecurityRefreshFailure);"));
+  assert.ok(html.includes("refreshSecurityCenter('initial').catch(showSecurityRefreshFailure);"));
+  assert.ok(html.includes("refreshSecurityCenter('automatic').catch(showSecurityRefreshFailure)"));
+  assert.ok(html.includes("status('securityHealthStatus','诊断报告导出失败；防护状态仍按最近一次后端读取结果显示。',true);"),'download errors must not be mislabeled as failed protection reads');
+ }finally{await app.close();}
 });
 
 test('diagnostic distinguishes an empty audit feed from an unavailable source',()=>{
