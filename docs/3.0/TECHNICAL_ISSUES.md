@@ -1668,3 +1668,17 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#45 P1:** M2's bounded documentation commit is ready for the next batch. Hook is not treated as native Shell protection; exact-head hosted checks are pending.
 - **#49 P2:** M9 has synchronized both owned contract copies with their canonical owner blobs. Issue remains open pending push and exact-head hosted checks.
 - Push cadence is now one shared batch at least 5 minutes apart, with quota / PR #24 / remote-ref preflight each time.
+## 2026-10-23 05:51 UTC current exact-head delta
+
+- **#49 P2 — CLOSED:** exact M9 root/nested contract blobs match their canonical owners; current PR #36 CI, wrapper, and cross-module composition all pass. Closure is limited to duplicate-contract drift.
+- **#51 P1 — OPEN / UNKNOWN:** exact M2 PR #37 CI reproduced the M1-owned four-process file-store RETRY_LIMIT symptom on Ubuntu Node 20; parent exact head passed. M0 recorded recurrence in comment 6358401751. No proof of lost writes/data corruption; underlying lock-holder/timing trigger remains unknown.
+- **#45 P1 — OPEN / UNPROTECTED:** its doc-only commit is public, but the exact-head workflow failed due to the unrelated #51 file-store test; no native Shell protection or host enforcement is established.
+- **#52 P0 and #57 P1 remain OPEN / NOT_VERIFIED.** M1 owner review and M6 product-artifact audit are active; no exclusive test resource is in use.
+
+## 2026-10-23 05:55 UTC issue and resource correction
+
+- **#49 P2 — CLOSED** after exact root/nested contract parity and green current-head M9 checks.
+- **#51 P1 — OPEN / UNKNOWN** after the exact #37 head again failed the M1-owned RETRY_LIMIT test; no data loss/corruption proven.
+- **#52 P0 — OPEN / NOT_VERIFIED.** M1 accepts only adapter/API compatibility for M2 head 3a60813; M4 host wiring and product-held identity/TOCTOU remain unproven. M4/M5 next review.
+- **#57 P1 — OPEN / NOT_VERIFIED.** M7 artifacts provide provenance and same-run lifecycle evidence only; independent E4 receipt/runner remains missing.
+- Resource correction: M7 #39 hosted Windows installer lifecycle run 39904585994 completed 05:16:49 UTC without a prior #29 reservation entry. No GitHub workflow is currently in progress. Slot is free now; reserve before future installer/VM/model runs.

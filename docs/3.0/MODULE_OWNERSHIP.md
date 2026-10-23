@@ -787,3 +787,15 @@ M0 documentation-only successor head `fa8b83cd69eaf66c294d9f011c1a618ab7bd3312` 
 - M2 #45 commit 3a60813e90d470cb2e5d609444aba0ffc240411c is limited to execution-isolation/codex/codex-hooks.fragment.json; it documents the currently unprotected native Shell boundary. No native model run or host-enforcement proof is claimed.
 - M9 #49 commits e6155c6 and 581b822 update only the M9-owned root API contract and nested M1 contract copy. M1 remains owner of its source contract; M9's copy is synchronized by exact blob.
 - Both are pending push and exact-head hosted verification. No module ownership changed.
+## 05:51 UTC exact CI ownership clarification
+
+- M2 PR #37 commit 3a60813 changes only execution-isolation/codex/codex-hooks.fragment.json. Its failed CI symptom is in test/file-state-store.test.ts, whose source/test ownership is M1 (#51); no ownership was reassigned and M2 made no code fix.
+- M1 remains owner of both held-file identity/canonical Gateway behavior (#52) and file-state-store retry handling (#51). Separate these acceptance tracks; do not infer data loss from RETRY_LIMIT.
+- M6 remains owner of independent product E4 evidence (#57); no suitable artifact or clean independent receipt has been established yet.
+
+## 05:55 UTC two-module handoff
+
+- M1 completed exact-head disposition of M2 PR #37; no M1 code changed. M1 remains owner of held-identity/canonical Gateway behavior (#52) and file-state-store retry behavior (#51).
+- M6 completed the #57 artifact audit without file changes. M7 owns package/build provenance; independent E4 operator, reviewer, and clean-environment receipt remain unassigned/unknown.
+- Next parallel pair is M4 (#52 first-party desktop/host consumer trace) and M5 (#52 sensitive-path/workspace-policy regression audit), each limited to its existing worktree and owned files.
+- M7 PR #39 run 39904585994 included a hosted installer lifecycle job. Record this as completed resource use; the shared exclusive slot is currently unassigned.

@@ -1186,3 +1186,15 @@ The M9 fixture proves a synthetic protected read through the packed public facad
 - M2 #45 remains UNPROTECTED / NOT_VERIFIED until native Shell OS enforcement is verified; the committed text update is disclosure only.
 - M9 #49 owner-contract parity is corrected locally, but integration remains pending publication and current-head CI. The full composition result is not transferable across mismatched M2/M8 pins.
 - Push batches are limited to one every 5 minutes; quota below 5% or unreadable stops work before any new push.
+## 2026-10-23 05:51 UTC gate update
+
+- M9 contract parity is resolved at current head; hosted composition is green, but this only clears #49 documentation drift and does not prove protected file-read host wiring.
+- M2 PR #37 is red on the unchanged M1 file-state-store concurrency test at exact head; parent passed. Keep #51 OPEN and the trigger UNKNOWN until owner evidence exists. Do not claim corruption or suppress RETRY_LIMIT.
+- #52 held-identity product path and #57 independent E4 remain NOT_VERIFIED. The VMware/real-model/installer resource remains unreserved.
+
+## 2026-10-23 05:55 UTC P0 and independent E4 gate
+
+- M1's exact M2-head disposition is limited to API/adapter compatibility; it does not prove a first-party host callsite or OS-atomic held-file identity.
+- M5 policy tests and M4 UI/virtual-console paths must not be presented as product OBSERVE file-read protection without the exact supported consumer path and held-identity controls.
+- M6's current evidence gap is independent product E4 provenance and receipt; M7's hosted package/lifecycle artifacts do not satisfy the separate acceptance.
+- Resource log correction: hosted installer lifecycle run 39904585994 was completed under PR #39 at 05:16 UTC, without a #29 reservation record. No workflow is active now; slot is free for a future explicitly reserved run.
