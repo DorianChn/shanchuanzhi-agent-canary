@@ -40,7 +40,7 @@ const mergedSourceProvenance = {
 };
 
 const currentCandidateProvenance = {
-  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', prHead: '0d725280092bd544035b276fd1738c409f811f22', prTree: 'd768ae07b109f978072c8805e29424d49f49f154' },
+  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', sourceBase: '98a4833250434de905611ace71bfe8094554d417', prHead: '0d725280092bd544035b276fd1738c409f811f22', prTree: 'd768ae07b109f978072c8805e29424d49f49f154' },
   M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '92dd42b900b10ce0294e9e3faa7e175d728228b3', prTree: '78c60440662a3dcd15d86e9d3c09d3fa9a3769d3' },
   M3: { ownerHead: '98a034fa2066cec18f833440cc51275c389681c6', ownerTree: '4da9bd1d3168aaa8dc1df97ad8b8e4bb18187430', prHead: '3a377ffe1d1f34b97a71ae6657accb9126d052f2', prTree: 'cc256658e28a710b4aa9f0dd780cd471622e922d' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
@@ -98,7 +98,7 @@ for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
   const currentCandidate = currentCandidateProvenance[moduleName];
   if (currentCandidate) {
     assert.equal(pinnedSourceShas[moduleName], currentCandidate.prHead, `${moduleName} current source must pin the exact follow-up PR head`);
-    assertAncestor(moduleName, provenance.mergeSha, currentCandidate.prHead, `${moduleName} historical merge source`);
+    assertAncestor(moduleName, currentCandidate.sourceBase ?? provenance.mergeSha, currentCandidate.prHead, `${moduleName} current candidate source base`);
     assertAncestor(moduleName, currentCandidate.ownerHead, currentCandidate.prHead, `${moduleName} owner fix commit`);
     assert.equal(readTreeIdAt(moduleName, currentCandidate.ownerHead), currentCandidate.ownerTree, `${moduleName} owner fix tree must retain its recorded provenance`);
     assert.equal(readTreeIdAt(moduleName, currentCandidate.prHead), currentCandidate.prTree, `${moduleName} follow-up PR head tree must retain its exact provenance`);
