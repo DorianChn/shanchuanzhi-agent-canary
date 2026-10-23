@@ -1650,3 +1650,4 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#71 P1:** OPEN / queued M3 for Windows Node 20 fixture teardown `ENOTEMPTY`.
 - **#72 P1:** OPEN / queued M1 for exact-blob review of M3 Hook changes.
 - **00:34 UTC checkpoint:** M9 PR #36 now publishes exact-source refresh head `81dea34a24d3dd8c080206367fced54466987c26`, with M7 `f20e307` and M8 `854de50` pins. Exact detached composition passed locally, but hosted Ubuntu/Windows exact-source runs are pending; Issue #74 remains OPEN until those checks complete.
+- **00:38 UTC resolution:** current M9 head `81dea34a24d3dd8c080206367fced54466987c26` passed hosted exact-source composition on Ubuntu and Windows (run `39878928119`), all exact PR checks (`39878928120`), and wrapper regressions on both platforms (`39878928107`). Acceptance is met; GitHub Issue #74 was closed at 00:38 UTC. Product-host/TOCTOU #52 and independent E4 #57 remain open and are not covered by this closure.
