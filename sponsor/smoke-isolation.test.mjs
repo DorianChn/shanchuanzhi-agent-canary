@@ -31,11 +31,14 @@ try {
       SystemRoot: process.env.SystemRoot ?? "",
       TEMP: process.env.TEMP ?? os.tmpdir(),
       TMP: process.env.TMP ?? os.tmpdir(),
+      SMOKE_TEST_FORCE_EADDRINUSE: "1",
     },
   });
 
   assert.equal(result.error, undefined, result.error?.message);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stderr, /EADDRINUSE/, "the first startup should encounter the injected port collision");
+  assert.match(result.stderr, /retrying with a fresh ephemeral port/, "the smoke test should recover on a new port");
   for (const [name, contents] of protectedFiles) {
     assert.equal(fs.readFileSync(path.join(sandbox, name), "utf8"), contents, `${name} was modified by the smoke test`);
   }
