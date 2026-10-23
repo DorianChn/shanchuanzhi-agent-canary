@@ -74,9 +74,22 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   const marker='AGENT_CANARY_PROTECTED_FILE_READ_OK';
   fs.writeFileSync(file,marker,{flag:'wx',mode:0o600});
   let closeGateway:(()=>Promise<void>)|undefined;
+  let aliasRoot:string|undefined;
+  let aliasPath:string|undefined;
   t.after(async()=>{
     try{await closeGateway?.();}
     finally{
+      if(aliasPath){
+        const aliasStat=fs.lstatSync(aliasPath);
+        assert.equal(aliasStat.isSymbolicLink(),true);
+        assert.equal(fs.realpathSync(aliasPath),fs.realpathSync(root));
+        if(process.platform==='win32')fs.rmdirSync(aliasPath);else fs.unlinkSync(aliasPath);
+      }
+      if(aliasRoot){
+        const realAliasRoot=fs.realpathSync(aliasRoot),realTemp=fs.realpathSync(os.tmpdir()),relativeAliasRoot=path.relative(realTemp,realAliasRoot);
+        assert.notEqual(relativeAliasRoot,'..');assert.ok(!relativeAliasRoot.startsWith('..'+path.sep));
+        fs.rmSync(realAliasRoot,{recursive:true,force:true});
+      }
       const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
       assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
       fs.rmSync(realRoot,{recursive:true,force:true});
@@ -139,6 +152,26 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   assert.equal(host.m5Callbacks(),1);
   const afterPositive=evidence.snapshot().length;
   assert.ok(afterPositive>0);
+
+  aliasRoot=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-alias-root-'));
+  aliasPath=path.join(aliasRoot,'workspace-alias');
+  fs.symlinkSync(root,aliasPath,process.platform==='win32'?'junction':'dir');
+  const aliasedFile=path.join(aliasPath,'agent-canary-public.txt');
+  assert.equal(fs.realpathSync(aliasedFile),fs.realpathSync(file),'the junction/symlink path must resolve to the exact registered file');
+  const aliasArgument=path.relative(root,aliasedFile);
+  assert.ok(aliasArgument.startsWith('..'+path.sep),'the physical alias must be outside the registered workspace by path spelling');
+  const callbacksBeforePhysicalAlias=host.m5Callbacks();
+  const evidenceBeforePhysicalAlias=gateway.evidence().length;
+  await assert.rejects(
+    host.dispatch({name:'protected_read',args:{path:aliasArgument}}),
+    (error:any)=>error instanceof Error&&error.message==='M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
+  );
+  assert.equal(host.m5Callbacks(),callbacksBeforePhysicalAlias,'the M2 fixed map must reject a physical alias before M5');
+  assert.equal(gateway.evidence().length,evidenceBeforePhysicalAlias,'a physical alias must not add an M1 read event');
+  assert.deepEqual(await dispatchProtectedRead(host,{path:aliasArgument}),{status:'DENY',reason:'FIXED_PROBE_PATH_REQUIRED',markerMatched:false});
+  assert.equal(host.m5Callbacks(),callbacksBeforePhysicalAlias,'M3 must also reject the alias before its M2 dispatch');
+  assert.equal(gateway.evidence().length,evidenceBeforePhysicalAlias);
+  assert.equal(fs.readFileSync(file,'utf8'),marker,'the physical alias attempt must leave the registered fixture unchanged');
 
   const aliasOutcome=await dispatchProtectedRead(host,{path:'./agent-canary-public.txt'});
   assert.equal(aliasOutcome.status,'DENY');

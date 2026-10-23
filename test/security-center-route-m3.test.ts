@@ -425,7 +425,7 @@ test('security-center route ignores provider getters and does not overstate conf
 });
 
 function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow',missingM2=false,missingEvidence=false){
-  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;gatewayEvidence:number;workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,gatewayEvidence:0};
+  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;gatewayEvidence:number;unregisteredPaths:string[];workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,gatewayEvidence:0,unregisteredPaths:[]};
   const capability=Object.freeze(Object.create(null));
   const loader=async()=>{
     state.dependencyLoads++;
@@ -471,7 +471,7 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
         });
         return{dispatch:(call:unknown)=>{
           const candidate=(call as any)?.args?.path;
-          if(candidate!=='agent-canary-public.txt')throw new TypeError('M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');
+          if(candidate!=='agent-canary-public.txt'){state.unregisteredPaths.push(typeof candidate==='string'?candidate:'<non-string>');throw new TypeError('M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');}
           if(!options.gateway.verifyFileReadCapability(capability,call,'file-read'))throw new TypeError('M2_SECURITY_GATEWAY_CAPABILITY_INVALID');
           return router.dispatch(call);
         }};
@@ -540,6 +540,10 @@ test('protected-read action reports PASS only after the fixed positive, alias de
     assert.equal(serialized.includes(dependencies.state.workspaceRoot??''),false);
     assert.deepEqual(dependencies.state.fixedFiles,[{path:'agent-canary-public.txt'}]);
     assert.deepEqual(dependencies.state.routeArguments,{name:'protected_read',args:{path:'agent-canary-public.txt'}});
+    assert.equal(dependencies.state.unregisteredPaths.length,2,'the lexical alias and physical junction alias must both be rejected by the fixed M2 map');
+    assert.equal(dependencies.state.unregisteredPaths[0],'./agent-canary-public.txt');
+    assert.ok(dependencies.state.unregisteredPaths[1].startsWith('..'+path.sep));
+    assert.ok(dependencies.state.unregisteredPaths[1].includes('agent-canary-console-probe-alias-'));
     assert.equal(dependencies.state.routerCallbacks,1,'only the fixed positive control may reach M5');
     assert.equal(dependencies.state.gatewayEvidence,1,'alias and same-path replacement denials must not add M1 read evidence');
     assert.equal(dependencies.state.gatewayCloses,1);
