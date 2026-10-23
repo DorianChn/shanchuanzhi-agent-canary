@@ -16,16 +16,58 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
  const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
  assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
 });
-test('native lab wrapper allows fixture read and rejects destructive command',()=>{
+test('native lab wrapper writes only normalized allowlisted log fields',()=>{
+ const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'normalized-hook-module.mjs');
+ const callerCanaries=['SYNTHETIC_NATIVE_HOOK_ARGUMENT_CANARY','C:/synthetic/caller/private.txt'];
+ const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
+ fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
+ const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
+ assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
+ assert.equal(lines.length,1);
+ const record=JSON.parse(lines[0]);
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
+ assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
+ for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
+});
+test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
- for(const [tool,input,expected]of [['Read',{file_path:'normal.txt'},'allow'],['Bash',{command:'rm -- victim.txt'},'deny']] as const){
+ for(const [tool,input]of [['Read',{file_path:'normal.txt',note:'NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE'}],['Write',{file_path:'normal.txt',content:'WRITE_BODY_LOG_SENTINEL'}],['Delete',{file_path:'normal.txt'}],['Bash',{command:'rm -- victim.txt'}]] as const){
  const r=spawnSync(process.execPath,[file,path.resolve('dist/agent-hook.js'),root,path.join(root,'wrapper-state'),log],{input:JSON.stringify({session_id:'wrapper-test',tool_name:tool,tool_input:input}),encoding:'utf8',env:{...process.env,AGENT_CANARY_HOME:path.join(root,'wrapper-home')}});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,expected);
+  assert.equal(r.status,0);const decision=JSON.parse(r.stdout).hookSpecificOutput;
+  assert.equal(decision.permissionDecision,'deny');
+  if(tool!=='Bash')assert.equal(decision.permissionDecisionReason,'Agent Canary: native_file_execution_not_pinned');
  }
- assert.equal(fs.readFileSync(log,'utf8').trim().split('\n').length,2);
+ const records=fs.readFileSync(log,'utf8');assert.equal(records.trim().split('\n').length,4);assert.ok(!records.includes('NOT_A_REAL_CREDENTIAL_HOOK_LOG_FIXTURE'));assert.ok(!records.includes('WRITE_BODY_LOG_SENTINEL'));
+ assert.equal(fs.readFileSync(path.join(root,'normal.txt'),'utf8'),'NORMAL_FIXTURE');
 });
 
+test('native lab wrapper persists only allowlisted metadata',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'canary-hook-module.mjs'),log=path.join(root,'canary.jsonl');
+ const callerCanary='M2_CALLER_CANARY',toolCanary='M2_TOOL_CANARY',argumentCanary='M2_ARGUMENT_CANARY',pathCanary='M2_PATH_CANARY',reasonCanary='M2_REASON_CANARY';
+ const decision={hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:reasonCanary}};
+ fs.writeFileSync(modulePath,'export async function decideAgentHook(){return '+JSON.stringify(decision)+'}\n');
+ const input={session_id:callerCanary,tool_name:toolCanary,tool_input:{command:argumentCanary,file_path:path.join(root,pathCanary)}};
+ const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'canary-state'),log],{input:JSON.stringify(input),encoding:'utf8'});
+ assert.equal(result.status,0);
+ assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const logText=fs.readFileSync(log,'utf8').trim();
+ for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary])assert.equal(logText.includes(canary),false,canary+' was persisted');
+ const records=logText.split('\n');
+ assert.equal(records.length,1);
+ const record=JSON.parse(records[0]) as Record<string,unknown>;
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');
+ assert.ok(['allow','deny','ask'].includes(String(record.permissionDecision)));
+ assert.equal(typeof record.timestamp,'string');
+ const timestamp=new Date(record.timestamp as string);
+ assert.equal(Number.isNaN(timestamp.valueOf()),false);
+ assert.equal(timestamp.toISOString(),record.timestamp);
+});
 test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
  const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
  const input=JSON.stringify({session_id:'failure-fixture',tool_name:'Bash',tool_input:{command:'git status'}});

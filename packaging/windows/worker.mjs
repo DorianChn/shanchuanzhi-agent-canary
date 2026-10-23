@@ -1,5 +1,5 @@
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash,randomUUID} from 'node:crypto';import {spawnSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
-import {createAutoE4Run,writeAutoE4Artifacts} from './auto-e4.mjs';
+import {createAutoE4Run,writeAutoE4Artifacts,recordAutoE4BundleFailure} from './auto-e4.mjs';
 import {runHookFaultChecks} from './e4-hook-faults.mjs';
 import {writeFileAtomically} from './durable-files.mjs';
 const ROOT=path.dirname(fileURLToPath(import.meta.url)),APP=path.join(ROOT,'app');
@@ -93,6 +93,29 @@ function makeEvidenceBundle(runDir){
  const check=spawnSync(tool,['-tf',archive],{cwd:runDir,encoding:'utf8',windowsHide:true,timeout:10000,maxBuffer:128*1024,env:{SystemRoot:systemRoot,WINDIR:process.env.WINDIR??systemRoot,PATH:path.dirname(tool)+';'+path.join(systemRoot,'System32')+';'+path.dirname(process.execPath)}});if(check.status!==0||files.some(f=>!check.stdout.split(/\r?\n/).includes(f)))throw Error('EVIDENCE_BUNDLE_VERIFY_FAILED');
  const sha=digest(fs.readFileSync(archive));fs.writeFileSync(archive+'.sha256',sha+'  '+path.basename(archive)+'\n',{flag:'wx',mode:0o600});return{archive,sha256:sha,bytes:fs.statSync(archive).size};
 }
+export function finalizeAutoE4Artifacts(run,createBundle=makeEvidenceBundle){
+ const report=run.report;
+ const stagingDir=fs.mkdtempSync(path.join(run.runDir,'.finalizing-'));
+ const finalDir=path.join(run.runDir,'evidence');
+ try{
+  const eventName=report.eventsFile??'events.jsonl';
+  fs.copyFileSync(path.join(run.runDir,eventName),path.join(stagingDir,eventName),fs.constants.COPYFILE_EXCL);
+  let artifacts=writeAutoE4Artifacts(report,stagingDir),bundle=null;
+  try{bundle=createBundle(stagingDir);}
+  catch(error){
+   for(const file of ['AgentCanary-Auto-E4-Evidence.zip','AgentCanary-Auto-E4-Evidence.zip.sha256'])try{fs.rmSync(path.join(stagingDir,file),{force:true});}catch{}
+   artifacts=recordAutoE4BundleFailure(report,stagingDir,String(error?.message??'EVIDENCE_BUNDLE_CREATE_FAILED'),{sanitize:e4Sanitize});
+  }
+  fs.renameSync(stagingDir,finalDir);
+  return{
+   artifacts:{...artifacts,jsonFile:path.join(finalDir,path.basename(artifacts.jsonFile)),mdFile:path.join(finalDir,path.basename(artifacts.mdFile)),indexFile:path.join(finalDir,path.basename(artifacts.indexFile))},
+   bundle:bundle?{...bundle,archive:path.join(finalDir,path.basename(bundle.archive))}:null
+  };
+ }catch(error){
+  try{fs.rmSync(stagingDir,{recursive:true,force:true});}catch{}
+  throw error;
+ }
+}
 async function runAutoE4(state,version,receipt,manifest){
  safeDirectory(dataDir);
  const run=createAutoE4Run({dataDir,emit:e=>process.stdout.write(JSON.stringify(e)+'\n'),sanitize:e4Sanitize});
@@ -126,10 +149,9 @@ async function runAutoE4(state,version,receipt,manifest){
   await run.stage('github-pr',async()=>({status:'BLOCKED',detail:{reason:'PACKAGED_APP_HAS_NO_SOURCE_CHECKOUT_OR_GITHUB_WRITE_CREDENTIALS',localChangesCommitted:false,remoteWrites:false,summary:'The application will not search for, copy, or stage arbitrary user repositories.'}}));
   await run.stage('materials',async()=>({status:'PASS',detail:{reason:'REPORT_AND_EVIDENCE_INDEX_WILL_BE_GENERATED_IN_THIS_RUN_DIRECTORY',summary:'A run-specific evidence bundle is prepared after report finalization.'}}));
   let report=run.finish();report.commands=run.report.commands;report.environment=run.report.environment;report.installer=run.report.installer;report.software=run.report.software;report.operator=run.report.operator;report.sessionId=run.report.sessionId;
-  let artifacts=writeAutoE4Artifacts(report,run.runDir),bundle=null;
-  try{bundle=makeEvidenceBundle(run.runDir);}
-  catch(error){const stage=report.stages.find(x=>x.id==='materials');stage.status='BLOCKED';stage.detail={reason:String(error.message),summary:'Reports exist, but a verified ZIP bundle could not be created.'};report.coverage.blocked++;report.coverage.verified=Math.max(0,report.coverage.verified-1);report.technicalResult='BLOCKED';run.record({type:'progress',stageId:'materials',status:'BLOCKED',message:stage.detail.summary,detail:{reason:stage.detail.reason}});artifacts=writeAutoE4Artifacts(report,run.runDir);}
-  writeFileAtomically(path.join(dataDir,'latest.json'),JSON.stringify({kind:'auto-e4',file:artifacts.jsonFile,markdownFile:artifacts.mdFile}),{replace:true});
+  const {artifacts,bundle}=finalizeAutoE4Artifacts(run);
+  try{writeFileAtomically(path.join(dataDir,'latest.json'),JSON.stringify({kind:'auto-e4',file:artifacts.jsonFile,markdownFile:artifacts.mdFile}),{replace:true});}
+  catch(error){try{fs.rmSync(path.join(run.runDir,'evidence'),{recursive:true,force:true});}catch{}throw error;}
   process.stdout.write(JSON.stringify({type:'result',status:report.technicalResult,overallE4:report.overallE4,reportFile:artifacts.jsonFile,markdownFile:artifacts.mdFile,bundleFile:bundle?.archive??null,bundleSHA256:bundle?.sha256??null,bundleBytes:bundle?.bytes??null,report:redact(report,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>']])})+'\n');
   if(report.technicalResult==='FAIL')process.exitCode=1;
  }finally{run.release();}

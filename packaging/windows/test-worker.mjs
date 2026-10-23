@@ -1,5 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import crypto from 'node:crypto';import {spawnSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
-import {redact,inspectPayload,readInstallerReceipt} from './worker.mjs';
+import {redact,inspectPayload,readInstallerReceipt,finalizeAutoE4Artifacts} from './worker.mjs';
+import {createAutoE4Run,writeAutoE4Artifacts} from './auto-e4.mjs';
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 const fixtureRoots=new Set();
 test.afterEach(()=>{for(const root of fixtureRoots){fs.rmSync(root,{recursive:true,force:true});fixtureRoots.delete(root);}});
@@ -25,3 +26,69 @@ test('missing receipt is explicitly unverified',()=>{const {root}=fixture();asse
 test('record-install keeps normal behavior when M7 phase telemetry is disabled',()=>{const f=recordInstallFixture();const r=runRecordInstall(f);assert.equal(r.status,0,r.stderr);assert.equal(JSON.parse(r.stdout).status,'VERIFIED');assert.equal(JSON.parse(fs.readFileSync(path.join(f.root,'INSTALL_RECEIPT.json'),'utf8')).installerSHA256,sha('synthetic setup bytes'));assert.equal(fs.existsSync(path.join(f.root,'.m7-installer-lifecycle-phase')),false);});
 test('record-install emits only the final fixed marker when the exact M7 toggle is enabled',()=>{const f=recordInstallFixture(),alternate=path.join(f.root,'caller-selected-marker.txt');fs.writeFileSync(path.join(f.root,'.m7-installer-lifecycle-phase'),'RECORD_INSTALL_STARTED\n');const r=runRecordInstall(f,{marker:'1',alternateMarkerPath:alternate});assert.equal(r.status,0,r.stderr);assert.equal(fs.readFileSync(path.join(f.root,'.m7-installer-lifecycle-phase'),'utf8'),'RECEIPT_ATOMIC_WRITE_COMPLETE\n');assert.equal(fs.existsSync(alternate),false);assert.equal(JSON.parse(fs.readFileSync(path.join(f.root,'INSTALL_RECEIPT.json'),'utf8')).installerSHA256,sha('synthetic setup bytes'));});
 test('record-install does not enable M7 phase telemetry for non-exact toggle values',()=>{const f=recordInstallFixture();const r=runRecordInstall(f,{marker:'true'});assert.equal(r.status,0,r.stderr);assert.equal(fs.existsSync(path.join(f.root,'.m7-installer-lifecycle-phase')),false);});
+
+test('Auto E4 bundle failure persists a blocked final report without weakening run finalization',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'ac-e4-bundle-failure-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data});
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    const report=run.finish();
+    const {artifacts,bundle}=finalizeAutoE4Artifacts(run,()=>{throw Error('EVIDENCE_BUNDLE_CREATE_FAILED');});
+    assert.equal(bundle,null);
+    assert.equal(report.technicalResult,'BLOCKED');
+    assert.equal(report.stages.find(stage=>stage.id==='materials').status,'BLOCKED');
+    assert.equal(report.coverage.blocked,1);
+    const persisted=JSON.parse(fs.readFileSync(artifacts.jsonFile,'utf8'));
+    assert.equal(persisted.technicalResult,'BLOCKED');
+    assert.equal(persisted.stages.find(stage=>stage.id==='materials').status,'BLOCKED');
+    assert.equal(path.dirname(artifacts.jsonFile),path.join(run.runDir,'evidence'));
+    assert.equal(fs.existsSync(path.join(run.runDir,'AUTO_E4_REPORT.json')),false);
+    const eventFile=path.join(path.dirname(artifacts.jsonFile),'events.jsonl');
+    const events=fs.readFileSync(eventFile,'utf8').trim().split(/\r?\n/).map(line=>JSON.parse(line));
+    assert.equal(events.at(-1).status,'BLOCKED');
+    const index=JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8'));
+    assert.equal(index.artifacts.find(item=>item.name==='events.jsonl').sha256,sha(fs.readFileSync(eventFile)));
+    assert.throws(()=>run.record({type:'progress',stageId:'materials',status:'LATE'}),/AUTO_E4_RUN_FINISHED/);
+    assert.throws(()=>writeAutoE4Artifacts(report,path.dirname(artifacts.jsonFile)),/AUTO_E4_ARTIFACT_ALREADY_EXISTS/);
+  }finally{run.release();}
+});
+
+test('Auto E4 bundle failure sanitizes local paths in every persisted artifact',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'ac-e4-bundle-redaction-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data,sanitize:value=>redact(value)});
+  const marker='E4_BUNDLE_FAILURE_LOCAL_PATH_MARKER';
+  const localPath=`C:\\Users\\fixture\\${marker}\\sidecar.json`;
+  const reason=`EACCES: permission denied, open '${localPath}'`;
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    run.finish();
+    const {artifacts,bundle}=finalizeAutoE4Artifacts(run,()=>{throw Error(reason);});
+    assert.equal(bundle,null);
+
+    const json=fs.readFileSync(artifacts.jsonFile,'utf8');
+    const markdown=fs.readFileSync(artifacts.mdFile,'utf8');
+    const eventText=fs.readFileSync(path.join(path.dirname(artifacts.jsonFile),'events.jsonl'),'utf8');
+    for(const persisted of [json,markdown,eventText]){
+      assert(!persisted.includes(localPath));
+      assert(!persisted.includes(marker));
+    }
+
+    const report=JSON.parse(json);
+    const stage=report.stages.find(item=>item.id==='materials');
+    assert.equal(stage.status,'BLOCKED');
+    assert.match(stage.detail.reason,/EACCES: permission denied/);
+    assert(stage.detail.reason.includes('[ABSOLUTE_PATH_REDACTED]'));
+    const events=eventText.trim().split(/\r?\n/).map(line=>JSON.parse(line));
+    assert.equal(events.at(-1).detail.reason,stage.detail.reason);
+    assert.match(events.at(-1).detail.reason,/EACCES: permission denied/);
+    const index=JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8'));
+    for(const file of [artifacts.jsonFile,artifacts.mdFile,path.join(path.dirname(artifacts.jsonFile),'events.jsonl')]){
+      const bytes=fs.readFileSync(file);
+      const entry=index.artifacts.find(item=>item.name===path.basename(file));
+      assert.equal(entry.bytes,bytes.length);
+      assert.equal(entry.sha256,sha(bytes));
+    }
+  }finally{run.release();}
+});
