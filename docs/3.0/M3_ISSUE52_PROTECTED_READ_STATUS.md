@@ -396,3 +396,31 @@ sponsor smoke, and macOS/Ubuntu/Windows Node 20/22. The separate
 ownership-contract-evidence run `40031991694` also passed. These are M3 PR
 checks only; M9's exact integrated M1/M2/M3/M5 Ubuntu and Windows composition
 remains pending. Keep Issue #52 OPEN / P0 / NOT_VERIFIED.
+
+### M9 ordinary-CLI composition blocker — 2026-10-24
+
+M9 run `40031324000` (M9 `b72d54eb7daeef4765ffe854edf9733ee3ffd865`) pins M3
+`606395eae6173384711afa1aafc5f71614b26ab9`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. Its ordinary-CLI protected-read
+subtest fails on Ubuntu and Windows: expected the fixed probe to PASS, but the
+route returns `UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE`. The direct M3
+adapter + packed exact-M2 + M5 composition and alias-denial subtests pass.
+
+The ordinary CLI loads the public self-reference
+`@dorianchn/agent-canary/gateway-adapter` from the M3 package tree. M9 verifies
+that M3 and M2 use the same relative export path, but the target blobs differ:
+M3's target is `7a05ed64300c6345222dff13a4e929a250646acc`; M2 PR #91's file is
+`0d7053114e87177669ec2c3b416028e05affb62f` and contains the required held-read
+provider. The M3 package therefore resolves its stale adapter copy and fails
+closed. M3 must not copy M2-owned source, load a private M2 path, or use the
+generic callback as fallback. The M9/package-composition owner must place the
+exact M2 public-export bytes at the M3 package target, verify blob identity,
+and rerun the ordinary CLI test on both hosts.
+
+This M9 run is not exact-current-M3 evidence: it pins M3 `606395e`, while PR #90
+is now `98a034f`. It also has a separate M8 assertion failure; M9 wrapper run
+`40031323821` fails the dependency audit for existing Hono, ip-address, and
+zod advisories. Issue #52 remains OPEN / P0 / NOT_VERIFIED until the package
+composition blocker is resolved and M9 exact-source Ubuntu/Windows composition
+passes. No M1/M2/M4/M5 file was changed.

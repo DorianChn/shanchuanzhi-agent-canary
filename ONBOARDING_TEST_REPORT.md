@@ -347,3 +347,35 @@ smoke, and macOS/Ubuntu/Windows Node 20/22); ownership-contract-evidence run
 M1/M2/M3/M5 Ubuntu/Windows composition gate. Issue #52 remains OPEN / P0 /
 NOT_VERIFIED; M1 review of the host seam and M2/M5 package integration are
 still pending.
+
+### M9 ordinary-CLI composition failure — 2026-10-24
+
+M9 run `40031324000` on M9 head `b72d54eb7daeef4765ffe854edf9733ee3ffd865`
+checked out M3 `606395eae6173384711afa1aafc5f71614b26ab9`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. On both Ubuntu and Windows, M9
+subtest 11, “M3 ordinary CLI passes only after its fixed protected-read and
+replacement controls,” expected `PASS / FIXED_PROBE_CONTROLS_PASSED` but got
+`UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE`. M9 subtests 16 and 17 pass when
+the M3 adapter is directly composed with the packed exact M2 facade and M5
+router, including alias denials.
+
+The M9 CLI test resolves the public self-reference
+`@dorianchn/agent-canary/gateway-adapter` under `M3_ROOT`. Its package path is
+the same relative export path as M2's, but the checked-out target bytes differ:
+M3 tree blob `7a05ed64300c6345222dff13a4e929a250646acc`; exact M2 candidate blob
+`0d7053114e87177669ec2c3b416028e05affb62f`, which contains
+`fileReadCapability.readFileWithCapability`. Thus the ordinary CLI reaches the
+stale M2 copy in the M3 tree and correctly fails closed. M3 must not copy M2's
+implementation, import its private source tree, or fall back to a generic path
+callback. The next step is for the M9/package-composition owner to place the
+exact M2 public export bytes at the M3 package export target, assert blob
+identity, and rerun both hosts against current reviewed refs.
+
+M9 run `40031324000` is not exact-current-M3 evidence because it pins M3
+`606395e`; the current M3 head is `98a034fa2066cec18f833440cc51275c389681c6`.
+The run also has an unrelated M8 candidate assertion failure. M9 wrapper runs
+`40031323821` fail `npm audit --audit-level=high` for existing Hono,
+ip-address, and zod advisories; M3 did not change those dependencies. Issue #52
+remains OPEN / P0 / NOT_VERIFIED until the composition blocker is resolved and
+M9 exact-source Ubuntu/Windows composition passes.
