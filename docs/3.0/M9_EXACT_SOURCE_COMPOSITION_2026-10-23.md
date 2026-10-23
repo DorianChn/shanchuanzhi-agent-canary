@@ -603,7 +603,7 @@ Two other failures from the first run used M9 assertions that described PR owner
 
 ## Feature baseline synchronization candidate — 2026-10-23
 
-The existing M9 branch was ordinarily merged with `origin/feature/agent-canary-3.0` at `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. This is an uncommitted merge candidate in the existing M9 worktree; no push or PR update was made.
+The existing M9 branch was ordinarily merged with `origin/feature/agent-canary-3.0` at `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. Merge commit `712cb5a320f20ce8aed384661fe88a61e71c3e46` and report commit `72dd92fe483c84d67c7b78dff1ccffac094b08b2` are local; no push or PR update was made.
 
 ### Conflict resolution map
 
@@ -628,3 +628,11 @@ M9's old `test/ai.test.ts` delta was also restored to feature. Its prior M9 comm
 - Exact-source M9 composition with M1 `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`, M2 `49af6d3dd57d9f091c95f489ead27f4f03c941a9`, M3 `611f9fca14706a1110a1f0a39e8488f4ff28d2a9`, M4 `d0f61987c2a06acb47a7187142bc303101af0ad4`, M5 `f0e90c99033a6304748ac79fe106439ca4bd2e06`, M6 `a6f4a889ec16b4f2c78f91d630e657eea7319dbd`, M7 `8689d8fbbcdded4735d0e5aa328805f398a2862a`, and historical scoped M8 `84ee6a7a8d65706f694b7949e82fd8c83cc11523`: 16 total, 14 passed, 2 failed, 0 skipped. The failures remain unmodified: canonical Hook byte parity (M2 `d6f93249306b7966259cab463dd39475728ef338` vs M1 `b7ed4aba70a597f4f63a05decc6de1b32f67372e`) and the positive M2/M5 held-read returning `DENY / path_execution_not_pinned` instead of `OBSERVE_ONLY`. The latter remains the P1 blocker described above.
 - The full staged `git diff --check` reports trailing whitespace in three incoming feature-owned reports (`docs/3.0/E4_GITHUB_PRODUCT_ARTIFACT_AUDIT_2026-10-22.md`, `docs/3.0/M1/HOOK_ISSUE_32_DISPOSITION.md`, and `docs/3.0/M6_E4_INDEPENDENT_ACCEPTANCE_AUDIT.md`). These files match the feature source and were not modified by M9. The M9-only delta is checked separately before commit.
 - The ordinary merge was committed locally as 712cb5a320f20ce8aed384661fe88a61e71c3e46 (parents: M9 55e8a230bb219633d2988cf1d272b4d75e2c48d3, feature 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d). It has not been pushed. No failure assertion was deleted, skipped, or weakened.
+
+## Issue #88 P0 — M2 Hook reason-output regression
+
+The exact merged M2 source is `49af6d3dd57d9f091c95f489ead27f4f03c941a9` (M2 owner head `db98c7d5d409aa390ef539c96a209d6daba8d793`); its `security-lab/claude-native-hook.mjs` blob is `d6f93249306b7966259cab463dd39475728ef338`. The current M1 canonical Hook blob is `b7ed4aba70a597f4f63a05decc6de1b32f67372e`. M2's npm `files` allowlist does not include `security-lab/claude-native-hook.mjs`, so the new regression explicitly exercises a byte-identical copy of the exact M2 source-tree Hook in a disposable fixture; it does not claim that this Hook is present in M2's npm tarball.
+
+The M9-owned test invokes both exact M1 and M2 Hook copies with synthetic `allow`, `deny`, and `ask` decisions and a distinct reason canary for each. It asserts that decisions stay unchanged and that each canary is absent from stdout, stderr, and JSONL. The M1 canonical control passes. Against M2 `49af6d3`, all three decisions are preserved and JSONL/stderr stay clear, but all three synthetic reason markers appear in stdout. The new test therefore fails with direct evidence for P0 #88; the test does not change M2 behavior or lower any security assertion.
+
+The exact-source M9 composition suite now has **17 tests: 14 passed, 3 failed, 0 skipped**. The three failures are the existing canonical Hook byte mismatch (M2 `d6f932...` versus M1 `b7ed4a...`), the new Issue #88 P0 stdout-leak regression, and the existing M2/M5 positive held-read composition returning `DENY / path_execution_not_pinned` instead of `OBSERVE_ONLY` (P1). No failing assertion was removed, skipped, or weakened. M9's existing build passed before this test-only addition; the new composition run used a freshly packed M2 merge tree `49af6d3` installed into a disposable consumer.

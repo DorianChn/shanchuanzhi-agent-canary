@@ -267,6 +267,93 @@ test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () =>
   }
 });
 
+test('Issue #88 P0: M1 sanitization control and exact M2 source Hook keep reason canaries out of output channels', () => {
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-issue-88-m2-hook-reason-'));
+  try {
+    const workspaceRoot = path.join(fixture, 'workspace');
+    const stateDirectory = path.join(fixture, 'state');
+    fs.mkdirSync(workspaceRoot, { recursive: true });
+    fs.mkdirSync(stateDirectory, { recursive: true });
+    const decisions = ['allow', 'deny', 'ask'];
+    const leakedCanaries = [];
+    const hookSources = [
+      {
+        moduleName: 'M1',
+        expectedBlob: 'b7ed4aba70a597f4f63a05decc6de1b32f67372e',
+      },
+      {
+        moduleName: 'M2',
+        expectedBlob: 'd6f93249306b7966259cab463dd39475728ef338',
+      },
+    ];
+
+    for (const { moduleName, expectedBlob } of hookSources) {
+      const sourceHook = path.join(sourceRoots[moduleName].root, 'security-lab', 'claude-native-hook.mjs');
+      const isolatedHookCopy = path.join(fixture, `${moduleName.toLowerCase()}-claude-native-hook.mjs`);
+      assert.equal(
+        readBlobIdAt(moduleName, pinnedSourceShas[moduleName], 'security-lab/claude-native-hook.mjs'),
+        expectedBlob,
+        `Issue #88 must execute the exact ${moduleName} merge-source Hook blob under review`,
+      );
+      fs.copyFileSync(sourceHook, isolatedHookCopy);
+      assert.deepEqual(fs.readFileSync(isolatedHookCopy), fs.readFileSync(sourceHook), `the isolated fixture must execute the byte-identical ${moduleName} Hook copy`);
+
+      const observedDecisions = [];
+      for (const decision of decisions) {
+        const canary = `M9_ISSUE_88_P0_${moduleName}_SYNTHETIC_REASON_${decision.toUpperCase()}`;
+        const decisionModule = path.join(fixture, `${moduleName.toLowerCase()}-decision-${decision}.mjs`);
+        const logFile = path.join(fixture, `${moduleName.toLowerCase()}-decision-${decision}.jsonl`);
+        fs.writeFileSync(decisionModule,
+          `export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:${JSON.stringify(canary)}}}}\n`,
+        );
+
+        const result = spawnSync(process.execPath, [isolatedHookCopy, decisionModule, workspaceRoot, stateDirectory, logFile], {
+          input: JSON.stringify({
+            session_id: `m9-issue-88-${moduleName.toLowerCase()}-${decision}`,
+            tool_name: 'Bash',
+            tool_input: { command: 'synthetic fixture command' },
+          }),
+          encoding: 'utf8',
+          windowsHide: true,
+          timeout: 5000,
+          maxBuffer: 128 * 1024,
+        });
+        assert.equal(result.error, undefined, result.error?.message);
+        assert.equal(result.status, 0, `${result.stdout ?? ''}\n${result.stderr ?? ''}`);
+
+        const response = JSON.parse(result.stdout.trim());
+        const observedDecision = response.hookSpecificOutput.permissionDecision;
+        observedDecisions.push(observedDecision);
+        assert.equal(observedDecision, decision, `${moduleName} ${decision} must remain the Hook decision`);
+
+        const logText = fs.readFileSync(logFile, 'utf8');
+        const logLines = logText.trim().split(/\r?\n/);
+        assert.equal(logLines.length, 1, `${moduleName} ${decision} must emit exactly one decision record`);
+        const record = JSON.parse(logLines[0]);
+        assert.equal(record.permissionDecision, decision, `${moduleName} ${decision} must remain unchanged in JSONL`);
+
+        for (const [channel, text] of [
+          ['stdout', result.stdout ?? ''],
+          ['stderr', result.stderr ?? ''],
+          ['JSONL', logText],
+        ]) {
+          if (text.includes(canary)) leakedCanaries.push(`${moduleName}/${decision}/${channel}/${canary}`);
+        }
+      }
+
+      assert.deepEqual(observedDecisions, decisions, `${moduleName} must preserve allow/deny/ask decisions in order`);
+    }
+
+    assert.deepEqual(
+      leakedCanaries,
+      [],
+      `Issue #88 P0: synthetic reason markers must be absent from stdout, stderr, and JSONL; observed ${leakedCanaries.join(', ')}`,
+    );
+  } finally {
+    fs.rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
 test('exact M2 merge tree pins M7 package policy while current M7 merge adds reliability checks', () => {
   const workflow = fs.readFileSync(path.join(sourceRoots.M2.root, '.github', 'workflows', 'ci.yml'), 'utf8');
   const workflowRef = workflow.match(/uses:\s*DorianChn\/shanchuanzhi-agent-canary\/\.github\/workflows\/m7-package-smoke\.yml@([a-f0-9]{40})/);
