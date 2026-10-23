@@ -24,6 +24,11 @@ export const CONSOLE_PAGE = String.raw`<!doctype html>
 <div class="security-fact"><span>已保护工具</span><strong id="protectedToolCount">UNKNOWN</strong><small>没有真实覆盖计数接口时不估算</small></div>
 <div class="security-fact"><span>未受保护执行路径</span><strong id="unprotectedPathCount">UNKNOWN</strong><small id="unprotectedPathDetail">等待后端返回路径覆盖数据</small></div>
 </div>
+<h3>后端状态接口可用性</h3>
+<div class="security-facts" aria-label="后端状态接口可用性">
+<div class="security-fact"><span>/api/security-center · 实时防护状态</span><strong id="securityCenterSourceStatus" class="security-status" data-status="UNKNOWN">UNKNOWN · 未知</strong><small id="securityCenterSourceDetail">接口状态未知；不可验证的防护字段保持 UNKNOWN。</small></div>
+<div class="security-fact"><span>/api/e4/status · E4 运行状态</span><strong id="e4SourceStatus" class="security-status" data-status="UNKNOWN">UNKNOWN · 未知</strong><small id="e4SourceDetail">接口状态未知；E4 运行结果保持 UNKNOWN。</small></div>
+</div>
 <div id="securitySourceIssues" class="security-source-issues" role="status" aria-live="polite"></div>
 <aside id="nativeCodexShellBoundary" class="native-shell-warning" role="note" aria-labelledby="nativeCodexShellTitle">
 <div><strong id="nativeCodexShellTitle">Native Codex Shell</strong><span id="nativeCodexShellStatus" class="security-status" data-status="NOT_PROTECTED">UNPROTECTED / BLOCKED_NOT_VERIFIED</span></div>
@@ -70,6 +75,22 @@ let securityRefreshBusy=false,securityLastChecked=null;
 function protectionLabel(value){return value==='PROTECTED'?'已保护':value==='PARTIALLY_PROTECTED'?'部分保护':value==='NOT_PROTECTED'?'未保护':'未知';}
 function setProtectionNode(id,value){const node=getEl(id),normalized=securityCenterAdapter.normalizeProtectionStatus(value);node.dataset.status=normalized;node.textContent=normalized+(normalized==='UNKNOWN'?'':' · '+protectionLabel(normalized));}
 function sourceStateLabel(value){return SECURITY_SOURCE_TEXT[value]||'未知';}
+function renderSecurityEndpointAvailability(){
+ const sourceStatus=securitySources.securityCenter,securityNode=getEl('securityCenterSourceStatus');
+ securityNode.dataset.status=sourceStatus;securityNode.textContent=sourceStatus+' · '+sourceStateLabel(sourceStatus);
+ getEl('securityCenterSourceDetail').textContent=sourceStatus==='UNSUPPORTED'
+  ?'/api/security-center 未实现；当前各产品防护字段保持 UNKNOWN。'
+  :sourceStatus==='AVAILABLE'
+   ?'/api/security-center 可读取；只使用明确返回字段，未返回的防护字段保持 UNKNOWN。'
+   :'/api/security-center 当前为 '+sourceStatus+'；不可验证的防护字段保持 UNKNOWN。';
+ const e4Status=securitySources.e4,e4Node=getEl('e4SourceStatus');
+ e4Node.dataset.status=e4Status;e4Node.textContent=e4Status+' · '+sourceStateLabel(e4Status);
+ getEl('e4SourceDetail').textContent=e4Status==='UNSUPPORTED'
+  ?'/api/e4/status 未实现；E4 运行结果仍为 UNKNOWN。'
+  :e4Status==='AVAILABLE'
+   ?'/api/e4/status 可读取；接口可用不代表 E4 已运行或通过。'
+   :'/api/e4/status 当前为 '+e4Status+'；E4 运行结果仍为 UNKNOWN。';
+}
 async function securityGet(route){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
  try{
@@ -142,6 +163,7 @@ function renderSecurityEvents(){
  if(hadFocus)(buttons.find(button=>button.dataset.eventKey===focusedKey)||target).focus();
 }
 function renderSecurityCenter(){
+ renderSecurityEndpointAvailability();
  setProtectionNode('overallProtectionStatus',securitySnapshot.protectionStatus);
  getEl('firstPartyObserveReadStatus').dataset.status='UNKNOWN';
  getEl('firstPartyObserveReadStatus').textContent=securitySnapshot.firstPartyObserveReadStatus+' · 未验证';

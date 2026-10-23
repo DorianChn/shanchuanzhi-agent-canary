@@ -105,6 +105,39 @@ test('missing security-center provider leaves UI protection UNKNOWN whether the 
  }finally{await console.close();}
 });
 
+test('security endpoint availability is visible without claiming protection or E4 completion',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  assert.match(html,/后端状态接口可用性/);
+  assert.match(html,/id="securityCenterSourceStatus" class="security-status" data-status="UNKNOWN">UNKNOWN · 未知<\/strong>/);
+  assert.match(html,/id="e4SourceStatus" class="security-status" data-status="UNKNOWN">UNKNOWN · 未知<\/strong>/);
+  const start=html.indexOf('function renderSecurityEndpointAvailability(){');
+  const end=html.indexOf('async function securityGet',start);
+  assert.ok(start>=0&&end>start,'the served UI should include its endpoint availability renderer');
+  const elements=new Map<string,{dataset:Record<string,string>,textContent:string}>();
+  for(const id of ['securityCenterSourceStatus','securityCenterSourceDetail','e4SourceStatus','e4SourceDetail'])elements.set(id,{dataset:{},textContent:''});
+  const sourceText:Record<string,string>={UNSUPPORTED:'未实现',AVAILABLE:'可读取',UNKNOWN:'未知'};
+  const script=html.slice(start,end)+'renderSecurityEndpointAvailability();';
+  const run=(states:Record<string,string>)=>new Script(script).runInNewContext({
+   securitySources:states,
+   sourceStateLabel:(state:string)=>sourceText[state]||'未知',
+   getEl:(id:string)=>elements.get(id),
+  });
+  run({securityCenter:'UNSUPPORTED',e4:'UNSUPPORTED'});
+  assert.equal(elements.get('securityCenterSourceStatus')?.dataset.status,'UNSUPPORTED');
+  assert.equal(elements.get('securityCenterSourceStatus')?.textContent,'UNSUPPORTED · 未实现');
+  assert.match(elements.get('securityCenterSourceDetail')?.textContent||'',/防护字段保持 UNKNOWN/);
+  assert.equal(elements.get('e4SourceStatus')?.dataset.status,'UNSUPPORTED');
+  assert.equal(elements.get('e4SourceStatus')?.textContent,'UNSUPPORTED · 未实现');
+  assert.match(elements.get('e4SourceDetail')?.textContent||'',/E4 运行结果仍为 UNKNOWN/);
+  run({securityCenter:'AVAILABLE',e4:'AVAILABLE'});
+  assert.match(elements.get('securityCenterSourceDetail')?.textContent||'',/未返回的防护字段保持 UNKNOWN/);
+  assert.match(elements.get('e4SourceDetail')?.textContent||'',/不代表 E4 已运行或通过/);
+  assert.equal(adaptSecuritySnapshot({}).protectionStatus,'UNKNOWN');
+ }finally{await app.close();}
+});
+
 
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({
