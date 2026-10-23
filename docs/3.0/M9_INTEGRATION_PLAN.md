@@ -3,9 +3,9 @@
 ## 当前 exact-source composition 快照（2026-10-23）
 
 - 当前 M1–M8 exact source pins、模块级覆盖、owner 审阅范围及证据限制见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md)。
-- 本轮 exact-source pins 更新到 M3 #33 `b8b471f`、M4 #34 `721c25b`、M5 #47 `8bb14c6`、M6 #38 `98a4833`、M7 #39 `5a7540b`；M9 workflow 现锁定所有八个当前公开 PR heads，包含 M3 fail-closed、M5 capability adapter、M4 脱敏展示、M6 package-boundary 和 M7 installer-receipt 回归。
-- 最新复核的 M3 hosted CI `39919260164` 失败于 `approval expires with no actual callback`：测试在 `pending()[0].requestId` 处读取到 `undefined`，未到达过期审批断言；M3 owner 需确认根因。M4 run `39919282220` 为 9/9 success，M5 run `39918480015` success。M9 本地精确组合 16/16 不能替代 M3 hosted CI。
-- M1/M3/M4/M5 真实产品文件的安全闭环仍按 owner 证据标记 `NOT_READY / NOT_VERIFIED`。Issue #52 仍 OPEN / P0 / NOT_VERIFIED；合成接口通过不代表 first-party product-host wiring、真实用户文件保护或 OS-atomic TOCTOU 已验收。PR #36 run `39920983998`（composition）、`39920984006`（CI）和 `39920984084`（wrapper）均成功，但它们来自旧 M6 `392a7c2`、M7 `97bb8de` pins；不得用来证明本轮新 M6/M7 pins 已通过 M9。新组合验证通过后仍需推送并等待 hosted M9 CI。
+- 当前 M9 exact-source pins 为 M3 #33 本地候选 `bfcf85e`、M4 #34 `721c25b`、M5 #47 `8bb14c6`、M6 #38 `98a4833`、M7 #39 `5a7540b`，其余 M1/M2/M8 详见 snapshot 表。M3 新候选尚未推送，故没有该 SHA 的 hosted CI；先前 M3 hosted CI `39919260164` 只覆盖旧 SHA `b8b471f3`，失败于 `approval expires with no actual callback` 中 `pending()[0].requestId` 为 `undefined`，未到达过期审批断言。M4 run `39919282220` 为 9/9 success，M5 run `39918480015` success。M9 本地精确组合 16/16 不能替代 M3 hosted CI。
+- M1 PR #43 与 M2 PR #37 已合入 `feature/agent-canary-3.0`，merge commits 分别为 `f0b4ee800672c3b702fa6d48201f74642d724cc5` 与 `49af6d3dd57d9f091c95f489ead27f4f03c941a9`；M9 仍固定其精确模块源 heads `fa369069` 与 `db98c7d5`。合入共享基线不等于产品安全验收：Issue #52 仍 OPEN / P0 / NOT_VERIFIED；合成接口通过不代表 first-party product-host wiring、真实用户文件保护或 OS-atomic TOCTOU 已验收。
+- PR #36 run `39920983998`（composition）、`39920984006`（CI）和 `39920984084`（wrapper）均成功，但它们来自旧 M6 `392a7c2`、M7 `97bb8de` pins，且 M3 pin 当时为 `b8b471f3`；不得用来证明当前 M3/M6/M7 pins 的 M9 hosted composition。新候选需等 M3 源提交先推送、再推送 M9 后触发并核对 hosted CI。
 
 ## M9 exact-source refresh：M6、M7 — 2026-10-23
 
@@ -13,6 +13,13 @@
 - M6 #38 新 head `98a4833250434de905611ace71bfe8094554d417` 将独立 E4 receipt 绑定 product-run identity；其 exact-head CI `39920790310` 和 wrapper `39920790439` 均成功。M7 #39 新 head `5a7540b0b041d10e6d562aa528f79a2cfdea987a` 刷新 product E4 provenance 文档；其 exact-head CI `39920944820` 和 wrapper `39920944771` 均成功。M6 修改 receipt schema/verifier，M7 仅修改 provenance 文档；M7 的 M6-conditional helper blob 未变化。
 - PR #36 上一次 hosted composition `39920983998`、CI `39920984006` 和 wrapper `39920984084` 均成功，但工作流当时 checkout 的 M6/M7 仍为旧 SHA `392a7c24697fd8925e3022616aad054922efb38f` / `97bb8de315f2c19edbaa4d6536abc50876fecffd`。这些是旧 pin 的历史结果，不覆盖新 exact-source composition。
 - 本轮仅修改 M9 workflow、M9 composition SHA map 与 M9 报告；新 exact-source roots 下 focused composition 为 16/16，`git diff --check` 通过。提交后由 M0 按五分钟批次统一推送；新 M9 hosted CI 结果待推送触发后记录。
+
+## M9 M3 local-head refresh and M1/M2 merge record — 2026-10-23
+
+- M9 exact M3 pin 已更新到 owner 本地候选 `bfcf85e7d1a6870973181b988f2e7b6aefdf5c37`；该 M3 提交尚未推送，当前没有该 SHA 的 hosted CI。M9 所需发布顺序是先让 M3 精确提交可从 GitHub checkout，再推送 M9 并核对新 hosted composition。
+- M1 PR #43 已合入 base `feature/agent-canary-3.0`，merge commit `f0b4ee800672c3b702fa6d48201f74642d724cc5`；M2 PR #37 已合入同一 base，merge commit `49af6d3dd57d9f091c95f489ead27f4f03c941a9`。两个 PR head refs 未变，M9 exact pins 仍为 M1 `fa369069241bf81d32c7f39d31a61806efa55fe4`、M2 `db98c7d5d409aa390ef539c96a209d6daba8d793`。
+- Issue #52 保持 OPEN / P0 / NOT_VERIFIED。M1/M2 合并及 M9 合成组合测试均不证明 first-party product-host wiring、真实用户文件保护或 OS-atomic TOCTOU。
+- 上轮 published M3 `b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b` 的 hosted run `39919260164` 失败，是历史 SHA 的 CI 结果。M3 新本地候选新增 fixed-probe denial controls；在此候选上运行 M9 focused composition **16/16 通过**。此局部组合不替代 M3 exact-head CI、产品宿主验收或外部 E4。
 
 ## M9 精确 head 与契约/风险复核（2026-10-15 00:38 UTC）
 

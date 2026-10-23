@@ -491,3 +491,22 @@ M6's new head changes the receipt schema and verifier to bind the independent E4
 PR #36 hosted workflow run `39920983998` (composition), CI run `39920984006`, and wrapper `39920984084` all succeeded on the earlier M9 head `dddbdd48719b3075587f2dedca6eff76eff3c282`. That workflow checked out the old M6 `392a7c24697fd8925e3022616aad054922efb38f` and M7 `97bb8de315f2c19edbaa4d6536abc50876fecffd`; it is historical old-pin evidence and does not validate the new M6/M7 heads.
 
 The local focused command `node --import tsx --test test/m9-cross-module-composition.test.mjs` passed **16/16** with exact M1–M8 roots from the table above, including the exact M2 npm tarball installed into a disposable consumer. `git diff --check` passed. Only M9 workflow refs/assertions, the M9 test SHA map, and M9 reports changed. A new hosted M9 run is pending the coordinator's next push batch. Package fixtures remain synthetic; M1/M3/M4/M5 product-file closure, real protected reads, OS-atomic TOCTOU, clean-VM lifecycle, and external independent E4 remain `NOT_READY / NOT_VERIFIED`.
+
+## M3 local-head refresh and M1/M2 merge record — 2026-10-23
+
+This section supersedes the M3 pin in the preceding table. The exact M1/M2 source pins remain their unchanged module PR heads, now merged into the shared AC3 base as recorded below.
+
+| Module / PR | Exact source pin | Current availability / CI evidence |
+| --- | --- | --- |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` | PR merged into `feature/agent-canary-3.0` as `f0b4ee800672c3b702fa6d48201f74642d724cc5`; source branch head is unchanged |
+| M2 / #37 | `db98c7d5d409aa390ef539c96a209d6daba8d793` | PR merged into `feature/agent-canary-3.0` as `49af6d3dd57d9f091c95f489ead27f4f03c941a9`; source branch head is unchanged |
+| M3 / #33 | `bfcf85e7d1a6870973181b988f2e7b6aefdf5c37` | Local owner candidate, not pushed yet; no hosted CI for this SHA |
+| M4 / #34 | `721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2` | Run `39919282220` passed all 9 checks |
+| M5 / #47 | `8bb14c6b38dc2cc76bdf915442dc8048d30ff76d` | Run `39918480015` succeeded |
+| M6 / #38 | `98a4833250434de905611ace71bfe8094554d417` | Exact-head CI `39920790310` and wrapper `39920790439` succeeded |
+| M7 / #39 | `5a7540b0b041d10e6d562aa528f79a2cfdea987a` | Exact-head CI `39920944820` and wrapper `39920944771` succeeded |
+| M8 / #40 | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` | Existing exact-head evidence; not rerun for this refresh |
+
+M3 candidate `bfcf85e` updates the Console protected-read flow and adds fixed-probe denial controls to its route and packaged-consumer tests. The M9 focused composition passed **16/16** with this exact local M3 source; its synthetic `codex-connection-mcp` positive-control still asserts that unchanged runtime's `ALLOW / HELD_FILE_POSITIVE_CONTROL` result. This does not assert the separate Console flow's positive status or real product-host wiring. The standalone M3 package gate remains `NOT_READY`; the package export map is still SDK-only. The earlier M3 run `39919260164` failed at the old published M3 SHA `b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b` and is not evidence for or against the new local candidate.
+
+M1 PR #43 and M2 PR #37 merge commits are recorded above, but merge completion does not resolve Issue #52. It remains **OPEN / P0 / NOT_VERIFIED** pending supported first-party host wiring, real protected-resource behavior, and OS-atomic TOCTOU evidence. PR #36 hosted runs `39920983998`, `39920984006`, and `39920984084` used the earlier M3/M6/M7 pins and therefore do not validate this current source set. The M3 commit must first be published before a hosted M9 run can check it out.
