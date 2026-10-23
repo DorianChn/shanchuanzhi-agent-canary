@@ -113,3 +113,19 @@ Before marking E4 verified, publish a protocol and evidence tied to one immutabl
 6. A signed or otherwise reviewable receipt that binds the operator, artifact, environment, commands, and results.
 
 A SHA-256 manifest alone is not a signature or independent timestamp. CI and same-machine tests remain useful, but they do not satisfy this E4 gate.
+
+## M8 PR #40 candidate validation — 2026-10-23
+
+This section records maintainer-run validation of candidate tree `a7620db78fbfedac75dacb684680ceee8a00fef4`. These local checks cover documentation, regression fixtures, and package build behavior; they are not independent E4, installer-lifecycle, or clean-VM evidence.
+
+| Command | Result |
+|---|---|
+| `npm run build` | PASS |
+| `npm test` | 493 total; 482 passed, 11 skipped, 0 failed |
+| `node scripts/check-docs.mjs` | PASS; 14 documents, 57 links, 13 code examples, 4 issue templates |
+| `node --test security-lab/claude-native-hook-output.test.mjs` | 6/6 passed |
+| `npm --prefix sponsor test` | 24 passed, 1 skipped, 0 failed |
+| `npm --prefix sponsor run smoke` | All 12 smoke checks passed |
+| `git diff --check origin/feature/agent-canary-3.0...HEAD` | PASS |
+
+The exact-head GitHub matrix is tracked separately on [PR #40](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/40). Hosted results from older PR heads are not acceptance evidence for this candidate. The M8 Hook-output expectations still require M1 owner review; Issue #80 remains open for M6/M8 E4 reason-contract disposition. No test or security policy was weakened.
