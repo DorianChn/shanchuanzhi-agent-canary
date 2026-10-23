@@ -44,7 +44,15 @@ test('Claude native hook wrapper logs only the allowlisted decision fields',t=>{
   const result=spawnSync(process.execPath,[wrapper,modulePath,root,state,logFile],{input:JSON.stringify(input),encoding:'utf8',windowsHide:true,timeout:5000});
   assert.equal(result.error,undefined,result.error?.message);
   assert.equal(result.status,0,result.stderr);
-  assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecisionReason,sensitive.reason);
+  const output=JSON.parse(result.stdout).hookSpecificOutput;
+  assert.equal(output.hookEventName,'PreToolUse');
+  assert.equal(output.permissionDecision,'allow');
+  // Injected fixture reasons are not product reason codes and must use the fixed sanitized fallback.
+  assert.equal(output.permissionDecisionReason,'Agent Canary: permission_allowed');
+  for(const value of Object.values(sensitive)){
+    assert.equal(result.stdout.includes(value),false,`sensitive value returned: ${value}`);
+    assert.equal(result.stderr.includes(value),false,`sensitive value written to stderr: ${value}`);
+  }
   const log=fs.readFileSync(logFile,'utf8');
   const lines=log.trim().split(/\r?\n/);
   assert.equal(lines.length,1);
@@ -54,6 +62,8 @@ test('Claude native hook wrapper logs only the allowlisted decision fields',t=>{
   assert.equal(event.hookEventName,'PreToolUse');
   assert.equal(event.permissionDecision,'allow');
   for(const value of Object.values(sensitive))assert.equal(log.includes(value),false,`sensitive value persisted: ${value}`);
+  assert.equal(result.stdout.includes(sensitive.reason),false);
+  assert.equal(result.stderr.includes(sensitive.reason),false);
   assert.equal(log.includes('permissionDecisionReason'),false);
   assert.equal(log.includes('tool_input'),false);
 });

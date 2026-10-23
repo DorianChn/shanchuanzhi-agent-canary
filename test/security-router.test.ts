@@ -1,6 +1,8 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';
 const home=fs.mkdtempSync(path.join(os.tmpdir(),'canary-v2-test-'));process.env.AGENT_CANARY_HOME=home;
 const {createAgentGuard,createRiskPolicyRouter,createSecurityToolRouter,SessionDataFlow,PolicyBlockedError}=await import('../src/sdk.js');
+const {createTrustedExecutionGateway,EvidenceRecorder}=await import('../src/sdk.js');
+const {createGatewayFileReadCapabilityProvider}=await import('../src/risk-policy.js');
 const tools={read:{operation:'file-read'},write:{operation:'file-write'},shell:{operation:'shell'},http:{operation:'http'},secret:{operation:'sensitive-read'}} as const;
 function setup(extra:any={}){let calls=0;const guard=createAgentGuard({alert:false,eventsFile:path.join(home,Math.random()+'.jsonl')});const router=createSecurityToolRouter({guard,workspaceRoot:home,tools,executeRealTool:()=>{calls++;return 'public';},...extra});return{guard,router,count:()=>calls};}
 function provider(verdict:string='benign'){return {id:'test',name:'fixture',kind:'local',analyze:async()=>({status:'ok',advisoryOnly:true,verdict,severity:'high',evidence:[{eventId:'proposed-call',quote:'write'}],summary:'fixture',durationMs:1}),listModels:async()=>[],testConnection:async()=>({ok:true})} as any;}
@@ -40,6 +42,41 @@ test('literal private network denied in balanced, observe records without blocki
 test('OBSERVE keeps a legal public HTTPS GET observable',async()=>{const o=setup({mode:'OBSERVE'}),call={name:'http',args:{url:'https://docs.example.com',method:'GET'}};assert.equal((await o.router.decide(call)).action,'OBSERVE_ONLY');await o.router.dispatch(call);assert.equal(o.count(),1);assert.equal(o.router.pendingApprovals().length,0);});
 test('decide preserves an incoming hard DENY in OBSERVE mode',async()=>{const guard=createAgentGuard({alert:false});let callbacks=0;const config={mode:'STRICT' as 'STRICT'|'OBSERVE',guard,workspaceRoot:home,tools,verifyRealPaths:true,executeRealTool:()=>{callbacks++;return 'unexpected';}};const router=createSecurityToolRouter(config);config.mode='OBSERVE';const call={name:'http',args:{url:'http://example.invalid',method:'GET'}};assert.equal(router.inspectPolicy(call).action,'DENY');assert.equal((await router.decide(call)).action,'DENY');assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);});
 test('host-supported sandbox chooses only host executor',async()=>{let sandbox=0;const s=setup({executeSandboxTool:()=>++sandbox});const d=await s.router.decide({name:'read',args:{path:'public.txt'}});assert.equal(d.action,'SANDBOX');await s.router.dispatch({name:'read',args:{path:'public.txt'}});assert.equal(sandbox,1);assert.equal(s.count(),0);});
+test('verifyRealPaths allows only an exact verified M1 held-file read through the security router',async()=>{
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(home,'held-read-security-router-'))),target=path.join(root,'public.txt'),content='M5_SECURITY_ROUTER_HELD_FILE_FIXTURE';
+ fs.writeFileSync(target,content);
+ const guard=createAgentGuard({sessionId:'m5-security-router-held-read',alert:false});
+ const gateway=createTrustedExecutionGateway({agentId:'m5-security-router-held-read',guard,workspaceRoot:root,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()}) as any;
+ let gatewayClosed=false;
+ try{
+  const fileReadCapability=createGatewayFileReadCapabilityProvider(gateway,[{toolName:'read_public',path:'public.txt',pathArg:'file_path'}]);let genericCallbacks=0;
+  const router=createSecurityToolRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read_public:{operation:'file-read',pathArg:'file_path'},write:{operation:'file-write'},remove:{operation:'delete'}},fileReadCapability,
+   executeRealTool:(call:any)=>{genericCallbacks++;if(call.name==='write')fs.writeFileSync(target,'UNAUTHORIZED_M5_PATH_CALLBACK');if(call.name==='remove')fs.rmSync(target);return 'unexpected';}});
+  const call={name:'read_public',args:{file_path:'public.txt'}};
+  assert.equal((await router.decide(call)).action,'OBSERVE_ONLY');
+  assert.deepEqual(await router.dispatch(call),{content});
+  assert.equal(genericCallbacks,0,'the M1 held-file provider, never the generic pathname callback, serves the read');
+  assert.equal(router.pendingApprovals().length,0);
+  assert.ok(gateway.evidence().some((event:any)=>event.tool_id==='read_file'&&event.execution_status==='SUCCEEDED'&&event.side_effect_verification==='VERIFIED'));
+
+  for(const denied of [
+   {name:'read_public',args:{file_path:'public.txt/../public.txt'}},
+   {name:'read_public',args:{file_path:'public.txt',extra:true}},
+   {name:'unregistered_read',args:{file_path:'public.txt'}},
+   {name:'write',args:{path:'public.txt',content:'UNAUTHORIZED_M5_PATH_CALLBACK'}},
+   {name:'remove',args:{path:'public.txt'}},
+  ]){
+   await assert.rejects(router.dispatch(denied as any),PolicyBlockedError);
+  }
+  assert.equal(genericCallbacks,0,'aliases, unregistered tools, writes, and deletes never reach a pathname callback');
+  assert.equal(fs.readFileSync(target,'utf8'),content,'denied calls have no filesystem side effect');
+  assert.equal(router.pendingApprovals().length,0);
+
+  await gateway.close();gatewayClosed=true;
+  await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY');
+  assert.equal(genericCallbacks,0,'a revoked capability remains denied');
+ }finally{if(!gatewayClosed)await gateway.close();}
+});
 test('reject and expiration remove approval without callback',async()=>{const s=setup({approvalTtlMs:1000});await assert.rejects(s.router.dispatch({name:'write',args:{path:'note'}}));s.router.denyApproval(s.router.pendingApprovals()[0].requestId);assert.equal(s.router.pendingApprovals().length,0);await assert.rejects(s.router.dispatch({name:'write',args:{path:'note'}}));await new Promise(r=>setTimeout(r,1100));await assert.rejects(s.router.approve(s.router.pendingApprovals()[0]?.requestId??'expired','host'));assert.equal(s.count(),0);});
 test('realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks',async()=>{const outside=fs.mkdtempSync(path.join(os.tmpdir(),'canary-outside-'));fs.writeFileSync(path.join(outside,'public.txt'),'public');const link=path.join(home,'linked');fs.symlinkSync(outside,link,process.platform==='win32'?'junction':'dir');let old=0;const guard=createAgentGuard({alert:false});await createRiskPolicyRouter({guard,workspaceRoot:home,tools,executeRealTool:()=>++old}).dispatch({name:'read',args:{path:'linked/public.txt'}});assert.equal(old,1);const legacy=setup({verifyRealPaths:false});await legacy.router.dispatch({name:'read',args:{path:'linked/public.txt'}});assert.equal(legacy.count(),1);const s=setup({verifyRealPaths:true});const call={name:'read',args:{path:'linked/public.txt'}};assert.equal((await s.router.decide(call)).action,'DENY');await assert.rejects(s.router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY');assert.equal(s.router.pendingApprovals().length,0);assert.equal(s.count(),0);});
 test('OBSERVE hard-denies a sensitive read through an aliased path before the registered file callback',async()=>{
