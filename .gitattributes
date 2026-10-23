@@ -1,1 +1,2 @@
 security-lab/e4-runs/** -text
+/packaging/windows/claude-native-hook.mjs text eol=lf

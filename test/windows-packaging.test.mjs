@@ -240,6 +240,17 @@ test('Windows artifact evidence binds the exact Hook SHA through build report, m
   const m9HookBytes=spawnSync('git',['-C',repo,'cat-file','blob',`HEAD:${m9HookPath}`],{windowsHide:true});
   assert.equal(m9HookBytes.status,0,(m9HookBytes.stderr??'').toString());
   assert.deepEqual(m9HookBytes.stdout,wrapper.bytes,'M9 checked Hook Git blob must be byte-identical to the committed installer Hook');
+  const packageHookPath='packaging/windows/claude-native-hook.mjs';
+  const packageHookEol=spawnSync('git',['-C',repo,'check-attr','eol','--',packageHookPath],{encoding:'utf8',windowsHide:true});
+  assert.equal(packageHookEol.status,0,(packageHookEol.stdout??'')+'\n'+(packageHookEol.stderr??''));
+  assert.equal(packageHookEol.stdout.trim(),`${packageHookPath}: eol: lf`);
+  const windowsCheckoutHook=spawnSync('git',['-C',repo,'-c','core.autocrlf=true','cat-file','--filters',`--path=${packageHookPath}`,`HEAD:${packageHookPath}`],{windowsHide:true});
+  assert.equal(windowsCheckoutHook.status,0,(windowsCheckoutHook.stderr??'').toString());
+  assert.equal(windowsCheckoutHook.stdout.includes(Buffer.from('\r\n')),false,'Windows checkout filters must preserve the canonical LF Hook bytes');
+  assert.equal(createHash('sha256').update(windowsCheckoutHook.stdout).digest('hex'),wrapper.sha256);
+  const windowsCheckoutBlob=spawnSync('git',['-C',repo,'hash-object','--stdin'],{input:windowsCheckoutHook.stdout,encoding:'utf8',windowsHide:true});
+  assert.equal(windowsCheckoutBlob.status,0,(windowsCheckoutBlob.stdout??'')+'\n'+(windowsCheckoutBlob.stderr??''));
+  assert.equal(windowsCheckoutBlob.stdout.trim(),wrapper.blobSha);
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   assert.match(build,/wrapperSourceContentSHA256:packagedHookSource\.sha256/);
   const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8').replace(/\r\n/g,'\n');
