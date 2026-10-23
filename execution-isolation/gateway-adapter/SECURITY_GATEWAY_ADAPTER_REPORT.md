@@ -2,7 +2,7 @@
 
 Date: 2026-10-21
 Scope: M2-owned adapter seam for Issue #52
-Status: `M2_M1_M5_OPAQUE_CAPABILITY_ADAPTER_IMPLEMENTED_LOCALLY; PRODUCT_HOST_INTEGRATION_NOT_VERIFIED; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
+Status: `M2_M1_M5_OPAQUE_CAPABILITY_ADAPTER_PUBLIC_IN_PR37; M3_SOURCE_CONSUMER_PRESENT_BUT_UNPACKAGED; PRODUCT_HOST_INTEGRATION_NOT_VERIFIED; PRODUCTION_ALIAS_PROTECTION_NOT_VERIFIED`
 
 Native Codex Shell boundary (Issue #45): **`UNPROTECTED / BLOCKED_NOT_VERIFIED`**.
 Codex documents supported Windows command enforcement through MXC or the
@@ -484,3 +484,98 @@ factory. The archive test proves package contents and module reachability, not a
 first-party host callsite or successful strict real-file read. The one-file
 packaging revision needs updated exact-diff owner readback; no M1/M5/M6/M7
 implementation paths or security policies were changed.
+
+## 2026-10-23 Issue #52 M2 owner check — current public contracts and consumer
+
+**Decision:** M2's public adapter is already capability-bound to M1's current
+Gateway contract and requires strict M5 `OBSERVE` composition. No M2 runtime or
+test change is needed. A first-party M3 source route is prepared to call it,
+but the current M3-only package does not expose the required M2/M5 public
+subpaths; its default route therefore returns `UNKNOWN` before probe-file or
+Gateway creation. Issue #52 remains **OPEN / P0 / NOT_VERIFIED**.
+
+### Exact refs
+
+- M1 PR #43: `27c417627b0e89e9db999025b65b25e12f0f1d7f` (OPEN / Draft),
+  Gateway source blob `2be0a1a0ab6a324f0426cf71308bb62d1170957c`.
+- M2 PR #37: `58c2e46fef70021fbfd70e1caa7ba44e7281ee43` (OPEN / Draft),
+  exact-head CI run `39896034781` passed all nine jobs.
+- M5 PR #47: `f05edaeeabff2e261bf563fb0782d7b9bc500645` (OPEN / Draft).
+- M3 PR #33: `8104ab30eed5245eb61eeebb1075b915e8557b46` (OPEN / Draft).
+
+The M2 delta from the previously reviewed public head
+`1c050abace5af6e09b7b934730f2361b78f9d938` changes only
+`execution-isolation/reports/ISOLATION_TEST_RESULTS.md` and
+`execution-isolation/windows/Test-AppContainerPrototype.ps1`. Its package,
+public facade, adapter implementation, and host-adapter test blobs are
+unchanged at `0e0fceffdc7e07a67b60173c46c6bc8ec29e7d3b`,
+`7a05ed64300c6345222dff13a4e929a250646acc`,
+`5c1d461a4af0c840a7c2a93d0173ec1f6ad87ac8`, and
+`3b3819aeba755ce8a39040936b82e2e5e47e65db`, respectively. This addendum
+supersedes earlier report paragraphs that describe the pre-capability,
+path-string-only adapter.
+
+### M1/M2/M5 contract result
+
+At the exact M1 source, the Gateway exposes host-only
+`bindFileReadCapability`, `verifyFileReadCapability`, and
+`readFileWithCapability` methods. M1 binds an opaque object to one safe,
+constructor-registered resource and the exact tool/operation/path argument;
+verification rechecks that held identity. The current M5 router accepts a
+trusted `fileReadCapability.resolve/verify` provider and carries only the
+verified capability in execution context.
+
+M2's `createSecurityGatewayHostAdapter` exports as the sole public facade
+function. It requires `mode: "OBSERVE"` and `verifyRealPaths: true`, reserves
+the tool map, execution callback, and capability provider, and accepts only
+construction-time fixed tool/path bindings. For each binding it requests the
+M1 capability, supplies the M1-backed resolver/verifier to M5, preflights
+before router dispatch, verifies the same capability again in the M2 callback,
+and calls M1 `readFileWithCapability`. It has no path-only read fallback.
+The current M2 implementation therefore consumes the M1 identity contract
+when given the real M1 Gateway and trusted M5 router. M2's host-composition
+tests still use contract doubles; they are not a live product composition.
+
+### Product consumer boundary
+
+M3 PR #33 contains a first-party source-level fixed temporary-probe route:
+`src/ai/console.ts::runConsoleProtectedRead` lazily imports the intended M1 SDK,
+M5 policy-router, and M2 gateway-adapter public subpaths, creates one marker
+file, and dispatches the fixed `protected_read` tool through the M2 host adapter.
+`src/codex-connection-mcp.ts::createProtectedHostAdapter` supplies the same
+strict OBSERVE composition. This is a fixed temporary probe, not an
+arbitrary user-file or native Codex-tool path.
+
+The current M3 package manifest exports only `./sdk`; it does not expose the
+M2 `./gateway-adapter` or M5 `./policy-router` subpaths. M3's own route test
+checks those exports and asserts that the ordinary `ai console` route returns
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating a temporary directory,
+Gateway, router, or callback when either is missing. Its successful route
+fixture injects a test facade/router, so it is not evidence that the current
+packaged product consumes the M2/M1/M5 implementations. The M2 source adapter
+exists and has a source-level caller, but a runnable, exact-owner product
+consumer is not yet established.
+
+### Owners and acceptance still required
+
+- **M3** owns composing the exact public M1 SDK, M2 facade, and M5 router
+  subpaths into its actual package/runtime entrypoint. The default route must
+  execute through those public owner implementations without injected test
+  doubles; missing subpaths must remain `UNKNOWN` with no filesystem or
+  Gateway side effect.
+- **M4/M3** must identify the shipped first-party consumer that is meant to
+  protect reads. A fixed temporary marker cannot establish protection for
+  user-selected files or native host tools.
+- The exact composed route needs a safe fixed-read positive control plus
+  sensitive/alias/junction and same-path replacement negatives. Denials must
+  occur before the M5 execution callback and M1 read evidence, leave approval
+  count at zero, and preserve fixture bytes. These tests must use the exact
+  owner implementations and clearly label the fixture scope.
+- Keep Issue #52 **OPEN / P0 / NOT_VERIFIED** until that product route and its
+  alias/path-replacement acceptance evidence exist. M1 held-identity checks
+  are not an OS-atomic path/operation transaction; this M2 adapter makes no
+  change-and-revert or native Shell protection claim.
+
+No source, test, policy, package, or other-module files were changed for this
+owner check. No tests were run; the cited M2 exact-head CI is the existing
+verification for the unchanged public adapter blobs.
