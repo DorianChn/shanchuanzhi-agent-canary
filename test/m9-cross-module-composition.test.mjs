@@ -590,7 +590,7 @@ function isPolicyBlocked(error, predicate) {
     && predicate(error.decision);
 }
 
-test('M3 ordinary CLI stays UNKNOWN when the protected-read host adapter is unavailable', async (t) => {
+test('M3 ordinary CLI passes only after its fixed protected-read and replacement controls', async (t) => {
   const m3Root = sourceRoots.M3.root;
   const m3Package = JSON.parse(fs.readFileSync(path.join(m3Root, 'package.json'), 'utf8'));
   const m5Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M5.root, 'package.json'), 'utf8'));
@@ -677,14 +677,14 @@ test('M3 ordinary CLI stays UNKNOWN when the protected-read host adapter is unav
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), {
     scope: 'M3_FIXED_TEMP_PROBE_ONLY',
-    status: 'UNKNOWN',
-    reason: 'OWNER_ADAPTER_UNAVAILABLE',
-    markerMatched: false,
+    status: 'PASS',
+    reason: 'FIXED_PROBE_CONTROLS_PASSED',
+    markerMatched: true,
   });
   assert.deepEqual(
     fs.readdirSync(isolatedTemp).filter((name) => name.startsWith('agent-canary-console-probe-')),
     [],
-    'M3 ordinary CLI must not create a protected-read probe directory when the host adapter is unavailable',
+    'M3 ordinary CLI must remove its fixed protected-read probe directory after the request',
   );
 });
 
@@ -1162,7 +1162,7 @@ test('packed M2 facade with active M1 capability and exact M5 router rejects sen
     assertFixturesUnchanged();
   }
 
-  assert.equal(m5ToM2Callbacks, 1, 'only the positive control enters the M5-to-M2 execution callback');
+  assert.equal(m5ToM2Callbacks, callbacksAfterPositiveRead, 'the positive held-file read and denied aliases never enter the generic M5-to-M2 callback');
   assert.deepEqual(host.pendingApprovals(), []);
   assert.deepEqual(gateway.operator.pending(), []);
   assert.equal(guard.state, 'SAFE');
