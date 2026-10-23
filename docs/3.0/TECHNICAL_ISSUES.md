@@ -3,6 +3,7 @@
 - **P1 / OPEN / INVESTIGATING.** Owner: M9 for the composition guard; M6 supports verification of its additive E4 regression. At exact public M6 head `3578e7ba10b2fd160efa0e4683aba863c666db8a`, M9 exact-source test `node test/m9-cross-module-composition.test.mjs` surfaced a stale whole-file expectation for `test/auto-e4.test.mjs`: current blob `612b78b...` includes M6's new protected-target-mutation FAIL regression, while the historical reviewed blob is `18fcc4b...`.
 - **Resolution path:** M9 preserves the historical exact-blob assertion for the reviewed source and changes the current-candidate guard to verify all historical test lines remain intact and in order while allowing additive regressions. Then rerun the composition on exact detached M1–M8 refs and retain hosted Ubuntu/Windows checks. The first manual-pin-only pass is invalid as exact-source evidence.
 - **Acceptance:** exact detached-source composition passes without deleting or weakening M6 tests; independent product E4 evidence remains a separate OPEN requirement under #57. M9 owner is updating the guard; resolution is not yet verified.
+- **00:28 UTC checkpoint:** local M9 commit ce1ddb2 passed 11/11 exact-source tests against the M1–M8 refs that existed before the latest M7/M8 push. M7 20e307 and M8 854de50 are now public; M9 is rebuilding detached sources at those exact SHAs and rerunning its guard. No M9 update has been pushed; keep #74 OPEN pending current-ref hosted Ubuntu/Windows checks.
 
 
 ## M1 exact failure trace — Issue #51 — 2026-10-20 22:39 UTC

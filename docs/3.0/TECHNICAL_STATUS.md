@@ -7223,3 +7223,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M9 local commit `ce1ddb2a5e88abb78d936464acb979d9a833a888` passed exact-source composition 11/11 against the then-current public M1–M8 refs. M7/M8 published new heads immediately afterward; the M9 owner is updating pins to `f20e307` and `854de50` and must rerun exact-source validation before any M9 push. Public M9 PR #36 remains `fe246f1d97a06149d366989ac9dd169b05006754`; its earlier green checks apply to the old pins. Issue #74 remains OPEN until the current-ref hosted Ubuntu/Windows run passes.
 - M0 PR #30 public head `b65a85ee3cc1a81d24a74f62d29002032e9ff218` has all listed checks green; updated ownership/status docs are prepared locally for the next five-minute batch.
 - Unresolved evidence boundaries remain: M2 native Shell UNPROTECTED (#45); production-host protected-read/OS-atomic TOCTOU NOT_VERIFIED (#52, P0); independent product E4 NOT_VERIFIED (#57); installer lifecycle root cause and clean-VM gate OPEN (#41). No tests were removed or weakened.
+## Five-minute CI checkpoint — 2026-10-23 00:28 UTC
+
+- M7 exact product CI run `39878031913` completed successfully (all nine checks). Windows Community wrapper `39878031868` has both wrapper regression jobs passed; its Windows build-evidence job is still running, so no lifecycle outcome is claimed yet. Issue #41 remains OPEN/P1/HOLD.
+- M8 PR #40 exact product CI `39878036234` and Windows Community wrapper `39878038319` both completed successfully. This is documentation/test evidence only and does not establish host integration.
+- M9 exact-source refresh is rebuilding detached worktrees at newly published M7 `f20e307` and M8 `854de50`; current public M9 PR #36 still points to its older source pins. The prior local 11/11 result is not evidence for the newly updated source set.
+- PR #24 and M0 PR #30 remain unchanged; no merge or Release.
