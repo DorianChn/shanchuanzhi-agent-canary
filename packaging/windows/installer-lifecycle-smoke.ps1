@@ -278,6 +278,12 @@ try {
     $ownedPath = Resolve-ContainedPath $installRoot ([string]$entry.path)
     if (Test-Path -LiteralPath $ownedPath) { $remainingOwned += [string]$entry.path }
   }
+  $residueLimit = 64
+  $result.uninstallResidue = [ordered]@{
+    count = $remainingOwned.Count
+    relativePaths = @($remainingOwned | Select-Object -First $residueLimit)
+    truncated = ($remainingOwned.Count -gt $residueLimit)
+  }
   Assert-Condition ($remainingOwned.Count -eq 0) 'OWNED_INSTALL_FILES_REMAIN_AFTER_UNINSTALL'
   Assert-Condition ($null -eq (Get-RegistryInstallLocation $registryKey)) 'REGISTRY_KEY_REMAINS_AFTER_UNINSTALL'
   Assert-Condition (-not (Test-Path -LiteralPath $startMenuShortcut)) 'START_MENU_SHORTCUT_REMAINS_AFTER_UNINSTALL'

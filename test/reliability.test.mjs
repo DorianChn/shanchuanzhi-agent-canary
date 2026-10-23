@@ -137,6 +137,11 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   assert.ok(smoke.includes('INSTALLED_LAUNCHER_SHA256_MISMATCH'),'the installed launcher must match the build report');
   assert.ok(smoke.includes('"/S /D=$installRoot"'),'install must be silent and confined to the runner temp directory');
   assert.ok(smoke.includes('"/S _?=$installRoot"'),'uninstall must be silent and bound to the exact target');
+  const residueCapture=smoke.indexOf('$result.uninstallResidue = [ordered]@{');
+  const ownedFileAssertion=smoke.indexOf("Assert-Condition ($remainingOwned.Count -eq 0) 'OWNED_INSTALL_FILES_REMAIN_AFTER_UNINSTALL'");
+  assert.ok(residueCapture>=0&&residueCapture<ownedFileAssertion,'uninstall residue must be captured before the owned-file assertion can fail');
+  assert.ok(smoke.includes('$residueLimit = 64')&&smoke.includes('relativePaths = @($remainingOwned | Select-Object -First $residueLimit)')&&smoke.includes('truncated = ($remainingOwned.Count -gt $residueLimit)'),'uninstall residue evidence must be capped and explicitly report truncation');
+  assert.ok(smoke.includes('count = $remainingOwned.Count'),'uninstall residue evidence must retain the total count when the path list is capped');
   assert.ok(smoke.includes('UNKNOWN_FILE_NOT_PRESERVED'),'uninstall must preserve an unknown-file sentinel');
   assert.ok(smoke.includes("cancelRollback = 'NOT_TESTED'")&&smoke.includes("efs = 'NOT_TESTED'"),'the result must retain explicit non-claims');
 });
