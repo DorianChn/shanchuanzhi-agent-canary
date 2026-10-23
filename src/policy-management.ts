@@ -203,9 +203,14 @@ export function verifyPolicyEvidence(events: unknown[], expectedHead?: string): 
 export function verifyPolicyEvidenceExport(serialized: string, expectedHead?: string) {
   try {
     const bundle = JSON.parse(serialized);
-    if (bundle?.schema_version !== 'agent-canary.policy-evidence-export/1' || !/^[a-f0-9]{64}$/.test(bundle.project_id) || !Array.isArray(bundle.events) || bundle.events.some((e: any) => e.project_id !== bundle.project_id)) return { valid: false, reason: 'INVALID_EXPORT', head: null };
-    const expected = expectedHead ?? bundle.anchored_head ?? undefined;
-    return verifyPolicyEvidence(bundle.events, expected);
+    if (bundle?.schema_version !== 'agent-canary.policy-evidence-export/1' || !/^[a-f0-9]{64}$/.test(bundle.project_id) || !Array.isArray(bundle.events) || bundle.events.some((e: any) => e.project_id !== bundle.project_id) || (bundle.anchored_head !== null && (typeof bundle.anchored_head !== 'string' || !/^[a-f0-9]{64}$/.test(bundle.anchored_head)))) return { valid: false, reason: 'INVALID_EXPORT', head: null };
+    // The head embedded in an export is self-asserted data, not an independent
+    // trust anchor. Check that it matches the event chain, but only report an
+    // anchored chain when the caller supplies a separately trusted head.
+    const verified = verifyPolicyEvidence(bundle.events, expectedHead);
+    if (!verified.valid) return verified;
+    if (bundle.anchored_head !== verified.head) return { valid: false, reason: 'HEAD_MISMATCH', head: verified.head };
+    return verified;
   } catch { return { valid: false, reason: 'INVALID_EXPORT', head: null }; }
 }
 

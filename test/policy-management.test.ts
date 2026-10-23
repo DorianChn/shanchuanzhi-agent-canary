@@ -9,6 +9,7 @@ import {
   createProjectPolicyManager,
   verifyPolicyEvidenceExport,
 } from '../src/policy-management.js';
+import { evidenceDigest } from '../src/runtime/evidence.js';
 
 function workspace() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'canary-policy-project-'));
@@ -292,6 +293,7 @@ test('evidence export verifies its chain and expected head, and rejects mutation
   assert.ok(head);
   const bundle = manager.exportEvidence();
   assert.equal(manager.verifyEvidence(head).valid, true);
+  assert.equal(verifyPolicyEvidenceExport(bundle).reason, 'VALID_LOCAL_CHAIN_UNANCHORED');
   assert.equal(verifyPolicyEvidenceExport(bundle, head).valid, true);
   assert.equal(verifyPolicyEvidenceExport(bundle, '0'.repeat(64)).reason, 'HEAD_MISMATCH');
   const changed = bundle.replace('project_network_restricted', 'policy_network_restricted');
@@ -299,6 +301,21 @@ test('evidence export verifies its chain and expected head, and rejects mutation
   const data = JSON.parse(bundle);
   data.events.pop();
   assert.equal(verifyPolicyEvidenceExport(JSON.stringify(data)).valid, false);
+
+  const rewritten = JSON.parse(bundle);
+  rewritten.events.at(-1).decision = 'ALLOW';
+  rewritten.events.at(-1).reason_code = 'policy_allowed';
+  let previous: string | null = null;
+  for (const event of rewritten.events) {
+    delete event.event_digest;
+    event.previous_event_digest = previous;
+    event.event_digest = evidenceDigest(event);
+    previous = event.event_digest;
+  }
+  rewritten.anchored_head = previous;
+  const rewrittenBundle = JSON.stringify(rewritten);
+  assert.equal(verifyPolicyEvidenceExport(rewrittenBundle).reason, 'VALID_LOCAL_CHAIN_UNANCHORED', 'a self-recomputed bundle must never claim an independent anchor');
+  assert.equal(verifyPolicyEvidenceExport(rewrittenBundle, head).reason, 'HEAD_MISMATCH', 'the separately retained trusted head must detect a rewritten chain');
 });
 
 test('corrupt policy audit fails closed before a real callback starts', async () => {
