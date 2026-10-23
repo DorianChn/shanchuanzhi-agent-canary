@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agent-canary:e4-independent-review-receipt:v1",
+  "title": "Agent Canary E4 Independent Review Receipt v1",
+  "$comment": "The Ed25519 signature covers canonical UTF-8 JSON for the whole receipt with the signature member omitted. Canonicalization recursively sorts object keys and emits no insignificant whitespace. keyId is SHA-256 over the signer's SubjectPublicKeyInfo DER. A valid signature does not establish human identity or independence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "run", "operator", "reviewer", "environment", "checks", "signature"],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "status": {"enum": ["PASS", "FAIL", "BLOCKED", "NOT_RUN"]}
+  },
+  "properties": {
+    "schema": {"const": "agent-canary.e4-independent-review-receipt.v1"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archiveSha256", "sourceCommit", "sourceTree", "producerRunId", "productVersion", "artifactFileName", "artifactSize", "artifactSha256", "startedAt", "completedAt", "result"],
+      "properties": {
+        "archiveSha256": {"$ref": "#/$defs/sha256"},
+        "sourceCommit": {"$ref": "#/$defs/commit"},
+        "sourceTree": {"$ref": "#/$defs/commit"},
+        "producerRunId": {"type": "string", "minLength": 1, "maxLength": 200},
+        "productVersion": {"type": "string", "minLength": 1, "maxLength": 100},
+        "artifactFileName": {"type": "string", "minLength": 1, "maxLength": 255},
+        "artifactSize": {"type": "integer", "minimum": 1},
+        "artifactSha256": {"$ref": "#/$defs/sha256"},
+        "startedAt": {"type": "string", "format": "date-time"},
+        "completedAt": {"type": "string", "format": "date-time"},
+        "result": {"$ref": "#/$defs/status"}
+      }
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "identitySource"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 100},
+        "role": {"const": "independent-operator"},
+        "identitySource": {"type": "string", "minLength": 1, "maxLength": 500}
+      }
+    },
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "relationshipCheck", "identitySource"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 100},
+        "role": {"const": "independent-reviewer"},
+        "relationshipCheck": {"const": "not-artifact-author-or-operator"},
+        "identitySource": {"type": "string", "minLength": 1, "maxLength": 500}
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "windowsBuild", "imageSha256", "snapshotId", "checkoutCommit", "checkoutTree", "cleanCheckout", "cleanEnvironment"],
+      "properties": {
+        "provider": {"type": "string", "minLength": 1, "maxLength": 200},
+        "windowsBuild": {"type": "string", "minLength": 1, "maxLength": 100},
+        "imageSha256": {"$ref": "#/$defs/sha256"},
+        "snapshotId": {"type": "string", "minLength": 1, "maxLength": 200},
+        "checkoutCommit": {"$ref": "#/$defs/commit"},
+        "checkoutTree": {"$ref": "#/$defs/commit"},
+        "cleanCheckout": {"const": true},
+        "cleanEnvironment": {"const": true}
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productExecution", "verifierPositive", "externalCopyMismatches", "archiveUnchanged"],
+      "properties": {
+        "productExecution": {"$ref": "#/$defs/status"},
+        "verifierPositive": {"$ref": "#/$defs/status"},
+        "externalCopyMismatches": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["SHA256SUMS.txt", "report.json", "report.md", "raw.log"],
+          "properties": {
+            "SHA256SUMS.txt": {"$ref": "#/$defs/status"},
+            "report.json": {"$ref": "#/$defs/status"},
+            "report.md": {"$ref": "#/$defs/status"},
+            "raw.log": {"$ref": "#/$defs/status"}
+          }
+        },
+        "archiveUnchanged": {"$ref": "#/$defs/status"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "keyId", "keySource", "value"],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "keyId": {"$ref": "#/$defs/sha256"},
+        "keySource": {"type": "string", "minLength": 1, "maxLength": 500},
+        "value": {"type": "string", "contentEncoding": "base64", "minLength": 80, "maxLength": 100}
+      }
+    }
+  }
+}

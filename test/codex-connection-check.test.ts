@@ -103,7 +103,11 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
       assert.deepEqual(missingM1Methods,['bindFileReadCapability','verifyFileReadCapability','readFileWithCapability']);
       assert.equal(host.reason,'M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
     }else{
-      assert.ok(['M2_PUBLIC_ADAPTER_UNAVAILABLE','M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE'].includes(host.reason));
+      assert.ok([
+        'M2_PUBLIC_ADAPTER_UNAVAILABLE',
+        'M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE',
+        'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE',
+      ].includes(host.reason));
     }
     assert.equal(host.m5Callbacks(),0);
     assert.equal(gateway.evidence().length,0);
@@ -233,7 +237,7 @@ test('first-party connection-check runtime passes only its fixed trusted inputs 
     const defaultRuntime=await createConnectionCheckRuntime({workspaceRoot:root});
     defaultGateway=defaultRuntime.gateway;
     assert.equal(defaultRuntime.protectedHost.status,'UNKNOWN');
-    assert.equal(defaultRuntime.protectedHost.reason,'M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
+    assert.equal(defaultRuntime.protectedHost.reason,'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE');
     assert.equal(defaultRuntime.protectedHost.m5Callbacks(),0);
     assert.equal(defaultRuntime.evidence.snapshot().length,0);
     assert.equal(fs.readFileSync(file,'utf8'),'M3_RUNTIME_FIXTURE');

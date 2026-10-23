@@ -26,8 +26,8 @@ export async function decideAgentHook(client:'claude'|'cursor',workspaceRoot:str
   if(typeof target==='string'&&path.isAbsolute(target))target=path.relative(workspaceRoot,target);
   const router=createSecurityToolRouter({guard,workspaceRoot,verifyRealPaths:true,tools:{shell:{operation:'shell'},read:{operation:'file-read'},write:{operation:'file-write'},delete:{operation:'delete'}},executeRealTool:()=>{throw Error('HOOK_NEVER_EXECUTES');}});
   const d=await router.decide({name:tool,args:{...(target===undefined?{}:{path:target}),...(raw.command===undefined?{}:{command:raw.command})}});
-  // Native Hooks authorize host-owned file I/O but do not receive the M1 held-file capability.
-  // Preserve policy hard-denies; otherwise fail closed until this operation uses that capability.
+  // The native Hook returns permission to a host that performs file I/O itself.
+  // Until that operation is routed through a held-file Gateway capability, never grant it here.
   const nativeFileOperation=read||write||del;
   const unpinnedNativeFileOperation=nativeFileOperation&&(d.action!=='DENY'||d.reason==='path_execution_not_pinned');
   permission=unpinnedNativeFileOperation?'deny':d.action==='ALLOW'?'allow':d.action==='DENY'?'deny':'ask';

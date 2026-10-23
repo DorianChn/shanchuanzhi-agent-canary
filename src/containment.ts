@@ -197,20 +197,6 @@ class SessionCircuitBreaker implements AgentGuard {
     this.stateStore = options.stateStore;
   }
 
-  subscribeQuarantine(listener: () => void): () => void {
-    if (typeof listener !== "function") throw new Error("GUARD_QUARANTINE_LISTENER_INVALID");
-    const subscriber = { listener, notifiedEpoch: 0 };
-    this.quarantineSubscribers.add(subscriber);
-    // Reading state also latches and synchronously notifies shared quarantine.
-    if (this.state === "QUARANTINED") this.notifyQuarantineSubscriber(subscriber);
-    let active = true;
-    return () => {
-      if (!active) return;
-      active = false;
-      this.quarantineSubscribers.delete(subscriber);
-    };
-  }
-
   get state(): CircuitState {
     if (!this.stateStore) return this.currentState;
     try {
@@ -228,6 +214,21 @@ class SessionCircuitBreaker implements AgentGuard {
       this.latchQuarantine();
       return "QUARANTINED";
     }
+  }
+
+  subscribeQuarantine(listener: () => void): () => void {
+    if (typeof listener !== "function") throw new Error("GUARD_QUARANTINE_LISTENER_INVALID");
+    const subscriber = { listener, notifiedEpoch: 0 };
+    this.quarantineSubscribers.add(subscriber);
+    // Reading state also latches and notifies if a shared store already holds
+    // quarantine. Epoch tracking prevents delivering that transition twice.
+    if (this.state === "QUARANTINED") this.notifyQuarantineSubscriber(subscriber);
+    let active = true;
+    return () => {
+      if (!active) return;
+      active = false;
+      this.quarantineSubscribers.delete(subscriber);
+    };
   }
 
   beforeToolCall(call: ToolCall): ToolDecision {
