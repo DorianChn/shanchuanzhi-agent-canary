@@ -35,7 +35,14 @@ test('native lab wrapper persists only allowlisted metadata',()=>{
  const input={session_id:callerCanary,tool_name:toolCanary,tool_input:{command:argumentCanary,file_path:path.join(root,pathCanary)}};
  const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'canary-state'),log],{input:JSON.stringify(input),encoding:'utf8'});
  assert.equal(result.status,0);
- assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const publicOutput=JSON.parse(result.stdout);
+ assert.equal(publicOutput.hookSpecificOutput.permissionDecision,'allow');
+ assert.equal(publicOutput.hookSpecificOutput.permissionDecisionReason,'Agent Canary: permission_allowed');
+ assert.equal(result.stderr,'');
+ for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary]){
+  assert.equal(result.stdout.includes(canary),false,canary+' was returned to the host');
+  assert.equal(result.stderr.includes(canary),false,canary+' was written to stderr');
+ }
  const logText=fs.readFileSync(log,'utf8').trim();
  for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary])assert.equal(logText.includes(canary),false,canary+' was persisted');
  const records=logText.split('\n');
