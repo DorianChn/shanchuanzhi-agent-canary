@@ -242,5 +242,38 @@
       "https://learn.chatgpt.com/docs/app/windows"
     ]
   },
+  "currentHostProbe": {
+    "observedAtUtc": "2026-10-23T01:32:40Z",
+    "host": {
+      "os": "Windows 11 Home",
+      "windowsBuild": "26200.9168",
+      "desktopAppVersion": "26.1016.6573.0",
+      "codexCliVersion": "0.163.0-alpha.11",
+      "shell": "Windows PowerShell 7.6.5"
+    },
+    "officialWindowsMxcProbe": {
+      "documentation": "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+      "minimumDocumentedBuilds": ["26100.9278", "26200.9278"],
+      "invocation": "codex -c windows.sandbox=mxc sandbox --include-managed-config --permission-profile :workspace -- cmd.exe /d /c echo MXC_OK",
+      "perInvocationConfigOnly": true,
+      "exitCode": 1,
+      "result": "native MXC is unavailable on this executor",
+      "childLaunched": false,
+      "interpretation": "The observed Windows build is below the documented MXC minimum and the official CLI probe reports MXC unavailable. The probe does not distinguish build compatibility from additional device or policy limitations."
+    },
+    "hostPolicy": {
+      "legacyElevatedAvailability": "NOT_PROBED",
+      "legacyUnelevatedAvailability": "NOT_PROBED",
+      "desktopEffectiveSandbox": "UNKNOWN",
+      "desktopHookInvocationTelemetry": "UNAVAILABLE",
+      "desktopProtectedPathSentinelAttempted": false,
+      "beforeSha256": null,
+      "afterSha256": null
+    },
+    "classification": "UNPROTECTED",
+    "acceptance": "BLOCKED_NOT_VERIFIED",
+    "issue45": "OPEN",
+    "decision": "Retain UNPROTECTED until an actual Desktop native-Shell protected-path denial is observed with effective enforcement state and unchanged sentinel hashes."
+  },
   "classification": "UNPROTECTED"
 }
