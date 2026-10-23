@@ -39,6 +39,26 @@ type ProtectedReadDependencies={
 };
 export type SecurityCenterProtectedReadDependencies=()=>Promise<ProtectedReadDependencies>;
 
+async function loadDefaultProtectedReadDependencies():Promise<ProtectedReadDependencies>{
+  // These are package self-references to the public M1/M5 SDK and M2 facade.
+  // Keep the specifiers runtime-resolved: this M3-only checkout does not yet
+  // export M2's subpath, while the integrated package adds it through M2.
+  const sdkSpecifier:string='@dorianchn/agent-canary/sdk';
+  const adapterSpecifier:string='@dorianchn/agent-canary/gateway-adapter';
+  const [sdkValue,adapterValue]=await Promise.all([import(sdkSpecifier),import(adapterSpecifier)]);
+  const sdk=sdkValue as unknown as {
+    createTrustedExecutionGateway?:ProtectedReadGatewayFactory;
+    createSecurityToolRouter?:typeof SecurityToolRouterFactory;
+  };
+  const facade=adapterValue as unknown as PublicM2Facade;
+  if(typeof sdk.createTrustedExecutionGateway!=='function'||typeof sdk.createSecurityToolRouter!=='function'||typeof facade?.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
+  return{
+    createGateway:sdk.createTrustedExecutionGateway,
+    loadM2Facade:async()=>facade,
+    createSecurityToolRouter:sdk.createSecurityToolRouter,
+  };
+}
+
 function protectedReadEnvelope(status:'ALLOW'|'DENY'|'UNKNOWN',reason:ProtectedReadReason,markerMatched:boolean){
   return{scope:protectedReadScope,status,reason,markerMatched};
 }
@@ -302,7 +322,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         const suppliedHeader=req.headers['x-canary-operator-code'];
         const supplied=Buffer.from(typeof suppliedHeader==='string'?suppliedHeader:''),expected=Buffer.from(operatorCode??'');
         if(!operatorCode||typeof suppliedHeader!=='string'||supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){reply(protectedReadEnvelope('UNKNOWN','REQUEST_AUTH_REQUIRED',false),403);return;}
-        reply(await runConsoleProtectedRead(options.securityCenterProtectedReadDependencies));return;
+        reply(await runConsoleProtectedRead(options.securityCenterProtectedReadDependencies??loadDefaultProtectedReadDependencies));return;
       }
       if(req.url==='/api/runtime3/action'){reply(await runtime3.action(body.action));return;}
       if(req.url==='/api/runtime3/approve'){

@@ -135,3 +135,28 @@ M9 PR #36 head 为 `de3799aae540f58173acec4ab3f7a1fe98593aa7`。该 run 的 comp
 版本边界：上述失败针对 M9 固定的 M3 `be388…`，不能代表当前 M3 PR head。PR #33 当前 head 为 `5ef54c19f5fd04360dcd898cea8d3eaf33341539`；M1 对评审范围 `9841bd8..5ef54c1` 为 ACCEPT（Issue #64 comment `6304451949`），exact-head CI run `39517509901` 通过。该 head 的 M3-owned focused regression 为 15/15，build 通过。旧 M9 run `38727481764` 没有测试此 head；M9 owner 仍需 pin 此 exact ref 并重跑 Ubuntu/Windows composition。
 
 M0 ownership 表将 Hook 语义与规范断言归 M1。PR #33 exact head `5ef54c19f5fd04360dcd898cea8d3eaf33341539` 的 changed-file 范围包含 M1-owned `src/agent-hook.ts` 与 `test/agent-hook.test.ts` 及 M3 文件；M1 对 `9841bd8..5ef54c1` 的 disposition 为 ACCEPT（Issue #64 comment `6304451949`）。本次仅更正 M3 报告，未写入 Hook 实现/测试。真实宿主 Hook 生效与原生 I/O 覆盖仍为 `NOT_VERIFIED`；M5 `verifyRealPaths:true` 保持 fail closed，未关闭 strict mode 或加入通用路径回退。#55 保持开启，等待 M9 exact-source Ubuntu/Windows composition checks 通过。
+
+## 2026-10-23 Console CLI protected-read bootstrap recheck
+
+M3 worktree `feature/ac3-agent-onboarding` was clean at
+`c7b7772c9d62e138e1cc6deed7c43104eaccafa6`. The ordinary
+`src/ai/cli.ts` `ai console` action passes only port and process-local API / operator
+secrets to `startAIConsole`; it has no explicit owner bootstrap. The Console's
+fixed-temp action now lazily loads only package self-reference public subpaths:
+M1/M5 `@dorianchn/agent-canary/sdk` and M2
+`@dorianchn/agent-canary/gateway-adapter`. It does not accept request, model,
+environment, or browser-selected dependencies. CSRF, operator, and exact `{}`
+checks still happen before this loader runs.
+
+At this M3 exact source, `package.json` exposes only `./sdk`; a direct Node
+self-reference to M2's subpath fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+Consequently the normal default Console route returns sanitized
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before temp probe creation, Gateway
+construction, or M5 callback. The M3 regression checks this absent-subpath
+case and verifies no probe directory remains. This is fail-closed negative
+evidence only. The exact M1/M2/M5 candidate public contracts are recorded in
+`docs/3.0/M3_ISSUE52_PROTECTED_READ_STATUS.md`; M9 must test the default
+no-injection route in the exact integrated package. M4's Desktop UI still does
+not call this M3 route, and neither this synthetic temp probe nor M9's future
+positive control may be described as arbitrary product-file or native-tool
+protection. Issue #52 remains OPEN / P0 / NOT_VERIFIED.

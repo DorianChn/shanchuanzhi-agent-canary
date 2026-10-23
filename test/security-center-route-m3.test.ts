@@ -7,6 +7,8 @@ import path from 'node:path';
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-security-center-route-'));
 process.env.AGENT_CANARY_HOME = testHome;
+const currentPackage = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { exports?: Record<string, unknown> };
+const hasPublicM2GatewayAdapter = Object.hasOwn(currentPackage.exports ?? {}, './gateway-adapter');
 after(() => {
   if (previousAgentCanaryHome === undefined) delete process.env.AGENT_CANARY_HOME;
   else process.env.AGENT_CANARY_HOME = previousAgentCanaryHome;
@@ -300,16 +302,21 @@ test('protected-read action treats unexpected markers as UNKNOWN and missing com
   }finally{await console.close();}
 
   const prefix='agent-canary-console-probe-';
-  const before=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
-  const defaultConsole=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE'});
-  try{
-    const csrf=await csrfFor(defaultConsole.url);
-    const response=await fetch(defaultConsole.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
-    assert.equal(response.status,200);
-    assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
-    const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
-    assert.deepEqual(after.filter(name=>!before.has(name)),[],'an M3-only default must not construct a Gateway or probe directory');
-  }finally{await defaultConsole.close();}
+  if(!hasPublicM2GatewayAdapter){
+    const before=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
+    // This is the same startAIConsole call used by `ai console`; in an M3-only
+    // package its public M2 subpath is absent, so the self-package bootstrap
+    // must return UNKNOWN before creating a temp file, Gateway, or callback.
+    const defaultConsole=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE'});
+    try{
+      const csrf=await csrfFor(defaultConsole.url);
+      const response=await fetch(defaultConsole.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
+      assert.equal(response.status,200);
+      assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
+      const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
+      assert.deepEqual(after.filter(name=>!before.has(name)),[],'an M3-only default must not construct a Gateway or probe directory when the M2 public subpath is unavailable');
+    }finally{await defaultConsole.close();}
+  }
 
   const incomplete=fakeProtectedReadDependencies('allow',true);
   const beforeIncomplete=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));

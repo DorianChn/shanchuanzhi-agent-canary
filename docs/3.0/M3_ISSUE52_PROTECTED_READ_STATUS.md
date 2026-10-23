@@ -219,3 +219,41 @@ and cleanup controls. This Console probe covers only a synthetic temporary
 file. Issue #52 remains `OPEN / P0 / NOT_VERIFIED`; no arbitrary product-host
 file protection, native tool coverage, or OS-atomic identity guarantee is
 claimed. No M1/M2/M4/M5 source or shared M0 contract was changed.
+
+## Normal CLI bootstrap audit — 2026-10-23
+
+M3 exact head `c7b7772c9d62e138e1cc6deed7c43104eaccafa6` was checked with a
+clean worktree. The ordinary `ai console` CLI callsite in `src/ai/cli.ts`
+passes only `port`, `AGENT_CANARY_AI_KEY`, and `AGENT_CANARY_OPERATOR_CODE` to
+`startAIConsole`; it has no external bootstrap provider. M3's own package
+export map exposes `./sdk` only. Its current Gateway source does not contain
+M1's opaque held-file bind/verify/read methods, so loading M3's own SDK cannot
+stand in for the current M1 owner implementation.
+
+The current public candidate contracts were verified at their open PR heads:
+M1 PR #43 `6886d6eef3beb972bc8f4c797584b0f522483870` exposes the held-file
+Gateway from `./sdk`; M2 PR #37 `67428139e53c3f63a1101b4f94e84b291cbb1196`
+exposes `createSecurityGatewayHostAdapter` from `./gateway-adapter`; and M5
+PR #47 `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` exposes
+`createSecurityToolRouter` from `./sdk`, with strict capability checks. The
+M3-only package does not yet export M2's subpath.
+
+M3 now uses a trusted, lazy package self-reference to those existing public
+subpaths as the default Console bootstrap. It runs only after the protected
+route has passed CSRF, operator, and exact-empty-body checks. This adds no
+request-controlled path and imports no private source file. At this exact M3
+head, `@dorianchn/agent-canary/gateway-adapter` resolves to
+`ERR_PACKAGE_PATH_NOT_EXPORTED`; the route returns sanitized
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating its temporary probe,
+Gateway, policy router, or callback. The M3 regression covers this absent-M2
+case and verifies no probe directory is left behind. M3's injected structural
+test doubles remain wiring tests, not owner-runtime evidence.
+
+M9 must run the ordinary no-injection Console route against the exact M1/M2/M5
+composition and retain the fixed-marker positive control, hard-deny/unknown
+controls, sensitive and alias rejection, same-path replacement, zero forbidden
+callback/read-evidence assertions, unchanged fixture hashes, and safe cleanup.
+That result may establish only the fixed synthetic temporary probe. M4's
+Desktop UI still has no confirmed caller for this POST route; product files,
+native host tools, and UI protection remain `NOT_VERIFIED`, and Issue #52 stays
+`OPEN / P0` until the required integrated acceptance passes.
