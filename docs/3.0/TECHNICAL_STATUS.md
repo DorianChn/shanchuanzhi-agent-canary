@@ -7438,6 +7438,12 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Exact-head M0 CI run `39897233406` and M7 CI run `39897235879` were in progress at 03:52 UTC; M7 Windows Community wrapper run `39897235833` was also in progress. No green result is inferred. M0's coordination workflow run `39897233453` completed successfully.
 - The M7 publication supersedes the preceding batch note that the commit was queued. M9 is now refreshing its existing integration branch to pin the published M7 documentation head; this successor has not been pushed or verified yet.
 - PR #24 remains OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No main merge, PR #24 change, or Release occurred.
+
+## Exact-head CI follow-up — 2026-10-23 03:56 UTC
+
+- M7 PR #39 head `1ab085abc6a242be563912a423ff1ee7f11e7127` completed CI run `39897235879` with 9/9 jobs successful and Windows Community wrapper run `39897235833` with 4/4 jobs successful. This is hosted-runner evidence only; Issue #41 remains OPEN/P1/HOLD for the clean Windows 11 product acceptance cases listed above.
+- M0 PR #30 head `8202a83e78c0600d6b6f6196bd08c63bda18214b` coordination run `39897597163` passed 1/1. Its CI run `39897597172` was still in progress: sponsor-smoke passed while Docker, platform matrix, and package-smoke were unfinished/not yet reported. No full-CI result is inferred.
+- The M9 owner refresh to pin this exact M7 head is in progress on the existing integration branch; its change, local composition result, and remote CI remain pending.
 ## 02:56 UTC batch addendum — M1 Issue #32 owner readback
 
 - M1 completed the exact Issue #32 comparison without rerunning tests or changing runtime, test, or policy code. Local M1 commit `e1e3d4fed83c853328d5e2720ac89a7be29c3571` records that run `39891131432` failed the old Windows Node 20 synchronous fixture's one-second marker assertion (`false !== true`) before stdout/decision assertions; the run had 321 pass, 1 fail, 4 skipped, with the Windows Node 20 job failed and package-smoke skipped. The exact PR #30 tree did not contain the failing test, Hook source, or native wrapper. Current M1 blobs differ; evidence still cannot establish the trigger, a host callback, or a security bypass. Root cause remains UNKNOWN; Issue #32 stays OPEN/P1.
