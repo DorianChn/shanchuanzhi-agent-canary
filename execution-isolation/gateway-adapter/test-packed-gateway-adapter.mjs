@@ -56,8 +56,8 @@ test("packed package cannot load the low-level gateway bypass by file path", asy
       "execution-isolation/gateway-adapter/gateway-adapter.mjs",
     ]);
 
-    const archivePath = path.join(temporaryRoot, metadata.filename);
-    const archiveEntries = execFileSync("tar", ["-tzf", archivePath], {
+    const archiveEntries = execFileSync("tar", ["-tzf", metadata.filename], {
+      cwd: temporaryRoot,
       encoding: "utf8",
       windowsHide: true,
     })
@@ -81,7 +81,8 @@ test("packed package cannot load the low-level gateway bypass by file path", asy
 
     const extractionRoot = path.join(temporaryRoot, "extracted");
     await mkdir(extractionRoot, { recursive: true });
-    execFileSync("tar", ["-xzf", archivePath, "-C", extractionRoot], {
+    execFileSync("tar", ["-xzf", metadata.filename, "-C", "extracted"], {
+      cwd: temporaryRoot,
       windowsHide: true,
     });
 
