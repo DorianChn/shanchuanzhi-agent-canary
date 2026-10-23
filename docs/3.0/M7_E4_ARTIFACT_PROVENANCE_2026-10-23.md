@@ -1,5 +1,16 @@
 # M7 product-candidate provenance for independent E4
 
+## Current exact-head refresh — 2026-10-23 15:52 local / 07:52 UTC
+
+The evidence below from the earlier `1ab085a` producer is superseded for candidate selection by the newer exact-head run. The M7 branch head is `97bb8de315f2c19edbaa4d6536abc50876fecffd`; GitHub reports both the [Windows Community wrapper run 39904585994](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39904585994) and [CI run 39904585997](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39904585997) succeeded on that SHA.
+
+- Exact build artifact: [12479419522](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39904585994), `windows-community-build-evidence-97bb8de315f2c19edbaa4d6536abc50876fecffd`, 38,195,704 bytes, `expired=false`, expires `2026-10-30T05:16:17Z` at inspection. Its producing `windows-community-build-evidence` job completed successfully, including package build and upload.
+- Exact lifecycle artifact: [12479619066](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39904585994), `windows-community-installer-lifecycle-97bb8de315f2c19edbaa4d6536abc50876fecffd`, 1,308 bytes, `expired=false`, expires `2026-10-30T05:16:46Z` at inspection. I retrieved and parsed its 2,868-byte `INSTALLER_LIFECYCLE_RESULT.json` directly from the artifact ZIP.
+- The lifecycle receipt binds `sourceSHA=97bb8de315f2c19edbaa4d6536abc50876fecffd`, `candidateId=competition-candidate.2`, and installer SHA-256 `718ddcc18db9f2c2bfdc4782d50c314afed9c76f327a3fb9efd7dd4231d4f392`. It records seven checksum-verified files; silent install, duplicate-candidate refusal, uninstall, registry/shortcut cleanup, and preservation of an unknown sentinel all passed in the hosted run.
+- Runtime provenance is specifically GitHub-hosted Windows Server 2025 Datacenter, build 26100. The receipt explicitly does **not** assert a standard-user token. The separate 38 MB build archive was not unpacked in this audit; artifact identity/size/retention are confirmed from GitHub metadata, and the installer digest and seven-file provenance check are confirmed by the retrieved same-run lifecycle receipt.
+
+This is traceable producer and bounded installer lifecycle evidence that M6 can use to bind a future independent E4 run to one exact candidate. It is not an independent operator receipt or E4 PASS. Windows 11 client behavior, clean independent environment, standard-user token, real model/native agent behavior, EFS, cancel/rollback, and in-place upgrade remain unverified or untested. Keep Issue #57 `OPEN / P1 / NOT_VERIFIED`; reserve those assertions for the independent operator/reviewer receipt.
+
 **Observed:** 2026-10-23 05:07 UTC
 **M7 source:** `feature/ac3-reliability-ac3` at `1ab085abc6a242be563912a423ff1ee7f11e7127`
 **Disposition:** A retrievable, traceable installer candidate and its exact Setup.exe SHA-256 are available for a future independent E4 run. This is provenance evidence only; independent product E4 remains `NOT_VERIFIED`.
