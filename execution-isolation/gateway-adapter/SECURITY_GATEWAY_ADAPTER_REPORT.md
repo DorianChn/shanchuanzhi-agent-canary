@@ -579,3 +579,62 @@ consumer is not yet established.
 No source, test, policy, package, or other-module files were changed for this
 owner check. No tests were run; the cited M2 exact-head CI is the existing
 verification for the unchanged public adapter blobs.
+
+## 2026-10-23 M3 packed owner-consumer review
+
+**M2 owner disposition: ACCEPT_WITH_CONDITIONS** for the adapter contract and
+call shape exercised by M3's packed-consumer test. This is a bounded M2 review;
+it does not accept M1 alias/held-file guarantees, M5 policy behavior, or
+protection of real user files/native host operations.
+
+### Exact source and public export
+
+- M3 PR #33 exact head: `e3e7584cd186728b1756df3542af9aff13937a36`.
+- New test blob: `test/packaged-owner-consumer.test.mjs`,
+  `a01e1f75d360eed45a3789bb27722c6dd17ecf30`.
+- M2 PR #37 exact public head at review: `c43e7ba33e29d9097ac68b444137b65aeaa92acc`.
+- M2 `package.json` blob: `0e0fceffdc7e07a67b60173c46c6bc8ec29e7d3b`;
+  it maps `./gateway-adapter` to the single bundled facade file.
+- M2 facade blob:
+  `execution-isolation/gateway-adapter/gateway-adapter.mjs`,
+  `7a05ed64300c6345222dff13a4e929a250646acc`.
+
+The test is not injecting an M2 return value or a fake M2 facade. Its
+`prepareComposedPackage` reads each supplied owner package manifest, copies the
+manifest-declared M2 export target byte-for-byte, merges the public export maps
+into a temporary combined package, then runs `npm pack` and extracts it.
+Assertions resolve the packed `./gateway-adapter` entry and compare its bytes
+to the selected M2 checkout. The packed M3 CLI then handles the protected-read
+request through its default package-self-reference imports. M3's
+`createProtectedHostAdapter` invokes
+`createSecurityGatewayHostAdapter` from that resolved M2 facade, and the
+positive-control result requires a completed `host.dispatch` plus one M5
+callback. This exercises the M2 public export and actual adapter call shape;
+the combined manifest/package is a synthetic composition assembled for the
+test, not a published integrated artifact.
+
+The two negative cases remove `./gateway-adapter` (or the M5 export) from the
+composed package's export map while retaining the copied owner file. Node's
+public-subpath import consequently fails, M3 returns
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`, and the temporary probe directory
+remains absent. That establishes fail-closed behavior for a missing public
+export, not for a missing M2 file or every packaging failure mode.
+
+### Verification and conditions
+
+On Windows / Node.js `v22.23.1`, I ran the test directly with
+`M1_ROOT`, `M2_PACKED_ROOT`, `M3_ROOT`, and `M5_ROOT` set to the current owner
+worktrees. All three cases passed (positive composed consumer, missing M2
+export, missing M5 export). The M2 path was the exact PR #37 head above. No
+repository files were changed by this run.
+
+GitHub run `39901051277` for M3 exact head `e3e7584...` has since completed
+successfully. It is not evidence that this new test ran: the test is not listed
+in M3's `npm test` script and is not invoked by the CI workflow's commands.
+The test also accepts owner-root paths from environment variables without
+asserting expected commit IDs; the exact M2 pin in this review comes from the
+explicit local `M2_PACKED_ROOT` selection and the compared facade blob.
+Accordingly, acceptance is conditional on pinning the M2 owner root and
+explicitly invoking this test in CI before treating it as automated exact-head
+coverage. Issue #52 remains **OPEN / P0 / NOT_VERIFIED** pending product-scope
+and owner evidence outside this review.
