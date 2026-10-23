@@ -276,3 +276,21 @@ Thus the fixed temporary probe route exists in M3 source, but a complete support
 - **M9** must verify the exact supported package self-reference/import boundary and run a safe-read positive control plus path-only, sensitive-alias, symlink/junction, and path-replacement negative controls. Each deny must precede callback and approval creation and preserve target bytes/hash. Keep native Shell and OS-atomic TOCTOU claims separate.
 
 Issue #52 remains `OPEN/P0/NOT_VERIFIED`. The exact-ref disposition was posted and read back as [comment 6356203908](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52#issuecomment-6356203908). These source facts do not establish actual secret disclosure or unauthorized access.
+
+## 2026-10-23 06:00 UTC M4 acceptance criterion 4 recheck
+
+Rechecked only the existing M4 worktree and the supplied candidate refs: M4 PR #34 `d62557a03883c459cce6bec60b36686128ccf73d`, M1 PR #43 `fa369069241bf81d32c7f39d31a61806efa55fe4`, M2 PR #37 `3a60813e90d470cb2e5d609444aba0ffc240411c`, and M5 PR #47 `7fa47e8d82e4b92307a4429ea743931b4600ac90`. M4 was clean at the start of this report-only update; PR #34 is OPEN/Draft and remains on its existing M1 base.
+
+### M4 host/UI trace
+
+- The first-party desktop entry is `src/ai/cli.ts::registerAICommands` → `startAIConsole` in `src/ai/console.ts`. The CLI passes port and credential options only. The Console constructs `createRuntimeDemo()` and `createPolicySandbox()`; its file-related action routes are `/api/runtime3/action` (temporary demo Gateway) and `/api/policy/action` (virtual callback). It has no M4 OBSERVE file-read action route and no M2 adapter import/call.
+- M4 `src/ai/console-page.ts` requests `GET /api/security-center` for status only. It has no protected-read POST call. The checked-in Console server has no matching GET handler, so this checkout returns 404 for that route. `src/ai/security-center-adapter.ts` hard-codes `firstPartyObserveReadStatus: NOT_VERIFIED`; `test/runtime-console.test.ts` asserts both that status and that the page does not call M3's separate protected-read probe.
+- M4's `src/runtime/gateway.ts` has the M1-shaped `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability` APIs, but no M4 desktop/host callsite binds or consumes one. Their presence alone is not an OBSERVE file-read path.
+
+### Exact integration blocker
+
+- The supplied M2 #37 candidate contains `execution-isolation/gateway-adapter/security-gateway-adapter.mjs` and a `createSecurityGatewayHostAdapter` built around the M1 capability APIs. That adapter path is absent from this M4 checkout. M4 `package.json` exports only `./sdk` and its published-file allowlist does not include the M2 adapter path.
+- M4's checked-in `src/security-router.ts` has no `fileReadCapability` contract. When `verifyRealPaths` is enabled, it rejects generic file-read callbacks as unpinned; it cannot consume M5 #47's strict capability context. A direct path callback, temporary Runtime demo, or virtual policy callback would not satisfy the acceptance criterion.
+- Therefore the missing seam is an integrated, supported host composition: M4's current CLI/Console has no route or dependency injection for the M1 Gateway + M2 adapter + M5 strict router, and its package snapshot does not expose that adapter/router composition. The host route/package integration must be provided by the owning host/integration modules; M4 can then consume a reviewed sanitized result through its UI contract.
+
+No supported first-party M4 OBSERVE callsite exists at these exact refs, so the safe-read/alias/path-replacement runtime controls are not applicable here. No test or runtime read was run; no product or secret file was accessed. Keep Issue #52 `OPEN/P0/NOT_VERIFIED`; this source trace does not prove actual exposure, product protection, or OS-atomic TOCTOU.
