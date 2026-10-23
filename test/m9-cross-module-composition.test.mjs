@@ -20,8 +20,8 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: 'e8be92d2d813ab2e9fe47d3ab6874439a6328441',
   M2: '67428139e53c3f63a1101b4f94e84b291cbb1196',
-  M3: 'b85c4ad4de92fdcdf48e65e664c149b9de347b4f',
-  M4: '4bd982201db594100de862d314240c7d0ff3d3e0',
+  M3: 'f8c4092de804ff32639c92caef4f2615f0a37347',
+  M4: '7fe375d75ea8ca219abcae2e5cbc40d7b1b2e33b',
   M5: '8d1b832f46db363dd8ba5cdd7d573baa89e9a46d',
   M6: '3578e7ba10b2fd160efa0e4683aba863c666db8a',
   M7: '7c348622e6c94e6f583044832c4a415c6a19c209',
@@ -233,7 +233,7 @@ assert.equal(
   'M1 Gateway composition must resolve through the exact public package subpath',
 );
 
-const [m1, m2, m4, m5] = await Promise.all([
+const [m1, m2, m4, m4Page, m5] = await Promise.all([
   import(pathToFileURL(m1PublicSdkPath).href),
   import(pathToFileURL(path.join(
     sourceRoots.M2.root,
@@ -242,6 +242,7 @@ const [m1, m2, m4, m5] = await Promise.all([
     'security-gateway-adapter.mjs',
   )).href),
   import(pathToFileURL(path.join(sourceRoots.M4.root, 'src', 'ai', 'security-center-adapter.ts')).href),
+  import(pathToFileURL(path.join(sourceRoots.M4.root, 'src', 'ai', 'console-page.ts')).href),
   import(pathToFileURL(m5PublicRouterPath).href),
 ]);
 
@@ -348,6 +349,123 @@ test('M3 ordinary ai console CLI fails closed when public M5 and M2 subpaths are
     [],
     'M3 ordinary CLI must not create a protected-read probe directory when the M2 public export is absent',
   );
+});
+
+test('M3 snapshot-only status route feeds the exact M4 read-only consumer without protected-read work', async () => {
+  const isolatedTemp = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-m4-status-route-'));
+  const priorEnv = Object.fromEntries(['AGENT_CANARY_HOME', 'TEMP', 'TMP', 'TMPDIR'].map((key) => [key, process.env[key]]));
+  const isolatedHome = path.join(isolatedTemp, 'home');
+  fs.mkdirSync(isolatedHome, { recursive: true });
+  process.env.AGENT_CANARY_HOME = isolatedHome;
+  process.env.TEMP = isolatedTemp;
+  process.env.TMP = isolatedTemp;
+  process.env.TMPDIR = isolatedTemp;
+
+  let providerCalls = 0;
+  let protectedReadDependencyLoads = 0;
+  const privatePath = 'C:\\Users\\alice\\workspace\\private.txt';
+  const privateToken = 'cnry_m9_status_private_token';
+  let console;
+  try {
+    const m3Console = await import(pathToFileURL(path.join(sourceRoots.M3.root, 'src', 'ai', 'console.ts')).href);
+    console = await m3Console.startAIConsole({
+      port: 0,
+      securityCenterStatusProvider: async (...args) => {
+        providerCalls += 1;
+        assert.deepEqual(args, [], 'the snapshot route passes no request-controlled values to its provider');
+        return {
+          protectionStatus: 'PROTECTED',
+          gateway: { protectionStatus: 'PROTECTED', connectionStatus: 'CONNECTED', path: privatePath },
+          hook: { protectionStatus: 'PROTECTED' },
+          canaryIsolation: { protectionStatus: 'PROTECTED' },
+          policy: { protectionStatus: 'PROTECTED', name: 'M2 fixed file reads / M5 OBSERVE', token: privateToken },
+          protectedToolCount: 1,
+          unprotectedExecutionPaths: ['NATIVE_SHELL', privatePath],
+          agents: [{ agent: 'codex', detected: true, connectionStatus: 'CONNECTED', protectionStatus: 'PROTECTED' }],
+          privatePath,
+          privateToken,
+        };
+      },
+      securityCenterProtectedReadDependencies: async () => {
+        protectedReadDependencyLoads += 1;
+        throw new Error('the status route must not load protected-read dependencies');
+      },
+    });
+
+    let response = await fetch(`${console.url}/api/security-center`);
+    assert.equal(response.status, 403, 'missing CSRF must stop before reading the status provider');
+    assert.equal(providerCalls, 0);
+    const page = await fetch(console.url);
+    const html = await page.text();
+    const csrf = html.match(/const csrf='([a-f0-9]{64})'/)?.[1];
+    assert.ok(csrf);
+    response = await fetch(`${console.url}/api/security-center`, {
+      headers: { 'x-canary-csrf': 'invalid-csrf' },
+    });
+    assert.equal(response.status, 403);
+    assert.equal(providerCalls, 0, 'invalid CSRF must stop before reading the status provider');
+
+    response = await fetch(`${console.url}/api/security-center`, {
+      headers: { 'x-canary-csrf': csrf },
+    });
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    const statusSnapshot = await response.json();
+    assert.deepEqual(statusSnapshot, {
+      protectionStatus: 'UNKNOWN',
+      gateway: { protectionStatus: 'PROTECTED', connectionStatus: 'CONNECTED' },
+      hook: { protectionStatus: 'UNKNOWN' },
+      canaryIsolation: { protectionStatus: 'UNKNOWN' },
+      policy: { protectionStatus: 'PROTECTED', name: 'M2_FIXED_FILE_READS' },
+      protectedToolCount: 1,
+      unprotectedExecutionPaths: ['NATIVE_SHELL'],
+      agents: [{ agent: 'codex', detected: true, connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' }],
+    });
+    assert.equal(JSON.stringify(statusSnapshot).includes(privatePath), false);
+    assert.equal(JSON.stringify(statusSnapshot).includes(privateToken), false);
+    assert.equal(providerCalls, 1);
+    assert.equal(protectedReadDependencyLoads, 0, 'a status GET must not construct a Gateway or load protected-read dependencies');
+    assert.deepEqual(
+      fs.readdirSync(isolatedTemp).filter((name) => name.startsWith('agent-canary-console-probe-')),
+      [],
+      'a status GET must not create the independent fixed-marker probe directory',
+    );
+
+    const browserAdapter = new Function(`${m4.SECURITY_CENTER_ADAPTER_SCRIPT}\nreturn securityCenterAdapter;`)();
+    assert.equal(browserAdapter.isValidSecurityCenterStatusPayload(statusSnapshot), true);
+    const displaySnapshot = browserAdapter.adaptSecuritySnapshot({ securityCenter: statusSnapshot });
+    assert.equal(displaySnapshot.protectionStatus, 'UNKNOWN', 'the M4 consumer must not promote the status to full product protection');
+    assert.equal(displaySnapshot.coverage, 'UNKNOWN', 'M3 did not report an explicit coverage label');
+    assert.equal(displaySnapshot.gateway.protectionStatus, 'PROTECTED', 'component status remains scoped to the Gateway');
+    assert.equal(displaySnapshot.firstPartyObserveReadStatus, 'NOT_VERIFIED');
+    const displayJson = JSON.stringify(displaySnapshot);
+    assert.equal(displayJson.includes(privatePath), false);
+    assert.equal(displayJson.includes(privateToken), false);
+
+    const clientScripts = [...m4Page.CONSOLE_PAGE.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+      .map((match) => match[1]).join('\n');
+    assert.match(clientScripts, /securityCenterAdapter\.isValidSecurityCenterStatusPayload\(data\)/);
+    assert.match(clientScripts, /\['securityCenter','security-center'\]/);
+    assert.doesNotMatch(clientScripts, /security-center\/protected-read/i, 'the M4 page must not call the separate fixed-marker POST');
+    assert.match(m4Page.CONSOLE_PAGE, /id="securityCoverage"/);
+    assert.match(m4Page.CONSOLE_PAGE, /NOT_VERIFIED · 未验证/);
+
+    response = await fetch(`${console.url}/api/security-center`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-canary-csrf': csrf },
+      body: JSON.stringify({ protectionStatus: 'PROTECTED' }),
+    });
+    assert.equal(response.status, 404, 'the status-only route must not accept a write request');
+    assert.equal(providerCalls, 1);
+    assert.equal(protectedReadDependencyLoads, 0);
+  } finally {
+    if (console) await console.close();
+    for (const [key, value] of Object.entries(priorEnv)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    fs.rmSync(isolatedTemp, { recursive: true, force: true });
+  }
 });
 
 test('M4 exact security-center adapter redacts path details and preserves UNKNOWN protection status', () => {
