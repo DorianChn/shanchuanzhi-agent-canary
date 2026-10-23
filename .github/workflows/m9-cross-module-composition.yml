@@ -159,9 +159,9 @@ jobs:
           done
           m4_sha="$(git -C module-sources/m4 rev-parse --verify HEAD)"
           m5_sha="$(git -C module-sources/m5 rev-parse --verify HEAD)"
-          m5_code_sha="$(git -C module-sources/m5 rev-parse --verify 6695e0470d7ceef1485f912ac61237fc91860cd8^{commit})"
+          m5_code_sha="$(git -C module-sources/m5 rev-parse --verify f0e90c99033a6304748ac79fe106439ca4bd2e06^{commit})"
           if ! git -C module-sources/m5 merge-base --is-ancestor "$m5_code_sha" "$m5_sha"; then
-            echo 'Pinned M5 code SHA is not an ancestor of the checked-out M5 head.' >&2
+            echo 'Pinned M5 merge SHA is not an ancestor of the checked-out M5 source.' >&2
             exit 1
           fi
           m6_sha="$(git -C module-sources/m6 rev-parse --verify HEAD)"

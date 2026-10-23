@@ -210,7 +210,7 @@ assertAncestor('M8', m6M8ReviewedSourceSha, pinnedSourceShas.M8, 'historical M6-
 assert.equal(readBlobIdAt('M8', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M6-reviewed M8 test hunk must remain exact at the reviewed source');
 assert.equal(readBlobIdAt('M8', pinnedSourceShas.M8, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M8 current head must preserve the exact M6-reviewed test hunk');
 assert.equal(readTrackedBlobId('M7', 'packaging/windows/e4-hook-faults.mjs'), m7AcceptedE4HelperBlob, 'M7 helper accepted as a condition of the M6 review must remain exact');
-assert.equal(process.env.M5_CODE_SHA, '6695e0470d7ceef1485f912ac61237fc91860cd8');
+assert.equal(process.env.M5_CODE_SHA, 'f0e90c99033a6304748ac79fe106439ca4bd2e06');
 
 function readTrackedBlobId(moduleName, filePath) {
   const result = spawnSync('git', [

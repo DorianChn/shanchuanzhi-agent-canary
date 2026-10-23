@@ -2,7 +2,17 @@
 
 This snapshot records the source revisions pinned by the M9 composition workflow. The workflow checks out each source independently and validates the checked-out SHA before running the focused owner regressions and M9 composition tests.
 
+## Current exact-source recheck — 2026-10-23 14:07 UTC
+
+The current workflow checks out M1 at feature tip `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`, M2 at merged PR #37 commit `49af6d3dd57d9f091c95f489ead27f4f03c941a9`, M3 at `611f9fca14706a1110a1f0a39e8488f4ff28d2a9`, M4 at `d0f61987c2a06acb47a7187142bc303101af0ad4`, M5 at merged PR #47 commit `f0e90c99033a6304748ac79fe106439ca4bd2e06`, M6 at `a6f4a889ec16b4f2c78f91d630e657eea7319dbd`, and M7 at `8689d8fbbcdded4735d0e5aa328805f398a2862a`. The M8 checkout remains the historical source `84ee6a7a8d65706f694b7949e82fd8c83cc11523` used only to verify the scoped M6 review regression.
+
+M5 PR #47 was squash-merged, so its pre-merge implementation commit `6695e0470d7ceef1485f912ac61237fc91860cd8` is not an ancestor of the merged M5 checkout. The workflow now pins the actual M5 merge commit and retains the ancestry assertion against that exact source.
+
+The local exact-source suite at M9 head `20b384f30a24ee0ece73b205abc1e8e6d011a0de` remains **14/17 passed, 3 failed**: (1) M2's Claude host Hook blob differs from M1's canonical Hook blob; (2) the M2 Hook prints a caller-controlled decision reason to stdout in allow/deny/ask cases (P0 Issue #88); and (3) the registered M2/M5 positive held-file read is denied as `path_execution_not_pinned` (P1 Issue #87). Negative controls remain enabled. Hosted Ubuntu and Windows composition jobs at this head also fail before tests because of the stale M5 pin; the correction above is prepared locally and is not yet hosted evidence.
+
 ## Exact-source M1/M2 + M3/M5 integration result — 2026-10-23
+
+The following results are a historical candidate snapshot and are superseded for current source refs by the recheck above. Do not interpret its old PR-head and merge-state labels as current status.
 
 M9's working workflow and focused test now pin both merged M1/M2 sources to feature baseline `daa17efb70ba8c67b485e9269ec461138fd86f7c`, and M5 to PR #47 candidate `f33b4a770f6c6f05a3d291c0bd2f4f01989d9964`. The M5 candidate descends from the exact M1/M2 baseline and contains STRICT fix `6695e0470d7ceef1485f912ac61237fc91860cd8`, coordinated M3 adapter patch `243b83e893960e02a3a6348995dd417b29b3b320`, and the M0 API contract. The M3 adapter is exercised from this exact M5 tree; the separate M3 source remains only as the standalone fail-closed fixture.
 
