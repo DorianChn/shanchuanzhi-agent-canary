@@ -103,7 +103,7 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     const values=options as Record<string,unknown>;
     const executeDescriptor=Object.getOwnPropertyDescriptor(values,'executeRealTool');
     const execute=executeDescriptor&&Object.hasOwn(executeDescriptor,'value')?executeDescriptor.value:undefined;
-    if(typeof execute!=='function')throw new TypeError('M5_ROUTER_CALLBACK_MISSING');
+    if(typeof execute!=='function')throw new TypeError('M2_SECURITY_GATEWAY_CAPABILITY_EXECUTOR_UNAVAILABLE');
     const providerDescriptor=Object.getOwnPropertyDescriptor(values,'fileReadCapability');
     const provider=providerDescriptor&&Object.hasOwn(providerDescriptor,'value')?providerDescriptor.value:undefined;
     if(provider===null||typeof provider!=='object')throw new TypeError('M2_FILE_READ_CAPABILITY_PROVIDER_MISSING');
@@ -176,7 +176,7 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     const code=error instanceof Error?error.message:'';
     const reason=code==='M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE'||code==='M2_SECURITY_GATEWAY_HANDLE_INVALID'
       ?'M1_HELD_FILE_CAPABILITY_UNAVAILABLE'
-      :code==='M2_SECURITY_GATEWAY_FILE_READ_PROVIDER_UNAVAILABLE'
+      :code==='M2_SECURITY_GATEWAY_FILE_READ_PROVIDER_UNAVAILABLE'||code==='M2_FILE_READ_CAPABILITY_PROVIDER_MISSING'||code==='M2_SECURITY_GATEWAY_CAPABILITY_EXECUTOR_UNAVAILABLE'
         ?'M2_CAPABILITY_PROVIDER_UNAVAILABLE'
       :'M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE';
     return unavailable(reason);

@@ -349,8 +349,8 @@ test('M3 host dependency seam stays UNKNOWN and side-effect free when the truste
   }
 });
 
-test('M3 records a missing M2 held-read provider internally without exposing a new Console reason',async()=>{
-  let m5FactoryCalls=0,genericCallbacks=0,gatewayReads=0;
+test('M3 records a missing M2 capability-bound executor internally without exposing a new Console reason',async()=>{
+  let m5FactoryCalls=0,gatewayReads=0;
   const capability=Object.freeze(Object.create(null));
   const gateway=Object.freeze({
     bindFileReadCapability(){return capability;},
@@ -364,7 +364,8 @@ test('M3 records a missing M2 held-read provider internally without exposing a n
         ...options.routerOptions,
         tools:{protected_read:{operation:'file-read',pathArg:'path'}},
         fileReadCapability:{resolve:()=>capability,verify:()=>true},
-        executeRealTool:async()=>{genericCallbacks++;throw new Error('generic path callback must not be used');},
+        // Deliberately omit M2's capability-bound executor. A generic
+        // path-only callback must not be accepted as the M5 held-read method.
       });
     }}),
     createSecurityToolRouter:((()=>{m5FactoryCalls++;throw new Error('M5 must not be constructed without the M2 held-read method');}) as never),
@@ -375,7 +376,6 @@ test('M3 records a missing M2 held-read provider internally without exposing a n
   assert.equal(host.securityCenterStatusProvider,undefined);
   assert.equal(host.m5Callbacks(),0);
   assert.equal(m5FactoryCalls,0);
-  assert.equal(genericCallbacks,0);
   assert.equal(gatewayReads,0);
 });
 
