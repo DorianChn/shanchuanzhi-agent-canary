@@ -169,7 +169,7 @@ m7_lifecycle_marker_disabled:
  Pop $0
  Pop $1
  ${If} $0 != 0
-  MessageBox MB_ICONSTOP "Integrity receipt failed. Installation was not registered / 完整性记录失败，安装未登记。"
+  MessageBox MB_ICONSTOP "Integrity receipt failed. Installation was not registered / 完整性记录失败，安装未登记。" /SD IDOK
   Call RollbackInstall
   Abort
  ${EndIf}

@@ -96,6 +96,14 @@ test('NSIS defaults away from EFS paths and rejects encrypted custom targets wit
   assert.doesNotMatch(source,/RMDir\s+\/r/i);
 });
 
+test('silent receipt failure chooses a safe default then still rolls back and aborts',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const branch=source.match(/\$\{If\} \$0 != 0([\s\S]*?)\$\{EndIf\}/)?.[1];
+  assert.ok(branch,'record-install failure branch must remain explicit');
+  assert.match(branch,/MessageBox MB_ICONSTOP "Integrity receipt failed[^"]*" \/SD IDOK/);
+  assert.match(branch,/Call RollbackInstall\s+Abort/);
+});
+
 test('rendered installer keeps Unicode and spaced paths and emits exact rollback cleanup',()=>{
   const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
   const rendered=renderInstallerScript({

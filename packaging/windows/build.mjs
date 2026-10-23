@@ -10,7 +10,7 @@ const [payloadArg,nsisArg,zipArg,wrapperSHA]=process.argv.slice(2);
 if(!payloadArg||!nsisArg||!zipArg||!/^[a-f0-9]{40}$/.test(wrapperSHA||'')||process.platform!=='win32')throw Error('Usage: node build.mjs PAYLOAD_DIR NSIS_DIR COMMUNITY_ZIP WRAPPER_SOURCE_COMMIT_SHA');
 const root=path.resolve(payloadArg),nsis=path.resolve(nsisArg),output=path.dirname(root);
 const hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
-for(const f of ['worker.mjs','verification.mjs','auto-e4.mjs','e4-hook-faults.mjs'])fs.copyFileSync(path.join(src,f),path.join(root,f));
+for(const f of ['worker.mjs','verification.mjs','auto-e4.mjs','e4-hook-faults.mjs','durable-files.mjs'])fs.copyFileSync(path.join(src,f),path.join(root,f));
 fs.copyFileSync(path.resolve(src,'../../security-lab/claude-native-hook.mjs'),path.join(root,'claude-native-hook.mjs'));
 fs.copyFileSync(path.join(src,'THIRD_PARTY_NOTICES.md'),path.join(root,'THIRD_PARTY_NOTICES.md'));
 fs.copyFileSync(path.join(nsis,'COPYING'),path.join(root,'NSIS_COPYING'));
