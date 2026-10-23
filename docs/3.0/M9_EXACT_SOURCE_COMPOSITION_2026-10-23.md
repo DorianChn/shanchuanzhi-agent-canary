@@ -4,14 +4,14 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 | Module | PR | Exact source SHA | M9 coverage |
 | --- | --- | --- | --- |
-| M1 Gateway | #43 | `e1e3d4fed83c853328d5e2720ac89a7be29c3571` (current documentation successor; runtime source unchanged from the tested implementation) | Held-Gateway regression and synthetic protected-read composition; lock-metadata denial maps to fail-closed BUSY |
-| M2 isolation | #37 | `1c050abace5af6e09b7b934730f2361b78f9d938` (current public PR head) | Docs-only successor of `6742813`; exact-source M2 package build/pack and M9 composition are locally verified below; hosted CI for this head is not claimed |
-| M3 onboarding | #33 | `e3e7584cd186728b1756df3542af9aff13937a36` (current public PR head) | Adds an exact-owner packaged-consumer regression for M1/M2/M5 exports; missing M2/M5 exports remain UNKNOWN before probe setup |
-| M4 desktop security center | #34 | `ec12e53ca881e106f5666f6b2b9b586a56d485b2` (current documentation successor; runtime source unchanged from the tested implementation) | Read-only status consumer validates and redacts snapshots, downgrades unsupported aggregate claims; first-party host read remains NOT_VERIFIED |
-| M5 policy | #47 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` (current public PR head) | Adds a separate public `./policy-router` entry without replacing `./sdk`; exact build and risk-policy/export regressions passed |
+| M1 Gateway | #43 | `27c417627b0e89e9db999025b65b25e12f0f1d7f` (current public PR head; exact checks 11/11 passed) | Adds a workspace-local symlink/junction alias denial regression; M1 runtime source is unchanged. Held-Gateway and synthetic composition remain bounded evidence |
+| M2 isolation | #37 | `c43e7ba33e29d9097ac68b444137b65aeaa92acc` (current public PR head; exact checks 9/9 passed) | Adds a normal-exit child-cleanup acceptance predicate; package/facade blobs are unchanged. An unpublished owner disposition accepts the exact M3 packed-consumer test with conditions; it does not establish real product-host user-file protection |
+| M3 onboarding | #33 | `e3e7584cd186728b1756df3542af9aff13937a36` (current public PR head; exact checks 9/9 passed) | Adds an exact-owner packaged-consumer regression for M1/M2/M5 exports; the test is not in M3 CI. First M9 hosted attempt failed during Windows tar path handling; corrected rerun is pending |
+| M4 desktop security center | #34 | `d62557a03883c459cce6bec60b36686128ccf73d` (current public PR head; exact checks 9/9 passed) | Preserves keyboard focus and selected-event explanation across refresh; status consumer remains read-only and first-party host read is NOT_VERIFIED |
+| M5 policy | #47 | `f05edaeeabff2e261bf563fb0782d7b9bc500645` (current public PR head; exact checks 9/9 passed) | Rejects a self-asserted evidence head as an independent trust anchor; M9 adds the exact policy-management regression alongside risk-policy/export checks |
 | M6 E4 | #38 | `82d4e25a210a4c6d1f2c7f8e6d94ce56af1cd56b` (current public PR head; exact CI run `39899528596` passed 9/9) | Rejects ambiguous E4 report cases with a focused regression; M9 pins and checks the exact verifier/test source while preserving the historical M6/M8 review boundary |
 | M7 reliability | #39 | `1ab085abc6a242be563912a423ff1ee7f11e7127` (latest docs-only successor; runtime and tests unchanged from `1448a46ce43a2211e14be70fcd9c256b21d74c1f`) | M9 runs the pinned owner regressions; latest exact-head hosted lifecycle evidence is for `1448a46` (artifact `12475873203`), not the docs-only `1ab085` head. Issue #41 remains OPEN/P1/HOLD for clean-VM, standard-user, EFS, first-launch, rollback, and upgrade acceptance |
-| M8 open-source product | #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` (current public PR head) | Documents first-party Security Center protected-read as NOT_VERIFIED; existing Hook provenance, LF checkout and sanitized JSONL regressions remain pinned |
+| M8 open-source product | #40 | `f321df3041e2a101661da686a6ccbe6a222b4d24` (current public PR head; exact checks 11/11 passed) | Hardens docs validation for TypeScript-generated `dist` examples; Hook provenance, LF checkout and sanitized JSONL regressions remain pinned |
 
 ## Owner-review boundaries
 
@@ -318,3 +318,33 @@ M3 PR #33 is OPEN/Draft at public head `e3e7584cd186728b1756df3542af9aff13937a36
 Local validation against the exact source set passed: `npm run build` for M1 `e1e3d4f`, M2 `1c050ab`, M3 `e3e7584`, and M5 `8d1b832`; M3 `node --test test/packaged-owner-consumer.test.mjs` passed 3/3; M3 `node --import tsx --test test/security-center-route-m3.test.ts` passed 9/9; M9 `node --import tsx --test test/m9-cross-module-composition.test.mjs` passed 13/13 with the exact M1–M8 pins listed above. The packed-consumer fixtures check byte identity for public owner exports. Missing M2/M5 exports return sanitized `UNKNOWN` without creating the fixed probe; the M3 route regressions additionally verify rejection before Gateway/router/callback construction.
 
 This exercises synthetic package composition and a fixed temporary marker only. It does not verify reads of real Agent user files, first-party product-host wiring, Native Codex Shell protection, or OS-level race prevention. Issue #52 remains OPEN / P0 / NOT_VERIFIED. This local refresh did not run hosted M9 CI or alter the separate Sponsor smoke failure in run `39900492675` / Issue #75.
+
+## M1–M8 current public head composition and Windows tar correction — 2026-10-23
+
+The M9 pin sweep checked the current OPEN/Draft owner PR heads and their exact-head CI results before advancing pins. The workflow checkout refs, exact-source SHA guard, and module map now agree on this source set:
+
+| Module / PR | Exact public head | Exact-head hosted checks | Owner delta since previous M9 pin |
+| --- | --- | --- | --- |
+| M1 / #43 | `27c417627b0e89e9db999025b65b25e12f0f1d7f` | 11/11 passed | Adds workspace-local symlink/junction alias denial regression; runtime/API unchanged |
+| M2 / #37 | `c43e7ba33e29d9097ac68b444137b65aeaa92acc` | 9/9 passed | Adds `CHILD_TERMINATED_ON_JOB_CLOSE` acceptance predicate; package/facade/test blobs unchanged |
+| M3 / #33 | `e3e7584cd186728b1756df3542af9aff13937a36` | 9/9 passed | Adds `test/packaged-owner-consumer.test.mjs`; owner CI does not include this new test |
+| M4 / #34 | `d62557a03883c459cce6bec60b36686128ccf73d` | 9/9 passed | Preserves event focus and selected explanation after refresh |
+| M5 / #47 | `f05edaeeabff2e261bf563fb0782d7b9bc500645` | 9/9 passed | `policy-management.ts` no longer treats exported `anchored_head` as an independent trust anchor |
+| M6 / #38 | `82d4e25a210a4c6d1f2c7f8e6d94ce56af1cd56b` | 11/11 passed | Rejects ambiguous E4 report cases; existing exact M9 pin retained |
+| M7 / #39 | `1ab085abc6a242be563912a423ff1ee7f11e7127` | 13/13 passed | Documentation-only successor; prior hosted lifecycle evidence remains for runtime source `1448a46`, not this docs head |
+| M8 / #40 | `f321df3041e2a101661da686a6ccbe6a222b4d24` | 11/11 passed | `scripts/check-docs.mjs` enforces the build prerequisite for TypeScript `dist` examples |
+
+The exact M2 owner package/facade files used by the M3 test are unchanged at public head `c43e7ba`. A separate local M2 owner commit `b4aae52340e5eff5d9da4929f1bd59133048930c` is not public; its `ACCEPT_WITH_CONDITIONS` disposition is limited to the exact M3 test blob `a01e1f75d360eed45a3789bb27722c6dd17ecf30`. It does not claim real Agent host wiring or user-file access. M9 run `39901460198` was the first hosted attempt; the test launched but failed at tar extraction before its assertions because Git for Windows tar parsed `C:` as a remote host. No successful hosted M3 consumer result exists yet.
+
+### Local validation at these exact source heads
+
+- Builds passed for M1, M2, M3, M4, and M5.
+- M1 Gateway regression passed 37/37; M3 focused onboarding/Hook/route regressions passed 41/41; M4 runtime-console regressions passed 13/13; M5 risk-policy, export, and policy-management regressions passed 58/58.
+- M6 bundle verifier passed 21/21 and Auto E4 passed 11/11; M7 selected package/positive-control regressions passed 3/3; M8 provenance/LF tests passed 2/2 and sanitized JSONL test passed 1/1.
+- Exact M3 `test/packaged-owner-consumer.test.mjs` passed 3/3 on Windows after selecting `C:\Windows\System32\tar.exe` ahead of Git for Windows tar. The exact M2 package was packed from `c43e7ba` and installed into an isolated consumer.
+- Exact M9 composition passed 13/13 with the M1–M8 heads in the table above.
+- `git diff --check` passed before the local M9 commit.
+
+The M3 owner test is unchanged. M9's Windows workflow step now uses `pwsh`, places `Windows\System32` first on `PATH`, asserts that `tar.exe` resolves to the Windows-native executable, and then runs the test. This addresses the prior M9 Windows run `39901460198`, where Git for Windows tar treated the archive's `C:` drive prefix as a remote host. That prior hosted run remains failed; a new hosted M9 run is required to verify this workflow correction.
+
+The local tests prove exact-source package/API behavior and fixture-level results only. They do not prove real Agent user-file reads, first-party host wiring, native Shell enforcement, or OS-atomic TOCTOU. Issue #52 remains OPEN / P0 / NOT_VERIFIED; Issue #41 remains OPEN / P1 / HOLD. No issue or PR state was changed.
