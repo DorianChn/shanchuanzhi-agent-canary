@@ -103,18 +103,19 @@ for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
   }
 }
 
-test('exact M3 merge package includes the M2 facade but not the M5 policy export', () => {
+test('exact M3 package retains the coordinated M1 SDK, M2 facade, and M5 policy exports', () => {
   const readPackage = (moduleName) => JSON.parse(fs.readFileSync(path.join(sourceRoots[moduleName].root, 'package.json'), 'utf8'));
   const m1Package = readPackage('M1');
   const m2Package = readPackage('M2');
   const m3Package = readPackage('M3');
   const m5Package = readPackage('M5');
-  assert.deepEqual(Object.keys(m3Package.exports ?? {}).sort(), ['./gateway-adapter', './sdk'], 'the exact M3 merge tree includes the already integrated M2 facade');
+  assert.deepEqual(Object.keys(m3Package.exports ?? {}).sort(), ['./gateway-adapter', './policy', './policy-router', './sdk'], 'the exact M3 package retains the coordinated M1, M2, and M5 public export set');
   assert.deepEqual(m3Package.exports['./sdk'], m1Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M1 public SDK entry');
   assert.deepEqual(m3Package.exports['./sdk'], m2Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M2 public SDK entry');
   assert.deepEqual(m3Package.exports['./sdk'], m5Package.exports?.['./sdk'], 'M3 SDK self-reference must retain the M5 public SDK entry');
   assert.equal(m3Package.exports['./gateway-adapter'], m2Package.exports?.['./gateway-adapter'], 'the M3 merge tree retains the exact M2 public facade path');
-  assert.equal(m3Package.exports['./policy-router'], undefined, 'M3 owner source does not claim the M5 policy export');
+  assert.deepEqual(m3Package.exports['./policy'], m5Package.exports?.['./policy'], 'M3 retains the coordinated M5 public policy entry');
+  assert.deepEqual(m3Package.exports['./policy-router'], m5Package.exports?.['./policy-router'], 'M3 retains the exact M5 public policy-router entry');
   assert.equal(typeof m2Package.exports?.['./gateway-adapter'], 'string', 'M2 owns the public gateway-adapter export');
   assert.ok(m5Package.exports?.['./policy-router'], 'M5 owns the public policy-router export');
   assert.deepEqual(m5Package.exports['./policy-router'], {
@@ -133,14 +134,15 @@ test('exact M3 merge package includes the M2 facade but not the M5 policy export
   assert.match(ownerConsumer, /synthetic composition fixture/i, 'M3 labels its merged package consumer as a synthetic fixture');
 });
 
-test('exact M3 merge package is incomplete for combined M1/M2/M5 package use', () => {
+test('exact M3 package keeps coordinated M1/M2/M5 exports without claiming a separate integration gate', () => {
   const m3Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M3.root, 'package.json'), 'utf8'));
   const m2Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M2.root, 'package.json'), 'utf8'));
   const m5Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M5.root, 'package.json'), 'utf8'));
   assert.ok(m2Package.exports?.['./gateway-adapter'], 'M2 defines its public gateway facade');
   assert.equal(m3Package.exports?.['./gateway-adapter'], m2Package.exports['./gateway-adapter'], 'M3 source includes the exact merged M2 facade');
   assert.ok(m5Package.exports?.['./policy-router'], 'M5 defines its public policy router');
-  assert.equal(m3Package.exports?.['./policy-router'], undefined, 'M3 source alone does not publish the M5 policy router');
+  assert.deepEqual(m3Package.exports?.['./policy'], m5Package.exports?.['./policy'], 'the M3 package retains the coordinated M5 policy export');
+  assert.deepEqual(m3Package.exports?.['./policy-router'], m5Package.exports?.['./policy-router'], 'the M3 package retains the exact M5 policy-router export');
   assert.equal(typeof m3Package.scripts?.['check:integrated-package'], 'undefined', 'the M3 merge tree does not claim a separate integrated-package acceptance gate');
 });
 
@@ -588,12 +590,13 @@ function isPolicyBlocked(error, predicate) {
     && predicate(error.decision);
 }
 
-test('M3 merged package CLI fails closed when the public M5 subpath is absent', async (t) => {
+test('M3 ordinary CLI stays UNKNOWN when the protected-read host adapter is unavailable', async (t) => {
   const m3Root = sourceRoots.M3.root;
   const m3Package = JSON.parse(fs.readFileSync(path.join(m3Root, 'package.json'), 'utf8'));
+  const m5Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M5.root, 'package.json'), 'utf8'));
   assert.ok(m3Package.exports?.['./sdk'], 'the M3 package must expose its reviewed SDK self-reference');
   assert.equal(m3Package.exports?.['./gateway-adapter'], JSON.parse(fs.readFileSync(path.join(sourceRoots.M2.root, 'package.json'), 'utf8')).exports?.['./gateway-adapter'], 'the exact merged M3 tree retains the M2 public facade path');
-  assert.equal(m3Package.exports?.['./policy-router'], undefined, 'the M3-only package must not invent the M5 public export');
+  assert.deepEqual(m3Package.exports?.['./policy-router'], m5Package.exports?.['./policy-router'], 'the exact M3 package retains the current public M5 policy-router export');
 
   const requireFromM3 = createRequire(path.join(m3Root, 'package.json'));
   assert.equal(
@@ -601,10 +604,10 @@ test('M3 merged package CLI fails closed when the public M5 subpath is absent', 
     path.resolve(m3Root, m3Package.exports['./gateway-adapter']),
     'the exact M3 merged package resolves its retained M2 facade export',
   );
-  assert.throws(
-    () => requireFromM3.resolve('@dorianchn/agent-canary/policy-router'),
-    (error) => error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED',
-    'the exact M3-only package must fail to resolve the M5 public subpath',
+  assert.equal(
+    requireFromM3.resolve('@dorianchn/agent-canary/policy-router'),
+    path.resolve(m3Root, m5Package.exports['./policy-router'].import),
+    'the exact M3 package resolves the public M5 policy-router subpath',
   );
   const consoleSource = fs.readFileSync(path.join(m3Root, 'src', 'ai', 'console.ts'), 'utf8');
   assert.match(consoleSource, /const sdkSpecifier:string='@dorianchn\/agent-canary\/sdk'/);
@@ -681,7 +684,7 @@ test('M3 merged package CLI fails closed when the public M5 subpath is absent', 
   assert.deepEqual(
     fs.readdirSync(isolatedTemp).filter((name) => name.startsWith('agent-canary-console-probe-')),
     [],
-    'M3 ordinary CLI must not create a protected-read probe directory when the M5 public export is absent',
+    'M3 ordinary CLI must not create a protected-read probe directory when the host adapter is unavailable',
   );
 });
 
@@ -1118,7 +1121,10 @@ test('packed M2 facade with active M1 capability and exact M5 router rejects sen
   assert.equal(positiveDecision.action, 'OBSERVE_ONLY', `the exact M5 router must accept its M1-registered positive read in OBSERVE mode: ${JSON.stringify(positiveDecision)}`);
   const positive = await host.dispatch(positiveCall);
   assert.ok(JSON.stringify(positive).includes(publicMarker), 'the registered held-file read reaches M1 through packed M2');
-  assert.equal(m5ToM2Callbacks, 1);
+  // Strict held-file reads are served by the M1 capability provider and must
+  // not fall through M5's generic real-tool callback.
+  const callbacksAfterPositiveRead = m5ToM2Callbacks;
+  assert.equal(callbacksAfterPositiveRead, 0, 'the positive held-file read must use the M1 capability path, not the generic M5 callback');
   const evidenceAfterPositive = gateway.evidence().length;
   assert.ok(evidenceAfterPositive > 0, 'the positive control records the M1 held-file Gateway read');
   assert.deepEqual(host.pendingApprovals(), []);
@@ -1138,7 +1144,7 @@ test('packed M2 facade with active M1 capability and exact M5 router rejects sen
       (error) => error instanceof TypeError && error.message === 'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
       `${label} must fail the exact M2 path preflight before the M5-to-M2 execution callback`,
     );
-    assert.equal(m5ToM2Callbacks, 1, `${label} must not enter the M5-to-M2 callback`);
+    assert.equal(m5ToM2Callbacks, callbacksAfterPositiveRead, `${label} must not enter the M5-to-M2 callback`);
     assert.equal(gateway.evidence().length, evidenceAfterPositive, `${label} must not create new M1 Gateway evidence`);
     assert.deepEqual(host.pendingApprovals(), [], `${label} must not create an M5 approval`);
     assert.deepEqual(gateway.operator.pending(), [], `${label} must not create an M1 approval`);
