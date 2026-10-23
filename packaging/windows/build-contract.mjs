@@ -13,13 +13,38 @@ function git(repoRoot,args,encoding='utf8'){
 }
 
 export function resolveWrapperSourceSHA(repoRoot){
-  const changes=git(repoRoot,['status','--porcelain=v1','--untracked-files=all','--',WRAPPER_PATH]).trim();
-  if(changes)throw Error('WRAPPER_SOURCE_NOT_COMMITTED');
+  const sourcePath=path.join(repoRoot,WRAPPER_PATH),sourceInfo=fs.lstatSync(sourcePath);
+  if(!sourceInfo.isFile()||sourceInfo.isSymbolicLink())throw Error('WRAPPER_SOURCE_NOT_REGULAR_FILE');
   const sha=git(repoRoot,['rev-parse','HEAD']).trim().toLowerCase();
   if(!/^[a-f0-9]{40}$/.test(sha))throw Error('WRAPPER_SOURCE_SHA_INVALID');
-  const tracked=git(repoRoot,['show',`${sha}:${WRAPPER_PATH}`],null);
-  if(!Buffer.isBuffer(tracked)||!tracked.equals(fs.readFileSync(path.join(repoRoot,WRAPPER_PATH))))throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
+  const trackedBlob=git(repoRoot,['rev-parse',`${sha}:${WRAPPER_PATH}`]).trim().toLowerCase();
+  const workingBlob=git(repoRoot,['hash-object',`--path=${WRAPPER_PATH}`,path.join(repoRoot,WRAPPER_PATH)]).trim().toLowerCase();
+  if(!/^[a-f0-9]{40}$/.test(trackedBlob)||workingBlob!==trackedBlob)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
   return sha;
+}
+
+export function readCommittedWrapperSource(repoRoot){
+  const sha=resolveWrapperSourceSHA(repoRoot);
+  const bytes=git(repoRoot,['cat-file','blob',`${sha}:${WRAPPER_PATH}`],null);
+  if(!Buffer.isBuffer(bytes))throw Error('WRAPPER_SOURCE_GIT_PROVENANCE_UNAVAILABLE');
+  if(bytes.includes(Buffer.from('\r\n')))throw Error('WRAPPER_SOURCE_NOT_LF');
+  return{sha,bytes};
+}
+
+export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
+  if(typeof destination!=='string'||!destination||typeof expectedSHA!=='string')throw Error('PACKAGED_WRAPPER_ARGUMENT_INVALID');
+  const source=readCommittedWrapperSource(repoRoot);
+  if(expectedSHA!==source.sha)throw Error('WRAPPER_SOURCE_SHA_MISMATCH');
+  try{
+    const existing=fs.lstatSync(destination);
+    if(existing.isSymbolicLink()||!existing.isFile())throw Error('PACKAGED_WRAPPER_NOT_REGULAR_FILE');
+  }catch(error){
+    if(error.code!=='ENOENT')throw error;
+  }
+  fs.writeFileSync(destination,source.bytes);
+  const packaged=fs.readFileSync(destination);
+  if(!packaged.equals(source.bytes))throw Error('PACKAGED_WRAPPER_PROVENANCE_MISMATCH');
+  return{sha:source.sha,bytes:packaged};
 }
 
 export function parseWindowsBuildArgs(args,{platform=process.platform}={}){

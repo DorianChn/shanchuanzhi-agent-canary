@@ -120,10 +120,14 @@ test('M3 native Hook copy logs only allowlisted metadata when inputs and reasons
   assert.equal(result.status, 0);
   const output = JSON.parse(result.stdout);
   assert.equal(output.hookSpecificOutput.permissionDecision, 'allow');
-  assert.equal(output.hookSpecificOutput.permissionDecisionReason, reasonCanary);
-  assert.equal(result.stdout.includes(privateCallerPathCanary), false);
+  assert.equal(output.hookSpecificOutput.permissionDecisionReason, 'Agent Canary: permission_allowed');
+  for (const canary of [inputCanary, reasonCanary, privateCallerPathCanary]) {
+    assert.equal(result.stdout.includes(canary), false, `native hook stdout exposed ${canary}`);
+    assert.equal(result.stderr.includes(canary), false, `native hook stderr exposed ${canary}`);
+  }
 
-  const lines = fs.readFileSync(log, 'utf8').trim().split('\n');
+  const jsonl = fs.readFileSync(log, 'utf8');
+  const lines = jsonl.trim().split('\n');
   assert.equal(lines.length, 1);
   const record = JSON.parse(lines[0]);
   assert.deepEqual(Object.keys(record).sort(), ['hookEventName', 'permissionDecision', 'timestamp']);
@@ -131,7 +135,7 @@ test('M3 native Hook copy logs only allowlisted metadata when inputs and reasons
   assert.equal(record.permissionDecision, 'allow');
   assert.equal(record.timestamp, new Date(record.timestamp).toISOString());
   for (const canary of [inputCanary, reasonCanary, privateCallerPathCanary]) {
-    assert.equal(lines[0].includes(canary), false, `native hook log persisted ${canary}`);
+    assert.equal(jsonl.includes(canary), false, `native hook JSONL persisted ${canary}`);
   }
 });
 
