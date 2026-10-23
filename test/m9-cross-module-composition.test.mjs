@@ -48,11 +48,11 @@ const currentCandidateProvenance = {
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
 const m1HistoricalReviewSha = 'a5eff766ebe041bc2c6cc13758827d5a96205de9';
 const m1M2ReviewedSourceSha = '099ad64e4a09330920cbd40847adec3fe631e91e';
-const m1M3ReviewedSourceSha = '27d4a20a20894c7b779edf68d8bf79685bc0e69b';
+const m1M3ReviewedSourceSha = 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e';
 const m1M3ReviewedBlobs = {
-  'src/agent-hook.ts': '0dc597783386e9273d7167172aa933b17f663e72',
-  'test/agent-hook.test.ts': 'cc4e03b939ea6b18f427bb2f9ac026cca5314c63',
-  'security-lab/claude-native-hook.mjs': 'ae23875d91c246c0fa833137e71c949bad9bd3cc',
+  'src/agent-hook.ts': '76f7bf6314046777ee1615873e5de4621671ea15',
+  'test/agent-hook.test.ts': '0e8a2250ee500d455b0c96430b33714925db3862',
+  'security-lab/claude-native-hook.mjs': 'b7ed4aba70a597f4f63a05decc6de1b32f67372e',
 };
 const m6PriorAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
 const m6M8ReviewedContractSha = '2cebabc81d7908c04ddfa10378fa1d3427b92cf4';
@@ -181,7 +181,7 @@ test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the 
 assert.equal(process.env.M1_M3_REVIEW_SHA, m1HistoricalReviewSha, 'M1-to-M3 Hook disposition must preserve its historical M1 review SHA');
 assertAncestor('M1', m1HistoricalReviewSha, pinnedSourceShas.M1, 'historical M1-to-M3 review source');
 assert.equal(process.env.M1_M3_REVIEW_TARGET_SHA, m1M3ReviewedSourceSha, 'M1 review must name the M3 source commit it actually reviewed');
-assert.equal(process.env.M1_M3_REVIEW_COMMENT, '6347268881', 'M1 review must cite the exact Issue #72 owner comment');
+assert.equal(process.env.M1_M3_REVIEW_COMMENT, '6374247604', 'M1 review must cite the exact Issue #72 owner comment');
 assert.equal(process.env.M1_M3_REVIEW_ISSUE, '72', 'M1-to-M3 Hook review is tracked on Issue #72');
 assertAncestor('M3', m1M3ReviewedSourceSha, pinnedSourceShas.M3, 'M1-reviewed M3 Hook source');
 const currentM1M3ReviewMismatches = Object.entries(m1M3ReviewedBlobs)

@@ -139,8 +139,8 @@ jobs:
           fi
           m3_sha="$(git -C module-sources/m3 rev-parse --verify HEAD)"
           m1_m3_review_sha='a5eff766ebe041bc2c6cc13758827d5a96205de9'
-          m1_m3_review_target_sha='27d4a20a20894c7b779edf68d8bf79685bc0e69b'
-          m1_m3_review_comment='6347268881'
+          m1_m3_review_target_sha='e771c06f72d8a03fb7945037a3facbc2d0ed8a6e'
+          m1_m3_review_comment='6374247604'
           m1_m3_review_issue='72'
           if ! git -C module-sources/m1 merge-base --is-ancestor "$m1_m3_review_sha" "$m1_sha"; then
             echo 'Historical M1 Hook review SHA is not an ancestor of the exact M1 source candidate.' >&2
@@ -149,9 +149,9 @@ jobs:
           m1_m3_review_status='ACCEPT'
           m1_m3_review_changed_files=''
           for reviewed_file in \
-            'src/agent-hook.ts:0dc597783386e9273d7167172aa933b17f663e72' \
-            'test/agent-hook.test.ts:cc4e03b939ea6b18f427bb2f9ac026cca5314c63' \
-            'security-lab/claude-native-hook.mjs:ae23875d91c246c0fa833137e71c949bad9bd3cc'; do
+            'src/agent-hook.ts:76f7bf6314046777ee1615873e5de4621671ea15' \
+            'test/agent-hook.test.ts:0e8a2250ee500d455b0c96430b33714925db3862' \
+            'security-lab/claude-native-hook.mjs:b7ed4aba70a597f4f63a05decc6de1b32f67372e'; do
             file_path="${reviewed_file%%:*}"
             expected_blob="${reviewed_file#*:}"
             historical_blob="$(git -C module-sources/m3 rev-parse --verify "${m1_m3_review_target_sha}:${file_path}")"
