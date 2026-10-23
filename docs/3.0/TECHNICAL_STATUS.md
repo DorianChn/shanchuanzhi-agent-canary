@@ -7266,3 +7266,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 ## Artifact ID clarification — 2026-10-23 00:52 UTC
 
 - Correction to the 00:49 M7 lifecycle checkpoint: lifecycle result artifact is `12469982378` (`windows-community-installer-lifecycle-436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e`) from run `39879983018`; build-evidence artifact `12470152465` is separate. The lifecycle JSON was downloaded from the correctly named artifact and its status/details remain unchanged. Issue #41 clarification comment `6354731134` records this correction. Hosted run: `https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39879983018`.
+
+## Five-minute M7 diagnostic / M9 pin push — 2026-10-23 00:56 UTC
+
+- M7 diagnostic commit `bb1b5f78e08c67e4f6bedb3381c282ff567e04dd` is pushed to PR #39. It only adds a bounded relative-path residue record (count, up to 64 paths, truncation flag) before the existing assertion; uninstall semantics are unchanged. `npm run test:reliability` passed 55, skipped 3, failed 0. Issue #41 comment `6354768590` records the diagnostic-only scope. Exact-head product CI and wrapper checks are now running; no specific residual path or lifecycle pass is claimed.
+- M9 PR #36 is pushed at `fe639266416a7a393806c9df2961150fa5863a83`; it pins M7 `436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e` and reports the hosted lifecycle failure precisely. Exact-source composition jobs on Ubuntu and Windows are running. Issue #74 remains CLOSED for its previously accepted source set; #41 remains OPEN/P1/HOLD.
+- Artifact correction: lifecycle result is artifact `12469982378`; `12470152465` is the separate build-evidence artifact. Issue #41 clarification comment `6354731134` and M9 report link to run `39879983018` record the distinction.
+- M0 local docs now include this checkpoint and are being published in the same push batch. No merge or Release.
