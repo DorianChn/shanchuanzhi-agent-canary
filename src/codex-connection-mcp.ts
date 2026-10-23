@@ -9,7 +9,9 @@ import {EvidenceRecorder} from './runtime/evidence.js';
 import {createTrustedExecutionGateway} from './runtime/gateway.js';
 import {createSecurityToolRouter} from './security-router.js';
 
+const sdkSpecifier='@dorianchn/agent-canary/sdk';
 const adapterSpecifier='@dorianchn/agent-canary/gateway-adapter';
+const policyRouterSpecifier='@dorianchn/agent-canary/policy-router';
 const protectedTool='protected_read';
 const protectedRelativePath='agent-canary-public.txt';
 const protectedMarker='AGENT_CANARY_PROTECTED_FILE_READ_OK';
@@ -37,6 +39,19 @@ export type ProtectedHostDependencies={
   createSecurityToolRouter?:typeof createSecurityToolRouter;
 };
 
+/** Resolve the Gateway through M1's public package entry in a composed build.
+ * The M3-only package still has a compatible standalone SDK for the ordinary
+ * connection markers; createProtectedHostAdapter independently requires M1's
+ * held-file capability methods before it can expose any protected read. */
+async function loadDefaultGatewayFactory():Promise<typeof createTrustedExecutionGateway>{
+  try{
+    const specifier=sdkSpecifier;
+    const sdk=await import(specifier) as {createTrustedExecutionGateway?:typeof createTrustedExecutionGateway};
+    if(typeof sdk.createTrustedExecutionGateway==='function')return sdk.createTrustedExecutionGateway;
+  }catch{/* Standalone M3 may be run from a source checkout without self-reference resolution. */}
+  return createTrustedExecutionGateway;
+}
+
 /** Trusted first-party runtime inputs. These are construction-time dependencies,
  * never request/model data; the fixed probe path and callback set stay owned by M3. */
 export type ConnectionCheckRuntimeDependencies=ProtectedHostDependencies&{
@@ -61,8 +76,24 @@ export type ConnectionCheckRuntime={
  * Missing owner APIs or package composition stays UNKNOWN and has no path fallback.
  */
 export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnType<typeof createAgentGuard>,workspaceRoot:string,dependencies:ProtectedHostDependencies={}):Promise<ProtectedHostAdapter>{
-  const routerFactory=dependencies.createSecurityToolRouter??createSecurityToolRouter;
   let m5CallbackCount=0;
+  const unavailable=(reason:string):ProtectedHostAdapter=>({status:'UNKNOWN',reason,m5Callbacks:()=>m5CallbackCount});
+  if(gateway===null||typeof gateway!=='object')return unavailable('M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
+  for(const method of ['bindFileReadCapability','verifyFileReadCapability','readFileWithCapability']){
+    const descriptor=Object.getOwnPropertyDescriptor(gateway,method);
+    if(!descriptor||!Object.hasOwn(descriptor,'value')||typeof descriptor.value!=='function')return unavailable('M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
+  }
+  let routerFactory=dependencies.createSecurityToolRouter;
+  if(!routerFactory){
+    try{
+      // M5 owns the strict OBSERVE router. Never silently substitute M3's local
+      // router when the composed package export is absent.
+      const specifier=policyRouterSpecifier;
+      const policy=await import(specifier) as {createSecurityToolRouter?:typeof createSecurityToolRouter};
+      if(typeof policy.createSecurityToolRouter==='function')routerFactory=policy.createSecurityToolRouter;
+    }catch{/* A missing M5 public export keeps the protected route unavailable. */}
+  }
+  if(!routerFactory)return unavailable('M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE');
   const observedM5Factory=(options:unknown)=>{
     if(options===null||typeof options!=='object'||Array.isArray(options))throw new TypeError('M5_ROUTER_OPTIONS_INVALID');
     const values=options as Record<string,unknown>;
@@ -74,12 +105,6 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     }};
     return routerFactory(observed as never);
   };
-  const unavailable=(reason:string):ProtectedHostAdapter=>({status:'UNKNOWN',reason,m5Callbacks:()=>m5CallbackCount});
-  if(gateway===null||typeof gateway!=='object')return unavailable('M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
-  for(const method of ['bindFileReadCapability','verifyFileReadCapability','readFileWithCapability']){
-    const descriptor=Object.getOwnPropertyDescriptor(gateway,method);
-    if(!descriptor||!Object.hasOwn(descriptor,'value')||typeof descriptor.value!=='function')return unavailable('M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
-  }
   let facade:PublicM2Facade|undefined;
   try{
     if(dependencies.loadM2Facade){
@@ -155,7 +180,7 @@ export async function createConnectionCheckRuntime(dependencies:ConnectionCheckR
     hook_probe:async()=>({content:'AGENT_CANARY_HOOK_WAS_NOT_EFFECTIVE',sideEffects:0}),
   };
   const files=fs.existsSync(path.join(root,protectedRelativePath))?[{path:protectedRelativePath}]:[];
-  const gatewayFactory=dependencies.createGateway??createTrustedExecutionGateway;
+  const gatewayFactory=dependencies.createGateway??await loadDefaultGatewayFactory();
   const gateway=gatewayFactory({
     agentId:'codex-onboarding-check',guard,workspaceRoot:root,files,evidence,
     mcpTools:Object.fromEntries(Object.entries(callbacks).map(([name,execute])=>[name,{risk:'READ_ONLY' as const,approvalRequired:false,execute:async()=>execute()}])),

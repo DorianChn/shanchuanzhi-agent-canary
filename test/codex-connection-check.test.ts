@@ -199,6 +199,24 @@ test('M3 host dependency seam stays UNKNOWN and side-effect free when the truste
   }
 });
 
+test('M3 host does not substitute its local router when the composed M5 public export is absent',async()=>{
+  let bindings=0,adapterLoads=0;
+  const gateway=Object.freeze({
+    bindFileReadCapability(){bindings++;return Object.freeze(Object.create(null));},
+    verifyFileReadCapability(){return true;},
+    readFileWithCapability(){throw new Error('unavailable M5 must never reach a file read');},
+  });
+  const host=await createProtectedHostAdapter(gateway,createAgentGuard({alert:false}),process.cwd(),{
+    loadM2Facade:async()=>{adapterLoads++;throw new Error('M2 must not load without the public M5 router');},
+  });
+  assert.equal(host.status,'UNKNOWN');
+  assert.equal(host.reason,'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE');
+  assert.equal(host.dispatch,undefined);
+  assert.equal(host.m5Callbacks(),0);
+  assert.equal(bindings,0);
+  assert.equal(adapterLoads,0);
+});
+
 test('first-party connection-check runtime passes only its fixed trusted inputs into the M1/M2/M5 seam',async t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-runtime-seam-'));
   const file=path.join(root,'agent-canary-public.txt');

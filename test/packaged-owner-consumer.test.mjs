@@ -324,3 +324,108 @@ for (const absentOwner of ['m2', 'm5']) {
     assert.deepEqual(fs.readdirSync(tempRoot).filter((name) => name.startsWith('agent-canary-console-probe-')), [], 'missing owner exports must fail before the temporary probe is created');
   });
 }
+
+test('packed M3 onboarding host loads the public M1, M2, and M5 entries and denies a replaced path before policy dispatch', {
+  skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
+}, async () => {
+  const exact = prepareComposedPackage('onboarding-host', { m1: true, m2: true, m5: true });
+  const packed = packAndExtract(exact.packageRoot, 'onboarding-host');
+  const hostModule = await import(pathToFileURL(path.join(packed.installedRoot, 'dist', 'codex-connection-mcp.js')).href);
+  const workspaceRoot = path.join(scratch, 'onboarding-host-workspace');
+  fs.mkdirSync(workspaceRoot, { recursive: true });
+  const file = path.join(workspaceRoot, 'agent-canary-public.txt');
+  const heldFile = path.join(workspaceRoot, 'agent-canary-public.held.txt');
+  fs.writeFileSync(file, 'AGENT_CANARY_PROTECTED_FILE_READ_OK', { flag: 'wx', mode: 0o600 });
+  const runtime = await hostModule.createConnectionCheckRuntime({ workspaceRoot });
+
+  try {
+    assert.equal(typeof runtime.gateway.bindFileReadCapability, 'function', 'the composed M1 public SDK must provide held-file capabilities');
+    assert.equal(typeof runtime.gateway.verifyFileReadCapability, 'function');
+    assert.equal(typeof runtime.gateway.readFileWithCapability, 'function');
+    const positive = await hostModule.dispatchProtectedRead(runtime.protectedHost, { path: 'agent-canary-public.txt' });
+    assert.deepEqual(positive, { status: 'ALLOW', reason: 'HELD_FILE_POSITIVE_CONTROL', markerMatched: true });
+    assert.equal(runtime.protectedHost.m5Callbacks(), 1, 'the valid fixed read must pass through M5 exactly once');
+
+    const callbacksBeforeAlias = runtime.protectedHost.m5Callbacks();
+    await assert.rejects(
+      runtime.protectedHost.dispatch({ name: 'protected_read', args: { path: './agent-canary-public.txt' } }),
+      /M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED/,
+      'M2 must reject a lexical alias before entering M5',
+    );
+    assert.equal(runtime.protectedHost.m5Callbacks(), callbacksBeforeAlias);
+
+    fs.renameSync(file, heldFile);
+    fs.writeFileSync(file, 'NOT_A_REAL_CREDENTIAL_REPLACEMENT', { flag: 'wx', mode: 0o600 });
+    const replacementBytes = fs.readFileSync(file);
+    const heldBytes = fs.readFileSync(heldFile);
+    const callbacksBeforeReplacement = runtime.protectedHost.m5Callbacks();
+    await assert.rejects(
+      runtime.protectedHost.dispatch({ name: 'protected_read', args: { path: 'agent-canary-public.txt' } }),
+      /M2_SECURITY_GATEWAY_CAPABILITY_INVALID/,
+      'M2 must fail preflight after M1 detects a replaced held-file identity',
+    );
+    assert.equal(runtime.protectedHost.m5Callbacks(), callbacksBeforeReplacement, 'a replaced path must be denied before M5 callback dispatch');
+    assert.equal(runtime.gateway.operator.pending().length, 0, 'neither denial creates an approval');
+    assert.equal(fs.readFileSync(file).toString('hex'), replacementBytes.toString('hex'));
+    assert.equal(fs.readFileSync(heldFile).toString('hex'), heldBytes.toString('hex'));
+  } finally {
+    await runtime.gateway.close();
+  }
+});
+
+test('packed M2 refuses a sensitive symlink alias during M1 capability binding before M5 router creation', {
+  skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
+}, async () => {
+  const exact = prepareComposedPackage('sensitive-alias', { m1: true, m2: true, m5: true });
+  const packed = packAndExtract(exact.packageRoot, 'sensitive-alias');
+  const packageRequire = createRequire(path.join(packed.installedRoot, 'package.json'));
+  const [m1Sdk, m2Adapter, m5Router] = await Promise.all([
+    import(pathToFileURL(packageRequire.resolve('@dorianchn/agent-canary/sdk')).href),
+    import(pathToFileURL(packageRequire.resolve('@dorianchn/agent-canary/gateway-adapter')).href),
+    import(pathToFileURL(packageRequire.resolve('@dorianchn/agent-canary/policy-router')).href),
+  ]);
+  const root = path.join(scratch, 'sensitive-alias-workspace');
+  const privateDirectory = path.join(root, 'private');
+  const aliasDirectory = path.join(root, 'public');
+  fs.mkdirSync(privateDirectory, { recursive: true });
+  const secret = path.join(privateDirectory, 'credentials-private.json');
+  const original = Buffer.from('SYNTHETIC_SENSITIVE_ALIAS_SENTINEL');
+  fs.writeFileSync(secret, original, { flag: 'wx', mode: 0o600 });
+  fs.symlinkSync(privateDirectory, aliasDirectory, process.platform === 'win32' ? 'junction' : 'dir');
+  const guard = m1Sdk.createAgentGuard({ alert: false });
+  const gateway = m1Sdk.createTrustedExecutionGateway({
+    agentId: 'm3-packed-sensitive-alias',
+    guard,
+    workspaceRoot: root,
+    files: [{ path: 'private/credentials-private.json', sensitive: true }],
+    evidence: new m1Sdk.EvidenceRecorder(),
+  });
+  let routerCreations = 0;
+  let callbacks = 0;
+
+  try {
+    assert.throws(() => m2Adapter.createSecurityGatewayHostAdapter({
+      gateway,
+      fixedFileReads: { read_private: ['public/credentials-private.json'] },
+      createSecurityToolRouter: (options) => {
+        routerCreations += 1;
+        const executeRealTool = options.executeRealTool;
+        return m5Router.createSecurityToolRouter({
+          ...options,
+          executeRealTool: (...args) => {
+            callbacks += 1;
+            return Reflect.apply(executeRealTool, undefined, args);
+          },
+        });
+      },
+      routerOptions: { guard, workspaceRoot: root, mode: 'OBSERVE', verifyRealPaths: true },
+    }), /M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE/);
+    assert.equal(routerCreations, 0, 'M1 must reject the alias at capability binding before M5 is constructed');
+    assert.equal(callbacks, 0);
+    assert.equal(gateway.operator.pending().length, 0);
+    assert.equal(fs.readFileSync(secret).toString('hex'), original.toString('hex'));
+  } finally {
+    await gateway.close();
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
