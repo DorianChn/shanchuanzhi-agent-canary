@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: a84ee13fa0e7e8ba0ace371235236f1d6b203780
+          ref: 3a377ffe1d1f34b97a71ae6657accb9126d052f2
           path: module-sources/m3
           fetch-depth: 0
 
