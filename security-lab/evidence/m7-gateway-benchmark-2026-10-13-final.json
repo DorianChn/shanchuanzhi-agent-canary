@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "agent-canary.m7.gateway-benchmark.v1",
+  "startedAt": "2026-10-13T08:42:51.661Z",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v22.23.1",
+    "osRelease": "10.0.26200",
+    "cpuCount": 32,
+    "totalMemoryBytes": 33479172096
+  },
+  "workload": {
+    "kind": "synthetic in-process read-only MCP callback",
+    "network": false,
+    "externalServices": false,
+    "warmupOperations": 100,
+    "operations": 1000,
+    "concurrency": 16,
+    "rounds": 3
+  },
+  "warmup": {
+    "operations": 100,
+    "errors": 0
+  },
+  "results": [
+    {
+      "round": 1,
+      "operations": 1000,
+      "successes": 1000,
+      "errors": 0,
+      "errorSamples": [],
+      "concurrency": 16,
+      "durationMs": 600.29,
+      "throughputOpsPerSecond": 1665.862,
+      "latencyMs": {
+        "p50": 4.924,
+        "p95": 9.02,
+        "p99": 10.353,
+        "max": 11.417
+      },
+      "cpuMs": {
+        "user": 438,
+        "system": 219,
+        "total": 657
+      },
+      "memoryBytes": {
+        "rssBefore": 88948736,
+        "rssAfter": 106049536,
+        "rssDelta": 17100800,
+        "heapBefore": 26135024,
+        "heapAfter": 35787048,
+        "heapDelta": 9652024
+      },
+      "evidence": {
+        "events": 2000,
+        "chainValid": true
+      },
+      "activeResources": {
+        "ConnectWrap": 2,
+        "PipeWrap": 3
+      }
+    },
+    {
+      "round": 2,
+      "operations": 1000,
+      "successes": 1000,
+      "errors": 0,
+      "errorSamples": [],
+      "concurrency": 16,
+      "durationMs": 593.251,
+      "throughputOpsPerSecond": 1685.626,
+      "latencyMs": {
+        "p50": 4.959,
+        "p95": 9.393,
+        "p99": 10.976,
+        "max": 15.013
+      },
+      "cpuMs": {
+        "user": 438,
+        "system": 172,
+        "total": 610
+      },
+      "memoryBytes": {
+        "rssBefore": 106692608,
+        "rssAfter": 107659264,
+        "rssDelta": 966656,
+        "heapBefore": 37353072,
+        "heapAfter": 28961152,
+        "heapDelta": -8391920
+      },
+      "evidence": {
+        "events": 2000,
+        "chainValid": true
+      },
+      "activeResources": {
+        "ConnectWrap": 2,
+        "PipeWrap": 3
+      }
+    },
+    {
+      "round": 3,
+      "operations": 1000,
+      "successes": 1000,
+      "errors": 0,
+      "errorSamples": [],
+      "concurrency": 16,
+      "durationMs": 523.372,
+      "throughputOpsPerSecond": 1910.687,
+      "latencyMs": {
+        "p50": 4.264,
+        "p95": 8.463,
+        "p99": 9.982,
+        "max": 12.864
+      },
+      "cpuMs": {
+        "user": 453,
+        "system": 125,
+        "total": 578
+      },
+      "memoryBytes": {
+        "rssBefore": 108298240,
+        "rssAfter": 109563904,
+        "rssDelta": 1265664,
+        "heapBefore": 30195304,
+        "heapAfter": 37808904,
+        "heapDelta": 7613600
+      },
+      "evidence": {
+        "events": 2000,
+        "chainValid": true
+      },
+      "activeResources": {
+        "ConnectWrap": 2,
+        "PipeWrap": 3
+      }
+    }
+  ],
+  "summary": {
+    "operationsTotal": 3000,
+    "successesTotal": 3000,
+    "errorsTotal": 0,
+    "throughputOpsPerSecondMedian": 1685.626,
+    "latencyMsMedianOfRounds": {
+      "p50": 4.924,
+      "p95": 9.02,
+      "p99": 10.353
+    },
+    "cpuMsTotal": 1845,
+    "rssDeltaBytesMedian": 1265664,
+    "heapDeltaBytesMedian": 7613600,
+    "evidenceChainsValid": true
+  },
+  "completedAt": "2026-10-13T08:42:54.558Z",
+  "status": "COMPLETED"
+}
