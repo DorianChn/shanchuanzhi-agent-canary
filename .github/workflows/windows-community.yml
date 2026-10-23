@@ -39,7 +39,7 @@ jobs:
         run: node scripts/verify-installer-template.mjs
       - run: npm ci --no-audit --no-fund
       - run: npm run build
-      - run: npm run test:reliability
+      - run: node --import tsx --test test/reliability.test.mjs
       - run: npm audit --audit-level=high
       - run: npm run pack:check
       - run: node --check packaging/windows/build.mjs
