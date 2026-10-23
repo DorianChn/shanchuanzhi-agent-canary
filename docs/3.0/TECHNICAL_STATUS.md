@@ -7382,3 +7382,16 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M7's clean-VM installer lifecycle remains OPEN/P1/HOLD (#41). M7 hosted lifecycle smoke passes on PR #39, but no clean-VM install/upgrade/uninstall/cancel-rollback run has been performed in this batch. Issue #41 comment `6355913185` records the lock audit and hold rationale.
 - M0 reserved the exclusive VMware/real-model/installer slot for M7 on Issue #29 in comment `6355904602`. Read-only checks show `vmrun list` = 0 and no `vmware.exe`/`vmware-vmx.exe`; the existing VM lock marker dates to 2026-10-12 and names absent PID 12084, while the VM log ends on 2026-10-13 without an explicit shutdown record. This suggests an orphaned lock but does not prove there is no external handle. Preserve the lock; stop if VMware reports ownership ambiguity. No VM or installer run has started.
 - Issue #52 remains OPEN/P0/NOT_VERIFIED: production host wiring, real held-file identity, native Shell enforcement, and OS-atomic TOCTOU remain unverified. Other open blockers include #41, #45, #51, #54, #57, #62, and #70. No main merge, PR #24 edit, or Release.
+
+## M7 VM slot release and M0 hosted check — 2026-10-23 02:29 UTC
+
+- Additional read-only VM metadata: `cleanShutdown = FALSE`, `.vmsd` has no snapshot entries, and the disk descriptor is a base disk (`parentCID=ffffffff`). This does not prove guest data damage, but it provides no clean restore point or clean-shutdown evidence. No VM/lock/installer file was touched.
+- M0 released the unused exclusive VM/installer slot in Issue #29 comment `6355939992`; Issue #41 comment `6355939380` records the clean-baseline finding. The M7 clean-VM gate remains OPEN/P1/HOLD.
+- The post-push PR #30 head `55c895ec761ab933e21557c4061b051daf548ddf` has 9 checks passing and `package-smoke` pending at 02:29 UTC. Wait for that exact-head check before recording completion.
+
+## M5 advisory ownership handoff and M0 CI closeout — 2026-10-23 02:31 UTC
+
+- Usage Overview read at 02:30:45 UTC: 33% five-hour / 76% weekly; PR #24 remains OPEN/Draft at its unchanged head/base. The 5% quota stop remains in force.
+- PR #30 exact head `55c895ec761ab933e21557c4061b051daf548ddf` completed all 10/10 checks successfully by 02:30:45 UTC.
+- M5 completed a read-only owner review of Issue #70 and made no changes. M5 resolves Hono `4.13.7` transitively through the MCP SDK; no tracked `serveStatic` callsite or M5-owned manifest/lockfile delta was found. The official advisory affects `>=4.12.4, <4.13.11` and is patched in `4.13.11`; existing M7-owned PR #67 raises Hono to `4.13.13`, updates the lockfile digest, and passes 9/9 exact-head checks at `cda74e9`. PR #67 is OPEN/unmerged; keep Issue #70 OPEN/P1 until merge and default-branch alert refresh. M0 recorded the handoff in comment `6355978858`.
+- M7's clean-VM acceptance remains OPEN/P1/HOLD; the previous lock/baseline evidence and release of the unused exclusive slot are recorded in Issue #29 comments `6355904602` and `6355939992`, and Issue #41 comments `6355913185` and `6355939380`.
