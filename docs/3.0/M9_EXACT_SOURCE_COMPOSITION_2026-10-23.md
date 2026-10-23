@@ -509,4 +509,25 @@ This section supersedes the M3 pin in the preceding table. The exact M1/M2 sourc
 
 M3 candidate `bfcf85e` updates the Console protected-read flow and adds fixed-probe denial controls to its route and packaged-consumer tests. The M9 focused composition passed **16/16** with this exact local M3 source; its synthetic `codex-connection-mcp` positive-control still asserts that unchanged runtime's `ALLOW / HELD_FILE_POSITIVE_CONTROL` result. This does not assert the separate Console flow's positive status or real product-host wiring. The standalone M3 package gate remains `NOT_READY`; the package export map is still SDK-only. The earlier M3 run `39919260164` failed at the old published M3 SHA `b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b` and is not evidence for or against the new local candidate.
 
-M1 PR #43 and M2 PR #37 merge commits are recorded above, but merge completion does not resolve Issue #52. It remains **OPEN / P0 / NOT_VERIFIED** pending supported first-party host wiring, real protected-resource behavior, and OS-atomic TOCTOU evidence. PR #36 hosted runs `39920983998`, `39920984006`, and `39920984084` used the earlier M3/M6/M7 pins and therefore do not validate this current source set. The M3 commit must first be published before a hosted M9 run can check it out.
+M1 PR #43 and M2 PR #37 merge commits are recorded above, but merge completion does not resolve Issue #52. It remains **OPEN / P0 / NOT_VERIFIED** pending supported first-party host wiring, real protected-resource behavior, and OS-atomic TOCTOU evidence. PR #36 hosted runs `39920983998`, `39920984006`, and `39920984084` used the earlier M3/M6/M7 pins and therefore do not validate this source set. M3 CAC8 is now public; its M1-reviewed test-blob mismatch blocks current local composition as recorded in the refresh section below.
+
+## Published M3 refresh and M9 gate result — 2026-10-23
+
+This refresh supersedes the preceding M3 pin; the M9 exact-source check exposed a review-boundary mismatch and is not green.
+
+| Module / PR | Exact public source head | Evidence at refresh |
+| --- | --- | --- |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` | Merged to the feature base as `f0b4ee800672c3b702fa6d48201f74642d724cc5`; source pin unchanged |
+| M2 / #37 | `db98c7d5d409aa390ef539c96a209d6daba8d793` | Merged to the feature base as `49af6d3dd57d9f091c95f489ead27f4f03c941a9`; source pin unchanged |
+| M3 / #33 | `cac8f4627aceb5dd3732036129e42ade7e4790e9` | Public/open; `gh run list --commit` returned no hosted runs and `gh pr checks 33` reported none at refresh |
+| M4 / #34 | `721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2` | Merged to the feature base |
+| M5 / #47 | `8bb14c6b38dc2cc76bdf915442dc8048d30ff76d` | Hosted CI run `39918480015` succeeded (9/9) |
+| M6 / #38 | `98a4833250434de905611ace71bfe8094554d417` | Merged to the feature base; independent product E4 and Issue #57 remain NOT_VERIFIED |
+| M7 / #39 | `5a7540b0b041d10e6d562aa528f79a2cfdea987a` | Public/open; exact-head CI and wrapper runs `39920944820` / `39920944771` succeeded |
+| M8 / #40 | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` | Public/open. The local successor `4fb07ed5abebf642a22df2a05bd8bdc9a4ea1f50` is unpushed and unverified, so it is not pinned |
+
+The M9 workflow and composition test source map now pin M3 `cac8f4627aceb5dd3732036129e42ade7e4790e9`; the workflow runs the exact M3 focused tests and the M9 composition test checks M3's `check:integrated-package` result. The exact M9 run was attempted with exact M1–M8 roots, including temporary detached source clones at the published M5/M7/M8 SHAs where the shared owner worktrees had unpublished successors. It fails at the existing M1-to-M3 review guard: M1-reviewed M3 blob `test/agent-hook.test.ts` was `cc4e03b939ea6b18f427bb2f9ac026cca5314c63`, while current M3 is `04419e519983ba77ee98fd8b019ef3440c80ab51`. M3's CAC8 change removes the positive held-file Gateway test from that file and adds it to `test/security-center-route-m3.test.ts`; it also adds quarantine-subscriber tests. This relocation may preserve that positive fixture, but the recorded M1 disposition did not review the new test blob. M9 keeps the exact review guard unchanged pending an M1 owner disposition; no product-security failure is inferred from this test-blob mismatch.
+
+The root `package.json` was not edited in this partial refresh. PR #36 is still conflicting against feature baseline `75c2119f31928daf54041a4be714a892cc93e0e2`, including `package.json`; the M9 branch also lacks M3 `scripts/check-integrated-package.mjs` and `test/security-center-route-m3.test.ts`, plus M5 `src/policy-router.ts` and `test/policy-router-export.test.ts`. Adding those root commands/exports before their owner files and the shared manifest conflict are reconciled would create dangling package entries. The exact M3 and M5 canonical tests remain run directly from their separate owner checkouts in the M9 workflow. No full rebase/merge was attempted; shared runtime, packaging, and canonical-test conflicts remain assigned to their respective owners.
+
+Issue #52 remains **OPEN / P0 / NOT_VERIFIED**; product-host hookup, real protected-resource access, and OS-atomic TOCTOU remain unverified. Issue #57 and independent product E4 remain **NOT_VERIFIED**. The M9 new-pin hosted composition has not run. No PR was pushed or merged.
