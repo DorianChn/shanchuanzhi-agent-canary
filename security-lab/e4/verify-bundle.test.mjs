@@ -250,10 +250,13 @@ for (const name of ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log']) {
     const valid = runVerifier(runDir);
     assert.equal(valid.status, 0, valid.stderr);
 
+    const archivePath = path.join(runDir, 'evidence.zip');
+    const archivedSourceBefore = fs.readFileSync(archivePath);
     fs.appendFileSync(path.join(runDir, name), 'tampered external copy\n');
     const invalid = runVerifier(runDir);
     assert.equal(invalid.status, 1, invalid.stderr);
     assert.match(invalid.stderr, new RegExp(`E4_EXTERNAL_COPY_MISMATCH:${name.replaceAll('.', '\\.')}`));
+    assert.deepEqual(fs.readFileSync(archivePath), archivedSourceBefore, 'rejecting an external copy mismatch must leave the archived source byte-identical');
   });
 }
 
