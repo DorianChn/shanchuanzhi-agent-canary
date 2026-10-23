@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -18,11 +18,11 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 }));
 
 const pinnedSourceShas = {
-  M1: '6886d6eef3beb972bc8f4c797584b0f522483870',
+  M1: 'e8be92d2d813ab2e9fe47d3ab6874439a6328441',
   M2: '67428139e53c3f63a1101b4f94e84b291cbb1196',
-  M3: 'c7b7772c9d62e138e1cc6deed7c43104eaccafa6',
-  M4: '4f83140807a48bfe0d3273e2493a2124f533b8a0',
-  M5: '12b2499a1f7b8525f3bf2d7659249c1bd8e881ed',
+  M3: 'b85c4ad4de92fdcdf48e65e664c149b9de347b4f',
+  M4: '4bd982201db594100de862d314240c7d0ff3d3e0',
+  M5: '8d1b832f46db363dd8ba5cdd7d573baa89e9a46d',
   M6: '3578e7ba10b2fd160efa0e4683aba863c666db8a',
   M7: '7c348622e6c94e6f583044832c4a415c6a19c209',
   M8: '854de50d94637caf3f334de7d28dcdcaddd88f9f',
@@ -218,8 +218,23 @@ const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-cross-module-home-'))
 process.env.AGENT_CANARY_HOME = testHome;
 after(() => fs.rmSync(testHome, { recursive: true, force: true }));
 
+const m5PackageRequire = createRequire(path.join(sourceRoots.M5.root, 'package.json'));
+const m5PublicRouterPath = m5PackageRequire.resolve('@dorianchn/agent-canary/policy-router');
+assert.equal(
+  path.resolve(m5PublicRouterPath),
+  path.resolve(path.join(sourceRoots.M5.root, 'dist', 'policy-router.js')),
+  'M5 router composition must resolve through the exact public package subpath',
+);
+const m1PackageRequire = createRequire(path.join(sourceRoots.M1.root, 'package.json'));
+const m1PublicSdkPath = m1PackageRequire.resolve('@dorianchn/agent-canary/sdk');
+assert.equal(
+  path.resolve(m1PublicSdkPath),
+  path.resolve(path.join(sourceRoots.M1.root, 'dist', 'sdk.js')),
+  'M1 Gateway composition must resolve through the exact public package subpath',
+);
+
 const [m1, m2, m4, m5] = await Promise.all([
-  import(pathToFileURL(path.join(sourceRoots.M1.root, 'src', 'sdk.ts')).href),
+  import(pathToFileURL(m1PublicSdkPath).href),
   import(pathToFileURL(path.join(
     sourceRoots.M2.root,
     'execution-isolation',
@@ -227,8 +242,113 @@ const [m1, m2, m4, m5] = await Promise.all([
     'security-gateway-adapter.mjs',
   )).href),
   import(pathToFileURL(path.join(sourceRoots.M4.root, 'src', 'ai', 'security-center-adapter.ts')).href),
-  import(pathToFileURL(path.join(sourceRoots.M5.root, 'src', 'sdk.ts')).href),
+  import(pathToFileURL(m5PublicRouterPath).href),
 ]);
+
+function isPolicyBlocked(error, predicate) {
+  return error instanceof Error
+    && error.name === 'PolicyBlockedError'
+    && error.decision !== null
+    && typeof error.decision === 'object'
+    && predicate(error.decision);
+}
+
+test('M3 ordinary ai console CLI fails closed when public M5 and M2 subpaths are absent', async (t) => {
+  const m3Root = sourceRoots.M3.root;
+  const m3Package = JSON.parse(fs.readFileSync(path.join(m3Root, 'package.json'), 'utf8'));
+  assert.ok(m3Package.exports?.['./sdk'], 'the M3 package must expose its reviewed SDK self-reference');
+  assert.equal(m3Package.exports?.['./gateway-adapter'], undefined, 'the M3-only package must not invent the M2 public export');
+  assert.equal(m3Package.exports?.['./policy-router'], undefined, 'the M3-only package must not invent the M5 public export');
+
+  const requireFromM3 = createRequire(path.join(m3Root, 'package.json'));
+  assert.throws(
+    () => requireFromM3.resolve('@dorianchn/agent-canary/gateway-adapter'),
+    (error) => error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+    'the exact M3-only package must fail to resolve the M2 public subpath',
+  );
+  assert.throws(
+    () => requireFromM3.resolve('@dorianchn/agent-canary/policy-router'),
+    (error) => error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED',
+    'the exact M3-only package must fail to resolve the M5 public subpath',
+  );
+  const consoleSource = fs.readFileSync(path.join(m3Root, 'src', 'ai', 'console.ts'), 'utf8');
+  assert.match(consoleSource, /const sdkSpecifier:string='@dorianchn\/agent-canary\/sdk'/);
+  assert.match(consoleSource, /const policyRouterSpecifier:string='@dorianchn\/agent-canary\/policy-router'/);
+  assert.match(consoleSource, /const adapterSpecifier:string='@dorianchn\/agent-canary\/gateway-adapter'/);
+  assert.match(consoleSource, /await Promise\.all\(\[import\(sdkSpecifier\),import\(policyRouterSpecifier\),import\(adapterSpecifier\)\]\)/);
+
+  const isolatedTemp = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-cli-no-injection-'));
+  const operatorCode = 'M9_CLI_OPERATOR_FIXTURE';
+  let child;
+  let output = '';
+  t.after(async () => {
+    if (child && child.exitCode === null && child.signalCode === null) child.kill();
+    if (child && child.exitCode === null && child.signalCode === null) {
+      await new Promise((resolve) => child.once('exit', resolve));
+    }
+    fs.rmSync(isolatedTemp, { recursive: true, force: true });
+  });
+
+  child = spawn(process.execPath, [path.join(m3Root, 'dist', 'index.js'), 'ai', 'console', '--port', '0'], {
+    cwd: m3Root,
+    env: {
+      ...process.env,
+      AGENT_CANARY_OPERATOR_CODE: operatorCode,
+      TEMP: isolatedTemp,
+      TMP: isolatedTemp,
+      TMPDIR: isolatedTemp,
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+    windowsHide: true,
+  });
+  child.stdout.setEncoding('utf8');
+  child.stderr.setEncoding('utf8');
+  const url = await new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (error, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      error ? reject(error) : resolve(value);
+    };
+    const timeout = setTimeout(() => finish(new Error(`M3 CLI did not start; output: ${output}`)), 15_000);
+    child.stdout.on('data', (chunk) => {
+      output += chunk;
+      const match = output.match(/Agent Canary 中文控制台: (http:\/\/127\.0\.0\.1:\d+)/);
+      if (match) finish(undefined, match[1]);
+    });
+    child.stderr.on('data', (chunk) => { output += chunk; });
+    child.once('error', (error) => finish(error));
+    child.once('exit', (code, signal) => finish(new Error(`M3 CLI exited before listening (${code ?? signal}); output: ${output}`)));
+  });
+
+  const page = await fetch(url);
+  assert.equal(page.status, 200);
+  const html = await page.text();
+  const csrf = html.match(/const csrf='([a-f0-9]{64})'/)?.[1];
+  assert.ok(csrf, 'ordinary CLI page must provide its session CSRF token');
+  const response = await fetch(`${url}/api/security-center/protected-read`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-canary-csrf': csrf,
+      'x-canary-operator-code': operatorCode,
+    },
+    body: '{}',
+  });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    scope: 'M3_FIXED_TEMP_PROBE_ONLY',
+    status: 'UNKNOWN',
+    reason: 'OWNER_ADAPTER_UNAVAILABLE',
+    markerMatched: false,
+  });
+  assert.deepEqual(
+    fs.readdirSync(isolatedTemp).filter((name) => name.startsWith('agent-canary-console-probe-')),
+    [],
+    'M3 ordinary CLI must not create a protected-read probe directory when the M2 public export is absent',
+  );
+});
 
 test('M4 exact security-center adapter redacts path details and preserves UNKNOWN protection status', () => {
   const privateValues = [
@@ -321,7 +441,7 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
     assert.equal((await router.decide(call)).reason, 'path_execution_not_pinned');
     await assert.rejects(
       router.dispatch(call),
-      (error) => error instanceof m5.PolicyBlockedError && error.decision.reason === 'path_execution_not_pinned',
+      (error) => isPolicyBlocked(error, (decision) => decision.action === 'DENY' && decision.reason === 'path_execution_not_pinned'),
     );
     assert.equal(callbackCalls.length, 0, `${call.name} must fail before the generic path callback`);
     assert.equal(router.pendingApprovals().length, 0, 'fail-closed paths do not create approvals');
@@ -331,7 +451,7 @@ test('M5 real-path mode blocks generic file callbacks before execution and keeps
   assert.equal((await router.decide(sensitiveRead)).reason, 'observe_sensitive_data_blocked');
   await assert.rejects(
     router.dispatch(sensitiveRead),
-    (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+    (error) => isPolicyBlocked(error, (decision) => decision.action === 'DENY'),
   );
   assert.equal(callbackCalls.length, 0, 'OBSERVE cannot waive the deterministic sensitive-path denial');
   assert.equal(router.pendingApprovals().length, 0);
@@ -678,7 +798,7 @@ test('exact M1/M2/M5 sources deny strict path-only reads when no M1 capability p
     assert.equal(publicDecision.reason, 'path_execution_not_pinned');
     await assert.rejects(
       router.dispatch(publicCall),
-      (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+      (error) => isPolicyBlocked(error, (decision) => decision.action === 'DENY'),
     );
     assert.equal(adapterCallbackCalls, 0, 'an ordinary path-bearing host callback is not a held-file capability');
     const initialGatewayEvidenceCount = gateway.evidence().length;
@@ -697,7 +817,7 @@ test('exact M1/M2/M5 sources deny strict path-only reads when no M1 capability p
       assert.equal((await router.decide(aliasedRead)).action, 'DENY', pathArg);
       await assert.rejects(
         router.dispatch(aliasedRead),
-        (error) => error instanceof m5.PolicyBlockedError && error.decision.action === 'DENY',
+        (error) => isPolicyBlocked(error, (decision) => decision.action === 'DENY'),
         pathArg,
       );
       assert.equal(adapterCallbackCalls, 0, `${pathArg} is rejected before the M2/Gateway callback`);

@@ -4,18 +4,18 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 | Module | PR | Exact source SHA | M9 coverage |
 | --- | --- | --- | --- |
-| M1 Gateway | #43 | `6886d6eef3beb972bc8f4c797584b0f522483870` (current PR head; exact CI green) | Held-Gateway regression and synthetic protected-read composition; lock-metadata denial maps to fail-closed BUSY |
+| M1 Gateway | #43 | `e8be92d2d813ab2e9fe47d3ab6874439a6328441` (current exact pin; docs-only descendant of the tested implementation) | Held-Gateway regression and synthetic protected-read composition; lock-metadata denial maps to fail-closed BUSY |
 | M2 isolation | #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` | Exact CI run `39866513817` passed 9/9; docs-only delta from the prior pin; package build, tarball facade, package policy and synthetic composition |
-| M3 onboarding | #33 | `c7b7772c9d62e138e1cc6deed7c43104eaccafa6` (current PR head) | Trusted Console bootstrap is required for the fixed synthetic protected-read action; M3-only and incomplete composition fail closed before probe/Gateway/router work. Local build and route regressions passed 8/8; a production bootstrap is not established |
-| M4 desktop security center | #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` (current PR head) | Security-center copy/status assertions clarified against the M3 fixed-probe boundary; first-party host read remains NOT_VERIFIED |
-| M5 policy | #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | Exact CI run `39867073839` passed 9/9; risk-policy source and regression changes verify deterministic DENY skips optional review, approval and execution callbacks |
+| M3 onboarding | #33 | `b85c4ad4de92fdcdf48e65e664c149b9de347b4f` (local owner successor; pending batch publication) | Loader uses M1 `./sdk`, M5 `./policy-router`, and M2 `./gateway-adapter`; the standalone M3 package lacks the latter two exports and fails closed before protected-read side effects |
+| M4 desktop security center | #34 | `4bd982201db594100de862d314240c7d0ff3d3e0` (current exact pin) | Security-center copy/status assertions clarified against the M3 fixed-probe boundary; first-party host read remains NOT_VERIFIED |
+| M5 policy | #47 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` (local owner successor; pending batch publication) | Adds a separate public `./policy-router` entry without replacing `./sdk`; current local build and risk-policy/export regressions passed |
 | M6 E4 | #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` (current PR head) | Adds a failure when a model fixture mutates its target; M9 now checks the historical lifecycle assertions remain intact while allowing additive regression coverage |
 | M7 reliability | #39 | `7c348622e6c94e6f583044832c4a415c6a19c209` (current public PR head) | Fixes the hosted lifecycle smoke's ordinary NSIS uninstall invocation and waits for bounded completion before residue assertions; exact M9 source tests and the bounded hosted lifecycle run pass. The prior 436d95c failure remains historical; Issue #41 remains OPEN pending coordinator disposition and broader acceptance |
 | M8 open-source product | #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` (current public PR head) | Documents first-party Security Center protected-read as NOT_VERIFIED; existing Hook provenance, LF checkout and sanitized JSONL regressions remain pinned |
 
 ## Owner-review boundaries
 
-- M1 Issue #52 comment `6349691761` approves the exact historical M2 source `099ad64e4a09330920cbd40847adec3fe631e91e` for the M1 Gateway/M2 adapter API contract only, with historical M1 review base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. Current M2 `67428139e53c3f63a1101b4f94e84b291cbb1196` descends from that reviewed source, but the exact-source approval does not cover later M2 changes. Current M1 `6886d6eef3beb972bc8f4c797584b0f522483870` descends from the historical review base; the comment does not accept the new M1 read implementation, a first-party host integration or TOCTOU protection.
+- M1 Issue #52 comment `6349691761` approves the exact historical M2 source `099ad64e4a09330920cbd40847adec3fe631e91e` for the M1 Gateway/M2 adapter API contract only, with historical M1 review base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. Current M2 `67428139e53c3f63a1101b4f94e84b291cbb1196` descends from that reviewed source, but the exact-source approval does not cover later M2 changes. Current M1 `e8be92d2d813ab2e9fe47d3ab6874439a6328441` descends from the historical review base; the comment does not accept the new M1 read implementation, a first-party host integration or TOCTOU protection.
 - M1 Issue #72 comment `6347268881` reviewed M3 source `27d4a20a20894c7b779edf68d8bf79685bc0e69b` for three Hook-related blobs only, with the same historical M1 review base. M9 checks those same blobs remain unchanged in the current M3 source; this is not an M1 review of the newer M3 Console route or its tests.
 - M6 Issue #59 comment `6346660246` reviewed exact M8 source `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` and M6 lifecycle contract source `2cebabc81d7908c04ddfa10378fa1d3427b92cf4`. Historical M8 `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` is a descendant with only `E4_EVIDENCE_INDEX.md` changed since prior pin `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d`; latest M8 `854de50d94637caf3f334de7d28dcdcaddd88f9f` adds documentation only, and the M6-reviewed `test/auto-e4.test.mjs` blob remains identical. The former M6 pin `15e1663eac9c3932165fca9b39587115345f289c` retained the full reviewed lifecycle test blob. Current M6 `3578e7ba10b2fd160efa0e4683aba863c666db8a` adds regression tests to that file; M9 checks every previously reviewed line remains in order. These scoped dispositions do not accept unrelated changes in current module heads.
 - M6 current exact-head hosted CI run `39864322034` and wrapper run `39864322029` are green (9/9 CI, 2/2 wrapper). This does not establish installer, clean-VM, real-model or external E4 behavior.
@@ -106,7 +106,7 @@ At this earlier snapshot, PR #36 was OPEN and Draft at `fe246f1d97a06149d366989a
 | M2 / PR #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` |
 | M3 / PR #33 | `c7b7772c9d62e138e1cc6deed7c43104eaccafa6` |
 | M4 / PR #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` |
-| M5 / PR #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` |
+| M5 / PR #47 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` |
 | M6 / PR #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` |
 | M7 / PR #39 | `f4a7f91815236a87e81319d0c3512d57031b149e` |
 | M8 / PR #40 | `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` |
@@ -135,7 +135,7 @@ M7 and M8 advanced to new public refs. M7 `f20e307458f4c703459621fd48e44a9e806f0
 | M2 / PR #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` |
 | M3 / PR #33 | `c7b7772c9d62e138e1cc6deed7c43104eaccafa6` |
 | M4 / PR #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` |
-| M5 / PR #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` |
+| M5 / PR #47 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` (local owner successor; pending batch publication) |
 | M6 / PR #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` |
 | M7 / PR #39 (historical) | `f20e307458f4c703459621fd48e44a9e806f03bb` |
 | M8 / PR #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` |
@@ -184,3 +184,35 @@ The [M7 exact CI run](https://github.com/DorianChn/shanchuanzhi-agent-canary/act
 The hosted runner was Windows Server 2025 build 26100; standard-user token behavior was not asserted. Windows 11 client, EFS, in-place upgrade, cancellation rollback, and real model/native-agent behavior remain untested or unverified. This is a bounded hosted lifecycle pass, not full installer/product acceptance. Issue #41 remains OPEN / P1 / HOLD; M9 does not close it. Issue #74 remains CLOSED. M9's own hosted composition check remains pending because this pin refresh is local and has not been pushed.
 
 One initial pack-check attempt invoked M2's package checker from the M2 worktree and failed its M2 package policy check. That was the wrong command for the M7 integration gate; rerunning M7's `pack:check` from the exact M7 worktree against the same M2 source passed with 91 files. The failed invocation is not a failing M7 regression.
+
+## M1/M3/M4/M5 exact-source refresh and ordinary CLI check — 2026-10-23
+
+The current M9 pin map and workflow use these exact owner commits. M3 and M5 are locally committed owner successors that are pending the coordinator's publication batch; the remaining refs were already available from their owner branches:
+
+| Module | Exact public source SHA |
+| --- | --- |
+| M1 / PR #43 | `e8be92d2d813ab2e9fe47d3ab6874439a6328441` |
+| M2 / PR #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` |
+| M3 / PR #33 | `b85c4ad4de92fdcdf48e65e664c149b9de347b4f` (local owner successor; pending batch publication) |
+| M4 / PR #34 | `4bd982201db594100de862d314240c7d0ff3d3e0` |
+| M5 / PR #47 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` (local owner successor; pending batch publication) |
+| M6 / PR #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` |
+| M7 / PR #39 | `7c348622e6c94e6f583044832c4a415c6a19c209` |
+| M8 / PR #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` |
+
+The M9 exact-source harness starts the built M3 `ai console --port 0` CLI with no injected dependencies and calls its authenticated protected-read endpoint. It verifies that the standalone M3 package has neither the M5 `./policy-router` nor M2 `./gateway-adapter` export and that Node rejects both self-package subpaths with `ERR_PACKAGE_PATH_NOT_EXPORTED`. The expected route result is the sanitized `M3_FIXED_TEMP_PROBE_ONLY / UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` envelope, with no `agent-canary-console-probe-*` directory in the isolated temp root. The default bootstrap awaits all three package imports before returning Gateway/router factories, so missing owner exports fail before protected-read Gateway or router construction. The console itself may create its separate integration demo workspace; the assertion is limited to the protected-read probe directory.
+
+The existing injected M1/M2/M5 fixture resolves the Gateway through the exact M1 public `./sdk` package subpath, the packed M2 facade through its public package subpath, and the router through the exact M5 public `./policy-router` package subpath. The workflow builds M1 and M5 before resolving these built exports. It retains its fixed safe-marker positive control and sensitive-path, alias, and path-replacement denials, callback counts, approval queues, evidence counts, and fixture hashes. This remains synthetic runtime composition evidence. M3's new default loader now uses these public contracts; the standalone M3 package still lacks the M5 and M2 exports, so its ordinary no-injection route remains UNKNOWN. M9 does not assemble a combined package to prove all three public self-references resolve from M3's default loader, and does not add a private import/API or synthetic package shim. The synthetic positive fixture is not a product-bootstrap pass.
+
+Exact detached worktrees were SHA-checked before use. Local focused checks:
+
+- M1 `npm run build` and `node --import tsx --test test/gateway.test.ts`: **build passed; 36/36 passed**.
+- M2 `npm ci`, `npm run build`, `npm pack`, then install the packed artifact in an isolated consumer: **passed**; artifact `dorianchn-agent-canary-1.2.7.tgz` came from exact M2 `67428139e53c3f63a1101b4f94e84b291cbb1196`.
+- M3 `b85c4ad4de92fdcdf48e65e664c149b9de347b4f`: `npm ci`, `npm run build`, and `node --import tsx --test test/onboarding.test.ts test/codex-connection-check.test.ts test/agent-hook.test.ts test/security-center-route-m3.test.ts`: **40/40 passed**.
+- M4 `npm ci`, `npm run build`, and `node --import tsx --test test/runtime-console.test.ts`: **11/11 passed**.
+- M5 `npm ci`, `npm run build`, and `node --import tsx --test test/risk-policy.test.ts test/policy-router-export.test.ts`: **43/43 passed**; the test resolves `./policy-router` to the exact built public entry.
+- M9 `node --import tsx --test test/m9-cross-module-composition.test.mjs` was rerun with M3 `b85c4ad4de92fdcdf48e65e664c149b9de347b4f`, M5 `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d`, the other six exact module roots, and the packed M2 artifact: **12/12 passed**. This includes the no-injection M3 CLI UNKNOWN/no-probe case and injected fixed-marker positive plus sensitive, alias, path-replacement, and no-capability DENY controls via M1 `./sdk`, M2's packed export, and M5 `./policy-router`.
+
+M5 `8d1b832` is a locally committed owner successor that is still awaiting the coordinator's publication batch; hosted M9 CI has not run against this pin set. The first M9 attempt stopped after 3 tests because the exact M1 scratch worktree did not yet have dependencies installed (`ERR_MODULE_NOT_FOUND` for `@modelcontextprotocol/sdk`). After `npm ci` in that exact M1 worktree, M1 gateway tests and the full exact-source M9 composition passed. This was local environment preparation, not a source regression.
+
+M4 exact source still has no first-party caller for the protected-read POST. Issue #52 remains OPEN / P0 / NOT_VERIFIED for product-host wiring, held-identity consumption, and concurrent/OS-atomic TOCTOU. The fixed temp marker applies to this synthetic test only; it does not establish protection for user files or the desktop. Hosted M9 CI remains pending for this pin refresh; no merge, push, live host, VM, model, or installer acceptance is implied.
