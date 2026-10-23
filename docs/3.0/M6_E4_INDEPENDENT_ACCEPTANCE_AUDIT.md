@@ -35,3 +35,10 @@ No installer, VM, real-model, or external product test was run for this audit.
 - **Earliest delivery:** not confirmed in the public issue record as of this snapshot.
 
 Close #57 only when all four evidence groups above are tied to the exact product build and independently reviewed. Until then, keep `productE4Accepted=false` and `e4Status=NOT_VERIFIED`.
+
+## Follow-up — 2026-10-23 06:14 UTC
+
+- GitHub identifies M7 PR #39 head `97bb8de315f2c19edbaa4d6536abc50876fecffd`; run `39904585994` completed successfully at 05:16:49 UTC. Its artifact inventory includes `windows-community-build-evidence-97bb8de315f2c19edbaa4d6536abc50876fecffd` (38,195,704 bytes, SHA-256 `fe1080b83e338a7eef0227462a1663d26b59e6387525f5eafd4bd523f4193782`) and `windows-community-installer-lifecycle-97bb8de315f2c19edbaa4d6536abc50876fecffd` (1,308 bytes, SHA-256 `5b64c23eb4acee37a4bbef54ebe549361ce03edb03859531715840b5f9fd0e76`). The workflow jobs report success. I inspected GitHub run and artifact metadata only; I did not download or inspect either artifact. Their same-run provenance does not provide an independent operator or clean-environment E4 receipt.
+- `security-lab/e4/verify-bundle.mjs` now accepts a detached signed receipt and reviewer public key, binds the receipt to the archive digest plus report source commit/tree and reported package digest, and enforces distinct operator/reviewer role claims and clean-environment fields. The machine-readable output exposes the claimed roles, environment, checks, and signature state while keeping `independentReceipt.status`, `productE4Accepted`, and `e4Status` at `NOT_VERIFIED`. A signature only proves possession of the supplied key; identity and independence remain an out-of-band review requirement, and this verifier does not re-read product artifact bytes.
+- `security-lab/e4/independent-review-receipt.schema.json` defines the strict receipt contract. Focused tests cover missing receipts, validly signed but untrusted claims, forged signatures, role collision, and package-digest mismatch.
+- No M7 artifact was downloaded, no installer or model was executed, and no VMware resource was used.
