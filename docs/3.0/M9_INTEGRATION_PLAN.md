@@ -3,9 +3,16 @@
 ## 当前 exact-source composition 快照（2026-10-23）
 
 - 当前 M1–M8 exact source pins、模块级覆盖、owner 审阅范围及证据限制见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md)。
-- 本轮 exact-source pins 更新到 M3 #33 `b8b471f`、M4 #34 `721c25b`、M5 #47 `8bb14c6`；M9 workflow 已包含 M3 不兼容 provider fail-closed 回归、M5 capability adapter 回归及 M4 脱敏展示检查。
+- 本轮 exact-source pins 更新到 M3 #33 `b8b471f`、M4 #34 `721c25b`、M5 #47 `8bb14c6`、M6 #38 `98a4833`、M7 #39 `5a7540b`；M9 workflow 现锁定所有八个当前公开 PR heads，包含 M3 fail-closed、M5 capability adapter、M4 脱敏展示、M6 package-boundary 和 M7 installer-receipt 回归。
 - 最新复核的 M3 hosted CI `39919260164` 失败于 `approval expires with no actual callback`：测试在 `pending()[0].requestId` 处读取到 `undefined`，未到达过期审批断言；M3 owner 需确认根因。M4 run `39919282220` 为 9/9 success，M5 run `39918480015` success。M9 本地精确组合 16/16 不能替代 M3 hosted CI。
-- M1/M3/M4/M5 真实产品文件的安全闭环仍按 owner 证据标记 `NOT_READY / NOT_VERIFIED`。Issue #52 仍 OPEN / P0 / NOT_VERIFIED；合成接口通过不代表 first-party product-host wiring、真实用户文件保护或 OS-atomic TOCTOU 已验收。M9 本轮变更尚未推送，新的 hosted M9 CI 待推送后运行。
+- M1/M3/M4/M5 真实产品文件的安全闭环仍按 owner 证据标记 `NOT_READY / NOT_VERIFIED`。Issue #52 仍 OPEN / P0 / NOT_VERIFIED；合成接口通过不代表 first-party product-host wiring、真实用户文件保护或 OS-atomic TOCTOU 已验收。PR #36 run `39920983998`（composition）、`39920984006`（CI）和 `39920984084`（wrapper）均成功，但它们来自旧 M6 `392a7c2`、M7 `97bb8de` pins；不得用来证明本轮新 M6/M7 pins 已通过 M9。新组合验证通过后仍需推送并等待 hosted M9 CI。
+
+## M9 exact-source refresh：M6、M7 — 2026-10-23
+
+- 本地 M9 分支 `feature/ac3-m9-integration` 起点与远端一致，为 `dddbdd48719b3075587f2dedca6eff76eff3c282`。已核对 M1–M8 的实际 PR #43/#37/#33/#34/#47/#38/#39/#40 heads；精确 SHA 和 owner CI 摘要见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md) 最新小节。
+- M6 #38 新 head `98a4833250434de905611ace71bfe8094554d417` 将独立 E4 receipt 绑定 product-run identity；其 exact-head CI `39920790310` 和 wrapper `39920790439` 均成功。M7 #39 新 head `5a7540b0b041d10e6d562aa528f79a2cfdea987a` 刷新 product E4 provenance 文档；其 exact-head CI `39920944820` 和 wrapper `39920944771` 均成功。M6 修改 receipt schema/verifier，M7 仅修改 provenance 文档；M7 的 M6-conditional helper blob 未变化。
+- PR #36 上一次 hosted composition `39920983998`、CI `39920984006` 和 wrapper `39920984084` 均成功，但工作流当时 checkout 的 M6/M7 仍为旧 SHA `392a7c24697fd8925e3022616aad054922efb38f` / `97bb8de315f2c19edbaa4d6536abc50876fecffd`。这些是旧 pin 的历史结果，不覆盖新 exact-source composition。
+- 本轮仅修改 M9 workflow、M9 composition SHA map 与 M9 报告；新 exact-source roots 下 focused composition 为 16/16，`git diff --check` 通过。提交后由 M0 按五分钟批次统一推送；新 M9 hosted CI 结果待推送触发后记录。
 
 ## M9 精确 head 与契约/风险复核（2026-10-15 00:38 UTC）
 

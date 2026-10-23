@@ -23,8 +23,8 @@ const pinnedSourceShas = {
   M3: 'b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b',
   M4: '721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2',
   M5: '8bb14c6b38dc2cc76bdf915442dc8048d30ff76d',
-  M6: '392a7c24697fd8925e3022616aad054922efb38f',
-  M7: '97bb8de315f2c19edbaa4d6536abc50876fecffd',
+  M6: '98a4833250434de905611ace71bfe8094554d417',
+  M7: '5a7540b0b041d10e6d562aa528f79a2cfdea987a',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
 };
 

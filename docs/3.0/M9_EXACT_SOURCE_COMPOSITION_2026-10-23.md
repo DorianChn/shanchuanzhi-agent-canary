@@ -470,3 +470,24 @@ The exact M3 commit adds an incompatible-provider fail-closed regression; the ex
 - `git diff --check` passed for the M9-owned changes.
 
 These checks cover owner-source, package-boundary, API, and synthetic fixture composition only. M1/M3/M4/M5 product-file security closure remains `NOT_READY / NOT_VERIFIED` per owner evidence; first-party host wiring, real user-file protection, native Shell interception, OS-atomic TOCTOU, clean-VM lifecycle, and external E4 remain unverified. Issue #52 remains OPEN/P0/NOT_VERIFIED. M9 PR #36's hosted workflow has not run against these refreshed pins because this candidate remains local pending the coordinator's push batch.
+
+## Exact remote-head refresh for M6 and M7 — 2026-10-23
+
+This section supersedes the M6/M7 entries in the previous table. The M9 workflow and source map now target the current public PR heads. The other six refs were re-read from their public PRs and are unchanged from the previous exact-head refresh.
+
+| Module / PR | Exact remote owner head | Owner CI evidence at refresh |
+| --- | --- | --- |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` | Existing exact-head CI evidence; no new run in this refresh |
+| M2 / #37 | `db98c7d5d409aa390ef539c96a209d6daba8d793` | Existing exact-head CI evidence; no new run in this refresh |
+| M3 / #33 | `b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b` | Run `39919260164` remains failed in Ubuntu Node 22; owner diagnosis remains outstanding |
+| M4 / #34 | `721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2` | Run `39919282220` passed all 9 checks |
+| M5 / #47 | `8bb14c6b38dc2cc76bdf915442dc8048d30ff76d` | Run `39918480015` succeeded |
+| M6 / #38 | `98a4833250434de905611ace71bfe8094554d417` | Exact-head CI run `39920790310` and wrapper `39920790439` both succeeded |
+| M7 / #39 | `5a7540b0b041d10e6d562aa528f79a2cfdea987a` | Exact-head CI run `39920944820` and wrapper `39920944771` both succeeded |
+| M8 / #40 | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` | Existing exact-head CI evidence; no new run in this refresh |
+
+M6's new head changes the receipt schema and verifier to bind the independent E4 receipt to product-run identity. M7's new head updates only the product-E4 provenance document. The M7 helper blob checked by the conditional M6 review remains unchanged at `89e8a04ed026af146a712517144f560aefe92a0d`; this only preserves that narrow source condition, not a broad M6 acceptance of the current M7 head.
+
+PR #36 hosted workflow run `39920983998` (composition), CI run `39920984006`, and wrapper `39920984084` all succeeded on the earlier M9 head `dddbdd48719b3075587f2dedca6eff76eff3c282`. That workflow checked out the old M6 `392a7c24697fd8925e3022616aad054922efb38f` and M7 `97bb8de315f2c19edbaa4d6536abc50876fecffd`; it is historical old-pin evidence and does not validate the new M6/M7 heads.
+
+The local focused command `node --import tsx --test test/m9-cross-module-composition.test.mjs` passed **16/16** with exact M1–M8 roots from the table above, including the exact M2 npm tarball installed into a disposable consumer. `git diff --check` passed. Only M9 workflow refs/assertions, the M9 test SHA map, and M9 reports changed. A new hosted M9 run is pending the coordinator's next push batch. Package fixtures remain synthetic; M1/M3/M4/M5 product-file closure, real protected reads, OS-atomic TOCTOU, clean-VM lifecycle, and external independent E4 remain `NOT_READY / NOT_VERIFIED`.
