@@ -24,7 +24,7 @@ const pinnedSourceShas = {
   M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
   M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
   M6: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd',
-  M7: 'a3b3b19a9c7df91b6b530c1d083fd641442e8ad5',
+  M7: '59b73949e106e118945acb6cc19c2dc650e2fd63',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
   M8_CANDIDATE: '1abdfe3890c6c263eea667789deb7eab5038e828',
 };
@@ -44,7 +44,7 @@ const currentCandidateProvenance = {
   M3: { ownerHead: '606395eae6173384711afa1aafc5f71614b26ab9', ownerTree: 'a4611ee2994f59eff7d8717806abcb4ae60b7edc', prHead: '606395eae6173384711afa1aafc5f71614b26ab9', prTree: 'a4611ee2994f59eff7d8717806abcb4ae60b7edc' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
-  M7: { ownerHead: '4d66e65d797656a653bde8576cffefb79f2197fa', ownerTree: '115f58c8b6e8ab99258a9481b5c16e65b66a39b5', prHead: 'a3b3b19a9c7df91b6b530c1d083fd641442e8ad5', prTree: '450c2c185b18d9a61e65cc22902887900b8dd77e' },
+  M7: { ownerHead: '4d66e65d797656a653bde8576cffefb79f2197fa', ownerTree: '115f58c8b6e8ab99258a9481b5c16e65b66a39b5', prHead: '59b73949e106e118945acb6cc19c2dc650e2fd63', prTree: 'db27eb420614c1cd41ce2790e7990d5fc00001dd' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
