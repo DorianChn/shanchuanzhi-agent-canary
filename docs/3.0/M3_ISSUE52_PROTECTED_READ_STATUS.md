@@ -314,3 +314,52 @@ effectiveness, or an OS-atomic path-and-operation transaction. M9 exact-source
 composition review remains required; Issue #52 remains `OPEN / P0 / NOT_VERIFIED`.
 The M1 exact review of the shared Hook sanitizer synchronization is still
 pending, and this follow-up does not touch either M1 Hook path.
+
+## M4 status-consumer handoff and exact M2 provider blocker — 2026-10-24
+
+This is the current M3 follow-up for M4's report-only audit in Issue #52
+(report commit `7922309da0f6ea60c02b9bd17e6872aa98d753e`). M4 is a read-only
+consumer of `GET /api/security-center`; it does not call the protected-read
+POST and does not own a Gateway capability. M3 owns the normal Console probe
+and sanitized status route.
+
+M3's fixed probe binds only its process-owned temporary marker to M1 and
+requests the public M2 host adapter and public M5 router in strict OBSERVE
+mode. M3 now requires the M2 capability provider method
+`readFileWithCapability(capability, call, signal?)`, forwards the opaque
+capability/call/signal unchanged, and never routes a strict file read through
+the generic path-only callback. If this method is missing, the normal Console
+probe returns only `UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE`. The GET
+status route stays read-only and CSRF protected; it normalizes a trusted
+provider snapshot, allows only the exact `M2_FIXED_FILE_READS_ONLY` coverage
+label, and defaults to UNKNOWN when the ordinary CLI has no provider. GET does
+not trigger the fixed probe.
+
+Exact blocker: the checked-out M3 package exports `./gateway-adapter`, but its
+current `execution-isolation/gateway-adapter/gateway-adapter.mjs` provider has
+only `resolve` and `verify`; it does not have
+`readFileWithCapability`. M2 PR #91 at
+`92dd42b900b10ce0294e9e3faa7e175d728228b3` is OPEN/Draft; M1's scoped ACCEPT is
+recorded in Issue #91 comment `6374194267`. Its reviewed patch adds that exact
+M5-facing method. It is not present in the checked-out package bytes. M5 PR #94
+at `cca42cd1762f995e92454d55ffa5e63951e39144` is also OPEN/Draft. M3 must wait
+for the owner package surfaces to be integrated and
+then rerun exact-source composition; this change does not modify M1, M2, M4,
+M5, or `package.json`.
+
+M3's M2 contract test uses a clearly synthetic M2 facade implementing the
+reviewed provider shape, a real M1 Gateway, and M5's exported router. It checks
+the safe registered read, side-effect-free snapshot, physical alias rejection,
+and path-replacement rejection before additional provider callbacks, generic
+callbacks, or M1 read evidence. This fixture verifies only M3 forwarding and
+denial behavior; it does not claim current M2 bytes are integrated. The default
+package regression expects UNKNOWN for the checked-out missing provider.
+
+Local Windows verification for this revision: `npm run build` PASS;
+`node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
+PASS (26/26); `git diff --check` PASS.
+
+Issue #52 remains OPEN / P0 / NOT_VERIFIED. M9 must run the exact integrated
+M1/M2/M3/M5 references on Ubuntu and Windows. These M3 tests do not prove a
+real product-host callback, native tool protection, installer effectiveness,
+M4 UI protection, or OS-atomic TOCTOU safety.

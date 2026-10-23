@@ -241,3 +241,70 @@ owner artifact and M2/M5 exports have been integrated into one checkout.
 The existing `npm run pack:check` also passed for the standalone M3 package
 (same 96-file tarball); that smoke check covers the current SDK/CLI surface only
 and does not establish M2/M5 subpath availability.
+
+## M3 normal-CLI Host probe and status boundary — 2026-10-24
+
+This section supersedes earlier claims that the checked-out default Console
+route completes a positive M1/M2/M5 probe. At the start of this follow-up, the
+existing branch was `feature/ac3-agent-onboarding` at local report commit
+`75388fd619da884e072b4c0e51167777e1dd295d`, based on public PR #90 head
+`a49c0f796e4ab487de86089245cc1ea123a92b86`. The saved
+`test/agent-hook.test.ts` delta in `stash@{0}` was left untouched; no shared Hook
+path was edited.
+
+M3's ordinary Console keeps the exact, empty-body,
+`POST /api/security-center/protected-read` action behind origin, CSRF, and
+operator checks. It creates only a process-owned temporary
+`agent-canary-public.txt`, binds that exact registered file to M1, and asks
+M2's public `createSecurityGatewayHostAdapter` to compose M5's public
+`createSecurityToolRouter` with `mode: OBSERVE` and `verifyRealPaths: true`.
+The result is reduced to the fixed scope/status/reason/marker fields. The
+read-only `GET /api/security-center` route invokes only a trusted injected
+snapshot provider, applies the existing allowlist sanitizer, and returns
+UNKNOWN when the normal CLI has no provider. It never runs the POST probe.
+Sanitized M2 status now preserves only the exact coverage value
+`M2_FIXED_FILE_READS_ONLY`; paths, arguments, contents, hook state, and native
+tool protection remain excluded or UNKNOWN.
+
+The M3 adapter wrapper now requires M2's capability provider to expose the
+owner-reviewed `readFileWithCapability(capability, call, signal?)` method.
+It forwards those values unchanged through M5's strict router and counts only
+that held-read provider invocation. It does not adapt or fall back to M2's
+generic `executeRealTool` path callback. If the method is absent, composition
+returns sanitized `UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE` before a
+protected callback or M1 read evidence can occur.
+
+The current M3 checkout does export `./gateway-adapter`, but the exact file
+`execution-isolation/gateway-adapter/gateway-adapter.mjs` in that checkout
+still supplies only `resolve` and `verify` on `fileReadCapability`. The M1-
+reviewed M2 candidate is PR #91 head
+`92dd42b900b10ce0294e9e3faa7e175d728228b3` (OPEN/Draft; M1 scoped ACCEPT in
+Issue #91 comment `6374194267`); its patch adds the
+missing provider method and routes it directly to M1's held-file read. That
+candidate is not integrated into the current M3 package. M5 PR #94 remains
+OPEN/Draft at `cca42cd1762f995e92454d55ffa5e63951e39144`; M3 continues to load
+only the public `./policy-router` subpath and never substitutes its local
+router if that export is unavailable. This is the precise blocker to a
+successful normal-CLI positive probe on the current package snapshot.
+
+The M3 contract fixture supplies the accepted M2 provider shape synthetically,
+then exercises M3's wrapper with a real M1 Gateway and the package's M5 router.
+It verifies a safe registered-read positive, a side-effect-free status query,
+physical junction/symlink alias denial, and same-path identity replacement
+denial before another held-read-provider invocation, generic callback, or M1
+read-evidence event. The separate default-package test confirms the checked-out
+M2 gap stays `UNKNOWN`; the Security Center GET regressions cover CSRF, exact
+route handling, UNKNOWN defaults, and sanitized status filtering. The synthetic
+contract fixture is not evidence that current M2 PR/package bytes are
+integrated.
+
+Local Windows validation for this M3 revision passed: `npm run build`;
+`node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
+(26/26); and `git diff --check`.
+
+Issue #52 remains OPEN / P0 / NOT_VERIFIED. M4 is a read-only status consumer;
+the default normal CLI currently supplies no M2 status provider, so its GET
+status correctly remains UNKNOWN. No real product-host callback, native tool,
+installer, M4 UI protection, or OS-atomic path/open transaction is verified.
+M9 must pin the exact M1/M2/M3/M5 sources and pass its Ubuntu and Windows
+composition checks before this P0 can advance.

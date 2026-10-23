@@ -108,28 +108,27 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     if(provider===null||typeof provider!=='object')throw new TypeError('M2_FILE_READ_CAPABILITY_PROVIDER_MISSING');
     const resolveDescriptor=Object.getOwnPropertyDescriptor(provider,'resolve');
     const verifyDescriptor=Object.getOwnPropertyDescriptor(provider,'verify');
+    const readDescriptor=Object.getOwnPropertyDescriptor(provider,'readFileWithCapability');
     if(!resolveDescriptor||!Object.hasOwn(resolveDescriptor,'value')||typeof resolveDescriptor.value!=='function'||
-      !verifyDescriptor||!Object.hasOwn(verifyDescriptor,'value')||typeof verifyDescriptor.value!=='function'){
-      throw new TypeError('M2_FILE_READ_CAPABILITY_PROVIDER_INVALID');
+      !verifyDescriptor||!Object.hasOwn(verifyDescriptor,'value')||typeof verifyDescriptor.value!=='function'||
+      !readDescriptor||!Object.hasOwn(readDescriptor,'value')||typeof readDescriptor.value!=='function'){
+      throw new TypeError('M2_SECURITY_GATEWAY_FILE_READ_PROVIDER_UNAVAILABLE');
     }
     const resolve=resolveDescriptor.value as (...args:unknown[])=>unknown;
     const verify=verifyDescriptor.value as (...args:unknown[])=>unknown;
-    // M2's public fixed-read facade exposes resolve/verify and a capability-bound
-    // executeRealTool callback. M5's strict router consumes the same capability
-    // through readFileWithCapability, so adapt that method to M2's fixed callback.
-    // M2 rechecks the tool/path/capability and invokes only M1's held-file read.
+    const readFileWithCapability=readDescriptor.value as (...args:unknown[])=>unknown;
+    // M2 owns the capability provider. Require its public held-read method and
+    // delegate the original capability, call, and signal unchanged. Never
+    // substitute M2's generic executeRealTool callback for a missing method.
     const fileReadCapability=Object.freeze({
       resolve:(call:unknown)=>Reflect.apply(resolve,provider,[call]),
       verify:(capability:unknown,call:unknown,operation:unknown)=>Reflect.apply(verify,provider,[capability,call,operation]),
       readFileWithCapability:(capability:unknown,call:unknown,signal?:AbortSignal)=>{
         m5CallbackCount++;
-        return Reflect.apply(execute,undefined,[call,{signal:signal??new AbortController().signal,fileReadCapability:capability}]);
+        return Reflect.apply(readFileWithCapability,provider,[capability,call,signal]);
       },
     });
-    const observed={...values,fileReadCapability,executeRealTool:(call:unknown,context:unknown)=>{
-      m5CallbackCount++;
-      return Reflect.apply(execute,undefined,[call,context]);
-    }};
+    const observed={...values,fileReadCapability};
     return routerFactory(observed as never);
   };
   let facade:PublicM2Facade|undefined;
@@ -167,6 +166,8 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     const code=error instanceof Error?error.message:'';
     const reason=code==='M2_SECURITY_GATEWAY_CAPABILITY_UNAVAILABLE'||code==='M2_SECURITY_GATEWAY_HANDLE_INVALID'
       ?'M1_HELD_FILE_CAPABILITY_UNAVAILABLE'
+      :code==='M2_SECURITY_GATEWAY_FILE_READ_PROVIDER_UNAVAILABLE'
+        ?'M2_CAPABILITY_PROVIDER_UNAVAILABLE'
       :'M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE';
     return unavailable(reason);
   }

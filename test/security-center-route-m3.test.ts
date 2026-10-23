@@ -328,6 +328,7 @@ test('security-center route preserves scoped provider status and filters unsafe 
     policy: { protectionStatus: 'PROTECTED', name: 'M2_FIXED_FILE_READS' },
     protectedToolCount: 1,
     unprotectedExecutionPaths: ['NATIVE_SHELL'],
+    coverage: 'M2_FIXED_FILE_READS_ONLY',
     agents: [
       { agent: 'codex', detected: true, connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
       { agent: 'claude', connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
@@ -374,6 +375,7 @@ test('security-center route keeps missing, invalid, or failed provider data UNKN
     async () => { throw new Error('private provider failure'); },
     async () => undefined,
     async () => ({ protectionStatus: 'PROTECTED', gateway: { protectionStatus: 'bad-status' } }),
+    async () => ({ protectionStatus: 'UNKNOWN', coverage: 'ALL_TOOLS', privatePath: 'C:\\Users\\alice\\secret.txt' }),
   ]) {
     const console = await startAIConsole({ port: 0, securityCenterStatusProvider: provider });
     try {
@@ -425,7 +427,7 @@ test('security-center route ignores provider getters and does not overstate conf
 });
 
 function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow',missingM2=false,missingEvidence=false){
-  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;gatewayEvidence:number;unregisteredPaths:string[];workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,gatewayEvidence:0,unregisteredPaths:[]};
+  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;heldReadCallbacks:number;gatewayEvidence:number;unregisteredPaths:string[];workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,heldReadCallbacks:0,gatewayEvidence:0,unregisteredPaths:[]};
   const capability=Object.freeze(Object.create(null));
   const loader=async()=>{
     state.dependencyLoads++;
@@ -459,14 +461,21 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
       loadM2Facade:async()=>{
         if(missingM2)throw new Error('private M2 dependency failure');
         return{createSecurityGatewayHostAdapter(options:Record<string,any>){
+        const provider=Object.freeze({
+          resolve:(call:unknown)=>options.gateway.verifyFileReadCapability(capability,call,'file-read')?capability:undefined,
+          verify:(value:unknown,call:unknown,operation:string)=>value===capability&&operation==='file-read'&&options.gateway.verifyFileReadCapability(value,call,operation),
+          async readFileWithCapability(value:unknown,call:unknown,signal?:AbortSignal){
+            assert.equal(value,capability);assert.equal(signal?.aborted,false);state.heldReadCallbacks++;
+            return options.gateway.readFileWithCapability(value,call,'file-read',signal);
+          },
+        });
         const router=options.createSecurityToolRouter({
           ...options.routerOptions,
           tools:{protected_read:{operation:'file-read',pathArg:'path'}},
-          fileReadCapability:{resolve:(call:unknown)=>options.gateway.verifyFileReadCapability(capability,call,'file-read')?capability:undefined,verify:(value:unknown,call:unknown)=>value===capability&&options.gateway.verifyFileReadCapability(value,call,'file-read')},
-          executeRealTool:async(call:unknown,context:{signal:AbortSignal})=>{
-            assert.equal(context.signal.aborted,false);
+          fileReadCapability:provider,
+          executeRealTool:async()=>{
             state.routerCallbacks++;
-            return gateway.readFileWithCapability(capability,call,'file-read');
+            throw new Error('strict held reads must not use the generic path callback');
           },
         });
         return{dispatch:(call:unknown)=>{
@@ -478,9 +487,13 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
       }};
       },
       createSecurityToolRouter(options:Record<string,any>){
-        const gateway=options.executeRealTool;
+        const provider=options.fileReadCapability;
         return{
-          async dispatch(call:unknown){return gateway(call,{signal:new AbortController().signal,fileReadCapability:capability});},
+          async dispatch(call:unknown){
+            const resolved=provider.resolve(call);
+            if(!resolved||provider.verify(resolved,call,'file-read')!==true)throw new TypeError('M5_HELD_FILE_CAPABILITY_INVALID');
+            return provider.readFileWithCapability(resolved,call,new AbortController().signal);
+          },
           pendingApprovals(){return[];},
           inspectPolicy(){return{action:'ALLOW',mode:'OBSERVE'};},
         };
@@ -544,14 +557,15 @@ test('protected-read action reports PASS only after the fixed positive, alias de
     assert.equal(dependencies.state.unregisteredPaths[0],'./agent-canary-public.txt');
     assert.ok(dependencies.state.unregisteredPaths[1].startsWith('..'+path.sep));
     assert.ok(dependencies.state.unregisteredPaths[1].includes('agent-canary-console-probe-alias-'));
-    assert.equal(dependencies.state.routerCallbacks,1,'only the fixed positive control may reach M5');
+    assert.equal(dependencies.state.heldReadCallbacks,1,'only the fixed positive control may reach the M2 held-read provider');
+    assert.equal(dependencies.state.routerCallbacks,0,'strict file reads must bypass the generic path-only callback');
     assert.equal(dependencies.state.gatewayEvidence,1,'alias and same-path replacement denials must not add M1 read evidence');
     assert.equal(dependencies.state.gatewayCloses,1);
     assert.equal(fs.existsSync(dependencies.state.workspaceRoot??''),false,'the exact temporary probe directory is removed after the held Gateway closes');
   }finally{await console.close();}
 });
 
-test('default first-party Console protected-read uses the public M1/M2/M5 composition',async()=>{
+test('default first-party Console protected-read fails closed when the checked-out M2 provider lacks held-read support',async()=>{
   const prefix='agent-canary-console-probe-';
   const before=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
   if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
@@ -571,7 +585,7 @@ test('default first-party Console protected-read uses the public M1/M2/M5 compos
     assert.equal(response.status,200);
     const result=await response.json();
     if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
-      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true});
+      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'M2_CAPABILITY_PROVIDER_UNAVAILABLE',markerMatched:false},'the checked-out public M2 provider lacks the M5 held-read method; M3 must not fall back to executeRealTool');
     }else{
       assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
     }
