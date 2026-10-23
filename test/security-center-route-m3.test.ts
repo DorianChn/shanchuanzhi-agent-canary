@@ -1,6 +1,6 @@
 import { after, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -565,32 +565,54 @@ test('protected-read action reports PASS only after the fixed positive, alias de
   }finally{await console.close();}
 });
 
-test('default first-party Console protected-read fails closed when the checked-out M2 provider lacks held-read support',async()=>{
+test('default first-party Console CLI reads through the M2 held-file capability and M5 router',async(t)=>{
   const prefix='agent-canary-console-probe-';
-  const before=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
-  if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
-    const [sdk,adapter,policy]=await Promise.all([
-      import('@dorianchn/agent-canary/sdk'),
-      import('@dorianchn/agent-canary/gateway-adapter'),
-      import('@dorianchn/agent-canary/policy-router'),
-    ]);
-    assert.equal(typeof sdk.createTrustedExecutionGateway,'function');
-    assert.equal(typeof adapter.createSecurityGatewayHostAdapter,'function');
-    assert.equal(typeof policy.createSecurityToolRouter,'function');
-  }
-  const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE'});
+  assert.equal(hasPublicM2GatewayAdapter,true,'the M2 facade must be resolved through its public package entry');
+  assert.equal(hasPublicM5PolicyRouter,true,'the M5 router must be resolved through its public package entry');
+  const [sdk,adapter,policy]=await Promise.all([
+    import('@dorianchn/agent-canary/sdk'),
+    import('@dorianchn/agent-canary/gateway-adapter'),
+    import('@dorianchn/agent-canary/policy-router'),
+  ]);
+  assert.equal(typeof sdk.createTrustedExecutionGateway,'function');
+  assert.equal(typeof adapter.createSecurityGatewayHostAdapter,'function');
+  assert.equal(typeof policy.createSecurityToolRouter,'function');
+  const childTempRoot=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-cli-temp-'));
+  const before=new Set(fs.readdirSync(childTempRoot).filter(name=>name.startsWith(prefix)));
+  const child=spawn(process.execPath,[path.resolve('dist/index.js'),'ai','console','--port','0'],{
+    cwd:process.cwd(),
+    env:{...process.env,AGENT_CANARY_OPERATOR_CODE:'OPERATOR_FIXTURE',AGENT_CANARY_HOME:path.join(childTempRoot,'home'),TMP:childTempRoot,TEMP:childTempRoot,TMPDIR:childTempRoot},
+    stdio:['ignore','pipe','pipe'],
+    windowsHide:true,
+  });
+  let stdout='',stderr='';
+  child.stdout.setEncoding('utf8').on('data',(chunk:string)=>stdout+=chunk);
+  child.stderr.setEncoding('utf8').on('data',(chunk:string)=>stderr+=chunk);
+  const closed=new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>child.once('close',(code,signal)=>resolve({code,signal})));
+  t.after(async()=>{
+    if(child.exitCode===null&&child.signalCode===null)child.kill();
+    await Promise.race([closed,new Promise(resolve=>setTimeout(resolve,5_000))]);
+    fs.rmSync(childTempRoot,{recursive:true,force:true});
+  });
+  const consoleUrl=await new Promise<string>((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(new Error('default Console CLI did not report its loopback URL: '+stderr.slice(-1000))),10_000);
+    child.once('error',error=>{clearTimeout(timer);reject(error);});
+    child.once('close',exit=>{clearTimeout(timer);reject(new Error('default Console CLI exited before startup: '+JSON.stringify(exit)+' '+stderr.slice(-1000)));});
+    child.stdout.on('data',()=>{
+      const match=stdout.match(/Agent Canary 中文控制台: (http:\/\/127\.0\.0\.1:\d+)/);
+      if(match){clearTimeout(timer);resolve(match[1]);}
+    });
+  });
   try{
-    const csrf=await csrfFor(console.url);
-    const response=await fetch(console.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
+    const csrf=await csrfFor(consoleUrl);
+    const response=await fetch(consoleUrl+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
     assert.equal(response.status,200);
-    const result=await response.json();
-    if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
-      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false},'the checked-out public M2 provider lacks the M5 held-read method; M3 must preserve its fixed response enum and must not fall back to executeRealTool');
-    }else{
-      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
-    }
-  }finally{await console.close();}
-  const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
+    assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true},'PASS requires the M1 held-file positive read plus alias and same-path replacement denials through M2/M5');
+  }finally{
+    if(child.exitCode===null&&child.signalCode===null)child.kill();
+    await Promise.race([closed,new Promise(resolve=>setTimeout(resolve,5_000))]);
+  }
+  const after=fs.readdirSync(childTempRoot).filter(name=>name.startsWith(prefix));
   assert.deepEqual(after.filter(name=>!before.has(name)),[],'the first-party fixed probe and its junction alias must be cleaned up');
 });
 

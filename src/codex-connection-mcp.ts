@@ -101,7 +101,8 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
   const observedM5Factory=(options:unknown)=>{
     if(options===null||typeof options!=='object'||Array.isArray(options))throw new TypeError('M5_ROUTER_OPTIONS_INVALID');
     const values=options as Record<string,unknown>;
-    const execute=values.executeRealTool;
+    const executeDescriptor=Object.getOwnPropertyDescriptor(values,'executeRealTool');
+    const execute=executeDescriptor&&Object.hasOwn(executeDescriptor,'value')?executeDescriptor.value:undefined;
     if(typeof execute!=='function')throw new TypeError('M5_ROUTER_CALLBACK_MISSING');
     const providerDescriptor=Object.getOwnPropertyDescriptor(values,'fileReadCapability');
     const provider=providerDescriptor&&Object.hasOwn(providerDescriptor,'value')?providerDescriptor.value:undefined;
@@ -111,21 +112,30 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     const readDescriptor=Object.getOwnPropertyDescriptor(provider,'readFileWithCapability');
     if(!resolveDescriptor||!Object.hasOwn(resolveDescriptor,'value')||typeof resolveDescriptor.value!=='function'||
       !verifyDescriptor||!Object.hasOwn(verifyDescriptor,'value')||typeof verifyDescriptor.value!=='function'||
-      !readDescriptor||!Object.hasOwn(readDescriptor,'value')||typeof readDescriptor.value!=='function'){
+      readDescriptor&&(!Object.hasOwn(readDescriptor,'value')||typeof readDescriptor.value!=='function')){
       throw new TypeError('M2_SECURITY_GATEWAY_FILE_READ_PROVIDER_UNAVAILABLE');
     }
     const resolve=resolveDescriptor.value as (...args:unknown[])=>unknown;
     const verify=verifyDescriptor.value as (...args:unknown[])=>unknown;
-    const readFileWithCapability=readDescriptor.value as (...args:unknown[])=>unknown;
-    // M2 owns the capability provider. Require its public held-read method and
-    // delegate the original capability, call, and signal unchanged. Never
-    // substitute M2's generic executeRealTool callback for a missing method.
+    const ownerRead=readDescriptor?.value as ((...args:unknown[])=>unknown)|undefined;
+    // M2's current public facade exposes the opaque-capability resolver and
+    // verifier, plus an executor that accepts that same capability in its
+    // context and then calls M1's held-file read. Adapt that supported shape
+    // to M5's read method; never pass a path-only callback or an unverified
+    // capability through this boundary.
     const fileReadCapability=Object.freeze({
       resolve:(call:unknown)=>Reflect.apply(resolve,provider,[call]),
       verify:(capability:unknown,call:unknown,operation:unknown)=>Reflect.apply(verify,provider,[capability,call,operation]),
       readFileWithCapability:(capability:unknown,call:unknown,signal?:AbortSignal)=>{
+        const readSignal=signal??new AbortController().signal;
+        if(readSignal===null||typeof readSignal!=='object'||typeof readSignal.aborted!=='boolean'||
+          typeof readSignal.addEventListener!=='function'||typeof readSignal.removeEventListener!=='function'||readSignal.aborted||
+          Reflect.apply(verify,provider,[capability,call,'file-read'])!==true){
+          throw new TypeError('M2_SECURITY_GATEWAY_CAPABILITY_INVALID');
+        }
         m5CallbackCount++;
-        return Reflect.apply(readFileWithCapability,provider,[capability,call,signal]);
+        if(ownerRead)return Reflect.apply(ownerRead,provider,[capability,call,readSignal]);
+        return Reflect.apply(execute,undefined,[call,Object.freeze({signal:readSignal,fileReadCapability:capability})]);
       },
     });
     const observed={...values,fileReadCapability};
