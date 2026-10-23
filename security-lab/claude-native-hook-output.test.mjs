@@ -28,11 +28,13 @@ for(const decision of ['allow','deny','ask']){
     command:`echo ${sentinel}`,
     path:`/workspace/${sentinel}`,
     file_path:`C:\\workspace\\${sentinel}.txt`,
+    content:`file contents ${sentinel}`,
    },
   };
   assert.ok(input.tool_input.command.includes(sentinel));
   assert.ok(input.tool_input.path.includes(sentinel));
   assert.ok(input.tool_input.file_path.includes(sentinel));
+  assert.ok(input.tool_input.content.includes(sentinel));
   fs.writeFileSync(modulePath,`export async function decideAgentHook(_client,_workspaceRoot,_stateDirectory,input){
  const caller=input.tool_input.command;
  return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:'Agent Canary: '+caller,callerData:input.tool_input.path},debug:input.path};
