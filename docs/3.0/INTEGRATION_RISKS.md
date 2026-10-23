@@ -1172,3 +1172,17 @@ The M9 fixture proves a synthetic protected read through the packed public facad
 - The 12:40–13:00 M3+M5 slot ended with no owner-authored response/head movement. Exactly M1+M3 are active 13:00–13:20 to confirm held identity and implement the route.
 - M9 PR #36 exact head `7c8d808` has successful Ubuntu/Windows composition, product CI 9/9, and wrapper 2/2. Its PR body still contains stale claims and needs an owner refresh before final integration review.
 - P1 #69 (M2 package smoke), #70 (Hono GHSA), #71 (M3 Windows teardown), and #72 (M1 exact Hook review) remain queued behind P0. #53 remains closed only for its packaged Hook logging scope.
+
+
+## 2026-10-23 05:36 UTC bounded risk update
+
+- **#75 P1 CI availability — mitigation verified, issue closed:** exact M8 head passes sponsor-smoke, full CI and wrapper. Deterministic EADDRINUSE injection verifies the failure mode and retry. The hosted run's original port owner is unknown; the probe-close/child-bind race is plausible, not proven as the only cause. No security acceptance is inferred.
+- **#54 P1 Windows Node 22 provider retry — OPEN / UNKNOWN:** exact current head and one targeted run pass, but the historical hosted failure lacks request-count/error-code evidence. M9 owns test diagnostics; provider/transport code ownership remains open.
+- **#70 P1 Hono GHSA — OPEN:** current PR #67 exact CI including package-smoke is green and bumps transitive Hono to 4.13.13. Default branch remains on 4.13.7, which falls in the official advisory affected range `>=4.12.4, <4.13.11`; patched version is 4.13.11. Static search found no `serveStatic` callsite but is not proof of non-reachability. Do not merge; issue remains until default-branch/advisory state is rechecked. Source: https://github.com/advisories/GHSA-5r4p-p66f-jhc7.
+- **#45 P1 native Codex Shell — OPEN / UNPROTECTED:** M2 is reviewing the current host boundary and user-facing claims; no new native model run is authorized or reported. Keep protection status explicit.
+
+## 2026-10-23 05:42 UTC integration gate delta
+
+- M2 #45 remains UNPROTECTED / NOT_VERIFIED until native Shell OS enforcement is verified; the committed text update is disclosure only.
+- M9 #49 owner-contract parity is corrected locally, but integration remains pending publication and current-head CI. The full composition result is not transferable across mismatched M2/M8 pins.
+- Push batches are limited to one every 5 minutes; quota below 5% or unreadable stops work before any new push.

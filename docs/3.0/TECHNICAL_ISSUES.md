@@ -1651,3 +1651,20 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#72 P1:** OPEN / queued M1 for exact-blob review of M3 Hook changes.
 - **00:34 UTC checkpoint:** M9 PR #36 now publishes exact-source refresh head `81dea34a24d3dd8c080206367fced54466987c26`, with M7 `f20e307` and M8 `854de50` pins. Exact detached composition passed locally, but hosted Ubuntu/Windows exact-source runs are pending; Issue #74 remains OPEN until those checks complete.
 - **00:38 UTC resolution:** current M9 head `81dea34a24d3dd8c080206367fced54466987c26` passed hosted exact-source composition on Ubuntu and Windows (run `39878928119`), all exact PR checks (`39878928120`), and wrapper regressions on both platforms (`39878928107`). Acceptance is met; GitHub Issue #74 was closed at 00:38 UTC. Product-host/TOCTOU #52 and independent E4 #57 remain open and are not covered by this closure.
+
+
+## M0 exact issue and owner status — 2026-10-23 05:36 UTC
+
+- **#75 P1 — Sponsor smoke EADDRINUSE:** CLOSED after M8 added deterministic occupied-first-port regression coverage, bounded fresh-port retry/readiness synchronization, and exact-head CI `39905824836` plus Windows wrapper `39905824815` passed. Child bind collision is confirmed; the original competing process remains unknown.
+- **#62 P1 — expired-approval Gateway CI flake:** OPEN. M1's controlled-clock regression passed 1/1 targeted; historical CI failed before EXPIRED / callback=0 assertions. No bypass evidence; root cause remains UNKNOWN.
+- **#54 P1 — Windows Node 22 AI 503 retry:** OPEN. M9's current exact PR checks passed 13/13; one focused loopback 503-then-success run passed with exactly two requests. The old hosted run has no request count/error code, so root cause is UNKNOWN. M9 owns test diagnostics; provider/transport source has no assigned owner.
+- **#70 P1 — Hono advisory/package manifest:** OPEN. M7's exact-head PR #67 audit shows the existing patched-version candidate and green package-smoke, but default branch remains on vulnerable Hono 4.13.7; advisory/current default branch stays unresolved until exact state is reread after remediation. No merge requested/performed.
+- **#45 P1 — native Codex Shell boundary:** OPEN; active M2 audit of current documentation and capability status. No native model run has started.
+- **#49 P2 — M9 API contract copy:** OPEN; active M9 owner review/sync. M1 remains owner of its Gateway contract.
+- **#52 P0 remains NOT_VERIFIED; #57 independent E4 remains NOT_VERIFIED; #41 remains HOLD.** VMware/real-model/installer slot is unreserved.
+
+## 2026-10-23 05:42 UTC push-gate delta
+
+- **#45 P1:** M2's bounded documentation commit is ready for the next batch. Hook is not treated as native Shell protection; exact-head hosted checks are pending.
+- **#49 P2:** M9 has synchronized both owned contract copies with their canonical owner blobs. Issue remains open pending push and exact-head hosted checks.
+- Push cadence is now one shared batch at least 5 minutes apart, with quota / PR #24 / remote-ref preflight each time.

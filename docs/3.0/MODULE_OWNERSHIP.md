@@ -771,3 +771,19 @@ M6 exact head `15e1663eac9c3932165fca9b39587115345f289c` remains unchanged; its 
 M9 PR #36 exact head `219d74e17dab061e2e97fa31c7c27c00fa633c34` passed CI run `39868531791` (9/9), wrapper run `39868531597` (2/2), and exact-source composition run `39868531673` (Ubuntu/Windows 2/2). M0 PR #30 exact head `0953bcfa2dc1968b09979dc88769ad46b85511d9` passed coordination run `39868523446` (1/1); product CI `39868523458` has 7 success, 1 Windows Node 20 fixture failure, and 1 skipped package-smoke. M1 triage reproduced the inherited 1-second marker timing race in old blob `1ecb3ee`; current owner PR #43 uses async marker polling at blob `82ca466`. No module code changed. Issues #32 and #52 remain open in their respective owner scopes.
 
 M0 documentation-only successor head `fa8b83cd69eaf66c294d9f011c1a618ab7bd3312` passed exact product CI run `39869440716` 9/9 with the same inherited fixture blob. Preserve the earlier failure record as an intermittent timing regression; #32 remains open pending propagation of the owner-authored robust test to affected branch snapshots.
+
+
+## M0 ownership and exact-head delta — 2026-10-23 05:36 UTC
+
+- M8's bounded #75 assignment completed on existing PR #40 head `da23d4614fbb23b73ad14d58751b82c067e7827a`. The only assigned files remain `sponsor/smoke.mjs` and `sponsor/smoke-isolation.test.mjs`; Sponsor payment/state logic ownership did not move. Exact CI and wrapper passed; #75 is closed with uncertainty about the original socket owner retained.
+- M9 PR #36 exact head is `6dd9dc406655ab2881023454f3df453eef0a8cf9`, with product, wrapper and Ubuntu/Windows composition checks green. For #54, M9 owns `test/ai.test.ts` retry diagnostics only; `src/ai/provider.ts` and `src/ai/transport.ts` have no module owner. Do not modify those source paths until M0 names an owner. The #54 historical trigger remains UNKNOWN.
+- M9 is assigned P2 #49 to reconcile only its owned canonical contract copy against the current M0 contract and owner-authored M1 Gateway contract; do not edit M1 files or change public APIs under this task.
+- M7's bounded #70 audit is complete. It did not change PR #67, `package-lock.json`, or `SOURCE_MANIFEST.json`. PR #67 exact head `cda74e9860f1d96d7404871378c0c737535fa77e` and CI `39827204460` are green; any future manifest edits need an explicit path-owner assignment, as these paths are not in M7's standing ownership table. The existing Dependabot branch remains unchanged and unmerged.
+- M2 owns active P1 #45 boundary/documentation audit on existing PR #37; no model/VM/installer test has started. Two active module slots are M2/#45 and M9/#49. Exclusive test slot remains unreserved.
+- PR #24 stays OPEN/Draft at unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; no branch, baseline, worktree, or runtime-interface ownership changed.
+
+## 05:42 UTC assignment and pending-hosted-check delta
+
+- M2 #45 commit 3a60813e90d470cb2e5d609444aba0ffc240411c is limited to execution-isolation/codex/codex-hooks.fragment.json; it documents the currently unprotected native Shell boundary. No native model run or host-enforcement proof is claimed.
+- M9 #49 commits e6155c6 and 581b822 update only the M9-owned root API contract and nested M1 contract copy. M1 remains owner of its source contract; M9's copy is synchronized by exact blob.
+- Both are pending push and exact-head hosted verification. No module ownership changed.
