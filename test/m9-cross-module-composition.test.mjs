@@ -9,7 +9,7 @@ import { pathToFileURL } from 'node:url';
 import { after, test } from 'node:test';
 
 // Synthetic fixture-level API composition only; this does not prove a production host hookup.
-const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8'].map((moduleName) => {
+const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M8_CANDIDATE'].map((moduleName) => {
   const root = process.env[`${moduleName}_ROOT`];
   const sha = process.env[`${moduleName}_SHA`];
   assert.ok(root, `${moduleName}_ROOT must point to its independent checkout`);
@@ -26,6 +26,7 @@ const pinnedSourceShas = {
   M6: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd',
   M7: '8689d8fbbcdded4735d0e5aa328805f398a2862a',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
+  M8_CANDIDATE: '1abdfe3890c6c263eea667789deb7eab5038e828',
 };
 
 const mergedSourceProvenance = {
@@ -354,6 +355,91 @@ test('Issue #88 P0: M1 sanitization control and exact M2 source Hook keep reason
   }
 });
 
+test('M3 exact-source Hook still matches the current M1 canonical sanitized wrapper', () => {
+  assert.equal(
+    readTrackedBlobId('M3', 'security-lab/claude-native-hook.mjs'),
+    readTrackedBlobId('M1', 'security-lab/claude-native-hook.mjs'),
+    'M3 Hook must match the current M1 canonical source after the M1 redaction update',
+  );
+});
+
+test('Issue #89 P0: exact M3 Hook source keeps reason canaries out of output channels', () => {
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-issue-89-m3-hook-reason-'));
+  try {
+    const workspaceRoot = path.join(fixture, 'workspace');
+    const stateDirectory = path.join(fixture, 'state');
+    fs.mkdirSync(workspaceRoot, { recursive: true });
+    fs.mkdirSync(stateDirectory, { recursive: true });
+    const decisions = ['allow', 'deny', 'ask'];
+    const leakedCanaries = [];
+    const hookSources = [
+      { moduleName: 'M1', expectedBlob: 'b7ed4aba70a597f4f63a05decc6de1b32f67372e' },
+      { moduleName: 'M3', expectedBlob: 'd6f93249306b7966259cab463dd39475728ef338' },
+    ];
+
+    for (const { moduleName, expectedBlob } of hookSources) {
+      const sourceHook = path.join(sourceRoots[moduleName].root, 'security-lab', 'claude-native-hook.mjs');
+      const isolatedHookCopy = path.join(fixture, moduleName.toLowerCase() + '-claude-native-hook.mjs');
+      assert.equal(
+        readBlobIdAt(moduleName, pinnedSourceShas[moduleName], 'security-lab/claude-native-hook.mjs'),
+        expectedBlob,
+        'Issue #89 must execute the exact ' + moduleName + ' merge-source Hook blob',
+      );
+      fs.copyFileSync(sourceHook, isolatedHookCopy);
+      assert.deepEqual(fs.readFileSync(isolatedHookCopy), fs.readFileSync(sourceHook));
+
+      for (const decision of decisions) {
+        const canary = 'M9_ISSUE_89_P0_' + moduleName + '_SYNTHETIC_REASON_' + decision.toUpperCase();
+        const decisionModule = path.join(fixture, moduleName.toLowerCase() + '-decision-' + decision + '.mjs');
+        const logFile = path.join(fixture, moduleName.toLowerCase() + '-decision-' + decision + '.jsonl');
+        const decisionSource = {
+          hookSpecificOutput: {
+            hookEventName: 'PreToolUse',
+            permissionDecision: decision,
+            permissionDecisionReason: canary,
+          },
+        };
+        fs.writeFileSync(
+          decisionModule,
+          'export async function decideAgentHook(){return ' + JSON.stringify(decisionSource) + '}\n',
+        );
+        const result = spawnSync(process.execPath, [isolatedHookCopy, decisionModule, workspaceRoot, stateDirectory, logFile], {
+          input: JSON.stringify({
+            session_id: 'm9-issue-89-' + moduleName.toLowerCase() + '-' + decision,
+            tool_name: 'Bash',
+            tool_input: { command: 'synthetic fixture command' },
+          }),
+          encoding: 'utf8',
+          windowsHide: true,
+          timeout: 5000,
+          maxBuffer: 128 * 1024,
+        });
+        assert.equal(result.error, undefined, result.error?.message);
+        assert.equal(result.status, 0, (result.stdout ?? '') + '\n' + (result.stderr ?? ''));
+        const response = JSON.parse(result.stdout.trim());
+        assert.equal(response.hookSpecificOutput.permissionDecision, decision, moduleName + ' decision must remain unchanged');
+
+        const logText = fs.existsSync(logFile) ? fs.readFileSync(logFile, 'utf8') : '';
+        for (const [channel, text] of [
+          ['stdout', result.stdout ?? ''],
+          ['stderr', result.stderr ?? ''],
+          ['JSONL', logText],
+        ]) {
+          if (text.includes(canary)) leakedCanaries.push(moduleName + '/' + decision + '/' + channel + '/' + canary);
+        }
+      }
+    }
+
+    assert.deepEqual(
+      leakedCanaries,
+      [],
+      'Issue #89 P0: synthetic reason markers must be absent from stdout, stderr, and JSONL; observed ' + leakedCanaries.join(', '),
+    );
+  } finally {
+    fs.rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
 test('exact M2 merge tree pins M7 package policy while current M7 merge adds reliability checks', () => {
   const workflow = fs.readFileSync(path.join(sourceRoots.M2.root, '.github', 'workflows', 'ci.yml'), 'utf8');
   const workflowRef = workflow.match(/uses:\s*DorianChn\/shanchuanzhi-agent-canary\/\.github\/workflows\/m7-package-smoke\.yml@([a-f0-9]{40})/);
@@ -383,6 +469,51 @@ test('M8 Hook adapter matches its exact M1-approved source blob', () => {
     readTrackedBlobId('M8', 'security-lab/claude-native-hook.mjs'),
     '544b5eb76633469b7185c4ea77d85d7f1754393e',
     'M8 must use the exact Hook adapter blob accepted by M1',
+  );
+});
+
+test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and sanitizes Hook output', () => {
+  const candidateSha = pinnedSourceShas.M8_CANDIDATE;
+  assertAncestor('M8_CANDIDATE', m6M8ReviewedSourceSha, candidateSha, 'M6-reviewed M8 source in the current PR #40 candidate');
+  assert.equal(
+    readBlobIdAt('M8_CANDIDATE', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'),
+    m8ReviewedE4TestBlob,
+    'the original M6-reviewed M8 lifecycle test blob must remain identifiable',
+  );
+  const candidateLifecycleBlob = readTrackedBlobId('M8_CANDIDATE', 'test/auto-e4.test.mjs');
+  assert.equal(
+    candidateLifecycleBlob,
+    '607c1c065c66caa792c62f2cdd45d6c6223f3d24',
+    'the current M8 candidate lifecycle-file change must stay tied to the exact PR #40 head',
+  );
+  assert.notEqual(
+    candidateLifecycleBlob,
+    m8ReviewedE4TestBlob,
+    'the changed M6-owned lifecycle file is not covered by the historical exact-blob review',
+  );
+  const candidateLifecycleText = fs.readFileSync(path.join(sourceRoots.M8_CANDIDATE.root, 'test/auto-e4.test.mjs'), 'utf8');
+  assert.doesNotMatch(
+    candidateLifecycleText,
+    /test\('co-located E4 payload wrapper logs only allowlisted metadata'/,
+    'the removed M6-reviewed test must remain visible as a pending owner disposition',
+  );
+
+  const m1HookBlob = readTrackedBlobId('M1', 'security-lab/claude-native-hook.mjs');
+  assert.equal(m1HookBlob, 'b7ed4aba70a597f4f63a05decc6de1b32f67372e', 'M1 canonical Hook blob must remain exact');
+  assert.equal(
+    readTrackedBlobId('M8_CANDIDATE', 'security-lab/claude-native-hook.mjs'),
+    m1HookBlob,
+    'the current M8 Hook must match the current M1 canonical source',
+  );
+  assert.equal(
+    readTrackedBlobId('M8_CANDIDATE', 'security-lab/claude-native-hook-output.test.mjs'),
+    '186fa2d163f7118d10f01abdac91a0b5e657359b',
+    'M9 must execute the exact current M8 output-redaction test blob',
+  );
+  assert.equal(
+    readTrackedBlobId('M8_CANDIDATE', 'packaging/windows/build-contract.mjs'),
+    readTrackedBlobId('M7', 'packaging/windows/build-contract.mjs'),
+    'the current M8 candidate must preserve the exact M7-owned Windows build contract',
   );
 });
 

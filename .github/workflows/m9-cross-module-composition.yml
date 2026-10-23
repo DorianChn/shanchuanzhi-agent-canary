@@ -87,6 +87,14 @@ jobs:
           path: module-sources/m8
           fetch-depth: 0
 
+      - name: Checkout exact current M8 PR #40 candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: DorianChn/shanchuanzhi-agent-canary
+          ref: 1abdfe3890c6c263eea667789deb7eab5038e828
+          path: module-sources/m8-candidate
+          fetch-depth: 0
+
       - name: Fetch merged PR owner heads for merge-tree provenance
         shell: bash
         run: |
@@ -184,6 +192,15 @@ jobs:
             echo 'The exact M8 test source accepted by M6 is not an ancestor of the current M8 candidate.' >&2
             exit 1
           fi
+          m8_candidate_sha="$(git -C module-sources/m8-candidate rev-parse --verify HEAD)"
+          if [ "$m8_candidate_sha" != '1abdfe3890c6c263eea667789deb7eab5038e828' ]; then
+            echo "M8 candidate checkout SHA mismatch: expected 1abdfe3890c6c263eea667789deb7eab5038e828, got $m8_candidate_sha" >&2
+            exit 1
+          fi
+          if ! git -C module-sources/m8-candidate merge-base --is-ancestor "$m6_m8_review_target_sha" "$m8_candidate_sha"; then
+            echo 'The exact M6-reviewed M8 source is not an ancestor of the current M8 PR candidate.' >&2
+            exit 1
+          fi
           {
             printf 'M9_SHA=%s\n' "$m9_sha"
             printf 'M1_SHA=%s\n' "$m1_sha"
@@ -222,12 +239,14 @@ jobs:
             printf 'M6_M8_REVIEW_SCOPE=%s\n' "$m6_m8_review_scope"
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
+            printf 'M8_CANDIDATE_SHA=%s\n' "$m8_candidate_sha"
           } >> "$GITHUB_ENV"
           printf 'M1-to-M3 reviewed Hook source: %s (historical M1 review SHA %s; current M1 %s; reviewed M3 commit %s; current M3 source %s; changed reviewed files:%s; historical blobs verified; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_sha" "$m1_m3_review_target_sha" "$m3_sha" "${m1_m3_review_changed_files:- none}" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'Exact source SHAs: M9=%s M1=%s M2=%s M3=%s M4=%s M5=%s M6=%s M7=%s M8=%s\n' "$m9_sha" "$m1_sha" "$m2_sha" "$m3_sha" "$m4_sha" "$m5_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M2 Issue #52: %s (historical M1 review SHA %s; current M1 %s; exact reviewed M2 %s; current M2 %s; comment %s; scope %s; boundary %s)\n' "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_sha" "$m1_m2_review_target_sha" "$m2_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M3 Hook disposition: %s (reviewed M3 %s; current M3 %s; changed reviewed files:%s; historical blobs verified; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_target_sha" "$m3_sha" "${m1_m3_review_changed_files:- none}" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M6-to-M8 scoped disposition: %s (reviewed M6 contract %s; current M6 %s; exact reviewed M8 %s; current M8 %s; Issue #59 comment %s)\n' "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_sha" "$m6_m8_review_target_sha" "$m8_sha" "$m6_m8_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'Current M8 PR candidate: %s (exact source pinned for M9 checks; M1 exact-file review and M6 lifecycle-file disposition remain pending)\n' "$m8_candidate_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -359,6 +378,10 @@ jobs:
           node --test --test-name-pattern="prepare build command carries the same Community ZIP and exact Hook source commit in documented argument order|Windows Hook provenance keeps LF checkout bytes equal to the tracked blob" test/windows-packaging.test.mjs
           node --test --test-name-pattern="co-located E4 payload wrapper logs only allowlisted metadata" test/auto-e4.test.mjs
 
+      - name: Run current M8 PR #40 Hook output regression
+        working-directory: module-sources/m8-candidate
+        run: node --test security-lab/claude-native-hook-output.test.mjs
+
       - name: Run exact-source M1/M2/M3/M4/M5/M6/M7/M8 M9 composition regressions
         working-directory: module-sources/m9
         env:
@@ -371,6 +394,7 @@ jobs:
           M6_ROOT: ${{ github.workspace }}/module-sources/m6
           M7_ROOT: ${{ github.workspace }}/module-sources/m7
           M8_ROOT: ${{ github.workspace }}/module-sources/m8
+          M8_CANDIDATE_ROOT: ${{ github.workspace }}/module-sources/m8-candidate
           M2_PACKED_ROOT: ${{ runner.temp }}/m9-m2-consumer/node_modules/@dorianchn/agent-canary
           M2_CONSUMER_ROOT: ${{ runner.temp }}/m9-m2-consumer
         run: node --import tsx --test test/m9-cross-module-composition.test.mjs
@@ -382,6 +406,7 @@ jobs:
           {
             echo 'Exact source roots are actual feature merge commits: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Owner PR heads and tree equality are asserted by the M9 composition test.'
             echo 'M8 checkout 84ee6a7a8d65706f694b7949e82fd8c83cc11523 is a historical source retained only for the narrowly scoped M6-reviewed test regression; it is not a current M8 candidate or a PASS verdict.'
+            echo 'M8 current candidate 1abdfe3890c6c263eea667789deb7eab5038e828 is checked separately and its exact Hook-output test is run; M1 review of the new test and M6 disposition on the changed lifecycle-test blob remain pending.'
             echo 'Open module candidates are tracked separately from merged refs. This workflow does not convert pending owner checks into acceptance.'
             echo 'Composition assertions are synthetic source/package fixtures only; they do not establish first-party product-host wiring, real protected-file access, OS-atomic TOCTOU, clean-VM installer lifecycle, or independent product E4.'
             echo 'Issue #52 remains OPEN / P0 / NOT_VERIFIED for supported product-host held-identity consumption and TOCTOU. Issue #57 and independent product E4 remain NOT_VERIFIED.'

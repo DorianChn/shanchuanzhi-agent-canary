@@ -2,13 +2,36 @@
 
 This snapshot records the source revisions pinned by the M9 composition workflow. The workflow checks out each source independently and validates the checked-out SHA before running the focused owner regressions and M9 composition tests.
 
-## Current exact-source recheck — 2026-10-23 14:07 UTC
+## Current exact-source CI — 2026-10-23 14:23 UTC
+
+PR #36 is at exact head `2d762b13794398a2dd46aa7cadeb1bff1b6c2c8e`. The workflow's M5 source pin now matches the actual squash-merge commit `f0e90c99033a6304748ac79fe106439ca4bd2e06`; both Ubuntu and Windows reached the exact-source composition suite.
+
+Each platform reports **17 tests: 14 passed, 3 failed, 0 skipped**. The same three failures occur on both platforms:
+1. M2 tracked Hook blob differs from M1's canonical Hook blob.
+2. M2 Hook emits the synthetic caller-controlled reason canary to stdout for allow/deny/ask (P0 Issue #88); the M1 sanitization control passes.
+3. M2/M5 denies the registered positive held-file read as `path_execution_not_pinned` (P1 Issue #87); the no-capability path-only denial control passes.
+
+All 15 other hosted PR checks pass. No test or security assertion was removed or weakened. Issues #87 and #88 now contain the current CI result and owner acceptance criteria. M5's audit found no safe M5-only relaxation; the held-read path requires an M2 capability-bound adapter read or a jointly reviewed M1/M2/M5 API change.
+
+The source matrix still uses historical M8 `84ee6a7a8d65706f694b7949e82fd8c83cc11523` only for the scoped M6 review regression. Current M8 PR #40 head `1abdfe3890c6c263eea667789deb7eab5038e828` is not yet composed. M8 hosted checks pass, but exact-file M1 review of its new output regression test remains pending.
+
+M9 remains OPEN/Draft. Keep the integration gate open until the M2/M1 owner changes and review are recorded, the current M8 head is included, and exact-head composition passes. Separate product acceptance gates such as Issues #52, #41, #45, and #57 remain distinct; these source-tree checks do not establish clean-VM lifecycle or independent product E4. PR #24 remains OPEN/Draft; no main merge or Release action occurred.
+
+## Local exact-source follow-up — 2026-10-23 15:00 UTC (awaiting hosted CI)
+
+The M9 worktree still has remote parent `2d762b13794398a2dd46aa7cadeb1bff1b6c2c8e`; these local M9-owned changes are not hosted evidence yet. The workflow now checks current M8 PR #40 head `1abdfe3890c6c263eea667789deb7eab5038e828` separately from historical M8 `84ee6a7a8d65706f694b7949e82fd8c83cc11523`. Its exact-source candidate assertion passed locally, and the six-case `security-lab/claude-native-hook-output.test.mjs` had passed on that candidate. The current M8 lifecycle test blob is `607c1c065c66caa792c62f2cdd45d6c6223f3d24`, replacing the M6-reviewed `d8909264ea2d924d611ca01a4daa73829ab67d1d`; Issue #59 is OPEN pending M6's exact current disposition. M1 review of the new M8 output-test blob remains pending.
+
+The added exact-source M3 checks expose a separate P0: current M3 merge source `611f9fca14706a1110a1f0a39e8488f4ff28d2a9` uses Hook blob `d6f93249306b7966259cab463dd39475728ef338`, which differs from the current M1 canonical blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`. On the exact M3 Hook, the synthetic caller-controlled reason appears on stdout for allow, deny, and ask; the M1 control stays clear and all decisions remain unchanged. Local targeted M9 run: the M8 candidate check passed; the M3 output-sanitization check failed on those three stdout canaries as expected. Issue #89 is OPEN/P0. Issue #72 is OPEN pending M1 review of the exact merged M3 blobs. This is source-tree evidence only; it does not establish package or installer exposure.
+
+The remote 14/17 result above remains the latest hosted M9 composition evidence. A full exact-head hosted rerun is pending publication of these M9-owned workflow, test, and report updates; until owner fixes and exact-source CI pass, M9 remains blocked by P0 output handling and unresolved M2/M5 compatibility failures. No failing assertion was removed or weakened.
+
+## Exact-source checkpoint — 2026-10-23 14:07 UTC (historical; superseded above)
 
 The current workflow checks out M1 at feature tip `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`, M2 at merged PR #37 commit `49af6d3dd57d9f091c95f489ead27f4f03c941a9`, M3 at `611f9fca14706a1110a1f0a39e8488f4ff28d2a9`, M4 at `d0f61987c2a06acb47a7187142bc303101af0ad4`, M5 at merged PR #47 commit `f0e90c99033a6304748ac79fe106439ca4bd2e06`, M6 at `a6f4a889ec16b4f2c78f91d630e657eea7319dbd`, and M7 at `8689d8fbbcdded4735d0e5aa328805f398a2862a`. The M8 checkout remains the historical source `84ee6a7a8d65706f694b7949e82fd8c83cc11523` used only to verify the scoped M6 review regression; current M8 PR #40 head `1abdfe3890c6c263eea667789deb7eab5038e828` is not yet included in the M9 exact-source matrix.
 
 M5 PR #47 was squash-merged, so its pre-merge implementation commit `6695e0470d7ceef1485f912ac61237fc91860cd8` is not an ancestor of the merged M5 checkout. The workflow now pins the actual M5 merge commit and retains the ancestry assertion against that exact source.
 
-The local exact-source suite at old M9 head `20b384f30a24ee0ece73b205abc1e8e6d011a0de` was **14/17 passed, 3 failed**: (1) M2's Claude host Hook blob differs from M1's canonical Hook blob; (2) the M2 Hook prints a caller-controlled decision reason to stdout in allow/deny/ask cases (P0 Issue #88); and (3) the registered M2/M5 positive held-file read is denied as `path_execution_not_pinned` (P1 Issue #87). Negative controls remain enabled. Hosted run `39965738477` for remote head `20b384f` failed its Ubuntu and Windows jobs before composition tests because of the stale M5 pin. The correction is committed locally at `453624d` and is not yet hosted evidence; rerun the exact-source suite at that new head before reporting its result.
+The local exact-source suite at old M9 head `20b384f30a24ee0ece73b205abc1e8e6d011a0de` was **14/17 passed, 3 failed**: (1) M2's Claude host Hook blob differs from M1's canonical Hook blob; (2) the M2 Hook prints a caller-controlled decision reason to stdout in allow/deny/ask cases (P0 Issue #88); and (3) the registered M2/M5 positive held-file read is denied as `path_execution_not_pinned` (P1 Issue #87). Negative controls remain enabled. Hosted run `39965738477` for remote head `20b384f` failed its Ubuntu and Windows jobs before composition tests because of the stale M5 pin. At that historical checkpoint the correction had not yet been hosted; see the current exact-source CI section above for the result at the corrected head.
 
 ## Exact-source M1/M2 + M3/M5 integration result — 2026-10-23
 
