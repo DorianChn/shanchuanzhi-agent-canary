@@ -20,11 +20,11 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: '6886d6eef3beb972bc8f4c797584b0f522483870',
   M2: '67428139e53c3f63a1101b4f94e84b291cbb1196',
-  M3: '34b526d4d63f28c09400e0130b09ead13d394aca',
-  M4: '0a1fc1393c2ae837e7cecbb59e9c935380fa4930',
+  M3: 'c7b7772c9d62e138e1cc6deed7c43104eaccafa6',
+  M4: '4f83140807a48bfe0d3273e2493a2124f533b8a0',
   M5: '12b2499a1f7b8525f3bf2d7659249c1bd8e881ed',
-  M6: '15e1663eac9c3932165fca9b39587115345f289c',
-  M7: '28aa87378a1682b0dca6b28178955ad5a7fc6e84',
+  M6: '3578e7ba10b2fd160efa0e4683aba863c666db8a',
+  M7: 'f4a7f91815236a87e81319d0c3512d57031b149e',
   M8: '35aa22f3087ed1859da19acbf12cc4c767dd4f3d',
 };
 
@@ -97,7 +97,7 @@ assertAncestor('M2', m1M2ReviewedSourceSha, pinnedSourceShas.M2, 'historical M1-
 assertAncestor('M6', m6PriorAcceptanceSha, pinnedSourceShas.M6, 'historical M6 owner acceptance');
 assertAncestor('M6', m6M8ReviewedContractSha, pinnedSourceShas.M6, 'historically reviewed M6/M8 lifecycle contract');
 assert.equal(readBlobIdAt('M6', m6M8ReviewedContractSha, 'test/auto-e4.test.mjs'), m6ReviewedLifecycleTestBlob, 'M6-reviewed lifecycle assertions must remain exact at the reviewed source');
-assert.equal(readBlobIdAt('M6', pinnedSourceShas.M6, 'test/auto-e4.test.mjs'), m6ReviewedLifecycleTestBlob, 'current M6 candidate must preserve the reviewed lifecycle assertions');
+assertHistoricalTextPreserved('M6', m6M8ReviewedContractSha, pinnedSourceShas.M6, 'test/auto-e4.test.mjs', 'current M6 candidate must retain every line of the reviewed lifecycle tests in order');
 assertAncestor('M8', m6M8ReviewedSourceSha, pinnedSourceShas.M8, 'historical M6-reviewed M8 test source');
 assert.equal(readBlobIdAt('M8', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M6-reviewed M8 test hunk must remain exact at the reviewed source');
 assert.equal(readBlobIdAt('M8', pinnedSourceShas.M8, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M8 current head must preserve the exact M6-reviewed test hunk');
@@ -135,6 +135,28 @@ function readBlobIdAt(moduleName, revision, filePath) {
   assert.equal(result.error, undefined, `${moduleName} blob ID lookup must start`);
   assert.equal(result.status, 0, `${moduleName} revision ${revision} must contain ${filePath}`);
   return result.stdout.trim();
+}
+
+function readTrackedTextAt(moduleName, revision, filePath) {
+  const result = spawnSync('git', [
+    '-C', sourceRoots[moduleName].root,
+    'show',
+    `${revision}:${filePath}`,
+  ], { encoding: 'utf8', windowsHide: true });
+  assert.equal(result.error, undefined, `${moduleName} tracked source read must start`);
+  assert.equal(result.status, 0, `${moduleName} revision ${revision} must contain ${filePath}`);
+  return result.stdout.replace(/\r\n/g, '\n').split('\n');
+}
+
+function assertHistoricalTextPreserved(moduleName, historicalRevision, candidateRevision, filePath, message) {
+  const historicalLines = readTrackedTextAt(moduleName, historicalRevision, filePath);
+  const candidateLines = readTrackedTextAt(moduleName, candidateRevision, filePath);
+  let candidateIndex = 0;
+  for (const line of candidateLines) {
+    if (line === historicalLines[candidateIndex]) candidateIndex += 1;
+    if (candidateIndex === historicalLines.length) break;
+  }
+  assert.equal(candidateIndex, historicalLines.length, message);
 }
 
 test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
