@@ -23,7 +23,15 @@ The M9 worktree still has remote parent `2d762b13794398a2dd46aa7cadeb1bff1b6c2c8
 
 The added exact-source M3 checks expose a separate P0: current M3 merge source `611f9fca14706a1110a1f0a39e8488f4ff28d2a9` uses Hook blob `d6f93249306b7966259cab463dd39475728ef338`, which differs from the current M1 canonical blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`. On the exact M3 Hook, the synthetic caller-controlled reason appears on stdout for allow, deny, and ask; the M1 control stays clear and all decisions remain unchanged. Local targeted M9 run: the M8 candidate check passed; the M3 output-sanitization check failed on those three stdout canaries as expected. Issue #89 is OPEN/P0. Issue #72 is OPEN pending M1 review of the exact merged M3 blobs. This is source-tree evidence only; it does not establish package or installer exposure.
 
-The remote 14/17 result above remains the latest hosted M9 composition evidence. A full exact-head hosted rerun is pending publication of these M9-owned workflow, test, and report updates; until owner fixes and exact-source CI pass, M9 remains blocked by P0 output handling and unresolved M2/M5 compatibility failures. No failing assertion was removed or weakened.
+The remote 14/17 result above remains the latest hosted M9 composition evidence at the time of this 15:00 UTC checkpoint. A full exact-head hosted rerun is pending publication of these M9-owned workflow, test, and report updates; until owner fixes and exact-source CI pass, M9 remains blocked by P0 output handling and unresolved M2/M5 compatibility failures. No failing assertion was removed or weakened.
+
+## Exact-head hosted result — 2026-10-23 15:09 UTC
+
+PR #36 exact head `4cc4565a46c4fb760d891f00a11431a8afd666e3`, run [39975045227](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39975045227), completed on Ubuntu and Windows. Both platforms report **20 tests: 15 passed, 5 failed, 0 skipped**. Failures are identical: (1) pinned M2/M5/M7/M9 Hook copies do not match current M1 canonical; (2) M2 exact Hook reason canaries reach stdout (P0 #88); (3) current M3 Hook differs from M1 canonical (reopened #72); (4) M3 exact Hook reason canaries reach stdout (P0 #89); and (5) the registered M2/M5 positive held-file read is denied as `path_execution_not_pinned` (P1 #87). All five gates remain enabled.
+
+The current M8 PR #40 candidate is separately pinned; its six-case Hook-output test and the M9 exact candidate assertion pass. General CI, package smoke, wrapper regressions, Windows installer lifecycle, and the AC3 ownership-contract check pass. The PR description's required evidence and ownership fields are present; coordination run [39975677845](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39975677845) passes.
+
+M9 remains OPEN/Draft. Issues #87/#88/#89 contain current exact-head evidence; M6 disposition on the changed M8-owned E4 test file (#59) and M1 exact review of current merged M3 Hook files (#72) remain pending. Product acceptance Issues #52 and #57 are still separate and NOT_VERIFIED. No first-party product-host protection, OS-atomic TOCTOU, clean-VM installer acceptance, or independent product E4 is claimed. PR #24 remains OPEN/Draft and unchanged.
 
 ## Exact-source checkpoint — 2026-10-23 14:07 UTC (historical; superseded above)
 
