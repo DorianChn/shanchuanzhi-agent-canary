@@ -20,6 +20,7 @@ export const CONSOLE_PAGE = String.raw`<!doctype html>
 <div class="security-fact"><span>Hook 健康</span><strong id="hookProtectionStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small>需后端 Hook 健康接口提供实时状态</small></div>
 <div class="security-fact"><span>Canary 隔离</span><strong id="canaryIsolationStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small id="canaryIsolationScopeDetail">历史隔离事件不代表当前隔离状态</small></div>
 <div class="security-fact"><span>当前策略</span><strong id="currentPolicyName">UNKNOWN</strong><small>策略保护状态 <span id="currentPolicyStatus" class="security-status" data-status="UNKNOWN">UNKNOWN</span></small><small id="currentPolicyScopeDetail">产品策略未知；Console 沙箱数据不代表真实 Agent 策略</small></div>
+<div class="security-fact"><span>后端声明的覆盖范围</span><strong id="securityCoverage" class="security-status" data-status="UNKNOWN">UNKNOWN</strong><small id="securityCoverageDetail">仅展示已识别的粗粒度覆盖标签；未知范围不视为已保护</small></div>
 <div class="security-fact"><span>已保护工具</span><strong id="protectedToolCount">UNKNOWN</strong><small>没有真实覆盖计数接口时不估算</small></div>
 <div class="security-fact"><span>未受保护执行路径</span><strong id="unprotectedPathCount">UNKNOWN</strong><small id="unprotectedPathDetail">等待后端返回路径覆盖数据</small></div>
 </div>
@@ -138,6 +139,12 @@ function renderSecurityCenter(){
  setProtectionNode('overallProtectionStatus',securitySnapshot.protectionStatus);
  getEl('firstPartyObserveReadStatus').dataset.status='UNKNOWN';
  getEl('firstPartyObserveReadStatus').textContent=securitySnapshot.firstPartyObserveReadStatus+' · 未验证';
+ const coverage=getEl('securityCoverage');
+ coverage.dataset.status=securitySnapshot.coverage==='M2_FIXED_FILE_READS_ONLY'?'PARTIALLY_PROTECTED':'UNKNOWN';
+ coverage.textContent=securitySnapshot.coverage==='M2_FIXED_FILE_READS_ONLY'?'M2_FIXED_FILE_READS_ONLY · 部分覆盖':'UNKNOWN';
+ getEl('securityCoverageDetail').textContent=securitySnapshot.coverage==='M2_FIXED_FILE_READS_ONLY'
+  ?'仅 M2 固定文件读取能力；不代表 Hook、原生宿主或其他执行路径已受保护'
+  :'后端未提供可识别的覆盖范围；UNKNOWN 不代表已保护或未保护';
  setProtectionNode('gatewayProtectionStatus',securitySnapshot.gateway.protectionStatus);
  setProtectionNode('hookProtectionStatus',securitySnapshot.hook.protectionStatus);
  setProtectionNode('canaryIsolationStatus',securitySnapshot.canaryIsolation.protectionStatus);
@@ -177,7 +184,7 @@ async function refreshSecurityCenter(reason='manual'){
     :key==='agents'?Array.isArray(data.agents)
     :key==='policyState'?typeof data.mode==='string'&&typeof data.scope==='string'
     :key==='runtime3'?typeof data.mode==='string'&&typeof data.agent==='string'&&typeof data.coverage==='string'&&typeof data.guard==='string'
-    :key==='securityCenter'?['protectionStatus','gateway','hook','canaryIsolation','policy','protectedToolCount','unprotectedExecutionPaths','agents'].some(field=>Object.hasOwn(data,field))
+    :key==='securityCenter'?securityCenterAdapter.isValidSecurityCenterStatusPayload(data)
     :key==='e4'?typeof data.status==='string'
     :false;
    if(valid){if(key in values)values[key]=data;securitySources[key]='AVAILABLE';}

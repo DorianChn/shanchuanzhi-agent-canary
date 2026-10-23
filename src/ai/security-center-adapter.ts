@@ -6,6 +6,7 @@ export const PROTECTION_STATUSES = [
 ] as const;
 
 export type ProtectionStatus = typeof PROTECTION_STATUSES[number];
+export type SecurityCoverage = 'M2_FIXED_FILE_READS_ONLY' | 'UNKNOWN';
 export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'UNKNOWN';
 export type DataSourceStatus =
   | 'AVAILABLE'
@@ -26,6 +27,10 @@ const DATA_SOURCE_STATUSES: readonly string[] = [
   'UNKNOWN',
 ];
 const AGENT_IDS = ['claude', 'cursor', 'cline', 'codex'] as const;
+const SECURITY_CENTER_FIELDS = [
+  'protectionStatus', 'gateway', 'hook', 'canaryIsolation', 'policy',
+  'protectedToolCount', 'unprotectedExecutionPaths', 'agents', 'coverage',
+] as const;
 const RISK_LEVELS = ['SAFE', 'READ', 'WRITE', 'NETWORK', 'EXECUTE', 'SECRET', 'DESTRUCTIVE'] as const;
 const EVENT_EXPLANATIONS: Record<string, string> = {
   decoy_called: '调用触发了 Canary 诱饵信号；事件本身不能证明当前会话仍处于隔离状态。',
@@ -57,10 +62,73 @@ function sanitizeText(value: unknown, limit = 240): string {
     .slice(0, limit);
 }
 
+function sanitizePolicyName(value: unknown): string | null {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const normalized = sanitizeText(value, 100);
+  // Policy names are identifiers, never paths, command lines, or free-form text.
+  return /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}$/.test(normalized)
+    ? normalized
+    : 'CUSTOM_POLICY';
+}
+
 export function normalizeProtectionStatus(value: unknown): ProtectionStatus {
   return typeof value === 'string' && (PROTECTION_STATUSES as readonly string[]).includes(value)
     ? value as ProtectionStatus
     : 'UNKNOWN';
+}
+
+export function normalizeSecurityCoverage(value: unknown): SecurityCoverage {
+  return value === 'M2_FIXED_FILE_READS_ONLY' ? value : 'UNKNOWN';
+}
+
+/** Reject malformed snapshots before the UI labels their source as available. */
+export function isValidSecurityCenterStatusPayload(input: unknown): boolean {
+  if (input === null || typeof input !== 'object' || Array.isArray(input)) return false;
+  const value = input as Record<string, unknown>;
+  if (!SECURITY_CENTER_FIELDS.some(field => Object.hasOwn(value, field))) return false;
+
+  if (Object.hasOwn(value, 'protectionStatus') &&
+      !(PROTECTION_STATUSES as readonly unknown[]).includes(value.protectionStatus)) return false;
+  if (Object.hasOwn(value, 'coverage') && typeof value.coverage !== 'string') return false;
+  if (Object.hasOwn(value, 'gateway')) {
+    const gateway = value.gateway;
+    if (gateway === null || typeof gateway !== 'object' || Array.isArray(gateway)) return false;
+    const record = gateway as Record<string, unknown>;
+    if (Object.hasOwn(record, 'protectionStatus') &&
+        !(PROTECTION_STATUSES as readonly unknown[]).includes(record.protectionStatus)) return false;
+    if (Object.hasOwn(record, 'connectionStatus') &&
+        record.connectionStatus !== 'CONNECTED' && record.connectionStatus !== 'DISCONNECTED' &&
+        record.connectionStatus !== 'UNKNOWN') return false;
+  }
+  for (const key of ['hook', 'canaryIsolation', 'policy'] as const) {
+    if (!Object.hasOwn(value, key)) continue;
+    const section = value[key];
+    if (section === null || typeof section !== 'object' || Array.isArray(section)) return false;
+    const record = section as Record<string, unknown>;
+    if (Object.hasOwn(record, 'protectionStatus') &&
+        !(PROTECTION_STATUSES as readonly unknown[]).includes(record.protectionStatus)) return false;
+    if (key === 'policy' && Object.hasOwn(record, 'name') && typeof record.name !== 'string') return false;
+  }
+  if (Object.hasOwn(value, 'protectedToolCount') &&
+      (!Number.isSafeInteger(value.protectedToolCount) || (value.protectedToolCount as number) < 0)) return false;
+  if (Object.hasOwn(value, 'unprotectedExecutionPaths') &&
+      (!Array.isArray(value.unprotectedExecutionPaths) ||
+       !value.unprotectedExecutionPaths.every(item => typeof item === 'string'))) return false;
+  if (Object.hasOwn(value, 'agents')) {
+    if (!Array.isArray(value.agents)) return false;
+    for (const item of value.agents) {
+      if (item === null || typeof item !== 'object' || Array.isArray(item)) return false;
+      const agent = item as Record<string, unknown>;
+      if (typeof agent.agent !== 'string' || !(AGENT_IDS as readonly string[]).includes(agent.agent)) return false;
+      if (Object.hasOwn(agent, 'detected') && typeof agent.detected !== 'boolean') return false;
+      if (Object.hasOwn(agent, 'connectionStatus') &&
+          agent.connectionStatus !== 'CONNECTED' && agent.connectionStatus !== 'DISCONNECTED' &&
+          agent.connectionStatus !== 'UNKNOWN') return false;
+      if (Object.hasOwn(agent, 'protectionStatus') &&
+          !(PROTECTION_STATUSES as readonly unknown[]).includes(agent.protectionStatus)) return false;
+    }
+  }
+  return true;
 }
 
 export function normalizeConnectionStatus(value: unknown): ConnectionStatus {
@@ -102,6 +170,13 @@ export function adaptSecuritySnapshot(input: {
   const hook = asRecord(securityCenter.hook);
   const isolation = asRecord(securityCenter.canaryIsolation);
   const policy = asRecord(securityCenter.policy);
+  const coverage = normalizeSecurityCoverage(securityCenter.coverage);
+  const reportedProtectionStatus = normalizeProtectionStatus(securityCenter.protectionStatus);
+  // The only currently contracted coverage is explicitly partial. Never let a
+  // contradictory or scope-free PROTECTED aggregate turn unknown/partial data green.
+  const protectionStatus = reportedProtectionStatus === 'PROTECTED'
+    ? 'UNKNOWN' as const
+    : reportedProtectionStatus;
   const liveAgents = Array.isArray(securityCenter.agents);
   const rawAgents = liveAgents ? securityCenter.agents : agentResponse.agents;
 
@@ -137,7 +212,8 @@ export function adaptSecuritySnapshot(input: {
     .filter((event: ReturnType<typeof mapEvent>): event is NonNullable<typeof event> => event !== null);
 
   return {
-    protectionStatus: normalizeProtectionStatus(securityCenter.protectionStatus),
+    protectionStatus,
+    coverage,
     // This adapter consumes status snapshots, not a Console read-action result.
     // Ignore provider-supplied first-party read claims until the host route is
     // wired to M1/M2/M5 and its callback-bound evidence is independently tested.
@@ -154,9 +230,7 @@ export function adaptSecuritySnapshot(input: {
     },
     policy: {
       protectionStatus: normalizeProtectionStatus(policy.protectionStatus),
-      name: typeof policy.name === 'string' && policy.name.trim()
-        ? sanitizeText(policy.name, 100)
-        : null,
+      name: sanitizePolicyName(policy.name),
     },
     protectedToolCount: Number.isSafeInteger(securityCenter.protectedToolCount) &&
       securityCenter.protectedToolCount >= 0
@@ -252,6 +326,7 @@ export function buildSecurityDiagnostic(
     scope: 'Local Console read-only snapshot. UNKNOWN means the backend did not provide a verifiable value.',
     protection: {
       overall: view.protectionStatus,
+      coverage: view.coverage,
       firstPartyObserveRead: view.firstPartyObserveReadStatus,
       gateway: view.gateway.protectionStatus,
       hook: view.hook.protectionStatus,
@@ -298,11 +373,15 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const PROTECTION_STATUSES = ' + JSON.stringify(PROTECTION_STATUSES) + ';',
   'const DATA_SOURCE_STATUSES = ' + JSON.stringify(DATA_SOURCE_STATUSES) + ';',
   'const AGENT_IDS = ' + JSON.stringify(AGENT_IDS) + ';',
+  'const SECURITY_CENTER_FIELDS = ' + JSON.stringify(SECURITY_CENTER_FIELDS) + ';',
   'const RISK_LEVELS = ' + JSON.stringify(RISK_LEVELS) + ';',
   'const EVENT_EXPLANATIONS = ' + JSON.stringify(EVENT_EXPLANATIONS) + ';',
   'const asRecord = ' + asRecord.toString() + ';',
   'const sanitizeText = ' + sanitizeText.toString() + ';',
+  'const sanitizePolicyName = ' + sanitizePolicyName.toString() + ';',
   'const normalizeProtectionStatus = ' + normalizeProtectionStatus.toString() + ';',
+  'const normalizeSecurityCoverage = ' + normalizeSecurityCoverage.toString() + ';',
+  'const isValidSecurityCenterStatusPayload = ' + isValidSecurityCenterStatusPayload.toString() + ';',
   'const normalizeConnectionStatus = ' + normalizeConnectionStatus.toString() + ';',
   'const mapEvent = ' + mapEvent.toString() + ';',
   'const adaptSecuritySnapshot = ' + adaptSecuritySnapshot.toString() + ';',
@@ -310,6 +389,6 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const preparePolicyResultForDisplay = ' + preparePolicyResultForDisplay.toString() + ';',
   'const explainSecurityEvent = ' + explainSecurityEvent.toString() + ';',
   'const buildSecurityDiagnostic = ' + buildSecurityDiagnostic.toString() + ';',
-  'return {normalizeProtectionStatus, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
+  'return {normalizeProtectionStatus, normalizeSecurityCoverage, isValidSecurityCenterStatusPayload, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
   '})();',
 ].join('\n');

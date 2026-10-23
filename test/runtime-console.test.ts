@@ -1,7 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import os from 'node:os';import fs from 'node:fs';import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import http from 'node:http';
-import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
+import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
 test('desktop branch native hook audit log omits synthetic sensitive canaries',()=>{
@@ -32,6 +32,7 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
   assert.match(html,/Agent Canary 安全控制中心/);assert.match(html,/自动 E4 测试入口/);assert.match(html,/PARTIALLY_PROTECTED/);assert.match(html,/security-center/);assert.match(html,/currentPolicyScopeDetail/);assert.match(html,/canaryIsolationScopeDetail/);assert.match(html,/Console 虚拟执行器策略/);assert.match(html,/受控 Runtime 示例 Guard/);assert.match(html,/显式 DENY 和 SENSITIVE_DATA 仍会拒绝/);assert.match(html,/preparePolicyResultForDisplay/);assert.match(html,/POLICY_CONFLICT/);assert.match(html,/catch\(e\)\{status\('policyStatus',warning\|\|e\.message,true\);\}/);assert.match(html,/policyResult/);
   assert.match(html,/id="nativeCodexShellBoundary"[^>]*role="note"/);assert.match(html,/id="nativeCodexShellStatus" class="security-status" data-status="NOT_PROTECTED">UNPROTECTED \/ BLOCKED_NOT_VERIFIED<\/span>/);assert.match(html,/尚未完成 Codex 原生 Shell 路径的端到端验证，也未控制该路径/);assert.match(html,/MCP 或 Gateway 中受保护的回调不代表原生 Shell 已受保护/);
   assert.match(html,/id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证<\/strong>/);assert.match(html,/GET \/api\/security-center 仅返回状态，不执行文件读取/);assert.match(html,/M3 的 POST \/api\/security-center\/protected-read 是独立的固定临时标记探针；本页面不调用或读取其结果/);assert.match(html,/该探针不证明用户文件或原生宿主路径已受保护/);assert.match(html,/MCP 探针、Gateway 绑定状态、Runtime 临时文件演示和虚拟策略读取也不能替代此验证/);
+  assert.match(html,/securityCenterAdapter\.isValidSecurityCenterStatusPayload\(data\)/);assert.match(html,/id="securityCoverage"/);assert.match(html,/UNKNOWN 不代表已保护或未保护/);
   const clientScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]);assert.ok(clientScripts.length);assert.doesNotMatch(clientScripts.join('\n'),/security-center\/protected-read/i,'the Security Center must not invoke the fixed temporary-marker probe');
   assert.match(html,/const readable=\['state','agents','policyState','runtime3'\]\.filter\(k=>securitySources\[k\]==='AVAILABLE'\)\.length/);
   assert.match(html,/readable\+'\/4 个已有只读接口可读/);
@@ -114,6 +115,7 @@ test('security-center adapter keeps absent backend data UNKNOWN and ignores demo
  assert.equal(view.hook.protectionStatus,'UNKNOWN');assert.equal(view.canaryIsolation.protectionStatus,'UNKNOWN');assert.equal(view.policy.protectionStatus,'UNKNOWN');
  assert.deepEqual(view.consoleSandboxPolicy,{mode:null,scope:null});assert.deepEqual(view.runtimeDemo,{guard:null,scope:null});
  assert.equal(view.protectedToolCount,null);assert.equal(view.unprotectedExecutionPaths,null);
+ assert.equal(view.coverage,'UNKNOWN');
  assert.deepEqual(view.agents.map(agent=>[agent.agent,agent.detected,agent.protectionStatus]),[['cursor',true,'UNKNOWN'],['codex',false,'UNKNOWN']]);
  assert.equal(view.events.length,1);assert.equal(view.events[0].reason,'[REDACTED]');
  assert.equal(JSON.stringify(view).includes('args'),false);assert.equal(JSON.stringify(view).includes('C:\\private'),false);
@@ -157,6 +159,7 @@ test('security-center adapter accepts only exact live statuses and exports a red
   agents:{agents:[]},
   securityCenter:{
    protectionStatus:'PARTIALLY_PROTECTED',
+   coverage:'M2_FIXED_FILE_READS_ONLY',
    gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},
    hook:{protectionStatus:'NOT_PROTECTED'},
    canaryIsolation:{protectionStatus:'UNKNOWN'},
@@ -166,6 +169,7 @@ test('security-center adapter accepts only exact live statuses and exports a red
   },
  });
  assert.equal(view.protectionStatus,'PARTIALLY_PROTECTED');assert.equal(view.gateway.protectionStatus,'PROTECTED');
+ assert.equal(view.coverage,'M2_FIXED_FILE_READS_ONLY');
  assert.equal(view.hook.protectionStatus,'NOT_PROTECTED');assert.equal(view.policy.name,'strict-runtime');
  assert.equal(view.protectedToolCount,3);assert.deepEqual(view.unprotectedExecutionPaths,['UNPROTECTED_EXECUTION_PATH','UNPROTECTED_EXECUTION_PATH','UNPROTECTED_EXECUTION_PATH']);
  const snapshotJson=JSON.stringify(view);
@@ -175,12 +179,45 @@ test('security-center adapter accepts only exact live statuses and exports a red
  const report=buildSecurityDiagnostic(view,{state:'AVAILABLE',agents:'AVAILABLE',policyState:'AVAILABLE',runtime3:'AVAILABLE',securityCenter:'AVAILABLE',e4:'UNSUPPORTED'},'2026-10-13T00:00:00.000Z');
  const json=JSON.stringify(report);
  assert.equal(report.protection.unprotectedExecutionPathCount,3);
+ assert.equal(report.protection.coverage,'M2_FIXED_FILE_READS_ONLY');
  assert.equal(json.includes('cnry_secret'),false);assert.equal(json.includes('C:\\private'),false);assert.equal(json.includes('C:\\unsafe'),false);assert.equal(json.includes('D:\\private'),false);assert.equal(json.includes('cnry_supersecret'),false);assert.equal(json.includes('PRIVATE_ARGUMENT'),false);assert.equal(json.includes('token='),false);
  assert.equal(report.dataSources.e4,'UNSUPPORTED');
 });
 
+test('security-center consumer validates status-only payloads and never promotes unknown or partial coverage to PROTECTED',()=>{
+ assert.equal(isValidSecurityCenterStatusPayload({}),false);
+ assert.equal(isValidSecurityCenterStatusPayload([]),false);
+ assert.equal(isValidSecurityCenterStatusPayload({protectionStatus:'PARTIAL'}),false);
+ assert.equal(isValidSecurityCenterStatusPayload({protectedToolCount:-1}),false);
+ assert.equal(isValidSecurityCenterStatusPayload({unprotectedExecutionPaths:['safe-id',7]}),false);
+
+ const partial={
+  protectionStatus:'PROTECTED',coverage:'M2_FIXED_FILE_READS_ONLY',
+  gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},
+  hook:{protectionStatus:'UNKNOWN'},canaryIsolation:{protectionStatus:'UNKNOWN'},
+  policy:{protectionStatus:'UNKNOWN',name:'C:\\Users\\private\\secret.txt --key=PRIVATE_ARGUMENT'},protectedToolCount:1,
+  unprotectedExecutionPaths:['C:\\Users\\private\\secret.txt?token=cnry_private','--argument=PRIVATE_ARGUMENT'],
+  agents:[{agent:'codex',detected:true,connectionStatus:'CONNECTED',protectionStatus:'UNKNOWN'}],
+ };
+ assert.equal(isValidSecurityCenterStatusPayload(partial),true);
+ const view=adaptSecuritySnapshot({securityCenter:partial});
+ assert.equal(view.protectionStatus,'UNKNOWN','a partial read-only coverage report cannot claim overall protection');
+ assert.equal(view.coverage,'M2_FIXED_FILE_READS_ONLY');
+ assert.equal(view.gateway.protectionStatus,'PROTECTED','a scoped component result remains attributed only to Gateway');
+ assert.equal(view.policy.name,'CUSTOM_POLICY','free-form policy names are not rendered as paths or arguments');
+ assert.deepEqual(view.unprotectedExecutionPaths,['UNPROTECTED_EXECUTION_PATH','UNPROTECTED_EXECUTION_PATH']);
+ const serialized=JSON.stringify(view);
+ for(const sensitive of ['C:\\Users','secret.txt','cnry_private','PRIVATE_ARGUMENT','--argument=','--key='])assert.equal(serialized.includes(sensitive),false);
+
+ const scopeFree=adaptSecuritySnapshot({securityCenter:{protectionStatus:'PROTECTED'}});
+ assert.equal(isValidSecurityCenterStatusPayload({protectionStatus:'PROTECTED'}),true);
+ assert.equal(scopeFree.protectionStatus,'UNKNOWN','scope-free aggregate protection is not verifiable');
+ assert.equal(scopeFree.coverage,'UNKNOWN');
+});
+
 test('security-center data-source failures preserve timeout, permission, missing route, and malformed response',()=>{
  assert.equal(classifyDataSourceFailure(undefined,'AbortError'),'TIMEOUT');
+ assert.equal(classifyDataSourceFailure(401,'Error'),'PERMISSION_DENIED');
  assert.equal(classifyDataSourceFailure(403,'Error'),'PERMISSION_DENIED');
  assert.equal(classifyDataSourceFailure(404,'Error'),'UNSUPPORTED');
  assert.equal(classifyDataSourceFailure(undefined,'InvalidResponseError'),'INVALID_RESPONSE');

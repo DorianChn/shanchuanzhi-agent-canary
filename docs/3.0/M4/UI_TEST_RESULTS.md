@@ -62,3 +62,11 @@ Chrome headless was driven through local DevTools Protocol because the connected
 ## Resource boundary
 
 No VMware test, real-model test, full Auto E4 run, or real installation test was started. M4 changed no M1/M2 execution logic.
+
+## 2026-10-23 status-consumer adapter follow-up
+
+- `npm run build`: passed.
+- `node --import tsx --test test/runtime-console.test.ts`: **12/12** passed.
+- `git diff --check`: passed.
+- Added synthetic status-payload checks for malformed fields, scope-free `PROTECTED`, fixed-read partial coverage, redaction of path/argument/token canaries, and the read-only endpoint validator. Existing browser-script regression still forbids `POST /api/security-center/protected-read`.
+- M3's current status route was not exercised by this M4 branch's built Console; exact-source cross-branch integration remains pending. No Agent/tool execution or user-file read occurred.
