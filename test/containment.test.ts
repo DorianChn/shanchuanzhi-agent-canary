@@ -88,33 +88,6 @@ test("quarantine subscribers are synchronous, isolated from observer errors, and
   unsubscribeLate();
 });
 
-test("a shared quarantine is synchronously latched and delivered when observed", () => {
-  const stateStore = sdk.createContainmentStateStore();
-  const first = sdk.createAgentGuard({
-    sessionId: "shared-notify-first-session",
-    principalId: "shared-notify-principal",
-    stateStore,
-    eventsFile: containmentEvents,
-    alert: false,
-  });
-  const retried = sdk.createAgentGuard({
-    sessionId: "shared-notify-retry-session",
-    principalId: "shared-notify-principal",
-    stateStore,
-    eventsFile: containmentEvents,
-    alert: false,
-  });
-  const notifications: string[] = [];
-  retried.subscribeQuarantine(() => notifications.push(retried.state));
-
-  first.trip({ reason: "shared_synthetic_trip" });
-  assert.deepEqual(notifications, [], "the shared store has no push channel; observation happens synchronously on the retry guard");
-  assert.equal(retried.state, "QUARANTINED");
-  assert.deepEqual(notifications, ["QUARANTINED"]);
-  assert.equal(retried.state, "QUARANTINED");
-  assert.deepEqual(notifications, ["QUARANTINED"], "the local quarantine latch prevents duplicate notifications");
-});
-
 test("4: a blocked callback is never executed", async () => {
   const guard = sdk.createAgentGuard({ sessionId: "callback-session", eventsFile: containmentEvents, alert: false });
   guard.trip({ reason: "test_compromise" });

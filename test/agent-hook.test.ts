@@ -2,7 +2,6 @@ import {spawn,spawnSync} from 'node:child_process';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-hook-'));process.env.AGENT_CANARY_HOME=root;
 const {decideAgentHook}=await import('../src/agent-hook.js');
-const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder}=await import('../src/sdk.js');
 test('Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build',async()=>{const state=path.join(root,'state');const c:any=await decideAgentHook('claude',root,state,{session_id:'fixture1',tool_name:'Bash',tool_input:{command:'git status --short'}});assert.equal(c.hookSpecificOutput.permissionDecision,'allow');const x:any=await decideAgentHook('cursor',root,state,{conversation_id:'fixture1',command:'npm run build'});assert.equal(x.permission,'ask');});
 test('hook canary quarantine persists across process-style Guard instances',async()=>{const state=path.join(root,'state2');const input={session_id:'fixture2',tool_name:'mcp__canary__canary_read_secrets',tool_input:{}};const c:any=await decideAgentHook('claude',root,state,input);assert.equal(c.hookSpecificOutput.permissionDecision,'deny');const x:any=await decideAgentHook('claude',root,state,{...input,tool_name:'Bash',tool_input:{command:'git status'}});assert.equal(x.hookSpecificOutput.permissionDecision,'deny');});
 test('hook path boundary and model approvals cannot authorize dangerous calls',async()=>{const state=path.join(root,'state3');const c:any=await decideAgentHook('cursor',root,state,{conversation_id:'fixture3',tool_name:'Read',tool_input:{file_path:path.join(root,'..','outside.txt'),approved:true}});assert.equal(c.permission,'deny');await assert.rejects(decideAgentHook('claude',root,state,{tool_name:'Bash',tool_input:{command:'git status'}}),/SESSION_REQUIRED/);});
@@ -25,15 +24,6 @@ test('native unpinned file reads deny with the M1 reason for both supported hook
  const cursor:any=await decideAgentHook('cursor',root,path.join(root,'unpinned-cursor-state'),{conversation_id:'unpinned-cursor',tool_name:'Read',tool_input:{file_path:'normal.txt'}});
  assert.equal(cursor.permission,'deny');
  assert.equal(cursor.user_message,'Agent Canary: native_file_execution_not_pinned');
-});
-test('supported held-file Gateway capability still allows a registered read',async()=>{
- const workspace=fs.mkdtempSync(path.join(root,'held-file-positive-')),file=path.join(workspace,'normal.txt');
- fs.writeFileSync(file,'SUPPORTED_HELD_FILE_FIXTURE');
- const evidence=new EvidenceRecorder(),runtime=createTrustedExecutionGateway({agentId:'m3-hook-positive',guard:createAgentGuard({alert:false}),workspaceRoot:workspace,files:[{path:'normal.txt'}],evidence});
- try{
-  assert.deepEqual(await runtime.agent.dispatch({name:'read_file',args:{path:'normal.txt'}}),{content:'SUPPORTED_HELD_FILE_FIXTURE'});
-  assert.equal(evidence.snapshot().at(-1)?.decision,'ALLOW');
- }finally{await runtime.close();}
 });
 test('native lab wrapper denies unpinned file operations and destructive commands',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');

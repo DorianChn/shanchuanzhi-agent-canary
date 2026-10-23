@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { createAgentGuard } from '../src/containment.js';
+import { createAgentGuard, createContainmentStateStore } from '../src/containment.js';
 import { EvidenceRecorder } from '../src/runtime/evidence.js';
+import { createTrustedExecutionGateway } from '../src/sdk.js';
 import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
@@ -19,6 +20,56 @@ after(() => {
   fs.rmSync(testHome, { recursive: true, force: true });
 });
 const { startAIConsole } = await import('../src/ai/console.js');
+
+test('M3 integration keeps an explicit positive control for a registered held-file Gateway read', async () => {
+  const workspace = fs.mkdtempSync(path.join(testHome, 'held-file-positive-'));
+  fs.writeFileSync(path.join(workspace, 'normal.txt'), 'SUPPORTED_HELD_FILE_FIXTURE');
+  const evidence = new EvidenceRecorder();
+  const runtime = createTrustedExecutionGateway({
+    agentId: 'm3-hook-positive',
+    guard: createAgentGuard({ alert: false }),
+    workspaceRoot: workspace,
+    files: [{ path: 'normal.txt' }],
+    evidence,
+  });
+  try {
+    assert.deepEqual(
+      await runtime.agent.dispatch({ name: 'read_file', args: { path: 'normal.txt' } }),
+      { content: 'SUPPORTED_HELD_FILE_FIXTURE' },
+    );
+    assert.equal(evidence.snapshot().at(-1)?.decision, 'ALLOW');
+  } finally {
+    await runtime.close();
+  }
+});
+
+test('M3 integration observes shared quarantine once when a retry guard reads the owner store', () => {
+  const stateStore = createContainmentStateStore();
+  const eventsFile = path.join(testHome, 'shared-notification-events.jsonl');
+  const first = createAgentGuard({
+    sessionId: 'shared-notify-first-session',
+    principalId: 'shared-notify-principal',
+    stateStore,
+    eventsFile,
+    alert: false,
+  });
+  const retried = createAgentGuard({
+    sessionId: 'shared-notify-retry-session',
+    principalId: 'shared-notify-principal',
+    stateStore,
+    eventsFile,
+    alert: false,
+  });
+  const notifications: string[] = [];
+  retried.subscribeQuarantine(() => notifications.push(retried.state));
+
+  first.trip({ reason: 'shared_synthetic_trip' });
+  assert.deepEqual(notifications, [], 'the shared store has no push channel; observation happens synchronously on the retry guard');
+  assert.equal(retried.state, 'QUARANTINED');
+  assert.deepEqual(notifications, ['QUARANTINED']);
+  assert.equal(retried.state, 'QUARANTINED');
+  assert.deepEqual(notifications, ['QUARANTINED'], 'the local quarantine latch prevents duplicate notifications');
+});
 
 test('protected host adapter rejects an incompatible M1 gateway before M2/M5 side effects', async () => {
   const calls = { m2FacadeLoads: 0, m5RouterCreations: 0, gatewayDispatches: 0 };
