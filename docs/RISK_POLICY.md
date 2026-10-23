@@ -2,6 +2,26 @@
 
 这是宿主注册的执行边界，不是全局 Agent 防火墙。默认 BALANCED；原有 `createGuardedToolRouter()`、CLI 与 MCP stdio 接口保持兼容。只有改用 `createRiskPolicyRouter()` 的 callback 才经过新增策略。
 
+## 公共导入路径
+
+M5 的安全策略 Router 适配层通过 `@dorianchn/agent-canary/policy-router` 导出 `createSecurityToolRouter`、`SecurityRouterOptions`、`SecurityDecision`、`SecurityAction` 和 `RiskPolicyExecutionContext`。这个子路径是 M5 的稳定消费入口；它只再导出 `src/security-router.ts` 的规范实现，不复制或包装其执行逻辑。`@dorianchn/agent-canary/sdk` 是共享 SDK 入口，M1 维护其中的 Gateway API；不要为接入 M5 Router 覆盖该入口。`@dorianchn/agent-canary/policy` 仍是独立的项目策略管理 API。
+
+M9 或其他组合调用方应从 `@dorianchn/agent-canary/policy-router` 导入 M5 Router，而不是依赖 `./sdk` 是否包含该符号。`RiskPolicyExecutionContext.fileReadCapability` 是宿主提供的不透明能力值；仅有策略许可或该类型本身不证明文件已通过 M1 Gateway 的 held-file 路径。
+
+```ts
+import {
+  createSecurityToolRouter,
+  type RiskPolicyExecutionContext,
+  type SecurityRouterOptions,
+} from '@dorianchn/agent-canary/policy-router';
+
+const executeRealTool: SecurityRouterOptions<unknown>['executeRealTool'] =
+  async (call, context: { signal: AbortSignal } & RiskPolicyExecutionContext) => {
+    // Host-owned executor. Protected reads must consume the M1 Gateway capability.
+    return hostExecutor(call, context);
+  };
+```
+
 M5 策略 `ALLOW` 只表示本层检查通过，不代表 Gateway 已登记该资源。若与 M1 TrustedExecutionGateway 组合，宿主 callback 仍须把调用交给 Gateway 的 `agent.dispatch`，由 Gateway 在最终执行前重新授权；不要用裸 callback 绕过该检查。本 M5 改动没有变更 Hook、Gateway 或 Guard 的接口。
 
 ```ts
