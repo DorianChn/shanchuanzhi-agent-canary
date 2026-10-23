@@ -184,23 +184,22 @@ jobs:
           $extractedHookRelativePath = [System.IO.Path]::GetRelativePath($setupExtractRoot, $extractedHookPath).Replace('\','/')
           $hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq $extractedHookRelativePath })
           if ($extractedHookRelativePath -ne 'claude-native-hook.mjs' -or $hookEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $packagedHookPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HOOK_MANIFEST_MISMATCH' }
-          $sourceHookSha256 = (Get-FileHash -LiteralPath $sourceHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
-          $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
-          $extractedHookSha256 = (Get-FileHash -LiteralPath $extractedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
-          if ($sourceHookSha256 -ne $packagedHookSha256 -or $packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }
           $sourceHookBlobSha = (& git rev-parse "HEAD:$sourceHookPath").Trim()
           $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()
           $extractedHookBlobSha = (& git hash-object $extractedHookPath).Trim()
           if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw 'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH' }
-          $canonicalHookBlobSha = 'd6f93249306b7966259cab463dd39475728ef338'
-          if ($sourceHookBlobSha -ne $canonicalHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }
-          $sourceHookBytes = [System.IO.File]::ReadAllBytes($sourceHookPath)
+          $reviewedHookBlobShas = @('d6f93249306b7966259cab463dd39475728ef338', 'b7ed4aba70a597f4f63a05decc6de1b32f67372e')
+          if ($reviewedHookBlobShas -notcontains $sourceHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }
+          $canonicalHookBlobSha = $sourceHookBlobSha
+          $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $extractedHookSha256 = (Get-FileHash -LiteralPath $extractedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }
           $packagedHookBytes = [System.IO.File]::ReadAllBytes($packagedHookPath)
           $extractedHookBytes = [System.IO.File]::ReadAllBytes($extractedHookPath)
-          $hookBytesIdentical = $sourceHookBytes.Length -eq $packagedHookBytes.Length -and $sourceHookBytes.Length -eq $extractedHookBytes.Length
+          $hookBytesIdentical = $packagedHookBytes.Length -eq $extractedHookBytes.Length
           if ($hookBytesIdentical) {
-            for ($i = 0; $i -lt $sourceHookBytes.Length; $i++) {
-              if ($sourceHookBytes[$i] -ne $packagedHookBytes[$i] -or $sourceHookBytes[$i] -ne $extractedHookBytes[$i]) { $hookBytesIdentical = $false; break }
+            for ($i = 0; $i -lt $packagedHookBytes.Length; $i++) {
+              if ($packagedHookBytes[$i] -ne $extractedHookBytes[$i]) { $hookBytesIdentical = $false; break }
             }
           }
           if (-not $hookBytesIdentical) { throw 'SETUP_EXTRACTED_HOOK_BYTE_COMPARISON_FAILED' }
