@@ -1,6 +1,6 @@
-## M0 exact-head ownership snapshot — 2026-10-23 00:12 UTC
+## M0 exact-head ownership snapshot — 2026-10-23 00:26 UTC
 
-GitHub readback at 00:12 UTC: all active AC3 module PRs are OPEN/Draft. PRs #30, #33, #36–#40, #43 and #47 target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #34 targets M1 PR #43 at `6886d6eef3beb972bc8f4c797584b0f522483870`. Legacy M6 PR #31 targets `main` and is outside this AC3 ownership map. This snapshot supersedes older exact-head tables below and does not assert acceptance beyond the recorded evidence.
+GitHub readback at 00:26 UTC: all active AC3 module PRs are OPEN/Draft. PRs #30, #33, #36–#40, #43 and #47 target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #34 targets M1 PR #43 at `6886d6eef3beb972bc8f4c797584b0f522483870`. Legacy M6 PR #31 targets `main` and is outside this AC3 ownership map. This snapshot supersedes older exact-head tables below and does not assert acceptance beyond the recorded evidence.
 
 | Module | Existing branch / PR | Remote head at snapshot | M0-recorded ownership boundary |
 | --- | --- | --- | --- |
@@ -8,12 +8,12 @@ GitHub readback at 00:12 UTC: all active AC3 module PRs are OPEN/Draft. PRs #30,
 | M1 | `feature/ac3-security-core` / #43 | `6886d6eef3beb972bc8f4c797584b0f522483870` | Gateway, Guard, canonical Hook and file-store contracts; no reproducible M1-owned bypass found; host adoption and OS-atomic proof remain NOT_VERIFIED (#52). |
 | M2 | `feature/ac3-execution-isolation` / #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` | Execution adapter and host-hook integration; native Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED (#45). |
 | M3 | `feature/ac3-agent-onboarding` / #33 | `c7b7772c9d62e138e1cc6deed7c43104eaccafa6` | Onboarding, Hook copy/tests, and fixed Console route; absent trusted composition fails closed to UNKNOWN; exact M9 composition pending. |
-| M4 | `feature/ac3-desktop-security-center` / #34 | `db3c0ee11d989a25b73a2d65246142a780f3ef6a` | Desktop security UI/tests; current M4 follow-up `4f831408` is local and queued for next batch. |
+| M4 | `feature/ac3-desktop-security-center` / #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` | Desktop security UI/tests; explicitly says UI does not consume M3 probe and keeps status NOT_VERIFIED. |
 | M5 | `feature/ac3-policy-audit` / #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | Policy/router and alias-denial regressions; no concrete reproducible defect found in audit. |
-| M6 | `feature/ac3-e4-validation-ac3` / #38 | `15e1663eac9c3932165fca9b39587115345f289c` | E4 verifier/schema/bundle; product-level independent E4 remains NOT_VERIFIED (#57). |
-| M7 | `feature/ac3-reliability-ac3` / #39 | `f4a7f91815236a87e81319d0c3512d57031b149e` | Reliability/installer payload and lifecycle evidence; phase diagnostic pushed, hosted lifecycle run pending (#41). |
-| M8 | `feature/ac3-open-source-product` / #40 | `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` | Open-source/docs and canonical shipped Hook/logging copy. |
-| M9 | `feature/ac3-m9-integration` / #36 | `fe246f1d97a06149d366989ac9dd169b05006754` | Exact-ref composition and integration tests; current source pins are stale and must be refreshed after owner heads stabilize. |
+| M6 | `feature/ac3-e4-validation-ac3` / #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` | E4 verifier/schema/bundle; target mutation now hard-fails; product-level independent E4 remains NOT_VERIFIED (#57). |
+| M7 | `feature/ac3-reliability-ac3` / #39 | `f20e307458f4c703459621fd48e44a9e806f03bb` | Reliability/installer payload and lifecycle evidence; bounded worker-phase telemetry pushed; exact CI and wrapper runs pending; root cause remains unknown (#41). |
+| M8 | `feature/ac3-open-source-product` / #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` | Open-source/docs and canonical shipped Hook/logging copy; protected-read verification limits clarified. |
+| M9 | `feature/ac3-m9-integration` / #36 | `fe246f1d97a06149d366989ac9dd169b05006754` | Public head still pins prior M7/M8 refs; exact-source refresh for newly published owner heads is in progress. |
 20:47 UTC delta: PR #30 advanced to `b0b3aec824eec181d8d28d343e6a173377b4a878`; the 20:47 GitHub scan showed M1–M9 still at the heads listed above.
 21:07 UTC delta: PR #30 advanced to `cae786222f596c9cd0a49af90ad1d9e68e8a1aba`; the 21:07 GitHub scan showed M1–M9 still at the heads listed above.
 21:28 UTC delta: PR #30 advanced to `d37191dd88a957aa22d05bd3578c2922140c7a39`; a 21:28 GitHub readback confirmed M1–M9 remain at the heads listed above. PR #24 remains unchanged.

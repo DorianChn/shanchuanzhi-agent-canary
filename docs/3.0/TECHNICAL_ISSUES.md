@@ -1,3 +1,10 @@
+## M9/M6 exact-source guard compatibility — Issue #74 — 2026-10-23 00:19 UTC
+
+- **P1 / OPEN / INVESTIGATING.** Owner: M9 for the composition guard; M6 supports verification of its additive E4 regression. At exact public M6 head `3578e7ba10b2fd160efa0e4683aba863c666db8a`, M9 exact-source test `node test/m9-cross-module-composition.test.mjs` surfaced a stale whole-file expectation for `test/auto-e4.test.mjs`: current blob `612b78b...` includes M6's new protected-target-mutation FAIL regression, while the historical reviewed blob is `18fcc4b...`.
+- **Resolution path:** M9 preserves the historical exact-blob assertion for the reviewed source and changes the current-candidate guard to verify all historical test lines remain intact and in order while allowing additive regressions. Then rerun the composition on exact detached M1–M8 refs and retain hosted Ubuntu/Windows checks. The first manual-pin-only pass is invalid as exact-source evidence.
+- **Acceptance:** exact detached-source composition passes without deleting or weakening M6 tests; independent product E4 evidence remains a separate OPEN requirement under #57. M9 owner is updating the guard; resolution is not yet verified.
+
+
 ## M1 exact failure trace — Issue #51 — 2026-10-20 22:39 UTC
 
 - **P1 / state-store contention:** M0 re-read Ubuntu Node 22 run `39497366090` at PR #43 head `5e9e22d`. Worker 2 reached `RETRY_LIMIT` at 500/500 in 1062 ms; all retries were `EEXIST`. Twenty lock-path samples showed no `ENOENT`, stat error, or lock-identity change, while state identity changed seven times. Workers 0 and 1 each acquired/released 12 times with `ownerMatch: true`; workers 2 and 3 never acquired and both exhausted, with the trace inferring holder transitions from worker 0 to worker 1. This is consistent with possible contention starvation, but cause remains UNKNOWN.
