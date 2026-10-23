@@ -44,7 +44,9 @@ const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataF
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
-  const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
+  // Native Windows resolution expands NTFS short-name aliases before the
+  // protected-path and held-resource identity checks below.
+  const root=fs.realpathSync.native(options.workspaceRoot),resources=new Map<string,Resource>();
   const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve(),controllers:new Set<AbortController>(),quarantineEpoch:0};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
@@ -56,7 +58,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     for(const f of options.files){
       const relative=filePath(f.path);
       if(!relative||relative.includes('\0')||relative.includes(':')||path.isAbsolute(relative)||relative!==path.posix.normalize(relative)||relative.split('/').includes('..')||resources.has(relative))throw Error('GATEWAY_RESOURCE_INVALID');
-      const absolute=path.join(root,relative),real=fs.realpathSync(absolute),rel=path.relative(root,real);
+      const absolute=path.join(root,relative),real=fs.realpathSync.native(absolute),rel=path.relative(root,real);
       if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel)||real!==absolute)throw Error('GATEWAY_RESOURCE_LINK_REJECTED');
       const before=fs.lstatSync(absolute);
       if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1||before.size>65_536)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
@@ -100,7 +102,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   function blocked(r:Request,reason:string,decision:EvidenceDecision='DENY'):never {audit(r,decision,reason,'NOT_STARTED','NOT_STARTED');throw new GatewayDeniedError(reason,r.id,decision);}
   function resource(r:Request):Resource|undefined{return typeof r.args.path==='string'?resources.get(filePath(r.args.path)):undefined;}
-  function stillBound(r:Resource):boolean{try{const named=fs.lstatSync(r.absolute),held=fs.fstatSync(r.fd);return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1&&sameFile(r,named)&&sameFile(r,held)&&fs.realpathSync(r.absolute)===r.absolute;}catch{return false;}}
+  function stillBound(r:Resource):boolean{try{const named=fs.lstatSync(r.absolute),held=fs.fstatSync(r.fd);return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1&&sameFile(r,named)&&sameFile(r,held)&&fs.realpathSync.native(r.absolute)===r.absolute;}catch{return false;}}
   function normalizeFileReadBinding(value:unknown):{toolName:string;operation:'file-read';path:string;pathArg:string}|undefined{
     try{
       if(!value||typeof value!=='object'||Array.isArray(value))return undefined;

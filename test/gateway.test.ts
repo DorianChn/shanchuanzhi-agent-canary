@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
 const home=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-'));process.env.AGENT_CANARY_HOME=home;
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain,canonicalJSON}=await import('../src/sdk.js');
@@ -151,6 +152,21 @@ test('workspace-local symlink or junction aliases cannot read registered sensiti
   assert.equal(createHash('sha256').update(secretAfter).digest('hex'),secretHash,'the protected fixture is unchanged');
  }finally{await runtime.close();}
  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+test('Windows NTFS short-name alias cannot register a protected credential file',{skip:process.platform!=='win32'},async(t)=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-short-name-alias-'));let runtime:any;
+ try{
+  const protectedFile='credentials-private.json';fs.writeFileSync(path.join(root,protectedFile),'SYNTHETIC_SHORT_NAME_SECRET');
+  const listing=execFileSync('cmd.exe',['/d','/c','dir','/x',root],{encoding:'utf8'});
+  const row=listing.split(/\r?\n/).find(line=>line.includes(protectedFile));
+  const fields=row?.trim().split(/\s+/),alias=fields&&fields.length>=5?fields.at(-2):undefined;
+  if(!alias||alias===protectedFile){t.skip('NTFS 8.3 short-name generation is unavailable');return;}
+  assert.equal(fs.existsSync(path.join(root,alias)),true,'the short-name alias resolves to the protected fixture');
+  assert.notEqual(fs.realpathSync.native(path.join(root,alias)),path.join(root,alias),'native realpath expands the short-name alias');
+  assert.throws(()=>{
+   runtime=createTrustedExecutionGateway({agentId:'windows-short-name-alias',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:alias}],evidence:new EvidenceRecorder()});
+  },/GATEWAY_RESOURCE_LINK_REJECTED/);
+ }finally{if(runtime)await runtime.close();fs.rmSync(root,{recursive:true,force:true});}
 });
 test('symlink or Windows junction resource escape rejected at registration',async()=>{const root=fs.mkdtempSync(path.join(home,'link-')),outside=fs.mkdtempSync(path.join(home,'external-'));fs.writeFileSync(path.join(outside,'test.txt'),'protected');fs.symlinkSync(outside,path.join(root,'link'),process.platform==='win32'?'junction':'dir');assert.throws(()=>createTrustedExecutionGateway({agentId:'fixture',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'link/test.txt',writable:true}],evidence:new EvidenceRecorder()}),/LINK_REJECTED/);assert.equal(fs.readFileSync(path.join(outside,'test.txt'),'utf8'),'protected');});
 test('quarantine prevents actual file write and queued command process',async()=>{const s=setup({commands:{marker:{executable:process.execPath,args:['-e',"require('fs').writeFileSync('marker.txt','bad')"]}}});try{s.guard.trip({reason:'test_canary'});await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'bad'}}),/guard_quarantined/);await assert.rejects(s.runtime.agent.dispatch({name:'run_command',args:{command:'marker'}}));assert.equal(fs.existsSync(path.join(s.root,'marker.txt')),false);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');}finally{await s.runtime.close();}});
