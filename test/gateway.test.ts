@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
 const home=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-'));process.env.AGENT_CANARY_HOME=home;
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain,canonicalJSON}=await import('../src/sdk.js');
@@ -114,6 +115,59 @@ test('Windows directory-junction replacement during a held read never returns co
 test('first unauthorized credential read rejected before real content is returned',async()=>{const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),/credential_resource_denied/);assert.equal(s.guard.state,'SAFE');assert.equal(s.evidence.snapshot()[0].execution_status,'NOT_STARTED');assert.ok(!JSON.stringify(s.evidence.snapshot()).includes('NOT_A_REAL_CREDENTIAL'));}finally{await s.runtime.close();}});
 test('path traversal and forged grant cannot write outside capability',async()=>{const s=setup();const outside=path.join(home,'outside.txt');try{for(const args of [{path:'../outside.txt',content:'bad'},{path:'result.txt',content:'bad',approved:true}])await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args}));assert.equal(fs.existsSync(outside),false);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');}finally{await s.runtime.close();}});
 test('replacement after gateway initialization never writes replacement inode',async()=>{const s=setup();const original=path.join(s.root,'result.txt');try{fs.renameSync(original,original+'.old');fs.writeFileSync(original,'replacement');await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'forbidden'}}),/resource_not_bound/);assert.equal(fs.readFileSync(original,'utf8'),'replacement');assert.equal(fs.readFileSync(original+'.old','utf8'),'before');}finally{await s.runtime.close();}});
+test('workspace-local symlink or junction aliases cannot read registered sensitive files',async()=>{
+ const root=fs.mkdtempSync(path.join(home,'workspace-alias-'));
+ try{
+ const privateDir=path.join(root,'private'),publicDir=path.join(root,'public'),secret=path.join(privateDir,'fixture.txt');
+ fs.mkdirSync(privateDir);fs.writeFileSync(secret,'SYNTHETIC_ALIAS_SECRET_SENTINEL');
+ fs.symlinkSync(privateDir,publicDir,process.platform==='win32'?'junction':'dir');
+ const secretBefore=fs.readFileSync(secret),secretHash=createHash('sha256').update(secretBefore).digest('hex'),aliasFile=path.join(publicDir,'fixture.txt');
+ assert.deepEqual(fs.readFileSync(aliasFile),secretBefore,'the workspace-local link resolves to the protected fixture');
+ const registrationGuard=createAgentGuard({alert:false});
+ assert.throws(()=>createTrustedExecutionGateway({agentId:'workspace-alias-registration',guard:registrationGuard,workspaceRoot:root,files:[{path:'public/fixture.txt'}],evidence:new EvidenceRecorder()}),/GATEWAY_RESOURCE_LINK_REJECTED/);
+ assert.equal(fs.readFileSync(secret).toString('hex'),secretBefore.toString('hex'),'alias registration leaves target bytes unchanged');
+ const safeFile=path.join(root,'safe.txt');fs.writeFileSync(safeFile,'SAFE_READ_POSITIVE');
+ const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),evidence=new EvidenceRecorder();
+ const runtime=createTrustedExecutionGateway({agentId:'workspace-alias-fixture',guard,workspaceRoot:root,files:[{path:'private/fixture.txt',sensitive:true},{path:'safe.txt'}],evidence});
+ try{
+  const safeCapability=runtime.bindFileReadCapability({toolName:'read_safe',operation:'file-read',path:'safe.txt'}),safeCall={name:'read_safe',args:{path:'safe.txt'}};let hostCallbacks=0;
+  const invokeHostRead=async(call:any)=>{if(!runtime.verifyFileReadCapability(safeCapability,call,'file-read'))throw Error('GATEWAY_FILE_CAPABILITY_INVALID');hostCallbacks++;return runtime.readFileWithCapability(safeCapability,call,'file-read');};
+  assert.deepEqual(await invokeHostRead(safeCall),{content:'SAFE_READ_POSITIVE'},'the registered safe-read positive control remains allowed');
+  assert.equal(hostCallbacks,1,'the valid fixed read reaches the synthetic host callback');
+  assert.throws(()=>runtime.bindFileReadCapability({toolName:'read_sensitive',operation:'file-read',path:'public/fixture.txt'}),/GATEWAY_FILE_CAPABILITY_UNAVAILABLE/);
+  const callbacksBeforeAlias=hostCallbacks;
+  await assert.rejects(invokeHostRead({name:'read_safe',args:{path:'public/fixture.txt'}}),/GATEWAY_FILE_CAPABILITY_INVALID/);
+  assert.equal(hostCallbacks,callbacksBeforeAlias,'a capability cannot redirect the synthetic host callback through the alias');
+  assert.throws(()=>runtime.bindFileReadCapability({toolName:'read_sensitive',operation:'file-read',path:'private/fixture.txt'}),/GATEWAY_FILE_CAPABILITY_UNAVAILABLE/);
+  await assert.rejects(runtime.agent.dispatch({name:'read_file',args:{path:'private/fixture.txt'}}),/credential_resource_denied/);
+  const beforeAlias=evidence.snapshot().length;
+  await assert.rejects(runtime.agent.dispatch({name:'read_file',args:{path:'public/fixture.txt'}}),/resource_not_bound/);
+  const aliasEvents=evidence.snapshot().slice(beforeAlias);
+  assert.ok(aliasEvents.length>0,'the alias attempt is recorded as a denial');
+  assert.equal(aliasEvents.some(event=>event.execution_status==='RUNNING'),false,'the alias is denied before M1 read execution');
+  assert.equal(runtime.operator.pending().length,0,'a symlink/junction alias creates no approval');
+  assert.equal(guard.state,'SAFE');
+  const secretAfter=fs.readFileSync(secret);
+  assert.equal(secretAfter.toString('hex'),secretBefore.toString('hex'));
+  assert.equal(createHash('sha256').update(secretAfter).digest('hex'),secretHash,'the protected fixture is unchanged');
+ }finally{await runtime.close();}
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+test('Windows NTFS short-name alias cannot register a protected credential file',{skip:process.platform!=='win32'},async(t)=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-short-name-alias-'));let runtime:any;
+ try{
+  const protectedFile='credentials-private.json';fs.writeFileSync(path.join(root,protectedFile),'SYNTHETIC_SHORT_NAME_SECRET');
+  const listing=execFileSync('cmd.exe',['/d','/c','dir','/x',root],{encoding:'utf8'});
+  const row=listing.split(/\r?\n/).find(line=>line.includes(protectedFile));
+  const fields=row?.trim().split(/\s+/),alias=fields&&fields.length>=5?fields.at(-2):undefined;
+  if(!alias||alias===protectedFile){t.skip('NTFS 8.3 short-name generation is unavailable');return;}
+  assert.equal(fs.existsSync(path.join(root,alias)),true,'the short-name alias resolves to the protected fixture');
+  assert.notEqual(fs.realpathSync.native(path.join(root,alias)),path.join(root,alias),'native realpath expands the short-name alias');
+  assert.throws(()=>{
+   runtime=createTrustedExecutionGateway({agentId:'windows-short-name-alias',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:alias}],evidence:new EvidenceRecorder()});
+  },/GATEWAY_RESOURCE_LINK_REJECTED/);
+ }finally{if(runtime)await runtime.close();fs.rmSync(root,{recursive:true,force:true});}
+});
 test('symlink or Windows junction resource escape rejected at registration',async()=>{const root=fs.mkdtempSync(path.join(home,'link-')),outside=fs.mkdtempSync(path.join(home,'external-'));fs.writeFileSync(path.join(outside,'test.txt'),'protected');fs.symlinkSync(outside,path.join(root,'link'),process.platform==='win32'?'junction':'dir');assert.throws(()=>createTrustedExecutionGateway({agentId:'fixture',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'link/test.txt',writable:true}],evidence:new EvidenceRecorder()}),/LINK_REJECTED/);assert.equal(fs.readFileSync(path.join(outside,'test.txt'),'utf8'),'protected');});
 test('quarantine prevents actual file write and queued command process',async()=>{const s=setup({commands:{marker:{executable:process.execPath,args:['-e',"require('fs').writeFileSync('marker.txt','bad')"]}}});try{s.guard.trip({reason:'test_canary'});await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'bad'}}),/guard_quarantined/);await assert.rejects(s.runtime.agent.dispatch({name:'run_command',args:{command:'marker'}}));assert.equal(fs.existsSync(path.join(s.root,'marker.txt')),false);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');}finally{await s.runtime.close();}});
 test('nested MCP canary quarantines immediately and aborts an active controlled call',async()=>{

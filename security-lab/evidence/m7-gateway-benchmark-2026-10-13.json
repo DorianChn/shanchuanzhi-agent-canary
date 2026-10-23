@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "agent-canary.m7.gateway-benchmark.v1",
+  "startedAt": "2026-10-13T08:40:09.748Z",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v22.23.1",
+    "osRelease": "10.0.26200",
+    "cpuCount": 32,
+    "totalMemoryBytes": 33479172096
+  },
+  "workload": {
+    "kind": "synthetic in-process read-only MCP callback",
+    "network": false,
+    "externalServices": false,
+    "operations": 1000,
+    "concurrency": 16
+  },
+  "result": {
+    "operations": 1000,
+    "successes": 1000,
+    "errors": 0,
+    "errorSamples": [],
+    "concurrency": 16,
+    "durationMs": 527.362,
+    "throughputOpsPerSecond": 1896.23,
+    "latencyMs": {
+      "p50": 4.402,
+      "p95": 8.048,
+      "p99": 11.744,
+      "max": 15.887
+    },
+    "cpuMs": {
+      "user": 406,
+      "system": 203,
+      "total": 609
+    },
+    "memoryBytes": {
+      "rssBefore": 80560128,
+      "rssAfter": 103464960,
+      "rssDelta": 22904832,
+      "heapBefore": 25194056,
+      "heapAfter": 31450064,
+      "heapDelta": 6256008
+    },
+    "evidence": {
+      "events": 2000,
+      "chainValid": true
+    },
+    "activeResources": {
+      "ConnectWrap": 2,
+      "PipeWrap": 3
+    }
+  },
+  "completedAt": "2026-10-13T08:40:11.006Z",
+  "status": "COMPLETED"
+}

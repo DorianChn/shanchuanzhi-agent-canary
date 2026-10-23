@@ -49,9 +49,22 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
       return r==='..'||r.startsWith('..'+path.sep)||path.isAbsolute(r);
     }catch{return true;}
   }
-  function unpinnedFileOperation(call:ToolCall){
+  function fileOperationRequiresPinnedExecution(call:ToolCall){
     const d=trustedTools[call.name];
-    return options.verifyRealPaths===true&&!!d&&['file-read','file-write','delete'].includes(d.operation);
+    return (options.verifyRealPaths===true||options.mode==='STRICT')&&!!d&&['file-read','file-write','delete'].includes(d.operation);
+  }
+  function hasValidHeldFileRead(call:ToolCall){
+    const d=trustedTools[call.name],provider=options.fileReadCapability;
+    if(!fileOperationRequiresPinnedExecution(call)||d?.operation!=='file-read'||!provider||
+      typeof provider.resolve!=='function'||typeof provider.verify!=='function'||
+      typeof provider.readFileWithCapability!=='function')return false;
+    try{
+      const capability=provider.resolve(call);
+      return capability!==undefined&&capability!==null&&provider.verify(capability,call,'file-read')===true;
+    }catch{return false;}
+  }
+  function unpinnedFileOperation(call:ToolCall){
+    return fileOperationRequiresPinnedExecution(call)&&!hasValidHeldFileRead(call);
   }
   function privateTarget(call:ToolCall){const d=trustedTools[call.name];if(d?.operation!=='http')return false;try{const u=new URL(String(call.args?.[d.urlArg??'url']));const h=u.hostname;return h==='localhost'||h==='[::1]'||/^127\.|^10\.|^192\.168\.|^169\.254\.|^0\.|^172\.(1[6-9]|2\d|3[01])\.|^\[f[cd]|^\[fe[89ab]/i.test(h);}catch{return true;}}
   async function review(call:ToolCall,d:Readonly<PolicyDecision>):Promise<'DENY'|'UNCHANGED'>{
@@ -82,8 +95,10 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     return review(call,d);
   }
   const router=createRiskPolicyRouter({...options,reviewDecision:dispatchReview,executeRealTool:async(call)=>{
-    // Recheck realpath immediately before execution; a prior approval is not a path capability.
-    if(unpinnedFileOperation(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'path_execution_not_pinned',mode:options.mode??'BALANCED'});
+    // This callback only receives path strings. Strict held-file reads must be
+    // served by the policy router's capability provider and must never fall
+    // through to the generic executor, even when the capability is valid.
+    if(fileOperationRequiresPinnedExecution(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'path_execution_not_pinned',mode:options.mode??'BALANCED'});
     if(pathDenied(call)||options.mode!=='OBSERVE'&&privateTarget(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'execution_boundary_changed',mode:options.mode??'BALANCED'});
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
     try{const execute=options.executeSandboxTool??options.executeRealTool;
