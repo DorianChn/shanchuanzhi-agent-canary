@@ -1,15 +1,15 @@
 # Windows 安装器验收记录（M7）
 
-证据刷新：2026-10-21
+证据刷新：2026-10-23
 历史本机候选复核：2026-10-14
-结论：**HOLD。当前 exact head 的 NSIS 模板编译和 Windows Community 包静态构建/提取证据通过；安装器运行时验收未执行。**
+结论：**HOLD。当前 exact head 的 NSIS 模板编译、Windows Community 包静态构建/提取，以及 GitHub 托管 Windows runner 中的限界安装、重复安装拒绝与卸载 smoke 均通过；干净 Windows 11 VM、标准用户令牌、EFS 和失败回滚仍未验证。**
 
-## 当前候选状态（2026-10-21）
+## 当前候选状态（2026-10-23）
 
-- PR [#39](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/39) 为 OPEN / Draft，分支 `feature/ac3-reliability-ac3`，exact head `9330005b2e15c521b9645a728d34e9477d8d6340`，基线为 `feature/agent-canary-3.0`。
-- 当前 CI run [39573529208](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39573529208) 的 9 个 job 全部成功。Windows Community wrapper run [39573529232](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39573529232) 的 2 个 job 成功；Windows job 的 pinned NSIS 3.13 安装和模板编译步骤通过，Ubuntu job 按设计跳过 Windows-only 编译步骤。
-- 同一 wrapper run 上传了 artifact [12332644890](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39573529232)：Windows Community 包和 sanitized evidence。Issue [#53](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/53) 记录 M0 对 artifact 校验和的核验结果：Setup.exe SHA-256 为 `028397a88160c50c5a73795b888e47198bef85102eb83bf39ca7c1c8aed664c4`；BUILD_REPORT 的归档完整性和静态提取检查通过，且 `installerExecuted=false`。从 Setup.exe 静态提取的 Hook 与 M1 canonical blob `d6f93249306b7966259cab463dd39475728ef338` 一致。
-- 以上证明构建、NSIS 模板编译和静态提取检查，不证明安装器在 Windows 上实际运行。首次启动、升级、卸载、用户取消回滚、普通用户令牌及 EFS 路径生命周期仍为 **NOT VERIFIED / HOLD**。2026-10-14 的 VMware 磁盘/快照限制记录仍是历史环境证据；本次没有启动或修改 VM，也没有重新执行安装测试。
+- PR [#39](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/39) 为 OPEN / Draft，分支 `feature/ac3-reliability-ac3`，exact head `7c348622e6c94e6f583044832c4a415c6a19c209`，基线 `feature/agent-canary-3.0`，base SHA `62496d4020bd90ba2eede49b2e80a2bbebb036b4`。
+- 当前 CI run [39882121780](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39882121780) 与 Windows Community wrapper run [39882121777](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39882121777) 均对应 exact head `7c348622e6c94e6f583044832c4a415c6a19c209` 且成功。wrapper 的 Windows job 通过 pinned NSIS 3.13 安装和模板编译；Ubuntu job按设计跳过 Windows-only 编译步骤。Windows Community build-evidence 和 installer-lifecycle 两个 job 均成功。
+- wrapper run `39882121777` 的日志明确记录 `M7_INSTALLER_LIFECYCLE_STATUS=PASS_BOUNDED_GITHUB_HOSTED_INSTALL_UNINSTALL`，`SOURCE_SHA=7c348622e6c94e6f583044832c4a415c6a19c209`，安装器 SHA-256 为 `fbfa942881ae432c817899a79e5db4d329c029351f64614a17c8b7b6f360cbe1`。该 smoke 对同一 run 构建出的包执行中文/空格临时路径安装、清单和收据校验、重复候选检查（首次安装保留且第二目标为空）、静默卸载、注册表/快捷方式和自有文件清理检查，并确认未知 sentinel 被保留。它运行在 GitHub-hosted 临时 Windows runner，不是候选 Windows 11 clean VM；结果不证明标准用户令牌、EFS、取消/失败回滚或原位升级。
+- 2026-10-21 的 exact-head `9330005b2e15c521b9645a728d34e9477d8d6340` 和 run `39573529208` / `39573529232` 是历史快照，不代表当前 head。此前关于“安装器运行时验收未执行”的表述已由上述最新 hosted lifecycle smoke 更新；VMware 原环境的锁和磁盘状态仍没有被修改。
 
 ## 边界和证据级别
 
@@ -17,9 +17,9 @@
 
 本记录区分三类证据：
 
-- **本轮源码测试**：`npm run verify` 及 Windows 包装器专项回归；这些结果不代表已运行安装程序。
-- **编译检查**：Windows CI 候选流程下载并校验 NSIS 3.13 安装包，安装到临时目录，强制要求 `makensis.exe` 存在并匹配预期版本，再用它编译渲染后的模板；编译输出是使用合成 payload 的临时 smoke-fixture EXE，不是发行包，且不会运行。安装步骤记录安装包与编译器 SHA-256，编译步骤记录实际版本及输出/模板 SHA-256。历史 run `38415886978`（旧 head `65ce028`）曾因 `NSIS_COMPILER_MISSING` 失败，run `38430069038`（head `4f3a2c5`）则在此前测试步骤失败导致编译被跳过；这些已被后续 M7 workflow 修复覆盖。当前 exact-head Windows wrapper run `39573529232` 的 NSIS 安装与模板编译步骤成功，见上方当前候选状态。
-- **实际安装验收**：本轮未执行。公开或本机构建的真实安装包没有在 M7 环境中运行；VMware 安装测试资源现已释放，没有留下运行中的 VM 或访客安装进程。
+- **本轮源码测试**：`npm run verify` 及 Windows 包装器专项回归；另有下述 exact-head hosted lifecycle smoke。源码回归和 runner smoke 的证明范围不同。
+- **编译检查**：Windows CI 候选流程下载并校验 NSIS 3.13 安装包，安装到临时目录，强制要求 `makensis.exe` 存在并匹配预期版本，再用它编译渲染后的模板；编译输出是使用合成 payload 的临时 smoke-fixture EXE，不是发行包，且不会运行。安装步骤记录安装包与编译器 SHA-256，编译步骤记录实际版本及输出/模板 SHA-256。历史 run `38415886978`（旧 head `65ce028`）曾因 `NSIS_COMPILER_MISSING` 失败，run `38430069038`（head `4f3a2c5`）则在此前测试步骤失败导致编译被跳过；这些已被后续 M7 workflow 修复覆盖。当前 exact-head Windows wrapper run `39882121777` 的 NSIS 安装与模板编译步骤成功，见上方当前候选状态。
+- **限界安装验收**：exact-head 同 run 构建的 Community Setup 已在 GitHub-hosted 临时 Windows runner 中实际运行并完成安装、重复安装拒绝和卸载，见上方 run `39882121777`。这不是 M7 本机 clean VM 或 Windows 11 标准用户会话；受 VMware 锁/快照状态影响，M7 独占 VMware 测试槽已释放，没有清锁、修盘或启动该 VM。
 
 历史 Windows 记录见 [`docs/3.0/INSTALLATION_ACCEPTANCE.md`](../../docs/3.0/INSTALLATION_ACCEPTANCE.md)：公开 candidate.4 曾在 EFS LocalAppData 环境卸载失败；随后本机 NSIS 3.10 诊断构建完成了两轮生命周期，但它不是公开 candidate，也不是发行工具链 NSIS 3.13。该历史结果没有被挪作本轮证明。
 
@@ -28,14 +28,14 @@
 | 场景 | 本轮状态 | 证据与限制 |
 |---|---|---|
 | 普通用户安装 | **源码配置通过；实际未验证** | NSIS `RequestExecutionLevel user`，注册信息写入 HKCU，快捷方式与默认路径为当前用户。尚未用标准用户令牌运行候选安装包。 |
-| 中文路径、空格路径 | **模板渲染回归和当前候选模板编译通过；实际安装未验证** | 回归测试渲染 `Agent Canary 安装` 和空格路径；当前 exact-head Windows wrapper run `39573529232` 已通过 pinned NSIS 3.13 模板编译（使用合成 payload）。没有用真实安装器在中文/空格目录中安装。 |
+| 中文路径、空格路径 | **GitHub-hosted 临时 runner 生命周期通过；clean Windows 11 VM 未验证** | exact-head run `39882121777` 用实际 Community Setup 安装到 `Agent Canary 验收 …\Agent Canary 安装目录`，并校验清单、收据和卸载。它不是 M7 clean VM 或标准用户令牌验收。 |
 | EFS 路径 | **源码检查通过；实际未验证** | 模板检测 LocalAppData 的 `FILE_ATTRIBUTE_ENCRYPTED` 并将默认位置改到当前用户目录；对自定义目标检查最近的现存祖先。尚未在 EFS 目录中运行候选安装包。不得通过改变宿主机 EFS/安全设置制造测试环境。 |
-| 首次启动 | **未验证** | 当前 head 已生成并静态检查 Windows Community 包，但报告明确 `installerExecuted=false`；没有在 Windows 中启动该安装包。 |
+| 首次启动 | **未验证** | 生成包的 `BUILD_REPORT.json` 明确 `installerExecuted=false`，表示静态构建步骤本身没有执行安装器；后续 lifecycle job 实际运行安装器并检查安装文件，但没有启动已安装的 Agent Canary 应用。 |
 | 重复安装同一候选 | **拒绝逻辑有源码测试；实际未验证** | 非空目录、已登记候选或冲突快捷方式会被拒绝。 |
 | 升级 | **未实现原位升级 / 未验证** | 候选号对应独立安装目录、注册项和快捷方式；不同候选可并存。当前源码没有旧版本迁移或原位升级事务。发行前需明确支持的升级方式并验证。 |
-| 卸载与重装 | **源码清单逻辑通过；实际未验证** | 只删除清单中的精确文件和空目录，不递归删除目录；对目录重解析点做拒绝检查。不能据此宣称公开安装包已卸载或重装成功。 |
+| 卸载与重装 | **exact-head hosted runner 卸载通过；clean Windows 11 VM 未验证** | exact-head Community Setup 的静默卸载清除了受管文件、注册表项和快捷方式，并保留未知 sentinel。独立重装循环、clean VM 生命周期仍未验证；卸载仅按清单删除精确文件和空目录，并拒绝目录重解析点。 |
 | 安装失败回滚 | **模板逻辑已补；实际未验证** | 复制载荷、安装收据或注册失败时按精确清单回滚；取消/失败回调也尝试回滚。回滚遇到重解析目录会保留目录并报告不完整。未用 NSIS 安装器注入失败、磁盘耗尽或中断。 |
-| 卸载残留 | **未验证** | 无真实安装目录树、注册表和快捷方式的安装前后差分。未知文件及应用报告按设计保留。 |
+| 卸载残留 | **hosted runner 合成安装目录检查通过；clean VM 未验证** | exact-head smoke 检查受管文件、注册表、快捷方式及未知文件 sentinel；没有 M7 clean VM 的安装前后差分。未知文件及应用报告按设计保留。 |
 | 签名 / SmartScreen | **未验证 / 构建为 unsigned** | M7 没有代码签名证书，也未测下载信誉提示。哈希只证明字节一致，不证明发布者身份。 |
 
 ## 截至 2026-10-14 的实现记录（历史说明）
