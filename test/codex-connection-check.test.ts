@@ -195,11 +195,14 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
 
 test('M3 uses a synthetic M2 held-read contract through public M5 without the generic callback',async t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-reviewed-m2-contract-'));
+  const initialRootStat=fs.lstatSync(root);
+  const rootIdentity={dev:initialRootStat.dev,ino:initialRootStat.ino};
   const file=path.join(root,'agent-canary-public.txt');
   const marker='AGENT_CANARY_PROTECTED_FILE_READ_OK';
   fs.writeFileSync(file,marker,{flag:'wx',mode:0o600});
   let closeGateway:(()=>Promise<void>)|undefined;
   let aliasRoot:string|undefined;
+  let aliasRootIdentity:{dev:number;ino:number}|undefined;
   let aliasPath:string|undefined;
   let aliasIdentity:{dev:number;ino:number}|undefined;
   const genericCallbacks={count:0};
@@ -213,13 +216,18 @@ test('M3 uses a synthetic M2 held-read contract through public M5 without the ge
         assert.equal(fs.realpathSync(aliasPath),fs.realpathSync(root));
         if(process.platform==='win32')fs.rmdirSync(aliasPath);else fs.unlinkSync(aliasPath);
       }
-      if(aliasRoot){
+      if(aliasRoot&&aliasRootIdentity){
+        const currentAliasRoot=fs.lstatSync(aliasRoot);
+        assert.equal(currentAliasRoot.isDirectory(),true);assert.equal(currentAliasRoot.isSymbolicLink(),false);
+        assert.equal(currentAliasRoot.dev,aliasRootIdentity.dev);assert.equal(currentAliasRoot.ino,aliasRootIdentity.ino);
         const realAliasRoot=fs.realpathSync(aliasRoot),realTemp=fs.realpathSync(os.tmpdir()),relativeAliasRoot=path.relative(realTemp,realAliasRoot);
-        assert.equal(realAliasRoot,aliasRoot);assert.notEqual(relativeAliasRoot,'..');assert.ok(!relativeAliasRoot.startsWith('..'+path.sep));
+        assert.notEqual(relativeAliasRoot,'..');assert.ok(!relativeAliasRoot.startsWith('..'+path.sep));
         fs.rmSync(realAliasRoot,{recursive:true,force:true});
       }
+      const currentRootStat=fs.lstatSync(root);
+      assert.equal(currentRootStat.isDirectory(),true);assert.equal(currentRootStat.isSymbolicLink(),false);
+      assert.equal(currentRootStat.dev,rootIdentity.dev);assert.equal(currentRootStat.ino,rootIdentity.ino);
       const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
-      assert.equal(realRoot,root);
       assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
       fs.rmSync(realRoot,{recursive:true,force:true});
     }
@@ -268,6 +276,7 @@ test('M3 uses a synthetic M2 held-read contract through public M5 without the ge
   assert.ok(evidenceAfterPositive>statusEvidenceBefore);
 
   aliasRoot=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-reviewed-m2-alias-'));
+  const aliasRootStat=fs.lstatSync(aliasRoot);aliasRootIdentity={dev:aliasRootStat.dev,ino:aliasRootStat.ino};
   aliasPath=path.join(aliasRoot,'workspace-alias');
   fs.symlinkSync(root,aliasPath,process.platform==='win32'?'junction':'dir');
   const aliasStat=fs.lstatSync(aliasPath);aliasIdentity={dev:aliasStat.dev,ino:aliasStat.ino};
