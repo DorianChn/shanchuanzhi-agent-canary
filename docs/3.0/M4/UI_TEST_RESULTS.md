@@ -70,3 +70,12 @@ No VMware test, real-model test, full Auto E4 run, or real installation test was
 - `git diff --check`: passed.
 - Added synthetic status-payload checks for malformed fields, scope-free `PROTECTED`, fixed-read partial coverage, redaction of path/argument/token canaries, and the read-only endpoint validator. Existing browser-script regression still forbids `POST /api/security-center/protected-read`.
 - M3's current status route was not exercised by this M4 branch's built Console; exact-source cross-branch integration remains pending. No Agent/tool execution or user-file read occurred.
+
+## 2026-10-23 event refresh keyboard recovery
+
+- Reproduced the defect in the local Chrome Console with a temporary `AGENT_CANARY_HOME` and a synthetic `/api/state` event: refreshing replaced the focused event button, cleared its selected state, and left focus on `BODY`.
+- After the fix, the same refresh handler kept the still-visible event focused with `aria-pressed="true"` and preserved its explanation. When the fixture returned an empty feed, focus moved to the event-list container and the explicit empty-state text remained visible.
+- At a **501 CSS-pixel** viewport, a long Chinese/emoji event label wrapped without horizontal overflow: document width **486 px**; event-list and row `scrollWidth` matched their **419 px** client widths.
+- A synthetic **403** from `/api/security-center` showed permission-recovery guidance while overall protection stayed **UNKNOWN** and first-party OBSERVE stayed **NOT_VERIFIED**.
+- `npm run build`: passed. `node --import tsx --test test/runtime-console.test.ts`: **13/13** passed; the new test checks that the generated Console page includes stable event identity and focus/selection restoration. Impeccable detector on `src/ai/console-page.ts`: **no findings**.
+- The browser check used the manual health action to exercise the same refresh handler; the background-window timer was paused by the existing `document.hidden` guard. No model, protected-read probe, or real Agent/tool execution was used.

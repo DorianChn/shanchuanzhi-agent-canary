@@ -233,6 +233,18 @@ test('diagnostic distinguishes an empty audit feed from an unavailable source',(
  assert.equal(unavailable.dataSources.state,'UNSUPPORTED');
 });
 
+test('security event refresh retains keyboard focus and selected explanation for a still-visible record',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  assert.match(html,/id="securityEvents" class="security-event-list" tabindex="-1" aria-live="polite"/);
+  assert.ok(html.includes('function securityEventIdentity(event){return JSON.stringify([event.ts,event.sessionId,event.kind,event.toolName,event.riskLevel]);}'));
+  assert.ok(html.includes("setAttribute('aria-pressed',String(eventKey===selectedKey))"),'selection state should be reapplied when event rows are refreshed');
+  assert.ok(html.includes("if(hadFocus)(buttons.find(button=>button.dataset.eventKey===focusedKey)||target).focus();"),'focus should return to the same visible event after its row is rebuilt');
+  assert.ok(html.includes('if(selected)getEl(\'securityEventExplanation\').textContent=securityCenterAdapter.explainSecurityEvent(securitySnapshot.events.find(event=>securityEventIdentity(event)===selectedKey));'),'the selected row explanation should remain in sync after refresh');
+ }finally{await app.close();}
+});
+
 test('OBSERVE denial, sensitive-data allow, and Guard quarantine are not rendered as successful policy results',()=>{
  const denied=preparePolicyResultForDisplay({mode:'OBSERVE',status:'DENY',guardState:'SAFE',decision:{action:'DENY',mode:'OBSERVE',risks:['SENSITIVE_DATA']}});
  assert.equal(denied.status,'DENY');assert.equal(denied.decision.action,'DENY');assert.deepEqual(denied.decision.risks,['SENSITIVE_DATA']);assert.equal(denied.displayWarning,undefined);

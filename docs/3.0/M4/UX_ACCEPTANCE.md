@@ -1,6 +1,6 @@
 # M4 UX Acceptance — Windows Security Center
 
-Date: 2026-10-13
+Date: 2026-10-23
 Product surface: existing local Agent Canary Console at **src/ai/console-page.ts**
 
 ## Status rules
@@ -40,7 +40,7 @@ Only the optional live security-center response may set protection statuses. Mis
 - The security center is the first section in the incumbent Console page; no second product shell is created.
 - Buttons have direct action labels, keyboard focus uses the existing visible focus ring, and changing health/event state is announced with live regions.
 - The overview collapses to one column at narrow widths. The 390 CSS-pixel browser check measured a 390-pixel document width with no horizontal overflow.
-- Event rows are selectable by keyboard and pointer; the explanation area reports the selected real record.
+- Event rows are selectable by keyboard and pointer; periodic refresh keeps focus, selection, and the explanation for a still-visible record. If that record leaves the latest-100 window, focus returns to the event list.
 - Demo policy/runtime sections remain visibly labeled as virtual demonstrations.
 
 ## Acceptance boundary

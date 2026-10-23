@@ -32,7 +32,7 @@ export const CONSOLE_PAGE = String.raw`<!doctype html>
 </div>
 <div class="security-columns">
 <section class="security-panel" aria-labelledby="securityAgentsTitle"><h3 id="securityAgentsTitle">Agent 接入状态</h3><p class="muted">配置目录检测不代表客户端已连接；现有演示安装记录不计为真实接入或受保护 Agent。</p><div id="securityAgents" class="security-agent-list" aria-live="polite">正在读取 Agent 配置检测…</div></section>
-<section class="security-panel" id="securityEventsPanel" aria-labelledby="securityEventsTitle"><h3 id="securityEventsTitle">实时安全事件</h3><p class="muted">每 10 秒读取后端最近 100 条审计记录。空列表只表示当前范围内没有已记录事件。</p><div id="securityEvents" class="security-event-list" aria-live="polite">正在读取本地审计记录…</div><div id="securityEventExplanation" class="security-event-explanation" role="status" aria-live="polite">选择一条真实记录查看拦截原因解释；不会生成虚拟告警。</div></section>
+<section class="security-panel" id="securityEventsPanel" aria-labelledby="securityEventsTitle"><h3 id="securityEventsTitle">实时安全事件</h3><p class="muted">每 10 秒读取后端最近 100 条审计记录。空列表只表示当前范围内没有已记录事件。</p><div id="securityEvents" class="security-event-list" tabindex="-1" aria-live="polite">正在读取本地审计记录…</div><div id="securityEventExplanation" class="security-event-explanation" role="status" aria-live="polite">选择一条真实记录查看拦截原因解释；不会生成虚拟告警。</div></section>
 </div>
 <section id="securityE4Panel" class="security-panel security-e4-panel" hidden aria-labelledby="securityE4Title"><h3 id="securityE4Title">自动 E4 测试入口 · UNKNOWN</h3><p>当前 Console 没有 E4 运行与进度 API，因此运行状态为 UNKNOWN。这里不会启动测试或显示 PASS。复制的命令只运行仓库现有 Auto E4 本地测试脚本；它不代替 clean VM、安装包、真实模型或独立操作员验证。</p><pre><code id="securityE4Command">npm run build &amp;&amp; node --import tsx --test test/auto-e4.test.mjs</code></pre><button id="securityE4CopyButton" class="secondary">复制本地测试命令</button><p id="securityE4Status" class="status" role="status" aria-live="polite">E4 运行状态：UNKNOWN · 后端启动接口尚未实现。</p></section>
 <details id="securityOnboarding" class="security-panel"><summary>首次使用引导与故障排查</summary>
@@ -120,20 +120,26 @@ function renderSecurityAgents(){
   row.append(name,detected,protectedState);target.append(row);
  }
 }
+function securityEventIdentity(event){return JSON.stringify([event.ts,event.sessionId,event.kind,event.toolName,event.riskLevel]);}
 function renderSecurityEvents(){
- const target=getEl('securityEvents');target.replaceChildren();
- if(securitySources.state!=='AVAILABLE'){target.textContent='无法读取真实审计记录（'+sourceStateLabel(securitySources.state)+'）。不会用演示事件填充。';getEl('securityEventExplanation').textContent='事件接口不可用，无法解释本次拦截原因。';return;}
- if(!securitySnapshot.events.length){target.textContent='最近 100 条审计记录中没有事件。此空列表不表示防护正常。';getEl('securityEventExplanation').textContent='当前没有已记录事件可供解释。';return;}
+ const target=getEl('securityEvents'),hadFocus=target.contains(document.activeElement),focusedKey=document.activeElement?.closest?.('.security-event-button')?.dataset.eventKey,selectedKey=target.querySelector('.security-event-button[aria-pressed="true"]')?.dataset.eventKey;
+ target.replaceChildren();
+ if(securitySources.state!=='AVAILABLE'){target.textContent='无法读取真实审计记录（'+sourceStateLabel(securitySources.state)+'）。不会用演示事件填充。';getEl('securityEventExplanation').textContent='事件接口不可用，无法解释本次拦截原因。';if(hadFocus)target.focus();return;}
+ if(!securitySnapshot.events.length){target.textContent='最近 100 条审计记录中没有事件。此空列表不表示防护正常。';getEl('securityEventExplanation').textContent='当前没有已记录事件可供解释。';if(hadFocus)target.focus();return;}
  for(const event of securitySnapshot.events){
-  const button=document.createElement('button');button.type='button';button.className='security-event-button';button.setAttribute('aria-pressed','false');
+  const eventKey=securityEventIdentity(event),button=document.createElement('button');button.type='button';button.className='security-event-button';button.dataset.eventKey=eventKey;button.setAttribute('aria-pressed',String(eventKey===selectedKey));
   button.textContent=event.kind+' · '+(event.toolName||event.sessionId||'本地审计事件');
   const small=document.createElement('small');small.textContent=(event.ts||'时间未记录')+(event.riskLevel?' · '+event.riskLevel:'');
   button.append(small);button.onclick=()=>{
    document.querySelectorAll('.security-event-button').forEach(item=>item.setAttribute('aria-pressed','false'));
    button.setAttribute('aria-pressed','true');
    getEl('securityEventExplanation').textContent=securityCenterAdapter.explainSecurityEvent(event);
-  };target.append(button);
+ };target.append(button);
  }
+ const buttons=[...target.querySelectorAll('.security-event-button')],selected=buttons.find(button=>button.dataset.eventKey===selectedKey);
+ if(selected)getEl('securityEventExplanation').textContent=securityCenterAdapter.explainSecurityEvent(securitySnapshot.events.find(event=>securityEventIdentity(event)===selectedKey));
+ else if(selectedKey)getEl('securityEventExplanation').textContent='所选审计记录已离开最近 100 条范围；选择当前记录查看解释。';
+ if(hadFocus)(buttons.find(button=>button.dataset.eventKey===focusedKey)||target).focus();
 }
 function renderSecurityCenter(){
  setProtectionNode('overallProtectionStatus',securitySnapshot.protectionStatus);
