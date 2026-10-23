@@ -21,10 +21,26 @@ function setup(mode:'OBSERVE'|'BALANCED'|'STRICT'='BALANCED',extra:Record<string
  const router=createRiskPolicyRouter({guard,workspaceRoot:process.cwd(),mode,tools,eventsFile,allowedReadOrigins:['https://docs.example.com'],executeRealTool:(call:any)=>{calls.push(call);return 'public value';},...extra});return{guard,router,calls,eventsFile};
 }
 for(const mode of ['OBSERVE','BALANCED','STRICT'] as const){
- test(mode+' permits public read and reviewed shell/HTTPS GET',async()=>{const s=setup(mode);await s.router.dispatch({name:'read',args:{path:'README.md'}});await s.router.dispatch({name:'shell',args:{command:'ls -la'}});await s.router.dispatch({name:'http',args:{url:'https://docs.example.com/guide',method:'GET'}});assert.equal(s.calls.length,3);});
+ test(mode+' permits public read and reviewed shell/HTTPS GET',async()=>{let heldReads=0;const capability=Object.freeze(Object.create(null));const provider={resolve:(call:any)=>call.name==='read'&&call.args.path==='README.md'?capability:undefined,verify:(candidate:any,call:any,operation:string)=>candidate===capability&&call.name==='read'&&call.args.path==='README.md'&&operation==='file-read',readFileWithCapability:async()=>{heldReads++;return 'public value';}};const s=setup(mode,mode==='STRICT'?{fileReadCapability:provider}:{});await s.router.dispatch({name:'read',args:{path:'README.md'}});await s.router.dispatch({name:'shell',args:{command:'ls -la'}});await s.router.dispatch({name:'http',args:{url:'https://docs.example.com/guide',method:'GET'}});assert.equal(s.calls.length,mode==='STRICT'?2:3);assert.equal(heldReads,mode==='STRICT'?1:0);});
  test(mode+' handles ordinary registered shell work according to the configured mode',async()=>{const s=setup(mode);const p=s.router.dispatch({name:'shell',args:{command:'npm run build'}});if(mode==='OBSERVE')await p;else await assert.rejects(p,PolicyBlockedError);assert.equal(s.calls.length,mode==='OBSERVE'?1:0);});
  test(mode+' never overrides quarantined Guard',async()=>{const s=setup(mode);s.guard.trip({reason:'test'});await assert.rejects(s.router.dispatch({name:'read',args:{path:'README.md'}}),CanaryBlockedError);assert.equal(s.calls.length,0);});
 }
+test('STRICT requires held-file reads when verifyRealPaths is omitted or false',async()=>{
+ const root=fs.mkdtempSync(path.join(process.env.AGENT_CANARY_HOME!,'strict-default-held-read-required-'));
+ const target=path.join(root,'public.txt'),content='M5_STRICT_HELD_READ_REQUIRED';fs.writeFileSync(target,content);
+ const before=createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+ for(const verifyRealPaths of [undefined,false] as const){
+  let callbacks=0;const guard=createAgentGuard({sessionId:'strict-held-read-required-'+String(verifyRealPaths),alert:false});
+  const options:any={guard,workspaceRoot:root,mode:'STRICT',tools:{read:{operation:'file-read'}},executeRealTool:(call:any)=>{callbacks++;return fs.readFileSync(path.join(root,call.args.path),'utf8');}};
+  if(verifyRealPaths!==undefined)options.verifyRealPaths=verifyRealPaths;
+  const router=createRiskPolicyRouter(options),call={name:'read',args:{path:'public.txt'}};
+  const preview=router.inspectPolicy(call);assert.equal(preview.action,'DENY');assert.equal(preview.reason,'path_execution_not_pinned');
+  await assert.rejects(router.dispatch(call),(error:any)=>error instanceof PolicyBlockedError&&error.decision.action==='DENY'&&error.decision.reason==='path_execution_not_pinned');
+  assert.equal(router.pendingApprovals().length,0,'STRICT missing-capability denial must not create an approval');
+  assert.equal(callbacks,0,'STRICT must never pass this file read to the generic path callback');
+  assert.equal(fs.readFileSync(target,'utf8'),content);assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'),before);
+ }
+});
 test('OBSERVE cannot override explicit safety denials or expose sensitive data',async()=>{
  for(const mode of ['OBSERVE','BALANCED','STRICT'] as const){
   const s=setup(mode);
@@ -265,10 +281,11 @@ test('strict read positive control uses the real M1 held-file Gateway, not a pat
  const gateway=createTrustedExecutionGateway({agentId:'m5-held-read-test',guard,workspaceRoot:root,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()}) as any;
  try{
   const provider=createGatewayFileReadCapabilityProvider(gateway,[{toolName:'read_public',path:'public.txt',pathArg:'file_path'}]);let genericCallbacks=0;
-  const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'OBSERVE',verifyRealPaths:true,tools:{read_public:{operation:'file-read',pathArg:'file_path'}},fileReadCapability:provider,
+  const router=createRiskPolicyRouter({guard,workspaceRoot:root,mode:'STRICT',tools:{read_public:{operation:'file-read',pathArg:'file_path'}},fileReadCapability:provider,
    executeRealTool:(call:any)=>{genericCallbacks++;return fs.readFileSync(path.join(root,call.args.file_path),'utf8');}});
   assert.deepEqual(await router.dispatch({name:'read_public',args:{file_path:'public.txt'}}),{content});
   assert.equal(genericCallbacks,0,'the strict path callback must not read the file');
+  assert.equal(router.pendingApprovals().length,0,'strict held-file positive control must not create an approval');
   assert.ok(gateway.evidence().some((event:any)=>event.tool_id==='read_file'&&event.execution_status==='SUCCEEDED'&&event.side_effect_verification==='VERIFIED'));
   assert.equal(guard.state,'SAFE');
  }finally{await gateway.close();}

@@ -124,7 +124,7 @@ export function createGatewayFileReadCapabilityProvider<TCapability extends obje
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
-  /** Opt in to M1-pinned reads and fail-closed writes/deletes. OBSERVE always rejects canonical aliases/escapes, even when omitted or false. */
+  /** Opt in to M1-pinned reads and fail-closed writes/deletes outside STRICT. STRICT always requires held-file reads. OBSERVE always rejects canonical aliases/escapes, even when omitted or false. */
   verifyRealPaths?: boolean;
   /** Trusted host lookup, M1 verification, and held-file read for a constructor-registered safe file. Path strings alone never satisfy verifyRealPaths. */
   fileReadCapability?: TrustedFileReadCapabilityProvider;
@@ -279,7 +279,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     if(options.reviewDecision)await options.reviewDecision(call,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}));
   }
   function sweep(){for(const [id,p]of pending)if(p.expires<Date.now())pending.delete(id);}
-  function isStrictFileRead(call:ToolCall):boolean{return options.verifyRealPaths===true&&tools.get(call.name)?.operation==='file-read';}
+  function isStrictFileRead(call:ToolCall):boolean{return (options.verifyRealPaths===true||mode==='STRICT')&&tools.get(call.name)?.operation==='file-read';}
   function resolveExecutionContext(call:ToolCall):RiskPolicyExecutionContext|undefined {
     if(!isStrictFileRead(call)||!options.fileReadCapability)return undefined;
     try{
@@ -320,8 +320,9 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
         if(outside)deny('outside_workspace');
         else if(mode==='OBSERVE'&&sensitivePath)deny('observe_sensitive_data_blocked');
         else if(pathAlias)deny('path_alias_rejected');
-        else if(filesystemOperation&&options.verifyRealPaths&&(
-          d.operation!=='file-read'||!hasValidFileReadCapability(call,executionContext)
+        else if(filesystemOperation&&(
+          (options.verifyRealPaths===true&&d.operation!=='file-read')||
+          (isStrictFileRead(call)&&!hasValidFileReadCapability(call,executionContext))
         ))deny('path_execution_not_pinned');
         else if(sensitivePath)requireApproval('sensitive_path');
         else if(d.operation!=='file-read')requireApproval(d.operation==='delete'?'destructive_write':'workspace_write');
