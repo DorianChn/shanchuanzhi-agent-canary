@@ -17,6 +17,15 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
  const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
  assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
 });
+test('native unpinned file reads deny with the M1 reason for both supported hook protocols',async()=>{
+ fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
+ const claude:any=await decideAgentHook('claude',root,path.join(root,'unpinned-claude-state'),{session_id:'unpinned-claude',tool_name:'Read',tool_input:{file_path:'normal.txt'}});
+ assert.equal(claude.hookSpecificOutput.permissionDecision,'deny');
+ assert.equal(claude.hookSpecificOutput.permissionDecisionReason,'Agent Canary: native_file_execution_not_pinned');
+ const cursor:any=await decideAgentHook('cursor',root,path.join(root,'unpinned-cursor-state'),{conversation_id:'unpinned-cursor',tool_name:'Read',tool_input:{file_path:'normal.txt'}});
+ assert.equal(cursor.permission,'deny');
+ assert.equal(cursor.user_message,'Agent Canary: native_file_execution_not_pinned');
+});
 test('supported held-file Gateway capability still allows a registered read',async()=>{
  const workspace=fs.mkdtempSync(path.join(root,'held-file-positive-')),file=path.join(workspace,'normal.txt');
  fs.writeFileSync(file,'SUPPORTED_HELD_FILE_FIXTURE');
