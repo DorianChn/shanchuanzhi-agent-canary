@@ -212,6 +212,96 @@ test('packed M3 CLI consumes the exact M1, M2, and M5 public owner exports by de
   assert.deepEqual(fs.readdirSync(tempRoot).filter((name) => name.startsWith('agent-canary-console-probe-')), [], 'the fixed probe must be cleaned after the packaged owner chain completes');
 });
 
+test('packed M3 reports the exact M5 policy denial without reaching the held-file read callback', {
+  skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
+}, async () => {
+  const exact = prepareComposedPackage('policy-denial', { m1: true, m2: true, m5: true });
+  const packed = packAndExtract(exact.packageRoot, 'policy-denial');
+  const packageRequire = createRequire(path.join(packed.installedRoot, 'package.json'));
+  const [m1Sdk, m2Adapter, m5Router, consoleModule] = await Promise.all([
+    import(pathToFileURL(packageRequire.resolve('@dorianchn/agent-canary/sdk')).href),
+    import(pathToFileURL(packageRequire.resolve('@dorianchn/agent-canary/gateway-adapter')).href),
+    import(pathToFileURL(packageRequire.resolve('@dorianchn/agent-canary/policy-router')).href),
+    import(pathToFileURL(path.join(packed.installedRoot, 'dist', 'ai', 'console.js')).href),
+  ]);
+  assert.equal(typeof m1Sdk.createTrustedExecutionGateway, 'function');
+  assert.equal(typeof m2Adapter.createSecurityGatewayHostAdapter, 'function');
+  assert.equal(typeof m5Router.createSecurityToolRouter, 'function');
+  assert.equal(typeof consoleModule.startAIConsole, 'function');
+
+  let capabilityVerifications = 0;
+  let m5Callbacks = 0;
+  let heldFileReads = 0;
+  let gatewayHandle;
+  const operatorCode = 'M3_PACKAGED_POLICY_DENIAL_FIXTURE';
+  const console = await consoleModule.startAIConsole({
+    port: 0,
+    operatorApprovalCode: operatorCode,
+    securityCenterProtectedReadDependencies: async () => ({
+      createGateway(options) {
+        const gateway = m1Sdk.createTrustedExecutionGateway(options);
+        gatewayHandle = {
+          bindFileReadCapability: (...args) => gateway.bindFileReadCapability(...args),
+          verifyFileReadCapability: (...args) => {
+            capabilityVerifications += 1;
+            const valid = gateway.verifyFileReadCapability(...args);
+            // M2's preflight succeeds. The exact M5 router then sees a stale
+            // M1 capability and must deny before the callback can read the file.
+            return capabilityVerifications === 1 && valid;
+          },
+          readFileWithCapability: (...args) => {
+            heldFileReads += 1;
+            return gateway.readFileWithCapability(...args);
+          },
+          close: () => gateway.close(),
+        };
+        return gatewayHandle;
+      },
+      loadM2Facade: async () => m2Adapter,
+      createSecurityToolRouter(options) {
+        const executeRealTool = options.executeRealTool;
+        return m5Router.createSecurityToolRouter({
+          ...options,
+          executeRealTool: (...args) => {
+            m5Callbacks += 1;
+            return Reflect.apply(executeRealTool, undefined, args);
+          },
+        });
+      },
+    }),
+  });
+
+  try {
+    const page = await fetch(console.url);
+    assert.equal(page.status, 200);
+    const csrf = (await page.text()).match(/const csrf='([a-f0-9]+)'/)?.[1];
+    assert.ok(csrf, 'the packed console must provide its CSRF token');
+    const response = await fetch(`${console.url}/api/security-center/protected-read`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-canary-csrf': csrf,
+        'x-canary-operator-code': operatorCode,
+      },
+      body: '{}',
+    });
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {
+      scope: 'M3_FIXED_TEMP_PROBE_ONLY',
+      status: 'DENY',
+      reason: 'OWNER_POLICY_DENIED',
+      markerMatched: false,
+    });
+    assert.equal(capabilityVerifications, 2, 'M2 preflight and the exact M5 policy router must each verify the M1 capability');
+    assert.equal(m5Callbacks, 0, 'M5 policy denial must happen before its registered execution callback');
+    assert.equal(heldFileReads, 0, 'the M1 held-file read must not run after M5 denies the stale capability');
+    assert.ok(gatewayHandle, 'the denial fixture must construct the exact M1 Gateway');
+    assert.deepEqual(fs.readdirSync(os.tmpdir()).filter((name) => name.startsWith('agent-canary-console-probe-')), [], 'the denied packaged probe must be cleaned without reading the held file');
+  } finally {
+    await console.close();
+  }
+});
+
 for (const absentOwner of ['m2', 'm5']) {
   test(`packed M3 CLI remains UNKNOWN without the exact M${absentOwner === 'm2' ? '2' : '5'} public export and creates no probe`, {
     skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
