@@ -9,7 +9,7 @@ Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Python zipfile
 1. `node packaging/windows/prepare.mjs "EMPTY_BUILD_DIRECTORY" "PYTHON_EXE" "NPM_CLI_JS" "COMMUNITY_ZIP" "ZIP_SHA256"`。必须显式提供 Community ZIP 与 SHA-256；构建脚本不会静默回退到旧候选包。
 2. 下载并核对官方 NSIS 3.13 校验值；可用 7-Zip 解压，不需要管理员安装工具。
 3. 将 Node 完整 LICENSE 与 `packaging/windows/THIRD_PARTY_NOTICES.md` 放入随包目录。生产依赖原始 LICENSE 随 node_modules 保留。
-4. `node packaging/windows/build.mjs "BUILD_DIRECTORY/payload" "PORTABLE_NSIS_DIRECTORY" "BUILD_DIRECTORY/community.zip" "WRAPPER_SOURCE_COMMIT_SHA_40_HEX"`。最后一个参数是写入 `VERSION.json` 的 40 位来源提交 SHA。
+4. 使用 `prepare.mjs` 输出的 `next` 命令调用 `build.mjs`；它会预填 Community ZIP 路径与当前已提交 Hook 来源 SHA，只需把 NSIS 目录占位符替换成已核验的便携目录。`build.mjs` 会拒绝格式错误、与当前提交不匹配或工作区 Hook 文件未提交的 SHA。
 5. `node --test packaging/windows/test-worker.mjs`
 6. 用 `scripts/check-sdk-types.mjs --package-root BUILD_DIRECTORY/payload/app` 进行干净外部 SDK 类型消费检查。
 
