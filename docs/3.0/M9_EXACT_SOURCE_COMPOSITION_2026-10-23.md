@@ -4,7 +4,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 | Module | PR | Exact source SHA | M9 coverage |
 | --- | --- | --- | --- |
-| M1 Gateway | #43 | `27c417627b0e89e9db999025b65b25e12f0f1d7f` (current public PR head; exact checks 11/11 passed) | Adds a workspace-local symlink/junction alias denial regression; M1 runtime source is unchanged. Held-Gateway and synthetic composition remain bounded evidence |
+| M1 Gateway | #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` (local successor; PR #43 still points to `27c417627b0e89e9db999025b65b25e12f0f1d7f`) | Uses native Windows realpath resolution to expand NTFS short-name aliases before protected-resource identity checks; local Windows Gateway suite passes 38/38. Hosted exact-head CI is pending publication |
 | M2 isolation | #37 | `c43e7ba33e29d9097ac68b444137b65aeaa92acc` (current public PR head; exact checks 9/9 passed) | Adds a normal-exit child-cleanup acceptance predicate; package/facade blobs are unchanged. An unpublished owner disposition accepts the exact M3 packed-consumer test with conditions; it does not establish real product-host user-file protection |
 | M3 onboarding | #33 | `e3e7584cd186728b1756df3542af9aff13937a36` (current public PR head; exact checks 9/9 passed) | Adds an exact-owner packaged-consumer regression for M1/M2/M5 exports; the test is not in M3 CI. First M9 hosted attempt failed during Windows tar path handling; corrected rerun is pending |
 | M4 desktop security center | #34 | `d62557a03883c459cce6bec60b36686128ccf73d` (current public PR head; exact checks 9/9 passed) | Preserves keyboard focus and selected-event explanation across refresh; status consumer remains read-only and first-party host read is NOT_VERIFIED |
@@ -325,7 +325,7 @@ The M9 pin sweep checked the current OPEN/Draft owner PR heads and their exact-h
 
 | Module / PR | Exact public head | Exact-head hosted checks | Owner delta since previous M9 pin |
 | --- | --- | --- | --- |
-| M1 / #43 | `27c417627b0e89e9db999025b65b25e12f0f1d7f` | 11/11 passed | Adds workspace-local symlink/junction alias denial regression; runtime/API unchanged |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` (local successor; prior public head `27c417627b0e89e9db999025b65b25e12f0f1d7f`) | Local Windows build + Gateway test 38/38; hosted exact-head CI pending | Switches to `fs.realpathSync.native` to expand NTFS short names before protected identity checks; adds a short-name alias regression |
 | M2 / #37 | `c43e7ba33e29d9097ac68b444137b65aeaa92acc` | 9/9 passed | Adds `CHILD_TERMINATED_ON_JOB_CLOSE` acceptance predicate; package/facade/test blobs unchanged |
 | M3 / #33 | `e3e7584cd186728b1756df3542af9aff13937a36` | 9/9 passed | Adds `test/packaged-owner-consumer.test.mjs`; owner CI does not include this new test |
 | M4 / #34 | `d62557a03883c459cce6bec60b36686128ccf73d` | 9/9 passed | Preserves event focus and selected explanation after refresh |
@@ -348,3 +348,11 @@ The exact M2 owner package/facade files used by the M3 test are unchanged at pub
 The M3 owner test is unchanged. M9's Windows workflow step now uses `pwsh`, places `Windows\System32` first on `PATH`, asserts that `tar.exe` resolves to the Windows-native executable, and then runs the test. This addresses the prior M9 Windows run `39901460198`, where Git for Windows tar treated the archive's `C:` drive prefix as a remote host. That prior hosted run remains failed; a new hosted M9 run is required to verify this workflow correction.
 
 The local tests prove exact-source package/API behavior and fixture-level results only. They do not prove real Agent user-file reads, first-party host wiring, native Shell enforcement, or OS-atomic TOCTOU. Issue #52 remains OPEN / P0 / NOT_VERIFIED; Issue #41 remains OPEN / P1 / HOLD. No issue or PR state was changed.
+
+## M1 NTFS short-name alias denial successor — 2026-10-23
+
+M1 owner commit `fa369069241bf81d32c7f39d31a61806efa55fe4` is present on the local M1 branch but is not yet published: PR #43 remains OPEN/Draft at `27c417627b0e89e9db999025b65b25e12f0f1d7f`, and GitHub has no check runs for the local SHA. The M9 workflow and exact-source test pin now target `fa369069241bf81d32c7f39d31a61806efa55fe4`, ready to consume after publication.
+
+The M1 change uses `fs.realpathSync.native` when resolving the workspace root, registered resources, and held-path revalidation. Its Windows regression obtains the NTFS short name with `cmd.exe /c dir /x` and confirms that an alias for a synthetic credential fixture is rejected before registration. On the exact M1 branch head, `npm run build` and `node --import tsx --test test/gateway.test.ts` passed; the Windows-only short-name case ran and passed, for 38/38 total.
+
+The exact M9 composition regression passed 13/13 against M1 `fa369069241bf81d32c7f39d31a61806efa55fe4` and the unchanged M2–M8 pins listed above. This is local synthetic/source evidence. Hosted M1 CI for `fa369069` and hosted M9 CI with this pin remain pending publication; the prior M9 run `39901460198` still records the independent Windows tar-path failure addressed by the preceding workflow fix. Issue #52 remains OPEN / P0 / NOT_VERIFIED.
