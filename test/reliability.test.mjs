@@ -136,9 +136,25 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   assert.ok(smoke.includes('if (-not $process.WaitForExit($TimeoutMs))')&&smoke.includes('$process.Kill($true)')&&smoke.includes("throw 'NSIS_PROCESS_TIMEOUT'"),'diagnostics must preserve the bounded timeout, kill, and failure behavior');
   assert.ok(smoke.includes('INSTALLED_LAUNCHER_SHA256_MISMATCH'),'the installed launcher must match the build report');
   assert.ok(smoke.includes('"/S /D=$installRoot"'),'install must be silent and confined to the runner temp directory');
-  assert.ok(smoke.includes('"/S _?=$installRoot"'),'uninstall must be silent and bound to the exact target');
-  const residueCapture=smoke.indexOf('$result.uninstallResidue = [ordered]@{');
+  const normalUninstallLine=smoke.split('\n').find(line=>line.includes('$uninstallResult = Invoke-Nsis'))??'';
+  assert.match(normalUninstallLine,/Invoke-Nsis \$uninstallerPath '\/S'/,'the tested ordinary-user uninstall must use silent mode');
+  assert.doesNotMatch(normalUninstallLine,/_\?=/,'the tested ordinary-user uninstall must allow NSIS to use its temporary copy');
+  const uninstallWait=smoke.indexOf('$result.uninstallCompletion = Wait-ForUninstallCompletion');
   const ownedFileAssertion=smoke.indexOf("Assert-Condition ($remainingOwned.Count -eq 0) 'OWNED_INSTALL_FILES_REMAIN_AFTER_UNINSTALL'");
+  const postUninstallAssertions=[
+    ownedFileAssertion,
+    smoke.indexOf("Assert-Condition ($null -eq (Get-RegistryInstallLocation $registryKey)) 'REGISTRY_KEY_REMAINS_AFTER_UNINSTALL'"),
+    smoke.indexOf("Assert-Condition (-not (Test-Path -LiteralPath $startMenuShortcut)) 'START_MENU_SHORTCUT_REMAINS_AFTER_UNINSTALL'"),
+    smoke.indexOf("Assert-Condition (-not (Test-Path -LiteralPath $startMenuFolder)) 'START_MENU_FOLDER_REMAINS_AFTER_UNINSTALL'"),
+    smoke.indexOf("Assert-Condition (-not (Test-Path -LiteralPath $desktopShortcut)) 'DESKTOP_SHORTCUT_REMAINS_AFTER_UNINSTALL'"),
+    smoke.indexOf("Assert-Condition (Test-Path -LiteralPath $sentinelPath -PathType Leaf) 'UNKNOWN_FILE_NOT_PRESERVED'"),
+  ];
+  assert.ok(smoke.includes('function Wait-ForUninstallCompletion')&&smoke.includes('-TimeoutMs 30000')&&smoke.includes("'UNINSTALL_COMPLETION_TIMEOUT'"),'the temp-copy uninstall completion wait must be bounded and fail on timeout');
+  assert.ok(normalUninstallLine.length>0&&uninstallWait>smoke.indexOf(normalUninstallLine)&&postUninstallAssertions.every(position=>position>uninstallWait),'the smoke must wait for NSIS temporary-copy completion before checking owned files, registry, shortcuts, and sentinel');
+  assert.ok(smoke.includes('$signals.registryRemoved')&&smoke.includes('$signals.startMenuShortcutRemoved')&&smoke.includes('$signals.startMenuFolderRemoved')&&smoke.includes('$signals.desktopShortcutRemoved'),'the bounded wait must observe the completed uninstall side effects before checking them');
+  assert.ok(smoke.includes('"/S _?=$installRoot"'),'failure-only cleanup may keep the synchronous NSIS uninstall mode');
+  assert.ok(smoke.includes('$uninstallAttempted = $true')&&smoke.includes('-not $uninstallAttempted'),'timeout must not launch a second cleanup uninstaller while the temp copy may still be running');
+  const residueCapture=smoke.indexOf('$result.uninstallResidue = [ordered]@{');
   assert.ok(residueCapture>=0&&residueCapture<ownedFileAssertion,'uninstall residue must be captured before the owned-file assertion can fail');
   assert.ok(smoke.includes('$residueLimit = 64')&&smoke.includes('relativePaths = @($remainingOwned | Select-Object -First $residueLimit)')&&smoke.includes('truncated = ($remainingOwned.Count -gt $residueLimit)'),'uninstall residue evidence must be capped and explicitly report truncation');
   assert.ok(smoke.includes('count = $remainingOwned.Count'),'uninstall residue evidence must retain the total count when the path list is capped');

@@ -23,6 +23,7 @@ $result = [ordered]@{
   runner = $null
   failure = $null
   cleanupAfterFailure = $null
+  uninstallCompletion = $null
   completedAt = $null
   checks = [System.Collections.Generic.List[object]]::new()
   lifecycleLimits = @{
@@ -41,6 +42,7 @@ $installRoot = $null
 $phaseMarkerPath = $null
 $installerPath = $null
 $uninstalled = $false
+$uninstallAttempted = $false
 $fatalError = $null
 
 function Assert-Condition([bool]$Condition, [string]$Code) {
@@ -138,6 +140,31 @@ function Resolve-ContainedPath([string]$Root, [string]$RelativePath) {
   $pathFull = [IO.Path]::GetFullPath([IO.Path]::Combine($Root, $RelativePath.Replace('/', [IO.Path]::DirectorySeparatorChar)))
   Assert-Condition ($pathFull.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)) 'MANIFEST_PATH_ESCAPES_INSTALL_ROOT'
   return $pathFull
+}
+
+function Wait-ForUninstallCompletion([string]$UninstallerPath, [string]$RegistryKey, [string]$StartMenuShortcut, [string]$StartMenuFolder, [string]$DesktopShortcut, [int]$TimeoutMs = 30000) {
+  # A normal NSIS invocation can return after starting its TEMP copy; wait for the copy's terminal effects before assertions.
+  $clock = [Diagnostics.Stopwatch]::StartNew()
+  try {
+    while ($true) {
+      $signals = [ordered]@{
+        uninstallerRemoved = -not (Test-Path -LiteralPath $UninstallerPath)
+        registryRemoved = $null -eq (Get-RegistryInstallLocation $RegistryKey)
+        startMenuShortcutRemoved = -not (Test-Path -LiteralPath $StartMenuShortcut)
+        startMenuFolderRemoved = -not (Test-Path -LiteralPath $StartMenuFolder)
+        desktopShortcutRemoved = -not (Test-Path -LiteralPath $DesktopShortcut)
+      }
+      if ($signals.uninstallerRemoved -and $signals.registryRemoved -and $signals.startMenuShortcutRemoved -and $signals.startMenuFolderRemoved -and $signals.desktopShortcutRemoved) {
+        return [ordered]@{ completed = $true; durationMs = $clock.ElapsedMilliseconds; signals = $signals }
+      }
+      if ($clock.ElapsedMilliseconds -ge $TimeoutMs) {
+        return [ordered]@{ completed = $false; durationMs = $clock.ElapsedMilliseconds; signals = $signals }
+      }
+      Start-Sleep -Milliseconds 100
+    }
+  } finally {
+    $clock.Stop()
+  }
 }
 
 try {
@@ -268,8 +295,11 @@ try {
   [IO.File]::WriteAllText($sentinelPath, 'synthetic M7 uninstall preservation sentinel')
   $uninstallerPath = Join-Path $installRoot 'Uninstall.exe'
   Assert-Condition ((Assert-RegularFile $uninstallerPath).Length -gt 0) 'UNINSTALLER_MISSING_BEFORE_UNINSTALL'
-  $uninstallResult = Invoke-Nsis $uninstallerPath "/S _?=$installRoot"
+  $uninstallAttempted = $true
+  $uninstallResult = Invoke-Nsis $uninstallerPath '/S'
   Assert-Condition ($uninstallResult.exitCode -eq 0) 'UNINSTALLER_EXIT_NOT_ZERO'
+  $result.uninstallCompletion = Wait-ForUninstallCompletion $uninstallerPath $registryKey $startMenuShortcut $startMenuFolder $desktopShortcut -TimeoutMs 30000
+  Assert-Condition ($result.uninstallCompletion.completed) 'UNINSTALL_COMPLETION_TIMEOUT'
   $uninstalled = $true
 
   $ownedRootFiles = @('AgentCanary.exe', 'INSTALL_RECEIPT.json', 'Uninstall.exe')
@@ -292,7 +322,7 @@ try {
   Assert-Condition (Test-Path -LiteralPath $sentinelPath -PathType Leaf) 'UNKNOWN_FILE_NOT_PRESERVED'
   $remainingRootEntries = @(Get-ChildItem -LiteralPath $installRoot -Force | Select-Object -ExpandProperty Name)
   Assert-Condition ($remainingRootEntries.Count -eq 1 -and $remainingRootEntries[0] -eq 'M7-unknown-file-preservation-sentinel.txt') 'UNINSTALL_ROOT_CONTENTS_UNEXPECTED'
-  Add-Check 'silent-uninstall' 'PASS' @{ exitCode = $uninstallResult.exitCode; durationMs = $uninstallResult.durationMs; ownedFilesRemoved = $true; registryAndShortcutsRemoved = $true; unknownSentinelPreserved = $true }
+  Add-Check 'silent-uninstall' 'PASS' @{ exitCode = $uninstallResult.exitCode; durationMs = $uninstallResult.durationMs; completionWaitMs = $result.uninstallCompletion.durationMs; ownedFilesRemoved = $true; registryAndShortcutsRemoved = $true; unknownSentinelPreserved = $true }
   $result.status = 'PASS_BOUNDED_GITHUB_HOSTED_INSTALL_UNINSTALL'
 } catch {
   $fatalError = [string]$_.Exception.Message
@@ -302,13 +332,14 @@ try {
   $result.failure = $fatalError
   Add-Check 'installer-lifecycle' 'FAIL' @{ reason = $fatalError }
 } finally {
-  if (-not $uninstalled -and $installRoot -and $installerPath -and (Test-Path -LiteralPath $installRoot -PathType Container)) {
+  if (-not $uninstalled -and -not $uninstallAttempted -and $installRoot -and $installerPath -and (Test-Path -LiteralPath $installRoot -PathType Container)) {
     try {
       $sandboxPrefix = [IO.Path]::GetFullPath($sandboxRoot).TrimEnd([char[]]@([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)) + [IO.Path]::DirectorySeparatorChar
       $installFull = [IO.Path]::GetFullPath($installRoot)
       Assert-Condition ($installFull.StartsWith($sandboxPrefix, [StringComparison]::OrdinalIgnoreCase)) 'FAILURE_CLEANUP_TARGET_OUTSIDE_SANDBOX'
       $uninstallerPath = Join-Path $installFull 'Uninstall.exe'
       if (Test-Path -LiteralPath $uninstallerPath -PathType Leaf) {
+        # Failure-only cleanup is synchronous and is not the ordinary-user lifecycle path under test.
         $cleanup = Invoke-Nsis $uninstallerPath "/S _?=$installRoot"
         $result.cleanupAfterFailure = @{ attempted = $true; exitCode = $cleanup.exitCode }
       } else {
