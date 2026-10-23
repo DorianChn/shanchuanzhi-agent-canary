@@ -320,7 +320,7 @@ jobs:
           Write-Output "EXTRACTED_HOOK_CANARY=PASS; CALLER_CANARIES_ABSENT=True; SOURCE_SHA=$sourceSha"
           $report = [ordered]@{
             schemaVersion = 1
-            status = 'SETUP_EXTRACTED_HOOK_CANARY_EXECUTED_INSTALLER_NOT_RUN'
+            status = 'BUILT_NOT_INSTALLED; PACKAGED_HOOK_CANARY_EXECUTED'
             installerExecuted = $false
             sourceSHA = $sourceSha
             workflowRunId = $env:GITHUB_RUN_ID
