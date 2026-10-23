@@ -493,6 +493,11 @@ sanitized route. It verifies the opaque M2 capability before adapting the
 capability-bound M2 executor/provider to M5; no generic path-only callback is
 accepted. Missing owner exports/methods fail closed as `UNKNOWN`.
 
+M4's exact audit report commit `7922309da0f6ea60c02b9bd17e6872aa98d753e5`
+and its Issue #52 evidence confirm M4 is a read-only consumer of the sanitized
+Security Center status; it does not own or implement the protected-read host
+route.
+
 The default Console process resolves package self-reference exports from the
 M3 package. Its `gateway-adapter` target blob is
 `7a05ed64300c6345222dff13a4e929a250646acc`, different from exact M2 PR #91

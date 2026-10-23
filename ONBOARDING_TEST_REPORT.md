@@ -445,6 +445,9 @@ exact-source Ubuntu/Windows test successfully.
 ### P0 #52 fixed-path Host probe/status — 2026-10-24
 
 Current M3 PR #90 exact head is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`.
+M4's exact audit report commit `7922309da0f6ea60c02b9bd17e6872aa98d753e5`
+and Issue #52 evidence confirm M4 is a read-only consumer of the sanitized
+Security Center status; the missing normal-CLI probe/route is M3-owned.
 The first-party Console protected-read action in
 `src/codex-connection-mcp.ts` is written against the public M1 Gateway
 capability, M2 `createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router
