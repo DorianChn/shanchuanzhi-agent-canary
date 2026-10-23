@@ -17,13 +17,13 @@ import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgen
 import {createRuntimeDemo} from '../runtime/demo.js';
 import {createAgentGuard} from '../containment.js';
 import {EvidenceRecorder} from '../runtime/evidence.js';
-import {createProtectedHostAdapter,type PublicM2Facade} from '../codex-connection-mcp.js';
-import type {createSecurityToolRouter as SecurityToolRouterFactory} from '../security-router.js';
+import {createProtectedHostAdapter,type PublicM2Facade,type ProtectedHostDependencies} from '../codex-connection-mcp.js';
 
 const protectedReadRoute='/api/security-center/protected-read';
 const protectedReadFile='agent-canary-public.txt';
 const protectedReadMarker='AGENT_CANARY_CONSOLE_PROTECTED_READ_OK';
 const protectedReadScope='M3_FIXED_TEMP_PROBE_ONLY';
+type SecurityToolRouterFactory=NonNullable<ProtectedHostDependencies['createSecurityToolRouter']>;
 type ProtectedReadReason='HELD_FILE_POSITIVE_CONTROL'|'OWNER_ADAPTER_UNAVAILABLE'|'OWNER_ROUTE_NOT_CONFIRMED'|'INTEGRITY_MISMATCH'|'OWNER_POLICY_DENIED'|'OWNER_DISPATCH_FAILED'|'CLEANUP_FAILED'|'REQUEST_AUTH_REQUIRED'|'REQUEST_INVALID';
 type ProtectedReadGateway={
   bindFileReadCapability:(binding:{toolName:string;operation:'file-read';path:string;pathArg?:string})=>object;
@@ -35,27 +35,28 @@ type ProtectedReadGatewayFactory=(options:{agentId:string;guard:ReturnType<typeo
 type ProtectedReadDependencies={
   createGateway:ProtectedReadGatewayFactory;
   loadM2Facade:()=>Promise<PublicM2Facade>;
-  createSecurityToolRouter:typeof SecurityToolRouterFactory;
+  createSecurityToolRouter:SecurityToolRouterFactory;
 };
 export type SecurityCenterProtectedReadDependencies=()=>Promise<ProtectedReadDependencies>;
 
 async function loadDefaultProtectedReadDependencies():Promise<ProtectedReadDependencies>{
-  // These are package self-references to the public M1/M5 SDK and M2 facade.
-  // Keep the specifiers runtime-resolved: this M3-only checkout does not yet
-  // export M2's subpath, while the integrated package adds it through M2.
+  // These are package self-references to the public M1 Gateway, M5 policy
+  // router, and M2 facade. Keep them runtime-resolved: this M3-only checkout
+  // does not yet export the M5/M2 subpaths, while integration adds them.
   const sdkSpecifier:string='@dorianchn/agent-canary/sdk';
+  const policyRouterSpecifier:string='@dorianchn/agent-canary/policy-router';
   const adapterSpecifier:string='@dorianchn/agent-canary/gateway-adapter';
-  const [sdkValue,adapterValue]=await Promise.all([import(sdkSpecifier),import(adapterSpecifier)]);
+  const [sdkValue,policyRouterValue,adapterValue]=await Promise.all([import(sdkSpecifier),import(policyRouterSpecifier),import(adapterSpecifier)]);
   const sdk=sdkValue as unknown as {
     createTrustedExecutionGateway?:ProtectedReadGatewayFactory;
-    createSecurityToolRouter?:typeof SecurityToolRouterFactory;
   };
+  const policyRouter=policyRouterValue as unknown as {createSecurityToolRouter?:SecurityToolRouterFactory};
   const facade=adapterValue as unknown as PublicM2Facade;
-  if(typeof sdk.createTrustedExecutionGateway!=='function'||typeof sdk.createSecurityToolRouter!=='function'||typeof facade?.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
+  if(typeof sdk.createTrustedExecutionGateway!=='function'||typeof policyRouter.createSecurityToolRouter!=='function'||typeof facade?.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
   return{
     createGateway:sdk.createTrustedExecutionGateway,
     loadM2Facade:async()=>facade,
-    createSecurityToolRouter:sdk.createSecurityToolRouter,
+    createSecurityToolRouter:policyRouter.createSecurityToolRouter,
   };
 }
 

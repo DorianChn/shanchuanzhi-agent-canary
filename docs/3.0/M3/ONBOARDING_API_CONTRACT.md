@@ -99,7 +99,7 @@ restoreAgentIntegration(record) 要求回执字段、绝对路径和宿主配置
 - M3 是上述宿主发现、Agent Integration 和接入 CLI 的接口 owner。对这些调用形状、返回字段、状态或错误语义的变更，由 M3 先更新本文件和对应实现/测试。
 - M0 的共享契约文件只保留跨模块摘要；其他模块通过适配层消费这些接口，不在其 PR 中复制或修改本文件。
 - 当前 Codex 向导、隔离自检结果及所有兼容性声明均不得覆盖 NOT_VERIFIED / OUT_OF_SCOPE 限制。真实 Claude、Cursor、Cline 端到端兼容、Windows 发布命令和原生工具保护均需独立证据。
-- M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. M3's connection-check MCP uses the public `@dorianchn/agent-canary/gateway-adapter` facade and a trusted M5 router factory; its exact-source positive and negative controls are maintained by M9. The Console has a fixed temporary probe action and a built-in trusted bootstrap that lazily self-imports only the public M1/M5 `./sdk` and M2 `./gateway-adapter` subpaths. The M3-only package does not yet expose M2's subpath, so its ordinary CLI path returns sanitized `UNKNOWN` before creating the probe file or Gateway. The self-package import is not accepted as proof of owner composition: M9 must validate the integrated exact owner sources. No private-source import, generic path fallback, or strict-mode opt-out is part of this M3 contract. Native Codex tool coverage remains `OUT_OF_SCOPE`.
+- M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. M3's connection-check MCP uses the public `@dorianchn/agent-canary/gateway-adapter` facade and a trusted M5 router factory; its exact-source positive and negative controls are maintained by M9. The Console has a fixed temporary probe action and a built-in trusted bootstrap that lazily self-imports only the public M1 `./sdk`, M5 `./policy-router`, and M2 `./gateway-adapter` subpaths. The M3-only package does not yet expose the M5/M2 subpaths, so its ordinary CLI path returns sanitized `UNKNOWN` before creating the probe file or Gateway. The self-package import is not accepted as proof of owner composition: M9 must validate the integrated exact owner sources. No private-source runtime import, generic path fallback, or strict-mode opt-out is part of this M3 contract. Native Codex tool coverage remains `OUT_OF_SCOPE`.
 
 ## 6. Console fixed-probe action — implemented, product gate pending
 
@@ -119,10 +119,10 @@ of a Desktop/native host.
 - The JSON body must be exactly `{}`. It has no path, tool, workspace, or other
   caller-controlled fields. Any extra field, including a path alias, is
   rejected before probe dispatch.
-- The built-in bootstrap loads the M1 Gateway factory and M5 strict-router
-  factory from the package's public `./sdk` subpath and the M2 public facade
-  from `./gateway-adapter`; no HTTP data, environment value, or model response
-  selects these dependencies. M3 does not use its own branch's SDK as a
+- The built-in bootstrap loads the M1 Gateway factory from the package's
+  public `./sdk` subpath, the M5 strict-router factory from `./policy-router`,
+  and the M2 public facade from `./gateway-adapter`; no HTTP data, environment
+  value, or model response selects these dependencies. M3 does not use its own branch's SDK as a
   substitute for missing M1/M5 owner behavior. The M2 facade is preflighted
   before creating one process-owned temporary directory and fixed marker file.
   The resolved directory is contained under the resolved OS temp
@@ -152,11 +152,15 @@ of a Desktop/native host.
 ### Current package gate and acceptance criteria
 
 M1 PR #43 publishes the Gateway factory and held-file methods through `./sdk`;
-M2 PR #37 publishes `./gateway-adapter`; M5 PR #47 publishes
-`createSecurityToolRouter` through `./sdk`. The ordinary `ai console` CLI
+M2 PR #37 publishes `./gateway-adapter`; M5 owner commit
+`8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` adds the transparent public
+`./policy-router` re-export. At the latest GitHub check M5 PR #47 still pointed
+to `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed`, so the new owner commit is not
+yet part of that public PR head. The ordinary `ai console` CLI
 passes its port and host-local secrets to `startAIConsole`; the route's
 built-in bootstrap resolves these public subpaths without caller input. On the
-M3-only exact head the M2 subpath is absent, so the route returns `UNKNOWN`
+M3-only exact head both M5's `./policy-router` and M2's `./gateway-adapter`
+subpaths are absent, so the route returns `UNKNOWN`
 before creating probe filesystem state, a Gateway, or a router callback. The
 optional injected dependency loader remains an M3 test/composition seam; it
 does not count as exact-source integration evidence. M9 must compose the exact

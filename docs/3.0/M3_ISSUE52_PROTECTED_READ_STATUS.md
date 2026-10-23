@@ -198,8 +198,8 @@ argument, direct Console file-read fallback, or user-workspace path.
 | --- | --- | --- |
 | M1 | PR #43, `6886d6eef3beb972bc8f4c797584b0f522483870` | `createTrustedExecutionGateway` and the held-file capability methods are exposed through `./sdk`. |
 | M2 | PR #37, `67428139e53c3f63a1101b4f94e84b291cbb1196` | `createSecurityGatewayHostAdapter` is exposed through `./gateway-adapter`; its fixed file map routes to M5 and M1. |
-| M5 | PR #47, `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | `createSecurityToolRouter` is exported through `./sdk`; strict real-path mode requires a valid M1 capability and preserves hard `DENY` under `OBSERVE`. |
-| M3 | PR #33, current source base `34b526d` plus the local Console change | Trusted construction-time dependency bootstrap, fixed route, request authorization, sanitized output, and identity-checked cleanup are M3-owned. |
+| M5 | owner commit `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d`; PR #47 GitHub head was still `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` at audit | Adds the public `./policy-router` transparent re-export for canonical `createSecurityToolRouter` and its types; strict real-path mode still requires a valid M1 capability and preserves hard `DENY` under `OBSERVE`. |
+| M3 | PR #33, baseline `43d765ff1ed0986b90fe6123633e8bcd24e64e1d` plus this M3 patch | Trusted construction-time dependency bootstrap, fixed route, request authorization, sanitized output, and identity-checked cleanup are M3-owned. |
 
 The M3 package manifest at its current source base exposes only `./sdk`, so
 `./gateway-adapter` is not available in the default current M3 build. More
@@ -230,24 +230,39 @@ export map exposes `./sdk` only. Its current Gateway source does not contain
 M1's opaque held-file bind/verify/read methods, so loading M3's own SDK cannot
 stand in for the current M1 owner implementation.
 
-The current public candidate contracts were verified at their open PR heads:
-M1 PR #43 `6886d6eef3beb972bc8f4c797584b0f522483870` exposes the held-file
-Gateway from `./sdk`; M2 PR #37 `67428139e53c3f63a1101b4f94e84b291cbb1196`
-exposes `createSecurityGatewayHostAdapter` from `./gateway-adapter`; and M5
-PR #47 `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` exposes
-`createSecurityToolRouter` from `./sdk`, with strict capability checks. The
-M3-only package does not yet export M2's subpath.
+The latest verified public PR heads include M1 PR #43
+`6886d6eef3beb972bc8f4c797584b0f522483870` with the held-file Gateway from
+`./sdk`, and M2 PR #37
+`67428139e53c3f63a1101b4f94e84b291cbb1196` with
+`createSecurityGatewayHostAdapter` from `./gateway-adapter`. M5 owner commit
+`8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` adds `./policy-router` as a
+transparent re-export of the canonical router and types. GitHub still reported
+M5 PR #47 at `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed`; the additive export
+must not be treated as a public PR surface until that head advances. The
+M3-only package does not yet export either M5 `./policy-router` or M2's
+`./gateway-adapter` subpath.
 
-M3 now uses a trusted, lazy package self-reference to those existing public
-subpaths as the default Console bootstrap. It runs only after the protected
-route has passed CSRF, operator, and exact-empty-body checks. This adds no
-request-controlled path and imports no private source file. At this exact M3
-head, `@dorianchn/agent-canary/gateway-adapter` resolves to
-`ERR_PACKAGE_PATH_NOT_EXPORTED`; the route returns sanitized
-`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating its temporary probe,
-Gateway, policy router, or callback. The M3 regression covers this absent-M2
-case and verifies no probe directory is left behind. M3's injected structural
-test doubles remain wiring tests, not owner-runtime evidence.
+M3 now uses a trusted, lazy package self-reference to the public M1 `./sdk`,
+M5 `./policy-router`, and M2 `./gateway-adapter` subpaths as the default
+Console bootstrap. Runtime loading occurs only after the protected route has
+passed CSRF, operator, and exact-empty-body checks. It does not import a
+private M5 router implementation, fall back to the legacy M3 `./sdk` router,
+or provide a local router shim. At this exact M3 head neither
+`@dorianchn/agent-canary/policy-router` nor
+`@dorianchn/agent-canary/gateway-adapter` is exported; the route returns
+sanitized `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating its temporary
+probe, Gateway, policy router, or callback. The M3 regression confirms the
+legacy M3 SDK router exists but is not used as fallback, and verifies no probe
+directory is left behind. M3's injected structural test doubles remain wiring
+tests, not owner-runtime evidence.
+
+M5 owner commit `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` adds the M5 public
+`./policy-router` alias as a transparent re-export of the canonical router and
+types. At this audit, GitHub PR #47 still exposed head
+`12b2499a1f7b8525f3bf2d7659249c1bd8e881ed`; the additive export has not yet
+been confirmed at the public PR head. M1/M2/M5 positive protected-read
+evidence must wait for M9's exact-source harness/report using the confirmed
+owner heads, including M5 `8d1b832` after it is available to that harness.
 
 M9 must run the ordinary no-injection Console route against the exact M1/M2/M5
 composition and retain the fixed-marker positive control, hard-deny/unknown

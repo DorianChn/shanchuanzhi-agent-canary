@@ -9,6 +9,7 @@ const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-security-center-r
 process.env.AGENT_CANARY_HOME = testHome;
 const currentPackage = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { exports?: Record<string, unknown> };
 const hasPublicM2GatewayAdapter = Object.hasOwn(currentPackage.exports ?? {}, './gateway-adapter');
+const hasPublicM5PolicyRouter = Object.hasOwn(currentPackage.exports ?? {}, './policy-router');
 after(() => {
   if (previousAgentCanaryHome === undefined) delete process.env.AGENT_CANARY_HOME;
   else process.env.AGENT_CANARY_HOME = previousAgentCanaryHome;
@@ -302,11 +303,15 @@ test('protected-read action treats unexpected markers as UNKNOWN and missing com
   }finally{await console.close();}
 
   const prefix='agent-canary-console-probe-';
-  if(!hasPublicM2GatewayAdapter){
+  if(!hasPublicM2GatewayAdapter||!hasPublicM5PolicyRouter){
     const before=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
-    // This is the same startAIConsole call used by `ai console`; in an M3-only
-    // package its public M2 subpath is absent, so the self-package bootstrap
-    // must return UNKNOWN before creating a temp file, Gateway, or callback.
+    // The legacy M3 SDK has a router export, but it is not the M5 owner export.
+    // The ordinary CLI bootstrap must require M5's additive public subpath.
+    const sdk=await import('@dorianchn/agent-canary/sdk');
+    assert.equal(typeof sdk.createSecurityToolRouter,'function');
+    // This is the same startAIConsole call used by `ai console`; absent M5/M2
+    // public subpaths must return UNKNOWN before a temp file, Gateway, router,
+    // or callback is created.
     const defaultConsole=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE'});
     try{
       const csrf=await csrfFor(defaultConsole.url);
@@ -314,7 +319,7 @@ test('protected-read action treats unexpected markers as UNKNOWN and missing com
       assert.equal(response.status,200);
       assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
       const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
-      assert.deepEqual(after.filter(name=>!before.has(name)),[],'an M3-only default must not construct a Gateway or probe directory when the M2 public subpath is unavailable');
+      assert.deepEqual(after.filter(name=>!before.has(name)),[],'an M3-only default must not construct a Gateway or probe directory when either owner public subpath is unavailable');
     }finally{await defaultConsole.close();}
   }
 

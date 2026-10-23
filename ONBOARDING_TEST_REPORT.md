@@ -143,18 +143,24 @@ M3 worktree `feature/ac3-agent-onboarding` was clean at
 `src/ai/cli.ts` `ai console` action passes only port and process-local API / operator
 secrets to `startAIConsole`; it has no explicit owner bootstrap. The Console's
 fixed-temp action now lazily loads only package self-reference public subpaths:
-M1/M5 `@dorianchn/agent-canary/sdk` and M2
+M1 Gateway `@dorianchn/agent-canary/sdk`, M5 router
+`@dorianchn/agent-canary/policy-router`, and M2
 `@dorianchn/agent-canary/gateway-adapter`. It does not accept request, model,
 environment, or browser-selected dependencies. CSRF, operator, and exact `{}`
 checks still happen before this loader runs.
 
-At this M3 exact source, `package.json` exposes only `./sdk`; a direct Node
-self-reference to M2's subpath fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
+At M3 baseline `43d765ff1ed0986b90fe6123633e8bcd24e64e1d`, `package.json` exposes only `./sdk`; direct Node
+self-references to M5 `./policy-router` and M2 `./gateway-adapter` fail with
+`ERR_PACKAGE_PATH_NOT_EXPORTED`. M5's new public-export candidate is owner
+commit `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d`, while GitHub PR #47 still
+reported head `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` at this audit.
 Consequently the normal default Console route returns sanitized
 `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before temp probe creation, Gateway
-construction, or M5 callback. The M3 regression checks this absent-subpath
-case and verifies no probe directory remains. This is fail-closed negative
-evidence only. The exact M1/M2/M5 candidate public contracts are recorded in
+construction, M5 router creation, or callback. The M3 regression asserts that
+the legacy M3 SDK router is present but does not use it as an M5 fallback; it
+checks the absent-owner-subpath result and verifies no probe directory remains.
+This is fail-closed negative evidence only. The exact M1/M2/M5 candidate public
+contracts are recorded in
 `docs/3.0/M3_ISSUE52_PROTECTED_READ_STATUS.md`; M9 must test the default
 no-injection route in the exact integrated package. M4's Desktop UI still does
 not call this M3 route, and neither this synthetic temp probe nor M9's future
