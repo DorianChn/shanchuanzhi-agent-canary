@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'risk-policy-test-'));
 const {createAgentGuard,createRiskPolicyRouter,createSecurityToolRouter,PolicyBlockedError,CanaryBlockedError}=await import('../src/sdk.js');
+const {createGatewayFileReadCapabilityProvider}=await import('../src/risk-policy.js');
 const {readEvents}=await import('../src/alerts.js');
 test('multiple routers sharing a Guard serialize sensitive read and egress, including callback failure',async()=>{
  let release!:()=>void;let started!:()=>void;const gate=new Promise<void>(r=>release=r),active=new Promise<void>(r=>started=r);let sent=0;
@@ -210,6 +211,33 @@ test('trusted read token is rechecked at the final callback boundary and passed 
  assert.equal(verifyCalls,5,'M5 must revalidate the same opaque token immediately before the host callback');
  assert.equal(router.pendingApprovals().length,0);assert.equal(callbacks,0);
  assert.equal(fs.readFileSync(target,'utf8'),'M5_PUBLIC_CAPABILITY_FIXTURE');
+});
+test('M5 Gateway adapter binds fixed M1 capabilities and routes only the exact held-file read',async()=>{
+ const capability=Object.freeze(Object.create(null));let binds=0,verifies=0,reads=0;
+ const gateway={
+  bindFileReadCapability(binding:any){binds++;assert.deepEqual(binding,{toolName:'read_public',path:'public.txt',pathArg:'file_path',operation:'file-read'});return capability;},
+  verifyFileReadCapability(candidate:any,call:any,operation:string){verifies++;return candidate===capability&&operation==='file-read'&&call.name==='read_public'&&Object.keys(call.args).length===1&&call.args.file_path==='public.txt';},
+  async readFileWithCapability(candidate:any,call:any,operation:string){reads++;assert.equal(candidate,capability);assert.equal(call.name,'read_public');assert.equal(call.args.file_path,'public.txt');assert.equal(operation,'file-read');return 'M1_HELD_FILE_PUBLIC_FIXTURE';},
+ };
+ const provider=createGatewayFileReadCapabilityProvider(gateway,[{toolName:'read_public',path:'public.txt',pathArg:'file_path'}]);
+ assert.equal(binds,1,'only the fixed host binding is issued');
+ const call={name:'read_public',args:{file_path:'public.txt'}};
+ const guard=createAgentGuard({sessionId:'m5-gateway-capability-adapter',alert:false});
+ const router=createRiskPolicyRouter({guard,workspaceRoot:process.cwd(),mode:'OBSERVE',verifyRealPaths:true,tools:{read_public:{operation:'file-read',pathArg:'file_path'}},fileReadCapability:provider,executeRealTool:(actual,context)=>provider.readFileWithCapability(context?.fileReadCapability,actual)});
+ assert.equal(await router.dispatch(call),'M1_HELD_FILE_PUBLIC_FIXTURE');
+ assert.ok(verifies>=3,'M5 verifies the issued capability during policy, execution, and held-file read');assert.equal(reads,1);
+ for(const alias of [
+  {name:'read_public',args:{file_path:'public/../public.txt'}},
+  {name:'read_public',args:{file_path:'public.txt',path:'public.txt'}},
+  {name:'other_tool',args:{file_path:'public.txt'}},
+ ]){
+  assert.equal(provider.resolve(alias as any),undefined,'aliases, extra arguments, and unbound tools resolve no capability');
+  assert.equal(provider.verify(capability,alias as any,'file-read'),false);
+  await assert.rejects(provider.readFileWithCapability(capability,alias as any),/POLICY_FILE_READ_CAPABILITY_INVALID/);
+ }
+ await assert.rejects(provider.readFileWithCapability(Object.freeze(Object.create(null)),call),/POLICY_FILE_READ_CAPABILITY_INVALID/);
+ assert.equal(reads,1,'rejected aliases and forged capabilities never reach M1 read');
+ assert.throws(()=>createGatewayFileReadCapabilityProvider({bindFileReadCapability:gateway.bindFileReadCapability,verifyFileReadCapability:gateway.verifyFileReadCapability} as any,[{toolName:'read_public',path:'public.txt'}]),/POLICY_GATEWAY_FILE_READ_API_INVALID/);
 });
 test('read capability cannot authorize strict writes or deletes',async()=>{
  for(const operation of ['file-write','delete'] as const){

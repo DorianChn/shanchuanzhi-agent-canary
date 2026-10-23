@@ -19,8 +19,11 @@ test('M5 policy-router subpath resolves the canonical router without replacing s
   const canonicalModule = await import('../dist/security-router.js');
   assert.equal(publicEntry.createSecurityToolRouter, canonicalModule.createSecurityToolRouter);
   assert.equal(typeof publicEntry.createSecurityToolRouter, 'function');
+  assert.equal(typeof publicEntry.createGatewayFileReadCapabilityProvider, 'function');
 
   const declaration = fs.readFileSync('dist/policy-router.d.ts', 'utf8');
   assert.match(declaration, /SecurityRouterOptions/);
   assert.match(declaration, /RiskPolicyExecutionContext/);
+  assert.match(declaration, /GatewayFileReadCapabilityAPI/);
+  assert.match(declaration, /createGatewayFileReadCapabilityProvider/);
 });

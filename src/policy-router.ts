@@ -10,3 +10,9 @@ export {
   type SecurityAction,
 } from './security-router.js';
 export type { RiskPolicyExecutionContext } from './risk-policy.js';
+export {
+  createGatewayFileReadCapabilityProvider,
+  type GatewayFileReadCapabilityAPI,
+  type GatewayFileReadCapabilityBinding,
+  type GatewayFileReadCapabilityProvider,
+} from './risk-policy.js';

@@ -15,9 +15,110 @@ export interface TrustedFileReadCapabilityProvider {
   resolve(call: Readonly<ToolCall>): unknown;
   verify(capability: unknown, call: Readonly<ToolCall>, operation: 'file-read'): boolean;
 }
+/** The host-only portion of M1's Gateway used to issue and revalidate held-file capabilities. */
+export interface GatewayFileReadCapabilityAPI<TCapability extends object = object> {
+  bindFileReadCapability(binding: Readonly<GatewayFileReadCapabilityBinding & { operation: 'file-read' }>): TCapability;
+  verifyFileReadCapability(capability: TCapability, call: Readonly<ToolCall>, operation: 'file-read'): boolean;
+  readFileWithCapability(capability: TCapability, call: Readonly<ToolCall>, operation: 'file-read', signal?: AbortSignal): Promise<unknown>;
+}
+/** One constructor-fixed M5 tool to M1 registered-file binding. */
+export interface GatewayFileReadCapabilityBinding {
+  readonly toolName: string;
+  readonly path: string;
+  readonly pathArg?: string;
+}
+/** M5 policy provider plus the matching M1 held-handle read operation. */
+export interface GatewayFileReadCapabilityProvider extends TrustedFileReadCapabilityProvider {
+  readFileWithCapability(capability: unknown, call: Readonly<ToolCall>, signal?: AbortSignal): Promise<unknown>;
+}
 /** Passed only to the trusted host callback for a validated strict file read. */
 export interface RiskPolicyExecutionContext { readonly fileReadCapability?: unknown }
 export type PolicyRealToolExecutor<T> = (call: ToolCall, context?: Readonly<RiskPolicyExecutionContext>) => T | Promise<T>;
+
+/**
+ * Adapt M1's opaque held-file API to M5's policy provider. Bindings are trusted
+ * host configuration: model calls can select neither a capability nor a path
+ * beyond the exact registered tool/path pair.
+ */
+export function createGatewayFileReadCapabilityProvider<TCapability extends object>(
+  gateway: GatewayFileReadCapabilityAPI<TCapability>,
+  fixedBindings: readonly GatewayFileReadCapabilityBinding[],
+): GatewayFileReadCapabilityProvider {
+  if (!gateway || typeof gateway.bindFileReadCapability !== 'function' || typeof gateway.verifyFileReadCapability !== 'function' ||
+      typeof gateway.readFileWithCapability !== 'function') {
+    throw new Error('POLICY_GATEWAY_FILE_READ_API_INVALID');
+  }
+  if (!Array.isArray(fixedBindings) || fixedBindings.length < 1 || fixedBindings.length > 256) {
+    throw new Error('POLICY_FILE_READ_BINDINGS_INVALID');
+  }
+
+  const prepared = fixedBindings.map((binding) => {
+    if (!binding || typeof binding !== 'object' || Array.isArray(binding)) throw new Error('POLICY_FILE_READ_BINDING_INVALID');
+    const { toolName, path: relativePath, pathArg = 'path' } = binding;
+    if (typeof toolName !== 'string' || !/^[A-Za-z0-9_.-]{1,100}$/.test(toolName) ||
+        typeof relativePath !== 'string' || !relativePath || relativePath.includes('\\') || relativePath.includes('\0') ||
+        relativePath.includes(':') || relativePath.startsWith('/') || relativePath.split('/').some((part) => part === '' || part === '.' || part === '..') ||
+        typeof pathArg !== 'string' || !/^[A-Za-z0-9_.-]{1,100}$/.test(pathArg)) {
+      throw new Error('POLICY_FILE_READ_BINDING_INVALID');
+    }
+    return { toolName: toolName.toLowerCase(), path: relativePath, pathArg };
+  });
+  const names = new Set<string>();
+  for (const binding of prepared) {
+    if (names.has(binding.toolName)) throw new Error('POLICY_DUPLICATE_FILE_READ_BINDING');
+    names.add(binding.toolName);
+  }
+
+  const bindings = new Map<string, { path: string; pathArg: string; capability: TCapability }>();
+  for (const binding of prepared) {
+    const capability = gateway.bindFileReadCapability(Object.freeze({ ...binding, operation: 'file-read' as const }));
+    if (!capability || typeof capability !== 'object') throw new Error('POLICY_GATEWAY_FILE_CAPABILITY_INVALID');
+    bindings.set(binding.toolName, { path: binding.path, pathArg: binding.pathArg, capability });
+  }
+
+  function exactBinding(call: Readonly<ToolCall>) {
+    try {
+      if (!call || typeof call !== 'object') return undefined;
+      const callDescriptors = Object.getOwnPropertyDescriptors(call);
+      const name = callDescriptors.name;
+      const argsDescriptor = callDescriptors.args;
+      if (!name || name.get || name.set || !('value' in name) || typeof name.value !== 'string' ||
+          !argsDescriptor || argsDescriptor.get || argsDescriptor.set || !('value' in argsDescriptor)) return undefined;
+      const binding = bindings.get(name.value.toLowerCase());
+      const args = argsDescriptor.value;
+      if (!binding || !args || typeof args !== 'object' || Array.isArray(args)) return undefined;
+      const argDescriptors = Object.getOwnPropertyDescriptors(args);
+      const argKeys = Object.keys(argDescriptors);
+      if (argKeys.length !== 1 || argKeys[0] !== binding.pathArg) return undefined;
+      const arg = argDescriptors[binding.pathArg];
+      if (!arg || arg.get || arg.set || !('value' in arg) || arg.value !== binding.path) return undefined;
+      return binding;
+    } catch {
+      return undefined;
+    }
+  }
+
+  return Object.freeze({
+    resolve(call: Readonly<ToolCall>): unknown {
+      return exactBinding(call)?.capability;
+    },
+    verify(capability: unknown, call: Readonly<ToolCall>, operation: 'file-read'): boolean {
+      const binding = exactBinding(call);
+      if (!binding || operation !== 'file-read' || capability !== binding.capability) return false;
+      try { return gateway.verifyFileReadCapability(binding.capability, call, operation) === true; }
+      catch { return false; }
+    },
+    async readFileWithCapability(capability: unknown, call: Readonly<ToolCall>, signal?: AbortSignal): Promise<unknown> {
+      const binding = exactBinding(call);
+      if (!binding || capability !== binding.capability) throw new Error('POLICY_FILE_READ_CAPABILITY_INVALID');
+      let verified = false;
+      try { verified = gateway.verifyFileReadCapability(binding.capability, call, 'file-read') === true; } catch {}
+      if (!verified) throw new Error('POLICY_FILE_READ_CAPABILITY_INVALID');
+      return gateway.readFileWithCapability(binding.capability, call, 'file-read', signal);
+    },
+  });
+}
+
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
