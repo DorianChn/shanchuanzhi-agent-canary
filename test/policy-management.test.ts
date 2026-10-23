@@ -397,7 +397,11 @@ test('native lab hook logs only the fixed allowlist and drops synthetic sensitiv
   assert.equal(result.status, 0);
   const response = JSON.parse(result.stdout);
   assert.equal(response.hookSpecificOutput.permissionDecision, 'deny');
-  assert.equal(response.hookSpecificOutput.permissionDecisionReason, canaries.reason);
+  assert.equal(response.hookSpecificOutput.permissionDecisionReason, 'Agent Canary: permission_denied');
+  for (const canary of Object.values(canaries)) {
+    assert.equal(result.stdout.includes(canary), false, `hook output contains synthetic canary ${canary}`);
+    assert.equal(result.stderr.includes(canary), false, `hook stderr contains synthetic canary ${canary}`);
+  }
 
   const log = fs.readFileSync(logFile, 'utf8');
   const lines = log.trim().split(/\r?\n/);
