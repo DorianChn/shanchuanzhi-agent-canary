@@ -7439,3 +7439,6 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - Usage was 99% five-hour / 75% weekly at 03:16 UTC; PR #24 remains OPEN/Draft with unchanged head/base. M7 PR #39 exact head `1448a46ce43a2211e14be70fcd9c256b21d74c1f` is now green on all 13 listed checks, including Windows hosted installer lifecycle smoke. This remains hosted-runner evidence, not clean-VM acceptance.
 - M9 PR #36 exact head `88acbf74f36e175444fe315150e1446371fd7dd3` has 12/13 listed checks green; Ubuntu composition passed, while Windows composition job `120219406412` was still pending. The main OS matrix, package, wrapper and other composition checks passed.
+## Post-push M9 exact-head closeout — 2026-10-23 03:17 UTC
+
+- PR #36 exact head `88acbf74f36e175444fe315150e1446371fd7dd3` completed all 13/13 listed checks. Both Ubuntu and Windows exact-module composition jobs passed, including the refreshed M1/M4/M7 pins. This confirms the workflow and synthetic contract suite at the published head; it does not upgrade the product-host, VM, or E4 evidence level.
