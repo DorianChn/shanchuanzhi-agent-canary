@@ -437,3 +437,23 @@ Verification on the Windows M4 worktree:
 - `git diff --check` — PASS.
 
 The new M4 junction case verifies that a caller-supplied junction path is rejected by the fixed-probe request schema before protected-read dependencies load; it does not verify that M2 resolves or rejects a filesystem junction through a product Host callsite. No M4 product file, native Host callback, VMware, installer, or model was exercised. Product OBSERVE remains **NOT_VERIFIED**.
+
+## 2026-10-24 M2 PR #91 public-adapter clarification
+
+M0 identified public M2 PR #91 at `92dd42b900b10ce0294e9e3faa7e175d728228b3` as the candidate facade; current required checks pass, but the PR remains Draft. The candidate file blob is `0d7053114e87177669ec2c3b416028e05affb62f`. The M4 checkout contains a different blob at the same path (`7a05ed64300c6345222dff13a4e929a250646acc`); M4 does not treat that local source as the PR #91 candidate and did not use M2 worktree commit `69a98fb`.
+
+If the host integration consumes PR #91, the exact package boundary is the named export from `@dorianchn/agent-canary/gateway-adapter`:
+
+```js
+const { createSecurityGatewayHostAdapter } = await import('@dorianchn/agent-canary/gateway-adapter');
+const host = createSecurityGatewayHostAdapter({
+  gateway, // M1 Gateway holding the registered file identity
+  fixedFileReads: { protected_read: ['<registered-relative-file>'] },
+  createSecurityToolRouter, // M5 public strict router
+  routerOptions: { guard, workspaceRoot, mode: 'OBSERVE', verifyRealPaths: true },
+});
+```
+
+`fixedFileReads` must refer only to paths registered in that M1 Gateway. M2 reserves/injects the tool list, execution callback, and opaque capability provider; the caller must not provide those fields or add a path-only fallback. The M3 wrapper callsite is `src/codex-connection-mcp.ts::createProtectedHostAdapter`, which dynamically imports that package subpath and calls the facade; the current Console probe supplies only its process-owned `agent-canary-public.txt` target. However, the M4 checkout resolves the subpath to its local blob `7a05ed64300c6345222dff13a4e929a250646acc`, not PR #91's candidate blob `0d7053114e87177669ec2c3b416028e05affb62f`; the callsite alone does not prove the exact PR #91 artifact was composed. M9 must verify package resolution against the pinned candidate. M4's page does not invoke that host helper or protected-read POST; it consumes only the sanitized status GET.
+
+The M4 commit `7d050b25851f19d48a3c011d078aace5961c8888` is independent of PR #91 and remains limited to the status-consumer/request-boundary regression and report. A future acceptance run must resolve the exact packed PR #91 export in an ordinary supported CLI composition, then prove: (1) a registered safe positive read through M1 held identity → M2 facade → M5 strict OBSERVE; (2) unregistered/sensitive alias and physical symlink/junction alias denial; (3) same-path replacement denial; (4) each denial adds zero M1 read evidence, M5 callbacks, approvals, or file effects and leaves original bytes/hash unchanged; and (5) M4 receives only a sanitized operation-bound status result. M9 must pin the exact source refs and package exports. Until those controls pass, #52 remains **OPEN / P0 / NOT_VERIFIED**.
