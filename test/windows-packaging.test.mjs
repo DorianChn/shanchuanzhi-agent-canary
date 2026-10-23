@@ -207,6 +207,7 @@ test('prepare emits a build command pinned to the exact committed wrapper source
       communityZip
     });
     assert.equal(invocation.wrapperSourceSHA,resolveWrapperSourceSHA(repo));
+    assert.equal(invocation.wrapperSourcePath,'packaging/windows/claude-native-hook.mjs');
     assert.equal(invocation.buildArgs[3],invocation.wrapperSourceSHA);
     assert.equal(invocation.communityZIP_SHA256,createHash('sha256').update('synthetic community package').digest('hex'));
     assert.ok(invocation.command.includes(invocation.wrapperSourceSHA));
@@ -258,6 +259,66 @@ test('Windows artifact evidence binds the exact Hook SHA through build report, m
   assert.ok(workflow.includes("if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }"));
   assert.ok(workflow.includes("if ($installerSha256 -ne $buildResult.installerSHA256) { throw 'INSTALLER_SHA256_MISMATCH' }"));
   assert.ok(workflow.includes("if ($payloadManifestSha256 -ne $buildResult.manifestSHA256) { throw 'PAYLOAD_MANIFEST_SHA256_MISMATCH' }"));
+});
+
+test('wrapper source API accepts only the M7 and M8 canonical paths',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-wrapper-source-paths-'));
+  const allowedPaths=['packaging/windows/claude-native-hook.mjs','security-lab/claude-native-hook.mjs'];
+  const runGit=(...args)=>{
+    const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
+    assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
+    return result.stdout.trim();
+  };
+  try{
+    for(const sourcePath of allowedPaths){
+      const candidate=path.join(temp,sourcePath);
+      fs.mkdirSync(path.dirname(candidate),{recursive:true});
+      fs.copyFileSync(path.join(repo,allowedPaths[0]),candidate);
+    }
+    fs.writeFileSync(path.join(temp,'.gitattributes'),`${allowedPaths.map(sourcePath=>`${sourcePath} text eol=lf`).join('\n')}\n`);
+    runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
+    runGit('config','user.name','Canary contract test');
+    runGit('config','user.email','canary-contract-test@example.invalid');
+    runGit('add','--','.gitattributes',...allowedPaths);
+    runGit('commit','--quiet','-m','test canonical wrapper source paths');
+    const head=runGit('rev-parse','HEAD');
+    const communityZip=path.join(temp,'community.zip');
+    fs.writeFileSync(communityZip,'synthetic community package');
+    for(const sourcePath of allowedPaths){
+      const invocation=createWindowsBuildInvocation({
+        repoRoot:temp,
+        buildScript:path.join(repo,'packaging/windows/build.mjs'),
+        payloadDir:path.join(temp,'payload'),
+        nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
+        communityZip,
+        sourcePath
+      });
+      assert.equal(invocation.wrapperSourceSHA,head);
+      assert.equal(invocation.wrapperSourcePath,sourcePath);
+      assert.equal(resolveWrapperSourceSHA(temp,{sourcePath:invocation.wrapperSourcePath}),head);
+      const committed=readCommittedWrapperSource(temp,{sourcePath:invocation.wrapperSourcePath});
+      assert.equal(committed.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+      assert.equal(committed.sha256,M1_CANONICAL_WRAPPER_SHA256);
+      const destination=path.join(temp,'packaged',sourcePath.split('/').at(-1));
+      fs.mkdirSync(path.dirname(destination),{recursive:true});
+      const packaged=writePackagedWrapperSource(temp,destination,invocation.wrapperSourceSHA,{sourcePath:invocation.wrapperSourcePath});
+      assert.deepEqual(fs.readFileSync(destination),committed.bytes,`${sourcePath} must package exact committed bytes`);
+      assert.deepEqual(packaged.bytes,committed.bytes);
+    }
+    const unexpectedPath='../security-lab/claude-native-hook.mjs';
+    assert.throws(()=>resolveWrapperSourceSHA(temp,{sourcePath:unexpectedPath}),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+    assert.throws(()=>readCommittedWrapperSource(temp,{sourcePath:unexpectedPath}),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+    assert.throws(()=>writePackagedWrapperSource(temp,path.join(temp,'rejected.mjs'),head,{sourcePath:unexpectedPath}),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+    assert.throws(()=>createWindowsBuildInvocation({
+      repoRoot:temp,
+      buildScript:path.join(repo,'packaging/windows/build.mjs'),
+      payloadDir:path.join(temp,'payload'),
+      nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
+      communityZip,
+      sourcePath:unexpectedPath
+    }),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
 test('wrapper provenance refuses a Hook file changed after its source commit',()=>{
