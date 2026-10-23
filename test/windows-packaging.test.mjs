@@ -8,7 +8,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
-import {createWindowsBuildInvocation,parseWindowsBuildArgs,resolveWrapperSourceSHA} from '../packaging/windows/build-contract.mjs';
+import {createWindowsBuildInvocation,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
 import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -214,8 +214,15 @@ test('prepare emits a build command pinned to the exact committed wrapper source
     assert.match(source,/createWindowsBuildInvocation/);
     assert.match(source,/wrapperSourceSHA:invocation\.wrapperSourceSHA/);
     const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
-    assert.match(build,/resolveWrapperSourceSHA/);
-    assert.match(build,/WRAPPER_SOURCE_SHA_MISMATCH/);
+    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/);
+    const wrapper=readCommittedWrapperSource(repo);
+    assert.equal(wrapper.sha,invocation.wrapperSourceSHA);
+    assert.equal(wrapper.bytes.includes(Buffer.from('\r\n')),false);
+    const packagedPath=path.join(temp,'payload','claude-native-hook.mjs');
+    fs.mkdirSync(path.dirname(packagedPath),{recursive:true});
+    const packaged=writePackagedWrapperSource(repo,packagedPath,invocation.wrapperSourceSHA);
+    assert.deepEqual(fs.readFileSync(packagedPath),wrapper.bytes);
+    assert.deepEqual(packaged.bytes,wrapper.bytes);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
@@ -231,13 +238,21 @@ test('wrapper provenance refuses a Hook file changed after its source commit',()
     fs.mkdirSync(path.dirname(wrapper),{recursive:true});
     fs.writeFileSync(wrapper,'export const wrapper = true;\n');
     runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
     runGit('config','user.name','Canary contract test');
     runGit('config','user.email','canary-contract-test@example.invalid');
     runGit('add','--','security-lab/claude-native-hook.mjs');
     runGit('commit','--quiet','-m','test wrapper provenance');
     assert.equal(resolveWrapperSourceSHA(temp),runGit('rev-parse','HEAD'));
+    fs.writeFileSync(wrapper,'export const wrapper = true;\r\n');
+    const committed=readCommittedWrapperSource(temp),packaged=path.join(temp,'packaged','claude-native-hook.mjs');
+    fs.mkdirSync(path.dirname(packaged),{recursive:true});
+    assert.deepEqual(committed.bytes,Buffer.from('export const wrapper = true;\n'));
+    assert.notDeepEqual(fs.readFileSync(wrapper),committed.bytes,'the synthetic Windows worktree uses CRLF while the tracked blob uses LF');
+    assert.deepEqual(writePackagedWrapperSource(temp,packaged,committed.sha).bytes,committed.bytes);
+    assert.deepEqual(fs.readFileSync(packaged),committed.bytes,'packaged bytes must exactly match the Git blob');
     fs.appendFileSync(wrapper,'// changed after commit\n');
-    assert.throws(()=>resolveWrapperSourceSHA(temp),/WRAPPER_SOURCE_NOT_COMMITTED/);
+    assert.throws(()=>resolveWrapperSourceSHA(temp),/WRAPPER_SOURCE_PROVENANCE_MISMATCH/);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
@@ -246,10 +261,12 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
   try{
     const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
     assert.ok(build.includes("'e4-hook-faults.mjs'"),'Windows build must include the E4 hook-fault harness');
-    assert.ok(build.includes("fs.copyFileSync(path.resolve(src,'../../security-lab/claude-native-hook.mjs'),path.join(root,'claude-native-hook.mjs'))"),'Windows build must copy the reviewed wrapper next to the packaged harness');
+    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/,'Windows build must package exact committed wrapper bytes next to the harness');
     const packagedHook=path.join(payload,'claude-native-hook.mjs');
     const packagedE4=path.join(payload,'e4-hook-faults.mjs');
-    fs.copyFileSync(path.join(repo,'security-lab/claude-native-hook.mjs'),packagedHook);
+    const wrapperSource=readCommittedWrapperSource(repo);
+    writePackagedWrapperSource(repo,packagedHook,wrapperSource.sha);
+    assert.deepEqual(fs.readFileSync(packagedHook),wrapperSource.bytes,'packaged hook bytes must be the exact LF Git blob');
     fs.copyFileSync(path.join(repo,'packaging/windows/e4-hook-faults.mjs'),packagedE4);
     const {runHookFaultChecks}=await import(`${pathToFileURL(packagedE4).href}?packaged=${Date.now()}`);
     const result=runHookFaultChecks({appRoot:path.join(payload,'app','dist'),fixturesRoot:payload});

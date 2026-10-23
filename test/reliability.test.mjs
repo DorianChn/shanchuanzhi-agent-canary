@@ -82,6 +82,8 @@ test('Windows community workflow installs and compiles with NSIS only on Windows
   assert.ok(workflow.includes("name: Compile installer template on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/verify-installer-template.mjs"),'Ubuntu must not run Windows-only compiler acceptance');
   assert.ok(workflow.indexOf('run: node scripts/verify-installer-template.mjs')<workflow.indexOf('- run: npm ci --no-audit --no-fund'),'compiler evidence should run before unrelated tests can fail-fast the Windows job');
   assert.ok(workflow.includes('fail-fast: false'),'all OS matrix results should finish after one platform fails');
+  assert.ok(workflow.includes("$reviewedHookBlobShas = @('d6f93249306b7966259cab463dd39475728ef338', 'b7ed4aba70a597f4f63a05decc6de1b32f67372e')"),'only the exact reviewed baseline and M1 sanitizer Hook blobs may pass Windows package provenance');
+  assert.ok(workflow.includes("if ($reviewedHookBlobShas -notcontains $sourceHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }"),'unreviewed Hook blobs must fail closed');
 });
 test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited to install/uninstall',()=>{
   const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
