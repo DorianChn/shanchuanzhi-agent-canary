@@ -1682,3 +1682,11 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#52 P0 — OPEN / NOT_VERIFIED.** M1 accepts only adapter/API compatibility for M2 head 3a60813; M4 host wiring and product-held identity/TOCTOU remain unproven. M4/M5 next review.
 - **#57 P1 — OPEN / NOT_VERIFIED.** M7 artifacts provide provenance and same-run lifecycle evidence only; independent E4 receipt/runner remains missing.
 - Resource correction: M7 #39 hosted Windows installer lifecycle run 39904585994 completed 05:16:49 UTC without a prior #29 reservation entry. No GitHub workflow is currently in progress. Slot is free now; reserve before future installer/VM/model runs.
+
+## 2026-10-23 06:08 UTC — Issue #52 M4 consumer result
+
+- **#52 P0 — OPEN / NOT_VERIFIED.** M4 trace found no supported desktop OBSERVE file-read route through the M1 capability/M2 adapter. The CLI passes only port/credentials into Console; M4 page only requests a status GET with no matching server route; adapter is absent from the M4 package exports. Keep UI status NOT_VERIFIED.
+- **Responsibility:** M3 host/API + CLI/package composition and M2 adapter integration; M1 capability owner; M5 policy owner; M4 sanitized status consumer.
+- **Reproduction:** follow `registerAICommands` → `startAIConsole`, inspect `/api/security-center` and M4 package exports, then inspect the absence of a protected-read action/context. Path-only callback stays denied with `verifyRealPaths=true`.
+- **Acceptance:** exact supported package performs allowed read via held M1 capability and denies path-only, sensitive aliases, symlink/junction, and path replacement before callback/approval while preserving target bytes/hash. OS-atomic TOCTOU stays separately unverified.
+- M4 report-only commit `10dca766b6c0179a3a23922753c43aaf527ff412` is local pending next eligible batch; details and explicit evidence scope are in comment `6358636982`. M5 criteria 1–2 pass 65/65; M1's disposition is adapter/API compatibility only. Neither closes the host-callsite gap.
