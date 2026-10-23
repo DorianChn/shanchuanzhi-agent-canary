@@ -170,21 +170,22 @@ of a Desktop/native host.
 
 ### Current package gate and acceptance criteria
 
-M1 PR #43 publishes the Gateway factory and held-file methods through `./sdk`;
-M2 PR #37 publishes `./gateway-adapter`; M5 owner commit
-`8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` adds the transparent public
-`./policy-router` re-export. At the latest GitHub check M5 PR #47 still pointed
-to `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed`, so the new owner commit is not
-yet part of that public PR head. The ordinary `ai console` CLI
-passes its port and host-local secrets to `startAIConsole`; the route's
-built-in bootstrap resolves these public subpaths without caller input. On the
-M3-only exact head both M5's `./policy-router` and M2's `./gateway-adapter`
-subpaths are absent, so the route returns `UNKNOWN`
-before creating probe filesystem state, a Gateway, or a router callback. The
-optional injected dependency loader remains an M3 test/composition seam; it
-does not count as exact-source integration evidence. M9 must compose the exact
-owner sources and test the ordinary no-injection Console route through these
-public boundaries before any fixed-probe positive status is reported.
+The latest verified open PR heads are M1 #43 `e1e3d4fed83c853328d5e2720ac89a7be29c3571`,
+M2 #37 `1c050abace5af6e09b7b934730f2361b78f9d938`, and M5 #47
+`8d1b832f46db363dd8ba5cdd7d573baa89e9a46d`. Their public package surfaces
+are M1's held-file Gateway through `./sdk`, M2's
+`./gateway-adapter` (mapped to the package-included adapter file), and M5's
+`./policy-router` (mapped to its built distribution file). The M3-only
+`package.json` still exports only `./sdk`; it does not contain the M2 or M5
+subpaths. Therefore the ordinary `ai console` route's trusted lazy bootstrap
+uses only the supported public specifiers, but on this M3 package it returns
+sanitized `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating the fixed
+probe directory/file, a Gateway, a router, or a callback. The M3 regression
+covers this default no-injection case whenever either owner subpath is absent.
+The optional injected dependency loader remains an M3 test/composition seam;
+it does not count as exact-source integration evidence. M9 must compose all
+three exact owner exports in one package and test the ordinary no-injection
+Console route before any fixed-probe positive status is reported.
 
 Acceptance must cover the authorized exact-marker positive control; missing
 M1/M2/M5 component and unclassified-error `UNKNOWN`; explicit M1/M5 denial;

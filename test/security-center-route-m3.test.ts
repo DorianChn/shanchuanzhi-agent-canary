@@ -356,7 +356,7 @@ test('protected-read action distinguishes explicit owner denial from unknown dis
   }
 });
 
-test('protected-read action treats unexpected markers as UNKNOWN and missing composition fails before probe setup', async () => {
+test('protected-read action treats unexpected markers as UNKNOWN and missing composition fails before probe setup', async (t) => {
   const injected=fakeProtectedReadDependencies('wrong');
   const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterProtectedReadDependencies:injected.loader});
   try{
@@ -376,12 +376,15 @@ test('protected-read action treats unexpected markers as UNKNOWN and missing com
     // This is the same startAIConsole call used by `ai console`; absent M5/M2
     // public subpaths must return UNKNOWN before a temp file, Gateway, router,
     // or callback is created.
+    const probeDirectoryCreate=t.mock.method(fs,'mkdtempSync');
     const defaultConsole=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE'});
     try{
       const csrf=await csrfFor(defaultConsole.url);
       const response=await fetch(defaultConsole.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
       assert.equal(response.status,200);
       assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
+      const probeDirectoryCalls=probeDirectoryCreate.mock.calls.filter(call=>String(call.arguments[0]).includes(prefix));
+      assert.equal(probeDirectoryCalls.length,0,'missing public owner exports must be rejected before the probe filesystem side effect; Gateway/router/callback construction is downstream of this directory');
       const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
       assert.deepEqual(after.filter(name=>!before.has(name)),[],'an M3-only default must not construct a Gateway or probe directory when either owner public subpath is unavailable');
     }finally{await defaultConsole.close();}
