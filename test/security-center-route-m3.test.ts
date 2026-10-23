@@ -551,6 +551,35 @@ test('protected-read action reports PASS only after the fixed positive, alias de
   }finally{await console.close();}
 });
 
+test('default first-party Console protected-read uses the public M1/M2/M5 composition',async()=>{
+  const prefix='agent-canary-console-probe-';
+  const before=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
+  if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
+    const [sdk,adapter,policy]=await Promise.all([
+      import('@dorianchn/agent-canary/sdk'),
+      import('@dorianchn/agent-canary/gateway-adapter'),
+      import('@dorianchn/agent-canary/policy-router'),
+    ]);
+    assert.equal(typeof sdk.createTrustedExecutionGateway,'function');
+    assert.equal(typeof adapter.createSecurityGatewayHostAdapter,'function');
+    assert.equal(typeof policy.createSecurityToolRouter,'function');
+  }
+  const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE'});
+  try{
+    const csrf=await csrfFor(console.url);
+    const response=await fetch(console.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
+    assert.equal(response.status,200);
+    const result=await response.json();
+    if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
+      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true});
+    }else{
+      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
+    }
+  }finally{await console.close();}
+  const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
+  assert.deepEqual(after.filter(name=>!before.has(name)),[],'the first-party fixed probe and its junction alias must be cleaned up');
+});
+
 test('protected-read action stays UNKNOWN before owner composition when the M1 evidence surface is absent',async()=>{
   const dependencies=fakeProtectedReadDependencies('allow',false,true);
   const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterProtectedReadDependencies:dependencies.loader});
