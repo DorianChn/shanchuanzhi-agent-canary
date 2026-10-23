@@ -7467,3 +7467,8 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - With 88% five-hour / 73% weekly usage before the batch, pushed M0 `51bdedd5896711ce475a8a198233525e7d48628a`, M1 `a737dcac3fb05cb41c3f6108aa46fb5894f95e5a`, and M2 `58c2e46fef70021fbfd70e1caa7ba44e7281ee43`. Each remote ref was read back at the expected head.
 - PR #43 M1 CI was in progress; PR #37 M2 CI was queued/in progress; PR #30 M0 CI was in progress. No checks are presumed green until a completed status is observed. PR #24 head/base remain unchanged; no merge, release, or PR #24 edit occurred.
+
+## M1/M2 CI closeout and M4 local successor — 2026-10-23 03:42 UTC
+
+- M1 PR #43 exact head `a737dcac3fb05cb41c3f6108aa46fb5894f95e5a` completed 11/11 checks; M2 PR #37 exact head `58c2e46fef70021fbfd70e1caa7ba44e7281ee43` completed 9/9. M0 PR #30 exact head `c07040c0cb13fc22dcf0dd81184ee173a89a2fc4` still had three matrix checks running at the latest read.
+- M4 local commit `d62557a03883c459cce6bec60b36686128ccf73d` fixes keyboard focus/selection loss on security-event refresh, adds regression coverage, and updates acceptance evidence. Verification: runtime-console 13/13, build and diff check passed, Chrome synthetic focus/empty/403/narrow-CJK checks passed, and the single Impeccable detector returned no findings. M4 branch is ahead by one; publish waits for the next batch. Its page remains status-only/GET-only and does not establish protected reads.
