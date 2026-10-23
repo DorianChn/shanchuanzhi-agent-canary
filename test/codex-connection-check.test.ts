@@ -349,6 +349,36 @@ test('M3 host dependency seam stays UNKNOWN and side-effect free when the truste
   }
 });
 
+test('M3 records a missing M2 held-read provider internally without exposing a new Console reason',async()=>{
+  let m5FactoryCalls=0,genericCallbacks=0,gatewayReads=0;
+  const capability=Object.freeze(Object.create(null));
+  const gateway=Object.freeze({
+    bindFileReadCapability(){return capability;},
+    verifyFileReadCapability(){return true;},
+    readFileWithCapability(){gatewayReads++;throw new Error('the missing provider must stop before M1 read');},
+  });
+  const guard=createAgentGuard({sessionId:'m3-m2-provider-missing-test',alert:false});
+  const host=await createProtectedHostAdapter(gateway,guard,os.tmpdir(),{
+    loadM2Facade:async()=>({createSecurityGatewayHostAdapter(options:any){
+      return options.createSecurityToolRouter({
+        ...options.routerOptions,
+        tools:{protected_read:{operation:'file-read',pathArg:'path'}},
+        fileReadCapability:{resolve:()=>capability,verify:()=>true},
+        executeRealTool:async()=>{genericCallbacks++;throw new Error('generic path callback must not be used');},
+      });
+    }}),
+    createSecurityToolRouter:((()=>{m5FactoryCalls++;throw new Error('M5 must not be constructed without the M2 held-read method');}) as never),
+  });
+  assert.equal(host.status,'UNKNOWN');
+  assert.equal(host.reason,'M2_CAPABILITY_PROVIDER_UNAVAILABLE','internal diagnostics should retain the precise owner API blocker');
+  assert.equal(host.dispatch,undefined);
+  assert.equal(host.securityCenterStatusProvider,undefined);
+  assert.equal(host.m5Callbacks(),0);
+  assert.equal(m5FactoryCalls,0);
+  assert.equal(genericCallbacks,0);
+  assert.equal(gatewayReads,0);
+});
+
 test('M3 host does not substitute its local router when the composed M5 public export is absent',async()=>{
   let bindings=0,adapterLoads=0,policyLoads=0,reads=0;
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-m5-missing-'));

@@ -585,7 +585,7 @@ test('default first-party Console protected-read fails closed when the checked-o
     assert.equal(response.status,200);
     const result=await response.json();
     if(hasPublicM2GatewayAdapter&&hasPublicM5PolicyRouter){
-      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'M2_CAPABILITY_PROVIDER_UNAVAILABLE',markerMatched:false},'the checked-out public M2 provider lacks the M5 held-read method; M3 must not fall back to executeRealTool');
+      assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false},'the checked-out public M2 provider lacks the M5 held-read method; M3 must preserve its fixed response enum and must not fall back to executeRealTool');
     }else{
       assert.deepEqual(result,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
     }

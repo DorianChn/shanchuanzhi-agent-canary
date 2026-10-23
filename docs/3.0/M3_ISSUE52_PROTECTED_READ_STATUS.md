@@ -328,12 +328,14 @@ requests the public M2 host adapter and public M5 router in strict OBSERVE
 mode. M3 now requires the M2 capability provider method
 `readFileWithCapability(capability, call, signal?)`, forwards the opaque
 capability/call/signal unchanged, and never routes a strict file read through
-the generic path-only callback. If this method is missing, the normal Console
-probe returns only `UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE`. The GET
-status route stays read-only and CSRF protected; it normalizes a trusted
-provider snapshot, allows only the exact `M2_FIXED_FILE_READS_ONLY` coverage
-label, and defaults to UNKNOWN when the ordinary CLI has no provider. GET does
-not trigger the fixed probe.
+the generic path-only callback. If this method is missing, the internal M3
+adapter records `M2_CAPABILITY_PROVIDER_UNAVAILABLE` and stops before callback
+or M1 read evidence. The Console POST keeps its existing fixed public reason
+enum and returns `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; it does not expose the
+internal reason. The GET status route stays read-only and CSRF protected. It
+normalizes a trusted provider snapshot, allows only the exact
+`M2_FIXED_FILE_READS_ONLY` coverage label, and defaults to UNKNOWN when the
+ordinary CLI has no provider. GET does not trigger the fixed probe.
 
 Exact blocker: the checked-out M3 package exports `./gateway-adapter`, but its
 current `execution-isolation/gateway-adapter/gateway-adapter.mjs` provider has
@@ -357,7 +359,7 @@ package regression expects UNKNOWN for the checked-out missing provider.
 
 Local Windows verification for this revision: `npm run build` PASS;
 `node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
-PASS (26/26); `git diff --check` PASS.
+PASS (27/27); `git diff --check` PASS.
 
 Issue #52 remains OPEN / P0 / NOT_VERIFIED. M9 must run the exact integrated
 M1/M2/M3/M5 references on Ubuntu and Windows. These M3 tests do not prove a
@@ -373,8 +375,15 @@ string. Ubuntu Node 20/22, Docker, sponsor smoke, and ownership-contract
 evidence passed; remaining matrix jobs were cancelled after that failure. The
 failure did not involve a Host decision or file-read callback.
 
-M3 test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` now checks
+M3 test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` checks
 directory identity by device/inode and containment using canonical paths. Its
-local Windows build, focused 26/26 tests, and diff check pass. It remains local
-until the next scheduled push batch; PR #90 is still at `ed9f5b4`, and CI for
-`c462b29` has not run. Issue #52 stays OPEN / P0 / NOT_VERIFIED.
+local Windows build, focused 26/26 tests, and diff check passed at the time.
+The commit is included in public PR #90 head
+`606395eae6173384711afa1aafc5f71614b26ab9`; exact-head main workflow run
+`40028179680` passed all 9 jobs, including macOS, Ubuntu, and Windows Node
+20/22. A separate ownership-contract-evidence run `40028487559` failed because
+the PR body lacked the required `Test-Evidence:` metadata line; this is a PR
+body evidence-format failure, not a source test failure. The current focused
+M3 run is 27/27 with `npm run build` and `git diff --check` passing. Issue #52
+stays OPEN / P0 / NOT_VERIFIED pending owner package integration and M9's
+exact-source Ubuntu/Windows composition.

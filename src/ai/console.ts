@@ -24,7 +24,7 @@ const protectedReadFile='agent-canary-public.txt';
 const protectedReadMarker='AGENT_CANARY_CONSOLE_PROTECTED_READ_OK';
 const protectedReadScope='M3_FIXED_TEMP_PROBE_ONLY';
 type SecurityToolRouterFactory=NonNullable<ProtectedHostDependencies['createSecurityToolRouter']>;
-type ProtectedReadReason='FIXED_PROBE_CONTROLS_PASSED'|'OWNER_ADAPTER_UNAVAILABLE'|'M2_CAPABILITY_PROVIDER_UNAVAILABLE'|'OWNER_ROUTE_NOT_CONFIRMED'|'INTEGRITY_MISMATCH'|'OWNER_POLICY_DENIED'|'OWNER_DISPATCH_FAILED'|'CLEANUP_FAILED'|'REQUEST_AUTH_REQUIRED'|'REQUEST_INVALID';
+type ProtectedReadReason='FIXED_PROBE_CONTROLS_PASSED'|'OWNER_ADAPTER_UNAVAILABLE'|'OWNER_ROUTE_NOT_CONFIRMED'|'INTEGRITY_MISMATCH'|'OWNER_POLICY_DENIED'|'OWNER_DISPATCH_FAILED'|'CLEANUP_FAILED'|'REQUEST_AUTH_REQUIRED'|'REQUEST_INVALID';
 type ProtectedReadGateway={
   bindFileReadCapability:(binding:{toolName:string;operation:'file-read';path:string;pathArg?:string})=>object;
   verifyFileReadCapability:(capability:object,call:{name:string;args:Record<string,unknown>},operation:'file-read')=>boolean;
@@ -143,9 +143,7 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
     const initialEvidence=protectedReadEvidenceCount(gateway);
     const host=initialEvidence===undefined?undefined:await createProtectedHostAdapter(gateway,guard,tempDirectory,{loadM2Facade:async()=>facade,createSecurityToolRouter:dependencies.createSecurityToolRouter});
     if(initialEvidence===undefined){outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);}
-    else if(!host?.dispatch){
-      outcome=protectedReadEnvelope('UNKNOWN',host?.reason==='M2_CAPABILITY_PROVIDER_UNAVAILABLE'?'M2_CAPABILITY_PROVIDER_UNAVAILABLE':'OWNER_ADAPTER_UNAVAILABLE',false);
-    }
+    else if(!host?.dispatch){outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);}
     else{
       const before=host.m5Callbacks();
       try{

@@ -271,8 +271,11 @@ owner-reviewed `readFileWithCapability(capability, call, signal?)` method.
 It forwards those values unchanged through M5's strict router and counts only
 that held-read provider invocation. It does not adapt or fall back to M2's
 generic `executeRealTool` path callback. If the method is absent, composition
-returns sanitized `UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE` before a
-protected callback or M1 read evidence can occur.
+fails closed with internal adapter reason
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE` before a protected callback or M1 read
+evidence can occur. The Console response keeps its existing fixed public reason
+enum and returns sanitized `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; it does not
+expose the internal adapter reason through HTTP.
 
 The current M3 checkout does export `./gateway-adapter`, but the exact file
 `execution-isolation/gateway-adapter/gateway-adapter.mjs` in that checkout
@@ -300,7 +303,7 @@ integrated.
 
 Local Windows validation for this M3 revision passed: `npm run build`;
 `node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
-(26/26); and `git diff --check`.
+(27/27); and `git diff --check`.
 
 Issue #52 remains OPEN / P0 / NOT_VERIFIED. M4 is a read-only status consumer;
 the default normal CLI currently supplies no M2 status provider, so its GET
@@ -319,10 +322,20 @@ test cleanup assertion, not a Host/capability decision failure. Ubuntu Node 20
 and 22, Docker, sponsor smoke, and ownership-contract evidence passed; the
 other matrix jobs were cancelled after the macOS failure.
 
-Test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` now verifies the
+Test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` verifies the
 temporary directory's device/inode identity and canonical containment before
-cleanup, without comparing noncanonical path spellings. After that change,
-local Windows `npm run build`, the two focused test files (26/26), and
-`git diff --check` passed. This commit is local and has not yet been published;
-PR #90 still points at `ed9f5b4` and no exact-head CI result for `c462b29` is
-claimed.
+cleanup, without comparing noncanonical path spellings. It is included in
+public PR #90 head `606395eae6173384711afa1aafc5f71614b26ab9`. Exact-head main
+workflow run `40028179680` passed all 9 jobs, including macOS, Ubuntu, and
+Windows Node 20/22. A separate ownership-contract-evidence run
+`40028487559` failed because the PR body used a `## Test-Evidence` heading
+instead of the required `Test-Evidence:` metadata line; no code failure was
+reported by that check.
+
+Current local verification after the Console reason-enum correction and the
+missing-M2-provider regression: `npm run build` PASS; the two focused files
+PASS (27/27); `git diff --check` PASS. The public response remains within the
+existing fixed enum, while internal M3 diagnostics retain the precise missing
+M2 method. The ordinary CLI still lacks that method in its checked-out M2
+adapter and therefore remains UNKNOWN. No M1/M2/M4/M5 owner file or shared M0
+contract was changed.
