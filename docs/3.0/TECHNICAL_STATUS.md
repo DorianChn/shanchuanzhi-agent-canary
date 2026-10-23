@@ -7460,5 +7460,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - M9 PR #36 exact head `56b1d0873e7a2b3d61ab588b6b1c4cf3814ec334` completed 13/13 checks, including Ubuntu and Windows composition. M6 PR #38 exact head `c0b4a0b969323b5d0c1b032d40b2c41286eb5f45` completed 11/11. M0 PR #30 head `4a4242eb2ed4801ccdb7fcb8cc448c77eedcdd18` completed 10/10.
 - M1 local commit `a737dcac3fb05cb41c3f6108aa46fb5894f95e5a` adds Windows workspace junction/symlink alias-denial regressions: targeted 1/1, full Gateway 37/37, `git diff --check` passed. Evidence remains synthetic M1 Gateway coverage; Issue #52 stays OPEN/P0/NOT_VERIFIED for first-party host bypass and OS-atomic race.
-- M2 local commit `58c2e46fef70021fbfd70e1caa7ba44e7281ee43` closes a missing child-termination predicate in the AppContainer prototype gate. Adapter/host-composition tests passed 12/12; Windows 11 AppContainer prototype run confirmed expected Job-close termination, blocked sentinel writes with unchanged hashes, and cleanup. The Node file entry remains blocked by `lstat C:\` `EPERM`; no production host/shell guarantee is claimed. These M1/M2 commits await the next coordinated push batch.
+- M2 commit `58c2e46fef70021fbfd70e1caa7ba44e7281ee43` closes a missing child-termination predicate in the AppContainer prototype gate. Adapter/host-composition tests passed 12/12; Windows 11 AppContainer prototype run confirmed expected Job-close termination, blocked sentinel writes with unchanged hashes, and cleanup. The Node file entry remains blocked by `lstat C:\` `EPERM`; no production host/shell guarantee is claimed.
 - PR #24 was rechecked at 03:33 UTC and remains OPEN/Draft with unchanged head `62496d4020bd90ba2eede49b2e80a2bbebb036b4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+
+## M0/M1/M2 push batch — 2026-10-23 03:35 UTC
+
+- With 88% five-hour / 73% weekly usage before the batch, pushed M0 `51bdedd5896711ce475a8a198233525e7d48628a`, M1 `a737dcac3fb05cb41c3f6108aa46fb5894f95e5a`, and M2 `58c2e46fef70021fbfd70e1caa7ba44e7281ee43`. Each remote ref was read back at the expected head.
+- PR #43 M1 CI was in progress; PR #37 M2 CI was queued/in progress; PR #30 M0 CI was in progress. No checks are presumed green until a completed status is observed. PR #24 head/base remain unchanged; no merge, release, or PR #24 edit occurred.
