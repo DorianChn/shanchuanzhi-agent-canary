@@ -1,5 +1,6 @@
 import { after, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -20,6 +21,7 @@ after(() => {
   fs.rmSync(testHome, { recursive: true, force: true });
 });
 const { startAIConsole } = await import('../src/ai/console.js');
+const { decideAgentHook } = await import('../src/agent-hook.js');
 
 test('M3 integration keeps an explicit positive control for a registered held-file Gateway read', async () => {
   const workspace = fs.mkdtempSync(path.join(testHome, 'held-file-positive-'));
@@ -69,6 +71,94 @@ test('M3 integration observes shared quarantine once when a retry guard reads th
   assert.deepEqual(notifications, ['QUARANTINED']);
   assert.equal(retried.state, 'QUARANTINED');
   assert.deepEqual(notifications, ['QUARANTINED'], 'the local quarantine latch prevents duplicate notifications');
+});
+
+test('M3 hook integration denies native unpinned reads for both supported protocols', async () => {
+  const workspace = fs.mkdtempSync(path.join(testHome, 'native-unpinned-read-'));
+  fs.writeFileSync(path.join(workspace, 'normal.txt'), 'NORMAL_FIXTURE');
+  const claude = await decideAgentHook('claude', workspace, path.join(testHome, 'unpinned-claude-state'), {
+    session_id: 'm3-unpinned-claude',
+    tool_name: 'Read',
+    tool_input: { file_path: 'normal.txt' },
+  }) as any;
+  assert.equal(claude.hookSpecificOutput.permissionDecision, 'deny');
+  assert.equal(claude.hookSpecificOutput.permissionDecisionReason, 'Agent Canary: native_file_execution_not_pinned');
+
+  const cursor = await decideAgentHook('cursor', workspace, path.join(testHome, 'unpinned-cursor-state'), {
+    conversation_id: 'm3-unpinned-cursor',
+    tool_name: 'Read',
+    tool_input: { file_path: 'normal.txt' },
+  }) as any;
+  assert.equal(cursor.permission, 'deny');
+  assert.equal(cursor.user_message, 'Agent Canary: native_file_execution_not_pinned');
+});
+
+test('M3 native Hook copy logs only allowlisted metadata when inputs and reasons contain canaries', () => {
+  const wrapper = path.resolve('security-lab/claude-native-hook.mjs');
+  const modulePath = path.join(testHome, 'm3-allowlisted-hook-module.mjs');
+  const log = path.join(testHome, 'm3-allowlisted-hook.jsonl');
+  const inputCanary = 'M3_SYNTHETIC_RAW_INPUT_CANARY_7f39';
+  const reasonCanary = 'M3_SYNTHETIC_REASON_CANARY_12ac';
+  const privateCallerPathCanary = path.join(testHome, 'M3_SYNTHETIC_PRIVATE_CALLER_PATH_CANARY_91dd');
+  fs.writeFileSync(
+    modulePath,
+    `export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`,
+  );
+  const result = spawnSync(
+    process.execPath,
+    [wrapper, modulePath, testHome, path.join(testHome, 'm3-allowlisted-state'), log],
+    {
+      input: JSON.stringify({
+        session_id: 'm3-allowlist-fixture',
+        tool_name: 'Read',
+        tool_input: { file_path: privateCallerPathCanary, marker: inputCanary },
+      }),
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.hookSpecificOutput.permissionDecision, 'allow');
+  assert.equal(output.hookSpecificOutput.permissionDecisionReason, reasonCanary);
+  assert.equal(result.stdout.includes(privateCallerPathCanary), false);
+
+  const lines = fs.readFileSync(log, 'utf8').trim().split('\n');
+  assert.equal(lines.length, 1);
+  const record = JSON.parse(lines[0]);
+  assert.deepEqual(Object.keys(record).sort(), ['hookEventName', 'permissionDecision', 'timestamp']);
+  assert.equal(record.hookEventName, 'PreToolUse');
+  assert.equal(record.permissionDecision, 'allow');
+  assert.equal(record.timestamp, new Date(record.timestamp).toISOString());
+  for (const canary of [inputCanary, reasonCanary, privateCallerPathCanary]) {
+    assert.equal(lines[0].includes(canary), false, `native hook log persisted ${canary}`);
+  }
+});
+
+test('M3 quarantine regression confirms trip state and repeated state reads do not notify twice', () => {
+  const guard = createAgentGuard({
+    sessionId: 'm3-synchronous-quarantine-regression',
+    eventsFile: path.join(testHome, 'm3-synchronous-quarantine.jsonl'),
+    alert: false,
+  });
+  const notifications: string[] = [];
+  guard.subscribeQuarantine(() => notifications.push(guard.state));
+
+  const trip = guard.trip({ reason: 'm3_synthetic_external_trip' });
+  assert.equal(trip.state, 'QUARANTINED');
+  assert.equal(guard.state, 'QUARANTINED');
+  assert.deepEqual(notifications, ['QUARANTINED']);
+  assert.equal(guard.state, 'QUARANTINED');
+  assert.deepEqual(notifications, ['QUARANTINED']);
+
+  let lateNotifications = 0;
+  const unsubscribeLate = guard.subscribeQuarantine(() => { lateNotifications += 1; });
+  assert.equal(lateNotifications, 1);
+  assert.equal(guard.state, 'QUARANTINED');
+  assert.equal(lateNotifications, 1, 're-reading a latched state does not send a duplicate notification');
+  guard.reset({ acknowledgedBy: 'M3 regression fixture' });
+  guard.trip({ reason: 'm3_synthetic_second_trip' });
+  assert.equal(lateNotifications, 2);
+  unsubscribeLate();
 });
 
 test('protected host adapter rejects an incompatible M1 gateway before M2/M5 side effects', async () => {
