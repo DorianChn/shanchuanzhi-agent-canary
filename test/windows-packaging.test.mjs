@@ -88,6 +88,8 @@ test('Community source build transfers the patched dependency tree and keeps can
   assert.equal(lock.packages['node_modules/body-parser'].version,'2.4.0');
   assert.equal(lock.packages['node_modules/ip-address'].version,'10.7.4');
   assert.equal(lock.packages['node_modules/zod'].version,'4.6.7');
+  assert.equal(lock.packages['node_modules/hono'].version,'4.13.13');
+  assert.equal(lock.packages['node_modules/fast-uri'].version,'3.1.9');
   assert.match(source,/\['audit','--json'\]/);
   assert.doesNotMatch(source,/\['audit','--json','--audit-level'/);
 });
