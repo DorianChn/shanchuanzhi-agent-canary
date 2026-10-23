@@ -49,6 +49,10 @@ jobs:
         working-directory: candidate
         run: npm run build
 
+      - name: Run M7-owned reliability regressions
+        working-directory: candidate
+        run: node --import tsx --test test/reliability.test.mjs test/reliability-gateway-lifecycle.test.ts
+
       - name: Check out the pinned M7 policy implementation
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
