@@ -20,11 +20,11 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 const pinnedSourceShas = {
   M1: '7cd34454c4bd6aa7176e0e076f5333639e3ccd5d',
   M2: '92dd42b900b10ce0294e9e3faa7e175d728228b3',
-  M3: 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e',
-  M4: 'd0f61987c2a06acb47a7187142bc303101af0ad4',
+  M3: 'a49c0f796e4ab487de86089245cc1ea123a92b86',
+  M4: '7d050b25851f19d48a3c011d078aace5961c8888',
   M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
   M6: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd',
-  M7: '8689d8fbbcdded4735d0e5aa328805f398a2862a',
+  M7: 'a3b3b19a9c7df91b6b530c1d083fd641442e8ad5',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
   M8_CANDIDATE: '1abdfe3890c6c263eea667789deb7eab5038e828',
 };
@@ -41,8 +41,10 @@ const mergedSourceProvenance = {
 
 const currentCandidateProvenance = {
   M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '92dd42b900b10ce0294e9e3faa7e175d728228b3', prTree: '78c60440662a3dcd15d86e9d3c09d3fa9a3769d3' },
-  M3: { ownerHead: '9ea681894627e073e7720e9c2fca22f9351fb02b', ownerTree: '53627df0a9dedee0496d5e87d741c2162d1d13f3', prHead: 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e', prTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9' },
+  M3: { ownerHead: '02be066e3f0fc82fd53b3664a19c15e30a80e45f', ownerTree: 'f5945b565199f473c3a7e303e6be0e07631262fe', prHead: 'a49c0f796e4ab487de86089245cc1ea123a92b86', prTree: '7b16e2a4a154430d87ef0a406af773f08898a166' },
+  M4: { ownerHead: '7d050b25851f19d48a3c011d078aace5961c8888', ownerTree: 'dbf17911b6cddd61b687bdc8de5f180b1c4d9e97', prHead: '7d050b25851f19d48a3c011d078aace5961c8888', prTree: 'dbf17911b6cddd61b687bdc8de5f180b1c4d9e97' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
+  M7: { ownerHead: '4d66e65d797656a653bde8576cffefb79f2197fa', ownerTree: '115f58c8b6e8ab99258a9481b5c16e65b66a39b5', prHead: 'a3b3b19a9c7df91b6b530c1d083fd641442e8ad5', prTree: '450c2c185b18d9a61e65cc22902887900b8dd77e' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
