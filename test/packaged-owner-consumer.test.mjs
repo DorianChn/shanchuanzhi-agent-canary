@@ -192,6 +192,8 @@ test('synthetic composition fixture: packed M3 CLI consumes exact M1, M2, and M5
     import(pathToFileURL(publicEntries['./gateway-adapter']).href),
     import(pathToFileURL(publicEntries['./policy-router']).href),
   ]);
+  assert.equal(typeof m1Sdk.createAgentGuard, 'function');
+  assert.equal(typeof m1Sdk.EvidenceRecorder, 'function');
   assert.equal(typeof m1Sdk.createTrustedExecutionGateway, 'function');
   assert.equal(typeof m2Adapter.createSecurityGatewayHostAdapter, 'function');
   assert.equal(typeof m5Router.createSecurityToolRouter, 'function');
@@ -205,8 +207,8 @@ test('synthetic composition fixture: packed M3 CLI consumes exact M1, M2, and M5
   const body = await response.json();
   assert.deepEqual(body, {
     scope: 'M3_FIXED_TEMP_PROBE_ONLY',
-    status: 'ALLOW',
-    reason: 'HELD_FILE_POSITIVE_CONTROL',
+    status: 'PASS',
+    reason: 'FIXED_PROBE_CONTROLS_PASSED',
     markerMatched: true,
   });
   assert.equal(JSON.stringify(body).includes('AGENT_CANARY_CONSOLE_PROTECTED_READ_OK'), false, 'the packed CLI must return only its sanitized marker verdict');
@@ -239,6 +241,8 @@ test('synthetic composition fixture: M5 policy denial precedes the held-file rea
     port: 0,
     operatorApprovalCode: operatorCode,
     securityCenterProtectedReadDependencies: async () => ({
+      createGuard: m1Sdk.createAgentGuard,
+      createEvidenceRecorder: () => new m1Sdk.EvidenceRecorder(),
       createGateway(options) {
         const gateway = m1Sdk.createTrustedExecutionGateway(options);
         gatewayHandle = {
@@ -254,6 +258,7 @@ test('synthetic composition fixture: M5 policy denial precedes the held-file rea
             heldFileReads += 1;
             return gateway.readFileWithCapability(...args);
           },
+          evidence: () => gateway.evidence(),
           close: () => gateway.close(),
         };
         return gatewayHandle;

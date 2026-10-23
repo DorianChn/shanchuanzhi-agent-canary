@@ -6,8 +6,8 @@ Policy: fail closed; no path-only fallback.
 
 ## Current M3 owner gate — 2026-10-23
 
-This section supersedes the older exact-ref table below. M3 source baseline is
-`feature/ac3-agent-onboarding` at `df580cf712ba36863b9245fbb5bbacf484dac919`;
+This section supersedes the older exact-ref table below. M3 candidate starts
+from `feature/ac3-agent-onboarding` at `b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b`;
 M1 is `fa369069241bf81d32c7f39d31a61806efa55fe4`, M2 is
 `db98c7d5d409aa390ef539c96a209d6daba8d793`, and the current local M5 candidate
 is `8bb14c6b38dc2cc76bdf915442dc8048d30ff76d`. M1 has authorized M5 to adapt
@@ -24,6 +24,18 @@ status provider and remains `UNKNOWN`. Its authorized protected-read POST is
 the fixed temporary-file probe documented below; it is not a user/product file
 read. The route has no request path field and this work does not add one.
 
+The Console POST now requires three controls before returning
+`PASS / FIXED_PROBE_CONTROLS_PASSED`: the exact temporary marker is read once,
+M2 rejects a fixed lexical alias, and M2/M1 reject a same-path inode
+replacement. Each negative control must leave both the M5 callback count and
+M1 read-evidence count unchanged. This remains `M3_FIXED_TEMP_PROBE_ONLY`;
+`PASS` does not establish a product-file route. The exact-owner package test
+builds a clearly labeled synthetic composition fixture from byte-identical
+public owner export files; this is integration evidence for the probe, not
+product acceptance or the final M9 pinned package. The probe obtains its M1
+Guard factory and EvidenceRecorder from the same public `./sdk` export; a
+missing evidence surface stops before M2/M5 composition or dispatch.
+
 M3 `package.json` still exports only `./sdk`. The default protected-read
 bootstrap resolves the exact public `./sdk`, `./gateway-adapter`, and
 `./policy-router` package subpaths. When M2/M5 exports or required M1 methods
@@ -39,19 +51,23 @@ safely. Therefore no product-file ALLOW path is implemented or claimed. The
 temporary fixed marker remains explicitly synthetic. The M3 regression now
 also verifies that a Gateway object missing the M1 held-file methods returns
 `UNKNOWN` before loading M2/M5, creating an execution callback, or dispatching
-through the legacy Gateway surface.
+through the legacy Gateway surface. The M3-only package still lacks the M2/M5
+public subpaths, so its default Console route remains `UNKNOWN` before probe
+filesystem setup; M9 must validate the exact pinned integrated package.
 
-### M3 validation at source baseline `df580cf`
+### M3 candidate validation
 
-- `node --import tsx --test test/security-center-route-m3.test.ts`: 10/10 PASS,
-  including the new incompatible-M1 test and the existing absent-export
-  `UNKNOWN`/no-probe assertions.
+- `node --import tsx --test test/security-center-route-m3.test.ts`: 11/11 PASS,
+  including positive + alias/replacement controls and missing-evidence `UNKNOWN`.
+- `node --test test/packaged-owner-consumer.test.mjs` with exact M1/M2/M5 roots:
+  6/6 PASS. The packed composition is explicitly synthetic; copied public
+  owner export files were byte-checked against the exact worktrees.
 - `npm run build`: PASS.
-- `npm run pack:check`: PASS for the standalone M3 package (96 files); this
-  is not an integrated owner package.
-- `npm run check:integrated-package`: `NOT_READY`; the real M3 checkout still
-  packs only `./sdk`, its `dist/sdk.d.ts` differs from exact M1, and the M2/M5
-  public subpaths are absent.
+- `npm run pack:check`: PASS for the standalone M3 package (96 files); this is
+  not the integrated owner package.
+- `npm run check:integrated-package` with exact owner roots: `NOT_READY`; M3
+  still exports only `./sdk`, M2/M5 subpaths are absent, and M3's `dist/sdk.d.ts`
+  differs from exact M1. These are package-owner/M9 gates, not changed here.
 - `git diff --check`: PASS.
 
 ### Exact remaining owner actions

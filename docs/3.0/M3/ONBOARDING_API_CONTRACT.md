@@ -139,9 +139,10 @@ of a Desktop/native host.
   caller-controlled fields. Any extra field, including a path alias, is
   rejected before probe dispatch.
 - The built-in bootstrap loads the M1 Gateway factory from the package's
-  public `./sdk` subpath, the M5 strict-router factory from `./policy-router`,
-  and the M2 public facade from `./gateway-adapter`; no HTTP data, environment
-  value, or model response selects these dependencies. M3 does not use its own branch's SDK as a
+  public `./sdk` subpath, including the M1 Guard factory and EvidenceRecorder,
+  the M5 strict-router factory from `./policy-router`, and the M2 public facade
+  from `./gateway-adapter`; no HTTP data, environment value, or model response
+  selects these dependencies. M3 does not use its own branch's SDK as a
   substitute for missing M1/M5 owner behavior. The M2 facade is preflighted
   before creating one process-owned temporary directory and fixed marker file.
   The resolved directory is contained under the resolved OS temp
@@ -150,13 +151,19 @@ of a Desktop/native host.
   checks. Missing package subpaths/APIs, setup errors, dispatch
   errors without an explicit owner `DENY`, and unknown outcomes return
   `UNKNOWN`; there is no direct filesystem-read fallback.
-- `ALLOW` requires the owner route to return the exact fixed marker. A result
-  that claims ALLOW without an exact marker match is `UNKNOWN` with the fixed
-  reason `integrity_mismatch`. Only an explicit M1 or M5 `DENY` is reported as
-  `DENY`; other failures remain `UNKNOWN`.
+- `PASS` requires the exact fixed marker positive read, followed by M2 denial
+  of M3's fixed lexical alias and M2/M1 denial of a same-path inode
+  replacement. Both negative controls must leave the M5 callback count and M1
+  read-evidence count unchanged. The route uses only static probe arguments;
+  it never accepts a path from the HTTP caller. A missing evidence API,
+  unexpected denial, callback/evidence change, wrong marker, or other
+  unclassified result remains `UNKNOWN`. An explicit owner denial of the
+  positive read is `DENY`.
 - The action response contains only
   `{scope: "M3_FIXED_TEMP_PROBE_ONLY", status, reason, markerMatched}` where
-  status is `ALLOW | DENY | UNKNOWN` and reason is a fixed enum. It never
+  status is `PASS | DENY | UNKNOWN` and reason is a fixed enum. `PASS` means
+  only that this temporary marker probe completed its controls; it does not
+  mean a product file or native host is protected. It never
   returns a path, file bytes, exception text, Gateway evidence, or adapter
   object. Wrong/missing operator authorization or an invalid body is rejected
   before probe work with a fixed HTTP error and the same sanitized envelope
@@ -187,12 +194,14 @@ it does not count as exact-source integration evidence. M9 must compose all
 three exact owner exports in one package and test the ordinary no-injection
 Console route before any fixed-probe positive status is reported.
 
-Acceptance must cover the authorized exact-marker positive control; missing
-M1/M2/M5 component and unclassified-error `UNKNOWN`; explicit M1/M5 denial;
-wrong-marker `INTEGRITY_MISMATCH`; wrong/missing operator code and CSRF with no
-probe filesystem or Gateway work; extra-body/path-alias rejection with no
-dispatch; and owner-composed symlink/junction alias plus same-path replacement
-denials with zero M5 execution callback / M1 read evidence and unchanged
+A product-path acceptance must separately establish a real trusted host and
+fixed product-file manifest. The synthetic Console probe covers the authorized
+exact-marker positive control; missing M1/M2/M5 component and unclassified-error
+`UNKNOWN`; explicit M1/M5 denial; wrong-marker `INTEGRITY_MISMATCH`;
+wrong/missing operator code and CSRF with no probe filesystem or Gateway work;
+extra-body/path-alias rejection with no dispatch; and owner-composed fixed
+lexical-alias plus same-path replacement denials with zero M5 execution
+callback / M1 read-evidence delta and unchanged
 fixture bytes. The latter are controlled synthetic-fixture cases only. M4 may
 label a successful result only as a “fixed synthetic probe”; Issue #52 and
 product arbitrary-file / symlink-junction protection remain `OPEN / P0 /
@@ -218,6 +227,9 @@ alias acceptance run succeeds.
   probe with an exact empty JSON body. Its fixed path and fixed marker are
   M3-owned probe data, not a product file. HTTP input, model output, and
   environment variables cannot select a path, tool, workspace, or callback.
+  It reports `PASS` only after the exact marker read and fixed alias/replacement
+  denials, with no M5 callback or M1 evidence delta from the negative controls;
+  that status remains scoped to the temporary probe.
 - M3 `package.json` currently exports only `./sdk`. An M3-only package is
   therefore `NOT_READY` for the protected M1/M2/M5 composition; a missing or
   incompatible public dependency produces `UNKNOWN`, with no legacy-router,

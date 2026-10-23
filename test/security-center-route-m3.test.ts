@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createAgentGuard } from '../src/containment.js';
+import { EvidenceRecorder } from '../src/runtime/evidence.js';
 import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
@@ -270,26 +271,35 @@ test('security-center route ignores provider getters and does not overstate conf
   }
 });
 
-function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow',missingM2=false){
-  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0};
+function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow',missingM2=false,missingEvidence=false){
+  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;gatewayEvidence:number;workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,gatewayEvidence:0};
   const capability=Object.freeze(Object.create(null));
   const loader=async()=>{
     state.dependencyLoads++;
     return{
+      createGuard:(options:{sessionId:string;alert:boolean})=>createAgentGuard(options),
+      createEvidenceRecorder:()=>new EvidenceRecorder(),
       createGateway(options:{workspaceRoot:string;files:readonly {path:string}[]}){
         state.gatewayCreates++;
         state.workspaceRoot=options.workspaceRoot;
         state.fixedFiles=options.files;
+        const registeredPath=path.join(options.workspaceRoot,'agent-canary-public.txt');
+        const registeredStat=fs.lstatSync(registeredPath);
         return{
           bindFileReadCapability(binding:unknown){assert.deepEqual(binding,{toolName:'protected_read',operation:'file-read',path:'agent-canary-public.txt',pathArg:'path'});return capability;},
-          verifyFileReadCapability(value:unknown,call:unknown,operation:string){return value===capability&&operation==='file-read'&&JSON.stringify(call)===JSON.stringify({name:'protected_read',args:{path:'agent-canary-public.txt'}});},
+          verifyFileReadCapability(value:unknown,call:unknown,operation:string){
+            if(value!==capability||operation!=='file-read'||JSON.stringify(call)!==JSON.stringify({name:'protected_read',args:{path:'agent-canary-public.txt'}}))return false;
+            try{const current=fs.lstatSync(registeredPath);return current.isFile()&&!current.isSymbolicLink()&&current.dev===registeredStat.dev&&current.ino===registeredStat.ino;}catch{return false;}
+          },
           async readFileWithCapability(value:unknown,call:unknown,operation:string){
             assert.equal(value,capability);assert.equal(operation,'file-read');state.routeArguments=call;
             if(mode==='deny')throw Object.assign(new Error('private path and marker must not escape'),{decision:{action:'DENY',reason:'private detail'}});
             if(mode==='unknown')throw new Error('unclassified private failure');
+            state.gatewayEvidence++;
             if(mode==='wrong')return{content:'UNEXPECTED_PRIVATE_RESULT'};
             return{content:'AGENT_CANARY_CONSOLE_PROTECTED_READ_OK'};
           },
+          ...(missingEvidence?{}:{evidence(){return Array.from({length:state.gatewayEvidence},()=>({kind:'fixed-read-fixture'}));}}),
           async close(){state.gatewayCloses++;},
         };
       },
@@ -299,14 +309,19 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
         const router=options.createSecurityToolRouter({
           ...options.routerOptions,
           tools:{protected_read:{operation:'file-read',pathArg:'path'}},
-          fileReadCapability:{resolve:()=>capability,verify:()=>true},
+          fileReadCapability:{resolve:(call:unknown)=>options.gateway.verifyFileReadCapability(capability,call,'file-read')?capability:undefined,verify:(value:unknown,call:unknown)=>value===capability&&options.gateway.verifyFileReadCapability(value,call,'file-read')},
           executeRealTool:async(call:unknown,context:{signal:AbortSignal})=>{
             assert.equal(context.signal.aborted,false);
             state.routerCallbacks++;
             return gateway.readFileWithCapability(capability,call,'file-read');
           },
         });
-        return{dispatch:(call:unknown)=>router.dispatch(call)};
+        return{dispatch:(call:unknown)=>{
+          const candidate=(call as any)?.args?.path;
+          if(candidate!=='agent-canary-public.txt')throw new TypeError('M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');
+          if(!options.gateway.verifyFileReadCapability(capability,call,'file-read'))throw new TypeError('M2_SECURITY_GATEWAY_CAPABILITY_INVALID');
+          return router.dispatch(call);
+        }};
       }};
       },
       createSecurityToolRouter(options:Record<string,any>){
@@ -358,7 +373,7 @@ test('protected-read action validates CSRF, operator, and empty body before load
   }finally{await unconfigured.close();}
 });
 
-test('protected-read action uses one fixed probe and exposes only the sanitized positive result', async () => {
+test('protected-read action reports PASS only after the fixed positive, alias deny, and replacement deny controls', async () => {
   const dependencies=fakeProtectedReadDependencies();
   const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterProtectedReadDependencies:dependencies.loader});
   try{
@@ -366,15 +381,31 @@ test('protected-read action uses one fixed probe and exposes only the sanitized 
     const response=await fetch(console.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
     assert.equal(response.status,200);
     const body=await response.json();
-    assert.deepEqual(body,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'ALLOW',reason:'HELD_FILE_POSITIVE_CONTROL',markerMatched:true});
+    assert.deepEqual(body,{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true});
     const serialized=JSON.stringify(body);
     assert.equal(serialized.includes('AGENT_CANARY_CONSOLE_PROTECTED_READ_OK'),false);
     assert.equal(serialized.includes(dependencies.state.workspaceRoot??''),false);
     assert.deepEqual(dependencies.state.fixedFiles,[{path:'agent-canary-public.txt'}]);
     assert.deepEqual(dependencies.state.routeArguments,{name:'protected_read',args:{path:'agent-canary-public.txt'}});
-    assert.equal(dependencies.state.routerCallbacks,1);
+    assert.equal(dependencies.state.routerCallbacks,1,'only the fixed positive control may reach M5');
+    assert.equal(dependencies.state.gatewayEvidence,1,'alias and same-path replacement denials must not add M1 read evidence');
     assert.equal(dependencies.state.gatewayCloses,1);
     assert.equal(fs.existsSync(dependencies.state.workspaceRoot??''),false,'the exact temporary probe directory is removed after the held Gateway closes');
+  }finally{await console.close();}
+});
+
+test('protected-read action stays UNKNOWN before owner composition when the M1 evidence surface is absent',async()=>{
+  const dependencies=fakeProtectedReadDependencies('allow',false,true);
+  const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterProtectedReadDependencies:dependencies.loader});
+  try{
+    const csrf=await csrfFor(console.url);
+    const response=await fetch(console.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
+    assert.equal(response.status,200);
+    assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ROUTE_NOT_CONFIRMED',markerMatched:false});
+    assert.equal(dependencies.state.routerCallbacks,0,'M3 must stop before composing or dispatching without the M1 evidence API');
+    assert.equal(dependencies.state.gatewayEvidence,0);
+    assert.equal(dependencies.state.gatewayCloses,1);
+    assert.equal(fs.existsSync(dependencies.state.workspaceRoot??''),false);
   }finally{await console.close();}
 });
 

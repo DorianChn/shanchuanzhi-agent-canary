@@ -15,8 +15,8 @@ import {createPolicySandbox} from './policy-demo.js';
 import os from 'node:os';
 import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient} from '../agent-integrations.js';
 import {createRuntimeDemo} from '../runtime/demo.js';
-import {createAgentGuard} from '../containment.js';
-import {EvidenceRecorder} from '../runtime/evidence.js';
+import type {AgentGuard} from '../containment.js';
+import type {EvidenceRecorder} from '../runtime/evidence.js';
 import {createProtectedHostAdapter,type PublicM2Facade,type PublicM2HostAdapter,type ProtectedHostDependencies} from '../codex-connection-mcp.js';
 
 const protectedReadRoute='/api/security-center/protected-read';
@@ -24,15 +24,18 @@ const protectedReadFile='agent-canary-public.txt';
 const protectedReadMarker='AGENT_CANARY_CONSOLE_PROTECTED_READ_OK';
 const protectedReadScope='M3_FIXED_TEMP_PROBE_ONLY';
 type SecurityToolRouterFactory=NonNullable<ProtectedHostDependencies['createSecurityToolRouter']>;
-type ProtectedReadReason='HELD_FILE_POSITIVE_CONTROL'|'OWNER_ADAPTER_UNAVAILABLE'|'OWNER_ROUTE_NOT_CONFIRMED'|'INTEGRITY_MISMATCH'|'OWNER_POLICY_DENIED'|'OWNER_DISPATCH_FAILED'|'CLEANUP_FAILED'|'REQUEST_AUTH_REQUIRED'|'REQUEST_INVALID';
+type ProtectedReadReason='FIXED_PROBE_CONTROLS_PASSED'|'OWNER_ADAPTER_UNAVAILABLE'|'OWNER_ROUTE_NOT_CONFIRMED'|'INTEGRITY_MISMATCH'|'OWNER_POLICY_DENIED'|'OWNER_DISPATCH_FAILED'|'CLEANUP_FAILED'|'REQUEST_AUTH_REQUIRED'|'REQUEST_INVALID';
 type ProtectedReadGateway={
   bindFileReadCapability:(binding:{toolName:string;operation:'file-read';path:string;pathArg?:string})=>object;
   verifyFileReadCapability:(capability:object,call:{name:string;args:Record<string,unknown>},operation:'file-read')=>boolean;
   readFileWithCapability:(capability:object,call:{name:string;args:Record<string,unknown>},operation:'file-read',signal?:AbortSignal)=>Promise<unknown>;
+  evidence?:()=>unknown[];
   close:()=>Promise<void>;
 };
-type ProtectedReadGatewayFactory=(options:{agentId:string;guard:ReturnType<typeof createAgentGuard>;workspaceRoot:string;files:readonly {path:string}[];evidence:EvidenceRecorder})=>ProtectedReadGateway;
+type ProtectedReadGatewayFactory=(options:{agentId:string;guard:AgentGuard;workspaceRoot:string;files:readonly {path:string}[];evidence:EvidenceRecorder})=>ProtectedReadGateway;
 type ProtectedReadDependencies={
+  createGuard:(options:{sessionId:string;alert:boolean})=>AgentGuard;
+  createEvidenceRecorder:()=>EvidenceRecorder;
   createGateway:ProtectedReadGatewayFactory;
   loadM2Facade:()=>Promise<PublicM2Facade>;
   createSecurityToolRouter:SecurityToolRouterFactory;
@@ -48,19 +51,23 @@ async function loadDefaultProtectedReadDependencies():Promise<ProtectedReadDepen
   const adapterSpecifier:string='@dorianchn/agent-canary/gateway-adapter';
   const [sdkValue,policyRouterValue,adapterValue]=await Promise.all([import(sdkSpecifier),import(policyRouterSpecifier),import(adapterSpecifier)]);
   const sdk=sdkValue as unknown as {
+    createAgentGuard?:(options:{sessionId:string;alert:boolean})=>AgentGuard;
+    EvidenceRecorder?:new()=>EvidenceRecorder;
     createTrustedExecutionGateway?:ProtectedReadGatewayFactory;
   };
   const policyRouter=policyRouterValue as unknown as {createSecurityToolRouter?:SecurityToolRouterFactory};
   const facade=adapterValue as unknown as PublicM2Facade;
-  if(typeof sdk.createTrustedExecutionGateway!=='function'||typeof policyRouter.createSecurityToolRouter!=='function'||typeof facade?.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
+  if(typeof sdk.createAgentGuard!=='function'||typeof sdk.EvidenceRecorder!=='function'||typeof sdk.createTrustedExecutionGateway!=='function'||typeof policyRouter.createSecurityToolRouter!=='function'||typeof facade?.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
   return{
+    createGuard:sdk.createAgentGuard,
+    createEvidenceRecorder:()=>new sdk.EvidenceRecorder!(),
     createGateway:sdk.createTrustedExecutionGateway,
     loadM2Facade:async()=>facade,
     createSecurityToolRouter:policyRouter.createSecurityToolRouter,
   };
 }
 
-function protectedReadEnvelope(status:'ALLOW'|'DENY'|'UNKNOWN',reason:ProtectedReadReason,markerMatched:boolean){
+function protectedReadEnvelope(status:'PASS'|'DENY'|'UNKNOWN',reason:ProtectedReadReason,markerMatched:boolean){
   return{scope:protectedReadScope,status,reason,markerMatched};
 }
 
@@ -79,6 +86,19 @@ function containsTempPath(root:string,candidate:string):boolean{
   return relative!==''&&relative!=='..'&&!relative.startsWith('..'+path.sep)&&!path.isAbsolute(relative);
 }
 
+function protectedReadEvidenceCount(gateway:ProtectedReadGateway):number|undefined{
+  const descriptor=Object.getOwnPropertyDescriptor(gateway,'evidence');
+  if(!descriptor||!Object.hasOwn(descriptor,'value')||typeof descriptor.value!=='function')return undefined;
+  try{
+    const events=Reflect.apply(descriptor.value,gateway,[]);
+    return Array.isArray(events)?events.length:undefined;
+  }catch{return undefined;}
+}
+
+function hasExactOwnerError(error:unknown,code:string):boolean{
+  return error instanceof Error&&error.message===code;
+}
+
 async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedReadDependencies|undefined){
   let outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);
   let gateway:ProtectedReadGateway|undefined;
@@ -86,6 +106,8 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
   let tempDirectory:string|undefined;
   let directoryIdentity:{dev:number;ino:number}|undefined;
   let fileIdentity:{dev:number;ino:number}|undefined;
+  let replacementIdentity:{dev:number;ino:number}|undefined;
+  let replacementStage:'created'|'original-held'|'active'|undefined;
   let cleanupSucceeded=true;
   if(!loadDependencies)return outcome;
   try{
@@ -108,18 +130,69 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
     }finally{fs.closeSync(probeDescriptor);}
     const realProbePath=fs.realpathSync(probePath),probeStat=fs.lstatSync(probePath);
     if(realProbePath!==probePath||!probeStat.isFile()||probeStat.isSymbolicLink()||probeStat.nlink!==1||probeStat.size!==Buffer.byteLength(protectedReadMarker)||probeStat.dev!==fileIdentity.dev||probeStat.ino!==fileIdentity.ino)throw new Error('PROTECTED_READ_TEMP_FILE_UNSAFE');
-    const guard=createAgentGuard({sessionId:'console-protected-read-'+randomBytes(12).toString('hex'),alert:false});
-    gateway=dependencies.createGateway({agentId:'agent-canary-console-probe',guard,workspaceRoot:tempDirectory,files:[{path:protectedReadFile}],evidence:new EvidenceRecorder()});
-    const host=await createProtectedHostAdapter(gateway,guard,tempDirectory,{loadM2Facade:async()=>facade,createSecurityToolRouter:dependencies.createSecurityToolRouter});
-    if(!host.dispatch){outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);}
+    const guard=dependencies.createGuard({sessionId:'console-protected-read-'+randomBytes(12).toString('hex'),alert:false});
+    gateway=dependencies.createGateway({agentId:'agent-canary-console-probe',guard,workspaceRoot:tempDirectory,files:[{path:protectedReadFile}],evidence:dependencies.createEvidenceRecorder()});
+    const initialEvidence=protectedReadEvidenceCount(gateway);
+    const host=initialEvidence===undefined?undefined:await createProtectedHostAdapter(gateway,guard,tempDirectory,{loadM2Facade:async()=>facade,createSecurityToolRouter:dependencies.createSecurityToolRouter});
+    if(initialEvidence===undefined){outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);}
+    else if(!host?.dispatch){outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);}
     else{
       const before=host.m5Callbacks();
       try{
         const result=await host.dispatch({name:'protected_read',args:{path:protectedReadFile}});
         const matched=result===protectedReadMarker||ownDataValue(result,'content')===protectedReadMarker;
-        outcome=matched&&host.m5Callbacks()-before===1
-          ?protectedReadEnvelope('ALLOW','HELD_FILE_POSITIVE_CONTROL',true)
-          :protectedReadEnvelope('UNKNOWN',matched?'OWNER_ROUTE_NOT_CONFIRMED':'INTEGRITY_MISMATCH',false);
+        const positiveEvidence=protectedReadEvidenceCount(gateway);
+        if(!matched){
+          outcome=protectedReadEnvelope('UNKNOWN','INTEGRITY_MISMATCH',false);
+        }else if(host.m5Callbacks()-before!==1||positiveEvidence===undefined||positiveEvidence<=initialEvidence){
+          outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+        }else{
+          const positiveCallbackCount=host.m5Callbacks();
+          const aliasEvidenceBefore=protectedReadEvidenceCount(gateway);
+          let aliasDenied=false;
+          try{await host.dispatch({name:'protected_read',args:{path:'./agent-canary-public.txt'}});}
+          catch(error){aliasDenied=hasExactOwnerError(error,'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');}
+          const aliasEvidenceAfter=protectedReadEvidenceCount(gateway);
+          if(!aliasDenied||host.m5Callbacks()!==positiveCallbackCount||aliasEvidenceBefore===undefined||aliasEvidenceBefore!==positiveEvidence||aliasEvidenceAfter!==aliasEvidenceBefore){
+            outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+          }else{
+            const probePath=path.join(tempDirectory,protectedReadFile);
+            const heldPath=path.join(tempDirectory,protectedReadFile+'.held');
+            const replacementPath=path.join(tempDirectory,protectedReadFile+'.replacement');
+            const currentEntries=fs.readdirSync(tempDirectory);
+            if(currentEntries.length!==1||currentEntries[0]!==protectedReadFile||fs.existsSync(heldPath)||fs.existsSync(replacementPath)){
+              outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+            }else{
+              const replacementDescriptor=fs.openSync(replacementPath,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|(fs.constants.O_NOFOLLOW??0),0o600);
+              try{
+                const replacementStat=fs.fstatSync(replacementDescriptor);
+                replacementIdentity={dev:replacementStat.dev,ino:replacementStat.ino};
+                if(!replacementStat.isFile()||replacementStat.nlink!==1)throw new Error('PROTECTED_READ_REPLACEMENT_FILE_UNSAFE');
+                fs.writeFileSync(replacementDescriptor,'AGENT_CANARY_CONSOLE_REPLACEMENT','utf8');
+              }finally{fs.closeSync(replacementDescriptor);}
+              replacementStage='created';
+              fs.renameSync(probePath,heldPath);
+              const heldStat=fs.lstatSync(heldPath);
+              if(heldStat.isSymbolicLink()||!heldStat.isFile()||heldStat.nlink!==1||heldStat.dev!==fileIdentity.dev||heldStat.ino!==fileIdentity.ino)throw new Error('PROTECTED_READ_HELD_FILE_CHANGED');
+              replacementStage='original-held';
+              fs.renameSync(replacementPath,probePath);
+              const activeReplacementStat=fs.lstatSync(probePath);
+              if(activeReplacementStat.isSymbolicLink()||!activeReplacementStat.isFile()||activeReplacementStat.nlink!==1||activeReplacementStat.dev!==replacementIdentity.dev||activeReplacementStat.ino!==replacementIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_FILE_UNSAFE');
+              replacementStage='active';
+              const replacementEvidenceBefore=protectedReadEvidenceCount(gateway);
+              let replacementDenied=false;
+              try{await host.dispatch({name:'protected_read',args:{path:protectedReadFile}});}
+              catch(error){replacementDenied=hasExactOwnerError(error,'M2_SECURITY_GATEWAY_CAPABILITY_INVALID');}
+              const replacementEvidenceAfter=protectedReadEvidenceCount(gateway);
+              const replacementStillHeld=fs.lstatSync(probePath),originalStillHeld=fs.lstatSync(heldPath);
+              const replacementIntact=replacementStillHeld.isFile()&&!replacementStillHeld.isSymbolicLink()&&replacementStillHeld.nlink===1&&replacementStillHeld.dev===replacementIdentity.dev&&replacementStillHeld.ino===replacementIdentity.ino;
+              const originalIntact=originalStillHeld.isFile()&&!originalStillHeld.isSymbolicLink()&&originalStillHeld.nlink===1&&originalStillHeld.dev===fileIdentity.dev&&originalStillHeld.ino===fileIdentity.ino;
+              outcome=replacementDenied&&host.m5Callbacks()===positiveCallbackCount&&replacementEvidenceBefore!==undefined&&replacementEvidenceAfter===replacementEvidenceBefore&&replacementIntact&&originalIntact
+                ?protectedReadEnvelope('PASS','FIXED_PROBE_CONTROLS_PASSED',true)
+                :protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+            }
+          }
+        }
       }catch(error){
         outcome=isExplicitProtectedReadDenial(error)
           ?protectedReadEnvelope('DENY','OWNER_POLICY_DENIED',false)
@@ -130,6 +203,31 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
     outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);
   }finally{
     if(gateway){try{await gateway.close();}catch{cleanupSucceeded=false;}}
+    if(tempRoot&&tempDirectory&&directoryIdentity&&fileIdentity&&replacementIdentity&&replacementStage&&cleanupSucceeded){
+      try{
+        const realRoot=fs.realpathSync(tempRoot),realDirectory=fs.realpathSync(tempDirectory),directoryStat=fs.lstatSync(tempDirectory);
+        if(realRoot!==tempRoot||realDirectory!==tempDirectory||!containsTempPath(realRoot,realDirectory)||!directoryStat.isDirectory()||directoryStat.isSymbolicLink()||directoryStat.dev!==directoryIdentity.dev||directoryStat.ino!==directoryIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_CLEANUP_UNSAFE');
+        const probePath=path.join(tempDirectory,protectedReadFile),heldPath=path.join(tempDirectory,protectedReadFile+'.held'),replacementPath=path.join(tempDirectory,protectedReadFile+'.replacement');
+        const entries=fs.readdirSync(tempDirectory);
+        const expectedNames=replacementStage==='created'?[protectedReadFile,protectedReadFile+'.replacement']:[protectedReadFile+'.held',replacementStage==='active'?protectedReadFile:protectedReadFile+'.replacement'];
+        if(entries.length!==expectedNames.length||entries.some(name=>!expectedNames.includes(name)))throw new Error('PROTECTED_READ_REPLACEMENT_CLEANUP_UNSAFE');
+        if(replacementStage==='created'){
+          const original=fs.lstatSync(probePath),replacement=fs.lstatSync(replacementPath);
+          if(original.isSymbolicLink()||!original.isFile()||original.nlink!==1||original.dev!==fileIdentity.dev||original.ino!==fileIdentity.ino||replacement.isSymbolicLink()||!replacement.isFile()||replacement.nlink!==1||replacement.dev!==replacementIdentity.dev||replacement.ino!==replacementIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_CLEANUP_UNSAFE');
+          fs.unlinkSync(replacementPath);
+        }else if(replacementStage==='original-held'){
+          const original=fs.lstatSync(heldPath),replacement=fs.lstatSync(replacementPath);
+          if(original.isSymbolicLink()||!original.isFile()||original.nlink!==1||original.dev!==fileIdentity.dev||original.ino!==fileIdentity.ino||replacement.isSymbolicLink()||!replacement.isFile()||replacement.nlink!==1||replacement.dev!==replacementIdentity.dev||replacement.ino!==replacementIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_CLEANUP_UNSAFE');
+          fs.unlinkSync(replacementPath);
+          fs.renameSync(heldPath,probePath);
+        }else{
+          const original=fs.lstatSync(heldPath),replacement=fs.lstatSync(probePath);
+          if(original.isSymbolicLink()||!original.isFile()||original.nlink!==1||original.dev!==fileIdentity.dev||original.ino!==fileIdentity.ino||replacement.isSymbolicLink()||!replacement.isFile()||replacement.nlink!==1||replacement.dev!==replacementIdentity.dev||replacement.ino!==replacementIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_CLEANUP_UNSAFE');
+          fs.unlinkSync(probePath);
+          fs.renameSync(heldPath,probePath);
+        }
+      }catch{cleanupSucceeded=false;}
+    }
     if(tempRoot&&tempDirectory&&directoryIdentity&&fileIdentity&&cleanupSucceeded){
       try{
         const realRoot=fs.realpathSync(tempRoot),realDirectory=fs.realpathSync(tempDirectory),directoryStat=fs.lstatSync(tempDirectory);
