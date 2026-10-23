@@ -10,7 +10,7 @@
 import { DECOY_TOOLS, handleDecoyCall } from "./decoys.js";
 import { findTokensInText, plantIntoFile, type CanaryToken } from "./tokens.js";
 export {createFileContainmentStateStore} from './file-state-store.js';
-export {createTrustedExecutionGateway,GatewayDeniedError,type GatewayOptions,type GatewayFile,type GatewayCommand} from './runtime/gateway.js';
+export {createTrustedExecutionGateway,GatewayDeniedError,type GatewayOptions,type GatewayFile,type GatewayCommand,type GatewayFileReadBinding,type GatewayFileReadCapability} from './runtime/gateway.js';
 export {EvidenceRecorder,canonicalJSON,evidenceDigest,validateEvidence,verifyEvidenceChain,type SecurityEvidenceEvent} from './runtime/evidence.js';
 export {HoneypotRuntime,planAdaptiveDecoys,type DecoyKind,type DecoyInteraction} from './runtime/honeypot.js';
 export {DataFlowTracker} from './runtime/dataflow.js';

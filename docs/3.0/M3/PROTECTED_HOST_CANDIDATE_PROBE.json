@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-22",
+  "classification": "local cross-worktree owner-candidate compatibility probe; not CI and not spawned Codex CLI acceptance",
+  "status": "PASS",
+  "sourceRefs": {
+    "M1": "7279336307fc7aacd46119405858d4fd91499757",
+    "M2": "be66cf8f4c1a60f093740577796ec5cd633e1d93",
+    "M3": "535d429faef7ae0e15bbf9b382d639280045f338",
+    "M5": "bbce79aa086b39b51422cc72471c23c963778650"
+  },
+  "route": "M3 createProtectedHostAdapter -> M2 public createSecurityGatewayHostAdapter -> M5 createSecurityToolRouter -> M1 Gateway held-file capability",
+  "checks": {
+    "fixedSafeRead": "PASS",
+    "aliasDenied": "PASS",
+    "aliasM5CallbackDelta": 0,
+    "aliasM1EvidenceDelta": 0,
+    "aliasFixtureBytesUnchanged": true,
+    "samePathReplacementDenied": "PASS",
+    "replacementM5CallbackDelta": 0,
+    "replacementM1EvidenceDelta": 0,
+    "replacementAndHeldBytesVerified": true
+  },
+  "notVerified": [
+    "M3 package self-resolution of the M2 facade",
+    "one unified exact-source PR composition",
+    "runCodexConnectionCheck with the spawned Codex CLI",
+    "protection of user-workspace files or native Codex tools",
+    "OS-atomic protection against all concurrent replacement races"
+  ]
+}
