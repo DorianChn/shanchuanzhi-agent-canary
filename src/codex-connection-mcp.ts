@@ -36,6 +36,8 @@ export type PublicM2Facade={
 /** Trusted host-only seams for composing the separately owned M1/M2/M5 sources. */
 export type ProtectedHostDependencies={
   loadM2Facade?:()=>Promise<PublicM2Facade>;
+  /** M3-owned loader seam so incomplete package compositions can be tested without mutating exports. */
+  loadM5PolicyRouter?:()=>Promise<{createSecurityToolRouter?:typeof createSecurityToolRouter}>;
   createSecurityToolRouter?:typeof createSecurityToolRouter;
 };
 
@@ -89,7 +91,9 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
       // M5 owns the strict OBSERVE router. Never silently substitute M3's local
       // router when the composed package export is absent.
       const specifier=policyRouterSpecifier;
-      const policy=await import(specifier) as {createSecurityToolRouter?:typeof createSecurityToolRouter};
+      const policy=dependencies.loadM5PolicyRouter
+        ?await dependencies.loadM5PolicyRouter()
+        :await import(specifier) as {createSecurityToolRouter?:typeof createSecurityToolRouter};
       if(typeof policy.createSecurityToolRouter==='function')routerFactory=policy.createSecurityToolRouter;
     }catch{/* A missing M5 public export keeps the protected route unavailable. */}
   }
@@ -99,7 +103,30 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
     const values=options as Record<string,unknown>;
     const execute=values.executeRealTool;
     if(typeof execute!=='function')throw new TypeError('M5_ROUTER_CALLBACK_MISSING');
-    const observed={...values,executeRealTool:(call:unknown,context:unknown)=>{
+    const providerDescriptor=Object.getOwnPropertyDescriptor(values,'fileReadCapability');
+    const provider=providerDescriptor&&Object.hasOwn(providerDescriptor,'value')?providerDescriptor.value:undefined;
+    if(provider===null||typeof provider!=='object')throw new TypeError('M2_FILE_READ_CAPABILITY_PROVIDER_MISSING');
+    const resolveDescriptor=Object.getOwnPropertyDescriptor(provider,'resolve');
+    const verifyDescriptor=Object.getOwnPropertyDescriptor(provider,'verify');
+    if(!resolveDescriptor||!Object.hasOwn(resolveDescriptor,'value')||typeof resolveDescriptor.value!=='function'||
+      !verifyDescriptor||!Object.hasOwn(verifyDescriptor,'value')||typeof verifyDescriptor.value!=='function'){
+      throw new TypeError('M2_FILE_READ_CAPABILITY_PROVIDER_INVALID');
+    }
+    const resolve=resolveDescriptor.value as (...args:unknown[])=>unknown;
+    const verify=verifyDescriptor.value as (...args:unknown[])=>unknown;
+    // M2's public fixed-read facade exposes resolve/verify and a capability-bound
+    // executeRealTool callback. M5's strict router consumes the same capability
+    // through readFileWithCapability, so adapt that method to M2's fixed callback.
+    // M2 rechecks the tool/path/capability and invokes only M1's held-file read.
+    const fileReadCapability=Object.freeze({
+      resolve:(call:unknown)=>Reflect.apply(resolve,provider,[call]),
+      verify:(capability:unknown,call:unknown,operation:unknown)=>Reflect.apply(verify,provider,[capability,call,operation]),
+      readFileWithCapability:(capability:unknown,call:unknown,signal?:AbortSignal)=>{
+        m5CallbackCount++;
+        return Reflect.apply(execute,undefined,[call,{signal:signal??new AbortController().signal,fileReadCapability:capability}]);
+      },
+    });
+    const observed={...values,fileReadCapability,executeRealTool:(call:unknown,context:unknown)=>{
       m5CallbackCount++;
       return Reflect.apply(execute,undefined,[call,context]);
     }};
