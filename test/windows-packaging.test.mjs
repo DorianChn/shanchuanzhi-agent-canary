@@ -8,7 +8,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
-import {createWindowsBuildInvocation,M1_CANONICAL_WRAPPER_BLOB_SHA,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
+import {createWindowsBuildInvocation,M1_CANONICAL_WRAPPER_BLOB_SHA,M1_CANONICAL_WRAPPER_SHA256,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
 import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -218,13 +218,28 @@ test('prepare emits a build command pinned to the exact committed wrapper source
     const wrapper=readCommittedWrapperSource(repo);
     assert.equal(wrapper.sha,invocation.wrapperSourceSHA);
     assert.equal(wrapper.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(wrapper.sha256,M1_CANONICAL_WRAPPER_SHA256);
     assert.equal(wrapper.bytes.includes(Buffer.from('\r\n')),false);
     const packagedPath=path.join(temp,'payload','claude-native-hook.mjs');
     fs.mkdirSync(path.dirname(packagedPath),{recursive:true});
     const packaged=writePackagedWrapperSource(repo,packagedPath,invocation.wrapperSourceSHA);
     assert.deepEqual(fs.readFileSync(packagedPath),wrapper.bytes);
     assert.deepEqual(packaged.bytes,wrapper.bytes);
+    assert.equal(packaged.sha256,M1_CANONICAL_WRAPPER_SHA256);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('Windows artifact evidence binds the exact Hook SHA through build report, manifest, and Setup extraction',()=>{
+  const wrapper=readCommittedWrapperSource(repo);
+  assert.equal(wrapper.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+  assert.equal(wrapper.sha256,M1_CANONICAL_WRAPPER_SHA256);
+  const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+  assert.match(build,/wrapperSourceContentSHA256:packagedHookSource\.sha256/);
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8').replace(/\r\n/g,'\n');
+  assert.ok(workflow.includes("if ($buildResult.version.wrapperSourceContentSHA256 -ne $packagedHookSha256) { throw 'BUILD_REPORT_HOOK_SHA256_MISMATCH' }"));
+  assert.ok(workflow.includes("if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }"));
+  assert.ok(workflow.includes("if ($installerSha256 -ne $buildResult.installerSHA256) { throw 'INSTALLER_SHA256_MISMATCH' }"));
+  assert.ok(workflow.includes("if ($payloadManifestSha256 -ne $buildResult.manifestSHA256) { throw 'PAYLOAD_MANIFEST_SHA256_MISMATCH' }"));
 });
 
 test('wrapper provenance refuses a Hook file changed after its source commit',()=>{

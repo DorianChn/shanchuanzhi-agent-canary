@@ -22,7 +22,7 @@ const pkg=JSON.parse(fs.readFileSync(path.join(root,'app/package.json'),'utf8'))
 const candidateMatch=/^competition-candidate\.(\d+)$/.exec(meta.candidateId||'');
 if(!candidateMatch)throw Error('UNEXPECTED_CANDIDATE');
 const candidateNumber=candidateMatch[1],candidateLabel=`candidate.${candidateNumber}`;
-const version={wrapperSourceSHA:wrapperSHA,wrapperSourceBlobSHA:packagedHookSource.blobSha,desktopVersion:pkg.version,communityVersion:pkg.version,candidateId:meta.candidateId,runtimeBaselineSHA:meta.runtimeBaselineSHA,communityRepairSHA:meta.sourceSHA,securityRuntimeModified:meta.securityRuntimeModified,communityZIP_SHA256:hash(path.resolve(zipArg)),nodeVersion:'22.23.1',nodeSHA256:'f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed',signature:'UNSIGNED',coreRuntimeHashes:runtime};
+const version={wrapperSourceSHA:wrapperSHA,wrapperSourceBlobSHA:packagedHookSource.blobSha,wrapperSourceContentSHA256:packagedHookSource.sha256,desktopVersion:pkg.version,communityVersion:pkg.version,candidateId:meta.candidateId,runtimeBaselineSHA:meta.runtimeBaselineSHA,communityRepairSHA:meta.sourceSHA,securityRuntimeModified:meta.securityRuntimeModified,communityZIP_SHA256:hash(path.resolve(zipArg)),nodeVersion:'22.23.1',nodeSHA256:'f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed',signature:'UNSIGNED',coreRuntimeHashes:runtime};
 if(hash(path.join(root,'runtime/node.exe'))!==version.nodeSHA256)throw Error('NODE_CHECKSUM_MISMATCH');
 fs.writeFileSync(path.join(root,'VERSION.json'),JSON.stringify(version,null,2));
 const excluded=new Set(['AgentCanary.exe','PAYLOAD_MANIFEST.json','INSTALL_RECEIPT.json','Uninstall.exe']);

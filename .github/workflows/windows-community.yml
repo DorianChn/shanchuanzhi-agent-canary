@@ -233,6 +233,7 @@ jobs:
           if ($buildResult.version.wrapperSourceBlobSHA -ne $canonicalHookBlobSha) { throw 'BUILD_REPORT_HOOK_BLOB_MISMATCH' }
           $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
           $extractedHookSha256 = (Get-FileHash -LiteralPath $extractedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($buildResult.version.wrapperSourceContentSHA256 -ne $packagedHookSha256) { throw 'BUILD_REPORT_HOOK_SHA256_MISMATCH' }
           if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }
           $packagedHookBytes = [System.IO.File]::ReadAllBytes($packagedHookPath)
           $extractedHookBytes = [System.IO.File]::ReadAllBytes($extractedHookPath)

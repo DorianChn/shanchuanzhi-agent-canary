@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 
 const WRAPPER_PATH='packaging/windows/claude-native-hook.mjs';
 export const M1_CANONICAL_WRAPPER_BLOB_SHA='b7ed4aba70a597f4f63a05decc6de1b32f67372e';
+export const M1_CANONICAL_WRAPPER_SHA256='ff0bfef67e92c9ee387f78dd617408b63db6a9646566e16ca0f8e02c842c511d';
 const BUILD_USAGE='Usage: node build.mjs PAYLOAD_DIR NSIS_DIR COMMUNITY_ZIP WRAPPER_SOURCE_COMMIT_SHA';
 
 function git(repoRoot,args,encoding='utf8'){
@@ -29,7 +30,9 @@ export function readCommittedWrapperSource(repoRoot){
   const bytes=git(repoRoot,['cat-file','blob',`${sha}:${WRAPPER_PATH}`],null);
   if(!Buffer.isBuffer(bytes))throw Error('WRAPPER_SOURCE_GIT_PROVENANCE_UNAVAILABLE');
   if(bytes.includes(Buffer.from('\r\n')))throw Error('WRAPPER_SOURCE_NOT_LF');
-  return{sha,blobSha:M1_CANONICAL_WRAPPER_BLOB_SHA,bytes};
+  const sha256=createHash('sha256').update(bytes).digest('hex');
+  if(sha256!==M1_CANONICAL_WRAPPER_SHA256)throw Error('WRAPPER_SOURCE_SHA256_MISMATCH');
+  return{sha,blobSha:M1_CANONICAL_WRAPPER_BLOB_SHA,sha256,bytes};
 }
 
 export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
@@ -45,7 +48,9 @@ export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
   fs.writeFileSync(destination,source.bytes);
   const packaged=fs.readFileSync(destination);
   if(!packaged.equals(source.bytes))throw Error('PACKAGED_WRAPPER_PROVENANCE_MISMATCH');
-  return{sha:source.sha,blobSha:source.blobSha,bytes:packaged};
+  const sha256=createHash('sha256').update(packaged).digest('hex');
+  if(sha256!==source.sha256)throw Error('PACKAGED_WRAPPER_SHA256_MISMATCH');
+  return{sha:source.sha,blobSha:source.blobSha,sha256,bytes:packaged};
 }
 
 export function parseWindowsBuildArgs(args,{platform=process.platform}={}){
