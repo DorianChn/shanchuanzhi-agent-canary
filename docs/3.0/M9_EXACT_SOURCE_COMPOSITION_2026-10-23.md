@@ -677,3 +677,17 @@ The exact merged M2 source is `49af6d3dd57d9f091c95f489ead27f4f03c941a9` (M2 own
 The M9-owned test invokes both exact M1 and M2 Hook copies with synthetic `allow`, `deny`, and `ask` decisions and a distinct reason canary for each. It asserts that decisions stay unchanged and that each canary is absent from stdout, stderr, and JSONL. The M1 canonical control passes. Against M2 `49af6d3`, all three decisions are preserved and JSONL/stderr stay clear, but all three synthetic reason markers appear in stdout. The new test therefore fails with direct evidence for P0 #88; the test does not change M2 behavior or lower any security assertion.
 
 The exact-source M9 composition suite now has **17 tests: 14 passed, 3 failed, 0 skipped**. The three failures are the existing canonical Hook byte mismatch (M2 `d6f932...` versus M1 `b7ed4a...`), the new Issue #88 P0 stdout-leak regression, and the existing M2/M5 positive held-read composition returning `DENY / path_execution_not_pinned` instead of `OBSERVE_ONLY` (P1). No failing assertion was removed, skipped, or weakened. `npm run build` was rerun after this test-only addition and passed; the new composition run used a freshly packed M2 merge tree `49af6d3` installed into a disposable consumer.
+## Current exact-head hosted result — 2026-10-23 15:25–15:30 UTC
+
+M9 PR #36 head 0d3beaa9dae5a33cb3e0a4dbfa50a6c8f9a71de5 completed composition run 39978172198 with FAILURE on Ubuntu and Windows. Both exact-source jobs ran 20 tests: 15 passed, 5 failed, 0 skipped. The report-only M9 commit did not change the composition workflow or test source from code head 4cc4565a46c4fb760d891f00a11431a8afd666e3.
+
+The same five assertions fail on both platforms:
+1. Pinned M2/M5/M7/M9 Hook copies differ from the current M1 canonical blob.
+2. P0 Issue #88: M2 Hook synthetic caller-controlled reason canaries appear on stdout for allow, deny, and ask.
+3. M3 Hook source differs from the current M1 canonical blob.
+4. P0 Issue #89: M3 Hook synthetic reason canaries appear on stdout for allow, deny, and ask.
+5. P1 Issue #87: the registered M2/M5 held-file positive read returns DENY / path_execution_not_pinned instead of OBSERVE_ONLY.
+
+Current M8 PR #40 source was included in this workflow and its dedicated test step passed. The separate CI run 39978172153, Windows Community wrapper 39978171989, and AC3 coordination run 39978254905 passed. Issues #87, #88, and #89 remain OPEN; current M8 shared-test disposition #59 and current M3 exact-file review #72 remain OPEN. Product acceptance #52 and independent E4 #57 remain NOT_VERIFIED and are separate from synthetic composition.
+
+A local worktree audit at 2026-10-23 16:22 UTC found no owner implementation repair for these failures: M2 remains clean at db98c7d; M3 has only a test commit and uncommitted test change; M5 and M6 have only test-only commits. M0 did not edit M1-M8 implementation. Keep M9 OPEN/Draft until owners fix and review their owned changes and exact-source composition passes.
