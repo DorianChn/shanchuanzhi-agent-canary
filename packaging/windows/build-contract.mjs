@@ -3,7 +3,13 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 
-const WRAPPER_PATH='security-lab/claude-native-hook.mjs';
+const WRAPPER_PATH='packaging/windows/claude-native-hook.mjs';
+const ALLOWED_WRAPPER_SOURCE_PATHS=new Set([
+  WRAPPER_PATH,
+  'security-lab/claude-native-hook.mjs'
+]);
+export const M1_CANONICAL_WRAPPER_BLOB_SHA='b7ed4aba70a597f4f63a05decc6de1b32f67372e';
+export const M1_CANONICAL_WRAPPER_SHA256='ff0bfef67e92c9ee387f78dd617408b63db6a9646566e16ca0f8e02c842c511d';
 const BUILD_USAGE='Usage: node build.mjs PAYLOAD_DIR NSIS_DIR COMMUNITY_ZIP WRAPPER_SOURCE_COMMIT_SHA';
 
 function git(repoRoot,args,encoding='utf8'){
@@ -12,28 +18,54 @@ function git(repoRoot,args,encoding='utf8'){
   return result.stdout;
 }
 
-export function resolveWrapperSourceSHA(repoRoot){
-  const sourcePath=path.join(repoRoot,WRAPPER_PATH),sourceInfo=fs.lstatSync(sourcePath);
+function checkedWrapperSourcePath(sourcePath=WRAPPER_PATH){
+  if(typeof sourcePath!=='string'||!ALLOWED_WRAPPER_SOURCE_PATHS.has(sourcePath))throw Error('WRAPPER_SOURCE_PATH_NOT_ALLOWED');
+  return sourcePath;
+}
+
+function normalizeWindowsLineEndings(bytes){
+  const normalized=[];
+  for(let index=0;index<bytes.length;index++){
+    const byte=bytes[index];
+    if(byte===0x0d){
+      if(bytes[index+1]!==0x0a)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
+      normalized.push(0x0a);
+      index++;
+    }else normalized.push(byte);
+  }
+  return Buffer.from(normalized);
+}
+
+function gitBlobSHA(bytes){
+  return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+}
+
+export function resolveWrapperSourceSHA(repoRoot,{sourcePath:requestedSourcePath=WRAPPER_PATH}={}){
+  const sourcePath=checkedWrapperSourcePath(requestedSourcePath);
+  const absoluteSourcePath=path.join(repoRoot,sourcePath),sourceInfo=fs.lstatSync(absoluteSourcePath);
   if(!sourceInfo.isFile()||sourceInfo.isSymbolicLink())throw Error('WRAPPER_SOURCE_NOT_REGULAR_FILE');
   const sha=git(repoRoot,['rev-parse','HEAD']).trim().toLowerCase();
   if(!/^[a-f0-9]{40}$/.test(sha))throw Error('WRAPPER_SOURCE_SHA_INVALID');
-  const trackedBlob=git(repoRoot,['rev-parse',`${sha}:${WRAPPER_PATH}`]).trim().toLowerCase();
-  const workingBlob=git(repoRoot,['hash-object',`--path=${WRAPPER_PATH}`,path.join(repoRoot,WRAPPER_PATH)]).trim().toLowerCase();
-  if(!/^[a-f0-9]{40}$/.test(trackedBlob)||workingBlob!==trackedBlob)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
+  const trackedBlob=git(repoRoot,['rev-parse',`${sha}:${sourcePath}`]).trim().toLowerCase();
+  const workingBlob=gitBlobSHA(normalizeWindowsLineEndings(fs.readFileSync(absoluteSourcePath)));
+  if(!/^[a-f0-9]{40}$/.test(trackedBlob)||trackedBlob!==M1_CANONICAL_WRAPPER_BLOB_SHA||workingBlob!==trackedBlob)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
   return sha;
 }
 
-export function readCommittedWrapperSource(repoRoot){
-  const sha=resolveWrapperSourceSHA(repoRoot);
-  const bytes=git(repoRoot,['cat-file','blob',`${sha}:${WRAPPER_PATH}`],null);
+export function readCommittedWrapperSource(repoRoot,{sourcePath:requestedSourcePath=WRAPPER_PATH}={}){
+  const sourcePath=checkedWrapperSourcePath(requestedSourcePath);
+  const sha=resolveWrapperSourceSHA(repoRoot,{sourcePath});
+  const bytes=git(repoRoot,['cat-file','blob',`${sha}:${sourcePath}`],null);
   if(!Buffer.isBuffer(bytes))throw Error('WRAPPER_SOURCE_GIT_PROVENANCE_UNAVAILABLE');
   if(bytes.includes(Buffer.from('\r\n')))throw Error('WRAPPER_SOURCE_NOT_LF');
-  return{sha,bytes};
+  const sha256=createHash('sha256').update(bytes).digest('hex');
+  if(sha256!==M1_CANONICAL_WRAPPER_SHA256)throw Error('WRAPPER_SOURCE_SHA256_MISMATCH');
+  return{sha,blobSha:M1_CANONICAL_WRAPPER_BLOB_SHA,sha256,bytes};
 }
 
-export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
+export function writePackagedWrapperSource(repoRoot,destination,expectedSHA,{sourcePath:requestedSourcePath=WRAPPER_PATH}={}){
   if(typeof destination!=='string'||!destination||typeof expectedSHA!=='string')throw Error('PACKAGED_WRAPPER_ARGUMENT_INVALID');
-  const source=readCommittedWrapperSource(repoRoot);
+  const source=readCommittedWrapperSource(repoRoot,{sourcePath:requestedSourcePath});
   if(expectedSHA!==source.sha)throw Error('WRAPPER_SOURCE_SHA_MISMATCH');
   try{
     const existing=fs.lstatSync(destination);
@@ -44,7 +76,9 @@ export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
   fs.writeFileSync(destination,source.bytes);
   const packaged=fs.readFileSync(destination);
   if(!packaged.equals(source.bytes))throw Error('PACKAGED_WRAPPER_PROVENANCE_MISMATCH');
-  return{sha:source.sha,bytes:packaged};
+  const sha256=createHash('sha256').update(packaged).digest('hex');
+  if(sha256!==source.sha256)throw Error('PACKAGED_WRAPPER_SHA256_MISMATCH');
+  return{sha:source.sha,blobSha:source.blobSha,sha256,bytes:packaged};
 }
 
 export function parseWindowsBuildArgs(args,{platform=process.platform}={}){
@@ -52,16 +86,18 @@ export function parseWindowsBuildArgs(args,{platform=process.platform}={}){
   return args;
 }
 
-export function createWindowsBuildInvocation({repoRoot,buildScript,payloadDir,nsisDir,communityZip,nodeCommand='node'}={}){
+export function createWindowsBuildInvocation({repoRoot,buildScript,payloadDir,nsisDir,communityZip,nodeCommand='node',sourcePath:requestedSourcePath=WRAPPER_PATH}={}){
   for(const value of [repoRoot,buildScript,payloadDir,nsisDir,communityZip])if(typeof value!=='string'||!value)throw Error('WINDOWS_BUILD_ARGUMENT_REQUIRED');
   const zipInfo=fs.lstatSync(communityZip);
   if(!zipInfo.isFile()||zipInfo.isSymbolicLink())throw Error('COMMUNITY_ZIP_NOT_REGULAR_FILE');
-  const wrapperSourceSHA=resolveWrapperSourceSHA(repoRoot);
+  const sourcePath=checkedWrapperSourcePath(requestedSourcePath);
+  const wrapperSourceSHA=resolveWrapperSourceSHA(repoRoot,{sourcePath});
   const buildArgs=[payloadDir,nsisDir,communityZip,wrapperSourceSHA];
   const args=[path.resolve(buildScript),...buildArgs];
   const quote=value=>'"'+String(value).replaceAll('"','\\"')+'"';
   return{
     wrapperSourceSHA,
+    wrapperSourcePath:sourcePath,
     communityZip:path.resolve(communityZip),
     communityZIP_SHA256:createHash('sha256').update(fs.readFileSync(communityZip)).digest('hex'),
     buildArgs,

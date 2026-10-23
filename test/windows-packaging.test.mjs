@@ -8,10 +8,11 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
-import {createWindowsBuildInvocation,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
+import {createWindowsBuildInvocation,M1_CANONICAL_WRAPPER_BLOB_SHA,M1_CANONICAL_WRAPPER_SHA256,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
 import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const M8_WRAPPER_SOURCE_PATH='security-lab/claude-native-hook.mjs';
 
 test('payload inventory includes empty directories so NSIS can remove them non-recursively',()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-payload-layout-'));
@@ -204,31 +205,39 @@ test('prepare emits a build command pinned to the exact committed wrapper source
       buildScript:path.join(repo,'packaging/windows/build.mjs'),
       payloadDir:path.join(temp,'payload'),
       nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
-      communityZip
+      communityZip,
+      sourcePath:M8_WRAPPER_SOURCE_PATH
     });
-    assert.equal(invocation.wrapperSourceSHA,resolveWrapperSourceSHA(repo));
+    assert.equal(invocation.wrapperSourceSHA,resolveWrapperSourceSHA(repo,{sourcePath:M8_WRAPPER_SOURCE_PATH}));
+    assert.equal(invocation.wrapperSourcePath,M8_WRAPPER_SOURCE_PATH);
     assert.equal(invocation.buildArgs[3],invocation.wrapperSourceSHA);
     assert.equal(invocation.communityZIP_SHA256,createHash('sha256').update('synthetic community package').digest('hex'));
     assert.ok(invocation.command.includes(invocation.wrapperSourceSHA));
     const source=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
     assert.match(source,/createWindowsBuildInvocation/);
+    assert.match(source,/sourcePath:'security-lab\/claude-native-hook\.mjs'/);
     assert.match(source,/wrapperSourceSHA:invocation\.wrapperSourceSHA/);
     const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
-    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/);
-    const wrapper=readCommittedWrapperSource(repo);
+    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA,\{sourcePath:'security-lab\/claude-native-hook\.mjs'\}\)/);
+    assert.match(build,/wrapperSourceBlobSHA:packagedHookSource\.blobSha/);
+    assert.match(build,/wrapperSourceContentSHA256:packagedHookSource\.sha256/);
+    const wrapper=readCommittedWrapperSource(repo,{sourcePath:M8_WRAPPER_SOURCE_PATH});
     assert.equal(wrapper.sha,invocation.wrapperSourceSHA);
+    assert.equal(wrapper.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(wrapper.sha256,M1_CANONICAL_WRAPPER_SHA256);
     assert.equal(wrapper.bytes.includes(Buffer.from('\r\n')),false);
     const packagedPath=path.join(temp,'payload','claude-native-hook.mjs');
     fs.mkdirSync(path.dirname(packagedPath),{recursive:true});
-    const packaged=writePackagedWrapperSource(repo,packagedPath,invocation.wrapperSourceSHA);
+    const packaged=writePackagedWrapperSource(repo,packagedPath,invocation.wrapperSourceSHA,{sourcePath:M8_WRAPPER_SOURCE_PATH});
     assert.deepEqual(fs.readFileSync(packagedPath),wrapper.bytes);
     assert.deepEqual(packaged.bytes,wrapper.bytes);
+    assert.equal(packaged.sha256,M1_CANONICAL_WRAPPER_SHA256);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
 test('wrapper provenance refuses a Hook file changed after its source commit',()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-wrapper-provenance-'));
-  const wrapper=path.join(temp,'security-lab','claude-native-hook.mjs');
+  const wrapper=path.join(temp,M8_WRAPPER_SOURCE_PATH);
   const runGit=(...args)=>{
     const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
     assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
@@ -236,23 +245,52 @@ test('wrapper provenance refuses a Hook file changed after its source commit',()
   };
   try{
     fs.mkdirSync(path.dirname(wrapper),{recursive:true});
-    fs.writeFileSync(wrapper,'export const wrapper = true;\n');
+    fs.copyFileSync(path.join(repo,M8_WRAPPER_SOURCE_PATH),wrapper);
+    fs.writeFileSync(path.join(temp,'.gitattributes'),`${M8_WRAPPER_SOURCE_PATH} text eol=lf\n`);
     runGit('init','--quiet');
     runGit('config','core.autocrlf','true');
     runGit('config','user.name','Canary contract test');
     runGit('config','user.email','canary-contract-test@example.invalid');
-    runGit('add','--','security-lab/claude-native-hook.mjs');
+    runGit('add','--','.gitattributes',M8_WRAPPER_SOURCE_PATH);
     runGit('commit','--quiet','-m','test wrapper provenance');
-    assert.equal(resolveWrapperSourceSHA(temp),runGit('rev-parse','HEAD'));
-    fs.writeFileSync(wrapper,'export const wrapper = true;\r\n');
-    const committed=readCommittedWrapperSource(temp),packaged=path.join(temp,'packaged','claude-native-hook.mjs');
+    assert.equal(runGit(`rev-parse`,`HEAD:${M8_WRAPPER_SOURCE_PATH}`),M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(resolveWrapperSourceSHA(temp,{sourcePath:M8_WRAPPER_SOURCE_PATH}),runGit('rev-parse','HEAD'));
+    fs.writeFileSync(wrapper,fs.readFileSync(wrapper).toString('utf8').replace(/\r?\n/g,'\r\n'));
+    const committed=readCommittedWrapperSource(temp,{sourcePath:M8_WRAPPER_SOURCE_PATH}),packaged=path.join(temp,'packaged','claude-native-hook.mjs');
     fs.mkdirSync(path.dirname(packaged),{recursive:true});
-    assert.deepEqual(committed.bytes,Buffer.from('export const wrapper = true;\n'));
+    assert.equal(committed.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(committed.sha256,M1_CANONICAL_WRAPPER_SHA256);
     assert.notDeepEqual(fs.readFileSync(wrapper),committed.bytes,'the synthetic Windows worktree uses CRLF while the tracked blob uses LF');
-    assert.deepEqual(writePackagedWrapperSource(temp,packaged,committed.sha).bytes,committed.bytes);
+    assert.deepEqual(writePackagedWrapperSource(temp,packaged,committed.sha,{sourcePath:M8_WRAPPER_SOURCE_PATH}).bytes,committed.bytes);
     assert.deepEqual(fs.readFileSync(packaged),committed.bytes,'packaged bytes must exactly match the Git blob');
     fs.appendFileSync(wrapper,'// changed after commit\n');
-    assert.throws(()=>resolveWrapperSourceSHA(temp),/WRAPPER_SOURCE_PROVENANCE_MISMATCH/);
+    assert.throws(()=>resolveWrapperSourceSHA(temp,{sourcePath:M8_WRAPPER_SOURCE_PATH}),/WRAPPER_SOURCE_PROVENANCE_MISMATCH/);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('M8 source adapter refuses a committed Hook that differs from the M1 canonical bytes',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-noncanonical-wrapper-'));
+  const wrapper=path.join(temp,M8_WRAPPER_SOURCE_PATH);
+  const runGit=(...args)=>{
+    const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
+    assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
+    return result.stdout.trim();
+  };
+  try{
+    fs.mkdirSync(path.dirname(wrapper),{recursive:true});
+    fs.copyFileSync(path.join(repo,M8_WRAPPER_SOURCE_PATH),wrapper);
+    fs.appendFileSync(wrapper,'// committed noncanonical mutation\n');
+    fs.writeFileSync(path.join(temp,'.gitattributes'),`${M8_WRAPPER_SOURCE_PATH} text eol=lf\n`);
+    runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
+    runGit('config','user.name','Canary contract test');
+    runGit('config','user.email','canary-contract-test@example.invalid');
+    runGit('add','--','.gitattributes',M8_WRAPPER_SOURCE_PATH);
+    runGit('commit','--quiet','-m','test noncanonical wrapper rejection');
+    const head=runGit('rev-parse','HEAD');
+    assert.notEqual(runGit('rev-parse',`HEAD:${M8_WRAPPER_SOURCE_PATH}`),M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.throws(()=>readCommittedWrapperSource(temp,{sourcePath:M8_WRAPPER_SOURCE_PATH}),/WRAPPER_SOURCE_PROVENANCE_MISMATCH/);
+    assert.throws(()=>writePackagedWrapperSource(temp,path.join(temp,'packaged','claude-native-hook.mjs'),head,{sourcePath:M8_WRAPPER_SOURCE_PATH}),/WRAPPER_SOURCE_PROVENANCE_MISMATCH/);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
@@ -261,11 +299,13 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
   try{
     const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
     assert.ok(build.includes("'e4-hook-faults.mjs'"),'Windows build must include the E4 hook-fault harness');
-    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/,'Windows build must package exact committed wrapper bytes next to the harness');
+    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA,\{sourcePath:'security-lab\/claude-native-hook\.mjs'\}\)/,'Windows build must package exact committed wrapper bytes next to the harness');
     const packagedHook=path.join(payload,'claude-native-hook.mjs');
     const packagedE4=path.join(payload,'e4-hook-faults.mjs');
-    const wrapperSource=readCommittedWrapperSource(repo);
-    writePackagedWrapperSource(repo,packagedHook,wrapperSource.sha);
+    const wrapperSource=readCommittedWrapperSource(repo,{sourcePath:M8_WRAPPER_SOURCE_PATH});
+    assert.equal(wrapperSource.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(wrapperSource.sha256,M1_CANONICAL_WRAPPER_SHA256);
+    writePackagedWrapperSource(repo,packagedHook,wrapperSource.sha,{sourcePath:M8_WRAPPER_SOURCE_PATH});
     assert.deepEqual(fs.readFileSync(packagedHook),wrapperSource.bytes,'packaged hook bytes must be the exact LF Git blob');
     fs.copyFileSync(path.join(repo,'packaging/windows/e4-hook-faults.mjs'),packagedE4);
     const {runHookFaultChecks}=await import(`${pathToFileURL(packagedE4).href}?packaged=${Date.now()}`);
@@ -292,6 +332,79 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
       assert.equal(log[0].includes(marker),false,`packaged decision log leaked ${marker}`);
     }
   }finally{fs.rmSync(payload,{recursive:true,force:true});}
+});
+
+test('M1 canonical installer Hook redacts caller sentinels without changing decisions',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-hook-reason-redaction-'));
+  try{
+    const hook=path.join(root,'claude-native-hook.mjs');
+    const hookSource=readCommittedWrapperSource(repo,{sourcePath:M8_WRAPPER_SOURCE_PATH});
+    assert.equal(hookSource.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(hookSource.sha256,M1_CANONICAL_WRAPPER_SHA256);
+    writePackagedWrapperSource(repo,hook,hookSource.sha,{sourcePath:M8_WRAPPER_SOURCE_PATH});
+    const state=path.join(root,'state');fs.mkdirSync(state);
+    const callerSentinel='M8_SYNTHETIC_CALLER_REASON_SENTINEL';
+    const inputSentinels=[callerSentinel,'C:/synthetic/caller/private.txt'];
+    const input={session_id:callerSentinel,tool_name:'Read',tool_input:{file_path:inputSentinels[1],note:callerSentinel}};
+    const fallbacks={allow:'Agent Canary: permission_allowed',deny:'Agent Canary: permission_denied',ask:'Agent Canary: approval_required'};
+    const invoke=(name,moduleSource)=>{
+      const modulePath=path.join(root,`${name}.mjs`),logPath=path.join(root,`${name}.jsonl`);
+      fs.writeFileSync(modulePath,moduleSource,{flag:'wx'});
+      const result=spawnSync(process.execPath,[hook,modulePath,root,state,logPath],{input:JSON.stringify(input),encoding:'utf8',windowsHide:true,timeout:5000,maxBuffer:128*1024});
+      assert.equal(result.error?.code??null,null,`${name} process should finish within its bounded timeout`);
+      assert.equal(result.status,0,`${name} process should return the established hook protocol status`);
+      for(const marker of inputSentinels){
+        assert.equal((result.stdout??'').includes(marker),false,`${name} stdout leaked a caller canary`);
+        assert.equal((result.stderr??'').includes(marker),false,`${name} stderr leaked a caller canary`);
+      }
+      return{result,logPath};
+    };
+    for(const decision of ['allow','deny','ask']){
+      const reason=`caller supplied ${callerSentinel}`;
+      const fixture=`export async function decideAgentHook(){return ${JSON.stringify({hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:decision,permissionDecisionReason:reason}})}}\n`;
+      const {result,logPath}=invoke(`decision-${decision}`,fixture);
+      const stdoutDecision=JSON.parse(result.stdout).hookSpecificOutput;
+      assert.equal(stdoutDecision.permissionDecision,decision);
+      assert.equal(stdoutDecision.permissionDecisionReason,fallbacks[decision]);
+      const lines=fs.readFileSync(logPath,'utf8').trim().split(/\r?\n/);
+      assert.equal(lines.length,1);
+      const record=JSON.parse(lines[0]);
+      assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+      assert.equal(record.permissionDecision,decision);
+      for(const marker of inputSentinels){
+        assert.equal(lines[0].includes(marker),false,`${decision} JSONL leaked a caller canary`);
+        assert.equal((result.stdout??'').includes(marker),false,`${decision} stdout leaked a caller canary`);
+      }
+    }
+    const safeReason='Agent Canary: unregistered_tool';
+    const safeFixture=`export async function decideAgentHook(){return ${JSON.stringify({hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'deny',permissionDecisionReason:safeReason}})}}\n`;
+    const safeResult=invoke('safe-reason',safeFixture).result;
+    assert.equal(JSON.parse(safeResult.stdout).hookSpecificOutput.permissionDecision,'deny');
+    assert.equal(JSON.parse(safeResult.stdout).hookSpecificOutput.permissionDecisionReason,safeReason,'reviewed safe reason must remain stable');
+
+    const errorSentinel='M8_SYNTHETIC_THROW_REASON_SENTINEL';
+    const failed=invoke('throwing-hook',`export async function decideAgentHook(){throw new Error(${JSON.stringify(errorSentinel)})}\n`);
+    const failedDecision=JSON.parse(failed.result.stdout).hookSpecificOutput;
+    assert.equal(failedDecision.permissionDecision,'deny');
+    assert.equal(failedDecision.permissionDecisionReason,'LAB_HOOK_ERROR_FAIL_CLOSED');
+    assert.equal(fs.existsSync(failed.logPath),false,'a rejected hook must not persist a partial record');
+    for(const marker of [...inputSentinels,errorSentinel]){
+      assert.equal((failed.result.stdout??'').includes(marker),false,'fail-closed stdout leaked a caller canary');
+      assert.equal((failed.result.stderr??'').includes(marker),false,'fail-closed stderr leaked a caller canary');
+    }
+
+    const timeoutMarker='M8_SYNTHETIC_TIMEOUT_REASON_SENTINEL';
+    const timeoutModule=`const privateFixture=${JSON.stringify(timeoutMarker)}; export async function decideAgentHook(){void privateFixture;return await new Promise(()=>{})}\n`;
+    const timedOut=invoke('timeout-hook',timeoutModule);
+    const timeoutDecision=JSON.parse(timedOut.result.stdout).hookSpecificOutput;
+    assert.equal(timeoutDecision.permissionDecision,'deny');
+    assert.equal(timeoutDecision.permissionDecisionReason,'LAB_HOOK_ERROR_FAIL_CLOSED');
+    assert.equal(fs.existsSync(timedOut.logPath),false,'a timed-out hook must not persist a partial record');
+    for(const marker of [...inputSentinels,timeoutMarker]){
+      assert.equal((timedOut.result.stdout??'').includes(marker),false,'timeout stdout leaked a caller canary');
+      assert.equal((timedOut.result.stderr??'').includes(marker),false,'timeout stderr leaked a caller canary');
+    }
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 
 test('Windows launcher exposes one non-reentrant Auto E4 action with streamed, explicitly bounded results',()=>{
