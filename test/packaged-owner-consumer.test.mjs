@@ -44,7 +44,7 @@ function hashFile(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
-function prepareComposedPackage(label, exports) {
+function prepareSyntheticComposedPackage(label, exports) {
   const m1 = readPackage(roots.M1);
   const m2 = readPackage(roots.M2);
   const m3 = readPackage(roots.M3);
@@ -57,8 +57,9 @@ function prepareComposedPackage(label, exports) {
   }
   fs.cpSync(path.join(roots.M3, 'dist'), path.join(packageRoot, 'dist'), { recursive: true });
 
-  // The temporary package models additive owner entries on the combined artifact.
-  // Each copied runtime file comes byte-for-byte from that module's exact checkout.
+  // This is deliberately a synthetic composition fixture, not the M3 branch's
+  // package or a release candidate. Each copied runtime file comes byte-for-byte
+  // from that module's exact checkout so the test can exercise cross-owner code.
   const m1Files = ['dist/sdk.js', 'dist/sdk.d.ts', 'dist/containment.js', 'dist/containment.d.ts', 'dist/file-state-store.js', 'dist/file-state-store.d.ts', 'dist/runtime/gateway.js', 'dist/runtime/gateway.d.ts'];
   for (const file of m1Files) copyOwnerFile(roots.M1, `./${file}`, packageRoot);
 
@@ -166,10 +167,10 @@ async function protectedRead(url, operatorCode) {
   });
 }
 
-test('packed M3 CLI consumes the exact M1, M2, and M5 public owner exports by default', {
+test('synthetic composition fixture: packed M3 CLI consumes exact M1, M2, and M5 owner exports', {
   skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
 }, async (t) => {
-  const exact = prepareComposedPackage('exact', { m1: true, m2: true, m5: true });
+  const exact = prepareSyntheticComposedPackage('exact', { m1: true, m2: true, m5: true });
   const packed = packAndExtract(exact.packageRoot, 'exact');
   const packageRequire = createRequire(path.join(packed.installedRoot, 'package.json'));
   const publicEntries = {
@@ -212,10 +213,10 @@ test('packed M3 CLI consumes the exact M1, M2, and M5 public owner exports by de
   assert.deepEqual(fs.readdirSync(tempRoot).filter((name) => name.startsWith('agent-canary-console-probe-')), [], 'the fixed probe must be cleaned after the packaged owner chain completes');
 });
 
-test('packed M3 reports the exact M5 policy denial without reaching the held-file read callback', {
+test('synthetic composition fixture: M5 policy denial precedes the held-file read callback', {
   skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
 }, async () => {
-  const exact = prepareComposedPackage('policy-denial', { m1: true, m2: true, m5: true });
+  const exact = prepareSyntheticComposedPackage('policy-denial', { m1: true, m2: true, m5: true });
   const packed = packAndExtract(exact.packageRoot, 'policy-denial');
   const packageRequire = createRequire(path.join(packed.installedRoot, 'package.json'));
   const [m1Sdk, m2Adapter, m5Router, consoleModule] = await Promise.all([
@@ -303,11 +304,11 @@ test('packed M3 reports the exact M5 policy denial without reaching the held-fil
 });
 
 for (const absentOwner of ['m2', 'm5']) {
-  test(`packed M3 CLI remains UNKNOWN without the exact M${absentOwner === 'm2' ? '2' : '5'} public export and creates no probe`, {
+  test(`synthetic composition fixture: M3 remains UNKNOWN without the M${absentOwner === 'm2' ? '2' : '5'} public export`, {
     skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
   }, async (t) => {
     const exports = { m1: true, m2: true, m5: true, [absentOwner]: false };
-    const composed = prepareComposedPackage(`without-${absentOwner}`, exports);
+    const composed = prepareSyntheticComposedPackage(`without-${absentOwner}`, exports);
     const packed = packAndExtract(composed.packageRoot, `without-${absentOwner}`);
     const tempRoot = path.join(scratch, `without-${absentOwner}`, 'runtime-temp');
     fs.mkdirSync(tempRoot, { recursive: true });
@@ -325,10 +326,10 @@ for (const absentOwner of ['m2', 'm5']) {
   });
 }
 
-test('packed M3 onboarding host loads the public M1, M2, and M5 entries and denies a replaced path before policy dispatch', {
+test('synthetic composition fixture: onboarding host denies a replaced path before policy dispatch', {
   skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
 }, async () => {
-  const exact = prepareComposedPackage('onboarding-host', { m1: true, m2: true, m5: true });
+  const exact = prepareSyntheticComposedPackage('onboarding-host', { m1: true, m2: true, m5: true });
   const packed = packAndExtract(exact.packageRoot, 'onboarding-host');
   const hostModule = await import(pathToFileURL(path.join(packed.installedRoot, 'dist', 'codex-connection-mcp.js')).href);
   const workspaceRoot = path.join(scratch, 'onboarding-host-workspace');
@@ -373,10 +374,10 @@ test('packed M3 onboarding host loads the public M1, M2, and M5 entries and deni
   }
 });
 
-test('packed M2 refuses a sensitive symlink alias during M1 capability binding before M5 router creation', {
+test('synthetic composition fixture: M2 refuses a sensitive symlink alias before M5 router creation', {
   skip: missingRoots.length ? `requires exact owner checkouts: ${missingRoots.join(', ')}` : false,
 }, async () => {
-  const exact = prepareComposedPackage('sensitive-alias', { m1: true, m2: true, m5: true });
+  const exact = prepareSyntheticComposedPackage('sensitive-alias', { m1: true, m2: true, m5: true });
   const packed = packAndExtract(exact.packageRoot, 'sensitive-alias');
   const packageRequire = createRequire(path.join(packed.installedRoot, 'package.json'));
   const [m1Sdk, m2Adapter, m5Router] = await Promise.all([

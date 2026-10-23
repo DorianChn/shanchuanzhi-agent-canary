@@ -188,3 +188,56 @@ redaction, provider failure, and getter avoidance. `npm run build` passed and
 This route reports status only; it does not establish product-host file
 protection or positive protected-read evidence. Issue #52 remains OPEN / P0 /
 NOT_VERIFIED pending M9's exact-source integration.
+
+## 2026-10-23 Real package-composition boundary
+
+The current M3 branch head is `47474e3ea71b8a3ab0f175a74e2970ee52150878`.
+Its actual `package.json` identifies `@dorianchn/agent-canary@1.2.7` and exports
+only `./sdk`. The exact M2 owner branch `db98c7d5d409aa390ef539c96a209d6daba8d793`
+exports `./gateway-adapter` from
+`execution-isolation/gateway-adapter/gateway-adapter.mjs`; exact M5 owner branch
+`7fa47e8d82e4b92307a4429ea743931b4600ac90` exports `./policy-router` from its
+typed `dist` entry. These are the same package name and version, and the M2/M5
+targets are absent from the M3 checkout. Separate package aliases or guessed
+exports would therefore misstate the published boundary and could create a
+broken tarball.
+
+`test/packaged-owner-consumer.test.mjs` builds a temporary manifest and copies
+exact owner files to exercise cross-module behavior. Its cases are now named
+and commented as **synthetic composition fixtures**; they are useful behavioral
+tests, but are not evidence that the actual M3 package resolves those owner
+exports. The standalone M3 package remains fail-closed when the M2 or M5
+subpath is absent.
+
+The M3-owned command `npm run check:integrated-package` runs
+`scripts/check-integrated-package.mjs` against the actual checkout and its real
+`npm pack` output. It requires `M1_ROOT`, `M2_ROOT`, and `M5_ROOT` to identify the
+exact owner checkouts, compares the integrated subpath entries and target bytes
+against each owner manifest, verifies the packed targets, then installs the
+tarball offline and resolves/imports the three public subpaths. It never edits
+the manifest or copies owner files. A missing export or any mismatch yields a
+machine-readable `NOT_READY` report and a failing exit code; the current M3-only
+checkout is expected to fail this integration gate until the package owners'
+entries and files are present in the same integrated tree.
+
+Final package acceptance needs: M1's exact `./sdk` owner entry and bytes; M2's
+exact `./gateway-adapter` export and target; M5's exact `./policy-router` export,
+target, and import closure; M3 to retain those owner entries in the single
+package manifest and pack allowlist; and M9 to run this gate against the actual
+integrated checkout/tarball. The owner export names, target paths, package
+identity/version, and bytes must come from those manifests and checkouts, not
+from a synthetic package. This gate checks package composition only; it does
+not prove desktop-host or operating-system enforcement. Issue #52 remains
+OPEN / P0 / NOT_VERIFIED.
+
+On this exact M3 head, `M1_ROOT`, `M2_ROOT`, and `M5_ROOT` were set to the
+current owner worktrees and `npm run check:integrated-package` ran the actual
+M3 `npm pack`. It exited non-zero with `NOT_READY`: the real M3 package exposed
+only `./sdk`, `./gateway-adapter` and `./policy-router` were absent, and the
+M3-built `dist/sdk.d.ts` differed from M1's exact owner target. The actual M3
+tarball listed 96 files. This records a real package-boundary failure; it is
+not a successful composite-package check. The gate must be rerun after M1's
+owner artifact and M2/M5 exports have been integrated into one checkout.
+The existing `npm run pack:check` also passed for the standalone M3 package
+(same 96-file tarball); that smoke check covers the current SDK/CLI surface only
+and does not establish M2/M5 subpath availability.
