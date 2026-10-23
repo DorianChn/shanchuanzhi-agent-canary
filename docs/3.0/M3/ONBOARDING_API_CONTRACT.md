@@ -198,3 +198,64 @@ label a successful result only as a “fixed synthetic probe”; Issue #52 and
 product arbitrary-file / symlink-junction protection remain `OPEN / P0 /
 NOT_VERIFIED` until the real product-host configuration and attacker-controlled
 alias acceptance run succeeds.
+
+## 7. M3 product-file readiness and exact integration contract — 2026-10-23
+
+### Current CLI/API state
+
+- The M3 CLI command `agent-canary ai console` supplies only `port`, the
+  process-local AI key, and the operator approval code to `startAIConsole`.
+  It does not construct an M1 Gateway or an M2/M5 provider for a real product
+  workspace.
+- `startAIConsole` has trusted construction-time seams for
+  `securityCenterStatusProvider` and
+  `securityCenterProtectedReadDependencies`. The built-in protected-read
+  bootstrap imports only public package subpaths: M1 `./sdk`, M2
+  `./gateway-adapter`, and M5 `./policy-router`.
+- `GET /api/security-center` is status-only. Without a trusted M2 status
+  provider it returns `UNKNOWN` and performs no protected execution.
+- `POST /api/security-center/protected-read` is a synthetic temporary-file
+  probe with an exact empty JSON body. Its fixed path and fixed marker are
+  M3-owned probe data, not a product file. HTTP input, model output, and
+  environment variables cannot select a path, tool, workspace, or callback.
+- M3 `package.json` currently exports only `./sdk`. An M3-only package is
+  therefore `NOT_READY` for the protected M1/M2/M5 composition; a missing or
+  incompatible public dependency produces `UNKNOWN`, with no legacy-router,
+  private-source, or path-only fallback. The M3 lane does not edit the shared
+  package manifest.
+
+### Required shape for a future product host
+
+M3 may enable a product-file provider only after the M3 product host has a
+defined, trusted use case and supplies a construction-time immutable manifest
+containing its workspace identity and fixed relative resource list. No HTTP,
+model, query-string, or user-selected path may extend that list. The composed
+package must resolve the exact public owner exports, and the host must:
+
+1. Construct the exact M1 Gateway with the trusted workspace and registered
+   file map; require its opaque bind, verify, and held-read methods.
+2. Pass the fixed tool-to-relative-path map through the exact M2 public
+   `createSecurityGatewayHostAdapter` facade.
+3. Supply the exact M5 public `createSecurityToolRouter` in strict
+   `OBSERVE` with `verifyRealPaths: true`; M5 must validate the M1-issued
+   capability before the callback, and M2 must dispatch only through the
+   held-file Gateway method.
+4. Keep missing/invalid provider data, stale or mismatched capability, and
+   owner/API failures at `UNKNOWN` or explicit owner `DENY`; never retry through
+   a generic callback. Responses expose only the status allowlist, not paths,
+   bytes, or capabilities.
+5. Require M9 to test ordinary package self-resolution at pinned owner SHAs,
+   including one owner-approved positive file case and alias/replacement
+   denials before callback/read, with callback and M1 evidence counts plus
+   unchanged fixture bytes. A synthetic marker is supporting probe evidence,
+   not a product-file acceptance case.
+
+No supported M3 product workspace/file manifest currently exists, so this
+workstream does not turn the probe marker into a product read and does not add
+a `--path`/`--workspace` option. The required next M3 action is to define that
+trusted product-host configuration before implementing its CLI injection.
+M9 owns exact-source package composition; M1 owns held-file capability
+semantics; M2 owns the adapter; M5 owns strict policy; M4 owns only the GET
+consumer. Until those exact package and product-host gates pass, product-file
+protection remains `NOT_READY / UNKNOWN` and Issue #52 remains `OPEN / P0 /
+NOT_VERIFIED`.

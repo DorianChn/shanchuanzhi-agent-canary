@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createAgentGuard } from '../src/containment.js';
+import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-security-center-route-'));
@@ -16,6 +18,41 @@ after(() => {
   fs.rmSync(testHome, { recursive: true, force: true });
 });
 const { startAIConsole } = await import('../src/ai/console.js');
+
+test('protected host adapter rejects an incompatible M1 gateway before M2/M5 side effects', async () => {
+  const calls = { m2FacadeLoads: 0, m5RouterCreations: 0, gatewayDispatches: 0 };
+  const incompatibleGateway = Object.freeze({
+    agent: Object.freeze({
+      async dispatch() {
+        calls.gatewayDispatches++;
+        throw new Error('legacy path dispatch must not be used');
+      },
+    }),
+  });
+  const guard = createAgentGuard({ sessionId: 'm3-incompatible-gateway-fixture', alert: false });
+
+  const host = await createProtectedHostAdapter(
+    incompatibleGateway,
+    guard,
+    os.tmpdir(),
+    {
+      loadM2Facade: async () => {
+        calls.m2FacadeLoads++;
+        return { createSecurityGatewayHostAdapter: () => { throw new Error('M2 must not be reached'); } };
+      },
+      createSecurityToolRouter: (() => {
+        calls.m5RouterCreations++;
+        throw new Error('M5 must not be reached');
+      }) as never,
+    },
+  );
+
+  assert.equal(host.status, 'UNKNOWN');
+  assert.equal(host.reason, 'M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
+  assert.equal(host.dispatch, undefined);
+  assert.equal(host.m5Callbacks(), 0);
+  assert.deepEqual(calls, { m2FacadeLoads: 0, m5RouterCreations: 0, gatewayDispatches: 0 });
+});
 
 async function csrfFor(url: string) {
   const response = await fetch(url);

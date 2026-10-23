@@ -1,8 +1,82 @@
 # M3 protected-host adoption status
 
-Date: 2026-10-22
-Status in this M3 worktree: `BLOCKED / UNKNOWN`
+Date: 2026-10-23
+Status in this M3 worktree: `PRODUCT PATH NOT_READY / UNKNOWN`
 Policy: fail closed; no path-only fallback.
+
+## Current M3 owner gate — 2026-10-23
+
+This section supersedes the older exact-ref table below. M3 source baseline is
+`feature/ac3-agent-onboarding` at `df580cf712ba36863b9245fbb5bbacf484dac919`;
+M1 is `fa369069241bf81d32c7f39d31a61806efa55fe4`, M2 is
+`db98c7d5d409aa390ef539c96a209d6daba8d793`, and the current local M5 candidate
+is `8bb14c6b38dc2cc76bdf915442dc8048d30ff76d`. M1 has authorized M5 to adapt
+the policy boundary to the exact M1 held-file methods. M5's candidate uses
+`bindFileReadCapability`, `verifyFileReadCapability`, and
+`readFileWithCapability`; the M5 owner reports 44/44 focused tests, build,
+pack check, and M1 Gateway positive/alias checks passing. The M5 commit is
+local at this checkpoint; M9 still needs an exact public-package composition.
+
+The M3 CLI does not supply a trusted host workspace or fixed product-file map.
+`agent-canary ai console` calls `startAIConsole` with only port, API key, and
+the operator approval code. Its GET status route has no injected trusted M2
+status provider and remains `UNKNOWN`. Its authorized protected-read POST is
+the fixed temporary-file probe documented below; it is not a user/product file
+read. The route has no request path field and this work does not add one.
+
+M3 `package.json` still exports only `./sdk`. The default protected-read
+bootstrap resolves the exact public `./sdk`, `./gateway-adapter`, and
+`./policy-router` package subpaths. When M2/M5 exports or required M1 methods
+are absent/incompatible, it returns sanitized `UNKNOWN`; the route must not
+fall back to M3's legacy router, private implementation imports, a generic
+callback, or a path selected by HTTP, environment, or model output. M3 does not
+edit the shared package manifest; the integrated package owner must compose
+the approved owner exports and their exact files.
+
+There is no M3-owned product use case or trusted construction-time file map in
+the current Console/CLI contract from which to select a real product file
+safely. Therefore no product-file ALLOW path is implemented or claimed. The
+temporary fixed marker remains explicitly synthetic. The M3 regression now
+also verifies that a Gateway object missing the M1 held-file methods returns
+`UNKNOWN` before loading M2/M5, creating an execution callback, or dispatching
+through the legacy Gateway surface.
+
+### M3 validation at source baseline `df580cf`
+
+- `node --import tsx --test test/security-center-route-m3.test.ts`: 10/10 PASS,
+  including the new incompatible-M1 test and the existing absent-export
+  `UNKNOWN`/no-probe assertions.
+- `npm run build`: PASS.
+- `npm run pack:check`: PASS for the standalone M3 package (96 files); this
+  is not an integrated owner package.
+- `npm run check:integrated-package`: `NOT_READY`; the real M3 checkout still
+  packs only `./sdk`, its `dist/sdk.d.ts` differs from exact M1, and the M2/M5
+  public subpaths are absent.
+- `git diff --check`: PASS.
+
+### Exact remaining owner actions
+
+1. **M3 product owner:** identify the real M3 host/use case and supply its
+   trusted workspace identity plus a reviewed fixed relative-file manifest at
+   process construction time. Until that product contract exists, keep only
+   the synthetic probe and keep product file status `UNKNOWN`.
+2. **M9/package owner:** compose the exact M1 `./sdk`, M2 `./gateway-adapter`,
+   and M5 `./policy-router` public exports in one package, without copying
+   private implementations or changing owner bytes; test ordinary package
+   self-resolution at the pinned exact SHAs. M3's current package gate remains
+   `NOT_READY` because the M2/M5 subpaths are absent.
+3. **M1/M2/M5 owners:** retain the accepted M1 capability methods, M2's fixed
+   tool/path facade, and M5 strict `OBSERVE` verification. Resolve any future
+   contract changes in the owning module before M3 consumes them.
+4. **M4 owner:** remain a read-only consumer of M3 `GET /api/security-center`;
+   missing or unsupported backend data stays `UNKNOWN`. M4 does not own the
+   M3 backend or protected-read route.
+5. **M9 acceptance:** on the exact integrated package and M3 first-party host,
+   verify absent/incompatible dependencies are `UNKNOWN` with zero protected
+   callback/read evidence; separately verify any owner-approved product-file
+   positive case and alias/replacement denials. Synthetic marker checks do
+   not satisfy product-file or native-host acceptance. Keep Issue #52
+   `OPEN / P0 / NOT_VERIFIED` until those gates pass.
 
 ## Implemented M3 boundary
 
