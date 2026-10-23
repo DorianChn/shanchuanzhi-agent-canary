@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "agent-canary.m7.gateway-benchmark.v1",
+  "startedAt": "2026-10-13T08:42:14.126Z",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v22.23.1",
+    "osRelease": "10.0.26200",
+    "cpuCount": 32,
+    "totalMemoryBytes": 33479172096
+  },
+  "workload": {
+    "kind": "synthetic in-process read-only MCP callback",
+    "network": false,
+    "externalServices": false,
+    "warmupOperations": 100,
+    "operations": 1000,
+    "concurrency": 16
+  },
+  "warmup": {
+    "operations": 100,
+    "errors": 0
+  },
+  "result": {
+    "operations": 1000,
+    "successes": 1000,
+    "errors": 0,
+    "errorSamples": [],
+    "concurrency": 16,
+    "durationMs": 606.785,
+    "throughputOpsPerSecond": 1648.031,
+    "latencyMs": {
+      "p50": 4.942,
+      "p95": 9.557,
+      "p99": 11.253,
+      "max": 16.127
+    },
+    "cpuMs": {
+      "user": 359,
+      "system": 266,
+      "total": 625
+    },
+    "memoryBytes": {
+      "rssBefore": 86069248,
+      "rssAfter": 102973440,
+      "rssDelta": 16904192,
+      "heapBefore": 26952920,
+      "heapAfter": 36076096,
+      "heapDelta": 9123176
+    },
+    "evidence": {
+      "events": 2000,
+      "chainValid": true
+    },
+    "activeResources": {
+      "ConnectWrap": 2,
+      "PipeWrap": 3
+    }
+  },
+  "completedAt": "2026-10-13T08:42:15.674Z",
+  "status": "COMPLETED"
+}
