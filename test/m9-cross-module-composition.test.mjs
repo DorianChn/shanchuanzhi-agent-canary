@@ -24,7 +24,7 @@ const pinnedSourceShas = {
   M4: '4f83140807a48bfe0d3273e2493a2124f533b8a0',
   M5: '12b2499a1f7b8525f3bf2d7659249c1bd8e881ed',
   M6: '3578e7ba10b2fd160efa0e4683aba863c666db8a',
-  M7: 'f20e307458f4c703459621fd48e44a9e806f03bb',
+  M7: '436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e',
   M8: '854de50d94637caf3f334de7d28dcdcaddd88f9f',
 };
 

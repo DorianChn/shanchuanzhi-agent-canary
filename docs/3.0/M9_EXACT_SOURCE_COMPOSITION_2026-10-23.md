@@ -10,7 +10,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 | M4 desktop security center | #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` (current PR head) | Security-center copy/status assertions clarified against the M3 fixed-probe boundary; first-party host read remains NOT_VERIFIED |
 | M5 policy | #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | Exact CI run `39867073839` passed 9/9; risk-policy source and regression changes verify deterministic DENY skips optional review, approval and execution callbacks |
 | M6 E4 | #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` (current PR head) | Adds a failure when a model fixture mutates its target; M9 now checks the historical lifecycle assertions remain intact while allowing additive regression coverage |
-| M7 reliability | #39 | `f20e307458f4c703459621fd48e44a9e806f03bb` (current public PR head) | Bounded installer receipt phase markers; M9 reruns exact-toggle unit regressions. No real installer/VM acceptance; Issue #41 remains OPEN/HOLD |
+| M7 reliability | #39 | `436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e` (current public PR head) | Packages the durable-files worker dependency and safely defaults the silent receipt failure dialog; exact-source compatibility tests pass. Hosted lifecycle run failed because owned install files remained after uninstall; Issue #41 remains OPEN/HOLD |
 | M8 open-source product | #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` (current public PR head) | Documents first-party Security Center protected-read as NOT_VERIFIED; existing Hook provenance, LF checkout and sanitized JSONL regressions remain pinned |
 
 ## Owner-review boundaries
@@ -125,9 +125,9 @@ During the first exact-source run, the M9 gate failed because it required the co
 
 These are local fixture/source and owner-regression results. They do not establish a live Desktop/host bootstrap, native Codex Shell protection, OS-atomic or concurrent TOCTOU safety, installer lifecycle acceptance, clean-VM acceptance, or independent external E4. Keep Issue #52 OPEN / P0 / NOT_VERIFIED and Issue #41 OPEN / P1 / HOLD.
 
-## Latest exact-source refresh — 2026-10-23
+## M7/M8 exact-source refresh — 2026-10-23 (prior M7 pin)
 
-M7 and M8 advanced to new public refs. The M9 harness and workflow now pin these exact owner heads:
+M7 and M8 advanced to new public refs. M7 `f20e307458f4c703459621fd48e44a9e806f03bb` below is a historical pin, superseded by the M7 follow-up section; M8 remains at the same exact source.
 
 | Module | Exact public owner ref |
 | --- | --- |
@@ -137,7 +137,7 @@ M7 and M8 advanced to new public refs. The M9 harness and workflow now pin these
 | M4 / PR #34 | `4f83140807a48bfe0d3273e2493a2124f533b8a0` |
 | M5 / PR #47 | `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` |
 | M6 / PR #38 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` |
-| M7 / PR #39 | `f20e307458f4c703459621fd48e44a9e806f03bb` |
+| M7 / PR #39 (historical) | `f20e307458f4c703459621fd48e44a9e806f03bb` |
 | M8 / PR #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` |
 
 M7 adds fixed-path, bounded lifecycle phase telemetry for installer receipt creation and tests exact-toggle behavior. The M9 workflow now executes the telemetry-off positive control, exact-toggle marker test, non-exact-toggle negative control, and lifecycle smoke contract regression at the pinned M7 SHA. These are unit/source checks; they do not run Setup.exe, an installer, or a VM. M8's update is documentation-only and explicitly states the first-party protected-read route remains NOT_VERIFIED unless a trusted composition bootstrap is present and an end-to-end read is proven.
@@ -151,3 +151,18 @@ The exact detached M7/M8 worktrees were checked at the two SHAs above. After the
 - `node --import tsx --test test/m9-security-composition.test.ts`: **3 passed, 1 existing skip**. The skipped M9 product-source case predates the M1 capability API; the exact source behavior is covered by the cross-module composition harness.
 
 Hosted M9 Ubuntu/Windows exact-source composition remains required. Issue #41 remains OPEN / P1 / HOLD; Issue #52 remains OPEN / P0 / NOT_VERIFIED. No live installer, VM, model, production host hookup, or OS-atomic acceptance was performed.
+
+## M7 exact-source follow-up — 2026-10-23
+
+The public M7 PR #39 head advanced from `f20e307458f4c703459621fd48e44a9e806f03bb` to `436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e`. M9 changed only its M7 source pin and M7-specific regression coverage; M1–M6 and M8 pins remain unchanged. The detached M7 worktree was verified at the new SHA.
+
+The new M7 commit adds `durable-files.mjs` to the worker files copied into the installer payload, selects the IDOK default for the silent integrity-receipt failure dialog, and adds regressions for the full worker-module closure and rollback/abort behavior. Exact-source Windows compatibility results:
+
+- `node --test --test-name-pattern="Windows payload build copies every local worker module dependency|record-install keeps normal behavior when M7 phase telemetry is disabled|record-install emits only the final fixed marker when the exact M7 toggle is enabled|record-install does not enable M7 phase telemetry for non-exact toggle values" packaging/windows/test-worker.mjs`: **4/4 passed**.
+- `node --test --test-name-pattern="prepare output and build instructions pass the pinned ZIP and required source commit SHA|Windows payload E4 checks the co-located privacy-safe hook wrapper|silent receipt failure chooses a safe default then still rolls back and aborts" test/windows-packaging.test.mjs`: **3/3 passed**.
+- `npm run pack:check -- --package-root <exact M2 worktree>`: passed for **91 files**.
+- Exact-source M9 composition with M7 `436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e` and all other pinned modules unchanged: **11/11 passed**.
+
+The new M7 exact CI run `39879983009` completed successfully. Wrapper run `39879983018` passed the Ubuntu and Windows wrapper regressions and Windows build-evidence job, but its Windows installer lifecycle job **failed**. The hosted result artifact at `reports/m7-lifecycle-436d95c/INSTALLER_LIFECYCLE_RESULT.json` records source `436d95c0d867e96c7e91a6bf2aceaa6d03d48a3e`, provenance PASS, silent install PASS (3,848 manifest files, exit 0), and duplicate-candidate refusal PASS. Overall status is FAIL because `OWNED_INSTALL_FILES_REMAIN_AFTER_UNINSTALL`. Runner was GitHub-hosted Windows Server 2025; standard-user token was not asserted, and EFS, in-place upgrade, cancellation rollback, real model/native agent, and Windows 11 client were not tested or verified. Keep Issue #41 OPEN / P1 / HOLD; this is not installer acceptance. M9's hosted composition remains pending because this pin update is local and has not been pushed.
+
+The local tests cover source/payload fixtures only; they did not run Setup.exe, an installer, or a VM. The separate owner-hosted run above did execute an installer and failed its uninstall-cleanup check. No separate issue is needed for this pin-only compatibility follow-up; document it in PR #36. The lifecycle failure belongs to existing Issue #41. Issue #74 is CLOSED and its acceptance history remains unchanged. Issue #41 remains OPEN / P1 / HOLD.
