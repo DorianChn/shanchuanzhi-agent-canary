@@ -89,3 +89,9 @@ The M6 source-checkout E4 tests do not prove a built installer, clean-VM lifecyc
 - M4 has a new M4-owned commit `db3c0ee11d989a25b73a2d65246142a780f3ef6a` and M7 has public test instrumentation `d1bc00b0f1d2b1c8e108ed83dafc27ede1eb1bd8`. This M9 candidate still pins the prior M4/M7 commits, so the passing 3caa116 composition is historical for those exact pins. Refresh pins after the current M7 lifecycle run and M3 host-route work reach reviewable refs.
 - M2 remains at `67428139e53c3f63a1101b4f94e84b291cbb1196` with an explicitly `UNPROTECTED / BLOCKED_NOT_VERIFIED` native Shell boundary; Issue #45 comment #6354018926 records why no product-host claim is made.
 - M3 is actively working only on its M3 Console-route contract/source; no new endpoint or first-party protected-read test is in the candidate yet. Keep Issue #52 OPEN/P0/NOT_VERIFIED until exact-source composition and host checks prove the controls.
+
+## Hosted checks and pending source refresh — 2026-10-23 00:05 UTC
+
+- M9 PR #36 exact head `624237162459e021cf4d66bc3d253da1443c1404` passed CI `39875500080` (9/9), wrapper `39875500104` (2/2), and composition `39875500110` on Ubuntu and Windows. The workflow passed against its currently pinned refs only.
+- The pin map still references M4 `0a1fc13` and M7 `28aa873`. Current public M4 is `db3c0ee11d989a25b73a2d65246142a780f3ef6a`; current public M7 is `d1bc00b0f1d2b1c8e108ed83dafc27ede1eb1bd8`. M3's new route is local/unpushed and needs review. Refresh the exact-source pins only after those owner heads are stable, then rerun composition.
+- M7's current lifecycle artifact still fails with a confirmed started-but-incomplete setup process; M3's probe route is not yet pinned. Issue #52 stays OPEN/P0/NOT_VERIFIED and Issue #41 stays OPEN/P1/HOLD.
