@@ -363,3 +363,18 @@ Issue #52 remains OPEN / P0 / NOT_VERIFIED. M9 must run the exact integrated
 M1/M2/M3/M5 references on Ubuntu and Windows. These M3 tests do not prove a
 real product-host callback, native tool protection, installer effectiveness,
 M4 UI protection, or OS-atomic TOCTOU safety.
+
+### Exact-head CI cleanup-path correction — 2026-10-24
+
+PR #90 exact-head run `40027402261` failed on macOS Node 22 in the new M3
+synthetic M2-contract test's cleanup hook: macOS resolved the temporary
+`/var/...` path to `/private/var/...`, while the test compared the original
+string. Ubuntu Node 20/22, Docker, sponsor smoke, and ownership-contract
+evidence passed; remaining matrix jobs were cancelled after that failure. The
+failure did not involve a Host decision or file-read callback.
+
+M3 test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` now checks
+directory identity by device/inode and containment using canonical paths. Its
+local Windows build, focused 26/26 tests, and diff check pass. It remains local
+until the next scheduled push batch; PR #90 is still at `ed9f5b4`, and CI for
+`c462b29` has not run. Issue #52 stays OPEN / P0 / NOT_VERIFIED.

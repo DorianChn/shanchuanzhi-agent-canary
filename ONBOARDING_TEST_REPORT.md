@@ -308,3 +308,21 @@ status correctly remains UNKNOWN. No real product-host callback, native tool,
 installer, M4 UI protection, or OS-atomic path/open transaction is verified.
 M9 must pin the exact M1/M2/M3/M5 sources and pass its Ubuntu and Windows
 composition checks before this P0 can advance.
+
+### Exact-head CI follow-up — 2026-10-24
+
+PR #90 run `40027402261` on exact head
+`ed9f5b4e1cb27a09d217509671c31bd20430ceb6` failed on macOS Node 22 in the new
+synthetic M2-contract test's cleanup hook. The test compared a `/var/...`
+temporary path with macOS `realpath`'s `/private/var/...` spelling. This was a
+test cleanup assertion, not a Host/capability decision failure. Ubuntu Node 20
+and 22, Docker, sponsor smoke, and ownership-contract evidence passed; the
+other matrix jobs were cancelled after the macOS failure.
+
+Test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` now verifies the
+temporary directory's device/inode identity and canonical containment before
+cleanup, without comparing noncanonical path spellings. After that change,
+local Windows `npm run build`, the two focused test files (26/26), and
+`git diff --check` passed. This commit is local and has not yet been published;
+PR #90 still points at `ed9f5b4` and no exact-head CI result for `c462b29` is
+claimed.
