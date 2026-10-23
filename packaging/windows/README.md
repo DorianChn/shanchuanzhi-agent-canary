@@ -4,12 +4,12 @@
 
 ## 构建者要求
 
-Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Git；Python zipfile；官方 NSIS 3.13 的便携编译文件。最终用户不需要 Node、Python、Git 或 NSIS。
+Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Python zipfile；官方 NSIS 3.13 的便携编译文件。最终用户不需要 Node、Python、Git 或 NSIS。
 
-1. `node packaging/windows/prepare.mjs "EMPTY_BUILD_DIRECTORY" "PYTHON_EXE" "NPM_CLI_JS"`
+1. `node packaging/windows/prepare.mjs "EMPTY_BUILD_DIRECTORY" "PYTHON_EXE" "NPM_CLI_JS" "COMMUNITY_ZIP" "ZIP_SHA256"`。必须显式提供 Community ZIP 与 SHA-256；构建脚本不会静默回退到旧候选包。
 2. 下载并核对官方 NSIS 3.13 校验值；可用 7-Zip 解压，不需要管理员安装工具。
 3. 将 Node 完整 LICENSE 与 `packaging/windows/THIRD_PARTY_NOTICES.md` 放入随包目录。生产依赖原始 LICENSE 随 node_modules 保留。
-4. 将 `prepare.mjs` 输出的 `next` 命令中的 `PATH_TO_VERIFIED_PORTABLE_NSIS_3_13` 替换为 NSIS 3.13 便携目录后，运行该完整命令。参数顺序固定为 payload、NSIS 目录、同次 prepare 输出的 `community.zip`、当前源码 checkout 的 40 位 Git commit SHA。Hook 文件有未提交修改时会拒绝生成 provenance；build 会再次核对该 SHA，并从传入的 ZIP 文件重新计算 `communityZIP_SHA256`。
+4. `node packaging/windows/build.mjs "BUILD_DIRECTORY/payload" "PORTABLE_NSIS_DIRECTORY" "BUILD_DIRECTORY/community.zip" "WRAPPER_SOURCE_COMMIT_SHA_40_HEX"`。最后一个参数是写入 `VERSION.json` 的 40 位来源提交 SHA。
 5. `node --test packaging/windows/test-worker.mjs`
 6. 用 `scripts/check-sdk-types.mjs --package-root BUILD_DIRECTORY/payload/app` 进行干净外部 SDK 类型消费检查。
 
@@ -19,7 +19,7 @@ Windows 11 x64；内置 .NET Framework 4.8 编译器；Node/npm；Git；Python z
 
 启动器编译时嵌入 payload manifest 摘要；执行 Node 前逐个核对文件大小、SHA-256 与 reparse point。安装记录摘要来自实际 `$EXEPATH`。这些是本地一致性检查，**不是代码签名或防本机管理员篡改认证**。不合作 callback、未登记 Agent 原生工具、系统级隔离仍在边界外。
 
-安装器 RequestExecutionLevel=user；HKCU 标准卸载项；桌面及开始菜单快捷方式。卸载仅逐个删除本发行包拥有文件，拒绝目录重定向，不递归清理用户目录。复现报告保留在 `%LOCALAPPDATA%/AgentCanaryCommunityData`，不自动删除用户证据。
+安装器 RequestExecutionLevel=user；HKCU 标准卸载项；桌面及开始菜单快捷方式。安装前拒绝非空目录和同候选的既有注册项。失败路径按构建时的拥有文件清单回滚，不递归删除目录；卸载同样逐个删除本发行包拥有文件并拒绝目录重定向。复现报告保留在 `%LOCALAPPDATA%/AgentCanaryCommunityData`，不自动删除用户证据。
 
 ## 验证语义
 
