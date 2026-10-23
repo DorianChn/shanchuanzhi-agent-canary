@@ -482,3 +482,41 @@ M9 wrapper run `40035799522` fails its audit step on existing Hono,
 ip-address, and zod advisories. M3 PR checks pass. Keep Issue #52 OPEN / P0 /
 NOT_VERIFIED pending M9/package composition alignment and a successful
 exact-source Ubuntu/Windows run.
+
+### Fixed-path Host probe/status verification — 2026-10-24
+
+M3 PR #90 exact head `3a377ffe1d1f34b97a71ae6657accb9126d052f2` composes the
+normal Console protected-read probe through the public M1 held-file Gateway
+capability, M2 `createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router
+with `verifyRealPaths:true`. M3 owns the fixed registered tool/path and
+sanitized route. It verifies the opaque M2 capability before adapting the
+capability-bound M2 executor to M5; no generic path-only callback is accepted.
+Missing owner exports/methods fail closed as `UNKNOWN`.
+
+The POST action checks CSRF, operator authority, and an empty request body
+before loading probe dependencies. Its PASS requires the fixed registered-read
+positive control and both alias and path-replacement denial controls before
+callback/side effect. The GET route checks CSRF and serializes only the
+allowlisted M2 status fields; it is snapshot-only and never runs a read. The
+focused local command
+`node --import tsx --test test/codex-connection-check.test.ts
+test/security-center-route-m3.test.ts` passed 27/27, `npm run build` passed,
+PR exact-head workflow `40037861929` passed 9/9, and ownership-contract evidence
+run `40037861836` passed. These are synthetic host/contract tests, not proof of
+an installed Codex callback or native-tool protection.
+
+M9 run `40037657193` completed failure on both Ubuntu and Windows, but checked
+out M3 `a84ee13fa0e7e8ba0ace371235236f1d6b203780`, not current M3
+`3a377ffe1d1f34b97a71ae6657accb9126d052f2`. It failed before the M9 exact
+composition regression: M3's missing-capability-executor test expected
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`, while `a84ee13` returned
+`M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE`. Current `3a377ff` fixes that
+M3-owned reason mapping and its exact PR CI passes, but no M9 run has yet
+validated current `3a377ff`. The M3 package's `gateway-adapter` target remains
+byte-different from the exact M2 export; this older failed run does not establish
+whether that packaging difference affects the corrected normal-CLI path.
+
+No M1 review of exact M3 head `3a377ff` is recorded on PR #90. Keep Issue #52
+OPEN / P0 / NOT_VERIFIED until M9 repins `3a377ff` and exact-source Ubuntu and
+Windows composition checks pass. Native host activation, installer behavior,
+and E4 remain `NOT_VERIFIED`.

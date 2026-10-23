@@ -105,6 +105,8 @@ M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marke
 
 ### M3 产品入口与 M1/M2/M5 调用链
 
+> 历史快照：以下入口审计反映 2026-10-21 的实现。其“没有 M3 到 M2/M5 的 Host probe 调用链”结论已被本文末尾“P0 #52 fixed-path Host probe/status”记录取代；Hook 与原生工具保护边界仍然有效。
+
 - `package.json` 的 `agent-canary` bin 指向 `dist/index.js`，构建为 `tsc`。M3 向导生成的项目 MCP 入口为 `node dist/competition.js serve --stdio`；`src/competition.ts` 调用 `src/server.ts` 的 decoy MCP handler，工具表来自 `DECOY_TOOLS`，调用由 `handleDecoyCall` 处理。此 Codex 接入入口不导入 M2 adapter，也不创建或消费 M1 Gateway capability。
 - 独立的内置演示入口 `agent-canary ai console`（`package.json` 的 `ai:console` 指向 `node dist/index.js ai console`）会从 `src/ai/console.ts` 创建 `src/runtime/demo.ts`。该 demo 直接创建 M1 `createTrustedExecutionGateway`，经 `runtime.agent.dispatch` 执行固定的读/写调用，目标为 `HoneypotRuntime` 创建的临时演示文件；不经过 M2 adapter。它证明内置隔离 demo 调用 Gateway，不是外部 Agent 宿主 callback、用户 workspace 文件或 Codex 原生工具已受保护的证据。Console 中 Agent 配置演示也使用隔离的临时项目。
 - `connect-check` 确实运行已安装 Codex CLI，但使用临时、ephemeral 配置与独立的 `dist/codex-connection-mcp.js`。该测试服务器直接创建 M1 `createTrustedExecutionGateway`，登记固定 `public_read`/`hook_probe` 合成回调，且 `files: []`；它没有调用 M2 adapter，也不消费用户文件、原生 Codex callback 或项目刚安装的配置。因此 `ALLOW` 仅是该合成路径证据。
@@ -439,3 +441,49 @@ M9 wrapper run `40035799522` fails its audit step on existing Hono,
 ip-address, and zod advisories. M3 PR checks pass; Issue #52 stays OPEN / P0 /
 NOT_VERIFIED until M9/package composition aligns the M2 bytes and reruns the
 exact-source Ubuntu/Windows test successfully.
+
+### P0 #52 fixed-path Host probe/status — 2026-10-24
+
+Current M3 PR #90 exact head is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`.
+The first-party Console protected-read action in
+`src/codex-connection-mcp.ts` composes the public M1 Gateway capability, M2
+`createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router. M3 fixes the
+tool name, relative file, and argument shape; the M2 capability-bound executor
+receives the same opaque verified capability and calls the held-read path. The
+M5 router is requested with `verifyRealPaths:true`. Missing M1/M2/M5 methods or
+exports leave the adapter `UNKNOWN`; the Console route exposes only its bounded
+status enum and never falls back to a path-only callback.
+
+The protected-read POST validates CSRF/operator/body before loading probe
+dependencies. It returns PASS only after the fixed registered-file positive
+control and alias/path-replacement denials. The GET Security Center route reads
+only an injected, sanitized M2 snapshot, checks the Console CSRF boundary, and
+does not start the protected probe. Native Codex tools and real installed-host
+callback activation remain `UNPROTECTED / NOT_VERIFIED`.
+
+Verification on this exact M3 head: `node --import tsx --test
+test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
+passed 27/27; `npm run build` passed. Exact PR workflow `40037861929` passed
+9/9 jobs, including package smoke and macOS/Ubuntu/Windows Node 20/22; separate
+ownership-contract evidence run `40037861836` passed. These tests use fixed
+fixtures and synthetic owner-contract seams; they do not establish activation
+inside a user-installed Codex process.
+
+M9 PR #36 run `40037657193` is not a current-source result: its log records M3
+`a84ee13fa0e7e8ba0ace371235236f1d6b203780`, M2
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M1 baseline
+`7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. Ubuntu and Windows both stopped in
+the M3 focused regression step: the missing-executor case expected internal
+reason `M2_CAPABILITY_PROVIDER_UNAVAILABLE` but `a84ee13` returned
+`M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE`. M3 commit `3a377ff` corrects this
+classification and current M3 CI is green; M9 has not rerun against `3a377ff`,
+and its exact composition regression step did not execute in run
+`40037657193`. The M3 package subpath still has a different adapter blob from
+the exact M2 package export; this older run does not establish whether that byte
+difference affects the corrected ordinary-CLI path.
+
+No M1 review of exact M3 head `3a377ff` is recorded on PR #90. Keep Issue #52
+OPEN / P0 / NOT_VERIFIED until M9 pins the current M3 head and the exact-source
+Ubuntu and Windows composition checks pass. Do not infer real host activation,
+installer effectiveness, native-tool protection, or E4 from local/PR synthetic
+checks.
