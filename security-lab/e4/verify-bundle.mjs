@@ -108,8 +108,15 @@ for (const name of payloadNames.filter(item => item.startsWith('evidence/'))) {
   if (external === null) continue;
   if (!external.equals(files.get(name))) throw new Error(`E4_EXTERNAL_COPY_MISMATCH:${name}`);
 }
+if (!Array.isArray(report.cases)) throw new Error('E4_MATRIX_CASES_INVALID');
+const caseIds = new Set();
+for (const row of report.cases) {
+  if (!row || typeof row.id !== 'string' || !row.id.trim()) throw new Error('E4_MATRIX_CASES_INVALID');
+  if (caseIds.has(row.id)) throw new Error(`E4_MATRIX_CASE_DUPLICATE:${row.id}`);
+  caseIds.add(row.id);
+}
 const requiredCases = ['GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION', 'GW-FAULT-EXECUTOR', 'GW-FAULT-CLOSED', 'HOOK-FAULT-STATESTORE', 'SHELL-BOUNDARY-BYPASS', 'ARTIFACT-VM-BINDING', 'APP-01', 'MODEL-REAL-TOOLCALL'];
-for (const id of requiredCases) if (!report.cases.some(row => row.id === id)) throw new Error(`E4_MATRIX_CASE_MISSING:${id}`);
+for (const id of requiredCases) if (!caseIds.has(id)) throw new Error(`E4_MATRIX_CASE_MISSING:${id}`);
 const shell = report.cases.find(row => row.id === 'SHELL-BOUNDARY-BYPASS');
 if (shell.status === 'PASS' || shell.details.countsAsGatewayPass !== false || shell.details.countsAsGatewayFail !== false) throw new Error('E4_SHELL_BOUNDARY_CLASSIFICATION_INVALID');
 const modelCase = report.cases.find(row => row.id === 'MODEL-REAL-TOOLCALL');

@@ -12,7 +12,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const verifier = path.join(scriptDir, 'verify-bundle.mjs');
 const sha256 = data => createHash('sha256').update(data).digest('hex');
 
-function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4', extraPayload = [], reportOverrides = {}, evidenceData = '{"event":"synthetic-evidence"}\n'} = {}) {
+function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4', extraPayload = [], reportOverrides = {}, evidenceData = '{"event":"synthetic-evidence"}\n', duplicateCaseId = null} = {}) {
   fs.mkdirSync(runDir, { recursive: true });
   const cases = [
     'GW-ALLOW-CONTROL', 'GW-CANARY-BLOCK', 'CANARY-SESSION-ISOLATION',
@@ -23,6 +23,11 @@ function createValidRun(runDir, {classification = 'AUTHOR_AUTOMATION_RUN_NOT_E4'
     : id === 'MODEL-REAL-TOOLCALL'
       ? { id, status: 'BLOCKED', reason: 'REAL_MODEL_FLAG_NOT_SET' }
       : { id, status: 'PASS_FIXTURE', reason: 'SYNTHETIC_FIXTURE' });
+  if (duplicateCaseId) {
+    const duplicate = cases.find(row => row.id === duplicateCaseId);
+    if (!duplicate) throw new Error(`unknown synthetic matrix case: ${duplicateCaseId}`);
+    cases.push({ ...duplicate });
+  }
   const report = {
     e4Status: 'NOT_VERIFIED',
     overall: 'AUTHOR_AUTOMATION_COMPLETE_E4_STILL_NOT_VERIFIED',
@@ -90,6 +95,28 @@ test('missing product provenance can verify bundle integrity only, never product
   assert.equal(summary.sourceCommit, undefined);
   assert.equal(Object.hasOwn(summary, 'valid'), false);
 });
+
+test('E4 verifier rejects duplicate case ids rather than returning an ambiguous matrix summary', t => {
+  const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-verifier-'));
+  t.after(() => fs.rmSync(runDir, { recursive: true, force: true }));
+  createValidRun(runDir, {duplicateCaseId: 'MODEL-REAL-TOOLCALL'});
+
+  const result = runVerifier(runDir);
+  assert.equal(result.status, 1, result.stdout);
+  assert.match(result.stderr, /E4_MATRIX_CASE_DUPLICATE:MODEL-REAL-TOOLCALL/);
+});
+
+for (const [label, cases] of [['non-array case list', null], ['case row without an id', [{}]]]) {
+  test(`E4 verifier rejects a malformed ${label}`, t => {
+    const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-verifier-'));
+    t.after(() => fs.rmSync(runDir, { recursive: true, force: true }));
+    createValidRun(runDir, {reportOverrides: {cases}});
+
+    const result = runVerifier(runDir);
+    assert.equal(result.status, 1, result.stdout);
+    assert.match(result.stderr, /E4_MATRIX_CASES_INVALID/);
+  });
+}
 
 test('E4 verifier rejects an archive swapped after its outer hash is read', t => {
   const parentDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-swap-'));

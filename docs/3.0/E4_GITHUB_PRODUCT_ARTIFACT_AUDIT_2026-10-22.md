@@ -92,3 +92,26 @@ M7 PR [#39](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/39) is O
 The lifecycle artifact was downloaded and its sanitized `INSTALLER_LIFECYCLE_RESULT.json` read. It reports `PASS_BOUNDED_GITHUB_HOSTED_INSTALL_UNINSTALL`, source SHA `1448a46ce43a2211e14be70fcd9c256b21d74c1f`, and installer SHA-256 `25442c5e350225cea8f2c33bc8d09bc9e4008734a38ccbcca87dc1caa9eb086f`. All four recorded checks passed: artifact provenance, silent install to a Unicode/space path, duplicate-candidate refusal, and silent uninstall. The recorded runner was GitHub-hosted Windows Server 2025 Datacenter, build `26100`; the report says its execution context does not assert a standard-user token. It also explicitly leaves EFS, in-place upgrade, Windows 11 client, real model/native agent, cancellation/rollback, and ordinary-user-token behavior untested or unverified.
 
 This is new bounded hosted installer-lifecycle evidence and improves artifact traceability. It does not establish a Windows 11 clean-VM reproduction by an independent operator, real-model/host actions against the installed package, or an authenticated independent receipt. M6 has not run its verifier positive and mismatch controls against a qualifying product E4 bundle because none is identified in the current public inventory. Issue #57 therefore remains OPEN/P1/NOT_VERIFIED; no E4 PASS is claimed, and earliest delivery remains unconfirmed.
+
+## Follow-up snapshot — 2026-10-23 04:12 UTC
+
+### Exact owner heads and hosted evidence
+
+M6 PR [#38](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/38) is OPEN/Draft at `c0b4a0b969323b5d0c1b032d40b2c41286eb5f45`. Exact-head CI run `39895141579` passed 9/9 jobs and Windows Community wrapper run `39895141608` passed 2/2. These are source and fixture checks.
+
+M7 PR [#39](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/39) is OPEN/Draft at `1ab085abc6a242be563912a423ff1ee7f11e7127`. Workflow run `39897235833` completed successfully and published the current build and lifecycle artifacts:
+
+| Artifact | ID | Size | GitHub artifact digest |
+|---|---:|---:|---|
+| `windows-community-build-evidence-1ab085abc6a242be563912a423ff1ee7f11e7127` | 12477356625 | 38,195,641 bytes | `sha256:004a4076dc35881a43a7eab9a1671ebd3b813f9a01937d522e178a0dcbcaac81` |
+| `windows-community-installer-lifecycle-1ab085abc6a242be563912a423ff1ee7f11e7127` | 12477472135 | 1,305 bytes | `sha256:36a3c2eae1311d126367f266c3a290fbd0827b17e051a39f0f4453dde18f46fe` |
+
+The latest sanitized lifecycle result was downloaded and read. It binds source `1ab085abc6a242be563912a423ff1ee7f11e7127` to installer SHA-256 `ae6add6905ddcbef4dd04a3f14089caa37527e93c6e883a0a0c906f48740247f`. All four checks passed: package provenance, silent install into a Unicode/space path, duplicate-candidate refusal, and silent uninstall with zero reported residue and unknown sentinel preserved. The runner is GitHub-hosted Windows Server 2025 Datacenter build `26100`; the result does not assert a standard-user token. It explicitly leaves Windows 11 client, EFS, upgrade, cancellation/rollback, real-model/native-agent use, and ordinary-user-token behavior untested or unverified.
+
+M9 PR [#36](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/36) is OPEN/Draft at `8775020b802af71946cd921939d8441f75d8bb64`. Exact-head composition run `39898436423` succeeded on Ubuntu and Windows. Inspection of that workflow shows it pins M6 at `3578e7ba10b2fd160efa0e4683aba863c666db8a`, so the run does not include current M6 head `c0b4a0b`; it pins M7 at current head `1ab085a`. The composition result is synthetic module/package evidence and does not test independent product E4.
+
+### M6 verifier regression
+
+The verifier previously accepted a synthetic report containing two `MODEL-REAL-TOOLCALL` rows, then summarized only the first row. This was reproduced before the fix: the verifier exited 0 and emitted `modelStatus: BLOCKED` for the ambiguous report. The verifier now rejects malformed case arrays, missing/blank case IDs, and duplicate case IDs before summarizing required matrix cases. Regression tests cover a duplicate ID, a non-array case list, and a row without an ID. `npm run e4:test` passes 21/21 tests and `git diff --check` passes. This closes a report-ambiguity gap only; it does not establish model identity, product behavior, or E4 acceptance.
+
+Issue [#57](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/57) remains OPEN/P1. No qualifying independent product E4 bundle or authenticated independent-operator receipt is identified, and earliest delivery remains unconfirmed. No E4 PASS is claimed.

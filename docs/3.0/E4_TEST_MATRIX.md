@@ -4,7 +4,7 @@ This matrix operationalizes the existing E4 standard; it does not change the thr
 
 The machine-readable companion is [`security-lab/e4/matrix.json`](../../security-lab/e4/matrix.json). The automatic entry point is `npm run e4:auto`; it exercises synthetic fixtures and always records `e4Status: NOT_VERIFIED`.
 
-The focused verifier regression suite is `npm run e4:test`. It runs only `security-lab/e4/verify-bundle.test.mjs` against temporary synthetic bundles: valid baselines are accepted for bundle integrity only; a fixture missing product provenance still reports `productE4Accepted=false`; changed external copies of `SHA256SUMS.txt`, `report.json`, `report.md`, `raw.log`, or a present `evidence/*.jsonl` are rejected; and contradictory `bundle.json` schema, archive name/size, entry count, inner-manifest summary, classification, or verification label are rejected. It does not execute the E4 runner, use a real model, VM, or installer, or produce external E4 evidence.
+The focused verifier regression suite is `npm run e4:test`. It runs only `security-lab/e4/verify-bundle.test.mjs` against temporary synthetic bundles: valid baselines are accepted for bundle integrity only; a fixture missing product provenance still reports `productE4Accepted=false`; changed external copies of `SHA256SUMS.txt`, `report.json`, `report.md`, `raw.log`, or a present `evidence/*.jsonl` are rejected; contradictory `bundle.json` schema, archive name/size, entry count, inner-manifest summary, classification, or verification label are rejected; and duplicate or malformed report case IDs are rejected to avoid ambiguous summaries. It does not execute the E4 runner, use a real model, VM, or installer, or produce external E4 evidence.
 
 ## Required mapping
 
