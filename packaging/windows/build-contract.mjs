@@ -14,13 +14,30 @@ function git(repoRoot,args,encoding='utf8'){
   return result.stdout;
 }
 
+function normalizeWindowsLineEndings(bytes){
+  const normalized=[];
+  for(let index=0;index<bytes.length;index++){
+    const byte=bytes[index];
+    if(byte===0x0d){
+      if(bytes[index+1]!==0x0a)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
+      normalized.push(0x0a);
+      index++;
+    }else normalized.push(byte);
+  }
+  return Buffer.from(normalized);
+}
+
+function gitBlobSHA(bytes){
+  return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+}
+
 export function resolveWrapperSourceSHA(repoRoot){
   const sourcePath=path.join(repoRoot,WRAPPER_PATH),sourceInfo=fs.lstatSync(sourcePath);
   if(!sourceInfo.isFile()||sourceInfo.isSymbolicLink())throw Error('WRAPPER_SOURCE_NOT_REGULAR_FILE');
   const sha=git(repoRoot,['rev-parse','HEAD']).trim().toLowerCase();
   if(!/^[a-f0-9]{40}$/.test(sha))throw Error('WRAPPER_SOURCE_SHA_INVALID');
   const trackedBlob=git(repoRoot,['rev-parse',`${sha}:${WRAPPER_PATH}`]).trim().toLowerCase();
-  const workingBlob=git(repoRoot,['hash-object',`--path=${WRAPPER_PATH}`,path.join(repoRoot,WRAPPER_PATH)]).trim().toLowerCase();
+  const workingBlob=gitBlobSHA(normalizeWindowsLineEndings(fs.readFileSync(sourcePath)));
   if(!/^[a-f0-9]{40}$/.test(trackedBlob)||trackedBlob!==M1_CANONICAL_WRAPPER_BLOB_SHA||workingBlob!==trackedBlob)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
   return sha;
 }
