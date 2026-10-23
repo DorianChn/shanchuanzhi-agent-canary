@@ -1,5 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import crypto from 'node:crypto';
-import {redact,inspectPayload,readInstallerReceipt} from './worker.mjs';
+import {redact,inspectPayload,readInstallerReceipt,finalizeAutoE4Artifacts} from './worker.mjs';
+import {createAutoE4Run,writeAutoE4Artifacts} from './auto-e4.mjs';
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 function fixture(file='data.txt'){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ac-desktop-test-'));fs.writeFileSync(path.join(root,'data.txt'),'fixture');const m={schemaVersion:1,files:[{path:file,size:7,sha256:sha('fixture')}]};const raw=JSON.stringify(m);fs.writeFileSync(path.join(root,'PAYLOAD_MANIFEST.json'),raw);return {root,anchor:sha(raw)};}
 test('valid payload hashes actual bytes',()=>{const{root,anchor}=fixture();assert.equal(inspectPayload(root,anchor).files.length,1);});
@@ -16,3 +17,66 @@ test('symbolic link payload is rejected',{skip:process.platform==='win32'?'Windo
 test('receipt objects cannot masquerade as installer SHA evidence',()=>{const {root}=fixture();fs.writeFileSync(path.join(root,'INSTALL_RECEIPT.json'),JSON.stringify({installerSHA256:{secret:'synthetic'}}));assert.equal(readInstallerReceipt(root).status,'NOT_VERIFIED_INVALID_OR_UNREADABLE_RECEIPT');});
 test('oversized receipt is bounded and never trusted',()=>{const {root}=fixture();fs.writeFileSync(path.join(root,'INSTALL_RECEIPT.json'),' '.repeat(5000));assert.equal(readInstallerReceipt(root).installerSHA256,null);});
 test('missing receipt is explicitly unverified',()=>{const {root}=fixture();assert.equal(readInstallerReceipt(root).status,'NOT_VERIFIED_PORTABLE_OR_MISSING_RECEIPT');});
+
+test('Auto E4 bundle failure persists a blocked final report without weakening run finalization',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'ac-e4-bundle-failure-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data});
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    const report=run.finish();
+    const {artifacts,bundle}=finalizeAutoE4Artifacts(run,()=>{throw Error('EVIDENCE_BUNDLE_CREATE_FAILED');});
+    assert.equal(bundle,null);
+    assert.equal(report.technicalResult,'BLOCKED');
+    assert.equal(report.stages.find(stage=>stage.id==='materials').status,'BLOCKED');
+    assert.equal(report.coverage.blocked,1);
+    const persisted=JSON.parse(fs.readFileSync(artifacts.jsonFile,'utf8'));
+    assert.equal(persisted.technicalResult,'BLOCKED');
+    assert.equal(persisted.stages.find(stage=>stage.id==='materials').status,'BLOCKED');
+    const events=fs.readFileSync(path.join(run.runDir,'events.jsonl'),'utf8').trim().split(/\r?\n/).map(line=>JSON.parse(line));
+    assert.equal(events.at(-1).status,'BLOCKED');
+    const index=JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8'));
+    assert.equal(index.artifacts.find(item=>item.name==='events.jsonl').sha256,sha(fs.readFileSync(path.join(run.runDir,'events.jsonl'))));
+    assert.throws(()=>run.record({type:'progress',stageId:'materials',status:'LATE'}),/AUTO_E4_RUN_FINISHED/);
+    assert.throws(()=>writeAutoE4Artifacts(report,run.runDir),/AUTO_E4_ARTIFACT_ALREADY_EXISTS/);
+  }finally{run.release();}
+});
+
+test('Auto E4 bundle failure sanitizes local paths in every persisted artifact',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'ac-e4-bundle-redaction-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const run=createAutoE4Run({dataDir:data,sanitize:value=>redact(value)});
+  const marker='E4_BUNDLE_FAILURE_LOCAL_PATH_MARKER';
+  const localPath=`C:\\Users\\fixture\\${marker}\\sidecar.json`;
+  const reason=`EACCES: permission denied, open '${localPath}'`;
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    run.finish();
+    const {artifacts,bundle}=finalizeAutoE4Artifacts(run,()=>{throw Error(reason);});
+    assert.equal(bundle,null);
+
+    const json=fs.readFileSync(artifacts.jsonFile,'utf8');
+    const markdown=fs.readFileSync(artifacts.mdFile,'utf8');
+    const eventText=fs.readFileSync(path.join(run.runDir,'events.jsonl'),'utf8');
+    for(const persisted of [json,markdown,eventText]){
+      assert(!persisted.includes(localPath));
+      assert(!persisted.includes(marker));
+    }
+
+    const report=JSON.parse(json);
+    const stage=report.stages.find(item=>item.id==='materials');
+    assert.equal(stage.status,'BLOCKED');
+    assert.match(stage.detail.reason,/EACCES: permission denied/);
+    assert(stage.detail.reason.includes('[ABSOLUTE_PATH_REDACTED]'));
+    const events=eventText.trim().split(/\r?\n/).map(line=>JSON.parse(line));
+    assert.equal(events.at(-1).detail.reason,stage.detail.reason);
+    assert.match(events.at(-1).detail.reason,/EACCES: permission denied/);
+    const index=JSON.parse(fs.readFileSync(artifacts.indexFile,'utf8'));
+    for(const file of [artifacts.jsonFile,artifacts.mdFile,path.join(run.runDir,'events.jsonl')]){
+      const bytes=fs.readFileSync(file);
+      const entry=index.artifacts.find(item=>item.name===path.basename(file));
+      assert.equal(entry.bytes,bytes.length);
+      assert.equal(entry.sha256,sha(bytes));
+    }
+  }finally{run.release();}
+});

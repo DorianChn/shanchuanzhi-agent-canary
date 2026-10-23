@@ -104,3 +104,29 @@ test('closed gateway connection rejects before file and network side effects',as
  assert.equal(calls,0);assert.equal(s.received(),0);assert.equal(hash(fs.readFileSync(victim)),hash(before));
  await s.close();
 });
+test('closing a gateway aborts its active request and rejects already queued effects',async()=>{
+ const s=await sinkFixture();let release!:()=>void,started!:()=>void,signal:AbortSignal|undefined;
+ const start=new Promise<void>(r=>started=r),hold=new Promise<void>(r=>release=r);
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[{path:'result.txt',writable:true}],evidence:new EvidenceRecorder(),timeoutMs:5_000,mcpTools:{wait:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,abort:AbortSignal)=>{signal=abort;started();await hold;return 'done';}}}});
+ const active=runtime.agent.dispatch({name:'mcp_tool',args:{tool:'wait',arguments:{}}}).then(()=>true,()=>false);
+ let queued:Promise<boolean>|undefined,closing:Promise<void>|undefined;
+ try{await start;queued=runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'after-close'}}).then(()=>true,()=>false);closing=runtime.close();release();const [activeResult,queuedResult]=await Promise.all([active,queued]);await closing;
+  assert.equal(signal!.aborted,true);assert.equal(activeResult,false);assert.equal(queuedResult,false);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');
+ }finally{release();if(closing)await closing;else await runtime.close();await Promise.all([active,queued].filter(Boolean));await s.close();}
+});
+test('caller cancellation interrupts a non-cooperative policy review promptly',async()=>{
+ const s=await sinkFixture();let release!:()=>void,started!:()=>void,calls=0;
+ const start=new Promise<void>(r=>started=r),hold=new Promise<void>(r=>release=r),controller=new AbortController();
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),reviewTimeoutMs:5_000,provider:{analyze:async()=>{started();await hold;return{status:'ok',advisoryOnly:true,verdict:'benign',severity:'low',confidence:null,summary:'fixture',reasoningSummary:'fixture',recommendedActions:[],evidence:[{eventId:'proposed-call',quote:'fixture'}]};}} as any,mcpTools:{action:{approvalRequired:true,execute:async()=>++calls}}});
+ const outcome=runtime.agent.dispatch({name:'mcp_tool',args:{tool:'action',arguments:{}}},controller.signal).then(()=>false,()=>true);
+ try{await start;controller.abort();const settled=await Promise.race([outcome,new Promise<boolean>(r=>setImmediate(()=>r(false)))]);release();assert.equal(settled,true);assert.equal(await outcome,true);assert.equal(runtime.operator.pending().length,0);assert.equal(calls,0);
+ }finally{release();await runtime.close();await s.close();}
+});
+test('caller cancellation aborts a running executor and returns without waiting for it',async()=>{
+ const s=await sinkFixture();let release!:()=>void,started!:()=>void,signal:AbortSignal|undefined,effects=0;
+ const start=new Promise<void>(r=>started=r),hold=new Promise<void>(r=>release=r),controller=new AbortController();
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),timeoutMs:5_000,mcpTools:{wait:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,abort:AbortSignal)=>{signal=abort;started();await hold;if(!abort.aborted)effects++;return 'done';}}}});
+ const outcome=runtime.agent.dispatch({name:'mcp_tool',args:{tool:'wait',arguments:{}}},controller.signal).then(()=>false,()=>true);
+ try{await start;controller.abort();const settled=await Promise.race([outcome,new Promise<boolean>(r=>setImmediate(()=>r(false)))]);release();assert.equal(settled,true);assert.equal(await outcome,true);assert.equal(signal!.aborted,true);assert.equal(effects,0);assert.equal(s.guard.state,'QUARANTINED');
+ }finally{release();await runtime.close();await s.close();}
+});
