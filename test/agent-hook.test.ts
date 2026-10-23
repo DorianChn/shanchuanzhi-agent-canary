@@ -16,6 +16,22 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
  const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
  assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
 });
+test('native lab wrapper writes only normalized allowlisted log fields',()=>{
+ const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'normalized-hook-module.mjs');
+ const callerCanaries=['SYNTHETIC_NATIVE_HOOK_ARGUMENT_CANARY','C:/synthetic/caller/private.txt'];
+ const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
+ fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
+ const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
+ assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
+ assert.equal(lines.length,1);
+ const record=JSON.parse(lines[0]);
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
+ assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
+ for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
+});
 test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
@@ -29,6 +45,29 @@ test('native lab wrapper denies unpinned fixture file operations and rejects des
  assert.equal(fs.readFileSync(path.join(root,'normal.txt'),'utf8'),'NORMAL_FIXTURE');
 });
 
+test('native lab wrapper persists only allowlisted metadata',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ const modulePath=path.join(root,'canary-hook-module.mjs'),log=path.join(root,'canary.jsonl');
+ const callerCanary='M2_CALLER_CANARY',toolCanary='M2_TOOL_CANARY',argumentCanary='M2_ARGUMENT_CANARY',pathCanary='M2_PATH_CANARY',reasonCanary='M2_REASON_CANARY';
+ const decision={hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:reasonCanary}};
+ fs.writeFileSync(modulePath,'export async function decideAgentHook(){return '+JSON.stringify(decision)+'}\n');
+ const input={session_id:callerCanary,tool_name:toolCanary,tool_input:{command:argumentCanary,file_path:path.join(root,pathCanary)}};
+ const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'canary-state'),log],{input:JSON.stringify(input),encoding:'utf8'});
+ assert.equal(result.status,0);
+ assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const logText=fs.readFileSync(log,'utf8').trim();
+ for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary])assert.equal(logText.includes(canary),false,canary+' was persisted');
+ const records=logText.split('\n');
+ assert.equal(records.length,1);
+ const record=JSON.parse(records[0]) as Record<string,unknown>;
+ assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(record.hookEventName,'PreToolUse');
+ assert.ok(['allow','deny','ask'].includes(String(record.permissionDecision)));
+ assert.equal(typeof record.timestamp,'string');
+ const timestamp=new Date(record.timestamp as string);
+ assert.equal(Number.isNaN(timestamp.valueOf()),false);
+ assert.equal(timestamp.toISOString(),record.timestamp);
+});
 test('native lab wrapper fails closed on hook load, callback, evidence-write, and timeout failures',()=>{
  const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
  const input=JSON.stringify({session_id:'failure-fixture',tool_name:'Bash',tool_input:{command:'git status'}});
@@ -50,24 +89,7 @@ test('native lab wrapper fails closed on hook load, callback, evidence-write, an
  assert.ok(Date.now()-started>=1900&&Date.now()-started<5000,'timeout returns a denial within the bounded hook budget');
 });
 
-test('native lab wrapper writes only normalized allowlisted log fields',()=>{
- const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
- const modulePath=path.join(root,'normalized-hook-module.mjs');
- const callerCanaries=['SYNTHETIC_NATIVE_HOOK_ARGUMENT_CANARY','C:/synthetic/caller/private.txt'];
- const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
- fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
- const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
- const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
- assert.equal(lines.length,1);
- const record=JSON.parse(lines[0]);
- assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
- assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
- assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
- for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
-});
-
-test('native lab wrapper interruption fixture observed no decision, output, or log',async(t)=>{
+test('native lab wrapper interruption emits no decision or output',async(t)=>{
  // The native host dispatches tool callbacks outside this subprocess; this fixture cannot count that callback.
  const marker=path.join(root,'interrupted-hook-entered'),wrapper=path.resolve('security-lab/claude-native-hook.mjs'),modulePath=path.join(root,'interrupted-hook-module.mjs'),log=path.join(root,'interrupted.jsonl');
  // Hold this synthetic child after entry so the wrapper's own 2s timeout cannot win if the parent is briefly descheduled.
@@ -94,9 +116,9 @@ test('native lab wrapper interruption fixture observed no decision, output, or l
   assert.ok(result,'interrupted hook child did not close: '+diagnostic());
   assert.equal(spawnError,undefined,'hook child failed to spawn: '+diagnostic());
   assert.ok(result.signal!==null||(result.code!==null&&result.code!==0),'hook child did not terminate from interruption: '+diagnostic());
-  assert.equal(stdout,'','observed child stdout contained a decision or output: '+diagnostic());
-  assert.equal(stderr,'','observed child stderr was non-empty: '+diagnostic());
-  assert.ok(!fs.existsSync(log),'observed decision log exists after synthetic interruption: '+diagnostic());
+  assert.equal(stdout,'','interrupted hook emitted a permission decision or output: '+diagnostic());
+  assert.equal(stderr,'','interrupted hook wrote unexpected stderr: '+diagnostic());
+  assert.ok(!fs.existsSync(log),'interrupted hook wrote a decision record: '+diagnostic());
   t.diagnostic('interruption diagnostics: '+diagnostic());
  }finally{
   if(!closed)child.kill();
