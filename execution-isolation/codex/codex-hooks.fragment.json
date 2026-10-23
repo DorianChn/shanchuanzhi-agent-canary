@@ -1,5 +1,5 @@
 {
-  "description": "Candidate Agent Canary M2 Codex project hook. Native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED until host enforcement is verified. Requires M0 ownership coordination and exact-definition review/trust before installation.",
+  "description": "Candidate Agent Canary M2 Codex project hook; this fragment is not installed or trusted. Native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED. PreToolUse can deny a matched Bash call only when invoked; callback errors, timeouts, or malformed output may let the call continue, and some specialized paths bypass default Hooks. A Hook alone is not fail-closed. Codex Windows sandbox/permission profiles are supported, but M2 has not verified the effective Desktop policy or native-Shell OS denial. Requires M0 ownership coordination and exact-definition review/trust before installation.",
   "hooks": {
     "PreToolUse": [
       {
