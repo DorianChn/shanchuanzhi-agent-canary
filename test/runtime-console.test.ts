@@ -76,6 +76,41 @@ test('security and E4 status stay unknown or unavailable behind the existing Hos
  }finally{await console.close();}
 });
 
+test('protected-read rejects caller-supplied lexical, junction, and replacement paths before host dependencies',async()=>{
+ const fixtureRoot=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m4-protected-read-boundary-'));
+ const workspace=path.join(fixtureRoot,'workspace'),outside=path.join(fixtureRoot,'outside');
+ fs.mkdirSync(workspace);fs.mkdirSync(outside);
+ const target=path.join(outside,'private.txt'),replacement=path.join(outside,'private.txt.replacement');
+ const alias=path.join(workspace,'outside-alias');
+ fs.writeFileSync(target,'UNCHANGED_PRIVATE_FIXTURE');fs.writeFileSync(replacement,'UNCHANGED_REPLACEMENT_FIXTURE');
+ fs.symlinkSync(outside,alias,process.platform==='win32'?'junction':'dir');
+ const targetIdentity=fs.statSync(target),replacementIdentity=fs.statSync(replacement);
+ let protectedReadDependencyLoads=0;
+ const app=await startAIConsole({
+  port:0,operatorApprovalCode:'FIXTURE_OPERATOR_ONLY',
+  securityCenterProtectedReadDependencies:async()=>{protectedReadDependencyLoads++;throw new Error('invalid request must stop before Host dependencies');},
+ });
+ try{
+  const html=await (await fetch(app.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
+  const requests=[
+   {path:'./agent-canary-public.txt'},
+   {path:path.join(alias,'private.txt')},
+   {path:'agent-canary-public.txt.replacement'},
+  ];
+  for(const body of requests){
+   const response=await fetch(app.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf!,'x-canary-operator-code':'FIXTURE_OPERATOR_ONLY'},body:JSON.stringify(body)});
+   assert.equal(response.status,400);
+   assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'REQUEST_INVALID',markerMatched:false});
+   assert.equal(protectedReadDependencyLoads,0,'caller-controlled paths must be rejected before the Host/M1/M2/M5 composition loads');
+  }
+  assert.equal(fs.readFileSync(target,'utf8'),'UNCHANGED_PRIVATE_FIXTURE');
+  assert.equal(fs.readFileSync(replacement,'utf8'),'UNCHANGED_REPLACEMENT_FIXTURE');
+  assert.deepEqual([fs.statSync(target).dev,fs.statSync(target).ino],[targetIdentity.dev,targetIdentity.ino]);
+  assert.deepEqual([fs.statSync(replacement).dev,fs.statSync(replacement).ino],[replacementIdentity.dev,replacementIdentity.ino]);
+  assert.equal(fs.realpathSync(alias),fs.realpathSync(outside),'the junction/symlink fixture itself must remain unchanged');
+ }finally{await app.close();fs.rmSync(fixtureRoot,{recursive:true,force:true});}
+});
+
 test('missing security-center provider leaves UI protection UNKNOWN whether the status route is absent or present',async()=>{
  const console=await startAIConsole({port:0});
  try{
@@ -156,9 +191,9 @@ test('security-center adapter keeps absent backend data UNKNOWN and ignores demo
  assert.equal(normalizeProtectionStatus('PARTIAL'),'UNKNOWN');assert.equal(normalizeProtectionStatus('protected'),'UNKNOWN');
 });
 
-test('Gateway binding status and temporary demo reads do not verify a first-party OBSERVE consumer',()=>{
+test('Gateway status and an exact M3 fixed-probe PASS do not verify a first-party OBSERVE consumer',()=>{
  const view=adaptSecuritySnapshot({
-  securityCenter:{protectionStatus:'PARTIALLY_PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},hook:{protectionStatus:'UNKNOWN'},canaryIsolation:{protectionStatus:'UNKNOWN'},policy:{name:'M2_FIXED_FILE_READS',protectionStatus:'PROTECTED'},protectedToolCount:1,unprotectedExecutionPaths:null,coverage:'M2_FIXED_FILE_READS_ONLY',firstPartyObserveReadStatus:'PROTECTED',observeRead:{status:'PROTECTED',successfulReads:1,negativeCases:4}},
+  securityCenter:{protectionStatus:'PARTIALLY_PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},hook:{protectionStatus:'UNKNOWN'},canaryIsolation:{protectionStatus:'UNKNOWN'},policy:{name:'M2_FIXED_FILE_READS',protectionStatus:'PROTECTED'},protectedToolCount:1,unprotectedExecutionPaths:null,coverage:'M2_FIXED_FILE_READS_ONLY',firstPartyObserveReadStatus:'PROTECTED',observeRead:{status:'PROTECTED',successfulReads:1,negativeCases:4},protectedReadProbe:{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true}},
   runtime3:{mode:'DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL',agent:'controlled-sdk-demo',coverage:'REGISTERED_CAPABILITIES_ONLY',guard:'SAFE'},
   policyState:{mode:'OBSERVE',scope:'VIRTUAL_EXECUTORS'},
  });
@@ -170,6 +205,7 @@ test('Gateway binding status and temporary demo reads do not verify a first-part
  const diagnostic=buildSecurityDiagnostic(view,{securityCenter:'AVAILABLE'});
  assert.equal(diagnostic.protection.firstPartyObserveRead,'NOT_VERIFIED','status-provider claims cannot promote the first-party read indicator');
  assert.equal(JSON.stringify(diagnostic).includes('successfulReads'),false,'provider-supplied read claims are not copied into diagnostic evidence');
+ assert.equal(JSON.stringify(diagnostic).includes('M3_FIXED_TEMP_PROBE_ONLY'),false,'the actual fixed-temp probe envelope is not product-file evidence and is not exported as such');
 });
 
 test('existing policy and Runtime APIs are shown only within their backend-declared demo scope',()=>{

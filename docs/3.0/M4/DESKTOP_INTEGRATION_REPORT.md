@@ -413,3 +413,27 @@ The concrete unblock is an M3-owned normal-CLI host route with a reviewed fixed 
 - M9's separate test `M3 snapshot-only status route feeds the exact M4 read-only consumer without protected-read work` confirms the M3 status GET does not load protected-read dependencies, redacts private path/token fields, and feeds the M4 adapter/page. The M4 result remains overall `UNKNOWN` and `firstPartyObserveReadStatus: NOT_VERIFIED`; the page does not invoke the fixed-marker POST. This is the correct M4 consumer boundary.
 - M4's own `src/ai/cli.ts` → `startAIConsole()` path still has no protected-read dependency injection or handler. The M3 fixed-probe route takes no target path, so M4 cannot use it to exercise symlink/junction aliases. The existing M4 consumer does not need an added Host call to the fixed probe; no safe M4-owned code path exists for alias/junction Host acceptance.
 - Disposition: M3 fixed-temp probe evidence is **not** promoted to arbitrary user-file or native-host OBSERVE coverage. M4 source and tests remain unchanged; P0 #52 remains **OPEN / NOT_VERIFIED** for M4 first-party OBSERVE file-read consumption. Alias/junction Host acceptance requires an owner-provided fixed-target capability route; no such M4 seam is exposed here.
+
+## 2026-10-24 M4 status-consumer and request-boundary regression
+
+This update supersedes earlier report statements that the current merged source has no protected-read route. The M3-owned `src/ai/console.ts` now contains `POST /api/security-center/protected-read`; it composes public M1/M2/M5 owner APIs for a process-owned temporary marker. It accepts only `{}` after Host/Origin, CSRF, and operator checks. It tests a registered safe read, the lexical `./agent-canary-public.txt` alias, and same-path replacement. It does not accept or read a caller-selected workspace path and does not exercise a physical symlink/junction alias. Its `M3_FIXED_TEMP_PROBE_ONLY` PASS is limited to that temporary probe.
+
+M4 remains a read-only status consumer under the current contract: `src/ai/console-page.ts` uses `GET /api/security-center`, and `src/ai/security-center-adapter.ts` fixes the first-party OBSERVE indicator at `NOT_VERIFIED`. Connecting the page to the M3 POST would violate the existing M4 consumer contract and still would not create a product-file or junction test case. No M1, M2, M3, M5 source or public interface was changed.
+
+M4-owned regression changes:
+
+- `test/runtime-console.test.ts` now feeds the exact M3 fixed-temp `{scope,status,reason,markerMatched}` PASS envelope to the status adapter and asserts that neither the first-party OBSERVE indicator nor diagnostic export treats it as product-file evidence.
+- The same suite sends lexical-alias, physical symlink/junction, and replacement path values to the fixed probe request boundary. Each non-empty request must return `REQUEST_INVALID` before protected-read dependencies load; the test verifies zero Host dependency loads and unchanged fixture bytes, identities, and alias target. This is request-schema rejection evidence only; it does not claim an M2 adapter-level junction denial.
+- Existing `test/security-center-route-m3.test.ts` route regressions pass, including its dependency-injected fixed-temp positive/lexical-alias/replacement case. This route test uses an injected owner-dependency fixture and is not itself evidence of the current packed-package normal-CLI composition. The real product-file/junction Host acceptance gate remains outstanding.
+
+M4 requested the missing supported seam from M3 in [Issue #52 comment 6374974889](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52#issuecomment-6374974889): bind an explicitly registered target through the existing M1 held-file capability, public M2 adapter, and M5 strict OBSERVE router; expose only a sanitized read-only operation result to M4; and add a physical symlink/junction alias denial with zero M1 evidence increments, callbacks, approvals, and file changes. Until that owner seam and exact-host evidence exist, Issue #52 remains **OPEN / P0 / NOT_VERIFIED**.
+
+Verification on the Windows M4 worktree:
+
+- `npm run build` — PASS.
+- Focused M4/M3 regressions selected by name — 3/3 PASS.
+- `node --import tsx --test test/runtime-console.test.ts` — 16/16 PASS.
+- `node --import tsx --test test/security-center-route-m3.test.ts` — 16/16 PASS (the injected dependency fixture remains scoped route-test evidence).
+- `git diff --check` — PASS.
+
+The new M4 junction case verifies that a caller-supplied junction path is rejected by the fixed-probe request schema before protected-read dependencies load; it does not verify that M2 resolves or rejects a filesystem junction through a product Host callsite. No M4 product file, native Host callback, VMware, installer, or model was exercised. Product OBSERVE remains **NOT_VERIFIED**.
