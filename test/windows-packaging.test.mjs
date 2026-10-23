@@ -253,11 +253,12 @@ test('wrapper provenance refuses a Hook file changed after its source commit',()
   try{
     fs.mkdirSync(path.dirname(wrapper),{recursive:true});
     fs.copyFileSync(path.join(repo,'packaging/windows/claude-native-hook.mjs'),wrapper);
+    fs.writeFileSync(path.join(temp,'.gitattributes'),'packaging/windows/claude-native-hook.mjs text eol=lf\n');
     runGit('init','--quiet');
     runGit('config','core.autocrlf','true');
     runGit('config','user.name','Canary contract test');
     runGit('config','user.email','canary-contract-test@example.invalid');
-    runGit('add','--','packaging/windows/claude-native-hook.mjs');
+    runGit('add','--','.gitattributes','packaging/windows/claude-native-hook.mjs');
     runGit('commit','--quiet','-m','test wrapper provenance');
     assert.equal(runGit('rev-parse','HEAD:packaging/windows/claude-native-hook.mjs'),M1_CANONICAL_WRAPPER_BLOB_SHA);
     assert.equal(resolveWrapperSourceSHA(temp),runGit('rev-parse','HEAD'));
