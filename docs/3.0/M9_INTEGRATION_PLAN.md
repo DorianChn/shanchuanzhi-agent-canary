@@ -3,8 +3,9 @@
 ## 当前 exact-source composition 快照（2026-10-23）
 
 - 当前 M1–M8 exact source pins、模块级覆盖、owner 审阅范围及证据限制见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md)。
-- 本轮更新 M2/M3/M6 pin，并新增 M4 #34 独立 checkout、build、桌面回归和安全中心脱敏适配器合成检查。M3 的 M1 review 仅覆盖已审阅 Hook blobs；M2 的 M1 approval 仅覆盖 Gateway/adapter API contract。
-- Issue #52 仍 OPEN / P0 / NOT_VERIFIED。合成接口通过不代表 first-party product-host wiring 或 OS-atomic TOCTOU 已验收。M6 当前 exact-head hosted CI 的 Ubuntu Node 22 和 macOS Node 20 job 仍待完成。
+- 本轮 exact-source pins 更新到 M3 #33 `b8b471f`、M4 #34 `721c25b`、M5 #47 `8bb14c6`；M9 workflow 已包含 M3 不兼容 provider fail-closed 回归、M5 capability adapter 回归及 M4 脱敏展示检查。
+- 最新复核的 M3 hosted CI `39919260164` 失败于 `approval expires with no actual callback`：测试在 `pending()[0].requestId` 处读取到 `undefined`，未到达过期审批断言；M3 owner 需确认根因。M4 run `39919282220` 为 9/9 success，M5 run `39918480015` success。M9 本地精确组合 16/16 不能替代 M3 hosted CI。
+- M1/M3/M4/M5 真实产品文件的安全闭环仍按 owner 证据标记 `NOT_READY / NOT_VERIFIED`。Issue #52 仍 OPEN / P0 / NOT_VERIFIED；合成接口通过不代表 first-party product-host wiring、真实用户文件保护或 OS-atomic TOCTOU 已验收。M9 本轮变更尚未推送，新的 hosted M9 CI 待推送后运行。
 
 ## M9 精确 head 与契约/风险复核（2026-10-15 00:38 UTC）
 

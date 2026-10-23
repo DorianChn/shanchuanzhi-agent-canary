@@ -442,3 +442,31 @@ M6's `security-lab/e4/verify-bundle.mjs` and receipt schema remain repository-on
 - The M9 changes are local until the coordinator's next push batch. PR #36's current hosted checks do not yet validate this refreshed workflow; a new M9 CI run is required after publication.
 
 Issue #52 remains **OPEN / P0 / NOT_VERIFIED** because the package fixtures do not prove supported product-host wiring, real protected-resource reads, or OS-atomic TOCTOU behavior. Issue #57 remains **OPEN / P1 / NOT_VERIFIED** pending a separately produced and independently reviewed E4 receipt. Neither issue was closed or modified. The exact M3 package gate and these issue states are M9 integration acceptance controls; no synthetic pass may be presented as a shipped package or independent E4 result.
+
+## Exact remote-head refresh for M3, M4, and M5 — 2026-10-23
+
+The M9 workflow and exact-source composition map now pin the currently published owner PR heads below. The prior section's M3/M4/M5 hashes and owner-run summary are historical snapshots and are superseded for the current M9 candidate.
+
+| Module / PR | Exact remote owner head | Owner CI evidence at refresh |
+| --- | --- | --- |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` | Existing exact-head CI evidence; not rerun here |
+| M2 / #37 | `db98c7d5d409aa390ef539c96a209d6daba8d793` | Existing exact-head CI evidence; not rerun here |
+| M3 / #33 | `b8b471f3ceba9ec0ca9e270ac430f14d6a917e3b` | Run `39919260164` failed in Ubuntu Node 22 `npm test` |
+| M4 / #34 | `721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2` | Run `39919282220` passed all 9 checks |
+| M5 / #47 | `8bb14c6b38dc2cc76bdf915442dc8048d30ff76d` | Run `39918480015` succeeded |
+| M6 / #38 | `392a7c24697fd8925e3022616aad054922efb38f` | Existing exact-head CI evidence; not rerun here |
+| M7 / #39 | `97bb8de315f2c19edbaa4d6536abc50876fecffd` | Remote head remains this SHA. Local candidate `868842b1b7d76cf94a8d84a5f76c6acd4ca67f50` has successful CI run `39815479316` and wrapper run `39815479411`, but is not published and is therefore not pinned here. |
+| M8 / #40 | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` | Existing exact-head CI evidence; not rerun here |
+
+M3's failing subtest is `approval expires with no actual callback` in `test/gateway.test.ts`. The test fails while reading `s.runtime.operator.pending()[0].requestId`: `pending()[0]` is `undefined`, producing `TypeError: Cannot read properties of undefined (reading 'requestId')`. The test configures `approvalTtlMs: 5`; failure occurs before the subsequent `approve(id)` assertion that expects `/EXPIRED/`. This points to an unverified timing-sensitive test boundary, not a confirmed product root cause. The M3 owner must diagnose it; M9's local pass does not replace the failed hosted M3 run.
+
+The exact M3 commit adds an incompatible-provider fail-closed regression; the exact M5 commit adds a Gateway held-file capability adapter and focused tests. The exact M4 commit changes only its host-ownership route-audit document relative to the prior M9 pin. The current M3 package remains an expected `NOT_READY` candidate: its 96-file package lacks the M2 `./gateway-adapter` and M5 `./policy-router` exports and has the recorded M1 `./sdk` declaration mismatch. M5's adapter unit tests do not establish first-party product-host wiring.
+
+### Local exact-source validation
+
+- M3 `node --import tsx --test test/onboarding.test.ts test/codex-connection-check.test.ts test/agent-hook.test.ts test/security-center-route-m3.test.ts`: **43/43 passed** at `b8b471f3`.
+- M5 `node --import tsx --test test/risk-policy.test.ts test/policy-router-export.test.ts test/policy-management.test.ts`: **59/59 passed** at `8bb14c6b`.
+- M9 `node --import tsx --test test/m9-cross-module-composition.test.mjs`: **16/16 passed** against the exact M1–M8 remote heads in the table. The exact M1/M2/M5 package build and M2 tarball were prepared in an M9-owned temporary validation directory and removed after the run; no other module source tree was edited.
+- `git diff --check` passed for the M9-owned changes.
+
+These checks cover owner-source, package-boundary, API, and synthetic fixture composition only. M1/M3/M4/M5 product-file security closure remains `NOT_READY / NOT_VERIFIED` per owner evidence; first-party host wiring, real user-file protection, native Shell interception, OS-atomic TOCTOU, clean-VM lifecycle, and external E4 remain unverified. Issue #52 remains OPEN/P0/NOT_VERIFIED. M9 PR #36's hosted workflow has not run against these refreshed pins because this candidate remains local pending the coordinator's push batch.
