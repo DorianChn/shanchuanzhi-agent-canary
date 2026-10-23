@@ -272,3 +272,45 @@ That result may establish only the fixed synthetic temporary probe. M4's
 Desktop UI still has no confirmed caller for this POST route; product files,
 native host tools, and UI protection remain `NOT_VERIFIED`, and Issue #52 stays
 `OPEN / P0` until the required integrated acceptance passes.
+
+## M3 default OBSERVE callsite follow-up — 2026-10-24
+
+This section supersedes earlier statements above that the M3 branch lacked the
+public M2/M5 package subpaths. After fast-forwarding the existing M3 branch to
+public base `e771c06f72d8a03fb7945037a3facbc2d0ed8a6e`, the integrated package
+exports `./sdk`, `./gateway-adapter`, and `./policy-router`. M3 did not edit the
+shared package manifest or any M1, M2, or M5 implementation file.
+
+The default first-party `POST /api/security-center/protected-read` Console
+callsite now exercises its physical directory-alias denial control as well as
+the existing fixed safe-read positive and same-path replacement controls. It
+creates only the fixed temporary `agent-canary-public.txt`, obtains the M1
+Gateway factory through public `./sdk`, calls M2's public
+`createSecurityGatewayHostAdapter`, and supplies M5's public
+`createSecurityToolRouter` with `mode: OBSERVE` and `verifyRealPaths: true`.
+There is no generic pathname callback or private-module fallback.
+
+The safe registered-file read returns only the fixed status marker. A Windows
+directory junction (a directory symlink on other platforms) aliases the same
+registered file under an outside-workspace path spelling; M2 rejects that
+fixed-map mismatch before another M5 callback or M1 evidence event. A
+same-path inode replacement is also denied before either count advances. The
+alias entry is removed only after its link identity and canonical target match
+the objects created by this probe; failed cleanup returns `UNKNOWN`.
+
+At code commit `02be066e3f0fc82fd53b3664a19c15e30a80e45f`, the M3-owned source
+and integration regression were committed on the existing branch. Follow-up
+commit `a49c0f796e4ab487de86089245cc1ea123a92b86` adds a no-injection test of
+the default Console route through the public owner exports. Local Windows
+verification passed:
+
+- `npm run build`
+- `node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts` — 25/25 passed.
+- `git diff --check`
+
+These results cover a synthetic temporary file only. They do not verify a
+user/product file, the M4 Desktop UI, native Codex/Claude callbacks, installer
+effectiveness, or an OS-atomic path-and-operation transaction. M9 exact-source
+composition review remains required; Issue #52 remains `OPEN / P0 / NOT_VERIFIED`.
+The M1 exact review of the shared Hook sanitizer synchronization is still
+pending, and this follow-up does not touch either M1 Hook path.
