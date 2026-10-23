@@ -433,8 +433,10 @@ run `40032565764` pins current M3 PR #90 head
 `92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
 `cca42cd1762f995e92454d55ffa5e63951e39144`. The M3 ordinary-CLI subtest fails
 on Ubuntu and Windows, returning
-`UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE` instead of the expected
-fixed-probe PASS. This is an exact-current-M3 failure.
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` instead of the expected fixed-probe PASS.
+The internal M3 adapter reason is `M2_CAPABILITY_PROVIDER_UNAVAILABLE`; the
+current Console keeps that value out of the fixed public response enum. This
+is an exact-current-M3 failure.
 Direct composition with the packed M2 candidate passes, but M3's public
 self-reference resolves to a different adapter blob as described above.
 

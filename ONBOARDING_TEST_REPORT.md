@@ -388,8 +388,10 @@ run `40032565764` now pins current M3 PR #90 head
 `92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
 `cca42cd1762f995e92454d55ffa5e63951e39144`. The M3 ordinary-CLI subtest 11
 still fails on both Ubuntu and Windows with response
-`UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE` instead of the expected
-fixed-probe PASS.
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` instead of the expected fixed-probe
+PASS. The internal adapter reason remains
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`; PR #90 `98a034f` keeps that internal
+reason out of the fixed Console response enum.
 This is now exact-current-M3 failure evidence, not only the earlier stale-pin
 run. The M2 packed-adapter composition and alias-denial controls still pass;
 the public-export target blob mismatch documented above remains the cause.
