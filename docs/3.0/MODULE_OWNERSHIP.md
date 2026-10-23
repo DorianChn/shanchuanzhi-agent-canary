@@ -14,6 +14,11 @@ GitHub readback at 00:34 UTC: all active AC3 module PRs are OPEN/Draft. PRs #30,
 | M7 | `feature/ac3-reliability-ac3` / #39 | `f20e307458f4c703459621fd48e44a9e806f03bb` | Reliability/installer payload and lifecycle evidence; bounded worker-phase telemetry pushed; product CI 9/9 and build regressions passed; hosted lifecycle failed at RECORD_INSTALL_STARTED with no established root cause (#41). |
 | M8 | `feature/ac3-open-source-product` / #40 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` | Open-source/docs and canonical shipped Hook/logging copy; protected-read verification limits clarified; exact CI and wrapper regressions passed. |
 | M9 | `feature/ac3-m9-integration` / #36 | `81dea34a24d3dd8c080206367fced54466987c26` | Exact-source pins now match current M1–M8 heads; hosted Ubuntu/Windows exact composition is pending. |
+
+## M0 ownership delta — 2026-10-23 05:20 UTC
+
+- For P1 Issue #75, M8 has bounded exclusive ownership of the Sponsor CI harness files `sponsor/smoke.mjs` and `sponsor/smoke-isolation.test.mjs` on its existing PR #40 branch. This is a task-specific routing decision because no M1–M9 module previously claimed these paths; it does not transfer Sponsor payment/state business logic or `sponsor/server.mjs` ownership.
+- Preserve all protected-file and fail-closed assertions. No hard-coded ports, test deletion, or weakened expectations. If a correct fix requires editing `sponsor/server.mjs`, payment, or state-store behavior, stop and return the ownership conflict to M0 before changing it.
 20:47 UTC delta: PR #30 advanced to `b0b3aec824eec181d8d28d343e6a173377b4a878`; the 20:47 GitHub scan showed M1–M9 still at the heads listed above.
 21:07 UTC delta: PR #30 advanced to `cae786222f596c9cd0a49af90ad1d9e68e8a1aba`; the 21:07 GitHub scan showed M1–M9 still at the heads listed above.
 21:28 UTC delta: PR #30 advanced to `d37191dd88a957aa22d05bd3578c2922140c7a39`; a 21:28 GitHub readback confirmed M1–M9 remain at the heads listed above. PR #24 remains unchanged.
