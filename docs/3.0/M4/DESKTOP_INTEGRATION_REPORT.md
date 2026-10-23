@@ -333,3 +333,36 @@ The M9 report at the checked local snapshot pins the current exact M1–M8 candi
 There is no M4-owned consumer change to make against the current route contracts: M4's status GET and M3's synthetic POST are different actions, and the latter cannot meet first-party product OBSERVE acceptance. Keep Issue #52 `OPEN / P0 / NOT_VERIFIED` as the latest M9 issue update records. M3 must first expose a reviewed, versioned first-party host action through its normal CLI path, with a trusted-host allowlist rather than an arbitrary caller-supplied path. The action must dispatch through the M1 held-file capability, M2 adapter, and M5 strict OBSERVE router, then return a minimal sanitized result bound to that operation without raw file contents or filesystem paths. Unsupported targets, malformed results, or policy denial must remain fail-closed.
 
 After that owner contract exists, M4 may add only a typed action consumer for that exact documented schema; absent, unsupported, malformed, denied, or contradictory responses must remain `UNKNOWN` / `NOT_VERIFIED`. M9 must exercise the actual packed supported package and normal CLI bootstrap using synthetic fixtures: a scoped positive case, path-only and sensitive-alias rejection, symlink/junction rejection, same-path replacement, zero forbidden callback/approval/read evidence on denial, unchanged target bytes/hash, and safe cleanup. Native Shell coverage and OS-atomic TOCTOU remain separate acceptance claims. No M4 endpoint, arbitrary-path read, probe invocation, status promotion, product-file access, or policy relaxation was added in this recheck.
+
+## 2026-10-23 M4 UI/handler route evidence and acceptance contract
+
+This M4-only recheck uses the public M4 PR #34 source head `d0bc987e509ffcddd04880d35f9b6791a9aed0e4` and public M3 PR #33 source head `df580cf712ba36863b9245fbb5bbacf484dac919`. The current M4 worktree was `d7eedfe7d968605760926abf2608aecf63a4c2fc` before this report update; its intervening commits are M4 report-only changes.
+
+### Existing request and response facts
+
+- M4 `src/ai/console-page.ts` makes a same-origin `GET /api/security-center` status request through its CSRF-protected helper. It has no call to `POST /api/security-center/protected-read`. M4 `src/ai/console.ts` registers neither a `GET /api/security-center` handler nor a protected-read POST handler; when run from this M4 checkout, that UI status route is absent (404).
+- M4 `src/ai/security-center-adapter.ts` keeps `firstPartyObserveReadStatus` fixed at `NOT_VERIFIED`, regardless of provider-supplied status/read claims. Missing, malformed, unavailable, partial, or contradictory status remains unknown or not verified.
+- M3's current `GET /api/security-center` is a status-provider snapshot only; it does not execute a read. M3 separately implements `POST /api/security-center/protected-read`. Its exact request is an empty JSON object `{}` after same-origin/Host checks, `x-canary-csrf`, and `x-canary-operator-code` validation. Its actual response envelope is `{ scope: 'M3_FIXED_TEMP_PROBE_ONLY', status: 'ALLOW' | 'DENY' | 'UNKNOWN', reason: ProtectedReadReason, markerMatched: boolean }`.
+- That M3 POST creates a fresh OS temp directory and fixed marker file itself, dispatches the fixed `protected_read` tool, checks the marker, then attempts identity-checked cleanup. It accepts no product/Agent target or path. The response is evidence only for that fixed synthetic probe, not a real product-file route; M4 must not call it to populate or promote product OBSERVE status.
+- M3's normal `ai console` CLI passes port and operator code but no trusted `securityCenterProtectedReadDependencies`. Its current package manifest exports only `./sdk`; the default loader's `./gateway-adapter` and `./policy-router` package self-references are not exported in that manifest. This M4 note does not claim a supported packed-package host route.
+
+### M4 consumer contract required before implementation
+
+No product-read route, HTTP verb/body, target selector, or wire schema is currently published for M4 to consume. M3 owns the Console host/API and must publish the exact request/response contract through its owner path, with M0 recording the shared contract. M4 will not guess a URL or adapt the fixed marker route.
+
+The M4 consumer may be added only after that contract exists and must satisfy these boundaries:
+
+- The host request selects only a reviewed, preconfigured target identifier; it must not accept a caller-controlled filesystem path, raw file contents, or a caller-created M1 capability. The trusted host binds the target to M1 identity and dispatches through the supported M2 adapter and M5 strict router.
+- The successful response must be versioned and operation-bound, identify the exact allowlisted target/scope and explicit decision, and contain no file bytes, filesystem path, secret, or opaque capability. A fixed-temp-probe scope is never a product target.
+- The UI may render success only for a well-formed success response matching the requested operation and reviewed product scope. Unsupported schema, missing dependency, timeout, 401/403, 404, malformed or contradictory fields, policy denial, or cleanup uncertainty remains `UNKNOWN` / `NOT_VERIFIED`; no status snapshot or synthetic marker can promote it.
+- The exact route and body must retain same-origin, Host/Origin, CSRF, and operator authorization required by the owning host. Any operator credential stays out of persisted browser state and diagnostic exports.
+
+### Reproducible UI and host acceptance once M3 publishes the contract
+
+1. Run the supported packed package through the normal M3 CLI and confirm the exact documented host route exists; separately confirm M4's own Console handler is wired to it. A 404 or unresolved M1/M2/M5 export must display `UNKNOWN` / `NOT_VERIFIED`.
+2. Use only a synthetic, pre-registered target fixture. Verify the positive safe-read result is operation-bound, sanitized, and scoped; do not use the fixed marker endpoint as this control.
+3. Exercise path-only/unregistered target, sensitive alias, traversal, symlink/junction, and same-path replacement negatives. Each denial must precede protected callback and approval creation; record zero callback/approval counts in test instrumentation and unchanged target bytes/hash.
+4. Exercise denied, unsupported, malformed, contradictory, stale/mismatched-operation, timeout, permission, and missing-route responses in the rendered M4 UI. Verify each remains `UNKNOWN` / `NOT_VERIFIED`, never `PROTECTED`, and that no raw content, path, token, or credential appears in the UI or diagnostic export.
+5. Keep native Shell enforcement, installer lifecycle, real user-file access, and OS-atomic TOCTOU as separate acceptance claims.
+
+Verification on this M4 worktree: `node --import tsx --test test/runtime-console.test.ts` passed 13/13; `git diff --check` passed before the report append. These tests cover the existing M4 status/UI fail-closed contract only. No protected-read route, product/user/secret file, VM, model, or installer was exercised. Issue #52 remains OPEN / P0 / NOT_VERIFIED for M4 first-party host/UI consumption.
