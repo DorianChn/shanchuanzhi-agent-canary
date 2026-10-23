@@ -31,19 +31,19 @@ jobs:
           path: module-sources/m1
           fetch-depth: 0
 
-      - name: Checkout M2 PR #37 actual merge commit
+      - name: Checkout exact current M2 follow-up PR #91 head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 49af6d3dd57d9f091c95f489ead27f4f03c941a9
+          ref: 92dd42b900b10ce0294e9e3faa7e175d728228b3
           path: module-sources/m2
           fetch-depth: 0
 
-      - name: Checkout M3 PR #33 actual merge commit
+      - name: Checkout exact current M3 follow-up PR #90 head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 611f9fca14706a1110a1f0a39e8488f4ff28d2a9
+          ref: e771c06f72d8a03fb7945037a3facbc2d0ed8a6e
           path: module-sources/m3
           fetch-depth: 0
 
@@ -404,7 +404,7 @@ jobs:
         shell: bash
         run: |
           {
-            echo 'Exact source roots are actual feature merge commits: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Owner PR heads and tree equality are asserted by the M9 composition test.'
+            echo 'Historical merge provenance remains pinned: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Current M2/M3 follow-up heads are PR #91 92dd42b900b10ce0294e9e3faa7e175d728228b3 and PR #90 e771c06f72d8a03fb7945037a3facbc2d0ed8a6e; exact owner and PR-head trees are asserted by M9.'
             echo 'M8 checkout 84ee6a7a8d65706f694b7949e82fd8c83cc11523 is a historical source retained only for the narrowly scoped M6-reviewed test regression; it is not a current M8 candidate or a PASS verdict.'
             echo 'M8 current candidate 1abdfe3890c6c263eea667789deb7eab5038e828 is checked separately and its exact Hook-output test is run; M1 review of the new test and M6 disposition on the changed lifecycle-test blob remain pending.'
             echo 'Open module candidates are tracked separately from merged refs. This workflow does not convert pending owner checks into acceptance.'

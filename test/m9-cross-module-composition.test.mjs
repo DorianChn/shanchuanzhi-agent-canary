@@ -19,8 +19,8 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 
 const pinnedSourceShas = {
   M1: '7cd34454c4bd6aa7176e0e076f5333639e3ccd5d',
-  M2: '49af6d3dd57d9f091c95f489ead27f4f03c941a9',
-  M3: '611f9fca14706a1110a1f0a39e8488f4ff28d2a9',
+  M2: '92dd42b900b10ce0294e9e3faa7e175d728228b3',
+  M3: 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e',
   M4: 'd0f61987c2a06acb47a7187142bc303101af0ad4',
   M5: 'f0e90c99033a6304748ac79fe106439ca4bd2e06',
   M6: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd',
@@ -30,13 +30,18 @@ const pinnedSourceShas = {
 };
 
 const mergedSourceProvenance = {
-  M1: { ownerHead: 'afd049246e027f414c6a53ee3e4355444718efd7', ownerTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9', mergeTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9' },
-  M2: { ownerHead: 'db98c7d5d409aa390ef539c96a209d6daba8d793', ownerTree: 'e2c81e61a72ecc472a7988f26e0b2614d4995f0d', mergeTree: 'add5837de7426566e124756b052ad1686d6ed308' },
-  M3: { ownerHead: '96d688d725292092dfc4e7ba940e9edfa8354e1e', ownerTree: '66a2baf3568aa65e5d5a423a8c215545a4293c39', mergeTree: '66a2baf3568aa65e5d5a423a8c215545a4293c39' },
-  M4: { ownerHead: '721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2', ownerTree: '490c8629beb1c93f8c133c4adf5948fd58f71802', mergeTree: '991354de1703fd0d72dac36f5c07c8369d12134f' },
-  M5: { ownerHead: '688f4bf4acd9a46a5bbaed622c71a64ef788e551', ownerTree: 'aa102e622a14abb5fc484f0a1ed777da289bc141', mergeTree: '6c83bcb4ffe226bc3a52f5fcfac485c6b8324fdd' },
-  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', mergeTree: 'bbb5eea8678ebfaaa1826bd529079cf16e6bdeda' },
-  M7: { ownerHead: 'a0b2968ca18bf4264ff93789abb65c1dc1c2e4cf', ownerTree: 'ed48c9630a2c083f8fed3781a8dd550ce84f119c', mergeTree: 'e1916366719310e1f912a6802bc3040df8fe512f' },
+  M1: { ownerHead: 'afd049246e027f414c6a53ee3e4355444718efd7', ownerTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9', mergeSha: '7cd34454c4bd6aa7176e0e076f5333639e3ccd5d', mergeTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9' },
+  M2: { ownerHead: 'db98c7d5d409aa390ef539c96a209d6daba8d793', ownerTree: 'e2c81e61a72ecc472a7988f26e0b2614d4995f0d', mergeSha: '49af6d3dd57d9f091c95f489ead27f4f03c941a9', mergeTree: 'add5837de7426566e124756b052ad1686d6ed308' },
+  M3: { ownerHead: '96d688d725292092dfc4e7ba940e9edfa8354e1e', ownerTree: '66a2baf3568aa65e5d5a423a8c215545a4293c39', mergeSha: '611f9fca14706a1110a1f0a39e8488f4ff28d2a9', mergeTree: '66a2baf3568aa65e5d5a423a8c215545a4293c39' },
+  M4: { ownerHead: '721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2', ownerTree: '490c8629beb1c93f8c133c4adf5948fd58f71802', mergeSha: 'd0f61987c2a06acb47a7187142bc303101af0ad4', mergeTree: '991354de1703fd0d72dac36f5c07c8369d12134f' },
+  M5: { ownerHead: '688f4bf4acd9a46a5bbaed622c71a64ef788e551', ownerTree: 'aa102e622a14abb5fc484f0a1ed777da289bc141', mergeSha: 'f0e90c99033a6304748ac79fe106439ca4bd2e06', mergeTree: '6c83bcb4ffe226bc3a52f5fcfac485c6b8324fdd' },
+  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', mergeSha: 'a6f4a889ec16b4f2c78f91d630e657eea7319dbd', mergeTree: 'bbb5eea8678ebfaaa1826bd529079cf16e6bdeda' },
+  M7: { ownerHead: 'a0b2968ca18bf4264ff93789abb65c1dc1c2e4cf', ownerTree: 'ed48c9630a2c083f8fed3781a8dd550ce84f119c', mergeSha: '8689d8fbbcdded4735d0e5aa328805f398a2862a', mergeTree: 'e1916366719310e1f912a6802bc3040df8fe512f' },
+};
+
+const currentCandidateProvenance = {
+  M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '92dd42b900b10ce0294e9e3faa7e175d728228b3', prTree: '78c60440662a3dcd15d86e9d3c09d3fa9a3769d3' },
+  M3: { ownerHead: '9ea681894627e073e7720e9c2fca22f9351fb02b', ownerTree: '53627df0a9dedee0496d5e87d741c2162d1d13f3', prHead: 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e', prTree: '9d99965f0a7bf57d4a0714d241c6270e5c3148e9' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
@@ -79,14 +84,23 @@ function readTreeIdAt(moduleName, commitSha) {
 }
 
 for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
-  const sourceTree = readTreeIdAt(moduleName, pinnedSourceShas[moduleName]);
-  assert.equal(sourceTree, provenance.mergeTree, `${moduleName} source root must use the recorded actual merge tree`);
+  assert.equal(readTreeIdAt(moduleName, provenance.mergeSha), provenance.mergeTree, `${moduleName} historical actual merge tree must retain its recorded provenance`);
   assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} owner PR head tree must retain its recorded provenance`);
   assert.equal(
     provenance.ownerTree === provenance.mergeTree,
     ['M1', 'M3'].includes(moduleName),
     `${moduleName} owner-head versus merge-tree relation must remain explicitly recorded`,
   );
+  const currentCandidate = currentCandidateProvenance[moduleName];
+  if (currentCandidate) {
+    assert.equal(pinnedSourceShas[moduleName], currentCandidate.prHead, `${moduleName} current source must pin the exact follow-up PR head`);
+    assertAncestor(moduleName, provenance.mergeSha, currentCandidate.prHead, `${moduleName} historical merge source`);
+    assertAncestor(moduleName, currentCandidate.ownerHead, currentCandidate.prHead, `${moduleName} owner fix commit`);
+    assert.equal(readTreeIdAt(moduleName, currentCandidate.ownerHead), currentCandidate.ownerTree, `${moduleName} owner fix tree must retain its recorded provenance`);
+    assert.equal(readTreeIdAt(moduleName, currentCandidate.prHead), currentCandidate.prTree, `${moduleName} follow-up PR head tree must retain its exact provenance`);
+  } else {
+    assert.equal(readTreeIdAt(moduleName, pinnedSourceShas[moduleName]), provenance.mergeTree, `${moduleName} current source root must use the recorded actual merge tree`);
+  }
 }
 
 test('exact M3 merge package includes the M2 facade but not the M5 policy export', () => {
@@ -284,7 +298,7 @@ test('Issue #88 P0: M1 sanitization control and exact M2 source Hook keep reason
       },
       {
         moduleName: 'M2',
-        expectedBlob: 'd6f93249306b7966259cab463dd39475728ef338',
+        expectedBlob: 'b7ed4aba70a597f4f63a05decc6de1b32f67372e',
       },
     ];
 
@@ -374,7 +388,7 @@ test('Issue #89 P0: exact M3 Hook source keeps reason canaries out of output cha
     const leakedCanaries = [];
     const hookSources = [
       { moduleName: 'M1', expectedBlob: 'b7ed4aba70a597f4f63a05decc6de1b32f67372e' },
-      { moduleName: 'M3', expectedBlob: 'd6f93249306b7966259cab463dd39475728ef338' },
+      { moduleName: 'M3', expectedBlob: 'b7ed4aba70a597f4f63a05decc6de1b32f67372e' },
     ];
 
     for (const { moduleName, expectedBlob } of hookSources) {
