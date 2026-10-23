@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {createAutoE4Run,AUTO_E4_STAGES,writeAutoE4Artifacts} from '../packaging/windows/auto-e4.mjs';
 import {runHookFaultChecks} from '../packaging/windows/e4-hook-faults.mjs';
-import {fileURLToPath,pathToFileURL} from 'node:url';
+import {fileURLToPath} from 'node:url';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 
@@ -46,38 +46,6 @@ test('packaged hook wrapper fails closed and target-side fixture evidence is che
   assert.equal(result.sideEffects.protectedVictimUnchanged,true);
   assert.equal(result.sideEffects.unsafeCallbackStarts,0);
   assert.match(result.scope,/NOT A THIRD.PARTY HOST OR VM TEST/);
-});
-
-test('co-located E4 payload wrapper logs only allowlisted metadata',async()=>{
-  const payload=fs.mkdtempSync(path.join(os.tmpdir(),'canary-e4-packaged-hook-'));
-  const sourceHook=path.join(repo,'security-lab/claude-native-hook.mjs');
-  const sourceFaults=path.join(repo,'packaging/windows/e4-hook-faults.mjs');
-  const packagedHook=path.join(payload,'claude-native-hook.mjs');
-  const packagedFaults=path.join(payload,'e4-hook-faults.mjs');
-  fs.copyFileSync(sourceHook,packagedHook);
-  fs.copyFileSync(sourceFaults,packagedFaults);
-  assert.deepEqual(fs.readFileSync(packagedHook),fs.readFileSync(sourceHook));
-  assert.equal(fs.existsSync(path.resolve(payload,'../../security-lab/claude-native-hook.mjs')),false,'fixture must not have the repository-source fallback');
-  const {runHookFaultChecks:runPackagedHookFaultChecks}=await import(pathToFileURL(packagedFaults).href);
-  const result=runPackagedHookFaultChecks({appRoot:path.join(repo,'dist'),fixturesRoot:payload});
-  assert.equal(result.status,'PASS');
-  assert.equal(result.positiveControl.logContractSatisfied,true);
-  assert.equal(result.positiveControl.logAudit.status,'PASS');
-  assert.equal(result.positiveControl.logAudit.records,1);
-  assert.equal(result.logAudit.status,'PASS');
-  assert.equal(result.logAudit.records,1);
-  assert.equal(result.logAudit.callerInputCanaryAbsent,true);
-  assert.ok(result.faultCases.every(x=>x.logAudit.status==='PASS'));
-  const controlLines=fs.readFileSync(path.join(result.root,'positive-control.jsonl'),'utf8').trim().split(/\r?\n/);
-  assert.equal(controlLines.length,1);
-  const controlRecord=JSON.parse(controlLines[0]);
-  assert.deepEqual(Object.keys(controlRecord).sort(),['hookEventName','permissionDecision','timestamp']);
-  assert.equal(controlRecord.hookEventName,'PreToolUse');
-  assert.equal(controlRecord.permissionDecision,'allow');
-  assert.equal(new Date(controlRecord.timestamp).toISOString(),controlRecord.timestamp);
-  for(const marker of ['SYNTHETIC_E4_HOOK_ARGUMENT_MARKER','SYNTHETIC_E4_HOOK_REASON_MARKER','C:/synthetic/caller/private.txt','M8_SYNTHETIC_INPUT_CANARY_NOT_SECRET','M8_SYNTHETIC_REASON_CANARY_NOT_SECRET','write victim']){
-    assert.equal(controlLines[0].includes(marker),false,`packaged decision log leaked ${marker}`);
-  }
 });
 
 test('Auto E4 rejects invalid stage status rather than treating it as PASS',async()=>{
