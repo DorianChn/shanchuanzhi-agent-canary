@@ -366,3 +366,33 @@ The M4 consumer may be added only after that contract exists and must satisfy th
 5. Keep native Shell enforcement, installer lifecycle, real user-file access, and OS-atomic TOCTOU as separate acceptance claims.
 
 Verification on this M4 worktree: `node --import tsx --test test/runtime-console.test.ts` passed 13/13; `git diff --check` passed before the report append. These tests cover the existing M4 status/UI fail-closed contract only. No protected-read route, product/user/secret file, VM, model, or installer was exercised. Issue #52 remains OPEN / P0 / NOT_VERIFIED for M4 first-party host/UI consumption.
+
+## 2026-10-24 M4 Issue #52 capability-consumer recheck
+
+### Exact starting state and current public refs
+
+- M4 worktree: `feature/ac3-desktop-security-center`, clean at `721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2` before this report-only update.
+- PR #34 is already **MERGED** at that exact head. Its exact-head CI run `39919282220` passed all 9 checks. This report update is after that merge; it does not change the merge result.
+- M2 PR #91 remains OPEN/Draft at `92dd42b900b10ce0294e9e3faa7e175d728228b3`; its review decision is empty. The adapter files are absent from this M4 checkout and are not listed in this checkout's package exports/files.
+- M5 PR #47 is MERGED at `688f4bf4acd9a46a5bbaed622c71a64ef788e551`, but that later M5 capability-provider implementation is not present in this M4 branch snapshot.
+- Issue #52 remains OPEN/P0/NOT_VERIFIED.
+
+### M4-to-Gateway trace
+
+- M1 Gateway in this checkout exposes host-only `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability` in `src/runtime/gateway.ts`. These methods bind the read to a constructor-registered file and send the operation through the ordinary M1 dispatch boundary.
+- The existing Gateway contract tests include a scoped positive read and the negative test `file-read capability blocks sensitive aliases and replaced paths before the host callback`. Those prove the Gateway contract in isolation, not an M4 Host consumer.
+- M4's `src/ai/console-page.ts` requests `GET /api/security-center` for status and contains no protected-read action. `src/ai/security-center-adapter.ts` fixes `firstPartyObserveReadStatus` to `NOT_VERIFIED`. In this M4 snapshot, `src/ai/console.ts::startAIConsole` has no protected-read handler or Gateway/M2 adapter dependency injection; the existing Console regression accepts the status route being absent and keeps the UI unknown.
+- M4's `src/security-router.ts` has no `fileReadCapability` provider. With `verifyRealPaths: true`, generic file callbacks are rejected as `path_execution_not_pinned`. The M2 host adapter needed to bind and verify M1's capability is not present in the checkout or package surface.
+
+### Safe implementation disposition
+
+There is no supported M4 Host callsite at this exact source ref to attach the M1 capability to. Calling `readFileWithCapability` directly from a new desktop callback would create a separate, unwired action and bypass the M2 host adapter and M5 strict-router consumer. Adding a UI request alone would target a route this M4 server does not expose. Either option would make a test fixture look like product integration without proving the supported host path, so no product code or security assertion was changed.
+
+The concrete unblock is an M3-owned normal-CLI host route with a reviewed fixed target/action and sanitized response, composed through the public M2 adapter and the M5 capability-aware router. The M2 adapter candidate must be owner-reviewed and made available to the supported package composition. Once that exact route/schema exists in the M4 integration base, M4 can consume only its sanitized result and add a real positive read plus alias/path-replacement zero-side-effect UI/host controls. Until then, missing, malformed, or unsupported data stays `NOT_VERIFIED` / `UNKNOWN`.
+
+### Verification on this checkout
+
+- `npm run build` — passed.
+- `node --import tsx --test test/runtime-console.test.ts` — 13/13 passed; CSRF/operator/quarantine assertions and the unknown/no-probe UI contract remain intact.
+- `node --import tsx --test test/gateway.test.ts` — 36/36 passed, including the isolated Gateway positive and alias/path-replacement negative controls. This does not claim an M4 consumer or a product-file read.
+- No M4 host read, product/user/secret file access, model, VM, or installer test was performed. Issue #52 remains OPEN/P0/NOT_VERIFIED for the M4 first-party Host consumer.
