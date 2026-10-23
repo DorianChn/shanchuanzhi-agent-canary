@@ -176,7 +176,7 @@ jobs:
           if ($extractedManifestSha256 -ne $payloadManifestSha256) { throw 'SETUP_EXTRACTED_MANIFEST_MISMATCH' }
           $extractedManifest = Get-Content -LiteralPath $extractedManifestPath -Raw | ConvertFrom-Json
 
-          $sourceHookPath = 'security-lab/claude-native-hook.mjs'
+          $sourceHookPath = 'packaging/windows/claude-native-hook.mjs'
           $packagedHookPath = Join-Path $payloadRoot 'claude-native-hook.mjs'
           $extractedHookCandidates = @(Get-ChildItem -LiteralPath $setupExtractRoot -Filter 'claude-native-hook.mjs' -File -Recurse)
           if ($extractedHookCandidates.Count -ne 1) { throw 'SETUP_EXTRACTED_HOOK_MISSING_OR_AMBIGUOUS' }
@@ -188,9 +188,10 @@ jobs:
           $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()
           $extractedHookBlobSha = (& git hash-object $extractedHookPath).Trim()
           if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw 'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH' }
-          $reviewedHookBlobShas = @('d6f93249306b7966259cab463dd39475728ef338', 'b7ed4aba70a597f4f63a05decc6de1b32f67372e')
+          $reviewedHookBlobShas = @('b7ed4aba70a597f4f63a05decc6de1b32f67372e')
           if ($reviewedHookBlobShas -notcontains $sourceHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }
           $canonicalHookBlobSha = $sourceHookBlobSha
+          if ($buildResult.version.wrapperSourceBlobSHA -ne $canonicalHookBlobSha) { throw 'BUILD_REPORT_HOOK_BLOB_MISMATCH' }
           $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
           $extractedHookSha256 = (Get-FileHash -LiteralPath $extractedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }

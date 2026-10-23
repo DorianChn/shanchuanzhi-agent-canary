@@ -3,7 +3,8 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 
-const WRAPPER_PATH='security-lab/claude-native-hook.mjs';
+const WRAPPER_PATH='packaging/windows/claude-native-hook.mjs';
+export const M1_CANONICAL_WRAPPER_BLOB_SHA='b7ed4aba70a597f4f63a05decc6de1b32f67372e';
 const BUILD_USAGE='Usage: node build.mjs PAYLOAD_DIR NSIS_DIR COMMUNITY_ZIP WRAPPER_SOURCE_COMMIT_SHA';
 
 function git(repoRoot,args,encoding='utf8'){
@@ -19,7 +20,7 @@ export function resolveWrapperSourceSHA(repoRoot){
   if(!/^[a-f0-9]{40}$/.test(sha))throw Error('WRAPPER_SOURCE_SHA_INVALID');
   const trackedBlob=git(repoRoot,['rev-parse',`${sha}:${WRAPPER_PATH}`]).trim().toLowerCase();
   const workingBlob=git(repoRoot,['hash-object',`--path=${WRAPPER_PATH}`,path.join(repoRoot,WRAPPER_PATH)]).trim().toLowerCase();
-  if(!/^[a-f0-9]{40}$/.test(trackedBlob)||workingBlob!==trackedBlob)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
+  if(!/^[a-f0-9]{40}$/.test(trackedBlob)||trackedBlob!==M1_CANONICAL_WRAPPER_BLOB_SHA||workingBlob!==trackedBlob)throw Error('WRAPPER_SOURCE_PROVENANCE_MISMATCH');
   return sha;
 }
 
@@ -28,7 +29,7 @@ export function readCommittedWrapperSource(repoRoot){
   const bytes=git(repoRoot,['cat-file','blob',`${sha}:${WRAPPER_PATH}`],null);
   if(!Buffer.isBuffer(bytes))throw Error('WRAPPER_SOURCE_GIT_PROVENANCE_UNAVAILABLE');
   if(bytes.includes(Buffer.from('\r\n')))throw Error('WRAPPER_SOURCE_NOT_LF');
-  return{sha,bytes};
+  return{sha,blobSha:M1_CANONICAL_WRAPPER_BLOB_SHA,bytes};
 }
 
 export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
@@ -44,7 +45,7 @@ export function writePackagedWrapperSource(repoRoot,destination,expectedSHA){
   fs.writeFileSync(destination,source.bytes);
   const packaged=fs.readFileSync(destination);
   if(!packaged.equals(source.bytes))throw Error('PACKAGED_WRAPPER_PROVENANCE_MISMATCH');
-  return{sha:source.sha,bytes:packaged};
+  return{sha:source.sha,blobSha:source.blobSha,bytes:packaged};
 }
 
 export function parseWindowsBuildArgs(args,{platform=process.platform}={}){
