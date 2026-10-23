@@ -101,14 +101,33 @@ restoreAgentIntegration(record) 要求回执字段、绝对路径和宿主配置
 - 当前 Codex 向导、隔离自检结果及所有兼容性声明均不得覆盖 NOT_VERIFIED / OUT_OF_SCOPE 限制。真实 Claude、Cursor、Cline 端到端兼容、Windows 发布命令和原生工具保护均需独立证据。
 - M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. M3's connection-check MCP uses the public `@dorianchn/agent-canary/gateway-adapter` facade and a trusted M5 router factory; its exact-source positive and negative controls are maintained by M9. The Console has a fixed temporary probe action and a built-in trusted bootstrap that lazily self-imports only the public M1 `./sdk`, M5 `./policy-router`, and M2 `./gateway-adapter` subpaths. The M3-only package does not yet expose the M5/M2 subpaths, so its ordinary CLI path returns sanitized `UNKNOWN` before creating the probe file or Gateway. The self-package import is not accepted as proof of owner composition: M9 must validate the integrated exact owner sources. No private-source runtime import, generic path fallback, or strict-mode opt-out is part of this M3 contract. Native Codex tool coverage remains `OUT_OF_SCOPE`.
 
-## 6. Console fixed-probe action — implemented, product gate pending
+## 6. Console Security Center routes
+
+### Read-only status snapshot
+
+`GET /api/security-center` is an exact-path, status-only handler behind the
+Console's same-origin and CSRF checks. Missing or invalid CSRF returns the
+existing HTTP 403 response before the provider is called. With no trusted
+construction-time `SecurityCenterStatusProvider` from the M2 host adapter, the
+route returns the fixed `UNKNOWN` snapshot. When supplied, it invokes that
+provider once with no request arguments and normalizes only its returned
+snapshot. Provider errors and invalid fields remain `UNKNOWN` or are omitted.
+
+The handler never creates or calls the protected-read Gateway, dispatches an
+Agent action, reads a file, creates an approval, or invokes a tool callback.
+Query/path parameters do not match the exact route. Responses contain only the
+allowlisted status snapshot; absolute paths, arguments, file contents, secrets,
+tokens, Hook state, and Canary-isolation state cannot be inferred from the M2
+provider. Hook and Canary isolation therefore remain `UNKNOWN`.
+
+### Fixed-probe action — implemented, product gate pending
 
 `POST /api/security-center/protected-read` is a fixed synthetic probe action.
 The existing `GET /api/security-center` remains status-only and never runs file
 I/O. The action does not read a user-selected path and does not prove protection
 of a Desktop/native host.
 
-### Request and response
+#### Request and response
 
 - Method/path: `POST /api/security-center/protected-read`.
 - The request must pass the Console's existing same-origin and CSRF checks and

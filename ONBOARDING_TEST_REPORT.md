@@ -166,3 +166,25 @@ no-injection route in the exact integrated package. M4's Desktop UI still does
 not call this M3 route, and neither this synthetic temp probe nor M9's future
 positive control may be described as arbitrary product-file or native-tool
 protection. Issue #52 remains OPEN / P0 / NOT_VERIFIED.
+
+## 2026-10-23 Security Center status-route read-only recheck
+
+M3 baseline `b85c4ad4de92fdcdf48e65e664c149b9de347b4f` already contained the
+exact `GET /api/security-center` handler. This update binds its provider type
+to M2's `PublicM2HostAdapter.securityCenterStatusProvider` and isolates the
+route in a snapshot-only fail-closed reader. With no explicit trusted M2
+provider, it returns the static UNKNOWN snapshot. With one, it invokes it only
+after same-origin and CSRF checks, passes no request values, and normalizes
+only the returned snapshot. Provider exceptions produce UNKNOWN. The normal
+`ai console` CLI still supplies no M2 provider, so its status remains UNKNOWN.
+
+The added M3 regression verifies missing CSRF returns HTTP 403 without calling
+the provider; a query/path parameter cannot select a resource or escape in the
+404 response; the exact GET invokes the M2 snapshot once; and the protected-read
+dependency loader remains untouched. Existing tests continue to cover UNKNOWN
+defaults, status-field allowlisting, private path/argument/secret/content
+redaction, provider failure, and getter avoidance. `npm run build` passed and
+`node --import tsx --test test/security-center-route-m3.test.ts` passed 9/9.
+This route reports status only; it does not establish product-host file
+protection or positive protected-read evidence. Issue #52 remains OPEN / P0 /
+NOT_VERIFIED pending M9's exact-source integration.

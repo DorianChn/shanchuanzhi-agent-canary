@@ -47,6 +47,70 @@ test('security-center route defaults to UNKNOWN behind the console CSRF boundary
   }
 });
 
+test('security-center status reads only an injected M2 snapshot after CSRF and never starts protected execution', async () => {
+  let providerCalls = 0;
+  let protectedReadLoads = 0;
+  const privatePath = 'C:\\Users\\alice\\workspace\\private.txt';
+  const privateSecret = 'status_provider_private_token';
+  const console = await startAIConsole({
+    port: 0,
+    securityCenterStatusProvider: async (...args: unknown[]) => {
+      providerCalls += 1;
+      assert.deepEqual(args, [], 'the snapshot provider receives no request-controlled parameters');
+      return {
+        protectionStatus: 'PARTIALLY_PROTECTED',
+        gateway: { protectionStatus: 'PROTECTED', connectionStatus: 'CONNECTED', path: privatePath },
+        policy: { protectionStatus: 'PROTECTED', name: 'M2_FIXED_FILE_READS', token: privateSecret },
+        privatePath,
+        privateSecret,
+      };
+    },
+    securityCenterProtectedReadDependencies: async () => {
+      protectedReadLoads += 1;
+      throw new Error('status route must not load protected-read dependencies');
+    },
+  });
+  try {
+    let response = await fetch(console.url + '/api/security-center');
+    assert.equal(response.status, 403);
+    assert.equal(providerCalls, 0, 'missing CSRF must stop before reading the M2 snapshot');
+
+    const csrf = await csrfFor(console.url);
+    response = await fetch(console.url + '/api/security-center', {
+      headers: { 'x-canary-csrf': 'invalid-csrf' },
+    });
+    assert.equal(response.status, 403);
+    assert.equal(providerCalls, 0, 'invalid CSRF must stop before reading the M2 snapshot');
+    response = await fetch(console.url + '/api/security-center', {
+      headers: { 'x-canary-csrf': csrf, origin: 'https://attacker.invalid' },
+    });
+    assert.equal(response.status, 403);
+    assert.equal(providerCalls, 0, 'cross-origin reads must stop before reading the M2 snapshot');
+    response = await fetch(console.url + '/api/security-center?path=' + encodeURIComponent(privatePath), {
+      headers: { 'x-canary-csrf': csrf },
+    });
+    assert.equal(response.status, 404, 'the exact status route accepts no path/query parameters');
+    assert.equal(providerCalls, 0);
+    assert.equal((await response.text()).includes(privatePath), false);
+
+    response = await fetch(console.url + '/api/security-center', {
+      headers: { 'x-canary-csrf': csrf },
+    });
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.protectionStatus, 'PARTIALLY_PROTECTED');
+    assert.deepEqual(body.hook, { protectionStatus: 'UNKNOWN' });
+    assert.deepEqual(body.canaryIsolation, { protectionStatus: 'UNKNOWN' });
+    const serialized = JSON.stringify(body);
+    assert.equal(serialized.includes(privatePath), false);
+    assert.equal(serialized.includes(privateSecret), false);
+    assert.equal(providerCalls, 1);
+    assert.equal(protectedReadLoads, 0, 'status reads must not construct a Gateway or invoke protected-read callbacks');
+  } finally {
+    await console.close();
+  }
+});
+
 test('security-center route preserves scoped provider status and filters unsafe or unsupported fields', async () => {
   const privatePath = 'C:\\Users\\alice\\workspace\\secret.txt';
   const privateToken = 'cnry_private_test_token';

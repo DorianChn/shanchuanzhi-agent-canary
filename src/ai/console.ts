@@ -17,7 +17,7 @@ import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgen
 import {createRuntimeDemo} from '../runtime/demo.js';
 import {createAgentGuard} from '../containment.js';
 import {EvidenceRecorder} from '../runtime/evidence.js';
-import {createProtectedHostAdapter,type PublicM2Facade,type ProtectedHostDependencies} from '../codex-connection-mcp.js';
+import {createProtectedHostAdapter,type PublicM2Facade,type PublicM2HostAdapter,type ProtectedHostDependencies} from '../codex-connection-mcp.js';
 
 const protectedReadRoute='/api/security-center/protected-read';
 const protectedReadFile='agent-canary-public.txt';
@@ -150,7 +150,7 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
   return cleanupSucceeded?outcome:protectedReadEnvelope('UNKNOWN','CLEANUP_FAILED',false);
 }
 
-export type SecurityCenterStatusProvider = () => unknown | Promise<unknown>;
+export type SecurityCenterStatusProvider = NonNullable<PublicM2HostAdapter['securityCenterStatusProvider']>;
 
 const UNKNOWN_SECURITY_CENTER_STATUS = Object.freeze({
   protectionStatus: 'UNKNOWN',
@@ -242,6 +242,17 @@ function normalizeSecurityCenterSnapshot(value: unknown) {
   return normalized;
 }
 
+async function readSecurityCenterStatus(provider: SecurityCenterStatusProvider | undefined) {
+  if (typeof provider !== 'function') return UNKNOWN_SECURITY_CENTER_STATUS;
+  try {
+    // M2 owns this side-effect-free snapshot. The Console only normalizes its
+    // return value; this path never constructs or invokes protected execution.
+    return normalizeSecurityCenterSnapshot(await provider());
+  } catch {
+    return UNKNOWN_SECURITY_CENTER_STATUS;
+  }
+}
+
 export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number; securityCenterStatusProvider?: SecurityCenterStatusProvider; securityCenterProtectedReadDependencies?:SecurityCenterProtectedReadDependencies } = {}) {
   const port = options.port ?? 4318;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('AI_CONSOLE_PORT_INVALID');
@@ -285,13 +296,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
         reply({ presets: PROVIDER_PRESETS, events, counts: { signals: events.filter(e => e.kind === 'decoy_called' || e.kind === 'token_found').length, sessions: new Set(events.filter(e => e.kind === 'session_quarantined').map(e => e.sessionId)).size, blocked: events.filter(e => e.kind === 'action_blocked').length }, countScope: 'latest 100 recorded events only', experiments }); return;
       }
       if (req.method === 'GET' && req.url === '/api/security-center') {
-        if (!options.securityCenterStatusProvider) { reply(UNKNOWN_SECURITY_CENTER_STATUS); return; }
-        try {
-          const snapshot = await options.securityCenterStatusProvider();
-          reply(normalizeSecurityCenterSnapshot(snapshot));
-        } catch {
-          reply(UNKNOWN_SECURITY_CENTER_STATUS);
-        }
+        reply(await readSecurityCenterStatus(options.securityCenterStatusProvider));
         return;
       }
       if (req.method === 'GET' && req.url === '/api/job') { reply(job); return; }
