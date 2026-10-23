@@ -42,7 +42,12 @@ test('native lab wrapper writes only normalized allowlisted log fields',()=>{
  const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
  const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ assert.equal(r.status,0);
+ const output=JSON.parse(r.stdout).hookSpecificOutput;
+ assert.equal(output.permissionDecision,'allow');
+ assert.equal(output.permissionDecisionReason,'Agent Canary: permission_allowed');
+ assert.equal(r.stdout.includes(reasonCanary),false,'unknown reason leaked to stdout');
+ assert.equal(r.stderr.includes(reasonCanary),false,'unknown reason leaked to stderr');
  const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
  assert.equal(lines.length,1);
  const record=JSON.parse(lines[0]);
@@ -50,6 +55,21 @@ test('native lab wrapper writes only normalized allowlisted log fields',()=>{
  assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
  assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
  for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
+});
+test('native lab wrapper uses decision-specific fallback for unknown reasons',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ for(const [decision,fallback]of [['deny','Agent Canary: permission_denied'],['ask','Agent Canary: approval_required']] as const){
+  const reasonCanary=`SYNTHETIC_${decision.toUpperCase()}_REASON_CANARY`,modulePath=path.join(root,`${decision}-reason-hook.mjs`),log=path.join(root,`${decision}-reason.jsonl`);
+  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
+  const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,`${decision}-reason-state`),log],{input:JSON.stringify({session_id:`${decision}-reason-fixture`,tool_name:'Bash',tool_input:{command:'git status'}}),encoding:'utf8'});
+  assert.equal(result.status,0);
+  const output=JSON.parse(result.stdout).hookSpecificOutput;
+  assert.equal(output.permissionDecision,decision);
+  assert.equal(output.permissionDecisionReason,fallback);
+  assert.equal(result.stdout.includes(reasonCanary),false,'unknown reason leaked to stdout');
+  assert.equal(result.stderr.includes(reasonCanary),false,'unknown reason leaked to stderr');
+  assert.equal(fs.readFileSync(log,'utf8').includes(reasonCanary),false,'unknown reason leaked to JSONL');
+ }
 });
 test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
