@@ -262,7 +262,7 @@ test('wrapper provenance refuses a Hook file changed after its source commit',()
     runGit('commit','--quiet','-m','test wrapper provenance');
     assert.equal(runGit('rev-parse','HEAD:packaging/windows/claude-native-hook.mjs'),M1_CANONICAL_WRAPPER_BLOB_SHA);
     assert.equal(resolveWrapperSourceSHA(temp),runGit('rev-parse','HEAD'));
-    fs.writeFileSync(wrapper,fs.readFileSync(wrapper).toString('utf8').replace(/\n/g,'\r\n'));
+    fs.writeFileSync(wrapper,fs.readFileSync(wrapper).toString('utf8').replace(/\r\n/g,'\n').replace(/\n/g,'\r\n'));
     const committed=readCommittedWrapperSource(temp),packaged=path.join(temp,'packaged','claude-native-hook.mjs');
     fs.mkdirSync(path.dirname(packaged),{recursive:true});
     assert.equal(committed.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
