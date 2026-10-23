@@ -233,6 +233,13 @@ test('Windows artifact evidence binds the exact Hook SHA through build report, m
   const wrapper=readCommittedWrapperSource(repo);
   assert.equal(wrapper.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
   assert.equal(wrapper.sha256,M1_CANONICAL_WRAPPER_SHA256);
+  const m9HookPath='security-lab/claude-native-hook.mjs';
+  const m9HookBlob=spawnSync('git',['-C',repo,'rev-parse',`HEAD:${m9HookPath}`],{encoding:'utf8',windowsHide:true});
+  assert.equal(m9HookBlob.status,0,(m9HookBlob.stdout??'')+'\n'+(m9HookBlob.stderr??''));
+  assert.equal(m9HookBlob.stdout.trim(),wrapper.blobSha,'M9 exact-source parity reads this M7 Hook path; it must match the installer payload source');
+  const m9HookBytes=spawnSync('git',['-C',repo,'cat-file','blob',`HEAD:${m9HookPath}`],{windowsHide:true});
+  assert.equal(m9HookBytes.status,0,(m9HookBytes.stderr??'').toString());
+  assert.deepEqual(m9HookBytes.stdout,wrapper.bytes,'M9 checked Hook Git blob must be byte-identical to the committed installer Hook');
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   assert.match(build,/wrapperSourceContentSHA256:packagedHookSource\.sha256/);
   const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8').replace(/\r\n/g,'\n');
