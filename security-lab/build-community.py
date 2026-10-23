@@ -42,7 +42,12 @@ pkg['scripts']['acceptance:offline']='npm run self-test && npm run types:check &
 pkg['scripts']['test']='node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts'
 pkg['scripts']['self-test']='node dist/competition.js self-test --json'
 (stage/'package.json').write_text(json.dumps(pkg,indent=2)+'\n')
-lock=json.loads((stage/'package-lock.json').read_text());lock['version']=pkg['version'];lock['packages']['']['version']=pkg['version'];(stage/'package-lock.json').write_text(json.dumps(lock,indent=2)+'\n')
+lock=json.loads((root/'package-lock.json').read_text(encoding='utf-8'))
+lock_root=lock.get('packages',{}).get('',{})
+if lock.get('name')!=pkg.get('name') or lock_root.get('name')!=pkg.get('name'):raise SystemExit('Community package lock name mismatch')
+for field in ('dependencies','devDependencies','optionalDependencies'):
+ if lock_root.get(field,{})!=pkg.get(field,{}):raise SystemExit('Community package lock '+field+' mismatch')
+lock['version']=pkg['version'];lock_root['version']=pkg['version'];(stage/'package-lock.json').write_text(json.dumps(lock,indent=2)+'\n',encoding='utf-8')
 version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True,'runtimeBaselineSHA':'99660b36db9d5b1121eea6fe06b026c5f1e36bcf','candidateId':a.candidate_id,'securityRuntimeModified':True,'repair':'Explicit product identity, Hook module-load denial, and recheck held file identity before effects; historical experiments are not relabelled as this build'}
 (stage/'FREE_BUILD_VERSION.json').write_text(json.dumps(version,indent=2)+'\n')
 for readme in ['README.md','README.zh-CN.md']:

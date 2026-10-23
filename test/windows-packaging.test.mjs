@@ -71,6 +71,27 @@ test('M7 reusable package smoke pins and applies its checker to the caller candi
   assert.doesNotMatch(workflow,/execution-isolation\/\*\*/);
 });
 
+test('Community source build transfers the patched dependency tree and keeps candidate metadata and audit policy',()=>{
+  const source=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
+  const pkg=JSON.parse(fs.readFileSync(path.join(repo,'package.json'),'utf8'));
+  const lock=JSON.parse(fs.readFileSync(path.join(repo,'package-lock.json'),'utf8'));
+  const lockRoot=lock.packages[''];
+  assert.match(source,/lock=json\.loads\(\(root\/'package-lock\.json'\)\.read_text\(encoding='utf-8'\)\)/);
+  assert.match(source,/lock_root=lock\.get\('packages',\{\}\)\.get\('',\{\}\)/);
+  assert.match(source,/lock\['version'\]=pkg\['version'\];lock_root\['version'\]=pkg\['version'\]/);
+  assert.match(source,/pkg\['version'\]='3\.0\.0-'\+a\.candidate_id/);
+  assert.match(source,/version=\{'product':.*?'candidateId':a\.candidate_id/s);
+  assert.match(source,/if lock_root\.get\(field,\{\}\)!=pkg\.get\(field,\{\}\)/);
+  for(const field of ['dependencies','devDependencies','optionalDependencies']){
+    assert.deepEqual(lockRoot[field]??{},pkg[field]??{},`root lock ${field} must match the candidate manifest`);
+  }
+  assert.equal(lock.packages['node_modules/body-parser'].version,'2.4.0');
+  assert.equal(lock.packages['node_modules/ip-address'].version,'10.7.4');
+  assert.equal(lock.packages['node_modules/zod'].version,'4.6.7');
+  assert.match(source,/\['audit','--json'\]/);
+  assert.doesNotMatch(source,/\['audit','--json','--audit-level'/);
+});
+
 test('payload inventory rejects symbolic links',t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-payload-link-'));
   try{
