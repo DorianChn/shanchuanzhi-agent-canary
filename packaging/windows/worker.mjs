@@ -116,6 +116,15 @@ export function finalizeAutoE4Artifacts(run,createBundle=makeEvidenceBundle){
   throw error;
  }
 }
+export function finalizeAndPublishAutoE4Evidence(run,directory,{createBundle=makeEvidenceBundle,fileSystem=fs}={}){
+ const finalized=finalizeAutoE4Artifacts(run,createBundle);
+ try{
+  writeFileAtomically(path.join(directory,'latest.json'),JSON.stringify({kind:'auto-e4',file:finalized.artifacts.jsonFile,markdownFile:finalized.artifacts.mdFile}),{replace:true,fileSystem});
+  return{...finalized,latestPointer:{status:'UPDATED'}};
+ }catch{
+  return{...finalized,latestPointer:{status:'FAILED',errorCode:'LATEST_POINTER_UPDATE_FAILED'}};
+ }
+}
 async function runAutoE4(state,version,receipt,manifest){
  safeDirectory(dataDir);
  const run=createAutoE4Run({dataDir,emit:e=>process.stdout.write(JSON.stringify(e)+'\n'),sanitize:e4Sanitize});
@@ -149,11 +158,11 @@ async function runAutoE4(state,version,receipt,manifest){
   await run.stage('github-pr',async()=>({status:'BLOCKED',detail:{reason:'PACKAGED_APP_HAS_NO_SOURCE_CHECKOUT_OR_GITHUB_WRITE_CREDENTIALS',localChangesCommitted:false,remoteWrites:false,summary:'The application will not search for, copy, or stage arbitrary user repositories.'}}));
   await run.stage('materials',async()=>({status:'PASS',detail:{reason:'REPORT_AND_EVIDENCE_INDEX_WILL_BE_GENERATED_IN_THIS_RUN_DIRECTORY',summary:'A run-specific evidence bundle is prepared after report finalization.'}}));
   let report=run.finish();report.commands=run.report.commands;report.environment=run.report.environment;report.installer=run.report.installer;report.software=run.report.software;report.operator=run.report.operator;report.sessionId=run.report.sessionId;
-  const {artifacts,bundle}=finalizeAutoE4Artifacts(run);
-  try{writeFileAtomically(path.join(dataDir,'latest.json'),JSON.stringify({kind:'auto-e4',file:artifacts.jsonFile,markdownFile:artifacts.mdFile}),{replace:true});}
-  catch(error){try{fs.rmSync(path.join(run.runDir,'evidence'),{recursive:true,force:true});}catch{}throw error;}
-  process.stdout.write(JSON.stringify({type:'result',status:report.technicalResult,overallE4:report.overallE4,reportFile:artifacts.jsonFile,markdownFile:artifacts.mdFile,bundleFile:bundle?.archive??null,bundleSHA256:bundle?.sha256??null,bundleBytes:bundle?.bytes??null,report:redact(report,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>']])})+'\n');
-  if(report.technicalResult==='FAIL')process.exitCode=1;
+  const {artifacts,bundle,latestPointer}=finalizeAndPublishAutoE4Evidence(run,dataDir);
+  const latestPointerFailed=latestPointer.status==='FAILED';
+  const outputReport=latestPointerFailed?{...report,publication:{evidence:'PUBLISHED',latestPointer}}:report;
+  process.stdout.write(JSON.stringify({type:'result',status:latestPointerFailed?'FAILED':report.technicalResult,errorCode:latestPointer.errorCode??null,latestPointer,overallE4:report.overallE4,reportFile:artifacts.jsonFile,markdownFile:artifacts.mdFile,bundleFile:bundle?.archive??null,bundleSHA256:bundle?.sha256??null,bundleBytes:bundle?.bytes??null,report:redact(outputReport,[[ROOT,'<INSTALL_DIR>'],[dataDir,'<APP_DATA>'],[os.homedir(),'<USER_HOME>'],[os.tmpdir(),'<TEMP_DIR>']])})+'\n');
+  if(latestPointerFailed||report.technicalResult==='FAIL')process.exitCode=1;
  }finally{run.release();}
 }
 export async function main(){writeM7LifecyclePhase('WORKER_ENTRY');if(!['initialize','environment','verify','export','record-install','auto-e4'].includes(action)||!ROLES.has(role))throw Error('COMMAND_OR_ROLE_INVALID');writeM7LifecyclePhase('MANIFEST_INSPECT_STARTED');const manifest=inspectPayload(ROOT,expected);writeM7LifecyclePhase('MANIFEST_INSPECT_COMPLETE');const version=JSON.parse(fs.readFileSync(path.join(ROOT,'VERSION.json'),'utf8'));

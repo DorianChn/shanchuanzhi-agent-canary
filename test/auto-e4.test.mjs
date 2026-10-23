@@ -7,6 +7,7 @@ import path from 'node:path';
 import {createAutoE4Run,AUTO_E4_STAGES,writeAutoE4Artifacts} from '../packaging/windows/auto-e4.mjs';
 import {runHookFaultChecks} from '../packaging/windows/e4-hook-faults.mjs';
 import {classifyModelResult} from '../security-lab/e4/model-result.mjs';
+import {finalizeAndPublishAutoE4Evidence} from '../packaging/windows/worker.mjs';
 import {fileURLToPath} from 'node:url';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -190,6 +191,35 @@ test('Auto E4 artifact writer refuses to overwrite a prior report',t=>{
   assert.equal(fs.readFileSync(files.jsonFile,'utf8'),originalJson);
   assert.equal(fs.readFileSync(files.mdFile,'utf8'),originalMarkdown);
   assert.equal(fs.readFileSync(files.indexFile,'utf8'),originalIndex);
+});
+
+test('Auto E4 preserves published evidence and reports latest-pointer failure',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-latest-pointer-failure-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const latest=path.join(data,'latest.json'),previous='{"kind":"auto-e4","file":"previous-run/report.json"}';
+  fs.writeFileSync(latest,previous);
+  const run=createAutoE4Run({dataDir:data});
+  const failingFileSystem={...fs,renameSync(source,target){if(path.resolve(target)===latest)throw Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});return fs.renameSync(source,target);}};
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    run.finish();
+    const {artifacts,bundle,latestPointer}=finalizeAndPublishAutoE4Evidence(run,data,{
+      fileSystem:failingFileSystem,
+      createBundle(directory){
+        const archive=path.join(directory,'AgentCanary-Auto-E4-Evidence.zip');
+        fs.writeFileSync(archive,'synthetic complete bundle',{flag:'wx'});
+        fs.writeFileSync(archive+'.sha256','synthetic bundle digest',{flag:'wx'});
+        return{archive,sha256:'synthetic',bytes:25};
+      }
+    });
+
+    assert.deepEqual(latestPointer,{status:'FAILED',errorCode:'LATEST_POINTER_UPDATE_FAILED'});
+    assert.equal(fs.readFileSync(latest,'utf8'),previous);
+    assert.equal(path.dirname(artifacts.jsonFile),path.join(run.runDir,'evidence'));
+    for(const file of [artifacts.jsonFile,artifacts.mdFile,artifacts.indexFile,path.join(path.dirname(artifacts.jsonFile),'events.jsonl'),bundle.archive,bundle.archive+'.sha256'])assert.equal(fs.statSync(file).isFile(),true,file);
+    assert.equal(JSON.parse(fs.readFileSync(artifacts.jsonFile,'utf8')).runId,run.runId);
+    assert.deepEqual(fs.readdirSync(path.dirname(artifacts.jsonFile)).sort(),['AUTO_E4_REPORT.json','AUTO_E4_REPORT.md','AgentCanary-Auto-E4-Evidence.zip','AgentCanary-Auto-E4-Evidence.zip.sha256','EVIDENCE_INDEX.json','events.jsonl'].sort());
+  }finally{run.release();}
 });
 
 test('Auto E4 rejects concurrent duplicate stages and keeps active-stage state internal',async t=>{
