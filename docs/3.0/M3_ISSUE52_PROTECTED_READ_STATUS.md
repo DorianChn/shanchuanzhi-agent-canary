@@ -446,3 +446,21 @@ advisories. These are outside M3 ownership. Keep Issue #52 OPEN / P0 /
 NOT_VERIFIED until the M9 package-composition owner aligns the public M2 export
 bytes in the M3 package tree and exact-current Ubuntu/Windows composition
 passes.
+
+### Latest M9 completion — 2026-10-24
+
+M9 PR #36 is at `80b721f02d5aa861654b89d3fd019b369caa3a39`. Run
+`40034276936` pins M3 code `98a034fa2066cec18f833440cc51275c389681c6` (M3
+PR #90 `de12f31` adds documentation only), M2
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5
+`cca42cd1762f995e92454d55ffa5e63951e39144`. The ordinary-CLI subtest fails
+on both Ubuntu and Windows: its actual HTTP status is
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; the internal M3 adapter reason is
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`. Direct M3 adapter composition with the
+packed exact M2 facade and M5 router (subtests 16/17) passes on both hosts,
+including alias denial. A separate M8 candidate subtest 10 also fails.
+
+M9 wrapper run `40034276939` fails its audit step on existing Hono,
+ip-address, and zod advisories. M3 PR checks remain green. Issue #52 remains
+OPEN / P0 / NOT_VERIFIED until the public M2 export bytes are composed into
+the M3 package target and the exact-source M9 run passes both hosts.
