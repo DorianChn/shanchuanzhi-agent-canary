@@ -406,3 +406,39 @@ M9's focused gate now asserts the exact M3 export boundary, the owner-export dis
 - M2 exact head `3a60813` remains subject to its hosted concurrency failure in run `39907522136` (Issue #51). M3 exact head `47474e3` passed its owner workflow run `39911107983` (9/9). M9's changes here are local only; PR #36 has not been pushed or hosted on this refreshed pin set.
 
 The exact M3 package remains SDK-only even though its temporary test tarball adds owner export entries. The M6 verifier remains repository-only despite its passing fixture tests. These package boundaries and evidence limits are now enforced by M9-owned assertions.
+
+## Repinned owner candidates and exact package readiness gate — 2026-10-23
+
+This section supersedes the prior M2/M3/M4/M6/M8 pin snapshot above. The M9 workflow and exact-source test now pin the currently published owner candidates:
+
+| Module / PR | Exact owner SHA |
+| --- | --- |
+| M1 / #43 | `fa369069241bf81d32c7f39d31a61806efa55fe4` |
+| M2 / #37 | `db98c7d5d409aa390ef539c96a209d6daba8d793` |
+| M3 / #33 | `df580cf712ba36863b9245fbb5bbacf484dac919` |
+| M4 / #34 | `d0bc987e509ffcddd04880d35f9b6791a9aed0e4` |
+| M5 / #47 | `7fa47e8d82e4b92307a4429ea743931b4600ac90` |
+| M6 / #38 | `392a7c24697fd8925e3022616aad054922efb38f` |
+| M7 / #39 | `97bb8de315f2c19edbaa4d6536abc50876fecffd` |
+| M8 / #40 | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` |
+
+The exact M2 public facade is `createSecurityGatewayHostAdapter`, exported at `./gateway-adapter`. The M5 owner package declares `./policy-router` with `types: ./dist/policy-router.d.ts` and JS `import`/`default: ./dist/policy-router.js`; both files exist and `dist` is in its `files` allowlist. The M5 owner reports that its actual 94-file npm tarball imports successfully and approves this export for a single integrated package. This verifies the M5-owned package boundary only; it does not turn the standalone M3 package into that aggregate package.
+
+At exact M3 head `df580cf712ba36863b9245fbb5bbacf484dac919`, the real-package opt-in gate packs the unchanged M3 checkout and returns `NOT_READY` for its 96-file candidate. The M9 regression invokes that gate against exact M1 `fa369069`, M2 `db98c7d5`, and M5 `7fa47e8` roots and asserts its exact result:
+
+1. `M1: integrated target bytes differ from the exact owner (./dist/sdk.d.ts)`
+2. `M2: integrated package does not export ./gateway-adapter`
+3. `M5: integrated package does not export ./policy-router`
+
+The gate's exit code 1 is the expected result for this candidate, and the surrounding M9 test passes only when the machine-readable `NOT_READY`, M3 package SHA, 96-file count, and all three issue strings match. PR #33 by itself therefore does not produce a supported packaged M1/M2/M5 composition. M3's synthetic merged-tarball test remains explicitly labeled as a synthetic composition fixture: it exercises exact owner export bytes and injected fixture behavior, but does not publish M2's `./gateway-adapter` or M5's `./policy-router` from the M3 package. M9's separate runtime fixtures are also synthetic and do not prove first-party host wiring or real user-file access.
+
+M6's `security-lab/e4/verify-bundle.mjs` and receipt schema remain repository-only tooling omitted by the npm `files` allowlist; the released CLI/package must not be described as including that verifier. The verifier checks receipts against fixtures, but no independent product-level E4 run or receipt is established here.
+
+### Exact-source validation and hosted checks
+
+- M9 `node --import tsx --test test/m9-cross-module-composition.test.mjs` passed **16/16** using the exact M1–M8 roots above. This includes the expected-NOT_READY real-package assertion, explicit M3 SDK-only/M2-and-M5 export boundaries, M5 target and allowlist assertions, M6 package preview exclusion, and the existing source/API and synthetic fixture checks.
+- The M3 synthetic owner-consumer suite had previously passed **6/6** against the exact M1/M2/M3/M5 heads, consuming a real npm tarball from M2 `db98c7d5`; those results remain synthetic and do not override the M3 real-package gate.
+- The exact owner-head hosted workflows are green at the pins above: M1 runs `39903113727` and `39903113558` (including its file-store tests), M2 run `39913491343`, M3 run `39913500554`, M4 run `39913504965`, M5 run `39902163975`, M6 run `39910433154` plus wrapper run `39910433046`, M7 run `39904585997` plus wrapper run `39904585994`, and M8 run `39911831058` plus wrapper run `39911831084`. These owner checks do not establish that the M9 combined workflow has run at the refreshed pins.
+- The M9 changes are local until the coordinator's next push batch. PR #36's current hosted checks do not yet validate this refreshed workflow; a new M9 CI run is required after publication.
+
+Issue #52 remains **OPEN / P0 / NOT_VERIFIED** because the package fixtures do not prove supported product-host wiring, real protected-resource reads, or OS-atomic TOCTOU behavior. Issue #57 remains **OPEN / P1 / NOT_VERIFIED** pending a separately produced and independently reviewed E4 receipt. Neither issue was closed or modified. The exact M3 package gate and these issue states are M9 integration acceptance controls; no synthetic pass may be presented as a shipped package or independent E4 result.

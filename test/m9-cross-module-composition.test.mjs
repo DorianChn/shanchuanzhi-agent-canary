@@ -19,9 +19,9 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 
 const pinnedSourceShas = {
   M1: 'fa369069241bf81d32c7f39d31a61806efa55fe4',
-  M2: '3a60813e90d470cb2e5d609444aba0ffc240411c',
-  M3: '47474e3ea71b8a3ab0f175a74e2970ee52150878',
-  M4: 'd62557a03883c459cce6bec60b36686128ccf73d',
+  M2: 'db98c7d5d409aa390ef539c96a209d6daba8d793',
+  M3: 'df580cf712ba36863b9245fbb5bbacf484dac919',
+  M4: 'd0bc987e509ffcddd04880d35f9b6791a9aed0e4',
   M5: '7fa47e8d82e4b92307a4429ea743931b4600ac90',
   M6: '392a7c24697fd8925e3022616aad054922efb38f',
   M7: '97bb8de315f2c19edbaa4d6536abc50876fecffd',
@@ -74,10 +74,50 @@ test('exact M3 package stays SDK-only while the M3 consumer fixture composes own
   assert.equal(m3Package.exports['./policy-router'], undefined, 'M5 policy router is not exported by the exact M3 package');
   assert.equal(typeof m2Package.exports?.['./gateway-adapter'], 'string', 'M2 owns the public gateway-adapter export');
   assert.ok(m5Package.exports?.['./policy-router'], 'M5 owns the public policy-router export');
+  assert.deepEqual(m5Package.exports['./policy-router'], {
+    types: './dist/policy-router.d.ts',
+    import: './dist/policy-router.js',
+    default: './dist/policy-router.js',
+  }, 'M5 owns an exact JS and declaration entry for policy-router');
+  assert.ok(m5Package.files?.includes('dist'), 'M5 package allowlist must include its public dist targets');
+  for (const target of ['dist/policy-router.js', 'dist/policy-router.d.ts']) {
+    assert.ok(fs.statSync(path.join(sourceRoots.M5.root, target)).isFile(), `M5 owner target must exist: ${target}`);
+  }
 
   const ownerConsumer = fs.readFileSync(path.join(sourceRoots.M3.root, 'test', 'packaged-owner-consumer.test.mjs'), 'utf8');
   assert.match(ownerConsumer, /const composedExports\s*=\s*\{[\s\S]*?\.\.\.m1\.exports,[\s\S]*?\.\.\.m2\.exports,[\s\S]*?\.\.\.m5\.exports/);
   assert.match(ownerConsumer, /npm pack/, 'the M3 owner-consumer contract builds its own temporary tarball');
+  assert.match(ownerConsumer, /synthetic composition fixture/i, 'M3 labels its merged package consumer as a synthetic fixture');
+});
+
+test('M3 real-package integration gate reports the exact standalone candidate as NOT_READY', () => {
+  const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const result = spawnSync(npmCommand, ['run', '--silent', 'check:integrated-package'], {
+    cwd: sourceRoots.M3.root,
+    env: {
+      ...process.env,
+      M1_ROOT: sourceRoots.M1.root,
+      M2_ROOT: sourceRoots.M2.root,
+      M5_ROOT: sourceRoots.M5.root,
+    },
+    encoding: 'utf8',
+    windowsHide: true,
+    shell: process.platform === 'win32',
+  });
+  assert.equal(result.error, undefined, `M3 real-package gate must start: ${result.error?.message ?? ''}`);
+  assert.equal(result.status, 1, `the exact standalone M3 candidate is not ready; output: ${result.stdout}\n${result.stderr}`);
+  const jsonStart = result.stdout.indexOf('{');
+  const jsonEnd = result.stdout.lastIndexOf('}');
+  assert.ok(jsonStart >= 0 && jsonEnd > jsonStart, `M3 gate must return machine-readable JSON: ${result.stdout}`);
+  const report = JSON.parse(result.stdout.slice(jsonStart, jsonEnd + 1));
+  assert.equal(report.status, 'NOT_READY');
+  assert.equal(report.packageHead, pinnedSourceShas.M3);
+  assert.equal(report.packedFileCount, 96, 'M3 exact standalone npm pack contains 96 files');
+  assert.deepEqual(report.issues, [
+    'M1: integrated target bytes differ from the exact owner (./dist/sdk.d.ts)',
+    'M2: integrated package does not export ./gateway-adapter',
+    'M5: integrated package does not export ./policy-router',
+  ]);
 });
 
 test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the npm package', () => {
