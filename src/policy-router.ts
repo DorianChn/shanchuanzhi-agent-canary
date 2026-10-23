@@ -9,7 +9,7 @@ export {
   type SecurityDecision,
   type SecurityAction,
 } from './security-router.js';
-export type { RiskPolicyExecutionContext } from './risk-policy.js';
+export type { RiskPolicyExecutionContext, TrustedFileReadCapabilityProvider } from './risk-policy.js';
 export {
   createGatewayFileReadCapabilityProvider,
   type GatewayFileReadCapabilityAPI,

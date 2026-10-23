@@ -14,6 +14,8 @@ export interface RiskToolDescriptor { operation: ToolOperation; pathArg?: string
 export interface TrustedFileReadCapabilityProvider {
   resolve(call: Readonly<ToolCall>): unknown;
   verify(capability: unknown, call: Readonly<ToolCall>, operation: 'file-read'): boolean;
+  /** Strict reads use this provider directly; never delegate the held-file read to a path callback. */
+  readFileWithCapability(capability: unknown, call: Readonly<ToolCall>, signal?: AbortSignal): Promise<unknown>;
 }
 /** The host-only portion of M1's Gateway used to issue and revalidate held-file capabilities. */
 export interface GatewayFileReadCapabilityAPI<TCapability extends object = object> {
@@ -31,7 +33,7 @@ export interface GatewayFileReadCapabilityBinding {
 export interface GatewayFileReadCapabilityProvider extends TrustedFileReadCapabilityProvider {
   readFileWithCapability(capability: unknown, call: Readonly<ToolCall>, signal?: AbortSignal): Promise<unknown>;
 }
-/** Passed only to the trusted host callback for a validated strict file read. */
+/** Internal strict-read context; it is never forwarded to the generic executor. */
 export interface RiskPolicyExecutionContext { readonly fileReadCapability?: unknown }
 export type PolicyRealToolExecutor<T> = (call: ToolCall, context?: Readonly<RiskPolicyExecutionContext>) => T | Promise<T>;
 
@@ -124,7 +126,7 @@ export interface RiskPolicyOptions {
   workspaceRoot: string;
   /** Opt in to M1-pinned reads and fail-closed writes/deletes. OBSERVE always rejects canonical aliases/escapes, even when omitted or false. */
   verifyRealPaths?: boolean;
-  /** Trusted host lookup and M1 verification for a constructor-registered, safe file-read capability. Path strings alone never satisfy verifyRealPaths. */
+  /** Trusted host lookup, M1 verification, and held-file read for a constructor-registered safe file. Path strings alone never satisfy verifyRealPaths. */
   fileReadCapability?: TrustedFileReadCapabilityProvider;
   /** Trusted host registration; never accept these descriptors from model arguments. */
   tools: Record<string, RiskToolDescriptor>;
@@ -253,6 +255,18 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
       const decision:PolicyDecision={action:'DENY',risks:['READ_ONLY'],reason:'path_execution_not_pinned',mode};
       await recordRecheckedDenial(call,decision);audit('policy_blocked',call,decision);throw new PolicyBlockedError(decision);
     }
+    if(isStrictFileRead(call)){
+      const provider=options.fileReadCapability;
+      const capability=executionContext?.fileReadCapability;
+      // The held-file provider is the executor for strict reads. A generic
+      // callback can reinterpret the path and ignore a capability, so it must
+      // never receive a strict read after the policy checks pass.
+      if(!provider||typeof provider.readFileWithCapability!=='function'||capability===undefined||capability===null){
+        const decision:PolicyDecision={action:'DENY',risks:['READ_ONLY'],reason:'path_execution_not_pinned',mode};
+        await recordRecheckedDenial(call,decision);audit('policy_blocked',call,decision);throw new PolicyBlockedError(decision);
+      }
+      return await provider.readFileWithCapability(capability,call);
+    }
     return executionContext?options.executeRealTool(call,executionContext):options.executeRealTool(call);
   }});
   function audit(kind:'policy_allowed'|'policy_blocked'|'policy_approval_required'|'policy_approval_granted',call:ToolCall,d:PolicyDecision){
@@ -275,7 +289,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   }
   function hasValidFileReadCapability(call:ToolCall,context:RiskPolicyExecutionContext|undefined):boolean {
     const capability=context?.fileReadCapability;
-    if(!isStrictFileRead(call)||capability===undefined||capability===null||!options.fileReadCapability)return false;
+    if(!isStrictFileRead(call)||capability===undefined||capability===null||!options.fileReadCapability||typeof options.fileReadCapability.readFileWithCapability!=='function')return false;
     try{return options.fileReadCapability.verify(capability,call,'file-read')===true;}catch{return false;}
   }
   function classify(call:ToolCall,executionContext?:RiskPolicyExecutionContext):PolicyDecision {
