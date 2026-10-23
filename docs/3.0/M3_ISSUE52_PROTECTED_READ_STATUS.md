@@ -464,3 +464,21 @@ M9 wrapper run `40034276939` fails its audit step on existing Hono,
 ip-address, and zod advisories. M3 PR checks remain green. Issue #52 remains
 OPEN / P0 / NOT_VERIFIED until the public M2 export bytes are composed into
 the M3 package target and the exact-source M9 run passes both hosts.
+
+### Exact-current-PR M9 rerun — 2026-10-24
+
+M9 PR #36 is at `405a4fbbbe41a192f2dad8a8e52c246ed5c7bc2e`. Run
+`40035799661` pins current M3 PR #90 head
+`10d488336ce8873f7eeade59064f6601f468e126`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. The ordinary-CLI subtest 11
+fails on both Ubuntu and Windows with actual HTTP status
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; the internal adapter reason remains
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`. Direct packed exact-M2/M5 subtests 16/17
+pass on both hosts, including alias denial. The public export target blob
+mismatch is unchanged; a separate M8 subtest 10 also fails.
+
+M9 wrapper run `40035799522` fails its audit step on existing Hono,
+ip-address, and zod advisories. M3 PR checks pass. Keep Issue #52 OPEN / P0 /
+NOT_VERIFIED pending M9/package composition alignment and a successful
+exact-source Ubuntu/Windows run.
