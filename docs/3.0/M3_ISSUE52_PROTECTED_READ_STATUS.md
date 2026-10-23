@@ -486,12 +486,20 @@ exact-source Ubuntu/Windows run.
 ### Fixed-path Host probe/status verification — 2026-10-24
 
 M3 PR #90 exact head `3a377ffe1d1f34b97a71ae6657accb9126d052f2` composes the
-normal Console protected-read probe through the public M1 held-file Gateway
-capability, M2 `createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router
+normal Console protected-read probe against public M1 held-file Gateway,
+M2 `createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router contracts
 with `verifyRealPaths:true`. M3 owns the fixed registered tool/path and
 sanitized route. It verifies the opaque M2 capability before adapting the
-capability-bound M2 executor to M5; no generic path-only callback is accepted.
-Missing owner exports/methods fail closed as `UNKNOWN`.
+capability-bound M2 executor/provider to M5; no generic path-only callback is
+accepted. Missing owner exports/methods fail closed as `UNKNOWN`.
+
+The default Console process resolves package self-reference exports from the
+M3 package. Its `gateway-adapter` target blob is
+`7a05ed64300c6345222dff13a4e929a250646acc`, different from exact M2 PR #91
+blob `0d7053114e87177669ec2c3b416028e05affb62f`. The local CLI positive test
+uses the checked-in M3 package path and synthetic capability fixture; it does
+not prove the ordinary process consumed the exact M2 candidate package. M9's
+current-source package-composition test is needed to settle this boundary.
 
 The POST action checks CSRF, operator authority, and an empty request body
 before loading probe dependencies. Its PASS requires the fixed registered-read

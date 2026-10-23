@@ -446,13 +446,22 @@ exact-source Ubuntu/Windows test successfully.
 
 Current M3 PR #90 exact head is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`.
 The first-party Console protected-read action in
-`src/codex-connection-mcp.ts` composes the public M1 Gateway capability, M2
-`createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router. M3 fixes the
-tool name, relative file, and argument shape; the M2 capability-bound executor
-receives the same opaque verified capability and calls the held-read path. The
-M5 router is requested with `verifyRealPaths:true`. Missing M1/M2/M5 methods or
-exports leave the adapter `UNKNOWN`; the Console route exposes only its bounded
-status enum and never falls back to a path-only callback.
+`src/codex-connection-mcp.ts` is written against the public M1 Gateway
+capability, M2 `createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router
+contracts. M3 fixes the tool name, relative file, and argument shape; its M2
+bridge verifies the opaque capability before passing it to M5 through the
+M2 capability-bound executor/provider. The M5 router is requested with
+`verifyRealPaths:true`. Missing M1/M2/M5 methods or exports leave the adapter
+`UNKNOWN`; the Console route exposes only its bounded status enum and never
+falls back to a path-only callback.
+
+The default Console process resolves these public self-reference subpaths from
+the M3 package. Its `gateway-adapter` target blob is
+`7a05ed64300c6345222dff13a4e929a250646acc`, which differs from exact M2 PR #91
+blob `0d7053114e87177669ec2c3b416028e05affb62f`. The local first-party CLI test
+therefore validates the checked-in M3 package path and synthetic capability
+fixture, not composition with the exact M2 candidate. M9 must repin current M3
+and run its package-composition check to resolve this boundary.
 
 The protected-read POST validates CSRF/operator/body before loading probe
 dependencies. It returns PASS only after the fixed registered-file positive
