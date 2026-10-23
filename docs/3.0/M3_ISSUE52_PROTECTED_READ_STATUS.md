@@ -176,3 +176,42 @@ active. The existing GET remains status-only. M4 must continue reporting
 Issue #52 remains `OPEN / P0 / NOT_VERIFIED` until supported owner dependencies
 are wired and the real product-host configuration plus attacker-controlled
 alias acceptance passes. No M1/M2/M4/M5 source or shared M0 contract was changed.
+
+## M3 Console fixed-probe action — 2026-10-23 follow-up
+
+The Console now owns `POST /api/security-center/protected-read`. It accepts an
+exact empty JSON object, requires the existing CSRF check and a configured
+operator code in `x-canary-operator-code`, and exposes only the fixed scope,
+status, reason enum, and marker-match boolean. It creates a per-request
+temporary directory only after both checks, registers only
+`agent-canary-public.txt`, composes M1/M2/M5 through injected trusted factories
+or public package exports, closes the Gateway before cleanup, and removes only
+the identity-checked file and directory it created. Missing owner exports,
+unclassified dispatch failures, an unexpected marker, or failed cleanup remain
+`UNKNOWN`; only explicit M1/M5 `DENY` is surfaced as `DENY`. There is no path
+argument, direct Console file-read fallback, or user-workspace path.
+
+### Exact owner candidate surfaces rechecked
+
+| Owner | Current local PR candidate | Public surface verified |
+| --- | --- | --- |
+| M1 | PR #43, `6886d6eef3beb972bc8f4c797584b0f522483870` | `createTrustedExecutionGateway` and the held-file capability methods are exposed through `./sdk`. |
+| M2 | PR #37, `67428139e53c3f63a1101b4f94e84b291cbb1196` | `createSecurityGatewayHostAdapter` is exposed through `./gateway-adapter`; its fixed file map routes to M5 and M1. |
+| M5 | PR #47, `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | `createSecurityToolRouter` is exported through `./sdk`; strict real-path mode requires a valid M1 capability and preserves hard `DENY` under `OBSERVE`. |
+| M3 | PR #33, current source base `34b526d` plus the local Console change | Public self-package loader, fixed route, request authorization, sanitized output, and identity-checked cleanup are M3-owned. |
+
+The M3 package manifest at its current source base exposes only `./sdk`, so
+`./gateway-adapter` is not available in the default current M3 build. The
+default Console action was exercised against that package gate and returns
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating the probe directory or
+Gateway. The injected M3 tests verify request and response boundaries and
+cleanup using structural test doubles; they do not count as M1/M2/M5 product
+security evidence.
+
+M9 must still run the exact-source composed Console route against the M1, M2,
+M3, and M5 owner sources and preserve the positive, explicit-deny, unknown,
+wrong-marker, alias, same-path replacement, zero-callback, unchanged-fixture,
+and cleanup controls. This Console probe covers only a synthetic temporary
+file. Issue #52 remains `OPEN / P0 / NOT_VERIFIED`; no arbitrary product-host
+file protection, native tool coverage, or OS-atomic identity guarantee is
+claimed. No M1/M2/M4/M5 source or shared M0 contract was changed.
