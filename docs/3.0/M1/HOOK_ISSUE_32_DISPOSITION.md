@@ -28,3 +28,14 @@ The source comparison cannot distinguish among child-start/import timing, Window
 - [PR #30 run 39891131432](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39891131432), Windows Node 20 job 120210892310.
 - [Issue #32](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/32).
 
+## 2026-10-23 M0 CI run 39897597172 — old fixture recurrence
+
+The new M0 run evaluated PR #30 head `8202a83e78c0600d6b6f6196bd08c63bda18214b`. That exact commit changes only `docs/3.0/TECHNICAL_STATUS.md`; it does not change the M1 Hook source, native wrapper, or interruption test.
+
+- Windows Node 20 job `120231512420` failed `native lab wrapper interruption emits no allow decision and invokes no tool callback` at `test/agent-hook.test.ts:54:53` with `false !== true`. The failed assertion is the synthetic child-entry marker check; later output/decision assertions were not reached.
+- The run reports 321 passed, 1 failed, 4 skipped; `package-smoke` was skipped. No other cancelled or skipped matrix job is counted as failed.
+- The run's test blob is the older `1ecb3ee8b45f1fbe942a25bcd5ce696f82534601`. Current M1 PR #43 has test blob `82ca4662e0a6c4269011ff8eba9470f2a26ccc39`; it uses an asynchronous marker handshake and external interruption after the synthetic child enters, then checks empty output and no decision log. The two blobs are not the same fixture source.
+- This recurrence supports only **ROOT CAUSE UNKNOWN** for the old synthetic marker failure. It does not demonstrate a permission allow, native callback, protected-file read, or Issue #52 regression. Keep Issue #32 **OPEN / P1** and retain all current assertions. No CI rerun or test change was made for this disposition.
+
+Evidence: [M0 CI run 39897597172](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39897597172).
+
