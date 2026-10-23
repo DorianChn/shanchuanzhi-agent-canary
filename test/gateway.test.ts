@@ -88,6 +88,32 @@ test('file-read capability revalidates held identity immediately before reading'
   assert.equal(s.guard.state,'QUARANTINED');assert.equal(s.evidence.snapshot().at(-1)!.execution_status,'FAILED');
  }finally{await s.runtime.close();}
 });
+test('file-read capability revalidates identity after async review before creating approval',async()=>{
+ let releaseReview!:()=>void,reviewStarted!:()=>void;
+ const reviewReady=new Promise<void>(resolve=>{reviewStarted=resolve}),holdReview=new Promise<void>(resolve=>{releaseReview=resolve;});
+ const s=setup({
+  files:[{path:'public.txt',approvalRequired:true}],
+  reviewTimeoutMs:5_000,
+  provider:{analyze:async()=>{reviewStarted();await holdReview;return{status:'ok',advisoryOnly:true,verdict:'benign',severity:'low',confidence:null,summary:'synthetic review',reasoningSummary:'synthetic review',recommendedActions:[],evidence:[]};}},
+ });
+ const original=path.join(s.root,'public.txt'),held=path.join(s.root,'public.held.txt'),call={name:'read_public',args:{path:'public.txt'}};
+ try{
+  const capability=s.runtime.bindFileReadCapability({toolName:'read_public',operation:'file-read',path:'public.txt'});
+  const read=s.runtime.readFileWithCapability(capability,call,'file-read');
+  await reviewReady;
+  fs.renameSync(original,held);fs.writeFileSync(original,'replacement target');
+  releaseReview();
+  await assert.rejects(read,/GATEWAY_DENY:resource_not_bound/);
+  assert.equal(s.runtime.operator.pending().length,0,'a path replaced during review must not create a stale approval');
+  assert.equal(s.evidence.snapshot().at(-1)?.decision,'DENY');
+  assert.equal(s.evidence.snapshot().at(-1)?.decision_reason,'resource_not_bound');
+  assert.equal(fs.readFileSync(original,'utf8'),'replacement target');
+  assert.equal(fs.readFileSync(held,'utf8'),'hello');
+ }finally{
+  releaseReview();
+  await s.runtime.close();
+ }
+});
 test('Windows directory-junction replacement during a held read never returns content', {skip:process.platform!=='win32'}, async()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-held-junction-')),boundDir=path.join(root,'workspace'),heldDir=path.join(root,'workspace-held'),outsideDir=path.join(root,'outside');
  fs.mkdirSync(boundDir);fs.mkdirSync(outsideDir);fs.writeFileSync(path.join(boundDir,'public.txt'),'authorized original');fs.writeFileSync(path.join(outsideDir,'public.txt'),'NOT_A_REAL_CREDENTIAL');
