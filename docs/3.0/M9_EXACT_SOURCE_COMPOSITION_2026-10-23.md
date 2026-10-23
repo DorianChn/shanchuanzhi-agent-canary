@@ -691,3 +691,15 @@ The same five assertions fail on both platforms:
 Current M8 PR #40 source was included in this workflow and its dedicated test step passed. The separate CI run 39978172153, Windows Community wrapper 39978171989, and AC3 coordination run 39978254905 passed. Issues #87, #88, and #89 remain OPEN; current M8 shared-test disposition #59 and current M3 exact-file review #72 remain OPEN. Product acceptance #52 and independent E4 #57 remain NOT_VERIFIED and are separate from synthetic composition.
 
 A local worktree audit at 2026-10-23 16:22 UTC found no owner implementation repair for these failures: M2 remains clean at db98c7d; M3 has only a test commit and uncommitted test change; M5 and M6 have only test-only commits. M0 did not edit M1-M8 implementation. Keep M9 OPEN/Draft until owners fix and review their owned changes and exact-source composition passes.
+## Current exact-head hosted result — 2026-10-23 16:28–16:31 UTC
+
+M9 PR #36 current head a2f478864250c0ec1bc79866074ce855bfba38ae is report-only. The exact-source run 39986788529 completed FAILURE on both Ubuntu and Windows. Each platform ran 20 tests: 15 passed, 5 failed, 0 skipped. The same five failures remain:
+1. M2/M5/M7/M9 Hook copies differ from M1 canonical.
+2. P0 #88: M2 caller-controlled reason canaries appear on stdout for allow, deny, and ask.
+3. M3 Hook differs from M1 canonical.
+4. P0 #89: M3 caller-controlled reason canaries appear on stdout for allow, deny, and ask.
+5. P1 #87: registered held-file read returns DENY / path_execution_not_pinned instead of OBSERVE_ONLY.
+
+Both OS jobs passed the exact M1 held-Gateway, M3 build/focused onboarding, M5 policy, M6 Auto E4 lifecycle, and current M8 PR #40 dedicated steps; only the final M9 composition regression step failed. For this head, CI 39986788654, Windows Community wrapper 39986788596, and AC3 coordination runs 39986788527 and 39987253619 passed. The failing assertions and denial controls remain intact. Current M8's exact PR checks remain green, while #59 and #72 owner dispositions remain open.
+
+No code-source change was included in a2f; the result confirms the five blockers on the report-only rerun. M9 remains OPEN/Draft.
