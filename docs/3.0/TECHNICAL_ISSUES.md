@@ -1649,3 +1649,4 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#70 P1:** OPEN / queued to M7; existing Dependabot PR #67 upgrades Hono 4.13.7 to 4.13.13. No `serveStatic` callsite or actual exposure confirmed; require exact package-smoke and applicability review.
 - **#71 P1:** OPEN / queued M3 for Windows Node 20 fixture teardown `ENOTEMPTY`.
 - **#72 P1:** OPEN / queued M1 for exact-blob review of M3 Hook changes.
+- **00:34 UTC checkpoint:** M9 PR #36 now publishes exact-source refresh head `81dea34a24d3dd8c080206367fced54466987c26`, with M7 `f20e307` and M8 `854de50` pins. Exact detached composition passed locally, but hosted Ubuntu/Windows exact-source runs are pending; Issue #74 remains OPEN until those checks complete.
