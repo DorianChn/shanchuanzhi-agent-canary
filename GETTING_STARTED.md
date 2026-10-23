@@ -1,6 +1,6 @@
 # Getting started
 
-The v3.0.0 GitHub Release is published, but it has no attached Release assets. This guide uses the v3.0.0 CLI package from GitHub Packages or builds from the `v3.0.0` source tag; GitHub Packages distribution is separate from GitHub Releases. The moving `feature/agent-canary-3.0` branch is a separate development build and may differ from that source tag. The five-minute target assumes Node.js is installed and a GitHub token with `read:packages` is available; first-time account/token setup or dependency downloads may take longer.
+The v3.0.0 GitHub Release is published, but it has no attached Release assets. The `v3.0.0` source manifest declares a CLI package on GitHub Packages; package retrieval is not verified by this guide and requires a GitHub token with `read:packages`. The tag-pinned source-build path below is separately available. The moving `feature/agent-canary-3.0` branch is a different development build and may differ from that source tag. The five-minute target assumes Node.js is installed and GitHub Packages access is configured; first-time account/token setup or dependency downloads may take longer.
 
 ## Five-minute quick start: v3.0.0 package
 

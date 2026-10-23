@@ -17,6 +17,8 @@ Please report privately:
 
 Installing a decoy MCP server does not make unrelated tools guarded. Native shell and file operations, arbitrary third-party MCP servers, unregistered callbacks, operating-system calls, and actions already started are outside the product's general protection claim.
 
+The reviewed first-party desktop Console has not been verified as a product-file reader: its status UI reports `NOT_VERIFIED`, the checked-in M4 server has no `GET /api/security-center` handler, and no supported OBSERVE read callsite consumes an M1-bound file identity through the M2 adapter. Temporary-file demos and virtual policy callbacks are not product-file protection. Track this integration boundary in [issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52).
+
 ## Report a vulnerability
 
 Use [GitHub Security Advisories](https://github.com/DorianChn/shanchuanzhi-agent-canary/security/advisories/new) to create a private report. Do not post exploit steps, real tokens, customer data, or sensitive logs in a public issue or discussion.

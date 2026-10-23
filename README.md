@@ -7,8 +7,8 @@ Agent Canary provides inert MCP decoys and synthetic canary tokens that can surf
 ## Project status
 
 - **Release status:** v3.0.0 is published as the [Agent Canary 3.0 GitHub Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). The release is tied to its source snapshot.
-- **Install:** the v3.0.0 CLI package is distributed separately through GitHub Packages and requires a GitHub token with `read:packages`; see [Getting Started](GETTING_STARTED.md).
-- **Container image:** The public GHCR package lists the `3.0.0` and `latest` tags. A local pull and runtime behavior have not been verified in this documentation update.
+- **Install:** the v3.0.0 source manifest declares a CLI package on GitHub Packages, which requires a GitHub token with `read:packages`. Package retrieval was not verified in this review; see [Getting Started](GETTING_STARTED.md) for the tag-pinned source-build path.
+- **Container image:** Current GHCR package/tag availability, local pull, and runtime behavior are **NOT_VERIFIED** in this review. Do not assume the `3.0.0` or `latest` tags are pullable.
 - **Independent E4 reproduction:** NOT_VERIFIED; the evidence index records what was and was not tested.
 - **License:** MIT for this repository. Third-party dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - **Runtime:** Node.js 20 or newer for the source build.
@@ -23,8 +23,8 @@ In particular, Agent Canary does **not** claim to prevent prompt injection, stop
 
 - **Native Codex Shell — UNPROTECTED:** Agent Canary does not intercept Codex's built-in Shell; MCP/Guard setup does not change that.
 - **AppContainer — LIMITED:** Verified coverage is limited to the tested child-process operations; this is not evidence of whole-host or general shell protection.
-- **First-party Security Center protected read — NOT_VERIFIED:** The default route fails closed without a trusted composition bootstrap. An end-to-end read through the trusted Gateway, host facade, and strict policy router has not been verified.
-- **Security Center / E4 backend runtime — UNKNOWN:** An HTTP 404 does not establish success or failure.
+- **First-party Security Center protected read — NOT_VERIFIED:** The reviewed M4 desktop source has no first-party OBSERVE read callsite consuming an M1-bound file identity through the M2 adapter. Its status UI hardcodes `NOT_VERIFIED`, and `GET /api/security-center` has no handler (404). Temporary-file demos and virtual policy reads do not prove product-file protection; see [issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52).
+- **Security Center / E4 status APIs — UNKNOWN:** The reviewed desktop server also has no `GET /api/e4/status` handler (404). A missing status endpoint is not evidence of protection or of a successful security denial.
 - **E4 — NOT_VERIFIED:** Fixture-only evidence is not a product pass. Independent E4 remains NOT_VERIFIED.
 
 ## Start here

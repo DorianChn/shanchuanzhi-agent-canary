@@ -13,7 +13,7 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 | `feature/agent-canary-3.0` and other moving branches | **Development** | Pin a full commit SHA. Branch contents and package metadata can change and are not release artifacts. |
 | Independent security benefit from AI/risk-policy analysis or adaptive decoys | **Experimental / not verified** | The local console is present in v3.0.0, but independent AI benefit and adaptive-versus-static gain are not established. |
 | Candidate desktop installer, native-host hooks, and Auto E4 | **Candidate-specific / partial** | These are not general guarantees of the v3.0.0 source snapshot. The earlier installer is unsigned and clean-VM validation remains blocked. See [security limitations](docs/3.0/SECURITY_LIMITATIONS.md) and the [E4 evidence index](E4_EVIDENCE_INDEX.md). |
-| First-party Security Center protected read route | **NOT_VERIFIED** | The default route fails closed without a trusted composition bootstrap. An end-to-end read through the trusted Gateway, host facade, and strict policy router has not been verified. |
+| First-party Security Center protected read route | **NOT_VERIFIED** | The reviewed M4 desktop source has no first-party OBSERVE read callsite consuming an M1-bound file identity through the M2 adapter; its status UI hardcodes `NOT_VERIFIED`, and `GET /api/security-center` has no handler (404). Temporary-file demos and virtual policy reads do not establish product-file protection. See [open issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52). |
 | Codex built-in Shell | **UNPROTECTED** | Agent Canary does not intercept Codex's native Shell. MCP registration does not change that. |
 | Claude/Cursor/Cline built-in tools | **Not verified as general coverage** | An MCP server or hook configuration does not imply global interception. |
 
@@ -24,7 +24,7 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 | Node.js | >=20 in the v3.0.0 package manifest | Declared runtime minimum; the source verification receipt records Windows Node.js 22.23.1. This does not imply every Node release has been tested. |
 | Windows source build | **Verified for a bounded v3.0.0 source run** | The immutable mainline receipt records `npm run verify` on a Windows host with Node.js 22.23.1. It is not a clean-VM or all-editions result. |
 | Ubuntu/WSL2 and cross-platform CI | **Candidate-specific evidence** | Earlier candidate-source records include WSL2 checks and a Windows/Linux/macOS Node 20/22 CI matrix. Those records are not a rerun of the v3.0.0 tag. |
-| Docker | **GHCR tags `3.0.0` and `latest` published; local pull/runtime NOT_VERIFIED here** | The public package listing confirms those tags. This does not establish a successful local pull, container startup, or protection of host processes or other MCP servers. |
+| Docker | **Current GHCR package/tag availability, local pull, and runtime NOT_VERIFIED** | Do not assume `3.0.0` or `latest` is currently pullable. This matrix does not establish container startup or protection of host processes or other MCP servers. |
 | Windows desktop installer | **Candidate/community installer assets published; no stable v3.0.0 install path claimed** | Setup assets are attached to the competition/candidate releases. Their presence does not establish a supported stable install or clean-VM acceptance; see the [E4 evidence index](E4_EVIDENCE_INDEX.md). |
 
 ## Agent hosts and integration paths
