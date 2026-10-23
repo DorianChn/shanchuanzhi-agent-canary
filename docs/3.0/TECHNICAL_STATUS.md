@@ -7740,3 +7740,21 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M1 owner reviewed exact M2 PR #37 SHA db98c7d5d409aa390ef539c96a209d6daba8d793: the source/API and deny-before-side-effect contract passes. M2 binds fixed tool/path pairs to M1 capability, preflights before M5, then revalidates capability and arguments before M1 held-file read; M1 checks canonical path and held-file identity. Windows focused tests passed M1 4/4 and M2 3/3. M2 tests use a synthetic Gateway and M1 filesystem tests run separately; a real combined M1×M2×M5 OS filesystem composition remains NOT_VERIFIED. No M1 fix was needed.
 - M7 PR #39 remains OPEN/Draft at 97bb8de315f2c19edbaa4d6536abc50876fecffd; M7 worktree is clean and remote head exact. CI run 39904585997 and Windows wrapper 39904585994 passed, including Node 20/22 matrix, installer compile, artifact install/verify/uninstall lifecycle, and package smoke. The focused M7 audit found no reproducible owned defect; no change was made.
 - Keep Issue #52 OPEN/P0/NOT_VERIFIED until the actual supported package and first-party OBSERVE route demonstrate real M1×M2×M5 held-identity behavior with safe-read positive control and alias/path-replacement rejection before callback. M9 local test success does not satisfy this product acceptance.
+
+## 2026-10-23 07:06 UTC — M0/M9 batch pushed; refreshed hosted checks started
+
+- Atomic push updated M0 PR #30 to 0938c6497dd894ba06cb70c84d0b615cb5f8440c and M9 PR #36 to c36aa6f12b64d52e8ab9dc420879cf32c8ec9ff1; both remain OPEN/Draft on the unchanged PR #24 head as their base.
+- M0 exact CI run 39915539019 and coordination evidence 39915539018 started on the pushed head. M9 refreshed composition run 39915542635, CI run 39915542641, and Windows wrapper 39915542828 started/queued on the pushed head. Prior M9 exact-source local suite was 16/16; hosted results are pending.
+- The last push batch started around 07:05:20 UTC. Next push is no earlier than 07:10:20 UTC, after fresh Usage Overview, PR #24 and PR #30/#36 verification, and fast-forward checks. Usage immediately before the batch showed 29% five-hour, 64% weekly, and 113 credits.
+- Issue #52 remains OPEN/P0/NOT_VERIFIED despite M1 source-contract approval: M1 and M2 filesystem tests passed separately, but the real combined M1×M2×M5 product-host path has not been verified. Issue #57 remains OPEN/P1/NOT_VERIFIED pending independent product E4 evidence.
+## 2026-10-23 07:09 UTC — refreshed M9 hosted checks
+
+- M0 PR #30 exact head `0938c6497dd894ba06cb70c84d0b615cb5f8440c` passed CI run `39915539019` and coordination evidence run `39915539018`.
+- M9 PR #36 exact head `c36aa6f12b64d52e8ab9dc420879cf32c8ec9ff1` passed standard CI `39915542641` and Windows Community wrapper `39915542828`. Refreshed exact-source composition run `39915542635` remains in progress as of 07:08:35 UTC; do not call the M9 composition gate passed until this exact run finishes.
+- M0 follow-up commit `f382a90` only normalizes the coordinator report's appended line endings/encoding after review. Its focused `git diff --check` is clean. It is local, ready for the next eligible batch.
+- Last push started around 07:05:20 UTC; next push is no earlier than 07:10:20 UTC after fresh quota, PR #24/#30/#36 and remote fast-forward preflight. Last Usage Overview read before the batch showed 29% five-hour remaining.
+## 2026-10-23 07:09 UTC — exact M9 hosted composition passed
+
+- M9 exact-source workflow `39915542635` passed on both Ubuntu and Windows. Standard CI `39915542641` passed its full matrix, Docker, sponsor, and package-smoke jobs; Windows wrapper `39915542828` passed on Ubuntu and Windows.
+- These checks validated the exact M1–M8 pins and M9's package-readiness assertions. M3's real standalone package remains truthfully `NOT_READY`; Issue #52 remains OPEN/P0/NOT_VERIFIED for real first-party OBSERVE/held-file identity behavior, and #57 remains OPEN/P1/NOT_VERIFIED for missing independent product E4 evidence.
+- M9 hosted results are green at pushed SHA `c36aa6f12b64d52e8ab9dc420879cf32c8ec9ff1`. M0 has docs-only commit(s) local after pushed SHA `0938c6497dd894ba06cb70c84d0b615cb5f8440c`; next shared push is due no earlier than 07:10:20 UTC, subject to fresh quota and branch preflight.
