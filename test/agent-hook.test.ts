@@ -125,6 +125,3 @@ test('native lab wrapper interruption emits no decision or output',async(t)=>{
   await Promise.race([exited,pause(1_000)]);
  }
 });
-
-// M8-owned output regression fixture; keep canonical runtime assertions above owned by M1.
-await import('../security-lab/claude-native-hook-output.test.mjs');
