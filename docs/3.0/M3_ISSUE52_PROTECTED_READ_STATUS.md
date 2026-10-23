@@ -387,3 +387,12 @@ body evidence-format failure, not a source test failure. The current focused
 M3 run is 27/27 with `npm run build` and `git diff --check` passing. Issue #52
 stays OPEN / P0 / NOT_VERIFIED pending owner package integration and M9's
 exact-source Ubuntu/Windows composition.
+
+### Exact-head M3 CI — 2026-10-24
+
+PR #90 exact head `98a034fa2066cec18f833440cc51275c389681c6` completed
+workflow run `40031961789` with 9/9 jobs passing: Docker, package smoke,
+sponsor smoke, and macOS/Ubuntu/Windows Node 20/22. The separate
+ownership-contract-evidence run `40031991694` also passed. These are M3 PR
+checks only; M9's exact integrated M1/M2/M3/M5 Ubuntu and Windows composition
+remains pending. Keep Issue #52 OPEN / P0 / NOT_VERIFIED.

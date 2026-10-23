@@ -339,3 +339,11 @@ existing fixed enum, while internal M3 diagnostics retain the precise missing
 M2 method. The ordinary CLI still lacks that method in its checked-out M2
 adapter and therefore remains UNKNOWN. No M1/M2/M4/M5 owner file or shared M0
 contract was changed.
+
+Exact-head PR CI for `98a034fa2066cec18f833440cc51275c389681c6` completed:
+workflow run `40031961789` passed 9/9 jobs (Docker, package smoke, sponsor
+smoke, and macOS/Ubuntu/Windows Node 20/22); ownership-contract-evidence run
+`40031991694` passed. This M3 branch CI does not replace M9's exact-source
+M1/M2/M3/M5 Ubuntu/Windows composition gate. Issue #52 remains OPEN / P0 /
+NOT_VERIFIED; M1 review of the host seam and M2/M5 package integration are
+still pending.
