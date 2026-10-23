@@ -514,3 +514,15 @@ M3 source is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`. The remaining compositi
 assertions do not run. This is an M9 pin/test freshness blocker; no M3 source
 failure was reached in this run. M9 must update its expected M3 SHA and rerun
 both hosts. Issue #52 remains OPEN / P0 / NOT_VERIFIED.
+
+### Latest M9 composition gate — 2026-10-24
+
+M9 PR #36 run `40039180984` checked out the exact current M3 source
+`3a377ffe1d1f34b97a71ae6657accb9126d052f2`; its M3 pin assertion now matches.
+Both Ubuntu and Windows nevertheless fail in the same M9 test-file setup at
+`M6 current source root must use the recorded actual merge tree`: actual M6 tree
+`d768ae07b109f978072c8805e29424d49f49f154`, expected
+`bbb5eea8678ebfaaa1826bd529079cf16e6bdeda`. The setup aborts before M3-specific
+composition assertions run. This is an M6/M9 provenance-gate blocker, not an
+observed M3 behavior failure. M9 must update/verify its M6 merge-tree record and
+rerun both hosts before #52 can be considered for promotion.

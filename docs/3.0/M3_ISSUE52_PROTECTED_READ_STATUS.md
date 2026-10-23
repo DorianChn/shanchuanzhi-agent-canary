@@ -548,3 +548,15 @@ checked-out M3 is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`. The exact M9
 composition assertions therefore did not run. This is an M9 pin/test freshness
 blocker, not an observed M3 behavior failure. M9 must update the expected pin and
 rerun both hosts. Keep Issue #52 OPEN / P0 / NOT_VERIFIED.
+
+### Latest M9 composition gate — 2026-10-24
+
+M9 PR #36 run `40039180984` checked out exact current M3 source
+`3a377ffe1d1f34b97a71ae6657accb9126d052f2`, and the M3 pin assertion now
+matches. Both Ubuntu and Windows fail in M9 test setup at `M6 current source
+root must use the recorded actual merge tree`: actual M6 tree is
+`d768ae07b109f978072c8805e29424d49f49f154`; expected tree is
+`bbb5eea8678ebfaaa1826bd529079cf16e6bdeda`. The setup aborts before any M3
+composition assertions run. This is an M6/M9 provenance-gate blocker, not an
+observed M3 behavior failure. M9 must correct/verify its M6 merge-tree record
+and rerun both hosts. Keep Issue #52 OPEN / P0 / NOT_VERIFIED.
