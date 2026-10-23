@@ -7472,3 +7472,9 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - M1 PR #43 exact head `a737dcac3fb05cb41c3f6108aa46fb5894f95e5a` completed 11/11 checks; M2 PR #37 exact head `58c2e46fef70021fbfd70e1caa7ba44e7281ee43` completed 9/9. M0 PR #30 exact head `c07040c0cb13fc22dcf0dd81184ee173a89a2fc4` still had three matrix checks running at the latest read.
 - M4 local commit `d62557a03883c459cce6bec60b36686128ccf73d` fixes keyboard focus/selection loss on security-event refresh, adds regression coverage, and updates acceptance evidence. Verification: runtime-console 13/13, build and diff check passed, Chrome synthetic focus/empty/403/narrow-CJK checks passed, and the single Impeccable detector returned no findings. M4 branch is ahead by one; publish waits for the next batch. Its page remains status-only/GET-only and does not establish protected reads.
+
+## M4/M8 fixes ready for publication — 2026-10-23 03:44 UTC
+
+- M4 commit `d62557a03883c459cce6bec60b36686128ccf73d` is ready on its existing branch; PR #34 CI will run after publication. The exact synthetic UI checks and GET-only limit are recorded above.
+- M8 commit `f321df3041e2a101661da686a6ccbe6a222b4d24` fixes the docs checker treating build-generated `dist/competition.js` as missing in clean source. It passes with and without `dist`, and a negative fixture without the documented build prerequisite is correctly rejected; 14 docs, 57 links, 13 examples, and 4 issue templates were checked. Package install remains unverified because the private registry returned 401 without a token.
+- M1 posted Issue #52 update `6356848663`, preserving OPEN/P0/NOT_VERIFIED; M6 posted Issue #57 update `6356849216`, preserving OPEN/P1/NOT_VERIFIED. M8 does not claim private package install evidence. M4 and M8 local successors are queued for the 03:45 UTC batch; no merge, Release, or PR #24 change occurred.
