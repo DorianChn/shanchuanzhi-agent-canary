@@ -204,21 +204,35 @@ test('M3 host dependency seam stays UNKNOWN and side-effect free when the truste
 });
 
 test('M3 host does not substitute its local router when the composed M5 public export is absent',async()=>{
-  let bindings=0,adapterLoads=0;
+  let bindings=0,adapterLoads=0,policyLoads=0,reads=0;
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-m5-missing-'));
+  const file=path.join(root,'agent-canary-public.txt');
+  const original='M3_M5_MISSING_FIXTURE_UNCHANGED';
+  fs.writeFileSync(file,original,{flag:'wx',mode:0o600});
   const gateway=Object.freeze({
     bindFileReadCapability(){bindings++;return Object.freeze(Object.create(null));},
     verifyFileReadCapability(){return true;},
-    readFileWithCapability(){throw new Error('unavailable M5 must never reach a file read');},
+    readFileWithCapability(){reads++;throw new Error('unavailable M5 must never reach a file read');},
   });
-  const host=await createProtectedHostAdapter(gateway,createAgentGuard({alert:false}),process.cwd(),{
-    loadM2Facade:async()=>{adapterLoads++;throw new Error('M2 must not load without the public M5 router');},
-  });
-  assert.equal(host.status,'UNKNOWN');
-  assert.equal(host.reason,'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE');
-  assert.equal(host.dispatch,undefined);
-  assert.equal(host.m5Callbacks(),0);
-  assert.equal(bindings,0);
-  assert.equal(adapterLoads,0);
+  try{
+    const host=await createProtectedHostAdapter(gateway,createAgentGuard({alert:false}),root,{
+      loadM5PolicyRouter:async()=>{policyLoads++;return{};},
+      loadM2Facade:async()=>{adapterLoads++;throw new Error('M2 must not load without the public M5 router');},
+    });
+    assert.equal(host.status,'UNKNOWN');
+    assert.equal(host.reason,'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE');
+    assert.equal(host.dispatch,undefined);
+    assert.equal(host.m5Callbacks(),0);
+    assert.equal(policyLoads,1);
+    assert.equal(bindings,0);
+    assert.equal(adapterLoads,0);
+    assert.equal(reads,0);
+    assert.equal(fs.readFileSync(file,'utf8'),original);
+  }finally{
+    const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
+    assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
+    fs.rmSync(realRoot,{recursive:true,force:true});
+  }
 });
 
 test('first-party connection-check runtime passes only its fixed trusted inputs into the M1/M2/M5 seam',async t=>{
@@ -234,7 +248,9 @@ test('first-party connection-check runtime passes only its fixed trusted inputs 
   let adapterOptions:Record<string,unknown>|undefined;
   let defaultGateway:ReturnType<typeof createTrustedExecutionGateway>|undefined;
   try{
-    const defaultRuntime=await createConnectionCheckRuntime({workspaceRoot:root});
+    // Model an M3 package composed before M5's public package entry was added.
+    // The current repository does export it, so inject the missing-export case.
+    const defaultRuntime=await createConnectionCheckRuntime({workspaceRoot:root,loadM5PolicyRouter:async()=>({})});
     defaultGateway=defaultRuntime.gateway;
     assert.equal(defaultRuntime.protectedHost.status,'UNKNOWN');
     assert.equal(defaultRuntime.protectedHost.reason,'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE');
