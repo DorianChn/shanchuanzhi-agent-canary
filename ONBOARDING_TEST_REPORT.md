@@ -488,14 +488,29 @@ M9 PR #36 run `40037657193` is not a current-source result: its log records M3
 the M3 focused regression step: the missing-executor case expected internal
 reason `M2_CAPABILITY_PROVIDER_UNAVAILABLE` but `a84ee13` returned
 `M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE`. M3 commit `3a377ff` corrects this
-classification and current M3 CI is green; M9 has not rerun against `3a377ff`,
-and its exact composition regression step did not execute in run
-`40037657193`. The M3 package subpath still has a different adapter blob from
-the exact M2 package export; this older run does not establish whether that byte
-difference affects the corrected ordinary-CLI path.
+classification and current M3 CI is green. A later M9 run checked out
+`3a377ff` but failed its stale M3 pin assertion before the exact composition
+regression; see the current M9 pin result below. The M3 package subpath still has
+a different adapter blob from the exact M2 package export; the runs so far do
+not establish whether that byte difference affects the corrected ordinary-CLI
+path.
 
 No M1 review of exact M3 head `3a377ff` is recorded on PR #90. Keep Issue #52
 OPEN / P0 / NOT_VERIFIED until M9 pins the current M3 head and the exact-source
 Ubuntu and Windows composition checks pass. Do not infer real host activation,
 installer effectiveness, native-tool protection, or E4 from local/PR synthetic
 checks.
+
+### Current M9 pin assertion — 2026-10-24
+
+M9 PR #36 head `759f5f88ecc21ab4fe485d6a5683754828bbf374`, run
+`40037963937`, checked out the current M3 code `3a377ffe1d1f34b97a71ae6657accb9126d052f2`,
+M2 `92dd42b900b10ce0294e9e3faa7e175d728228b3`, M5
+`cca42cd1762f995e92454d55ffa5e63951e39144`, and M1 baseline
+`7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. Ubuntu and Windows both fail at
+the first M9 composition-test assertion in `test/m9-cross-module-composition.test.mjs`:
+the test expects M3 `10d488336ce8873f7eeade59064f6601f468e126`, while the checked-out
+M3 source is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`. The remaining composition
+assertions do not run. This is an M9 pin/test freshness blocker; no M3 source
+failure was reached in this run. M9 must update its expected M3 SHA and rerun
+both hosts. Issue #52 remains OPEN / P0 / NOT_VERIFIED.

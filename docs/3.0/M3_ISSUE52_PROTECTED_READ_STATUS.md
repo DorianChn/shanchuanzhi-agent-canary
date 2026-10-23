@@ -524,12 +524,27 @@ out M3 `a84ee13fa0e7e8ba0ace371235236f1d6b203780`, not current M3
 composition regression: M3's missing-capability-executor test expected
 `M2_CAPABILITY_PROVIDER_UNAVAILABLE`, while `a84ee13` returned
 `M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE`. Current `3a377ff` fixes that
-M3-owned reason mapping and its exact PR CI passes, but no M9 run has yet
-validated current `3a377ff`. The M3 package's `gateway-adapter` target remains
-byte-different from the exact M2 export; this older failed run does not establish
+M3-owned reason mapping and its exact PR CI passes. A later M9 run checked out
+`3a377ff` but failed a stale M9 pin assertion before composition; see the latest
+pin result below. The M3 package's `gateway-adapter` target remains
+byte-different from the exact M2 export; the runs so far do not establish
 whether that packaging difference affects the corrected normal-CLI path.
 
 No M1 review of exact M3 head `3a377ff` is recorded on PR #90. Keep Issue #52
 OPEN / P0 / NOT_VERIFIED until M9 repins `3a377ff` and exact-source Ubuntu and
 Windows composition checks pass. Native host activation, installer behavior,
 and E4 remain `NOT_VERIFIED`.
+
+### Current M9 pin assertion — 2026-10-24
+
+M9 PR #36 head `759f5f88ecc21ab4fe485d6a5683754828bbf374`, run
+`40037963937`, checked out current M3 code `3a377ffe1d1f34b97a71ae6657accb9126d052f2`,
+M2 `92dd42b900b10ce0294e9e3faa7e175d728228b3`, M5
+`cca42cd1762f995e92454d55ffa5e63951e39144`, and M1 baseline
+`7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. Both Ubuntu and Windows fail the
+first assertion in `test/m9-cross-module-composition.test.mjs`: its expected M3
+pin is stale at `10d488336ce8873f7eeade59064f6601f468e126`, while the actual
+checked-out M3 is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`. The exact M9
+composition assertions therefore did not run. This is an M9 pin/test freshness
+blocker, not an observed M3 behavior failure. M9 must update the expected pin and
+rerun both hosts. Keep Issue #52 OPEN / P0 / NOT_VERIFIED.
