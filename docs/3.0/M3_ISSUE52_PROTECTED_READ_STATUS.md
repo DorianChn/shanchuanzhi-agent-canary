@@ -424,3 +424,23 @@ is now `98a034f`. It also has a separate M8 assertion failure; M9 wrapper run
 zod advisories. Issue #52 remains OPEN / P0 / NOT_VERIFIED until the package
 composition blocker is resolved and M9 exact-source Ubuntu/Windows composition
 passes. No M1/M2/M4/M5 file was changed.
+
+### Current-M3 M9 rerun — 2026-10-24
+
+M9 PR #36 is now at `ebd7c7e2fdc049a8d9e0f07d93b89e8934c870d5`. Exact-source
+run `40032565764` pins current M3 PR #90 head
+`98a034fa2066cec18f833440cc51275c389681c6`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. The M3 ordinary-CLI subtest fails
+on Ubuntu and Windows, returning
+`UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE` instead of the expected
+fixed-probe PASS. This is an exact-current-M3 failure.
+Direct composition with the packed M2 candidate passes, but M3's public
+self-reference resolves to a different adapter blob as described above.
+
+The M9 run also fails a separate M8 candidate assertion. Wrapper run
+`40032565853` fails the dependency audit on existing Hono, ip-address, and zod
+advisories. These are outside M3 ownership. Keep Issue #52 OPEN / P0 /
+NOT_VERIFIED until the M9 package-composition owner aligns the public M2 export
+bytes in the M3 package tree and exact-current Ubuntu/Windows composition
+passes.

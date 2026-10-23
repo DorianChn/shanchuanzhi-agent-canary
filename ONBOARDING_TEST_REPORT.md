@@ -379,3 +379,24 @@ The run also has an unrelated M8 candidate assertion failure. M9 wrapper runs
 ip-address, and zod advisories; M3 did not change those dependencies. Issue #52
 remains OPEN / P0 / NOT_VERIFIED until the composition blocker is resolved and
 M9 exact-source Ubuntu/Windows composition passes.
+
+### Current-M3 exact-source M9 rerun — 2026-10-24
+
+M9 PR #36 advanced to head `ebd7c7e2fdc049a8d9e0f07d93b89e8934c870d5` and
+run `40032565764` now pins current M3 PR #90 head
+`98a034fa2066cec18f833440cc51275c389681c6`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. The M3 ordinary-CLI subtest 11
+still fails on both Ubuntu and Windows with response
+`UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE` instead of the expected
+fixed-probe PASS.
+This is now exact-current-M3 failure evidence, not only the earlier stale-pin
+run. The M2 packed-adapter composition and alias-denial controls still pass;
+the public-export target blob mismatch documented above remains the cause.
+
+The same run has an independent M8 candidate test failure. Current wrapper
+regression run `40032565853` still fails only its `npm audit --audit-level=high`
+step on existing Hono, ip-address, and zod advisories. M3 does not own those
+paths/dependencies. Issue #52 remains OPEN / P0 / NOT_VERIFIED until the M9
+composition owner fixes the public package contents and the exact-current
+Ubuntu/Windows run passes.
