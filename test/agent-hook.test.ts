@@ -58,7 +58,7 @@ test('native lab wrapper writes only normalized allowlisted log fields',()=>{
 });
 test('native lab wrapper uses decision-specific fallback for unknown reasons',()=>{
  const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
- for(const [decision,fallback]of [['deny','Agent Canary: permission_denied'],['ask','Agent Canary: approval_required']] as const){
+ for(const [decision,fallback]of [['allow','Agent Canary: permission_allowed'],['deny','Agent Canary: permission_denied'],['ask','Agent Canary: approval_required']] as const){
   const reasonCanary=`SYNTHETIC_${decision.toUpperCase()}_REASON_CANARY`,modulePath=path.join(root,`${decision}-reason-hook.mjs`),log=path.join(root,`${decision}-reason.jsonl`);
   fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
   const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,`${decision}-reason-state`),log],{input:JSON.stringify({session_id:`${decision}-reason-fixture`,tool_name:'Bash',tool_input:{command:'git status'}}),encoding:'utf8'});
