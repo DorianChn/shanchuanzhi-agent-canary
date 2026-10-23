@@ -5,7 +5,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 | Module | PR | Exact source SHA | M9 coverage |
 | --- | --- | --- | --- |
 | M1 Gateway | #43 | `e8be92d2d813ab2e9fe47d3ab6874439a6328441` (current exact pin; docs-only descendant of the tested implementation) | Held-Gateway regression and synthetic protected-read composition; lock-metadata denial maps to fail-closed BUSY |
-| M2 isolation | #37 | `67428139e53c3f63a1101b4f94e84b291cbb1196` | Exact CI run `39866513817` passed 9/9; docs-only delta from the prior pin; package build, tarball facade, package policy and synthetic composition |
+| M2 isolation | #37 | `1c050abace5af6e09b7b934730f2361b78f9d938` (current public PR head) | Docs-only successor of `6742813`; exact-source M2 package build/pack and M9 composition are locally verified below; hosted CI for this head is not claimed |
 | M3 onboarding | #33 | `f8c4092de804ff32639c92caef4f2615f0a37347` (current public PR head) | Snapshot-only status GET with CSRF gating; default protected-read loader still fails closed when standalone M3 lacks M5/M2 exports |
 | M4 desktop security center | #34 | `7fe375d75ea8ca219abcae2e5cbc40d7b1b2e33b` (current public PR head) | Read-only status consumer validates and redacts snapshots, downgrades unsupported aggregate claims; first-party host read remains NOT_VERIFIED |
 | M5 policy | #47 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` (current public PR head) | Adds a separate public `./policy-router` entry without replacing `./sdk`; exact build and risk-policy/export regressions passed |
@@ -15,7 +15,7 @@ This snapshot records the source revisions pinned by the M9 composition workflow
 
 ## Owner-review boundaries
 
-- M1 Issue #52 comment `6349691761` approves the exact historical M2 source `099ad64e4a09330920cbd40847adec3fe631e91e` for the M1 Gateway/M2 adapter API contract only, with historical M1 review base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. Current M2 `67428139e53c3f63a1101b4f94e84b291cbb1196` descends from that reviewed source, but the exact-source approval does not cover later M2 changes. Current M1 `e8be92d2d813ab2e9fe47d3ab6874439a6328441` descends from the historical review base; the comment does not accept the new M1 read implementation, a first-party host integration or TOCTOU protection.
+- M1 Issue #52 comment `6349691761` approves the exact historical M2 source `099ad64e4a09330920cbd40847adec3fe631e91e` for the M1 Gateway/M2 adapter API contract only, with historical M1 review base `a5eff766ebe041bc2c6cc13758827d5a96205de9`. Current M2 `1c050abace5af6e09b7b934730f2361b78f9d938` descends from that reviewed source. Its delta from `67428139e53c3f63a1101b4f94e84b291cbb1196` is documentation/evidence only; this does not broaden the historical review to new M2 runtime behavior, and no runtime delta was found. Current M1 `e8be92d2d813ab2e9fe47d3ab6874439a6328441` descends from the historical review base; the comment does not accept the new M1 read implementation, a first-party host integration or TOCTOU protection.
 - M1 Issue #72 comment `6347268881` reviewed M3 source `27d4a20a20894c7b779edf68d8bf79685bc0e69b` for three Hook-related blobs only, with the same historical M1 review base. M9 checks those same blobs remain unchanged in the current M3 source; this is not an M1 review of the newer M3 Console route or its tests.
 - M6 Issue #59 comment `6346660246` reviewed exact M8 source `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` and M6 lifecycle contract source `2cebabc81d7908c04ddfa10378fa1d3427b92cf4`. Historical M8 `35aa22f3087ed1859da19acbf12cc4c767dd4f3d` is a descendant with only `E4_EVIDENCE_INDEX.md` changed since prior pin `5bf5d4f0a1fee8b4d7ef72ec474e9ca7a7ba9d3d`; latest M8 `854de50d94637caf3f334de7d28dcdcaddd88f9f` adds documentation only, and the M6-reviewed `test/auto-e4.test.mjs` blob remains identical. The former M6 pin `15e1663eac9c3932165fca9b39587115345f289c` retained the full reviewed lifecycle test blob. Current M6 `3578e7ba10b2fd160efa0e4683aba863c666db8a` adds regression tests to that file; M9 checks every previously reviewed line remains in order. These scoped dispositions do not accept unrelated changes in current module heads.
 - M6 current exact-head hosted CI run `39864322034` and wrapper run `39864322029` are green (9/9 CI, 2/2 wrapper). This does not establish installer, clean-VM, real-model or external E4 behavior.
@@ -217,7 +217,7 @@ M3 `b85c4ad` and M5 `8d1b832` were subsequently published to their owner PRs. Ho
 
 M4 exact source still has no first-party caller for the protected-read POST. Issue #52 remains OPEN / P0 / NOT_VERIFIED for product-host wiring, held-identity consumption, and concurrent/OS-atomic TOCTOU. The fixed temp marker applies to this synthetic test only; it does not establish protection for user files or the desktop. Hosted M9 CI remains pending for this pin refresh; no merge, push, live host, VM, model, or installer acceptance is implied.
 
-## M3/M4 status-route and read-only UI refresh — 2026-10-23
+## Previous M3/M4 status-route and read-only UI refresh — 2026-10-23
 
 GitHub PR heads were verified after publication: M3 PR #33 is `f8c4092de804ff32639c92caef4f2615f0a37347`, M4 PR #34 is `7fe375d75ea8ca219abcae2e5cbc40d7b1b2e33b`, and M5 PR #47 is `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d`. The full M9 exact-source map used for the rerun is:
 
@@ -247,3 +247,30 @@ Exact local checks on the published owner heads:
 The initial targeted M9 attempt had one test-harness failure (`Unexpected token 'const'`): the wrapper treated M4's generated adapter script as an expression even though it begins with declarations. The harness now evaluates the exact generated script and returns its adapter object; the focused route-to-consumer test then passed 1/1. This was a harness issue, not a source test failure. The final full-suite rerun supersedes that initial attempt.
 
 The workflow now pins the published M3/M4 heads and runs their exact route and UI owner regressions before the M9 composition suite. Hosted M9 CI for this refreshed pin set remains pending. No standalone `actionlint` or YAML parser was available locally, so the workflow file was not independently parsed; `git diff --check` and the local exact-source tests are separate checks. Issue #52 remains OPEN / P0 / NOT_VERIFIED for first-party host wiring, held-identity consumption, and concurrent/OS-atomic TOCTOU. No product protection, VM, model, installer, or release acceptance is claimed.
+
+## M2 PR #37 exact-head refresh — 2026-10-23
+
+GitHub reports PR #37 OPEN at exact public head `1c050abace5af6e09b7b934730f2361b78f9d938`. Comparing it with the prior M9 M2 pin `67428139e53c3f63a1101b4f94e84b291cbb1196` shows exactly two changed files: `execution-isolation/codex/native-host-hook-evidence.json` and `execution-isolation/reports/NATIVE_SHELL_BYPASS_REPORT.md` (45 insertions, no deletions). The additions are M2's report of a current Windows MXC capability probe and its bounded interpretation; M9 did not independently rerun that host probe. No package manifest, runtime source, test, Hook, policy, or package-export file changed. The exact PR #37 run `39866513817` remains evidence for the old `6742813` head only; this report does not claim hosted M2 CI for `1c050ab`.
+
+The current M2 head is a documentation-only descendant of both the historical M1-reviewed adapter source and the prior M2 package candidate. The M1 approval remains limited to the historical adapter-to-Gateway API contract and is not treated as a new approval of unrelated runtime behavior. The new host-probe record remains `UNPROTECTED / BLOCKED_NOT_VERIFIED`; it adds no host-enforcement or product-protection claim.
+
+The exact source map for this rerun was:
+
+| Module | Exact source SHA |
+| --- | --- |
+| M1 | `e8be92d2d813ab2e9fe47d3ab6874439a6328441` |
+| M2 | `1c050abace5af6e09b7b934730f2361b78f9d938` |
+| M3 | `f8c4092de804ff32639c92caef4f2615f0a37347` |
+| M4 | `7fe375d75ea8ca219abcae2e5cbc40d7b1b2e33b` |
+| M5 | `8d1b832f46db363dd8ba5cdd7d573baa89e9a46d` |
+| M6 | `3578e7ba10b2fd160efa0e4683aba863c666db8a` |
+| M7 | `7c348622e6c94e6f583044832c4a415c6a19c209` |
+| M8 | `854de50d94637caf3f334de7d28dcdcaddd88f9f` |
+
+Local exact-source checks:
+
+- From the M2 checkout at `1c050abace5af6e09b7b934730f2361b78f9d938`, `npm run build` passed and `npm pack --json` produced `dorianchn-agent-canary-1.2.7.tgz` (91 files). Its SHA-256 was `40e05911461c55c2668c9f504160dd15df3983d38861dffbd856f27cca531c8`; the tarball was installed in an isolated consumer and supplied to M9.
+- From exact M7 `7c348622e6c94e6f583044832c4a415c6a19c209`, `npm run pack:check -- --package-root C:\Users\36712\Desktop\Agent-Canary-Dev\agents\M2` passed for 91 files.
+- With the exact roots above and the new packed M2 artifact, `node --import tsx --test test/m9-cross-module-composition.test.mjs` passed **13/13**. This run used M9 worktree HEAD `85d4d8dbb95f0a3a3c975c2754610926f277500d` with the local M2 pin refresh applied; it covers packed-M2 positive, deny, alias, path-replacement, no-capability, and M3/M4 status-display controls.
+
+These are local source/package composition results only. Hosted M9 CI for this refreshed pin set remains pending, and all prior product-host, native Shell, Issue #52, VM/model/installer boundaries remain unchanged.
