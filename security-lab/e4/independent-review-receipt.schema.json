@@ -16,31 +16,40 @@
     "run": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["archiveSha256", "sourceCommit", "sourceTree", "artifactSha256"],
+      "required": ["archiveSha256", "sourceCommit", "sourceTree", "producerRunId", "productVersion", "artifactFileName", "artifactSize", "artifactSha256", "startedAt", "completedAt", "result"],
       "properties": {
         "archiveSha256": {"$ref": "#/$defs/sha256"},
         "sourceCommit": {"$ref": "#/$defs/commit"},
         "sourceTree": {"$ref": "#/$defs/commit"},
-        "artifactSha256": {"$ref": "#/$defs/sha256"}
+        "producerRunId": {"type": "string", "minLength": 1, "maxLength": 200},
+        "productVersion": {"type": "string", "minLength": 1, "maxLength": 100},
+        "artifactFileName": {"type": "string", "minLength": 1, "maxLength": 255},
+        "artifactSize": {"type": "integer", "minimum": 1},
+        "artifactSha256": {"$ref": "#/$defs/sha256"},
+        "startedAt": {"type": "string", "format": "date-time"},
+        "completedAt": {"type": "string", "format": "date-time"},
+        "result": {"$ref": "#/$defs/status"}
       }
     },
     "operator": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "role"],
+      "required": ["id", "role", "identitySource"],
       "properties": {
         "id": {"type": "string", "minLength": 1, "maxLength": 100},
-        "role": {"const": "independent-operator"}
+        "role": {"const": "independent-operator"},
+        "identitySource": {"type": "string", "minLength": 1, "maxLength": 500}
       }
     },
     "reviewer": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "role", "relationshipCheck"],
+      "required": ["id", "role", "relationshipCheck", "identitySource"],
       "properties": {
         "id": {"type": "string", "minLength": 1, "maxLength": 100},
         "role": {"const": "independent-reviewer"},
-        "relationshipCheck": {"const": "not-artifact-author-or-operator"}
+        "relationshipCheck": {"const": "not-artifact-author-or-operator"},
+        "identitySource": {"type": "string", "minLength": 1, "maxLength": 500}
       }
     },
     "environment": {
@@ -82,10 +91,11 @@
     "signature": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["algorithm", "keyId", "value"],
+      "required": ["algorithm", "keyId", "keySource", "value"],
       "properties": {
         "algorithm": {"const": "Ed25519"},
         "keyId": {"$ref": "#/$defs/sha256"},
+        "keySource": {"type": "string", "minLength": 1, "maxLength": 500},
         "value": {"type": "string", "contentEncoding": "base64", "minLength": 80, "maxLength": 100}
       }
     }

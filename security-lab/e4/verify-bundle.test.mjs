@@ -80,7 +80,7 @@ function runVerifier(runDir, {preload, env = process.env, independentReceipt, re
   return spawnSync(process.execPath, args, { encoding: 'utf8', windowsHide: true, env });
 }
 
-function writeSignedIndependentReceipt(runDir, {operatorId = 'operator-1', reviewerId = 'reviewer-1', archiveSha256, artifactSha256, signatureMutation} = {}) {
+function writeSignedIndependentReceipt(runDir, {operatorId = 'operator-1', reviewerId = 'reviewer-1', archiveSha256, artifactSha256, receiptMutation, signatureMutation} = {}) {
   const report = JSON.parse(fs.readFileSync(path.join(runDir, 'report.json'), 'utf8'));
   const archiveHash = archiveSha256 ?? sha256(fs.readFileSync(path.join(runDir, 'evidence.zip')));
   const artifactHash = artifactSha256 ?? report.artifact.sha256;
@@ -90,10 +90,17 @@ function writeSignedIndependentReceipt(runDir, {operatorId = 'operator-1', revie
       archiveSha256: archiveHash,
       sourceCommit: report.source.commit,
       sourceTree: report.source.tree,
-      artifactSha256: artifactHash
+      producerRunId: 'synthetic-actions-run-123',
+      productVersion: 'synthetic-test-version',
+      artifactFileName: report.artifact.fileName,
+      artifactSize: report.artifact.size,
+      artifactSha256: artifactHash,
+      startedAt: '2026-10-23T04:00:00.000Z',
+      completedAt: '2026-10-23T04:01:00.000Z',
+      result: 'PASS'
     },
-    operator: {id: operatorId, role: 'independent-operator'},
-    reviewer: {id: reviewerId, role: 'independent-reviewer', relationshipCheck: 'not-artifact-author-or-operator'},
+    operator: {id: operatorId, role: 'independent-operator', identitySource: 'https://example.invalid/operator'},
+    reviewer: {id: reviewerId, role: 'independent-reviewer', relationshipCheck: 'not-artifact-author-or-operator', identitySource: 'https://example.invalid/reviewer'},
     environment: {
       provider: 'synthetic-test-provider',
       windowsBuild: 'synthetic-test-build',
@@ -116,11 +123,13 @@ function writeSignedIndependentReceipt(runDir, {operatorId = 'operator-1', revie
       archiveUnchanged: 'PASS'
     }
   };
+  receiptMutation?.(receipt);
   const {privateKey, publicKey} = generateKeyPairSync('ed25519');
   const keyId = sha256(publicKey.export({type: 'spki', format: 'der'}));
   receipt.signature = {
     algorithm: 'Ed25519',
     keyId,
+    keySource: 'https://example.invalid/reviewer-key',
     value: signBytes(null, Buffer.from(canonicalJson(receipt)), privateKey).toString('base64')
   };
   if (signatureMutation) signatureMutation(receipt);
@@ -205,7 +214,11 @@ test('a signed, hash-bound independent receipt is reported without promoting E4 
   assert.equal(summary.independentReceipt.reviewerRole, 'CLAIMED_INDEPENDENT_REVIEWER');
   assert.equal(summary.independentReceipt.roleSeparation, 'CLAIMED_DISTINCT_IDENTITIES');
   assert.equal(summary.independentReceipt.cleanEnvironment, 'CLAIMED_CLEAN_WINDOWS_ENVIRONMENT');
+  assert.equal(summary.independentReceipt.runClaim.producerRunId, 'synthetic-actions-run-123');
+  assert.equal(summary.independentReceipt.runClaim.completedAt, '2026-10-23T04:01:00.000Z');
+  assert.equal(summary.independentReceipt.identitySources.reviewerKey, 'https://example.invalid/reviewer-key');
   assert.equal(summary.independentReceipt.checkClaims.externalCopyMismatches['raw.log'], 'PASS');
+  assert.equal(summary.independentReceipt.checkClaims.productExecution, 'PASS');
   assert.equal(summary.independentReceipt.productE4Accepted, undefined);
   assert.equal(summary.productE4Accepted, false);
   assert.equal(summary.e4Status, 'NOT_VERIFIED');
@@ -263,6 +276,60 @@ test('E4 verifier rejects a signed receipt bound to a different artifact digest'
   const result = runVerifier(runDir, {independentReceipt: receiptPath, reviewerPublicKey: reviewerPublicKeyPath});
   assert.equal(result.status, 1, result.stdout);
   assert.match(result.stderr, /E4_INDEPENDENT_RECEIPT_BINDING_MISMATCH/);
+});
+
+test('E4 verifier rejects a signed receipt bound to a different product artifact size', t => {
+  const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-receipt-'));
+  t.after(() => fs.rmSync(runDir, {recursive: true, force: true}));
+  createValidRun(runDir, {
+    reportOverrides: {
+      source: {commit: '1'.repeat(40), tree: '2'.repeat(40)},
+      artifact: {fileName: 'setup.exe', size: 123, sha256: '3'.repeat(64), executedByRunner: false, status: 'HASHED_NOT_EXECUTED'}
+    }
+  });
+  const {receiptPath, reviewerPublicKeyPath} = writeSignedIndependentReceipt(runDir, {
+    receiptMutation: receipt => { receipt.run.artifactSize += 1; }
+  });
+
+  const result = runVerifier(runDir, {independentReceipt: receiptPath, reviewerPublicKey: reviewerPublicKeyPath});
+  assert.equal(result.status, 1, result.stdout);
+  assert.match(result.stderr, /E4_INDEPENDENT_RECEIPT_BINDING_MISMATCH/);
+});
+
+test('E4 verifier rejects signed receipt timestamps that are invalid or reversed', t => {
+  const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-receipt-'));
+  t.after(() => fs.rmSync(runDir, {recursive: true, force: true}));
+  createValidRun(runDir, {
+    reportOverrides: {
+      source: {commit: '1'.repeat(40), tree: '2'.repeat(40)},
+      artifact: {fileName: 'setup.exe', size: 123, sha256: '3'.repeat(64), executedByRunner: false, status: 'HASHED_NOT_EXECUTED'}
+    }
+  });
+  const {receiptPath, reviewerPublicKeyPath} = writeSignedIndependentReceipt(runDir, {
+    receiptMutation: receipt => { receipt.run.completedAt = '2026-10-22T03:00:00.000Z'; }
+  });
+
+  const result = runVerifier(runDir, {independentReceipt: receiptPath, reviewerPublicKey: reviewerPublicKeyPath});
+  assert.equal(result.status, 1, result.stdout);
+  assert.match(result.stderr, /E4_INDEPENDENT_RECEIPT_RUN_INVALID/);
+});
+
+test('E4 verifier rejects a signed PASS run result when a required check is not PASS', t => {
+  const runDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-e4-receipt-'));
+  t.after(() => fs.rmSync(runDir, {recursive: true, force: true}));
+  createValidRun(runDir, {
+    reportOverrides: {
+      source: {commit: '1'.repeat(40), tree: '2'.repeat(40)},
+      artifact: {fileName: 'setup.exe', size: 123, sha256: '3'.repeat(64), executedByRunner: false, status: 'HASHED_NOT_EXECUTED'}
+    }
+  });
+  const {receiptPath, reviewerPublicKeyPath} = writeSignedIndependentReceipt(runDir, {
+    receiptMutation: receipt => { receipt.checks.productExecution = 'BLOCKED'; }
+  });
+
+  const result = runVerifier(runDir, {independentReceipt: receiptPath, reviewerPublicKey: reviewerPublicKeyPath});
+  assert.equal(result.status, 1, result.stdout);
+  assert.match(result.stderr, /E4_INDEPENDENT_RECEIPT_RESULT_INCONSISTENT/);
 });
 
 test('E4 verifier rejects duplicate case ids rather than returning an ambiguous matrix summary', t => {

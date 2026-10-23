@@ -78,6 +78,8 @@ function verifyIndependentReceipt(report, archiveHash) {
     reviewerRole: 'NOT_VERIFIED',
     roleSeparation: 'NOT_VERIFIED',
     cleanEnvironment: 'NOT_VERIFIED',
+    runClaim: null,
+    identitySources: null,
     checkClaims: null,
     reasons: []
   };
@@ -99,25 +101,38 @@ function verifyIndependentReceipt(report, archiveHash) {
   const invalid = () => { throw new Error('E4_INDEPENDENT_RECEIPT_INVALID'); };
   requireObjectKeys(receipt, ['schema', 'run', 'operator', 'reviewer', 'environment', 'checks', 'signature'], 'E4_INDEPENDENT_RECEIPT_INVALID');
   if (receipt.schema !== 'agent-canary.e4-independent-review-receipt.v1') invalid();
-  requireObjectKeys(receipt.run, ['archiveSha256', 'sourceCommit', 'sourceTree', 'artifactSha256'], 'E4_INDEPENDENT_RECEIPT_INVALID');
-  requireObjectKeys(receipt.operator, ['id', 'role'], 'E4_INDEPENDENT_RECEIPT_INVALID');
-  requireObjectKeys(receipt.reviewer, ['id', 'role', 'relationshipCheck'], 'E4_INDEPENDENT_RECEIPT_INVALID');
+  requireObjectKeys(receipt.run, ['archiveSha256', 'sourceCommit', 'sourceTree', 'producerRunId', 'productVersion', 'artifactFileName', 'artifactSize', 'artifactSha256', 'startedAt', 'completedAt', 'result'], 'E4_INDEPENDENT_RECEIPT_INVALID');
+  requireObjectKeys(receipt.operator, ['id', 'role', 'identitySource'], 'E4_INDEPENDENT_RECEIPT_INVALID');
+  requireObjectKeys(receipt.reviewer, ['id', 'role', 'relationshipCheck', 'identitySource'], 'E4_INDEPENDENT_RECEIPT_INVALID');
   requireObjectKeys(receipt.environment, ['provider', 'windowsBuild', 'imageSha256', 'snapshotId', 'checkoutCommit', 'checkoutTree', 'cleanCheckout', 'cleanEnvironment'], 'E4_INDEPENDENT_RECEIPT_INVALID');
   requireObjectKeys(receipt.checks, ['productExecution', 'verifierPositive', 'externalCopyMismatches', 'archiveUnchanged'], 'E4_INDEPENDENT_RECEIPT_INVALID');
   requireObjectKeys(receipt.checks.externalCopyMismatches, ['SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log'], 'E4_INDEPENDENT_RECEIPT_INVALID');
-  requireObjectKeys(receipt.signature, ['algorithm', 'keyId', 'value'], 'E4_INDEPENDENT_RECEIPT_INVALID');
+  requireObjectKeys(receipt.signature, ['algorithm', 'keyId', 'keySource', 'value'], 'E4_INDEPENDENT_RECEIPT_INVALID');
 
   if (
     typeof report.source?.commit !== 'string' || !/^[a-f0-9]{40}$/.test(report.source.commit) ||
     typeof report.source?.tree !== 'string' || !/^[a-f0-9]{40}$/.test(report.source.tree) ||
-    typeof report.artifact?.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(report.artifact.sha256)
+    typeof report.artifact?.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(report.artifact.sha256) ||
+    typeof report.artifact?.fileName !== 'string' || !report.artifact.fileName.trim() ||
+    !Number.isSafeInteger(report.artifact?.size) || report.artifact.size < 1
   ) throw new Error('E4_RECEIPT_PRODUCT_PROVENANCE_MISSING');
   requireSha256(receipt.run.archiveSha256, 'E4_INDEPENDENT_RECEIPT_INVALID');
   requireSha256(receipt.run.artifactSha256, 'E4_INDEPENDENT_RECEIPT_INVALID');
+  const isUtcTimestamp = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
+  if (
+    typeof receipt.run.producerRunId !== 'string' || !receipt.run.producerRunId.trim() ||
+    typeof receipt.run.productVersion !== 'string' || !receipt.run.productVersion.trim() ||
+    typeof receipt.run.artifactFileName !== 'string' || !receipt.run.artifactFileName.trim() ||
+    !Number.isSafeInteger(receipt.run.artifactSize) || receipt.run.artifactSize < 1 ||
+    !isUtcTimestamp(receipt.run.startedAt) || !isUtcTimestamp(receipt.run.completedAt) ||
+    Date.parse(receipt.run.completedAt) < Date.parse(receipt.run.startedAt) ||
+    !['PASS', 'FAIL', 'BLOCKED', 'NOT_RUN'].includes(receipt.run.result)
+  ) throw new Error('E4_INDEPENDENT_RECEIPT_RUN_INVALID');
   if (
     receipt.run.archiveSha256 !== archiveHash ||
     receipt.run.sourceCommit !== report.source.commit || receipt.run.sourceTree !== report.source.tree ||
-    receipt.run.artifactSha256 !== report.artifact.sha256
+    receipt.run.artifactSha256 !== report.artifact.sha256 ||
+    receipt.run.artifactFileName !== report.artifact.fileName || receipt.run.artifactSize !== report.artifact.size
   ) throw new Error('E4_INDEPENDENT_RECEIPT_BINDING_MISMATCH');
 
   if (
@@ -125,6 +140,8 @@ function verifyIndependentReceipt(report, archiveHash) {
     receipt.operator.role !== 'independent-operator' ||
     typeof receipt.reviewer.id !== 'string' || !receipt.reviewer.id.trim() ||
     receipt.reviewer.role !== 'independent-reviewer' ||
+    typeof receipt.operator.identitySource !== 'string' || !receipt.operator.identitySource.trim() ||
+    typeof receipt.reviewer.identitySource !== 'string' || !receipt.reviewer.identitySource.trim() ||
     receipt.operator.id === receipt.reviewer.id ||
     receipt.reviewer.relationshipCheck !== 'not-artifact-author-or-operator'
   ) throw new Error('E4_INDEPENDENT_RECEIPT_ROLE_SEPARATION_INVALID');
@@ -145,8 +162,13 @@ function verifyIndependentReceipt(report, archiveHash) {
     receipt.checks.archiveUnchanged
   ];
   if (checkStatuses.some(status => !['PASS', 'FAIL', 'BLOCKED', 'NOT_RUN'].includes(status))) invalid();
+  if (
+    (receipt.run.result === 'PASS' && checkStatuses.some(status => status !== 'PASS')) ||
+    (receipt.run.result === 'FAIL' && !checkStatuses.includes('FAIL'))
+  ) throw new Error('E4_INDEPENDENT_RECEIPT_RESULT_INCONSISTENT');
   if (!['Ed25519'].includes(receipt.signature.algorithm)) throw new Error('E4_INDEPENDENT_RECEIPT_SIGNATURE_INVALID');
   requireSha256(receipt.signature.keyId, 'E4_INDEPENDENT_RECEIPT_SIGNATURE_INVALID');
+  if (typeof receipt.signature.keySource !== 'string' || !receipt.signature.keySource.trim()) throw new Error('E4_INDEPENDENT_RECEIPT_SIGNATURE_INVALID');
   if (typeof receipt.signature.value !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(receipt.signature.value)) {
     throw new Error('E4_INDEPENDENT_RECEIPT_SIGNATURE_INVALID');
   }
@@ -156,6 +178,8 @@ function verifyIndependentReceipt(report, archiveHash) {
   base.reviewerRole = 'CLAIMED_INDEPENDENT_REVIEWER';
   base.roleSeparation = 'CLAIMED_DISTINCT_IDENTITIES';
   base.cleanEnvironment = 'CLAIMED_CLEAN_WINDOWS_ENVIRONMENT';
+  base.runClaim = receipt.run;
+  base.identitySources = { operator: receipt.operator.identitySource, reviewer: receipt.reviewer.identitySource, reviewerKey: receipt.signature.keySource };
   base.checkClaims = receipt.checks;
   base.reasons.push('REVIEWER_IDENTITY_AND_INDEPENDENCE_REQUIRE_OUT_OF_BAND_REVIEW');
 
