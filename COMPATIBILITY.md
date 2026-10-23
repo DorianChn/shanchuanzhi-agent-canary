@@ -44,3 +44,14 @@ This matrix separates repository CI coverage, host configuration fixtures, and o
 - VERIFIED_PROTECTED must be tied to an exact host version, artifact/commit, callback, and observed effect.
 - Agent Canary cannot undo an operation that already started. Some callback failures or host hook failures may be outside its control.
 - Evidence and trial plans do not establish third-party certification, a security rating, or a user count.
+
+## Native Hook reason projection proposal (#80)
+
+**M8 proposal; M6 owner acceptance is pending.** The Hook response keeps the `permissionDecisionReason` field, but the value is projected through a fixed allowlist so caller-controlled text is never returned to the host.
+
+- Preserve `LAB_HOOK_ERROR_FAIL_CLOSED` exactly.
+- Preserve `Agent Canary: <reason-code>` only when `<reason-code>` is one of the fixed codes `read_only`, `unregistered_tool`, `sensitive_data_read`, `outside_workspace`, `sensitive_path`, `workspace_write`, `destructive_write`, `invalid_command`, `reviewed_read_command`, `sensitive_or_destructive_shell`, `unreviewed_shell`, `unapproved_network_target`, `possible_sensitive_egress`, `approved_read_origin`, `network_write_or_unreviewed_origin`, `approval_capacity`, `host_approval_rejected`, `execution_boundary_changed`, `callback_timeout`, `guard_quarantined`, `host_pre_execution_review_denied`, `canary_quarantine`, `native_file_execution_not_pinned`, or `path_execution_not_pinned`. The fixed `observe_only:` forms are allowed only for `unregistered_tool`, `sensitive_data_read`, `outside_workspace`, `sensitive_path`, `workspace_write`, `destructive_write`, `invalid_command`, `sensitive_or_destructive_shell`, `unreviewed_shell`, `unapproved_network_target`, `possible_sensitive_egress`, and `network_write_or_unreviewed_origin`.
+- For any other reason value, use the fixed fallback for the final decision: `allow` → `Agent Canary: permission_allowed`; `deny` → `Agent Canary: permission_denied`; `ask` → `Agent Canary: approval_required`.
+- This projection changes response metadata only. It does not change the permission decision, approval path, or E4 result. Persistent Hook logs continue to contain only the timestamp, fixed `PreToolUse` event, and permission-decision enum; they never contain the reason.
+
+M6 owns `test/auto-e4.test.mjs` and the E4 expectation. For a caller-provided `M6_HOOK_LOG_CANARY_REASON`, M8 proposes asserting the fixed decision fallback and checking that the canary is absent from stdout, stderr, and the JSONL log. If E4 needs a distinct safe reason code, M6 should propose the fixed code and its meaning before the shared contract changes. This proposal is not accepted until M6 records its decision on Issue #80.

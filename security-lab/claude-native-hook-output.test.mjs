@@ -70,6 +70,56 @@ for(const decision of ['allow','deny','ask']){
  });
 }
 
+test('M6 reason canary is projected to a fixed decision reason and absent from output and log',t=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m8-m6-reason-'));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const modulePath=path.join(root,'fixture.mjs');
+ const stateDirectory=path.join(root,'state');
+ const logFile=path.join(root,'events.jsonl');
+ const canary='M6_HOOK_LOG_CANARY_REASON';
+ const input={session_id:'m8-m6-reason-fixture',tool_name:'Bash',tool_input:{reason:canary}};
+ fs.writeFileSync(modulePath,`export async function decideAgentHook(_client,_workspaceRoot,_stateDirectory,input){
+ return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:input.tool_input.reason}};
+}\n`);
+
+ const run=spawnSync(process.execPath,[wrapperPath,modulePath,root,stateDirectory,logFile],{
+  input:JSON.stringify(input),encoding:'utf8',timeout:5000,windowsHide:true,
+ });
+ assert.equal(run.error,undefined);
+ assert.equal(run.status,0,run.stderr);
+ assert.equal(run.signal,null);
+ assert.ok(!run.stdout.includes(canary));
+ assert.ok(!run.stderr.includes(canary));
+ const result=JSON.parse(run.stdout.trim());
+ assert.equal(result.hookSpecificOutput.permissionDecision,'allow');
+ assert.equal(result.hookSpecificOutput.permissionDecisionReason,safeReasonByDecision.allow);
+ const log=fs.readFileSync(logFile,'utf8');
+ assert.ok(!log.includes(canary));
+ const records=log.trim().split(/\r?\n/);
+ assert.equal(records.length,1);
+ assert.deepEqual(Object.keys(JSON.parse(records[0])).sort(),['hookEventName','permissionDecision','timestamp']);
+});
+
+test('native Hook projection preserves a fixed allowlisted reason code',t=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m8-safe-reason-'));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const modulePath=path.join(root,'fixture.mjs');
+ const stateDirectory=path.join(root,'state');
+ const logFile=path.join(root,'events.jsonl');
+ fs.writeFileSync(modulePath,"export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'deny',permissionDecisionReason:'Agent Canary: sensitive_path'}}}\n");
+
+ const run=spawnSync(process.execPath,[wrapperPath,modulePath,root,stateDirectory,logFile],{
+  input:JSON.stringify({session_id:'m8-safe-reason-fixture',tool_name:'Bash',tool_input:{}}),encoding:'utf8',timeout:5000,windowsHide:true,
+ });
+ assert.equal(run.error,undefined);
+ assert.equal(run.status,0,run.stderr);
+ assert.equal(JSON.parse(run.stdout.trim()).hookSpecificOutput.permissionDecision,'deny');
+ assert.equal(JSON.parse(run.stdout.trim()).hookSpecificOutput.permissionDecisionReason,'Agent Canary: sensitive_path');
+ const event=JSON.parse(fs.readFileSync(logFile,'utf8').trim());
+ assert.deepEqual(Object.keys(event).sort(),['hookEventName','permissionDecision','timestamp']);
+ assert.equal(event.permissionDecision,'deny');
+});
+
 test('co-located E4 payload wrapper logs only allowlisted metadata',async t=>{
  const payload=fs.mkdtempSync(path.join(os.tmpdir(),'canary-e4-packaged-hook-'));
  t.after(()=>fs.rmSync(payload,{recursive:true,force:true}));
