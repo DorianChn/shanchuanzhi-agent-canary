@@ -275,13 +275,12 @@ function assertHistoricalTextPreserved(moduleName, historicalRevision, candidate
 
 test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
   const canonicalHookBlob = readTrackedBlobId('M1', 'security-lab/claude-native-hook.mjs');
+  const mismatches = [];
   for (const moduleName of ['M2', 'M5', 'M7', 'M9']) {
-    assert.equal(
-      readTrackedBlobId(moduleName, 'security-lab/claude-native-hook.mjs'),
-      canonicalHookBlob,
-      `${moduleName} tracked Hook must match the M1 canonical sanitized wrapper`,
-    );
+    const actualHookBlob = readTrackedBlobId(moduleName, 'security-lab/claude-native-hook.mjs');
+    if (actualHookBlob !== canonicalHookBlob) mismatches.push(`${moduleName}: ${actualHookBlob}`);
   }
+  assert.deepEqual(mismatches, [], `every shipped Hook copy must match the M1 canonical sanitized wrapper ${canonicalHookBlob}`);
 });
 
 test('Issue #88 P0: M1 sanitization control and exact M2 source Hook keep reason canaries out of output channels', () => {
