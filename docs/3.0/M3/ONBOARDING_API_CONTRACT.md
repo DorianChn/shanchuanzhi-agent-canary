@@ -99,7 +99,7 @@ restoreAgentIntegration(record) 要求回执字段、绝对路径和宿主配置
 - M3 是上述宿主发现、Agent Integration 和接入 CLI 的接口 owner。对这些调用形状、返回字段、状态或错误语义的变更，由 M3 先更新本文件和对应实现/测试。
 - M0 的共享契约文件只保留跨模块摘要；其他模块通过适配层消费这些接口，不在其 PR 中复制或修改本文件。
 - 当前 Codex 向导、隔离自检结果及所有兼容性声明均不得覆盖 NOT_VERIFIED / OUT_OF_SCOPE 限制。真实 Claude、Cursor、Cline 端到端兼容、Windows 发布命令和原生工具保护均需独立证据。
-- M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. M3's connection-check MCP uses the public `@dorianchn/agent-canary/gateway-adapter` facade and a trusted M5 router factory; its exact-source positive and negative controls are maintained by M9. The Console now has a separate fixed temporary probe action under the same owner composition. The default current M3 package still cannot load M2's public subpath and its own `./sdk` build does not expose M1's held-file methods, so this route returns sanitized `UNKNOWN` until the composed package contains the owner candidates. No private-source import, generic path fallback, or strict-mode opt-out is part of this M3 contract. Native Codex tool coverage remains `OUT_OF_SCOPE`.
+- M5 strict real-path execution remains fail closed unless a trusted host can bind execution to the checked resource identity. M3's connection-check MCP uses the public `@dorianchn/agent-canary/gateway-adapter` facade and a trusted M5 router factory; its exact-source positive and negative controls are maintained by M9. The Console has a separate fixed temporary probe action, but requires a trusted construction-time bootstrap that supplies M1/M2/M5 owner implementations. An M3-only Console default returns sanitized `UNKNOWN` before creating the probe file or Gateway; the route never treats its own SDK exports as proof of the M1 held-capability Gateway or M5 strict router. No private-source import, generic path fallback, or strict-mode opt-out is part of this M3 contract. Native Codex tool coverage remains `OUT_OF_SCOPE`.
 
 ## 6. Console fixed-probe action — implemented, product gate pending
 
@@ -119,12 +119,14 @@ of a Desktop/native host.
 - The JSON body must be exactly `{}`. It has no path, tool, workspace, or other
   caller-controlled fields. Any extra field, including a path alias, is
   rejected before probe dispatch.
-- The host loads only the public M1/M5 `./sdk` and M2 `./gateway-adapter`
-  dependencies after authorization, then creates one process-owned temporary
-  directory and fixed marker file. The resolved directory is contained under
-  the resolved OS temp root and both created objects are identity-checked.
-  The fixed M1/M2/M5 route uses the opaque held-file capability and M5
-  `OBSERVE` with strict real-path checks. Missing APIs, setup errors, dispatch
+- A trusted construction-time bootstrap must supply the M1 Gateway factory,
+  M2 public facade, and M5 strict-router factory. M3 does not import its own
+  `./sdk` to guess which implementation is M1 or M5. The M2 facade is
+  preflighted before creating one process-owned temporary directory and fixed
+  marker file. The resolved directory is contained under the resolved OS temp
+  root and both created objects are identity-checked. The fixed M1/M2/M5 route
+  uses the opaque held-file capability and M5 `OBSERVE` with strict real-path
+  checks. Without the trusted bootstrap, missing APIs, setup errors, dispatch
   errors without an explicit owner `DENY`, and unknown outcomes return
   `UNKNOWN`; there is no direct filesystem-read fallback.
 - `ALLOW` requires the owner route to return the exact fixed marker. A result
@@ -149,13 +151,14 @@ of a Desktop/native host.
 
 M1 PR #43 publishes the Gateway factory and held-file methods through `./sdk`;
 M2 PR #37 publishes `./gateway-adapter`; M5 PR #47 publishes
-`createSecurityToolRouter` through `./sdk`. The current M3 candidate package
-manifest still declares only `./sdk`, and its self package's default M1 Gateway
-does not provide the held-file methods. Thus this branch's default route
-fails closed as `UNKNOWN` before any path fallback. The trusted dependency
-loader is an M3 test/composition seam; it does not count as exact-source
-integration evidence. M9 must compose exact owner sources through these public
-boundaries before product-positive status can be reported.
+`createSecurityToolRouter` through `./sdk`. These are the public inputs a
+trusted M9/product bootstrap can supply. The M3 Console never auto-loads its
+self-package SDK as an M1/M5 substitute. With no bootstrap, or when the M2
+facade cannot be loaded during preflight, the route returns `UNKNOWN` before
+creating probe filesystem state, a Gateway, or a router callback. The trusted
+dependency loader is an M3 test/composition seam; it does not count as
+exact-source integration evidence. M9 must compose exact owner sources through
+these public boundaries before product-positive status can be reported.
 
 Acceptance must cover the authorized exact-marker positive control; missing
 M1/M2/M5 component and unclassified-error `UNKNOWN`; explicit M1/M5 denial;

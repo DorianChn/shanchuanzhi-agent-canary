@@ -185,8 +185,9 @@ operator code in `x-canary-operator-code`, and exposes only the fixed scope,
 status, reason enum, and marker-match boolean. It creates a per-request
 temporary directory only after both checks, registers only
 `agent-canary-public.txt`, composes M1/M2/M5 through injected trusted factories
-or public package exports, closes the Gateway before cleanup, and removes only
-the identity-checked file and directory it created. Missing owner exports,
+supplied by a construction-time host bootstrap, closes the Gateway before
+cleanup, and removes only the identity-checked file and directory it created.
+The M3 Console never imports its own `./sdk` as an M1/M5 substitute. Missing owner exports,
 unclassified dispatch failures, an unexpected marker, or failed cleanup remain
 `UNKNOWN`; only explicit M1/M5 `DENY` is surfaced as `DENY`. There is no path
 argument, direct Console file-read fallback, or user-workspace path.
@@ -198,18 +199,21 @@ argument, direct Console file-read fallback, or user-workspace path.
 | M1 | PR #43, `6886d6eef3beb972bc8f4c797584b0f522483870` | `createTrustedExecutionGateway` and the held-file capability methods are exposed through `./sdk`. |
 | M2 | PR #37, `67428139e53c3f63a1101b4f94e84b291cbb1196` | `createSecurityGatewayHostAdapter` is exposed through `./gateway-adapter`; its fixed file map routes to M5 and M1. |
 | M5 | PR #47, `12b2499a1f7b8525f3bf2d7659249c1bd8e881ed` | `createSecurityToolRouter` is exported through `./sdk`; strict real-path mode requires a valid M1 capability and preserves hard `DENY` under `OBSERVE`. |
-| M3 | PR #33, current source base `34b526d` plus the local Console change | Public self-package loader, fixed route, request authorization, sanitized output, and identity-checked cleanup are M3-owned. |
+| M3 | PR #33, current source base `34b526d` plus the local Console change | Trusted construction-time dependency bootstrap, fixed route, request authorization, sanitized output, and identity-checked cleanup are M3-owned. |
 
 The M3 package manifest at its current source base exposes only `./sdk`, so
-`./gateway-adapter` is not available in the default current M3 build. The
-default Console action was exercised against that package gate and returns
-`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating the probe directory or
-Gateway. The injected M3 tests verify request and response boundaries and
-cleanup using structural test doubles; they do not count as M1/M2/M5 product
-security evidence.
+`./gateway-adapter` is not available in the default current M3 build. More
+fundamentally, the M3 self-package SDK is not accepted as proof of the exact M1
+held-capability Gateway or M5 strict router. With no trusted composed bootstrap,
+the Console returns `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` before creating the
+probe directory, Gateway, or router callback. An injected bootstrap that cannot
+preflight M2 also stops before those effects. The injected M3 tests verify
+request and response boundaries and cleanup using structural test doubles;
+they do not count as M1/M2/M5 product security evidence.
 
-M9 must still run the exact-source composed Console route against the M1, M2,
-M3, and M5 owner sources and preserve the positive, explicit-deny, unknown,
+M9 must supply exact M1, M2, M3, and M5 owner references to the trusted
+construction-time bootstrap and run the composed Console route. Preserve the
+positive, explicit-deny, unknown,
 wrong-marker, alias, same-path replacement, zero-callback, unchanged-fixture,
 and cleanup controls. This Console probe covers only a synthetic temporary
 file. Issue #52 remains `OPEN / P0 / NOT_VERIFIED`; no arbitrary product-host

@@ -166,7 +166,7 @@ test('security-center route ignores provider getters and does not overstate conf
   }
 });
 
-function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow'){
+function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow',missingM2=false){
   const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0};
   const capability=Object.freeze(Object.create(null));
   const loader=async()=>{
@@ -189,7 +189,9 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
           async close(){state.gatewayCloses++;},
         };
       },
-      loadM2Facade:async()=>({createSecurityGatewayHostAdapter(options:Record<string,any>){
+      loadM2Facade:async()=>{
+        if(missingM2)throw new Error('private M2 dependency failure');
+        return{createSecurityGatewayHostAdapter(options:Record<string,any>){
         const router=options.createSecurityToolRouter({
           ...options.routerOptions,
           tools:{protected_read:{operation:'file-read',pathArg:'path'}},
@@ -201,7 +203,8 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
           },
         });
         return{dispatch:(call:unknown)=>router.dispatch(call)};
-      }}),
+      }};
+      },
       createSecurityToolRouter(options:Record<string,any>){
         const gateway=options.executeRealTool;
         return{
@@ -286,7 +289,7 @@ test('protected-read action distinguishes explicit owner denial from unknown dis
   }
 });
 
-test('protected-read action treats an unexpected marker as UNKNOWN and default missing exports fail closed', async () => {
+test('protected-read action treats unexpected markers as UNKNOWN and missing composition fails before probe setup', async () => {
   const injected=fakeProtectedReadDependencies('wrong');
   const console=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterProtectedReadDependencies:injected.loader});
   try{
@@ -305,6 +308,20 @@ test('protected-read action treats an unexpected marker as UNKNOWN and default m
     assert.equal(response.status,200);
     assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
     const after=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
-    assert.deepEqual(after.filter(name=>!before.has(name)),[],'missing public M2 export must fail before creating probe filesystem state');
+    assert.deepEqual(after.filter(name=>!before.has(name)),[],'an M3-only default must not construct a Gateway or probe directory');
   }finally{await defaultConsole.close();}
+
+  const incomplete=fakeProtectedReadDependencies('allow',true);
+  const beforeIncomplete=new Set(fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix)));
+  const incompleteConsole=await startAIConsole({port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterProtectedReadDependencies:incomplete.loader});
+  try{
+    const csrf=await csrfFor(incompleteConsole.url);
+    const response=await fetch(incompleteConsole.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
+    assert.equal(response.status,200);
+    assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'OWNER_ADAPTER_UNAVAILABLE',markerMatched:false});
+    assert.equal(incomplete.state.gatewayCreates,0);
+    assert.equal(incomplete.state.routerCallbacks,0);
+    const afterIncomplete=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
+    assert.deepEqual(afterIncomplete.filter(name=>!beforeIncomplete.has(name)),[],'an unavailable M2 composition must fail before any probe filesystem, Gateway, or router callback');
+  }finally{await incompleteConsole.close();}
 });

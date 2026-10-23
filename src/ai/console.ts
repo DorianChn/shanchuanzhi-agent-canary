@@ -58,20 +58,6 @@ function containsTempPath(root:string,candidate:string):boolean{
   return relative!==''&&relative!=='..'&&!relative.startsWith('..'+path.sep)&&!path.isAbsolute(relative);
 }
 
-async function loadDefaultProtectedReadDependencies():Promise<ProtectedReadDependencies>{
-  const sdkSpecifier='@dorianchn/agent-canary/sdk';
-  const adapterSpecifier='@dorianchn/agent-canary/gateway-adapter';
-  const [sdkValue,adapterValue]=await Promise.all([import(sdkSpecifier),import(adapterSpecifier)]);
-  const sdk=sdkValue as unknown as {createTrustedExecutionGateway?:ProtectedReadGatewayFactory;createSecurityToolRouter?:typeof SecurityToolRouterFactory};
-  const adapter=adapterValue as unknown as PublicM2Facade;
-  if(typeof sdk.createTrustedExecutionGateway!=='function'||typeof sdk.createSecurityToolRouter!=='function'||typeof adapter.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
-  return{
-    createGateway:sdk.createTrustedExecutionGateway,
-    loadM2Facade:async()=>adapter,
-    createSecurityToolRouter:sdk.createSecurityToolRouter,
-  };
-}
-
 async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedReadDependencies|undefined){
   let outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);
   let gateway:ProtectedReadGateway|undefined;
@@ -80,9 +66,12 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
   let directoryIdentity:{dev:number;ino:number}|undefined;
   let fileIdentity:{dev:number;ino:number}|undefined;
   let cleanupSucceeded=true;
+  if(!loadDependencies)return outcome;
   try{
-    const dependencies=await(loadDependencies??loadDefaultProtectedReadDependencies)();
+    const dependencies=await loadDependencies();
     if(typeof dependencies.createGateway!=='function'||typeof dependencies.loadM2Facade!=='function'||typeof dependencies.createSecurityToolRouter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
+    const facade=await dependencies.loadM2Facade();
+    if(typeof facade?.createSecurityGatewayHostAdapter!=='function')throw new Error('PROTECTED_READ_DEPENDENCY_UNAVAILABLE');
     tempRoot=fs.realpathSync(os.tmpdir());
     tempDirectory=fs.mkdtempSync(path.join(tempRoot,'agent-canary-console-probe-'));
     const realDirectory=fs.realpathSync(tempDirectory),directoryStat=fs.lstatSync(tempDirectory);
@@ -100,7 +89,7 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
     if(realProbePath!==probePath||!probeStat.isFile()||probeStat.isSymbolicLink()||probeStat.nlink!==1||probeStat.size!==Buffer.byteLength(protectedReadMarker)||probeStat.dev!==fileIdentity.dev||probeStat.ino!==fileIdentity.ino)throw new Error('PROTECTED_READ_TEMP_FILE_UNSAFE');
     const guard=createAgentGuard({sessionId:'console-protected-read-'+randomBytes(12).toString('hex'),alert:false});
     gateway=dependencies.createGateway({agentId:'agent-canary-console-probe',guard,workspaceRoot:tempDirectory,files:[{path:protectedReadFile}],evidence:new EvidenceRecorder()});
-    const host=await createProtectedHostAdapter(gateway,guard,tempDirectory,{loadM2Facade:dependencies.loadM2Facade,createSecurityToolRouter:dependencies.createSecurityToolRouter});
+    const host=await createProtectedHostAdapter(gateway,guard,tempDirectory,{loadM2Facade:async()=>facade,createSecurityToolRouter:dependencies.createSecurityToolRouter});
     if(!host.dispatch){outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);}
     else{
       const before=host.m5Callbacks();
