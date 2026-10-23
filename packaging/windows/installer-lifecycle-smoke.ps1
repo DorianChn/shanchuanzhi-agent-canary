@@ -14,6 +14,7 @@ $result = [ordered]@{
   installerProcessStarted = $false
   installerProcessCompleted = $false
   installerExitCode = $null
+  installerPhase = $null
   sourceSHA = $ExpectedSourceSHA
   installerSHA256 = $null
   candidateId = $null
@@ -37,6 +38,7 @@ $result = [ordered]@{
 
 $sandboxRoot = $null
 $installRoot = $null
+$phaseMarkerPath = $null
 $installerPath = $null
 $uninstalled = $false
 $fatalError = $null
@@ -60,7 +62,7 @@ function Assert-RegularFile([string]$Path) {
   return $item
 }
 
-function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs = 180000, [switch]$RecordSetupProcess) {
+function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs = 180000, [switch]$RecordSetupProcess, [switch]$EnablePhaseMarkers) {
   $startInfo = [Diagnostics.ProcessStartInfo]::new()
   $startInfo.FileName = $Executable
   # NSIS requires /D= and _?= paths to be unquoted and last. Keep Arguments raw.
@@ -68,6 +70,9 @@ function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs
   $startInfo.UseShellExecute = $false
   $startInfo.CreateNoWindow = $true
   $startInfo.WindowStyle = [Diagnostics.ProcessWindowStyle]::Hidden
+  if ($EnablePhaseMarkers) {
+    $startInfo.EnvironmentVariables['AGENT_CANARY_M7_PHASE_MARKER'] = '1'
+  }
   $process = [Diagnostics.Process]::new()
   $process.StartInfo = $startInfo
   $clock = [Diagnostics.Stopwatch]::StartNew()
@@ -94,6 +99,26 @@ function Invoke-Nsis([string]$Executable, [string]$RawArguments, [int]$TimeoutMs
 function Get-RegistryInstallLocation([string]$KeyPath) {
   if (-not (Test-Path -LiteralPath $KeyPath)) { return $null }
   return [string](Get-ItemProperty -LiteralPath $KeyPath -Name InstallLocation -ErrorAction Stop).InstallLocation
+}
+
+function Read-InstallerPhase {
+  if (-not $phaseMarkerPath -or -not (Test-Path -LiteralPath $phaseMarkerPath -PathType Leaf)) { return }
+  $installPrefix = [IO.Path]::GetFullPath($installRoot).TrimEnd([char[]]@([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)) + [IO.Path]::DirectorySeparatorChar
+  $markerFull = [IO.Path]::GetFullPath($phaseMarkerPath)
+  if (-not $markerFull.StartsWith($installPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+    $result.installerPhase = 'UNREADABLE_MARKER'
+    return
+  }
+  try {
+    $null = Assert-RegularFile $phaseMarkerPath
+    $phaseValue = [IO.File]::ReadAllText($phaseMarkerPath).Trim()
+    $knownPhases = @('FILE_COPY_STARTED', 'FILE_COPY_COMPLETE', 'RECORD_INSTALL_STARTED', 'RECORD_INSTALL_COMPLETE', 'INSTALL_REGISTERED')
+    $result.installerPhase = if ($phaseValue -in $knownPhases) { $phaseValue } else { 'INVALID_MARKER' }
+  } catch {
+    $result.installerPhase = 'UNREADABLE_MARKER'
+  } finally {
+    Remove-Item -LiteralPath $phaseMarkerPath -Force -ErrorAction SilentlyContinue
+  }
 }
 
 function Resolve-ContainedPath([string]$Root, [string]$RelativePath) {
@@ -183,6 +208,7 @@ try {
   Assert-Condition (-not (Test-Path -LiteralPath $sandboxRoot)) 'SANDBOX_ALREADY_EXISTS'
   New-Item -ItemType Directory -Path $sandboxRoot | Out-Null
   $installRoot = Join-Path $sandboxRoot 'Agent Canary 安装目录'
+  $phaseMarkerPath = Join-Path $installRoot '.m7-installer-lifecycle-phase'
   $duplicateRoot = Join-Path $sandboxRoot 'duplicate target'
   $registryKey = "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall\AgentCanaryCommunityCandidate$candidateNumber"
   $programsRoot = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
@@ -196,7 +222,8 @@ try {
   Assert-Condition (-not (Test-Path -LiteralPath $startMenuFolder)) 'START_MENU_TARGET_NOT_CLEAN'
   Assert-Condition (-not (Test-Path -LiteralPath $desktopShortcut)) 'DESKTOP_SHORTCUT_ALREADY_EXISTS'
 
-  $installResult = Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess
+  $installResult = Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess -EnablePhaseMarkers
+  Read-InstallerPhase
   Assert-Condition ($installResult.exitCode -eq 0) 'INSTALLER_EXIT_NOT_ZERO'
   $result.installerExecuted = $true
   $result.installPath = '<RUNNER_TEMP>/Agent Canary 安装目录'
@@ -277,6 +304,7 @@ try {
       $result.cleanupAfterFailure = @{ attempted = $true; status = 'FAILED'; reason = $cleanupReason }
     }
   }
+  Read-InstallerPhase
   $result.completedAt = [DateTime]::UtcNow.ToString('o')
   $evidenceDirectory = Split-Path -Parent $EvidencePath
   New-Item -ItemType Directory -Path $evidenceDirectory -Force | Out-Null

@@ -89,6 +89,7 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   const lifecycleJobEnv=lifecycleJob.slice(lifecycleJob.indexOf('    env:\n'),lifecycleJob.indexOf('    steps:\n'));
   const buildJob=workflow.slice(workflow.indexOf('  windows-community-build-evidence:'),workflow.indexOf('  windows-community-installer-lifecycle:'));
   const smoke=fs.readFileSync(new URL('../packaging/windows/installer-lifecycle-smoke.ps1',import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const installer=fs.readFileSync(new URL('../packaging/windows/installer.nsi.in',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   assert.ok(lifecycleJob.includes('needs: windows-community-build-evidence'),'lifecycle must consume the package from this workflow run');
   assert.ok(lifecycleJob.includes('runs-on: windows-latest'),'lifecycle must run on a fresh hosted Windows VM');
   assert.ok(lifecycleJob.includes('permissions: {}'),'untrusted package execution must have no repository permissions');
@@ -110,7 +111,22 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   const processWait=smoke.indexOf('if (-not $process.WaitForExit($TimeoutMs))',processStart);
   assert.ok(processStart>=0&&processStart<processStartedRecord&&processStartedRecord<processWait,'timeout evidence must record a started setup process before waiting');
   assert.ok(smoke.includes('$result.installerProcessCompleted = $true')&&smoke.includes('$result.installerExitCode = $process.ExitCode'),'process completion and exit code must only be recorded after wait succeeds');
-  assert.ok(smoke.includes('Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess'),'primary setup execution must populate process evidence');
+  assert.ok(smoke.includes('Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess -EnablePhaseMarkers'),'primary setup execution must populate process evidence and enable bounded phase markers');
+  assert.ok(smoke.includes("$startInfo.EnvironmentVariables['AGENT_CANARY_M7_PHASE_MARKER'] = '1'")&&smoke.includes("$result.installerPhase = if ($phaseValue -in $knownPhases)"),'the smoke result must read a bounded lifecycle phase marker from the exact setup process');
+  const phaseMarkers=[
+    'StrCpy $M7LifecyclePhase "FILE_COPY_STARTED"',
+    'StrCpy $M7LifecyclePhase "FILE_COPY_COMPLETE"',
+    'StrCpy $M7LifecyclePhase "RECORD_INSTALL_STARTED"',
+    'nsExec::ExecToStack',
+    'StrCpy $M7LifecyclePhase "RECORD_INSTALL_COMPLETE"',
+    'WriteUninstaller',
+    'StrCpy $M7LifecyclePhase "INSTALL_REGISTERED"'
+  ].map(marker=>installer.indexOf(marker));
+  assert.ok(installer.includes('StrCmp $M7LifecycleMarkerEnabled "1" 0 m7_lifecycle_marker_disabled')&&installer.includes('StrCpy $M7LifecycleMarkerPath "$INSTDIR\\.m7-installer-lifecycle-phase"'),'phase logging must write only to a fixed file inside the selected install directory when the hosted smoke opts in');
+  assert.ok(installer.includes('IfErrors 0 +2')&&installer.includes('SetErrors'),'phase logging must preserve the NSIS error flag used by installation failure handling');
+  assert.ok(smoke.includes("Join-Path $installRoot '.m7-installer-lifecycle-phase'")&&smoke.includes('Remove-Item -LiteralPath $phaseMarkerPath -Force'),'the smoke must read and remove its marker within the disposable install target');
+  assert.ok(phaseMarkers.every((position,index)=>position>=0&&(index===0||position>phaseMarkers[index-1])),'NSIS phase markers must bracket file copy, receipt recording, and registration in order');
+  assert.ok(smoke.includes('if (-not $process.WaitForExit($TimeoutMs))')&&smoke.includes('$process.Kill($true)')&&smoke.includes("throw 'NSIS_PROCESS_TIMEOUT'"),'diagnostics must preserve the bounded timeout, kill, and failure behavior');
   assert.ok(smoke.includes('INSTALLED_LAUNCHER_SHA256_MISMATCH'),'the installed launcher must match the build report');
   assert.ok(smoke.includes('"/S /D=$installRoot"'),'install must be silent and confined to the runner temp directory');
   assert.ok(smoke.includes('"/S _?=$installRoot"'),'uninstall must be silent and bound to the exact target');
