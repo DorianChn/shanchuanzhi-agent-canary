@@ -66,7 +66,7 @@ jobs:
     env:
       AGENT_CANARY_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       COMMUNITY_CANDIDATE_ID: competition-candidate.2
-      M8_SOURCE_SHA: 90fcde07775d4109f6e1b1b4b52d1975723dd979
+      M8_SOURCE_SHA: 24b8651730d57d860ba136e77db1526031abb1fc
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -77,7 +77,7 @@ jobs:
         shell: pwsh
         run: |
           $m8SourceSha = $env:M8_SOURCE_SHA
-          if ($m8SourceSha -ne '90fcde07775d4109f6e1b1b4b52d1975723dd979') { throw 'M8_SOURCE_SHA_PIN_MISMATCH' }
+          if ($m8SourceSha -ne '24b8651730d57d860ba136e77db1526031abb1fc') { throw 'M8_SOURCE_SHA_PIN_MISMATCH' }
           $baseRepository = "https://github.com/$env:GITHUB_REPOSITORY.git"
           & git fetch --no-tags --depth=1 $baseRepository refs/pull/40/head
           if ($LASTEXITCODE -ne 0) { throw 'M8_SOURCE_FETCH_FAILED' }

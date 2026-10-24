@@ -195,17 +195,17 @@ test('Community candidate pins the Hook Git blob when a Windows worktree has CRL
 test('Community candidate stages the exact M8 offline-demo Git blob and provenance',()=>{
   const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
   const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
-  const m8SourceSHA='90fcde07775d4109f6e1b1b4b52d1975723dd979';
+  const m8SourceSHA='24b8651730d57d860ba136e77db1526031abb1fc';
   const m8DemoBlob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
   const m8DemoPath='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
   assert.match(builder,/p\.add_argument\('--m8-source-sha',required=True\)/);
-  assert.match(builder,/expected_m8_source_sha='90fcde07775d4109f6e1b1b4b52d1975723dd979'/);
+  assert.match(builder,/expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'/);
   assert.match(builder,/expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
   assert.match(builder,/m8_demo_ref=f'\{a\.m8_source_sha\}:\{m8_demo_relative\}'/);
   assert.match(builder,/community_demo_path\.write_bytes\(m8_demo_bytes\)/);
   assert.match(builder,/if candidate_m8_demo!=m8_demo_bytes[\s\S]*?expected_m8_demo_blob/);
   assert.match(builder,/m8SourceSHA':a\.m8_source_sha[\s\S]*?'m8SourceBlob':expected_m8_demo_blob/);
-  assert.match(workflow,/M8_SOURCE_SHA: 90fcde07775d4109f6e1b1b4b52d1975723dd979/);
+  assert.match(workflow,/M8_SOURCE_SHA: 24b8651730d57d860ba136e77db1526031abb1fc/);
   assert.match(workflow,/refs\/pull\/40\/head/);
   assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
   assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
