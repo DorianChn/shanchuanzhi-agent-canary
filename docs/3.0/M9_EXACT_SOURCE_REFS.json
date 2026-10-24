@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "repository": "DorianChn/shanchuanzhi-agent-canary",
+  "targetBaseRef": "feature/agent-canary-3.0",
+  "modules": {
+    "M1": {
+      "pullRequest": 101,
+      "branchRef": "feature/ac3-security-core",
+      "sha": "47501fc090ee67f7f96d84d231c7ce7cc70379cd"
+    },
+    "M2": {
+      "pullRequest": 110,
+      "branchRef": "feature/ac3-execution-isolation",
+      "sha": "941fd22d5e43e1de91a76b8c73006e57a4c15496"
+    },
+    "M3": {
+      "pullRequest": 107,
+      "branchRef": "feature/ac3-agent-onboarding",
+      "sha": "0d61b434ba2ac81e313b82432f4ac00afedd3cbc"
+    },
+    "M4": {
+      "pullRequest": 98,
+      "branchRef": "feature/ac3-desktop-security-center",
+      "sha": "892d3290338fe811da127f8f51ab91de0b9fc18b"
+    },
+    "M5": {
+      "pullRequest": 94,
+      "branchRef": "feature/ac3-policy-audit",
+      "sha": "cca42cd1762f995e92454d55ffa5e63951e39144"
+    },
+    "M6": {
+      "pullRequest": 111,
+      "branchRef": "feature/ac3-e4-validation-ac3",
+      "sha": "2a88d8b7e099ce865c9900bb9313d4b8bdef8299"
+    },
+    "M7": {
+      "pullRequest": 113,
+      "branchRef": "feature/ac3-m7-m8-source-pin",
+      "sha": "bba0f0f89c610f8198660e799de7a652b8ea8e96"
+    },
+    "M8": {
+      "pullRequest": 40,
+      "branchRef": "feature/ac3-open-source-product",
+      "sha": "1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841"
+    }
+  },
+  "historicalSources": {
+    "M8_M6_SCOPED_REGRESSION": {
+      "sha": "84ee6a7a8d65706f694b7949e82fd8c83cc11523",
+      "reason": "Independent checkout used only for the historical M6-scoped lifecycle regression; not the current M8 candidate."
+    }
+  },
+  "reviewDispositions": {
+    "M6_M8_CURRENT_LIFECYCLE": {
+      "issue": 80,
+      "scope": "M6 lifecycle disposition for the exact current M8 candidate",
+      "status": "ACCEPT",
+      "targetSha": "1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841",
+      "reviewedSha": "1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841",
+      "commentId": "6387136527",
+      "candidateLifecycleBlobSha": "d1705c204ef3f511ee4828e90b35731b36f92238",
+      "m6VerifierTestBlobSha": "2e9b0c00c853193ea50eaecf1209747e8f64affe"
+    }
+  }
+}

@@ -17,16 +17,20 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
   return [moduleName, { root, sha }];
 }));
 
+const exactSourceManifest = JSON.parse(fs.readFileSync(
+  path.join(sourceRoots.M9.root, 'docs/3.0/M9_EXACT_SOURCE_REFS.json'),
+  'utf8',
+));
 const pinnedSourceShas = {
-  M1: '47501fc090ee67f7f96d84d231c7ce7cc70379cd',
-  M2: '26cdb8781e57a05f57362e3078d77ce18614481c',
-  M3: '0d61b434ba2ac81e313b82432f4ac00afedd3cbc',
-  M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
-  M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
-  M6: '2975f3fc88929cacf268e80a503667b440ea519a',
-  M7: '7d1da7d3d90f61aae4e3405b980fc719633d20ac',
-  M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
-  M8_CANDIDATE: '60cfe8d976a42d0f635d4be93ca24c00e81246d5',
+  M1: exactSourceManifest.modules.M1.sha,
+  M2: exactSourceManifest.modules.M2.sha,
+  M3: exactSourceManifest.modules.M3.sha,
+  M4: exactSourceManifest.modules.M4.sha,
+  M5: exactSourceManifest.modules.M5.sha,
+  M6: exactSourceManifest.modules.M6.sha,
+  M7: exactSourceManifest.modules.M7.sha,
+  M8: exactSourceManifest.historicalSources.M8_M6_SCOPED_REGRESSION.sha,
+  M8_CANDIDATE: exactSourceManifest.modules.M8.sha,
 };
 
 const mergedSourceProvenance = {
@@ -41,23 +45,35 @@ const mergedSourceProvenance = {
 
 const currentCandidateProvenance = {
   M1: { ownerHead: '47501fc090ee67f7f96d84d231c7ce7cc70379cd', ownerTree: '779ecf4c6020dd3ccb551b59e638f7066d724c2b', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '47501fc090ee67f7f96d84d231c7ce7cc70379cd', prTree: '779ecf4c6020dd3ccb551b59e638f7066d724c2b' },
-  M6: { ownerHead: 'ed335ef7cacfa626f9a5b6bc4c69e6af6366123e', ownerTree: '2dd0c9991794b5983d488fbacadb7a9fbe4f0d89', sourceBase: 'eb78dcef6eb1bd501606244771880bb41d6f0b43', prHead: '2975f3fc88929cacf268e80a503667b440ea519a', prTree: 'c1cae38a069255f346b85c8e9ec708c56e91e16c' },
-  M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '26cdb8781e57a05f57362e3078d77ce18614481c', prTree: 'd47d82af42266d9cb0c3a3895b180c1c23aeb980' },
+  M6: { ownerHead: '681a6221c4e5e327d1a6e5eb8c0bf6f4d5e59c18', ownerTree: 'd18b254f6393b8b287c6d4715e7e07c51ccd01c7', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: '6eb6f528b13f2bc51924adb3d3d1b94a0fde305d', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: '2a88d8b7e099ce865c9900bb9313d4b8bdef8299', prTree: 'd64ab5c58b20995034ed33bf5aab8bdbfe03ca12' },
+  M2: { ownerHead: '941fd22d5e43e1de91a76b8c73006e57a4c15496', ownerTree: '969fd968d14c04e35648281924028f6702a65a2a', sourceBase: '7736ec936d575c86a347058cc60107b2ae31109d', firstParent: '7736ec936d575c86a347058cc60107b2ae31109d', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: '941fd22d5e43e1de91a76b8c73006e57a4c15496', prTree: '969fd968d14c04e35648281924028f6702a65a2a' },
   M3: { ownerHead: 'ea9754c8b7275bf508e5338b3ddc11edc7d6a106', ownerTree: '76830b2068cc74dd7c9976141a112cf0a1c7f51c', sourceBase: '416f1ba4848d5be4011ac72d42066d4c72b42d49', prHead: '0d61b434ba2ac81e313b82432f4ac00afedd3cbc', prTree: 'e9674f6c6222e7f496ad2aaf641f0083b61b8271' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
+  M7: { ownerHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', ownerTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: 'c03176fbce3741bd756bfdad4576ff807572134b', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', prTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228' },
+};
+
+const historicalCandidateProvenance = {
   M7: { ownerHead: '37034a971d00477a8aa3d57f34773c125939ec92', ownerTree: 'e0d234e71372109a7e9f7076844d8ebf83e8ef50', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '7d1da7d3d90f61aae4e3405b980fc719633d20ac', prTree: '05bc65f26346e8b49aab921d274e3b81382ccca1' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
 const m1HistoricalReviewSha = 'a5eff766ebe041bc2c6cc13758827d5a96205de9';
 const m1M2ReviewedSourceSha = '099ad64e4a09330920cbd40847adec3fe631e91e';
-const m1M3ReviewedSourceSha = 'e771c06f72d8a03fb7945037a3facbc2d0ed8a6e';
+const m1M3ReviewSourceSha = '47501fc090ee67f7f96d84d231c7ce7cc70379cd';
+const m1M3ReviewedSourceSha = '0d61b434ba2ac81e313b82432f4ac00afedd3cbc';
+const m1M3ReviewComment = '6386280736';
 const m1M3ReviewedBlobs = {
   'src/agent-hook.ts': '76f7bf6314046777ee1615873e5de4621671ea15',
-  'test/agent-hook.test.ts': '0e8a2250ee500d455b0c96430b33714925db3862',
+  'test/agent-hook.test.ts': '10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2',
   'security-lab/claude-native-hook.mjs': 'b7ed4aba70a597f4f63a05decc6de1b32f67372e',
 };
+const currentM1M3ReviewMismatches = Object.entries(m1M3ReviewedBlobs)
+  .filter(([filePath, expectedBlob]) => {
+    const result = spawnSync('git', ['-C', sourceRoots.M3.root, 'rev-parse', '--verify', `${pinnedSourceShas.M3}:${filePath}`], { encoding: 'utf8', windowsHide: true });
+    return result.status !== 0 || result.stdout.trim() !== expectedBlob;
+  })
+  .map(([filePath]) => filePath);
 const m6PriorAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
 const m6M8ReviewedContractSha = '2cebabc81d7908c04ddfa10378fa1d3427b92cf4';
 const m6M8ReviewedSourceSha = '72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db';
@@ -71,19 +87,16 @@ const m1M8HookReview = {
   outputTestBlob: '186fa2d163f7118d10f01abdac91a0b5e657359b',
 };
 const m6M8CurrentLifecycleReview = {
-  status: 'ACCEPT',
-  sha: '60cfe8d976a42d0f635d4be93ca24c00e81246d5',
-  blob: 'd1705c204ef3f511ee4828e90b35731b36f92238',
-  comment: '6379633677',
-  issue: '80',
+  status: exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.status,
+  sha: exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.targetSha,
+  reviewedSha: exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.reviewedSha ?? '',
+  blob: exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.candidateLifecycleBlobSha,
+  m6VerifierBlob: exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.m6VerifierTestBlobSha,
+  comment: exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.commentId ?? '',
+  issue: String(exactSourceManifest.reviewDispositions.M6_M8_CURRENT_LIFECYCLE.issue),
 };
 const m8ReviewedE4TestBlob = 'd8909264ea2d924d611ca01a4daa73829ab67d1d';
 const m7AcceptedE4HelperBlob = '89e8a04ed026af146a712517144f560aefe92a0d';
-assert.equal(
-  readTreeIdAt('M8_CANDIDATE', pinnedSourceShas.M8_CANDIDATE),
-  '25a78c1e0bff8551cc8f41bde312c59224f45abf',
-  'the current M8 PR #40 source tree must remain tied to the exact candidate pin',
-);
 
 function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
   const result = spawnSync('git', [
@@ -97,10 +110,6 @@ function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
   assert.equal(result.status, 0, `${description} must remain an ancestor of the exact candidate`);
 }
 
-for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
-  assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
-}
-
 function readTreeIdAt(moduleName, commitSha) {
   const result = spawnSync('git', ['-C', sourceRoots[moduleName].root, 'rev-parse', '--verify', `${commitSha}^{tree}`], { encoding: 'utf8', windowsHide: true });
   assert.equal(result.error, undefined, `${moduleName} tree lookup must start`);
@@ -108,25 +117,46 @@ function readTreeIdAt(moduleName, commitSha) {
   return result.stdout.trim();
 }
 
-for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
-  assert.equal(readTreeIdAt(moduleName, provenance.mergeSha), provenance.mergeTree, `${moduleName} historical actual merge tree must retain its recorded provenance`);
-  assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} owner PR head tree must retain its recorded provenance`);
-  assert.equal(
-    provenance.ownerTree === provenance.mergeTree,
-    ['M1', 'M3'].includes(moduleName),
-    `${moduleName} owner-head versus merge-tree relation must remain explicitly recorded`,
-  );
-  const currentCandidate = currentCandidateProvenance[moduleName];
-  if (currentCandidate) {
-    assert.equal(pinnedSourceShas[moduleName], currentCandidate.prHead, `${moduleName} current source must pin the exact follow-up PR head`);
-    assertAncestor(moduleName, currentCandidate.sourceBase ?? provenance.mergeSha, currentCandidate.prHead, `${moduleName} current candidate source base`);
-    assertAncestor(moduleName, currentCandidate.ownerHead, currentCandidate.prHead, `${moduleName} owner fix commit`);
-    assert.equal(readTreeIdAt(moduleName, currentCandidate.ownerHead), currentCandidate.ownerTree, `${moduleName} owner fix tree must retain its recorded provenance`);
-    assert.equal(readTreeIdAt(moduleName, currentCandidate.prHead), currentCandidate.prTree, `${moduleName} follow-up PR head tree must retain its exact provenance`);
-  } else {
-    assert.equal(readTreeIdAt(moduleName, pinnedSourceShas[moduleName]), provenance.mergeTree, `${moduleName} current source root must use the recorded actual merge tree`);
+test('manifest-pinned exact source refs retain their tree and ancestry provenance', () => {
+  for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
+    assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
   }
-}
+  for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
+    assert.equal(readTreeIdAt(moduleName, provenance.mergeSha), provenance.mergeTree, `${moduleName} historical actual merge tree must retain its recorded provenance`);
+    assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} owner PR head tree must retain its recorded provenance`);
+    assert.equal(
+      provenance.ownerTree === provenance.mergeTree,
+      ['M1', 'M3'].includes(moduleName),
+      `${moduleName} owner-head versus merge-tree relation must remain explicitly recorded`,
+    );
+    const currentCandidate = currentCandidateProvenance[moduleName];
+    if (currentCandidate) {
+      assert.equal(pinnedSourceShas[moduleName], currentCandidate.prHead, `${moduleName} current source must pin the exact follow-up PR head`);
+      assertAncestor(moduleName, currentCandidate.sourceBase ?? provenance.mergeSha, currentCandidate.prHead, `${moduleName} current candidate source base`);
+      if (currentCandidate.targetBase) {
+        assertAncestor(moduleName, currentCandidate.targetBase, currentCandidate.prHead, `${moduleName} exact target branch base`);
+      }
+      if (currentCandidate.firstParent) {
+        const firstParent = spawnSync('git', ['-C', sourceRoots[moduleName].root, 'rev-parse', '--verify', `${currentCandidate.prHead}^1`], { encoding: 'utf8', windowsHide: true });
+        assert.equal(firstParent.error, undefined, `${moduleName} first-parent lookup must start`);
+        assert.equal(firstParent.status, 0, `${moduleName} first parent must exist`);
+        assert.equal(firstParent.stdout.trim(), currentCandidate.firstParent, `${moduleName} candidate must retain its exact first parent`);
+      }
+      assertAncestor(moduleName, currentCandidate.ownerHead, currentCandidate.prHead, `${moduleName} owner fix commit`);
+      assert.equal(readTreeIdAt(moduleName, currentCandidate.ownerHead), currentCandidate.ownerTree, `${moduleName} owner fix tree must retain its recorded provenance`);
+      assert.equal(readTreeIdAt(moduleName, currentCandidate.prHead), currentCandidate.prTree, `${moduleName} follow-up PR head tree must retain its exact provenance`);
+    } else {
+      assert.equal(readTreeIdAt(moduleName, pinnedSourceShas[moduleName]), provenance.mergeTree, `${moduleName} current source root must use the recorded actual merge tree`);
+    }
+  }
+  for (const [moduleName, provenance] of Object.entries(historicalCandidateProvenance)) {
+    assertAncestor(moduleName, provenance.sourceBase, provenance.prHead, `${moduleName} historical candidate source base`);
+    assertAncestor(moduleName, provenance.ownerHead, provenance.prHead, `${moduleName} historical owner fix commit`);
+    assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} historical owner fix tree must remain exact`);
+    assert.equal(readTreeIdAt(moduleName, provenance.prHead), provenance.prTree, `${moduleName} historical PR head tree must remain exact`);
+    assertAncestor(moduleName, provenance.prHead, pinnedSourceShas[moduleName], `${moduleName} historical PR head must remain on the current candidate ancestry`);
+  }
+});
 
 test('exact M3 package retains the coordinated M1 SDK, M2 facade, and M5 policy exports', () => {
   const readPackage = (moduleName) => JSON.parse(fs.readFileSync(path.join(sourceRoots[moduleName].root, 'package.json'), 'utf8'));
@@ -213,15 +243,13 @@ test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the 
   assert.equal(packagedPaths.some((file) => file.startsWith('security-lab/e4/')), false, 'npm pack must omit the E4 repository tooling directory');
 });
 
-assert.equal(process.env.M1_M3_REVIEW_SHA, m1HistoricalReviewSha, 'M1-to-M3 Hook disposition must preserve its historical M1 review SHA');
-assertAncestor('M1', m1HistoricalReviewSha, pinnedSourceShas.M1, 'historical M1-to-M3 review source');
+test('owner review pointers retain their exact scope and file fingerprints', () => {
+assert.equal(process.env.M1_M3_REVIEW_SHA, m1M3ReviewSourceSha, 'M1-to-M3 Hook acceptance must identify the M1 source that issued it');
+assertAncestor('M1', m1M3ReviewSourceSha, pinnedSourceShas.M1, 'current M1 Hook review source');
 assert.equal(process.env.M1_M3_REVIEW_TARGET_SHA, m1M3ReviewedSourceSha, 'M1 review must name the M3 source commit it actually reviewed');
-assert.equal(process.env.M1_M3_REVIEW_COMMENT, '6374247604', 'M1 review must cite the exact Issue #72 owner comment');
+assert.equal(process.env.M1_M3_REVIEW_COMMENT, m1M3ReviewComment, 'M1 review must cite the exact Issue #72 owner comment');
 assert.equal(process.env.M1_M3_REVIEW_ISSUE, '72', 'M1-to-M3 Hook review is tracked on Issue #72');
 assertAncestor('M3', m1M3ReviewedSourceSha, pinnedSourceShas.M3, 'M1-reviewed M3 Hook source');
-const currentM1M3ReviewMismatches = Object.entries(m1M3ReviewedBlobs)
-  .filter(([filePath, expectedBlob]) => readBlobIdAt('M3', pinnedSourceShas.M3, filePath) !== expectedBlob)
-  .map(([filePath]) => filePath);
 assert.equal(
   process.env.M1_M3_REVIEW_STATUS,
   currentM1M3ReviewMismatches.length === 0 ? 'ACCEPT' : 'NOT_VERIFIED',
@@ -264,6 +292,7 @@ assert.equal(readBlobIdAt('M8', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'),
 assert.equal(readBlobIdAt('M8', pinnedSourceShas.M8, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M8 current head must preserve the exact M6-reviewed test hunk');
 assert.equal(readTrackedBlobId('M7', 'packaging/windows/e4-hook-faults.mjs'), m7AcceptedE4HelperBlob, 'M7 helper accepted as a condition of the M6 review must remain exact');
 assert.equal(process.env.M5_CODE_SHA, 'f0e90c99033a6304748ac79fe106439ca4bd2e06');
+});
 
 function readTrackedBlobId(moduleName, filePath) {
   const result = spawnSync('git', [
@@ -700,9 +729,9 @@ test('historical M8 source matches its exact M1-approved Hook blob', () => {
   );
 });
 
-test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and sanitizes Hook output', () => {
+test('current M8 PR #40 candidate keeps its lifecycle fingerprint and sanitizes Hook output', () => {
   const candidateSha = pinnedSourceShas.M8_CANDIDATE;
-  assert.equal(candidateSha, m6M8CurrentLifecycleReview.sha, 'the current M6 owner disposition must stay tied to the reviewed exact M8 head');
+  assert.equal(candidateSha, m6M8CurrentLifecycleReview.sha, 'the M6 disposition record must target the manifest-pinned exact M8 head');
   assert.equal(process.env.M1_M8_HOOK_REVIEW_STATUS, m1M8HookReview.status);
   assert.equal(process.env.M1_M8_HOOK_REVIEW_SOURCE_SHA, m1M8HookReview.sourceSha);
   assert.equal(process.env.M1_M8_HOOK_REVIEW_COMMENT, m1M8HookReview.comment);
@@ -711,7 +740,9 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   assert.equal(process.env.M1_M8_OUTPUT_TEST_BLOB, m1M8HookReview.outputTestBlob);
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_STATUS, m6M8CurrentLifecycleReview.status);
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_SHA, m6M8CurrentLifecycleReview.sha);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEWED_SHA, m6M8CurrentLifecycleReview.reviewedSha);
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_BLOB, m6M8CurrentLifecycleReview.blob);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_VERIFIER_BLOB, m6M8CurrentLifecycleReview.m6VerifierBlob);
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_COMMENT, m6M8CurrentLifecycleReview.comment);
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_ISSUE, m6M8CurrentLifecycleReview.issue);
   assertAncestor('M8_CANDIDATE', m1M8HookReview.sourceSha, candidateSha, 'M1-reviewed M8 Hook source');
@@ -725,12 +756,22 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   assert.equal(
     candidateLifecycleBlob,
     m6M8CurrentLifecycleReview.blob,
-    'the current M8 candidate lifecycle-file change must stay tied to the exact PR #40 head',
+    'the current M8 candidate lifecycle-file blob must match the manifest fingerprint',
+  );
+  assert.equal(
+    readTrackedBlobId('M6', 'test/auto-e4.test.mjs'),
+    m6M8CurrentLifecycleReview.blob,
+    'the exact M6 candidate must retain the lifecycle test blob covered by the M6 owner disposition',
+  );
+  assert.equal(
+    readTrackedBlobId('M6', 'security-lab/e4/verify-bundle.test.mjs'),
+    m6M8CurrentLifecycleReview.m6VerifierBlob,
+    'the exact M6 candidate must retain the verifier test blob covered by the M6 owner disposition',
   );
   assert.notEqual(
     candidateLifecycleBlob,
     m8ReviewedE4TestBlob,
-    'the changed M6-owned lifecycle file is not covered by the historical exact-blob review',
+    'the changed lifecycle file is not treated as covered by the older exact-blob review',
   );
   const candidateLifecycleText = fs.readFileSync(path.join(sourceRoots.M8_CANDIDATE.root, 'test/auto-e4.test.mjs'), 'utf8');
   assert.doesNotMatch(
