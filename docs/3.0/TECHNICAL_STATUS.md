@@ -8254,3 +8254,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Read-only filesystem/Git recheck confirms eight distinct worktree paths under `agents/M1` through `agents/M8`, eight distinct `feature/ac3-*` branches, and the same GitHub origin. All eight branch heads share ancestor `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`.
 - M1, M2, M3, M4, M5, M6, and M8 worktrees are clean. M7 remains at `ab9b03f` with its pre-existing workflow modification and untracked acceptance evidence preserved.
 - M1/M2/M3/M5/M6/M8 use the coordinator repository's common Git directory. M4/M7 use their existing common Git directory under `Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4`; both paths resolve to the expected remote and branch. M0 fetched the current feature ref there to verify lineage; no working-tree files or branch heads changed.
+
+## Historical Windows Node 22 retry diagnosis — 2026-10-24 12:26 UTC
+
+- Current feature-base CI is green: PR #24 run `40068981954` and latest PR #109 run `40092920859` each passed 9/9. This shows no recurrence in those broad jobs, but neither reproduces nor explains the historical PR #36 exact-head Windows 503 fixture failure; root cause remains UNKNOWN.
+- M9 owns exact-head integration triage. M0 requested a named provider/transport/test owner and safe exact-head error-code/request-count/retry-timing evidence or a bounded no-current-reproduction disposition in #54 comment `6384204561`. Keep #54 OPEN until its acceptance criteria are met; preserve bounded retries and assertions.
