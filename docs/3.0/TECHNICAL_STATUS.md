@@ -8229,3 +8229,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M0 PR #109 is OPEN/Draft at `36d946cb0fa5b020c1226dcd623326c704051224`. Standard CI run `40092920859` completed SUCCESS with all 9 jobs (including package-smoke); AC3 coordination run `40092920811` completed SUCCESS. The M9 pull-request check `40092920800` was SKIPPED again, so #76 remains OPEN/P1.
 - PR #24 is still OPEN/Draft at unchanged feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and its existing competition base. No module source, `main`, or Release was changed.
 - #80 is CLOSED for its completed M6/M8 reason-projection contract only. Independent E4 #57 and the remaining protected-host, Hook-runtime, installer, M8, exact-review, and M9 trigger issues remain separate and open. Current open issue count is 2 P0, 10 P1, and 1 P2.
+
+## M8 exact-base conflict inventory — 2026-10-24 12:15 UTC
+
+- Read-only `git merge-tree` between feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and M8 PR #40 head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` reproduced 12 conflicts: eight modify/delete paths (`COMPATIBILITY.md`, `E4_EVIDENCE_INDEX.md`, `GETTING_STARTED.md`, `RELEASE_NOTES_DRAFT.md`, `SECURITY_TESTING.md`, `UPGRADING.md`, `USER_TEST_PLAN.md`, `scripts/check-docs.mjs`) and four content paths (`README.md`, `README.zh-CN.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`).
+- M0 recorded the exact list and existing-branch-only action request on #99 comment `6384094440`. No merge or M8 file modification was performed.
