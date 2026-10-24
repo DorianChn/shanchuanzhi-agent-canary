@@ -414,3 +414,9 @@ Public semantics remain owned by the module that implements them. This matrix re
 
 ## M0 current contract precedence — 2026-10-24 10:15 UTC
 The cross-module matrix above is the current owner/contract map. Repeated 09:21 headings and older dated entries are retained as historical snapshots; use the 10:14 matrix where they differ, including the fact that M3's configured-target route exists while installed-package, native-host, and OS-atomic acceptance remain open.
+
+## AC3 immutable common-source floor — 2026-10-25
+
+M0 records `e4732d9745bb4fbbebf6896a35b4657ad82abd73` as the approved immutable common-source baseline in `scripts/ac3-ownership.json`. For each coordination check, both the event's actual current feature base and the exact PR head must descend from this baseline. The check also runs `git merge-tree --write-tree` against those exact base/head commits and records both SHAs plus the resulting composition tree; missing or invalid baseline data, wrong lineage, unavailable commits, and merge conflicts fail closed. This permits a clean manifest-only feature advance without requiring every module head to absorb a self-moving feature tip.
+
+The current feature tip remains the actual comparison and merge-tree input. M9's exact source pins, exact owner-approved blobs, sensitive-path policy, and required API/evidence fields remain unchanged and exact; post-merge CI remains required. This source-lineage rule does not alter or weaken Gateway, Hook, or policy security semantics.

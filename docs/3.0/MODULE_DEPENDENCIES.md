@@ -255,3 +255,7 @@ VMware, real-model, and installer tests share one exclusive slot. Check #29 befo
 
 ## M0 current dependency precedence — 2026-10-24 10:15 UTC
 Use the cross-module map above as the current dependency order; repeated 09:21 and older entries are historical. The configured-target route exists in the feature source, but source-composition evidence does not close #52. Current-ref M9 trigger, installer checksum/lifecycle, and independent E4 gates remain open under #76, #41, and #57.
+
+## AC3 coordination baseline
+
+M0 owns the immutable shared-source floor `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. AC3 verifies that both the live feature base from the PR event and the PR head descend from that commit, then computes and records their prospective merge tree with `git merge-tree --write-tree`. A clean coordination-only advance on the feature line can therefore coexist with a module branch that still has the approved baseline; an unrelated lineage or real merge conflict remains a hard failure. M9 exact pins and owner dispositions are separate strict gates and are not inferred from this baseline. After integration, the exact candidate still needs passing CI.
