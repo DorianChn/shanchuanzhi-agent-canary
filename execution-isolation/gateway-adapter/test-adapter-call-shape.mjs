@@ -59,6 +59,29 @@ test("fixed read forwards M1's opaque capability unchanged with the host AbortSi
   assert.deepEqual(Object.keys(adapter).sort(), ["executeRealTool", "fileReadCapability", "tools"]);
 });
 
+test("strict M5 provider read uses the same constructor-bound M1 capability", async () => {
+  const { adapter, calls } = setup();
+  const call = { name: "read_public", args: { path: "public/readable.txt" } };
+  const capability = adapter.fileReadCapability.resolve(call);
+
+  assert.deepEqual(
+    await adapter.fileReadCapability.readFileWithCapability(capability, call),
+    { content: "synthetic public fixture" },
+  );
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].capability, capability);
+  assert.equal(calls[0].signal, undefined, "M5 may omit the optional cancellation signal");
+
+  await assert.rejects(
+    adapter.fileReadCapability.readFileWithCapability(
+      Object.freeze(Object.create(null)),
+      call,
+    ),
+    (error) => error.message === "M2_SECURITY_GATEWAY_CAPABILITY_INVALID",
+  );
+  assert.equal(calls.length, 1, "a substituted capability cannot reach M1");
+});
+
 test("unregistered paths, tools, and model-controlled fields fail before M1 dispatch", async () => {
   const { adapter, calls } = setup();
   const signal = new AbortController().signal;
