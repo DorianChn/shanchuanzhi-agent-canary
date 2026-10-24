@@ -43,7 +43,7 @@ test('Windows Community packaging requires the exact 37 runtime files and SDK de
   assert.match(worker,/runtimeFiles:Array\.isArray\(version\.coreRuntimeHashes\)\?version\.coreRuntimeHashes\.length:0/);
 });
 
-test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',()=>{
+test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-community-runtime-contract-'));
   const payload=path.join(temp,'payload'),app=path.join(payload,'app'),dist=path.join(app,'dist');
   const nsis=path.join(temp,'nsis');
