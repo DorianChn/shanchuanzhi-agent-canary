@@ -8271,3 +8271,11 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - The Actions jobs API still reports sponsor-smoke as `in_progress` even though all its steps, including Complete job, show completed/success and the parent run is completed/success. This is recorded as a job-status/API inconsistency; no failing step is shown.
 - AC3 coordination run `40094720203` is SUCCESS (1/1). M9 composition run `40094720181` is SKIPPED again; #76 remains OPEN/P1.
 - PR #24 is unchanged OPEN/Draft at feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Next scheduled push batch is no earlier than 12:57:45 UTC.
+
+## M7 build-artifact evidence qualification — 2026-10-24 12:48 UTC
+
+- M0 downloaded the unmodified Windows Community artifact `12550557477` from run `40068894360` and verified its GitHub artifact digest `sha256:e13de9196966c7ee65d6b7a6e56d39e48fbf8111c2124b94cf2f2c8d3eb1b94f`. Its source is older feature commit `f313e5ffd1c604198a0e653a91eb66813fd111ee`, not current M7 branch head `ab9b03f`.
+- All 11 extracted files listed in `SHA256SUMS.txt` matched their SHA-256 entries. The Setup SHA-256 is `d87dfe66c0ab46f52e42cc738f2e064ff3aa37ca344d078cb5c5dd04e217c5cd`. `BUILD_REPORT` records `BUILT_NOT_INSTALLED; PACKAGED_HOOK_CANARY_EXECUTED`, `installerExecuted=false`, canonical Hook blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`, `canaryStatus=PASS`, and `callerCanariesAbsent=true`.
+- Separate lifecycle artifact `12550149073` records `FAIL / SHA256SUMS_PATH_UNEXPECTED`, `installerProcessStarted=false`, and `installerExecuted=false`. No installer was run locally.
+- The artifact has a packaged-Hook canary result but is not the M6 E4 bundle: it lacks `evidence.zip`, `report.json`, `report.md`, and `raw.log`. M0 did not run the M6 verifier on this unqualified build.
+- Evidence and residual gates were recorded on #41 comment `6384413991`, #93 comment `6384415403`, and #57 comment `6384417057`. #41/#93/#57 remain open; packaged-Hook canary evidence does not establish current-M7 install/runtime/log redaction or product E4.
