@@ -47,9 +47,9 @@ function checkStats(checks = []) {
   return stats;
 }
 
-function checkProblems(checks = []) {
+function checkNonSuccess(checks = []) {
   const items = latestChecks(checks).filter((check) =>
-    check.status !== 'completed' || !['success', 'skipped', 'neutral'].includes(check.conclusion)
+    check.status !== 'completed' || check.conclusion !== 'success'
   );
   return items.map((check) => clean(check.name ?? 'unnamed') + ' (' + clean(check.status === 'completed' ? check.conclusion : check.status) + ')').join(', ') || 'none';
 }
@@ -64,7 +64,7 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
     '',
     'Read-only snapshot of open PRs targeting ' + clean(rules.targetBase) + '. Warnings are evidence for M0 triage; they do not claim a runtime vulnerability or automatically close/block another PR.',
     '',
-    '| PR | Module | Head | State | Draft | Checks S/P/K/F | Pending/failing checks | Test evidence | API change | Artifacts |',
+    '| PR | Module | Head | State | Draft | Checks S/P/K/F | Pending/non-success checks | Test evidence | API change | Artifacts |',
     '|---:|:---|:---|:---|:---:|:---:|:---|:---:|:---:|---:|'
   ];
 
@@ -79,7 +79,7 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
       ' | ' + clean(state) +
       ' | ' + (pr.draft ? 'yes' : 'no') +
       ' | ' + stats.success + '/' + stats.pending + '/' + stats.skipped + '/' + stats.failed +
-      ' | ' + clean(checkProblems(checksByPr.get(pr.number) ?? [])) +
+      ' | ' + clean(checkNonSuccess(checksByPr.get(pr.number) ?? [])) +
       ' | ' + (hasEvidence(pr.body) ? 'declared' : 'MISSING') +
       ' | ' + (apiChange ? clean(apiChange) : 'MISSING') +
       ' | ' + (artifactsBySha.get(pr.head?.sha) ?? 0) + ' |'

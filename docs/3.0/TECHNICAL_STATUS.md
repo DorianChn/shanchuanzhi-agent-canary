@@ -1,3 +1,96 @@
+## Verified source cohort merged — 2026-10-24 17:49 UTC
+
+M7 #113 is now MERGED at 97c52430117596f74b5f94c77ade7a23fa910540, following M2 #110, M6 #111 and M8 #40. Manual run40117125609 verified actual installation at bba0f0f, canonical installed Hook b7ed4ab, all11 installed Hook/fault/decision checks, and clean uninstall with residue0. #93 is closed with that bounded evidence; #29 installer resource is released (comment6387514754). #41's untested platform/user/upgrade cases remain open.
+
+M0 coordination fixes and M9 final integration are the remaining source integration PRs. M9 also restores safe allowlisted error-code/request-count assertion diagnostics for #54, preserving the retry fixture, bounds and success assertions. The focused retry test passed; its historical trigger is still UNKNOWN and #54 remains open. No independent operator receipt or native host attestation is invented.
+
+## Current integration checkpoint — 2026-10-24 17:45 UTC
+
+- M2 #110 (941fd22), M6 #111 (2a88d8b), and M8 #40 (1c94ed4) are MERGED into feature/agent-canary-3.0. Merge commits are 20a57bbd, 1011981d, c13c40f0. GitHub main is unchanged; PR #24 remains open/draft on its original competition base, with its feature head advancing through authorized module merges.
+- M9 #112 at 0c8d7d1 passed exact-source composition on Ubuntu and Windows in run40116481278 and full product CI40116481355. #72 and #99 are closed with exact owner review and composition evidence. This does not close native-host or independent E4 acceptance.
+- M7 #113 at bba0f0f passed full product CI40116474766 and wrapper/build CI40116474744. Reserved manual lifecycle run40117125609 resolves to this exact head; wrapper/build jobs have passed and installed Hook/output tests are pending. #29 resource reservation comment6387426958 remains held until the actual lifecycle result is inspected.
+- M0 fixes the moving-baseline/source-pin cycle using approved common source e4732d9 plus exact current base/head lineage and a conflict-free git merge-tree result. Five synthetic DAG regressions passed; missing/invalid baseline, wrong lineage, and actual conflicts fail closed. Runtime security policies, M9 source pins, and owner/evidence guards are retained.
+- Latest open-PR audit found no file overlap or unregistered branches among #109/#112/#113. Original M7 dirty files, M6 handoffs and the previously denied M8 fixture cleanup remain preserved.
+- Remaining delivery gates: real installed-path result for current M7; publish and verify M0 changes; merge M7/M0 only after their checks; align M9 to resulting feature and verify/merge M9 last. Product issues #45/#52/#57 and uncompleted platform/permission/upgrade cases remain explicitly unverified.
+
+## Current verified cohort — 2026-10-24 17:30 UTC
+
+- Baseline remains e4732d9745bb4fbbebf6896a35b4657ad82abd73. PR #24 is OPEN/Draft on its existing competition base. No main/PR24 merge or Release has occurred.
+- M2 PR #110 head941fd22 and M6 PR #111 head2a88d8b have full product CI9/9. Missing PR-body coordination fields were corrected; M6's subsequent AC3 check passed without weakening the checker. Native Shell and independent E4 boundaries remain NOT_VERIFIED.
+- M8 local candidate1c94ed4, parent e3d89ba, repairs bounded smoke supervision. M0 Windows watchdog/collision2/2 and standalone12 checks passed; original M8 offline demo6/6 passed. M6's fresh exact two-blob ACCEPT is #80 comment6387136527. New candidate POSIX/hosted CI is pending publication; no historical orphan incident was reproduced.
+- Actual M7 manual run40114068571 at c03176f passed clean hosted Windows Server2025 install, duplicate refusal and uninstall, verifying3903 manifest files and residue0. Resource was released. Ordinary-user/Windows11/upgrade/cancel/EFS and native model/agent remain unverified. New local candidatebba0f0f adds installed Hook hash/blob, E4 fault and allow/deny/ask redaction checks; its actual installed-path execution remains pending the next reserved same-run test.
+- M9 local candidate0c8d7d1 records the exact M7 bba0f0f and M8 1c94ed4 candidates plus actual M1/M6 review pointers. Updated local full composition23/23, offline gate3/3 and manifest/workflow6/6 passed. Earlier exact-head CI reached a stale M8 constant; that failure was preserved and fixed, not relabeled as success. Full new-head Ubuntu/Windows CI is pending the batch.
+- M1 owner traced the historical approval fixture race, verified existing fixes89e40cd/5cb57c9 in feature, and #62 was closed. #51 original lock/scheduling trigger remains UNKNOWN. P0 #52 and #93 retain their actual remaining acceptance gates.
+- Original M7 dirty worktree and all prior owner handoffs are preserved. Eight primary module paths and branch names are distinct; common ancestor62496d4 is verified, while original branch-creation provenance is not inferred from current tips. Detailed local reports are under coordinator/reports.
+
+## Historical verified execution recovery — 2026-10-24 16:15 UTC
+
+- The earlier API limitation below is historical. No callable chat-read/send tool was added; authorized `codex exec resume` successfully resumed the original M1, M2 and M8 sessions. Their command logs and owner result files, rather than GitHub comments or process presence alone, establish the completed work.
+- M1 accepted the exact current Hook blobs for #72 in owner report/comment 6386280736; its focused Hook/contract tests passed 18/18 and approval-expiry tests passed 2/2. Integration must still record that disposition before closing #72. Product-host/OS-atomic protection under #52 remains unverified.
+- M8 resolved all 12 current-base conflicts in its existing branch. PR #40 head `e3d89ba12f210a10f1f4942e60019517d25cfb60` includes feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. CI 40109676309 passed 9/9, AC3 40109676124 and Hook-output 40109676126 passed, and Windows build/wrapper 40109676133 passed. Installer lifecycle was skipped. M8 accepted the exact M7 build-contract blob in #99; existing non-document deltas still require their owners' review before merge.
+- M2 recorded a real allowed-root native Shell write alongside standalone Hook denial; this is boundary evidence, not native host interception. Draft PR #110 contains evidence commit `7736ec936d575c86a347058cc60107b2ae31109d`. Its standard CI passed 9/9; AC3 correctly rejected the missing current baseline. Conflict-free baseline merge `941fd22d5e43e1de91a76b8c73006e57a4c15496` is local and pending the next push batch.
+- Two actual tasks are in progress: original M6 resumed session validates the downloaded artifact from run 40109676133 without executing its installer; the existing M9 integration worker repairs PR trigger/ref selection in its existing integration worktree. M6 output must remain developer SELF_CHECK, not independent product E4. M7's original session refused a second writer; its existing dirty workflow/evidence was preserved and it is not reported as an active task.
+- Last module push batch: approximately 16:02 UTC. Next batch may begin no earlier than 16:22 UTC and only for substantive completed changes. No quota monitoring; no main/PR #24 merge or Release. PRs #40/#109/#110 remain Draft pending their actual gates.
+
+## Historical coordinator correction — 2026-10-24 15:38 UTC
+
+- User direction: do not monitor quota. Maximum two module development tasks may run concurrently; pushes are batched no more frequently than every 20 minutes when there is substantive work.
+- No callable read_thread, send_message_to_thread, or wait_threads tool is exposed in this runtime. GitHub comments request work but do not start or resume Codex chats. M1/M7/M8 execution is UNKNOWN, not confirmed RUNNING. Earlier entries describing assigned/reserved module slots are scheduling requests only. An uncommitted M7 diff is preserved filesystem state, not proof of a live worker.
+- Fresh issue queries for #41/#52/#99 show no comments since 15:05:49 UTC. There is no verified live module process/job handle to wait on. Do not repeatedly poll terminal CI or generate commits describing unchanged state.
+- Outstanding owner work remains #52/#93 P0 and the existing P1 issues, including M8 current-base reconciliation and M9 workflow selection. M0 cannot implement owner changes under its current scope. No completion claim is supported.
+
+## Current coordinator snapshot — 2026-10-24 09:48 UTC
+
+M0 refreshed the exact pushed head and live integration gates. No module implementation was changed.
+
+- **M0 PR #109:** head `3d4dd1033e9fca8dc608ab7961a7e813a9974c9c`, feature base `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI run `40083165990` passed 9/9; AC3 coordination `40083165993` passed; M9 composition `40083165982` was skipped. M0 recorded the second exact-head trigger reproduction in Issue #76 comment `6382723192`.
+- **M9 workflow:** PR #36 is merged and pinned-source composition run `40066875122` passed Ubuntu/Windows. The current workflow still admits only manual dispatch or PR #36 and checks out `refs/pull/36/head`; it does not execute against PR #109/current feature refs.
+- **M8:** PR #40 remains OPEN/Draft at `60cfe8d`; read-only merge-tree against current feature `e4732d9` still reports 12 conflicts. M0's latest request is comment `6382530045`; no M8 disposition is visible on #99.
+- **Other acceptance gates:** #52/#93 remain P0; #41/#57/#72 and #76 remain open. M7's installer workflow diff stays uncommitted and untouched; exclusive resource slot #29 is FREE.
+- **Boundaries:** PR #24 remains OPEN/Draft on its competition base. `main`, M8/M7 source, and Release are untouched by M0.
+
+## Current coordinator snapshot — 2026-10-24 09:31 UTC
+
+Live state was refreshed from GitHub Actions, PRs/issues, local worktrees, and Usage Overview. M0 changed coordination documents only.
+
+- **M0 PR #109:** pushed head `d11c9e3a6002696366cd32fe9b4a846a547d2fc0`, based on feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI `40081829456` and AC3 coordination `40081829430` succeeded; M9 composition `40081829472` was skipped. M0 recorded this fresh trigger-gap reproduction in #76 comment `6382577864`.
+- **M8 PR #40:** still OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, whose recorded base is `416f1ba`; read-only merge-tree against current feature still has 12 conflicts, with paths in #76 comment `6381059163`. M0's owner request is comment `6382530045`; no M8 owner disposition is visible on #99.
+- **M9:** PR #36 is merged; exact-source run `40066875122` passed Ubuntu/Windows at its pins. The current workflow's job condition admits only manual dispatch or PR #36, and checks out `refs/pull/36/head`; PR #109's exact-head run `40081829472` therefore skipped while standard CI and coordination passed. Issue #76 comment `6382577864` records the fresh reproduction.
+- **P0/P1 acceptance:** #52 installed/runtime evidence, #93 packaged Hook redaction, #41 installer lifecycle, #57 independent product E4, and #72 exact M1 test-blob disposition remain open. No installer/VM slot was started.
+- **M7 scheduler safety (#41/#29):** M7 primary worktree at `ab9b03f` has a pre-existing uncommitted workflow condition that enables installer lifecycle on every PR, plus untracked acceptance evidence. The workflow has no `concurrency:` declaration. M0 has not touched these files; Issue #29 shows the exclusive slot FREE. The latest hosted lifecycle attempt failed before Setup.exe due the 11-versus-7 checksum-path contract.
+- **Worktrees:** feature, coordinator, M1–M6, M8, M9, and the merged M7-follow-up worktree are clean. M7's primary worktree's workflow/evidence changes remain preserved. PR #24 remains OPEN/Draft at feature head `e4732d9`; `main` and Release remain untouched.
+
+## Current coordinator snapshot — 2026-10-24 09:18 UTC
+
+Re-read the live GitHub refs, Actions metadata, browser Usage Overview, and existing worktrees. The M0 coordination branch remains isolated from feature and module source.
+
+- **Feature/M9:** feature remains `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. M9 PR #36 source run `40066875122` passed its exact pinned composition on Ubuntu and Windows. M9 workflow run `40080532927` on M0 PR #109 and prior run `40068981943` on PR #24 both completed **skipped**; workflow admits PR #36 or manual dispatch and dispatch still uses PR #36 plus static SHAs. Standard CI for PR #109 (`40080532923`) passed all 9 jobs; ownership-contract run `40080532868` passed. Issue #76 records the required workflow correction.
+- **M1–M7 merged follow-ups:** #101/#91/#107/#98/#94/#100/#106 are merged into the feature line. M8 PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, recorded base `416f1ba` versus feature `e4732d9`; read-only merge-tree still finds 12 conflicts. M8 owner disposition on #99 is outstanding.
+- **P0 #52:** M3 #107 adds a configured-target CLI route (`ai console --workspace-root … --protected-target id=relative-path`). It binds an M1 Gateway file identity, dispatches through the M2 host adapter and M5 OBSERVE router, and returns only status. The exact M3 source test covers a real CLI subprocess plus positive, sensitive-path, alias/junction, and path-replacement fixtures; M9 exact-source run `40066875122` passed on both OSes. M0 recorded this correction in #52 comment `6382450244`. This is source/fixture evidence; independently installed/published package behavior and native host protection remain NOT_VERIFIED, so #52 stays P0/open.
+- **P0 #93:** M7 #106 fixed the BUILD_REPORT status mismatch. Installed Hook stdout/log redaction and exact shipped payload acceptance remain NOT_VERIFIED.
+- **P1 #41/#29:** the latest lifecycle attempt failed before Setup.exe because the producer lists 11 checksum paths while the consumer expects 7. Existing M7 worktree also has an uncommitted workflow change enabling the lifecycle job on every PR without concurrency/reservation; M0 left it untouched. No installer/VM slot was started.
+- **P1 #57:** no independent product E4 artifact/operator receipt is identified; fixture and build evidence do not qualify.
+- **P1 #72:** only the shared test blob changed between M1-reviewed M3 source and current M3: `0e8a225…` → `10cdb80…` (+23/-1); canonical `src/agent-hook.ts` and wrapper blobs match. M0 posted a static diff summary at #72 comment `6382420684`; M1's explicit ACCEPT/REJECT remains pending.
+- **Worktrees:** M1–M6 and M8 are clean and match their tracked origin branches. M7 remains dirty only in its pre-existing `.github/workflows/windows-community.yml` change and untracked acceptance directory. M9 is clean at `cbb2e7d`. Coordinator and feature worktrees are clean before this documentation update. No module source was changed.
+- **Quota/release boundary:** Usage Overview read at 09:10 UTC showed 97% five-hour and 58% weekly remaining. PR #24 remains OPEN/Draft at feature head `e4732d9` on its existing competition base; no `main` merge, PR #24 merge, or Release occurred. Next M0 push is no earlier than 09:24 UTC and requires fresh quota/ref checks.
+
+`read_thread` is not available in this session; no other Codex conversation content is claimed as read. GitHub and filesystem state are the coordination evidence.
+
+## Current coordinator snapshot — 2026-10-24 08:55 UTC
+
+This snapshot supersedes earlier status lines for the exact refs listed here. Evidence was re-read from the GitHub API, Actions run metadata, the current remote feature ref, and the existing M0/M9/M1–M8 worktrees. `read_thread` is not exposed in this session, so Codex conversation contents are not claimed as read.
+
+- **Feature/M9:** current remote `feature/agent-canary-3.0` is `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; the worktree is clean. M9 PR #36 source head `cbb2e7db38eee0dc1a23e6e7804ff77d0088d84f` merged on 2026-10-24 05:43:11 UTC at merge commit `f313e5ffd1c604198a0e653a91eb66813fd111ee`. Exact-source composition run `40066875122` passed on Ubuntu and Windows at its pinned candidates. On current feature head `e4732d9`, PR #24-triggered M9 run `40068981943` was **skipped**; the M9 workflow condition only admits PR #36 or `workflow_dispatch`, and the dispatch path still checks out `refs/pull/36/head` plus static module SHAs. M0 recorded the required trigger/ref correction in Issue #76 comment `6382290540`.
+- **M1–M7:** follow-up PRs #101, #91, #107, #98, #94, #100, and #106 are closed/merged into the feature line. Their scoped integrations do not close product-host, installer, or independent-E4 gates below.
+- **M8:** PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`. Its recorded base SHA is `416f1ba`, while current feature is `e4732d9`; read-only merge-tree against the current feature found 12 conflicts. GitHub reports `mergeable_state=clean` against the stale base SHA, so that flag is not accepted as current-base proof. M8 owner disposition on #99 is still missing.
+- **P0 #52:** synthetic symlink/junction/held-identity regressions pass in M9, but M4 has not demonstrated a supported first-party OBSERVE file-read callsite consuming the protected identity. Product-host enforcement and TOCTOU remain NOT_VERIFIED.
+- **P0 #93:** M7 PR #106 fixed the BUILD_REPORT producer/consumer mismatch. Installed Hook stdout redaction and the exact shipped payload remain NOT_VERIFIED; installer lifecycle was not run.
+- **P1 #41:** latest hosted installer lifecycle failed before Setup.exe on the checksum-path contract. M7's preserved, uncommitted workflow diff would enable the lifecycle job on all pull requests without a concurrency group, bypassing the #29 reservation guard if published. M0 requested the owner retain manual reservation gating or add serialized reservation; M7 has not replied.
+- **P1 #57 / #72:** independent product E4 remains NOT_VERIFIED; M1 has not dispositioned the exact current M3 Hook test blob on #72. M0 has not changed M1–M8 module code.
+- **PR #24 / release boundary:** PR #24 is OPEN/Draft, head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`, base `competition/shanchuanzhi-release-readiness`. No `main` merge, PR #24 merge, or Release occurred. PR #109 remains the M0 coordination-doc Draft.
+- **Workspace:** coordinator and feature worktrees are clean; M7's pre-existing workflow edit and untracked acceptance evidence are preserved. M4/M7 are existing worktrees linked to the separate Documents common repository; no attempt was made to move or relink them.
+- **Quota snapshot:** Usage Overview reset at 08:55 UTC to 100% five-hour and 59% weekly. This is a point-in-time reading; recheck before any later push and stop below 5%.
+
 ## M0 ownership follow-up — 2026-10-15 21:16 UTC
 
 - **M0 PR scope / P2 Issue #56:** PR #30's changed-file list contains M1-owned `test/agent-hook.test.ts`; its M0-side change is associated with `b92bde4 test(m1): stabilize native hook interruption fixture`. PR #43 also changes the path. PR #30's current scope says coordination docs only. The PR #30 timeline has no visible M1 owner disposition/review, so approval is UNKNOWN. Keep #30 Draft until reconciled; Issue #56 records reproduction and acceptance.
@@ -8028,3 +8121,381 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - P1 #81, #87, and #102 are now closed with scoped evidence. Open issue labels: P0 2 (#52, #93), P1 14. Product, installer, independent E4, and remaining reliability issues stay open until their specific acceptance evidence exists.
 - M8 #40 remains OPEN/Draft pending owner disposition on #99 and post-M9-base reconciliation. PR #24 remains OPEN/Draft on its original release-readiness base. No main merge or Release.
 - Last Usage Overview read remains 05:53 UTC at 49% five-hour / 66% weekly; quota stop threshold (<5%) inactive then.
+
+## 2026-10-24 06:15 UTC — hosted lifecycle result
+
+- M0 ran the existing `Windows Community wrapper` workflow with lifecycle enabled on source `f313e5ffd1c604198a0e653a91eb66813fd111ee` (run `40068894360`). Ubuntu/Windows wrapper regressions and Windows Community build evidence passed. The installer-lifecycle job failed before Setup.exe: artifact result `SHA256SUMS_PATH_UNEXPECTED`, `installerExecuted=false`, `installerProcessStarted=false`.
+- Root cause is an exact producer/consumer list mismatch: workflow checksums 11 named artifacts while the lifecycle script accepts 7; it rejects `BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, or `SOURCE_MANIFEST.json` before installation. M7 owns the correction request on #41 comment `6380772102`. Do not broaden to a wildcard or infer any install/uninstall result.
+- The exclusive installer slot was released after the workflow ended; no VMware or real-model work ran. Re-run only after M7's exact allowlist fix and current-source checks.
+- M0 docs PR #108 merged at `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. PR #24 remains OPEN/Draft at that feature head on the original release-readiness base. Main and Release remain untouched.
+- Current labeled issue counts remain P0 2 and P1 14. M8 #40 still awaits owner disposition on #99. Last Usage Overview read: 49% five-hour / 66% weekly at 06:08 UTC.
+
+## 2026-10-24 06:24 UTC — exact lifecycle contract audit
+
+- Independent source review confirmed the failed run's producer at `.github/workflows/windows-community.yml:411` has an 11-path checksum list while `packaging/windows/installer-lifecycle-smoke.ps1:182-200` strictly allows 7. The producer list expansion arrived in commit `e903e5c1`; its consumer allowlist was not synchronized. This reproduces `SHA256SUMS_PATH_UNEXPECTED` before Setup.exe; the uploaded artifact confirms the installer process never started.
+- M7's narrow correction is to add the four exact paths (`BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, `SOURCE_MANIFEST.json`) to the fixed consumer list and add an ordered producer/consumer list-equality regression in `test/reliability.test.mjs`. Keep duplicate, path containment, regular-file, hash, count, and source-SHA checks. Re-run current-source CI/build before requesting a new exclusive installer slot. This is a requested fix, not a completed M7 change.
+- Issue #41 remains OPEN/P1/HOLD; the failed run gives no install/uninstall evidence. The exclusive slot remains free. M8 #40 remains OPEN/Draft at `60cfe8d`; M8's owner disposition on #99 and post-M9-base checks are still missing. M9 exact-source composition at run `40066875122` passed Ubuntu and Windows against the M8 candidate.
+- M1–M7 and M9 are integrated; M8 is the one unmerged M1–M8 module. Open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft with its original base; no `main` merge or Release.
+- Usage Overview read at 06:18 UTC: 49% five-hour and 66% weekly remaining; the <5% stop threshold is inactive.
+
+## 2026-10-24 06:36 UTC — coordination CI and live quota
+
+- M0 docs PR #109 head `00c763f2f752ad9c9945923689295f6d77855428` now passes all 9 CI jobs, including Windows Node 20/22; ownership-contract run `40070369061` also passed. M9 composition was skipped for this docs-only commit. PR #109 remains OPEN/Draft.
+- No M8 owner reply followed M0's PR #40 disposition request `6380586402`; no M7 owner code update followed Issue #41 requests `6380772102` and `6380866198`. Keep #40 Draft and #41 OPEN/P1/HOLD.
+- Integration count remains M1–M7 and M9 merged, M8 unmerged; open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft on its original base; no `main` merge or Release.
+- Refreshed Usage Overview at 06:36 UTC: 34% five-hour and 64% weekly remaining. The <5% stop threshold is not active.
+
+## 2026-10-24 06:45 UTC — M8 base reconciliation conflict
+
+- A read-only merge-tree check compared feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73` with existing M8 head `60cfe8d976a42d0f635d4be93ca24c00e81246d5`. It found 12 conflicts: modify/delete in `COMPATIBILITY.md`, `E4_EVIDENCE_INDEX.md`, `GETTING_STARTED.md`, `RELEASE_NOTES_DRAFT.md`, `SECURITY_TESTING.md`, `UPGRADING.md`, `USER_TEST_PLAN.md`, `scripts/check-docs.mjs`; content conflicts in `README.md`, `README.zh-CN.md`, `SECURITY.md`, and `THIRD_PARTY_NOTICES.md`.
+- No merge was applied; the M8 and feature worktrees remain clean. PR #40 is still OPEN/Draft and records base `416f1ba`. M0 recorded the exact conflicts and owner action on Issue #76 comment `6381059163`; M8 must reconcile its docs against current feature/M9 and rerun current-base checks before PR readiness.
+- PR #41 still has no M7 code-update response after the exact four-path fix request. Installer acceptance remains OPEN/P1/HOLD; no installation evidence is claimed.
+- M0 PR #109 head `da035d0` passed all 9 CI jobs in run `40070963573`; ownership-contract run `40070963454` passed; M9 composition was skipped for docs-only changes. PR #109 remains OPEN/Draft.
+- M1–M7 and M9 are integrated; M8 remains the one unmerged M1–M8 module. Open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft on its original base. No `main` merge or Release.
+- Refreshed Usage Overview at 06:45 UTC: 34% five-hour and 64% weekly remaining; the <5% stop threshold is inactive.
+
+## 2026-10-24 07:04 UTC — M6/M8 shared-input gate closed
+
+- P1 Issue #59 was closed at comment `6381199392` for its stated M6/M8 input-review and M9 composition scope. M6's exact `ACCEPT` covers M8 head `60cfe8d` and E4 test blob `d1705c2` on #80 comment `6379633677`; M6 lock defect #66 is closed; M9 run `40066875122` passed both Ubuntu and Windows against that M8 head. Separate product E4, installer, packaged-Hook, and M7/M8 build-contract issues remain open.
+- Open labeled issues are now P0 2 and P1 13. P0 #52/#93 and P1 #41/#57/#80/#99 remain separate gates.
+- M0 PR #109 head `d514ec9b6c67c81bf2b746cc3df2900bb58c0cfe` shows all checks passing (10 successful, one M9 composition workflow skipped for docs-only change). It remains OPEN/Draft.
+- M8 PR #40 remains OPEN/Draft with the 12 post-M9 base conflicts recorded on #76 and PR #40; no owner resolution or M7 lifecycle code update is visible yet. M1–M7 and M9 are integrated; M8 is the one unmerged M1–M8 module.
+- PR #24 remains OPEN/Draft on its original base; only the local feature worktree was fast-forwarded to `e4732d9`. No remote `main` merge or Release.
+- Refreshed Usage Overview at 07:04 UTC: 23% five-hour and 62% weekly remaining; the <5% stop threshold is inactive.
+
+## 2026-10-24 07:32 UTC — M1 Windows interruption gate closed
+
+- Issue #32 is CLOSED for the historical Windows test-harness timing failure. M1 identified the old fixed 1-second `spawnSync` marker window as the source of false failures; PR #43's asynchronous bounded-marker/interruption correction is merged in current feature history (merge commit `f0b4ee800672c3b702fa6d48201f74642d724cc5`, verified ancestor of `e4732d9745bb4fbbebf6896a35b4657ad82abd73`).
+- Current integrated test blob `10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2` waits for the marker, holds beyond the wrapper timeout, interrupts the child, and checks spawn/exit diagnostics, empty stdout/stderr, and no decision log. CI run `40072794731` passed all 9 jobs, including Windows Node 20/22 and package-smoke, on PR #109 head `7160bece2d62cab6ba53098d6ff548933287e216` based on the current feature baseline.
+- Scope limit: the synthetic subprocess does not establish native-host callback interception. Product host acceptance stays open under #52; separate M1/M3 file conflicts remain under #76.
+- Current open labels: P0 = 2 (#52, #93); P1 = 12 (#99, #80, #78, #76, #72, #70, #62, #57, #54, #51, #45, #41). #41 still has the 11-vs-7 checksum path mismatch and no Setup.exe run; #40 remains OPEN/Draft with 12 base conflicts and missing owner disposition on #99; #72 awaits M1 disposition for the current test blob.
+- PR #24 remains OPEN/Draft at its original release-readiness base. No remote `main` merge or Release occurred. Usage Overview refreshed after reload at 07:29 UTC: 16% five-hour / 61% weekly remaining; the <5% threshold was inactive.
+
+## 2026-10-24 07:42 UTC — M7 lifecycle fix still pending
+
+- Closed P1 #78 after verifying M7 PR #39's fail-closed stale-lock behavior, exact parsed-owner release checks, deterministic concurrent/replacement regressions, and passing exact PR CI. This closes the source race finding only; independent E4 remains NOT_VERIFIED.
+- M7 shared worktree is present at `feature/ac3-reliability-ac3` / `ab9b03f`, equal to its remote tracking branch. It retains a pre-existing uncommitted workflow change and untracked acceptance evidence; M0 left both untouched. Its installer lifecycle script still accepts 7 checksum paths while its producer emits 11; M0 posted the exact four-path/regression request at #41 comment `6381585159`.
+- P1 #41 remains OPEN; the prior hosted lifecycle run stopped before Setup.exe. No new installer run was started. M7's local workflow change enables lifecycle on every pull request without a workflow concurrency group; M0 flagged that it can bypass the #29 reservation, and asked that it remain explicitly gated or serialized before publication (comment `6381618783`).
+- Current open labels: P0 = 2 (#52, #93); P1 = 11 (#99, #80, #76, #72, #70, #62, #57, #54, #51, #45, #41). M8 PR #40 remains OPEN/Draft with 12 conflicts and missing owner disposition; #72 still awaits exact M1 review.
+- M0 docs commit `a639daf4d923ae08ed54fab82032787394a6ce2f` is pushed to PR #109. Current CI run `40074761258` completed successfully on all 9 jobs; M9 composition was skipped for docs-only change. PR #24 remains OPEN/Draft at its original base; no remote `main` merge or Release.
+- Usage Overview refreshed at 07:40 UTC: 14% five-hour / 61% weekly remaining; the <5% threshold is inactive.
+
+## 2026-10-24 07:45 UTC — M6 legacy Draft boundary
+
+- M6 PR #38 is MERGED into the feature branch. The older M6 PR #31 remains OPEN/Draft and targets `main`; its E4 runner, guide, and evidence paths are present in the current feature tree. M0 made no retarget/merge change. Authored automation evidence still does not satisfy independent product E4 (#57/#80).
+- Read-only worktree audit: M1–M6 and M8 module worktrees are clean and match their remote branches; M7 is the only dirty module worktree observed, with the previously recorded workflow edit and untracked acceptance evidence preserved.
+
+## 2026-10-24 09:51 UTC — current PR #24 gate audit
+
+- PR #24 remains OPEN/Draft at head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`, with base `competition/shanchuanzhi-release-readiness`; no PR #24 or `main` changes were made by M0.
+- Exact-head standard CI run `40068981954` passed 9/9 jobs. Windows Community wrapper/build run `40068981872` passed its build evidence and both OS wrapper regressions. On the same PR head, `compose-current-module-refs` run `40068981943` and `windows-community-installer-lifecycle` were skipped; these are not integration or installer acceptance.
+- Existing M0 PR #109 remains OPEN/Draft at `3d4dd1033e9fca8dc608ab7961a7e813a9974c9c`, based on the same feature head. Its standard CI and ownership-contract check pass; its current-ref M9 composition job is skipped and tracked in #76.
+- M8 PR #40 remains OPEN/Draft at `60cfe8d`; its recorded base `416f1ba` is behind current feature `e4732d9`. The 12 read-only merge-tree conflicts and missing M8 owner disposition on #99 remain unresolved. P0 product gates #52/#93 and P1 installer/E4 gates #41/#57 remain open.
+- After the preceding snapshot, M0 PR #109 head `0543e82` passed standard CI 9/9 (`40083853286`) and the ownership-contract run (`40083853320`); M9 current-ref composition `40083853294` was skipped again. M0 recorded both PR #24 and PR #109 exact-head skip evidence in #76 comment `6382817912`.
+
+## Current coordinator snapshot — 2026-10-24 10:26 UTC
+
+M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview. M0 changed coordination evidence only; no M1–M8 implementation, PR #24, `main`, or Release was changed.
+
+- **M0 PR #109:** pushed head `dacc6deb37f862a972287ea166bbd2a620c066f3`, based on feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI `40085564078` passed 9/9, ownership-contract run `40085564074` passed, and M9 current-ref composition `40085564075` was skipped. M0 recorded the exact-head result in #76 comment `6383047361`.
+- **M9 integration gate:** PR #36 is merged, but the existing M9 workflow still skips pull-request events outside PR #36 and its dispatch path checks out the old PR #36 ref. The current-ref trigger/ref correction is still assigned to M9; #76 remains OPEN/P1.
+- **M8:** PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, recorded base `416f1ba`, behind feature. A read-only merge-tree audit found 12 conflicts against feature. No M8 owner disposition is visible; M0 posted the exact follow-up in #99 comment `6383067419`. Do not merge or claim M8 complete before owner reconciliation and exact-current-base checks.
+- **P0 acceptance:** #52 first-party protected-read/alias/TOCTOU product acceptance and #93 installed Hook redaction remain OPEN. Source CI does not substitute for those product checks.
+- **P1 acceptance:** #41 installer checksum producer/consumer mismatch (11 vs 7) remains unresolved; prior lifecycle run stopped before Setup.exe and the exclusive slot remains unreserved. #57 independent product E4 receipt remains missing. #72 awaits M1 disposition for the exact M3 Hook-test blob. Current other P1s remain #45, #51, #54, #62, #70, #76, #80, and #99. #29 is P2 and tracks the exclusive test reservation.
+- **Issue counts:** 2 P0, 11 P1, 1 P2 remain open in the current GitHub snapshot.
+- **PR #24:** remains OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; its metadata remains unchanged by M0.
+- **Quota:** Usage Overview read at 10:20 UTC showed 97% five-hour and 58% weekly remaining. Resource-slot #29 was last recorded FREE at 06:12 UTC; M0 has not started an installer, VMware, or real-model test.
+
+## Owner follow-up delta — 2026-10-24 10:51 UTC
+
+- Exact PR #109 head `dacc6deb37f862a972287ea166bbd2a620c066f3` has standard CI `40085564078` green 9/9 and AC3 ownership check `40085564074` green; current-ref M9 composition `40085564075` is SKIPPED. PR #24 remains unchanged at feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`, OPEN/Draft.
+- Module worktree heads are unchanged in the latest read-only sweep. M1–M6, M8, and M9 are clean and track their existing branches. M7 remains dirty only in its pre-existing workflow trigger edit and untracked acceptance evidence; M0 has not staged or changed it.
+- M0 requested exact owner dispositions for configured-target route acceptance (#52, comment `6383098422`), M1's current Hook-test blob (#72, `6383117828`), and historical retry/HTTP-503 incidents (#51 `6383316044`, #54 `6383316054`). Those issues remain open; no closure is inferred from current passing standard CI.
+- M7's exact producer/consumer checksum mismatch and unsafe unreserved pull-request lifecycle trigger remain open at #41; M0's latest comment is `6383076882`. M8's current-base conflict set and missing owner disposition remain open at #99/#76; latest M8 follow-up is #99 comment `6383067419`.
+- Open labeled issue counts remain P0=2 (#52, #93), P1=11, P2=1 (#29). Product-host, installed-Hook, clean-VM installer, independent E4, M8 reconciliation, and M9 current-ref composition gates remain unaccepted.
+- Existing M0 PR audit workflow is active: its pull-request check validates ownership/API/test-evidence declarations, then on M0's own PR runs the open-PR/check-run/artifact/path-overlap audit. This is automatic coordination evidence, not a substitute for owner disposition or product acceptance.
+
+## Post-push verification — 2026-10-24 10:57 UTC
+
+- PR #109 head `ba1ec2b098ec82e26de77c8f23ee2b0c64c627da` is OPEN/Draft on feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI run `40087678896` passed 9/9, including package-smoke; AC3 ownership-contract run `40087678667` passed; current-ref M9 composition `40087678646` was SKIPPED.
+- PR #24 remains OPEN/Draft at its unchanged head and competition base. No `main` merge, source-module change, or Release occurred.
+- Latest owner-contact readbacks show M0's specific follow-ups are still the newest comments on #41, #51, #52, #54, #72, and #99; no owner implementation/disposition is recorded there yet. The issues remain open at their existing priorities.
+- The M9 workflow trigger/ref blocker is still live; a green docs CI does not satisfy cross-module composition. Keep #76 OPEN/P1 until a current-ref M9 run executes and passes on Ubuntu and Windows.
+
+## M9 workflow trigger correction request — 2026-10-24 10:59 UTC
+
+- Exact PR #109 head `ba1ec2b098ec82e26de77c8f23ee2b0c64c627da` completed standard CI 9/9 (`40087678896`) and AC3 coordination 1/1 (`40087678667`); M9 composition run `40087678646` was skipped. PR #24 remains OPEN/Draft at its original head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Read-only inspection of merged M9 workflow confirms its pull-request job condition only admits PR #36, and it checks out `refs/pull/36/head`; manual dispatch has no explicit current-ref input. The current PR #109 and PR #24 skips are therefore a workflow trigger/ref defect, not test success.
+- M0 recorded a concrete owner edit plan on #76 comment `6383381123`. M9 must fix the existing M9-owned workflow on its existing branch, preserve explicit module SHA pins, assert/print them, and produce an exact current-ref Ubuntu/Windows pass. No module implementation was changed by M0.
+
+## Coordination audit attention fix — 2026-10-24 11:01 UTC
+
+- M0's read-only open-PR audit previously counted skipped/neutral checks in the `K` column but hid their names from the attention column. The report now lists every pending or non-success check by name while preserving `skipped` as `K`, not `failed`; this makes skipped M9 composition visible without calling it a failure or a pass.
+- M0-only change: commit `2097bc7` updates `scripts/ac3-pr-audit.mjs` and its targeted regression. `node --test test/ac3-pr-audit.test.mjs` passed 4/4; `git diff --check` passed. No M1–M8 source or security assertion was changed.
+- This commit is local on the existing M0 branch and will be included in the next authorized push batch after the quota, remote-ref, and scope checks. M9 current-ref composition remains independently OPEN/P1 until its owner repairs the workflow and produces a current exact-source run.
+
+## M9 exact current-source manual composition — 2026-10-24 11:10 UTC
+
+- M0 manually dispatched the existing M9 workflow against feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Run `40088403364` completed successfully on both `ubuntu-latest` and `windows-latest`; both jobs checked out and exercised the currently pinned M1–M8 candidate refs.
+- The result validates this exact source composition on the two hosted runners only. It does not prove the automatic PR trigger/ref selection, installed-product E4, the clean-VM installer lifecycle, VMware containment, or real-model behavior.
+- M0 recorded the run and evidence limits on issue #76 comment `6383494695`. Keep #76 OPEN/P1 until the M9-owned trigger/ref defect is corrected and the normal integration event runs the gate; keep the independent P0/P1 product acceptance issues open until their own evidence is supplied.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and its existing competition base. No module source, `main`, or Release was changed.
+
+## M0 post-push and live acceptance snapshot — 2026-10-24 11:16 UTC
+
+- M0 pushed coordinator-only commit `a3c9bb9f0e0a2c0eeb5051a40ded8f9a68c12617` to existing PR #109. Its AC3 coordination check `40089004836` passed and standard CI `40089004923` passed all 9 jobs. The PR event's M9 composition check `40089004844` was skipped, confirming the #76 automatic trigger/ref gap remains.
+- Manual M9 run `40088403364` is green on Ubuntu and Windows for the exact feature baseline and currently pinned M1–M8 candidates; this is source-composition evidence only. It does not close installed-product, clean-VM lifecycle, independent E4, VMware, or real-model acceptance.
+- Current open issue count remains 2 P0, 11 P1, and 1 P2. PR #24 remains OPEN/Draft at its unchanged head and competition base; no module implementation, `main`, or Release was changed by M0.
+- With unchanged M1/M7/M8 worktree heads confirmed, M0 refreshed the actionable owner requests on #52 (comment `6383570778`), #41 (`6383563783`), and #99 (`6383563822`), keeping each issue open and preserving existing module ownership. M0 then corrected the #52 request in comment `6383587337` after verifying its exact current scope.
+- Scope refinement for #52: the current M3 route regression covers synthetic sensitive-path/symlink-junction denial and same-path replacement, and the manual M9 workflow runs that exact test. The remaining gate is owner disposition plus installed/product-host consumer evidence and the explicitly separate OS-atomic TOCTOU boundary; do not duplicate the existing alias regression in M1.
+
+## Read-only open-PR audit — 2026-10-24 11:24 UTC
+
+- The updated M0 audit ran read-only against open PRs targeting `feature/agent-canary-3.0`. It found PR #109 (M0) and PR #40 (M8), no unregistered branches, and no same-path overlaps among those PRs.
+- PR #109 exact head `a3c9bb9` has 10 successful checks, 1 skipped check (`compose-current-module-refs`), no pending/failing checks, and no exact-head Actions artifact. PR #40 exact head `60cfe8d` has 15 successful checks, 1 skipped check (`windows-community-installer-lifecycle`), no pending/failing checks, and 1 exact-head artifact. A declared test-evidence marker and artifact count are not product acceptance.
+- PR #24 targets the separate competition base and is outside this audit's feature-base filter; it was separately verified OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+
+## Acceptance and resource checkpoint — 2026-10-24 12:04 UTC
+
+- M0 closed #80 after verifying M6's exact M8-head ACCEPT and successful exact-candidate M9 checks on Ubuntu and Windows. Closure is limited to the M6/M8 reason-projection contract; independent product E4 remains open under #57, installed Hook evidence under #93, installer lifecycle under #41, and the M9 trigger/ref defect under #76.
+- #52 is still OPEN/P0 for installed/product-host consumer and OS-atomic TOCTOU evidence. M0 corrected its earlier follow-up after verifying that the current M3 route regression already covers synthetic alias/replacement denial and that M9 runs it (comments `6383570778` and `6383587337`).
+- #72 remains OPEN/P1: current M3 `test/agent-hook.test.ts` blob `10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2` differs from the blob still recorded as M1-reviewed in the M9 workflow (`0e8a2250ee500d455b0c96430b33714925db3862`). M9 current-source tests passed, but its metadata marks the exact review NOT_VERIFIED. M0 recorded this in #72 comment `6383651767`.
+- #62 remains OPEN/P1: current `test/gateway.test.ts` passed in M9 run `40088403364` on both runners; the cause of the historical 5 ms expiry race remains unclassified. M0 requested an M1 disposition in comment `6383650165` without rerunning solely for another green result.
+- #41 and #99 owner requests are recorded in comments `6383563783` and `6383563822`. The latest open-issue readback is 2 P0, 10 P1, and 1 P2 after closing #80. Main M1–M8 worktree heads remain unchanged; M7's existing dirty workflow/evidence is preserved.
+- Resource check: no queued or in-progress GitHub workflow was present; local process scan found no active VMware desktop VM or Ollama process. M0 recorded the exclusive slot FREE in #29 comment `6383994848`; activity in separate Codex sessions remains unknown.
+- PR #24 remains OPEN/Draft at unchanged head and competition base. M1–M7 owner follow-up PRs #91/#101/#107/#98/#94/#100/#106 are MERGED into the feature base; M8 PR #40 remains OPEN/Draft. No M1–M8 source, `main`, PR #24, or Release was changed by these M0 actions.
+
+## Post-push validation — 2026-10-24 12:14 UTC
+
+- M0 PR #109 is OPEN/Draft at `36d946cb0fa5b020c1226dcd623326c704051224`. Standard CI run `40092920859` completed SUCCESS with all 9 jobs (including package-smoke); AC3 coordination run `40092920811` completed SUCCESS. The M9 pull-request check `40092920800` was SKIPPED again, so #76 remains OPEN/P1.
+- PR #24 is still OPEN/Draft at unchanged feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and its existing competition base. No module source, `main`, or Release was changed.
+- #80 is CLOSED for its completed M6/M8 reason-projection contract only. Independent E4 #57 and the remaining protected-host, Hook-runtime, installer, M8, exact-review, and M9 trigger issues remain separate and open. Current open issue count is 2 P0, 10 P1, and 1 P2.
+
+## M8 exact-base conflict inventory — 2026-10-24 12:15 UTC
+
+- Read-only `git merge-tree` between feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and M8 PR #40 head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` reproduced 12 conflicts: eight modify/delete paths (`COMPATIBILITY.md`, `E4_EVIDENCE_INDEX.md`, `GETTING_STARTED.md`, `RELEASE_NOTES_DRAFT.md`, `SECURITY_TESTING.md`, `UPGRADING.md`, `USER_TEST_PLAN.md`, `scripts/check-docs.mjs`) and four content paths (`README.md`, `README.zh-CN.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`).
+- M0 recorded the exact list and existing-branch-only action request on #99 comment `6384094440`. No merge or M8 file modification was performed.
+
+## Live M7 acceptance blocker — 2026-10-24 12:21 UTC
+
+- A fresh read-only audit found M7 producer/consumer checksum drift at feature `e4732d9`, M7 candidate `ab9b03f`, and PR #106 merge `d6bf3a8`: producer has 11 paths while the Windows smoke consumer has 7. The consumer omits `BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, and `SOURCE_MANIFEST.json`.
+- Hosted run `40064614487` skipped installer lifecycle; current-source run `40068894360` failed before launching the installer with `SHA256SUMS_PATH_UNEXPECTED`. Older successful run `39882121777` used source `7c348622` and the previous 7-path manifest, so it does not qualify the current candidate.
+- M0 recorded the exact producer/consumer delta, run evidence, and M7 acceptance request on #41 comment `6384147284`. #41 remains OPEN/P1; no M7 source/worktree edits were made and the exclusive installer slot remains FREE.
+- Current status is 2 open P0, 10 open P1, and 1 open P2. Seven M1–M7 follow-up PRs are merged to the feature base; M8 PR #40 remains OPEN/Draft with the 12 exact-base conflicts recorded under #99. PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Latest readable Usage Overview is 64% five-hour / 53% weekly. The usage tab remains open per user preference.
+
+## M9 PR-event recheck — 2026-10-24 12:24 UTC
+
+- PR #109 head `36d946cb0fa5b020c1226dcd623326c704051224` has standard CI `40092920859` SUCCESS (9/9) and AC3 coordination `40092920811` SUCCESS, while M9 composition event `40092920800` is SKIPPED.
+- Manual composition `40088403364` passed on Ubuntu and Windows for the then-current pinned source tree, but does not verify the automatic PR trigger/ref selection or installed-product/installer acceptance.
+- M0 recorded the latest run and M9 owner action on #76 comment `6384173802`. Keep #76 OPEN until the current normal PR event executes and passes against exact refs.
+
+## M1–M8 worktree and lineage verification — 2026-10-24 12:25 UTC
+
+- Read-only filesystem/Git recheck confirms eight distinct worktree paths under `agents/M1` through `agents/M8`, eight distinct `feature/ac3-*` branches, and the same GitHub origin. All eight branch heads share ancestor `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`.
+- M1, M2, M3, M4, M5, M6, and M8 worktrees are clean. M7 remains at `ab9b03f` with its pre-existing workflow modification and untracked acceptance evidence preserved.
+- M1/M2/M3/M5/M6/M8 use the coordinator repository's common Git directory. M4/M7 use their existing common Git directory under `Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4`; both paths resolve to the expected remote and branch. M0 fetched the current feature ref there to verify lineage; no working-tree files or branch heads changed.
+
+## Historical Windows Node 22 retry diagnosis — 2026-10-24 12:26 UTC
+
+- Current feature-base CI is green: PR #24 run `40068981954` and latest PR #109 run `40092920859` each passed 9/9. This shows no recurrence in those broad jobs, but neither reproduces nor explains the historical PR #36 exact-head Windows 503 fixture failure; root cause remains UNKNOWN.
+- M9 owns exact-head integration triage. M0 requested a named provider/transport/test owner and safe exact-head error-code/request-count/retry-timing evidence or a bounded no-current-reproduction disposition in #54 comment `6384204561`. Keep #54 OPEN until its acceptance criteria are met; preserve bounded retries and assertions.
+
+## Historical quarantine retry disposition — 2026-10-24 12:27 UTC
+
+- Latest current-feature CI run `40092920859` passed all 9 jobs, including Node 22 lanes. It shows no recurrence in that run but does not identify the missing lock-holder/timing trigger from the historical PR #38 `RETRY_LIMIT` event.
+- M0 recorded this narrow evidence and requested M1's scoped disposition on #51 comment `6384207835`. Keep the 48 quarantine assertions and bounded fail-closed retry; #51 remains OPEN while its documented root-cause acceptance is unresolved.
+
+## PR #109 batch CI result — 2026-10-24 12:40 UTC
+
+- Pushed head `46d59b95fdda067a7418685fb6149a61fbf0c93e` completed standard CI run `40094720305` with workflow conclusion SUCCESS; `gh run watch --exit-status` returned success. The nine listed jobs include Docker, six OS/Node test lanes, sponsor smoke, and package smoke; all job steps report success.
+- The Actions jobs API still reports sponsor-smoke as `in_progress` even though all its steps, including Complete job, show completed/success and the parent run is completed/success. This is recorded as a job-status/API inconsistency; no failing step is shown.
+- AC3 coordination run `40094720203` is SUCCESS (1/1). M9 composition run `40094720181` is SKIPPED again; #76 remains OPEN/P1.
+- PR #24 is unchanged OPEN/Draft at feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Next scheduled push batch is no earlier than 12:57:45 UTC.
+
+## M7 build-artifact evidence qualification — 2026-10-24 12:48 UTC
+
+- M0 downloaded the unmodified Windows Community artifact `12550557477` from run `40068894360` and verified its GitHub artifact digest `sha256:e13de9196966c7ee65d6b7a6e56d39e48fbf8111c2124b94cf2f2c8d3eb1b94f`. Its source is older feature commit `f313e5ffd1c604198a0e653a91eb66813fd111ee`, not current M7 branch head `ab9b03f`.
+- All 11 extracted files listed in `SHA256SUMS.txt` matched their SHA-256 entries. The Setup SHA-256 is `d87dfe66c0ab46f52e42cc738f2e064ff3aa37ca344d078cb5c5dd04e217c5cd`. `BUILD_REPORT` records `BUILT_NOT_INSTALLED; PACKAGED_HOOK_CANARY_EXECUTED`, `installerExecuted=false`, canonical Hook blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`, `canaryStatus=PASS`, and `callerCanariesAbsent=true`.
+- Separate lifecycle artifact `12550149073` records `FAIL / SHA256SUMS_PATH_UNEXPECTED`, `installerProcessStarted=false`, and `installerExecuted=false`. No installer was run locally.
+- The artifact has a packaged-Hook canary result but is not the M6 E4 bundle: it lacks `evidence.zip`, `report.json`, `report.md`, and `raw.log`. M0 did not run the M6 verifier on this unqualified build.
+- Evidence and residual gates were recorded on #41 comment `6384413991`, #93 comment `6384415403`, and #57 comment `6384417057`. #41/#93/#57 remain open; packaged-Hook canary evidence does not establish current-M7 install/runtime/log redaction or product E4.
+
+## Live coordination snapshot — 2026-10-24 12:52 UTC
+
+- PR #109 remains OPEN/Draft at head `46d59b95fdda067a7418685fb6149a61fbf0c93e`; latest standard CI `40094720305` and AC3 coordination `40094720203` are successful, while M9 composition `40094720181` is skipped.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. No new module branch head or owner-authored response appeared in the latest snapshot.
+- Thirteen technical Issues remain open: 2 P0, 10 P1, 1 P2. The latest #41, #93, and #57 updates are M0 evidence notes; their owner acceptance and product-level gates remain outstanding.
+- The M7 artifact verified at 12:48 is older than current M7 and not install or M6 E4 acceptance evidence. Keep #41/#93/#57 OPEN; do not count packaged Hook canary evidence as installed-product validation.
+- A fresh Usage Overview read at 12:50 showed 58% five-hour and 52% weekly remaining; the page remains open. PR #109 and PR #24 state checked again at 12:51 UTC. No main merge, module implementation change, M9 workflow change, or Release action.
+
+## PR #109 post-push gate — 2026-10-24 12:56 UTC
+
+- Pushed M0-only docs head `75163448ba89f83c31967fe38ceea604d30a9f98` after fresh Usage read (58% five-hour / 52% weekly) and preflight confirming remote M0 head `46d59b9`, PR #109 base `feature/agent-canary-3.0`, and PR #24 unchanged OPEN/Draft at `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Standard CI run `40095802424` completed SUCCESS, 9/9 jobs; AC3 coordination run `40095802360` completed SUCCESS. M9 composition run `40095802417` completed SKIPPED on this exact PR head.
+- M0 posted the current exact-head trigger result to #76 comment `6384455163`; keep #76 OPEN/P1 until the M9-owned automatic event selects and passes the exact current source on Ubuntu and Windows.
+- Module owners have not supplied new acceptance evidence in this snapshot. No module implementation, M9 workflow, main, PR #24, or Release action was changed.
+
+## M8 current-base gate — 2026-10-24 12:56 UTC
+
+- Fresh remote refs show M1–M8 module heads unchanged from the 12:25 worktree snapshot. M8 PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, based on old feature SHA `416f1ba4848d5be4011ac72d42066d4c72b42d49`; the current feature baseline is `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Read-only exact merge-tree audit recorded 12 current-base conflicts in #76 comment `6384094440`. GitHub `mergeable=clean` only describes the older PR base; it is not evidence against the current feature baseline. M8 owner rebase/disposition and post-resolution CI remain outstanding; keep #40 Draft and #76/#99 OPEN.
+- M0 posted the refreshed exact-head/base evidence on #76 comment `6384482776`; M0 made no M8 or shared runtime edits.
+
+## PR #109 batch result — 2026-10-24 13:01 UTC
+
+- Pushed M0 coordinator-docs head `1b4b2d7aa176a2948d5645539304df3152458b01`. Standard CI run `40096176199` completed SUCCESS with all 9 jobs successful; AC3 coordination run `40096176169` completed SUCCESS.
+- M9 composition run `40096176240` was SKIPPED again on the exact current PR head. No M9-owned workflow correction or module branch update is visible. The current skip remains recorded as an automatic integration blocker in #76.
+- PR #40 remains OPEN/Draft on the older base SHA `416f1ba`; current feature head is `e4732d9`. The 12-conflict current-base audit and M8 owner action remain unresolved; M0 recorded the exact state in #76 comment `6384482776`.
+- PR #24 remains OPEN/Draft at its unchanged head. The Usage page showed 58% five-hour / 52% weekly at 12:58 UTC and remains open. No module source, M9 workflow, main, PR #24, or Release change.
+
+## M1/M3 exact-blob follow-up — 2026-10-24 13:02 UTC
+
+- Current M3 branch `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` and feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` share the exact Hook test blob `10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2`, Hook implementation blob `76f7bf6314046777ee1615873e5de4621671ea15`, and native Hook blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`.
+- The older M1 review did not cover the current test blob; the prior manual M9 run only proves test execution. M0 requested an explicit M1 ACCEPT/REJECT and rationale on #72 comment `6384536968`. Keep #72 OPEN/P1 until that exact review is recorded.
+- Latest PR #109 head `1b4b2d7` has CI SUCCESS (9/9), AC3 coordination SUCCESS, and M9 composition SKIPPED (`40096176240`). M8 PR #40 current-base blockers remain as recorded in #76; PR #24 remains unchanged OPEN/Draft.
+
+## Current-head gate and P0 owner follow-up — 2026-10-24 13:07 UTC
+
+- PR #109 head `b10aa46c6859c0a6ffde71edf0832b1d65dab9eb`: standard CI `40096585659` SUCCESS (9/9), AC3 coordination `40096585644` SUCCESS, and M9 composition `40096585641` SKIPPED.
+- M0 recorded the repeated exact-head skip on #76 comment `6384565301`. P0 #52 remains OPEN; existing synthetic route/M9 test evidence does not establish the product-host consumer or OS-atomic TOCTOU boundary. M0 requested evidence or an explicit BLOCKED/NOT_VERIFIED disposition on comment `6384570394`.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Fresh remote refs show no M1–M8 branch-head movement since 12:56; the latest #52, #72, and #99 comments are M0 requests, with no corresponding owner disposition yet. Quota last read at 13:03: 40% five-hour and 49% weekly; usage tab remains open.
+
+## M6/M7 owner follow-up and current CI — 2026-10-24 13:12 UTC
+
+- PR #109 head `86b822787370febd463c6be38105a978cbeb45b8`: standard CI `40096950985` SUCCESS (9/9), AC3 coordination `40096950809` SUCCESS, and M9 composition `40096950805` SKIPPED.
+- M0 refreshed existing owner requests: #41 comment `6384619047` requests a current-head installer lifecycle pass after checksum-contract repair; P0 #93 comment `6384619254` requests current-head installed Hook stdout/log redaction evidence; #57 comment `6384619452` requests the M6 verifier's own complete product E4 bundle. Those issues remain open.
+- Latest reads of #41/#93/#57 show only M0's follow-up comments; no owner acceptance artifact or module-head update is present. The M1/M3 exact-blob request remains on #72, P0 #52 remains open, and M8 current-base conflicts remain tracked in #76/#99.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Quota last read at 13:09: 40% five-hour / 49% weekly; usage tab remains open.
+
+## PR #109 current-head and owner status — 2026-10-24 13:18 UTC
+
+- PR #109 head `19a053644931a9570b453278b8898571a7d4e6d2`: standard CI `40097358398` SUCCESS (9/9), AC3 coordination `40097358364` SUCCESS, and M9 composition `40097358476` SKIPPED.
+- M0 logged the current M9 recurrence in #76 comment `6384668382`. M7/M6 owner requests are on #41 `6384619047`, P0 #93 `6384619254`, and #57 `6384619452`; exact M1 review is on #72 `6384536968`; P0 #52 follow-up is `6384570394`.
+- Latest comment checks show no module-owner acceptance evidence on these gates. Remote M1–M8 branch heads were unchanged in the 13:12 snapshot. PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Usage page is open; last readable quota at 13:14 was 38% five-hour and 49% weekly. M0 changed coordination docs only; no module, M9 workflow, main, PR #24, or Release changes.
+
+## M1 retry diagnosis follow-up — 2026-10-24 13:18 UTC
+
+- Current feature CI `40097358398` passed 9/9, including Ubuntu Node 22, but did not reproduce or explain the historical PR #38 `RETRY_LIMIT` event. M0 requested an evidence-bounded lock-holder/timing disposition on #51 comment `6384695432`.
+- Keep the 48 quarantine assertions and fail-closed bounded retry unchanged; #51 remains OPEN/P1 until M1 records the cause or a bounded no-current-reproduction result.
+
+## M1 Gateway expiry diagnosis follow-up — 2026-10-24 13:19 UTC
+
+- Latest current-feature CI `40097358398` passed 9/9 including Node 20/22 lanes, with no recurrence of the historical expired-approval fixture failure. It does not explain the original `pending()[0]` undefined event or prove the failed attempt reached expiry/zero-callback assertions.
+- M0 requested M1's evidence-bounded root-cause or no-current-reproduction disposition on #62 comment `6384701122`; preserve TTL and zero-callback assertions. Keep #62 OPEN/P1.
+
+## PR #109 latest CI terminal result — 2026-10-24 13:23 UTC
+
+- PR #109 head `b7fbd2b7fabb92eee57b9b73e3f60d7217bddf68`: CI run `40097746876` completed SUCCESS with 9/9 jobs successful; AC3 run `40097746794` completed SUCCESS. M9 composition run `40097746830` was SKIPPED.
+- The first `gh run watch` ended with an API `unexpected EOF` while fetching jobs; direct run and jobs API readbacks then confirmed all nine jobs successful and the parent workflow `completed/success`. This was an API read interruption, not a test failure.
+- M0 recorded the exact-head M9 recurrence on #76 comment `6384721674`. Latest M1 follow-ups remain open: #51 `6384695432` and #62 `6384701122`; no module source or workflow changes were made by M0.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Usage page remains open; last quota read was 37% five-hour / 49% weekly at 13:20 UTC.
+
+## Current integration and module snapshot — 2026-10-24 13:29 UTC
+
+- PR #109 head `419bc98757443fb8620cbd004dd64eb6c54fb96a`: standard CI `40098150128` SUCCESS (9/9), AC3 `40098149982` SUCCESS, M9 composition `40098149978` SKIPPED.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Current open technical issues remain 13 total: 2 P0, 10 P1, 1 P2.
+- Fresh `ls-remote` confirms M1–M8 module branch heads remain unchanged from their previously recorded SHAs. Latest reads of #41/#93/#57/#52/#72/#99 show M0 comments without subsequent owner dispositions; the current M9 skip is recorded on #76 comment `6384782021`.
+- Usage Overview was readable at 13:25: 37% five-hour / 49% weekly; the page remains open. M0 changes are coordination docs only; no module code, M9 workflow, main, PR #24, or Release change.
+
+## M7 Hono advisory disposition — 2026-10-24 13:30 UTC
+
+- Dependabot PR #67 exact head `cda74e9860f1d96d7404871378c0c737535fa77e` has later CI run `39827204460` SUCCESS across 9/9 jobs, including package-smoke; earlier run `39586184706` is a historical manifest-smoke failure.
+- GitHub Dependabot alert #2 (`GHSA-5r4p-p66f-jhc7`) remains OPEN. PR #67 remains OPEN/non-Draft and targets `main`; M0 did not merge it. M7 owner must record exact manifest/version, default-branch state, and vulnerable-callsite disposition before #70 can close.
+- M0 posted the exact evidence and owner request on #70 comment `6384812326`; keep #70 OPEN/P1 while the advisory is unresolved.
+
+## M2/M9 gate follow-up and current CI — 2026-10-24 13:35 UTC
+
+- PR #109 head `94bb180385ad2ee5861aa5c74b98ea15c08abb77`: standard CI `40098552719` SUCCESS (9/9), AC3 coordination `40098552770` SUCCESS, and M9 composition `40098552667` SKIPPED.
+- M0 requested M2's exact native Codex Shell host evidence or explicit UNPROTECTED/BLOCKED boundary on #45 comment `6384841812`; WSL/simulated Hook results do not establish host acceptance.
+- M0 requested M9's evidence-bounded Windows Node 22 503 diagnosis or no-current-reproduction disposition on #54 comment `6384851032`; preserve bounded retries and assertions. The current M9 trigger skip remains on #76 comment `6384834116`.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Issue #70's exact Dependabot run passed but alert #2 remains OPEN; no main merge. Last quota read at 13:30: 37% five-hour / 49% weekly.
+
+## M8 contract-owner disposition follow-up — 2026-10-24 13:35 UTC
+
+- M8 PR #40 is still at head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` and old base `416f1ba`; the existing audit shows the M7/M8 build-contract blobs match, but M8 has not recorded the requested ACCEPT/REJECT provenance disposition.
+- Current-base conflict resolution and revalidation remain tracked in #76. M0 refreshed the owner request on #99 comment `6384858175`; keep #99 OPEN/P1 and #40 Draft until owner disposition and current-base CI exist.
+
+## M0 coordination checkpoint — 2026-10-24 13:44 UTC
+
+- The user removed quota monitoring. This supersedes prior quota-based pause rules: M0 will not inspect usage or gate work on a usage percentage. Keep no more than two module tasks active in parallel. VMware, real-model, and installer runs still require the single exclusive reservation; none was reserved or launched in this checkpoint.
+- The current runtime has no `read_thread` tool. Live Codex-chat activity is therefore unknown; coordination uses GitHub Issues/PRs and the observable worktrees. The scheduling update is recorded in Issue #29 comment `6384942868`.
+- PR #24 is still OPEN/Draft, base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`, head `feature/agent-canary-3.0` at `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. No PR #24 or `main` mutation was made.
+- PR #109 is OPEN/Draft against `feature/agent-canary-3.0`. Remote head is `94bb180385ad2ee5861aa5c74b98ea15c08abb77`; this exact head has standard CI 9/9 and AC3 coordination SUCCESS, while M9 composition `40098552667` is SKIPPED. Local M0 is two commits ahead (`99ee113`, `cb42a37`), both limited to this status file. The previous push was at about 13:31:35 UTC; the next batch is due no earlier than 13:51:35 UTC.
+- The existing M1–M7 module PRs (#43/#37/#33/#34/#47/#38/#39) and M9 PR #36 are merged into the feature branch, but their follow-up acceptance issues remain open. M8 PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5` against old base `416f1ba4848d5be4011ac72d42066d4c72b42d49`; the earlier read-only merge-tree audit found 12 current-base conflicts. No owner disposition has arrived in #99.
+- All eight original M1–M8 directories exist as distinct worktrees on separate feature branches, and each local branch head matches its corresponding remote ref. M1/M2/M3/M5/M6/M8 share the coordinator repository's common Git directory; M4/M7 use their existing separate clone. M7 alone is dirty: one uncommitted `windows-community.yml` change (2-line diff) that unconditionally enables installer lifecycle on `pull_request`. M0 inspected the diff read-only and did not edit, stage, or reset it. M7 was asked on #41 comment `6384954308` to restore a fail-closed reservation/manual or serialized gate and align the 11/7 checksum-path contract before push; M1 was assigned the second task slot on #52 comment `6384954511`.
+- Latest comments on the active technical issues are still M0 follow-ups, with no owner-authored disposition visible: P0 #52/#93; P1 #41/#45/#51/#54/#57/#62/#70/#72/#76/#99; P2 #29. Current open set is 13 issues (2 P0, 10 P1, 1 P2). Critical gates remain product-host protected-read proof, installed Hook redaction, M9 current-ref execution, M8 current-base disposition, independent M6 product E4, and M7 installer lifecycle.
+- `.gitignore` excludes the local coordination directories/reports/logs plus common secrets, logs, and temp files. Six required coordination documents are present under `docs/3.0/`; no module implementation was changed.
+
+## M0 owner-slot preservation update — 2026-10-24 13:56 UTC
+
+- M7 remains the only dirty module worktree. Read-only status found its existing workflow diff plus untracked `.m7-m8-acceptance-*` output containing a ZIP, build JSON, and runtime-contract folder. M0 did not open, stage, ignore, edit, or remove those artifacts. M7 was asked on #41 comment `6385067530` to review provenance/secrets and explicitly choose PR contents. The tracked workflow diff still enables lifecycle runs on all PRs without reservation/concurrency gating; no installer run was started.
+- M1's second-slot P0 #52 handoff remains unanswered as of 13:56 UTC; no owner disposition or module-head movement is visible. M8 stays queued behind the two-task limit.
+- PR #109 remote remains OPEN/Draft at `94bb180385ad2ee5861aa5c74b98ea15c08abb77`; local M0 is three documentation commits ahead on its existing branch. PR #24 is unchanged OPEN/Draft and remains outside this publication batch.
+## PR #109 terminal checks — 2026-10-24 14:00 UTC
+
+- Exact head `20f71cad790751dbb23184791a63c52d12cc83cb`: CI run `40100314787` completed SUCCESS, 9/9 jobs; AC3 coordination run `40100314725` completed SUCCESS. M9 composition `40100314740` completed SKIPPED, so integration remains unverified. M0 recorded the exact-head result and M9 acceptance gate in #76 comment `6385108207`.
+- No owner-authored response is visible on the M7 #41, M1 #52, or M8 #99 handoffs. M7's tracked and untracked local work remains preserved; M1's worktree remains clean; M8 remains queued under the two-task limit.
+- No quota page was checked. M0's last push was at 13:56 UTC; next publication batch is no earlier than 14:16 UTC.
+## M0 scheduling checkpoint — 2026-10-24 14:15 UTC
+
+- No owner-authored reply or M1/M7/M8 branch movement is visible since the 13:56 snapshot. M7's original workflow diff and untracked acceptance directory remain untouched; M1's #52 task remains pending; M8's #99 task is queued behind the two active slots (queue note `6385140689`).
+- PR #109 head `20f71cad790751dbb23184791a63c52d12cc83cb` remains OPEN/Draft with CI 9/9 and AC3 SUCCESS; M9 remains SKIPPED. PR #24 remains unchanged OPEN/Draft at `e4732d9745bb4fbbebf6896a35b4657ad82abd73` against the competition readiness base.
+- No quota, VMware, real-model, or installer check/run occurred. This status-only update is local until the next 20-minute push window, no earlier than 14:17 UTC.
+## M9 trigger exact-ref audit — 2026-10-24 14:19 UTC
+
+- M9 run `40101873619` received the current PR #109 `pull_request` event at head `2212a6806c73a6b15987d38718a3510df48f9ae5`, but its only composition job was SKIPPED. Read-only review of the existing M9 workflow at branch `cbb2e7db` identifies the condition: `workflow_dispatch` or PR #36 only. Manual dispatch remains unsuitable as current-ref acceptance because the workflow checks out PR #36 and static module SHAs; its M7 pin is `7d1da7d`, while the current M7 branch head is `ab9b03f`. Exact cause and acceptance criteria are in #76 comment `6385302936`. M0 did not edit or dispatch the M9 workflow.
+- AC3 coordination run `40101873540` succeeded. Standard CI `40101873706` is still in progress at this checkpoint; do not report a terminal result yet. M8 remains queued on #99 comment `6385140689`; M1/M7 have no owner-authored response to their current handoffs.
+## PR #109 terminal result — 2026-10-24 14:21 UTC
+
+- Exact head `2212a6806c73a6b15987d38718a3510df48f9ae5`: standard CI run `40101873706` completed SUCCESS (9/9); AC3 coordination `40101873540` completed SUCCESS; M9 composition `40101873619` completed SKIPPED. The M9 workflow condition still admits only manual dispatch or PR #36, and its manual path uses static refs, including the stale M7 pin. M0 recorded the terminal result in #76 comment `6385322283`; current-ref integration remains OPEN/P1.
+- M1/M7 owner handoffs remain unanswered; M8 remains queued. No M1–M8 branch/worktree change was made by M0.
+## Current module PR routing — 2026-10-24 14:25 UTC
+
+- The existing M1–M7 follow-up PRs #101/#91/#107/#98/#94/#100/#106 are all MERGED. M9 PR #36 is MERGED. Current open AC3 module PR is M8 #40 (OPEN/Draft, head `60cfe8d`, stale base `416f1ba`). M0 PR #109 remains OPEN/Draft. A repository-wide open-PR inventory also showed unrelated #31 (M6 legacy PR targeting `main`); M0 did not modify it.
+- M1 branch `feature/ac3-security-core` is at `47501fc`, the merged #101 head, with no open M1 PR. M7 branch `feature/ac3-reliability-ac3` is at `ab9b03f`, has uncommitted tracked/untracked work, and is not the merged #106 branch. M0 asked each owner to use the existing branch and an owner-authored Draft PR if code changes are needed; no new module branch was created. Comments are #41 `6385361421` and #52 `6385361634`.
+- M8 remains queued behind M7/M1 on #99; current-base reconciliation stays M8-owned and must retain all conflicting tests/docs until an owner-reviewed resolution.
+## M8 PR #40 current-head gate — 2026-10-24 14:32 UTC
+
+- PR #40 is OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5` and still targets stale base `416f1ba4848d5be4011ac72d42066d4c72b42d49`. Current hosted checks are 15 SUCCESS, 1 SKIPPED (installer lifecycle), 0 failed, 0 pending. The skipped lifecycle is not installation evidence.
+- GitHub `MERGEABLE/CLEAN` reflects the stale PR base. The existing read-only merge-tree audit against current feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73` reports 12 conflicts. No M8 owner response or branch change is visible. M0 refreshed #99 comment `6385427802`; PR #40 remains Draft and M8 remains queued.
+## PR #109 current-head gate — 2026-10-24 14:41 UTC
+
+- Exact head `4d1bbb672a02e84a3219830d110d77e9d3eec6d3`: CI run `40103382585` completed SUCCESS (9/9); AC3 run `40103382558` completed SUCCESS; M9 run `40103382554` completed SKIPPED because the existing job condition admits only manual dispatch or PR #36. M0 recorded this exact recurrence in #76 comment `6385515616`.
+- No owner-authored reply is visible on M7 #41, M1 #52, or M8 #99; those branch/worktree heads remain unchanged. M8 remains queued and PR #40 stays Draft.
+## M1/M7 owner checkpoint request — 2026-10-24 14:46 UTC
+
+- M1 and M7 have not posted owner-authored status on their assigned slots. M0 requested a concise WORKING/BLOCKED/DONE state and next action on #52 comment `6385580957` and #41 comment `6385580693`; this is a status request, not evidence of completion.
+- M1 remains on P0 #52. M7 remains on the installer-trigger/checksum gate; the workflow stays unpushed until it has an explicit fail-closed reservation/manual or serialized guard. M8 remains queued after these two slots.
+## M0 no-owner-change checkpoint — 2026-10-24 14:54 UTC
+
+- The latest #41/#52/#99 comments remain M0-authored; no module owner has reported WORKING/BLOCKED/DONE. M1/M7/M8 branch heads are unchanged; M7's existing tracked/untracked work is still preserved.
+- Latest pushed M0 head `4d1bbb672a02e84a3219830d110d77e9d3eec6d3` has CI 9/9 SUCCESS, AC3 SUCCESS, and M9 SKIPPED. PR #24 remains OPEN/Draft at its unchanged base/head.
+- This entry is local until the next scheduled push window, no earlier than 14:58 UTC. No quota check or module/resource test occurred.
+## PR #109 terminal checks — 2026-10-24 15:01 UTC
+
+- Exact head `26bcce98c3876cb474d7f1ff37e9a4a056242c2d`: standard CI `40104848291` completed SUCCESS (9/9); AC3 coordination `40104848248` completed SUCCESS; M9 composition `40104848245` completed SKIPPED. The current-ref M9 gate remains missing; M0 recorded the terminal result on #76 comment `6385736997`.
+- No owner-authored response is visible on #41/#52/#99. M1/M7/M8 branches and M7's preserved local changes are unchanged.
+## M1–M8 branch audit — 2026-10-24 15:05 UTC
+
+- All eight existing module branches have zero ahead/behind divergence from their configured remote upstreams. M1, M2, M3, M4, M5, M6, and M8 worktrees are clean. M7 has two dirty entries: its uncommitted installer workflow edit and untracked acceptance directory; both remain untouched by M0.
+- Open-PR inventory is unchanged: M0 #109 and M8 #40 are the open AC3 Draft PRs; M6 legacy #31 targets `main` and remains untouched. Current merged follow-up PRs M1 #101 through M7 #106 remain merged.
+- No module owner response or head movement since the 14:46 checkpoint request. GitHub Issue #29 still records the two-slot order M7, then M1, then M8.
+## M0 dependency queue — 2026-10-24 15:06 UTC
+
+- The current two module slots remain M7 safe trigger/checksum correction and M1 P0 #52 boundary disposition. Follow-on order is M7 P0 #93 after checksum/installer reservation; M8 #99 current-base reconciliation; M2 #45 native Shell; M6 #57 product E4; M9 #76 current-ref composition after M1–M8 refs settle; then M1 #51/#62, M7 #70, and M1 #72. Full scheduling rationale is in #29 comment `6385784897`.
+- No owner-authored status is visible on M1/M7/M8 handoffs. No quota check was performed. Keep the two-task cap and the exclusive-resource reservation; do not create module branches, merge `main`/PR #24, or release.
+## PR #109 post-push gate — 2026-10-24 15:19 UTC
+
+- New M0 head `3f584ef0a61625a27a7aec3d6a38d387c4b4c190` is on the existing Draft PR #109. M9 run `40106419777` again completed SKIPPED on the current PR event; AC3 `40106419687` and standard CI `40106419776` are running. Exact recurrence is logged in #76 comment `6385927182`.
+- PR #24 remains OPEN/Draft with unchanged head/base. No module code or `main` changes occurred. Next M0 push is no earlier than 15:38 UTC.
+## PR #109 terminal result — 2026-10-24 15:22 UTC
+
+- Exact head `3f584ef0a61625a27a7aec3d6a38d387c4b4c190`: CI `40106419776` completed SUCCESS (9/9); AC3 coordination `40106419687` completed SUCCESS; M9 composition `40106419777` completed SKIPPED. M0 posted the terminal evidence and remaining gate on #76 comment `6385956324`.
+- No owner-authored response or M1/M7/M8 branch movement is visible. M0 local docs now have one commit ahead; next push is no earlier than 15:38 UTC.
+## M0 15:35 UTC checkpoint
+
+- No owner-authored replies or M1–M8 head movement since the 15:05 branch audit. M7's two local worktree changes remain intact; the other seven module worktrees remain clean.
+- Last pushed M0 head `3f584ef` passed CI 9/9 and AC3, while M9 composition was SKIPPED. PR #24 remains unchanged OPEN/Draft.
+- This is a docs-only coordination batch; next push no earlier than 15:38 UTC. No quota check or exclusive test run occurred.

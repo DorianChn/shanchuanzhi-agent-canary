@@ -1,3 +1,58 @@
+## Current integration risks — 2026-10-24 16:44 UTC
+
+| Gate | Verified change | Remaining acceptance |
+| --- | --- | --- |
+| M9 #112 / #76 | New workflow actually runs both platform jobs on the current feature-target PR. First Ubuntu attempt reached the offline composition gate and failed on its remaining old M8 SHA constant; source-selection success is not full composition success. | M9 fixes its remaining stale constant without weakening assertions and reruns exact full composition. |
+| M8 #40 / #99 | Twelve conflicts resolved at e3d89ba; CI 9/9, canonical Hook output and Windows build passed. M6 ACCEPT is #80 comment6386655050; M7 scoped prepare.mjs compatibility review is complete. | Finish bounded sponsor smoke review and actual current-source composition before readiness. |
+| M7 #41 / #93 | Existing clean M7 follow-up now has a local 11-entry inventory correction and job-level exclusive lock, at c03176f. Primary M7 dirty files remain untouched. | Publish the substantive batch, pass exact candidate checks, then reserve the resource before hosted installation. No installed result is claimed yet. |
+| M6 #111 / #57 | Product intake/control and verifier tests 41/41 passed; real artifact SELF_CHECK bundle generated with all product cases NOT_VERIFIED. | Independent operator lifecycle/tool effects and reviewer receipt remain external gates. |
+| M1 #62 / #51 | #62 closed after actual owner traced the historical fixture race and verified the existing deterministic fix; source fixes are in feature. | #51 retains UNKNOWN for its original lock-holder/scheduling trigger; green reruns do not establish that cause. |
+
+Integration order must preserve both ancestry and source provenance: complete owner-reviewed module candidates before final M9 manifest integration, then synchronize the M9 branch with the resulting feature tip and revalidate its explicit pins. Never silently relabel an old module pin as a newer candidate or bypass a failed baseline/owner gate to force a merge. main, PR #24 and Release remain outside this integration authorization.
+
+## Historical integration risks — 2026-10-24 09:48 UTC
+
+| Risk / gate | Priority | Current verified state | Required acceptance |
+| --- | --- | --- | --- |
+| M9 current-ref integration trigger (#76) | P1 | On current M0 PR #109 head `3d4dd10`, CI passed 9/9 and AC3 coordination passed, while M9 run `40083165982` was skipped. Workflow still checks out PR #36 only. | M9 owner updates the existing workflow so the intended current feature refs run on Ubuntu and Windows; skipped jobs cannot stand in for composition. |
+| M8 current-base branch (#40/#99) | P1 | M8 head `60cfe8d` is unchanged; 12 merge-tree conflicts remain and M8 owner disposition is absent. | M8 resolves by ownership, preserves tests/docs/current behavior, posts #99 disposition, and passes current-base checks plus exact-source composition. |
+| M7 lifecycle reservation (#41/#29) | P1 | Local M7 workflow diff still auto-enables installer lifecycle on pull_request with no concurrency group; no slot reservation exists and M0 has not run it. | Keep runs behind an explicit reserved/manual gate or implement an owner-reviewed serialized reservation; also fix the 11/7 checksum path mismatch before Setup.exe acceptance. |
+
+## Current integration risks — 2026-10-24 09:31 UTC
+
+| Risk / gate | Priority | Current verified state | Required acceptance |
+| --- | --- | --- | --- |
+| M9 current-ref integration trigger (#76) | P1 | On M0 PR #109 head `d11c9e3`, standard CI and coordination passed but M9 run `40081829472` was skipped. The current job condition allows only manual dispatch or PR #36 and checks out `refs/pull/36/head`; evidence is in #76 comment `6382577864`. | M9 owner updates the existing workflow trigger/ref contract; a current feature-target event must execute the exact intended composition on Ubuntu and Windows. |
+| M8 current-base branch (#40) | P1 | Head remains `60cfe8d`; merge-tree against feature `e4732d9` reports 12 conflicts. M0's latest owner request is #40 comment `6382530045`; M8 has not supplied the #99 disposition. | M8 resolves conflicts by file ownership, preserves tests and current feature behavior, records its #99 disposition, then passes current-base checks and exact-source composition. |
+| M7 installer scheduling/checksum (#41/#29) | P1 | Existing uncommitted M7 workflow diff runs installer lifecycle on every PR; the workflow has no concurrency group. The exclusive slot is FREE. Hosted lifecycle previously stopped before Setup.exe because the producer lists 11 checksum paths and the consumer accepts 7. | M7 aligns all checksum paths and retains an explicit/manual reservation gate or serialized slot; M0 must not execute a run while reservation/trigger acceptance is unresolved. |
+| Product acceptance | P0/P1 | #52 and #93 remain P0; #41 and #57 remain P1. Source/fixture M9 success does not prove installed-package, clean-VM, or independent product E4 acceptance. | Close each gate only with its own scoped package/runtime/operator evidence; do not promote skipped or source-only checks. |
+
+## Current integration risks — 2026-10-24 09:18 UTC
+
+| Risk / gate | Priority | Current verified state | Required acceptance |
+| --- | --- | --- | --- |
+| M9 current-ref integration trigger | P1 | Exact M9 composition run `40066875122` passed at pinned refs. Current M0 PR #109 run `40080532927` and PR #24 run `40068981943` are skipped; the workflow only runs for PR #36 or manual dispatch, whose source inputs remain PR #36 plus static pins. | Make the existing workflow execute against the intended current integration ref on both OSes; assert checked-out SHAs and ensure a skipped result cannot be represented as an integration pass. |
+| M8 current-base integration (#40/#76) | P1 | Existing PR #40 head `60cfe8d` is based on `416f1ba`; current feature is `e4732d9`. Read-only merge-tree reports 12 conflicts despite GitHub's stale-base `CLEAN` status. M8 disposition on #99 is also pending. | M8 reconciles its existing branch, retains tests and docs, records owner disposition, then passes current-base CI and exact-source M9. |
+| Configured OBSERVE target route (#52) | P0 | M3 #107 now contains a configured-target CLI route that binds an M1-held identity and calls M2/M5. Exact source tests cover CLI startup, positive read, sensitive/alias/junction denies, and replacement; M9 `40066875122` passes Ubuntu/Windows. This is source/fixture evidence, not independent installed-package or native-host acceptance. M0 correction is recorded in #52 comment `6382450244`. | M3/M4 owners confirm the intended consumer scope and bind the route to a shipped package/runtime; retain product-wide and native-host `NOT_VERIFIED` boundaries until exact artifact/runtime evidence exists. |
+| Shared Hook test disposition (#72) | P1 | M3 current test blob `10cdb80…` differs from reviewed `0e8a225…` by an additive 23-line redaction test and one strengthened assertion; M1 Hook implementation and wrapper blobs match. M0's exact diff summary is #72 comment `6382420684`. | M1 records ACCEPT/REJECT for the exact blob and M9 reflects that owner disposition. |
+| Packaged Hook reason redaction (#93) | P0 | M7 #106 fixed BUILD_REPORT status producer/consumer mismatch; installed Hook stdout/log behavior and exact shipped payload redaction remain NOT_VERIFIED. | M1/M7 verify exact packaged/installed bytes and caller-controlled reason sentinels without changing allow/deny/ask or weakening fail-closed behavior. |
+| Installer lifecycle and reservation (#41/#29) | P1 | Hosted lifecycle failed before Setup.exe: producer checksum list has 11 paths; consumer allowlist has 7. M7's preserved, uncommitted workflow diff enables lifecycle for every PR without a concurrency group; M0 did not modify it. | Align the complete producer/consumer contract with regressions, restore reservation gating or serialize the exclusive slot, then run the exact artifact lifecycle only after reservation. |
+| Independent product E4 (#57) | P1 | No independent product E4 artifact and operator receipt are identified. M6 fixtures/build checks are not product E4. | Independent operator verifies an exact hashed product artifact from a clean checkout and records sanitized results plus mismatch controls. |
+| PR #24 / release boundary | M0 | PR #24 remains OPEN/Draft at feature head `e4732d9` and its existing competition base; `main` is untouched. | Preserve the branch and Draft state; no Release is in scope. |
+
+## Current integration risks — 2026-10-24 08:55 UTC
+
+| Risk / gate | Priority | Current verified state | Required acceptance |
+| --- | --- | --- | --- |
+| M9 composition trigger after PR #36 merge | P1 | Current feature head `e4732d9` received M9 run `40068981943` through PR #24; it was skipped because the workflow condition only admits PR #36 or manual dispatch. Manual dispatch still checks out `refs/pull/36/head` and static module SHAs. Prior M9 exact-source run `40066875122` passed its pinned candidates on Ubuntu/Windows, but does not prove the current feature event. Issue #76 comment `6382290540` records reproduction and owner criteria. | M9 updates its existing integration workflow/ref manifest so a current feature composition run cannot silently skip, prints and asserts the selected M9/M1–M8 SHAs, and passes on Ubuntu and Windows. Keep installer/VM/real-model work outside this source-only gate and under the #29 exclusive reservation.
+| M8 current-base integration (#40/#76) | P1 | PR #40 is OPEN/Draft at `60cfe8d`; base field remains `416f1ba`, current feature is `e4732d9`, and read-only merge-tree finds 12 conflicts. GitHub's `clean` mergeability flag is associated with the stale base SHA and is not sufficient evidence for current-base mergeability. M8 owner disposition is also missing on #99. | M8 resolves conflicts on existing PR #40 while preserving feature/M9 and M8-owned behavior; obtain current-base hosted CI and exact-source M9 composition; record the M9/M7 owner disposition. Do not blanket-resolve conflicts or delete tests.
+| OBSERVE protected-read product host (#52) | P0 | Synthetic alias/junction and held-identity regressions pass, but no supported first-party host callsite consuming the Gateway-bound protected identity has been demonstrated. No production secret exposure is claimed. | M4 provides the exact shipping callsite plus safe-read and alias/path-replacement evidence, or records the exact host/API blocker. Keep product protection and TOCTOU NOT_VERIFIED until proven.
+| Packaged Hook reason redaction (#93) | P0 | PR #106 fixes the BUILD_REPORT status producer/consumer mismatch. Installed Hook stdout/log behavior and exact shipped payload redaction remain NOT_VERIFIED. | M7/M1 verify the exact packaged/installed Hook blob and sanitized caller-controlled reason sentinels without changing allow/deny/ask or fail-closed behavior; keep #93 open until lifecycle evidence exists.
+| Installer lifecycle and exclusive-resource guard (#41/#29) | P1 | Latest hosted attempt failed before Setup.exe on a checksum-path mismatch. M7 has an uncommitted workflow diff that would schedule lifecycle on every PR without a concurrency group if published; M0 left it untouched and asked M7 to keep reservation gating. | Correct producer/consumer checksum contract on the owner branch, preserve reservation gating/serialization, then run the real installer lifecycle on the reserved clean VM and record exact artifact hashes. A skipped or pre-Setup failure is not lifecycle acceptance.
+| Independent product E4 (#57) | P1 | No independent product E4 report/artifact is supplied; fixture/build evidence is not E4. | Another operator runs the verifier against an exact, hashed product artifact from a clean checkout and records sanitized PASS/FAIL plus mismatch controls. Keep NOT_VERIFIED until then.
+| M1 exact review of M3 Hook test (#72) | P1 | Current M3 test blob differs from the M1-reviewed blob; M1 has not ACCEPTed or REJECTed the exact current blob. | M1 records an exact-blob disposition; preserve the interruption, redaction, and no-output assertions. M9 must reflect that disposition in its manifest.
+| PR #24 and release boundary | M0 | PR #24 remains OPEN/Draft against `competition/shanchuanzhi-release-readiness`; no `main` merge or Release occurred. | Keep the base and Draft state unchanged during module coordination. No Release is in scope.
+
 ## Current integration delta — 2026-10-21 14:31 UTC
 
 The exact refs below supersede earlier snapshots for these gates only; PR #24 and other integration boundaries remain unchanged.
@@ -1207,7 +1262,28 @@ The M9 fixture proves a synthetic protected read through the packed public facad
 | M8 current candidate review (#59) | P1 | Current M8 dedicated workflow test passes, but issue #59 remains open for exact M6 shared E4 test disposition and M1 review of new Hook-output test. | M6 and M1 exact-blob ACCEPT/REJECT; M9 composition on final reviewed refs. |
 | Independent product acceptance (#52/#57) | P0/P1 | Separate from the synthetic composition run; both remain NOT_VERIFIED. | Verify first-party held identity and protected-path behavior, and independent E4 receipt/provenance. |
 
-Current M9 composition is 15/20 on both Ubuntu and Windows; no M9 acceptance or completion claim is supported.
+Historical exact-source run `39986788529` was 15/20 on Ubuntu and Windows. It was superseded by current-ref composition run `40066875122`, whose Ubuntu and Windows jobs both completed successfully on head `cbb2e7db38eee0dc1a23e6e7804ff77d0088d84f`. This closes that source-composition gate only; product-host, packaged installer, and independent E4 acceptance remain open.
+
+## 2026-10-24 07:32 UTC — historical M1 interruption-test flake closed
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Windows Hook interruption test timing (#32) | P1 | Closed after M1 identified the old fixed 1-second marker window as a test-harness timing failure, merged the asynchronous bounded-marker correction through PR #43, and current-base CI run `40072794731` passed Windows Node 20/22 and package-smoke. | This closes the historical test-harness flake only. Synthetic subprocess coverage does not prove native-host callback interception; product host acceptance remains under #52. |
+
+## 2026-10-24 07:42 UTC — M7 lifecycle checksum contract still blocks acceptance
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Installer lifecycle input contract (#41) | P1 | M7 branch `ab9b03f` still has an 11-path producer and a strict 7-path consumer. M0 recorded the four exact missing paths and ordered-list regression request in #41 comment `6381585159`; no install run was started. The existing uncommitted workflow diff also enables lifecycle on every pull request without a concurrency group; M0 flagged the #29 reservation risk in comment `6381618783`. | M7 must synchronize the exact ordered lists without wildcard/bypass, preserve all existing validation, run exact-head CI/build, and keep lifecycle behind an explicit reservation gate or serialized slot before execution. |
+
+| Auto E4 stale-lock race (#78) | P1 | Closed after exact-source review of merged PR #39: stale locks fail closed; release compares held-file identity and exact parsed owner fields; concurrent and replacement tests plus exact PR CI pass. | Independent product E4 remains NOT_VERIFIED under #57/#80. |
+
+## 2026-10-24 07:45 UTC — M6 Draft targeting boundary
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M6 legacy E4 Draft (#31) | — | Older PR #31 remains OPEN/Draft against `main`; the E4 runner, guide, and evidence paths are present in current feature history, and newer PR #38 is merged into feature. | No `main` merge or PR retarget by M0. Authored source evidence remains separate from independent product E4 tracked by #57/#80. |
+
 ## 2026-10-23 16:33 UTC — Current exact-source integration result
 
 | Gate | Priority | Current evidence | Remaining acceptance |
@@ -1233,3 +1309,18 @@ Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9
 | Gate | Priority | Verified state | Remaining acceptance |
 | --- | --- | --- | --- |
 | Offline demo / Community staging (#102) | P1 | Closed: M8 clean-worktree build and six-case offline runner pass at exact PR #40 head; M7 build evidence and M9 Ubuntu/Windows exact composition pass with the fixed M8 blob. | No installer execution or independent E4 claim; those remain #41/#57/#93. |
+
+## 2026-10-24 06:15 UTC — installer lifecycle remains blocked
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M7 hosted installer lifecycle (#41) | P1 | Workflow `40068894360` passed both wrapper regressions and Community build evidence, then failed before Setup.exe with `SHA256SUMS_PATH_UNEXPECTED`; artifact says installer not executed. Exact producer checksum set has 11 paths while consumer allowlist has 7. | M7 aligns the exact path sets without wildcards/check bypass, reruns current-source CI/build evidence, then reserves one installer slot for a new lifecycle attempt. Windows 11, ordinary-user, upgrade, cancel rollback, EFS, and independent E4 remain unverified. |
+
+## 2026-10-24 09:51 UTC — current release PR checks
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Current-ref M9 composition (#76) | P1 | PR #24 exact-head run `40068981943` and M0 PR #109 exact-head run `40083853294` both skipped composition. On #109 head `0543e82`, standard CI `40083853286` passed 9/9 and ownership evidence `40083853320` passed. M0 recorded the paired reproduction in #76 comment `6382817912`. | M9 updates the existing trigger/ref contract and obtains successful exact-source Ubuntu/Windows results on intended current refs; skipped status never closes the gate. |
+| PR #24 current-head CI | P1 | Head `e4732d9`; standard CI `40068981954` passed 9/9 and Community/wrapper run `40068981872` passed. Current-ref composition `40068981943` and installer lifecycle were skipped. | M9 must run the intended current refs on both OSes; M7 must fix the checksum contract and reserve a serialized installer attempt before lifecycle acceptance. |
+| M8 reconciliation (#40/#99) | P1 | PR #40 remains Draft at `60cfe8d`, based on `416f1ba`; read-only merge-tree against `e4732d9` still reports 12 conflicts and the M8 owner disposition is absent. | M8 resolves the existing branch against the current base by ownership, posts its #99 disposition, and passes current-base checks plus exact-source composition. |
+| Product acceptance (#52/#93/#41/#57) | P0/P1 | Separate host, packaged-Hook, clean-VM lifecycle, and independent E4 acceptance remain NOT_VERIFIED. | Each owner supplies artifact/runtime/operator evidence for its own acceptance scope; source CI and skipped jobs do not close these gates. |

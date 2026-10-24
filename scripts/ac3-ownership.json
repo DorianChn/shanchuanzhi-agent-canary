@@ -1,5 +1,6 @@
 {
   "targetBase": "feature/agent-canary-3.0",
+  "approvedCommonSourceBaseline": "e4732d9745bb4fbbebf6896a35b4657ad82abd73",
   "moduleBranches": {
     "feature/ac3-security-core": "M1",
     "feature/ac3-execution-isolation": "M2",
@@ -118,7 +119,22 @@
     ".gitignore": {
       "owner": "M0"
     },
+    "scripts/ac3-coordination-check.mjs": {
+      "owner": "M0"
+    },
+    "scripts/ac3-ownership.json": {
+      "owner": "M0"
+    },
+    "scripts/ac3-baseline.mjs": {
+      "owner": "M0"
+    },
+    "test/ac3-coordination-baseline.test.mjs": {
+      "owner": "M0"
+    },
     "docs/3.0/API_CONTRACTS.md": {
+      "owner": "M0"
+    },
+    "docs/3.0/MODULE_DEPENDENCIES.md": {
       "owner": "M0"
     },
     "src/runtime/gateway.ts": {
