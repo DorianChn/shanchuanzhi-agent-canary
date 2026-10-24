@@ -50,6 +50,10 @@ const currentCandidateProvenance = {
   M3: { ownerHead: 'ea9754c8b7275bf508e5338b3ddc11edc7d6a106', ownerTree: '76830b2068cc74dd7c9976141a112cf0a1c7f51c', sourceBase: '416f1ba4848d5be4011ac72d42066d4c72b42d49', prHead: '0d61b434ba2ac81e313b82432f4ac00afedd3cbc', prTree: 'e9674f6c6222e7f496ad2aaf641f0083b61b8271' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
+  M7: { ownerHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', ownerTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: 'c03176fbce3741bd756bfdad4576ff807572134b', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', prTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228' },
+};
+
+const historicalCandidateProvenance = {
   M7: { ownerHead: '37034a971d00477a8aa3d57f34773c125939ec92', ownerTree: 'e0d234e71372109a7e9f7076844d8ebf83e8ef50', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '7d1da7d3d90f61aae4e3405b980fc719633d20ac', prTree: '05bc65f26346e8b49aab921d274e3b81382ccca1' },
 };
 
@@ -144,6 +148,13 @@ test('manifest-pinned exact source refs retain their tree and ancestry provenanc
     } else {
       assert.equal(readTreeIdAt(moduleName, pinnedSourceShas[moduleName]), provenance.mergeTree, `${moduleName} current source root must use the recorded actual merge tree`);
     }
+  }
+  for (const [moduleName, provenance] of Object.entries(historicalCandidateProvenance)) {
+    assertAncestor(moduleName, provenance.sourceBase, provenance.prHead, `${moduleName} historical candidate source base`);
+    assertAncestor(moduleName, provenance.ownerHead, provenance.prHead, `${moduleName} historical owner fix commit`);
+    assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} historical owner fix tree must remain exact`);
+    assert.equal(readTreeIdAt(moduleName, provenance.prHead), provenance.prTree, `${moduleName} historical PR head tree must remain exact`);
+    assertAncestor(moduleName, provenance.prHead, pinnedSourceShas[moduleName], `${moduleName} historical PR head must remain on the current candidate ancestry`);
   }
 });
 
