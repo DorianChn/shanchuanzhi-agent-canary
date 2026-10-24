@@ -2,7 +2,7 @@
 
 | Risk / gate | Priority | Current verified state | Required acceptance |
 | --- | --- | --- | --- |
-| M9 current-ref integration trigger (#76) | P1 | On M0 PR #109 head `d11c9e3`, standard CI and coordination passed but M9 run `40081829472` was skipped. The result is recorded in #76 comment `6382577864`. | M9 owner updates the existing workflow trigger/ref contract; a current feature-target event must execute the exact intended composition on Ubuntu and Windows. |
+| M9 current-ref integration trigger (#76) | P1 | On M0 PR #109 head `d11c9e3`, standard CI and coordination passed but M9 run `40081829472` was skipped. The current job condition allows only manual dispatch or PR #36 and checks out `refs/pull/36/head`; evidence is in #76 comment `6382577864`. | M9 owner updates the existing workflow trigger/ref contract; a current feature-target event must execute the exact intended composition on Ubuntu and Windows. |
 | M8 current-base branch (#40) | P1 | Head remains `60cfe8d`; merge-tree against feature `e4732d9` reports 12 conflicts. M0's latest owner request is #40 comment `6382530045`; M8 has not supplied the #99 disposition. | M8 resolves conflicts by file ownership, preserves tests and current feature behavior, records its #99 disposition, then passes current-base checks and exact-source composition. |
 | Product acceptance | P0/P1 | #52 and #93 remain P0; #41 and #57 remain P1. Source/fixture M9 success does not prove installed-package, clean-VM, or independent product E4 acceptance. | Close each gate only with its own scoped package/runtime/operator evidence; do not promote skipped or source-only checks. |
 
