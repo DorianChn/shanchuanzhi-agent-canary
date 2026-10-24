@@ -8234,3 +8234,11 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Read-only `git merge-tree` between feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and M8 PR #40 head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` reproduced 12 conflicts: eight modify/delete paths (`COMPATIBILITY.md`, `E4_EVIDENCE_INDEX.md`, `GETTING_STARTED.md`, `RELEASE_NOTES_DRAFT.md`, `SECURITY_TESTING.md`, `UPGRADING.md`, `USER_TEST_PLAN.md`, `scripts/check-docs.mjs`) and four content paths (`README.md`, `README.zh-CN.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`).
 - M0 recorded the exact list and existing-branch-only action request on #99 comment `6384094440`. No merge or M8 file modification was performed.
+
+## Live M7 acceptance blocker — 2026-10-24 12:21 UTC
+
+- A fresh read-only audit found M7 producer/consumer checksum drift at feature `e4732d9`, M7 candidate `ab9b03f`, and PR #106 merge `d6bf3a8`: producer has 11 paths while the Windows smoke consumer has 7. The consumer omits `BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, and `SOURCE_MANIFEST.json`.
+- Hosted run `40064614487` skipped installer lifecycle; current-source run `40068894360` failed before launching the installer with `SHA256SUMS_PATH_UNEXPECTED`. Older successful run `39882121777` used source `7c348622` and the previous 7-path manifest, so it does not qualify the current candidate.
+- M0 recorded the exact producer/consumer delta, run evidence, and M7 acceptance request on #41 comment `6384147284`. #41 remains OPEN/P1; no M7 source/worktree edits were made and the exclusive installer slot remains FREE.
+- Current status is 2 open P0, 10 open P1, and 1 open P2. Seven M1–M7 follow-up PRs are merged to the feature base; M8 PR #40 remains OPEN/Draft with the 12 exact-base conflicts recorded under #99. PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Latest readable Usage Overview is 64% five-hour / 53% weekly. The usage tab remains open per user preference.
