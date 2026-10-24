@@ -1207,7 +1207,14 @@ The M9 fixture proves a synthetic protected read through the packed public facad
 | M8 current candidate review (#59) | P1 | Current M8 dedicated workflow test passes, but issue #59 remains open for exact M6 shared E4 test disposition and M1 review of new Hook-output test. | M6 and M1 exact-blob ACCEPT/REJECT; M9 composition on final reviewed refs. |
 | Independent product acceptance (#52/#57) | P0/P1 | Separate from the synthetic composition run; both remain NOT_VERIFIED. | Verify first-party held identity and protected-path behavior, and independent E4 receipt/provenance. |
 
-Current M9 composition is 15/20 on both Ubuntu and Windows; no M9 acceptance or completion claim is supported.
+Historical exact-source run `39986788529` was 15/20 on Ubuntu and Windows. It was superseded by current-ref composition run `40066875122`, whose Ubuntu and Windows jobs both completed successfully on head `cbb2e7db38eee0dc1a23e6e7804ff77d0088d84f`. This closes that source-composition gate only; product-host, packaged installer, and independent E4 acceptance remain open.
+
+## 2026-10-24 07:32 UTC — historical M1 interruption-test flake closed
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Windows Hook interruption test timing (#32) | P1 | Closed after M1 identified the old fixed 1-second marker window as a test-harness timing failure, merged the asynchronous bounded-marker correction through PR #43, and current-base CI run `40072794731` passed Windows Node 20/22 and package-smoke. | This closes the historical test-harness flake only. Synthetic subprocess coverage does not prove native-host callback interception; product host acceptance remains under #52. |
+
 ## 2026-10-23 16:33 UTC — Current exact-source integration result
 
 | Gate | Priority | Current evidence | Remaining acceptance |

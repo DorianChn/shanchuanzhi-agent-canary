@@ -8069,3 +8069,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M8 PR #40 remains OPEN/Draft with the 12 post-M9 base conflicts recorded on #76 and PR #40; no owner resolution or M7 lifecycle code update is visible yet. M1–M7 and M9 are integrated; M8 is the one unmerged M1–M8 module.
 - PR #24 remains OPEN/Draft on its original base; only the local feature worktree was fast-forwarded to `e4732d9`. No remote `main` merge or Release.
 - Refreshed Usage Overview at 07:04 UTC: 23% five-hour and 62% weekly remaining; the <5% stop threshold is inactive.
+
+## 2026-10-24 07:32 UTC — M1 Windows interruption gate closed
+
+- Issue #32 is CLOSED for the historical Windows test-harness timing failure. M1 identified the old fixed 1-second `spawnSync` marker window as the source of false failures; PR #43's asynchronous bounded-marker/interruption correction is merged in current feature history (merge commit `f0b4ee800672c3b702fa6d48201f74642d724cc5`, verified ancestor of `e4732d9745bb4fbbebf6896a35b4657ad82abd73`).
+- Current integrated test blob `10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2` waits for the marker, holds beyond the wrapper timeout, interrupts the child, and checks spawn/exit diagnostics, empty stdout/stderr, and no decision log. CI run `40072794731` passed all 9 jobs, including Windows Node 20/22 and package-smoke, on PR #109 head `7160bece2d62cab6ba53098d6ff548933287e216` based on the current feature baseline.
+- Scope limit: the synthetic subprocess does not establish native-host callback interception. Product host acceptance stays open under #52; separate M1/M3 file conflicts remain under #76.
+- Current open labels: P0 = 2 (#52, #93); P1 = 12 (#99, #80, #78, #76, #72, #70, #62, #57, #54, #51, #45, #41). #41 still has the 11-vs-7 checksum path mismatch and no Setup.exe run; #40 remains OPEN/Draft with 12 base conflicts and missing owner disposition on #99; #72 awaits M1 disposition for the current test blob.
+- PR #24 remains OPEN/Draft at its original release-readiness base. No remote `main` merge or Release occurred. Usage Overview refreshed after reload at 07:29 UTC: 16% five-hour / 61% weekly remaining; the <5% threshold was inactive.
