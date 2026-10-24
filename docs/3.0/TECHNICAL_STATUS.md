@@ -8223,3 +8223,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - #41 and #99 owner requests are recorded in comments `6383563783` and `6383563822`. The latest open-issue readback is 2 P0, 10 P1, and 1 P2 after closing #80. Main M1–M8 worktree heads remain unchanged; M7's existing dirty workflow/evidence is preserved.
 - Resource check: no queued or in-progress GitHub workflow was present; local process scan found no active VMware desktop VM or Ollama process. M0 recorded the exclusive slot FREE in #29 comment `6383994848`; activity in separate Codex sessions remains unknown.
 - PR #24 remains OPEN/Draft at unchanged head and competition base. M1–M7 owner follow-up PRs #91/#101/#107/#98/#94/#100/#106 are MERGED into the feature base; M8 PR #40 remains OPEN/Draft. No M1–M8 source, `main`, PR #24, or Release was changed by these M0 actions.
+
+## Post-push validation — 2026-10-24 12:14 UTC
+
+- M0 PR #109 is OPEN/Draft at `36d946cb0fa5b020c1226dcd623326c704051224`. Standard CI run `40092920859` completed SUCCESS with all 9 jobs (including package-smoke); AC3 coordination run `40092920811` completed SUCCESS. The M9 pull-request check `40092920800` was SKIPPED again, so #76 remains OPEN/P1.
+- PR #24 is still OPEN/Draft at unchanged feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and its existing competition base. No module source, `main`, or Release was changed.
+- #80 is CLOSED for its completed M6/M8 reason-projection contract only. Independent E4 #57 and the remaining protected-host, Hook-runtime, installer, M8, exact-review, and M9 trigger issues remain separate and open. Current open issue count is 2 P0, 10 P1, and 1 P2.
