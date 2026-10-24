@@ -82,8 +82,10 @@ test('Windows community workflow installs and compiles with NSIS only on Windows
   assert.ok(workflow.includes("name: Compile installer template on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/verify-installer-template.mjs"),'Ubuntu must not run Windows-only compiler acceptance');
   assert.ok(workflow.indexOf('run: node scripts/verify-installer-template.mjs')<workflow.indexOf('- run: npm ci --no-audit --no-fund'),'compiler evidence should run before unrelated tests can fail-fast the Windows job');
   assert.ok(workflow.includes('fail-fast: false'),'all OS matrix results should finish after one platform fails');
-  assert.ok(workflow.includes("$reviewedHookBlobShas = @('d6f93249306b7966259cab463dd39475728ef338', 'b7ed4aba70a597f4f63a05decc6de1b32f67372e')"),'only the exact reviewed baseline and M1 sanitizer Hook blobs may pass Windows package provenance');
+  assert.ok(workflow.includes("$sourceHookPath = 'packaging/windows/claude-native-hook.mjs'"),'Windows installer provenance must inspect the M7-owned payload source');
+  assert.ok(workflow.includes("$reviewedHookBlobShas = @('b7ed4aba70a597f4f63a05decc6de1b32f67372e')"),'only the exact M1 canonical reason-sanitizer Hook blob may pass Windows package provenance');
   assert.ok(workflow.includes("if ($reviewedHookBlobShas -notcontains $sourceHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }"),'unreviewed Hook blobs must fail closed');
+  assert.ok(workflow.includes("if ($buildResult.version.wrapperSourceBlobSHA -ne $canonicalHookBlobSha) { throw 'BUILD_REPORT_HOOK_BLOB_MISMATCH' }"),'the package version record must identify the exact canonical Hook blob');
   assert.ok(workflow.includes('if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw \'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH\' }'),'packaged and extracted raw bytes must hash to the exact committed Git blob');
   assert.doesNotMatch(workflow,/Get-FileHash -LiteralPath \$sourceHookPath|ReadAllBytes\(\$sourceHookPath\)/,'Windows checkout line-ending conversion must not be mistaken for package provenance');
 });
