@@ -2,6 +2,7 @@ import {spawn,spawnSync} from 'node:child_process';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-hook-'));process.env.AGENT_CANARY_HOME=root;
 const {decideAgentHook}=await import('../src/agent-hook.js');
+const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder}=await import('../src/sdk.js');
 test('Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build',async()=>{const state=path.join(root,'state');const c:any=await decideAgentHook('claude',root,state,{session_id:'fixture1',tool_name:'Bash',tool_input:{command:'git status --short'}});assert.equal(c.hookSpecificOutput.permissionDecision,'allow');const x:any=await decideAgentHook('cursor',root,state,{conversation_id:'fixture1',command:'npm run build'});assert.equal(x.permission,'ask');});
 test('hook canary quarantine persists across process-style Guard instances',async()=>{const state=path.join(root,'state2');const input={session_id:'fixture2',tool_name:'mcp__canary__canary_read_secrets',tool_input:{}};const c:any=await decideAgentHook('claude',root,state,input);assert.equal(c.hookSpecificOutput.permissionDecision,'deny');const x:any=await decideAgentHook('claude',root,state,{...input,tool_name:'Bash',tool_input:{command:'git status'}});assert.equal(x.hookSpecificOutput.permissionDecision,'deny');});
 test('hook path boundary and model approvals cannot authorize dangerous calls',async()=>{const state=path.join(root,'state3');const c:any=await decideAgentHook('cursor',root,state,{conversation_id:'fixture3',tool_name:'Read',tool_input:{file_path:path.join(root,'..','outside.txt'),approved:true}});assert.equal(c.permission,'deny');await assert.rejects(decideAgentHook('claude',root,state,{tool_name:'Bash',tool_input:{command:'git status'}}),/SESSION_REQUIRED/);});
@@ -16,6 +17,24 @@ test('native lab wrapper syntax and malformed input fail closed',()=>{
  const r=spawnSync(process.execPath,[file],{input:'{invalid',encoding:'utf8'});
  assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'deny');
 });
+test('native unpinned file reads deny with the M1 reason for both supported hook protocols',async()=>{
+ fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
+ const claude:any=await decideAgentHook('claude',root,path.join(root,'unpinned-claude-state'),{session_id:'unpinned-claude',tool_name:'Read',tool_input:{file_path:'normal.txt'}});
+ assert.equal(claude.hookSpecificOutput.permissionDecision,'deny');
+ assert.equal(claude.hookSpecificOutput.permissionDecisionReason,'Agent Canary: native_file_execution_not_pinned');
+ const cursor:any=await decideAgentHook('cursor',root,path.join(root,'unpinned-cursor-state'),{conversation_id:'unpinned-cursor',tool_name:'Read',tool_input:{file_path:'normal.txt'}});
+ assert.equal(cursor.permission,'deny');
+ assert.equal(cursor.user_message,'Agent Canary: native_file_execution_not_pinned');
+});
+test('supported held-file Gateway capability still allows a registered read',async()=>{
+ const workspace=fs.mkdtempSync(path.join(root,'held-file-positive-')),file=path.join(workspace,'normal.txt');
+ fs.writeFileSync(file,'SUPPORTED_HELD_FILE_FIXTURE');
+ const evidence=new EvidenceRecorder(),runtime=createTrustedExecutionGateway({agentId:'m3-hook-positive',guard:createAgentGuard({alert:false}),workspaceRoot:workspace,files:[{path:'normal.txt'}],evidence});
+ try{
+  assert.deepEqual(await runtime.agent.dispatch({name:'read_file',args:{path:'normal.txt'}}),{content:'SUPPORTED_HELD_FILE_FIXTURE'});
+  assert.equal(evidence.snapshot().at(-1)?.decision,'ALLOW');
+ }finally{await runtime.close();}
+});
 test('native lab wrapper writes only normalized allowlisted log fields',()=>{
  const log=path.join(root,'normalized-wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  const modulePath=path.join(root,'normalized-hook-module.mjs');
@@ -23,7 +42,12 @@ test('native lab wrapper writes only normalized allowlisted log fields',()=>{
  const reasonCanary='SYNTHETIC_NATIVE_HOOK_REASON_CANARY';
  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
  const r=spawnSync(process.execPath,[file,modulePath,root,path.join(root,'normalized-state'),log],{input:JSON.stringify({session_id:'normalized-log-fixture',tool_name:'Bash',tool_input:{note:callerCanaries[0],file_path:callerCanaries[1]}}),encoding:'utf8'});
- assert.equal(r.status,0);assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision,'allow');
+ assert.equal(r.status,0);
+ const output=JSON.parse(r.stdout).hookSpecificOutput;
+ assert.equal(output.permissionDecision,'allow');
+ assert.equal(output.permissionDecisionReason,'Agent Canary: permission_allowed');
+ assert.equal(r.stdout.includes(reasonCanary),false,'unknown reason leaked to stdout');
+ assert.equal(r.stderr.includes(reasonCanary),false,'unknown reason leaked to stderr');
  const lines=fs.readFileSync(log,'utf8').trim().split(/\r?\n/);
  assert.equal(lines.length,1);
  const record=JSON.parse(lines[0]);
@@ -31,6 +55,36 @@ test('native lab wrapper writes only normalized allowlisted log fields',()=>{
  assert.equal(record.hookEventName,'PreToolUse');assert.equal(record.permissionDecision,'allow');
  assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
  for(const marker of [...callerCanaries,reasonCanary])assert.equal(lines[0].includes(marker),false,`native decision log leaked ${marker}`);
+});
+test('native lab wrapper uses decision-specific fallback for unknown reasons',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ for(const [decision,fallback]of [['allow','Agent Canary: permission_allowed'],['deny','Agent Canary: permission_denied'],['ask','Agent Canary: approval_required']] as const){
+  const reasonCanary=`SYNTHETIC_${decision.toUpperCase()}_REASON_CANARY`,modulePath=path.join(root,`${decision}-reason-hook.mjs`),log=path.join(root,`${decision}-reason.jsonl`);
+  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:${JSON.stringify(reasonCanary)}}}}\n`);
+  const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,`${decision}-reason-state`),log],{input:JSON.stringify({session_id:`${decision}-reason-fixture`,tool_name:'Bash',tool_input:{command:'git status'}}),encoding:'utf8'});
+  assert.equal(result.status,0);
+  const output=JSON.parse(result.stdout).hookSpecificOutput;
+  assert.equal(output.permissionDecision,decision);
+  assert.equal(output.permissionDecisionReason,fallback);
+  assert.equal(result.stdout.includes(reasonCanary),false,'unknown reason leaked to stdout');
+  assert.equal(result.stderr.includes(reasonCanary),false,'unknown reason leaked to stderr');
+  assert.equal(fs.readFileSync(log,'utf8').includes(reasonCanary),false,'unknown reason leaked to JSONL');
+ }
+});
+test('native lab wrapper never leaks caller reason sentinels for allow, deny, or ask',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ for(const [decision,fallback]of [['allow','Agent Canary: permission_allowed'],['deny','Agent Canary: permission_denied'],['ask','Agent Canary: approval_required']] as const){
+  const reasonSentinel=`M2_CALLER_REASON_${decision.toUpperCase()}_SENTINEL`,modulePath=path.join(root,`${decision}-caller-reason-hook.mjs`),log=path.join(root,`${decision}-caller-reason.jsonl`);
+  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:${JSON.stringify(reasonSentinel)}}}}\n`);
+  const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,`${decision}-caller-reason-state`),log],{input:JSON.stringify({session_id:`${decision}-caller-reason-fixture`,tool_name:'Bash',tool_input:{command:'git status'}}),encoding:'utf8'});
+  assert.equal(result.status,0);
+  const output=JSON.parse(result.stdout).hookSpecificOutput;
+  assert.equal(output.permissionDecision,decision);
+  assert.equal(output.permissionDecisionReason,fallback);
+  assert.equal(result.stdout.includes(reasonSentinel),false,`${decision} reason sentinel leaked to stdout`);
+  assert.equal(result.stderr.includes(reasonSentinel),false,`${decision} reason sentinel leaked to stderr`);
+  assert.equal(fs.readFileSync(log,'utf8').includes(reasonSentinel),false,`${decision} reason sentinel leaked to JSONL`);
+ }
 });
 test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
@@ -54,7 +108,14 @@ test('native lab wrapper persists only allowlisted metadata',()=>{
  const input={session_id:callerCanary,tool_name:toolCanary,tool_input:{command:argumentCanary,file_path:path.join(root,pathCanary)}};
  const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,'canary-state'),log],{input:JSON.stringify(input),encoding:'utf8'});
  assert.equal(result.status,0);
- assert.equal(JSON.parse(result.stdout).hookSpecificOutput.permissionDecision,'allow');
+ const publicOutput=JSON.parse(result.stdout);
+ assert.equal(publicOutput.hookSpecificOutput.permissionDecision,'allow');
+ assert.equal(publicOutput.hookSpecificOutput.permissionDecisionReason,'Agent Canary: permission_allowed');
+ assert.equal(result.stderr,'');
+ for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary]){
+  assert.equal(result.stdout.includes(canary),false,canary+' was returned to the host');
+  assert.equal(result.stderr.includes(canary),false,canary+' was written to stderr');
+ }
  const logText=fs.readFileSync(log,'utf8').trim();
  for(const canary of [callerCanary,toolCanary,argumentCanary,pathCanary,reasonCanary])assert.equal(logText.includes(canary),false,canary+' was persisted');
  const records=logText.split('\n');

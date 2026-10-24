@@ -66,11 +66,9 @@ function setup(overrides = {}, { beforeFinalCapabilityCheck } = {}) {
           error.decision = { action: "DENY", reason: error.message };
           throw error;
         }
-        callbackCalls += 1;
-        return executeRealTool(call, {
-          signal: new AbortController().signal,
-          fileReadCapability: capability,
-        });
+        // Match M5's strict-router path: execute a held read through the provider,
+        // never through the generic path-string callback.
+        return provider.readFileWithCapability(capability, call);
       },
       pendingApprovals() {
         return [];
@@ -115,6 +113,7 @@ test("host composition passes the exact M1 capability through M5 and keeps alias
   });
   assert.equal(typeof routerOptions.fileReadCapability.resolve, "function");
   assert.equal(typeof routerOptions.fileReadCapability.verify, "function");
+  assert.equal(typeof routerOptions.fileReadCapability.readFileWithCapability, "function");
 
   const status = host.securityCenterStatusProvider();
   assert.deepEqual(status, {
@@ -139,7 +138,7 @@ test("host composition passes the exact M1 capability through M5 and keeps alias
   const call = { name: "read_public", args: { path: "public/readable.txt" } };
   const capability = routerOptions.fileReadCapability.resolve(call);
   assert.deepEqual(await host.dispatch(call), { content: "synthetic fixed read" });
-  assert.equal(callbackCalls(), 1);
+  assert.equal(callbackCalls(), 0, "M5's strict held read must bypass the generic callback");
   assert.equal(approvalCalls(), 0);
   assert.equal(gatewayCalls.length, 1);
   assert.equal(gatewayCalls[0].capability, capability);
@@ -150,7 +149,7 @@ test("host composition passes the exact M1 capability through M5 and keeps alias
     () => host.dispatch({ name: "read_public", args: { path: "public/linked/readable.txt" } }),
     (error) => error.message === "M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED",
   );
-  assert.equal(callbackCalls(), 1);
+  assert.equal(callbackCalls(), 0, "unregistered aliases never reach the generic callback");
   assert.equal(gatewayCalls.length, 1);
   assert.equal(host.pendingApprovals().length, 0);
 
@@ -158,7 +157,7 @@ test("host composition passes the exact M1 capability through M5 and keeps alias
     () => host.dispatch({ name: "read_public", args: { path: "public/sensitive-alias/credentials.txt" } }),
     (error) => error.message === "M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED",
   );
-  assert.equal(callbackCalls(), 1, "sensitive aliases must be denied before the callback");
+  assert.equal(callbackCalls(), 0, "sensitive aliases must be denied before the callback");
   assert.equal(approvalCalls(), 0, "hard-denied aliases must not request approval");
   assert.equal(gatewayCalls.length, 1, "sensitive aliases must be denied before M1 read effects");
   assert.equal(host.pendingApprovals().length, 0, "hard-denied aliases must not create approvals");
