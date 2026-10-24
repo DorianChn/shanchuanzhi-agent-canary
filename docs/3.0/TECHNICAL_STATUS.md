@@ -8338,3 +8338,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Current feature CI `40097358398` passed 9/9, including Ubuntu Node 22, but did not reproduce or explain the historical PR #38 `RETRY_LIMIT` event. M0 requested an evidence-bounded lock-holder/timing disposition on #51 comment `6384695432`.
 - Keep the 48 quarantine assertions and fail-closed bounded retry unchanged; #51 remains OPEN/P1 until M1 records the cause or a bounded no-current-reproduction result.
+
+## M1 Gateway expiry diagnosis follow-up — 2026-10-24 13:19 UTC
+
+- Latest current-feature CI `40097358398` passed 9/9 including Node 20/22 lanes, with no recurrence of the historical expired-approval fixture failure. It does not explain the original `pending()[0]` undefined event or prove the failed attempt reached expiry/zero-callback assertions.
+- M0 requested M1's evidence-bounded root-cause or no-current-reproduction disposition on #62 comment `6384701122`; preserve TTL and zero-callback assertions. Keep #62 OPEN/P1.
