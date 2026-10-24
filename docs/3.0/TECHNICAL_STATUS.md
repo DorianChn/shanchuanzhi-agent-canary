@@ -1,3 +1,10 @@
+## Authoritative coordinator correction — 2026-10-24 15:38 UTC
+
+- User direction: do not monitor quota. Maximum two module development tasks may run concurrently; pushes are batched no more frequently than every 20 minutes when there is substantive work.
+- No callable read_thread, send_message_to_thread, or wait_threads tool is exposed in this runtime. GitHub comments request work but do not start or resume Codex chats. M1/M7/M8 execution is UNKNOWN, not confirmed RUNNING. Earlier entries describing assigned/reserved module slots are scheduling requests only. An uncommitted M7 diff is preserved filesystem state, not proof of a live worker.
+- Fresh issue queries for #41/#52/#99 show no comments since 15:05:49 UTC. There is no verified live module process/job handle to wait on. Do not repeatedly poll terminal CI or generate commits describing unchanged state.
+- Outstanding owner work remains #52/#93 P0 and the existing P1 issues, including M8 current-base reconciliation and M9 workflow selection. M0 cannot implement owner changes under its current scope. No completion claim is supported.
+
 ## Current coordinator snapshot — 2026-10-24 09:48 UTC
 
 M0 refreshed the exact pushed head and live integration gates. No module implementation was changed.
