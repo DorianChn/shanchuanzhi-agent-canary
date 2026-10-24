@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {spawnSync} from 'node:child_process';
+import {spawn,spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {createAutoE4Run,AUTO_E4_STAGES,writeAutoE4Artifacts} from '../packaging/windows/auto-e4.mjs';
 import {runHookFaultChecks} from '../packaging/windows/e4-hook-faults.mjs';
 import {classifyModelResult} from '../security-lab/e4/model-result.mjs';
+import {finalizeAndPublishAutoE4Evidence} from '../packaging/windows/worker.mjs';
 import {fileURLToPath} from 'node:url';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -76,6 +77,79 @@ test('Auto E4 locks a run and does not silently remove a previous lock',()=>{
   const next=createAutoE4Run({dataDir:data});next.release();
 });
 
+test('Auto E4 fails closed on stale and unverifiable locks without changing their bytes',t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-stale-lock-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const lock=path.join(data,'auto-e4.lock');
+  const stale=JSON.stringify({schemaVersion:1,runId:'11111111-1111-4111-8111-111111111111',pid:2147483647,startedAt:new Date(0).toISOString()});
+  fs.writeFileSync(lock,stale);
+  assert.throws(()=>createAutoE4Run({dataDir:data}),/AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED/);
+  assert.equal(fs.readFileSync(lock,'utf8'),stale);
+  const unverifiable={schemaVersion:0,runId:'old-format',pid:2147483647};
+  const unverifiableBytes=JSON.stringify(unverifiable);
+  fs.writeFileSync(lock,unverifiableBytes);
+  assert.throws(()=>createAutoE4Run({dataDir:data}),/AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED/);
+  assert.deepEqual(JSON.parse(fs.readFileSync(lock,'utf8')),unverifiable);
+  assert.deepEqual(fs.readdirSync(path.join(data,'auto-e4-runs')),[]);
+});
+
+test('Auto E4 concurrent stale-lock attempts fail closed and preserve the lock',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-lock-race-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const lock=path.join(data,'auto-e4.lock');
+  const stale=JSON.stringify({schemaVersion:1,runId:'22222222-2222-4222-8222-222222222222',pid:2147483647,startedAt:new Date(0).toISOString()});
+  fs.writeFileSync(lock,stale);
+  const moduleUrl=new URL('../packaging/windows/auto-e4.mjs',import.meta.url).href;
+  const script=`
+import fs from 'node:fs';
+import path from 'node:path';
+import {createAutoE4Run} from ${JSON.stringify(moduleUrl)};
+const [data,id]=process.argv.slice(1);
+fs.writeFileSync(path.join(data,id+'.ready'),'ready',{flag:'wx'});
+while(!fs.existsSync(path.join(data,'start')))await new Promise(resolve=>setTimeout(resolve,5));
+try{const run=createAutoE4Run({dataDir:data});run.release();console.log('ACQUIRED');process.exitCode=2;}
+catch(error){console.log(error.message);if(!/AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED/.test(error.message))process.exitCode=3;}
+`;
+  const children=['one','two'].map(id=>{
+    const child=spawn(process.execPath,['--input-type=module','-e',script,data,id],{windowsHide:true,stdio:['ignore','pipe','pipe']});
+    let stdout='',stderr='';child.stdout.setEncoding('utf8').on('data',chunk=>stdout+=chunk);child.stderr.setEncoding('utf8').on('data',chunk=>stderr+=chunk);
+    const result=new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',(code,signal)=>resolve({code,signal,stdout,stderr}));});
+    return{id,child,result};
+  });
+  t.after(()=>{for(const {child} of children)if(child.exitCode===null)child.kill();});
+  const deadline=Date.now()+10000;
+  while(!children.every(({id})=>fs.existsSync(path.join(data,id+'.ready')))){
+    if(Date.now()>deadline)throw Error('LOCK_RACE_CHILDREN_NOT_READY');
+    await new Promise(resolve=>setTimeout(resolve,10));
+  }
+  fs.writeFileSync(path.join(data,'start'),'go',{flag:'wx'});
+  const results=await Promise.all(children.map(({result})=>result));
+  assert.ok(results.every(result=>result.code===0),JSON.stringify(results));
+  assert.ok(results.every(result=>result.stdout.trim()==='AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED'),JSON.stringify(results));
+  assert.equal(fs.readFileSync(lock,'utf8'),stale);
+  assert.deepEqual(fs.readdirSync(path.join(data,'auto-e4-runs')),[]);
+});
+
+test('Auto E4 release removes only the exact parsed lock owner',t=>{
+  const mutations=[
+    ['runId substring',owner=>({...owner,runId:owner.runId+'-replacement'})],
+    ['different pid',owner=>({...owner,pid:owner.pid+1})],
+    ['different schema',owner=>({...owner,schemaVersion:2})]
+  ];
+  for(const [label,mutate] of mutations){
+    const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-owner-'+label.replace(/\W+/g,'-')+'-'));
+    t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+    const run=createAutoE4Run({dataDir:data});
+    const lock=path.join(data,'auto-e4.lock');
+    const replacement=mutate(JSON.parse(fs.readFileSync(lock,'utf8')));
+    const bytes=JSON.stringify(replacement);
+    fs.writeFileSync(lock,bytes);
+    run.release();
+    assert.equal(fs.existsSync(lock),true,label);
+    assert.equal(fs.readFileSync(lock,'utf8'),bytes,label);
+  }
+});
+
 test('Auto E4 stages preserve PASS, BLOCKED and SKIPPED; report never claims external E4',async()=>{
   const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-status-'));
   const run=createAutoE4Run({dataDir:data});
@@ -127,6 +201,35 @@ test('Auto E4 artifact writer refuses to overwrite a prior report',t=>{
   assert.equal(fs.readFileSync(files.jsonFile,'utf8'),originalJson);
   assert.equal(fs.readFileSync(files.mdFile,'utf8'),originalMarkdown);
   assert.equal(fs.readFileSync(files.indexFile,'utf8'),originalIndex);
+});
+
+test('Auto E4 preserves published evidence and reports latest-pointer failure',async t=>{
+  const data=fs.mkdtempSync(path.join(os.tmpdir(),'canary-auto-e4-latest-pointer-failure-'));
+  t.after(()=>fs.rmSync(data,{recursive:true,force:true}));
+  const latest=path.join(data,'latest.json'),previous='{"kind":"auto-e4","file":"previous-run/report.json"}';
+  fs.writeFileSync(latest,previous);
+  const run=createAutoE4Run({dataDir:data});
+  const failingFileSystem={...fs,renameSync(source,target){if(path.resolve(target)===latest)throw Object.assign(new Error('synthetic disk full'),{code:'ENOSPC'});return fs.renameSync(source,target);}};
+  try{
+    await run.stage('materials',async()=>({status:'PASS',detail:{summary:'fixture report created'}}));
+    run.finish();
+    const {artifacts,bundle,latestPointer}=finalizeAndPublishAutoE4Evidence(run,data,{
+      fileSystem:failingFileSystem,
+      createBundle(directory){
+        const archive=path.join(directory,'AgentCanary-Auto-E4-Evidence.zip');
+        fs.writeFileSync(archive,'synthetic complete bundle',{flag:'wx'});
+        fs.writeFileSync(archive+'.sha256','synthetic bundle digest',{flag:'wx'});
+        return{archive,sha256:'synthetic',bytes:25};
+      }
+    });
+
+    assert.deepEqual(latestPointer,{status:'FAILED',errorCode:'LATEST_POINTER_UPDATE_FAILED'});
+    assert.equal(fs.readFileSync(latest,'utf8'),previous);
+    assert.equal(path.dirname(artifacts.jsonFile),path.join(run.runDir,'evidence'));
+    for(const file of [artifacts.jsonFile,artifacts.mdFile,artifacts.indexFile,path.join(path.dirname(artifacts.jsonFile),'events.jsonl'),bundle.archive,bundle.archive+'.sha256'])assert.equal(fs.statSync(file).isFile(),true,file);
+    assert.equal(JSON.parse(fs.readFileSync(artifacts.jsonFile,'utf8')).runId,run.runId);
+    assert.deepEqual(fs.readdirSync(path.dirname(artifacts.jsonFile)).sort(),['AUTO_E4_REPORT.json','AUTO_E4_REPORT.md','AgentCanary-Auto-E4-Evidence.zip','AgentCanary-Auto-E4-Evidence.zip.sha256','EVIDENCE_INDEX.json','events.jsonl'].sort());
+  }finally{run.release();}
 });
 
 test('Auto E4 rejects concurrent duplicate stages and keeps active-stage state internal',async t=>{

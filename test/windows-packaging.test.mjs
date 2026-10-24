@@ -3,9 +3,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
+import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
+import {createWindowsBuildInvocation,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
+import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 
@@ -22,6 +26,49 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }finally{
     fs.rmSync(root,{recursive:true,force:true});
   }
+});
+
+test('package allowlist admits only the reviewed M2 gateway facade',()=>{
+  for(const file of reviewedGatewayAdapterPackageFiles)assert.equal(isPublicPackageFile(file),true);
+  for(const file of [
+    'execution-isolation/gateway-adapter/security-gateway-adapter.mjs',
+    'execution-isolation/gateway-adapter/extra.mjs',
+    'execution-isolation/gateway-adapter/test-secret.mjs',
+    'execution-isolation/other-module/runtime.mjs',
+    'sponsor/private.mjs',
+    'src/runtime/internal.mjs',
+  ])assert.equal(isPublicPackageFile(file),false,file);
+  assert.deepEqual(reviewedGatewayAdapterPackageFiles,[
+    'execution-isolation/gateway-adapter/gateway-adapter.mjs',
+  ]);
+});
+
+test('package checker accepts only the reviewed gateway facade and exact export target',()=>{
+  const manifest={exports:{'./sdk':'./dist/sdk.js','./gateway-adapter':'./execution-isolation/gateway-adapter/gateway-adapter.mjs'}};
+  validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles]);
+  validateGatewayAdapterPackage({exports:{'./sdk':'./dist/sdk.js'}},[]);
+  assert.throws(()=>validateGatewayAdapterPackage({exports:{'./sdk':'./dist/sdk.js'}},[...reviewedGatewayAdapterPackageFiles]),/require the reviewed export/);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[]),/missing .*gateway-adapter\.mjs/);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles,'execution-isolation/gateway-adapter/security-gateway-adapter.mjs']),/unexpected gateway adapter package file/);
+  assert.throws(()=>validateGatewayAdapterPackage(manifest,[...reviewedGatewayAdapterPackageFiles,'execution-isolation/gateway-adapter/extra.mjs']),/unexpected gateway adapter package file/);
+  assert.throws(()=>validateGatewayAdapterPackage({exports:{...manifest.exports,'./security-gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/internals exposed/);
+  assert.throws(()=>validateGatewayAdapterPackage({exports:{'./gateway-adapter':'./execution-isolation/gateway-adapter/security-gateway-adapter.mjs'}},[...reviewedGatewayAdapterPackageFiles]),/must target only the strict facade/);
+});
+
+test('M7 reusable package smoke pins and applies its checker to the caller candidate',()=>{
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/m7-package-smoke.yml'),'utf8');
+  const checker=fs.readFileSync(path.join(repo,'scripts/check-package.mjs'),'utf8');
+  assert.match(workflow,/workflow_call:/);
+  assert.match(workflow,/policy-ref:[\s\S]*?required: true[\s\S]*?type: string/);
+  assert.match(workflow,/github\.event\.pull_request\.head\.sha \|\| github\.sha/);
+  assert.match(workflow,/ref: \$\{\{ inputs\.policy-ref \}\}/);
+  assert.match(workflow,/POLICY_REF[\s\S]*?\[\[:xdigit:\]\]\{40\}/);
+  assert.match(workflow,/permissions:\s+contents: read/);
+  assert.equal((workflow.match(/persist-credentials: false/g)??[]).length,2);
+  assert.match(workflow,/npm run pack:check -- --package-root "\$PACKAGE_ROOT"/);
+  assert.match(checker,/process\.argv\.indexOf\("--package-root"\)/);
+  assert.match(checker,/path\.join\(policyRoot, 'scripts', 'check-sdk-types\.mjs'\)/);
+  assert.doesNotMatch(workflow,/execution-isolation\/\*\*/);
 });
 
 test('payload inventory rejects symbolic links',t=>{
@@ -46,7 +93,205 @@ test('NSIS defaults away from EFS paths and rejects encrypted custom targets wit
   assert.match(source,/IntOp \$1 \$0 & 0x4000/);
   assert.match(source,/IfSilent efs_notice_done[\s\S]*?MessageBox MB_ICONEXCLAMATION\|MB_OK[\s\S]*?efs_notice_done:/);
   assert.match(source,/EFS-encrypted install paths are not supported/);
+  assert.match(source,/RequestExecutionLevel user/);
+  assert.match(source,/HKCU/);
   assert.doesNotMatch(source,/RMDir\s+\/r/i);
+});
+
+test('silent receipt failure chooses a safe default then still rolls back and aborts',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const branch=source.match(/\$\{If\} \$0 != 0([\s\S]*?)\$\{EndIf\}/)?.[1];
+  assert.ok(branch,'record-install failure branch must remain explicit');
+  assert.match(branch,/MessageBox MB_ICONSTOP "Integrity receipt failed[^"]*" \/SD IDOK/);
+  assert.match(branch,/Call RollbackInstall\s+Abort/);
+});
+
+test('rendered installer keeps Unicode and spaced paths and emits exact rollback cleanup',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const rendered=renderInstallerScript({
+    source,
+    output:path.join(os.tmpdir(),'Agent Canary 安装','AgentCanary-Community-Setup.exe'),
+    payload:path.join(os.tmpdir(),'Agent Canary 安装','payload'),
+    license:path.join(os.tmpdir(),'Agent Canary 安装','payload','app','LICENSE'),
+    anchor:'a'.repeat(64),candidateNumber:'4',
+    ownedFiles:['AgentCanary.exe','app/dist/competition.js'],directories:['app','app/dist']
+  });
+  assert.equal(rendered.charCodeAt(0),0xfeff);
+  assert.match(rendered,/Agent Canary 安装/);
+  assert.match(rendered,/Agent Canary Community candidate\.4/);
+  assert.match(rendered,/RequestExecutionLevel user/);
+  assert.match(rendered,/Function \.onInstFailed[\s\S]*?Call RollbackInstall/);
+  assert.match(rendered,/!define MUI_ABORTWARNING\s+!define MUI_CUSTOMFUNCTION_ABORT AgentCanaryAbortCleanup[\s\S]*?!insertmacro MUI_LANGUAGE/);
+  assert.match(rendered,/Function AgentCanaryAbortCleanup\s+Call RollbackInstall\s+FunctionEnd/);
+  assert.doesNotMatch(rendered,/Function \.onUserAbort\b/);
+  assert.match(rendered,/Function RollbackInstall[\s\S]*?GetFileAttributesW[\s\S]*?rollback_incomplete/);
+  assert.match(rendered,/GetFileAttributesW\(w "\$SMPROGRAMS\\Agent Canary Community candidate\.4"\)/);
+  assert.match(rendered,/Delete "\$INSTDIR\\app\\dist\\competition\.js"/);
+  assert.match(rendered,/RMDir "\$INSTDIR\\app\\dist"/);
+  assert.match(rendered,/IfErrors install_failed/);
+  assert.doesNotMatch(rendered,/__[A-Z_]+__/);
+  assert.doesNotMatch(rendered,/RMDir\s+\/r/i);
+});
+
+test('rollback and uninstall leave the install tree before non-recursive directory cleanup',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const rendered=renderInstallerScript({
+    source,
+    output:path.join(os.tmpdir(),'Agent Canary Setup.exe'),
+    payload:path.join(os.tmpdir(),'Agent Canary payload'),
+    license:path.join(os.tmpdir(),'Agent Canary payload','app','LICENSE'),
+    anchor:'b'.repeat(64),candidateNumber:'5',
+    ownedFiles:['AgentCanary.exe','app/runtime/node.exe'],directories:['app','app/runtime']
+  });
+  const rollback=rendered.slice(rendered.indexOf('Function RollbackInstall'),rendered.indexOf('FunctionEnd',rendered.indexOf('Function RollbackInstall')));
+  const uninstall=rendered.slice(rendered.indexOf('Section "Uninstall"'));
+  assert.match(rollback,/SetOutPath "\$TEMP"[\s\S]*?Delete "\$INSTDIR\\Uninstall\.exe"\s+RMDir "\$INSTDIR\\app\\runtime"[\s\S]*?RMDir "\$INSTDIR"/);
+  assert.match(uninstall,/ClearErrors\s+SetOutPath "\$TEMP"[\s\S]*?Delete "\$INSTDIR\\app\\runtime\\node\.exe"\s+RMDir "\$INSTDIR\\app\\runtime"[\s\S]*?IfErrors uninstall_incomplete[\s\S]*?Delete "\$INSTDIR\\Uninstall\.exe"[\s\S]*?DeleteRegKey HKCU[\s\S]*?RMDir "\$INSTDIR"/);
+  assert.match(rollback,/IfErrors rollback_incomplete rollback_done/);
+  assert.match(uninstall,/Uninstall was incomplete[\s\S]*?Resolve the access or retained-file issue and retry/);
+  assert.match(uninstall,/Never recursively delete installation directory/);
+  assert.doesNotMatch(rendered,/RMDir\s+\/r/i);
+});
+
+test('installer renderer rejects traversal in every cleanup manifest path',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/installer.nsi.in'),'utf8');
+  const base={
+    source,output:path.join(os.tmpdir(),'setup.exe'),payload:path.join(os.tmpdir(),'payload'),
+    license:path.join(os.tmpdir(),'payload','LICENSE'),anchor:'c'.repeat(64),candidateNumber:'6'
+  };
+  for(const ownedFiles of [['../outside'],['C:/outside'],['nested\\outside']]){
+    assert.throws(()=>renderInstallerScript({...base,ownedFiles,directories:[]}),/INSTALLER_PAYLOAD_PATH_INVALID/);
+  }
+  for(const directories of [['..'],['nested//child'],['/outside']]){
+    assert.throws(()=>renderInstallerScript({...base,ownedFiles:[],directories}),/INSTALLER_PAYLOAD_PATH_INVALID/);
+  }
+});
+
+test('Windows build requires a caller-pinned Community ZIP instead of a stale implicit artifact',()=>{
+  const source=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
+  assert.match(source,/!communityPath/);
+  assert.match(source,/COMMUNITY_ZIP SHA256/);
+  assert.match(source,/COMMUNITY_CHECKSUM_MISMATCH/);
+  assert.doesNotMatch(source,/competition-candidate\.2/);
+});
+
+test('prepare output and build instructions pass the pinned ZIP and required source commit SHA',()=>{
+  const prepare=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
+  const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+  const readme=fs.readFileSync(path.join(repo,'packaging/windows/README.md'),'utf8');
+  assert.match(build,/parseWindowsBuildArgs\(process\.argv\.slice\(2\)\)/);
+  assert.match(prepare,/createWindowsBuildInvocation\(/);
+  assert.match(prepare,/next:invocation\.command/);
+  assert.match(prepare,/wrapperSourceSHA:invocation\.wrapperSourceSHA/);
+  assert.match(readme,/prepare\.mjs` 输出的 `next` 命令调用 `build\.mjs`/);
+});
+
+test('Windows build contract accepts only a pinned Windows invocation',()=>{
+  const args=['payload','nsis','community.zip','a'.repeat(40)];
+  assert.deepEqual(parseWindowsBuildArgs(args,{platform:'win32'}),args);
+  assert.throws(()=>parseWindowsBuildArgs(args,{platform:'linux'}),/Usage: node build\.mjs/);
+  assert.throws(()=>parseWindowsBuildArgs([...args.slice(0,3),'A'.repeat(40)],{platform:'win32'}),/Usage: node build\.mjs/);
+  assert.throws(()=>parseWindowsBuildArgs(args.slice(0,3),{platform:'win32'}),/Usage: node build\.mjs/);
+});
+
+test('prepare emits a build command pinned to the exact committed wrapper source and ZIP',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-build-contract-'));
+  try{
+    const communityZip=path.join(temp,'community.zip');
+    fs.writeFileSync(communityZip,'synthetic community package');
+    const invocation=createWindowsBuildInvocation({
+      repoRoot:repo,
+      buildScript:path.join(repo,'packaging/windows/build.mjs'),
+      payloadDir:path.join(temp,'payload'),
+      nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
+      communityZip
+    });
+    assert.equal(invocation.wrapperSourceSHA,resolveWrapperSourceSHA(repo));
+    assert.equal(invocation.buildArgs[3],invocation.wrapperSourceSHA);
+    assert.equal(invocation.communityZIP_SHA256,createHash('sha256').update('synthetic community package').digest('hex'));
+    assert.ok(invocation.command.includes(invocation.wrapperSourceSHA));
+    const source=fs.readFileSync(path.join(repo,'packaging/windows/prepare.mjs'),'utf8');
+    assert.match(source,/createWindowsBuildInvocation/);
+    assert.match(source,/wrapperSourceSHA:invocation\.wrapperSourceSHA/);
+    const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/);
+    const wrapper=readCommittedWrapperSource(repo);
+    assert.equal(wrapper.sha,invocation.wrapperSourceSHA);
+    assert.equal(wrapper.bytes.includes(Buffer.from('\r\n')),false);
+    const packagedPath=path.join(temp,'payload','claude-native-hook.mjs');
+    fs.mkdirSync(path.dirname(packagedPath),{recursive:true});
+    const packaged=writePackagedWrapperSource(repo,packagedPath,invocation.wrapperSourceSHA);
+    assert.deepEqual(fs.readFileSync(packagedPath),wrapper.bytes);
+    assert.deepEqual(packaged.bytes,wrapper.bytes);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('wrapper provenance refuses a Hook file changed after its source commit',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-wrapper-provenance-'));
+  const wrapper=path.join(temp,'security-lab','claude-native-hook.mjs');
+  const runGit=(...args)=>{
+    const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
+    assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
+    return result.stdout.trim();
+  };
+  try{
+    fs.mkdirSync(path.dirname(wrapper),{recursive:true});
+    fs.writeFileSync(wrapper,'export const wrapper = true;\n');
+    runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
+    runGit('config','user.name','Canary contract test');
+    runGit('config','user.email','canary-contract-test@example.invalid');
+    runGit('add','--','security-lab/claude-native-hook.mjs');
+    runGit('commit','--quiet','-m','test wrapper provenance');
+    assert.equal(resolveWrapperSourceSHA(temp),runGit('rev-parse','HEAD'));
+    fs.writeFileSync(wrapper,'export const wrapper = true;\r\n');
+    const committed=readCommittedWrapperSource(temp),packaged=path.join(temp,'packaged','claude-native-hook.mjs');
+    fs.mkdirSync(path.dirname(packaged),{recursive:true});
+    assert.deepEqual(committed.bytes,Buffer.from('export const wrapper = true;\n'));
+    assert.notDeepEqual(fs.readFileSync(wrapper),committed.bytes,'the synthetic Windows worktree uses CRLF while the tracked blob uses LF');
+    assert.deepEqual(writePackagedWrapperSource(temp,packaged,committed.sha).bytes,committed.bytes);
+    assert.deepEqual(fs.readFileSync(packaged),committed.bytes,'packaged bytes must exactly match the Git blob');
+    fs.appendFileSync(wrapper,'// changed after commit\n');
+    assert.throws(()=>resolveWrapperSourceSHA(temp),/WRAPPER_SOURCE_PROVENANCE_MISMATCH/);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async()=>{
+  const payload=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-packaged-hook-'));
+  try{
+    const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+    assert.ok(build.includes("'e4-hook-faults.mjs'"),'Windows build must include the E4 hook-fault harness');
+    assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/,'Windows build must package exact committed wrapper bytes next to the harness');
+    const packagedHook=path.join(payload,'claude-native-hook.mjs');
+    const packagedE4=path.join(payload,'e4-hook-faults.mjs');
+    const wrapperSource=readCommittedWrapperSource(repo);
+    writePackagedWrapperSource(repo,packagedHook,wrapperSource.sha);
+    assert.deepEqual(fs.readFileSync(packagedHook),wrapperSource.bytes,'packaged hook bytes must be the exact LF Git blob');
+    fs.copyFileSync(path.join(repo,'packaging/windows/e4-hook-faults.mjs'),packagedE4);
+    const {runHookFaultChecks}=await import(`${pathToFileURL(packagedE4).href}?packaged=${Date.now()}`);
+    const result=runHookFaultChecks({appRoot:path.join(payload,'app','dist'),fixturesRoot:payload});
+    assert.equal(result.status,'PASS');
+    assert.equal(result.positiveControl.logContractSatisfied,true);
+    assert.equal(result.positiveControl.logAudit.status,'PASS');
+    assert.equal(result.positiveControl.logAudit.records,1);
+    assert.equal(result.logAudit.status,'PASS');
+    assert.equal(result.logAudit.records,1);
+    assert.equal(result.logAudit.callerInputCanaryAbsent,true);
+    assert.ok(result.faultCases.every(fault=>fault.logAudit.status==='PASS'));
+    assert.equal(result.positiveControl.decision,'allow');
+    assert.equal(result.sideEffects.protectedVictimUnchanged,true);
+    const log=fs.readFileSync(path.join(result.root,'positive-control.jsonl'),'utf8').trim().split(/\r?\n/);
+    assert.equal(log.length,1,'packaged hook must emit one positive-control decision record');
+    const record=JSON.parse(log[0]);
+    assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+    assert.equal(record.hookEventName,'PreToolUse');
+    assert.ok(['allow','deny','ask'].includes(record.permissionDecision));
+    assert.equal(record.permissionDecision,'allow');
+    assert.equal(new Date(record.timestamp).toISOString(),record.timestamp,'timestamp must use canonical ISO format');
+    for(const marker of ['SYNTHETIC_E4_HOOK_ARGUMENT_MARKER','SYNTHETIC_E4_HOOK_REASON_MARKER','C:/synthetic/caller/private.txt','write victim']){
+      assert.equal(log[0].includes(marker),false,`packaged decision log leaked ${marker}`);
+    }
+  }finally{fs.rmSync(payload,{recursive:true,force:true});}
 });
 
 test('Windows launcher exposes one non-reentrant Auto E4 action with streamed, explicitly bounded results',()=>{

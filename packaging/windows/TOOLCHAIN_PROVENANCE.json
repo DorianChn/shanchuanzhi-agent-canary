@@ -12,5 +12,11 @@
     "sha256": "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed",
     "source": "https://nodejs.org/dist/v22.23.1/SHASUMS256.txt"
   },
+  "setupExtractor": {
+    "name": "7-Zip",
+    "version": "26.04",
+    "source": "https://github.com/ip7z/7zip/releases/download/26.04/7z2604-x64.msi",
+    "sha256": "0b01334a418654293513449f61d6bfc99e5196ca371e3c3dc961eda57cd535c6"
+  },
   "noGlobalInstallation": true
 }

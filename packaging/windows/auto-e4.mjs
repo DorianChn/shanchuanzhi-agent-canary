@@ -1,12 +1,27 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
+import {writeFileAtomically} from './durable-files.mjs';
 
 export const AUTO_E4_STAGES = Object.freeze([
   'environment','clean-vm','release-package','sdk-side-effects','gpt6-agent',
   'hook-failures','evidence-review','uninstall-reinstall','github-pr','materials'
 ]);
 const VALID = new Set(['PASS','FAIL','BLOCKED','SKIPPED','NOT_VERIFIED']);
+
+function lockMatchesOwner(lock,lockFd,expected){
+  const descriptorStat=fs.fstatSync(lockFd);
+  const matchesDescriptor=stat=>stat.isFile()&&!stat.isSymbolicLink()&&stat.dev===descriptorStat.dev&&stat.ino===descriptorStat.ino;
+  if(!matchesDescriptor(fs.lstatSync(lock)))return false;
+  const owner=JSON.parse(fs.readFileSync(lock,'utf8'));
+  return matchesDescriptor(fs.lstatSync(lock))
+    &&owner!==null&&typeof owner==='object'&&!Array.isArray(owner)
+    &&Object.keys(owner).length===4
+    &&owner.schemaVersion===expected.schemaVersion
+    &&owner.runId===expected.runId
+    &&owner.pid===expected.pid
+    &&owner.startedAt===expected.startedAt;
+}
 
 export function createAutoE4Run({dataDir,now=()=>new Date(),emit=()=>{},sanitize=value=>value}) {
   if(!path.isAbsolute(dataDir)||path.parse(path.resolve(dataDir)).root===path.resolve(dataDir))throw Error('UNSAFE_DATA_DIRECTORY');
@@ -15,9 +30,19 @@ export function createAutoE4Run({dataDir,now=()=>new Date(),emit=()=>{},sanitize
   fs.mkdirSync(runs,{recursive:true});
   const runDir=path.join(runs,runId);fs.mkdirSync(runDir,{recursive:false});
   const lock=path.join(dataDir,'auto-e4.lock');
+  const lockOwner={schemaVersion:1,runId,pid:process.pid,startedAt:now().toISOString()};
   let lockFd;
-  try{lockFd=fs.openSync(lock,'wx',0o600);fs.writeFileSync(lockFd,JSON.stringify({runId,startedAt:now().toISOString()}));}
-  catch(error){try{if(lockFd!==undefined)fs.closeSync(lockFd);}catch{};try{fs.rmSync(runDir,{recursive:true,force:true});}catch{};if(error.code==='EEXIST')throw Error('AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED');throw error;}
+  try{
+    try{lockFd=fs.openSync(lock,'wx',0o600);}
+    catch(error){if(error.code==='EEXIST')throw Error('AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED');throw error;}
+    fs.writeFileSync(lockFd,JSON.stringify(lockOwner));
+    fs.fsyncSync(lockFd);
+  }
+  catch(error){
+    if(lockFd!==undefined){try{if(lockMatchesOwner(lock,lockFd,lockOwner))fs.unlinkSync(lock);}catch{}try{fs.closeSync(lockFd);}catch{}lockFd=undefined;}
+    try{fs.rmSync(runDir,{recursive:true,force:true});}catch{}
+    throw error;
+  }
   const eventsFile=path.join(runDir,'events.jsonl');
   const report={schemaVersion:'agent-canary.auto-e4.v1',runId,startedAt:now().toISOString(),mode:'AUTOMATED_BOUNDED_ACCEPTANCE',stages:[],commands:[],logs:[],externalIndependence:{status:'NOT_VERIFIED',reason:'No separate human operator and independent environment attestation has been reviewed.'},overallE4:'E4 EXTERNAL INDEPENDENCE NOT VERIFIED'};
   const startedStages=new Set(),activeStages=new Set();let finished=false;
@@ -55,8 +80,10 @@ export function createAutoE4Run({dataDir,now=()=>new Date(),emit=()=>{},sanitize
   }
   function release(){
     if(activeStages.size>0)throw Error('AUTO_E4_STAGE_IN_PROGRESS');
-    try{const current=fs.readFileSync(lock,'utf8');if(current.includes(runId)){fs.closeSync(lockFd);lockFd=undefined;fs.unlinkSync(lock);}}
+    if(lockFd===undefined)return;
+    try{if(lockMatchesOwner(lock,lockFd,lockOwner))fs.unlinkSync(lock);}
     catch{}
+    finally{try{fs.closeSync(lockFd);}catch{}lockFd=undefined;}
   }
   return {runId,runDir,report,stage,record,finish,release};
 }
@@ -80,14 +107,9 @@ function autoE4ArtifactContents(report,runDir,eventContent){
   return{...paths,jsonContent,mdContent,eventContent,indexContent:JSON.stringify({schemaVersion:'agent-canary.auto-e4-evidence-index.v1',runId:report.runId,artifacts:artifactIndex},null,2)+'\n',artifacts:artifactIndex};
 }
 function writeAutoE4ArtifactContents(output,{replace=false}={}){
-  const files=[['jsonFile','jsonContent'],['mdFile','mdContent'],...(output.eventContent===undefined?[]:[['eventFile','eventContent']]),['indexFile','indexContent']];
+  const files=[['jsonFile','jsonContent'],['mdFile','mdContent'],...(replace&&output.eventContent!==undefined?[['eventFile','eventContent']]:[]),['indexFile','indexContent']];
   if(!replace&&[output.jsonFile,output.mdFile,output.indexFile].some(file=>fs.existsSync(file)))throw Error('AUTO_E4_ARTIFACT_ALREADY_EXISTS');
-  if(!replace){fs.writeFileSync(output.jsonFile,output.jsonContent,{flag:'wx',mode:0o600});fs.writeFileSync(output.mdFile,output.mdContent,{flag:'wx',mode:0o600});fs.writeFileSync(output.indexFile,output.indexContent,{flag:'wx',mode:0o600});return;}
-  const tempFiles=[];
-  try{
-    for(const [fileKey,contentKey] of files){const temp=output[fileKey]+'.'+randomUUID()+'.tmp';fs.writeFileSync(temp,output[contentKey],{flag:'wx',mode:0o600});tempFiles.push({temp,target:output[fileKey]});}
-    for(const file of tempFiles)fs.renameSync(file.temp,file.target);
-  }finally{for(const file of tempFiles)try{fs.unlinkSync(file.temp);}catch{}}
+  for(const [fileKey,contentKey] of files)writeFileAtomically(output[fileKey],output[contentKey],{replace});
 }
 export function writeAutoE4Artifacts(report,runDir){
   const output=autoE4ArtifactContents(report,runDir);
