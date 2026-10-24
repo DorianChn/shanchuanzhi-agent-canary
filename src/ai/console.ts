@@ -99,13 +99,21 @@ function hasExactOwnerError(error:unknown,code:string):boolean{
   return error instanceof Error&&error.message===code;
 }
 
+function removeVerifiedDirectoryAlias(aliasPath:string,targetPath:string,identity:{dev:number;ino:number}):void{
+  const aliasStat=fs.lstatSync(aliasPath);
+  if(!aliasStat.isSymbolicLink()||aliasStat.dev!==identity.dev||aliasStat.ino!==identity.ino||fs.realpathSync(aliasPath)!==targetPath)throw new Error('PROTECTED_READ_ALIAS_CLEANUP_UNSAFE');
+  if(process.platform==='win32')fs.rmdirSync(aliasPath);else fs.unlinkSync(aliasPath);
+}
+
 async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedReadDependencies|undefined){
   let outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);
   let gateway:ProtectedReadGateway|undefined;
   let tempRoot:string|undefined;
   let tempDirectory:string|undefined;
+  let aliasDirectory:string|undefined;
   let directoryIdentity:{dev:number;ino:number}|undefined;
   let fileIdentity:{dev:number;ino:number}|undefined;
+  let aliasDirectoryIdentity:{dev:number;ino:number}|undefined;
   let replacementIdentity:{dev:number;ino:number}|undefined;
   let replacementStage:'created'|'original-held'|'active'|undefined;
   let cleanupSucceeded=true;
@@ -157,39 +165,63 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
             outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
           }else{
             const probePath=path.join(tempDirectory,protectedReadFile);
-            const heldPath=path.join(tempDirectory,protectedReadFile+'.held');
-            const replacementPath=path.join(tempDirectory,protectedReadFile+'.replacement');
-            const currentEntries=fs.readdirSync(tempDirectory);
-            if(currentEntries.length!==1||currentEntries[0]!==protectedReadFile||fs.existsSync(heldPath)||fs.existsSync(replacementPath)){
+            const aliasCandidate=path.join(tempRoot,`agent-canary-console-probe-alias-${randomBytes(12).toString('hex')}`);
+            fs.symlinkSync(tempDirectory,aliasCandidate,process.platform==='win32'?'junction':'dir');
+            aliasDirectory=aliasCandidate;
+            const aliasStat=fs.lstatSync(aliasDirectory);
+            aliasDirectoryIdentity={dev:aliasStat.dev,ino:aliasStat.ino};
+            const aliasProbePath=path.join(aliasDirectory,protectedReadFile);
+            const aliasArgument=path.relative(tempDirectory,aliasProbePath);
+            const aliasTargetMatches=aliasStat.isSymbolicLink()&&fs.statSync(aliasDirectory).isDirectory()&&fs.realpathSync(aliasDirectory)===tempDirectory&&fs.realpathSync(aliasProbePath)===probePath&&aliasArgument!==protectedReadFile&&aliasArgument!=='';
+            const junctionEvidenceBefore=protectedReadEvidenceCount(gateway);
+            const junctionCallbackCount=host.m5Callbacks();
+            let junctionDenied=false;
+            try{await host.dispatch({name:'protected_read',args:{path:aliasArgument}});}
+            catch(error){junctionDenied=hasExactOwnerError(error,'M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');}
+            const junctionEvidenceAfter=protectedReadEvidenceCount(gateway);
+            const probeAfterAlias=fs.lstatSync(probePath);
+            const probeStillHeld=!probeAfterAlias.isSymbolicLink()&&probeAfterAlias.isFile()&&probeAfterAlias.nlink===1&&probeAfterAlias.dev===fileIdentity.dev&&probeAfterAlias.ino===fileIdentity.ino;
+            const junctionAliasRejected=aliasTargetMatches&&junctionDenied&&host.m5Callbacks()===junctionCallbackCount&&junctionEvidenceBefore!==undefined&&junctionEvidenceBefore===positiveEvidence&&junctionEvidenceAfter===junctionEvidenceBefore&&probeStillHeld;
+            if(!junctionAliasRejected){
               outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
             }else{
-              const replacementDescriptor=fs.openSync(replacementPath,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|(fs.constants.O_NOFOLLOW??0),0o600);
-              try{
-                const replacementStat=fs.fstatSync(replacementDescriptor);
-                replacementIdentity={dev:replacementStat.dev,ino:replacementStat.ino};
-                if(!replacementStat.isFile()||replacementStat.nlink!==1)throw new Error('PROTECTED_READ_REPLACEMENT_FILE_UNSAFE');
-                fs.writeFileSync(replacementDescriptor,'AGENT_CANARY_CONSOLE_REPLACEMENT','utf8');
-              }finally{fs.closeSync(replacementDescriptor);}
-              replacementStage='created';
-              fs.renameSync(probePath,heldPath);
-              const heldStat=fs.lstatSync(heldPath);
-              if(heldStat.isSymbolicLink()||!heldStat.isFile()||heldStat.nlink!==1||heldStat.dev!==fileIdentity.dev||heldStat.ino!==fileIdentity.ino)throw new Error('PROTECTED_READ_HELD_FILE_CHANGED');
-              replacementStage='original-held';
-              fs.renameSync(replacementPath,probePath);
-              const activeReplacementStat=fs.lstatSync(probePath);
-              if(activeReplacementStat.isSymbolicLink()||!activeReplacementStat.isFile()||activeReplacementStat.nlink!==1||activeReplacementStat.dev!==replacementIdentity.dev||activeReplacementStat.ino!==replacementIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_FILE_UNSAFE');
-              replacementStage='active';
-              const replacementEvidenceBefore=protectedReadEvidenceCount(gateway);
-              let replacementDenied=false;
-              try{await host.dispatch({name:'protected_read',args:{path:protectedReadFile}});}
-              catch(error){replacementDenied=hasExactOwnerError(error,'M2_SECURITY_GATEWAY_CAPABILITY_INVALID');}
-              const replacementEvidenceAfter=protectedReadEvidenceCount(gateway);
-              const replacementStillHeld=fs.lstatSync(probePath),originalStillHeld=fs.lstatSync(heldPath);
-              const replacementIntact=replacementStillHeld.isFile()&&!replacementStillHeld.isSymbolicLink()&&replacementStillHeld.nlink===1&&replacementStillHeld.dev===replacementIdentity.dev&&replacementStillHeld.ino===replacementIdentity.ino;
-              const originalIntact=originalStillHeld.isFile()&&!originalStillHeld.isSymbolicLink()&&originalStillHeld.nlink===1&&originalStillHeld.dev===fileIdentity.dev&&originalStillHeld.ino===fileIdentity.ino;
-              outcome=replacementDenied&&host.m5Callbacks()===positiveCallbackCount&&replacementEvidenceBefore!==undefined&&replacementEvidenceAfter===replacementEvidenceBefore&&replacementIntact&&originalIntact
-                ?protectedReadEnvelope('PASS','FIXED_PROBE_CONTROLS_PASSED',true)
-                :protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+              removeVerifiedDirectoryAlias(aliasDirectory,tempDirectory,aliasDirectoryIdentity);
+              aliasDirectory=undefined;
+              aliasDirectoryIdentity=undefined;
+              const heldPath=path.join(tempDirectory,protectedReadFile+'.held');
+              const replacementPath=path.join(tempDirectory,protectedReadFile+'.replacement');
+              const currentEntries=fs.readdirSync(tempDirectory);
+              if(currentEntries.length!==1||currentEntries[0]!==protectedReadFile||fs.existsSync(heldPath)||fs.existsSync(replacementPath)){
+                outcome=protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+              }else{
+                const replacementDescriptor=fs.openSync(replacementPath,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|(fs.constants.O_NOFOLLOW??0),0o600);
+                try{
+                  const replacementStat=fs.fstatSync(replacementDescriptor);
+                  replacementIdentity={dev:replacementStat.dev,ino:replacementStat.ino};
+                  if(!replacementStat.isFile()||replacementStat.nlink!==1)throw new Error('PROTECTED_READ_REPLACEMENT_FILE_UNSAFE');
+                  fs.writeFileSync(replacementDescriptor,'AGENT_CANARY_CONSOLE_REPLACEMENT','utf8');
+                }finally{fs.closeSync(replacementDescriptor);}
+                replacementStage='created';
+                fs.renameSync(probePath,heldPath);
+                const heldStat=fs.lstatSync(heldPath);
+                if(heldStat.isSymbolicLink()||!heldStat.isFile()||heldStat.nlink!==1||heldStat.dev!==fileIdentity.dev||heldStat.ino!==fileIdentity.ino)throw new Error('PROTECTED_READ_HELD_FILE_CHANGED');
+                replacementStage='original-held';
+                fs.renameSync(replacementPath,probePath);
+                const activeReplacementStat=fs.lstatSync(probePath);
+                if(activeReplacementStat.isSymbolicLink()||!activeReplacementStat.isFile()||activeReplacementStat.nlink!==1||activeReplacementStat.dev!==replacementIdentity.dev||activeReplacementStat.ino!==replacementIdentity.ino)throw new Error('PROTECTED_READ_REPLACEMENT_FILE_UNSAFE');
+                replacementStage='active';
+                const replacementEvidenceBefore=protectedReadEvidenceCount(gateway);
+                let replacementDenied=false;
+                try{await host.dispatch({name:'protected_read',args:{path:protectedReadFile}});}
+                catch(error){replacementDenied=hasExactOwnerError(error,'M2_SECURITY_GATEWAY_CAPABILITY_INVALID');}
+                const replacementEvidenceAfter=protectedReadEvidenceCount(gateway);
+                const replacementStillHeld=fs.lstatSync(probePath),originalStillHeld=fs.lstatSync(heldPath);
+                const replacementIntact=replacementStillHeld.isFile()&&!replacementStillHeld.isSymbolicLink()&&replacementStillHeld.nlink===1&&replacementStillHeld.dev===replacementIdentity.dev&&replacementStillHeld.ino===replacementIdentity.ino;
+                const originalIntact=originalStillHeld.isFile()&&!originalStillHeld.isSymbolicLink()&&originalStillHeld.nlink===1&&originalStillHeld.dev===fileIdentity.dev&&originalStillHeld.ino===fileIdentity.ino;
+                outcome=replacementDenied&&host.m5Callbacks()===positiveCallbackCount&&replacementEvidenceBefore!==undefined&&replacementEvidenceAfter===replacementEvidenceBefore&&replacementIntact&&originalIntact
+                  ?protectedReadEnvelope('PASS','FIXED_PROBE_CONTROLS_PASSED',true)
+                  :protectedReadEnvelope('UNKNOWN','OWNER_ROUTE_NOT_CONFIRMED',false);
+              }
             }
           }
         }
@@ -203,6 +235,10 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
     outcome=protectedReadEnvelope('UNKNOWN','OWNER_ADAPTER_UNAVAILABLE',false);
   }finally{
     if(gateway){try{await gateway.close();}catch{cleanupSucceeded=false;}}
+    if(aliasDirectory){
+      if(!tempDirectory||!aliasDirectoryIdentity)cleanupSucceeded=false;
+      else try{removeVerifiedDirectoryAlias(aliasDirectory,tempDirectory,aliasDirectoryIdentity);aliasDirectory=undefined;aliasDirectoryIdentity=undefined;}catch{cleanupSucceeded=false;}
+    }
     if(tempRoot&&tempDirectory&&directoryIdentity&&fileIdentity&&replacementIdentity&&replacementStage&&cleanupSucceeded){
       try{
         const realRoot=fs.realpathSync(tempRoot),realDirectory=fs.realpathSync(tempDirectory),directoryStat=fs.lstatSync(tempDirectory);
@@ -320,6 +356,9 @@ function normalizeSecurityCenterSnapshot(value: unknown) {
   if (Number.isSafeInteger(protectedToolCount) && (protectedToolCount as number) >= 0) {
     normalized.protectedToolCount = protectedToolCount;
   }
+
+  const coverage = ownDataValue(value, 'coverage');
+  if (coverage === 'M2_FIXED_FILE_READS_ONLY') normalized.coverage = coverage;
 
   const paths = securityCenterArrayValues(ownDataValue(value, 'unprotectedExecutionPaths'))
     .filter((item): item is string => item === 'NATIVE_SHELL');
