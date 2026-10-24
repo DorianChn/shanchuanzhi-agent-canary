@@ -158,14 +158,25 @@ test('exact M3 package keeps coordinated M1/M2/M5 exports without claiming a sep
 test('exact M6 E4 receipt verifier is checkout tooling and is excluded from the npm package', () => {
   const m6PackagePath = path.join(sourceRoots.M6.root, 'package.json');
   const m6Package = JSON.parse(fs.readFileSync(m6PackagePath, 'utf8'));
+  const m1Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M1.root, 'package.json'), 'utf8'));
   const m2Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M2.root, 'package.json'), 'utf8'));
+  const m5Package = JSON.parse(fs.readFileSync(path.join(sourceRoots.M5.root, 'package.json'), 'utf8'));
   const verifierRelativePath = 'security-lab/e4/verify-bundle.mjs';
   const receiptSchemaRelativePath = 'security-lab/e4/independent-review-receipt.schema.json';
   assert.ok(fs.statSync(path.join(sourceRoots.M6.root, verifierRelativePath)).isFile(), 'the exact M6 checkout must contain its verifier');
   assert.ok(fs.statSync(path.join(sourceRoots.M6.root, receiptSchemaRelativePath)).isFile(), 'the exact M6 checkout must contain its receipt schema');
   assert.match(m6Package.scripts?.['e4:verify'] ?? '', /security-lab\/e4\/verify-bundle\.mjs/);
-  assert.deepEqual(Object.keys(m6Package.exports ?? {}).sort(), ['./gateway-adapter', './sdk'], 'the actual M6 merge tree contains the already merged M2 facade and the M6 SDK');
+  assert.deepEqual(
+    Object.keys(m6Package.exports ?? {}).sort(),
+    ['./gateway-adapter', './policy', './policy-router', './sdk'],
+    'the exact M6 tree retains required M1/M2 entries and the additive M5-owned policy entries from the coordinated baseline',
+  );
+  assert.deepEqual(m6Package.exports['./sdk'], m1Package.exports?.['./sdk'], 'the M6 tree preserves the exact M1 SDK package mapping');
   assert.deepEqual(m6Package.exports['./gateway-adapter'], m2Package.exports?.['./gateway-adapter'], 'the M6 merge tree preserves the exact M2 facade package mapping');
+  for (const subpath of ['./policy', './policy-router']) {
+    assert.ok(m5Package.exports?.[subpath], `M5 defines its public ${subpath} subpath`);
+    assert.deepEqual(m6Package.exports[subpath], m5Package.exports[subpath], `the M6 tree preserves the exact M5-owned ${subpath} package mapping`);
+  }
   assert.equal(JSON.stringify(m6Package.exports).includes('verify-bundle'), false, 'the receipt verifier is not a public package export');
   assert.ok(m6Package.files?.includes('dist'), 'the published package allowlist includes dist');
   assert.equal(m6Package.files?.some((entry) => entry.replace(/\\/g, '/').startsWith('security-lab/')), false, 'the npm allowlist excludes checkout-only security-lab tooling');
@@ -231,7 +242,7 @@ assertAncestor('M2', m1M2ReviewedSourceSha, pinnedSourceShas.M2, 'historical M1-
 assertAncestor('M6', m6PriorAcceptanceSha, pinnedSourceShas.M6, 'historical M6 owner acceptance');
 assertAncestor('M6', m6M8ReviewedContractSha, pinnedSourceShas.M6, 'historically reviewed M6/M8 lifecycle contract');
 assert.equal(readBlobIdAt('M6', m6M8ReviewedContractSha, 'test/auto-e4.test.mjs'), m6ReviewedLifecycleTestBlob, 'M6-reviewed lifecycle assertions must remain exact at the reviewed source');
-assertHistoricalTextPreserved('M6', m6M8ReviewedContractSha, pinnedSourceShas.M6, 'test/auto-e4.test.mjs', 'current M6 candidate must retain every line of the reviewed lifecycle tests in order');
+assertHistoricalAutoE4ScenariosPreserved('M6', m6M8ReviewedContractSha, pinnedSourceShas.M6, 'test/auto-e4.test.mjs');
 assertAncestor('M8', m6M8ReviewedSourceSha, pinnedSourceShas.M8, 'historical M6-reviewed M8 test source');
 assert.equal(readBlobIdAt('M8', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M6-reviewed M8 test hunk must remain exact at the reviewed source');
 assert.equal(readBlobIdAt('M8', pinnedSourceShas.M8, 'test/auto-e4.test.mjs'), m8ReviewedE4TestBlob, 'M8 current head must preserve the exact M6-reviewed test hunk');
@@ -271,15 +282,114 @@ function readTrackedTextAt(moduleName, revision, filePath) {
   return result.stdout.replace(/\r\n/g, '\n').split('\n');
 }
 
-function assertHistoricalTextPreserved(moduleName, historicalRevision, candidateRevision, filePath, message) {
-  const historicalLines = readTrackedTextAt(moduleName, historicalRevision, filePath);
-  const candidateLines = readTrackedTextAt(moduleName, candidateRevision, filePath);
-  let candidateIndex = 0;
-  for (const line of candidateLines) {
-    if (line === historicalLines[candidateIndex]) candidateIndex += 1;
-    if (candidateIndex === historicalLines.length) break;
+function assertHistoricalAutoE4ScenariosPreserved(moduleName, historicalRevision, candidateRevision, filePath) {
+  const historicalText = readTrackedTextAt(moduleName, historicalRevision, filePath).join('\n');
+  const candidateText = readTrackedTextAt(moduleName, candidateRevision, filePath).join('\n');
+  const scenarios = [
+    {
+      reviewedTitle: 'Claude native hook wrapper logs only the allowlisted decision fields',
+      candidateTitle: 'Claude native hook wrapper preserves allow, deny and ask while sanitizing caller reasons',
+      requirements: [
+        [/for\(const \[decision,fallback\] of cases\)/, 'each decision must use the sanitized fallback reason'],
+        [/assert\.deepEqual\(output,\{hookEventName:'PreToolUse',permissionDecision:decision,permissionDecisionReason:fallback\}\)/, 'the Hook decision stays intact while caller reason text is replaced'],
+        [/assert\.deepEqual\(Object\.keys\(event\)\.sort\(\),\['hookEventName','permissionDecision','timestamp'\]\)/, 'the persisted JSONL schema stays on the reviewed allowlist'],
+        [/stdout',result\.stdout/, 'stdout is checked for canary leaks'],
+        [/stderr',result\.stderr/, 'stderr is checked for canary leaks'],
+        [/JSONL',log/, 'JSONL is checked for canary leaks'],
+        [/stream\.includes\(value\),false/, 'caller-controlled values remain absent from output channels'],
+        [/log\.includes\('permissionDecisionReason'\),false/, 'the JSONL log omits caller reasons'],
+        [/log\.includes\('tool_input'\),false/, 'the JSONL log omits raw tool input'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 locks a run and does not silently remove a previous lock',
+      candidateTitle: 'Auto E4 locks a run and does not silently remove a previous lock',
+      requirements: [
+        [/assert\.throws\(\(\)=>createAutoE4Run\(\{dataDir:data\}\),\/AUTO_E4_ALREADY_RUNNING\//, 'a second run cannot take over the active lock'],
+        [/first\.release\(\)/, 'the first run explicitly releases its lock before a later run starts'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 stages preserve PASS, BLOCKED and SKIPPED; report never claims external E4',
+      candidateTitle: 'Auto E4 stages preserve PASS, BLOCKED and SKIPPED; report never claims external E4',
+      requirements: [
+        [/status:'PASS'/, 'a completed stage retains PASS'],
+        [/status:'BLOCKED'/, 'an unavailable acceptance stage retains BLOCKED'],
+        [/status==='SKIPPED'/, 'unrun stages remain SKIPPED'],
+        [/E4 EXTERNAL INDEPENDENCE NOT VERIFIED/, 'the report does not claim external E4 verification'],
+        [/\.includes\(data\),false/, 'the exported report omits its local data path'],
+      ],
+    },
+    {
+      reviewedTitle: 'packaged hook wrapper fails closed and target-side fixture evidence is checked',
+      candidateTitle: 'packaged hook wrapper fails closed and target-side fixture evidence is checked',
+      requirements: [
+        [/faultCases\.length,7/, 'all seven fault cases remain covered'],
+        [/faultCases\.every\(x=>x\.denied\|\|x\.errorCode==='ETIMEDOUT'\)/, 'fault cases fail closed'],
+        [/protectedVictimUnchanged,true/, 'the protected target remains unchanged'],
+        [/unsafeCallbackStarts,0/, 'unsafe callbacks never start'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 rejects invalid stage status rather than treating it as PASS',
+      candidateTitle: 'Auto E4 rejects invalid stage status rather than treating it as PASS',
+      requirements: [
+        [/status:'VERIFIED'/, 'an unrecognized status is exercised'],
+        [/stage\.status,'FAIL'/, 'an unrecognized status becomes FAIL'],
+        [/INVALID_STAGE_STATUS/, 'the invalid status is reported with a fixed error code'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 artifact writer refuses to overwrite a prior report',
+      candidateTitle: 'Auto E4 artifact writer refuses to overwrite a prior report',
+      requirements: [
+        [/AUTO_E4_ARTIFACT_ALREADY_EXISTS/, 'an existing report prevents overwrite'],
+        [/files\.jsonFile,'utf8'\),originalJson/, 'the original JSON report remains byte-for-byte intact'],
+        [/files\.mdFile,'utf8'\),originalMarkdown/, 'the original Markdown report remains byte-for-byte intact'],
+        [/files\.indexFile,'utf8'\),originalIndex/, 'the original evidence index remains byte-for-byte intact'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 rejects concurrent duplicate stages and keeps active-stage state internal',
+      candidateTitle: 'Auto E4 rejects concurrent duplicate stages and keeps active-stage state internal',
+      requirements: [
+        [/DUPLICATE_AUTO_E4_STAGE/, 'a duplicate stage is rejected'],
+        [/AUTO_E4_STAGE_IN_PROGRESS/, 'finalization cannot occur while a stage is active'],
+        [/report\.stages\.filter\(stage=>stage\.id==='environment'\)\.length,1/, 'only one stage result is recorded'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 release preserves the lock while a stage is active',
+      candidateTitle: 'Auto E4 release preserves the lock while a stage is active',
+      requirements: [
+        [/assert\.throws\(\(\)=>first\.release\(\),\/AUTO_E4_STAGE_IN_PROGRESS\//, 'release is rejected while a stage is active'],
+        [/AUTO_E4_ALREADY_RUNNING_OR_RECOVERY_REQUIRED/, 'another run cannot acquire the active run lock'],
+        [/assert\.equal\(fs\.existsSync\(lock\),false\)/, 'the lock is removed only after the stage and run settle'],
+      ],
+    },
+    {
+      reviewedTitle: 'Auto E4 finalization prevents later stages or event mutation',
+      candidateTitle: 'Auto E4 finalization prevents later stages or event mutation',
+      requirements: [
+        [/AUTO_E4_RUN_FINISHED/, 'finished runs reject later stages and events'],
+        [/run\.record\(\{type:'late-event'\}\)/, 'late event mutation is explicitly exercised'],
+        [/assert\.equal\(run\.finish\(\),report\)/, 'repeated finish returns the immutable completed report'],
+      ],
+    },
+  ];
+
+  const candidateTests = [...candidateText.matchAll(/^test\('([^']+)'/gm)];
+  for (const scenario of scenarios) {
+    assert.ok(historicalText.includes(`test('${scenario.reviewedTitle}'`), `reviewed Auto E4 fixture must contain: ${scenario.reviewedTitle}`);
+    const testIndex = candidateTests.findIndex((match) => match[1] === scenario.candidateTitle);
+    assert.notEqual(testIndex, -1, `current M6 Auto E4 suite must retain scenario: ${scenario.candidateTitle}`);
+    const testStart = candidateTests[testIndex].index;
+    const testEnd = candidateTests[testIndex + 1]?.index ?? candidateText.length;
+    const testSource = candidateText.slice(testStart, testEnd);
+    for (const [pattern, description] of scenario.requirements) {
+      assert.match(testSource, pattern, `${scenario.candidateTitle}: ${description}`);
+    }
   }
-  assert.equal(candidateIndex, historicalLines.length, message);
 }
 
 test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
@@ -483,11 +593,19 @@ test('exact M2 merge tree pins M7 package policy while current M7 merge adds rel
   assert.equal(workflowRef[1], policyRef[1], 'M2 CI must use the same exact M7 workflow and policy revision');
   assertAncestor('M7', workflowRef[1], mergedSourceProvenance.M7.ownerHead, 'M2 package-policy revision in the exact M7 owner PR history');
   const pinnedWorkflow = readTrackedTextAt('M7', workflowRef[1], '.github/workflows/m7-package-smoke.yml').join('\n');
-  const currentWorkflow = fs.readFileSync(path.join(sourceRoots.M7.root, '.github', 'workflows', 'm7-package-smoke.yml'), 'utf8');
+  const currentWorkflow = readTrackedTextAt('M7', pinnedSourceShas.M7, '.github/workflows/m7-package-smoke.yml').join('\n');
+  const pinnedPackageCheck = readTrackedTextAt('M7', workflowRef[1], 'scripts/check-package.mjs').join('\n');
+  const currentPackageCheck = readTrackedTextAt('M7', pinnedSourceShas.M7, 'scripts/check-package.mjs').join('\n');
   assert.match(pinnedWorkflow, /npm run build/, 'the exact M2-pinned M7 workflow still builds the candidate package');
   assert.match(currentWorkflow, /Run M7-owned reliability regressions/, 'current M7 workflow includes its added owner reliability checks');
+  assert.match(pinnedPackageCheck, /runNpm\(\["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile\], installDir\)/, 'the M2-pinned M7 package smoke installs without lifecycle scripts or audit side effects in its isolated prefix');
+  assert.match(currentPackageCheck, /runNpm\(\["install", "--prefix", installDir, "--ignore-scripts", "--no-audit", "--no-fund", packageFile\], installDir\)/, 'current M7 retains the same package-smoke policy and makes the already-selected install prefix explicit');
+  assert.equal(
+    currentPackageCheck.replace('runNpm(["install", "--prefix", installDir, ', 'runNpm(["install", '),
+    pinnedPackageCheck,
+    'the current M7 package checker differs from M2’s exact pinned checker only by the explicit prefix matching its existing installDir cwd',
+  );
   for (const filePath of [
-    'scripts/check-package.mjs',
     'scripts/package-file-policy.mjs',
   ]) {
     assert.equal(
@@ -498,11 +616,11 @@ test('exact M2 merge tree pins M7 package policy while current M7 merge adds rel
   }
 });
 
-test('M8 Hook adapter matches its exact M1-approved source blob', () => {
+test('historical M8 source matches its exact M1-approved Hook blob', () => {
   assert.equal(
-    readTrackedBlobId('M8', 'security-lab/claude-native-hook.mjs'),
+    readBlobIdAt('M8', pinnedSourceShas.M8, 'security-lab/claude-native-hook.mjs'),
     '544b5eb76633469b7185c4ea77d85d7f1754393e',
-    'M8 must use the exact Hook adapter blob accepted by M1',
+    'the historical M8 source must retain the exact Hook adapter blob accepted by M1',
   );
 });
 
@@ -551,10 +669,10 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   );
 });
 
-const m8CheckoutPolicy = spawnSync('git', ['-C', sourceRoots.M8.root, 'check-attr', 'eol', '--', 'security-lab/claude-native-hook.mjs'], { encoding: 'utf8', windowsHide: true });
+const m8CheckoutPolicy = spawnSync('git', ['-C', sourceRoots.M8.root, 'check-attr', `--source=${pinnedSourceShas.M8}`, 'eol', '--', 'security-lab/claude-native-hook.mjs'], { encoding: 'utf8', windowsHide: true });
 assert.equal(m8CheckoutPolicy.status, 0);
-assert.equal(m8CheckoutPolicy.stdout.trim(), 'security-lab/claude-native-hook.mjs: eol: lf');
-const m8BuildContract = fs.readFileSync(path.join(sourceRoots.M8.root, 'packaging/windows/build-contract.mjs'), 'utf8');
+assert.equal(m8CheckoutPolicy.stdout.trim(), 'security-lab/claude-native-hook.mjs: eol: lf', 'the historical M8 Hook pin records the LF attribute needed by its byte-for-byte provenance gate');
+const m8BuildContract = readTrackedTextAt('M8', pinnedSourceShas.M8, 'packaging/windows/build-contract.mjs').join('\n');
 assert.match(m8BuildContract, /tracked\.equals\(fs\.readFileSync\(path\.join\(repoRoot,WRAPPER_PATH\)\)\)/, 'M8 must preserve the strict raw-byte provenance comparison');
 
 console.log('[M9 cross-module source SHAs]', Object.entries(sourceRoots)
