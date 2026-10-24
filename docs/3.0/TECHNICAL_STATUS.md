@@ -8357,3 +8357,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Current open technical issues remain 13 total: 2 P0, 10 P1, 1 P2.
 - Fresh `ls-remote` confirms M1–M8 module branch heads remain unchanged from their previously recorded SHAs. Latest reads of #41/#93/#57/#52/#72/#99 show M0 comments without subsequent owner dispositions; the current M9 skip is recorded on #76 comment `6384782021`.
 - Usage Overview was readable at 13:25: 37% five-hour / 49% weekly; the page remains open. M0 changes are coordination docs only; no module code, M9 workflow, main, PR #24, or Release change.
+
+## M7 Hono advisory disposition — 2026-10-24 13:30 UTC
+
+- Dependabot PR #67 exact head `cda74e9860f1d96d7404871378c0c737535fa77e` has later CI run `39827204460` SUCCESS across 9/9 jobs, including package-smoke; earlier run `39586184706` is a historical manifest-smoke failure.
+- GitHub Dependabot alert #2 (`GHSA-5r4p-p66f-jhc7`) remains OPEN. PR #67 remains OPEN/non-Draft and targets `main`; M0 did not merge it. M7 owner must record exact manifest/version, default-branch state, and vulnerable-callsite disposition before #70 can close.
+- M0 posted the exact evidence and owner request on #70 comment `6384812326`; keep #70 OPEN/P1 while the advisory is unresolved.
