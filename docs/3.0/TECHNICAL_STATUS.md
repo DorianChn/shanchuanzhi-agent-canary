@@ -8060,3 +8060,12 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - M0 PR #109 head `da035d0` passed all 9 CI jobs in run `40070963573`; ownership-contract run `40070963454` passed; M9 composition was skipped for docs-only changes. PR #109 remains OPEN/Draft.
 - M1–M7 and M9 are integrated; M8 remains the one unmerged M1–M8 module. Open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft on its original base. No `main` merge or Release.
 - Refreshed Usage Overview at 06:45 UTC: 34% five-hour and 64% weekly remaining; the <5% stop threshold is inactive.
+
+## 2026-10-24 07:04 UTC — M6/M8 shared-input gate closed
+
+- P1 Issue #59 was closed at comment `6381199392` for its stated M6/M8 input-review and M9 composition scope. M6's exact `ACCEPT` covers M8 head `60cfe8d` and E4 test blob `d1705c2` on #80 comment `6379633677`; M6 lock defect #66 is closed; M9 run `40066875122` passed both Ubuntu and Windows against that M8 head. Separate product E4, installer, packaged-Hook, and M7/M8 build-contract issues remain open.
+- Open labeled issues are now P0 2 and P1 13. P0 #52/#93 and P1 #41/#57/#80/#99 remain separate gates.
+- M0 PR #109 head `d514ec9b6c67c81bf2b746cc3df2900bb58c0cfe` shows all checks passing (10 successful, one M9 composition workflow skipped for docs-only change). It remains OPEN/Draft.
+- M8 PR #40 remains OPEN/Draft with the 12 post-M9 base conflicts recorded on #76 and PR #40; no owner resolution or M7 lifecycle code update is visible yet. M1–M7 and M9 are integrated; M8 is the one unmerged M1–M8 module.
+- PR #24 remains OPEN/Draft on its original base; only the local feature worktree was fast-forwarded to `e4732d9`. No remote `main` merge or Release.
+- Refreshed Usage Overview at 07:04 UTC: 23% five-hour and 62% weekly remaining; the <5% stop threshold is inactive.
