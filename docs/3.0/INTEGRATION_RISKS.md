@@ -1215,6 +1215,20 @@ Historical exact-source run `39986788529` was 15/20 on Ubuntu and Windows. It wa
 | --- | --- | --- | --- |
 | Windows Hook interruption test timing (#32) | P1 | Closed after M1 identified the old fixed 1-second marker window as a test-harness timing failure, merged the asynchronous bounded-marker correction through PR #43, and current-base CI run `40072794731` passed Windows Node 20/22 and package-smoke. | This closes the historical test-harness flake only. Synthetic subprocess coverage does not prove native-host callback interception; product host acceptance remains under #52. |
 
+## 2026-10-24 07:42 UTC — M7 lifecycle checksum contract still blocks acceptance
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Installer lifecycle input contract (#41) | P1 | M7 branch `ab9b03f` still has an 11-path producer and a strict 7-path consumer. M0 recorded the four exact missing paths and ordered-list regression request in #41 comment `6381585159`; no install run was started. | M7 must synchronize the exact ordered lists without wildcard/bypass, preserve all existing validation, run exact-head CI/build, then reserve the exclusive installer slot through #29 before lifecycle execution. |
+
+| Auto E4 stale-lock race (#78) | P1 | Closed after exact-source review of merged PR #39: stale locks fail closed; release compares held-file identity and exact parsed owner fields; concurrent and replacement tests plus exact PR CI pass. | Independent product E4 remains NOT_VERIFIED under #57/#80. |
+
+## 2026-10-24 07:45 UTC — M6 Draft targeting boundary
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M6 legacy E4 Draft (#31) | — | Older PR #31 remains OPEN/Draft against `main`; the E4 runner, guide, and evidence paths are present in current feature history, and newer PR #38 is merged into feature. | No `main` merge or PR retarget by M0. Authored source evidence remains separate from independent product E4 tracked by #57/#80. |
+
 ## 2026-10-23 16:33 UTC — Current exact-source integration result
 
 | Gate | Priority | Current evidence | Remaining acceptance |

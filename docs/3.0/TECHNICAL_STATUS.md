@@ -8077,3 +8077,17 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Scope limit: the synthetic subprocess does not establish native-host callback interception. Product host acceptance stays open under #52; separate M1/M3 file conflicts remain under #76.
 - Current open labels: P0 = 2 (#52, #93); P1 = 12 (#99, #80, #78, #76, #72, #70, #62, #57, #54, #51, #45, #41). #41 still has the 11-vs-7 checksum path mismatch and no Setup.exe run; #40 remains OPEN/Draft with 12 base conflicts and missing owner disposition on #99; #72 awaits M1 disposition for the current test blob.
 - PR #24 remains OPEN/Draft at its original release-readiness base. No remote `main` merge or Release occurred. Usage Overview refreshed after reload at 07:29 UTC: 16% five-hour / 61% weekly remaining; the <5% threshold was inactive.
+
+## 2026-10-24 07:42 UTC — M7 lifecycle fix still pending
+
+- Closed P1 #78 after verifying M7 PR #39's fail-closed stale-lock behavior, exact parsed-owner release checks, deterministic concurrent/replacement regressions, and passing exact PR CI. This closes the source race finding only; independent E4 remains NOT_VERIFIED.
+- M7 shared worktree is present at `feature/ac3-reliability-ac3` / `ab9b03f`, equal to its remote tracking branch. It retains a pre-existing uncommitted workflow change and untracked acceptance evidence; M0 left both untouched. Its installer lifecycle script still accepts 7 checksum paths while its producer emits 11; M0 posted the exact four-path/regression request at #41 comment `6381585159`.
+- P1 #41 remains OPEN; the prior hosted lifecycle run stopped before Setup.exe. No new installer run was started. M7's local workflow change enabling lifecycle on pull requests is not a checksum fix; preserve the #29 exclusive-slot scheduling rule.
+- Current open labels: P0 = 2 (#52, #93); P1 = 11 (#99, #80, #76, #72, #70, #62, #57, #54, #51, #45, #41). M8 PR #40 remains OPEN/Draft with 12 conflicts and missing owner disposition; #72 still awaits exact M1 review.
+- M0 docs commit `a639daf4d923ae08ed54fab82032787394a6ce2f` is pushed to PR #109. Current CI run `40074761258` completed successfully on all 9 jobs; M9 composition was skipped for docs-only change. PR #24 remains OPEN/Draft at its original base; no remote `main` merge or Release.
+- Usage Overview refreshed at 07:40 UTC: 14% five-hour / 61% weekly remaining; the <5% threshold is inactive.
+
+## 2026-10-24 07:45 UTC — M6 legacy Draft boundary
+
+- M6 PR #38 is MERGED into the feature branch. The older M6 PR #31 remains OPEN/Draft and targets `main`; its E4 runner, guide, and evidence paths are present in the current feature tree. M0 made no retarget/merge change. Authored automation evidence still does not satisfy independent product E4 (#57/#80).
+- Read-only worktree audit: M1–M6 and M8 module worktrees are clean and match their remote branches; M7 is the only dirty module worktree observed, with the previously recorded workflow edit and untracked acceptance evidence preserved.
