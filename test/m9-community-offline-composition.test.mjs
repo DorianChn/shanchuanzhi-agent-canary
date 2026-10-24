@@ -10,7 +10,7 @@ const m8Root = process.env.M8_CANDIDATE_ROOT;
 const m8Sha = process.env.M8_CANDIDATE_SHA;
 const offlineDemoPath = 'competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
 const expectedM7Sha = '37034a971d00477a8aa3d57f34773c125939ec92';
-const expectedM8Sha = '3e68383b2063d5a9224cb15a67eea2777d4539df';
+const expectedM8Sha = '60cfe8d976a42d0f635d4be93ca24c00e81246d5';
 const expectedM8PinSha = '24b8651730d57d860ba136e77db1526031abb1fc';
 const expectedM7Blob = '71ba0f00f31583c4227cd937972e6f9a677898ca';
 const expectedM8Blob = '3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
@@ -33,7 +33,7 @@ function sourceBlob(root, sha) {
 
 test('M8 exact offline demo retains the Guard rejection and post-quarantine safety assertions', () => {
   assert.equal(git(m8Root, ['rev-parse', '--verify', 'HEAD'], 'M8 checkout SHA'), expectedM8Sha);
-  assert.equal(git(m8Root, ['rev-parse', '--verify', `${expectedM8Sha}^{tree}`], 'M8 checkout tree'), 'b2fcbd8f8bf5e4bafca3a44a8a65d6d5cdadbc90');
+  assert.equal(git(m8Root, ['rev-parse', '--verify', `${expectedM8Sha}^{tree}`], 'M8 checkout tree'), '25a78c1e0bff8551cc8f41bde312c59224f45abf');
   assert.equal(git(m8Root, ['merge-base', '--is-ancestor', expectedM8PinSha, expectedM8Sha], 'immutable M8 pin ancestry'), '');
   assert.equal(sourceBlob(m8Root, expectedM8Sha), expectedM8Blob, 'M8 offline demo must use the exact Issue #102 fixed blob');
 

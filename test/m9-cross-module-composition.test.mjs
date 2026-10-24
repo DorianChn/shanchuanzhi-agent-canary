@@ -18,7 +18,7 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 }));
 
 const pinnedSourceShas = {
-  M1: 'f18f1deec15b81f0d61ef18dbf0f91f50acef1b6',
+  M1: '47501fc090ee67f7f96d84d231c7ce7cc70379cd',
   M2: '26cdb8781e57a05f57362e3078d77ce18614481c',
   M3: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9',
   M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
@@ -26,7 +26,7 @@ const pinnedSourceShas = {
   M6: '2975f3fc88929cacf268e80a503667b440ea519a',
   M7: '37034a971d00477a8aa3d57f34773c125939ec92',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
-  M8_CANDIDATE: '3e68383b2063d5a9224cb15a67eea2777d4539df',
+  M8_CANDIDATE: '60cfe8d976a42d0f635d4be93ca24c00e81246d5',
 };
 
 const mergedSourceProvenance = {
@@ -40,7 +40,7 @@ const mergedSourceProvenance = {
 };
 
 const currentCandidateProvenance = {
-  M1: { ownerHead: '5adc14c32724a7b5da3ee40aed08eb41de7debea', ownerTree: '1b70a280b4bb4e69edfe9c68476728b4bdf9ad06', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: 'f18f1deec15b81f0d61ef18dbf0f91f50acef1b6', prTree: 'bf626ca319cfde115e31ff9565faf43f21c6f69b' },
+  M1: { ownerHead: '47501fc090ee67f7f96d84d231c7ce7cc70379cd', ownerTree: '779ecf4c6020dd3ccb551b59e638f7066d724c2b', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '47501fc090ee67f7f96d84d231c7ce7cc70379cd', prTree: '779ecf4c6020dd3ccb551b59e638f7066d724c2b' },
   M6: { ownerHead: 'ed335ef7cacfa626f9a5b6bc4c69e6af6366123e', ownerTree: '2dd0c9991794b5983d488fbacadb7a9fbe4f0d89', sourceBase: 'eb78dcef6eb1bd501606244771880bb41d6f0b43', prHead: '2975f3fc88929cacf268e80a503667b440ea519a', prTree: 'c1cae38a069255f346b85c8e9ec708c56e91e16c' },
   M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '26cdb8781e57a05f57362e3078d77ce18614481c', prTree: 'd47d82af42266d9cb0c3a3895b180c1c23aeb980' },
   M3: { ownerHead: '98a034fa2066cec18f833440cc51275c389681c6', ownerTree: '4da9bd1d3168aaa8dc1df97ad8b8e4bb18187430', prHead: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9', prTree: '2396a5915c2bb24fa828b02118ea5f69f9e3eea1' },
@@ -66,7 +66,7 @@ const m8ReviewedE4TestBlob = 'd8909264ea2d924d611ca01a4daa73829ab67d1d';
 const m7AcceptedE4HelperBlob = '89e8a04ed026af146a712517144f560aefe92a0d';
 assert.equal(
   readTreeIdAt('M8_CANDIDATE', pinnedSourceShas.M8_CANDIDATE),
-  'b2fcbd8f8bf5e4bafca3a44a8a65d6d5cdadbc90',
+  '25a78c1e0bff8551cc8f41bde312c59224f45abf',
   'the current M8 PR #40 source tree must remain tied to the exact candidate pin',
 );
 
@@ -696,7 +696,7 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   const candidateLifecycleBlob = readTrackedBlobId('M8_CANDIDATE', 'test/auto-e4.test.mjs');
   assert.equal(
     candidateLifecycleBlob,
-    '607c1c065c66caa792c62f2cdd45d6c6223f3d24',
+    'd1705c204ef3f511ee4828e90b35731b36f92238',
     'the current M8 candidate lifecycle-file change must stay tied to the exact PR #40 head',
   );
   assert.notEqual(
