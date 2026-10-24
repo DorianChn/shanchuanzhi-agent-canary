@@ -8180,3 +8180,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - PR #24 remains OPEN/Draft at its unchanged head and competition base. No `main` merge, source-module change, or Release occurred.
 - Latest owner-contact readbacks show M0's specific follow-ups are still the newest comments on #41, #51, #52, #54, #72, and #99; no owner implementation/disposition is recorded there yet. The issues remain open at their existing priorities.
 - The M9 workflow trigger/ref blocker is still live; a green docs CI does not satisfy cross-module composition. Keep #76 OPEN/P1 until a current-ref M9 run executes and passes on Ubuntu and Windows.
+
+## M9 workflow trigger correction request — 2026-10-24 10:59 UTC
+
+- Exact PR #109 head `ba1ec2b098ec82e26de77c8f23ee2b0c64c627da` completed standard CI 9/9 (`40087678896`) and AC3 coordination 1/1 (`40087678667`); M9 composition run `40087678646` was skipped. PR #24 remains OPEN/Draft at its original head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Read-only inspection of merged M9 workflow confirms its pull-request job condition only admits PR #36, and it checks out `refs/pull/36/head`; manual dispatch has no explicit current-ref input. The current PR #109 and PR #24 skips are therefore a workflow trigger/ref defect, not test success.
+- M0 recorded a concrete owner edit plan on #76 comment `6383381123`. M9 must fix the existing M9-owned workflow on its existing branch, preserve explicit module SHA pins, assert/print them, and produce an exact current-ref Ubuntu/Windows pass. No module implementation was changed by M0.
