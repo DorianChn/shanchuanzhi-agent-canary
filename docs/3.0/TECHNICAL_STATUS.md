@@ -1,3 +1,9 @@
+## Verified source cohort merged — 2026-10-24 17:49 UTC
+
+M7 #113 is now MERGED at 97c52430117596f74b5f94c77ade7a23fa910540, following M2 #110, M6 #111 and M8 #40. Manual run40117125609 verified actual installation at bba0f0f, canonical installed Hook b7ed4ab, all11 installed Hook/fault/decision checks, and clean uninstall with residue0. #93 is closed with that bounded evidence; #29 installer resource is released (comment6387514754). #41's untested platform/user/upgrade cases remain open.
+
+M0 coordination fixes and M9 final integration are the remaining source integration PRs. M9 also restores safe allowlisted error-code/request-count assertion diagnostics for #54, preserving the retry fixture, bounds and success assertions. The focused retry test passed; its historical trigger is still UNKNOWN and #54 remains open. No independent operator receipt or native host attestation is invented.
+
 ## Current integration checkpoint — 2026-10-24 17:45 UTC
 
 - M2 #110 (941fd22), M6 #111 (2a88d8b), and M8 #40 (1c94ed4) are MERGED into feature/agent-canary-3.0. Merge commits are 20a57bbd, 1011981d, c13c40f0. GitHub main is unchanged; PR #24 remains open/draft on its original competition base, with its feature head advancing through authorized module merges.
