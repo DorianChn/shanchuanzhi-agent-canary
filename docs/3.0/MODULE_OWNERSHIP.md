@@ -1,3 +1,44 @@
+## Current follow-up ownership — 2026-10-24 17:30 UTC
+
+| Scope | Owner and existing workspace | Boundary |
+| --- | --- | --- |
+| Product intake, control and verifier usage files in security-lab/e4/product-self-check* and PRODUCT_SELF_CHECK.md | M6; agents/M6, existing feature/ac3-e4-validation-ac3 / PR111 | Author SELF_CHECK only; does not issue independent operator/reviewer acceptance. |
+| Installer lifecycle script and reliability regression | M7; existing clean agents/M7-followup, feature/ac3-m7-m8-source-pin / PR113 | Main agents/M7's pre-existing dirty workflow/evidence are untouched; no transfer of canonical Hook semantics from M1. |
+| sponsor/smoke.mjs, smoke-process.mjs and smoke-isolation.test.mjs | M8; agents/M8, existing PR40 branch | Smoke harness only; server/payment/state-store ownership is not transferred. |
+| Exact-source manifest, its validator and M9 composition/workflow regressions | M9; integration/M9, existing feature/ac3-m9-integration / PR112 | Owner-reviewed immutable module refs; no module implementation edits. |
+| Coordination docs, ignore patterns and GitHub scheduling records | M0; coordinator / PR109 | Substantive batched publication; no main/PR24 merge or Release. |
+
+Actual original M1/M2/M6/M8 sessions were resumed through CLI and produced recorded results. Original M7 refused a second writer; M7 follow-up work above was performed by an explicitly assigned worker in its already existing clean worktree. Neither GitHub comments nor idle UI processes are reported as proof of running development. M3/M4/M5's selected source trees are consumed by M9 without edits to their implementation.
+
+## Historical M0 coordination-file ownership — 2026-10-24 11:02 UTC
+
+M0 owns the coordination documentation in `docs/3.0/*`, the AC3 coordination workflow and checker (`.github/workflows/ac3-coordination.yml`, `scripts/ac3-coordination-check.mjs`, `scripts/ac3-pr-audit.mjs`, `scripts/ac3-ownership.json`), and its focused audit regression (`test/ac3-pr-audit.test.mjs`). M0 may maintain these coordination paths and GitHub issue/status records; M1–M8 implementation and test paths remain owned by their listed modules. Shared module paths require the owning module's disposition and must not be edited from M0.
+
+## Current live readback — 2026-10-24 11:16 UTC
+
+- M0 branch `feature/ac3-m0-coordination` is at `a3c9bb9f0e0a2c0eeb5051a40ded8f9a68c12617`; PR #109 is OPEN/Draft against feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Coordination CI `40089004836` passed and standard CI `40089004923` passed all 9 jobs. The PR's M9 composition check `40089004844` was skipped by the known #76 trigger/ref defect.
+- Existing owner worktrees remain on their previously recorded heads: M1 `47501fc`, M2 `26cdb87`, M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2975f3f`, M7 `ab9b03f`, and M8 `60cfe8d`. M1–M6 and M8 are clean; M7's pre-existing workflow edit and untracked acceptance directory are preserved. M9 integration worktree remains clean at `cbb2e7d`.
+- PR #40 remains OPEN/Draft at `60cfe8d`; PR #24 remains OPEN/Draft at its unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and competition base. The issue tracker still has 2 P0, 11 P1, and 1 P2 open. A worktree readback does not establish activity in separate Codex chats.
+
+## M0 verified M1–M8 ownership and worktree snapshot — 2026-10-24 10:05 UTC
+
+This snapshot supersedes earlier branch/status snapshots below. Worktree location, attached branch, HEAD, and dirty state were read from the filesystem; primary PR states were checked on GitHub. Worktree state does not reveal activity in separate Codex chats.
+
+| Module | Existing branch / worktree | Current HEAD | Owned files and contract boundary | Current PR / worktree state |
+| --- | --- | --- | --- | --- |
+| M0 | `feature/ac3-m0-coordination` / `coordinator` | `2f8e155` | `docs/3.0/*`, coordination Issues, CI evidence, ownership and schedules. Does not edit M1–M8 implementation or tests. | #109 OPEN/Draft; clean. |
+| M1 | `feature/ac3-security-core` / `agents/M1` | `47501fc` | Gateway/Guard, held-file identity, canonical Hook semantics, file-state store and their security assertions. Owns shared Gateway and Hook contracts. | Primary #43 MERGED; clean. |
+| M2 | `feature/ac3-execution-isolation` / `agents/M2` | `26cdb87` | Execution-isolation and host adapter. Consumes M1 capabilities; does not redefine canonical Gateway/Hook semantics. | Primary #37 MERGED; clean. |
+| M3 | `feature/ac3-agent-onboarding` / `agents/M3` | `0d61b43` | Onboarding and configured-target CLI/route plus M3 route tests. Composes M1 Gateway, M2 adapter and M5 policy through their contracts. | #33 and configured-route follow-up #107 MERGED; clean. |
+| M4 | `feature/ac3-desktop-security-center` / `agents/M4` | `892d329` | Desktop Security Center UI and UI tests; consumes supported APIs and reports UNKNOWN/NOT_VERIFIED without promoting UI probes to product acceptance. | Primary #34 MERGED; clean; separate Windows-E4 Git common directory. |
+| M5 | `feature/ac3-policy-audit` / `agents/M5` | `cca42cd` | Risk policy, security router, audit fields and policy regressions. Owns policy decisions; consumes M1-validated capabilities. | Primary #47 MERGED; clean. |
+| M6 | `feature/ac3-e4-validation-ac3` / `agents/M6` | `2975f3f` | E4 verifier, evidence schema and bundle validation. Product-level independent E4 remains a separate acceptance gate. | Primary #38 MERGED; clean. |
+| M7 | `feature/ac3-reliability-ac3` / `agents/M7` | `ab9b03f` | Windows packaging, installer lifecycle, reliability workflow and tests. M1 remains owner of canonical Hook semantics; M7 owns its packaged copy. | Primary #39 and follow-ups MERGED; existing uncommitted workflow edit and untracked acceptance directory preserved; separate Windows-E4 Git common directory. |
+| M8 | `feature/ac3-open-source-product` / `agents/M8` | `60cfe8d` | Open-source, security and compatibility docs plus their documentation checks. Does not take ownership of M6 E4 verifier or M7 packaging implementation. | #40 OPEN/Draft on base `416f1ba`; 12 conflicts against current feature `e4732d9`; clean. M8 disposition on #99 still missing. |
+| M9 | `feature/ac3-m9-integration` / `integration/M9` | `cbb2e7d` | Exact-source pins, composition workflow/tests, integration contracts and risk aggregation. Module owners retain implementation paths. | #36 MERGED; clean. Current-ref workflow trigger remains OPEN under #76. |
+
+All eight branch heads have the same verified merge base, `62496d4020bd90ba2eede49b2e80a2bbebb036b4`, and each uses a distinct worktree directory and existing `feature/ac3-*` branch. M1–M6/M8 are clean and track their owner branches; M7 is dirty only in the workflow change and untracked acceptance directory identified above. M4/M7 use a separate Git common directory, with distinct worktree paths and branches. Do not reset, clean, move, or recreate any owner worktree. PR #24 remains OPEN/Draft at `e4732d9`; no `main` merge or Release occurred.
+
 ## M0 exact-head ownership snapshot — 2026-10-23 00:34 UTC
 
 ## M0 current ownership and blocker routing — 2026-10-23 15:23 UTC
