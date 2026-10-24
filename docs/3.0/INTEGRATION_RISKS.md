@@ -1,3 +1,11 @@
+## Current integration risks — 2026-10-24 09:48 UTC
+
+| Risk / gate | Priority | Current verified state | Required acceptance |
+| --- | --- | --- | --- |
+| M9 current-ref integration trigger (#76) | P1 | On current M0 PR #109 head `3d4dd10`, CI passed 9/9 and AC3 coordination passed, while M9 run `40083165982` was skipped. Workflow still checks out PR #36 only. | M9 owner updates the existing workflow so the intended current feature refs run on Ubuntu and Windows; skipped jobs cannot stand in for composition. |
+| M8 current-base branch (#40/#99) | P1 | M8 head `60cfe8d` is unchanged; 12 merge-tree conflicts remain and M8 owner disposition is absent. | M8 resolves by ownership, preserves tests/docs/current behavior, posts #99 disposition, and passes current-base checks plus exact-source composition. |
+| M7 lifecycle reservation (#41/#29) | P1 | Local M7 workflow diff still auto-enables installer lifecycle on pull_request with no concurrency group; no slot reservation exists and M0 has not run it. | Keep runs behind an explicit reserved/manual gate or implement an owner-reviewed serialized reservation; also fix the 11/7 checksum path mismatch before Setup.exe acceptance. |
+
 ## Current integration risks — 2026-10-24 09:31 UTC
 
 | Risk / gate | Priority | Current verified state | Required acceptance |

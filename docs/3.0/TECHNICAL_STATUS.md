@@ -1,3 +1,13 @@
+## Current coordinator snapshot — 2026-10-24 09:48 UTC
+
+M0 refreshed the exact pushed head and live integration gates. No module implementation was changed.
+
+- **M0 PR #109:** head `3d4dd1033e9fca8dc608ab7961a7e813a9974c9c`, feature base `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI run `40083165990` passed 9/9; AC3 coordination `40083165993` passed; M9 composition `40083165982` was skipped. M0 recorded the second exact-head trigger reproduction in Issue #76 comment `6382723192`.
+- **M9 workflow:** PR #36 is merged and pinned-source composition run `40066875122` passed Ubuntu/Windows. The current workflow still admits only manual dispatch or PR #36 and checks out `refs/pull/36/head`; it does not execute against PR #109/current feature refs.
+- **M8:** PR #40 remains OPEN/Draft at `60cfe8d`; read-only merge-tree against current feature `e4732d9` still reports 12 conflicts. M0's latest request is comment `6382530045`; no M8 disposition is visible on #99.
+- **Other acceptance gates:** #52/#93 remain P0; #41/#57/#72 and #76 remain open. M7's installer workflow diff stays uncommitted and untouched; exclusive resource slot #29 is FREE.
+- **Boundaries:** PR #24 remains OPEN/Draft on its competition base. `main`, M8/M7 source, and Release are untouched by M0.
+
 ## Current coordinator snapshot — 2026-10-24 09:31 UTC
 
 Live state was refreshed from GitHub Actions, PRs/issues, local worktrees, and Usage Overview. M0 changed coordination documents only.
