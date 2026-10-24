@@ -737,3 +737,31 @@ M7 PR #96 advanced from `e18b9d377905c79efd584993e84a55d48ff3891b` to local owne
 Local validation used a clean detached checkout materialized from the local M7 `fcc205d` commit because the owner worktree contains unrelated uncommitted workflow edits and an untracked fixture; those owner-worktree changes were left untouched. With the locally installed CPython 3.11.15 supplied explicitly, the full M7 Windows packaging suite passed **25 tests, 0 failed, 1 platform skip** (Windows symlink privilege is not assumed). Its offline source-fetch check used a temporary local bare mirror containing the already checked-out exact M8 PR #40 object `90fcde07775d4109f6e1b1b4b52d1975723dd979`; direct GitHub fetch stalled in this environment, so this local test does not claim live GitHub reachability.
 
 Against M7 `fcc205d` and the unchanged exact M1–M6/M8 roots, M9's offline Community composition passed **2/2** and the full M9 exact-source composition passed **21/21**, including the M2 packed consumer roots and all review-evidence variables. The new M9 runtime-contract test passed as part of the composition. Hosted checks for the fcc205d source are not yet available; M9 remains OPEN/Draft and the refresh is committed locally without pushing.
+
+## M7 exact-head refresh — 2026-10-24 01:39 UTC
+
+GitHub PR #96 was re-read at head `bfff4e786c215dcf4a36cad41fb5ea08900d14a4`, tree `324da33a8a5f788f79b5f2ae8cd69e6655e13eb2`, directly descended from the previously pinned M7 head `fcc205d56bd4d59adf765b51c7eff7aa50d02ed0`. The owner change is limited to `test/windows-packaging.test.mjs`: the Windows build-contract test now skips on non-Windows platforms. M9 updates its current M7 owner/tree/source-base/PR provenance and exact checkout, test guards, and offline composition pin. No M7 source or package manifest/lock was edited.
+
+Local validation against a clean detached checkout of exact M7 `bfff4e7`:
+- `npm run build` passed; `node --test test/windows-packaging.test.mjs` passed **25**, failed **0**, skipped **1** because Windows symlink privilege is not assumed; `npm audit --audit-level=high` found **0 vulnerabilities**.
+- `npm run pack:check` against exact M2 PR #91 `26cdb8781e57a05f57362e3078d77ce18614481c` passed with the candidate's **103 files**.
+- M9 M7/M8 offline Community source composition passed **2/2**; full exact-source M1–M8 M9 composition passed **21/21** using the M2 packed consumer and all existing review-evidence variables.
+- Exact M6 bundle verifier suite passed **29/29** and the complete Auto E4 suite passed **15/15**. M6 export and Auto E4 assertions remain unchanged.
+- M9 `npm run build` and `git diff --check` passed.
+
+The M7 packaging regression's source-fetch check stalled when it attempted direct GitHub access locally. The passing local rerun used a temporary bare mirror populated from the exact current M8 PR #40 checkout and a process-scoped Git URL rewrite; it validates exact SHA/blob staging locally, not live remote fetch reachability. Hosted M9 checks for the refreshed M7 pin have not run because this M9 update remains local and unpushed.
+
+The previously observed M9 candidate lockfile audit blocker remains open: hosted `npm audit --audit-level=high` reported **2 high and 3 moderate** vulnerabilities against M9's stale candidate lock. The exact M7 lock audit is clean, but M9 has not substituted or edited the M7-owned lockfile and has not relaxed the audit threshold. Resolve only when the owner lock update is incorporated into the integration candidate.
+
+
+## M7 hosted-head refresh — 2026-10-24 01:57 UTC
+
+GitHub PR #96 advanced to exact head `40d024fb6089cd72a186107912bd6baed824f301`, tree `23297aabffb18665fe3cc62af47746a1a28922d1`, directly descended from the previously recorded `bfff4e786c215dcf4a36cad41fb5ea08900d14a4`. M9 updates only its current M7 checkout ref, exact-SHA guards, current-candidate commit/tree/source-base provenance, and the M7/M8 offline composition expectation. Historical M7 merge provenance is unchanged. The refresh preserves the exact 37-path runtime contract and the `sdk.d.ts` presence gate.
+
+Local validation against the exact M7 40d source and current M8 PR #40 head `90fcde07775d4109f6e1b1b4b52d1975723dd979`:
+- Full M9 exact-source composition passed **21/21**, with the workflow's packed M2 consumer roots and all review-evidence variables supplied.
+- M9 M7/M8 offline Community composition passed **2/2**, including the M8 Guard rejection source and M7 pinned-blob compatibility assertion.
+- M7 `npm run build` passed; complete `node --test test/windows-packaging.test.mjs` passed **25**, failed **0**, skipped **1** (Windows symlink privilege is unavailable); M7 high-severity npm audit found **0 vulnerabilities**; M7 pack check against exact M2 completed with **103 files**.
+- The source-fetch test used a temporary local bare mirror populated from the exact M8 PR #40 object after direct GitHub fetch stalled locally. This proves local exact SHA/blob staging, not live GitHub fetch reachability.
+
+This is local evidence only: the M9 pin refresh has not been pushed, so there is no hosted M9 result for this head. The existing M9 candidate lockfile audit blocker remains unchanged (the earlier candidate audit reported 2 high and 3 moderate vulnerabilities); no owner lockfile was copied or changed and the audit threshold remains intact. M9 remains OPEN/Draft pending owner/base integration and hosted checks.
