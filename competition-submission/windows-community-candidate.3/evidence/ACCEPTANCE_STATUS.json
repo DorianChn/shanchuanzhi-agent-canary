@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "sourceCandidate2Zip": "e9ba7b153ad267c3275f0d213fcb49b81fb372b2047ee18e95139a7e9ed134d7",
+  "runtimeComparedFiles": 33,
+  "byteMismatchFiles": [],
+  "sdkDeclarationsPresent": true,
+  "guiInstall": "NOT_VERIFIED",
+  "cleanWindowsUserOrVM": "BLOCKED_NO_SEPARATE_ENVIRONMENT",
+  "E4": "NOT_VERIFIED",
+  "staticRender": "NOT_VERIFIED_OFFSCREEN_DRAW_TO_BITMAP_DID_NOT_RENDER_CHILDREN",
+  "uninstall": "NOT_VERIFIED_NOT_EXECUTED",
+  "noGlobalDeveloperToolOnRuntimePATH": true,
+  "headlessCSharpBridgeCommands": [
+    "initialize",
+    "environment",
+    "verify",
+    "export"
+  ],
+  "installerSHA256": "6c78620d249ec7e9f13ad929c4c1fb44c307f4b818751e7446f193a09a5d27e1",
+  "installerBytes": 38280335
+}

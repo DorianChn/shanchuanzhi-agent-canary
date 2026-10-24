@@ -1,0 +1,1 @@
+Claude Code was unable to find CLAUDE_CODE_GIT_BASH_PATH path "C:/Users/<LOCAL_USER>/AppData/Local/hermes/git/bin/bash.exe"

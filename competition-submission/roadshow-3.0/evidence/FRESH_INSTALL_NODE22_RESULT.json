@@ -1,0 +1,46 @@
+{
+  "mode": "SAME_OPERATOR_FRESH_DIRECTORY_PUBLIC_ZIP_NOT_E4_NOT_CLEAN_VM",
+  "archiveSHA256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+  "root": "NEW_CHINESE_SPACE_PATH_ON_SAME_MACHINE",
+  "commands": [
+    {
+      "name": "npm ci",
+      "exitCode": 0,
+      "durationSeconds": 7.633828401565552,
+      "log": "npm-ci-node22.txt"
+    },
+    {
+      "name": "npm run build",
+      "exitCode": 0,
+      "durationSeconds": 3.452531576156616,
+      "log": "npm-run-build-node22.txt"
+    },
+    {
+      "name": "npm test",
+      "exitCode": 0,
+      "durationSeconds": 5.474248886108398,
+      "log": "npm-test-node22.txt"
+    },
+    {
+      "name": "npm audit",
+      "exitCode": 0,
+      "durationSeconds": 2.8970484733581543,
+      "log": "npm-audit-node22.txt"
+    },
+    {
+      "name": "npm run self-test",
+      "exitCode": 0,
+      "durationSeconds": 1.261080026626587,
+      "log": "npm-run-self-test-node22.txt"
+    },
+    {
+      "name": "offline bounded demo",
+      "exitCode": 0,
+      "durationSeconds": 0.7054779529571533,
+      "log": "offline-bounded-demo-node22.txt"
+    }
+  ],
+  "status": "VERIFIED_BOUNDED_INSTALL",
+  "nodeVersion": "v22.23.1",
+  "localNode20": "NOT_VERIFIED"
+}

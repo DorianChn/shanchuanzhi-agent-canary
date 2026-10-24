@@ -1,0 +1,138 @@
+[
+  {
+    "id": "npm-ci",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "ci"
+    ],
+    "cwd": "C:/Users/<LOCAL_USER>/Desktop/工作/agent-canary-3.0-engineering",
+    "started": "2026-10-12T01:24:39.805Z",
+    "finished": "2026-10-12T01:24:48.876Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "root-build",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "build"
+    ],
+    "cwd": "C:/Users/<LOCAL_USER>/Desktop/工作/agent-canary-3.0-engineering",
+    "started": "2026-10-12T01:24:48.879Z",
+    "finished": "2026-10-12T01:24:52.903Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "root-tests",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "test"
+    ],
+    "cwd": "C:/Users/<LOCAL_USER>/Desktop/工作/agent-canary-3.0-engineering",
+    "started": "2026-10-12T01:24:52.905Z",
+    "finished": "2026-10-12T01:25:05.608Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "root-pack",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "pack:check"
+    ],
+    "cwd": "C:/Users/<LOCAL_USER>/Desktop/工作/agent-canary-3.0-engineering",
+    "started": "2026-10-12T01:25:05.610Z",
+    "finished": "2026-10-12T01:25:30.867Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "root-verify",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "verify"
+    ],
+    "cwd": "C:/Users/<LOCAL_USER>/Desktop/工作/agent-canary-3.0-engineering",
+    "started": "2026-10-12T01:25:30.869Z",
+    "finished": "2026-10-12T01:26:11.135Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "root-audit",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "audit",
+      "--json"
+    ],
+    "cwd": "C:/Users/<LOCAL_USER>/Desktop/工作/agent-canary-3.0-engineering",
+    "started": "2026-10-12T01:26:11.137Z",
+    "finished": "2026-10-12T01:26:14.209Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "sponsor-ci",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "ci"
+    ],
+    "cwd": "C:\\Users\\<LOCAL_USER>\\Desktop\\工作\\agent-canary-3.0-engineering\\sponsor",
+    "started": "2026-10-12T01:26:14.210Z",
+    "finished": "2026-10-12T01:26:17.521Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "sponsor-tests",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "test"
+    ],
+    "cwd": "C:\\Users\\<LOCAL_USER>\\Desktop\\工作\\agent-canary-3.0-engineering\\sponsor",
+    "started": "2026-10-12T01:26:17.523Z",
+    "finished": "2026-10-12T01:26:26.704Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "sponsor-smoke",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "smoke"
+    ],
+    "cwd": "C:\\Users\\<LOCAL_USER>\\Desktop\\工作\\agent-canary-3.0-engineering\\sponsor",
+    "started": "2026-10-12T01:26:26.707Z",
+    "finished": "2026-10-12T01:26:28.171Z",
+    "exitCode": 0,
+    "error": null
+  },
+  {
+    "id": "sponsor-audit",
+    "command": [
+      "node",
+      "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+      "audit",
+      "--json"
+    ],
+    "cwd": "C:\\Users\\<LOCAL_USER>\\Desktop\\工作\\agent-canary-3.0-engineering\\sponsor",
+    "started": "2026-10-12T01:26:28.173Z",
+    "finished": "2026-10-12T01:26:31.140Z",
+    "exitCode": 0,
+    "error": null
+  }
+]

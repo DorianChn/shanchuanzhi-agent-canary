@@ -1,0 +1,1933 @@
+test (ubuntu-latest, 22)	Run npm test	﻿2026-10-12T04:42:39.9094490Z ##[group]Run npm test
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:39.9094786Z ^[[36;1mnpm test^[[0m
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:39.9137669Z shell: /usr/bin/bash -e {0}
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:39.9137991Z ##[endgroup]
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:40.0183799Z 
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:40.0184949Z > @dorianchn/agent-canary@1.2.7 test
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:40.0188578Z > node --import tsx --test test/alerts.test.ts test/tokens.test.ts test/eval.test.ts test/dashboard.test.ts test/sdk.test.ts test/license.test.ts test/containment.test.ts test/install.test.ts test/config.test.ts test/install-backup.test.ts test/webhook.test.ts test/self-test.test.ts test/metadata.test.ts test/security-simulation.test.ts test/file-walk.test.ts test/watch.test.ts test/ai.test.ts test/risk-policy.test.ts test/security-router.test.ts test/agent-integrations.test.ts test/agent-hook.test.ts test/file-state-store.test.ts test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/package-types.test.ts test/product-identity.test.ts
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:40.0191002Z 
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:40.0997021Z TAP version 13
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7023351Z # Subtest: Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7053645Z ok 1 - Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7073215Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7073972Z   duration_ms: 6.230885
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7074785Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7075442Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7082360Z # Subtest: hook canary quarantine persists across process-style Guard instances
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7083664Z ok 2 - hook canary quarantine persists across process-style Guard instances
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7089674Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7090221Z   duration_ms: 35.596863
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7090725Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7091334Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7092178Z # Subtest: hook path boundary and model approvals cannot authorize dangerous calls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7093279Z ok 3 - hook path boundary and model approvals cannot authorize dangerous calls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7093961Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7094383Z   duration_ms: 5.493845
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7095643Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7105990Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7106927Z # Subtest: full persistent hook state fails closed for new identities without growing files
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7133213Z ok 4 - full persistent hook state fails closed for new identities without growing files
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7138024Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7138621Z   duration_ms: 45.401105
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7144746Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7145267Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7146196Z # Subtest: quarantine writer contention leaves persistent fail-closed marker rather than losing signal
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7147449Z ok 5 - quarantine writer contention leaves persistent fail-closed marker rather than losing signal
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7148469Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7148934Z   duration_ms: 10.122821
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7156324Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7156835Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7157539Z # Subtest: new native session cannot bypass workspace-bound quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7158435Z ok 6 - new native session cannot bypass workspace-bound quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7159563Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7160013Z   duration_ms: 4.640986
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7160481Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7160905Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7161810Z # Subtest: native lab wrapper syntax and malformed input fail closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7162702Z ok 7 - native lab wrapper syntax and malformed input fail closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7163355Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7163810Z   duration_ms: 102.223747
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7164292Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7164694Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7165454Z # Subtest: native lab wrapper allows fixture read and rejects destructive command
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7166526Z ok 8 - native lab wrapper allows fixture read and rejects destructive command
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7167625Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7168062Z   duration_ms: 500.59321
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7168557Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7168950Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7526648Z # Subtest: claude preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7542958Z ok 9 - claude preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7543900Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7544397Z   duration_ms: 50.080539
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7544919Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7545377Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7546202Z # Subtest: cursor preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7547199Z ok 10 - cursor preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7547884Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7548443Z   duration_ms: 6.698833
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7548951Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7549376Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7549972Z # Subtest: cline preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7550885Z ok 11 - cline preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7551896Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7552322Z   duration_ms: 4.514085
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7552825Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7553531Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7554296Z # Subtest: codex preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7557700Z ok 12 - codex preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7558405Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7558846Z   duration_ms: 4.054599
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7559792Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7561361Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7562318Z # Subtest: custom preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7563320Z ok 13 - custom preview, nonoverwriting install and verified restore
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7563990Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7564414Z   duration_ms: 2.426911
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7564881Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7565295Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7566087Z # Subtest: preserves other server and private config and refuses overwriting later user edits
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7567382Z ok 14 - preserves other server and private config and refuses overwriting later user edits
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7568214Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7568670Z   duration_ms: 2.275297
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7569172Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7569612Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7570358Z # Subtest: corrupt and changed configuration cannot be overwritten
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7571470Z ok 15 - corrupt and changed configuration cannot be overwritten
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7572030Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7572370Z   duration_ms: 1.362938
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7572766Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7573112Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7573670Z # Subtest: redirected parent config does not write outside chosen project
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7574403Z ok 16 - redirected parent config does not write outside chosen project
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7574933Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7575277Z   duration_ms: 0.599457
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7575671Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7576023Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7576700Z # Subtest: empty existing JSON fails closed; empty TOML presence and private outside-Git backup preserved
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7577836Z ok 17 - empty existing JSON fails closed; empty TOML presence and private outside-Git backup preserved
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7579122Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7579518Z   duration_ms: 2.73705
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7579962Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7580358Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7581295Z # Subtest: Codex preserves valid TOML exactly and rejects corruption or quoted duplicate server
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7582494Z ok 18 - Codex preserves valid TOML exactly and rejects corruption or quoted duplicate server
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7583233Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7583680Z   duration_ms: 7.878346
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7584213Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7584658Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7585357Z # Subtest: malformed JSON and TOML errors never echo sensitive source lines
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7586352Z ok 19 - malformed JSON and TOML errors never echo sensitive source lines
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7587350Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7587785Z   duration_ms: 0.71322
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7588241Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7588661Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7589433Z # Subtest: AI console inline JavaScript parses independently of TypeScript build
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7590451Z ok 20 - AI console inline JavaScript parses independently of TypeScript build
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7591335Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7591793Z   duration_ms: 2.72087
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7592228Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7592636Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7593136Z # Subtest: AI native wire protocol and usage: ollama
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7593819Z ok 21 - AI native wire protocol and usage: ollama
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7594360Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7594755Z   duration_ms: 60.87154
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7595219Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7595633Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7596181Z # Subtest: AI native wire protocol and usage: openai
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7596971Z ok 22 - AI native wire protocol and usage: openai
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7597514Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7597945Z   duration_ms: 6.822582
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7598396Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7598805Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7622257Z # Subtest: AI native wire protocol and usage: openai-compatible
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7628674Z ok 23 - AI native wire protocol and usage: openai-compatible
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7629499Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7630054Z   duration_ms: 4.358546
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7630672Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7641388Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7642198Z # Subtest: AI native wire protocol and usage: anthropic
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7642944Z ok 24 - AI native wire protocol and usage: anthropic
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7643578Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7643960Z   duration_ms: 4.056315
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7644368Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7644768Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7645294Z # Subtest: AI native wire protocol and usage: gemini
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7646065Z ok 25 - AI native wire protocol and usage: gemini
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7646591Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7646990Z   duration_ms: 4.245134
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7647414Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7647802Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7648324Z # Subtest: AI cloud requires consent before any network operation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7649038Z ok 26 - AI cloud requires consent before any network operation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7649551Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7649896Z   duration_ms: 0.513958
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7650330Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7650728Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7651550Z # Subtest: AI evidence IDs are grounded by host-extracted original text
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7652374Z ok 27 - AI evidence IDs are grounded by host-extracted original text
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7652977Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7653381Z   duration_ms: 0.210817
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7653829Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7654236Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7654963Z # Subtest: AI CSV export neutralizes spreadsheet formulas and limits report size
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7655961Z ok 28 - AI CSV export neutralizes spreadsheet formulas and limits report size
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7656650Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7657079Z   duration_ms: 4.643051
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7657982Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7658398Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7659187Z # Subtest: AI input minimization redacts keys, email, phone, exact host secret and token
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7660291Z ok 29 - AI input minimization redacts keys, email, phone, exact host secret and token
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7660998Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7661606Z   duration_ms: 0.734593
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7662095Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7662517Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7663190Z # Subtest: AI evidence input has bounds and unique secret-free IDs
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7664038Z ok 30 - AI evidence input has bounds and unique secret-free IDs
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7664657Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7665083Z   duration_ms: 3.389173
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7665562Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7666251Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7666778Z # Subtest: AI rejects output: invalidJSON
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7667440Z ok 31 - AI rejects output: invalidJSON
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7667980Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7668412Z   duration_ms: 0.341511
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7668890Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7669299Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7674573Z # Subtest: AI rejects output: hallucinatedEvidence
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7675762Z ok 32 - AI rejects output: hallucinatedEvidence
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7676584Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7677027Z   duration_ms: 0.237539
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7677519Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7677955Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7678528Z # Subtest: AI rejects output: unknownQuote
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7679324Z ok 33 - AI rejects output: unknownQuote
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7679917Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7680364Z   duration_ms: 0.134928
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7680861Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7681537Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7682149Z # Subtest: AI rejects output: invalidConfidence
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7682872Z ok 34 - AI rejects output: invalidConfidence
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7683479Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7683977Z   duration_ms: 0.142119
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7684482Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7684935Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7685529Z # Subtest: AI rejects output: oversizedSummary
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7686239Z ok 35 - AI rejects output: oversizedSummary
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7686843Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7687281Z   duration_ms: 0.143029
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7687771Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7688227Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7688771Z # Subtest: AI rejects output: extraReset
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7689444Z ok 36 - AI rejects output: extraReset
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7690009Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7690448Z   duration_ms: 0.114591
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7690941Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7691578Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7692150Z # Subtest: AI rejects output: missingEvidence
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7692886Z ok 37 - AI rejects output: missingEvidence
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7693495Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7693937Z   duration_ms: 0.091678
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7694430Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7694879Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7695507Z # Subtest: AI known key is removed from model explanation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7696339Z ok 38 - AI known key is removed from model explanation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7696954Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7697410Z   duration_ms: 10.329467
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7697913Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7698364Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7699136Z # Subtest: AI model lookup cannot reflect the backend API key into the frontend
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7700196Z ok 39 - AI model lookup cannot reflect the backend API key into the frontend
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7700933Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7701539Z   duration_ms: 7.952259
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7702057Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7702516Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7703165Z # Subtest: AI malformed response is uncertain, not benign
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7703991Z ok 40 - AI malformed response is uncertain, not benign
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7704644Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7705085Z   duration_ms: 4.112822
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7705570Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7706025Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7707110Z # Subtest: AI timeout and caller cancellation abort outstanding requests
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7708044Z ok 41 - AI timeout and caller cancellation abort outstanding requests
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7708675Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7709176Z   duration_ms: 109.842899
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7709688Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7710079Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7710705Z # Subtest: AI retries only configured 429/503, no unbounded retries
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7711623Z ok 42 - AI retries only configured 429/503, no unbounded retries
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7712169Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7712564Z   duration_ms: 219.585578
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7713024Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7713446Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7714310Z # Subtest: AI refuses redirects, oversized responses and raw provider error bodies
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7715466Z ok 43 - AI refuses redirects, oversized responses and raw provider error bodies
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7716067Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7716471Z   duration_ms: 12.016121
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7716920Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7717306Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7718061Z # Subtest: AI endpoint policy rejects SSRF and unsafe parameter combinations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7719001Z ok 44 - AI endpoint policy rejects SSRF and unsafe parameter combinations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7719674Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7720121Z   duration_ms: 1.105136
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7720606Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7721054Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7721973Z # Subtest: AI public HTTPS private IP fails at DNS destination validation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7722908Z ok 45 - AI public HTTPS private IP fails at DNS destination validation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7723577Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7724008Z   duration_ms: 0.854326
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7724494Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7724959Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7725706Z # Subtest: AI benign answer and provider outage cannot reopen a quarantined guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7726719Z ok 46 - AI benign answer and provider outage cannot reopen a quarantined guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7727424Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7727881Z   duration_ms: 11.206055
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7728352Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7728753Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7729436Z # Subtest: AI offline demo is explicit and dangerous callback does not execute
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7730347Z ok 47 - AI offline demo is explicit and dangerous callback does not execute
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7731029Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7731640Z   duration_ms: 3.311786
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7732115Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7732552Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7733424Z # Subtest: AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7734652Z ok 48 - AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7735424Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7735877Z   duration_ms: 67.676274
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7736379Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:41.7736825Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.4888917Z # Subtest: audit log omits raw arguments and redacts canary and secret values
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.4918938Z ok 49 - audit log omits raw arguments and redacts canary and secret values
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.4962119Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.4992188Z   duration_ms: 7.415973
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5016406Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5043169Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5044107Z # Subtest: audit fields cannot inject terminal control sequences or forged log lines
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5045453Z ok 50 - audit fields cannot inject terminal control sequences or forged log lines
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5046268Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5046727Z   duration_ms: 1.341711
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5047667Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5048056Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5049126Z # Subtest: legacy event headers and CLI display values cannot inject terminal controls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5050132Z ok 51 - legacy event headers and CLI display values cannot inject terminal controls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5050732Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5051488Z   duration_ms: 0.314423
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5051865Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5052176Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5052709Z # Subtest: new audit logs are owner-readable on POSIX systems
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5053408Z ok 52 - new audit logs are owner-readable on POSIX systems
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5053883Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5054178Z   duration_ms: 0.965367
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5054522Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5054830Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5055322Z # Subtest: webhook receives the same sanitized event shape
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5056018Z ok 53 - webhook receives the same sanitized event shape
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5056466Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5056768Z   duration_ms: 44.150016
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5057120Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5057441Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5058430Z # Subtest: sendAlertTest reports event log success and webhook success without desktop notification
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5059585Z ok 54 - sendAlertTest reports event log success and webhook success without desktop notification
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5060289Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5060573Z   duration_ms: 18.003028
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5060931Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5063373Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5063911Z # Subtest: sendAlertTest reports webhook failures and does not throw
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5081813Z ok 55 - sendAlertTest reports webhook failures and does not throw
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5082488Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5082820Z   duration_ms: 4.938693
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5083217Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5083536Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5084078Z # Subtest: sendAlertTest sanitizes its webhook payload
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5084800Z ok 56 - sendAlertTest sanitizes its webhook payload
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5085297Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5085626Z   duration_ms: 4.665712
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5086037Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5086359Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5087035Z # Subtest: sendAlertTest reports an unconfigured webhook and event-log failure
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5088045Z ok 57 - sendAlertTest reports an unconfigured webhook and event-log failure
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5088659Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5088992Z   duration_ms: 1.033862
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5089371Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5089677Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5090340Z # Subtest: webhook delivery does not follow redirects to a second destination
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5098593Z ok 58 - webhook delivery does not follow redirects to a second destination
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5099367Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5099726Z   duration_ms: 17.488306
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5100711Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5101071Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5101869Z # Subtest: event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5102785Z ok 59 - event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5103380Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5103664Z   duration_ms: 33.588838
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5103982Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5104281Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5104949Z # Subtest: writeFileAtomically creates a file and replaces it without leaving temp files
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5105845Z ok 60 - writeFileAtomically creates a file and replaces it without leaving temp files
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5106417Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5106695Z   duration_ms: 5.037269
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5107013Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5107315Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5107947Z # Subtest: writeFileAtomically leaves the existing file when the destination is invalid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5108864Z ok 61 - writeFileAtomically leaves the existing file when the destination is invalid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5109401Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5109698Z   duration_ms: 2.555874
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5110049Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5110343Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5111001Z # Subtest: private Agent Canary files and directories use owner-only POSIX permissions
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5112143Z ok 62 - private Agent Canary files and directories use owner-only POSIX permissions
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5113014Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5113330Z   duration_ms: 2.536175
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5113681Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5113985Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5114506Z # Subtest: first run uses defaults without writing a config file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5115195Z ok 63 - first run uses defaults without writing a config file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5115664Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5115967Z   duration_ms: 0.527717
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5116298Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5116594Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5117287Z # Subtest: empty, truncated, malformed, and non-object config files fail closed without overwrite
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5118338Z ok 64 - empty, truncated, malformed, and non-object config files fail closed without overwrite
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5119117Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5119511Z   duration_ms: 2.048675
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5119894Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5120204Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5120798Z # Subtest: unreadable config path fails closed instead of returning defaults
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5122723Z ok 65 - unreadable config path fails closed instead of returning defaults
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5123317Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5123622Z   duration_ms: 0.396706
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5123977Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5124301Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5124998Z # Subtest: invalid known config fields are rejected while omitted fields receive defaults
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5130330Z ok 66 - invalid known config fields are rejected while omitted fields receive defaults
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5131474Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5131803Z   duration_ms: 0.969182
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5133160Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5133499Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5133962Z # Subtest: 1: SAFE session permits a normal tool call
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5136233Z ok 67 - 1: SAFE session permits a normal tool call
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5136742Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5137049Z   duration_ms: 2.049675
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5137393Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5138597Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5139183Z # Subtest: 2: decoy invocation synchronously quarantines its own session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5156315Z ok 68 - 2: decoy invocation synchronously quarantines its own session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5156957Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5157297Z   duration_ms: 6.101335
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5157701Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5158011Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5158550Z # Subtest: 3: a quarantined session blocks a dangerous real tool
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5159270Z ok 69 - 3: a quarantined session blocks a dangerous real tool
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5159803Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5160116Z   duration_ms: 0.874453
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5160461Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5160764Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5161341Z # Subtest: 4: a blocked callback is never executed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5161982Z ok 70 - 4: a blocked callback is never executed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5162404Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5162703Z   duration_ms: 0.757476
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5163054Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5163351Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5163919Z # Subtest: 5: exact quarantine allowlist permits a reviewed safe operation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5164727Z ok 71 - 5: exact quarantine allowlist permits a reviewed safe operation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5165243Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5165535Z   duration_ms: 0.407792
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5165882Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5166175Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5166820Z # Subtest: 6: a human acknowledgement is required before reset restores normal operation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5167756Z ok 72 - 6: a human acknowledgement is required before reset restores normal operation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5168350Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5168632Z   duration_ms: 0.889135
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5168975Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5169287Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5169818Z # Subtest: 7: one tripped session cannot quarantine another session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5170534Z ok 73 - 7: one tripped session cannot quarantine another session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5171494Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5171789Z   duration_ms: 3.04709
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5172244Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5172576Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5173124Z # Subtest: 8: alert delivery failure cannot re-open a quarantined session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5173942Z ok 74 - 8: alert delivery failure cannot re-open a quarantined session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5174830Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5175347Z   duration_ms: 4.539586
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5175788Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5176142Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5176802Z # Subtest: 9: no async race allows a post-decoy dangerous callback through
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5177674Z ok 75 - 9: no async race allows a post-decoy dangerous callback through
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5178293Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5178750Z   duration_ms: 3.1456
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5179521Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5179960Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5180596Z # Subtest: token detection trips before its token event is emitted
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5181616Z ok 76 - token detection trips before its token event is emitted
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5182232Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5182654Z   duration_ms: 5.648599
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5183159Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5183537Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5184229Z # Subtest: credential revoker receives no secret data and starts after quarantine before alerts
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5185399Z ok 77 - credential revoker receives no secret data and starts after quarantine before alerts
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5186143Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5186533Z   duration_ms: 0.776735
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5186995Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5187384Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5188025Z # Subtest: credential revoker failures do not re-open the circuit
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5192746Z ok 78 - credential revoker failures do not re-open the circuit
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5193936Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5194607Z   duration_ms: 0.749644
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5195377Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5196083Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5197101Z # Subtest: shared principal state quarantines a fresh session without affecting another identity
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5198690Z ok 79 - shared principal state quarantines a fresh session without affecting another identity
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5199701Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5200385Z   duration_ms: 0.570123
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5201012Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5201620Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5202628Z # Subtest: a new session for the same principal cannot race a synchronous decoy trip
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5203851Z ok 80 - a new session for the same principal cannot race a synchronous decoy trip
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5204728Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5205288Z   duration_ms: 2.536401
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5205852Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5206448Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5207284Z # Subtest: principalId requires an explicit shared state store
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5208285Z ok 81 - principalId requires an explicit shared state store
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5208970Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5209581Z   duration_ms: 0.203643
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5210128Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5210626Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5211667Z # Subtest: a shared-store read failure during a trip latches the session closed after recovery
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5212958Z ok 82 - a shared-store read failure during a trip latches the session closed after recovery
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5214026Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5214478Z   duration_ms: 0.431188
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5215075Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5215543Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5216405Z # Subtest: a blocked call during a shared-store outage remains blocked after recovery
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5217878Z ok 83 - a blocked call during a shared-store outage remains blocked after recovery
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5220467Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5220980Z   duration_ms: 0.515608
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5222042Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5222528Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5223350Z # Subtest: a shared store returning SAFE after a failed quarantine cannot override the local latch
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5225198Z ok 84 - a shared store returning SAFE after a failed quarantine cannot override the local latch
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5226031Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5226502Z   duration_ms: 0.625827
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5227060Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5227512Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5228436Z # Subtest: a corrupt token registry quarantines a guard instead of returning a clean inspection
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5229631Z ok 85 - a corrupt token registry quarantines a guard instead of returning a clean inspection
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5230449Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5230897Z   duration_ms: 1.014271
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5231717Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5232176Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5232800Z # Subtest: dashboard renders summary cards and timeline
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5233899Z ok 86 - dashboard renders summary cards and timeline
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5234544Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5234992Z   duration_ms: 1.161036
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5235821Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5236331Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5237069Z # Subtest: dashboard escapes attacker-controlled payloads (XSS)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5238132Z ok 87 - dashboard escapes attacker-controlled payloads (XSS)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5238859Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5239301Z   duration_ms: 0.163117
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5239750Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5240336Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5240949Z # Subtest: empty event log renders friendly empty state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5243689Z ok 88 - empty event log renders friendly empty state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5251822Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5252395Z   duration_ms: 0.103831
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5252946Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5253476Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5254124Z # Subtest: CEF export: header, severity, escaped extension
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5254980Z ok 89 - CEF export: header, severity, escaped extension
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5255574Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5256077Z   duration_ms: 0.540021
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5256505Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5256963Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5257575Z # Subtest: JSON export: newline-delimited, parses back
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5258373Z ok 90 - JSON export: newline-delimited, parses back
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5258930Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5259387Z   duration_ms: 0.17134
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5259902Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5260438Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5261439Z # Subtest: CSV export: header + quoted cells
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5262318Z ok 91 - CSV export: header + quoted cells
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5263079Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5263751Z   duration_ms: 0.247132
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5264328Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5265106Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5265832Z # Subtest: CSV export neutralizes spreadsheet formula cells from event fields
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5266954Z ok 92 - CSV export neutralizes spreadsheet formula cells from event fields
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5267642Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5268155Z   duration_ms: 0.189072
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5268795Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.5269274Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6112719Z # Subtest: payload suite sanity: unique ids, valid categories, decoy coverage
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6114229Z ok 93 - payload suite sanity: unique ids, valid categories, decoy coverage
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6162468Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6192274Z   duration_ms: 1.089538
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6222552Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6252630Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6352597Z # Subtest: isDecoyTool recognizes decoys and rejects normal names
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6382649Z ok 94 - isDecoyTool recognizes decoys and rejects normal names
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6442168Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6493664Z   duration_ms: 0.14023
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6532031Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6612151Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6643343Z # Subtest: resisting model scores 100
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6650250Z ok 95 - resisting model scores 100
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6704021Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6752280Z   duration_ms: 1.137942
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6782227Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6821872Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6824684Z # Subtest: tool-touching model scores 0 and every payload is flagged
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6825996Z ok 96 - tool-touching model scores 0 and every payload is flagged
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6826648Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6827162Z   duration_ms: 132.818528
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6827710Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6828120Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6828786Z # Subtest: token-leaking model is flagged as compromised
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6829719Z ok 97 - token-leaking model is flagged as compromised
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6830445Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6830894Z   duration_ms: 1.484158
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6841833Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6842655Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6843666Z # Subtest: provider failure fails closed instead of counting as resistance
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6845342Z ok 98 - provider failure fails closed instead of counting as resistance
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6846146Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6846647Z   duration_ms: 0.975595
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6847258Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6847786Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6848775Z # Subtest: eval rejects invalid turn limits instead of scoring skipped calls as resistance
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6850210Z ok 99 - eval rejects invalid turn limits instead of scoring skipped calls as resistance
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6851314Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6851825Z   duration_ms: 1.176119
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6852339Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.6852900Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8502845Z # Subtest: OpenAI-compatible provider refuses redirects to a second endpoint
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8562665Z ok 100 - OpenAI-compatible provider refuses redirects to a second endpoint
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8582203Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8622245Z   duration_ms: 77.203841
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8623258Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8655185Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8656989Z # Subtest: decoy handler is invoked during eval (audit trail)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8658333Z ok 101 - decoy handler is invoked during eval (audit trail)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8659339Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8671556Z   duration_ms: 179.312832
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8672469Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8673057Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8673880Z # Subtest: markdown report renders score and detail table
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8675096Z ok 102 - markdown report renders score and detail table
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8675821Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8676392Z   duration_ms: 0.859686
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8677002Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8677574Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8678376Z # Subtest: handleDecoyCall returns trace-tokened fake replies
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8679472Z ok 103 - handleDecoyCall returns trace-tokened fake replies
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8680214Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8680866Z   duration_ms: 4.157083
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8681702Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:42.8682326Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0172929Z # Subtest: OSEP identifier references resolve, including request_id
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0218930Z ok 104 - OSEP identifier references resolve, including request_id
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0280209Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0289790Z   duration_ms: 2.91679
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0290790Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0291633Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0292468Z # Subtest: OSEP strict field conformance: request_id-0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0293609Z ok 105 - OSEP strict field conformance: request_id-0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0294424Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0295058Z   duration_ms: 1.075832
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0295771Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0296363Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0297199Z # Subtest: OSEP strict field conformance: request_id-1
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0298312Z ok 106 - OSEP strict field conformance: request_id-1
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0299126Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0299721Z   duration_ms: 0.304938
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0300431Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0301237Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0302005Z # Subtest: OSEP strict field conformance: request_id-2
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0302894Z ok 107 - OSEP strict field conformance: request_id-2
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0304063Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0304715Z   duration_ms: 0.194854
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0305356Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0305929Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0306698Z # Subtest: OSEP strict field conformance: request_id-3
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0307569Z ok 108 - OSEP strict field conformance: request_id-3
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0308355Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0308961Z   duration_ms: 0.167441
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0309610Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0310167Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0310937Z # Subtest: OSEP strict field conformance: request_id-4
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0312087Z ok 109 - OSEP strict field conformance: request_id-4
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0312796Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0313417Z   duration_ms: 0.144327
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0314012Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0314881Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0315717Z # Subtest: OSEP strict field conformance: request_id-5
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0330829Z ok 110 - OSEP strict field conformance: request_id-5
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0332180Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0332798Z   duration_ms: 0.245266
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0333531Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0334141Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0334888Z # Subtest: OSEP strict field conformance: request_id-6
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0335921Z ok 111 - OSEP strict field conformance: request_id-6
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0336683Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0337329Z   duration_ms: 0.119383
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0337927Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0338536Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0339241Z # Subtest: OSEP strict field conformance: request_id-7
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0340137Z ok 112 - OSEP strict field conformance: request_id-7
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0340920Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0341676Z   duration_ms: 0.624953
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0342283Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0417124Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0433036Z # Subtest: OSEP strict field conformance: evidence_id-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0434257Z ok 113 - OSEP strict field conformance: evidence_id-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0435045Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0435823Z   duration_ms: 0.678989
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0436532Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0437125Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0437902Z # Subtest: OSEP strict field conformance: evidence_id-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0438953Z ok 114 - OSEP strict field conformance: evidence_id-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0439729Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0440330Z   duration_ms: 0.163054
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0440994Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0441797Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0442736Z # Subtest: OSEP strict field conformance: evidence_id-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0443842Z ok 115 - OSEP strict field conformance: evidence_id-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0444720Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0445320Z   duration_ms: 0.093881
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0445992Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0446642Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0447478Z # Subtest: OSEP strict field conformance: evidence_id-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0448626Z ok 116 - OSEP strict field conformance: evidence_id-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0449412Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0450054Z   duration_ms: 0.355358
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0450731Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0451464Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0452271Z # Subtest: OSEP strict field conformance: evidence_id-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0453205Z ok 117 - OSEP strict field conformance: evidence_id-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0453961Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0454630Z   duration_ms: 0.146661
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0455229Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0455849Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0456667Z # Subtest: OSEP strict field conformance: request_digest-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0457754Z ok 118 - OSEP strict field conformance: request_digest-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0458490Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0459179Z   duration_ms: 0.162872
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0459787Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0460361Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0461418Z # Subtest: OSEP strict field conformance: request_digest-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0462474Z ok 119 - OSEP strict field conformance: request_digest-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0463632Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0464188Z   duration_ms: 0.100581
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0464774Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0465427Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0466198Z # Subtest: OSEP strict field conformance: request_digest-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0467179Z ok 120 - OSEP strict field conformance: request_digest-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0467944Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0468544Z   duration_ms: 0.093142
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0469142Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0469698Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0470522Z # Subtest: OSEP strict field conformance: request_digest-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0471679Z ok 121 - OSEP strict field conformance: request_digest-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0472536Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0473070Z   duration_ms: 0.121217
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0473640Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0474546Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0475310Z # Subtest: OSEP strict field conformance: request_digest-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0476413Z ok 122 - OSEP strict field conformance: request_digest-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0477193Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0477741Z   duration_ms: 0.092008
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0478413Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0478927Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0479707Z # Subtest: OSEP strict field conformance: event_digest-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0480704Z ok 123 - OSEP strict field conformance: event_digest-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0481753Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0482341Z   duration_ms: 0.100435
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0482992Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0483573Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0484387Z # Subtest: OSEP strict field conformance: event_digest-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0485505Z ok 124 - OSEP strict field conformance: event_digest-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0486351Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0486941Z   duration_ms: 0.085211
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0487627Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0488216Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0488934Z # Subtest: OSEP strict field conformance: event_digest-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0489857Z ok 125 - OSEP strict field conformance: event_digest-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0490595Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0491339Z   duration_ms: 0.092933
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0491983Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0492553Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0501529Z # Subtest: OSEP strict field conformance: event_digest-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0502746Z ok 126 - OSEP strict field conformance: event_digest-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0503512Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0504197Z   duration_ms: 0.091215
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0504856Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0505437Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0506209Z # Subtest: OSEP strict field conformance: event_digest-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0507036Z ok 127 - OSEP strict field conformance: event_digest-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0507759Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0508279Z   duration_ms: 0.081739
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0508863Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0509404Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0510221Z # Subtest: OSEP strict field conformance: approval_reference-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0511832Z ok 128 - OSEP strict field conformance: approval_reference-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0512860Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0513449Z   duration_ms: 0.089263
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0514030Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0514651Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0515599Z # Subtest: OSEP strict field conformance: approval_reference-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0516801Z ok 129 - OSEP strict field conformance: approval_reference-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0517622Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0518151Z   duration_ms: 0.085212
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0518743Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0519273Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0520256Z # Subtest: OSEP strict field conformance: approval_reference-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0522017Z ok 130 - OSEP strict field conformance: approval_reference-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0523537Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0524382Z   duration_ms: 0.083795
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0525058Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0525796Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0526620Z # Subtest: OSEP strict field conformance: approval_reference-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0528859Z ok 131 - OSEP strict field conformance: approval_reference-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0529882Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0530577Z   duration_ms: 0.092783
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0531648Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0532197Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0533025Z # Subtest: OSEP strict field conformance: approval_reference-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0534000Z ok 132 - OSEP strict field conformance: approval_reference-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0534785Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0535397Z   duration_ms: 0.085841
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0536738Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0537347Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0538230Z # Subtest: OSEP strict field conformance: previous_event_digest-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0539411Z ok 133 - OSEP strict field conformance: previous_event_digest-array
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0540492Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0541014Z   duration_ms: 0.093486
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0571967Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0621915Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0650011Z # Subtest: OSEP strict field conformance: previous_event_digest-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0654091Z ok 134 - OSEP strict field conformance: previous_event_digest-object
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0654979Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0655687Z   duration_ms: 0.084545
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0656265Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0656896Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0657749Z # Subtest: OSEP strict field conformance: previous_event_digest-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0658826Z ok 135 - OSEP strict field conformance: previous_event_digest-boolean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0659582Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0660317Z   duration_ms: 0.080922
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0661332Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0661859Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0662678Z # Subtest: OSEP strict field conformance: previous_event_digest-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0663737Z ok 136 - OSEP strict field conformance: previous_event_digest-valid
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0664474Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0665092Z   duration_ms: 0.088551
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0665636Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0666395Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0667229Z # Subtest: OSEP strict field conformance: previous_event_digest-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0668295Z ok 137 - OSEP strict field conformance: previous_event_digest-null
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0669051Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0675035Z   duration_ms: 0.086484
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0675703Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0676254Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0677021Z # Subtest: OSEP strict field conformance: timestamp-0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0677857Z ok 138 - OSEP strict field conformance: timestamp-0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0678580Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0679106Z   duration_ms: 0.088048
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0679636Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0680270Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0680933Z # Subtest: OSEP strict field conformance: timestamp-1
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0681985Z ok 139 - OSEP strict field conformance: timestamp-1
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0682696Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0683263Z   duration_ms: 0.115526
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0683854Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0684418Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0685157Z # Subtest: OSEP strict field conformance: timestamp-2
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0685990Z ok 140 - OSEP strict field conformance: timestamp-2
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0686739Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0687243Z   duration_ms: 0.097834
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0687856Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0688374Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0689050Z # Subtest: OSEP strict field conformance: timestamp-3
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0689925Z ok 141 - OSEP strict field conformance: timestamp-3
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0690568Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0691220Z   duration_ms: 0.088821
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0691832Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0692447Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0693282Z # Subtest: strict AJV2020 and enabled formats match all runtime field vectors
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0694451Z ok 142 - strict AJV2020 and enabled formats match all runtime field vectors
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0695271Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0695833Z   duration_ms: 94.348985
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0696498Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0697346Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0698217Z # Subtest: historical missing reference affects consumers, not gateway authorization
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0699552Z ok 143 - historical missing reference affects consumers, not gateway authorization
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0700409Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0701017Z   duration_ms: 125.167099
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0701982Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0702664Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0703680Z # Subtest: actual Recorder intent/outcome export passes strict standard schema and chain
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0704879Z ok 144 - actual Recorder intent/outcome export passes strict standard schema and chain
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0705783Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0706381Z   duration_ms: 28.258446
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0706979Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:43.0707767Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.1990269Z # Subtest: memory store boundary: separate stores do not preserve quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2063772Z ok 145 - memory store boundary: separate stores do not preserve quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2079401Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2084772Z   duration_ms: 1.24725
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2085854Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2086419Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2087664Z # Subtest: file store requires explicit bootstrap and never overwrites existing state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2089149Z ok 146 - file store requires explicit bootstrap and never overwrites existing state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2090100Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2090863Z   duration_ms: 25.260953
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2101866Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2102902Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2104072Z # Subtest: file store survives process restart and same principal gets quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2106070Z ok 147 - file store survives process restart and same principal gets quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2107165Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2107694Z   duration_ms: 649.544808
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2119546Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2119968Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2120801Z # Subtest: corruption empty truncation and schema errors reject without rewriting
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2122001Z ok 148 - corruption empty truncation and schema errors reject without rewriting
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2122763Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2123250Z   duration_ms: 8.669774
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2123688Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2124134Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2124886Z # Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2126077Z ok 149 - missing state after bootstrap latches guard fail-closed without regeneration
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2126783Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2127243Z   duration_ms: 0.998764
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2127703Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2128143Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2129029Z # Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2130181Z ok 150 - concurrent store instances preserve different scopes and enforce one quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2130923Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2162068Z   duration_ms: 37.763143
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2162550Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2163039Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2163762Z # Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2164850Z ok 151 - busy lock, excessive file and scope capacity never permit sensitive callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2165513Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2165934Z   duration_ms: 28.065328
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2166399Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2166859Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2167533Z # Subtest: symlink/junction redirected state and parent are rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2168487Z ok 152 - symlink/junction redirected state and parent are rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2169105Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2169504Z   duration_ms: 0.834127
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2170050Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2170543Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2194796Z # Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2196585Z ok 153 - trusted reset removes only one scope and invalid scopes are redacted errors
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2197277Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2197692Z   duration_ms: 66.675826
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2198305Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2198723Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2199420Z # Subtest: active writer lock causes guard reads to latch fail-closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2200369Z ok 154 - active writer lock causes guard reads to latch fail-closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2200995Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2201670Z   duration_ms: 3.313015
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2202179Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2202636Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2203361Z # Subtest: prototype-looking scopes are data and cannot return inherited state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2204591Z ok 155 - prototype-looking scopes are data and cannot return inherited state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2205569Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2205971Z   duration_ms: 121.541653
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2206496Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2206932Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2207619Z # Subtest: string bootstrap flags cannot recreate missing state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2208444Z ok 156 - string bootstrap flags cannot recreate missing state
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2209093Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2209507Z   duration_ms: 0.541761
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2209948Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:44.2210449Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8786642Z # Subtest: four concurrent processes preserve every quarantine without lost writes
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8788769Z not ok 157 - four concurrent processes preserve every quarantine without lost writes
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8789772Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8791061Z   duration_ms: 2472.066021
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8791999Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8792994Z   location: '/home/runner/work/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/test/file-state-store.test.ts:1:5983'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8794344Z   failureType: 'testCodeFailure'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8795928Z   error: |-
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8796879Z     file:///home/runner/work/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/[eval1]:1
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8800475Z     const sdk=await import("file:///home/runner/work/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/src/sdk.ts");const store=sdk.createFileContainmentStateStore("/tmp/canary-file-store-5xshdB/state.json");for(let i=0;i<12;i++){let done=false;for(let retry=0;retry<500;retry++){try{store.quarantine("worker:3:"+i);done=true;break;}catch(e){if(e.message!=="STATE_STORE_BUSY")throw e;await new Promise(r=>setTimeout(r,2));}}if(!done)throw Error("RETRY_LIMIT");}
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8804461Z                                                                                                                                                                                                                                                                                                                                                                                                                                                          ^
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8805889Z     
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8812393Z     Error: RETRY_LIMIT
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8813910Z         at file:///home/runner/work/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/[eval1]:1:438
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8815183Z     
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8815840Z     Node.js v22.23.3
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8816590Z     
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8817235Z   code: 'ERR_TEST_FAILURE'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8818008Z   stack: |-
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8819088Z     file:///home/runner/work/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/[eval1]:1:438
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8820759Z     ChildProcess.<anonymous> (/home/runner/work/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/test/file-state-store.test.ts:22:233)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8822570Z     ChildProcess.emit (node:events:519:28)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8823475Z     maybeClose (node:internal/child_process:1101:16)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8824567Z     ChildProcess._handle.onexit (node:internal/child_process:304:5)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8825455Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8827205Z # Subtest: Windows transient rename sharing failures retry without losing quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8828567Z ok 158 - Windows transient rename sharing failures retry without losing quarantine # SKIP
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8829577Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8830211Z   duration_ms: 6.994558
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8830859Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8831622Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8832631Z # Subtest: persistent rename failure never replaces the existing state or leaks details
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8833989Z ok 159 - persistent rename failure never replaces the existing state or leaks details
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8834855Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8835357Z   duration_ms: 230.100967
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8836539Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8837101Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8837908Z # Subtest: Windows lock EPERM with an existing writer is BUSY, not a data reset
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8839521Z ok 160 - Windows lock EPERM with an existing writer is BUSY, not a data reset # SKIP
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8840271Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8840786Z   duration_ms: 0.136067
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8841492Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8842028Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8842918Z # Subtest: Windows writer lock removed between EPERM and lstat remains fail-closed BUSY
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8844124Z ok 161 - Windows writer lock removed between EPERM and lstat remains fail-closed BUSY # SKIP
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8862555Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8913350Z   duration_ms: 0.121549
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.8972387Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:46.9001867Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6044643Z # Subtest: directory enumeration errors are surfaced so a scan cannot report a false clean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6046356Z ok 162 - directory enumeration errors are surfaced so a scan cannot report a false clean
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6047543Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6048221Z   duration_ms: 2.306503
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6048817Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6049398Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6050244Z # Subtest: recursive walking does not follow a symlink supplied as its root
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6051633Z ok 163 - recursive walking does not follow a symlink supplied as its root
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6052529Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6053161Z   duration_ms: 1.550412
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6053828Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6054646Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6055247Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6056364Z # Subtest: detected replacement after audit must not modify the previously held inode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6057576Z ok 164 - detected replacement after audit must not modify the previously held inode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6058504Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6059122Z   duration_ms: 11.241492
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6059732Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6060269Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6061337Z # Subtest: sensitive provenance expiry must not silently re-authorize egress
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6062548Z ok 165 - sensitive provenance expiry must not silently re-authorize egress
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6063345Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6064003Z   duration_ms: 11.448695
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6064621Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6065215Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6065769Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6066680Z # Subtest: two gateways sharing one Guard must not race source collection and egress
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6067587Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6068496Z ok 166 - two gateways sharing one Guard must not race source collection and egress
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6069323Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6069965Z   duration_ms: 12.506971
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6070527Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6071235Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6071828Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6072719Z # Subtest: concurrent duplicate approval executes a real callback exactly once
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6073579Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6074501Z ok 167 - concurrent duplicate approval executes a real callback exactly once
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6075256Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6075793Z   duration_ms: 20.099001
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6076906Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6077445Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6078169Z # Subtest: approval at the exact expiry boundary cannot execute
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6079156Z ok 168 - approval at the exact expiry boundary cannot execute
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6079867Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6080493Z   duration_ms: 10.172007
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6081019Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6082536Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6083465Z # Subtest: resource replacement in the check/use window cannot write the replacement inode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6084733Z ok 169 - resource replacement in the check/use window cannot write the replacement inode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6085608Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6086230Z   duration_ms: 10.761316
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6086857Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6087723Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6088403Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6089496Z # Subtest: an executor ignoring cancellation may cause a late side effect, which is not verified safe
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6091255Z ok 170 - an executor ignoring cancellation may cause a late side effect, which is not verified safe
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6092294Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6092872Z   duration_ms: 34.745366
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6093588Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6094140Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6094743Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6095748Z # Subtest: AI review timeout preserves pending approval and performs no callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6096705Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6097653Z ok 171 - AI review timeout preserves pending approval and performs no callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6098518Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6099106Z   duration_ms: 10.573013
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6099729Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6100585Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6101298Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6102136Z # Subtest: benign AI cannot self-approve or execute after quarantine during review
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6103405Z # FIXTURE_SINK_REQUESTS 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6104475Z ok 172 - benign AI cannot self-approve or execute after quarantine during review
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6105544Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6106139Z   duration_ms: 3.949637
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6106780Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6107529Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6108533Z # Subtest: MCP unknown and explicitly destructive capabilities cannot be approved by arguments
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6110093Z ok 173 - MCP unknown and explicitly destructive capabilities cannot be approved by arguments
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6111073Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6111754Z   duration_ms: 3.043175
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6112340Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6112914Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6113794Z # Subtest: HTTPS origin permission does not bypass transport loopback rejection
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6114962Z ok 174 - HTTPS origin permission does not bypass transport loopback rejection
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6115860Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6116439Z   duration_ms: 4.00081
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6117099Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6117601Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6118503Z # Subtest: gateway uses real held handles for authorized read and write and verifies bytes
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6119872Z ok 175 - gateway uses real held handles for authorized read and write and verifies bytes
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6120782Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6121699Z   duration_ms: 33.413455
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6122383Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6122959Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6123931Z # Subtest: first unauthorized credential read rejected before real content is returned
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6125297Z ok 176 - first unauthorized credential read rejected before real content is returned
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6126213Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6126758Z   duration_ms: 4.484869
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6127446Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6127998Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6128891Z # Subtest: path traversal and forged grant cannot write outside capability
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6129870Z ok 177 - path traversal and forged grant cannot write outside capability
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6130876Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6131716Z   duration_ms: 1.335914
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6132309Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6132868Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6133784Z # Subtest: replacement after gateway initialization never writes replacement inode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6135002Z ok 178 - replacement after gateway initialization never writes replacement inode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6135838Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6136403Z   duration_ms: 1.305729
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6137038Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6137577Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6138511Z # Subtest: symlink or Windows junction resource escape rejected at registration
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6139642Z ok 179 - symlink or Windows junction resource escape rejected at registration
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6140664Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6141321Z   duration_ms: 0.750135
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6142287Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6142915Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6143887Z # Subtest: quarantine prevents actual file write and queued command process
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6145075Z ok 180 - quarantine prevents actual file write and queued command process
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6145971Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6146528Z   duration_ms: 2.786899
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6147160Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6147733Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6148593Z # Subtest: fixed argv process really executes normal task; arbitrary shell does not run
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6149735Z ok 181 - fixed argv process really executes normal task; arbitrary shell does not run
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6150645Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6151300Z   duration_ms: 54.577957
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6151873Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6152451Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6153142Z # Subtest: denied network request has zero actual loopback HTTP side effects
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6154191Z ok 182 - denied network request has zero actual loopback HTTP side effects
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6155733Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6162716Z   duration_ms: 8.671811
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6163419Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6163949Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6164891Z # Subtest: host-only approval consumes once and model has no approve or reset entry point
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6166197Z ok 183 - host-only approval consumes once and model has no approve or reset entry point
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6167088Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6167632Z   duration_ms: 12.055458
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6168291Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6168859Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6169530Z # Subtest: approval expires with no actual callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6170479Z ok 184 - approval expires with no actual callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6171352Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6171838Z   duration_ms: 17.199765
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6172482Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6172907Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6173589Z # Subtest: AI benign cannot grant permission or execute callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6174502Z ok 185 - AI benign cannot grant permission or execute callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6175146Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6175634Z   duration_ms: 4.411967
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6176086Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6176472Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6177146Z # Subtest: AI timeout cannot grant permission or execute callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6178083Z ok 186 - AI timeout cannot grant permission or execute callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6178729Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6179150Z   duration_ms: 6.209016
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6179682Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6180112Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6180794Z # Subtest: AI invalid cannot grant permission or execute callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6181821Z ok 187 - AI invalid cannot grant permission or execute callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6182437Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6182947Z   duration_ms: 0.958178
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6183487Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6183886Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6184664Z # Subtest: AI suspicious only tightens a decision and guard remains authoritative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6185744Z ok 188 - AI suspicious only tightens a decision and guard remains authoritative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6186693Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6187146Z   duration_ms: 1.40171
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6187665Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6188103Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6188790Z # Subtest: pre-cancelled call and full evidence cannot change actual file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6189837Z ok 189 - pre-cancelled call and full evidence cannot change actual file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6190484Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6190914Z   duration_ms: 0.957603
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6191521Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6191954Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6192813Z # Subtest: serialized concurrent writes leave a complete value and continuous evidence chain
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6193968Z ok 190 - serialized concurrent writes leave a complete value and continuous evidence chain
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6194937Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6195348Z   duration_ms: 613.010584
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6195824Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6196362Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6197299Z # Subtest: evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6198761Z ok 191 - evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6199663Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6200115Z   duration_ms: 4.562912
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6200582Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6201012Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6201999Z # Subtest: invalid suspicious AI output stays pending instead of being accepted as a valid review
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6203188Z ok 192 - invalid suspicious AI output stays pending instead of being accepted as a valid review
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6204064Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6204471Z   duration_ms: 1.702739
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6204902Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6205418Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6206239Z # Subtest: sensitive MCP output blocks later registered network capability before its callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6207412Z ok 193 - sensitive MCP output blocks later registered network capability before its callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6208202Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6208622Z   duration_ms: 14.076418
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6209096Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6209554Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6210409Z # Subtest: deadline aborts registered callback, quarantines and refuses queued real file effect
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6211831Z ok 194 - deadline aborts registered callback, quarantines and refuses queued real file effect
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6212671Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6213081Z   duration_ms: 16.092267
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6213541Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6213988Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6214778Z # Subtest: replacing gateway for same Guard cannot erase prior sensitive tool history
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6215853Z ok 195 - replacing gateway for same Guard cannot erase prior sensitive tool history
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6216585Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6217045Z   duration_ms: 4.571316
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6217516Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6217933Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6218685Z # Subtest: five isolated decoy kinds have unique IDs and deployed is not touched
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6219682Z ok 196 - five isolated decoy kinds have unique IDs and deployed is not touched
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6220337Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6220778Z   duration_ms: 15.358017
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6221307Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6221767Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6222608Z # Subtest: database, internal API and MCP interaction is virtual and records only actual calls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6223765Z ok 197 - database, internal API and MCP interaction is virtual and records only actual calls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6224480Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6224915Z   duration_ms: 2.245471
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6225401Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6225810Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6226623Z # Subtest: adaptive metadata produces bounded selection without invented efficacy
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6227702Z ok 198 - adaptive metadata produces bounded selection without invented efficacy
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6228592Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6229090Z   duration_ms: 1.502794
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6229524Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6229965Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6230608Z # Subtest: real honeypot file read quarantines before next actual write
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6231762Z ok 199 - real honeypot file read quarantines before next actual write
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6232410Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6232802Z   duration_ms: 14.853132
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6233326Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6233718Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6235121Z # Subtest: bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6236442Z ok 200 - bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6237447Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6237884Z   duration_ms: 1.26618
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6238411Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6238866Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6239488Z # Subtest: dataflow bounded eviction, TTL and session separation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6240435Z ok 201 - dataflow bounded eviction, TTL and session separation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6241050Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6241626Z   duration_ms: 27.606977
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6242246Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6242651Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6243343Z # Subtest: repeated installs preserve each previous MCP config backup
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6244295Z ok 202 - repeated installs preserve each previous MCP config backup
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6244962Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6245389Z   duration_ms: 396.422552
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6245881Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6246336Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6246974Z # Subtest: install creates a Claude config in an isolated home
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6247857Z ok 203 - install creates a Claude config in an isolated home
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6248459Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6248855Z   duration_ms: 145.936653
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6249399Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6249840Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6250472Z # Subtest: install backs up and preserves unrelated MCP servers
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6251529Z ok 204 - install backs up and preserves unrelated MCP servers
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6252180Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6252595Z   duration_ms: 174.601099
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6253068Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6253524Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6254206Z # Subtest: uninstall removes only agent-canary and leaves other servers intact
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6255176Z ok 205 - uninstall removes only agent-canary and leaves other servers intact
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6256160Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6256536Z   duration_ms: 177.755752
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6257021Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6257451Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6258126Z # Subtest: invalid JSON returns a clear error instead of being overwritten
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6259059Z ok 206 - invalid JSON returns a clear error instead of being overwritten
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6259730Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6260128Z   duration_ms: 1.387751
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6273301Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6274265Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6274967Z # Subtest: entry commands cover Windows and Unix MCP process rules
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6275816Z ok 207 - entry commands cover Windows and Unix MCP process rules
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6276462Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6276850Z   duration_ms: 0.184883
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6277331Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:48.6277722Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9508075Z # Subtest: activate with valid gateway signature → licensed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9522192Z ok 208 - activate with valid gateway signature → licensed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9522961Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9523332Z   duration_ms: 243.601642
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9523707Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9524018Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9524503Z # Subtest: license signed by a wrong key is rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9525026Z ok 209 - license signed by a wrong key is rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9525405Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9525766Z   duration_ms: 23.769848
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9526529Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9526843Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9527352Z # Subtest: license bound to a different machine is rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9527878Z ok 210 - license bound to a different machine is rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9528305Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9528606Z   duration_ms: 6.877579
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9529032Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9529327Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9529776Z # Subtest: expired license token is rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9530324Z ok 211 - expired license token is rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9530753Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9531370Z   duration_ms: 5.190086
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9531802Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9532186Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9532665Z # Subtest: handle without subscription is refused
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9533403Z ok 212 - handle without subscription is refused
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9533900Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9534256Z   duration_ms: 3.929937
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9534803Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9535168Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9535587Z # Subtest: tampered cache file is rejected on load
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9536234Z ok 213 - tampered cache file is rejected on load
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9536713Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9537118Z   duration_ms: 463.244518
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9537561Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9537953Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9538432Z # Subtest: clock rollback makes the cache untrusted
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9539032Z ok 214 - clock rollback makes the cache untrusted
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9539627Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9540015Z   duration_ms: 369.173367
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9540427Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9540858Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9541770Z # Subtest: offline grace: unreachable gateway + valid cache still activates
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9542440Z ok 215 - offline grace: unreachable gateway + valid cache still activates
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9548772Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9549640Z   duration_ms: 180.612293
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9550074Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9550459Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9719155Z # Subtest: public MCP and Glama metadata stays aligned with the free V1 release
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9720304Z ok 216 - public MCP and Glama metadata stays aligned with the free V1 release
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9722240Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9722674Z   duration_ms: 1.656647
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9723180Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9723630Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9724393Z # Subtest: decoy tool definitions disclose inert behavior and conservative MCP annotations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9742637Z ok 217 - decoy tool definitions disclose inert behavior and conservative MCP annotations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9772195Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9775210Z   duration_ms: 0.412596
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9776065Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9778453Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9802991Z # Subtest: server instructions disclose the containment boundary without implying real decoy actions
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9804730Z ok 218 - server instructions disclose the containment boundary without implying real decoy actions
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9806032Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9806619Z   duration_ms: 0.350507
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9807367Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9807960Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9809070Z # Subtest: stdio MCP server lists inert decoys and answers calls without writing to stdout out of protocol
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9810607Z ok 219 - stdio MCP server lists inert decoys and answers calls without writing to stdout out of protocol
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9811744Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9812320Z   duration_ms: 1113.191404
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9812994Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9813593Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9814309Z # Subtest: build emits SDK and transitive declarations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9815298Z ok 220 - build emits SDK and transitive declarations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9816009Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9816667Z   duration_ms: 0.837191
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9817274Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9817818Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9819115Z # Subtest: SDK conditional export publishes the matching types first
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9820247Z ok 221 - SDK conditional export publishes the matching types first
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9821044Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9821898Z   duration_ms: 0.736445
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9822487Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9823082Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9824085Z # Subtest: Community builder retains public declarations and a typed consumer gate
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9825348Z ok 222 - Community builder retains public declarations and a typed consumer gate
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9826214Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9826826Z   duration_ms: 0.286939
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9827465Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9828002Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9828905Z # Subtest: free CLI reports a product version instead of an unknown option
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9830171Z ok 223 - free CLI reports a product version instead of an unknown option
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9831072Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9831737Z   duration_ms: 259.754778
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9832332Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9832955Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9833825Z # Subtest: free CLI distinguishes compatibility package and security baseline
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9835048Z ok 224 - free CLI distinguishes compatibility package and security baseline
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9835917Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9836473Z   duration_ms: 253.875662
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9837085Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9837648Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9838675Z # Subtest: hook import failure emits explicit denial when Node and the hook entry can start
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9839993Z ok 225 - hook import failure emits explicit denial when Node and the hook entry can start
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9840995Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9841654Z   duration_ms: 42.544508
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9842317Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9842848Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9843860Z # Subtest: multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9845289Z ok 226 - multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9846219Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9846799Z   duration_ms: 6.430462
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9847444Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9847966Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9848840Z # Subtest: OBSERVE permits public read and reviewed shell/HTTPS GET
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9849900Z ok 227 - OBSERVE permits public read and reviewed shell/HTTPS GET
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9850703Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9851401Z   duration_ms: 1.936944
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9852028Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9852573Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9853415Z # Subtest: OBSERVE treats explicit secret shell by declared mode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9854412Z ok 228 - OBSERVE treats explicit secret shell by declared mode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9855153Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9855747Z   duration_ms: 0.730665
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9856361Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9856914Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9857923Z # Subtest: OBSERVE never overrides quarantined Guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9858770Z ok 229 - OBSERVE never overrides quarantined Guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9859503Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9860106Z   duration_ms: 1.075348
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9860688Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9861399Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9862245Z # Subtest: BALANCED permits public read and reviewed shell/HTTPS GET
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9863215Z ok 230 - BALANCED permits public read and reviewed shell/HTTPS GET
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9864007Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9864741Z   duration_ms: 1.113432
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9865307Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9865903Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9866688Z # Subtest: BALANCED treats explicit secret shell by declared mode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9867650Z ok 231 - BALANCED treats explicit secret shell by declared mode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9868467Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9868988Z   duration_ms: 0.447712
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9869577Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9870463Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9871422Z # Subtest: BALANCED never overrides quarantined Guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9872242Z ok 232 - BALANCED never overrides quarantined Guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9872985Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9873759Z   duration_ms: 0.485725
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9874230Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9874640Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9875350Z # Subtest: STRICT permits public read and reviewed shell/HTTPS GET
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9876213Z ok 233 - STRICT permits public read and reviewed shell/HTTPS GET
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9876877Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9877677Z   duration_ms: 0.977971
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9878112Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9878563Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9879258Z # Subtest: STRICT treats explicit secret shell by declared mode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9880274Z ok 234 - STRICT treats explicit secret shell by declared mode
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9880862Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9881457Z   duration_ms: 0.61561
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9881922Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9882380Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9882940Z # Subtest: STRICT never overrides quarantined Guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9883756Z ok 235 - STRICT never overrides quarantined Guard
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9884333Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9884789Z   duration_ms: 0.721186
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9885260Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9885720Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9886428Z # Subtest: sensitive path is parameter-based even under an innocuous tool alias
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9887505Z ok 236 - sensitive path is parameter-based even under an innocuous tool alias
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9888219Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9888607Z   duration_ms: 0.536491
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9889133Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9889527Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9890307Z # Subtest: one-shot host approval binds immutable call; model approval fields cannot grant
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9891553Z ok 237 - one-shot host approval binds immutable call; model approval fields cannot grant
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9892304Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9892740Z   duration_ms: 0.865841
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9893183Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9893785Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9894566Z # Subtest: approval expired, foreign, missing operator and quarantined requests are rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9895700Z ok 238 - approval expired, foreign, missing operator and quarantined requests are rejected
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9896498Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9896875Z   duration_ms: 9.014155
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9897354Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9897773Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9898542Z # Subtest: approved secret read taints later network egress and cannot be approved through
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9899601Z ok 239 - approved secret read taints later network egress and cannot be approved through
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9900346Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9900789Z   duration_ms: 1.136626
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9902983Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9904216Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9904836Z # Subtest: pending network request is rechecked after another secret read
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9905813Z ok 240 - pending network request is rechecked after another secret read
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9906462Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9907632Z   duration_ms: 1.090512
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9908085Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9908520Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9909305Z # Subtest: replacing a policy router or mode cannot erase same-session sensitive history
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9910380Z ok 241 - replacing a policy router or mode cannot erase same-session sensitive history
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9911390Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9911845Z   duration_ms: 1.030689
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9912290Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9912736Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9913252Z # Subtest: concurrent one-shot approvals execute once
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9913978Z ok 242 - concurrent one-shot approvals execute once
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9914531Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9915011Z   duration_ms: 0.69425
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9915443Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9915809Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9916842Z # Subtest: a decoy quarantines immediately while another callback is in flight
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9917797Z ok 243 - a decoy quarantines immediately while another callback is in flight
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9918433Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9918837Z   duration_ms: 182.026542
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9919252Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9919664Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9920456Z # Subtest: malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9921849Z ok 244 - malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9922633Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9923089Z   duration_ms: 1.585666
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9923526Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9923929Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9924889Z # Subtest: destructive and write approvals keep ordinary workflow possible
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9925812Z ok 245 - destructive and write approvals keep ordinary workflow possible
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9926485Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9926956Z   duration_ms: 1.937277
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9927400Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9927806Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9928469Z # Subtest: audit errors do not execute callbacks; audit omits raw arguments
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9929493Z ok 246 - audit errors do not execute callbacks; audit omits raw arguments
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9930168Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9930582Z   duration_ms: 1.372379
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9931719Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9932124Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9932950Z # Subtest: accessors, cycles and oversized JSON cannot control policy
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9933870Z ok 247 - accessors, cycles and oversized JSON cannot control policy
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9934561Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9934970Z   duration_ms: 0.81288
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9935493Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9935929Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9936647Z # Subtest: queue capacity is bounded while decoys retain immediate priority
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9937689Z ok 248 - queue capacity is bounded while decoys retain immediate priority
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9938366Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9938794Z   duration_ms: 87.336041
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9939328Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9939739Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9940595Z # Subtest: console approval requires separate operator capability, cannot be forged with known CSRF
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9941940Z ok 249 - console approval requires separate operator capability, cannot be forged with known CSRF
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9942785Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9943190Z   duration_ms: 138.591384
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9943723Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9944128Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9944924Z # Subtest: 3.0 console API preserves CSRF, operator identity, replay control and real quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9946181Z ok 250 - 3.0 console API preserves CSRF, operator identity, replay control and real quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9946980Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9947416Z   duration_ms: 105.938169
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9947882Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9948351Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9949009Z # Subtest: decoyToolDefs emits native schemas for both formats
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9949823Z ok 251 - decoyToolDefs emits native schemas for both formats
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9950482Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9950887Z   duration_ms: 0.890491
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9951568Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9952060Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9952715Z # Subtest: free SDK decoy and token primitives work without a paid license
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9953705Z ok 252 - free SDK decoy and token primitives work without a paid license
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9955653Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9956136Z   duration_ms: 14.834541
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9956583Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9957064Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9957680Z # Subtest: scanCanary detects planted tokens, ignores normal text
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9958495Z ok 253 - scanCanary detects planted tokens, ignores normal text
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9959216Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9959818Z   duration_ms: 7.689943
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9960269Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9960653Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9961475Z # Subtest: createTokenGuard inspect fires alerts + audit event per hit
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9962533Z ok 254 - createTokenGuard inspect fires alerts + audit event per hit
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9963220Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9963712Z   duration_ms: 31.744997
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9964176Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9964639Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9965382Z # Subtest: guard without alert flag still returns hits (silent mode)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9966250Z ok 255 - guard without alert flag still returns hits (silent mode)
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9966930Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9967422Z   duration_ms: 5.006648
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9967903Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9968482Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9969372Z # Subtest: guarded tool router sends decoys to containment and never calls the real callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9970579Z ok 256 - guarded tool router sends decoys to containment and never calls the real callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9971464Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9971971Z   duration_ms: 5.596694
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9972410Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9972789Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9973377Z # Subtest: guarded tool router respects the guard quarantine allowlist
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9974245Z ok 257 - guarded tool router respects the guard quarantine allowlist
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9975026Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9975511Z   duration_ms: 2.616977
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9975977Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9976399Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9977020Z # Subtest: guarded tool router rejects incomplete integration configuration
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9977982Z ok 258 - guarded tool router rejects incomplete integration configuration
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9978608Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9979018Z   duration_ms: 0.270527
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9979521Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:50.9979912Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.4462550Z # Subtest: pre-review benign cannot grant permission or accept model approval
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.4523172Z ok 259 - pre-review benign cannot grant permission or accept model approval
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.4642672Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.4664226Z   duration_ms: 10.186776
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.4844153Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5020790Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5112971Z # Subtest: pre-review suspicious tightens ambiguous action to DENY
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5274202Z ok 260 - pre-review suspicious tightens ambiguous action to DENY
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5392797Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5505166Z   duration_ms: 1.537141
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5602703Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5735134Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.5892793Z # Subtest: clear safe and clear dangerous calls do not wait for AI
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6063057Z ok 261 - clear safe and clear dangerous calls do not wait for AI
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6153095Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6242665Z   duration_ms: 2.539622
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6502459Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6517131Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6657476Z # Subtest: review timeout remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6722572Z ok 262 - review timeout remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.6942606Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.7148119Z   duration_ms: 15.918109
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.7272613Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.7432689Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.7602729Z # Subtest: review throw remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.7753378Z ok 263 - review throw remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8012794Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8162775Z   duration_ms: 1.298369
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8252514Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8465531Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8562900Z # Subtest: review invalid remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8752815Z ok 264 - review invalid remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.8895944Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9102646Z   duration_ms: 1.296628
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9204269Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9372691Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9462780Z # Subtest: review injected-evidence remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9612764Z ok 265 - review injected-evidence remains conservative
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9772889Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:51.9830486Z   duration_ms: 1.001628
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0012838Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0123134Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0282706Z # Subtest: decoy during async review quarantines before callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0396021Z ok 266 - decoy during async review quarantines before callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0462622Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0632746Z   duration_ms: 16.707084
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0722571Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0812981Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.0997762Z # Subtest: callback deadline signals abort, quarantines, and cannot permit queued calls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1093078Z ok 267 - callback deadline signals abort, quarantines, and cannot permit queued calls
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1189975Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1345545Z   duration_ms: 13.43027
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1442935Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1532297Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1622923Z # Subtest: dataflow deduplicates, expires, evicts and never stores raw content
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1735527Z ok 268 - dataflow deduplicates, expires, evicts and never stores raw content
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1762175Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1822501Z   duration_ms: 26.34923
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1860888Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1882081Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1894067Z # Subtest: same-Guard flow survives replacement and blocks unrelated egress conservatively
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1922389Z ok 269 - same-Guard flow survives replacement and blocks unrelated egress conservatively
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1945815Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1972033Z   duration_ms: 2.004826
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.1992348Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2023771Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2032635Z # Subtest: literal private network denied in balanced, observe records without blocking
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2092388Z ok 270 - literal private network denied in balanced, observe records without blocking
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2132046Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2142744Z   duration_ms: 1.302889
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2162202Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2192000Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2216732Z # Subtest: host-supported sandbox chooses only host executor
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2228174Z ok 271 - host-supported sandbox chooses only host executor
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2261840Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2312097Z   duration_ms: 1.176477
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2341907Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2365161Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2382611Z # Subtest: reject and expiration remove approval without callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2412292Z ok 272 - reject and expiration remove approval without callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2442057Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2471829Z   duration_ms: 1104.60846
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2472746Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2500024Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2532548Z # Subtest: realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2553748Z ok 273 - realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2559648Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2582597Z   duration_ms: 14.946213
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2609660Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2653359Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2695126Z # Subtest: missing root fails closed and real public path allows
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2762301Z ok 274 - missing root fails closed and real public path allows
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2818058Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2862828Z   duration_ms: 2.152893
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2892378Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2893272Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2894390Z # Subtest: SIM-01 malicious README: secret read is blocked after a decoy signal
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2895881Z ok 275 - SIM-01 malicious README: secret read is blocked after a decoy signal
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2897018Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2897834Z   duration_ms: 7.944314
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2898513Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2899281Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2900601Z # Subtest: SIM-02 malicious web content: internal HTTP tool call is blocked
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2932307Z ok 276 - SIM-02 malicious web content: internal HTTP tool call is blocked
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2933410Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2933978Z   duration_ms: 3.109885
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2934423Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2935345Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2936112Z # Subtest: SIM-03 injected shell instruction: synthetic shell callback is blocked
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2937042Z ok 277 - SIM-03 injected shell instruction: synthetic shell callback is blocked
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2937725Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2938096Z   duration_ms: 2.716844
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2938505Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2938980Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2939753Z # Subtest: SIM-04 virtual credential exfiltration: mail callback is blocked
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2976532Z ok 278 - SIM-04 virtual credential exfiltration: mail callback is blocked
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2977473Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2977907Z   duration_ms: 2.36935
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2978444Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2978897Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2979726Z # Subtest: SIM-05 simulated file deletion: virtual file is preserved after quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2980864Z ok 279 - SIM-05 simulated file deletion: virtual file is preserved after quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2981793Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2982396Z   duration_ms: 2.768724
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2982935Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2983462Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2984374Z # Subtest: SIM-06 canary token leak: inspection quarantines before outbound callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2988226Z ok 280 - SIM-06 canary token leak: inspection quarantines before outbound callback
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2989432Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.2990211Z   duration_ms: 4.224
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3017367Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3018472Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3019523Z # Subtest: SIM-07 a quarantined session blocks repeated dangerous retries
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3020580Z ok 281 - SIM-07 a quarantined session blocks repeated dangerous retries
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3021514Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3022023Z   duration_ms: 5.259673
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3022495Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3022999Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3023768Z # Subtest: SIM-08 a new session for the same reviewed identity inherits quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3024930Z ok 282 - SIM-08 a new session for the same reviewed identity inherits quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3025639Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3025985Z   duration_ms: 2.792697
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3026509Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3026908Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3027687Z # Subtest: SIM-09 concurrent decoy and dangerous call: callback cannot race past quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3028816Z ok 283 - SIM-09 concurrent decoy and dangerous call: callback cannot race past quarantine
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3029592Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3030085Z   duration_ms: 2.705988
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3030578Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3031030Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3031858Z # Subtest: SIM-10 webhook failure does not reopen a quarantined session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3032891Z ok 284 - SIM-10 webhook failure does not reopen a quarantined session
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3033471Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3033824Z   duration_ms: 19.86327
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3034356Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3034754Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3035751Z # Subtest: SIM-11 shared state-store outage remains fail-closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3036660Z ok 285 - SIM-11 shared state-store outage remains fail-closed
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3037220Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3037668Z   duration_ms: 3.178751
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3038115Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3038645Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3039478Z # Subtest: SIM-12 avoiding every decoy lets a direct guarded tool call run while the session is SAFE
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3040733Z ok 286 - SIM-12 avoiding every decoy lets a direct guarded tool call run while the session is SAFE
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3103028Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3104054Z   duration_ms: 0.563718
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3104789Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3105404Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3106381Z # Subtest: SIM-13 direct callback bypass: unguarded integration can execute without detection
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3107595Z ok 287 - SIM-13 direct callback bypass: unguarded integration can execute without detection
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3108546Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3109057Z   duration_ms: 0.156482
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3109543Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3110078Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3111038Z # Subtest: SIM-14 a real callback that starts before a compromise signal is not retroactively cancelled
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3112531Z ok 288 - SIM-14 a real callback that starts before a compromise signal is not retroactively cancelled
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3113649Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3114034Z   duration_ms: 2.579389
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3114553Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3115013Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3115801Z # Subtest: CTRL-01 benign safe call is allowed without a compromise signal
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3116787Z ok 289 - CTRL-01 benign safe call is allowed without a compromise signal
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3117507Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3117945Z   duration_ms: 0.521826
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3118423Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3118957Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3119734Z # Subtest: self-test verifies containment without creating user config, tokens, or events
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3120830Z ok 290 - self-test verifies containment without creating user config, tokens, or events
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3121738Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3122108Z   duration_ms: 20.235221
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3122635Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:52.3123047Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6798436Z # Subtest: token format and registry roundtrip
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6799882Z ok 291 - token format and registry roundtrip
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6801458Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6802271Z   duration_ms: 4.41156
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6803149Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6803870Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6804804Z # Subtest: plantIntoFile creates honeypot and records planted refs
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6806176Z ok 292 - plantIntoFile creates honeypot and records planted refs
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6807094Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6807767Z   duration_ms: 5.904436
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6808518Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6809167Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6810173Z # Subtest: scanFile flags leaked tokens but ignores the honeypot file itself
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6811654Z ok 293 - scanFile flags leaked tokens but ignores the honeypot file itself
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6812713Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6813377Z   duration_ms: 4.240592
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6813952Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6814518Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6815558Z # Subtest: scanFile detects a binary token beyond the old size limit and across a read boundary
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6818837Z ok 294 - scanFile detects a binary token beyond the old size limit and across a read boundary
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6820748Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6821626Z   duration_ms: 11.414965
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6822266Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6822919Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6823885Z # Subtest: decoy call returns fake success with embedded trace token and logs an event
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6824690Z ok 295 - decoy call returns fake success with embedded trace token and logs an event
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6825172Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6825470Z   duration_ms: 15.64283
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6825871Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6826198Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6826725Z # Subtest: decoys leave represented real actions inert while returning a fake response
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6827440Z ok 296 - decoys leave represented real actions inert while returning a fake response
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6827971Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6828376Z   duration_ms: 16.898161
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6828713Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6829062Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6829520Z # Subtest: loadTokens skips corrupt records without losing valid tokens
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6830372Z ok 297 - loadTokens skips corrupt records without losing valid tokens
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6830949Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6831515Z   duration_ms: 4.037491
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6831997Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6832436Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6833201Z # Subtest: saveTokens writes a complete registry without leaving a temporary file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6834186Z ok 298 - saveTokens writes a complete registry without leaving a temporary file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6835333Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6835747Z   duration_ms: 7.12634
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6836188Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6840263Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6840971Z # Subtest: parallel CLI processes do not lose token registry updates
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6842085Z ok 299 - parallel CLI processes do not lose token registry updates
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6843124Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6843553Z   duration_ms: 1054.928393
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6844098Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6844604Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6845546Z # Subtest: Windows transient EPERM lock-open contention retries without losing registry records
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6846776Z ok 300 - Windows transient EPERM lock-open contention retries without losing registry records
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6847565Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6847985Z   duration_ms: 17.525987
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6848463Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6848975Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6849785Z # Subtest: Windows lock permission failures remain bounded and never overwrite token records
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6850913Z ok 301 - Windows lock permission failures remain bounded and never overwrite token records
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6851932Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6852337Z   duration_ms: 1.833095
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6852873Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6853317Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6853921Z # Subtest: token registry is owner-readable on POSIX systems
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6854562Z ok 302 - token registry is owner-readable on POSIX systems
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6855034Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6855351Z   duration_ms: 2.7719
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6855681Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6855994Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6856467Z # Subtest: CLI recursive check detects a token in a hidden .env file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6857066Z ok 303 - CLI recursive check detects a token in a hidden .env file
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6857494Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6857817Z   duration_ms: 467.618221
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6858173Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6858465Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6859042Z # Subtest: CLI recursive check fails closed for a missing path or an over-depth tree
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6859722Z ok 304 - CLI recursive check fails closed for a missing path or an over-depth tree
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6860163Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6860526Z   duration_ms: 812.835063
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6860878Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6861363Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6862096Z # Subtest: recursive walker includes hidden files but skips dependency and Git internals
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6862843Z ok 305 - recursive walker includes hidden files but skips dependency and Git internals
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6863332Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6863671Z   duration_ms: 1.37325
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6864023Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6864320Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6864845Z # Subtest: a corrupt token registry raises an error and is not overwritten by token generation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6865612Z ok 306 - a corrupt token registry raises an error and is not overwritten by token generation
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6866102Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6866426Z   duration_ms: 8.424187
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6866782Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6867091Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6959858Z # [agent-canary] watching /tmp/agent-canary-watch-test-Wcxhtv/synthetic-root — Ctrl+C to stop
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6960950Z # Subtest: watch rejects missing and non-directory roots instead of claiming to monitor them
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6961937Z ok 307 - watch rejects missing and non-directory roots instead of claiming to monitor them
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6963016Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6963440Z   duration_ms: 1.488891
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6963914Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6964388Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6964985Z # Subtest: watch queues, deduplicates, and releases resources under sustained synthetic events
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6965735Z ok 308 - watch queues, deduplicates, and releases resources under sustained synthetic events
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6966292Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6966571Z   duration_ms: 1033.687297
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6966934Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6967230Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6967718Z # Subtest: validateWebhookUrl trims and accepts HTTPS destinations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6974958Z ok 309 - validateWebhookUrl trims and accepts HTTPS destinations
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6975794Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6976180Z   duration_ms: 1.226571
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6976489Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6976874Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6977338Z # Subtest: validateWebhookUrl permits loopback HTTP development endpoints
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6977982Z ok 310 - validateWebhookUrl permits loopback HTTP development endpoints
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6978448Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6978745Z   duration_ms: 0.363393
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6979098Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6979442Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6979944Z # Subtest: validateWebhookUrl rejects unsafe schemes and remote HTTP
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6980547Z ok 311 - validateWebhookUrl rejects unsafe schemes and remote HTTP
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6981084Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6981814Z   duration_ms: 0.770285
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6982177Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6982585Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6983185Z # Subtest: webhook DNS validation rejects private, special, and mixed answers
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6984055Z ok 312 - webhook DNS validation rejects private, special, and mixed answers
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6984586Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6984983Z   duration_ms: 12.917903
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6985409Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6985770Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6986451Z # Subtest: webhook connects to a checked loopback address and does not follow redirects
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6987256Z ok 313 - webhook connects to a checked loopback address and does not follow redirects
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6987847Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6988215Z   duration_ms: 23.792047
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6988595Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6989034Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6989675Z # Subtest: webhook resolves once and pins the checked address for the complete request
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6990540Z ok 314 - webhook resolves once and pins the checked address for the complete request
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6991080Z   ---
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6991526Z   duration_ms: 9.266299
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6992022Z   type: 'test'
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6992385Z   ...
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6992765Z 1..314
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6993151Z # tests 314
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6993553Z # suites 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6993914Z # pass 310
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6994311Z # fail 1
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6994643Z # cancelled 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6994941Z # skipped 3
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6995390Z # todo 0
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.6995741Z # duration_ms 13634.509445
+test (ubuntu-latest, 22)	Run npm test	2026-10-12T04:42:53.7089858Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-11T16:44:29.050Z",
+  "prs": [
+    {
+      "number": 23,
+      "status": 200,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "dc8d0092b35141b295d5ff42873584ed488e4ee7",
+      "base": "main",
+      "baseSHA": "73cfdf990e7de669d5ffdb47ae56f5041ad4d31b",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/23"
+    },
+    {
+      "number": 24,
+      "status": 200,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "38f647648dabfd893a9b2460ae7afb763ff0666a",
+      "base": "competition/shanchuanzhi-release-readiness",
+      "baseSHA": "dc8d0092b35141b295d5ff42873584ed488e4ee7",
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/24"
+    }
+  ],
+  "release": {
+    "url": "https://api.github.com/repos/DorianChn/shanchuanzhi-agent-canary/releases/tags/v3.0.0-competition-candidate.1",
+    "status": 200,
+    "tag": "v3.0.0-competition-candidate.1",
+    "prerelease": true,
+    "assets": [
+      {
+        "name": "Agent_Canary_3_0_Chinese_Subtitles.srt",
+        "bytes": 1312,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Chinese_Subtitles.srt"
+      },
+      {
+        "name": "Agent_Canary_3_0_Community_Preview_99660b36.zip",
+        "bytes": 348655,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Community_Preview_99660b36.zip"
+      },
+      {
+        "name": "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm",
+        "bytes": 7897441,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Competition_Demo_Final_1080p.webm"
+      },
+      {
+        "name": "Agent_Canary_3_0_Evidence.zip",
+        "bytes": 193986,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Evidence.zip"
+      },
+      {
+        "name": "Agent_Canary_3_0_Project_Overview.pdf",
+        "bytes": 414450,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Project_Overview.pdf"
+      },
+      {
+        "name": "Agent_Canary_3_0_Real_Model_Evaluation.pdf",
+        "bytes": 326885,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Real_Model_Evaluation.pdf"
+      },
+      {
+        "name": "Agent_Canary_3_0_Submission_Materials.zip",
+        "bytes": 1053586,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Submission_Materials.zip"
+      },
+      {
+        "name": "Agent_Canary_3_0_Technical_Innovation.pdf",
+        "bytes": 147192,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Technical_Innovation.pdf"
+      },
+      {
+        "name": "DELIVERY_MANIFEST.json",
+        "bytes": 3084,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/DELIVERY_MANIFEST.json"
+      },
+      {
+        "name": "DELIVERY_STATUS.json",
+        "bytes": 3032,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/DELIVERY_STATUS.json"
+      },
+      {
+        "name": "INSTALL_AND_REPRODUCE.md",
+        "bytes": 3866,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/INSTALL_AND_REPRODUCE.md"
+      },
+      {
+        "name": "RELEASE_ASSET_MAP.json",
+        "bytes": 2459,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/RELEASE_ASSET_MAP.json"
+      },
+      {
+        "name": "SECURITY_ARCHITECTURE.png",
+        "bytes": 111311,
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/SECURITY_ARCHITECTURE.png"
+      }
+    ],
+    "target": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf"
+  },
+  "live": [
+    {
+      "url": "http://127.0.0.1:11434/api/tags",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "url": "https://api.github.com/repos/DorianChn/shanchuanzhi-agent-canary/actions/runs/38151843834",
+      "status": 200,
+      "sha": "38f647648dabfd893a9b2460ae7afb763ff0666a",
+      "conclusion": "success",
+      "state": "completed",
+      "html": "https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38151843834"
+    },
+    {
+      "url": "https://api.github.com/repos/DorianChn/shanchuanzhi-agent-canary/actions/runs/38151843834/jobs",
+      "status": 200,
+      "jobs": [
+        {
+          "name": "docker-build",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (macos-latest, 20)",
+          "conclusion": "success"
+        },
+        {
+          "name": "sponsor-smoke",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (windows-latest, 22)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (windows-latest, 20)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (macos-latest, 22)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (ubuntu-latest, 20)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (ubuntu-latest, 22)",
+          "conclusion": "success"
+        },
+        {
+          "name": "package-smoke",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

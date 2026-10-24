@@ -1,0 +1,43 @@
+{
+  "scope": "actual ZIP extraction in new subdirectory of same downloaded Community install; not E4 or clean VM",
+  "node": "v22.23.1",
+  "steps": [
+    {
+      "name": "companion-integrity",
+      "exitCode": 0,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\contributor-review\\kit\\verify-types.mjs",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3"
+      ]
+    },
+    {
+      "name": "packaged-type-consumer",
+      "exitCode": 0,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\node_modules\\typescript\\bin\\tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "ES2022",
+        "--module",
+        "NodeNext",
+        "--moduleResolution",
+        "NodeNext",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\contributor-review\\kit\\typed-host-derived.ts"
+      ]
+    },
+    {
+      "name": "packaged-sdk-template",
+      "exitCode": 0,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\contributor-review\\kit\\check-template.mjs",
+        "--root=C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3",
+        "--output=C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\docs\\competition\\score-review-2026-10-12\\evidence\\SDK_TEMPLATE_PACKAGED_FINAL_RESULT.json"
+      ]
+    }
+  ]
+}

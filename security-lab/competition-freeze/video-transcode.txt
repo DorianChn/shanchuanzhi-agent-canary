@@ -1,0 +1,35 @@
+ffmpeg version n7.0.1-playwright-build-1011 Copyright (c) 2000-2024 the FFmpeg developers
+  built with gcc 9.3-win32 (GCC) 20200320
+  configuration: --arch=x86_64 --target-os=mingw32 --cross-prefix=/usr/bin/x86_64-w64-mingw32- --disable-doc --pkg-config=pkg-config --pkg-config-flags=--static --extra-cflags=-I//root/prefix/include --extra-ldflags='-L//root/prefix/lib -static' --prefix=/root/prefix --bindir=/root/ffmpeg/bin --extra-version=playwright-build-1011 --disable-debug --disable-autodetect --disable-everything --enable-ffmpeg --enable-protocol=pipe --enable-protocol=file --enable-parser=mjpeg --enable-decoder=mjpeg --enable-demuxer=image2pipe --enable-filter=pad --enable-filter=crop --enable-filter=scale --enable-muxer=webm --enable-libvpx --enable-static --enable-encoder=libvpx_vp8 --enable-decoder=libvpx_vp8 --enable-demuxer=matroska --enable-encoder=png --enable-zlib --enable-muxer=image2 --disable-iconv --disable-bzlib
+  libavutil      59.  8.100 / 59.  8.100
+  libavcodec     61.  3.100 / 61.  3.100
+  libavformat    61.  1.100 / 61.  1.100
+  libavdevice    61.  1.100 / 61.  1.100
+  libavfilter    10.  1.100 / 10.  1.100
+  libswscale      8.  1.100 /  8.  1.100
+  libswresample   5.  1.100 /  5.  1.100
+[libvpx @ 000001cc9a852940] v1.14.1
+Input #0, matroska,webm, from 'competition-submission/3.0-final/Agent_Canary_3_0_Engineering_Demo.webm':
+  Metadata:
+    ENCODER         : Lavf61.1.100
+  Duration: 00:03:32.48, start: 0.000000, bitrate: 697 kb/s
+  Stream #0:0(eng): Video: vp8 (libvpx), yuv420p(tv, progressive), 1920x1080, SAR 1:1 DAR 16:9, 25 fps, 25 tbr, 1k tbn (default)
+      Metadata:
+        ENCODER         : Lavc61.3.100 libvpx
+        DURATION        : 00:03:32.480000000
+[libvpx @ 000001cc98c8cf80] v1.14.1
+Stream mapping:
+  Stream #0:0 -> #0:0 (vp8 (libvpx) -> vp8 (libvpx))
+Press [q] to stop, [?] for help
+[libvpx @ 000001cc9bcff840] v1.14.1
+Output #0, webm, to 'competition-submission/3.0-final/Agent_Canary_3_0_Competition_Demo_1080p.webm':
+  Metadata:
+    encoder         : Lavf61.1.100
+  Stream #0:0(eng): Video: vp8, yuv420p(tv, progressive), 1920x1080 [SAR 1:1 DAR 16:9], q=2-31, 320 kb/s, 5 fps, 1k tbn (default)
+      Metadata:
+        DURATION        : 00:03:32.480000000
+        encoder         : Lavc61.3.100 libvpx
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+frame=   30 fps=0.0 q=38.0 size=     183KiB time=00:00:06.00 bitrate= 249.5kbits/s dup=0 drop=150 speed=11.8x    frame=   69 fps= 68 q=12.0 size=     256KiB time=00:00:13.80 bitrate= 152.0kbits/s dup=0 drop=299 speed=13.6x    frame=  118 fps= 77 q=7.0 size=     768KiB time=00:00:23.60 bitrate= 266.6kbits/s dup=0 drop=466 speed=15.5x    frame=  156 fps= 77 q=10.0 size=    1280KiB time=00:00:31.20 bitrate= 336.1kbits/s dup=0 drop=624 speed=15.4x    frame=  201 fps= 79 q=16.0 size=    1280KiB time=00:00:40.20 bitrate= 260.8kbits/s dup=0 drop=798 speed=15.8x    frame=  243 fps= 80 q=14.0 size=    1536KiB time=00:00:48.60 bitrate= 258.9kbits/s dup=0 drop=966 speed=15.9x    frame=  283 fps= 79 q=13.0 size=    1792KiB time=00:00:56.60 bitrate= 259.4kbits/s dup=0 drop=1129 speed=15.9x    frame=  328 fps= 80 q=13.0 size=    2048KiB time=00:01:05.60 bitrate= 255.8kbits/s dup=0 drop=1304 speed=16.1x    frame=  369 fps= 80 q=12.0 size=    2304KiB time=00:01:13.80 bitrate= 255.8kbits/s dup=0 drop=1470 speed=16.1x    frame=  410 fps= 80 q=12.0 size=    2560KiB time=00:01:22.00 bitrate= 255.8kbits/s dup=0 drop=1634 speed=16.1x    frame=  450 fps= 80 q=12.0 size=    2816KiB time=00:01:30.00 bitrate= 256.3kbits/s dup=0 drop=1795 speed=16.1x    frame=  491 fps= 80 q=11.0 size=    3328KiB time=00:01:38.20 bitrate= 277.6kbits/s dup=0 drop=1958 speed=16.1x    frame=  533 fps= 80 q=11.0 size=    3328KiB time=00:01:46.60 bitrate= 255.8kbits/s dup=0 drop=2127 speed=16.1x    frame=  574 fps= 80 q=11.0 size=    3584KiB time=00:01:54.80 bitrate= 255.8kbits/s dup=0 drop=2290 speed=16.1x    frame=  615 fps= 81 q=11.0 size=    3840KiB time=00:02:03.00 bitrate= 255.8kbits/s dup=0 drop=2455 speed=16.1x    frame=  655 fps= 80 q=10.0 size=    4096KiB time=00:02:11.00 bitrate= 256.1kbits/s dup=0 drop=2616 speed=16.1x    frame=  696 fps= 81 q=13.0 size=    4608KiB time=00:02:19.20 bitrate= 271.2kbits/s dup=0 drop=2777 speed=16.1x    frame=  739 fps= 81 q=10.0 size=    4608KiB time=00:02:27.80 bitrate= 255.4kbits/s dup=0 drop=2950 speed=16.1x    frame=  781 fps= 81 q=10.0 size=    5120KiB time=00:02:36.20 bitrate= 268.5kbits/s dup=0 drop=3119 speed=16.2x    frame=  822 fps= 81 q=10.0 size=    5632KiB time=00:02:44.40 bitrate= 280.6kbits/s dup=0 drop=3283 speed=16.1x    frame=  866 fps= 81 q=10.0 size=    5632KiB time=00:02:53.20 bitrate= 266.4kbits/s dup=0 drop=3456 speed=16.2x    frame=  907 fps= 81 q=14.0 size=    5888KiB time=00:03:01.40 bitrate= 265.9kbits/s dup=0 drop=3621 speed=16.2x    frame=  949 fps= 81 q=10.0 size=    6144KiB time=00:03:09.80 bitrate= 265.2kbits/s dup=0 drop=3788 speed=16.2x    frame=  991 fps= 81 q=9.0 size=    6400KiB time=00:03:18.20 bitrate= 264.5kbits/s dup=0 drop=3958 speed=16.3x    frame= 1033 fps= 81 q=13.0 size=    6656KiB time=00:03:26.60 bitrate= 263.9kbits/s dup=0 drop=4126 speed=16.3x    [out#0/webm @ 000001cc9a852e80] video:7193KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.117876%
+frame= 1064 fps= 81 q=9.0 Lsize=    7201KiB time=00:03:32.80 bitrate= 277.2kbits/s dup=0 drop=4249 speed=16.3x    

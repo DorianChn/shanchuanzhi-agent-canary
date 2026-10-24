@@ -1,0 +1,15 @@
+{
+  "compileExitCode": 0,
+  "executeExitCode": 0,
+  "stdout": {
+    "status": "VERIFIED_TYPED_RUNTIME_CONSUMER",
+    "checks": 3,
+    "node": "v22.23.1",
+    "mode": "TYPE_SAFE_SDK_FIXTURE_NOT_MODEL_OR_NATIVE_HOST_EVAL",
+    "normalFileObserved": true,
+    "postTripCallbackCount": 1,
+    "E4": "NOT_VERIFIED_SAME_OPERATOR",
+    "fixtureRetained": true
+  },
+  "scope": "actual compiled TS app plus forwarding JS/declaration pair, not security effect improvement"
+}
