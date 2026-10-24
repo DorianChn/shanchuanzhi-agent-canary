@@ -7,7 +7,7 @@ root=Path(__file__).resolve().parent.parent
 if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise SystemExit('Exact source SHA required')
 if not a.candidate_id or len(a.candidate_id)>64 or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789.-' for c in a.candidate_id):raise SystemExit('Invalid candidate identifier')
 community_hook_relative='security-lab/claude-native-hook.mjs'
-expected_m8_source_sha='90fcde07775d4109f6e1b1b4b52d1975723dd979'
+expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'
 expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'
 m8_demo_relative='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs'
 if len(a.m8_source_sha)!=40 or any(c not in '0123456789abcdef' for c in a.m8_source_sha) or a.m8_source_sha!=expected_m8_source_sha:raise SystemExit('Pinned M8 source SHA mismatch')

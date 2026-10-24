@@ -12,7 +12,8 @@
     "feature/ac3-m0-coordination": "M0",
     "feature/ac3-m9-integration": "M9",
     "feature/ac3-e4-validation-ac3": "M6",
-    "feature/ac3-reliability-ac3": "M7"
+    "feature/ac3-reliability-ac3": "M7",
+    "feature/ac3-m7-m8-source-pin": "M7"
   },
   "sharedPaths": {
     ".gitattributes": [
