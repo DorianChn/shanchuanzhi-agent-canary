@@ -114,20 +114,30 @@ test('file-read capability revalidates identity after async review before creati
   await s.runtime.close();
  }
 });
-test('Windows directory-junction replacement during a held read never returns content', {skip:process.platform!=='win32'}, async()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-held-junction-')),boundDir=path.join(root,'workspace'),heldDir=path.join(root,'workspace-held'),outsideDir=path.join(root,'outside');
+test('Windows hard-link replacement after the pre-read check never redirects the held read', {skip:process.platform!=='win32'}, async()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-held-alias-')),boundDir=path.join(root,'workspace'),outsideDir=path.join(root,'outside');
  fs.mkdirSync(boundDir);fs.mkdirSync(outsideDir);fs.writeFileSync(path.join(boundDir,'public.txt'),'authorized original');fs.writeFileSync(path.join(outsideDir,'public.txt'),'NOT_A_REAL_CREDENTIAL');
  const secretPath=path.join(outsideDir,'public.txt'),secretBefore=fs.readFileSync(secretPath),secretHashBefore=createHash('sha256').update(secretBefore).digest('hex');
- const evidence=new EvidenceRecorder(64),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),runtime=createTrustedExecutionGateway({agentId:'windows-junction-fixture',guard,workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence});
+ const evidence=new EvidenceRecorder(64),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),runtime=createTrustedExecutionGateway({agentId:'windows-hardlink-fixture',guard,workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence});
  const binding={toolName:'read_public',operation:'file-read' as const,path:'workspace/public.txt'},call={name:'read_public',args:{path:'workspace/public.txt'}};
- const capability=runtime.bindFileReadCapability(binding),originalReadSync=fs.readSync;let replaced=false;
+ const filePath=path.join(boundDir,'public.txt'),heldPath=path.join(boundDir,'public-held.txt'),capability=runtime.bindFileReadCapability(binding),originalReadSync=fs.readSync;let replaced=false,hardlinkCreated=false,replacementError='',heldReadText='';
  try{
   (fs as any).readSync=(...args:any[])=>{
-   if(!replaced){replaced=true;fs.renameSync(boundDir,heldDir);fs.symlinkSync(outsideDir,boundDir,'junction');}
-   return (originalReadSync as any)(...args);
+   if(!replaced){
+    replaced=true;
+    // Windows denies renaming a parent directory while a file inside it is held open.
+    // Replace the leaf entry instead so the test installs a real alias after preflight.
+    try{fs.renameSync(filePath,heldPath);fs.linkSync(secretPath,filePath);hardlinkCreated=true;}
+    catch(error){replacementError=String(error);throw error;}
+   }
+   const count=(originalReadSync as any)(...args);
+   if(count>0&&Buffer.isBuffer(args[1])&&typeof args[2]==='number')heldReadText+=args[1].subarray(args[2],args[2]+count).toString('utf8');
+   return count;
   };
   await assert.rejects(runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
-  assert.equal(replaced,true,'junction replacement happened after the pre-read path check');
+  assert.equal(replaced,true,'path replacement happened after the pre-read path check');
+  assert.equal(hardlinkCreated,true,`the test must install a real sensitive hard-link alias before the held read (${replacementError})`);
+  assert.equal(heldReadText,'authorized original','the raced pathname never redirected the held-descriptor read to the sensitive alias');
   const secretAfter=fs.readFileSync(secretPath);
   assert.equal(secretAfter.toString('hex'),secretBefore.toString('hex'));
   assert.equal(createHash('sha256').update(secretAfter).digest('hex'),secretHashBefore,'the external target remains byte-for-byte unchanged');
