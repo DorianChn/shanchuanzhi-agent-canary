@@ -8410,3 +8410,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Exact head `2212a6806c73a6b15987d38718a3510df48f9ae5`: standard CI run `40101873706` completed SUCCESS (9/9); AC3 coordination `40101873540` completed SUCCESS; M9 composition `40101873619` completed SKIPPED. The M9 workflow condition still admits only manual dispatch or PR #36, and its manual path uses static refs, including the stale M7 pin. M0 recorded the terminal result in #76 comment `6385322283`; current-ref integration remains OPEN/P1.
 - M1/M7 owner handoffs remain unanswered; M8 remains queued. No M1–M8 branch/worktree change was made by M0.
+## Current module PR routing — 2026-10-24 14:25 UTC
+
+- The existing M1–M7 follow-up PRs #101/#91/#107/#98/#94/#100/#106 are all MERGED. M9 PR #36 is MERGED. Current open AC3 module PR is M8 #40 (OPEN/Draft, head `60cfe8d`, stale base `416f1ba`). M0 PR #109 remains OPEN/Draft. A repository-wide open-PR inventory also showed unrelated #31 (M6 legacy PR targeting `main`); M0 did not modify it.
+- M1 branch `feature/ac3-security-core` is at `47501fc`, the merged #101 head, with no open M1 PR. M7 branch `feature/ac3-reliability-ac3` is at `ab9b03f`, has uncommitted tracked/untracked work, and is not the merged #106 branch. M0 asked each owner to use the existing branch and an owner-authored Draft PR if code changes are needed; no new module branch was created. Comments are #41 `6385361421` and #52 `6385361634`.
+- M8 remains queued behind M7/M1 on #99; current-base reconciliation stays M8-owned and must retain all conflicting tests/docs until an owner-reviewed resolution.
