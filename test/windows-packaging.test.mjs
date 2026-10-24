@@ -76,6 +76,9 @@ test('Community source build transfers the patched dependency tree and keeps can
   const pkg=JSON.parse(fs.readFileSync(path.join(repo,'package.json'),'utf8'));
   const lock=JSON.parse(fs.readFileSync(path.join(repo,'package-lock.json'),'utf8'));
   const lockRoot=lock.packages[''];
+  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts']){
+    assert.ok(source.includes(`'${requiredSource}'`),`candidate source allowlist must include ${requiredSource}`);
+  }
   assert.match(source,/lock=json\.loads\(\(root\/'package-lock\.json'\)\.read_text\(encoding='utf-8'\)\)/);
   assert.match(source,/lock_root=lock\.get\('packages',\{\}\)\.get\('',\{\}\)/);
   assert.match(source,/lock\['version'\]=pkg\['version'\];lock_root\['version'\]=pkg\['version'\]/);
