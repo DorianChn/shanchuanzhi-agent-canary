@@ -8036,3 +8036,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - The exclusive installer slot was released after the workflow ended; no VMware or real-model work ran. Re-run only after M7's exact allowlist fix and current-source checks.
 - M0 docs PR #108 merged at `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. PR #24 remains OPEN/Draft at that feature head on the original release-readiness base. Main and Release remain untouched.
 - Current labeled issue counts remain P0 2 and P1 14. M8 #40 still awaits owner disposition on #99. Last Usage Overview read: 49% five-hour / 66% weekly at 06:08 UTC.
+
+## 2026-10-24 06:24 UTC — exact lifecycle contract audit
+
+- Independent source review confirmed the failed run's producer at `.github/workflows/windows-community.yml:411` has an 11-path checksum list while `packaging/windows/installer-lifecycle-smoke.ps1:182-200` strictly allows 7. The producer list expansion arrived in commit `e903e5c1`; its consumer allowlist was not synchronized. This reproduces `SHA256SUMS_PATH_UNEXPECTED` before Setup.exe; the uploaded artifact confirms the installer process never started.
+- M7's narrow correction is to add the four exact paths (`BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, `SOURCE_MANIFEST.json`) to the fixed consumer list and add an ordered producer/consumer list-equality regression in `test/reliability.test.mjs`. Keep duplicate, path containment, regular-file, hash, count, and source-SHA checks. Re-run current-source CI/build before requesting a new exclusive installer slot. This is a requested fix, not a completed M7 change.
+- Issue #41 remains OPEN/P1/HOLD; the failed run gives no install/uninstall evidence. The exclusive slot remains free. M8 #40 remains OPEN/Draft at `60cfe8d`; M8's owner disposition on #99 and post-M9-base checks are still missing. M9 exact-source composition at run `40066875122` passed Ubuntu and Windows against the M8 candidate.
+- M1–M7 and M9 are integrated; M8 is the one unmerged M1–M8 module. Open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft with its original base; no `main` merge or Release.
+- Usage Overview read at 06:18 UTC: 49% five-hour and 66% weekly remaining; the <5% stop threshold is inactive.
