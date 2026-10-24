@@ -1,4 +1,16 @@
-## Current M0 coordination-file ownership — 2026-10-24 11:02 UTC
+## Current follow-up ownership — 2026-10-24 17:30 UTC
+
+| Scope | Owner and existing workspace | Boundary |
+| --- | --- | --- |
+| Product intake, control and verifier usage files in security-lab/e4/product-self-check* and PRODUCT_SELF_CHECK.md | M6; agents/M6, existing feature/ac3-e4-validation-ac3 / PR111 | Author SELF_CHECK only; does not issue independent operator/reviewer acceptance. |
+| Installer lifecycle script and reliability regression | M7; existing clean agents/M7-followup, feature/ac3-m7-m8-source-pin / PR113 | Main agents/M7's pre-existing dirty workflow/evidence are untouched; no transfer of canonical Hook semantics from M1. |
+| sponsor/smoke.mjs, smoke-process.mjs and smoke-isolation.test.mjs | M8; agents/M8, existing PR40 branch | Smoke harness only; server/payment/state-store ownership is not transferred. |
+| Exact-source manifest, its validator and M9 composition/workflow regressions | M9; integration/M9, existing feature/ac3-m9-integration / PR112 | Owner-reviewed immutable module refs; no module implementation edits. |
+| Coordination docs, ignore patterns and GitHub scheduling records | M0; coordinator / PR109 | Substantive batched publication; no main/PR24 merge or Release. |
+
+Actual original M1/M2/M6/M8 sessions were resumed through CLI and produced recorded results. Original M7 refused a second writer; M7 follow-up work above was performed by an explicitly assigned worker in its already existing clean worktree. Neither GitHub comments nor idle UI processes are reported as proof of running development. M3/M4/M5's selected source trees are consumed by M9 without edits to their implementation.
+
+## Historical M0 coordination-file ownership — 2026-10-24 11:02 UTC
 
 M0 owns the coordination documentation in `docs/3.0/*`, the AC3 coordination workflow and checker (`.github/workflows/ac3-coordination.yml`, `scripts/ac3-coordination-check.mjs`, `scripts/ac3-pr-audit.mjs`, `scripts/ac3-ownership.json`), and its focused audit regression (`test/ac3-pr-audit.test.mjs`). M0 may maintain these coordination paths and GitHub issue/status records; M1–M8 implementation and test paths remain owned by their listed modules. Shared module paths require the owning module's disposition and must not be edited from M0.
 

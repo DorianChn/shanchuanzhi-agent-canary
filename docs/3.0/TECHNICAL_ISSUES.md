@@ -1,4 +1,13 @@
-## M0 live priority dashboard — 2026-10-24 10:16 UTC
+## Current acceptance delta — 2026-10-24 17:30 UTC
+
+- #62 CLOSED: actual M1 owner traced the historical fixture race, confirmed deterministic fixes in feature, reused the unchanged-head2/2 result and added a controlled-clock comparison. Closure comment6386808187. No expiry/zero-callback assertion was removed.
+- #51 remains OPEN/P1/UNKNOWN for the original lock-holder/scheduling trigger. New green matrices are not a recovered original trace; bounded diagnostics and all48 quarantine assertions remain.
+- #72 has current exact M1 ACCEPT (#6386280736) recorded by M9; final new-source hosted composition remains pending. #99 now has actual M8 build-contract ACCEPT, M7 scoped prepare.mjs ACCEPT and fresh M6 exact-test ACCEPT; final candidate checks/composition remain pending.
+- #76 has a real workflow implementation and local23/23 composition result, replacing the old PR36-only skip. The first published run failed an old M8 assertion; M9 fixed it without suppressing the failure. New batch CI must pass before closure.
+- #41 now has actual hosted install/duplicate-refusal/uninstall PASS at c03176f, run40114068571. Remaining Windows11/ordinary-user/upgrade/cancel/EFS matrix stays unverified. #93 is still OPEN/P0 until the new bba0f0f installed Hook stdout/stderr/JSONL checks execute in a reserved real installation.
+- #52 product-host/OS-atomic protection, #45 native Shell boundary, #57 independent product E4 and #70 main-target dependency remediation retain their stated scope and restrictions. No global acceptance is inferred from source fixtures or a bounded installer result.
+
+## Historical priority dashboard — 2026-10-24 10:16 UTC
 
 Priority definitions: **P0** protected-path fail-open, sensitive-data leak, or serious data damage; **P1** interface incompatibility, build failure, or key feature unavailable; **P2** noncritical UI/docs/performance or coordination hygiene. This table is the current open-issue snapshot; dated entries below are historical evidence.
 

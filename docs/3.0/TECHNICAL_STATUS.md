@@ -1,4 +1,14 @@
-## Verified execution recovery — 2026-10-24 16:15 UTC
+## Current verified cohort — 2026-10-24 17:30 UTC
+
+- Baseline remains e4732d9745bb4fbbebf6896a35b4657ad82abd73. PR #24 is OPEN/Draft on its existing competition base. No main/PR24 merge or Release has occurred.
+- M2 PR #110 head941fd22 and M6 PR #111 head2a88d8b have full product CI9/9. Missing PR-body coordination fields were corrected; M6's subsequent AC3 check passed without weakening the checker. Native Shell and independent E4 boundaries remain NOT_VERIFIED.
+- M8 local candidate1c94ed4, parent e3d89ba, repairs bounded smoke supervision. M0 Windows watchdog/collision2/2 and standalone12 checks passed; original M8 offline demo6/6 passed. M6's fresh exact two-blob ACCEPT is #80 comment6387136527. New candidate POSIX/hosted CI is pending publication; no historical orphan incident was reproduced.
+- Actual M7 manual run40114068571 at c03176f passed clean hosted Windows Server2025 install, duplicate refusal and uninstall, verifying3903 manifest files and residue0. Resource was released. Ordinary-user/Windows11/upgrade/cancel/EFS and native model/agent remain unverified. New local candidatebba0f0f adds installed Hook hash/blob, E4 fault and allow/deny/ask redaction checks; its actual installed-path execution remains pending the next reserved same-run test.
+- M9 local candidate0c8d7d1 records the exact M7 bba0f0f and M8 1c94ed4 candidates plus actual M1/M6 review pointers. Updated local full composition23/23, offline gate3/3 and manifest/workflow6/6 passed. Earlier exact-head CI reached a stale M8 constant; that failure was preserved and fixed, not relabeled as success. Full new-head Ubuntu/Windows CI is pending the batch.
+- M1 owner traced the historical approval fixture race, verified existing fixes89e40cd/5cb57c9 in feature, and #62 was closed. #51 original lock/scheduling trigger remains UNKNOWN. P0 #52 and #93 retain their actual remaining acceptance gates.
+- Original M7 dirty worktree and all prior owner handoffs are preserved. Eight primary module paths and branch names are distinct; common ancestor62496d4 is verified, while original branch-creation provenance is not inferred from current tips. Detailed local reports are under coordinator/reports.
+
+## Historical verified execution recovery — 2026-10-24 16:15 UTC
 
 - The earlier API limitation below is historical. No callable chat-read/send tool was added; authorized `codex exec resume` successfully resumed the original M1, M2 and M8 sessions. Their command logs and owner result files, rather than GitHub comments or process presence alone, establish the completed work.
 - M1 accepted the exact current Hook blobs for #72 in owner report/comment 6386280736; its focused Hook/contract tests passed 18/18 and approval-expiry tests passed 2/2. Integration must still record that disposition before closing #72. Product-host/OS-atomic protection under #52 remains unverified.
