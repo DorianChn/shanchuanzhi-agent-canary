@@ -8319,3 +8319,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - PR #109 head `b10aa46c6859c0a6ffde71edf0832b1d65dab9eb`: standard CI `40096585659` SUCCESS (9/9), AC3 coordination `40096585644` SUCCESS, and M9 composition `40096585641` SKIPPED.
 - M0 recorded the repeated exact-head skip on #76 comment `6384565301`. P0 #52 remains OPEN; existing synthetic route/M9 test evidence does not establish the product-host consumer or OS-atomic TOCTOU boundary. M0 requested evidence or an explicit BLOCKED/NOT_VERIFIED disposition on comment `6384570394`.
 - PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Fresh remote refs show no M1–M8 branch-head movement since 12:56; the latest #52, #72, and #99 comments are M0 requests, with no corresponding owner disposition yet. Quota last read at 13:03: 40% five-hour and 49% weekly; usage tab remains open.
+
+## M6/M7 owner follow-up and current CI — 2026-10-24 13:12 UTC
+
+- PR #109 head `86b822787370febd463c6be38105a978cbeb45b8`: standard CI `40096950985` SUCCESS (9/9), AC3 coordination `40096950809` SUCCESS, and M9 composition `40096950805` SKIPPED.
+- M0 refreshed existing owner requests: #41 comment `6384619047` requests a current-head installer lifecycle pass after checksum-contract repair; P0 #93 comment `6384619254` requests current-head installed Hook stdout/log redaction evidence; #57 comment `6384619452` requests the M6 verifier's own complete product E4 bundle. Those issues remain open.
+- Latest reads of #41/#93/#57 show only M0's follow-up comments; no owner acceptance artifact or module-head update is present. The M1/M3 exact-blob request remains on #72, P0 #52 remains open, and M8 current-base conflicts remain tracked in #76/#99.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Quota last read at 13:09: 40% five-hour / 49% weekly; usage tab remains open.
