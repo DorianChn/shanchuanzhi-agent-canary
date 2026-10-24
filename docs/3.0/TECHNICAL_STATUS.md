@@ -8313,3 +8313,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Current M3 branch `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` and feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` share the exact Hook test blob `10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2`, Hook implementation blob `76f7bf6314046777ee1615873e5de4621671ea15`, and native Hook blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`.
 - The older M1 review did not cover the current test blob; the prior manual M9 run only proves test execution. M0 requested an explicit M1 ACCEPT/REJECT and rationale on #72 comment `6384536968`. Keep #72 OPEN/P1 until that exact review is recorded.
 - Latest PR #109 head `1b4b2d7` has CI SUCCESS (9/9), AC3 coordination SUCCESS, and M9 composition SKIPPED (`40096176240`). M8 PR #40 current-base blockers remain as recorded in #76; PR #24 remains unchanged OPEN/Draft.
+
+## Current-head gate and P0 owner follow-up — 2026-10-24 13:07 UTC
+
+- PR #109 head `b10aa46c6859c0a6ffde71edf0832b1d65dab9eb`: standard CI `40096585659` SUCCESS (9/9), AC3 coordination `40096585644` SUCCESS, and M9 composition `40096585641` SKIPPED.
+- M0 recorded the repeated exact-head skip on #76 comment `6384565301`. P0 #52 remains OPEN; existing synthetic route/M9 test evidence does not establish the product-host consumer or OS-atomic TOCTOU boundary. M0 requested evidence or an explicit BLOCKED/NOT_VERIFIED disposition on comment `6384570394`.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Fresh remote refs show no M1–M8 branch-head movement since 12:56; the latest #52, #72, and #99 comments are M0 requests, with no corresponding owner disposition yet. Quota last read at 13:03: 40% five-hour and 49% weekly; usage tab remains open.
