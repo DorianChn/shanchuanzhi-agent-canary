@@ -23,10 +23,10 @@ const pinnedSourceShas = {
   M3: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9',
   M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
   M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
-  M6: '7e263867979e5b52044febd64ed785ad6b192e82',
+  M6: '2975f3fc88929cacf268e80a503667b440ea519a',
   M7: '37034a971d00477a8aa3d57f34773c125939ec92',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
-  M8_CANDIDATE: '39c8048f93118657e13a7f37eabafa756aa25f94',
+  M8_CANDIDATE: '3e68383b2063d5a9224cb15a67eea2777d4539df',
 };
 
 const mergedSourceProvenance = {
@@ -41,7 +41,7 @@ const mergedSourceProvenance = {
 
 const currentCandidateProvenance = {
   M1: { ownerHead: '5adc14c32724a7b5da3ee40aed08eb41de7debea', ownerTree: '1b70a280b4bb4e69edfe9c68476728b4bdf9ad06', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: 'f18f1deec15b81f0d61ef18dbf0f91f50acef1b6', prTree: 'bf626ca319cfde115e31ff9565faf43f21c6f69b' },
-  M6: { ownerHead: 'ed335ef7cacfa626f9a5b6bc4c69e6af6366123e', ownerTree: '2dd0c9991794b5983d488fbacadb7a9fbe4f0d89', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '7e263867979e5b52044febd64ed785ad6b192e82', prTree: '6c21e9ed9dc52f9b9440dabc9ea44503d57caa75' },
+  M6: { ownerHead: 'ed335ef7cacfa626f9a5b6bc4c69e6af6366123e', ownerTree: '2dd0c9991794b5983d488fbacadb7a9fbe4f0d89', sourceBase: 'eb78dcef6eb1bd501606244771880bb41d6f0b43', prHead: '2975f3fc88929cacf268e80a503667b440ea519a', prTree: 'c1cae38a069255f346b85c8e9ec708c56e91e16c' },
   M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '26cdb8781e57a05f57362e3078d77ce18614481c', prTree: 'd47d82af42266d9cb0c3a3895b180c1c23aeb980' },
   M3: { ownerHead: '98a034fa2066cec18f833440cc51275c389681c6', ownerTree: '4da9bd1d3168aaa8dc1df97ad8b8e4bb18187430', prHead: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9', prTree: '2396a5915c2bb24fa828b02118ea5f69f9e3eea1' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
@@ -66,7 +66,7 @@ const m8ReviewedE4TestBlob = 'd8909264ea2d924d611ca01a4daa73829ab67d1d';
 const m7AcceptedE4HelperBlob = '89e8a04ed026af146a712517144f560aefe92a0d';
 assert.equal(
   readTreeIdAt('M8_CANDIDATE', pinnedSourceShas.M8_CANDIDATE),
-  '83d4aed9e48e2cbdb3d7ad799d3563c154d7def4',
+  'b2fcbd8f8bf5e4bafca3a44a8a65d6d5cdadbc90',
   'the current M8 PR #40 source tree must remain tied to the exact candidate pin',
 );
 
