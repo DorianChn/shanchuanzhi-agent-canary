@@ -8363,3 +8363,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Dependabot PR #67 exact head `cda74e9860f1d96d7404871378c0c737535fa77e` has later CI run `39827204460` SUCCESS across 9/9 jobs, including package-smoke; earlier run `39586184706` is a historical manifest-smoke failure.
 - GitHub Dependabot alert #2 (`GHSA-5r4p-p66f-jhc7`) remains OPEN. PR #67 remains OPEN/non-Draft and targets `main`; M0 did not merge it. M7 owner must record exact manifest/version, default-branch state, and vulnerable-callsite disposition before #70 can close.
 - M0 posted the exact evidence and owner request on #70 comment `6384812326`; keep #70 OPEN/P1 while the advisory is unresolved.
+
+## M2/M9 gate follow-up and current CI — 2026-10-24 13:35 UTC
+
+- PR #109 head `94bb180385ad2ee5861aa5c74b98ea15c08abb77`: standard CI `40098552719` SUCCESS (9/9), AC3 coordination `40098552770` SUCCESS, and M9 composition `40098552667` SKIPPED.
+- M0 requested M2's exact native Codex Shell host evidence or explicit UNPROTECTED/BLOCKED boundary on #45 comment `6384841812`; WSL/simulated Hook results do not establish host acceptance.
+- M0 requested M9's evidence-bounded Windows Node 22 503 diagnosis or no-current-reproduction disposition on #54 comment `6384851032`; preserve bounded retries and assertions. The current M9 trigger skip remains on #76 comment `6384834116`.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Issue #70's exact Dependabot run passed but alert #2 remains OPEN; no main merge. Last quota read at 13:30: 37% five-hour / 49% weekly.
