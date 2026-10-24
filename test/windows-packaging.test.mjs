@@ -8,7 +8,8 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
-import {createWindowsBuildInvocation,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
+import {communityRuntimeFiles,validateCommunityRuntime} from '../packaging/windows/runtime-contract.mjs';
+import {createWindowsBuildInvocation,M1_CANONICAL_WRAPPER_BLOB_SHA,M1_CANONICAL_WRAPPER_SHA256,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
 import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -26,6 +27,49 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }finally{
     fs.rmSync(root,{recursive:true,force:true});
   }
+});
+
+test('Windows Community packaging requires the exact 37 runtime files and SDK declaration',()=>{
+  const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+  const worker=fs.readFileSync(path.join(repo,'packaging/windows/worker.mjs'),'utf8');
+  assert.equal(communityRuntimeFiles.length,37);
+  assert.equal(new Set(communityRuntimeFiles).size,communityRuntimeFiles.length);
+  assert.deepEqual(validateCommunityRuntime([...communityRuntimeFiles].reverse(),true),communityRuntimeFiles);
+  assert.throws(()=>validateCommunityRuntime(communityRuntimeFiles.slice(1),true),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  assert.throws(()=>validateCommunityRuntime([...communityRuntimeFiles,'unexpected.js'],true),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  assert.throws(()=>validateCommunityRuntime(communityRuntimeFiles,false),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  assert.match(build,/validateCommunityRuntime\(walk\(path\.join\(root,'app\/dist'\)\)/);
+  assert.match(build,/app\/dist\/sdk\.d\.ts/);
+  assert.match(worker,/runtimeFiles:Array\.isArray\(version\.coreRuntimeHashes\)\?version\.coreRuntimeHashes\.length:0/);
+});
+
+test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-community-runtime-contract-'));
+  const payload=path.join(temp,'payload'),app=path.join(payload,'app'),dist=path.join(app,'dist');
+  const nsis=path.join(temp,'nsis');
+  try{
+    fs.mkdirSync(dist,{recursive:true});
+    for(const file of communityRuntimeFiles){
+      const target=path.join(dist,...file.split('/'));
+      fs.mkdirSync(path.dirname(target),{recursive:true});
+      fs.writeFileSync(target,'synthetic runtime');
+    }
+    fs.writeFileSync(path.join(dist,'sdk.d.ts'),'export {}\n');
+    fs.mkdirSync(path.join(payload,'runtime'),{recursive:true});
+    fs.writeFileSync(path.join(payload,'runtime','node.exe'),'synthetic node');
+    fs.writeFileSync(path.join(app,'FREE_BUILD_VERSION.json'),JSON.stringify({candidateId:'competition-candidate.2',runtimeBaselineSHA:'99660b36db9d5b1121eea6fe06b026c5f1e36bcf',sourceSHA:'synthetic-source',securityRuntimeModified:true}));
+    fs.writeFileSync(path.join(app,'package.json'),JSON.stringify({version:'3.0.0-competition-candidate.2'}));
+    fs.mkdirSync(nsis);
+    fs.writeFileSync(path.join(nsis,'COPYING'),'synthetic NSIS license');
+    const communityZip=path.join(temp,'community.zip');
+    fs.writeFileSync(communityZip,'synthetic community ZIP');
+    const sourceSHA=spawnSync('git',['-C',repo,'rev-parse','HEAD'],{encoding:'utf8',windowsHide:true});
+    assert.equal(sourceSHA.status,0,(sourceSHA.stderr??'').toString());
+    const build=spawnSync(process.execPath,[path.join(repo,'packaging/windows/build.mjs'),payload,nsis,communityZip,sourceSHA.stdout.trim()],{encoding:'utf8',windowsHide:true});
+    assert.notEqual(build.status,0,'synthetic Node bytes must fail the later pinned-runtime integrity check');
+    assert.match((build.stdout??'')+(build.stderr??''),/NODE_CHECKSUM_MISMATCH/);
+    assert.doesNotMatch((build.stdout??'')+(build.stderr??''),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
 test('package allowlist admits only the reviewed M2 gateway facade',()=>{
@@ -69,6 +113,206 @@ test('M7 reusable package smoke pins and applies its checker to the caller candi
   assert.match(checker,/process\.argv\.indexOf\("--package-root"\)/);
   assert.match(checker,/path\.join\(policyRoot, 'scripts', 'check-sdk-types\.mjs'\)/);
   assert.doesNotMatch(workflow,/execution-isolation\/\*\*/);
+});
+
+test('Community source build transfers the patched dependency tree and keeps candidate metadata and audit policy',()=>{
+  const source=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
+  const pkg=JSON.parse(fs.readFileSync(path.join(repo,'package.json'),'utf8'));
+  const lock=JSON.parse(fs.readFileSync(path.join(repo,'package-lock.json'),'utf8'));
+  const lockRoot=lock.packages[''];
+  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','security-lab/claude-native-hook.mjs']){
+    assert.ok(source.includes(`'${requiredSource}'`),`candidate source allowlist must include ${requiredSource}`);
+  }
+  assert.match(source,/lock=json\.loads\(\(root\/'package-lock\.json'\)\.read_text\(encoding='utf-8'\)\)/);
+  assert.match(source,/lock_root=lock\.get\('packages',\{\}\)\.get\('',\{\}\)/);
+  assert.match(source,/lock\['version'\]=pkg\['version'\];lock_root\['version'\]=pkg\['version'\]/);
+  assert.match(source,/pkg\['version'\]='3\.0\.0-'\+a\.candidate_id/);
+  assert.match(source,/version=\{'product':.*?'candidateId':a\.candidate_id/s);
+  assert.match(source,/if lock_root\.get\(field,\{\}\)!=pkg\.get\(field,\{\}\)/);
+  for(const field of ['dependencies','devDependencies','optionalDependencies']){
+    assert.deepEqual(lockRoot[field]??{},pkg[field]??{},`root lock ${field} must match the candidate manifest`);
+  }
+  assert.equal(lock.packages['node_modules/body-parser'].version,'2.4.0');
+  assert.equal(lock.packages['node_modules/ip-address'].version,'10.7.4');
+  assert.equal(lock.packages['node_modules/zod'].version,'4.6.7');
+  assert.equal(lock.packages['node_modules/hono'].version,'4.13.13');
+  assert.equal(lock.packages['node_modules/fast-uri'].version,'3.1.9');
+  assert.match(source,/\['audit','--json'\]/);
+  assert.doesNotMatch(source,/\['audit','--json','--audit-level'/);
+  assert.match(source,/failed_steps=\[\(name,result\['exitCode'\]\) for name,result in logs\.items\(\) if result\['exitCode'\]!=0\]/);
+  assert.match(source,/print\(f'Community validation failed at: \{details\}',file=sys\.stderr\)/);
+  assert.match(source,/print\(f'Community validation log: \{logfile\.relative_to\(root\)\}',file=sys\.stderr\)/);
+});
+
+test('Community candidate pins the Hook Git blob when a Windows worktree has CRLF',()=>{
+  const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
+  assert.match(builder,/hook_blob_ref=f'\{a\.sha\}:\{community_hook_relative\}'/);
+  assert.match(builder,/subprocess\.run\(\['git','-C',str\(root\),'cat-file','blob',hook_blob_sha\]/);
+  assert.match(builder,/if relative==community_hook_relative:continue/);
+  assert.match(builder,/community_hook_path\.write_bytes\(hook_blob\)/);
+  assert.match(builder,/git_blob_sha\(candidate_hook\)!=hook_blob_sha/);
+
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-community-hook-blob-'));
+  const sourcePath='security-lab/claude-native-hook.mjs';
+  const canonical=readCommittedWrapperSource(repo);
+  const runGit=(...args)=>{
+    const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
+    assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
+    return result.stdout.trim();
+  };
+  try{
+    const worktreePath=path.join(temp,sourcePath);
+    fs.mkdirSync(path.dirname(worktreePath),{recursive:true});
+    fs.writeFileSync(worktreePath,canonical.bytes);
+    fs.writeFileSync(path.join(temp,'.gitattributes'),`${sourcePath} text eol=lf\n`);
+    runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
+    runGit('config','user.name','Canary contract test');
+    runGit('config','user.email','canary-contract-test@example.invalid');
+    runGit('add','--','.gitattributes',sourcePath);
+    runGit('commit','--quiet','-m','test pinned Community Hook blob');
+    const sourceCommit=runGit('rev-parse','HEAD');
+    assert.equal(runGit('rev-parse',`${sourceCommit}:${sourcePath}`),M1_CANONICAL_WRAPPER_BLOB_SHA);
+
+    const crlfWorktree=Buffer.from(canonical.bytes.toString('utf8').replace(/\n/g,'\r\n'),'utf8');
+    fs.writeFileSync(worktreePath,crlfWorktree);
+    assert.deepEqual(fs.readFileSync(worktreePath),crlfWorktree);
+    assert.notDeepEqual(fs.readFileSync(worktreePath),canonical.bytes,'the synthetic Windows worktree must differ from canonical LF bytes');
+
+    const pinned=spawnSync('git',['-C',temp,'cat-file','blob',`${sourceCommit}:${sourcePath}`],{windowsHide:true});
+    assert.equal(pinned.status,0,(pinned.stderr??'').toString());
+    const candidatePath=path.join(temp,'candidate',sourcePath);
+    fs.mkdirSync(path.dirname(candidatePath),{recursive:true});
+    fs.writeFileSync(candidatePath,pinned.stdout);
+    const candidate=fs.readFileSync(candidatePath);
+    const candidateBlob=createHash('sha1').update(`blob ${candidate.length}\0`).update(candidate).digest('hex');
+    assert.deepEqual(candidate,canonical.bytes);
+    assert.equal(candidateBlob,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(createHash('sha256').update(candidate).digest('hex'),M1_CANONICAL_WRAPPER_SHA256);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('Community candidate stages the exact M8 offline-demo Git blob and provenance',()=>{
+  const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
+  const m8SourceSHA='24b8651730d57d860ba136e77db1526031abb1fc';
+  const m8DemoBlob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
+  const m8DemoPath='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
+  assert.match(builder,/p\.add_argument\('--m8-source-sha',required=True\)/);
+  assert.match(builder,/p\.add_argument\('--m8-pr-head-sha',required=True\)/);
+  assert.match(builder,/expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'/);
+  assert.match(builder,/expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(builder,/m8_demo_ref=f'\{a\.m8_source_sha\}:\{m8_demo_relative\}'/);
+  assert.match(builder,/merge-base','--is-ancestor',a\.m8_source_sha,a\.m8_pr_head_sha/);
+  assert.match(builder,/m8_pr_demo_ref=f'\{a\.m8_pr_head_sha\}:\{m8_demo_relative\}'/);
+  assert.match(builder,/community_demo_path\.write_bytes\(m8_demo_bytes\)/);
+  assert.match(builder,/if candidate_m8_demo!=m8_demo_bytes[\s\S]*?expected_m8_demo_blob/);
+  assert.match(builder,/m8SourceSHA':a\.m8_source_sha[\s\S]*?'m8PRHeadSHA':a\.m8_pr_head_sha[\s\S]*?'m8PRHeadBlob':m8_pr_demo_blob_id/);
+  assert.match(workflow,/M8_SOURCE_SHA: 24b8651730d57d860ba136e77db1526031abb1fc/);
+  assert.match(workflow,/refs\/pull\/40\/head/);
+  assert.match(workflow,/git fetch --unshallow --no-tags \$baseRepository refs\/pull\/40\/head/);
+  assert.match(workflow,/git merge-base --is-ancestor \$m8SourceSha \$m8PrHeadSha/);
+  assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
+  assert.match(workflow,/--m8-pr-head-sha \$env:M8_PR_HEAD_SHA/);
+  assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(workflow,/communityBuildSummary\.m8PRHeadBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+
+  const runRepoGit=(...args)=>spawnSync('git',['-C',repo,...args],{encoding:'utf8',windowsHide:true});
+  let gitResult=runRepoGit('rev-parse','--is-shallow-repository');
+  assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+  const fetchArgs=['fetch','--no-tags'];
+  if(gitResult.stdout.trim()==='true')fetchArgs.push('--unshallow');
+  fetchArgs.push('origin','refs/pull/40/head');
+  gitResult=runRepoGit(...fetchArgs);
+  assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+  gitResult=runRepoGit('rev-parse','FETCH_HEAD');
+  assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+  const m8PrHeadSHA=gitResult.stdout.trim();
+  assert.match(m8PrHeadSHA,/^[a-f0-9]{40}$/,'the fetched M8 PR head must be an exact commit SHA');
+  gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,m8PrHeadSHA);
+  assert.equal(gitResult.status,0,'the immutable reviewed M8 source must remain an ancestor of the current PR head');
+  for(const commitSHA of [m8SourceSHA,m8PrHeadSHA]){
+    gitResult=runRepoGit('rev-parse','--verify',`${commitSHA}:${m8DemoPath}`);
+    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+    assert.equal(gitResult.stdout.trim(),m8DemoBlob,'both the pinned M8 commit and current PR head must contain the exact demo blob');
+  }
+  gitResult=runRepoGit('rev-parse','--verify',`${m8SourceSHA}^`);
+  assert.equal(gitResult.status,0,'the immutable M8 source commit must have a parent for the negative fixture');
+  const unrelatedHeadSHA=gitResult.stdout.trim();
+  gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,unrelatedHeadSHA);
+  assert.notEqual(gitResult.status,0,'the negative fixture must not descend from the immutable M8 source commit');
+  const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
+  assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
+  const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
+  assert.equal(expectedBlob,m8DemoBlob);
+  const expectedText=m8Demo.stdout.toString('utf8');
+  assert.match(expectedText,/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.match(expectedText,/g\.state,'QUARANTINED'/);
+  assert.match(expectedText,/guard_quarantined/);
+  assert.match(expectedText,/NORMAL_OK/);
+
+  const pythonCandidates=[process.env.CANARY_PYTHON,...(process.platform==='win32'?['python.exe','python']:['python3','python'])].filter(Boolean);
+  let pythonCommand;
+  for(const candidate of pythonCandidates){
+    const probe=spawnSync(candidate,['--version'],{encoding:'utf8',windowsHide:true});
+    if(probe.status===0){pythonCommand=candidate;break;}
+  }
+  assert.ok(pythonCommand,'the Community builder regression requires the same Python runtime as the build job');
+
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-community-m8-pin-'));
+  const fakeNpm=path.join(temp,'fake-npm-cli.cjs');
+  const outputName=`.test-community-m8-${process.pid}-${Date.now()}`;
+  const outputDir=path.join(repo,'competition-submission',outputName);
+  const sourceSHA=spawnSync('git',['-C',repo,'rev-parse','HEAD'],{encoding:'utf8',windowsHide:true});
+  assert.equal(sourceSHA.status,0,(sourceSHA.stderr??'').toString());
+  fs.writeFileSync(fakeNpm,"if (process.argv[2] === 'run' && process.argv[3] === 'build') { require('node:fs').mkdirSync('dist', { recursive: true }); require('node:fs').writeFileSync('dist/sdk.d.ts', 'export {};\\n'); }\n");
+  let stageDir;
+  try{
+    const unpinned=spawnSync(pythonCommand,[
+      'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha','0'.repeat(40),'--m8-pr-head-sha',m8PrHeadSHA,
+      '--candidate-id','m8-pin-test','--output-dir',outputDir,
+    ],{cwd:repo,encoding:'utf8',windowsHide:true});
+    assert.notEqual(unpinned.status,0,'the builder must reject noncanonical M8 source commits');
+    assert.match(unpinned.stderr,/Pinned M8 source SHA mismatch/);
+    assert.equal(fs.existsSync(outputDir),false,'a rejected M8 pin must not create candidate outputs');
+    const unrelatedHead=spawnSync(pythonCommand,[
+      'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,'--m8-pr-head-sha',unrelatedHeadSHA,
+      '--candidate-id','m8-pin-test','--output-dir',outputDir,
+    ],{cwd:repo,encoding:'utf8',windowsHide:true});
+    assert.notEqual(unrelatedHead.status,0,'the builder must reject an M8 PR head that does not descend from the reviewed source commit');
+    assert.match(unrelatedHead.stderr,/Pinned M8 source is not an ancestor of current PR head/);
+    assert.equal(fs.existsSync(outputDir),false,'a rejected M8 PR head must not create candidate outputs');
+    const build=spawnSync(pythonCommand,[
+      'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,'--m8-pr-head-sha',m8PrHeadSHA,
+      '--candidate-id','m8-pin-test','--output-dir',outputDir,
+    ],{cwd:repo,encoding:'utf8',windowsHide:true,maxBuffer:8*1024*1024});
+    assert.equal(build.status,0,(build.stdout??'')+'\n'+(build.stderr??''));
+    const summary=JSON.parse(build.stdout.trim());
+    assert.equal(summary.m8SourceSHA,m8SourceSHA);
+    assert.equal(summary.m8PRHeadSHA,m8PrHeadSHA);
+    assert.equal(summary.m8SourceBlob,m8DemoBlob);
+    assert.equal(summary.m8PRHeadBlob,m8DemoBlob);
+    const rawReport=JSON.parse(fs.readFileSync(path.join(outputDir,`community-build-${sourceSHA.stdout.trim().slice(0,8)}.json`),'utf8'));
+    assert.equal(rawReport.version.m8SourceSHA,m8SourceSHA);
+    assert.equal(rawReport.version.m8PRHeadSHA,m8PrHeadSHA);
+    assert.equal(rawReport.version.m8SourcePath,m8DemoPath);
+    assert.equal(rawReport.version.m8SourceBlob,m8DemoBlob);
+    assert.equal(rawReport.version.m8PRHeadBlob,m8DemoBlob);
+    stageDir=rawReport.temporaryBuild;
+    const staged=fs.readFileSync(path.join(stageDir,'reproduction-kit/run-offline-demo.mjs'));
+    assert.deepEqual(staged,m8Demo.stdout,'the actual staged candidate must contain the exact M8 Git blob');
+    const zipMember='agent-canary-community-3/reproduction-kit/run-offline-demo.mjs';
+    const zipped=spawnSync(pythonCommand,['-c',"import sys,zipfile;sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]))",summary.file,zipMember],{windowsHide:true,maxBuffer:2*1024*1024});
+    assert.equal(zipped.status,0,(zipped.stderr??'').toString());
+    assert.deepEqual(zipped.stdout,m8Demo.stdout,'the published candidate ZIP must preserve the exact M8 Git blob');
+  }finally{
+    fs.rmSync(outputDir,{recursive:true,force:true});
+    if(stageDir&&fs.existsSync(stageDir))fs.rmSync(path.dirname(stageDir),{recursive:true,force:true});
+    fs.rmSync(temp,{recursive:true,force:true});
+  }
 });
 
 test('payload inventory rejects symbolic links',t=>{
@@ -207,6 +451,7 @@ test('prepare emits a build command pinned to the exact committed wrapper source
       communityZip
     });
     assert.equal(invocation.wrapperSourceSHA,resolveWrapperSourceSHA(repo));
+    assert.equal(invocation.wrapperSourcePath,'packaging/windows/claude-native-hook.mjs');
     assert.equal(invocation.buildArgs[3],invocation.wrapperSourceSHA);
     assert.equal(invocation.communityZIP_SHA256,createHash('sha256').update('synthetic community package').digest('hex'));
     assert.ok(invocation.command.includes(invocation.wrapperSourceSHA));
@@ -217,18 +462,118 @@ test('prepare emits a build command pinned to the exact committed wrapper source
     assert.match(build,/writePackagedWrapperSource\(repoRoot,path\.join\(root,'claude-native-hook\.mjs'\),wrapperSHA\)/);
     const wrapper=readCommittedWrapperSource(repo);
     assert.equal(wrapper.sha,invocation.wrapperSourceSHA);
+    assert.equal(wrapper.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(wrapper.sha256,M1_CANONICAL_WRAPPER_SHA256);
     assert.equal(wrapper.bytes.includes(Buffer.from('\r\n')),false);
     const packagedPath=path.join(temp,'payload','claude-native-hook.mjs');
     fs.mkdirSync(path.dirname(packagedPath),{recursive:true});
     const packaged=writePackagedWrapperSource(repo,packagedPath,invocation.wrapperSourceSHA);
     assert.deepEqual(fs.readFileSync(packagedPath),wrapper.bytes);
     assert.deepEqual(packaged.bytes,wrapper.bytes);
+    assert.equal(packaged.sha256,M1_CANONICAL_WRAPPER_SHA256);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('Windows artifact evidence binds the exact Hook SHA through build report, manifest, and Setup extraction',()=>{
+  const wrapper=readCommittedWrapperSource(repo);
+  assert.equal(wrapper.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+  assert.equal(wrapper.sha256,M1_CANONICAL_WRAPPER_SHA256);
+  const m9HookPath='security-lab/claude-native-hook.mjs';
+  const m9HookBlob=spawnSync('git',['-C',repo,'rev-parse',`HEAD:${m9HookPath}`],{encoding:'utf8',windowsHide:true});
+  assert.equal(m9HookBlob.status,0,(m9HookBlob.stdout??'')+'\n'+(m9HookBlob.stderr??''));
+  assert.equal(m9HookBlob.stdout.trim(),wrapper.blobSha,'M9 exact-source parity reads this M7 Hook path; it must match the installer payload source');
+  const m9HookBytes=spawnSync('git',['-C',repo,'cat-file','blob',`HEAD:${m9HookPath}`],{windowsHide:true});
+  assert.equal(m9HookBytes.status,0,(m9HookBytes.stderr??'').toString());
+  assert.deepEqual(m9HookBytes.stdout,wrapper.bytes,'M9 checked Hook Git blob must be byte-identical to the committed installer Hook');
+  const packageHookPath='packaging/windows/claude-native-hook.mjs';
+  const packageHookEol=spawnSync('git',['-C',repo,'check-attr','eol','--',packageHookPath],{encoding:'utf8',windowsHide:true});
+  assert.equal(packageHookEol.status,0,(packageHookEol.stdout??'')+'\n'+(packageHookEol.stderr??''));
+  assert.equal(packageHookEol.stdout.trim(),`${packageHookPath}: eol: lf`);
+  const windowsCheckoutHook=spawnSync('git',['-C',repo,'-c','core.autocrlf=true','cat-file','--filters',`--path=${packageHookPath}`,`HEAD:${packageHookPath}`],{windowsHide:true});
+  assert.equal(windowsCheckoutHook.status,0,(windowsCheckoutHook.stderr??'').toString());
+  assert.equal(windowsCheckoutHook.stdout.includes(Buffer.from('\r\n')),false,'Windows checkout filters must preserve the canonical LF Hook bytes');
+  assert.equal(createHash('sha256').update(windowsCheckoutHook.stdout).digest('hex'),wrapper.sha256);
+  const windowsCheckoutBlob=spawnSync('git',['-C',repo,'hash-object','--stdin'],{input:windowsCheckoutHook.stdout,encoding:'utf8',windowsHide:true});
+  assert.equal(windowsCheckoutBlob.status,0,(windowsCheckoutBlob.stdout??'')+'\n'+(windowsCheckoutBlob.stderr??''));
+  assert.equal(windowsCheckoutBlob.stdout.trim(),wrapper.blobSha);
+  const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+  assert.match(build,/wrapperSourceContentSHA256:packagedHookSource\.sha256/);
+  const setupHookPaths=['claude-native-hook.mjs','app/security-lab/claude-native-hook.mjs'];
+  assert.equal(setupHookPaths.filter(file=>path.posix.basename(file)==='claude-native-hook.mjs').length,2);
+  assert.deepEqual(setupHookPaths.filter(file=>file.replace(/\\/g,'/')==='claude-native-hook.mjs'),['claude-native-hook.mjs']);
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8').replace(/\r\n/g,'\n');
+  assert.ok(workflow.includes("$expectedHookRelativePath = 'claude-native-hook.mjs'"));
+  assert.ok(workflow.includes("$hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\\','/') -ceq $expectedHookRelativePath })"));
+  assert.ok(!workflow.includes("Get-ChildItem -LiteralPath $setupExtractRoot -Filter 'claude-native-hook.mjs' -File -Recurse"));
+  assert.ok(workflow.includes("if ($buildResult.version.wrapperSourceContentSHA256 -ne $packagedHookSha256) { throw 'BUILD_REPORT_HOOK_SHA256_MISMATCH' }"));
+  assert.ok(workflow.includes("if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }"));
+  assert.ok(workflow.includes("if ($installerSha256 -ne $buildResult.installerSHA256) { throw 'INSTALLER_SHA256_MISMATCH' }"));
+  assert.ok(workflow.includes("if ($payloadManifestSha256 -ne $buildResult.manifestSHA256) { throw 'PAYLOAD_MANIFEST_SHA256_MISMATCH' }"));
+});
+
+test('wrapper source API accepts only the M7 and M8 canonical paths',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-wrapper-source-paths-'));
+  const allowedPaths=['packaging/windows/claude-native-hook.mjs','security-lab/claude-native-hook.mjs'];
+  const runGit=(...args)=>{
+    const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
+    assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
+    return result.stdout.trim();
+  };
+  try{
+    for(const sourcePath of allowedPaths){
+      const candidate=path.join(temp,sourcePath);
+      fs.mkdirSync(path.dirname(candidate),{recursive:true});
+      fs.copyFileSync(path.join(repo,allowedPaths[0]),candidate);
+    }
+    fs.writeFileSync(path.join(temp,'.gitattributes'),`${allowedPaths.map(sourcePath=>`${sourcePath} text eol=lf`).join('\n')}\n`);
+    runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
+    runGit('config','user.name','Canary contract test');
+    runGit('config','user.email','canary-contract-test@example.invalid');
+    runGit('add','--','.gitattributes',...allowedPaths);
+    runGit('commit','--quiet','-m','test canonical wrapper source paths');
+    const head=runGit('rev-parse','HEAD');
+    const communityZip=path.join(temp,'community.zip');
+    fs.writeFileSync(communityZip,'synthetic community package');
+    for(const sourcePath of allowedPaths){
+      const invocation=createWindowsBuildInvocation({
+        repoRoot:temp,
+        buildScript:path.join(repo,'packaging/windows/build.mjs'),
+        payloadDir:path.join(temp,'payload'),
+        nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
+        communityZip,
+        sourcePath
+      });
+      assert.equal(invocation.wrapperSourceSHA,head);
+      assert.equal(invocation.wrapperSourcePath,sourcePath);
+      assert.equal(resolveWrapperSourceSHA(temp,{sourcePath:invocation.wrapperSourcePath}),head);
+      const committed=readCommittedWrapperSource(temp,{sourcePath:invocation.wrapperSourcePath});
+      assert.equal(committed.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+      assert.equal(committed.sha256,M1_CANONICAL_WRAPPER_SHA256);
+      const destination=path.join(temp,'packaged',sourcePath.split('/').at(-1));
+      fs.mkdirSync(path.dirname(destination),{recursive:true});
+      const packaged=writePackagedWrapperSource(temp,destination,invocation.wrapperSourceSHA,{sourcePath:invocation.wrapperSourcePath});
+      assert.deepEqual(fs.readFileSync(destination),committed.bytes,`${sourcePath} must package exact committed bytes`);
+      assert.deepEqual(packaged.bytes,committed.bytes);
+    }
+    const unexpectedPath='../security-lab/claude-native-hook.mjs';
+    assert.throws(()=>resolveWrapperSourceSHA(temp,{sourcePath:unexpectedPath}),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+    assert.throws(()=>readCommittedWrapperSource(temp,{sourcePath:unexpectedPath}),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+    assert.throws(()=>writePackagedWrapperSource(temp,path.join(temp,'rejected.mjs'),head,{sourcePath:unexpectedPath}),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
+    assert.throws(()=>createWindowsBuildInvocation({
+      repoRoot:temp,
+      buildScript:path.join(repo,'packaging/windows/build.mjs'),
+      payloadDir:path.join(temp,'payload'),
+      nsisDir:'PATH_TO_VERIFIED_PORTABLE_NSIS_3_13',
+      communityZip,
+      sourcePath:unexpectedPath
+    }),/WRAPPER_SOURCE_PATH_NOT_ALLOWED/);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
 test('wrapper provenance refuses a Hook file changed after its source commit',()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-wrapper-provenance-'));
-  const wrapper=path.join(temp,'security-lab','claude-native-hook.mjs');
+  const wrapper=path.join(temp,'packaging','windows','claude-native-hook.mjs');
   const runGit=(...args)=>{
     const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
     assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
@@ -236,18 +581,20 @@ test('wrapper provenance refuses a Hook file changed after its source commit',()
   };
   try{
     fs.mkdirSync(path.dirname(wrapper),{recursive:true});
-    fs.writeFileSync(wrapper,'export const wrapper = true;\n');
+    fs.copyFileSync(path.join(repo,'packaging/windows/claude-native-hook.mjs'),wrapper);
+    fs.writeFileSync(path.join(temp,'.gitattributes'),'packaging/windows/claude-native-hook.mjs text eol=lf\n');
     runGit('init','--quiet');
     runGit('config','core.autocrlf','true');
     runGit('config','user.name','Canary contract test');
     runGit('config','user.email','canary-contract-test@example.invalid');
-    runGit('add','--','security-lab/claude-native-hook.mjs');
+    runGit('add','--','.gitattributes','packaging/windows/claude-native-hook.mjs');
     runGit('commit','--quiet','-m','test wrapper provenance');
+    assert.equal(runGit('rev-parse','HEAD:packaging/windows/claude-native-hook.mjs'),M1_CANONICAL_WRAPPER_BLOB_SHA);
     assert.equal(resolveWrapperSourceSHA(temp),runGit('rev-parse','HEAD'));
-    fs.writeFileSync(wrapper,'export const wrapper = true;\r\n');
+    fs.writeFileSync(wrapper,fs.readFileSync(wrapper).toString('utf8').replace(/\r?\n/g,'\r\n'));
     const committed=readCommittedWrapperSource(temp),packaged=path.join(temp,'packaged','claude-native-hook.mjs');
     fs.mkdirSync(path.dirname(packaged),{recursive:true});
-    assert.deepEqual(committed.bytes,Buffer.from('export const wrapper = true;\n'));
+    assert.equal(committed.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
     assert.notDeepEqual(fs.readFileSync(wrapper),committed.bytes,'the synthetic Windows worktree uses CRLF while the tracked blob uses LF');
     assert.deepEqual(writePackagedWrapperSource(temp,packaged,committed.sha).bytes,committed.bytes);
     assert.deepEqual(fs.readFileSync(packaged),committed.bytes,'packaged bytes must exactly match the Git blob');
@@ -265,6 +612,7 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
     const packagedHook=path.join(payload,'claude-native-hook.mjs');
     const packagedE4=path.join(payload,'e4-hook-faults.mjs');
     const wrapperSource=readCommittedWrapperSource(repo);
+    assert.equal(wrapperSource.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
     writePackagedWrapperSource(repo,packagedHook,wrapperSource.sha);
     assert.deepEqual(fs.readFileSync(packagedHook),wrapperSource.bytes,'packaged hook bytes must be the exact LF Git blob');
     fs.copyFileSync(path.join(repo,'packaging/windows/e4-hook-faults.mjs'),packagedE4);
@@ -292,6 +640,82 @@ test('Windows payload E4 checks the co-located privacy-safe hook wrapper',async(
       assert.equal(log[0].includes(marker),false,`packaged decision log leaked ${marker}`);
     }
   }finally{fs.rmSync(payload,{recursive:true,force:true});}
+});
+
+test('M1 canonical installer Hook redacts caller sentinels from stdout, stderr, and JSONL without changing decisions',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-hook-reason-redaction-'));
+  try{
+    const hook=path.join(root,'claude-native-hook.mjs');
+    const hookSource=readCommittedWrapperSource(repo);
+    assert.equal(hookSource.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    writePackagedWrapperSource(repo,hook,hookSource.sha);
+    const state=path.join(root,'state');fs.mkdirSync(state);
+    const callerInputSentinel='M7_SYNTHETIC_CALLER_INPUT_SENTINEL';
+    const callerReasonSentinel='M7_SYNTHETIC_CALLER_REASON_SENTINEL';
+    const inputSentinels=[callerInputSentinel,'C:/synthetic/caller/private.txt'];
+    const input={session_id:callerInputSentinel,tool_name:'Read',tool_input:{file_path:inputSentinels[1],note:callerInputSentinel}};
+    const fallbacks={allow:'Agent Canary: permission_allowed',deny:'Agent Canary: permission_denied',ask:'Agent Canary: approval_required'};
+    const invoke=(name,moduleSource)=>{
+      const modulePath=path.join(root,`${name}.mjs`),logPath=path.join(root,`${name}.jsonl`);
+      fs.writeFileSync(modulePath,moduleSource,{flag:'wx'});
+      const result=spawnSync(process.execPath,[hook,modulePath,root,state,logPath],{input:JSON.stringify(input),encoding:'utf8',windowsHide:true,timeout:5000,maxBuffer:128*1024});
+      assert.equal(result.error?.code??null,null,`${name} process should finish within its bounded timeout`);
+      assert.equal(result.status,0,`${name} process should return the established hook protocol status`);
+      for(const marker of inputSentinels){
+        assert.equal((result.stdout??'').includes(marker),false,`${name} stdout leaked a caller canary`);
+        assert.equal((result.stderr??'').includes(marker),false,`${name} stderr leaked a caller canary`);
+      }
+      return{result,logPath};
+    };
+    for(const decision of ['allow','deny','ask']){
+      const reason=`caller supplied ${callerReasonSentinel}`;
+      const fixture=`export async function decideAgentHook(){return ${JSON.stringify({hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:decision,permissionDecisionReason:reason}})}}\n`;
+      const {result,logPath}=invoke(`decision-${decision}`,fixture);
+      const stdoutDecision=JSON.parse(result.stdout).hookSpecificOutput;
+      assert.equal(stdoutDecision.permissionDecision,decision);
+      assert.equal(stdoutDecision.permissionDecisionReason,fallbacks[decision]);
+      assert.equal((result.stdout??'').includes(callerReasonSentinel),false,`${decision} stdout leaked a caller-controlled reason`);
+      assert.equal((result.stderr??'').includes(callerReasonSentinel),false,`${decision} stderr leaked a caller-controlled reason`);
+      const lines=fs.readFileSync(logPath,'utf8').trim().split(/\r?\n/);
+      assert.equal(lines.length,1);
+      const record=JSON.parse(lines[0]);
+      assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
+      assert.equal(record.permissionDecision,decision);
+      assert.equal(lines[0].includes(callerReasonSentinel),false,`${decision} JSONL leaked a caller-controlled reason`);
+      for(const marker of inputSentinels){
+        assert.equal(lines[0].includes(marker),false,`${decision} JSONL leaked a caller canary`);
+        assert.equal((result.stdout??'').includes(marker),false,`${decision} stdout leaked a caller canary`);
+      }
+    }
+    const safeReason='Agent Canary: unregistered_tool';
+    const safeFixture=`export async function decideAgentHook(){return ${JSON.stringify({hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'deny',permissionDecisionReason:safeReason}})}}\n`;
+    const safeResult=invoke('safe-reason',safeFixture).result;
+    assert.equal(JSON.parse(safeResult.stdout).hookSpecificOutput.permissionDecision,'deny');
+    assert.equal(JSON.parse(safeResult.stdout).hookSpecificOutput.permissionDecisionReason,safeReason,'reviewed safe reason must remain stable');
+
+    const errorSentinel='M7_SYNTHETIC_THROW_REASON_SENTINEL';
+    const failed=invoke('throwing-hook',`export async function decideAgentHook(){throw new Error(${JSON.stringify(errorSentinel)})}\n`);
+    const failedDecision=JSON.parse(failed.result.stdout).hookSpecificOutput;
+    assert.equal(failedDecision.permissionDecision,'deny');
+    assert.equal(failedDecision.permissionDecisionReason,'LAB_HOOK_ERROR_FAIL_CLOSED');
+    assert.equal(fs.existsSync(failed.logPath),false,'a rejected hook must not persist a partial record');
+    for(const marker of [...inputSentinels,errorSentinel]){
+      assert.equal((failed.result.stdout??'').includes(marker),false,'fail-closed stdout leaked a caller canary');
+      assert.equal((failed.result.stderr??'').includes(marker),false,'fail-closed stderr leaked a caller canary');
+    }
+
+    const timeoutMarker='M7_SYNTHETIC_TIMEOUT_REASON_SENTINEL';
+    const timeoutModule=`const privateFixture=${JSON.stringify(timeoutMarker)}; export async function decideAgentHook(){void privateFixture;return await new Promise(()=>{})}\n`;
+    const timedOut=invoke('timeout-hook',timeoutModule);
+    const timeoutDecision=JSON.parse(timedOut.result.stdout).hookSpecificOutput;
+    assert.equal(timeoutDecision.permissionDecision,'deny');
+    assert.equal(timeoutDecision.permissionDecisionReason,'LAB_HOOK_ERROR_FAIL_CLOSED');
+    assert.equal(fs.existsSync(timedOut.logPath),false,'a timed-out hook must not persist a partial record');
+    for(const marker of [...inputSentinels,timeoutMarker]){
+      assert.equal((timedOut.result.stdout??'').includes(marker),false,'timeout stdout leaked a caller canary');
+      assert.equal((timedOut.result.stderr??'').includes(marker),false,'timeout stderr leaked a caller canary');
+    }
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 
 test('Windows launcher exposes one non-reentrant Auto E4 action with streamed, explicitly bounded results',()=>{
