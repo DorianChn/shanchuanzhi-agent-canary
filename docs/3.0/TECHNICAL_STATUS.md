@@ -7847,3 +7847,184 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Cross-module Issue #76 is OPEN/P1. It records exact conflict paths and owners after the M1/M2/M4/M6 merges. M0 left owner-specific comments on PRs #33, #36, #39, #40, and #47. These PRs must sync their existing branches and use owner-reviewed adapters; no tests are to be removed or weakened.
 - M3's owner audit found required M3 held-file Gateway and shared-store single-notification cases in M1-owned tests, plus M3 package entries that must compose with the already-merged M6 E4 entries. M3 branch remains unchanged at `bfcf85e7…` pending M1/M6/M9 adapters. M9 remains unchanged at `30fd82a…` pending owner-compatible reconciliation of M1/M4/M5/M6/M7 files. Both branches currently show merge conflicts with the feature baseline; no hosted checks are reported for their new heads yet.
 - M5/M7/M8 current-base conflicts remain assigned to their respective owners through #76 and their PR comments. Issue #52 stays OPEN/P0/NOT_VERIFIED; Issue #57 stays OPEN/P1/NOT_VERIFIED. No product acceptance is inferred from the green baseline suite.
+
+## 2026-10-23 08:48 UTC — completed module merge checkpoint
+
+- M1 PR #43, M2 PR #37, M4 PR #34, M6 PR #38, and M0 coordination PR #30 are merged into `feature/agent-canary-3.0`. The latest feature head is `75c2119f31928daf54041a4be714a892cc93e0e2`; the local feature worktree is clean.
+- PR #24 remains OPEN/Draft with its original base `competition/shanchuanzhi-release-readiness` at `dc8d0092b35141b295d5ff42873584ed488e4ee7`. Its exact head `75c2119…` is CLEAN and all 13 reported checks passed, including package-smoke at 08:46:50 UTC. No PR #24 merge, retarget, or release action was taken.
+- Usage Overview read at 08:47 UTC showed 90% remaining in the five-hour limit and 59% weekly; the pause threshold is not active.
+- M3 owner commit `cac8f4627aceb5dd3732036129e42ade7e4790e9` locally isolates two M3 regression cases in `test/security-center-route-m3.test.ts`; the owner reported 45/45 focused assertions pass and a clean diff-check. This commit is not yet published. PR #33 still reports conflicts and its remote head has no current checks, so it is not merge-ready.
+- M5, M7, and M8 owners are preparing minimal conflict-safe updates in their owned areas. Shared M1 runtime/canonical tests and M9 package composition remain with their owners; no tests or security policies are being weakened.
+- PR #36 remains conflicting. Issue #76 coordinates the owner-specific reconciliation. Issue #52 remains OPEN/P0/NOT_VERIFIED; Issue #57 remains OPEN/P1/NOT_VERIFIED. Green PR #24 CI does not establish product held-file enforcement or independent product E4 acceptance.
+
+## 2026-10-23 08:53 UTC — M3/M7/M8 conflict-safe updates
+
+- M3 owner commit `cac8f4627aceb5dd3732036129e42ade7e4790e9` was fast-forward pushed to PR #33 at 08:52 UTC. PR #33 now points to that exact head, but GitHub reports no checks yet and the PR remains conflicting with the feature base. The two M3 regression cases are isolated in the M3-owned route test; Issue #52 remains P0/NOT_VERIFIED.
+- M8 owner has a local commit `4fb07ed` that moves packaged-output coverage into an M8-owned fixture and preserves M1/M6 runtime and canonical test behavior. Its merge-tree against feature head `75c2119` is clean; syntax and diff checks passed, but behavioral CI has not run. It is not yet pushed.
+- M7 PR #39 exact head `5a7540b` has 13/13 hosted checks green but conflicts with the feature base. The owner confirms its 10 Gateway quarantine/close assertions modify M1-owned `test/gateway.test.ts`; M7 is isolating only assertions it owns while deferring Gateway lifecycle to M1. No Gateway product acceptance is inferred.
+- M5 PR #47 exact head `8bb14c6` has 9/9 checks green but remains conflicting. M1-owner review is underway for its shared Hook/file-store deltas; M9 is composing the package manifest, and must retain M5 policy exports/tests and M3's new test entries.
+- Current usage at 08:52 UTC is 88% five-hour and 58% weekly. The most recent push was at 08:52 UTC, so the next upload batch is no earlier than 08:57 UTC and requires fresh quota and PR #24 checks. PR #24 remains OPEN/Draft at the unchanged base and head `75c2119…`; all 13 checks are green. Issues #52 and #57 remain OPEN/NOT_VERIFIED.
+
+## 2026-10-23 09:14 UTC — completed-module merge gate and P0 triage
+
+- Live GitHub read-back confirms M0 PR #30, M1 #43, M2 #37, M4 #34, and M6 #38 are already merged into `feature/agent-canary-3.0`. Their merge commits are present in baseline `75c2119f31928daf54041a4be714a892cc93e0e2`; no further merge action is needed for these completed modules.
+- PR #24 remains OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, head `75c2119f31928daf54041a4be714a892cc93e0e2`, CLEAN, with 13/13 checks successful. It was not modified.
+- M8 PR #40 head `4fb07ed5abebf642a22df2a05bd8bdc9a4ea1f50` fails wrapper/ownership checks. Source inspection confirms `security-lab/claude-native-hook.mjs` persists raw `input.tool_input` and the full decision object. M0 opened P0 Issue #77; M8 is correcting its owned shipped Hook/logging copy, retaining feature `.gitattributes` and M1/M6 canonical files. No merge or product-exposure claim.
+- M3 PR #33 remains at `cac8f4627aceb5dd3732036129e42ade7e4790e9`, DIRTY with no exact-head checks. Local M3 commit `a4605a0` restores canonical M1 test blobs; M1 owner review authorizes taking current feature blobs for the stale shared-source paths. M3 is now reconciling its existing branch and will leave M9-owned `package.json` unchanged.
+- M7 PR #39 remains at `5a7540b0b041d10e6d562aa528f79a2cfdea987a`, DIRTY; its 13/13 hosted checks are for that older remote head. The local sync to feature `75c2119` has unresolved M6/M7 semantic conflicts in `packaging/windows/auto-e4.mjs`, `worker.mjs`, and `test-worker.mjs`. Original uncommitted M7 alignment edits remain in `stash@{0}`. M6 owner review is read-only and pending; M7 has not been merged.
+- M5 PR #47 remains OPEN/Draft at `936a797456e342afb21ff436c5e1d7f8dfba3832`, DIRTY and without current exact-head checks; not merge-ready. M9 PR #36 remains OPEN/Draft at `30fd82a305c0c7f1ba88715f0b4e9bd80566da4f`, DIRTY; local candidate `1841647` is unpushed and composition remains blocked on exact module pins.
+- Usage page read at 09:13 UTC showed 80% five-hour and 57% weekly remaining. Keep the page open. The last module pushes were M5/M8 around 09:01 UTC; no unverified or conflicted changes have been pushed in this checkpoint.
+
+## 2026-10-23 09:27 UTC — merge readiness refresh
+
+- Live PR read-back: M0 #30, M1 #43, M2 #37, M4 #34, and M6 #38 are already MERGED into `feature/agent-canary-3.0`; no duplicate merge was attempted. The separate legacy M6 PR #31 is still a Draft targeting `main`; leave it untouched because M6 #38 is the accepted development-branch delivery.
+- No remaining open M PR is merge-ready: M3 #33 and M5 #47 have no checks for their current heads and are DIRTY; M7 #39 has 13/13 successful checks but is DIRTY against the current base; M8 #40 is UNSTABLE with failing ownership-contract and Ubuntu Node 22 checks; M9 #36 is DIRTY and has no current checks. Owners are continuing M3/M7 work in their existing worktrees.
+- PR #24 remains OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, head `75c2119f31928daf54041a4be714a892cc93e0e2`, CLEAN, with 13/13 checks successful. No PR #24 change, main merge, or Release action was taken.
+- Usage Overview read at 09:27 UTC shows 77% remaining five-hour and 57% weekly; the pause threshold is not active. Keep the usage page open. Only publish a later coordinated batch after a fresh quota and PR #24 check.
+
+## 2026-10-23 10:08 UTC — M3 merge and M7 exact-head validation
+
+- M3 PR #33 merged into `feature/agent-canary-3.0` at merge commit `611f9fca14706a1110a1f0a39e8488f4ff28d2a9`, using expected candidate head `96d688d725292092dfc4e7ba940e9edfa8354e1e`. Exact candidate hosted CI run `39935841135` passed 9/9 and refreshed ownership/API/evidence run `39936327926` passed 1/1. Local standard suite: 419 passed / 11 skipped / 0 failed; M3-focused suites 44/44. M4 compatibility review passed; M5/M6/M7 package-script coordination remains recorded as pending in Issue #76.
+- PR #24 remains OPEN/Draft, still targets `competition/shanchuanzhi-release-readiness`, and now points at feature merge head `611f9fca14706a1110a1f0a39e8488f4ff28d2a9`. All 13 checks passed after the M3 merge; no PR #24 merge, retarget, or release action was taken.
+- M7 exact candidate `a313cf5dc473350649dca5aac27fc051a926174d` includes feature head `611f9fc` and local M7 evidence-preservation fix `2442fc0`. It was pushed to existing PR #39 at 10:08 UTC; exact-head CI, coordination, and wrapper checks are pending. M6 reviewed the fix and accepted its evidence/pointer behavior. M8 shared packaging review is requested in Issue #76 and pending. Clean-VM install/upgrade/uninstall/cancel-rollback remains NOT_VERIFIED under #41.
+- Five modules were already merged before this checkpoint (M0/M1/M2/M4/M6); M3 is the sixth. M5 #47, M8 #40, and M9 #36 remain OPEN and are not merge-ready based on current recorded blockers. Issue #52 remains OPEN/P0/NOT_VERIFIED.
+- Usage page read at 10:07 UTC showed 69% five-hour and 55% weekly remaining; the hard pause threshold is not active. Keep the usage tab open.
+
+## 2026-10-23 10:15 UTC — M7/M5 exact-head merge gates
+
+- PR #39 remains OPEN/Draft at `a313cf5dc473350649dca5aac27fc051a926174d`, based on `611f9fc`. Main tests and M7 package smoke pass; both wrapper-regressions jobs fail because M7's added `windows-community.yml` invokes missing `npm run test:reliability`, although `test/reliability.test.mjs` exists. M6 review confirmed this is M7's workflow defect, not an M8 regression. Issue #76 comment `6362606224` assigns M7 the fix and requires both wrapper jobs green without removing tests or weakening gates. M7/M8 packaging paths overlap and require combined-base review; neither mergeability nor older #40 checks prove composition safety.
+- PR #47 remains OPEN/Draft at `936a797456e342afb21ff436c5e1d7f8dfba3832`, `CONFLICTING/DIRTY`, with no checks for that exact head. Conflicts are `package.json`, `src/security-router.ts`, and `test/security-router.test.ts`. M1 owns the latter two; the package merge must preserve M2 adapter tests, all five merged M3 suites, M6 E4 scripts, and M5 policy exports/tests. Issue #76 comment `6362621194` assigns owner reviews, current-base sync, additive reconciliation, and exact-head build/pack/CI acceptance.
+- No M7 or M5 merge was performed. PR #24 remains OPEN/Draft on `611f9fca14706a1110a1f0a39e8488f4ff28d2a9`, with 13/13 checks passed. Usage page read at 10:15 UTC showed 60% five-hour and 54% weekly remaining; the usage tab remains open.
+
+## 2026-10-23 10:43 UTC — M7 feature merge and M5 P0 remediation
+
+- M7 PR #39 exact head `a099d049ff3a5212fcb5e534cc477cf8750c47cc` merged by squash into `feature/agent-canary-3.0` at `daa17efb70ba8c67b485e9269ec461138fd86f7c` after all 14 exact-head hosted checks passed. Issue #41 remains OPEN/P1/NOT_VERIFIED for clean-VM install, upgrade, uninstall, and cancel/rollback; the merge does not close that acceptance item.
+- The local feature worktree was clean and fast-forwarded from `611f9fc` to `daa17ef`. PR #24 remains OPEN/Draft on its original `competition/shanchuanzhi-release-readiness` base; its shared feature head advanced automatically to `daa17ef`, and all 15 reported checks passed on the new head. PR #24 was not merged, retargeted, or released.
+- M5 PR #47 remains unmerged under P0 Issue #79. M5's local repair routes strict file reads through M1's held-file capability and adds path-only callback denial coverage. The first synced-base focused run reported 45/45, build and `pack:check` passed with a temporary manifest, and the conflicted `package.json` was byte-verified restored. M5 is syncing again to `daa17ef`; do not publish until exact latest-base checks and additive package reconciliation pass.
+- M8 PR #40 remains unmerged: its current hosted checks include ownership-contract and Ubuntu Node 22 failures. M9 PR #36 remains conflicting. Issue #52 remains OPEN/P0/NOT_VERIFIED; no user-facing security acceptance is inferred from CI.
+- Usage Overview read at 10:42 UTC showed 56% five-hour and 53% weekly remaining. The usage tab remains open; the pause threshold is not active.
+
+## 2026-10-23 10:57 UTC — completed M-level merge audit
+
+- Rechecked GitHub PR state: M1 #43, M2 #37, M3 #33, M4 #34, M6 #38, and M7 #39 are already merged into `feature/agent-canary-3.0`. Their merge commits are respectively `f0b4ee8`, `49af6d3`, `611f9fc`, `d0f6198`, `a6f4a88`, and `daa17ef`; the remote feature head and clean local `main` worktree both resolve to `daa17efb70ba8c67b485e9269ec461138fd86f7c`. No additional completed M-level PR was waiting to merge.
+- PR #24 remains OPEN/Draft on `competition/shanchuanzhi-release-readiness`; it was not changed. The separate legacy M6 PR #31 also remains OPEN/Draft against `main`; AC3 M6 is already represented by merged PR #38, so #31 was not merged or retargeted.
+- M5 #47, M8 #40, and M9 #36 remain OPEN/Draft and DIRTY; no merge attempted. Their open blockers remain M5 P0 #79, M8/M6 contract issue #80, and M9 integration reconciliation. M1 P0 #52 and M7 clean-VM acceptance #41 also remain OPEN/NOT_VERIFIED, so merged code is not reported as complete product acceptance.
+- Usage page read at 10:57 UTC showed 52% five-hour and 53% weekly remaining. The page remains open; the <5% pause condition is not active.
+
+## 2026-10-23 11:07 UTC — M5 exact-head CI and cross-module gates
+
+- M5 candidate `b97ecca985baf674959af4127b9d29368c959a06` was pushed to existing PR #47 after confirming the remote was still at `936a797456e342afb21ff436c5e1d7f8dfba3832`; no merge was performed. Local M5 evidence is 45/45 focused policy tests (no skips), build pass, and `pack:check` pass (103 files). `package.json` matches M9's additive contract blob; the M1 router/test files are byte-identical to the merged baseline.
+- Exact-head hosted CI run `39943249828` is FAIL, not merge-ready: Ubuntu Node 22 reports 469 passed / 3 failed / 13 skipped in M3 `test/codex-connection-check.test.ts`. The three failures are the M3 positive composition reporting UNKNOWN, and two dependency-seam expectations differing after M5's package export appears. M0 opened P1 issue #81 with exact reproduction and M3/M5/M9 acceptance; issue #79 remains OPEN/P0. M1 exact-candidate security review is requested. The ownership check also requires a current `Test-Evidence`, explicit `API-Contract-Change`, the M0 API contract document, and package coordination entries for M3/M6/M7; PR body is not yet corrected.
+- M8 proposal `3562cea44c99c0fe00f0ac7fc07e8afeaa65bf01` is local only. Its M8 Hook suite passes 6/6; M6 Auto E4 remains 14/15 on the raw reason expectation. M0 recorded the allowlisted, fixed decision projection proposal in Issue #80 and requested M6 owner decision; no M6 file was changed or pushed. M7 owner review of the unused build-contract helper remains pending.
+- M9 local package composition `f23f43d` and follow-up `d252b32` pass manifest test 1/1, build, targeted security/composition 69/69, and pack check (103 files); full root suite and exact-source workflow remain unrun. Existing PR #36 remains OPEN/Draft/DIRTY without checks; safe synchronization and exact-source M1/M3 review gates remain.
+- PR #24 remains OPEN/Draft and unchanged. Usage page read at 11:07 UTC showed 50% five-hour and 52% weekly remaining, with 113 credits; the usage tab stays open and the <5% pause condition is not active.
+
+## 2026-10-23 11:10 UTC — M1 P0 review finding
+
+- M1 read-only review of M5 head `b97ecca985baf674959af4127b9d29368c959a06` confirms exact capability binding and direct Gateway `readFileWithCapability` execution; M1-owned router/test blobs are unchanged. It also finds a P0: strict capability enforcement is gated only by `verifyRealPaths === true`, so `mode: STRICT` with the option omitted/false can still reach a generic path callback. M5 is fixing this in its own files and adding omitted/false regression coverage. Issue #79 remains OPEN/NOT_VERIFIED; no M5 merge.
+- M3 owner patch for the three hosted failures in M5 run `39943249828` is being prepared in a detached worktree from the exact candidate. M1 review is complete; M3 and M5 are the only active implementation tasks. PR #47 remains OPEN/Draft.
+- Issue #80 remains OPEN pending M6's decision on M8's non-secret allowlisted reason projection; M8's candidate is local only. M9's local manifest composition evidence is recorded above, while PR #36 is still conflicting and without exact-source CI. No further M-level PR was eligible to merge in this checkpoint.
+- Last live usage read remains 50% five-hour / 52% weekly (11:07 UTC); usage tab remains open.
+
+## 2026-10-23 11:22 UTC — M5/M3 integration candidate and M6/M8 contract
+
+- M5 PR #47 exact head `f33b4a770f6c6f05a3d291c0bd2f4f01989d9964` is OPEN/Draft and passes 13/13 product checks plus 1/1 ownership-contract check. It includes M5 STRICT held-read correction `6695e04`, M3 owner-produced adapter patch `243b83e`, and M0 contract-doc update `f33b4a7`. M1 reviewed the M5 correction. Combined local root suite on code head `243b83e`: 486 total / 475 passed / 11 skipped / 0 failed; build and package check (103 files) passed; M5 focused suite 46/46. No merge yet; M9 exact-source composition is active and Issues #79/#52 remain open until the additional integration and product gates are independently met.
+- M8 review determined `M6_HOOK_LOG_CANARY_REASON` is test-injected data, not a product reason enum; it must not be added to the production allowlist. M6 authored local follow-up commit `ccb1b7d` changing only its E4 test to expect M8's fixed sanitized fallback while retaining allow/PreToolUse and canary non-disclosure assertions. Focused validation passed 1/1 against exact M8 candidate `3562cea`; no push yet. Issue #80 remains OPEN while the integrated M8 candidate is validated.
+- M9 exact-source candidate refresh and M8/M6 candidate reconciliation are the only active workstreams. Usage page remains open and now reads 46% five-hour, 52% weekly, 113 credits, and about 1h43m to reset; the <5% pause threshold is not active.
+
+## 2026-10-23 15:00 UTC — M8/M3 exact-source gate update
+
+- Overall: M1–M7 code is represented in the feature baseline; M8 PR #40 is a tested candidate; M9 is not integration-complete. The latest hosted M9 run remains 14/17 on both Ubuntu and Windows, with M2 Hook parity, M2 P0 stdout redaction, and M2/M5 held-read compatibility failures. It is too early to call the release gate nearly complete.
+- M9 local branch `feature/ac3-m9-integration` remains based on remote head `2d762b13794398a2dd46aa7cadeb1bff1b6c2c8e`. The new M9-owned workflow/test/report changes add current M8 PR #40 head `1abdfe3890c6c263eea667789deb7eab5038e828` as a separate exact candidate while preserving historical M6-reviewed source evidence.
+- Current M8 Hook-output suite passed 6/6 locally. Its M6-owned `test/auto-e4.test.mjs` blob changed from reviewed `d8909264ea2d924d611ca01a4daa73829ab67d1d` to `607c1c065c66caa792c62f2cdd45d6c6223f3d24`; Issue #59 is OPEN pending M6 disposition. M1 exact review of the new M8 output test remains pending.
+- Current M3 merge source `611f9fca14706a1110a1f0a39e8488f4ff28d2a9` Hook blob `d6f93249306b7966259cab463dd39475728ef338` differs from M1's current canonical blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`. The exact M3 Hook emits caller-controlled synthetic reason canaries on stdout for allow/deny/ask; the M1 control is clean. New M9 local regression records this P0 as Issue #89. Issue #72 is OPEN for exact M1 disposition of current merged M3 blobs.
+- Local targeted M9 check passed the exact M8 candidate assertion and failed the M3 output assertion on the three expected stdout canaries. `node --check`, `git diff --check`, and the current M8 six-case suite passed. Hosted CI for the new M9 candidate is pending publication; no implementation ownership was crossed and no failing test or policy was weakened.
+- PR #24 remains OPEN/Draft and unchanged; no main merge or Release. Usage page remains open and reads 52% five-hour, 37% weekly, about 3h9m to reset; the <5% pause threshold is not active.
+
+## 2026-10-23 15:09 UTC — M9 exact-head hosted result
+
+- PR #36 head `4cc4565a46c4fb760d891f00a11431a8afd666e3` completed exact-source composition on both Ubuntu and Windows: 20 tests, 15 passed, 5 failed on each platform. Failures match: M2/M5/M7/M9 Hook-copy parity, P0 M2 stdout reason leak (#88), M3 Hook parity with current M1 (#72), P0 M3 stdout reason leak (#89), and P1 positive held-file read denied as `path_execution_not_pinned` (#87).
+- Current M8 PR #40 exact Hook-output test passed 6/6 in the hosted Windows composition run; the M9 exact M8 candidate check passes. General CI, package smoke, wrapper regressions, Windows installer lifecycle, and the corrected AC3 ownership-contract check pass.
+- PR #36 description now has the required `Test-Evidence`, `API-Contract-Change`, and `Coordinated-with` fields. AC3 check run `39975677845` is green. PR #36 stays OPEN/Draft because exact-source composition remains red.
+- Issues #87/#88/#89 contain source-specific reproduced findings; #59 and #72 remain OPEN for M6/M1 exact-blob owner disposition. No implementation-owner response is present in the latest issue comments. M0 has not edited M1–M8 implementation.
+- Module progress is not release completion: M1–M7 are integrated, M8 is a green candidate with exact owner reviews pending, and M9 has five reproducible integration failures. No defensible finish time exists until owners resolve the P0/P1 items and the exact-head workflow passes.
+- PR #24 remains OPEN/Draft at its existing base/head; no merge or Release. Usage Overview last read at 15:00 UTC showed 52% five-hour and 37% weekly remaining, with about 3h9m to reset; the usage tab remains open and the <5% pause threshold was not active at that read.
+
+## 2026-10-23 15:16 UTC — owner follow-up and quota checkpoint
+
+- Seven of eight M1–M8 PRs are merged (#33, #34, #37, #38, #43, #47, #84). M8 #40 remains OPEN/Draft with its six-case Hook output suite green but exact M1/M6 shared-file dispositions pending. M9 #36 remains OPEN/Draft at head `4cc4565`; its exact-source suite is still 15/20 on Ubuntu and Windows.
+- M0 added current CI evidence and explicit owner requests to #59, #72, #76, #87, #88, and #89. Latest issue snapshots still show no M1/M2/M3/M6 owner response to the new exact-source evidence.
+- Usage Overview read at 15:16 UTC: 34% remaining in the five-hour limit, 34% weekly, about 2h54m until reset. Keep the existing usage tab open; the <5% pause threshold is not active.
+
+## 2026-10-23 15:18 UTC — worktree publish readiness
+
+- After fetching origin, M1, M2, M4, M7, and M8 worktrees are synced to their remote branches. M3 has one local test-only commit plus an uncommitted test change; M5 has one local test-only commit; M6 has one local E4 expectation commit. None is an M9 owner-approved source fix, and M3's Hook implementation remains unchanged, so M0 preserved all three module worktrees and did not publish those commits.
+- M9 exact-result documentation is committed locally as `0d3beaa9dae5a33cb3e0a4dbfa50a6c8f9a71de5`; it is one commit ahead of remote M9 head `4cc4565a46c4fb760d891f00a11431a8afd666e3`. It will join the next allowed push batch at 15:24 UTC or later; no force push.
+- GitHub issue comment audit for #59, #72, #87, #88, and #89 shows only M0 follow-ups since the last hosted run; no owner disposition or repair commit is recorded yet.
+
+## 2026-10-23 15:26 UTC — M9 report batch published
+
+- M9 report-only commit `0d3beaa9dae5a33cb3e0a4dbfa50a6c8f9a71de5` was pushed at 15:25 UTC by ordinary fast-forward from the verified remote parent `4cc4565a46c4fb760d891f00a11431a8afd666e3`; no other module branch was pushed.
+- PR #36 is OPEN/Draft at `0d3beaa`. Current exact-head workflow run `39978172198` and general CI/wrapper run `39978172153` / `39978171989` are still running. The AC3 coordination/body-evidence check `39978254905` has passed. Prior code head `4cc4565` remains 15/20 in both composition suites; the report-only current-head rerun must be read before updating the result.
+- PR #24 readback confirms OPEN/Draft, original base `competition/shanchuanzhi-release-readiness`, head `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`; unchanged. Usage Overview at 15:25 UTC shows 34% five-hour and weekly remaining, about 2h44m to reset; threshold not active, tab remains open.
+## 2026-10-23 16:22 UTC — exact M9 head gate
+
+- PR #36 head 0d3beaa9dae5a33cb3e0a4dbfa50a6c8f9a71de5 exact-source run 39978172198 completed FAILURE on Ubuntu and Windows: 20 tests, 15 passed, 5 failed, 0 skipped on each platform. Current M8 PR #40 dedicated test step passed; CI 39978172153, Windows Community wrapper 39978171989, and AC3 coordination 39978254905 passed.
+- Remaining failures: M2/M5/M7/M9 Hook parity with M1; P0 #88 M2 stdout reason leak; M3 Hook parity with M1; P0 #89 M3 stdout reason leak; P1 #87 registered held-read denied as path_execution_not_pinned. All failure assertions and denial controls remain enabled.
+- Current M8 exact candidate review in #59 and current M3 file review in #72 remain OPEN. Product acceptance #52 and independent E4 #57 remain NOT_VERIFIED. M1-M7 are merged; M8 #40 and M9 #36 remain open.
+- Worktree audit found no M2/M3/M5/M6 source fix: M2 is clean, M3 changes are test-only, M5/M6 local commits are test-only. No owner implementation was changed by M0.
+- PR #36 body still says its current-head run is running. GitHub issue comment writes returned 403 Resource not accessible by integration; browser extension is disconnected; local git ls-remote failed TLS handshake. Do not claim those coordination updates were published. Retry after write access/network returns.
+- Last quota observation remains 34% five-hour and 34% weekly at 2026-10-23 15:25 UTC, reset expected in about 2h44m from that observation. Current quota cannot be read in this session; threshold status is UNKNOWN.
+## 2026-10-23 16:33 UTC — M9 current-head rerun
+
+- Exact current M9 PR #36 head a2f478864250c0ec1bc79866074ce855bfba38ae was tested by run 39986788529. Ubuntu and Windows both completed 20 tests: 15 passed, 5 failed, 0 skipped. The five failures are unchanged: Hook parity, P0 #88 M2 stdout reasons, M3 Hook parity, P0 #89 M3 stdout reasons, and P1 #87 held read denied as path_execution_not_pinned.
+- Exact M1 held-Gateway, M3 build/focused tests, M5 risk-policy, M6 Auto E4 lifecycle, and current M8 PR dedicated steps passed on both OSes; only the M9 composition step failed. CI 39986788654, Windows wrapper 39986788596, and AC3 coordination 39986788527/39987253619 passed.
+- The report-only current M9 head does not modify module code. PR #36 remains OPEN/Draft. M8 PR #40 remains OPEN/Draft with owner reviews still required.
+- GitHub issue comments and PR-body API writes are restricted through the app connector (403), but gh CLI can edit the PR body; issue comments are being retried through the authorized CLI.
+## 2026-10-23 16:36 UTC — owner follow-up published
+
+- PR #36 description is updated and read back: OPEN/Draft at head a2f478864250c0ec1bc79866074ce855bfba38ae; it now records completed run 39986788529 as 15/20 on Ubuntu and Windows, with the exact five failures and current passing CI/wrapper/AC3 checks.
+- Follow-up comments for the current run are published and read back: #87 comment 6369783301, #88 6369783450, #89 6369783755, #59 6369783350, #72 6369783320. These specify owner responsibilities and acceptance tests.
+- PR #24 read back OPEN/Draft at base competition/shanchuanzhi-release-readiness / dc8d0092b35141b295d5ff42873584ed488e4ee7 and head feature/agent-canary-3.0 / 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; unchanged.
+- M9 report refresh is local commit 55358c8 on the existing M9 branch. It records the current exact rerun; wait for the user's 20-minute push interval before publishing another commit. No M1-M8 implementation was changed.
+- Correction to the earlier same-time note: GitHub connector write calls returned 403, but authenticated gh CLI writes succeeded and were verified.
+
+## 2026-10-24 05:32 UTC — current integration checkpoint
+
+- Current M9 PR #36 head `0fad3371d1e2bf592cc0082f31df730dbbcab9a3` refreshes exact M3 #107 (`0d61b434ba2ac81e313b82432f4ac00afedd3cbc`) and M7 #106 (`7d1da7d3d90f61aae4e3405b980fc719633d20ac`) composition pins. It was pushed at 05:29 UTC; PR remains OPEN/Draft.
+- New-head standard CI run `40066447973` passed. M9 composition run `40066447762` passed on Ubuntu; Windows is still running. Windows Community wrapper run `40066447899` passed both wrapper regressions and is still producing Windows build evidence. Do not report cross-platform M9 acceptance until Windows composition completes.
+- Seven of eight module PRs are merged to `feature/agent-canary-3.0` (M1–M7); M8 PR #40 remains OPEN/Draft. Its current-head checks are green on the last checked head `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, but M8 owner disposition for #99 is not recorded, and M9's new exact-source Windows check is pending. Keep M8 Draft and do not merge yet.
+- Open acceptance blockers include P0 #52 (protected OBSERVE target alias/held-file/product-host acceptance) and #93 (installed Hook reason redaction), P1 #41 (clean-VM installer lifecycle), #57 (independent product E4), #99 (M8 owner disposition), plus #80, #102, #87, and other open P1 issues listed on GitHub. Synthetic composition and hosted source tests do not close product-level acceptance.
+- PR #24 was last verified OPEN/Draft with its release-readiness base and current feature head; it has not been changed by M0. No `main` merge, installer/VM/model execution, or release was performed in this checkpoint.
+- Worktree audit: M1–M6, M8, and M9 are clean; M7 retains one uncommitted workflow modification and one untracked acceptance-evidence directory, which were left untouched. Coordinator retains its existing five modified documentation files and two local commits.
+## 2026-10-24 05:38 UTC — synced M9 baseline and remaining M8 gate
+
+- M9 PR #36 is synced to feature baseline `077e597613997a32ccbe2c5c0186b4b6a28e2af7` at `cbb2e7db38eee0dc1a23e6e7804ff77d0088d84f`. Previous exact head `0fad3371d1e2bf592cc0082f31df730dbbcab9a3` passed M9 Ubuntu/Windows composition, full CI, and wrapper/build evidence; current synced-head CI `40066875108` and wrapper/build `40066875074` passed. Current exact M9 run `40066875122` is Ubuntu PASS, Windows still in progress.
+- Local post-sync verification passed `npm run build`, `git diff --check`, and 59/59 focused Gateway/M3 host-route regressions.
+- M8 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`. M1's scoped Hook-output ACCEPT blobs and M6's E4 test-contract ACCEPT were checked against the exact M8 source. M8's explicit owner disposition for the M7-owned build-contract/provenance remains missing; M0 request is PR #40 comment `6379853997`. Do not merge or mark M8 complete until the owner responds and synced-head M9 passes.
+- Seven of eight module PRs are merged into feature. Product blockers remain P0 #52/#93 and P1 #41/#57; source-level CI does not replace first-party host, clean-VM lifecycle, or independent E4 product acceptance. Other open cross-module P1s remain tracked on GitHub.
+- PR #24 was re-read as OPEN/Draft at base `competition/shanchuanzhi-release-readiness`, head feature `077e597613997a32ccbe2c5c0186b4b6a28e2af7`; unchanged. Usage Overview still reads 72% five-hour and 70% weekly. No install/VM/model test, `main` merge, or Release was performed.
+- Coordinator documentation changes are local and reviewed; M7's existing uncommitted workflow/evidence changes remain untouched.
+## 2026-10-24 05:45 UTC — M9 integrated into feature
+
+- M9 PR #36 was merged at 05:43 UTC into `feature/agent-canary-3.0`, merge commit `f313e5ffd1c604198a0e653a91eb66813fd111ee`. Exact M9 head `cbb2e7db38eee0dc1a23e6e7804ff77d0088d84f` passed current M1–M8 composition on Ubuntu and Windows (run `40066875122`), standard CI (9/9, `40066875108`), and Ubuntu/Windows wrapper plus Community build evidence (`40066875074`). Installer lifecycle was skipped.
+- Seven of eight module PRs M1–M8 are merged (M1–M7); M8 #40 remains OPEN/Draft. M1 and M6 scoped source reviews match M8's current exact blobs. The M8 owner's ACCEPT/REJECT for the M7-owned build-contract/provenance contract is still missing; M0 recorded the current request at #99 comment `6380513295`. M8 checks have not rerun against the post-M9 feature head.
+- Product acceptance remains open: P0 #52/#93 and P1 #41/#57, plus other P1 integration issues. M9 source composition does not claim first-party installed-host enforcement, clean-VM installer lifecycle, or independent product E4.
+- PR #24 remains OPEN/Draft with base `competition/shanchuanzhi-release-readiness`; its source branch is still `feature/agent-canary-3.0`, now at `f313e5ffd1c604198a0e653a91eb66813fd111ee` due to the authorized M9 merge. No PR #24 metadata/base change, `main` merge, or Release occurred.
+- Usage Overview read at 05:45 UTC: 72% five-hour and 70% weekly remaining. M7's pre-existing uncommitted workflow/evidence changes remain untouched.
+## 2026-10-24 05:54 UTC — current integration delta
+
+- M9 remains merged at `f313e5ffd1c604198a0e653a91eb66813fd111ee`; exact M9 source composition run `40066875122` passed both Ubuntu and Windows. M3 #107's public M2/M5 export route and M1/M2/M5 held-read integration are now evidenced by the exact M9 tests.
+- P1 #81 and #87 were closed with run/test evidence. #81 closure is limited to M3/M5 interface composition; #87 closure is limited to the packed M2/M1/M5 held-read integration. P0 #52 remains OPEN for first-party product-host/held-handle/TOCTOU acceptance.
+- M8 #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`. Its current recorded base SHA is `416f1ba`, while feature now points at `f313e5f`; do not treat its pre-M9 checks as current-base validation. M8 CI/wrapper/Hook-output and M9 exact-source checks pass on the reviewed source, but M8 owner disposition for #99 is still missing. M0 requested it on PR #40 comment `6380586402`; no merge until owner disposition and post-M9-base acceptance are reconciled.
+- Current open labeled issues: P0 = 2 (#52, #93); P1 = 15. P1 #80 remains open for independent product E4 under #57, not for the now-passing reason-projection integration subgate.
+- M0 PR #108 remains OPEN/Draft. Latest ownership-contract check `40067731682` and standard cross-platform CI/package-smoke checks pass. PR #24 remains OPEN/Draft on its original release-readiness base; no main merge or Release.
+- Usage Overview read at 05:53 UTC: 49% five-hour and 66% weekly remaining. Stop threshold (<5%) remains inactive.
+
+## 2026-10-24 06:03 UTC — offline demo acceptance update
+
+- M8 PR #40 exact head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` was verified locally in its clean worktree: `npm run build` passed; the documented offline runner returned `VERIFIED_BOUNDED_OPERATOR_DEMO` with six cases. The result explicitly remains `E4=NOT_VERIFIED_NO_EXTERNAL_OPERATOR`.
+- P1 #102 is closed for offline-demo/Community composition only. M7 #106 Community build-evidence run `40064614487` and M9 exact-source run `40066875122` passed; M9 verifies the M7 builder stages the exact M8 demo blob and retains the Guard/quarantine assertions.
+- P1 #81, #87, and #102 are now closed with scoped evidence. Open issue labels: P0 2 (#52, #93), P1 14. Product, installer, independent E4, and remaining reliability issues stay open until their specific acceptance evidence exists.
+- M8 #40 remains OPEN/Draft pending owner disposition on #99 and post-M9-base reconciliation. PR #24 remains OPEN/Draft on its original release-readiness base. No main merge or Release.
+- Last Usage Overview read remains 05:53 UTC at 49% five-hour / 66% weekly; quota stop threshold (<5%) inactive then.
