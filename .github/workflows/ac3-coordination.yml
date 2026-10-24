@@ -26,6 +26,9 @@ jobs:
           AC3_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           AC3_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           AC3_HEAD_REF: ${{ github.head_ref }}
+      - name: Test approved baseline and exact merge composition
+        if: github.head_ref == 'feature/ac3-m0-coordination'
+        run: node --test test/ac3-coordination-baseline.test.mjs
       - name: Test open-PR audit report logic
         if: github.head_ref == 'feature/ac3-m0-coordination'
         run: node --test test/ac3-pr-audit.test.mjs
