@@ -8242,3 +8242,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M0 recorded the exact producer/consumer delta, run evidence, and M7 acceptance request on #41 comment `6384147284`. #41 remains OPEN/P1; no M7 source/worktree edits were made and the exclusive installer slot remains FREE.
 - Current status is 2 open P0, 10 open P1, and 1 open P2. Seven M1–M7 follow-up PRs are merged to the feature base; M8 PR #40 remains OPEN/Draft with the 12 exact-base conflicts recorded under #99. PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
 - Latest readable Usage Overview is 64% five-hour / 53% weekly. The usage tab remains open per user preference.
+
+## M9 PR-event recheck — 2026-10-24 12:24 UTC
+
+- PR #109 head `36d946cb0fa5b020c1226dcd623326c704051224` has standard CI `40092920859` SUCCESS (9/9) and AC3 coordination `40092920811` SUCCESS, while M9 composition event `40092920800` is SKIPPED.
+- Manual composition `40088403364` passed on Ubuntu and Windows for the then-current pinned source tree, but does not verify the automatic PR trigger/ref selection or installed-product/installer acceptance.
+- M0 recorded the latest run and M9 owner action on #76 comment `6384173802`. Keep #76 OPEN until the current normal PR event executes and passes against exact refs.
