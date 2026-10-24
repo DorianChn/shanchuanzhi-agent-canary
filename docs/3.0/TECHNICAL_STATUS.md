@@ -8012,3 +8012,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Product acceptance remains open: P0 #52/#93 and P1 #41/#57, plus other P1 integration issues. M9 source composition does not claim first-party installed-host enforcement, clean-VM installer lifecycle, or independent product E4.
 - PR #24 remains OPEN/Draft with base `competition/shanchuanzhi-release-readiness`; its source branch is still `feature/agent-canary-3.0`, now at `f313e5ffd1c604198a0e653a91eb66813fd111ee` due to the authorized M9 merge. No PR #24 metadata/base change, `main` merge, or Release occurred.
 - Usage Overview read at 05:45 UTC: 72% five-hour and 70% weekly remaining. M7's pre-existing uncommitted workflow/evidence changes remain untouched.
+## 2026-10-24 05:54 UTC — current integration delta
+
+- M9 remains merged at `f313e5ffd1c604198a0e653a91eb66813fd111ee`; exact M9 source composition run `40066875122` passed both Ubuntu and Windows. M3 #107's public M2/M5 export route and M1/M2/M5 held-read integration are now evidenced by the exact M9 tests.
+- P1 #81 and #87 were closed with run/test evidence. #81 closure is limited to M3/M5 interface composition; #87 closure is limited to the packed M2/M1/M5 held-read integration. P0 #52 remains OPEN for first-party product-host/held-handle/TOCTOU acceptance.
+- M8 #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`. Its current recorded base SHA is `416f1ba`, while feature now points at `f313e5f`; do not treat its pre-M9 checks as current-base validation. M8 CI/wrapper/Hook-output and M9 exact-source checks pass on the reviewed source, but M8 owner disposition for #99 is still missing. M0 requested it on PR #40 comment `6380586402`; no merge until owner disposition and post-M9-base acceptance are reconciled.
+- Current open labeled issues: P0 = 2 (#52, #93); P1 = 15. P1 #80 remains open for independent product E4 under #57, not for the now-passing reason-projection integration subgate.
+- M0 PR #108 remains OPEN/Draft. Latest ownership-contract check `40067731682` and standard cross-platform CI/package-smoke checks pass. PR #24 remains OPEN/Draft on its original release-readiness base; no main merge or Release.
+- Usage Overview read at 05:53 UTC: 49% five-hour and 66% weekly remaining. Stop threshold (<5%) remains inactive.

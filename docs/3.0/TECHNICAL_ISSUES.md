@@ -1713,3 +1713,11 @@ Run 39986788529 at M9 head a2f478864250c0ec1bc79866074ce855bfba38ae completed on
 - P1 #87 registered held-file read returns DENY/path_execution_not_pinned rather than OBSERVE_ONLY.
 - M2/M3/M5/M7 Hook parity against current M1 canonical remains failed.
 All current M1/M3/M5/M6 and M8 dedicated per-module steps pass; only M9 composition fails. M0 has not changed module implementation. #59 and #72 remain open for exact M8/M3 owner dispositions.
+
+## 2026-10-24 05:54 UTC — exact-source issue dispositions
+
+- **#81 P1 — CLOSED, interface scope only:** M3 PR #107 documents the public M2 Gateway facade/M5 policy-router exports; M9 run `40066875122` passed exact composition on Ubuntu and Windows, including fixed probe, positive held-file route, and alias/replacement denials. P0 #52 remains open for product-host adoption and OS-level acceptance.
+- **#87 P1 — CLOSED, integration scope only:** the exact M9 packed-M2/M1/M5 test returned OBSERVE_ONLY for its registered positive read and denied sensitive, link, and hard-link aliases before callback/approval, with fixtures unchanged. No first-party product-host claim is made; keep #52 OPEN.
+- **#80 P1 — OPEN:** M6 accepted the exact M8 reason-projection/lifecycle-test blobs; M9 composition passes. The remaining gate is independent product E4 under #57. Installer lifecycle remains separate under #41/#93.
+- **#99 P1 — OPEN:** M8's exact build-contract adapter disposition is still missing. M0 asked for ACCEPT/REJECT on PR #40 comment `6380586402`; preserve PR #40 Draft pending response and post-M9-base checks.
+- Current open labels after #81/#87 closure: P0 2 (#52, #93); P1 15. Do not close other issues without exact current-source evidence and their stated owner/product acceptance.

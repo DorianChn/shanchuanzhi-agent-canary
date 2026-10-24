@@ -1218,3 +1218,12 @@ Current M9 composition is 15/20 on both Ubuntu and Windows; no M9 acceptance or 
 | Product host / independent E4 (#52/#57) | P0/P1 | Separate acceptance gates remain NOT_VERIFIED. | Actual supported host-held identity/security behavior and independent E4 evidence. |
 
 Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9 completion claim is supported.
+
+## 2026-10-24 05:54 UTC — post-M9 exact-source risk update
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M3/M5 public route (#81) | P1 | Closed: M3 #107 plus exact-source M9 run `40066875122` passed Ubuntu/Windows export, fixed-probe, and protected-read composition checks. | Product-host use and real protected-open remain separate under #52. |
+| M1/M2/M5 held-read chain (#87) | P1 | Closed: exact M9 run `40066875122` passed packed-M2 positive OBSERVE read and sensitive/link/hard-link alias denials on Ubuntu/Windows with no callback/approval side effects. | First-party product-host adoption and OS-level TOCTOU remain open under #52. |
+| M8 module merge (#40/#99) | P1 | M8 PR #40 remains Draft at `60cfe8d`; reviewed source CI and M9 composition pass. M8 owner disposition is missing; PR's recorded base SHA `416f1ba` predates feature `f313e5f`. | Record exact M7 build-contract/provenance disposition and reconcile the post-M9 base before merge. |
+| Product/installed acceptance (#52/#93/#41/#57) | P0/P1 | Still OPEN/NOT_VERIFIED; exact source CI does not establish host interception, installed Hook runtime, clean-VM lifecycle, or independent E4. | Require the actual supported-host, package-runtime, clean-VM and independent E4 evidence for the relevant gate. |
