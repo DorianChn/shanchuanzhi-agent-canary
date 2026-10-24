@@ -1,3 +1,13 @@
+## Current coordinator snapshot — 2026-10-24 09:31 UTC
+
+Live state was refreshed from GitHub Actions, PRs/issues, local worktrees, and Usage Overview. M0 changed coordination documents only.
+
+- **M0 PR #109:** pushed head `d11c9e3a6002696366cd32fe9b4a846a547d2fc0`, based on feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI `40081829456` and AC3 coordination `40081829430` succeeded; M9 composition `40081829472` was skipped. M0 recorded this fresh trigger-gap reproduction in #76 comment `6382577864`.
+- **M8 PR #40:** still OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, whose recorded base is `416f1ba`; read-only merge-tree against current feature still has 12 conflicts, with paths in #76 comment `6381059163`. M0's owner request is comment `6382530045`; no M8 owner disposition is visible on #99.
+- **M9:** PR #36 is merged; exact-source run `40066875122` passed Ubuntu/Windows at its pins. The feature-PR trigger/ref gate remains open because PR #109's M9 run skipped.
+- **P0/P1 acceptance:** #52 installed/runtime evidence, #93 packaged Hook redaction, #41 installer lifecycle, #57 independent product E4, and #72 exact M1 test-blob disposition remain open. No installer/VM slot was started.
+- **Worktrees:** coordinator, feature, M1/M2/M3/M5/M6/M8, and M9 worktrees are clean at their current branches. PR #24 remains OPEN/Draft at feature head `e4732d9`; `main` and Release remain untouched.
+
 ## Current coordinator snapshot — 2026-10-24 09:18 UTC
 
 Re-read the live GitHub refs, Actions metadata, browser Usage Overview, and existing worktrees. The M0 coordination branch remains isolated from feature and module source.
