@@ -225,3 +225,11 @@ M3's Console status route depends on the owner-controlled M2 public `./gateway-a
 ## 2026-10-22 13:00 UTC P0 refinement
 
 For the active M3 backend route, dependency order is M1 held-file capability → M5 strict OBSERVE router → M2 public host facade and registered fixed-path map → M3 Console route/capability binding → M4 read-only UI status consumer. M9 verifies the synthetic composition of exact current sources, but M3's Console route is still absent. Exactly M1+M3 are active to confirm held-identity use and implement that route; M4 waits for the backend path.
+
+## Live P0 #52 route-owner correction — 2026-10-24 04:34 Asia/Shanghai
+
+M4's exact source trace is recorded at M4 branch commit `7922309da0f6ea60c02b9bd17e6872aa98d753e5` and Issue #52 comment `6374173416`. M4's Security Center is a read-only consumer of `GET /api/security-center`; it has no protected-read handler and must remain UNKNOWN when the trusted status route/provider is absent. Do not add a parallel M4 read endpoint.
+
+The remaining implementation dependency is the M3 normal-CLI fixed host probe/status composition over the public M1 Gateway capability, M2 adapter/fixed-path map, and M5 strict-router provider. The M3 follow-up PR #90 is Hook-only at `e771c06f72d8a03fb7945037a3facbc2d0ed8a6e`; it does not supply that probe. M2 PR #91 (`92dd42b900b10ce0294e9e3faa7e175d728228b3`) and M5 PR #94 (`cca42cd1762f995e92454d55ffa5e63951e39144`) remain candidates pending M1 exact-source review and M9 composition. M4 waits for the exact route/schema before adding any UI consumption beyond its current fail-closed status contract.
+
+Acceptance order: M1 owner disposition → M2/M5 reviewed public inputs → M3 fixed host probe and sanitized status with safe-read plus alias/path-replacement zero-side-effect controls → M4 read-only status consumer → M9 exact-source Ubuntu/Windows composition. Issue #52 remains OPEN/P0/NOT_VERIFIED until all gates pass; this dependency note does not claim product protection or OS-atomic TOCTOU.
