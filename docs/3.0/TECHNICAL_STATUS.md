@@ -8264,3 +8264,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Latest current-feature CI run `40092920859` passed all 9 jobs, including Node 22 lanes. It shows no recurrence in that run but does not identify the missing lock-holder/timing trigger from the historical PR #38 `RETRY_LIMIT` event.
 - M0 recorded this narrow evidence and requested M1's scoped disposition on #51 comment `6384207835`. Keep the 48 quarantine assertions and bounded fail-closed retry; #51 remains OPEN while its documented root-cause acceptance is unresolved.
+
+## PR #109 batch CI result — 2026-10-24 12:40 UTC
+
+- Pushed head `46d59b95fdda067a7418685fb6149a61fbf0c93e` completed standard CI run `40094720305` with workflow conclusion SUCCESS; `gh run watch --exit-status` returned success. The nine listed jobs include Docker, six OS/Node test lanes, sponsor smoke, and package smoke; all job steps report success.
+- The Actions jobs API still reports sponsor-smoke as `in_progress` even though all its steps, including Complete job, show completed/success and the parent run is completed/success. This is recorded as a job-status/API inconsistency; no failing step is shown.
+- AC3 coordination run `40094720203` is SUCCESS (1/1). M9 composition run `40094720181` is SKIPPED again; #76 remains OPEN/P1.
+- PR #24 is unchanged OPEN/Draft at feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Next scheduled push batch is no earlier than 12:57:45 UTC.
