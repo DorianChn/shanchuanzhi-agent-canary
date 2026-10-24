@@ -1,3 +1,11 @@
+## M0 exclusive runtime resource contract — 2026-10-24
+
+- At most two module development tasks run concurrently. GitHub comments alone do not start chats; retain an actual worker/job handle or completed owner result before recording execution.
+- GitHub jobs that execute an installer, disposable VM workload or real-model acceptance must share the static job concurrency group `agent-canary-exclusive-e4`, with `cancel-in-progress: false`. Ordinary builds and source-only composition do not consume this resource.
+- M7 installer execution requires explicit `workflow_dispatch` and `run_installer_lifecycle=true`; a pull request must not run an installer automatically. Reserve the exclusive resource in Issue #29 before dispatch, recording source SHA, purpose and job/run identity; release it after inspecting the actual terminal result. Local VMware/model runs use the same Issue #29 reservation because a GitHub concurrency group cannot lock a desktop resource.
+- Same-run producer/consumer provenance, exact artifact inventory and checksum verification remain mandatory. A hosted-runner lifecycle result does not establish a Windows 11 client or ordinary-user token unless separately evidenced. Developer SELF_CHECK and independent E4 remain distinct.
+- Push substantive changes in batches separated by at least 20 minutes. No quota monitoring is required under the current user instruction. Runtime/API implementation ownership is unchanged.
+
 ## Current configured-target contract status — 2026-10-24 09:21 UTC
 
 M3's merged feature source now implements the configured-target CLI/HTTP contract documented below. The exact-source M9 run `40066875122` passed Ubuntu and Windows. This corrects older snapshots in this file that described the M3 route as absent; it does not promote source/fixture evidence to installed-package, native-host, or OS-atomic TOCTOU acceptance. Issue #52 remains OPEN/P0/NOT_VERIFIED for those product gates. M3 owns runtime semantics; this M0 entry records the observed public boundary without changing it.

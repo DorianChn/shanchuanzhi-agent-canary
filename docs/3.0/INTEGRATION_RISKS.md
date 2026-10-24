@@ -1,4 +1,16 @@
-## Current integration risks — 2026-10-24 09:48 UTC
+## Current integration risks — 2026-10-24 16:44 UTC
+
+| Gate | Verified change | Remaining acceptance |
+| --- | --- | --- |
+| M9 #112 / #76 | New workflow actually runs both platform jobs on the current feature-target PR. First Ubuntu attempt reached the offline composition gate and failed on its remaining old M8 SHA constant; source-selection success is not full composition success. | M9 fixes its remaining stale constant without weakening assertions and reruns exact full composition. |
+| M8 #40 / #99 | Twelve conflicts resolved at e3d89ba; CI 9/9, canonical Hook output and Windows build passed. M6 ACCEPT is #80 comment6386655050; M7 scoped prepare.mjs compatibility review is complete. | Finish bounded sponsor smoke review and actual current-source composition before readiness. |
+| M7 #41 / #93 | Existing clean M7 follow-up now has a local 11-entry inventory correction and job-level exclusive lock, at c03176f. Primary M7 dirty files remain untouched. | Publish the substantive batch, pass exact candidate checks, then reserve the resource before hosted installation. No installed result is claimed yet. |
+| M6 #111 / #57 | Product intake/control and verifier tests 41/41 passed; real artifact SELF_CHECK bundle generated with all product cases NOT_VERIFIED. | Independent operator lifecycle/tool effects and reviewer receipt remain external gates. |
+| M1 #62 / #51 | #62 closed after actual owner traced the historical fixture race and verified the existing deterministic fix; source fixes are in feature. | #51 retains UNKNOWN for its original lock-holder/scheduling trigger; green reruns do not establish that cause. |
+
+Integration order must preserve both ancestry and source provenance: complete owner-reviewed module candidates before final M9 manifest integration, then synchronize the M9 branch with the resulting feature tip and revalidate its explicit pins. Never silently relabel an old module pin as a newer candidate or bypass a failed baseline/owner gate to force a merge. main, PR #24 and Release remain outside this integration authorization.
+
+## Historical integration risks — 2026-10-24 09:48 UTC
 
 | Risk / gate | Priority | Current verified state | Required acceptance |
 | --- | --- | --- | --- |
