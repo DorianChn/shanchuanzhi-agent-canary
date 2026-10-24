@@ -24,48 +24,48 @@ test('Auto E4 still treats absent tool calls and unverified model identity as in
   assert.equal(classifyModelResult({toolCallCount:1,activeDenials:1,targetUnchanged:true,identityVerified:true}).status,'PASS_REAL_MODEL_ACTIVE_DENIAL');
 });
 
-test('Claude native hook wrapper logs only the allowlisted decision fields',t=>{
+test('Claude native hook wrapper preserves allow, deny and ask while sanitizing caller reasons',t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m6-hook-log-'));
   t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
   const state=path.join(root,'state');fs.mkdirSync(state);
-  const modulePath=path.join(root,'fixture-hook.mjs');
-  const logFile=path.join(root,'hook-events.jsonl');
   const wrapper=path.join(repo,'security-lab','claude-native-hook.mjs');
-  const sensitive={
-    session:'M6_HOOK_LOG_CANARY_SESSION',
-    tool:'M6_HOOK_LOG_CANARY_TOOL',
-    input:'M6_HOOK_LOG_CANARY_RAW_INPUT',
-    reason:'M6_HOOK_LOG_CANARY_REASON',
-    file:'M6_HOOK_LOG_CANARY_PATH',
-    filePath:path.join(root,'M6_HOOK_LOG_CANARY_PATH.txt')
-  };
-  fs.writeFileSync(modulePath,`export async function decideAgentHook(_provider,_workspace,_state,input){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:'allow',permissionDecisionReason:input.tool_input.reason}}}\n`);
-  const input={session_id:sensitive.session,tool_name:sensitive.tool,tool_input:{command:sensitive.input,file_path:sensitive.filePath,reason:sensitive.reason}};
-  const result=spawnSync(process.execPath,[wrapper,modulePath,root,state,logFile],{input:JSON.stringify(input),encoding:'utf8',windowsHide:true,timeout:5000});
-  assert.equal(result.error,undefined,result.error?.message);
-  assert.equal(result.status,0,result.stderr);
-  const output=JSON.parse(result.stdout).hookSpecificOutput;
-  assert.equal(output.hookEventName,'PreToolUse');
-  assert.equal(output.permissionDecision,'allow');
-  // Injected fixture reasons are not product reason codes and must use the fixed sanitized fallback.
-  assert.equal(output.permissionDecisionReason,'Agent Canary: permission_allowed');
-  for(const value of Object.values(sensitive)){
-    assert.equal(result.stdout.includes(value),false,`sensitive value returned: ${value}`);
-    assert.equal(result.stderr.includes(value),false,`sensitive value written to stderr: ${value}`);
+  const cases=[
+    ['allow','Agent Canary: permission_allowed'],
+    ['deny','Agent Canary: permission_denied'],
+    ['ask','Agent Canary: approval_required']
+  ];
+  // Caller-controlled reason and input values must not alter decisions or enter output/evidence.
+  for(const [decision,fallback] of cases){
+    const modulePath=path.join(root,`${decision}-fixture-hook.mjs`);
+    const logFile=path.join(root,`${decision}-hook-events.jsonl`);
+    const sensitive={
+      session:`M6_HOOK_LOG_CANARY_${decision.toUpperCase()}_SESSION`,
+      tool:`M6_HOOK_LOG_CANARY_${decision.toUpperCase()}_TOOL`,
+      input:`M6_HOOK_LOG_CANARY_${decision.toUpperCase()}_RAW_INPUT`,
+      reason:`M6_HOOK_LOG_CANARY_${decision.toUpperCase()}_REASON`,
+      filePath:path.join(root,`M6_HOOK_LOG_CANARY_${decision.toUpperCase()}_PATH.txt`)
+    };
+    fs.writeFileSync(modulePath,`export async function decideAgentHook(_provider,_workspace,_state,input){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:input.tool_input.reason}}}\n`);
+    const input={session_id:sensitive.session,tool_name:sensitive.tool,tool_input:{command:sensitive.input,file_path:sensitive.filePath,reason:sensitive.reason}};
+    const result=spawnSync(process.execPath,[wrapper,modulePath,root,state,logFile],{input:JSON.stringify(input),encoding:'utf8',windowsHide:true,timeout:5000});
+    assert.equal(result.error,undefined,result.error?.message);
+    assert.equal(result.status,0,result.stderr);
+    const output=JSON.parse(result.stdout).hookSpecificOutput;
+    assert.deepEqual(output,{hookEventName:'PreToolUse',permissionDecision:decision,permissionDecisionReason:fallback});
+    const log=fs.readFileSync(logFile,'utf8');
+    const lines=log.trim().split(/\r?\n/);
+    assert.equal(lines.length,1);
+    const event=JSON.parse(lines[0]);
+    assert.deepEqual(Object.keys(event).sort(),['hookEventName','permissionDecision','timestamp']);
+    assert.equal(Number.isNaN(Date.parse(event.timestamp)),false);
+    assert.equal(event.hookEventName,'PreToolUse');
+    assert.equal(event.permissionDecision,decision);
+    for(const [streamName,stream] of [['stdout',result.stdout],['stderr',result.stderr],['JSONL',log]]){
+      for(const value of Object.values(sensitive))assert.equal(stream.includes(value),false,`${streamName} leaked ${value}`);
+    }
+    assert.equal(log.includes('permissionDecisionReason'),false);
+    assert.equal(log.includes('tool_input'),false);
   }
-  const log=fs.readFileSync(logFile,'utf8');
-  const lines=log.trim().split(/\r?\n/);
-  assert.equal(lines.length,1);
-  const event=JSON.parse(lines[0]);
-  assert.deepEqual(Object.keys(event).sort(),['hookEventName','permissionDecision','timestamp']);
-  assert.equal(Number.isNaN(Date.parse(event.timestamp)),false);
-  assert.equal(event.hookEventName,'PreToolUse');
-  assert.equal(event.permissionDecision,'allow');
-  for(const value of Object.values(sensitive))assert.equal(log.includes(value),false,`sensitive value persisted: ${value}`);
-  assert.equal(result.stdout.includes(sensitive.reason),false);
-  assert.equal(result.stderr.includes(sensitive.reason),false);
-  assert.equal(log.includes('permissionDecisionReason'),false);
-  assert.equal(log.includes('tool_input'),false);
 });
 
 test('Auto E4 locks a run and does not silently remove a previous lock',()=>{
