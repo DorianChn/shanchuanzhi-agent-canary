@@ -8419,3 +8419,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - PR #40 is OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5` and still targets stale base `416f1ba4848d5be4011ac72d42066d4c72b42d49`. Current hosted checks are 15 SUCCESS, 1 SKIPPED (installer lifecycle), 0 failed, 0 pending. The skipped lifecycle is not installation evidence.
 - GitHub `MERGEABLE/CLEAN` reflects the stale PR base. The existing read-only merge-tree audit against current feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73` reports 12 conflicts. No M8 owner response or branch change is visible. M0 refreshed #99 comment `6385427802`; PR #40 remains Draft and M8 remains queued.
+## PR #109 current-head gate — 2026-10-24 14:41 UTC
+
+- Exact head `4d1bbb672a02e84a3219830d110d77e9d3eec6d3`: CI run `40103382585` completed SUCCESS (9/9); AC3 run `40103382558` completed SUCCESS; M9 run `40103382554` completed SKIPPED because the existing job condition admits only manual dispatch or PR #36. M0 recorded this exact recurrence in #76 comment `6385515616`.
+- No owner-authored reply is visible on M7 #41, M1 #52, or M8 #99; those branch/worktree heads remain unchanged. M8 remains queued and PR #40 stays Draft.
