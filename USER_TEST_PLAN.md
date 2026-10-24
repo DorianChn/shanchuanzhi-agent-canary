@@ -25,7 +25,7 @@ Budget 30 minutes per participant, excluding dependency-download time. Use the s
 1. **Understand the product (5 minutes):** Read the README and explain in their own words what is and is not protected.
 2. **Install and self-check (10 minutes):** Follow [GETTING_STARTED.md](GETTING_STARTED.md) in the prepared scratch environment; run the self-test and identify the expected success result.
 3. **Optional Codex setup (10 minutes):** Only for participants using Codex. Use the exact v3.0.0 CLI in a scratch project; preview the project config, apply it, inspect MCP status, then use the documented receipt-based rollback. Explain before the task that this registers Agent Canary's MCP server and does not guard Codex's built-in tools.
-4. **Feedback (5 minutes):** Complete the public product-feedback issue form only if they choose to share feedback. Private notes remain with the study organizer and are not posted automatically.
+4. **Feedback (5 minutes):** Use GitHub Discussions for optional redacted usability feedback, or the existing bug report form for a reproducible defect. Private notes remain with the study organizer and are not posted automatically.
 
 Do not ask a participant to trigger a decoy against a real workspace. If an optional decoy demonstration is included, use a new throwaway session and explain that it quarantines the Agent Canary route.
 
@@ -44,7 +44,7 @@ With 5–10 participants these are product iteration gates, not statistically re
 
 ## Feedback and issue collection
 
-- Use the Product feedback GitHub issue form for optional public, redacted reports.
+- Use the existing [bug report form](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/new?template=bug_report.yml) for reproducible defects, with exact artifact/SHA and redacted steps. The dedicated product-feedback form is absent from the current feature baseline.
 - Use GitHub Discussions for general setup and usability questions.
 - Use a private [Security Advisory](https://github.com/DorianChn/shanchuanzhi-agent-canary/security/advisories/new) for vulnerabilities; never put exploit details in the feedback form.
 - Ask before quoting or attributing feedback. Do not make participants' comments, identities, or recordings public by default.

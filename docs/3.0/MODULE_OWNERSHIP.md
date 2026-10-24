@@ -1,5 +1,21 @@
 ## M0 exact-head ownership snapshot — 2026-10-23 00:34 UTC
 
+## M0 current ownership and blocker routing — 2026-10-23 15:23 UTC
+
+GitHub readback: M1–M7 PRs #33, #34, #37, #38, #43, #47, and #84 are merged into `feature/agent-canary-3.0`; M8 PR #40 and M9 PR #36 remain OPEN/Draft. PR #24 remains OPEN/Draft and unchanged. M9 remote head is `4cc4565a46c4fb760d891f00a11431a8afd666e3`; the exact-hosted result is 15/20 on both Ubuntu and Windows.
+
+| Active integration finding | Implementation owner(s) | Contract/review owner | M9 / coordination owner |
+| --- | --- | --- | --- |
+| #87 registered held-file read denied as `path_execution_not_pinned` | M2 adapter; M5 strict-router consumer | M1 held-file capability contract | M9 exact composition and regression |
+| #88 M2 native Hook reason canary reaches stdout | M2 tracked Hook copy | M1 reason-sanitization contract | M9 exact-source test/evidence |
+| #89 M3 native Hook reason canary reaches stdout | M3 tracked Hook copy | M1 reason-sanitization contract and exact-blob disposition (#72) | M9 exact-source test/evidence |
+| #59 M8 changes M6-owned E4 test file; M8 adds output test | M8 current PR #40 candidate | M6 lifecycle/E4 contract; M1 exact Hook-test review | M9 keeps historical and current M8 sources separate |
+| #72 current merged M3 Hook/test blobs differ from the previously reviewed PR source | M3 maintains its Hook copy | M1 exact current-blob review | M9 pins merge source and records disposition |
+
+Current filesystem readback after `git fetch origin`: M1, M2, M4, M7, and M8 worktrees match their tracked branches; M3 has one local test commit and uncommitted test edits; M5 has one local test-only commit; M6 has one local E4 test commit. Those M3/M5/M6 changes are not the required M9 source fixes and remain in their owner worktrees. M9 has a report-only commit `0d3beaa` locally, not yet pushed; it is reserved for the next 20-minute push batch. No new module branch or module implementation change was made by M0.
+
+## M0 exact-head ownership snapshot — 2026-10-23 00:34 UTC (historical)
+
 GitHub readback at 00:34 UTC: all active AC3 module PRs are OPEN/Draft. PRs #30, #33, #36–#40, #43 and #47 target `feature/agent-canary-3.0` at `62496d4020bd90ba2eede49b2e80a2bbebb036b4`; PR #34 targets M1 PR #43 at `6886d6eef3beb972bc8f4c797584b0f522483870`. Legacy M6 PR #31 targets `main` and is outside this AC3 ownership map. This snapshot supersedes older exact-head tables below and does not assert acceptance beyond the recorded evidence.
 
 | Module | Existing branch / PR | Remote head at snapshot | M0-recorded ownership boundary |

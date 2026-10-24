@@ -1,6 +1,6 @@
-# Third-party notices
+# Third-party dependency notice
 
-The project license in [LICENSE](LICENSE) remains MIT. Direct dependency and bundled-runtime licenses are separate; this file is an inventory aid, not legal advice or a complete review of every transitive obligation.
+Agent Canary project code retains MIT. smol-toml 1.9.1 is a separately licensed BSD-3-Clause runtime dependency, pinned in package-lock.json. Its package contains the upstream copyright and license. The historical free ZIP described by the source receipt does not bundle node_modules; this is not a statement about all installer payloads.
 
 ## v3.0.0 source package
 
@@ -24,6 +24,10 @@ Exact resolved versions are pinned by the [v3.0.0 package lock](https://github.c
 
 ## Windows community installer
 
-The Windows community installer has additional upstream notices for its bundled Node.js runtime and NSIS components in [packaging/windows/THIRD_PARTY_NOTICES.md](packaging/windows/THIRD_PARTY_NOTICES.md). A previously recorded candidate installer hash is `567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6`; this hash does not establish that the installer is a published Release asset or a supported install path. Those notices apply to that installer payload and should not be assumed to describe the v3.0.0 package or a GHCR image.
+The Windows community installer has additional upstream notices for its bundled Node.js runtime and NSIS components in [packaging/windows/THIRD_PARTY_NOTICES.md](packaging/windows/THIRD_PARTY_NOTICES.md). A historical candidate.4 installer hash is `567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6`; this hash does not establish that the installer is a published Release asset or a supported install path. Those notices apply to that installer payload and should not be assumed to describe the v3.0.0 package or a GHCR image.
 
 Before each release, regenerate and review the dependency inventory from the exact lockfile and artifact. Preserve upstream license files and notices in redistributed packages.
+
+Upstream: https://github.com/squirrelchat/smol-toml
+
+For later artifact identity, see [M7-owned provenance](docs/3.0/M7_E4_ARTIFACT_PROVENANCE_2026-10-23.md). License metadata alone does not verify a new artifact or installer.

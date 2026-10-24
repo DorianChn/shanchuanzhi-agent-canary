@@ -1,52 +1,35 @@
-# Contributing
+# 参与贡献
 
-Thanks for helping improve Agent Canary. Small, reproducible changes with a clear security boundary are easiest to review.
+## 报告问题
 
-## Before opening an issue
+开 issue 时请附上 `agent-canary doctor` 的输出（可脱敏），能省一轮往返。
 
-- For a bug, include the affected release or full commit SHA, OS, Node.js version, host, expected behavior, and a minimal reproduction.
-- Remove secrets, personal paths, customer data, private configuration, and payment information.
-- Use [GitHub Security Advisories](https://github.com/DorianChn/shanchuanzhi-agent-canary/security/advisories/new) for exploitable vulnerabilities. Do not put exploit details in a public issue.
-- For usability feedback, use the product-feedback issue form or [GitHub Discussions](https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions). See [SUPPORT.md](SUPPORT.md) for what belongs in each channel.
+## 加代码
 
-## Set up the source tree
+    git clone https://github.com/DorianChn/shanchuanzhi-agent-canary && cd shanchuanzhi-agent-canary
+    npm install && npm run build && npm test
 
-Requirements: Git, Node.js 20+, and npm.
+提交前测试必须全绿；评测、许可证和诱饵处理都有回归测试。
 
-~~~sh
-git clone https://github.com/DorianChn/shanchuanzhi-agent-canary.git
-cd shanchuanzhi-agent-canary
-npm ci
-npm run build
-~~~
+## 加诱饵工具
 
-Before submitting a change, run the checks that match its scope:
+`src/decoys.ts` 里每个诱饵约 30 行：名字、描述（要写得让被劫持的 agent 心动）、
+JSON Schema、伪造返回。硬性规则见 [SECURITY.md](SECURITY.md)：
 
-~~~sh
-node scripts/check-docs.mjs
-npm run build
-npm test
-npm run pack:check
-~~~
+- 诱饵永不执行真实操作，处理器只返回捏造的文本
+- 返回内容里必须内嵌一次性追踪令牌（`token` 参数）
 
-For Gateway changes, also run the focused temporary-I/O acceptance test:
+改完跑 `npm test`，其中有一条专门测试"诱饵永不执行真实操作"。
 
-~~~sh
-node --import tsx --test test/gateway-acceptance.test.ts
-~~~
+## 赞助网关（sponsor/）
 
-Do not run real credentials, production endpoints, or destructive operations in tests. Use temporary fixtures and loopback-only endpoints. Report commands that were not run; do not turn an unverified check into a pass claim.
+改 `sponsor/server.mjs` 后运行：
 
-## Make a reviewable change
+    cd sponsor && node smoke.mjs
 
-1. State the user problem and expected behavior.
-2. Keep the change focused and preserve existing behavior unless the PR explains the compatibility impact.
-3. Update user documentation and the [compatibility matrix](COMPATIBILITY.md) when host, release, or feature status changes.
-4. Explain the security effect, data written, new permissions/network access, failure behavior, and dependency-license impact.
-5. Link evidence to the exact source or artifact version. Do not describe development-branch behavior as released or claim that native Shell is protected.
+14 项断言全过再提交。签名密钥（license-keys.json）、订阅数据（subscribers.json）
+永远不要提交进仓库。
 
-The repository code is MIT-licensed. Retain the upstream license and notices for third-party code; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Do not add a dependency without explaining why it is needed and recording its license.
+## 提交信息
 
-## Pull requests
-
-Use the pull-request template. Include a concise summary, exact verification commands and outcomes, compatibility impact, and links to any security or release evidence. Passing fixtures prove only those fixtures and callbacks; they do not establish operating-system isolation, third-party certification, or general host coverage.
+一行说清"做了什么"，正文补充"为什么"。

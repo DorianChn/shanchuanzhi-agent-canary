@@ -2,6 +2,10 @@
 
 **Status as of 2026-10-13: independent E4 remains NOT_VERIFIED and its evidence gate remains BLOCKED.** The v3.0.0 GitHub Release is published but has no attached assets; the competition Release and candidate.4 prerelease have separate candidate/community assets. Publication status does not change the E4 result. This page indexes the recorded evidence and limits and does not claim an external certification or independent audit.
 
+## Current evidence authority
+
+The M6-owned [current E4 index](docs/3.0/E4_EVIDENCE_INDEX.md) retains author-run bundles, failures and independent-evidence gates. [M7 artifact provenance](docs/3.0/M7_E4_ARTIFACT_PROVENANCE_2026-10-23.md) covers package identity separately. This root page preserves M8 historical receipts and supersedes neither owner record. Fixtures and CI are not independent E4. The [M8 #99 disposition](COMPATIBILITY.md#current-hook-build-contract-m8-accept-99) accepts the build interface only.
+
 ## v3.0.0 source-tag verification
 
 The `v3.0.0` source tag points to commit `42d1d4d9f42fdc89a9c38c338310679afb924e54`. Its [mainline verification receipt](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/42d1d4d9f42fdc89a9c38c338310679afb924e54/docs/3.0/MAINLINE_VERIFY_2026-10-13.json) records `npm run verify` on a Windows host with Node.js 22.23.1: build passed, 100/100 automated tests passed, offline self-test 4/4, SDK type checks 5/5, source manifest 181 files with 0 mismatches, and packed-package smoke 72 files passed.
@@ -144,4 +148,4 @@ This section records maintainer-run checks on synchronized candidate `8cf751badc
 | `git diff --check origin/feature/agent-canary-3.0...HEAD` | PASS |
 | exact M9 composition and full cross-platform candidate matrix | Pending on the published PR #40 head; older-head runs are not acceptance for this candidate |
 
-No test or security policy was weakened. M1 Hook-output owner review and Issue #80 disposition remain outstanding.
+At the time of this historical receipt, M1 Hook-output review and Issue #80 disposition were outstanding. This is not a current owner-status claim; see the current contract and Issue #99 snapshot in COMPATIBILITY.md. Older checks do not validate this merge-resolution candidate.

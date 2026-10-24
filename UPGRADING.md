@@ -1,5 +1,7 @@
 # Upgrade guide
 
+Development-branch integration is not a user upgrade procedure. Keep exact reviewed source/artifact hashes and owner contracts; see [COMPATIBILITY.md](COMPATIBILITY.md). This documentation merge does not validate installer migration.
+
 ## Current source and package boundary
 
 The `v3.0.0` GitHub Release is published but has no attached assets. The `v3.0.0-competition` Release and `v3.0.0-competition-candidate.4` prerelease have separate candidate/community assets; they are not substitutes for the v3.0.0 package. The reviewed v3.0.0 source records do not provide a verified in-place V1.2.7-to-v3.0.0 state migration procedure.

@@ -2,6 +2,8 @@
 
 This guide runs Agent Canary code with synthetic inputs. It does not test a live target, use real credentials, or prove that an agent host's native tools are intercepted.
 
+For current development, consult [M6 E4 scope](docs/3.0/E4_EVIDENCE_INDEX.md) and [current API contracts](docs/3.0/API_CONTRACTS.md). Configured-target reads are separately authorized host operations; these historical tag instructions do not validate them or a shipped installer.
+
 ## 1. Pin what you are testing
 
 The `v3.0.0` GitHub Release is published but has no attached assets. Use its immutable `v3.0.0` source tag for a reproducible source check; this does not establish package equivalence or independent E4. The `v3.0.0-competition` Release and `v3.0.0-competition-candidate.4` prerelease are published with separate candidate/community assets. Keep each candidate result bound to its exact source tag and artifact SHA-256; do not substitute it for v3.0.0. The moving `feature/agent-canary-3.0` branch is a different artifact; record its full commit SHA.

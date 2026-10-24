@@ -43,6 +43,18 @@ test('Windows Community packaging requires the exact 37 runtime files and SDK de
   assert.match(worker,/runtimeFiles:Array\.isArray\(version\.coreRuntimeHashes\)\?version\.coreRuntimeHashes\.length:0/);
 });
 
+test('installer lifecycle smoke accepts only the BUILD_REPORT status emitted by Windows Community',()=>{
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
+  const lifecycle=fs.readFileSync(path.join(repo,'packaging/windows/installer-lifecycle-smoke.ps1'),'utf8');
+  const emittedStatus=workflow.match(/\$report = \[ordered\]@\{\s*schemaVersion = 1\s*status = '([^']+)'/);
+  const acceptedStatus=lifecycle.match(/\$buildReport\.status -eq '([^']+)'/);
+  assert.ok(emittedStatus,'Windows Community must declare its BUILD_REPORT status');
+  assert.ok(acceptedStatus,'installer lifecycle smoke must validate BUILD_REPORT status');
+  assert.equal(acceptedStatus[1],emittedStatus[1]);
+  assert.match(workflow,/installerExecuted = \$false/);
+  assert.match(lifecycle,/\$buildReport\.installerExecuted -eq \$false/);
+});
+
 test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-community-runtime-contract-'));
   const payload=path.join(temp,'payload'),app=path.join(payload,'app'),dist=path.join(app,'dist');

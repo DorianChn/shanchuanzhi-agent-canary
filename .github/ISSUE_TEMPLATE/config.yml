@@ -1,8 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Share usability feedback in Discussions
-    url: https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions
-    about: Public discussion; do not post secrets or vulnerability details.
   - name: Report a security vulnerability privately
     url: https://github.com/DorianChn/shanchuanzhi-agent-canary/security/advisories/new
-    about: Use a private GitHub Security Advisory for exploitable vulnerabilities.
+    about: Do not post exploitable details in a public issue.

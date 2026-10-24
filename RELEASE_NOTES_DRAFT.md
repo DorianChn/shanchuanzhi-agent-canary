@@ -13,6 +13,10 @@
 
 The repository has source tags for `v3.0.0`, `v3.0.0-competition`, and `v3.0.0-competition-candidate.4`. The v3.0.0 Release has no attached assets; the competition Release and candidate.4 prerelease have separate published candidate/community assets. This draft is not for any of those existing releases. Do not reuse it for an existing package or attach it to a moving branch.
 
+## Current development integration gate
+
+M8 accepts the M7 interface documented in [COMPATIBILITY.md](COMPATIBILITY.md). This resolution integrates baseline e4732d9745bb4fbbebf6896a35b4657ad82abd73; final source SHA, CI and artifacts are not frozen. Do not relabel prior hosted checks for this candidate. Retain installer/clean-VM and independent E4 gates; this document remains a draft.
+
 ## Proposed release summary
 
 For a future version, write the final summary only from its exact tagged source and packaged artifacts. Describe verified user-visible behavior, installation requirements, data written, and rollback steps. Link each security statement to a test of that same tag or artifact.

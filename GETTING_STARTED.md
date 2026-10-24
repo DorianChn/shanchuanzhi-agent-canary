@@ -2,6 +2,10 @@
 
 The v3.0.0 GitHub Release is published, but it has no attached Release assets. The `v3.0.0` source manifest declares a CLI package on GitHub Packages; package retrieval is not verified by this guide and requires a GitHub token with `read:packages`. The tag-pinned source-build path below is separately available. The moving `feature/agent-canary-3.0` branch is a different development build and may differ from that source tag. The five-minute target assumes Node.js is installed and GitHub Packages access is configured; first-time account/token setup or dependency downloads may take longer.
 
+## Choose the source before starting
+
+The instructions below describe the historical v3.0.0 tag, not this development candidate manifest. For current source, record the full SHA and follow its README/CLI help. See [COMPATIBILITY.md](COMPATIBILITY.md). Setup success does not establish native Codex Shell protection.
+
 ## Five-minute quick start: v3.0.0 package
 
 Requirements: Node.js 20+, npm, network access, and a GitHub Classic Personal Access Token with `read:packages` for the published npm package. Do not paste the token into this repository or commit an `.npmrc` containing credentials.

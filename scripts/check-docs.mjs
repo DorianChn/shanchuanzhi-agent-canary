@@ -10,7 +10,6 @@ const files = [
   "README.zh-CN.md",
   "GETTING_STARTED.md",
   "SECURITY.md",
-  "SUPPORT.md",
   "CONTRIBUTING.md",
   "COMPATIBILITY.md",
   "SECURITY_TESTING.md",
@@ -21,11 +20,12 @@ const files = [
   "THIRD_PARTY_NOTICES.md",
   ".github/pull_request_template.md",
 ];
+// Feature removed SUPPORT.md and the dedicated feedback form.
+// CONTRIBUTING.md, the bug form and the private advisory route remain reporting paths.
 const issueTemplateFiles = [
   ".github/ISSUE_TEMPLATE/bug_report.yml",
   ".github/ISSUE_TEMPLATE/config.yml",
   ".github/ISSUE_TEMPLATE/feature_request.yml",
-  ".github/ISSUE_TEMPLATE/product_feedback.yml",
 ];
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const tsconfig = JSON.parse(fs.readFileSync(path.join(root, "tsconfig.json"), "utf8"));
@@ -78,6 +78,7 @@ for (const relativeFile of files) {
   }
 
   const markdown = fs.readFileSync(absoluteFile, "utf8");
+  if (/^(?:<{7}|={7}|>{7})(?:\s|$)/m.test(markdown)) errors.push(relativeFile + ": unresolved merge conflict marker");
   const localHeadings = headings(markdown);
 
   for (const match of markdown.matchAll(/!?\[[^\]]*\]\((?:<([^>]+)>|([^\s)]+))(?:\s+["'][^"']*["'])?\)/g)) {
@@ -123,9 +124,9 @@ for (const relativeFile of files) {
     }
   }
 
-  for (const block of markdown.matchAll(/~~~([a-zA-Z0-9_-]*)\s*\n([\s\S]*?)\n~~~/g)) {
-    const language = block[1].toLowerCase();
-    const code = block[2];
+  for (const block of markdown.matchAll(/^[ \t]*(~~~|```)([a-zA-Z0-9_-]*)[ \t]*\n([\s\S]*?)^[ \t]*\1[ \t]*$/gm)) {
+    const language = block[2].toLowerCase();
+    const code = block[3];
     if (language === "toml") {
       try {
         parseToml(code);
