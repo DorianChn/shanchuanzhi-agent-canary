@@ -8423,3 +8423,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Exact head `4d1bbb672a02e84a3219830d110d77e9d3eec6d3`: CI run `40103382585` completed SUCCESS (9/9); AC3 run `40103382558` completed SUCCESS; M9 run `40103382554` completed SKIPPED because the existing job condition admits only manual dispatch or PR #36. M0 recorded this exact recurrence in #76 comment `6385515616`.
 - No owner-authored reply is visible on M7 #41, M1 #52, or M8 #99; those branch/worktree heads remain unchanged. M8 remains queued and PR #40 stays Draft.
+## M1/M7 owner checkpoint request — 2026-10-24 14:46 UTC
+
+- M1 and M7 have not posted owner-authored status on their assigned slots. M0 requested a concise WORKING/BLOCKED/DONE state and next action on #52 comment `6385580957` and #41 comment `6385580693`; this is a status request, not evidence of completion.
+- M1 remains on P0 #52. M7 remains on the installer-trigger/checksum gate; the workflow stays unpushed until it has an explicit fail-closed reservation/manual or serialized guard. M8 remains queued after these two slots.
