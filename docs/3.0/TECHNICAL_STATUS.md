@@ -8192,3 +8192,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M0's read-only open-PR audit previously counted skipped/neutral checks in the `K` column but hid their names from the attention column. The report now lists every pending or non-success check by name while preserving `skipped` as `K`, not `failed`; this makes skipped M9 composition visible without calling it a failure or a pass.
 - M0-only change: commit `2097bc7` updates `scripts/ac3-pr-audit.mjs` and its targeted regression. `node --test test/ac3-pr-audit.test.mjs` passed 4/4; `git diff --check` passed. No M1–M8 source or security assertion was changed.
 - This commit is local on the existing M0 branch and will be included in the next authorized push batch after the quota, remote-ref, and scope checks. M9 current-ref composition remains independently OPEN/P1 until its owner repairs the workflow and produces a current exact-source run.
+
+## M9 exact current-source manual composition — 2026-10-24 11:10 UTC
+
+- M0 manually dispatched the existing M9 workflow against feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Run `40088403364` completed successfully on both `ubuntu-latest` and `windows-latest`; both jobs checked out and exercised the currently pinned M1–M8 candidate refs.
+- The result validates this exact source composition on the two hosted runners only. It does not prove the automatic PR trigger/ref selection, installed-product E4, the clean-VM installer lifecycle, VMware containment, or real-model behavior.
+- M0 recorded the run and evidence limits on issue #76 comment `6383494695`. Keep #76 OPEN/P1 until the M9-owned trigger/ref defect is corrected and the normal integration event runs the gate; keep the independent P0/P1 product acceptance issues open until their own evidence is supplied.
+- PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and its existing competition base. No module source, `main`, or Release was changed.
