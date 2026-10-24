@@ -8333,3 +8333,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M0 logged the current M9 recurrence in #76 comment `6384668382`. M7/M6 owner requests are on #41 `6384619047`, P0 #93 `6384619254`, and #57 `6384619452`; exact M1 review is on #72 `6384536968`; P0 #52 follow-up is `6384570394`.
 - Latest comment checks show no module-owner acceptance evidence on these gates. Remote M1–M8 branch heads were unchanged in the 13:12 snapshot. PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
 - Usage page is open; last readable quota at 13:14 was 38% five-hour and 49% weekly. M0 changed coordination docs only; no module, M9 workflow, main, PR #24, or Release changes.
+
+## M1 retry diagnosis follow-up — 2026-10-24 13:18 UTC
+
+- Current feature CI `40097358398` passed 9/9, including Ubuntu Node 22, but did not reproduce or explain the historical PR #38 `RETRY_LIMIT` event. M0 requested an evidence-bounded lock-holder/timing disposition on #51 comment `6384695432`.
+- Keep the 48 quarantine assertions and fail-closed bounded retry unchanged; #51 remains OPEN/P1 until M1 records the cause or a bounded no-current-reproduction result.
