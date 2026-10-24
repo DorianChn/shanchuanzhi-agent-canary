@@ -1696,3 +1696,33 @@ Only M1 and M6 occupy the two active module slots. Usage was readable at 11:29 U
 - **#52 P0 — OPEN / NOT_VERIFIED.** M3 commit `47474e3ea71b8a3ab0f175a74e2970ee52150878` adds public M1 Gateway/M5 policy-router resolution to the supported M3 onboarding consumer, retaining M2 adapter resolution and failing closed when the M5 export is missing. Build, 17 focused tests, 6 exact packaged-consumer tests, and pack check pass. The 6 controls cover fixed synthetic marker read and alias/path-replacement/sensitive-symlink denials before callback/approval with unchanged bytes. M3 report excludes product/user-file access, M4 UI, native Shell, and OS-atomic TOCTOU. Commit is local pending the next batch; keep #52 open.
 - **#57 P1 — OPEN / NOT_VERIFIED.** M6 PR #38 head `392a7c24697fd8925e3022616aad054922efb38f` adds external signed-receipt validation bound to bundle/source/artifact digests and explicit NOT_VERIFIED states; local tests 26/26, hosted CI pending. M7 artifact metadata alone is same-workflow provenance, not independent E4. Independent operator/reviewer identity and clean-environment evidence still lack an accountable confirmed delivery time; no artifact was downloaded or run.
 - M0 #57 evidence/limit comment: `6358758268`. M0 scheduler #29 last batch receipt: `6358685595`.
+## 2026-10-23 16:22 UTC — Issues #87/#88/#89 current exact-head result
+
+The exact M9 run 39978172198 at head 0d3beaa9dae5a33cb3e0a4dbfa50a6c8f9a71de5 completed on both Ubuntu and Windows with 20 tests, 15 passed and 5 failed. The current M8 candidate''s dedicated workflow step passed; exact M9 composition did not.
+
+- P0 #88: M2 Hook reason canaries still reach stdout for allow, deny, and ask; owner M2, sanitization contract owner M1.
+- P0 #89: M3 Hook reason canaries still reach stdout for allow, deny, and ask, and its Hook blob differs from M1 canonical; owner M3, exact disposition owner M1.
+- P1 #87: the valid registered M2/M5 held-file read is still denied as path_execution_not_pinned; owners M2 adapter and M5 strict router, with M1 held-capability contract review.
+- #59 remains OPEN for M6 disposition of M8's changed shared E4 test blob and M1 review of the new M8 Hook-output test. #72 remains OPEN for M1's current merged M3 exact-file disposition.
+- Current issue comments could not be published: GitHub integration returned HTTP 403 Resource not accessible by integration. Keep the owner acceptance criteria above; do not close issues or weaken regressions.
+## 2026-10-23 16:33 UTC — Current M9 exact-head result
+
+Run 39986788529 at M9 head a2f478864250c0ec1bc79866074ce855bfba38ae completed on Ubuntu and Windows. Each exact-source composition run had 20 tests, 15 passed, 5 failed, 0 skipped. The same findings remain active:
+- P0 #88 M2 Hook synthetic caller-controlled reasons appear on stdout for allow/deny/ask.
+- P0 #89 M3 Hook synthetic caller-controlled reasons appear on stdout for allow/deny/ask, and the M3 Hook blob differs from M1 canonical.
+- P1 #87 registered held-file read returns DENY/path_execution_not_pinned rather than OBSERVE_ONLY.
+- M2/M3/M5/M7 Hook parity against current M1 canonical remains failed.
+All current M1/M3/M5/M6 and M8 dedicated per-module steps pass; only M9 composition fails. M0 has not changed module implementation. #59 and #72 remain open for exact M8/M3 owner dispositions.
+
+## 2026-10-24 05:54 UTC — exact-source issue dispositions
+
+- **#81 P1 — CLOSED, interface scope only:** M3 PR #107 documents the public M2 Gateway facade/M5 policy-router exports; M9 run `40066875122` passed exact composition on Ubuntu and Windows, including fixed probe, positive held-file route, and alias/replacement denials. P0 #52 remains open for product-host adoption and OS-level acceptance.
+- **#87 P1 — CLOSED, integration scope only:** the exact M9 packed-M2/M1/M5 test returned OBSERVE_ONLY for its registered positive read and denied sensitive, link, and hard-link aliases before callback/approval, with fixtures unchanged. No first-party product-host claim is made; keep #52 OPEN.
+- **#80 P1 — OPEN:** M6 accepted the exact M8 reason-projection/lifecycle-test blobs; M9 composition passes. The remaining gate is independent product E4 under #57. Installer lifecycle remains separate under #41/#93.
+- **#99 P1 — OPEN:** M8's exact build-contract adapter disposition is still missing. M0 asked for ACCEPT/REJECT on PR #40 comment `6380586402`; preserve PR #40 Draft pending response and post-M9-base checks.
+- Current open labels after #81/#87 closure: P0 2 (#52, #93); P1 15. Do not close other issues without exact current-source evidence and their stated owner/product acceptance.
+
+## 2026-10-24 06:03 UTC — Issue #102 resolution
+
+- **#102 P1 — CLOSED, offline-demo/packaging scope only:** M8 exact head `60cfe8d` builds and its documented offline runner returns `VERIFIED_BOUNDED_OPERATOR_DEMO` with six cases. M7 Community build run `40064614487` and M9 exact-source run `40066875122` pass; M9 checks the exact M8 demo blob and M7 staged-source contract. The offline runner is bounded temporary I/O, not independent E4. Keep #41, #52, #57, and #93 open for their separate installer, product-host, E4, and packaged-runtime acceptance.
+- Open labeled issue count after #81/#87/#102 closures: P0 2; P1 14. Do not infer closure from source composition for remaining gates.

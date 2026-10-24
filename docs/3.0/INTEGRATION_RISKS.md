@@ -1198,3 +1198,38 @@ The M9 fixture proves a synthetic protected read through the packed public facad
 - M5 policy tests and M4 UI/virtual-console paths must not be presented as product OBSERVE file-read protection without the exact supported consumer path and held-identity controls.
 - M6's current evidence gap is independent product E4 provenance and receipt; M7's hosted package/lifecycle artifacts do not satisfy the separate acceptance.
 - Resource log correction: hosted installer lifecycle run 39904585994 was completed under PR #39 at 05:16 UTC, without a #29 reservation record. No workflow is active now; slot is free for a future explicitly reserved run.
+## 2026-10-23 16:22 UTC — M9 composition remains blocked
+
+| Gate | Priority | Current evidence | Remaining acceptance |
+| --- | --- | --- | --- |
+| M2/M3 Hook parity and reason projection (#88/#89/#72) | P0 | Current M9 exact-head run 39978172198 fails both Ubuntu and Windows; M2 and M3 Hook blobs are d6f93249306b7966259cab463dd39475728ef338 while M1 canonical is b7ed4aba70a597f4f63a05decc6de1b32f67372e. Caller-controlled synthetic reasons reach stdout for allow/deny/ask. | M2/M3 reconcile owned copies with M1 canonical or secure an M1-reviewed contract; decisions unchanged; all output canaries absent; exact M9 rerun green. |
+| Registered held-file read (#87) | P1 | Current exact-source test still expects OBSERVE_ONLY and receives DENY / path_execution_not_pinned on both platforms. | M2 capability-bound adapter + M5 strict-router integration with M1 contract review; retain all sensitive-path, alias, and path-only denials. |
+| M8 current candidate review (#59) | P1 | Current M8 dedicated workflow test passes, but issue #59 remains open for exact M6 shared E4 test disposition and M1 review of new Hook-output test. | M6 and M1 exact-blob ACCEPT/REJECT; M9 composition on final reviewed refs. |
+| Independent product acceptance (#52/#57) | P0/P1 | Separate from the synthetic composition run; both remain NOT_VERIFIED. | Verify first-party held identity and protected-path behavior, and independent E4 receipt/provenance. |
+
+Current M9 composition is 15/20 on both Ubuntu and Windows; no M9 acceptance or completion claim is supported.
+## 2026-10-23 16:33 UTC — Current exact-source integration result
+
+| Gate | Priority | Current evidence | Remaining acceptance |
+| --- | --- | --- | --- |
+| Hook parity and output redaction (#88/#89/#72) | P0 | Run 39986788529 fails on both Ubuntu and Windows; M2/M3 reasons for allow/deny/ask reach stdout, and M2/M3 Hook blobs differ from M1 canonical. | M2/M3 owner changes or M1-reviewed contract; preserve decisions; all output canaries absent; exact M9 rerun green. |
+| Registered held-file read (#87) | P1 | Positive read still returns DENY / path_execution_not_pinned instead of OBSERVE_ONLY on both OSes. | M2 capability-bound adapter plus M5 strict-router integration and M1 contract review; all path, alias, and no-capability denials retained. |
+| M8 current-candidate review (#59) | P1 | Current M8 dedicated step passed, but exact M6 shared-test disposition and M1 Hook-output test review remain open. | M6/M1 exact-blob dispositions and final M9 composition. |
+| Product host / independent E4 (#52/#57) | P0/P1 | Separate acceptance gates remain NOT_VERIFIED. | Actual supported host-held identity/security behavior and independent E4 evidence. |
+
+Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9 completion claim is supported.
+
+## 2026-10-24 05:54 UTC — post-M9 exact-source risk update
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M3/M5 public route (#81) | P1 | Closed: M3 #107 plus exact-source M9 run `40066875122` passed Ubuntu/Windows export, fixed-probe, and protected-read composition checks. | Product-host use and real protected-open remain separate under #52. |
+| M1/M2/M5 held-read chain (#87) | P1 | Closed: exact M9 run `40066875122` passed packed-M2 positive OBSERVE read and sensitive/link/hard-link alias denials on Ubuntu/Windows with no callback/approval side effects. | First-party product-host adoption and OS-level TOCTOU remain open under #52. |
+| M8 module merge (#40/#99) | P1 | M8 PR #40 remains Draft at `60cfe8d`; reviewed source CI and M9 composition pass. M8 owner disposition is missing; PR's recorded base SHA `416f1ba` predates feature `f313e5f`. | Record exact M7 build-contract/provenance disposition and reconcile the post-M9 base before merge. |
+| Product/installed acceptance (#52/#93/#41/#57) | P0/P1 | Still OPEN/NOT_VERIFIED; exact source CI does not establish host interception, installed Hook runtime, clean-VM lifecycle, or independent E4. | Require the actual supported-host, package-runtime, clean-VM and independent E4 evidence for the relevant gate. |
+
+## 2026-10-24 06:03 UTC — bounded offline demo gate
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Offline demo / Community staging (#102) | P1 | Closed: M8 clean-worktree build and six-case offline runner pass at exact PR #40 head; M7 build evidence and M9 Ubuntu/Windows exact composition pass with the fixed M8 blob. | No installer execution or independent E4 claim; those remain #41/#57/#93. |

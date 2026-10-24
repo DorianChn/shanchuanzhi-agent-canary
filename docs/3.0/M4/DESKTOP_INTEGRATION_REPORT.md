@@ -366,3 +366,94 @@ The M4 consumer may be added only after that contract exists and must satisfy th
 5. Keep native Shell enforcement, installer lifecycle, real user-file access, and OS-atomic TOCTOU as separate acceptance claims.
 
 Verification on this M4 worktree: `node --import tsx --test test/runtime-console.test.ts` passed 13/13; `git diff --check` passed before the report append. These tests cover the existing M4 status/UI fail-closed contract only. No protected-read route, product/user/secret file, VM, model, or installer was exercised. Issue #52 remains OPEN / P0 / NOT_VERIFIED for M4 first-party host/UI consumption.
+
+## 2026-10-24 M4 Issue #52 capability-consumer recheck
+
+### Exact starting state and current public refs
+
+- M4 worktree: `feature/ac3-desktop-security-center`, clean at `721c25b9d0decd2e86ce3411ac8feb3e4cfbffc2` before this report-only update.
+- PR #34 is already **MERGED** at that exact head. Its exact-head CI run `39919282220` passed all 9 checks. This report update is after that merge; it does not change the merge result.
+- M2 PR #91 remains OPEN/Draft at `92dd42b900b10ce0294e9e3faa7e175d728228b3`; its review decision is empty. The adapter files are absent from this M4 checkout and are not listed in this checkout's package exports/files.
+- M5 PR #47 is MERGED at `688f4bf4acd9a46a5bbaed622c71a64ef788e551`, but that later M5 capability-provider implementation is not present in this M4 branch snapshot.
+- Issue #52 remains OPEN/P0/NOT_VERIFIED.
+
+### M4-to-Gateway trace
+
+- M1 Gateway in this checkout exposes host-only `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability` in `src/runtime/gateway.ts`. These methods bind the read to a constructor-registered file and send the operation through the ordinary M1 dispatch boundary.
+- The existing Gateway contract tests include a scoped positive read and the negative test `file-read capability blocks sensitive aliases and replaced paths before the host callback`. Those prove the Gateway contract in isolation, not an M4 Host consumer.
+- M4's `src/ai/console-page.ts` requests `GET /api/security-center` for status and contains no protected-read action. `src/ai/security-center-adapter.ts` fixes `firstPartyObserveReadStatus` to `NOT_VERIFIED`. In this M4 snapshot, `src/ai/console.ts::startAIConsole` has no protected-read handler or Gateway/M2 adapter dependency injection; the existing Console regression accepts the status route being absent and keeps the UI unknown.
+- M4's `src/security-router.ts` has no `fileReadCapability` provider. With `verifyRealPaths: true`, generic file callbacks are rejected as `path_execution_not_pinned`. The M2 host adapter needed to bind and verify M1's capability is not present in the checkout or package surface.
+
+### Safe implementation disposition
+
+There is no supported M4 Host callsite at this exact source ref to attach the M1 capability to. Calling `readFileWithCapability` directly from a new desktop callback would create a separate, unwired action and bypass the M2 host adapter and M5 strict-router consumer. Adding a UI request alone would target a route this M4 server does not expose. Either option would make a test fixture look like product integration without proving the supported host path, so no product code or security assertion was changed.
+
+The concrete unblock is an M3-owned normal-CLI host route with a reviewed fixed target/action and sanitized response, composed through the public M2 adapter and the M5 capability-aware router. The M2 adapter candidate must be owner-reviewed and made available to the supported package composition. Once that exact route/schema exists in the M4 integration base, M4 can consume only its sanitized result and add a real positive read plus alias/path-replacement zero-side-effect UI/host controls. Until then, missing, malformed, or unsupported data stays `NOT_VERIFIED` / `UNKNOWN`.
+
+### Verification on this checkout
+
+- `npm run build` — passed.
+- `node --import tsx --test test/runtime-console.test.ts` — 13/13 passed; CSRF/operator/quarantine assertions and the unknown/no-probe UI contract remain intact.
+- `node --import tsx --test test/gateway.test.ts` — 36/36 passed, including the isolated Gateway positive and alias/path-replacement negative controls. This does not claim an M4 consumer or a product-file read.
+- No M4 host read, product/user/secret file access, model, VM, or installer test was performed. Issue #52 remains OPEN/P0/NOT_VERIFIED for the M4 first-party Host consumer.
+
+## P0 #52 M4 Host-callsite disposition at local HEAD 3278b33
+
+- The supported M4 entry is `src/ai/cli.ts` → `startAIConsole()` in `src/ai/console.ts`. The CLI passes port and credentials; `startAIConsole()` accepts no Host Gateway, bound file capability, M2 adapter, or M5 router dependency. It constructs `createRuntimeDemo()` and `createPolicySandbox()` instead.
+- M1's `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability` APIs exist in `src/runtime/gateway.ts`, but no M4 `src/ai` product caller consumes them. The API binds to a constructor-registered file on that Gateway instance; a browser request or a separately constructed Console demo cannot carry or establish the Host-held identity.
+- M4's Console server has no `/api/security-center/protected-read` handler and no M2 Host-adapter call. The page requests status only and explicitly does not call M3's fixed temporary-marker probe. The capability-aware M2 adapter and M5 router consumer are not available in this M4 product composition.
+- **Exact missing seam:** M3's supported normal-CLI Host composition must retain the bound M1 capability and invoke the reviewed M2 adapter/M5 consumer, then expose an operation-scoped sanitized result to M4. M4 can consume that result only after this existing Host/API seam is available; inventing a route or binding a new Gateway inside M4 would not prove consumption of the Host-held capability.
+- No M4 source or Host-acceptance test was added. A synthetic test would not prove the product callsite, and existing M1 Gateway positive/alias/path-replacement tests remain Gateway-level evidence only. #52 stays **OPEN / P0 / NOT_VERIFIED** for first-party M4 OBSERVE file-read consumption.
+- Verification for this report-only update: source call-chain inspection and `git diff --check`; no product test/build was run because no runtime code changed. No file-read callback, approval, or file effect was exercised.
+
+## M9 exact-source reconciliation for M4 P0 #52
+
+- M9 PR #36 source head `1f2600c1df824d238246193e25706a530a708de6`, `test/m9-cross-module-composition.test.mjs` test `M3 ordinary CLI passes only after its fixed protected-read and replacement controls`, starts the M3 normal CLI and posts an empty body to `/api/security-center/protected-read` with CSRF and operator authorization. It expects only `{ scope: 'M3_FIXED_TEMP_PROBE_ONLY', status: 'PASS', reason: 'FIXED_PROBE_CONTROLS_PASSED', markerMatched: true }` and verifies the probe directory is removed. The test checks the exact M3 package resolves the M2 `./gateway-adapter` and M5 `./policy-router` exports and that M3 loads them with the M1 SDK. This establishes the fixed temporary-probe path only.
+- Run `40002296667` used older M9 head `b364b87c7e287aebeabf23b3e4020d0456e532db` and failed because its prior test still expected `UNKNOWN` / `OWNER_ADAPTER_UNAVAILABLE`; the observed actual result was the fixed-probe `PASS`. The updated PR #36 test above now asserts the observed result and cleanup; this M9 test change is not an M4 product-code fix or a symlink/junction result.
+- M9's separate test `M3 snapshot-only status route feeds the exact M4 read-only consumer without protected-read work` confirms the M3 status GET does not load protected-read dependencies, redacts private path/token fields, and feeds the M4 adapter/page. The M4 result remains overall `UNKNOWN` and `firstPartyObserveReadStatus: NOT_VERIFIED`; the page does not invoke the fixed-marker POST. This is the correct M4 consumer boundary.
+- M4's own `src/ai/cli.ts` → `startAIConsole()` path still has no protected-read dependency injection or handler. The M3 fixed-probe route takes no target path, so M4 cannot use it to exercise symlink/junction aliases. The existing M4 consumer does not need an added Host call to the fixed probe; no safe M4-owned code path exists for alias/junction Host acceptance.
+- Disposition: M3 fixed-temp probe evidence is **not** promoted to arbitrary user-file or native-host OBSERVE coverage. M4 source and tests remain unchanged; P0 #52 remains **OPEN / NOT_VERIFIED** for M4 first-party OBSERVE file-read consumption. Alias/junction Host acceptance requires an owner-provided fixed-target capability route; no such M4 seam is exposed here.
+
+## 2026-10-24 M4 status-consumer and request-boundary regression
+
+This update supersedes earlier report statements that the current merged source has no protected-read route. The M3-owned `src/ai/console.ts` now contains `POST /api/security-center/protected-read`; it composes public M1/M2/M5 owner APIs for a process-owned temporary marker. It accepts only `{}` after Host/Origin, CSRF, and operator checks. It tests a registered safe read, the lexical `./agent-canary-public.txt` alias, and same-path replacement. It does not accept or read a caller-selected workspace path and does not exercise a physical symlink/junction alias. Its `M3_FIXED_TEMP_PROBE_ONLY` PASS is limited to that temporary probe.
+
+M4 remains a read-only status consumer under the current contract: `src/ai/console-page.ts` uses `GET /api/security-center`, and `src/ai/security-center-adapter.ts` fixes the first-party OBSERVE indicator at `NOT_VERIFIED`. Connecting the page to the M3 POST would violate the existing M4 consumer contract and still would not create a product-file or junction test case. No M1, M2, M3, M5 source or public interface was changed.
+
+M4-owned regression changes:
+
+- `test/runtime-console.test.ts` now feeds the exact M3 fixed-temp `{scope,status,reason,markerMatched}` PASS envelope to the status adapter and asserts that neither the first-party OBSERVE indicator nor diagnostic export treats it as product-file evidence.
+- The same suite sends lexical-alias, physical symlink/junction, and replacement path values to the fixed probe request boundary. Each non-empty request must return `REQUEST_INVALID` before protected-read dependencies load; the test verifies zero Host dependency loads and unchanged fixture bytes, identities, and alias target. This is request-schema rejection evidence only; it does not claim an M2 adapter-level junction denial.
+- Existing `test/security-center-route-m3.test.ts` route regressions pass, including its dependency-injected fixed-temp positive/lexical-alias/replacement case. This route test uses an injected owner-dependency fixture and is not itself evidence of the current packed-package normal-CLI composition. The real product-file/junction Host acceptance gate remains outstanding.
+
+M4 requested the missing supported seam from M3 in [Issue #52 comment 6374974889](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52#issuecomment-6374974889): bind an explicitly registered target through the existing M1 held-file capability, public M2 adapter, and M5 strict OBSERVE router; expose only a sanitized read-only operation result to M4; and add a physical symlink/junction alias denial with zero M1 evidence increments, callbacks, approvals, and file changes. Until that owner seam and exact-host evidence exist, Issue #52 remains **OPEN / P0 / NOT_VERIFIED**.
+
+Verification on the Windows M4 worktree:
+
+- `npm run build` — PASS.
+- Focused M4/M3 regressions selected by name — 3/3 PASS.
+- `node --import tsx --test test/runtime-console.test.ts` — 16/16 PASS.
+- `node --import tsx --test test/security-center-route-m3.test.ts` — 16/16 PASS (the injected dependency fixture remains scoped route-test evidence).
+- `git diff --check` — PASS.
+
+The new M4 junction case verifies that a caller-supplied junction path is rejected by the fixed-probe request schema before protected-read dependencies load; it does not verify that M2 resolves or rejects a filesystem junction through a product Host callsite. No M4 product file, native Host callback, VMware, installer, or model was exercised. Product OBSERVE remains **NOT_VERIFIED**.
+
+## 2026-10-24 M2 PR #91 public-adapter clarification
+
+M0 identified public M2 PR #91 at `92dd42b900b10ce0294e9e3faa7e175d728228b3` as the candidate facade; current required checks pass, but the PR remains Draft. The candidate file blob is `0d7053114e87177669ec2c3b416028e05affb62f`. The M4 checkout contains a different blob at the same path (`7a05ed64300c6345222dff13a4e929a250646acc`); M4 does not treat that local source as the PR #91 candidate and did not use M2 worktree commit `69a98fb`.
+
+If the host integration consumes PR #91, the exact package boundary is the named export from `@dorianchn/agent-canary/gateway-adapter`:
+
+```js
+const { createSecurityGatewayHostAdapter } = await import('@dorianchn/agent-canary/gateway-adapter');
+const host = createSecurityGatewayHostAdapter({
+  gateway, // M1 Gateway holding the registered file identity
+  fixedFileReads: { protected_read: ['<registered-relative-file>'] },
+  createSecurityToolRouter, // M5 public strict router
+  routerOptions: { guard, workspaceRoot, mode: 'OBSERVE', verifyRealPaths: true },
+});
+```
+
+`fixedFileReads` must refer only to paths registered in that M1 Gateway. M2 reserves/injects the tool list, execution callback, and opaque capability provider; the caller must not provide those fields or add a path-only fallback. The M3 wrapper callsite is `src/codex-connection-mcp.ts::createProtectedHostAdapter`, which dynamically imports that package subpath and calls the facade; the current Console probe supplies only its process-owned `agent-canary-public.txt` target. However, the M4 checkout resolves the subpath to its local blob `7a05ed64300c6345222dff13a4e929a250646acc`, not PR #91's candidate blob `0d7053114e87177669ec2c3b416028e05affb62f`; the callsite alone does not prove the exact PR #91 artifact was composed. M9 must verify package resolution against the pinned candidate. M4's page does not invoke that host helper or protected-read POST; it consumes only the sanitized status GET.
+
+The M4 commit `7d050b25851f19d48a3c011d078aace5961c8888` is independent of PR #91 and remains limited to the status-consumer/request-boundary regression and report. A future acceptance run must resolve the exact packed PR #91 export in an ordinary supported CLI composition, then prove: (1) a registered safe positive read through M1 held identity → M2 facade → M5 strict OBSERVE; (2) unregistered/sensitive alias and physical symlink/junction alias denial; (3) same-path replacement denial; (4) each denial adds zero M1 read evidence, M5 callbacks, approvals, or file effects and leaves original bytes/hash unchanged; and (5) M4 receives only a sanitized operation-bound status result. M9 must pin the exact source refs and package exports. Until those controls pass, #52 remains **OPEN / P0 / NOT_VERIFIED**.
