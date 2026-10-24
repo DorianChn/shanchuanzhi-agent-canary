@@ -8436,3 +8436,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Exact head `26bcce98c3876cb474d7f1ff37e9a4a056242c2d`: standard CI `40104848291` completed SUCCESS (9/9); AC3 coordination `40104848248` completed SUCCESS; M9 composition `40104848245` completed SKIPPED. The current-ref M9 gate remains missing; M0 recorded the terminal result on #76 comment `6385736997`.
 - No owner-authored response is visible on #41/#52/#99. M1/M7/M8 branches and M7's preserved local changes are unchanged.
+## M1–M8 branch audit — 2026-10-24 15:05 UTC
+
+- All eight existing module branches have zero ahead/behind divergence from their configured remote upstreams. M1, M2, M3, M4, M5, M6, and M8 worktrees are clean. M7 has two dirty entries: its uncommitted installer workflow edit and untracked acceptance directory; both remain untouched by M0.
+- Open-PR inventory is unchanged: M0 #109 and M8 #40 are the open AC3 Draft PRs; M6 legacy #31 targets `main` and remains untouched. Current merged follow-up PRs M1 #101 through M7 #106 remain merged.
+- No module owner response or head movement since the 14:46 checkpoint request. GitHub Issue #29 still records the two-slot order M7, then M1, then M8.
