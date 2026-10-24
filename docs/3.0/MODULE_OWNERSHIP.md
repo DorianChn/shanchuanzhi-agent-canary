@@ -2,6 +2,12 @@
 
 M0 owns the coordination documentation in `docs/3.0/*`, the AC3 coordination workflow and checker (`.github/workflows/ac3-coordination.yml`, `scripts/ac3-coordination-check.mjs`, `scripts/ac3-pr-audit.mjs`, `scripts/ac3-ownership.json`), and its focused audit regression (`test/ac3-pr-audit.test.mjs`). M0 may maintain these coordination paths and GitHub issue/status records; M1–M8 implementation and test paths remain owned by their listed modules. Shared module paths require the owning module's disposition and must not be edited from M0.
 
+## Current live readback — 2026-10-24 11:16 UTC
+
+- M0 branch `feature/ac3-m0-coordination` is at `a3c9bb9f0e0a2c0eeb5051a40ded8f9a68c12617`; PR #109 is OPEN/Draft against feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Coordination CI `40089004836` passed and standard CI `40089004923` passed all 9 jobs. The PR's M9 composition check `40089004844` was skipped by the known #76 trigger/ref defect.
+- Existing owner worktrees remain on their previously recorded heads: M1 `47501fc`, M2 `26cdb87`, M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2975f3f`, M7 `ab9b03f`, and M8 `60cfe8d`. M1–M6 and M8 are clean; M7's pre-existing workflow edit and untracked acceptance directory are preserved. M9 integration worktree remains clean at `cbb2e7d`.
+- PR #40 remains OPEN/Draft at `60cfe8d`; PR #24 remains OPEN/Draft at its unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and competition base. The issue tracker still has 2 P0, 11 P1, and 1 P2 open. A worktree readback does not establish activity in separate Codex chats.
+
 ## M0 verified M1–M8 ownership and worktree snapshot — 2026-10-24 10:05 UTC
 
 This snapshot supersedes earlier branch/status snapshots below. Worktree location, attached branch, HEAD, and dirty state were read from the filesystem; primary PR states were checked on GitHub. Worktree state does not reveal activity in separate Codex chats.

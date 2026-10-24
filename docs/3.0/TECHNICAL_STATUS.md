@@ -8199,3 +8199,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - The result validates this exact source composition on the two hosted runners only. It does not prove the automatic PR trigger/ref selection, installed-product E4, the clean-VM installer lifecycle, VMware containment, or real-model behavior.
 - M0 recorded the run and evidence limits on issue #76 comment `6383494695`. Keep #76 OPEN/P1 until the M9-owned trigger/ref defect is corrected and the normal integration event runs the gate; keep the independent P0/P1 product acceptance issues open until their own evidence is supplied.
 - PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73` and its existing competition base. No module source, `main`, or Release was changed.
+
+## M0 post-push and live acceptance snapshot — 2026-10-24 11:16 UTC
+
+- M0 pushed coordinator-only commit `a3c9bb9f0e0a2c0eeb5051a40ded8f9a68c12617` to existing PR #109. Its AC3 coordination check `40089004836` passed and standard CI `40089004923` passed all 9 jobs. The PR event's M9 composition check `40089004844` was skipped, confirming the #76 automatic trigger/ref gap remains.
+- Manual M9 run `40088403364` is green on Ubuntu and Windows for the exact feature baseline and currently pinned M1–M8 candidates; this is source-composition evidence only. It does not close installed-product, clean-VM lifecycle, independent E4, VMware, or real-model acceptance.
+- Current open issue count remains 2 P0, 11 P1, and 1 P2. PR #24 remains OPEN/Draft at its unchanged head and competition base; no module implementation, `main`, or Release was changed by M0.
