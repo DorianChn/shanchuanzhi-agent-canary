@@ -1,3 +1,7 @@
+## Current M0 coordination-file ownership — 2026-10-24 11:02 UTC
+
+M0 owns the coordination documentation in `docs/3.0/*`, the AC3 coordination workflow and checker (`.github/workflows/ac3-coordination.yml`, `scripts/ac3-coordination-check.mjs`, `scripts/ac3-pr-audit.mjs`, `scripts/ac3-ownership.json`), and its focused audit regression (`test/ac3-pr-audit.test.mjs`). M0 may maintain these coordination paths and GitHub issue/status records; M1–M8 implementation and test paths remain owned by their listed modules. Shared module paths require the owning module's disposition and must not be edited from M0.
+
 ## M0 verified M1–M8 ownership and worktree snapshot — 2026-10-24 10:05 UTC
 
 This snapshot supersedes earlier branch/status snapshots below. Worktree location, attached branch, HEAD, and dirty state were read from the filesystem; primary PR states were checked on GitHub. Worktree state does not reveal activity in separate Codex chats.
