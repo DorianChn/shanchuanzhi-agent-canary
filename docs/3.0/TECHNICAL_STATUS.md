@@ -8020,3 +8020,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Current open labeled issues: P0 = 2 (#52, #93); P1 = 15. P1 #80 remains open for independent product E4 under #57, not for the now-passing reason-projection integration subgate.
 - M0 PR #108 remains OPEN/Draft. Latest ownership-contract check `40067731682` and standard cross-platform CI/package-smoke checks pass. PR #24 remains OPEN/Draft on its original release-readiness base; no main merge or Release.
 - Usage Overview read at 05:53 UTC: 49% five-hour and 66% weekly remaining. Stop threshold (<5%) remains inactive.
+
+## 2026-10-24 06:03 UTC — offline demo acceptance update
+
+- M8 PR #40 exact head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` was verified locally in its clean worktree: `npm run build` passed; the documented offline runner returned `VERIFIED_BOUNDED_OPERATOR_DEMO` with six cases. The result explicitly remains `E4=NOT_VERIFIED_NO_EXTERNAL_OPERATOR`.
+- P1 #102 is closed for offline-demo/Community composition only. M7 #106 Community build-evidence run `40064614487` and M9 exact-source run `40066875122` passed; M9 verifies the M7 builder stages the exact M8 demo blob and retains the Guard/quarantine assertions.
+- P1 #81, #87, and #102 are now closed with scoped evidence. Open issue labels: P0 2 (#52, #93), P1 14. Product, installer, independent E4, and remaining reliability issues stay open until their specific acceptance evidence exists.
+- M8 #40 remains OPEN/Draft pending owner disposition on #99 and post-M9-base reconciliation. PR #24 remains OPEN/Draft on its original release-readiness base. No main merge or Release.
+- Last Usage Overview read remains 05:53 UTC at 49% five-hour / 66% weekly; quota stop threshold (<5%) inactive then.

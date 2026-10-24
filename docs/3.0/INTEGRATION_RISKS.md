@@ -1227,3 +1227,9 @@ Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9
 | M1/M2/M5 held-read chain (#87) | P1 | Closed: exact M9 run `40066875122` passed packed-M2 positive OBSERVE read and sensitive/link/hard-link alias denials on Ubuntu/Windows with no callback/approval side effects. | First-party product-host adoption and OS-level TOCTOU remain open under #52. |
 | M8 module merge (#40/#99) | P1 | M8 PR #40 remains Draft at `60cfe8d`; reviewed source CI and M9 composition pass. M8 owner disposition is missing; PR's recorded base SHA `416f1ba` predates feature `f313e5f`. | Record exact M7 build-contract/provenance disposition and reconcile the post-M9 base before merge. |
 | Product/installed acceptance (#52/#93/#41/#57) | P0/P1 | Still OPEN/NOT_VERIFIED; exact source CI does not establish host interception, installed Hook runtime, clean-VM lifecycle, or independent E4. | Require the actual supported-host, package-runtime, clean-VM and independent E4 evidence for the relevant gate. |
+
+## 2026-10-24 06:03 UTC — bounded offline demo gate
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Offline demo / Community staging (#102) | P1 | Closed: M8 clean-worktree build and six-case offline runner pass at exact PR #40 head; M7 build evidence and M9 Ubuntu/Windows exact composition pass with the fixed M8 blob. | No installer execution or independent E4 claim; those remain #41/#57/#93. |
