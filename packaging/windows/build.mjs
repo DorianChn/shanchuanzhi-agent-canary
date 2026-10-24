@@ -5,6 +5,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {walkPayloadFiles as walk,walkPayloadDirectories} from './payload-walk.mjs';
 import {renderInstallerScript} from './render-installer.mjs';
+import {validateCommunityRuntime} from './runtime-contract.mjs';
 import {parseWindowsBuildArgs,writePackagedWrapperSource} from './build-contract.mjs';
 const src=path.dirname(fileURLToPath(import.meta.url));
 const [payloadArg,nsisArg,zipArg,wrapperSHA]=parseWindowsBuildArgs(process.argv.slice(2));
@@ -15,8 +16,8 @@ const hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex
 for(const f of ['worker.mjs','verification.mjs','auto-e4.mjs','e4-hook-faults.mjs','durable-files.mjs'])fs.copyFileSync(path.join(src,f),path.join(root,f));
 fs.copyFileSync(path.join(src,'THIRD_PARTY_NOTICES.md'),path.join(root,'THIRD_PARTY_NOTICES.md'));
 fs.copyFileSync(path.join(nsis,'COPYING'),path.join(root,'NSIS_COPYING'));
-const runtime=walk(path.join(root,'app/dist')).filter(p=>p.endsWith('.js')).map(p=>({path:p,sha256:hash(path.join(root,'app/dist',p))}));
-if(runtime.length!==33||!fs.existsSync(path.join(root,'app/dist/sdk.d.ts')))throw Error('COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE');
+const runtimeFiles=validateCommunityRuntime(walk(path.join(root,'app/dist')).filter(p=>p.endsWith('.js')),fs.existsSync(path.join(root,'app/dist/sdk.d.ts')));
+const runtime=runtimeFiles.map(p=>({path:p,sha256:hash(path.join(root,'app/dist',p))}));
 const meta=JSON.parse(fs.readFileSync(path.join(root,'app/FREE_BUILD_VERSION.json'),'utf8'));
 const pkg=JSON.parse(fs.readFileSync(path.join(root,'app/package.json'),'utf8'));
 const candidateMatch=/^competition-candidate\.(\d+)$/.exec(meta.candidateId||'');

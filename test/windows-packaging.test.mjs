@@ -8,6 +8,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {walkPayloadDirectories,walkPayloadFiles} from '../packaging/windows/payload-walk.mjs';
 import {renderInstallerScript} from '../packaging/windows/render-installer.mjs';
+import {communityRuntimeFiles,validateCommunityRuntime} from '../packaging/windows/runtime-contract.mjs';
 import {createWindowsBuildInvocation,M1_CANONICAL_WRAPPER_BLOB_SHA,M1_CANONICAL_WRAPPER_SHA256,parseWindowsBuildArgs,readCommittedWrapperSource,resolveWrapperSourceSHA,writePackagedWrapperSource} from '../packaging/windows/build-contract.mjs';
 import {isPublicPackageFile,reviewedGatewayAdapterPackageFiles,validateGatewayAdapterPackage} from '../scripts/package-file-policy.mjs';
 
@@ -26,6 +27,49 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }finally{
     fs.rmSync(root,{recursive:true,force:true});
   }
+});
+
+test('Windows Community packaging requires the exact 37 runtime files and SDK declaration',()=>{
+  const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
+  const worker=fs.readFileSync(path.join(repo,'packaging/windows/worker.mjs'),'utf8');
+  assert.equal(communityRuntimeFiles.length,37);
+  assert.equal(new Set(communityRuntimeFiles).size,communityRuntimeFiles.length);
+  assert.deepEqual(validateCommunityRuntime([...communityRuntimeFiles].reverse(),true),communityRuntimeFiles);
+  assert.throws(()=>validateCommunityRuntime(communityRuntimeFiles.slice(1),true),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  assert.throws(()=>validateCommunityRuntime([...communityRuntimeFiles,'unexpected.js'],true),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  assert.throws(()=>validateCommunityRuntime(communityRuntimeFiles,false),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  assert.match(build,/validateCommunityRuntime\(walk\(path\.join\(root,'app\/dist'\)\)/);
+  assert.match(build,/app\/dist\/sdk\.d\.ts/);
+  assert.match(worker,/runtimeFiles:Array\.isArray\(version\.coreRuntimeHashes\)\?version\.coreRuntimeHashes\.length:0/);
+});
+
+test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-community-runtime-contract-'));
+  const payload=path.join(temp,'payload'),app=path.join(payload,'app'),dist=path.join(app,'dist');
+  const nsis=path.join(temp,'nsis');
+  try{
+    fs.mkdirSync(dist,{recursive:true});
+    for(const file of communityRuntimeFiles){
+      const target=path.join(dist,...file.split('/'));
+      fs.mkdirSync(path.dirname(target),{recursive:true});
+      fs.writeFileSync(target,'synthetic runtime');
+    }
+    fs.writeFileSync(path.join(dist,'sdk.d.ts'),'export {}\n');
+    fs.mkdirSync(path.join(payload,'runtime'),{recursive:true});
+    fs.writeFileSync(path.join(payload,'runtime','node.exe'),'synthetic node');
+    fs.writeFileSync(path.join(app,'FREE_BUILD_VERSION.json'),JSON.stringify({candidateId:'competition-candidate.2',runtimeBaselineSHA:'99660b36db9d5b1121eea6fe06b026c5f1e36bcf',sourceSHA:'synthetic-source',securityRuntimeModified:true}));
+    fs.writeFileSync(path.join(app,'package.json'),JSON.stringify({version:'3.0.0-competition-candidate.2'}));
+    fs.mkdirSync(nsis);
+    fs.writeFileSync(path.join(nsis,'COPYING'),'synthetic NSIS license');
+    const communityZip=path.join(temp,'community.zip');
+    fs.writeFileSync(communityZip,'synthetic community ZIP');
+    const sourceSHA=spawnSync('git',['-C',repo,'rev-parse','HEAD'],{encoding:'utf8',windowsHide:true});
+    assert.equal(sourceSHA.status,0,(sourceSHA.stderr??'').toString());
+    const build=spawnSync(process.execPath,[path.join(repo,'packaging/windows/build.mjs'),payload,nsis,communityZip,sourceSHA.stdout.trim()],{encoding:'utf8',windowsHide:true});
+    assert.notEqual(build.status,0,'synthetic Node bytes must fail the later pinned-runtime integrity check');
+    assert.match((build.stdout??'')+(build.stderr??''),/NODE_CHECKSUM_MISMATCH/);
+    assert.doesNotMatch((build.stdout??'')+(build.stderr??''),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
 test('package allowlist admits only the reviewed M2 gateway facade',()=>{
@@ -166,8 +210,24 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
   assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
   assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
 
-  const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
-  assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
+  const sourceRepo=spawnSync('git',['-C',repo,'remote','get-url','origin'],{encoding:'utf8',windowsHide:true});
+  assert.equal(sourceRepo.status,0,(sourceRepo.stderr??'').toString());
+  const sourceFetchTemp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m8-source-fetch-'));
+  let m8Demo;
+  try{
+    const runGit=(...args)=>spawnSync('git',['-C',sourceFetchTemp,...args],{encoding:'utf8',windowsHide:true});
+    let gitResult=runGit('init','--quiet');
+    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+    gitResult=runGit('remote','add','origin',sourceRepo.stdout.trim());
+    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+    gitResult=runGit('fetch','--no-tags','--depth=1','origin','refs/pull/40/head');
+    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+    gitResult=runGit('rev-parse','FETCH_HEAD');
+    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+    assert.equal(gitResult.stdout.trim(),m8SourceSHA,'the fetched M8 PR ref must still match the exact pinned source SHA');
+    m8Demo=spawnSync('git',['-C',sourceFetchTemp,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
+    assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
+  }finally{fs.rmSync(sourceFetchTemp,{recursive:true,force:true});}
   const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
   assert.equal(expectedBlob,m8DemoBlob);
   const expectedText=m8Demo.stdout.toString('utf8');
