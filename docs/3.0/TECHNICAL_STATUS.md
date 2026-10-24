@@ -8143,3 +8143,10 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 
 - M6 PR #38 is MERGED into the feature branch. The older M6 PR #31 remains OPEN/Draft and targets `main`; its E4 runner, guide, and evidence paths are present in the current feature tree. M0 made no retarget/merge change. Authored automation evidence still does not satisfy independent product E4 (#57/#80).
 - Read-only worktree audit: M1–M6 and M8 module worktrees are clean and match their remote branches; M7 is the only dirty module worktree observed, with the previously recorded workflow edit and untracked acceptance evidence preserved.
+
+## 2026-10-24 09:51 UTC — current PR #24 gate audit
+
+- PR #24 remains OPEN/Draft at head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`, with base `competition/shanchuanzhi-release-readiness`; no PR #24 or `main` changes were made by M0.
+- Exact-head standard CI run `40068981954` passed 9/9 jobs. Windows Community wrapper/build run `40068981872` passed its build evidence and both OS wrapper regressions. On the same PR head, `compose-current-module-refs` run `40068981943` and `windows-community-installer-lifecycle` were skipped; these are not integration or installer acceptance.
+- Existing M0 PR #109 remains OPEN/Draft at `3d4dd1033e9fca8dc608ab7961a7e813a9974c9c`, based on the same feature head. Its standard CI and ownership-contract check pass; its current-ref M9 composition job is skipped and tracked in #76.
+- M8 PR #40 remains OPEN/Draft at `60cfe8d`; its recorded base `416f1ba` is behind current feature `e4732d9`. The 12 read-only merge-tree conflicts and missing M8 owner disposition on #99 remain unresolved. P0 product gates #52/#93 and P1 installer/E4 gates #41/#57 remain open.

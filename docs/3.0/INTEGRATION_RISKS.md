@@ -1303,3 +1303,11 @@ Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9
 | Gate | Priority | Verified state | Remaining acceptance |
 | --- | --- | --- | --- |
 | M7 hosted installer lifecycle (#41) | P1 | Workflow `40068894360` passed both wrapper regressions and Community build evidence, then failed before Setup.exe with `SHA256SUMS_PATH_UNEXPECTED`; artifact says installer not executed. Exact producer checksum set has 11 paths while consumer allowlist has 7. | M7 aligns the exact path sets without wildcards/check bypass, reruns current-source CI/build evidence, then reserves one installer slot for a new lifecycle attempt. Windows 11, ordinary-user, upgrade, cancel rollback, EFS, and independent E4 remain unverified. |
+
+## 2026-10-24 09:51 UTC — current release PR checks
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| PR #24 current-head CI | P1 | Head `e4732d9`; standard CI `40068981954` passed 9/9 and Community/wrapper run `40068981872` passed. Current-ref composition `40068981943` and installer lifecycle were skipped. | M9 must run the intended current refs on both OSes; M7 must fix the checksum contract and reserve a serialized installer attempt before lifecycle acceptance. |
+| M8 reconciliation (#40/#99) | P1 | PR #40 remains Draft at `60cfe8d`, based on `416f1ba`; read-only merge-tree against `e4732d9` still reports 12 conflicts and the M8 owner disposition is absent. | M8 resolves the existing branch against the current base by ownership, posts its #99 disposition, and passes current-base checks plus exact-source composition. |
+| Product acceptance (#52/#93/#41/#57) | P0/P1 | Separate host, packaged-Hook, clean-VM lifecycle, and independent E4 acceptance remain NOT_VERIFIED. | Each owner supplies artifact/runtime/operator evidence for its own acceptance scope; source CI and skipped jobs do not close these gates. |
