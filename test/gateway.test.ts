@@ -164,6 +164,10 @@ test('workspace-local symlink or junction aliases cannot read registered sensiti
   const callbacksBeforeAlias=hostCallbacks;
   await assert.rejects(invokeHostRead({name:'read_safe',args:{path:'public/fixture.txt'}}),/GATEWAY_FILE_CAPABILITY_INVALID/);
   assert.equal(hostCallbacks,callbacksBeforeAlias,'a capability cannot redirect the synthetic host callback through the alias');
+  const evidenceBeforeCapabilityAlias=evidence.snapshot().length;
+  await assert.rejects(runtime.readFileWithCapability(safeCapability,{name:'read_safe',args:{path:'public/fixture.txt'}},'file-read'),/GATEWAY_FILE_CAPABILITY_INVALID/);
+  assert.equal(evidence.snapshot().length,evidenceBeforeCapabilityAlias,'the M1 read boundary rejects an alias before dispatch or evidence of file execution');
+  assert.equal(hostCallbacks,callbacksBeforeAlias,'bypassing adapter preflight still cannot dispatch an alias through M1');
   assert.throws(()=>runtime.bindFileReadCapability({toolName:'read_sensitive',operation:'file-read',path:'private/fixture.txt'}),/GATEWAY_FILE_CAPABILITY_UNAVAILABLE/);
   await assert.rejects(runtime.agent.dispatch({name:'read_file',args:{path:'private/fixture.txt'}}),/credential_resource_denied/);
   const beforeAlias=evidence.snapshot().length;
