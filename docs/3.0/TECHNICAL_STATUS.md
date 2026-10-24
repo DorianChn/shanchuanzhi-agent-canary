@@ -1,3 +1,12 @@
+## Current integration checkpoint — 2026-10-24 17:45 UTC
+
+- M2 #110 (941fd22), M6 #111 (2a88d8b), and M8 #40 (1c94ed4) are MERGED into feature/agent-canary-3.0. Merge commits are 20a57bbd, 1011981d, c13c40f0. GitHub main is unchanged; PR #24 remains open/draft on its original competition base, with its feature head advancing through authorized module merges.
+- M9 #112 at 0c8d7d1 passed exact-source composition on Ubuntu and Windows in run40116481278 and full product CI40116481355. #72 and #99 are closed with exact owner review and composition evidence. This does not close native-host or independent E4 acceptance.
+- M7 #113 at bba0f0f passed full product CI40116474766 and wrapper/build CI40116474744. Reserved manual lifecycle run40117125609 resolves to this exact head; wrapper/build jobs have passed and installed Hook/output tests are pending. #29 resource reservation comment6387426958 remains held until the actual lifecycle result is inspected.
+- M0 fixes the moving-baseline/source-pin cycle using approved common source e4732d9 plus exact current base/head lineage and a conflict-free git merge-tree result. Five synthetic DAG regressions passed; missing/invalid baseline, wrong lineage, and actual conflicts fail closed. Runtime security policies, M9 source pins, and owner/evidence guards are retained.
+- Latest open-PR audit found no file overlap or unregistered branches among #109/#112/#113. Original M7 dirty files, M6 handoffs and the previously denied M8 fixture cleanup remain preserved.
+- Remaining delivery gates: real installed-path result for current M7; publish and verify M0 changes; merge M7/M0 only after their checks; align M9 to resulting feature and verify/merge M9 last. Product issues #45/#52/#57 and uncompleted platform/permission/upgrade cases remain explicitly unverified.
+
 ## Current verified cohort — 2026-10-24 17:30 UTC
 
 - Baseline remains e4732d9745bb4fbbebf6896a35b4657ad82abd73. PR #24 is OPEN/Draft on its existing competition base. No main/PR24 merge or Release has occurred.
