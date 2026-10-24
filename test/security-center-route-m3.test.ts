@@ -8,6 +8,8 @@ import { createAgentGuard, createContainmentStateStore } from '../src/containmen
 import { EvidenceRecorder } from '../src/runtime/evidence.js';
 import { createTrustedExecutionGateway } from '../src/sdk.js';
 import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
+import {createSecurityToolRouter} from '../src/security-router.js';
+import {createSecurityGatewayHostAdapter} from '../execution-isolation/gateway-adapter/gateway-adapter.mjs';
 import { isValidSecurityCenterStatusPayload } from '../src/ai/security-center-adapter.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
@@ -693,4 +695,151 @@ test('protected-read action treats unexpected markers as UNKNOWN and missing com
     const afterIncomplete=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
     assert.deepEqual(afterIncomplete.filter(name=>!beforeIncomplete.has(name)),[],'an unavailable M2 composition must fail before any probe filesystem, Gateway, or router callback');
   }finally{await incompleteConsole.close();}
+});
+
+function actualM1M2M5TargetDependencies(){
+  let gateway:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+  let router:{pendingApprovals:()=>unknown[]}|undefined;
+  let heldReadCallbacks=0;
+  const loader=async()=>({
+    createGuard:(options:{sessionId?:string;alert?:boolean})=>createAgentGuard(options),
+    createEvidenceRecorder:()=>new EvidenceRecorder(),
+    createGateway:(options:Parameters<typeof createTrustedExecutionGateway>[0])=>gateway=createTrustedExecutionGateway(options),
+    loadM2Facade:async()=>({createSecurityGatewayHostAdapter}),
+    createSecurityToolRouter:(options:any)=>{
+      const provider=options.fileReadCapability;
+      const monitoredProvider={
+        resolve:(call:any)=>provider.resolve(call),
+        verify:(capability:any,call:any,operation:any)=>provider.verify(capability,call,operation),
+        readFileWithCapability:(capability:any,call:any,signal?:AbortSignal)=>{
+          heldReadCallbacks++;
+          return provider.readFileWithCapability(capability,call,signal);
+        },
+      };
+      router=createSecurityToolRouter({...options,fileReadCapability:monitoredProvider});
+      return router;
+    },
+  });
+  return{loader,get gateway(){return gateway;},get heldReadCallbacks(){return heldReadCallbacks;},get pendingApprovals(){return router?.pendingApprovals().length??0;}};
+}
+
+async function postConfiguredTargetRead(url:string,csrf:string,body:unknown){
+  return fetch(url+'/api/security-center/target-read',{
+    method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},
+    body:JSON.stringify(body),
+  });
+}
+
+test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERVE with target-ID-only responses',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-positive-'));
+  fs.mkdirSync(path.join(workspace,'notes'));
+  const targetPath=path.join(workspace,'notes','summary.txt'),original='PRIVATE_TARGET_CONTENT_MUST_NOT_ESCAPE';
+  fs.writeFileSync(targetPath,original);
+  const dependencies=actualM1M2M5TargetDependencies();
+  const console=await startAIConsole({
+    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+    securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],securityCenterTargetDependencies:dependencies.loader as never,
+  });
+  try{
+    const csrf=await csrfFor(console.url),gateway=dependencies.gateway;
+    assert.ok(gateway,'the CLI startup dependency seam should construct M1 before accepting requests');
+    const evidenceBefore=gateway.evidence().length;
+    for(const request of [{path:'notes/summary.txt'},{targetId:'not-configured'},{targetId:'summary',path:'notes/summary.txt'}]){
+      const response=await postConfiguredTargetRead(console.url,csrf,request);
+      assert.equal(response.status,200);
+      assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    }
+    assert.equal(dependencies.heldReadCallbacks,0,'path-only, extra-path, and unconfigured requests must stop before M5');
+    assert.equal(gateway.evidence().length,evidenceBefore,'invalid requests must not append M1 evidence');
+    assert.equal(dependencies.pendingApprovals,0,'OBSERVE must not create approvals');
+
+    const positive=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'});
+    assert.equal(positive.status,200);
+    const positiveBody=await positive.json();
+    assert.deepEqual(positiveBody,{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
+    assert.equal(JSON.stringify(positiveBody).includes(original),false);
+    assert.equal(JSON.stringify(positiveBody).includes(targetPath),false);
+    assert.equal(dependencies.heldReadCallbacks,1);
+    const evidenceAfterPositive=gateway.evidence();
+    assert.ok(evidenceAfterPositive.length>evidenceBefore);
+    assert.ok(evidenceAfterPositive.some(event=>event.decision==='ALLOW'));
+    assert.equal(dependencies.pendingApprovals,0);
+
+    const heldPath=targetPath+'.held',replacement='REPLACEMENT_CONTENT_MUST_NOT_ESCAPE';
+    fs.renameSync(targetPath,heldPath);
+    fs.writeFileSync(targetPath,replacement);
+    const replacementEvidence=gateway.evidence().length,callbacksBefore=dependencies.heldReadCallbacks;
+    const deniedReplacement=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'});
+    assert.deepEqual(await deniedReplacement.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    assert.equal(dependencies.heldReadCallbacks,callbacksBefore,'M2 must reject the replaced M1 identity before M5 read callback');
+    assert.equal(gateway.evidence().length,replacementEvidence,'replacement rejection must add no M1 read evidence');
+    assert.equal(dependencies.pendingApprovals,0);
+    assert.equal(fs.readFileSync(targetPath,'utf8'),replacement);
+    assert.equal(fs.readFileSync(heldPath,'utf8'),original);
+  }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
+});
+
+test('configured sensitive and symlink targets fail closed before M5 callbacks or M1 read evidence',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-denials-'));
+  fs.mkdirSync(path.join(workspace,'.ssh'));
+  fs.writeFileSync(path.join(workspace,'.ssh','id_rsa'),'SENSITIVE_ALIAS_FIXTURE');
+  fs.mkdirSync(path.join(workspace,'real'));
+  fs.writeFileSync(path.join(workspace,'real','notes.txt'),'SAFE_TARGET_FIXTURE');
+  fs.symlinkSync(path.join(workspace,'real'),path.join(workspace,'alias'),process.platform==='win32'?'junction':'dir');
+  const dependencies=actualM1M2M5TargetDependencies();
+  const console=await startAIConsole({
+    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+    securityCenterProtectedTargets:[{id:'credentials',path:'.ssh/id_rsa'},{id:'linked',path:'alias/notes.txt'}],
+    securityCenterTargetDependencies:dependencies.loader as never,
+  });
+  try{
+    const csrf=await csrfFor(console.url);
+    for(const targetId of ['credentials','linked']){
+      const response=await postConfiguredTargetRead(console.url,csrf,{targetId});
+      assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    }
+    assert.equal(dependencies.heldReadCallbacks,0);
+    assert.equal(dependencies.gateway?.evidence().length,0);
+    assert.equal(dependencies.pendingApprovals,0);
+  }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
+});
+
+test('normal ai console CLI binds configured targets at process startup',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-cli-'));
+  fs.mkdirSync(path.join(workspace,'notes'));
+  fs.writeFileSync(path.join(workspace,'notes','brief.txt'),'CLI_TARGET_PRIVATE_CONTENT');
+  const child=spawn(process.execPath,[
+    path.resolve('dist/index.js'),'ai','console','--port','0','--workspace-root',workspace,'--protected-target','brief=notes/brief.txt',
+  ],{
+    cwd:process.cwd(),env:{...process.env,AGENT_CANARY_OPERATOR_CODE:'OPERATOR_FIXTURE'},
+    stdio:['ignore','pipe','pipe'],windowsHide:true,
+  });
+  let stdout='',stderr='';
+  child.stdout?.on('data',(chunk:Buffer)=>{stdout+=chunk.toString('utf8');});
+  child.stderr?.on('data',(chunk:Buffer)=>{stderr+=chunk.toString('utf8');});
+  try{
+    const url=await new Promise<string>((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error('CLI_START_TIMEOUT '+stderr.slice(-1000))),15_000);
+      const inspect=()=>{
+        const match=stdout.match(/Agent Canary 中文控制台: (http:\/\/127\.0\.0\.1:\d+)/);
+        if(match){clearTimeout(timer);resolve(match[1]);}
+      };
+      child.stdout?.on('data',inspect);
+      child.once('error',error=>{clearTimeout(timer);reject(error);});
+      child.once('exit',code=>{clearTimeout(timer);reject(new Error(`CLI_EXIT_${code} ${stderr.slice(-1000)}`));});
+      inspect();
+    });
+    const csrf=await csrfFor(url);
+    const response=await postConfiguredTargetRead(url,csrf,{targetId:'brief'});
+    assert.equal(response.status,200);
+    const body=await response.json();
+    assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
+    assert.equal(JSON.stringify(body).includes('CLI_TARGET_PRIVATE_CONTENT'),false);
+  }finally{
+    if(child.exitCode===null&&child.signalCode===null){
+      child.kill();
+      await new Promise<void>(resolve=>child.once('exit',()=>resolve()));
+    }
+    fs.rmSync(workspace,{recursive:true,force:true});
+  }
 });
