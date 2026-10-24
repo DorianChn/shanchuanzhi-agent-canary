@@ -8370,3 +8370,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M0 requested M2's exact native Codex Shell host evidence or explicit UNPROTECTED/BLOCKED boundary on #45 comment `6384841812`; WSL/simulated Hook results do not establish host acceptance.
 - M0 requested M9's evidence-bounded Windows Node 22 503 diagnosis or no-current-reproduction disposition on #54 comment `6384851032`; preserve bounded retries and assertions. The current M9 trigger skip remains on #76 comment `6384834116`.
 - PR #24 remains OPEN/Draft at unchanged head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Issue #70's exact Dependabot run passed but alert #2 remains OPEN; no main merge. Last quota read at 13:30: 37% five-hour / 49% weekly.
+
+## M8 contract-owner disposition follow-up — 2026-10-24 13:35 UTC
+
+- M8 PR #40 is still at head `60cfe8d976a42d0f635d4be93ca24c00e81246d5` and old base `416f1ba`; the existing audit shows the M7/M8 build-contract blobs match, but M8 has not recorded the requested ACCEPT/REJECT provenance disposition.
+- Current-base conflict resolution and revalidation remain tracked in #76. M0 refreshed the owner request on #99 comment `6384858175`; keep #99 OPEN/P1 and #40 Draft until owner disposition and current-base CI exist.
