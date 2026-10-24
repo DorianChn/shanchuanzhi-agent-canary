@@ -8259,3 +8259,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Current feature-base CI is green: PR #24 run `40068981954` and latest PR #109 run `40092920859` each passed 9/9. This shows no recurrence in those broad jobs, but neither reproduces nor explains the historical PR #36 exact-head Windows 503 fixture failure; root cause remains UNKNOWN.
 - M9 owns exact-head integration triage. M0 requested a named provider/transport/test owner and safe exact-head error-code/request-count/retry-timing evidence or a bounded no-current-reproduction disposition in #54 comment `6384204561`. Keep #54 OPEN until its acceptance criteria are met; preserve bounded retries and assertions.
+
+## Historical quarantine retry disposition — 2026-10-24 12:27 UTC
+
+- Latest current-feature CI run `40092920859` passed all 9 jobs, including Node 22 lanes. It shows no recurrence in that run but does not identify the missing lock-holder/timing trigger from the historical PR #38 `RETRY_LIMIT` event.
+- M0 recorded this narrow evidence and requested M1's scoped disposition on #51 comment `6384207835`. Keep the 48 quarantine assertions and bounded fail-closed retry; #51 remains OPEN while its documented root-cause acceptance is unresolved.
