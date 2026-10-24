@@ -1,3 +1,19 @@
+## Current coordinator snapshot — 2026-10-24 09:18 UTC
+
+Re-read the live GitHub refs, Actions metadata, browser Usage Overview, and existing worktrees. The M0 coordination branch remains isolated from feature and module source.
+
+- **Feature/M9:** feature remains `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. M9 PR #36 source run `40066875122` passed its exact pinned composition on Ubuntu and Windows. M9 workflow run `40080532927` on M0 PR #109 and prior run `40068981943` on PR #24 both completed **skipped**; workflow admits PR #36 or manual dispatch and dispatch still uses PR #36 plus static SHAs. Standard CI for PR #109 (`40080532923`) passed all 9 jobs; ownership-contract run `40080532868` passed. Issue #76 records the required workflow correction.
+- **M1–M7 merged follow-ups:** #101/#91/#107/#98/#94/#100/#106 are merged into the feature line. M8 PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, recorded base `416f1ba` versus feature `e4732d9`; read-only merge-tree still finds 12 conflicts. M8 owner disposition on #99 is outstanding.
+- **P0 #52:** M3 #107 adds a configured-target CLI route (`ai console --workspace-root … --protected-target id=relative-path`). It binds an M1 Gateway file identity, dispatches through the M2 host adapter and M5 OBSERVE router, and returns only status. The exact M3 source test covers a real CLI subprocess plus positive, sensitive-path, alias/junction, and path-replacement fixtures; M9 exact-source run `40066875122` passed on both OSes. M0 recorded this correction in #52 comment `6382450244`. This is source/fixture evidence; independently installed/published package behavior and native host protection remain NOT_VERIFIED, so #52 stays P0/open.
+- **P0 #93:** M7 #106 fixed the BUILD_REPORT status mismatch. Installed Hook stdout/log redaction and exact shipped payload acceptance remain NOT_VERIFIED.
+- **P1 #41/#29:** the latest lifecycle attempt failed before Setup.exe because the producer lists 11 checksum paths while the consumer expects 7. Existing M7 worktree also has an uncommitted workflow change enabling the lifecycle job on every PR without concurrency/reservation; M0 left it untouched. No installer/VM slot was started.
+- **P1 #57:** no independent product E4 artifact/operator receipt is identified; fixture and build evidence do not qualify.
+- **P1 #72:** only the shared test blob changed between M1-reviewed M3 source and current M3: `0e8a225…` → `10cdb80…` (+23/-1); canonical `src/agent-hook.ts` and wrapper blobs match. M0 posted a static diff summary at #72 comment `6382420684`; M1's explicit ACCEPT/REJECT remains pending.
+- **Worktrees:** M1–M6 and M8 are clean and match their tracked origin branches. M7 remains dirty only in its pre-existing `.github/workflows/windows-community.yml` change and untracked acceptance directory. M9 is clean at `cbb2e7d`. Coordinator and feature worktrees are clean before this documentation update. No module source was changed.
+- **Quota/release boundary:** Usage Overview read at 09:10 UTC showed 97% five-hour and 58% weekly remaining. PR #24 remains OPEN/Draft at feature head `e4732d9` on its existing competition base; no `main` merge, PR #24 merge, or Release occurred. Next M0 push is no earlier than 09:24 UTC and requires fresh quota/ref checks.
+
+`read_thread` is not available in this session; no other Codex conversation content is claimed as read. GitHub and filesystem state are the coordination evidence.
+
 ## Current coordinator snapshot — 2026-10-24 08:55 UTC
 
 This snapshot supersedes earlier status lines for the exact refs listed here. Evidence was re-read from the GitHub API, Actions run metadata, the current remote feature ref, and the existing M0/M9/M1–M8 worktrees. `read_thread` is not exposed in this session, so Codex conversation contents are not claimed as read.
