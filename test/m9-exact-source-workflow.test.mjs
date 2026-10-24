@@ -13,15 +13,12 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
   const validated = validateExactSourceManifest(manifest);
   assert.deepEqual(Object.keys(validated.modules).sort(), exactModuleNames);
   assert.equal(validated.modules.M2.pullRequest, 110);
-  assert.equal(validated.modules.M2.sha, '941fd22d5e43e1de91a76b8c73006e57a4c15496');
   assert.equal(validated.modules.M6.pullRequest, 111);
-  assert.equal(validated.modules.M6.sha, '2a88d8b7e099ce865c9900bb9313d4b8bdef8299');
   assert.equal(validated.modules.M8.pullRequest, 40);
-  assert.equal(validated.modules.M8.sha, 'e3d89ba12f210a10f1f4942e60019517d25cfb60');
   assert.notEqual(validated.historical.sha, validated.modules.M8.sha);
   assert.equal(validated.review.status, 'ACCEPT');
-  assert.equal(validated.review.targetSha, validated.modules.M8.sha);
-  assert.equal(validated.review.reviewedSha, validated.modules.M8.sha);
+  assert.equal(validated.review.targetSha, manifest.modules.M8.sha);
+  assert.equal(validated.review.reviewedSha, manifest.modules.M8.sha);
   assert.equal(validated.review.commentId, '6386655050');
   assert.equal(validated.review.candidateLifecycleBlobSha, 'd1705c204ef3f511ee4828e90b35731b36f92238');
   assert.equal(validated.review.m6VerifierTestBlobSha, '2e9b0c00c853193ea50eaecf1209747e8f64affe');

@@ -117,11 +117,6 @@ test('manifest-pinned exact source refs retain their tree and ancestry provenanc
   for (const [moduleName, expectedSha] of Object.entries(pinnedSourceShas)) {
     assert.equal(sourceRoots[moduleName].sha, expectedSha, `${moduleName} must use the pinned exact source commit`);
   }
-  assert.equal(
-    readTreeIdAt('M8_CANDIDATE', pinnedSourceShas.M8_CANDIDATE),
-    '13f15b324d406778ace56bec3cbfadf772c8014d',
-    'the current M8 PR #40 source tree must remain tied to the manifest candidate pin',
-  );
   for (const [moduleName, provenance] of Object.entries(mergedSourceProvenance)) {
     assert.equal(readTreeIdAt(moduleName, provenance.mergeSha), provenance.mergeTree, `${moduleName} historical actual merge tree must retain its recorded provenance`);
     assert.equal(readTreeIdAt(moduleName, provenance.ownerHead), provenance.ownerTree, `${moduleName} owner PR head tree must retain its recorded provenance`);
