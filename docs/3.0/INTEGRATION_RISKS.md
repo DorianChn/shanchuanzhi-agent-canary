@@ -1219,7 +1219,7 @@ Historical exact-source run `39986788529` was 15/20 on Ubuntu and Windows. It wa
 
 | Gate | Priority | Verified state | Remaining acceptance |
 | --- | --- | --- | --- |
-| Installer lifecycle input contract (#41) | P1 | M7 branch `ab9b03f` still has an 11-path producer and a strict 7-path consumer. M0 recorded the four exact missing paths and ordered-list regression request in #41 comment `6381585159`; no install run was started. | M7 must synchronize the exact ordered lists without wildcard/bypass, preserve all existing validation, run exact-head CI/build, then reserve the exclusive installer slot through #29 before lifecycle execution. |
+| Installer lifecycle input contract (#41) | P1 | M7 branch `ab9b03f` still has an 11-path producer and a strict 7-path consumer. M0 recorded the four exact missing paths and ordered-list regression request in #41 comment `6381585159`; no install run was started. The existing uncommitted workflow diff also enables lifecycle on every pull request without a concurrency group; M0 flagged the #29 reservation risk in comment `6381618783`. | M7 must synchronize the exact ordered lists without wildcard/bypass, preserve all existing validation, run exact-head CI/build, and keep lifecycle behind an explicit reservation gate or serialized slot before execution. |
 
 | Auto E4 stale-lock race (#78) | P1 | Closed after exact-source review of merged PR #39: stale locks fail closed; release compares held-file identity and exact parsed owner fields; concurrent and replacement tests plus exact PR CI pass. | Independent product E4 remains NOT_VERIFIED under #57/#80. |
 
