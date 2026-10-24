@@ -560,3 +560,47 @@ root must use the recorded actual merge tree`: actual M6 tree is
 composition assertions run. This is an M6/M9 provenance-gate blocker, not an
 observed M3 behavior failure. M9 must correct/verify its M6 merge-tree record
 and rerun both hosts. Keep Issue #52 OPEN / P0 / NOT_VERIFIED.
+
+
+### M3 configured-target CLI callsite — 2026-10-24
+
+M3 now has a first-party product route for host-configured held-file targets.
+The normal `ai console` CLI accepts `--workspace-root` and repeatable
+`--protected-target <id=relative-path>`; these values are captured at process
+startup. Startup rejects invalid/duplicate IDs, absolute or traversal paths,
+symlinks/junctions, hard-linked files, non-files, oversized files, and targets
+that M1 refuses to bind. It creates the M1 Gateway and held-file capabilities
+before the HTTP server starts, then registers only the resulting fixed
+`toolName -> relativePath` map with M2.
+
+The new `POST /api/security-center/target-read` request accepts exactly
+`{targetId}`. The target ID selects a preconfigured M3 binding; request,
+model, and tool output cannot choose a path or file contents. M2 dispatches
+through the strict M5 router with `mode: OBSERVE` and
+`verifyRealPaths: true`. Invalid IDs and identity changes stop before the M5
+read callback. The response is limited to
+`{scope: M3_CONFIGURED_TARGET_READ, status: ALLOW|DENY|UNKNOWN}`; it never
+contains path, file bytes, or an error string. The legacy temporary-marker
+route remains a separate synthetic diagnostic and is not used as product read
+evidence. No M1/M2/M5 code or public contract was changed.
+
+The M3 package export files were checked against the current owner worktrees:
+M1 `src/sdk.ts` blob `4ac7cdb0e15566457c03ee1a979a1283064fe3ff`,
+M2 `execution-isolation/gateway-adapter/gateway-adapter.mjs` blob
+`0d7053114e87177669ec2c3b416028e05affb62f`, and M5
+`src/policy-router.ts` blob `3718e5b99234d1b4691f54c1781db3a59d808080`
+match byte-for-byte across M3 and the respective owner worktrees. This confirms
+the local package self-references used by the normal CLI resolve the current
+owner export files in this integrated baseline; it is not a replacement for
+M9's pinned exact-source cross-platform acceptance.
+
+Focused M3 regressions cover the configured positive target, path-only and
+extra-field requests, unconfigured IDs, a sensitive path, a symlink/junction,
+same-path file replacement, zero forbidden callback/evidence/approval deltas,
+and response privacy. A built `ai console` CLI subprocess also returns only the
+sanitized ALLOW envelope for its startup-configured fixture. Local validation:
+`npm run build` passed; `node --import tsx --test
+test/security-center-route-m3.test.ts` passed 20/20; `git diff --check`
+passed. These are local synthetic fixture results. M9 must still run the exact
+pinned integrated composition on its required hosts, and Issue #52 remains
+OPEN / P0 until that and the wider product-host acceptance gates pass.

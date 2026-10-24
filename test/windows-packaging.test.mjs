@@ -43,6 +43,18 @@ test('Windows Community packaging requires the exact 37 runtime files and SDK de
   assert.match(worker,/runtimeFiles:Array\.isArray\(version\.coreRuntimeHashes\)\?version\.coreRuntimeHashes\.length:0/);
 });
 
+test('installer lifecycle smoke accepts only the BUILD_REPORT status emitted by Windows Community',()=>{
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
+  const lifecycle=fs.readFileSync(path.join(repo,'packaging/windows/installer-lifecycle-smoke.ps1'),'utf8');
+  const emittedStatus=workflow.match(/\$report = \[ordered\]@\{\s*schemaVersion = 1\s*status = '([^']+)'/);
+  const acceptedStatus=lifecycle.match(/\$buildReport\.status -eq '([^']+)'/);
+  assert.ok(emittedStatus,'Windows Community must declare its BUILD_REPORT status');
+  assert.ok(acceptedStatus,'installer lifecycle smoke must validate BUILD_REPORT status');
+  assert.equal(acceptedStatus[1],emittedStatus[1]);
+  assert.match(workflow,/installerExecuted = \$false/);
+  assert.match(lifecycle,/\$buildReport\.installerExecuted -eq \$false/);
+});
+
 test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-community-runtime-contract-'));
   const payload=path.join(temp,'payload'),app=path.join(payload,'app'),dist=path.join(app,'dist');
@@ -236,6 +248,11 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
     assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
     assert.equal(gitResult.stdout.trim(),m8DemoBlob,'both the pinned M8 commit and current PR head must contain the exact demo blob');
   }
+  gitResult=runRepoGit('rev-parse','--verify',`${m8SourceSHA}^`);
+  assert.equal(gitResult.status,0,'the immutable M8 source commit must have a parent for the negative fixture');
+  const unrelatedHeadSHA=gitResult.stdout.trim();
+  gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,unrelatedHeadSHA);
+  assert.notEqual(gitResult.status,0,'the negative fixture must not descend from the immutable M8 source commit');
   const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
   assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
   const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
@@ -273,7 +290,7 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
     assert.equal(fs.existsSync(outputDir),false,'a rejected M8 pin must not create candidate outputs');
     const unrelatedHead=spawnSync(pythonCommand,[
       'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
-      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,'--m8-pr-head-sha',sourceSHA.stdout.trim(),
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,'--m8-pr-head-sha',unrelatedHeadSHA,
       '--candidate-id','m8-pin-test','--output-dir',outputDir,
     ],{cwd:repo,encoding:'utf8',windowsHide:true});
     assert.notEqual(unrelatedHead.status,0,'the builder must reject an M8 PR head that does not descend from the reviewed source commit');
