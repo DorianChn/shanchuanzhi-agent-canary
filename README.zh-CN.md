@@ -8,14 +8,35 @@
 
 给 AI 编程 agent 装绊线。它在你的环境里布置诱饵 MCP 工具和金丝雀令牌，并给 SDK 集成提供会话熔断器，在发现失陷信号后阻断下一次经过守卫的真实操作。
 
+## 版本与分发范围
+
+- **发行状态：** v3.0.0 已作为 [Agent Canary 3.0 GitHub Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0) 发布；该发行版对应其源码快照。
+- **安装：** v3.0.0 源码清单声明了通过 GitHub Packages 分发的 CLI 包，该渠道需要带 `read:packages` 权限的 GitHub Token。本次审查未验证实际包下载；见[快速上手](GETTING_STARTED.md)中的固定 tag 源码构建方式。
+- **容器镜像：** 本次审查**未验证**当前 GHCR 包和标签是否可用，也未执行本地拉取或运行；不要假定 `3.0.0` 或 `latest` 当前可拉取。
+- **独立 E4 复现：** 尚未验证；[证据索引](E4_EVIDENCE_INDEX.md)列出已完成与未完成的检查。
+- **许可证：** 本仓库代码为 MIT。第三方依赖各自保留原许可证，见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- **运行环境：** 从源码构建需要 Node.js 20 或更高版本。
+
+本开发分支是独立候选，当前 package manifest 仍为 1.2.7。
+
 面向支持 stdio 的 MCP 客户端；非 MCP agent 可以用 SDK。本次审计用 MCP
 JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的安装界面。Node 20+，MIT，无遥测。
 
 中文文档（本文件）｜ [English](README.md)
 
-**3.0 工程候选核心验收**：[验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md) · [公平真实模型对照](docs/3.0/FAIR_CORE_EVALUATION.md) · [E0–E4证据映射](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md)。受控 SDK Agent 的执行前控制已有真实效果证据；原生客户端全局防护、AI 独立收益、自适应效果未验证。保留2.0竞赛版本，3.0不是稳定版。
+**历史 3.0 工程候选证据（2026-10-12）**：[验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md) · [公平真实模型对照](docs/3.0/FAIR_CORE_EVALUATION.md) · [E0–E4证据映射](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md)。受控 SDK Agent 的执行前控制已有真实效果证据；原生客户端全局防护、AI 独立收益、自适应效果未验证。保留 2.0 竞赛版本；该报告不代表当前开发分支已成为稳定发行。
 
 **类型修复补充候选**：[candidate.2](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.2)内置dist/sdk.d.ts、./sdk类型导出及三命令离线复验；33个运行时JS与candidate.1逐字节相同。已发送的candidate.1及原视频/PPT保留。[新增Claude原生Read/Bash限定证据](docs/3.0/AGENT_COVERAGE_MATRIX.md)属于独立的直接准入测试，不能作为全局保护或新Prompt Injection防护率。
+
+## 覆盖范围与限制
+
+- **原生 Codex Shell — UNPROTECTED（未保护）：** 内置 Shell 不在 Agent Canary 路径内；配置 MCP/Guard 不改变该边界。
+- **AppContainer — LIMITED（有限）：** 仅覆盖已测试的子进程操作，尚未证明整个宿主或通用 Shell 保护。
+- **Security Center — PARTIAL（部分）/ 产品验收 NOT_VERIFIED：** 当前 Console 实现 GET 状态接口及分别授权的固定探针/配置目标读取接口。M4 仅消费状态。这些接口不证明通用产品文件或 OS 原子级保护。见 [API 契约](docs/3.0/API_CONTRACTS.md)与[问题 #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52)。
+- **Security Center / E4 后端缺失 — UNKNOWN（未知）：** 404 或状态不可用必须保持 UNKNOWN，不能推断已保护或成功拒绝。
+- **E4 — NOT_VERIFIED（未验证）：** 合成 fixture、源码检查和 CI 都不等于独立产品 E4 通过。
+
+宿主与功能状态见 [COMPATIBILITY.md](COMPATIBILITY.md)。
 
 ## 3.0 竞赛候选与后续发展
 
