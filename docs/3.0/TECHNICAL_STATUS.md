@@ -8248,3 +8248,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - PR #109 head `36d946cb0fa5b020c1226dcd623326c704051224` has standard CI `40092920859` SUCCESS (9/9) and AC3 coordination `40092920811` SUCCESS, while M9 composition event `40092920800` is SKIPPED.
 - Manual composition `40088403364` passed on Ubuntu and Windows for the then-current pinned source tree, but does not verify the automatic PR trigger/ref selection or installed-product/installer acceptance.
 - M0 recorded the latest run and M9 owner action on #76 comment `6384173802`. Keep #76 OPEN until the current normal PR event executes and passes against exact refs.
+
+## M1–M8 worktree and lineage verification — 2026-10-24 12:25 UTC
+
+- Read-only filesystem/Git recheck confirms eight distinct worktree paths under `agents/M1` through `agents/M8`, eight distinct `feature/ac3-*` branches, and the same GitHub origin. All eight branch heads share ancestor `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`.
+- M1, M2, M3, M4, M5, M6, and M8 worktrees are clean. M7 remains at `ab9b03f` with its pre-existing workflow modification and untracked acceptance evidence preserved.
+- M1/M2/M3/M5/M6/M8 use the coordinator repository's common Git directory. M4/M7 use their existing common Git directory under `Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4`; both paths resolve to the expected remote and branch. M0 fetched the current feature ref there to verify lineage; no working-tree files or branch heads changed.
