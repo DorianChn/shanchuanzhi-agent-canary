@@ -8164,3 +8164,12 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - **Issue counts:** 2 P0, 11 P1, 1 P2 remain open in the current GitHub snapshot.
 - **PR #24:** remains OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; its metadata remains unchanged by M0.
 - **Quota:** Usage Overview read at 10:20 UTC showed 97% five-hour and 58% weekly remaining. Resource-slot #29 was last recorded FREE at 06:12 UTC; M0 has not started an installer, VMware, or real-model test.
+
+## Owner follow-up delta — 2026-10-24 10:51 UTC
+
+- Exact PR #109 head `dacc6deb37f862a972287ea166bbd2a620c066f3` has standard CI `40085564078` green 9/9 and AC3 ownership check `40085564074` green; current-ref M9 composition `40085564075` is SKIPPED. PR #24 remains unchanged at feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`, OPEN/Draft.
+- Module worktree heads are unchanged in the latest read-only sweep. M1–M6, M8, and M9 are clean and track their existing branches. M7 remains dirty only in its pre-existing workflow trigger edit and untracked acceptance evidence; M0 has not staged or changed it.
+- M0 requested exact owner dispositions for configured-target route acceptance (#52, comment `6383098422`), M1's current Hook-test blob (#72, `6383117828`), and historical retry/HTTP-503 incidents (#51 `6383316044`, #54 `6383316054`). Those issues remain open; no closure is inferred from current passing standard CI.
+- M7's exact producer/consumer checksum mismatch and unsafe unreserved pull-request lifecycle trigger remain open at #41; M0's latest comment is `6383076882`. M8's current-base conflict set and missing owner disposition remain open at #99/#76; latest M8 follow-up is #99 comment `6383067419`.
+- Open labeled issue counts remain P0=2 (#52, #93), P1=11, P2=1 (#29). Product-host, installed-Hook, clean-VM installer, independent E4, M8 reconciliation, and M9 current-ref composition gates remain unaccepted.
+- Existing M0 PR audit workflow is active: its pull-request check validates ownership/API/test-evidence declarations, then on M0's own PR runs the open-PR/check-run/artifact/path-overlap audit. This is automatic coordination evidence, not a substitute for owner disposition or product acceptance.
