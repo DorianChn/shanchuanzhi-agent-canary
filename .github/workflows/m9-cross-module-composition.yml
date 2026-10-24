@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 92dd42b900b10ce0294e9e3faa7e175d728228b3
+          ref: 26cdb8781e57a05f57362e3078d77ce18614481c
           path: module-sources/m2
           fetch-depth: 0
 
@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 0d725280092bd544035b276fd1738c409f811f22
+          ref: dbebc961ebde25433cf216da2c41d6b082b4be2e
           path: module-sources/m6
           fetch-depth: 0
 
@@ -75,7 +75,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: d80ffa8fb60c90c9f179b9e2154f6fdbc5661949
+          ref: cf478f5fce4dde3229dcd11e86db14be85e65cce
           path: module-sources/m7
           fetch-depth: 0
 
@@ -91,7 +91,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: f82bf0843924509774ed521d867aa9e83bf4cbac
+          ref: 90fcde07775d4109f6e1b1b4b52d1975723dd979
           path: module-sources/m8-candidate
           fetch-depth: 0
 
@@ -193,8 +193,8 @@ jobs:
             exit 1
           fi
           m8_candidate_sha="$(git -C module-sources/m8-candidate rev-parse --verify HEAD)"
-          if [ "$m8_candidate_sha" != 'f82bf0843924509774ed521d867aa9e83bf4cbac' ]; then
-            echo "M8 candidate checkout SHA mismatch: expected f82bf0843924509774ed521d867aa9e83bf4cbac, got $m8_candidate_sha" >&2
+          if [ "$m8_candidate_sha" != '90fcde07775d4109f6e1b1b4b52d1975723dd979' ]; then
+            echo "M8 candidate checkout SHA mismatch: expected 90fcde07775d4109f6e1b1b4b52d1975723dd979, got $m8_candidate_sha" >&2
             exit 1
           fi
           if ! git -C module-sources/m8-candidate merge-base --is-ancestor "$m6_m8_review_target_sha" "$m8_candidate_sha"; then
@@ -279,7 +279,7 @@ jobs:
         working-directory: module-sources/m7
         run: |
           m7_sha="$(git rev-parse --verify HEAD)"
-          test "$m7_sha" = 'd80ffa8fb60c90c9f179b9e2154f6fdbc5661949'
+          test "$m7_sha" = 'cf478f5fce4dde3229dcd11e86db14be85e65cce'
           npm ci
           PACKAGE_ROOT="$GITHUB_WORKSPACE/module-sources/m2"
           npm run pack:check -- --package-root "$PACKAGE_ROOT"
@@ -291,7 +291,7 @@ jobs:
         working-directory: module-sources/m7
         run: |
           m7_sha="$(git rev-parse --verify HEAD)"
-          test "$m7_sha" = 'd80ffa8fb60c90c9f179b9e2154f6fdbc5661949'
+          test "$m7_sha" = 'cf478f5fce4dde3229dcd11e86db14be85e65cce'
           node --import tsx --test --test-name-pattern="Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited" test/reliability.test.mjs
           node --test --test-name-pattern="Windows payload build copies every local worker module dependency|record-install keeps normal behavior when M7 phase telemetry is disabled|record-install emits only the final fixed marker when the exact M7 toggle is enabled|record-install does not enable M7 phase telemetry for non-exact toggle values" packaging/windows/test-worker.mjs
 
@@ -370,7 +370,7 @@ jobs:
 
       - name: Run M7 exact-head package-contract and positive-control regressions
         working-directory: module-sources/m7
-        run: node --test --test-name-pattern="prepare output and build instructions pass the pinned ZIP and required source commit SHA|Windows payload E4 checks the co-located privacy-safe hook wrapper|silent receipt failure chooses a safe default then still rolls back and aborts" test/windows-packaging.test.mjs
+        run: node --test --test-name-pattern="Community candidate pins the Hook Git blob when a Windows worktree has CRLF|prepare output and build instructions pass the pinned ZIP and required source commit SHA|Windows payload E4 checks the co-located privacy-safe hook wrapper|silent receipt failure chooses a safe default then still rolls back and aborts" test/windows-packaging.test.mjs
 
       - name: Run historical M8 provenance and scoped M6-review regressions
         working-directory: module-sources/m8
@@ -381,6 +381,15 @@ jobs:
       - name: Run current M8 PR #40 Hook output regression
         working-directory: module-sources/m8-candidate
         run: node --test security-lab/claude-native-hook-output.test.mjs
+
+      - name: Run M7/M8 exact offline Community source composition gate
+        working-directory: module-sources/m9
+        env:
+          M7_ROOT: ${{ github.workspace }}/module-sources/m7
+          M7_SHA: cf478f5fce4dde3229dcd11e86db14be85e65cce
+          M8_CANDIDATE_ROOT: ${{ github.workspace }}/module-sources/m8-candidate
+          M8_CANDIDATE_SHA: 90fcde07775d4109f6e1b1b4b52d1975723dd979
+        run: node --test test/m9-community-offline-composition.test.mjs
 
       - name: Run exact-source M1/M2/M3/M4/M5/M6/M7/M8 M9 composition regressions
         working-directory: module-sources/m9
@@ -404,9 +413,9 @@ jobs:
         shell: bash
         run: |
           {
-            echo 'Historical merge provenance remains pinned: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Current candidates are M2 PR #91 92dd42b900b10ce0294e9e3faa7e175d728228b3; M3 PR #90 0ebc49a3e688e10ffa643dd9275bd12cc31c13a9; M4 PR #98 892d3290338fe811da127f8f51ab91de0b9fc18b; M5 PR #94 cca42cd1762f995e92454d55ffa5e63951e39144; M6 PR #100 0d725280092bd544035b276fd1738c409f811f22; M7 PR #96 d80ffa8fb60c90c9f179b9e2154f6fdbc5661949; M8 PR #40 f82bf0843924509774ed521d867aa9e83bf4cbac. Exact historical provenance and current PR trees are asserted by M9.'
+            echo 'Historical merge provenance remains pinned: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Current candidates are M2 PR #91 26cdb8781e57a05f57362e3078d77ce18614481c; M3 PR #90 0ebc49a3e688e10ffa643dd9275bd12cc31c13a9; M4 PR #98 892d3290338fe811da127f8f51ab91de0b9fc18b; M5 PR #94 cca42cd1762f995e92454d55ffa5e63951e39144; M6 PR #100 dbebc961ebde25433cf216da2c41d6b082b4be2e; M7 PR #96 cf478f5fce4dde3229dcd11e86db14be85e65cce; M8 PR #40 90fcde07775d4109f6e1b1b4b52d1975723dd979. Exact historical provenance and current PR trees are asserted by M9.'
             echo 'M8 checkout 84ee6a7a8d65706f694b7949e82fd8c83cc11523 is a historical source retained only for the narrowly scoped M6-reviewed test regression; it is not a current M8 candidate or a PASS verdict.'
-            echo 'M8 current candidate f82bf0843924509774ed521d867aa9e83bf4cbac is checked separately and its exact Hook-output test is run; M1 review of the new test and M6 disposition on the changed lifecycle-test blob remain pending.'
+            echo 'M8 PR #40 current head 90fcde07775d4109f6e1b1b4b52d1975723dd979 is checked separately, including its offline-demo Guard rejection source; M7 Community candidate blob compatibility is asserted as a blocking M9 gate.'
             echo 'Open module candidates are tracked separately from merged refs. This workflow does not convert pending owner checks into acceptance.'
             echo 'Composition assertions are synthetic source/package fixtures only; they do not establish first-party product-host wiring, real protected-file access, OS-atomic TOCTOU, clean-VM installer lifecycle, or independent product E4.'
             echo 'Issue #52 remains OPEN / P0 / NOT_VERIFIED for supported product-host held-identity consumption and TOCTOU. Issue #57 and independent product E4 remain NOT_VERIFIED.'

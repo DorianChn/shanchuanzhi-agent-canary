@@ -19,14 +19,14 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 
 const pinnedSourceShas = {
   M1: '7cd34454c4bd6aa7176e0e076f5333639e3ccd5d',
-  M2: '92dd42b900b10ce0294e9e3faa7e175d728228b3',
+  M2: '26cdb8781e57a05f57362e3078d77ce18614481c',
   M3: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9',
   M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
   M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
-  M6: '0d725280092bd544035b276fd1738c409f811f22',
-  M7: 'd80ffa8fb60c90c9f179b9e2154f6fdbc5661949',
+  M6: 'dbebc961ebde25433cf216da2c41d6b082b4be2e',
+  M7: 'cf478f5fce4dde3229dcd11e86db14be85e65cce',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
-  M8_CANDIDATE: 'f82bf0843924509774ed521d867aa9e83bf4cbac',
+  M8_CANDIDATE: '90fcde07775d4109f6e1b1b4b52d1975723dd979',
 };
 
 const mergedSourceProvenance = {
@@ -40,12 +40,12 @@ const mergedSourceProvenance = {
 };
 
 const currentCandidateProvenance = {
-  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', sourceBase: '98a4833250434de905611ace71bfe8094554d417', prHead: '0d725280092bd544035b276fd1738c409f811f22', prTree: 'd768ae07b109f978072c8805e29424d49f49f154' },
-  M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '92dd42b900b10ce0294e9e3faa7e175d728228b3', prTree: '78c60440662a3dcd15d86e9d3c09d3fa9a3769d3' },
+  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', sourceBase: '98a4833250434de905611ace71bfe8094554d417', prHead: 'dbebc961ebde25433cf216da2c41d6b082b4be2e', prTree: '96434dfb5e37a553fb6bfc2d3ee5449000ff9ae5' },
+  M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '26cdb8781e57a05f57362e3078d77ce18614481c', prTree: 'd47d82af42266d9cb0c3a3895b180c1c23aeb980' },
   M3: { ownerHead: '98a034fa2066cec18f833440cc51275c389681c6', ownerTree: '4da9bd1d3168aaa8dc1df97ad8b8e4bb18187430', prHead: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9', prTree: '2396a5915c2bb24fa828b02118ea5f69f9e3eea1' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
-  M7: { ownerHead: '4d66e65d797656a653bde8576cffefb79f2197fa', ownerTree: '115f58c8b6e8ab99258a9481b5c16e65b66a39b5', prHead: 'd80ffa8fb60c90c9f179b9e2154f6fdbc5661949', prTree: 'f1d96e859526125898a8696a1d3684c58150f013' },
+  M7: { ownerHead: '4d66e65d797656a653bde8576cffefb79f2197fa', ownerTree: '115f58c8b6e8ab99258a9481b5c16e65b66a39b5', prHead: 'cf478f5fce4dde3229dcd11e86db14be85e65cce', prTree: '76151c1861addf66bbb66b79bb79a53d4fe4a90d' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
@@ -63,6 +63,11 @@ const m6M8ReviewedSourceSha = '72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db';
 const m6ReviewedLifecycleTestBlob = '18fcc4b91e229d029f0f55c420ca3d0580d2c68d';
 const m8ReviewedE4TestBlob = 'd8909264ea2d924d611ca01a4daa73829ab67d1d';
 const m7AcceptedE4HelperBlob = '89e8a04ed026af146a712517144f560aefe92a0d';
+assert.equal(
+  readTreeIdAt('M8_CANDIDATE', pinnedSourceShas.M8_CANDIDATE),
+  '6c2c96e46bf19cac2ac7154cbfd4efc9ee27e82f',
+  'the current M8 PR #40 source tree must remain tied to the exact candidate pin',
+);
 
 function assertAncestor(moduleName, ancestorSha, candidateSha, description) {
   const result = spawnSync('git', [
@@ -279,12 +284,22 @@ function assertHistoricalTextPreserved(moduleName, historicalRevision, candidate
 
 test('pinned M2/M5/M7/M9 Hook copies match the current M1 canonical blob', () => {
   const canonicalHookBlob = readTrackedBlobId('M1', 'security-lab/claude-native-hook.mjs');
+  assert.equal(
+    canonicalHookBlob,
+    'b7ed4aba70a597f4f63a05decc6de1b32f67372e',
+    'the exact M1 source candidate must retain its reviewed canonical Hook blob',
+  );
   const mismatches = [];
   for (const moduleName of ['M2', 'M5', 'M7', 'M9']) {
     const actualHookBlob = readTrackedBlobId(moduleName, 'security-lab/claude-native-hook.mjs');
     if (actualHookBlob !== canonicalHookBlob) mismatches.push(`${moduleName}: ${actualHookBlob}`);
   }
   assert.deepEqual(mismatches, [], `every shipped Hook copy must match the M1 canonical sanitized wrapper ${canonicalHookBlob}`);
+  assert.equal(
+    readBlobIdAt('M7', pinnedSourceShas.M7, 'security-lab/claude-native-hook.mjs'),
+    canonicalHookBlob,
+    'the exact M7 Community candidate must pin the reviewed M1 Hook Git blob',
+  );
 });
 
 test('Issue #88 P0: M1 sanitization control and exact M2 source Hook keep reason canaries out of output channels', () => {
