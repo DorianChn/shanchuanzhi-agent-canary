@@ -201,6 +201,29 @@ jobs:
             echo 'The exact M6-reviewed M8 source is not an ancestor of the current M8 PR candidate.' >&2
             exit 1
           fi
+          m1_m8_hook_review_status='ACCEPT'
+          m1_m8_hook_review_source_sha='1abdfe3890c6c263eea667789deb7eab5038e828'
+          m1_m8_hook_review_comment='6374253075'
+          m1_m8_hook_review_issue='80'
+          m1_m8_hook_blob='b7ed4aba70a597f4f63a05decc6de1b32f67372e'
+          m1_m8_output_test_blob='186fa2d163f7118d10f01abdac91a0b5e657359b'
+          if ! git -C module-sources/m8-candidate merge-base --is-ancestor "$m1_m8_hook_review_source_sha" "$m8_candidate_sha"; then
+            echo 'The M1-reviewed M8 Hook source must remain an ancestor of the exact candidate.' >&2
+            exit 1
+          fi
+          if [ "$(git -C module-sources/m8-candidate rev-parse --verify "${m8_candidate_sha}:security-lab/claude-native-hook.mjs")" != "$m1_m8_hook_blob" ] || [ "$(git -C module-sources/m8-candidate rev-parse --verify "${m8_candidate_sha}:security-lab/claude-native-hook-output.test.mjs")" != "$m1_m8_output_test_blob" ]; then
+            echo 'The exact Hook files covered by M1 Issue #80 review changed in the current M8 candidate.' >&2
+            exit 1
+          fi
+          m6_m8_current_lifecycle_review_status='ACCEPT'
+          m6_m8_current_lifecycle_review_sha='60cfe8d976a42d0f635d4be93ca24c00e81246d5'
+          m6_m8_current_lifecycle_review_blob='d1705c204ef3f511ee4828e90b35731b36f92238'
+          m6_m8_current_lifecycle_review_comment='6379633677'
+          m6_m8_current_lifecycle_review_issue='80'
+          if [ "$m8_candidate_sha" != "$m6_m8_current_lifecycle_review_sha" ] || [ "$(git -C module-sources/m8-candidate rev-parse --verify "${m8_candidate_sha}:test/auto-e4.test.mjs")" != "$m6_m8_current_lifecycle_review_blob" ]; then
+            echo 'The exact M6 owner disposition must stay tied to its reviewed M8 head and lifecycle-test blob.' >&2
+            exit 1
+          fi
           {
             printf 'M9_SHA=%s\n' "$m9_sha"
             printf 'M1_SHA=%s\n' "$m1_sha"
@@ -237,6 +260,17 @@ jobs:
             printf 'M6_M8_REVIEW_COMMENT=%s\n' "$m6_m8_review_comment"
             printf 'M6_M8_REVIEW_ISSUE=%s\n' "$m6_m8_review_issue"
             printf 'M6_M8_REVIEW_SCOPE=%s\n' "$m6_m8_review_scope"
+            printf 'M1_M8_HOOK_REVIEW_STATUS=%s\n' "$m1_m8_hook_review_status"
+            printf 'M1_M8_HOOK_REVIEW_SOURCE_SHA=%s\n' "$m1_m8_hook_review_source_sha"
+            printf 'M1_M8_HOOK_REVIEW_COMMENT=%s\n' "$m1_m8_hook_review_comment"
+            printf 'M1_M8_HOOK_REVIEW_ISSUE=%s\n' "$m1_m8_hook_review_issue"
+            printf 'M1_M8_HOOK_BLOB=%s\n' "$m1_m8_hook_blob"
+            printf 'M1_M8_OUTPUT_TEST_BLOB=%s\n' "$m1_m8_output_test_blob"
+            printf 'M6_M8_CURRENT_LIFECYCLE_REVIEW_STATUS=%s\n' "$m6_m8_current_lifecycle_review_status"
+            printf 'M6_M8_CURRENT_LIFECYCLE_REVIEW_SHA=%s\n' "$m6_m8_current_lifecycle_review_sha"
+            printf 'M6_M8_CURRENT_LIFECYCLE_REVIEW_BLOB=%s\n' "$m6_m8_current_lifecycle_review_blob"
+            printf 'M6_M8_CURRENT_LIFECYCLE_REVIEW_COMMENT=%s\n' "$m6_m8_current_lifecycle_review_comment"
+            printf 'M6_M8_CURRENT_LIFECYCLE_REVIEW_ISSUE=%s\n' "$m6_m8_current_lifecycle_review_issue"
             printf 'M7_SHA=%s\n' "$m7_sha"
             printf 'M8_SHA=%s\n' "$m8_sha"
             printf 'M8_CANDIDATE_SHA=%s\n' "$m8_candidate_sha"
@@ -245,8 +279,10 @@ jobs:
           printf 'Exact source SHAs: M9=%s M1=%s M2=%s M3=%s M4=%s M5=%s M6=%s M7=%s M8=%s\n' "$m9_sha" "$m1_sha" "$m2_sha" "$m3_sha" "$m4_sha" "$m5_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M2 Issue #52: %s (historical M1 review SHA %s; current M1 %s; exact reviewed M2 %s; current M2 %s; comment %s; scope %s; boundary %s)\n' "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_sha" "$m1_m2_review_target_sha" "$m2_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M3 Hook disposition: %s (reviewed M3 %s; current M3 %s; changed reviewed files:%s; historical blobs verified; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_target_sha" "$m3_sha" "${m1_m3_review_changed_files:- none}" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M1-to-M8 Hook disposition: %s (reviewed source %s; exact Hook/output-test blobs unchanged at current candidate %s; Issue #%s comment %s)\n' "$m1_m8_hook_review_status" "$m1_m8_hook_review_source_sha" "$m8_candidate_sha" "$m1_m8_hook_review_issue" "$m1_m8_hook_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M6-to-M8 scoped disposition: %s (reviewed M6 contract %s; current M6 %s; exact reviewed M8 %s; current M8 %s; Issue #59 comment %s)\n' "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_sha" "$m6_m8_review_target_sha" "$m8_sha" "$m6_m8_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
-          printf 'Current M8 PR candidate: %s (exact source pinned for M9 checks; M1 exact-file review and M6 lifecycle-file disposition remain pending)\n' "$m8_candidate_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M6-to-M8 current lifecycle disposition: %s (exact M8 head %s; test blob %s; Issue #%s comment %s; no product E4 acceptance implied)\n' "$m6_m8_current_lifecycle_review_status" "$m6_m8_current_lifecycle_review_sha" "$m6_m8_current_lifecycle_review_blob" "$m6_m8_current_lifecycle_review_issue" "$m6_m8_current_lifecycle_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'Current M8 PR candidate: %s (exact source pinned for M9 checks; owner dispositions are file-scoped and do not establish product E4 or host/VM acceptance)\n' "$m8_candidate_sha" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:

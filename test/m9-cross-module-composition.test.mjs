@@ -62,6 +62,21 @@ const m6PriorAcceptanceSha = '98803607b89f11e24430c461bd91e9c1a0ece9d4';
 const m6M8ReviewedContractSha = '2cebabc81d7908c04ddfa10378fa1d3427b92cf4';
 const m6M8ReviewedSourceSha = '72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db';
 const m6ReviewedLifecycleTestBlob = '18fcc4b91e229d029f0f55c420ca3d0580d2c68d';
+const m1M8HookReview = {
+  status: 'ACCEPT',
+  sourceSha: '1abdfe3890c6c263eea667789deb7eab5038e828',
+  comment: '6374253075',
+  issue: '80',
+  hookBlob: 'b7ed4aba70a597f4f63a05decc6de1b32f67372e',
+  outputTestBlob: '186fa2d163f7118d10f01abdac91a0b5e657359b',
+};
+const m6M8CurrentLifecycleReview = {
+  status: 'ACCEPT',
+  sha: '60cfe8d976a42d0f635d4be93ca24c00e81246d5',
+  blob: 'd1705c204ef3f511ee4828e90b35731b36f92238',
+  comment: '6379633677',
+  issue: '80',
+};
 const m8ReviewedE4TestBlob = 'd8909264ea2d924d611ca01a4daa73829ab67d1d';
 const m7AcceptedE4HelperBlob = '89e8a04ed026af146a712517144f560aefe92a0d';
 assert.equal(
@@ -687,6 +702,19 @@ test('historical M8 source matches its exact M1-approved Hook blob', () => {
 
 test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and sanitizes Hook output', () => {
   const candidateSha = pinnedSourceShas.M8_CANDIDATE;
+  assert.equal(candidateSha, m6M8CurrentLifecycleReview.sha, 'the current M6 owner disposition must stay tied to the reviewed exact M8 head');
+  assert.equal(process.env.M1_M8_HOOK_REVIEW_STATUS, m1M8HookReview.status);
+  assert.equal(process.env.M1_M8_HOOK_REVIEW_SOURCE_SHA, m1M8HookReview.sourceSha);
+  assert.equal(process.env.M1_M8_HOOK_REVIEW_COMMENT, m1M8HookReview.comment);
+  assert.equal(process.env.M1_M8_HOOK_REVIEW_ISSUE, m1M8HookReview.issue);
+  assert.equal(process.env.M1_M8_HOOK_BLOB, m1M8HookReview.hookBlob);
+  assert.equal(process.env.M1_M8_OUTPUT_TEST_BLOB, m1M8HookReview.outputTestBlob);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_STATUS, m6M8CurrentLifecycleReview.status);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_SHA, m6M8CurrentLifecycleReview.sha);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_BLOB, m6M8CurrentLifecycleReview.blob);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_COMMENT, m6M8CurrentLifecycleReview.comment);
+  assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_ISSUE, m6M8CurrentLifecycleReview.issue);
+  assertAncestor('M8_CANDIDATE', m1M8HookReview.sourceSha, candidateSha, 'M1-reviewed M8 Hook source');
   assertAncestor('M8_CANDIDATE', m6M8ReviewedSourceSha, candidateSha, 'M6-reviewed M8 source in the current PR #40 candidate');
   assert.equal(
     readBlobIdAt('M8_CANDIDATE', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'),
@@ -696,7 +724,7 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   const candidateLifecycleBlob = readTrackedBlobId('M8_CANDIDATE', 'test/auto-e4.test.mjs');
   assert.equal(
     candidateLifecycleBlob,
-    'd1705c204ef3f511ee4828e90b35731b36f92238',
+    m6M8CurrentLifecycleReview.blob,
     'the current M8 candidate lifecycle-file change must stay tied to the exact PR #40 head',
   );
   assert.notEqual(
@@ -708,11 +736,11 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   assert.doesNotMatch(
     candidateLifecycleText,
     /test\('co-located E4 payload wrapper logs only allowlisted metadata'/,
-    'the removed M6-reviewed test must remain visible as a pending owner disposition',
+    'the removed M6-owned payload test remains outside Auto E4 after its exact owner disposition',
   );
 
   const m1HookBlob = readTrackedBlobId('M1', 'security-lab/claude-native-hook.mjs');
-  assert.equal(m1HookBlob, 'b7ed4aba70a597f4f63a05decc6de1b32f67372e', 'M1 canonical Hook blob must remain exact');
+  assert.equal(m1HookBlob, m1M8HookReview.hookBlob, 'M1 canonical Hook blob must remain exact');
   assert.equal(
     readTrackedBlobId('M8_CANDIDATE', 'security-lab/claude-native-hook.mjs'),
     m1HookBlob,
@@ -720,7 +748,7 @@ test('current M8 PR #40 candidate records its M6-owned lifecycle-file delta and 
   );
   assert.equal(
     readTrackedBlobId('M8_CANDIDATE', 'security-lab/claude-native-hook-output.test.mjs'),
-    '186fa2d163f7118d10f01abdac91a0b5e657359b',
+    m1M8HookReview.outputTestBlob,
     'M9 must execute the exact current M8 output-redaction test blob',
   );
   assert.equal(
