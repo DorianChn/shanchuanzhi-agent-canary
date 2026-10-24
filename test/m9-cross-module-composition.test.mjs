@@ -18,15 +18,15 @@ const sourceRoots = Object.fromEntries(['M9', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
 }));
 
 const pinnedSourceShas = {
-  M1: '7cd34454c4bd6aa7176e0e076f5333639e3ccd5d',
+  M1: 'f18f1deec15b81f0d61ef18dbf0f91f50acef1b6',
   M2: '26cdb8781e57a05f57362e3078d77ce18614481c',
   M3: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9',
   M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
   M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
-  M6: 'dbebc961ebde25433cf216da2c41d6b082b4be2e',
-  M7: '40d024fb6089cd72a186107912bd6baed824f301',
+  M6: '7e263867979e5b52044febd64ed785ad6b192e82',
+  M7: '37034a971d00477a8aa3d57f34773c125939ec92',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
-  M8_CANDIDATE: '90fcde07775d4109f6e1b1b4b52d1975723dd979',
+  M8_CANDIDATE: '39c8048f93118657e13a7f37eabafa756aa25f94',
 };
 
 const mergedSourceProvenance = {
@@ -40,12 +40,13 @@ const mergedSourceProvenance = {
 };
 
 const currentCandidateProvenance = {
-  M6: { ownerHead: '98a4833250434de905611ace71bfe8094554d417', ownerTree: 'cfcb8e59252860d975e97459a3e0d7ab7ddca258', sourceBase: '98a4833250434de905611ace71bfe8094554d417', prHead: 'dbebc961ebde25433cf216da2c41d6b082b4be2e', prTree: '96434dfb5e37a553fb6bfc2d3ee5449000ff9ae5' },
+  M1: { ownerHead: '5adc14c32724a7b5da3ee40aed08eb41de7debea', ownerTree: '1b70a280b4bb4e69edfe9c68476728b4bdf9ad06', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: 'f18f1deec15b81f0d61ef18dbf0f91f50acef1b6', prTree: 'bf626ca319cfde115e31ff9565faf43f21c6f69b' },
+  M6: { ownerHead: 'ed335ef7cacfa626f9a5b6bc4c69e6af6366123e', ownerTree: '2dd0c9991794b5983d488fbacadb7a9fbe4f0d89', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '7e263867979e5b52044febd64ed785ad6b192e82', prTree: '6c21e9ed9dc52f9b9440dabc9ea44503d57caa75' },
   M2: { ownerHead: '69a98fb33edebe0d4576f9ce658e49d666b83bc0', ownerTree: '5293e9c55dd135b31b4edbf169b2a292aeb734e8', prHead: '26cdb8781e57a05f57362e3078d77ce18614481c', prTree: 'd47d82af42266d9cb0c3a3895b180c1c23aeb980' },
   M3: { ownerHead: '98a034fa2066cec18f833440cc51275c389681c6', ownerTree: '4da9bd1d3168aaa8dc1df97ad8b8e4bb18187430', prHead: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9', prTree: '2396a5915c2bb24fa828b02118ea5f69f9e3eea1' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
-  M7: { ownerHead: '40d024fb6089cd72a186107912bd6baed824f301', ownerTree: '23297aabffb18665fe3cc62af47746a1a28922d1', sourceBase: 'bfff4e786c215dcf4a36cad41fb5ea08900d14a4', prHead: '40d024fb6089cd72a186107912bd6baed824f301', prTree: '23297aabffb18665fe3cc62af47746a1a28922d1' },
+  M7: { ownerHead: '37034a971d00477a8aa3d57f34773c125939ec92', ownerTree: 'e0d234e71372109a7e9f7076844d8ebf83e8ef50', sourceBase: 'c750b9dac48286e8ab24b2ec74e6423c52fd6b25', prHead: '37034a971d00477a8aa3d57f34773c125939ec92', prTree: 'e0d234e71372109a7e9f7076844d8ebf83e8ef50' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
@@ -65,7 +66,7 @@ const m8ReviewedE4TestBlob = 'd8909264ea2d924d611ca01a4daa73829ab67d1d';
 const m7AcceptedE4HelperBlob = '89e8a04ed026af146a712517144f560aefe92a0d';
 assert.equal(
   readTreeIdAt('M8_CANDIDATE', pinnedSourceShas.M8_CANDIDATE),
-  '6c2c96e46bf19cac2ac7154cbfd4efc9ee27e82f',
+  '83d4aed9e48e2cbdb3d7ad799d3563c154d7def4',
   'the current M8 PR #40 source tree must remain tied to the exact candidate pin',
 );
 
