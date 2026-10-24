@@ -231,11 +231,14 @@ jobs:
 
           $sourceHookPath = 'packaging/windows/claude-native-hook.mjs'
           $packagedHookPath = Join-Path $payloadRoot 'claude-native-hook.mjs'
-          $extractedHookCandidates = @(Get-ChildItem -LiteralPath $setupExtractRoot -Filter 'claude-native-hook.mjs' -File -Recurse)
-          if ($extractedHookCandidates.Count -ne 1) { throw 'SETUP_EXTRACTED_HOOK_MISSING_OR_AMBIGUOUS' }
-          $extractedHookPath = $extractedHookCandidates[0].FullName
+          $expectedHookRelativePath = 'claude-native-hook.mjs'
+          $hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -ceq $expectedHookRelativePath })
+          if ($hookEntries.Count -ne 1) { throw 'SETUP_EXTRACTED_HOOK_MANIFEST_MISMATCH' }
+          $extractedHookPath = Join-Path $setupExtractRoot $expectedHookRelativePath
+          if (-not (Test-Path -LiteralPath $extractedHookPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HOOK_MISSING' }
+          $extractedHookItem = Get-Item -LiteralPath $extractedHookPath
+          if (($extractedHookItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'SETUP_EXTRACTED_HOOK_REPARSE_POINT' }
           $extractedHookRelativePath = [System.IO.Path]::GetRelativePath($setupExtractRoot, $extractedHookPath).Replace('\','/')
-          $hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq $extractedHookRelativePath })
           if ($extractedHookRelativePath -ne 'claude-native-hook.mjs' -or $hookEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $packagedHookPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HOOK_MANIFEST_MISMATCH' }
           $sourceHookBlobSha = (& git rev-parse "HEAD:$sourceHookPath").Trim()
           $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()

@@ -210,24 +210,14 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
   assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
   assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
 
-  const sourceRepo=spawnSync('git',['-C',repo,'remote','get-url','origin'],{encoding:'utf8',windowsHide:true});
-  assert.equal(sourceRepo.status,0,(sourceRepo.stderr??'').toString());
-  const sourceFetchTemp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m8-source-fetch-'));
-  let m8Demo;
-  try{
-    const runGit=(...args)=>spawnSync('git',['-C',sourceFetchTemp,...args],{encoding:'utf8',windowsHide:true});
-    let gitResult=runGit('init','--quiet');
-    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
-    gitResult=runGit('remote','add','origin',sourceRepo.stdout.trim());
-    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
-    gitResult=runGit('fetch','--no-tags','--depth=1','origin','refs/pull/40/head');
-    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
-    gitResult=runGit('rev-parse','FETCH_HEAD');
-    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
-    assert.equal(gitResult.stdout.trim(),m8SourceSHA,'the fetched M8 PR ref must still match the exact pinned source SHA');
-    m8Demo=spawnSync('git',['-C',sourceFetchTemp,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
-    assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
-  }finally{fs.rmSync(sourceFetchTemp,{recursive:true,force:true});}
+  const runRepoGit=(...args)=>spawnSync('git',['-C',repo,...args],{encoding:'utf8',windowsHide:true});
+  let gitResult=runRepoGit('fetch','--no-tags','--depth=1','origin','refs/pull/40/head');
+  assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+  gitResult=runRepoGit('rev-parse','FETCH_HEAD');
+  assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+  assert.equal(gitResult.stdout.trim(),m8SourceSHA,'the fetched M8 PR ref must still match the exact pinned source SHA');
+  const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
+  assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
   const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
   assert.equal(expectedBlob,m8DemoBlob);
   const expectedText=m8Demo.stdout.toString('utf8');
@@ -471,7 +461,13 @@ test('Windows artifact evidence binds the exact Hook SHA through build report, m
   assert.equal(windowsCheckoutBlob.stdout.trim(),wrapper.blobSha);
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   assert.match(build,/wrapperSourceContentSHA256:packagedHookSource\.sha256/);
+  const setupHookPaths=['claude-native-hook.mjs','app/security-lab/claude-native-hook.mjs'];
+  assert.equal(setupHookPaths.filter(file=>path.posix.basename(file)==='claude-native-hook.mjs').length,2);
+  assert.deepEqual(setupHookPaths.filter(file=>file.replace(/\\/g,'/')==='claude-native-hook.mjs'),['claude-native-hook.mjs']);
   const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8').replace(/\r\n/g,'\n');
+  assert.ok(workflow.includes("$expectedHookRelativePath = 'claude-native-hook.mjs'"));
+  assert.ok(workflow.includes("$hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\\','/') -ceq $expectedHookRelativePath })"));
+  assert.ok(!workflow.includes("Get-ChildItem -LiteralPath $setupExtractRoot -Filter 'claude-native-hook.mjs' -File -Recurse"));
   assert.ok(workflow.includes("if ($buildResult.version.wrapperSourceContentSHA256 -ne $packagedHookSha256) { throw 'BUILD_REPORT_HOOK_SHA256_MISMATCH' }"));
   assert.ok(workflow.includes("if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }"));
   assert.ok(workflow.includes("if ($installerSha256 -ne $buildResult.installerSHA256) { throw 'INSTALLER_SHA256_MISMATCH' }"));
