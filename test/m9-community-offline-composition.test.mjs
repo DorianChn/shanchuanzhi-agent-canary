@@ -9,7 +9,7 @@ const m7Sha = process.env.M7_SHA;
 const m8Root = process.env.M8_CANDIDATE_ROOT;
 const m8Sha = process.env.M8_CANDIDATE_SHA;
 const offlineDemoPath = 'competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
-const expectedM7Sha = '37034a971d00477a8aa3d57f34773c125939ec92';
+const expectedM7Sha = '7d1da7d3d90f61aae4e3405b980fc719633d20ac';
 const expectedM8Sha = '60cfe8d976a42d0f635d4be93ca24c00e81246d5';
 const expectedM8PinSha = '24b8651730d57d860ba136e77db1526031abb1fc';
 const expectedM7Blob = '71ba0f00f31583c4227cd937972e6f9a677898ca';
@@ -46,7 +46,7 @@ test('M8 exact offline demo retains the Guard rejection and post-quarantine safe
 
 test('M7 Community builder pins and stages the M8-fixed offline demo blob', () => {
   assert.equal(git(m7Root, ['rev-parse', '--verify', 'HEAD'], 'M7 checkout SHA'), expectedM7Sha);
-  assert.equal(git(m7Root, ['rev-parse', '--verify', `${expectedM7Sha}^{tree}`], 'M7 checkout tree'), 'e0d234e71372109a7e9f7076844d8ebf83e8ef50');
+  assert.equal(git(m7Root, ['rev-parse', '--verify', `${expectedM7Sha}^{tree}`], 'M7 checkout tree'), '05bc65f26346e8b49aab921d274e3b81382ccca1');
   const builder = fs.readFileSync(path.join(m7Root, 'security-lab/build-community.py'), 'utf8');
   const workflow = fs.readFileSync(path.join(m7Root, '.github/workflows/windows-community.yml'), 'utf8');
   assert.match(builder, /expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'/, 'M7 builder must retain the immutable reviewed M8 source pin');

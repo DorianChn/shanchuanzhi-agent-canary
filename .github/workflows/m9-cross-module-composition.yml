@@ -39,11 +39,11 @@ jobs:
           path: module-sources/m2
           fetch-depth: 0
 
-      - name: Checkout exact current M3 follow-up PR #90 head
+      - name: Checkout exact current M3 protected-host PR #107 head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 0ebc49a3e688e10ffa643dd9275bd12cc31c13a9
+          ref: 0d61b434ba2ac81e313b82432f4ac00afedd3cbc
           path: module-sources/m3
           fetch-depth: 0
 
@@ -71,11 +71,11 @@ jobs:
           path: module-sources/m6
           fetch-depth: 0
 
-      - name: Checkout exact current M7 Community candidate
+      - name: Checkout exact current M7 lifecycle follow-up PR #106 head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: DorianChn/shanchuanzhi-agent-canary
-          ref: 37034a971d00477a8aa3d57f34773c125939ec92
+          ref: 7d1da7d3d90f61aae4e3405b980fc719633d20ac
           path: module-sources/m7
           fetch-depth: 0
 
@@ -315,7 +315,7 @@ jobs:
         working-directory: module-sources/m7
         run: |
           m7_sha="$(git rev-parse --verify HEAD)"
-          test "$m7_sha" = '37034a971d00477a8aa3d57f34773c125939ec92'
+          test "$m7_sha" = '7d1da7d3d90f61aae4e3405b980fc719633d20ac'
           npm ci
           PACKAGE_ROOT="$GITHUB_WORKSPACE/module-sources/m2"
           npm run pack:check -- --package-root "$PACKAGE_ROOT"
@@ -327,7 +327,7 @@ jobs:
         working-directory: module-sources/m7
         run: |
           m7_sha="$(git rev-parse --verify HEAD)"
-          test "$m7_sha" = '37034a971d00477a8aa3d57f34773c125939ec92'
+          test "$m7_sha" = '7d1da7d3d90f61aae4e3405b980fc719633d20ac'
           node --import tsx --test --test-name-pattern="Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited" test/reliability.test.mjs
           node --test --test-name-pattern="Windows payload build copies every local worker module dependency|record-install keeps normal behavior when M7 phase telemetry is disabled|record-install emits only the final fixed marker when the exact M7 toggle is enabled|record-install does not enable M7 phase telemetry for non-exact toggle values" packaging/windows/test-worker.mjs
 
@@ -426,7 +426,7 @@ jobs:
         working-directory: module-sources/m9
         env:
           M7_ROOT: ${{ github.workspace }}/module-sources/m7
-          M7_SHA: 37034a971d00477a8aa3d57f34773c125939ec92
+          M7_SHA: 7d1da7d3d90f61aae4e3405b980fc719633d20ac
           M8_CANDIDATE_ROOT: ${{ github.workspace }}/module-sources/m8-candidate
           M8_CANDIDATE_SHA: 60cfe8d976a42d0f635d4be93ca24c00e81246d5
         run: node --test test/m9-community-offline-composition.test.mjs
@@ -453,7 +453,7 @@ jobs:
         shell: bash
         run: |
           {
-            echo 'Historical merge provenance remains pinned: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Current candidates are M1 PR #101 47501fc090ee67f7f96d84d231c7ce7cc70379cd; M2 PR #91 26cdb8781e57a05f57362e3078d77ce18614481c; M3 PR #90 0ebc49a3e688e10ffa643dd9275bd12cc31c13a9; M4 PR #98 892d3290338fe811da127f8f51ab91de0b9fc18b; M5 PR #94 cca42cd1762f995e92454d55ffa5e63951e39144; M6 PR #100 2975f3fc88929cacf268e80a503667b440ea519a; M7 feature/ac3-m7-m8-source-pin 37034a971d00477a8aa3d57f34773c125939ec92; M8 PR #40 60cfe8d976a42d0f635d4be93ca24c00e81246d5. Exact historical provenance and current candidate trees are asserted by M9.'
+            echo 'Historical merge provenance remains pinned: M1 #83 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d; M2 #37 49af6d3dd57d9f091c95f489ead27f4f03c941a9; M3 #33 611f9fca14706a1110a1f0a39e8488f4ff28d2a9; M4 #34 d0f61987c2a06acb47a7187142bc303101af0ad4; M5 #47 f0e90c99033a6304748ac79fe106439ca4bd2e06; M6 #38 a6f4a889ec16b4f2c78f91d630e657eea7319dbd; M7 #84 8689d8fbbcdded4735d0e5aa328805f398a2862a. Current candidates are M1 PR #101 47501fc090ee67f7f96d84d231c7ce7cc70379cd; M2 PR #91 26cdb8781e57a05f57362e3078d77ce18614481c; M3 PR #107 0d61b434ba2ac81e313b82432f4ac00afedd3cbc; M4 PR #98 892d3290338fe811da127f8f51ab91de0b9fc18b; M5 PR #94 cca42cd1762f995e92454d55ffa5e63951e39144; M6 PR #100 2975f3fc88929cacf268e80a503667b440ea519a; M7 PR #106 7d1da7d3d90f61aae4e3405b980fc719633d20ac; M8 PR #40 60cfe8d976a42d0f635d4be93ca24c00e81246d5. Exact historical provenance and current candidate trees are asserted by M9.'
             echo 'M8 checkout 84ee6a7a8d65706f694b7949e82fd8c83cc11523 is a historical source retained only for the narrowly scoped M6-reviewed test regression; it is not a current M8 candidate or a PASS verdict.'
             echo 'M8 PR #40 current head 60cfe8d976a42d0f635d4be93ca24c00e81246d5 is checked separately, including its offline-demo Guard rejection source; M7 Community candidate blob compatibility and the exact 37-file runtime/sdk.d.ts contract are blocking M9 gates.'
             echo 'Open module candidates are tracked separately from merged refs. This workflow does not convert pending owner checks into acceptance.'
