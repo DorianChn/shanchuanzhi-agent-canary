@@ -222,6 +222,26 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
         return false;
       }
     },
+    async readFileWithCapability(capability, call, signal) {
+      const bound = parseBoundCall(call);
+      if (
+        capability !== bound.capability ||
+        !fileReadCapability.verify(capability, bound.call, "file-read")
+      ) {
+        throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_INVALID");
+      }
+      if (signal !== undefined && !isAbortSignal(signal)) {
+        throw new TypeError("M2_SECURITY_GATEWAY_SIGNAL_INVALID");
+      }
+      if (signal?.aborted) {
+        throw abortError();
+      }
+      return Reflect.apply(
+        gatewayMethods.get("readFileWithCapability"),
+        gateway,
+        [bound.capability, bound.call, "file-read", signal],
+      );
+    },
   });
 
   const tools = Object.freeze(policyTools);
@@ -239,18 +259,11 @@ export function createSecurityGatewayAdapter(gateway, fixedFileReads) {
     }
 
     const suppliedCapability = contextValues.get("fileReadCapability");
-    if (
-      (suppliedCapability !== undefined && suppliedCapability !== bound.capability) ||
-      !fileReadCapability.verify(bound.capability, bound.call, "file-read")
-    ) {
+    if (suppliedCapability !== undefined && suppliedCapability !== bound.capability) {
       throw new TypeError("M2_SECURITY_GATEWAY_CAPABILITY_INVALID");
     }
 
-    return Reflect.apply(
-      gatewayMethods.get("readFileWithCapability"),
-      gateway,
-      [bound.capability, bound.call, "file-read", signal],
-    );
+    return fileReadCapability.readFileWithCapability(bound.capability, bound.call, signal);
   };
 
   const adapter = Object.freeze({ tools, executeRealTool, fileReadCapability });
