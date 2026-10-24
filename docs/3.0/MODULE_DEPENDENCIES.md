@@ -237,3 +237,21 @@ M4's exact source trace is recorded at M4 branch commit `7922309da0f6ea60c02b9bd
 The remaining implementation dependency is the M3 normal-CLI fixed host probe/status composition over the public M1 Gateway capability, M2 adapter/fixed-path map, and M5 strict-router provider. The M3 follow-up PR #90 is Hook-only at `e771c06f72d8a03fb7945037a3facbc2d0ed8a6e`; it does not supply that probe. M2 PR #91 (`92dd42b900b10ce0294e9e3faa7e175d728228b3`) and M5 PR #94 (`cca42cd1762f995e92454d55ffa5e63951e39144`) remain candidates pending M1 exact-source review and M9 composition. M4 waits for the exact route/schema before adding any UI consumption beyond its current fail-closed status contract.
 
 Acceptance order: M1 owner disposition → M2/M5 reviewed public inputs → M3 fixed host probe and sanitized status with safe-read plus alias/path-replacement zero-side-effect controls → M4 read-only status consumer → M9 exact-source Ubuntu/Windows composition. Issue #52 remains OPEN/P0/NOT_VERIFIED until all gates pass; this dependency note does not claim product protection or OS-atomic TOCTOU.
+
+## Current cross-module dependency map — 2026-10-24 10:14 UTC
+
+| From | To | Dependency contract | Gate / status |
+| --- | --- | --- | --- |
+| M1 Gateway / Hook | M2 adapter and M3 host route | M1 owns held-file identity, final denial, and sanitized Hook semantics. Consumers must use its capability boundary; no generic path fallback. | Source contract covered; shipped host and installed Hook acceptance remain #52/#93. |
+| M2 fixed-resource adapter + M5 policy | M3 configured-target CLI/route | M3 binds trusted targets at startup, composes owner APIs, and returns status only. M5 can tighten M1-authorized operations but cannot mint capabilities. | Exact-source route checks passed once; product-host acceptance remains #52 OPEN. |
+| M3 route | M4 Security Center | M4 consumes the read-only status API, preserves UNKNOWN, and does not execute protected reads or upgrade synthetic coverage to PROTECTED. | Owner disposition and shipped UI/runtime evidence remain required under #52. |
+| M1 Hook contract | M7 Windows package | M7 packages the M1-reviewed sanitizer; package provenance and installed output must be checked against exact bytes. | Installed redaction evidence remains #93 OPEN/P0. |
+| M7 package/lifecycle evidence | M6 E4 verifier | M7 supplies the exact build/package artifact and lifecycle report; M6 validates evidence schema, hashes, and provenance without converting a build fixture into runtime acceptance. | Lifecycle checksum producer/consumer mismatch is 11 vs 7 paths; #41 OPEN/P1. Independent E4 receipt missing at #57. |
+| M1–M8 exact refs | M9 composition | M9 pins owner branches and runs composition on Ubuntu and Windows; shared interfaces are reviewed by their owner before promotion. | One pinned-source run passed, but current-ref workflow trigger skips non-#36 PRs; #76 OPEN/P1. |
+
+VMware, real-model, and installer tests share one exclusive slot. Check #29 before starting any of them and release it only after terminal evidence. Current M0 does not start any such test.
+
+## Current configured-target dependency status — 2026-10-24 09:21 UTC
+
+## M0 current dependency precedence — 2026-10-24 10:15 UTC
+Use the cross-module map above as the current dependency order; repeated 09:21 and older entries are historical. The configured-target route exists in the feature source, but source-composition evidence does not close #52. Current-ref M9 trigger, installer checksum/lifecycle, and independent E4 gates remain open under #76, #41, and #57.
