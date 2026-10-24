@@ -8441,3 +8441,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - All eight existing module branches have zero ahead/behind divergence from their configured remote upstreams. M1, M2, M3, M4, M5, M6, and M8 worktrees are clean. M7 has two dirty entries: its uncommitted installer workflow edit and untracked acceptance directory; both remain untouched by M0.
 - Open-PR inventory is unchanged: M0 #109 and M8 #40 are the open AC3 Draft PRs; M6 legacy #31 targets `main` and remains untouched. Current merged follow-up PRs M1 #101 through M7 #106 remain merged.
 - No module owner response or head movement since the 14:46 checkpoint request. GitHub Issue #29 still records the two-slot order M7, then M1, then M8.
+## M0 dependency queue — 2026-10-24 15:06 UTC
+
+- The current two module slots remain M7 safe trigger/checksum correction and M1 P0 #52 boundary disposition. Follow-on order is M7 P0 #93 after checksum/installer reservation; M8 #99 current-base reconciliation; M2 #45 native Shell; M6 #57 product E4; M9 #76 current-ref composition after M1–M8 refs settle; then M1 #51/#62, M7 #70, and M1 #72. Full scheduling rationale is in #29 comment `6385784897`.
+- No owner-authored status is visible on M1/M7/M8 handoffs. No quota check was performed. Keep the two-task cap and the exclusive-resource reservation; do not create module branches, merge `main`/PR #24, or release.
