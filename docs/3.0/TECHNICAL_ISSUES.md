@@ -1726,3 +1726,9 @@ All current M1/M3/M5/M6 and M8 dedicated per-module steps pass; only M9 composit
 
 - **#102 P1 — CLOSED, offline-demo/packaging scope only:** M8 exact head `60cfe8d` builds and its documented offline runner returns `VERIFIED_BOUNDED_OPERATOR_DEMO` with six cases. M7 Community build run `40064614487` and M9 exact-source run `40066875122` pass; M9 checks the exact M8 demo blob and M7 staged-source contract. The offline runner is bounded temporary I/O, not independent E4. Keep #41, #52, #57, and #93 open for their separate installer, product-host, E4, and packaged-runtime acceptance.
 - Open labeled issue count after #81/#87/#102 closures: P0 2; P1 14. Do not infer closure from source composition for remaining gates.
+
+## 2026-10-24 06:15 UTC — Issue #41 lifecycle dispatch result
+
+- Workflow run `40068894360` used exact feature source `f313e5ffd1c604198a0e653a91eb66813fd111ee`: both wrapper regressions and Community build evidence passed; lifecycle failed before Setup.exe with `SHA256SUMS_PATH_UNEXPECTED`. The uploaded result confirms `installerExecuted=false` and `installerProcessStarted=false`.
+- Producer `.github/workflows/windows-community.yml` hashes 11 exact artifact paths. Consumer `packaging/windows/installer-lifecycle-smoke.ps1` accepts only 7; the four producer entries missing from the consumer list are `BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, and `SOURCE_MANIFEST.json`. M7 owns the exact allowlist reconciliation in #41 comment `6380772102`; keep all checks strict and rerun only after the fix.
+- Installer slot is FREE after run completion (#29 comment `6380772831`). No VMware, real-model, installation, or clean-VM acceptance is claimed by the failed run.

@@ -1233,3 +1233,9 @@ Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9
 | Gate | Priority | Verified state | Remaining acceptance |
 | --- | --- | --- | --- |
 | Offline demo / Community staging (#102) | P1 | Closed: M8 clean-worktree build and six-case offline runner pass at exact PR #40 head; M7 build evidence and M9 Ubuntu/Windows exact composition pass with the fixed M8 blob. | No installer execution or independent E4 claim; those remain #41/#57/#93. |
+
+## 2026-10-24 06:15 UTC — installer lifecycle remains blocked
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M7 hosted installer lifecycle (#41) | P1 | Workflow `40068894360` passed both wrapper regressions and Community build evidence, then failed before Setup.exe with `SHA256SUMS_PATH_UNEXPECTED`; artifact says installer not executed. Exact producer checksum set has 11 paths while consumer allowlist has 7. | M7 aligns the exact path sets without wildcards/check bypass, reruns current-source CI/build evidence, then reserves one installer slot for a new lifecycle attempt. Windows 11, ordinary-user, upgrade, cancel rollback, EFS, and independent E4 remain unverified. |

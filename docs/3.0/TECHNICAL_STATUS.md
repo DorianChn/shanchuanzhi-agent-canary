@@ -8028,3 +8028,11 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - P1 #81, #87, and #102 are now closed with scoped evidence. Open issue labels: P0 2 (#52, #93), P1 14. Product, installer, independent E4, and remaining reliability issues stay open until their specific acceptance evidence exists.
 - M8 #40 remains OPEN/Draft pending owner disposition on #99 and post-M9-base reconciliation. PR #24 remains OPEN/Draft on its original release-readiness base. No main merge or Release.
 - Last Usage Overview read remains 05:53 UTC at 49% five-hour / 66% weekly; quota stop threshold (<5%) inactive then.
+
+## 2026-10-24 06:15 UTC — hosted lifecycle result
+
+- M0 ran the existing `Windows Community wrapper` workflow with lifecycle enabled on source `f313e5ffd1c604198a0e653a91eb66813fd111ee` (run `40068894360`). Ubuntu/Windows wrapper regressions and Windows Community build evidence passed. The installer-lifecycle job failed before Setup.exe: artifact result `SHA256SUMS_PATH_UNEXPECTED`, `installerExecuted=false`, `installerProcessStarted=false`.
+- Root cause is an exact producer/consumer list mismatch: workflow checksums 11 named artifacts while the lifecycle script accepts 7; it rejects `BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, or `SOURCE_MANIFEST.json` before installation. M7 owns the correction request on #41 comment `6380772102`. Do not broaden to a wildcard or infer any install/uninstall result.
+- The exclusive installer slot was released after the workflow ended; no VMware or real-model work ran. Re-run only after M7's exact allowlist fix and current-source checks.
+- M0 docs PR #108 merged at `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. PR #24 remains OPEN/Draft at that feature head on the original release-readiness base. Main and Release remain untouched.
+- Current labeled issue counts remain P0 2 and P1 14. M8 #40 still awaits owner disposition on #99. Last Usage Overview read: 49% five-hour / 66% weekly at 06:08 UTC.
