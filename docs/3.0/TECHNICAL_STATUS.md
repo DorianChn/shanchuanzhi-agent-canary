@@ -8186,3 +8186,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Exact PR #109 head `ba1ec2b098ec82e26de77c8f23ee2b0c64c627da` completed standard CI 9/9 (`40087678896`) and AC3 coordination 1/1 (`40087678667`); M9 composition run `40087678646` was skipped. PR #24 remains OPEN/Draft at its original head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
 - Read-only inspection of merged M9 workflow confirms its pull-request job condition only admits PR #36, and it checks out `refs/pull/36/head`; manual dispatch has no explicit current-ref input. The current PR #109 and PR #24 skips are therefore a workflow trigger/ref defect, not test success.
 - M0 recorded a concrete owner edit plan on #76 comment `6383381123`. M9 must fix the existing M9-owned workflow on its existing branch, preserve explicit module SHA pins, assert/print them, and produce an exact current-ref Ubuntu/Windows pass. No module implementation was changed by M0.
+
+## Coordination audit attention fix — 2026-10-24 11:01 UTC
+
+- M0's read-only open-PR audit previously counted skipped/neutral checks in the `K` column but hid their names from the attention column. The report now lists every pending or non-success check by name while preserving `skipped` as `K`, not `failed`; this makes skipped M9 composition visible without calling it a failure or a pass.
+- M0-only change: commit `2097bc7` updates `scripts/ac3-pr-audit.mjs` and its targeted regression. `node --test test/ac3-pr-audit.test.mjs` passed 4/4; `git diff --check` passed. No M1–M8 source or security assertion was changed.
+- This commit is local on the existing M0 branch and will be included in the next authorized push batch after the quota, remote-ref, and scope checks. M9 current-ref composition remains independently OPEN/P1 until its owner repairs the workflow and produces a current exact-source run.
