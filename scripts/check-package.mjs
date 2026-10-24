@@ -63,7 +63,7 @@ try {
   const packageFile = path.join(temp, pack.filename);
   const installDir = path.join(temp, "install");
   fs.mkdirSync(installDir);
-  runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
+  runNpm(["install", "--prefix", installDir, "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
 
   run(process.execPath, [path.join(policyRoot, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
 
