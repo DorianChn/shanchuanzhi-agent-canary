@@ -8307,3 +8307,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M9 composition run `40096176240` was SKIPPED again on the exact current PR head. No M9-owned workflow correction or module branch update is visible. The current skip remains recorded as an automatic integration blocker in #76.
 - PR #40 remains OPEN/Draft on the older base SHA `416f1ba`; current feature head is `e4732d9`. The 12-conflict current-base audit and M8 owner action remain unresolved; M0 recorded the exact state in #76 comment `6384482776`.
 - PR #24 remains OPEN/Draft at its unchanged head. The Usage page showed 58% five-hour / 52% weekly at 12:58 UTC and remains open. No module source, M9 workflow, main, PR #24, or Release change.
+
+## M1/M3 exact-blob follow-up — 2026-10-24 13:02 UTC
+
+- Current M3 branch `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` and feature baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` share the exact Hook test blob `10cdb80b4ca6b19eac7696dc1a85d5cc9f984ae2`, Hook implementation blob `76f7bf6314046777ee1615873e5de4621671ea15`, and native Hook blob `b7ed4aba70a597f4f63a05decc6de1b32f67372e`.
+- The older M1 review did not cover the current test blob; the prior manual M9 run only proves test execution. M0 requested an explicit M1 ACCEPT/REJECT and rationale on #72 comment `6384536968`. Keep #72 OPEN/P1 until that exact review is recorded.
+- Latest PR #109 head `1b4b2d7` has CI SUCCESS (9/9), AC3 coordination SUCCESS, and M9 composition SKIPPED (`40096176240`). M8 PR #40 current-base blockers remain as recorded in #76; PR #24 remains unchanged OPEN/Draft.
