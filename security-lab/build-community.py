@@ -6,6 +6,18 @@ sys.stdout.reconfigure(encoding='utf-8')
 root=Path(__file__).resolve().parent.parent
 if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise SystemExit('Exact source SHA required')
 if not a.candidate_id or len(a.candidate_id)>64 or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789.-' for c in a.candidate_id):raise SystemExit('Invalid candidate identifier')
+community_hook_relative='security-lab/claude-native-hook.mjs'
+source_commit=subprocess.run(['git','-C',str(root),'rev-parse','--verify',a.sha+'^{commit}'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',errors='replace')
+if source_commit.returncode or source_commit.stdout.strip().lower()!=a.sha:raise SystemExit('Exact source commit unavailable')
+hook_blob_ref=f'{a.sha}:{community_hook_relative}'
+hook_blob_id=subprocess.run(['git','-C',str(root),'rev-parse','--verify',hook_blob_ref],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='ascii',errors='replace')
+if hook_blob_id.returncode or len(hook_blob_id.stdout.strip())!=40 or any(c not in '0123456789abcdef' for c in hook_blob_id.stdout.strip().lower()):raise SystemExit('Pinned Community Hook blob unavailable')
+hook_blob_sha=hook_blob_id.stdout.strip().lower()
+hook_blob_result=subprocess.run(['git','-C',str(root),'cat-file','blob',hook_blob_sha],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+if hook_blob_result.returncode:raise SystemExit('Pinned Community Hook blob unavailable')
+hook_blob=hook_blob_result.stdout
+def git_blob_sha(data):return hashlib.sha1(b'blob '+str(len(data)).encode('ascii')+b'\0'+data).hexdigest()
+if git_blob_sha(hook_blob)!=hook_blob_sha:raise SystemExit('Pinned Community Hook blob mismatch')
 seed=root/'competition-submission/Agent_Canary_Competition_2_0_Readiness.zip'
 if hashlib.sha256(seed.read_bytes()).hexdigest()!='57db33063111f45860f9317b6bcaa493fe9949abc50a4fcb0b6fc7fc64ae4b22':raise SystemExit('Verified 2.0 seed digest mismatch')
 stage=Path(tempfile.mkdtemp(prefix='Agent Canary 3 中文 Community '))/ 'agent-canary-community-3';stage.mkdir()
@@ -17,7 +29,11 @@ with zipfile.ZipFile(seed) as z:
   if relative.parts and relative.parts[0]=='dist':continue
   dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(z.read(info))
 for relative in ['src/competition.ts','src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/agent-hook.ts','security-lab/claude-native-hook.mjs','competition-submission/lab/agent-hook.mjs','src/file-state-store.ts','src/ai/console.ts','src/ai/console-page.ts','src/ai/security-center-adapter.ts','src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/product-identity.test.ts','test/file-state-store.test.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','test/evidence-conformance.test.ts','test/evidence-vectors.json','test/gateway-acceptance.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs','security-lab/holdout-v1.json','security-lab/holdout-protocol.md','packaging/ubuntu/install.sh','packaging/ubuntu/install.mjs','scripts/claude-hook-preview.mjs']:
+ if relative==community_hook_relative:continue
  dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes((root/relative).read_bytes())
+community_hook_path=stage/community_hook_relative;community_hook_path.parent.mkdir(parents=True,exist_ok=True);community_hook_path.write_bytes(hook_blob)
+candidate_hook=community_hook_path.read_bytes()
+if candidate_hook!=hook_blob or git_blob_sha(candidate_hook)!=hook_blob_sha:raise SystemExit('Community candidate Hook blob mismatch')
 for f in (root/'docs/3.0').glob('*.md'):
  if f.name=='PR_BODY.md':continue
  dest=stage/'docs/3.0'/f.name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(f.read_bytes())

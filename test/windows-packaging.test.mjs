@@ -100,6 +100,54 @@ test('Community source build transfers the patched dependency tree and keeps can
   assert.match(source,/print\(f'Community validation log: \{logfile\.relative_to\(root\)\}',file=sys\.stderr\)/);
 });
 
+test('Community candidate pins the Hook Git blob when a Windows worktree has CRLF',()=>{
+  const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
+  assert.match(builder,/hook_blob_ref=f'\{a\.sha\}:\{community_hook_relative\}'/);
+  assert.match(builder,/subprocess\.run\(\['git','-C',str\(root\),'cat-file','blob',hook_blob_sha\]/);
+  assert.match(builder,/if relative==community_hook_relative:continue/);
+  assert.match(builder,/community_hook_path\.write_bytes\(hook_blob\)/);
+  assert.match(builder,/git_blob_sha\(candidate_hook\)!=hook_blob_sha/);
+
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-community-hook-blob-'));
+  const sourcePath='security-lab/claude-native-hook.mjs';
+  const canonical=readCommittedWrapperSource(repo);
+  const runGit=(...args)=>{
+    const result=spawnSync('git',['-C',temp,...args],{encoding:'utf8',windowsHide:true});
+    assert.equal(result.status,0,(result.stdout??'')+'\n'+(result.stderr??''));
+    return result.stdout.trim();
+  };
+  try{
+    const worktreePath=path.join(temp,sourcePath);
+    fs.mkdirSync(path.dirname(worktreePath),{recursive:true});
+    fs.writeFileSync(worktreePath,canonical.bytes);
+    fs.writeFileSync(path.join(temp,'.gitattributes'),`${sourcePath} text eol=lf\n`);
+    runGit('init','--quiet');
+    runGit('config','core.autocrlf','true');
+    runGit('config','user.name','Canary contract test');
+    runGit('config','user.email','canary-contract-test@example.invalid');
+    runGit('add','--','.gitattributes',sourcePath);
+    runGit('commit','--quiet','-m','test pinned Community Hook blob');
+    const sourceCommit=runGit('rev-parse','HEAD');
+    assert.equal(runGit('rev-parse',`${sourceCommit}:${sourcePath}`),M1_CANONICAL_WRAPPER_BLOB_SHA);
+
+    const crlfWorktree=Buffer.from(canonical.bytes.toString('utf8').replace(/\n/g,'\r\n'),'utf8');
+    fs.writeFileSync(worktreePath,crlfWorktree);
+    assert.deepEqual(fs.readFileSync(worktreePath),crlfWorktree);
+    assert.notDeepEqual(fs.readFileSync(worktreePath),canonical.bytes,'the synthetic Windows worktree must differ from canonical LF bytes');
+
+    const pinned=spawnSync('git',['-C',temp,'cat-file','blob',`${sourceCommit}:${sourcePath}`],{windowsHide:true});
+    assert.equal(pinned.status,0,(pinned.stderr??'').toString());
+    const candidatePath=path.join(temp,'candidate',sourcePath);
+    fs.mkdirSync(path.dirname(candidatePath),{recursive:true});
+    fs.writeFileSync(candidatePath,pinned.stdout);
+    const candidate=fs.readFileSync(candidatePath);
+    const candidateBlob=createHash('sha1').update(`blob ${candidate.length}\0`).update(candidate).digest('hex');
+    assert.deepEqual(candidate,canonical.bytes);
+    assert.equal(candidateBlob,M1_CANONICAL_WRAPPER_BLOB_SHA);
+    assert.equal(createHash('sha256').update(candidate).digest('hex'),M1_CANONICAL_WRAPPER_SHA256);
+  }finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
 test('payload inventory rejects symbolic links',t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-payload-link-'));
   try{
@@ -429,9 +477,10 @@ test('M1 canonical installer Hook redacts caller sentinels from stdout, stderr, 
     assert.equal(hookSource.blobSha,M1_CANONICAL_WRAPPER_BLOB_SHA);
     writePackagedWrapperSource(repo,hook,hookSource.sha);
     const state=path.join(root,'state');fs.mkdirSync(state);
-    const callerSentinel='M7_SYNTHETIC_CALLER_REASON_SENTINEL';
-    const inputSentinels=[callerSentinel,'C:/synthetic/caller/private.txt'];
-    const input={session_id:callerSentinel,tool_name:'Read',tool_input:{file_path:inputSentinels[1],note:callerSentinel}};
+    const callerInputSentinel='M7_SYNTHETIC_CALLER_INPUT_SENTINEL';
+    const callerReasonSentinel='M7_SYNTHETIC_CALLER_REASON_SENTINEL';
+    const inputSentinels=[callerInputSentinel,'C:/synthetic/caller/private.txt'];
+    const input={session_id:callerInputSentinel,tool_name:'Read',tool_input:{file_path:inputSentinels[1],note:callerInputSentinel}};
     const fallbacks={allow:'Agent Canary: permission_allowed',deny:'Agent Canary: permission_denied',ask:'Agent Canary: approval_required'};
     const invoke=(name,moduleSource)=>{
       const modulePath=path.join(root,`${name}.mjs`),logPath=path.join(root,`${name}.jsonl`);
@@ -446,17 +495,20 @@ test('M1 canonical installer Hook redacts caller sentinels from stdout, stderr, 
       return{result,logPath};
     };
     for(const decision of ['allow','deny','ask']){
-      const reason=`caller supplied ${callerSentinel}`;
+      const reason=`caller supplied ${callerReasonSentinel}`;
       const fixture=`export async function decideAgentHook(){return ${JSON.stringify({hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:decision,permissionDecisionReason:reason}})}}\n`;
       const {result,logPath}=invoke(`decision-${decision}`,fixture);
       const stdoutDecision=JSON.parse(result.stdout).hookSpecificOutput;
       assert.equal(stdoutDecision.permissionDecision,decision);
       assert.equal(stdoutDecision.permissionDecisionReason,fallbacks[decision]);
+      assert.equal((result.stdout??'').includes(callerReasonSentinel),false,`${decision} stdout leaked a caller-controlled reason`);
+      assert.equal((result.stderr??'').includes(callerReasonSentinel),false,`${decision} stderr leaked a caller-controlled reason`);
       const lines=fs.readFileSync(logPath,'utf8').trim().split(/\r?\n/);
       assert.equal(lines.length,1);
       const record=JSON.parse(lines[0]);
       assert.deepEqual(Object.keys(record).sort(),['hookEventName','permissionDecision','timestamp']);
       assert.equal(record.permissionDecision,decision);
+      assert.equal(lines[0].includes(callerReasonSentinel),false,`${decision} JSONL leaked a caller-controlled reason`);
       for(const marker of inputSentinels){
         assert.equal(lines[0].includes(marker),false,`${decision} JSONL leaked a caller canary`);
         assert.equal((result.stdout??'').includes(marker),false,`${decision} stdout leaked a caller canary`);
