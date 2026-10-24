@@ -27,6 +27,8 @@
 
 ## 2026-10-23 M8 桌面接入状态补充 / M8 desktop integration status
 
+Historical source-audit snapshot only / 仅保留当时源码审查的历史范围。Current Console routes and status semantics are defined by [API_CONTRACTS](API_CONTRACTS.md) and [the current compatibility matrix](../../COMPATIBILITY.md): GET status and separately authorized reads now exist; missing backend status is UNKNOWN. The dated 404 observations below are not current-route or product-acceptance claims.
+
 以下是当前 M4 源码审计补充，不改写上文 2026-10-12 的历史验收结果。/ This is a current M4 source-audit addendum; it does not rewrite the historical 2026-10-12 acceptance record.
 
 - [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) remains `OPEN / P0 / NOT_VERIFIED` for the first-party OBSERVE product-file path. The reviewed desktop UI has no protected-read action that consumes an M1-bound identity through the M2 adapter. Its status adapter hardcodes `NOT_VERIFIED`; the reviewed server has no `GET /api/security-center` handler and returns 404.

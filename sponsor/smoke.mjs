@@ -9,9 +9,21 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { runSmokeDriver, smokeEnvironment } from "./smoke-process.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const sandbox = fs.mkdtempSync(path.join(__dirname, ".smoke-run-"));
+if (process.argv[2] !== "--smoke-worker") {
+  const result = await runSmokeDriver(fileURLToPath(import.meta.url), {
+    cwd: __dirname,
+    env: smokeEnvironment(process.env.SMOKE_TEST_FORCE_EADDRINUSE === "1"
+      ? { SMOKE_TEST_FORCE_EADDRINUSE: "1" } : {}),
+  });
+  process.stdout.write(result.stdout);
+  process.stderr.write(result.stderr);
+  if (result.error) console.error(result.error.message);
+  process.exit(result.status ?? 1);
+}
+const sandbox = fs.mkdtempSync(path.join(process.argv[3], ".smoke-run-"));
 const MAX_START_ATTEMPTS = 3;
 let BASE;
 let server;
@@ -35,6 +47,10 @@ async function reserveEphemeralPort() {
 async function closeHttpServer(httpServer) {
   if (!httpServer?.listening) return;
   await new Promise((resolve, reject) => httpServer.close((error) => error ? reject(error) : resolve()));
+}
+
+function request(url, options = {}) {
+  return fetch(url, { ...options, signal: AbortSignal.timeout(3000) });
 }
 
 async function waitForServer(child, base, closed, isListening, ms = 15000) {
@@ -143,38 +159,38 @@ try {
   const up = ready;
   check("server boots in demo mode", up);
 
-  const page = await (await fetch(BASE + "/")).text();
+  const page = await (await request(BASE + "/")).text();
   check("page renders personal plan card", page.includes("个人版 Personal"));
   check("page renders donation section (demo)", page.includes("一次性赞助"));
 
-  const qrRes = await fetch(BASE + "/api/qr?text=hello");
+  const qrRes = await request(BASE + "/api/qr?text=hello");
   check("qr endpoint serves png", qrRes.status === 200 && qrRes.headers.get("content-type") === "image/png");
 
-  const order = await (await fetch(BASE + "/api/order", {
+  const order = await (await request(BASE + "/api/order", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ channel: "wechat", plan: "personal", handle: "smoke-test" }),
   })).json();
   check("personal order created", order.ok === undefined && !!order.orderId && order.qr.includes("/demo/pay/"));
 
-  const payPage = await fetch(BASE + `/demo/pay/${order.orderId}`);
+  const payPage = await request(BASE + `/demo/pay/${order.orderId}`);
   check("demo pay page renders", payPage.status === 200);
-  await fetch(BASE + `/demo/confirm/${order.orderId}`);
+  await request(BASE + `/demo/confirm/${order.orderId}`);
 
-  const status = await (await fetch(BASE + "/api/order/" + order.orderId)).json();
+  const status = await (await request(BASE + "/api/order/" + order.orderId)).json();
   check("order auto-confirms in demo", status.status === "paid");
 
-  const sub = await (await fetch(BASE + "/api/subscription/smoke-test")).json();
+  const sub = await (await request(BASE + "/api/subscription/smoke-test")).json();
   check("subscription activated (+30d)", sub.active === true && !!sub.expiresAt);
 
-  const bad = await fetch(BASE + "/api/order", {
+  const bad = await request(BASE + "/api/order", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ channel: "wechat", plan: "personal" }),
   });
   check("personal order without handle rejected", bad.status === 400);
 
-  const claim = await (await fetch(BASE + "/api/manual-claim", {
+  const claim = await (await request(BASE + "/api/manual-claim", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ channel: "alipay", plan: "personal", handle: "manual-test" }),
@@ -185,7 +201,7 @@ try {
   const crypto = await import("node:crypto");
   fs.writeFileSync(path.join(serverSandbox, "subscribers.json"),
     JSON.stringify({ "LH": { handle: "LH", expiresAt: new Date(Date.now() + 864e5).toISOString() } }));
-  const act = (h) => fetch(BASE + "/api/activate", {
+  const act = (h) => request(BASE + "/api/activate", {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ handle: "LH", machineHash: crypto.randomBytes(31).toString("hex") + String(h).padStart(2, "0") }),
   });
