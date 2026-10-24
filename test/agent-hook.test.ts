@@ -71,6 +71,21 @@ test('native lab wrapper uses decision-specific fallback for unknown reasons',()
   assert.equal(fs.readFileSync(log,'utf8').includes(reasonCanary),false,'unknown reason leaked to JSONL');
  }
 });
+test('native lab wrapper never leaks caller reason sentinels for allow, deny, or ask',()=>{
+ const wrapper=path.resolve('security-lab/claude-native-hook.mjs');
+ for(const [decision,fallback]of [['allow','Agent Canary: permission_allowed'],['deny','Agent Canary: permission_denied'],['ask','Agent Canary: approval_required']] as const){
+  const reasonSentinel=`M2_CALLER_REASON_${decision.toUpperCase()}_SENTINEL`,modulePath=path.join(root,`${decision}-caller-reason-hook.mjs`),log=path.join(root,`${decision}-caller-reason.jsonl`);
+  fs.writeFileSync(modulePath,`export async function decideAgentHook(){return {hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:${JSON.stringify(decision)},permissionDecisionReason:${JSON.stringify(reasonSentinel)}}}}\n`);
+  const result=spawnSync(process.execPath,[wrapper,modulePath,root,path.join(root,`${decision}-caller-reason-state`),log],{input:JSON.stringify({session_id:`${decision}-caller-reason-fixture`,tool_name:'Bash',tool_input:{command:'git status'}}),encoding:'utf8'});
+  assert.equal(result.status,0);
+  const output=JSON.parse(result.stdout).hookSpecificOutput;
+  assert.equal(output.permissionDecision,decision);
+  assert.equal(output.permissionDecisionReason,fallback);
+  assert.equal(result.stdout.includes(reasonSentinel),false,`${decision} reason sentinel leaked to stdout`);
+  assert.equal(result.stderr.includes(reasonSentinel),false,`${decision} reason sentinel leaked to stderr`);
+  assert.equal(fs.readFileSync(log,'utf8').includes(reasonSentinel),false,`${decision} reason sentinel leaked to JSONL`);
+ }
+});
 test('native lab wrapper denies unpinned fixture file operations and rejects destructive command',()=>{
  const log=path.join(root,'wrapper.jsonl'),file=path.resolve('security-lab/claude-native-hook.mjs');
  fs.writeFileSync(path.join(root,'normal.txt'),'NORMAL_FIXTURE');
