@@ -77,7 +77,13 @@ export type ConnectionCheckRuntime={
  * The M1 Gateway must still expose its opaque held-read capability methods.
  * Missing owner APIs or package composition stays UNKNOWN and has no path fallback.
  */
-export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnType<typeof createAgentGuard>,workspaceRoot:string,dependencies:ProtectedHostDependencies={}):Promise<ProtectedHostAdapter>{
+export async function createProtectedHostAdapter(
+  gateway:unknown,
+  guard:ReturnType<typeof createAgentGuard>,
+  workspaceRoot:string,
+  dependencies:ProtectedHostDependencies={},
+  fixedFileReads:Record<string,readonly string[]>={[protectedTool]:[protectedRelativePath]},
+):Promise<ProtectedHostAdapter>{
   let m5CallbackCount=0;
   const unavailable=(reason:string):ProtectedHostAdapter=>({status:'UNKNOWN',reason,m5Callbacks:()=>m5CallbackCount});
   if(gateway===null||typeof gateway!=='object')return unavailable('M1_HELD_FILE_CAPABILITY_UNAVAILABLE');
@@ -158,7 +164,7 @@ export async function createProtectedHostAdapter(gateway:unknown,guard:ReturnTyp
   try{
     const host=facade.createSecurityGatewayHostAdapter({
       gateway,
-      fixedFileReads:{[protectedTool]:[protectedRelativePath]},
+      fixedFileReads,
       createSecurityToolRouter:observedM5Factory,
       routerOptions:{guard,workspaceRoot,mode:'OBSERVE',verifyRealPaths:true},
     });
