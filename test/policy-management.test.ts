@@ -368,19 +368,8 @@ test('native lab hook logs only the fixed allowlist and drops synthetic sensitiv
     reason: 'M5_REASON_SHOULD_NOT_PERSIST',
     decisionMetadata: 'M5_DECISION_METADATA_SHOULD_NOT_PERSIST',
   };
-  const modulePath = path.join(root, 'synthetic-hook.mjs');
   const logFile = path.join(root, 'hook.jsonl');
   const wrapper = path.resolve('security-lab/claude-native-hook.mjs');
-  const moduleSource = `export async function decideAgentHook() {
-    return { hookSpecificOutput: {
-      hookEventName: 'PreToolUse',
-      permissionDecision: 'deny',
-      permissionDecisionReason: ${JSON.stringify(canaries.reason)},
-      callerControlledMetadata: ${JSON.stringify(canaries.decisionMetadata)}
-    } };
-  }\n`;
-  fs.writeFileSync(modulePath, moduleSource, { flag: 'wx' });
-
   const input = {
     session_id: canaries.session,
     tool_name: canaries.toolName,
@@ -390,27 +379,47 @@ test('native lab hook logs only the fixed allowlist and drops synthetic sensitiv
       caller_value: canaries.callerData,
     },
   };
-  const result = spawnSync(process.execPath, [wrapper, modulePath, root, path.join(root, 'state'), logFile], {
-    input: JSON.stringify(input), encoding: 'utf8', timeout: 5000,
-  });
-  assert.equal(result.error, undefined);
-  assert.equal(result.status, 0);
-  const response = JSON.parse(result.stdout);
-  assert.equal(response.hookSpecificOutput.permissionDecision, 'deny');
-  assert.equal(response.hookSpecificOutput.permissionDecisionReason, 'Agent Canary: permission_denied');
-  for (const canary of Object.values(canaries)) {
-    assert.equal(result.stdout.includes(canary), false, `hook output contains synthetic canary ${canary}`);
-    assert.equal(result.stderr.includes(canary), false, `hook stderr contains synthetic canary ${canary}`);
+  const decisionCases = [
+    { decision: 'allow', fallback: 'Agent Canary: permission_allowed' },
+    { decision: 'deny', fallback: 'Agent Canary: permission_denied' },
+    { decision: 'ask', fallback: 'Agent Canary: approval_required' },
+  ] as const;
+  for (const { decision, fallback } of decisionCases) {
+    const modulePath = path.join(root, `synthetic-hook-${decision}.mjs`);
+    const moduleSource = `export async function decideAgentHook() {
+    return { hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: ${JSON.stringify(decision)},
+      permissionDecisionReason: ${JSON.stringify(canaries.reason)},
+      callerControlledMetadata: ${JSON.stringify(canaries.decisionMetadata)}
+    } };
+}\n`;
+    fs.writeFileSync(modulePath, moduleSource, { flag: 'wx' });
+
+    const result = spawnSync(process.execPath, [wrapper, modulePath, root, path.join(root, 'state'), logFile], {
+      input: JSON.stringify(input), encoding: 'utf8', timeout: 5000,
+    });
+    assert.equal(result.error, undefined, `${decision} hook execution failed`);
+    assert.equal(result.status, 0, `${decision} hook exited unsuccessfully`);
+    const response = JSON.parse(result.stdout);
+    assert.equal(response.hookSpecificOutput.permissionDecision, decision, `${decision} decision changed`);
+    assert.equal(response.hookSpecificOutput.permissionDecisionReason, fallback, `${decision} reason was not sanitized`);
+    for (const canary of Object.values(canaries)) {
+      assert.equal(result.stdout.includes(canary), false, `hook output contains synthetic canary ${canary}`);
+      assert.equal(result.stderr.includes(canary), false, `hook stderr contains synthetic canary ${canary}`);
+    }
   }
 
   const log = fs.readFileSync(logFile, 'utf8');
   const lines = log.trim().split(/\r?\n/);
-  assert.equal(lines.length, 1);
-  const record = JSON.parse(lines[0]);
-  assert.deepEqual(Object.keys(record), ['timestamp', 'hookEventName', 'permissionDecision']);
-  assert.equal(new Date(record.timestamp).toISOString(), record.timestamp);
-  assert.equal(record.hookEventName, 'PreToolUse');
-  assert.equal(record.permissionDecision, 'deny');
+  assert.equal(lines.length, decisionCases.length);
+  const records = lines.map(line => JSON.parse(line));
+  for (const [index, record] of records.entries()) {
+    assert.deepEqual(Object.keys(record), ['timestamp', 'hookEventName', 'permissionDecision']);
+    assert.equal(new Date(record.timestamp).toISOString(), record.timestamp);
+    assert.equal(record.hookEventName, 'PreToolUse');
+    assert.equal(record.permissionDecision, decisionCases[index].decision);
+  }
   for (const canary of Object.values(canaries)) {
     assert.equal(log.includes(canary), false, `persisted hook log contains synthetic canary ${canary}`);
   }
