@@ -8287,3 +8287,16 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Thirteen technical Issues remain open: 2 P0, 10 P1, 1 P2. The latest #41, #93, and #57 updates are M0 evidence notes; their owner acceptance and product-level gates remain outstanding.
 - The M7 artifact verified at 12:48 is older than current M7 and not install or M6 E4 acceptance evidence. Keep #41/#93/#57 OPEN; do not count packaged Hook canary evidence as installed-product validation.
 - A fresh Usage Overview read at 12:50 showed 58% five-hour and 52% weekly remaining; the page remains open. PR #109 and PR #24 state checked again at 12:51 UTC. No main merge, module implementation change, M9 workflow change, or Release action.
+
+## PR #109 post-push gate — 2026-10-24 12:56 UTC
+
+- Pushed M0-only docs head `75163448ba89f83c31967fe38ceea604d30a9f98` after fresh Usage read (58% five-hour / 52% weekly) and preflight confirming remote M0 head `46d59b9`, PR #109 base `feature/agent-canary-3.0`, and PR #24 unchanged OPEN/Draft at `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Standard CI run `40095802424` completed SUCCESS, 9/9 jobs; AC3 coordination run `40095802360` completed SUCCESS. M9 composition run `40095802417` completed SKIPPED on this exact PR head.
+- M0 posted the current exact-head trigger result to #76 comment `6384455163`; keep #76 OPEN/P1 until the M9-owned automatic event selects and passes the exact current source on Ubuntu and Windows.
+- Module owners have not supplied new acceptance evidence in this snapshot. No module implementation, M9 workflow, main, PR #24, or Release action was changed.
+
+## M8 current-base gate — 2026-10-24 12:56 UTC
+
+- Fresh remote refs show M1–M8 module heads unchanged from the 12:25 worktree snapshot. M8 PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, based on old feature SHA `416f1ba4848d5be4011ac72d42066d4c72b42d49`; the current feature baseline is `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- Read-only exact merge-tree audit recorded 12 current-base conflicts in #76 comment `6384094440`. GitHub `mergeable=clean` only describes the older PR base; it is not evidence against the current feature baseline. M8 owner rebase/disposition and post-resolution CI remain outstanding; keep #40 Draft and #76/#99 OPEN.
+- M0 posted the refreshed exact-head/base evidence on #76 comment `6384482776`; M0 made no M8 or shared runtime edits.
