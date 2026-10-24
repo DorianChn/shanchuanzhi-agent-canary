@@ -24,7 +24,7 @@ const pinnedSourceShas = {
   M4: '892d3290338fe811da127f8f51ab91de0b9fc18b',
   M5: 'cca42cd1762f995e92454d55ffa5e63951e39144',
   M6: 'dbebc961ebde25433cf216da2c41d6b082b4be2e',
-  M7: 'e18b9d377905c79efd584993e84a55d48ff3891b',
+  M7: 'fcc205d56bd4d59adf765b51c7eff7aa50d02ed0',
   M8: '84ee6a7a8d65706f694b7949e82fd8c83cc11523',
   M8_CANDIDATE: '90fcde07775d4109f6e1b1b4b52d1975723dd979',
 };
@@ -45,7 +45,7 @@ const currentCandidateProvenance = {
   M3: { ownerHead: '98a034fa2066cec18f833440cc51275c389681c6', ownerTree: '4da9bd1d3168aaa8dc1df97ad8b8e4bb18187430', prHead: '0ebc49a3e688e10ffa643dd9275bd12cc31c13a9', prTree: '2396a5915c2bb24fa828b02118ea5f69f9e3eea1' },
   M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
   M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
-  M7: { ownerHead: '4d66e65d797656a653bde8576cffefb79f2197fa', ownerTree: '115f58c8b6e8ab99258a9481b5c16e65b66a39b5', prHead: 'e18b9d377905c79efd584993e84a55d48ff3891b', prTree: '95a57dc4e7d318451b1f39c1efaf44fee1822698' },
+  M7: { ownerHead: 'fcc205d56bd4d59adf765b51c7eff7aa50d02ed0', ownerTree: '8e492896eebe016dba9a48a23a3a401ef17ecb9a', sourceBase: 'e18b9d377905c79efd584993e84a55d48ff3891b', prHead: 'fcc205d56bd4d59adf765b51c7eff7aa50d02ed0', prTree: '8e492896eebe016dba9a48a23a3a401ef17ecb9a' },
 };
 
 const m2PriorM1DispositionSha = 'be66cf8f4c1a60f093740577796ec5cd633e1d93';
@@ -614,6 +614,66 @@ test('exact M2 merge tree pins M7 package policy while current M7 merge adds rel
       `M7 package-policy file ${filePath} must remain byte-identical between the M2 CI pin and M9 source pin`,
     );
   }
+});
+
+test('exact current M7 Community runtime contract requires all 37 paths and rejects missing or extra JavaScript and missing sdk.d.ts', async () => {
+  const runtimeContractPath = path.join(sourceRoots.M7.root, 'packaging/windows/runtime-contract.mjs');
+  const { communityRuntimeFiles, validateCommunityRuntime } = await import(pathToFileURL(runtimeContractPath).href);
+  const expectedRuntimeFiles = [
+    'agent-hook.js',
+    'agent-host-detection.js',
+    'agent-integrations.js',
+    'ai/cli.js',
+    'ai/console-page.js',
+    'ai/console.js',
+    'ai/demo.js',
+    'ai/policy-demo.js',
+    'ai/privacy.js',
+    'ai/provider.js',
+    'ai/report.js',
+    'ai/security-center-adapter.js',
+    'ai/transport.js',
+    'ai/types.js',
+    'alerts.js',
+    'codex-connection-check.js',
+    'codex-connection-mcp.js',
+    'competition.js',
+    'config.js',
+    'containment.js',
+    'dataflow.js',
+    'decoys.js',
+    'file-state-store.js',
+    'network-tool.js',
+    'protected-mcp.js',
+    'risk-policy.js',
+    'runtime/dataflow.js',
+    'runtime/demo.js',
+    'runtime/evidence.js',
+    'runtime/gateway.js',
+    'runtime/honeypot.js',
+    'sdk.js',
+    'security-router.js',
+    'self-test.js',
+    'server.js',
+    'tokens.js',
+    'webhook.js',
+  ];
+  assert.equal(readTrackedBlobId('M7', 'packaging/windows/runtime-contract.mjs'), 'd8e03e4d697930ed87eb979a8ae3b611cd888a24', 'the runtime guard must remain tied to the exact M7 candidate source blob');
+  assert.equal(communityRuntimeFiles.length, 37, 'the exact M7 runtime manifest has 37 entries');
+  assert.deepEqual(communityRuntimeFiles, expectedRuntimeFiles, 'all 37 exact runtime paths remain fixed');
+  assert.equal(new Set(communityRuntimeFiles).size, 37, 'the runtime manifest has no duplicate paths');
+  assert.deepEqual(validateCommunityRuntime([...expectedRuntimeFiles].reverse(), true), expectedRuntimeFiles, 'the complete path set with sdk.d.ts is accepted');
+  assert.throws(() => validateCommunityRuntime(expectedRuntimeFiles.slice(1), true), /COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/, 'a missing runtime JavaScript path is rejected');
+  assert.throws(() => validateCommunityRuntime([...expectedRuntimeFiles, 'unexpected.js'], true), /COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/, 'an extra runtime JavaScript file is rejected');
+  assert.throws(() => validateCommunityRuntime(expectedRuntimeFiles, false), /COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/, 'a missing sdk.d.ts declaration is rejected');
+
+  const build = readTrackedTextAt('M7', pinnedSourceShas.M7, 'packaging/windows/build.mjs').join('\n');
+  const ownerTests = readTrackedTextAt('M7', pinnedSourceShas.M7, 'test/windows-packaging.test.mjs').join('\n');
+  assert.match(build, /validateCommunityRuntime\(walk\(path\.join\(root,'app\/dist'\)\)\.filter\(p=>p\.endsWith\('\.js'\)\),fs\.existsSync\(path\.join\(root,'app\/dist\/sdk\.d\.ts'\)\)\)/, 'the builder validates the emitted JavaScript inventory and sdk.d.ts');
+  assert.match(ownerTests, /Windows Community packaging requires the exact 37 runtime files and SDK declaration/);
+  assert.match(ownerTests, /communityRuntimeFiles\.slice\(1\)/, 'the exact M7 owner suite retains its missing-file negative control');
+  assert.match(ownerTests, /unexpected\.js/, 'the exact M7 owner suite retains its extra-JavaScript negative control');
+  assert.match(ownerTests, /validateCommunityRuntime\(communityRuntimeFiles,false\)/, 'the exact M7 owner suite retains its missing-sdk.d.ts negative control');
 });
 
 test('historical M8 source matches its exact M1-approved Hook blob', () => {
