@@ -1,3 +1,26 @@
+## M0 live priority dashboard — 2026-10-24 10:16 UTC
+
+Priority definitions: **P0** protected-path fail-open, sensitive-data leak, or serious data damage; **P1** interface incompatibility, build failure, or key feature unavailable; **P2** noncritical UI/docs/performance or coordination hygiene. This table is the current open-issue snapshot; dated entries below are historical evidence.
+
+| Issue | Priority | Owner(s) | Current state | Remaining acceptance / next gate |
+| --- | --- | --- | --- | --- |
+| #52 | P0 | M1 Gateway, M2 adapter, M3 route, M4 UI, M5 policy; M0 coordinates | Configured-target route exists and exact source tests passed; product-host/installed/runtime/TOCTOU still NOT_VERIFIED. | Supported shipped host must use a held M1 identity; preserve alias/replacement zero-side-effect denials; keep UI UNKNOWN until product evidence. |
+| #93 | P0 | M7 package; M1 redaction contract; M9 exact-artifact evidence | Source/build fixes do not prove installed Hook stdout/log redaction. | Verify exact packaged payload and sanitized runtime output; no P0 closure from source-only CI. |
+| #99 | P1 | M7 owns build contract; M8 owns its compatible adaptation | PR #40 remains at `60cfe8d` on base `416f1ba`; 12 conflicts against feature `e4732d9`; M8 disposition still absent. | M8 posts exact ACCEPT/REJECT for M7-owned adapter/provenance seam and resolves its existing branch by ownership. |
+| #80 | P1 | M6 E4 reason contract; M8 output fixture | M6 accepted the exact current blobs; M9 exact-source reason projection passed 21/21; issue remains open for independent product E4. | Keep integration result separate from #57's product E4 receipt. |
+| #76 | P1 | M9 workflow/ref contract | Current-ref composition skipped on PR #24 and M0 PR #109; exact-head evidence is recorded in comment `6382817912`. | M9 changes the existing trigger/ref behavior and passes intended exact refs on Ubuntu and Windows. |
+| #72 | P1 | M1 review; M3 owns its Hook test | M0 recorded the exact changed test blob `10cdb80`; no M1 disposition is visible. | M1 posts ACCEPT/REJECT for that exact test blob; implementation and canonical Hook ownership stay unchanged. |
+| #70 | P1 | M7 dependency/package policy; repository maintainer controls merge | Existing Dependabot PR #67 (Hono 4.13.13) is OPEN/non-Draft and all listed CI passes; it targets `main`. | Default-branch advisory remains until an authorized maintainer merges #67. M0 does not merge to `main`. |
+| #62 | P1 | M1 Gateway/test owner | One expired-approval CI failure occurred before expiry-denial and zero-callback assertions; root cause UNKNOWN; no bypass established. | Reproduce/classify with preserved assertions and exact-head evidence. |
+| #57 | P1 | M6 verifier; independent product operator/reviewer | No qualifying independent product artifact or operator receipt is present; NOT_VERIFIED. | Record exact artifact/build/hash, clean independent execution, and sanitized verifier/operator result. |
+| #54 | P1 | M9 test diagnostics; provider/transport source owner unassigned | Historical Windows Node 22 503 retry failure remains unexplained; isolated loopback retry passed but does not reproduce full hosted context. | Identify component owner, capture current request/error evidence, and rerun the exact hosted failure path. |
+| #51 | P1 | M1 state-store/Gateway owner | `RETRY_LIMIT` was observed in historical Ubuntu concurrency CI; cause UNKNOWN and no data loss/corruption is proven. | Diagnose current exact source without weakening retry or concurrency assertions. |
+| #45 | P1 | M2 host/isolation owner | Native Codex Shell remains UNPROTECTED; fixture/protocol tests do not establish installed trusted host enforcement. | Provide supported-host enforcement evidence or preserve explicit UNPROTECTED boundary. |
+| #41 | P1 | M7 installer/lifecycle owner | Producer emits 11 checksum paths; consumer accepts 7. Prior hosted attempt stopped before Setup.exe (`installerExecuted=false`). Existing local workflow diff enables PR runs without concurrency; M0 preserves it untouched. | Align ordered path sets, retain hash/path/source checks, keep lifecycle explicitly reserved/serialized, then obtain clean-VM lifecycle evidence. |
+| #29 | P2 | M0 scheduling | Last recorded exclusive-slot status was FREE after run `40068894360` failed before Setup.exe (06:12 UTC); M0 has not started VMware, real-model, or installer tests. | Reserve before any exclusive run and record terminal release; other-window activity is UNKNOWN. |
+
+Open labeled count at this readback: **P0 2, P1 11, P2 1**. No Issue is closed merely because a source check passed; cross-window Codex activity is not inferred from GitHub silence.
+
 ## M9/M6 exact-source guard compatibility — Issue #74 — 2026-10-23 00:19 UTC
 
 - **P1 / OPEN / INVESTIGATING.** Owner: M9 for the composition guard; M6 supports verification of its additive E4 regression. At exact public M6 head `3578e7ba10b2fd160efa0e4683aba863c666db8a`, M9 exact-source test `node test/m9-cross-module-composition.test.mjs` surfaced a stale whole-file expectation for `test/auto-e4.test.mjs`: current blob `612b78b...` includes M6's new protected-target-mutation FAIL regression, while the historical reviewed blob is `18fcc4b...`.
