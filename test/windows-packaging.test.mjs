@@ -148,6 +148,86 @@ test('Community candidate pins the Hook Git blob when a Windows worktree has CRL
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
 
+test('Community candidate stages the exact M8 offline-demo Git blob and provenance',()=>{
+  const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
+  const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
+  const m8SourceSHA='90fcde07775d4109f6e1b1b4b52d1975723dd979';
+  const m8DemoBlob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
+  const m8DemoPath='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
+  assert.match(builder,/p\.add_argument\('--m8-source-sha',required=True\)/);
+  assert.match(builder,/expected_m8_source_sha='90fcde07775d4109f6e1b1b4b52d1975723dd979'/);
+  assert.match(builder,/expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(builder,/m8_demo_ref=f'\{a\.m8_source_sha\}:\{m8_demo_relative\}'/);
+  assert.match(builder,/community_demo_path\.write_bytes\(m8_demo_bytes\)/);
+  assert.match(builder,/if candidate_m8_demo!=m8_demo_bytes[\s\S]*?expected_m8_demo_blob/);
+  assert.match(builder,/m8SourceSHA':a\.m8_source_sha[\s\S]*?'m8SourceBlob':expected_m8_demo_blob/);
+  assert.match(workflow,/M8_SOURCE_SHA: 90fcde07775d4109f6e1b1b4b52d1975723dd979/);
+  assert.match(workflow,/refs\/pull\/40\/head/);
+  assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
+  assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+
+  const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
+  assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
+  const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
+  assert.equal(expectedBlob,m8DemoBlob);
+  const expectedText=m8Demo.stdout.toString('utf8');
+  assert.match(expectedText,/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.match(expectedText,/g\.state,'QUARANTINED'/);
+  assert.match(expectedText,/guard_quarantined/);
+  assert.match(expectedText,/NORMAL_OK/);
+
+  const pythonCandidates=[process.env.CANARY_PYTHON,...(process.platform==='win32'?['python.exe','python']:['python3','python'])].filter(Boolean);
+  let pythonCommand;
+  for(const candidate of pythonCandidates){
+    const probe=spawnSync(candidate,['--version'],{encoding:'utf8',windowsHide:true});
+    if(probe.status===0){pythonCommand=candidate;break;}
+  }
+  assert.ok(pythonCommand,'the Community builder regression requires the same Python runtime as the build job');
+
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-community-m8-pin-'));
+  const fakeNpm=path.join(temp,'fake-npm-cli.cjs');
+  const outputName=`.test-community-m8-${process.pid}-${Date.now()}`;
+  const outputDir=path.join(repo,'competition-submission',outputName);
+  const sourceSHA=spawnSync('git',['-C',repo,'rev-parse','HEAD'],{encoding:'utf8',windowsHide:true});
+  assert.equal(sourceSHA.status,0,(sourceSHA.stderr??'').toString());
+  fs.writeFileSync(fakeNpm,"if (process.argv[2] === 'run' && process.argv[3] === 'build') { require('node:fs').mkdirSync('dist', { recursive: true }); require('node:fs').writeFileSync('dist/sdk.d.ts', 'export {};\\n'); }\n");
+  let stageDir;
+  try{
+    const unpinned=spawnSync(pythonCommand,[
+      'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha','0'.repeat(40),
+      '--candidate-id','m8-pin-test','--output-dir',outputDir,
+    ],{cwd:repo,encoding:'utf8',windowsHide:true});
+    assert.notEqual(unpinned.status,0,'the builder must reject noncanonical M8 source commits');
+    assert.match(unpinned.stderr,/Pinned M8 source SHA mismatch/);
+    assert.equal(fs.existsSync(outputDir),false,'a rejected M8 pin must not create candidate outputs');
+    const build=spawnSync(pythonCommand,[
+      'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,
+      '--candidate-id','m8-pin-test','--output-dir',outputDir,
+    ],{cwd:repo,encoding:'utf8',windowsHide:true,maxBuffer:8*1024*1024});
+    assert.equal(build.status,0,(build.stdout??'')+'\n'+(build.stderr??''));
+    const summary=JSON.parse(build.stdout.trim());
+    assert.equal(summary.m8SourceSHA,m8SourceSHA);
+    assert.equal(summary.m8SourceBlob,m8DemoBlob);
+    const rawReport=JSON.parse(fs.readFileSync(path.join(outputDir,`community-build-${sourceSHA.stdout.trim().slice(0,8)}.json`),'utf8'));
+    assert.equal(rawReport.version.m8SourceSHA,m8SourceSHA);
+    assert.equal(rawReport.version.m8SourcePath,m8DemoPath);
+    assert.equal(rawReport.version.m8SourceBlob,m8DemoBlob);
+    stageDir=rawReport.temporaryBuild;
+    const staged=fs.readFileSync(path.join(stageDir,'reproduction-kit/run-offline-demo.mjs'));
+    assert.deepEqual(staged,m8Demo.stdout,'the actual staged candidate must contain the exact M8 Git blob');
+    const zipMember='agent-canary-community-3/reproduction-kit/run-offline-demo.mjs';
+    const zipped=spawnSync(pythonCommand,['-c',"import sys,zipfile;sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]))",summary.file,zipMember],{windowsHide:true,maxBuffer:2*1024*1024});
+    assert.equal(zipped.status,0,(zipped.stderr??'').toString());
+    assert.deepEqual(zipped.stdout,m8Demo.stdout,'the published candidate ZIP must preserve the exact M8 Git blob');
+  }finally{
+    fs.rmSync(outputDir,{recursive:true,force:true});
+    if(stageDir&&fs.existsSync(stageDir))fs.rmSync(path.dirname(stageDir),{recursive:true,force:true});
+    fs.rmSync(temp,{recursive:true,force:true});
+  }
+});
+
 test('payload inventory rejects symbolic links',t=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-payload-link-'));
   try{

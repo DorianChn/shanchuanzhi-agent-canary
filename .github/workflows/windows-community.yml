@@ -66,12 +66,23 @@ jobs:
     env:
       AGENT_CANARY_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       COMMUNITY_CANDIDATE_ID: competition-candidate.2
+      M8_SOURCE_SHA: 90fcde07775d4109f6e1b1b4b52d1975723dd979
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Fetch and verify exact M8 offline-demo source
+        shell: pwsh
+        run: |
+          $m8SourceSha = $env:M8_SOURCE_SHA
+          if ($m8SourceSha -ne '90fcde07775d4109f6e1b1b4b52d1975723dd979') { throw 'M8_SOURCE_SHA_PIN_MISMATCH' }
+          $baseRepository = "https://github.com/$env:GITHUB_REPOSITORY.git"
+          & git fetch --no-tags --depth=1 $baseRepository refs/pull/40/head
+          if ($LASTEXITCODE -ne 0) { throw 'M8_SOURCE_FETCH_FAILED' }
+          $fetchedM8Sha = (& git rev-parse FETCH_HEAD).Trim()
+          if ($fetchedM8Sha -ne $m8SourceSha) { throw 'M8_SOURCE_FETCH_MISMATCH' }
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
@@ -107,11 +118,12 @@ jobs:
             --node $nodeExe `
             --npm-cli $npmCli `
             --sha $sourceSha `
+            --m8-source-sha $env:M8_SOURCE_SHA `
             --candidate-id $env:COMMUNITY_CANDIDATE_ID `
             --output-dir $communityBuildRoot
           if ($LASTEXITCODE -ne 0) { throw 'SOURCE_SHA_COMMUNITY_BUILD_FAILED' }
           $communityBuildSummary = ($communityBuildStdout | Out-String).Trim() | ConvertFrom-Json
-          if ($communityBuildSummary.status -ne 'VERIFIED_POSITIVE_LIST_BUILD' -or $communityBuildSummary.sourceSHA -ne $sourceSha -or $communityBuildSummary.files -lt 1) { throw 'COMMUNITY_BUILD_SUMMARY_INVALID' }
+          if ($communityBuildSummary.status -ne 'VERIFIED_POSITIVE_LIST_BUILD' -or $communityBuildSummary.sourceSHA -ne $sourceSha -or $communityBuildSummary.m8SourceSHA -ne $env:M8_SOURCE_SHA -or $communityBuildSummary.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f' -or $communityBuildSummary.files -lt 1) { throw 'COMMUNITY_BUILD_SUMMARY_INVALID' }
           $communityZip = Join-Path $communityBuildRoot "Agent_Canary_3_0_Community_Preview_$($sourceSha.Substring(0,8)).zip"
           $reportedCommunityZipPath = [System.IO.Path]::GetFullPath([string]$communityBuildSummary.file)
           $expectedCommunityZipPath = [System.IO.Path]::GetFullPath($communityZip)
@@ -121,7 +133,7 @@ jobs:
           $communityZipSha256 = (Get-FileHash -LiteralPath $communityZip -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($communityZipSha256 -ne [string]$communityBuildSummary.sha256) { throw 'COMMUNITY_ZIP_SHA256_MISMATCH' }
           $communityBuildRawReport = Get-Content -LiteralPath $communityBuildRawReportPath -Raw | ConvertFrom-Json
-          if ($communityBuildRawReport.version.sourceSHA -ne $sourceSha -or $communityBuildRawReport.version.candidateId -ne $env:COMMUNITY_CANDIDATE_ID) { throw 'COMMUNITY_BUILD_REPORT_PROVENANCE_MISMATCH' }
+          if ($communityBuildRawReport.version.sourceSHA -ne $sourceSha -or $communityBuildRawReport.version.candidateId -ne $env:COMMUNITY_CANDIDATE_ID -or $communityBuildRawReport.version.m8SourceSHA -ne $env:M8_SOURCE_SHA -or $communityBuildRawReport.version.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f') { throw 'COMMUNITY_BUILD_REPORT_PROVENANCE_MISMATCH' }
           $communityBuildSteps = @($communityBuildRawReport.steps.PSObject.Properties | ForEach-Object {
             if ([int]$_.Value.exitCode -ne 0) { throw 'COMMUNITY_BUILD_VALIDATION_FAILED' }
             [ordered]@{ name = [string]$_.Name; exitCode = [int]$_.Value.exitCode }
@@ -131,6 +143,8 @@ jobs:
             schemaVersion = 1
             status = [string]$communityBuildSummary.status
             sourceSHA = $sourceSha
+            m8SourceSHA = [string]$communityBuildRawReport.version.m8SourceSHA
+            m8SourceBlob = [string]$communityBuildRawReport.version.m8SourceBlob
             candidateId = [string]$communityBuildRawReport.version.candidateId
             sourceZip = [System.IO.Path]::GetFileName($communityZip)
             sourceZipSHA256 = $communityZipSha256
