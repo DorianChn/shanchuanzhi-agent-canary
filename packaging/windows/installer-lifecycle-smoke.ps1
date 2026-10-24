@@ -213,7 +213,7 @@ try {
   $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
   Assert-Condition ($buildReport.sourceSHA -eq $ExpectedSourceSHA) 'BUILD_REPORT_SOURCE_SHA_MISMATCH'
   Assert-Condition ($buildReport.installerExecuted -eq $false) 'STATIC_BUILD_REPORT_SHOULD_NOT_CLAIM_INSTALL'
-  Assert-Condition ($buildReport.status -eq 'SETUP_EXTRACTED_HOOK_CANARY_EXECUTED_INSTALLER_NOT_RUN') 'BUILD_REPORT_STATUS_INVALID'
+  Assert-Condition ($buildReport.status -eq 'BUILT_NOT_INSTALLED; PACKAGED_HOOK_CANARY_EXECUTED') 'BUILD_REPORT_STATUS_INVALID'
   Assert-Condition ($buildReport.candidateId -match '^competition-candidate\.([1-9][0-9]*)$') 'BUILD_REPORT_CANDIDATE_INVALID'
   $candidateNumber = $Matches[1]
   Assert-Condition ($buildReport.packageVersion -eq $manifest.version) 'PACKAGE_VERSION_MISMATCH'
