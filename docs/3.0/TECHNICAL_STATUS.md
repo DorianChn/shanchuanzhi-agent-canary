@@ -8051,3 +8051,12 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - No M8 owner reply followed M0's PR #40 disposition request `6380586402`; no M7 owner code update followed Issue #41 requests `6380772102` and `6380866198`. Keep #40 Draft and #41 OPEN/P1/HOLD.
 - Integration count remains M1–M7 and M9 merged, M8 unmerged; open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft on its original base; no `main` merge or Release.
 - Refreshed Usage Overview at 06:36 UTC: 34% five-hour and 64% weekly remaining. The <5% stop threshold is not active.
+
+## 2026-10-24 06:45 UTC — M8 base reconciliation conflict
+
+- A read-only merge-tree check compared feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73` with existing M8 head `60cfe8d976a42d0f635d4be93ca24c00e81246d5`. It found 12 conflicts: modify/delete in `COMPATIBILITY.md`, `E4_EVIDENCE_INDEX.md`, `GETTING_STARTED.md`, `RELEASE_NOTES_DRAFT.md`, `SECURITY_TESTING.md`, `UPGRADING.md`, `USER_TEST_PLAN.md`, `scripts/check-docs.mjs`; content conflicts in `README.md`, `README.zh-CN.md`, `SECURITY.md`, and `THIRD_PARTY_NOTICES.md`.
+- No merge was applied; the M8 and feature worktrees remain clean. PR #40 is still OPEN/Draft and records base `416f1ba`. M0 recorded the exact conflicts and owner action on Issue #76 comment `6381059163`; M8 must reconcile its docs against current feature/M9 and rerun current-base checks before PR readiness.
+- PR #41 still has no M7 code-update response after the exact four-path fix request. Installer acceptance remains OPEN/P1/HOLD; no installation evidence is claimed.
+- M0 PR #109 head `da035d0` passed all 9 CI jobs in run `40070963573`; ownership-contract run `40070963454` passed; M9 composition was skipped for docs-only changes. PR #109 remains OPEN/Draft.
+- M1–M7 and M9 are integrated; M8 remains the one unmerged M1–M8 module. Open labeled issues remain P0 2 and P1 14. PR #24 remains OPEN/Draft on its original base. No `main` merge or Release.
+- Refreshed Usage Overview at 06:45 UTC: 34% five-hour and 64% weekly remaining; the <5% stop threshold is inactive.
