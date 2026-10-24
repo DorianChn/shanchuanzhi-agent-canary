@@ -129,3 +129,19 @@ This section records maintainer-run validation of candidate tree `a7620db78fbfed
 | `git diff --check origin/feature/agent-canary-3.0...HEAD` | PASS |
 
 The exact-head GitHub matrix is tracked separately on [PR #40](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/40). Hosted results from older PR heads are not acceptance evidence for this candidate. The M8 Hook-output expectations still require M1 owner review; Issue #80 remains open for M6/M8 E4 reason-contract disposition. No test or security policy was weakened.
+
+## M8 PR #40 synchronized candidate validation — 2026-10-24
+
+This section records maintainer-run checks on synchronized candidate `8cf751badc45fe63e140fac25a2f142cca64793c`, whose second parent is feature baseline `416f1ba4848d5be4011ac72d42066d4c72b42d49`. The baseline includes the M7 ancestry-fixture correction merged by PR #105. This is source-level validation only; it does not claim independent product E4, installer lifecycle, or clean-VM acceptance.
+
+| Command | Result |
+|---|---|
+| `npm run build` | PASS |
+| `node scripts/check-docs.mjs` | PASS; 14 documents, 57 links, 13 code examples, 4 issue template files |
+| `node --test security-lab/claude-native-hook-output.test.mjs` | 6/6 passed |
+| `npm --prefix sponsor test` | 24 passed, 1 skipped for platform-dependent symlink permission; 0 failed |
+| `npm --prefix sponsor run smoke` | All 12 smoke checks passed |
+| `git diff --check origin/feature/agent-canary-3.0...HEAD` | PASS |
+| exact M9 composition and full cross-platform candidate matrix | Pending on the published PR #40 head; older-head runs are not acceptance for this candidate |
+
+No test or security policy was weakened. M1 Hook-output owner review and Issue #80 disposition remain outstanding.
