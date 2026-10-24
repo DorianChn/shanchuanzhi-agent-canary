@@ -97,6 +97,26 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   const smoke=fs.readFileSync(new URL('../packaging/windows/installer-lifecycle-smoke.ps1',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   const installer=fs.readFileSync(new URL('../packaging/windows/installer.nsi.in',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   const worker=fs.readFileSync(new URL('../packaging/windows/worker.mjs',import.meta.url),'utf8');
+  assert.ok(lifecycleJob.includes("    if: github.event_name == 'workflow_dispatch' && inputs.run_installer_lifecycle\n"),'installer lifecycle must remain explicitly manual-only');
+  assert.match(lifecycleJob,/    concurrency:\n      group: agent-canary-exclusive-e4\n      cancel-in-progress: false/,'the isolated installer job must share the static non-cancelling exclusive resource key');
+  assert.doesNotMatch(buildJob,/^\s+concurrency:/m,'ordinary PR build evidence must not acquire the exclusive VM/model/installer lock');
+  const readArtifactPaths=(source,name)=>{
+    const match=source.match(new RegExp(`\\$${name}\\s*=\\s*@\\(([\\s\\S]*?)\\)`));
+    assert.ok(match,`missing PowerShell artifact path list: ${name}`);
+    return Array.from(match[1].matchAll(/'([^']+)'/g),entry=>entry[1]);
+  };
+  const buildArtifactPaths=readArtifactPaths(buildJob,'artifactPaths');
+  const expectedArtifactPaths=readArtifactPaths(smoke,'expectedArtifactPaths');
+  assert.equal(new Set(buildArtifactPaths).size,buildArtifactPaths.length,'the workflow artifact manifest must not contain duplicate paths');
+  assert.equal(new Set(expectedArtifactPaths).size,expectedArtifactPaths.length,'the verifier artifact allowlist must not contain duplicate paths');
+  assert.deepEqual(expectedArtifactPaths,buildArtifactPaths,'the verifier must require exactly the artifact files emitted and checksummed by the workflow');
+  for(const marker of [
+    "throw 'SHA256SUMS_PATH_DUPLICATE'",
+    "throw 'SHA256SUMS_PATH_UNEXPECTED'",
+    'ARTIFACT_SHA256_MISMATCH',
+    "'SHA256SUMS_SET_INCOMPLETE'",
+    "'SHA256SUMS_ENTRY_MISSING'"
+  ]) assert.ok(smoke.includes(marker),`checksum verification must fail closed on ${marker}`);
   assert.ok(lifecycleJob.includes('needs: windows-community-build-evidence'),'lifecycle must consume the package from this workflow run');
   assert.ok(lifecycleJob.includes('runs-on: windows-latest'),'lifecycle must run on a fresh hosted Windows VM');
   assert.ok(lifecycleJob.includes('permissions: {}'),'untrusted package execution must have no repository permissions');

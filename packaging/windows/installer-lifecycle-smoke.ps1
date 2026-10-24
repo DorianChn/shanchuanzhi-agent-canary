@@ -182,6 +182,10 @@ try {
   $expectedArtifactPaths = @(
     'AgentCanary-Community-Setup.exe',
     'BUILD_REPORT.json',
+    'BUILD_RESULT.json',
+    'COMMUNITY_BUILD_REPORT.json',
+    'VERSION.json',
+    'SOURCE_MANIFEST.json',
     'PAYLOAD_MANIFEST.json',
     'CANARY_RESULT.json',
     'extracted-hook/claude-native-hook.mjs',
