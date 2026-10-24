@@ -1,3 +1,7 @@
+## Current configured-target dependency status — 2026-10-24 09:21 UTC
+
+The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. M3's focused CLI/source fixtures plus M9 run `40066875122` pass Ubuntu and Windows. M3/M4 owner confirmation and shipped-package/native-host acceptance are still outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.
+
 ## M0 ownership/dependency delta — 2026-10-15 21:16 UTC
 
 - Issue #56 tracks a PR-scope ownership overlap: M0 PR #30 currently carries an M1-owned `test/agent-hook.test.ts` diff while PR #43 also changes the canonical path. The PR #30 timeline has no visible M1 review/disposition; approval is UNKNOWN. Keep #30 Draft until the file-level diff and scope are reconciled, preserving the regression test.
