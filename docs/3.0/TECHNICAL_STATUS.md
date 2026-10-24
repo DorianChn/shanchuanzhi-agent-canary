@@ -8151,3 +8151,16 @@ Quota at 15:16 UTC: 77% five-hour / 19% weekly, 113 credits; usage tab remains o
 - Existing M0 PR #109 remains OPEN/Draft at `3d4dd1033e9fca8dc608ab7961a7e813a9974c9c`, based on the same feature head. Its standard CI and ownership-contract check pass; its current-ref M9 composition job is skipped and tracked in #76.
 - M8 PR #40 remains OPEN/Draft at `60cfe8d`; its recorded base `416f1ba` is behind current feature `e4732d9`. The 12 read-only merge-tree conflicts and missing M8 owner disposition on #99 remain unresolved. P0 product gates #52/#93 and P1 installer/E4 gates #41/#57 remain open.
 - After the preceding snapshot, M0 PR #109 head `0543e82` passed standard CI 9/9 (`40083853286`) and the ownership-contract run (`40083853320`); M9 current-ref composition `40083853294` was skipped again. M0 recorded both PR #24 and PR #109 exact-head skip evidence in #76 comment `6382817912`.
+
+## Current coordinator snapshot — 2026-10-24 10:26 UTC
+
+M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview. M0 changed coordination evidence only; no M1–M8 implementation, PR #24, `main`, or Release was changed.
+
+- **M0 PR #109:** pushed head `dacc6deb37f862a972287ea166bbd2a620c066f3`, based on feature `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Standard CI `40085564078` passed 9/9, ownership-contract run `40085564074` passed, and M9 current-ref composition `40085564075` was skipped. M0 recorded the exact-head result in #76 comment `6383047361`.
+- **M9 integration gate:** PR #36 is merged, but the existing M9 workflow still skips pull-request events outside PR #36 and its dispatch path checks out the old PR #36 ref. The current-ref trigger/ref correction is still assigned to M9; #76 remains OPEN/P1.
+- **M8:** PR #40 remains OPEN/Draft at `60cfe8d976a42d0f635d4be93ca24c00e81246d5`, recorded base `416f1ba`, behind feature. A read-only merge-tree audit found 12 conflicts against feature. No M8 owner disposition is visible; M0 posted the exact follow-up in #99 comment `6383067419`. Do not merge or claim M8 complete before owner reconciliation and exact-current-base checks.
+- **P0 acceptance:** #52 first-party protected-read/alias/TOCTOU product acceptance and #93 installed Hook redaction remain OPEN. Source CI does not substitute for those product checks.
+- **P1 acceptance:** #41 installer checksum producer/consumer mismatch (11 vs 7) remains unresolved; prior lifecycle run stopped before Setup.exe and the exclusive slot remains unreserved. #57 independent product E4 receipt remains missing. #72 awaits M1 disposition for the exact M3 Hook-test blob. Current other P1s remain #45, #51, #54, #62, #70, #76, #80, and #99. #29 is P2 and tracks the exclusive test reservation.
+- **Issue counts:** 2 P0, 11 P1, 1 P2 remain open in the current GitHub snapshot.
+- **PR #24:** remains OPEN/Draft, base `competition/shanchuanzhi-release-readiness`, feature head `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; its metadata remains unchanged by M0.
+- **Quota:** Usage Overview read at 10:20 UTC showed 97% five-hour and 58% weekly remaining. Resource-slot #29 was last recorded FREE at 06:12 UTC; M0 has not started an installer, VMware, or real-model test.
