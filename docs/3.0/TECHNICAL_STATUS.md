@@ -8640,3 +8640,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M9 PR-event run `40200283880` passed both platforms, but its immutable selection is feature base `b0d8d77` with merged-source refs M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, and M8 `84ee6a7`. This is baseline composition evidence for PR #119; it is not the follow-up candidate run.
 - Separate M9 candidate workflow run `40198737633` remains SUCCESS on Ubuntu/Windows at M9 SHA `b5b9f71`, pinning active M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`. This candidate pass does not erase old checks on PRs #120–#123 or the M5 ownership/package blockers.
 - PR #24 remains OPEN/Draft with unchanged head `b0d8d77` and base `competition/shanchuanzhi-release-readiness`. No merge, Release, or module implementation edit occurred.
+
+## M7 clean-VM resource preflight — 2026-10-25 14:07 UTC
+
+- Read-only `D:\虚拟机\vmrun.exe list` returned `Total running VMs: 0`; the previously named `D:\AgentCanary-3.0-Win11-VM` path is absent. No VM or installer was started; no recursive scan of D: was made.
+- Issue #41 remains OPEN/P1/NOT_VERIFIED. Before an installer run, M7 must identify the exact clean VM (`.vmx`) and matched candidate/hash, then reserve the mutually exclusive VMware/installer slot in #29. Issue comment `6398644196` records the preflight.
+- Issue #57 now records the exact M6 head `fae72ea` source-level bundle/lifecycle regressions passing in M9 run `40198737633`; independent product artifact provenance, real-model execution, clean VM, and a separate signed reviewer receipt remain absent. Product E4 remains NOT_VERIFIED; comment `6398640188`.
