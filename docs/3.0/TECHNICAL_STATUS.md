@@ -1,3 +1,9 @@
+## Owner worktree updates — 2026-10-25 12:35 UTC
+
+- M4 owner has a clean local merge commit `5d975b7927a66be26a8bfc3740530bb27a703f2c` on the existing `feature/ac3-desktop-security-center` branch. It merges current feature base `b0d8d77` into PR #121 head `5d1b6f3`, contains approved baseline `e4732d9`, and resolves the previously observed `test/runtime-console.test.ts` merge conflict. Exact-head `npm run build` and `test/runtime-console.test.ts` pass (17/17); the commit is not yet pushed. The no-write merge tree against `b0d8d77` is conflict-free.
+- M7 owner has three local commits through `bf9faee` on existing `feature/ac3-reliability-ac3`, with a preserved dirty `.gitignore`. Build passed; reliability tests pass 15/16 with one platform symlink skip; Windows packaging tests pass 26/27 with one platform symlink skip; package smoke passes (103 files). The branch does not contain approved baseline `e4732d9`; a no-write merge simulation against `b0d8d77` conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`. M0 will not resolve M7-owned conflicts.
+- M4 owner commit and M0 status docs are queued for the next authorized 20-minute push batch; M7 is not publishable until its owner resolves the baseline conflicts. Existing M6/M7/M8 dirty `.gitignore` files and M8's untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched.
+
 ## Push batch update — 2026-10-25 12:26 UTC
 
 - Pushed M9 commit `b140d44c02795e9e1298b1cd9a46b741b7ac083a` to the existing `feature/ac3-m9-integration` branch and M0 coordination commits through `fd9d396ec614af146710537a23db9ddc3c8deff3` to the existing `feature/ac3-m0-coordination` branch. No new branch was created; no main or PR #24 merge occurred.
