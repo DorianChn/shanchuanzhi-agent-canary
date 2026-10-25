@@ -1356,3 +1356,10 @@ The one-click runner now executes each local stage independently and verifies a 
 | Independent product E4 (#57) | P1 | One-click E4 and M9 composition are automated source/evidence checks; independent operator/reviewer receipt and real-model call remain absent. Product E4 is NOT_VERIFIED. | Obtain authenticated artifact/source provenance, clean isolated product run with real tool call, and separate signed reviewer receipt. |
 
 The one-click matrix is available at `coordinator/security-lab/e4-one-click-runs/20261025T133313640Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. It reported 33 PASS, 9 SKIPPED, and 4 FAIL. Do not interpret the green M9 candidate as closing clean-VM, product-host, real-model, or independent-review gates.
+
+## 2026-10-25 13:53 UTC — worktree metadata ownership
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M4/M7 worktree administration | P2 | M4 and M7 are separate working directories with the expected branch/origin, but their `.git` files point into the pre-existing Windows-E4 repository's worktree metadata, outside the coordinator repository. M4 is clean; M7 is 3 commits ahead with a dirty `.gitignore`. A separate M7-followup worktree exists under the coordinator repository. | Preserve both worktrees and M7 changes. Confirm owner/metadata handoff before any migration; do not unregister or relocate them during active work. |
+
