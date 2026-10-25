@@ -99,7 +99,13 @@ test('AI timeout and caller cancellation abort outstanding requests', async () =
 test('AI retries only configured 429/503, no unbounded retries', async () => {
   let calls=0;
   const f=await fixture((_req,res)=>{if(++calls===1){res.writeHead(503);res.end('secret server error');}else res.end(JSON.stringify(response('ollama')));});
-  try{const r=await createAIProvider({...cfg(f.base),retries:1}).analyze({events});assert.equal(r.status,'ok');assert.equal(calls,2);}finally{await f.close();}
+  try {
+    const r=await createAIProvider({...cfg(f.base),retries:1}).analyze({events});
+    const errorCode=typeof r.error==='string'&&/^AI_[A-Z0-9_]{1,64}$/.test(r.error)?r.error:'UNKNOWN';
+    const diagnostic=`retry failure details: requests=${calls}, errorCode=${errorCode}`;
+    assert.equal(r.status,'ok',diagnostic);
+    assert.equal(calls,2,diagnostic);
+  } finally { await f.close(); }
 });
 test('AI refuses redirects, oversized responses and raw provider error bodies', async () => {
   for(const mode of ['redirect','oversize','error']){

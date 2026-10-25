@@ -279,6 +279,11 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
           if(signal?.aborted)return blocked(request,'cancelled_before_execution');
           const afterReview=options.guard.beforeToolCall(gatewayCall(request));if(!afterReview.allowed){abortSession();return blocked(request,guardReason(afterReview.reason));}
+          // Approval review can await an external provider. Revalidate file identity
+          // after that wait so a replaced path cannot leave a stale approval pending.
+          if(request.name==='read_file'||request.name==='write_file'){
+            const target=resource(request);if(!target||!stillBound(target))return blocked(request,'resource_not_bound');
+          }
           sweep();if(pending.size>=64)return blocked(request,'approval_capacity');
           audit(request,'REQUIRE_APPROVAL',d.reason,'NOT_STARTED','NOT_STARTED');
           pending.set(request.id,{request,expires:Date.now()+ttl});throw new GatewayDeniedError(d.reason,request.id,'REQUIRE_APPROVAL');
