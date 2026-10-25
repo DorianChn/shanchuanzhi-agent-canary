@@ -404,7 +404,7 @@ jobs:
           retention-days: 7
 
   windows-community-installer-lifecycle:
-    if: github.event_name == 'workflow_dispatch' && inputs.run_installer_lifecycle
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.run_installer_lifecycle)
     needs: windows-community-build-evidence
     runs-on: windows-latest
     permissions: {}

@@ -1,5 +1,39 @@
 # Agent Canary 3.0 发布准备情况（M7）
 
+## 当前审计：2026-10-25 — HOLD
+
+本轮仅在现有 `agents/M7` / `feature/ac3-reliability-ac3` 审计，起始 HEAD `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`。保留已有 workflow/`.gitignore` 修改；没有 merge、push、Release、安装器/VM/真实模型执行。下方早期 PR/本地状态均为历史。
+
+### 当前源码与 CI
+
+- PR #96 已合并，其最后 head `40d024fb6089cd72a186107912bd6baed824f301` 的 [CI 40051920265](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40051920265) 和 [wrapper 40051920252](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40051920252) 成功；lifecycle skipped。本地后续 `ab9b03f` 没有可见的 PR-triggered CI 或开放 PR。
+- 当前产品 `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` 的 [CI 40162947429](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40162947429) 为 9/9 成功；[wrapper 40162947358](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40162947358) 为 3 success + 1 skipped lifecycle。绿色总状态不代表 lifecycle 已运行。
+- `ab9b03f` 的 BUILD_REPORT status 修复在当前产品对应 workflow、lifecycle script 和回归中均已存在；此 hunk 已集成，无需重复 PR。产品 M8 pin 为 `24b8651730d57d860ba136e77db1526031abb1fc`，校验该 source 是 fetched PR head 的祖先且两个 demo blob 相同。旧分支仍要求 PR head 等于 `90fcde0…`；本轮完整 packaging suite 如实记录 25 pass / 1 fail / 1 skip。不能将这个旧分支整树直接作为新产品候选。
+- 本轮修复点为保留原有 lifecycle 事件门禁修正并补行为回归；39 pass / 0 fail / 2 skip。该回归只验证实际条件的布尔事件规则，不是完整 Actions/YAML parser 或 hosted job 执行验证。源/包 Hook provenance、tamper rejection、安全决策和 caller-canary 断言未被弱化。共享 workflow 的新 M8 协调确认与候选 hosted CI 仍待完成。
+
+### 开放外部门槛
+
+| 门槛 | 当前结论 |
+|---|---|
+| #41 clean Windows 11 VM / standard-user lifecycle | OPEN / NOT_VERIFIED；[M0 最新只读清单](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41#issuecomment-6394453501) 没有可安全定位的已注册 clean VM，预期 VM 路径缺失。先登记隔离 VM、精确包与 Issue #29 资源窗口，再运行。 |
+| 首次启动、升级、重装、EFS、实际取消/失败回滚 | 未完成独立当前候选验收；历史 hosted install/uninstall 不能覆盖这些步骤。 |
+| 24h / 7d | 均 NOT_RUN；本轮仅 2.003 秒 smoke。 |
+| 当前产物内部复核 | 只读取产品 run 的 artifact 元数据；未重新下载/解包/执行，不提供本轮 Setup.exe 内部哈希验证声明。 |
+| #70 default-branch Hono remediation | OPEN；修复 PR #67 等待维护者决策，不在本轮授权合并范围。 |
+| 签名/SmartScreen、独立 product E4 / native-host 能力 | 不由本轮源码与合成测试证明；保持对应外部门槛。 |
+
+#53、#59、#93、#99 的 GitHub 当前 state 均为 CLOSED；这些限定 gate 的关闭不等于 #41 或整体 Release READY。
+
+### #70 依赖与 manifest 只读核验
+
+- 默认分支 `main@146be17ea924d09a78ceff90b83006cdd40dfc43` 由 `@modelcontextprotocol/sdk` 的 `hono:^4.11.4` 依赖解析到 Hono **4.13.7**。root lockfile SHA-256 `d3dfcec5c889f7be1699d69dc604b5cb4bba2016fb1090d96d1df18772627150` 与该提交 SOURCE_MANIFEST 条目匹配。
+- 现有 [PR #67](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/67) head `cda74e9860f1d96d7404871378c0c737535fa77e` 为 Hono **4.13.13**，lockfile SHA-256 `de39f00b6496708fc738f944776b53800961dfa399691069c8b57065a73f4f38` 与 SOURCE_MANIFEST 匹配；[exact-source CI 39827204460](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39827204460) SUCCESS。
+- 当前 feature 与本地 M7 lockfile 均解析到 Hono **4.13.13**，lockfile SHA-256 `243693054bb67e92ba22a0502fda105544cf9e22b4b26d9dbda8f4864a65ac94`。feature 不包含 root SOURCE_MANIFEST；未把它当成旧默认分支的 manifest 验证结果。
+- 对上述四个精确提交的 tracked `*.ts/*.js/*.mjs/*.cjs` 做 `git grep -n -E 'serveStatic|hono/serve-static|hono/(bun|deno|cloudflare-workers)'`，均无命中。它只说明这些源码中的直接调用未找到，不能证明依赖内部/动态调用不存在或将 advisory 判定为不适用。本轮未重跑 vulnerability feed，也未关闭告警。
+- 完整临时日志：`%TEMP%/m7-audit-20261025-7d170b1d1a794767916d548e38678a28/`。性能与稳定性实测见同目录报告和本仓库另外三份 M7 报告。
+
+## 2026-10-13 起的历史记录
+
 日期：2026-10-13
 整体状态：**HOLD — 不建议将当前 Windows 候选标为已通过安装与稳定性验收。**
 

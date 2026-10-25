@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
+import {runInNewContext} from 'node:vm';
 import {writeFileAtomically} from '../packaging/windows/durable-files.mjs';
 import {inspectInstallerCompileOutput} from '../packaging/windows/installer-compile-evidence.mjs';
 import {loadState,saveReport} from '../packaging/windows/worker.mjs';
@@ -88,6 +89,22 @@ test('Windows community workflow installs and compiles with NSIS only on Windows
   assert.ok(workflow.includes("if ($buildResult.version.wrapperSourceBlobSHA -ne $canonicalHookBlobSha) { throw 'BUILD_REPORT_HOOK_BLOB_MISMATCH' }"),'the package version record must identify the exact canonical Hook blob');
   assert.ok(workflow.includes('if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw \'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH\' }'),'packaged and extracted raw bytes must hash to the exact committed Git blob');
   assert.doesNotMatch(workflow,/Get-FileHash -LiteralPath \$sourceHookPath|ReadAllBytes\(\$sourceHookPath\)/,'Windows checkout line-ending conversion must not be mistaken for package provenance');
+});
+test('pull requests retain installer lifecycle evidence while manual runs obey the checkbox',()=>{
+  const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const jobOffset=workflow.indexOf('  windows-community-installer-lifecycle:\n');
+  assert.ok(jobOffset>=0,'the installer lifecycle job must remain present');
+  const condition=workflow.slice(jobOffset).match(/^    if:\s*(.+)$/m)?.[1];
+  assert.ok(condition,'the lifecycle job must declare its event policy');
+  const runs=(eventName,inputs)=>Boolean(runInNewContext(condition,{
+    github:{event_name:eventName},inputs,
+  },{timeout:100}));
+  for(const inputs of [{},{run_installer_lifecycle:false},{run_installer_lifecycle:true}]){
+    assert.equal(runs('pull_request',inputs),true,'pull requests must retain lifecycle evidence regardless of dispatch inputs');
+  }
+  assert.equal(runs('workflow_dispatch',{}),false);
+  assert.equal(runs('workflow_dispatch',{run_installer_lifecycle:false}),false);
+  assert.equal(runs('workflow_dispatch',{run_installer_lifecycle:true}),true);
 });
 test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited to install/uninstall',()=>{
   const workflow=fs.readFileSync(new URL('../.github/workflows/windows-community.yml',import.meta.url),'utf8').replace(/\r\n/g,'\n');
