@@ -41,6 +41,7 @@ __pycache__/
 
 # Local product E4 handoff bundles, generated captures and mismatch controls.
 /security-lab/e4-handoffs/
+/security-lab/e4-one-click-runs/
 
 # Disposable sponsor smoke watchdog fixtures and child-process receipts.
 /sponsor/.smoke-watchdog-*/

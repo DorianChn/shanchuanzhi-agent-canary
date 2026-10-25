@@ -1,3 +1,9 @@
+## E4 one-click Windows run — 2026-10-25
+
+- One-click runner `scripts/一键E4自动测试.cmd` tested current feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. Full suite: 506/518 passed, 1 failed, 11 skipped; the failed M8 package regression requires a Python runtime, which is absent on this Windows host. E4 bundle/self-check suite passed 41/41. Synthetic E4 reports two Gateway failures (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) and three external/product cases BLOCKED.
+- #118 is OPEN/P1, owned by M1 Gateway semantics and queued behind its active P0 slot. Both synthetic cases report `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected fixture targets remained unchanged, so no successful protected write was observed. Do not claim E4 acceptance or weaken the assertions.
+- Local JSON/Markdown/log report: `security-lab/e4-one-click-runs/20261025T050440262Z/ONE_CLICK_RESULT.{json,md}`. Product E4 and independent review remain NOT_VERIFIED.
+
 ## Current acceptance delta — 2026-10-24 17:30 UTC
 
 - #62 CLOSED: actual M1 owner traced the historical fixture race, confirmed deterministic fixes in feature, reused the unchanged-head2/2 result and added a controlled-clock comparison. Closure comment6386808187. No expiry/zero-callback assertion was removed.

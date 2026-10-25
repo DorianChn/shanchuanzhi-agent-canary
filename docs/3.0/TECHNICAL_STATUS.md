@@ -13,6 +13,12 @@ M0 coordination fixes and M9 final integration are the remaining source integrat
 - Latest open-PR audit found no file overlap or unregistered branches among #109/#112/#113. Original M7 dirty files, M6 handoffs and the previously denied M8 fixture cleanup remain preserved.
 - Remaining delivery gates: real installed-path result for current M7; publish and verify M0 changes; merge M7/M0 only after their checks; align M9 to resulting feature and verify/merge M9 last. Product issues #45/#52/#57 and uncompleted platform/permission/upgrade cases remain explicitly unverified.
 
+## One-click E4 automation result — 2026-10-25
+
+- Added a Windows double-click entry point that installs pinned development dependencies when absent, runs full project verification, E4 self-check/verifier tests, deterministic synthetic E4, and validates the generated evidence bundle. Logs and result reports are written under `security-lab/e4-one-click-runs/`.
+- Tested on product baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` (tree `b02f14e3ac183f203d7b7cc0d39dedfaeb10182b`). Result: automated checks FAIL; 506/518 full-suite tests passed, one test could not find Python; E4 bundle tests passed 41/41; synthetic Gateway cases `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` failed with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`. Their protected fixture targets remained unchanged. Issue #118 OPEN/P1 is queued to M1 behind active P0 work.
+- The run does not invoke a real model, execute the installer, operate a VM, or establish independent review. Product E4 remains NOT_VERIFIED. Detailed report: `security-lab/e4-one-click-runs/20261025T050440262Z/ONE_CLICK_RESULT.md`.
+
 ## Current verified cohort — 2026-10-24 17:30 UTC
 
 - Baseline remains e4732d9745bb4fbbebf6896a35b4657ad82abd73. PR #24 is OPEN/Draft on its existing competition base. No main/PR24 merge or Release has occurred.
