@@ -174,6 +174,32 @@ test('security endpoint availability is visible without claiming protection or E
 });
 
 
+test('configured-target read stays disabled without a trusted host target ID and never treats ALLOW as product acceptance',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  const panel=html.match(/<section id="configuredTargetReadPanel"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(panel,'the configured-target operation must have a visible, separate boundary');
+  assert.match(panel,/<button id="configuredTargetReadButton"[^>]*\sdisabled\s[^>]*aria-describedby="configuredTargetReadBlocker"/);
+  assert.match(panel,/未获得宿主确认的固定目标 ID/);
+  assert.match(panel,/POST \/api\/security-center\/target-read/);
+  assert.match(panel,/契约范围：<code>M3_CONFIGURED_TARGET_READ<\/code>/);
+  assert.match(panel,/data-status="UNKNOWN"[^>]*>UNKNOWN · 未执行；实测范围 UNKNOWN/);
+  assert.match(panel,/完整产品、原生工具和 OS 原子保护仍为 NOT_VERIFIED/);
+  assert.doesNotMatch(panel,/<(?:input|select|textarea|pre)\b/i,'no caller path, content, target ID or credential is collected while configuration is unavailable');
+  const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).join('\n');
+  assert.doesNotMatch(scripts,/configuredTargetReadButton|security-center\/target-read|security-center\/protected-read/,'loading or refreshing the UI must not guess a target or invoke either read action');
+
+  // A route result is not a status snapshot or evidence of native/product coverage.
+  const routeResult={scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW',targetId:'M4_TARGET_ID_CANARY',content:'M4_FILE_CONTENT_CANARY'};
+  const snapshot=adaptSecuritySnapshot({securityCenter:routeResult});
+  assert.equal(snapshot.protectionStatus,'UNKNOWN');
+  assert.equal(snapshot.firstPartyObserveReadStatus,'NOT_VERIFIED');
+  const diagnostic=JSON.stringify(buildSecurityDiagnostic(snapshot,{}));
+  assert.doesNotMatch(diagnostic,/M4_TARGET_ID_CANARY|M4_FILE_CONTENT_CANARY/);
+ }finally{await app.close();}
+});
+
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({
   state:{events:[{ts:'2026-10-13T00:00:00.000Z',kind:'action_blocked',reason:'token=cnry_secret',toolName:'read_file',args:{token:'cnry_secret'},path:'C:\\private'}]},

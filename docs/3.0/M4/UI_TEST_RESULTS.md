@@ -1,5 +1,13 @@
 # M4 UI Test Results
 
+## 2026-10-25 configured-target UI boundary
+
+- Actual worktree: `C:\Users\36712\Desktop\Agent-Canary-Dev\agents\M4`, existing branch `feature/ac3-desktop-security-center`, clean starting HEAD `892d3290338fe811da127f8f51ab91de0b9fc18b`.
+- Windows x64 / Node `v22.23.1`: `node --import tsx --test test/runtime-console.test.ts` — **17 passed, 0 failed, 0 skipped/cancelled**. `npm run build` — **PASS** (`tsc`); `git diff --check` — **PASS**.
+- New regression checks the served configured-target panel stays disabled without a trusted host ID; the panel collects no ID/path/content/credential inputs; no page script invokes either read route; a configured-target `ALLOW` envelope cannot promote product protection or first-party/native acceptance, or copy target/content canaries into diagnostics. These are UI/adapter assertions, not actual host denial or zero-effect evidence.
+- Local Chrome at **1277×825**: inspected the rendered panel and its DOM. The disabled button, missing-target guidance, contract route/scope and measured `UNKNOWN` were visible; full-product/native/OS-atomic status remained `NOT_VERIFIED`. The inspection tab and M4-only preview server were closed after inspection.
+- M3 baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` has the configured-target POST, but exposes no trusted ID/auth-readiness source to this page. The exact required M3 interface is recorded in `DESKTOP_INTEGRATION_REPORT.md`. No configured read was attempted. #52 remains **OPEN / P0 / NOT_VERIFIED**. New local-commit hosted CI is **NOT_RUN**, pending the coordinated push batch.
+
 Date: 2026-10-13
 Worktree: **agents/M4-desktop-security-center**
 Branch: **feature/ac3-desktop-security-center**
