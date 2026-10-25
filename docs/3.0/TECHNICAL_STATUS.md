@@ -1,7 +1,7 @@
 ## Push batch update — 2026-10-25 12:26 UTC
 
 - Pushed M9 commit `b140d44c02795e9e1298b1cd9a46b741b7ac083a` to the existing `feature/ac3-m9-integration` branch and M0 coordination commits through `fd9d396ec614af146710537a23db9ddc3c8deff3` to the existing `feature/ac3-m0-coordination` branch. No new branch was created; no main or PR #24 merge occurred.
-- PR #119 now points to `fd9d396`. AC3 run `40193124199` passed; CI `40193124272` and M9 `40193124204` are in progress.
+- PR #119 now points to `fd9d396`. AC3 run `40193124199` passed; CI `40193124272` and M9 `40193124204` are in progress. Its M9 job log explicitly selects feature-base M9 source `b0d8d77`, not candidate `b140d44`, so it does not validate the pushed M9 pin update.
 - M9 needs a new Draft PR because prior PR #117 is already merged. The GitHub integration denied PR creation with HTTP 403, so no follow-up PR exists yet; no alternate write route was used. M9 commit `b140d44` is pushed, with focused 16/16 tests and exact-manifest validation locally verified.
 
 ## Live coordination update — 2026-10-25 12:15 UTC
