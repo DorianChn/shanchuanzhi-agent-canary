@@ -1,12 +1,45 @@
 # Getting started
 
-The v3.0.0 GitHub Release is published, but it has no attached Release assets. The `v3.0.0` source manifest declares a CLI package on GitHub Packages; package retrieval is not verified by this guide and requires a GitHub token with `read:packages`. The tag-pinned source-build path below is separately available. The moving `feature/agent-canary-3.0` branch is a different development build and may differ from that source tag. The five-minute target assumes Node.js is installed and GitHub Packages access is configured; first-time account/token setup or dependency downloads may take longer.
+Start with a source snapshot so setup does not require changing the global CLI or registry configuration. The five-minute target assumes Node.js 20+, npm and Git are available and dependencies can be downloaded; it is not a measured setup-time claim. Keep development source, the historical v3.0.0 tag and candidate installers separate. See [the dated readiness audit](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md).
 
-## Choose the source before starting
+## Five-minute source quick start: reviewed development snapshot
 
-The instructions below describe the historical v3.0.0 tag, not this development candidate manifest. For current source, record the full SHA and follow its README/CLI help. See [COMPATIBILITY.md](COMPATIBILITY.md). Setup success does not establish native Codex Shell protection.
+This example pins reviewed M8 source 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841. It is not the latest moving feature branch or a published package. Use a new directory:
 
-## Five-minute quick start: v3.0.0 package
+~~~sh
+git clone https://github.com/DorianChn/shanchuanzhi-agent-canary.git agent-canary-source
+cd agent-canary-source
+git checkout --detach 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841
+git rev-parse HEAD
+npm ci
+npm run build
+node dist/index.js --help
+node dist/index.js self-test --json
+~~~
+
+At that source, the last command returns passed=true and four passing checks: safe_call, decoy_quarantine, blocked_callback and audit_order. This is an offline circuit-breaker test, not a host-connection, model, installer or E4 test. Failed checks remain failures.
+
+### Two source CLI entrypoints
+
+The source manifest is version 1.2.7 and its binary points to dist/index.js. Community/product commands live in dist/competition.js. Do not assume a globally installed agent-canary exposes the product integration helper:
+
+~~~sh
+npm run build
+node dist/competition.js --help
+node dist/competition.js integrate --help
+~~~
+
+For a current-source Codex preview, create a disposable project and invoke that built entrypoint explicitly:
+
+~~~sh
+node /absolute/path/to/agent-canary-source/dist/competition.js integrate --agent codex --project /absolute/path/to/scratch
+~~~
+
+The default is PREVIEW_ONLY; inspect the config path, command and coverage before any apply. This audit verified a preview in an empty scratch directory and confirmed no .codex/config.toml was written. It did not run Codex or establish host-native protection. Native Codex Shell remains UNPROTECTED. The historical tag's apply/receipt rollback is documented below; it is not migration between these entrypoints.
+
+## Historical v3.0.0 package path: retrieval not verified
+
+The [v3.0.0 GitHub Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0) has no attached binary assets as checked on 2026-10-25. Its source manifest declares GitHub Packages distribution. This separate channel's package availability/download was not tested. Prefer the source path above if access is unavailable.
 
 Requirements: Node.js 20+, npm, network access, and a GitHub Classic Personal Access Token with `read:packages` for the published npm package. Do not paste the token into this repository or commit an `.npmrc` containing credentials.
 
@@ -37,18 +70,9 @@ node dist/competition.js self-test --json
 
 The source tag is the reproducible code snapshot for v3.0.0. `npm run verify` runs the broader project verification suite; a passing run still does not establish global host-tool coverage or independent E4.
 
-## Optional development build
+## Moving development branches
 
-The moving `feature/agent-canary-3.0` branch is not a published Release artifact. If you need to inspect it, pin and record the full commit SHA, label results as development-source results, and do not treat its package metadata or behavior as v3.0.0 behavior.
-
-~~~sh
-git clone --depth 1 --branch feature/agent-canary-3.0 https://github.com/DorianChn/shanchuanzhi-agent-canary.git agent-canary-dev
-cd agent-canary-dev
-git rev-parse HEAD
-npm ci
-npm run build
-node dist/competition.js self-test --json
-~~~
+For another feature snapshot, record the full commit SHA and follow its CLI help/package metadata. A moving branch is not a Release artifact. The source example above pins the reviewed M8 head, not current feature or v3.0.0.
 
 ## Codex MCP setup (v3.0.0 tag)
 

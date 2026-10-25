@@ -1,5 +1,7 @@
 # Upgrade guide
 
+For current source, [Getting Started](GETTING_STARTED.md) distinguishes dist/index.js from the product integration helper dist/competition.js. Running a source entrypoint does not replace the global command.
+
 Development-branch integration is not a user upgrade procedure. Keep exact reviewed source/artifact hashes and owner contracts; see [COMPATIBILITY.md](COMPATIBILITY.md). This documentation merge does not validate installer migration.
 
 ## Current source and package boundary
