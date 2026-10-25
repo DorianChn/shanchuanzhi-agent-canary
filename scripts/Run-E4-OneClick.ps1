@@ -109,7 +109,14 @@ function Install-VerifiedPortablePython {
     $uri = "https://www.python.org/ftp/python/3.13.17/$($package.file)"
     Write-Host "No usable Python runtime found; downloading the official portable Python package for $architecture." -ForegroundColor Yellow
     Invoke-WebRequest -Uri $uri -OutFile $downloadPath -UseBasicParsing
-    $actualHash = (Get-FileHash -LiteralPath $downloadPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $archiveStream = [System.IO.File]::OpenRead($downloadPath)
+        try { $hashBytes = $sha256.ComputeHash($archiveStream) }
+        finally { $archiveStream.Dispose() }
+    }
+    finally { $sha256.Dispose() }
+    $actualHash = [System.BitConverter]::ToString($hashBytes).Replace('-', '').ToLowerInvariant()
     if ($actualHash -ne $package.sha256) { throw "Portable Python SHA-256 mismatch: expected $($package.sha256), received $actualHash." }
     Expand-Archive -LiteralPath $downloadPath -DestinationPath $runtimeDirectory -ErrorAction Stop
     $pythonPath = Join-Path $runtimeDirectory 'python.exe'
