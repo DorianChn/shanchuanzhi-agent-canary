@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$ProjectRoot)
+param([string]$ProjectRoot, [switch]$OpenReport)
 
 $ErrorActionPreference = 'Stop'
 $runnerRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -192,4 +192,8 @@ Write-Host "`n=== RESULT ===" -ForegroundColor Cyan
 Write-Host "Automated checks: $($result.automatedChecks)"
 Write-Host 'Product E4: NOT_VERIFIED (independent installed-product acceptance is still required)'
 Write-Host "Report: $mdPath"
+if ($OpenReport) {
+    try { Start-Process -FilePath $mdPath -ErrorAction Stop }
+    catch { Write-Warning "Could not open the report automatically: $($_.Exception.Message)" }
+}
 if ($overallExit -ne 0) { exit 1 }
