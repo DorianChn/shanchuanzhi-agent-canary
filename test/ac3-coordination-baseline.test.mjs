@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import { composeAc3Candidate } from '../scripts/ac3-baseline.mjs';
+import { composeAc3Candidate, resolveAc3EventBase } from '../scripts/ac3-baseline.mjs';
 
 function git(cwd, ...args) {
   const result = spawnSync('git', args, { cwd, encoding: 'utf8', windowsHide: true });
@@ -34,6 +34,45 @@ function repo(t) {
   const baselineSha = commit(cwd, 'approved common source baseline');
   return { cwd, baselineSha };
 }
+
+function eventContext(t) {
+  const { cwd, baselineSha: eventBaseSha } = repo(t);
+  write(cwd, 'manifest.txt', 'new frozen candidate pin\n');
+  const actualBaseSha = commit(cwd, 'advance feature metadata');
+  git(cwd, 'checkout', '-b', 'candidate', eventBaseSha);
+  write(cwd, 'candidate.txt', 'owner source\n');
+  const headSha = commit(cwd, 'candidate source');
+  const tree = git(cwd, 'merge-tree', '--write-tree', actualBaseSha, headSha);
+  const testMergeSha = git(cwd, 'commit-tree', tree, '-p', actualBaseSha, '-p', headSha, '-m', 'immutable test merge');
+  git(cwd, 'checkout', '--detach', testMergeSha);
+  return { cwd, eventBaseSha, actualBaseSha, headSha, testMergeSha };
+}
+
+test('uses immutable test-merge first parent when webhook base is stale', (t) => {
+  const context = eventContext(t);
+  const result = resolveAc3EventBase(context);
+  assert.equal(result.ok, true, result.errors.join('\n'));
+  assert.equal(result.baseSha, context.actualBaseSha);
+  assert.notEqual(result.baseSha, context.eventBaseSha);
+});
+
+test('rejects test-merge candidate mismatch and wrong checked-out commit', (t) => {
+  const context = eventContext(t);
+  assert.match(resolveAc3EventBase({ ...context, headSha: context.eventBaseSha }).errors.join('\n'), /second parent/);
+  git(context.cwd, 'checkout', '--detach', context.headSha);
+  assert.match(resolveAc3EventBase(context).errors.join('\n'), /checkout must equal/);
+});
+
+test('rejects non-merge, unavailable metadata, and unrelated webhook base', (t) => {
+  const context = eventContext(t);
+  git(context.cwd, 'checkout', '--detach', context.headSha);
+  assert.match(resolveAc3EventBase({ ...context, testMergeSha: context.headSha }).errors.join('\n'), /exactly two/);
+  assert.equal(resolveAc3EventBase({ ...context, testMergeSha: undefined }).ok, false);
+  const tree = git(context.cwd, 'rev-parse', `${context.eventBaseSha}^{tree}`);
+  const unrelatedBase = git(context.cwd, 'commit-tree', tree, '-m', 'unrelated event base');
+  git(context.cwd, 'checkout', '--detach', context.testMergeSha);
+  assert.match(resolveAc3EventBase({ ...context, eventBaseSha: unrelatedBase }).errors.join('\n'), /event base must be an ancestor/);
+});
 
 test('accepts manifest-only base advancement and returns a real clean merge tree', (t) => {
   const { cwd, baselineSha } = repo(t);
