@@ -1362,4 +1362,3 @@ The one-click matrix is available at `coordinator/security-lab/e4-one-click-runs
 | Gate | Priority | Verified state | Remaining acceptance |
 | --- | --- | --- | --- |
 | M4/M7 worktree administration | P2 | M4 and M7 are separate working directories with the expected branch/origin, but their `.git` files point into the pre-existing Windows-E4 repository's worktree metadata, outside the coordinator repository. M4 is clean; M7 is 3 commits ahead with a dirty `.gitignore`. A separate M7-followup worktree exists under the coordinator repository. | Preserve both worktrees and M7 changes. Confirm owner/metadata handoff before any migration; do not unregister or relocate them during active work. |
-
