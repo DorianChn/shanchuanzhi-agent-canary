@@ -1,21 +1,29 @@
 """Independent positive-list 3.0 candidate. Never modifies the legacy npm/Docker package."""
 import argparse, hashlib, json, subprocess, tempfile, zipfile, sys
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);p.add_argument('--m8-source-sha',required=True);p.add_argument('--candidate-id',default='engineering-preview.1');p.add_argument('--output-dir',default='competition-submission/3.0');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--node',required=True);p.add_argument('--npm-cli',required=True);p.add_argument('--sha',required=True);p.add_argument('--m8-source-sha',required=True);p.add_argument('--m8-pr-head-sha',required=True);p.add_argument('--candidate-id',default='engineering-preview.1');p.add_argument('--output-dir',default='competition-submission/3.0');a=p.parse_args()
 sys.stdout.reconfigure(encoding='utf-8')
 root=Path(__file__).resolve().parent.parent
 if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise SystemExit('Exact source SHA required')
 if not a.candidate_id or len(a.candidate_id)>64 or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789.-' for c in a.candidate_id):raise SystemExit('Invalid candidate identifier')
 community_hook_relative='security-lab/claude-native-hook.mjs'
-expected_m8_source_sha='90fcde07775d4109f6e1b1b4b52d1975723dd979'
+expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'
 expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'
 m8_demo_relative='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs'
 if len(a.m8_source_sha)!=40 or any(c not in '0123456789abcdef' for c in a.m8_source_sha) or a.m8_source_sha!=expected_m8_source_sha:raise SystemExit('Pinned M8 source SHA mismatch')
 m8_source_commit=subprocess.run(['git','-C',str(root),'rev-parse','--verify',a.m8_source_sha+'^{commit}'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',errors='replace')
 if m8_source_commit.returncode or m8_source_commit.stdout.strip().lower()!=a.m8_source_sha:raise SystemExit('Exact M8 source commit unavailable')
+if len(a.m8_pr_head_sha)!=40 or any(c not in '0123456789abcdef' for c in a.m8_pr_head_sha):raise SystemExit('Exact M8 PR head SHA required')
+m8_pr_head_commit=subprocess.run(['git','-C',str(root),'rev-parse','--verify',a.m8_pr_head_sha+'^{commit}'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',errors='replace')
+if m8_pr_head_commit.returncode or m8_pr_head_commit.stdout.strip().lower()!=a.m8_pr_head_sha:raise SystemExit('Exact M8 PR head commit unavailable')
+m8_ancestor=subprocess.run(['git','-C',str(root),'merge-base','--is-ancestor',a.m8_source_sha,a.m8_pr_head_sha],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+if m8_ancestor.returncode:raise SystemExit('Pinned M8 source is not an ancestor of current PR head')
 m8_demo_ref=f'{a.m8_source_sha}:{m8_demo_relative}'
 m8_demo_blob_id=subprocess.run(['git','-C',str(root),'rev-parse','--verify',m8_demo_ref],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='ascii',errors='replace')
 if m8_demo_blob_id.returncode or m8_demo_blob_id.stdout.strip().lower()!=expected_m8_demo_blob:raise SystemExit('Pinned M8 offline demo blob mismatch')
+m8_pr_demo_ref=f'{a.m8_pr_head_sha}:{m8_demo_relative}'
+m8_pr_demo_blob_id=subprocess.run(['git','-C',str(root),'rev-parse','--verify',m8_pr_demo_ref],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='ascii',errors='replace')
+if m8_pr_demo_blob_id.returncode or m8_pr_demo_blob_id.stdout.strip().lower()!=expected_m8_demo_blob:raise SystemExit('Current M8 PR offline demo blob mismatch')
 m8_demo_blob= subprocess.run(['git','-C',str(root),'cat-file','blob',expected_m8_demo_blob],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 if m8_demo_blob.returncode:raise SystemExit('Pinned M8 offline demo blob unavailable')
 m8_demo_bytes=m8_demo_blob.stdout
@@ -81,7 +89,7 @@ if lock.get('name')!=pkg.get('name') or lock_root.get('name')!=pkg.get('name'):r
 for field in ('dependencies','devDependencies','optionalDependencies'):
  if lock_root.get(field,{})!=pkg.get(field,{}):raise SystemExit('Community package lock '+field+' mismatch')
 lock['version']=pkg['version'];lock_root['version']=pkg['version'];(stage/'package-lock.json').write_text(json.dumps(lock,indent=2)+'\n',encoding='utf-8')
-version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8SourcePath':m8_demo_relative,'m8SourceBlob':expected_m8_demo_blob,'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True,'runtimeBaselineSHA':'99660b36db9d5b1121eea6fe06b026c5f1e36bcf','candidateId':a.candidate_id,'securityRuntimeModified':True,'repair':'Explicit product identity, Hook module-load denial, and recheck held file identity before effects; historical experiments are not relabelled as this build'}
+version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8PRHeadSHA':a.m8_pr_head_sha,'m8SourcePath':m8_demo_relative,'m8SourceBlob':expected_m8_demo_blob,'m8PRHeadBlob':m8_pr_demo_blob_id.stdout.strip().lower(),'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True,'runtimeBaselineSHA':'99660b36db9d5b1121eea6fe06b026c5f1e36bcf','candidateId':a.candidate_id,'securityRuntimeModified':True,'repair':'Explicit product identity, Hook module-load denial, and recheck held file identity before effects; historical experiments are not relabelled as this build'}
 (stage/'FREE_BUILD_VERSION.json').write_text(json.dumps(version,indent=2)+'\n')
 for readme in ['README.md','README.zh-CN.md']:
  f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n本候选内置dist/sdk.d.ts和类型导出；原candidate.1及其已发送材料保持不变。快速复验：npm ci → npm run build → npm run acceptance:offline。另人独立环境真实运行后才可能支持E4，目前NOT_VERIFIED。\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(encoding='utf-8'),encoding='utf-8')
@@ -114,4 +122,4 @@ manifest={str(rel).replace('\\','/'):hashlib.sha256(file.read_bytes()).hexdigest
 artifact=out/('Agent_Canary_3_0_Community_Preview_'+a.sha[:8]+'.zip')
 with zipfile.ZipFile(artifact,'x',zipfile.ZIP_DEFLATED)as z:
  for file,rel in included:z.write(file,str(Path('agent-canary-community-3')/rel))
-print(json.dumps({'file':str(artifact),'sha256':hashlib.sha256(artifact.read_bytes()).hexdigest(),'files':len(included),'sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8SourceBlob':expected_m8_demo_blob,'status':'VERIFIED_POSITIVE_LIST_BUILD'},ensure_ascii=False))
+print(json.dumps({'file':str(artifact),'sha256':hashlib.sha256(artifact.read_bytes()).hexdigest(),'files':len(included),'sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8PRHeadSHA':a.m8_pr_head_sha,'m8SourceBlob':expected_m8_demo_blob,'m8PRHeadBlob':m8_pr_demo_blob_id.stdout.strip().lower(),'status':'VERIFIED_POSITIVE_LIST_BUILD'},ensure_ascii=False))

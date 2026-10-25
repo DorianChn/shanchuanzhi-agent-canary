@@ -207,27 +207,52 @@ test('Community candidate pins the Hook Git blob when a Windows worktree has CRL
 test('Community candidate stages the exact M8 offline-demo Git blob and provenance',()=>{
   const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
   const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
-  const m8SourceSHA='90fcde07775d4109f6e1b1b4b52d1975723dd979';
+  const m8SourceSHA='24b8651730d57d860ba136e77db1526031abb1fc';
   const m8DemoBlob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
   const m8DemoPath='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
   assert.match(builder,/p\.add_argument\('--m8-source-sha',required=True\)/);
-  assert.match(builder,/expected_m8_source_sha='90fcde07775d4109f6e1b1b4b52d1975723dd979'/);
+  assert.match(builder,/p\.add_argument\('--m8-pr-head-sha',required=True\)/);
+  assert.match(builder,/expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'/);
   assert.match(builder,/expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
   assert.match(builder,/m8_demo_ref=f'\{a\.m8_source_sha\}:\{m8_demo_relative\}'/);
+  assert.match(builder,/merge-base','--is-ancestor',a\.m8_source_sha,a\.m8_pr_head_sha/);
+  assert.match(builder,/m8_pr_demo_ref=f'\{a\.m8_pr_head_sha\}:\{m8_demo_relative\}'/);
   assert.match(builder,/community_demo_path\.write_bytes\(m8_demo_bytes\)/);
   assert.match(builder,/if candidate_m8_demo!=m8_demo_bytes[\s\S]*?expected_m8_demo_blob/);
-  assert.match(builder,/m8SourceSHA':a\.m8_source_sha[\s\S]*?'m8SourceBlob':expected_m8_demo_blob/);
-  assert.match(workflow,/M8_SOURCE_SHA: 90fcde07775d4109f6e1b1b4b52d1975723dd979/);
+  assert.match(builder,/m8SourceSHA':a\.m8_source_sha[\s\S]*?'m8PRHeadSHA':a\.m8_pr_head_sha[\s\S]*?'m8PRHeadBlob':m8_pr_demo_blob_id/);
+  assert.match(workflow,/M8_SOURCE_SHA: 24b8651730d57d860ba136e77db1526031abb1fc/);
   assert.match(workflow,/refs\/pull\/40\/head/);
+  assert.match(workflow,/git fetch --unshallow --no-tags \$baseRepository refs\/pull\/40\/head/);
+  assert.match(workflow,/git merge-base --is-ancestor \$m8SourceSha \$m8PrHeadSha/);
   assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
+  assert.match(workflow,/--m8-pr-head-sha \$env:M8_PR_HEAD_SHA/);
   assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(workflow,/communityBuildSummary\.m8PRHeadBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
 
   const runRepoGit=(...args)=>spawnSync('git',['-C',repo,...args],{encoding:'utf8',windowsHide:true});
-  let gitResult=runRepoGit('fetch','--no-tags','--depth=1','origin','refs/pull/40/head');
+  let gitResult=runRepoGit('rev-parse','--is-shallow-repository');
+  assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+  const fetchArgs=['fetch','--no-tags'];
+  if(gitResult.stdout.trim()==='true')fetchArgs.push('--unshallow');
+  fetchArgs.push('origin','refs/pull/40/head');
+  gitResult=runRepoGit(...fetchArgs);
   assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
   gitResult=runRepoGit('rev-parse','FETCH_HEAD');
   assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
-  assert.equal(gitResult.stdout.trim(),m8SourceSHA,'the fetched M8 PR ref must still match the exact pinned source SHA');
+  const m8PrHeadSHA=gitResult.stdout.trim();
+  assert.match(m8PrHeadSHA,/^[a-f0-9]{40}$/,'the fetched M8 PR head must be an exact commit SHA');
+  gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,m8PrHeadSHA);
+  assert.equal(gitResult.status,0,'the immutable reviewed M8 source must remain an ancestor of the current PR head');
+  for(const commitSHA of [m8SourceSHA,m8PrHeadSHA]){
+    gitResult=runRepoGit('rev-parse','--verify',`${commitSHA}:${m8DemoPath}`);
+    assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
+    assert.equal(gitResult.stdout.trim(),m8DemoBlob,'both the pinned M8 commit and current PR head must contain the exact demo blob');
+  }
+  gitResult=runRepoGit('rev-parse','--verify',`${m8SourceSHA}^`);
+  assert.equal(gitResult.status,0,'the immutable M8 source commit must have a parent for the negative fixture');
+  const unrelatedHeadSHA=gitResult.stdout.trim();
+  gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,unrelatedHeadSHA);
+  assert.notEqual(gitResult.status,0,'the negative fixture must not descend from the immutable M8 source commit');
   const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
   assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
   const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
@@ -257,25 +282,37 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
   try{
     const unpinned=spawnSync(pythonCommand,[
       'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
-      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha','0'.repeat(40),
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha','0'.repeat(40),'--m8-pr-head-sha',m8PrHeadSHA,
       '--candidate-id','m8-pin-test','--output-dir',outputDir,
     ],{cwd:repo,encoding:'utf8',windowsHide:true});
     assert.notEqual(unpinned.status,0,'the builder must reject noncanonical M8 source commits');
     assert.match(unpinned.stderr,/Pinned M8 source SHA mismatch/);
     assert.equal(fs.existsSync(outputDir),false,'a rejected M8 pin must not create candidate outputs');
+    const unrelatedHead=spawnSync(pythonCommand,[
+      'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,'--m8-pr-head-sha',unrelatedHeadSHA,
+      '--candidate-id','m8-pin-test','--output-dir',outputDir,
+    ],{cwd:repo,encoding:'utf8',windowsHide:true});
+    assert.notEqual(unrelatedHead.status,0,'the builder must reject an M8 PR head that does not descend from the reviewed source commit');
+    assert.match(unrelatedHead.stderr,/Pinned M8 source is not an ancestor of current PR head/);
+    assert.equal(fs.existsSync(outputDir),false,'a rejected M8 PR head must not create candidate outputs');
     const build=spawnSync(pythonCommand,[
       'security-lab/build-community.py','--node',process.execPath,'--npm-cli',fakeNpm,
-      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,
+      '--sha',sourceSHA.stdout.trim(),'--m8-source-sha',m8SourceSHA,'--m8-pr-head-sha',m8PrHeadSHA,
       '--candidate-id','m8-pin-test','--output-dir',outputDir,
     ],{cwd:repo,encoding:'utf8',windowsHide:true,maxBuffer:8*1024*1024});
     assert.equal(build.status,0,(build.stdout??'')+'\n'+(build.stderr??''));
     const summary=JSON.parse(build.stdout.trim());
     assert.equal(summary.m8SourceSHA,m8SourceSHA);
+    assert.equal(summary.m8PRHeadSHA,m8PrHeadSHA);
     assert.equal(summary.m8SourceBlob,m8DemoBlob);
+    assert.equal(summary.m8PRHeadBlob,m8DemoBlob);
     const rawReport=JSON.parse(fs.readFileSync(path.join(outputDir,`community-build-${sourceSHA.stdout.trim().slice(0,8)}.json`),'utf8'));
     assert.equal(rawReport.version.m8SourceSHA,m8SourceSHA);
+    assert.equal(rawReport.version.m8PRHeadSHA,m8PrHeadSHA);
     assert.equal(rawReport.version.m8SourcePath,m8DemoPath);
     assert.equal(rawReport.version.m8SourceBlob,m8DemoBlob);
+    assert.equal(rawReport.version.m8PRHeadBlob,m8DemoBlob);
     stageDir=rawReport.temporaryBuild;
     const staged=fs.readFileSync(path.join(stageDir,'reproduction-kit/run-offline-demo.mjs'));
     assert.deepEqual(staged,m8Demo.stdout,'the actual staged candidate must contain the exact M8 Git blob');
