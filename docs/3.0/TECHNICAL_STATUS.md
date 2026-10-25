@@ -1,3 +1,18 @@
+## Live coordination snapshot — 2026-10-25 12:11 UTC
+
+- Product feature baseline remains `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. PR #24 remains OPEN/Draft and unmerged; `main` and Release are unchanged.
+- M0 PR #119 remains OPEN/Draft at `b3e6aacd888a0a1a27008d594265a517788df60d`; its AC3, CI, and M9 workflows pass on that head (runs `40171303782`, `40171303703`, `40171303653`).
+- M1 PR #114 is closed/merged at `89be11e`; owner disposition on P0 #52 is BLOCKED/NOT_VERIFIED for installed/native-host and OS-atomic acceptance. P1 #118 still reproduces a M1 Gateway cancellation failure in the synthetic decoy-read cases; the fix remains M1-owned on the existing branch.
+- M2 PR #110 is closed/merged at `941fd22`. Issue #52 still lacks installed-host consumer and OS-atomic evidence; the native Shell boundary remains explicitly unprotected.
+- M3 PR #120 now points to `91695529787f07111f5256d3c9d6e0e556f6eac1`, normally merged from current feature baseline `b0d8d77`. Exact-head CI passed 9/9 (run `40191658828`) and ownership contract passed (run `40191658696`). Its M9 check `40191658779` failed at exact-manifest validation because the feature-base M9 manifest still pinned the older M3 source.
+- M4 PR #121 remains OPEN/Draft at `5d1b6f3`; its owner-local build, 17/17 runtime-console tests, and browser check are recorded, but GitHub has no hosted checks for the head. Mergeability is currently false; Issue #125 tracks the missing checks/conflict.
+- M5 PR #122 remains OPEN/Draft at `dde81d6`; module CI passed, but coordination/M9 gates remain unresolved. M1's exact-diff review for this follow-up is still pending; Issue #124 tracks it.
+- M6 PR #123 remains OPEN/Draft at `fae72ea`; module CI and ownership contract passed (runs `40172587357`, `40190443162`). Its M9 check failed because the base manifest still pinned old M6 `2a88d8b`.
+- M7 PR #113 and M8 PR #40 are merged at `bba0f0f` and `1c94ed4`. Local M7 ref `feature/ac3-reliability-ac3` is at `5a7540b` without a public follow-up PR. M8 has owner-authored local commit `685520c` on its existing branch, with pre-existing dirty/untracked files preserved and no follow-up PR yet.
+- M9 PR #117 is merged at `7b6edae` (merge commit `de65fd2`). M0 has prepared local M9 commit `b140d44`, updating exact pins to M3 #120 and M6 #123; it is not yet pushed/PR'd. M9 build and package smoke passed; with the verified portable Python runtime, full suite passed 507/518, 0 failed, 11 skipped; exact-source workflow test passed 12/12 and manifest validation passed.
+- One-click E4 on baseline `b0d8d77` still reports two synthetic FAILs (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) and three BLOCKED real-environment cases. Product E4 and independent review remain NOT_VERIFIED. Latest report: `coordinator/security-lab/e4-one-click-runs/20261025T120007055Z/ONE_CLICK_RESULT.md`.
+- Open acceptance gates include P0 #52; P1 #118, #124, #125, #41, #45, #57, and #70. M9 pins for M4/M5/M7/M8 are still older than current follow-up candidates; M5 owner review and M4 hosted checks must land before those pins can be refreshed. No source/CI fixture is presented as real-host, clean-VM, or independent E4 evidence.
+
 ## One-click runner update — 2026-10-25 06:39 UTC
 
 - Updated `scripts/Run-E4-OneClick.ps1`: when Windows has no usable Python, it downloads the official Python.org 3.13.17 embeddable runtime into the per-run report folder and verifies the architecture-specific SHA-256 before execution. It does not install Python globally or modify PATH.
