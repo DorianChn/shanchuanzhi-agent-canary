@@ -95,3 +95,6 @@ __pycache__/
 /logs/
 # Keep only the reviewed synthetic E4 audit record; all other generated logs remain ignored.
 !/security-lab/e4-runs/20261013T084123Z/raw.log
+
+# Local generated M7/M8 acceptance fixtures and reports.
+/competition-submission/.m7-m8-acceptance-*/

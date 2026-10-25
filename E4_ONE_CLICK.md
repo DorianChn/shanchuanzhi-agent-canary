@@ -1,6 +1,6 @@
 # E4 一键自动测试
 
-Windows 上双击 `scripts/一键E4自动测试.cmd`，即可自动安装锁文件指定的开发依赖（仅当缺少 `node_modules`）、运行完整 `npm run verify`、执行 E4 证据包和自检测试、生成合成 E4 报告并验证报告包。
+Windows 上双击 `scripts/一键E4自动测试.cmd`，即可自动安装锁文件指定的开发依赖（仅当缺少 `node_modules`），并依次运行构建、完整测试套件、包内容检查、E4 证据包和自检测试、合成 E4 报告与报告包验证。各阶段独立运行；前一阶段失败也会继续执行后续自动检查，并汇总单独结果。
 
 结果保存在 `security-lab/e4-one-click-runs/<运行编号>/ONE_CLICK_RESULT.md` 和同目录日志中。脚本不会执行安装器、调用真实模型、启动/修改虚拟机或执行 GitHub 写操作。
 

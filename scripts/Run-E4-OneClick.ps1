@@ -87,8 +87,16 @@ try {
         $steps.Add([ordered]@{ name='dependency-install'; status='SKIPPED'; reason='node_modules already exists; no packages were installed.' })
     }
 
-    $verifyOk = Invoke-TestStep -Name 'full-project-verify' -Executable $npmCommand.Source -Arguments @('run','verify')
-    if (-not $verifyOk) { $overallExit = 1 }
+    # Run each verification stage separately so a failing test suite does not
+    # short-circuit the package-content check (as `npm run verify` would).
+    $buildOk = Invoke-TestStep -Name 'project-build' -Executable $npmCommand.Source -Arguments @('run','build')
+    if (-not $buildOk) { $overallExit = 1 }
+
+    $suiteOk = Invoke-TestStep -Name 'full-project-tests' -Executable $npmCommand.Source -Arguments @('test')
+    if (-not $suiteOk) { $overallExit = 1 }
+
+    $packageOk = Invoke-TestStep -Name 'package-content-check' -Executable $npmCommand.Source -Arguments @('run','pack:check')
+    if (-not $packageOk) { $overallExit = 1 }
 
     $focusedOk = Invoke-TestStep -Name 'e4-bundle-and-self-check-tests' -Executable $nodeCommand.Source -Arguments @('--test','security-lab/e4/product-self-check.test.mjs','security-lab/e4/verify-bundle.test.mjs')
     if (-not $focusedOk) { $overallExit = 1 }
@@ -96,13 +104,14 @@ try {
     $e4Output = Join-Path $outputRoot 'e4'
     $e4Ok = Invoke-TestStep -Name 'synthetic-e4-automation' -Executable $npmCommand.Source -Arguments @('run','e4:auto','--',"--out-dir=$e4Output")
     if (-not $e4Ok) { $overallExit = 1 }
+    $runDirectory = Get-ChildItem -LiteralPath $e4Output -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1
+    if ($runDirectory) {
+        $verifyBundleOk = Invoke-TestStep -Name 'generated-evidence-bundle-verification' -Executable $nodeCommand.Source -Arguments @('security-lab/e4/verify-bundle.mjs',$runDirectory.FullName)
+        if (-not $verifyBundleOk) { $overallExit = 1 }
+    }
     else {
-        $runDirectory = Get-ChildItem -LiteralPath $e4Output -Directory | Sort-Object Name -Descending | Select-Object -First 1
-        if (-not $runDirectory) { $overallExit = 1 }
-        else {
-            $verifyBundleOk = Invoke-TestStep -Name 'generated-evidence-bundle-verification' -Executable $nodeCommand.Source -Arguments @('security-lab/e4/verify-bundle.mjs',$runDirectory.FullName)
-            if (-not $verifyBundleOk) { $overallExit = 1 }
-        }
+        $steps.Add([ordered]@{ name='generated-evidence-bundle-verification'; status='BLOCKED'; reason='No E4 run directory was generated.' })
+        $overallExit = 1
     }
 }
 catch {
@@ -111,11 +120,11 @@ catch {
     Write-Host "RUNNER ERROR: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-$failedSteps = @($steps | Where-Object { $_.status -eq 'FAIL' })
+$failedSteps = @($steps | Where-Object { $_.status -in @('FAIL','BLOCKED') })
 $overallExit = if ($failedSteps.Count -gt 0) { 1 } else { 0 }
 $fullSuite = $null
 $fullSuiteFindings = @()
-$fullSuiteLog = Join-Path $outputRoot 'full-project-verify.log'
+$fullSuiteLog = Join-Path $outputRoot 'full-project-tests.log'
 if (Test-Path -LiteralPath $fullSuiteLog -PathType Leaf) {
     $fullSuiteText = Get-Content -LiteralPath $fullSuiteLog
     $fullSuite = [ordered]@{}
@@ -144,7 +153,7 @@ $result = [ordered]@{
     externalIndependence = 'NOT_VERIFIED'
     modelTest = 'NOT_RUN'
     installerAndVmLifecycle = 'NOT_RUN'
-    failedStepCount = $failedSteps.Count
+    nonPassingStepCount = $failedSteps.Count
     completedAtUtc = [DateTime]::UtcNow.ToString('o')
     reportDirectory = $outputRoot
     boundary = 'This one-click run executes repository tests and synthetic local fixtures. It does not call a real model, execute the installer, operate a VM, or create independent operator/reviewer evidence.'
@@ -175,7 +184,7 @@ if ($fullSuiteFindings.Count -eq 0 -and $e4Failures.Count -eq 0 -and $e4Blocked.
 $mdLines.Add('')
 $mdLines.Add('## Acceptance boundary')
 $mdLines.Add('')
-$mdLines.Add('This run covers the full source test suite, E4 evidence/self-check tests, synthetic scenarios, and generated bundle verification. It does not call a real model, execute the installer, or operate a VM. Installed product lifecycle and independent review still require a separate operator in a clean isolated environment.')
+$mdLines.Add('This run covers the project build, full source test suite, package-content check, E4 evidence/self-check tests, synthetic scenarios, and generated bundle verification. Independent stages continue after failures so later automated checks still produce results. It does not call a real model, execute the installer, or operate a VM. Installed product lifecycle and independent review still require a separate operator in a clean isolated environment.')
 $md = $mdLines -join [Environment]::NewLine
 $md | Set-Content -LiteralPath $mdPath -Encoding UTF8
 
