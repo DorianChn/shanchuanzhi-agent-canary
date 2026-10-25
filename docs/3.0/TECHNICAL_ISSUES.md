@@ -1,8 +1,17 @@
-## E4 one-click Windows run — 2026-10-25
+## Current E4 one-click Windows run — 2026-10-25 06:23 UTC
 
-- One-click runner `scripts/一键E4自动测试.cmd` tested current feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. Full suite: 506/518 passed, 1 failed, 11 skipped; the failed M8 package regression requires a Python runtime, which is absent on this Windows host. E4 bundle/self-check suite passed 41/41. Synthetic E4 reports two Gateway failures (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) and three external/product cases BLOCKED.
+- Latest one-click runner result (2026-10-25 06:39 UTC, baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`): Windows automatically downloaded Python.org embeddable Python 3.13.17 and verified SHA-256 `9e35319bffedab8b36ad44d8f377cb4f1733bcec257a0b6d04d94f01486ddb38`; full suite is 507/518 passed, 0 failed, 11 skipped; E4 bundle/self-check suite 41/41; build/package/bundle verification passed. Synthetic Gateway still reports two failures (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) and three product/external cases BLOCKED. Full report: `security-lab/e4-one-click-runs/20261025T063921101Z/ONE_CLICK_RESULT.md`.
 - #118 is OPEN/P1, owned by M1 Gateway semantics and queued behind its active P0 slot. Both synthetic cases report `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected fixture targets remained unchanged, so no successful protected write was observed. Do not claim E4 acceptance or weaken the assertions.
-- Local JSON/Markdown/log report: `security-lab/e4-one-click-runs/20261025T050440262Z/ONE_CLICK_RESULT.{json,md}`. Product E4 and independent review remain NOT_VERIFIED.
+- Local JSON/Markdown/log report: `security-lab/e4-one-click-runs/20261025T062320151Z/ONE_CLICK_RESULT.{json,md}`. Product E4 and independent review remain NOT_VERIFIED.
+
+## Current open acceptance blockers — 2026-10-25 06:36 UTC
+
+- **P0 #52 — M1/M2/M3/M4/M5:** source-level exact M9 composition passes on Ubuntu and Windows (`40169026928`), but the shipped first-party route remains a fixed temporary-marker probe and the M4 page does not consume it. Installed/native held-identity and OS-atomic TOCTOU evidence remain NOT_VERIFIED. M0 requested evidence-bounded DONE/BLOCKED updates from M1/M2 at 06:35 UTC.
+- **P1 #45 — M2:** native Codex Shell remains UNPROTECTED; no effective host sandbox/Hook attestation or protected sentinel result is recorded. M0 requested an exact verification or blocker update at 06:36 UTC.
+- **P1 #118 — M1:** two deterministic synthetic E4 Gateway cases fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected fixtures remained unchanged. It remains queued behind #52.
+- **P1 #41:** the remaining Windows 11 standard-user, upgrade, cancellation/rollback and EFS lifecycle matrix is not verified. **P1 #57:** independent operator/reviewer E4 receipt is absent.
+- **P1 #51/#54:** historical retry and Windows AI 503 triggers remain UNKNOWN despite later green/current recurrence runs. **P1 #70:** default-branch Hono remediation remains open; do not merge its main-target PR as part of feature coordination.
+- M0 PR #119 exact head `ac48cdb` has AC3 coordination success, CI 9/9 and exact M9 composition success on Ubuntu/Windows. These are source/CI checks, not product acceptance.
 
 ## Current acceptance delta — 2026-10-24 17:30 UTC
 

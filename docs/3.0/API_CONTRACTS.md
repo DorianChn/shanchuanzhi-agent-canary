@@ -4,7 +4,7 @@
 - GitHub jobs that execute an installer, disposable VM workload or real-model acceptance must share the static job concurrency group `agent-canary-exclusive-e4`, with `cancel-in-progress: false`. Ordinary builds and source-only composition do not consume this resource.
 - M7 installer execution requires explicit `workflow_dispatch` and `run_installer_lifecycle=true`; a pull request must not run an installer automatically. Reserve the exclusive resource in Issue #29 before dispatch, recording source SHA, purpose and job/run identity; release it after inspecting the actual terminal result. Local VMware/model runs use the same Issue #29 reservation because a GitHub concurrency group cannot lock a desktop resource.
 - Same-run producer/consumer provenance, exact artifact inventory and checksum verification remain mandatory. A hosted-runner lifecycle result does not establish a Windows 11 client or ordinary-user token unless separately evidenced. Developer SELF_CHECK and independent E4 remain distinct.
-- Push substantive changes in batches separated by at least 20 minutes. No quota monitoring is required under the current user instruction. Runtime/API implementation ownership is unchanged.
+- Push substantive changes in batches separated by at least 20 minutes. The active M0 goal requires stopping new work if the readable five-hour quota drops below 5%; latest authenticated read at 2026-10-25 06:32 UTC showed 94% remaining and 99% weekly. If the percentage becomes unreadable, do not start VMware, real-model, or installer work until it is readable. Runtime/API implementation ownership is unchanged.
 
 ## Current configured-target contract status — 2026-10-24 09:21 UTC
 

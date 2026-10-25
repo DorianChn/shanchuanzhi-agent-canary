@@ -43,6 +43,9 @@ $envInfo = [ordered]@{
     architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
     nodeVersion = $nodeVersionText
     npmVersion = (& $npmCommand.Source --version).Trim()
+    pythonVersion = $null
+    pythonRuntimeSource = $null
+    pythonRuntimeSha256 = $null
     realModelRequested = $false
     installerExecuted = $false
 }
@@ -74,8 +77,77 @@ function Invoke-TestStep {
     return ($exitCode -eq 0)
 }
 
+function Find-UsablePython {
+    $candidates = [System.Collections.Generic.List[string]]::new()
+    if ($env:CANARY_PYTHON) { $candidates.Add($env:CANARY_PYTHON) }
+    foreach ($name in @('python.exe', 'python3.exe', 'python', 'python3')) {
+        $command = Get-Command $name -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($command -and $command.Source -and -not $candidates.Contains($command.Source)) { $candidates.Add($command.Source) }
+    }
+    foreach ($candidate in $candidates) {
+        try {
+            $versionText = (& $candidate --version 2>&1 | Out-String).Trim()
+            if ($LASTEXITCODE -eq 0 -and $versionText -match '^Python\s+\d+\.\d+\.\d+') {
+                return [ordered]@{ path=$candidate; version=$versionText; source='preinstalled'; sha256=$null }
+            }
+        }
+        catch { }
+    }
+    return $null
+}
+
+function Install-VerifiedPortablePython {
+    $architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+    $package = switch ($architecture) {
+        'X64'   { @{ file='python-3.13.17-embed-amd64.zip'; sha256='9e35319bffedab8b36ad44d8f377cb4f1733bcec257a0b6d04d94f01486ddb38' } }
+        'X86'   { @{ file='python-3.13.17-embed-win32.zip'; sha256='4afd37bc88ed1391209a4c58deb902cd0741a476692412b23d340aff6e9285e7' } }
+        'Arm64' { @{ file='python-3.13.17-embed-arm64.zip'; sha256='7b58787a047b400edbfcb539aa3cdb4e2ed77bf0f22cae42b7c01cedd7dd6614' } }
+        default { throw "No pinned portable Python package is configured for Windows architecture $architecture." }
+    }
+    $downloadPath = Join-Path $outputRoot $package.file
+    $runtimeDirectory = Join-Path $outputRoot 'python-portable'
+    $uri = "https://www.python.org/ftp/python/3.13.17/$($package.file)"
+    Write-Host "No usable Python runtime found; downloading the official portable Python package for $architecture." -ForegroundColor Yellow
+    Invoke-WebRequest -Uri $uri -OutFile $downloadPath -UseBasicParsing
+    $actualHash = (Get-FileHash -LiteralPath $downloadPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actualHash -ne $package.sha256) { throw "Portable Python SHA-256 mismatch: expected $($package.sha256), received $actualHash." }
+    Expand-Archive -LiteralPath $downloadPath -DestinationPath $runtimeDirectory -ErrorAction Stop
+    $pythonPath = Join-Path $runtimeDirectory 'python.exe'
+    if (-not (Test-Path -LiteralPath $pythonPath -PathType Leaf)) { throw 'Verified portable Python archive did not contain python.exe.' }
+    $versionText = (& $pythonPath --version 2>&1 | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or $versionText -ne 'Python 3.13.17') { throw "Portable Python version check failed: $versionText" }
+    return [ordered]@{ path=$pythonPath; version=$versionText; source='python.org-verified-portable'; sha256=$actualHash }
+}
+
 $overallExit = 0
 try {
+    $pythonRuntime = Find-UsablePython
+    if ($pythonRuntime) {
+        $steps.Add([ordered]@{ name='python-runtime'; status='PASS'; reason="Using $($pythonRuntime.version) from preinstalled runtime." })
+    }
+    elseif ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) {
+        try {
+            $pythonRuntime = Install-VerifiedPortablePython
+            $steps.Add([ordered]@{ name='python-runtime'; status='PASS'; reason='Downloaded the official Python.org embeddable runtime and verified its pinned SHA-256 before execution.' })
+        }
+        catch {
+            $steps.Add([ordered]@{ name='python-runtime'; status='FAIL'; reason=$_.Exception.Message })
+            $overallExit = 1
+        }
+    }
+    else {
+        $steps.Add([ordered]@{ name='python-runtime'; status='FAIL'; reason='No usable Python runtime found; automatic portable bootstrap is supported only on Windows.' })
+        $overallExit = 1
+    }
+    if ($pythonRuntime) {
+        $envInfo.pythonVersion = $pythonRuntime.version
+        $envInfo.pythonRuntimeSource = $pythonRuntime.source
+        $envInfo.pythonRuntimeSha256 = $pythonRuntime.sha256
+        $envInfo.pythonRuntimePath = $pythonRuntime.path
+        $previousCanaryPython = $env:CANARY_PYTHON
+        $env:CANARY_PYTHON = $pythonRuntime.path
+    }
+
     $lockPath = Join-Path $repoRoot 'package-lock.json'
     if (-not (Test-Path -LiteralPath $lockPath -PathType Leaf)) {
         throw 'package-lock.json is missing; refusing an unpinned dependency install.'
@@ -119,6 +191,9 @@ catch {
     $steps.Add([ordered]@{ name='runner'; status='FAIL'; reason=$_.Exception.Message })
     Write-Host "RUNNER ERROR: $($_.Exception.Message)" -ForegroundColor Red
 }
+finally {
+    if ($pythonRuntime) { $env:CANARY_PYTHON = $previousCanaryPython }
+}
 
 $failedSteps = @($steps | Where-Object { $_.status -in @('FAIL','BLOCKED') })
 $overallExit = if ($failedSteps.Count -gt 0) { 1 } else { 0 }
@@ -153,6 +228,11 @@ $result = [ordered]@{
     externalIndependence = 'NOT_VERIFIED'
     modelTest = 'NOT_RUN'
     installerAndVmLifecycle = 'NOT_RUN'
+    remainingAcceptanceGates = @(
+        'A clean isolated Windows VM and matched installer lifecycle receipt are required for installed-product acceptance.',
+        'A configured real model and observed real tool call are required for MODEL-REAL-TOOLCALL.',
+        'An independent operator and reviewer must provide their own signed acceptance receipt.'
+    )
     nonPassingStepCount = $failedSteps.Count
     completedAtUtc = [DateTime]::UtcNow.ToString('o')
     reportDirectory = $outputRoot
@@ -184,7 +264,11 @@ if ($fullSuiteFindings.Count -eq 0 -and $e4Failures.Count -eq 0 -and $e4Blocked.
 $mdLines.Add('')
 $mdLines.Add('## Acceptance boundary')
 $mdLines.Add('')
-$mdLines.Add('This run covers the project build, full source test suite, package-content check, E4 evidence/self-check tests, synthetic scenarios, and generated bundle verification. Independent stages continue after failures so later automated checks still produce results. It does not call a real model, execute the installer, or operate a VM. Installed product lifecycle and independent review still require a separate operator in a clean isolated environment.')
+$mdLines.Add('This run covers the project build, full source test suite, package-content check, E4 evidence/self-check tests, synthetic scenarios, and generated bundle verification. If Windows has no usable Python runtime, the runner downloads the official Python.org embeddable package into this report directory and checks its pinned SHA-256 before use; it does not install Python system-wide. Independent stages continue after failures so later automated checks still produce results. It does not call a real model, execute the installer, or operate a VM. Installed product lifecycle and independent review still require a separate operator in a clean isolated environment.')
+$mdLines.Add('')
+$mdLines.Add('## Remaining acceptance gates')
+$mdLines.Add('')
+foreach ($gate in $result.remainingAcceptanceGates) { $mdLines.Add("- $gate") }
 $md = $mdLines -join [Environment]::NewLine
 $md | Set-Content -LiteralPath $mdPath -Encoding UTF8
 

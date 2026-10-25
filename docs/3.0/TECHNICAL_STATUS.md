@@ -1,3 +1,18 @@
+## One-click runner update — 2026-10-25 06:39 UTC
+
+- Updated `scripts/Run-E4-OneClick.ps1`: when Windows has no usable Python, it downloads the official Python.org 3.13.17 embeddable runtime into the per-run report folder and verifies the architecture-specific SHA-256 before execution. It does not install Python globally or modify PATH.
+- Re-ran the single-click flow against feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` (tree `b02f14e3ac183f203d7b7cc0d39dedfaeb10182b`). Python bootstrap, build, full source tests (507/518 pass, 0 fail, 11 skipped), package-content check, E4 bundle/self-check (41/41), and generated-bundle verification all PASS.
+- Synthetic E4 remains FAIL for `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; three VM/installer/model cases remain BLOCKED. Product E4 and independent review remain NOT_VERIFIED. Detailed report: `coordinator/security-lab/e4-one-click-runs/20261025T063921101Z/ONE_CLICK_RESULT.md`.
+
+## Live coordination snapshot — 2026-10-25 06:36 UTC
+
+- Product feature baseline: `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. M1–M8 implementation PRs have been merged into this feature baseline; PR #24 remains OPEN/Draft on its original competition base and has not been merged.
+- M0 PR #119 remains OPEN/Draft at `ac48cdb1985e20121fe9fb44f385d90171d4ca5f`. Exact-head checks: AC3 coordination `40169026922` SUCCESS; general CI `40169026941` 9/9 SUCCESS; M9 exact-source composition `40169026928` Ubuntu+Windows SUCCESS.
+- Existing M9 branch head `7b6edae` is an ancestor of feature `b0d8d77` and is five commits behind. Current M9 workflow has validated exact M1–M8 refs for the current feature event; the existing branch still needs final synchronization after the coordinated feature candidate is settled.
+- Latest local one-click run is `coordinator/security-lab/e4-one-click-runs/20261025T062320151Z/ONE_CLICK_RESULT.md`: build/package/E4 verifier 41/41/bundle integrity PASS; full suite 506/518, one Python-runtime-dependent failure, 11 skips; two synthetic Gateway failures and three BLOCKED cases. Product E4 remains NOT_VERIFIED.
+- Open acceptance gates: P0 #52 protected identity/native host/OS-atomic TOCTOU; P1 #45 native Codex Shell, #118 Gateway cancellation, #41 Windows 11 lifecycle, #57 independent E4, #51/#54 historical trigger disposition, and #70 default-branch dependency state. No external/clean-VM acceptance is inferred from green composition CI.
+- Usage Overview read at 06:32 UTC showed 94% five-hour and 99% weekly remaining. VMware, real-model and installer resource remains unreserved. M1 #52 and M2 #45 remain the last registered owner slots; direct status requests were posted at 06:35 and 06:36.
+
 ## Verified source cohort merged — 2026-10-24 17:49 UTC
 
 M7 #113 is now MERGED at 97c52430117596f74b5f94c77ade7a23fa910540, following M2 #110, M6 #111 and M8 #40. Manual run40117125609 verified actual installation at bba0f0f, canonical installed Hook b7ed4ab, all11 installed Hook/fault/decision checks, and clean uninstall with residue0. #93 is closed with that bounded evidence; #29 installer resource is released (comment6387514754). #41's untested platform/user/upgrade cases remain open.

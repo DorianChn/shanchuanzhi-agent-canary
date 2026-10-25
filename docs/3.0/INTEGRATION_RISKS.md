@@ -1,12 +1,13 @@
-## Current integration risks — 2026-10-24 16:44 UTC
+## Current integration risks — 2026-10-25 06:31 UTC
 
 | Gate | Verified change | Remaining acceptance |
 | --- | --- | --- |
-| M9 #112 / #76 | New workflow actually runs both platform jobs on the current feature-target PR. First Ubuntu attempt reached the offline composition gate and failed on its remaining old M8 SHA constant; source-selection success is not full composition success. | M9 fixes its remaining stale constant without weakening assertions and reruns exact full composition. |
-| M8 #40 / #99 | Twelve conflicts resolved at e3d89ba; CI 9/9, canonical Hook output and Windows build passed. M6 ACCEPT is #80 comment6386655050; M7 scoped prepare.mjs compatibility review is complete. | Finish bounded sponsor smoke review and actual current-source composition before readiness. |
-| M7 #41 / #93 | Existing clean M7 follow-up now has a local 11-entry inventory correction and job-level exclusive lock, at c03176f. Primary M7 dirty files remain untouched. | Publish the substantive batch, pass exact candidate checks, then reserve the resource before hosted installation. No installed result is claimed yet. |
-| M6 #111 / #57 | Product intake/control and verifier tests 41/41 passed; real artifact SELF_CHECK bundle generated with all product cases NOT_VERIFIED. | Independent operator lifecycle/tool effects and reviewer receipt remain external gates. |
-| M1 #62 / #51 | #62 closed after actual owner traced the historical fixture race and verified the existing deterministic fix; source fixes are in feature. | #51 retains UNKNOWN for its original lock-holder/scheduling trigger; green reruns do not establish that cause. |
+| M9 #112 / #117 | M9 exact-source composition on M0 PR #119 head `ac48cdb` passed on Ubuntu and Windows in run `40169026928`; general CI passed 9/9 in `40169026941`. | Integration branch `7b6edae` is an ancestor of feature `b0d8d77` and is five commits behind. Resynchronize the existing M9 branch only after the feature integration candidate is settled; do not create a branch or infer product-host acceptance. |
+| M8 #40 / #99 | M8 PR #40 is merged into the feature baseline; current exact-source M9 composition passes. | Sponsor smoke is source/CI evidence only; retain independent service, secret and payment-scope boundaries. |
+| M7 #41 | M7 PR #113 is merged; current package/source composition passes. | Windows 11 standard-user, upgrade, cancellation/rollback and EFS lifecycle matrix remains unverified; reserve the exclusive resource before execution. |
+| M6 #111 / #57 | M6 PR #111 is merged; evidence intake and bundle verifier source checks pass. | Independent operator lifecycle/tool effects and reviewer receipt are absent; #57 remains open. |
+| M1/M2 #52 / #45 / #118 | Current source composition passes, while the protected-read UI remains explicitly UNKNOWN and native Codex Shell is unprotected. | Obtain owner evidence/blocker on #52/#45; keep #118 queued behind M1 P0 work and preserve all effect assertions. |
+| M1 #51 / M9 #54 / M7 #70 | Later current runs pass; historical triggers remain UNKNOWN, and the main-target Hono remediation is still separate. | Retain #51/#54 open absent original-trace disposition; keep #70 open until default-branch remediation is accepted. |
 
 Integration order must preserve both ancestry and source provenance: complete owner-reviewed module candidates before final M9 manifest integration, then synchronize the M9 branch with the resulting feature tip and revalidate its explicit pins. Never silently relabel an old module pin as a newer candidate or bypass a failed baseline/owner gate to force a merge. main, PR #24 and Release remain outside this integration authorization.
 

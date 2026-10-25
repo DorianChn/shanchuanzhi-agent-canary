@@ -1,6 +1,6 @@
-## Current configured-target dependency status — 2026-10-24 09:21 UTC
+## Current configured-target dependency status — 2026-10-25 06:31 UTC
 
-The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. M3's focused CLI/source fixtures plus M9 run `40066875122` pass Ubuntu and Windows. M3/M4 owner confirmation and shipped-package/native-host acceptance are still outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.
+The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. Exact M9 composition run `40169026928` passed on Ubuntu and Windows for M0 PR #119 head `ac48cdb`, checking the current M1–M8 refs. M3's protected-read endpoint remains a fixed temporary-marker probe; the M4 UI intentionally does not call it. M3/M4 shipped-package/native-host acceptance remains outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.
 
 ## M0 ownership/dependency delta — 2026-10-15 21:16 UTC
 
