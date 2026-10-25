@@ -1,0 +1,33 @@
+name: M8 Hook output
+
+on:
+  pull_request:
+    branches: [feature/agent-canary-3.0]
+    paths:
+      - '.github/workflows/m8-hook-output.yml'
+      - 'security-lab/claude-native-hook.mjs'
+      - 'security-lab/claude-native-hook-output.test.mjs'
+      - 'packaging/windows/e4-hook-faults.mjs'
+  push:
+    branches: [feature/ac3-open-source-product]
+    paths:
+      - '.github/workflows/m8-hook-output.yml'
+      - 'security-lab/claude-native-hook.mjs'
+      - 'security-lab/claude-native-hook-output.test.mjs'
+      - 'packaging/windows/e4-hook-faults.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  hook-output-regression:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node --test security-lab/claude-native-hook-output.test.mjs

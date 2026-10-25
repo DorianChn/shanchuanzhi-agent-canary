@@ -82,8 +82,10 @@ test('Windows community workflow installs and compiles with NSIS only on Windows
   assert.ok(workflow.includes("name: Compile installer template on Windows\n        if: runner.os == 'Windows'\n        run: node scripts/verify-installer-template.mjs"),'Ubuntu must not run Windows-only compiler acceptance');
   assert.ok(workflow.indexOf('run: node scripts/verify-installer-template.mjs')<workflow.indexOf('- run: npm ci --no-audit --no-fund'),'compiler evidence should run before unrelated tests can fail-fast the Windows job');
   assert.ok(workflow.includes('fail-fast: false'),'all OS matrix results should finish after one platform fails');
-  assert.ok(workflow.includes("$reviewedHookBlobShas = @('d6f93249306b7966259cab463dd39475728ef338', 'b7ed4aba70a597f4f63a05decc6de1b32f67372e')"),'only the exact reviewed baseline and M1 sanitizer Hook blobs may pass Windows package provenance');
+  assert.ok(workflow.includes("$sourceHookPath = 'packaging/windows/claude-native-hook.mjs'"),'Windows installer provenance must inspect the M7-owned payload source');
+  assert.ok(workflow.includes("$reviewedHookBlobShas = @('b7ed4aba70a597f4f63a05decc6de1b32f67372e')"),'only the exact M1 canonical reason-sanitizer Hook blob may pass Windows package provenance');
   assert.ok(workflow.includes("if ($reviewedHookBlobShas -notcontains $sourceHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }"),'unreviewed Hook blobs must fail closed');
+  assert.ok(workflow.includes("if ($buildResult.version.wrapperSourceBlobSHA -ne $canonicalHookBlobSha) { throw 'BUILD_REPORT_HOOK_BLOB_MISMATCH' }"),'the package version record must identify the exact canonical Hook blob');
   assert.ok(workflow.includes('if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw \'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH\' }'),'packaged and extracted raw bytes must hash to the exact committed Git blob');
   assert.doesNotMatch(workflow,/Get-FileHash -LiteralPath \$sourceHookPath|ReadAllBytes\(\$sourceHookPath\)/,'Windows checkout line-ending conversion must not be mistaken for package provenance');
 });
@@ -93,8 +95,29 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   const lifecycleJobEnv=lifecycleJob.slice(lifecycleJob.indexOf('    env:\n'),lifecycleJob.indexOf('    steps:\n'));
   const buildJob=workflow.slice(workflow.indexOf('  windows-community-build-evidence:'),workflow.indexOf('  windows-community-installer-lifecycle:'));
   const smoke=fs.readFileSync(new URL('../packaging/windows/installer-lifecycle-smoke.ps1',import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  const hookHarness=fs.readFileSync(new URL('../packaging/windows/e4-hook-faults.mjs',import.meta.url),'utf8');
   const installer=fs.readFileSync(new URL('../packaging/windows/installer.nsi.in',import.meta.url),'utf8').replace(/\r\n/g,'\n');
   const worker=fs.readFileSync(new URL('../packaging/windows/worker.mjs',import.meta.url),'utf8');
+  assert.ok(lifecycleJob.includes("    if: github.event_name == 'workflow_dispatch' && inputs.run_installer_lifecycle\n"),'installer lifecycle must remain explicitly manual-only');
+  assert.match(lifecycleJob,/    concurrency:\n      group: agent-canary-exclusive-e4\n      cancel-in-progress: false/,'the isolated installer job must share the static non-cancelling exclusive resource key');
+  assert.doesNotMatch(buildJob,/^\s+concurrency:/m,'ordinary PR build evidence must not acquire the exclusive VM/model/installer lock');
+  const readArtifactPaths=(source,name)=>{
+    const match=source.match(new RegExp(`\\$${name}\\s*=\\s*@\\(([\\s\\S]*?)\\)`));
+    assert.ok(match,`missing PowerShell artifact path list: ${name}`);
+    return Array.from(match[1].matchAll(/'([^']+)'/g),entry=>entry[1]);
+  };
+  const buildArtifactPaths=readArtifactPaths(buildJob,'artifactPaths');
+  const expectedArtifactPaths=readArtifactPaths(smoke,'expectedArtifactPaths');
+  assert.equal(new Set(buildArtifactPaths).size,buildArtifactPaths.length,'the workflow artifact manifest must not contain duplicate paths');
+  assert.equal(new Set(expectedArtifactPaths).size,expectedArtifactPaths.length,'the verifier artifact allowlist must not contain duplicate paths');
+  assert.deepEqual(expectedArtifactPaths,buildArtifactPaths,'the verifier must require exactly the artifact files emitted and checksummed by the workflow');
+  for(const marker of [
+    "throw 'SHA256SUMS_PATH_DUPLICATE'",
+    "throw 'SHA256SUMS_PATH_UNEXPECTED'",
+    'ARTIFACT_SHA256_MISMATCH',
+    "'SHA256SUMS_SET_INCOMPLETE'",
+    "'SHA256SUMS_ENTRY_MISSING'"
+  ]) assert.ok(smoke.includes(marker),`checksum verification must fail closed on ${marker}`);
   assert.ok(lifecycleJob.includes('needs: windows-community-build-evidence'),'lifecycle must consume the package from this workflow run');
   assert.ok(lifecycleJob.includes('runs-on: windows-latest'),'lifecycle must run on a fresh hosted Windows VM');
   assert.ok(lifecycleJob.includes('permissions: {}'),'untrusted package execution must have no repository permissions');
@@ -118,6 +141,21 @@ test('Windows lifecycle smoke is isolated, same-run, checksum-bound, and limited
   assert.ok(smoke.includes('$result.installerProcessCompleted = $true')&&smoke.includes('$result.installerExitCode = $process.ExitCode'),'process completion and exit code must only be recorded after wait succeeds');
   assert.ok(smoke.includes('Invoke-Nsis $installerPath "/S /D=$installRoot" -RecordSetupProcess -EnablePhaseMarkers'),'primary setup execution must populate process evidence and enable bounded phase markers');
   assert.ok(smoke.includes("$startInfo.EnvironmentVariables['AGENT_CANARY_M7_PHASE_MARKER'] = '1'")&&smoke.includes("$result.installerPhase = if ($phaseValue -in $knownPhases)"),'the smoke result must read a bounded lifecycle phase marker from the exact setup process');
+  const silentInstallPass=smoke.indexOf("Add-Check 'silent-install' 'PASS'");
+  const installedHookCanary=smoke.indexOf('$installedHookCanary = Invoke-InstalledHookCanaries');
+  const uninstallAttempt=smoke.indexOf('$uninstallAttempted = $true');
+  assert.ok(silentInstallPass>=0&&installedHookCanary>silentInstallPass&&uninstallAttempt>installedHookCanary,'the installed Hook canary must run after the real install and before uninstall begins');
+  assert.ok(smoke.includes("$installedHookPath = Join-Path $installRoot 'claude-native-hook.mjs'")&&smoke.includes("$installedHarnessPath = Join-Path $installRoot 'e4-hook-faults.mjs'")&&smoke.includes("Join-Path (Join-Path $installRoot 'runtime') 'node.exe'"),'the Hook, harness, and Node executable must come from the exact installed root');
+  assert.ok(smoke.includes("$expectedHookPath = [IO.Path]::GetFullPath((Join-Path $InstallRoot 'claude-native-hook.mjs'))")&&smoke.includes("$expectedHarnessPath = [IO.Path]::GetFullPath((Join-Path $InstallRoot 'e4-hook-faults.mjs'))"),'the canary must reject fixture or artifact paths in place of installed files');
+  assert.ok(smoke.includes("$expectedNodePath = [IO.Path]::GetFullPath((Join-Path (Join-Path $InstallRoot 'runtime') 'node.exe'))"),'the canary must use the Node runtime verified inside the installed package');
+  assert.ok(smoke.includes("$canonicalHookBlob = 'b7ed4aba70a597f4f63a05decc6de1b32f67372e'")&&smoke.includes("$canonicalHookSha256 = 'ff0bfef67e92c9ee387f78dd617408b63db6a9646566e16ca0f8e02c842c511d'")&&smoke.includes('installedHookBlobSHA = $hookBlobSha'),'the lifecycle result must bind installed Hook Git blob and SHA-256 to the reviewed canonical bytes');
+  assert.ok(smoke.includes("Add-Check 'installed-hook-identity' $installedHookIdentityStatus")&&smoke.includes("Add-Check 'installed-hook-canary' 'FAIL'"),'the exact installed Hook identity and any canary failure must be retained in result checks');
+  assert.ok(smoke.includes('import {runHookFaultChecks} from $harnessUriLiteral')&&smoke.includes('runHookFaultChecks({appRoot:$installRootLiteral,fixturesRoot:$fixtureRootLiteral})'),'the existing harness API must execute from its installed co-located directory');
+  assert.ok(hookHarness.includes("fs.existsSync(path.join(here,'claude-native-hook.mjs'))?path.join(here,'claude-native-hook.mjs')"),'the packaged harness must select the Hook beside its installed module');
+  assert.ok(smoke.includes("'allow'),")&&smoke.includes("'deny'),")&&smoke.includes("'ask')")&&smoke.includes("'INSTALLED_HOOK_HARNESS_CASE_COUNT_INVALID'")&&smoke.includes("'INSTALLED_HOOK_HARNESS_FAULT_NOT_FAIL_CLOSED'"),'allow, deny, ask, and all existing fail-closed harness cases must be required');
+  assert.ok(smoke.includes('stdoutCanariesAbsent = $true')&&smoke.includes('stderrCanariesAbsent = $true')&&smoke.includes('jsonlCanariesAbsent = $true')&&smoke.includes('reasonSanitized = $true'),'only bounded sentinel-redaction results, not raw canary output, may enter lifecycle evidence');
+  assert.ok(smoke.includes("throw 'INSTALLED_HOOK_DECISION_TIMEOUT'")&&smoke.includes("throw 'INSTALLED_HOOK_HARNESS_TIMEOUT'")&&smoke.includes('if (-not $uninstalled -and -not $uninstallAttempted'),'a canary failure must time out boundedly and retain failure cleanup');
+  assert.ok(smoke.includes('totalCaseCount = 1 + $faultCases.Count + $decisionCases.Count')&&smoke.includes("Add-Check 'installed-hook-canary' 'FAIL'")&&smoke.includes('HOOK_CANARY_CLEANUP_TARGET_OUTSIDE_SANDBOX'),'bounded case count and explicit failure diagnostics must be recorded, with fixture cleanup confined to the sandbox');
   const workerPhases=['WORKER_ENTRY','MANIFEST_INSPECT_STARTED','MANIFEST_INSPECT_COMPLETE','INSTALLER_VALIDATION_STARTED','INSTALLER_VALIDATION_COMPLETE','INSTALLER_HASH_STARTED','INSTALLER_HASH_COMPLETE','RECEIPT_ATOMIC_WRITE_STARTED','RECEIPT_ATOMIC_WRITE_COMPLETE'];
   const workerMain=worker.slice(worker.indexOf('export async function main(){'));
   const workerPhasePositions=workerPhases.map(phase=>workerMain.indexOf("writeM7LifecyclePhase('"+phase+"')"));

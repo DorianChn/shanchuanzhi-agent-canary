@@ -74,9 +74,22 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   const marker='AGENT_CANARY_PROTECTED_FILE_READ_OK';
   fs.writeFileSync(file,marker,{flag:'wx',mode:0o600});
   let closeGateway:(()=>Promise<void>)|undefined;
+  let aliasRoot:string|undefined;
+  let aliasPath:string|undefined;
   t.after(async()=>{
     try{await closeGateway?.();}
     finally{
+      if(aliasPath){
+        const aliasStat=fs.lstatSync(aliasPath);
+        assert.equal(aliasStat.isSymbolicLink(),true);
+        assert.equal(fs.realpathSync(aliasPath),fs.realpathSync(root));
+        if(process.platform==='win32')fs.rmdirSync(aliasPath);else fs.unlinkSync(aliasPath);
+      }
+      if(aliasRoot){
+        const realAliasRoot=fs.realpathSync(aliasRoot),realTemp=fs.realpathSync(os.tmpdir()),relativeAliasRoot=path.relative(realTemp,realAliasRoot);
+        assert.notEqual(relativeAliasRoot,'..');assert.ok(!relativeAliasRoot.startsWith('..'+path.sep));
+        fs.rmSync(realAliasRoot,{recursive:true,force:true});
+      }
       const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
       assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
       fs.rmSync(realRoot,{recursive:true,force:true});
@@ -105,6 +118,7 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
     }else{
       assert.ok([
         'M2_PUBLIC_ADAPTER_UNAVAILABLE',
+        'M2_CAPABILITY_PROVIDER_UNAVAILABLE',
         'M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE',
         'M5_PUBLIC_POLICY_ROUTER_UNAVAILABLE',
       ].includes(host.reason));
@@ -140,6 +154,26 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   const afterPositive=evidence.snapshot().length;
   assert.ok(afterPositive>0);
 
+  aliasRoot=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-alias-root-'));
+  aliasPath=path.join(aliasRoot,'workspace-alias');
+  fs.symlinkSync(root,aliasPath,process.platform==='win32'?'junction':'dir');
+  const aliasedFile=path.join(aliasPath,'agent-canary-public.txt');
+  assert.equal(fs.realpathSync(aliasedFile),fs.realpathSync(file),'the junction/symlink path must resolve to the exact registered file');
+  const aliasArgument=path.relative(root,aliasedFile);
+  assert.ok(aliasArgument.startsWith('..'+path.sep),'the physical alias must be outside the registered workspace by path spelling');
+  const callbacksBeforePhysicalAlias=host.m5Callbacks();
+  const evidenceBeforePhysicalAlias=gateway.evidence().length;
+  await assert.rejects(
+    host.dispatch({name:'protected_read',args:{path:aliasArgument}}),
+    (error:any)=>error instanceof Error&&error.message==='M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED',
+  );
+  assert.equal(host.m5Callbacks(),callbacksBeforePhysicalAlias,'the M2 fixed map must reject a physical alias before M5');
+  assert.equal(gateway.evidence().length,evidenceBeforePhysicalAlias,'a physical alias must not add an M1 read event');
+  assert.deepEqual(await dispatchProtectedRead(host,{path:aliasArgument}),{status:'DENY',reason:'FIXED_PROBE_PATH_REQUIRED',markerMatched:false});
+  assert.equal(host.m5Callbacks(),callbacksBeforePhysicalAlias,'M3 must also reject the alias before its M2 dispatch');
+  assert.equal(gateway.evidence().length,evidenceBeforePhysicalAlias);
+  assert.equal(fs.readFileSync(file,'utf8'),marker,'the physical alias attempt must leave the registered fixture unchanged');
+
   const aliasOutcome=await dispatchProtectedRead(host,{path:'./agent-canary-public.txt'});
   assert.equal(aliasOutcome.status,'DENY');
   assert.equal(host.m5Callbacks(),1,'an alias must be rejected before the M5 execution callback');
@@ -155,6 +189,118 @@ test('M3 protected-file host is fail-closed until composed and rejects aliases o
   assert.equal(replacementOutcome.status,'DENY');
   assert.equal(host.m5Callbacks(),1,'a path replacement must be rejected before the M5 execution callback');
   assert.equal(gateway.evidence().length,afterPositive,'a replacement must not dispatch to M1');
+  assert.equal(fs.readFileSync(file,'utf8'),'replacement bytes');
+  assert.equal(fs.readFileSync(held,'utf8'),marker);
+});
+
+test('M3 uses a synthetic M2 held-read contract through public M5 without the generic callback',async t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-reviewed-m2-contract-'));
+  const initialRootStat=fs.lstatSync(root);
+  const rootIdentity={dev:initialRootStat.dev,ino:initialRootStat.ino};
+  const file=path.join(root,'agent-canary-public.txt');
+  const marker='AGENT_CANARY_PROTECTED_FILE_READ_OK';
+  fs.writeFileSync(file,marker,{flag:'wx',mode:0o600});
+  let closeGateway:(()=>Promise<void>)|undefined;
+  let aliasRoot:string|undefined;
+  let aliasRootIdentity:{dev:number;ino:number}|undefined;
+  let aliasPath:string|undefined;
+  let aliasIdentity:{dev:number;ino:number}|undefined;
+  const genericCallbacks={count:0};
+  t.after(async()=>{
+    try{await closeGateway?.();}
+    finally{
+      if(aliasPath&&aliasIdentity){
+        const currentAlias=fs.lstatSync(aliasPath);
+        assert.equal(currentAlias.isSymbolicLink(),true);
+        assert.equal(currentAlias.dev,aliasIdentity.dev);assert.equal(currentAlias.ino,aliasIdentity.ino);
+        assert.equal(fs.realpathSync(aliasPath),fs.realpathSync(root));
+        if(process.platform==='win32')fs.rmdirSync(aliasPath);else fs.unlinkSync(aliasPath);
+      }
+      if(aliasRoot&&aliasRootIdentity){
+        const currentAliasRoot=fs.lstatSync(aliasRoot);
+        assert.equal(currentAliasRoot.isDirectory(),true);assert.equal(currentAliasRoot.isSymbolicLink(),false);
+        assert.equal(currentAliasRoot.dev,aliasRootIdentity.dev);assert.equal(currentAliasRoot.ino,aliasRootIdentity.ino);
+        const realAliasRoot=fs.realpathSync(aliasRoot),realTemp=fs.realpathSync(os.tmpdir()),relativeAliasRoot=path.relative(realTemp,realAliasRoot);
+        assert.notEqual(relativeAliasRoot,'..');assert.ok(!relativeAliasRoot.startsWith('..'+path.sep));
+        fs.rmSync(realAliasRoot,{recursive:true,force:true});
+      }
+      const currentRootStat=fs.lstatSync(root);
+      assert.equal(currentRootStat.isDirectory(),true);assert.equal(currentRootStat.isSymbolicLink(),false);
+      assert.equal(currentRootStat.dev,rootIdentity.dev);assert.equal(currentRootStat.ino,rootIdentity.ino);
+      const realRoot=fs.realpathSync(root),realTemp=fs.realpathSync(os.tmpdir()),relative=path.relative(realTemp,realRoot);
+      assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
+      fs.rmSync(realRoot,{recursive:true,force:true});
+    }
+  });
+
+  const guard=createAgentGuard({sessionId:'m3-reviewed-m2-contract-test',alert:false});
+  const evidence=new EvidenceRecorder();
+  const gateway=createTrustedExecutionGateway({agentId:'m3-reviewed-m2-contract-test',guard,workspaceRoot:root,files:[{path:'agent-canary-public.txt'}],evidence});
+  closeGateway=()=>gateway.close();
+  const fixtureM2Facade={createSecurityGatewayHostAdapter(options:Record<string,any>){
+    const capability=gateway.bindFileReadCapability({toolName:'protected_read',operation:'file-read',path:'agent-canary-public.txt',pathArg:'path'});
+    const isFixedCall=(call:any)=>call?.name==='protected_read'&&call?.args?.path==='agent-canary-public.txt';
+    const provider=Object.freeze({
+      resolve:(call:unknown)=>isFixedCall(call)&&gateway.verifyFileReadCapability(capability,call as never,'file-read')?capability:undefined,
+      verify:(value:unknown,call:unknown,operation:string)=>value===capability&&operation==='file-read'&&isFixedCall(call)&&gateway.verifyFileReadCapability(value,call as never,operation),
+      readFileWithCapability:(value:unknown,call:unknown,signal?:AbortSignal)=>gateway.readFileWithCapability(value as never,call as never,'file-read',signal),
+    });
+    const router=options.createSecurityToolRouter({
+      ...options.routerOptions,
+      tools:{protected_read:{operation:'file-read',pathArg:'path'}},
+      fileReadCapability:provider,
+      executeRealTool:async()=>{genericCallbacks.count++;throw new Error('M3 must never use a generic file callback');},
+    });
+    return{
+      async dispatch(call:unknown){
+        if(!isFixedCall(call))throw new TypeError('M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');
+        const resolved=provider.resolve(call);
+        if(!resolved)throw new TypeError('M2_SECURITY_GATEWAY_CAPABILITY_INVALID');
+        return router.dispatch(call);
+      },
+      securityCenterStatusProvider:()=>({protectionStatus:'PARTIALLY_PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},policy:{protectionStatus:'PROTECTED'},coverage:'M2_FIXED_FILE_READS_ONLY'}),
+    };
+  }};
+  const host=await createProtectedHostAdapter(gateway,guard,root,{loadM2Facade:async()=>fixtureM2Facade});
+  assert.equal(typeof host.dispatch,'function');
+  assert.equal(typeof host.securityCenterStatusProvider,'function');
+  const statusEvidenceBefore=evidence.snapshot().length;
+  assert.equal((await host.securityCenterStatusProvider!() as any).coverage,'M2_FIXED_FILE_READS_ONLY');
+  assert.equal(evidence.snapshot().length,statusEvidenceBefore,'status inspection must remain side-effect free');
+
+  const positive=await dispatchProtectedRead(host,{path:'agent-canary-public.txt'});
+  assert.deepEqual(positive,{status:'ALLOW',reason:'HELD_FILE_POSITIVE_CONTROL',markerMatched:true});
+  assert.equal(host.m5Callbacks(),1);
+  assert.equal(genericCallbacks.count,0,'the M2 capability provider must bypass M2 executeRealTool');
+  const evidenceAfterPositive=evidence.snapshot().length;
+  assert.ok(evidenceAfterPositive>statusEvidenceBefore);
+
+  aliasRoot=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-m3-reviewed-m2-alias-'));
+  const aliasRootStat=fs.lstatSync(aliasRoot);aliasRootIdentity={dev:aliasRootStat.dev,ino:aliasRootStat.ino};
+  aliasPath=path.join(aliasRoot,'workspace-alias');
+  fs.symlinkSync(root,aliasPath,process.platform==='win32'?'junction':'dir');
+  const aliasStat=fs.lstatSync(aliasPath);aliasIdentity={dev:aliasStat.dev,ino:aliasStat.ino};
+  const aliasFile=path.join(aliasPath,'agent-canary-public.txt');
+  assert.equal(fs.realpathSync(aliasFile),fs.realpathSync(file));
+  const aliasArgument=path.relative(root,aliasFile);
+  assert.ok(aliasArgument.startsWith('..'+path.sep));
+  const beforeAliasEvidence=evidence.snapshot().length;
+  await assert.rejects(host.dispatch({name:'protected_read',args:{path:aliasArgument}}),(error:any)=>error instanceof Error&&error.message==='M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');
+  assert.deepEqual(await dispatchProtectedRead(host,{path:aliasArgument}),{status:'DENY',reason:'FIXED_PROBE_PATH_REQUIRED',markerMatched:false});
+  assert.equal(host.m5Callbacks(),1,'aliases must be denied before the M2 read provider callback');
+  assert.equal(genericCallbacks.count,0);
+  assert.equal(evidence.snapshot().length,beforeAliasEvidence,'aliases must not create M1 read evidence');
+  assert.equal(fs.readFileSync(file,'utf8'),marker,'alias attempts must not change the fixed file');
+
+  const held=path.join(root,'agent-canary-public.txt.held');
+  fs.renameSync(file,held);
+  fs.writeFileSync(file,'replacement bytes',{flag:'wx',mode:0o600});
+  const beforeReplacementEvidence=evidence.snapshot().length;
+  const replaced=await dispatchProtectedRead(host,{path:'agent-canary-public.txt'});
+  assert.deepEqual(replaced,{status:'DENY',reason:'PROTECTED_HOST_DISPATCH_DENIED',markerMatched:false});
+  assert.equal(host.m5Callbacks(),1,'M1 path-identity verification must stop replacement before read callback');
+  assert.equal(genericCallbacks.count,0);
+  assert.equal(evidence.snapshot().length,beforeReplacementEvidence,'replacement denial must not create M1 read evidence');
   assert.equal(fs.readFileSync(file,'utf8'),'replacement bytes');
   assert.equal(fs.readFileSync(held,'utf8'),marker);
 });
@@ -201,6 +347,36 @@ test('M3 host dependency seam stays UNKNOWN and side-effect free when the truste
     assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));
     fs.rmSync(realRoot,{recursive:true,force:true});
   }
+});
+
+test('M3 records a missing M2 capability-bound executor internally without exposing a new Console reason',async()=>{
+  let m5FactoryCalls=0,gatewayReads=0;
+  const capability=Object.freeze(Object.create(null));
+  const gateway=Object.freeze({
+    bindFileReadCapability(){return capability;},
+    verifyFileReadCapability(){return true;},
+    readFileWithCapability(){gatewayReads++;throw new Error('the missing provider must stop before M1 read');},
+  });
+  const guard=createAgentGuard({sessionId:'m3-m2-provider-missing-test',alert:false});
+  const host=await createProtectedHostAdapter(gateway,guard,os.tmpdir(),{
+    loadM2Facade:async()=>({createSecurityGatewayHostAdapter(options:any){
+      return options.createSecurityToolRouter({
+        ...options.routerOptions,
+        tools:{protected_read:{operation:'file-read',pathArg:'path'}},
+        fileReadCapability:{resolve:()=>capability,verify:()=>true},
+        // Deliberately omit M2's capability-bound executor. A generic
+        // path-only callback must not be accepted as the M5 held-read method.
+      });
+    }}),
+    createSecurityToolRouter:((()=>{m5FactoryCalls++;throw new Error('M5 must not be constructed without the M2 held-read method');}) as never),
+  });
+  assert.equal(host.status,'UNKNOWN');
+  assert.equal(host.reason,'M2_CAPABILITY_PROVIDER_UNAVAILABLE','internal diagnostics should retain the precise owner API blocker');
+  assert.equal(host.dispatch,undefined);
+  assert.equal(host.securityCenterStatusProvider,undefined);
+  assert.equal(host.m5Callbacks(),0);
+  assert.equal(m5FactoryCalls,0);
+  assert.equal(gatewayReads,0);
 });
 
 test('M3 host does not substitute its local router when the composed M5 public export is absent',async()=>{

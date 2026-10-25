@@ -1,6 +1,6 @@
 import { after, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -8,6 +8,8 @@ import { createAgentGuard, createContainmentStateStore } from '../src/containmen
 import { EvidenceRecorder } from '../src/runtime/evidence.js';
 import { createTrustedExecutionGateway } from '../src/sdk.js';
 import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
+import {createSecurityToolRouter} from '../src/security-router.js';
+import {createSecurityGatewayHostAdapter} from '../execution-isolation/gateway-adapter/gateway-adapter.mjs';
 import { isValidSecurityCenterStatusPayload } from '../src/ai/security-center-adapter.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
@@ -328,6 +330,7 @@ test('security-center route preserves scoped provider status and filters unsafe 
     policy: { protectionStatus: 'PROTECTED', name: 'M2_FIXED_FILE_READS' },
     protectedToolCount: 1,
     unprotectedExecutionPaths: ['NATIVE_SHELL'],
+    coverage: 'M2_FIXED_FILE_READS_ONLY',
     agents: [
       { agent: 'codex', detected: true, connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
       { agent: 'claude', connectionStatus: 'UNKNOWN', protectionStatus: 'UNKNOWN' },
@@ -374,6 +377,7 @@ test('security-center route keeps missing, invalid, or failed provider data UNKN
     async () => { throw new Error('private provider failure'); },
     async () => undefined,
     async () => ({ protectionStatus: 'PROTECTED', gateway: { protectionStatus: 'bad-status' } }),
+    async () => ({ protectionStatus: 'UNKNOWN', coverage: 'ALL_TOOLS', privatePath: 'C:\\Users\\alice\\secret.txt' }),
   ]) {
     const console = await startAIConsole({ port: 0, securityCenterStatusProvider: provider });
     try {
@@ -425,7 +429,7 @@ test('security-center route ignores provider getters and does not overstate conf
 });
 
 function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='allow',missingM2=false,missingEvidence=false){
-  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;gatewayEvidence:number;workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,gatewayEvidence:0};
+  const state:{dependencyLoads:number;gatewayCreates:number;gatewayCloses:number;routerCallbacks:number;heldReadCallbacks:number;gatewayEvidence:number;unregisteredPaths:string[];workspaceRoot?:string;fixedFiles?:unknown;routeArguments?:unknown}={dependencyLoads:0,gatewayCreates:0,gatewayCloses:0,routerCallbacks:0,heldReadCallbacks:0,gatewayEvidence:0,unregisteredPaths:[]};
   const capability=Object.freeze(Object.create(null));
   const loader=async()=>{
     state.dependencyLoads++;
@@ -459,28 +463,39 @@ function fakeProtectedReadDependencies(mode:'allow'|'deny'|'unknown'|'wrong'='al
       loadM2Facade:async()=>{
         if(missingM2)throw new Error('private M2 dependency failure');
         return{createSecurityGatewayHostAdapter(options:Record<string,any>){
+        const provider=Object.freeze({
+          resolve:(call:unknown)=>options.gateway.verifyFileReadCapability(capability,call,'file-read')?capability:undefined,
+          verify:(value:unknown,call:unknown,operation:string)=>value===capability&&operation==='file-read'&&options.gateway.verifyFileReadCapability(value,call,operation),
+          async readFileWithCapability(value:unknown,call:unknown,signal?:AbortSignal){
+            assert.equal(value,capability);assert.equal(signal?.aborted,false);state.heldReadCallbacks++;
+            return options.gateway.readFileWithCapability(value,call,'file-read',signal);
+          },
+        });
         const router=options.createSecurityToolRouter({
           ...options.routerOptions,
           tools:{protected_read:{operation:'file-read',pathArg:'path'}},
-          fileReadCapability:{resolve:(call:unknown)=>options.gateway.verifyFileReadCapability(capability,call,'file-read')?capability:undefined,verify:(value:unknown,call:unknown)=>value===capability&&options.gateway.verifyFileReadCapability(value,call,'file-read')},
-          executeRealTool:async(call:unknown,context:{signal:AbortSignal})=>{
-            assert.equal(context.signal.aborted,false);
+          fileReadCapability:provider,
+          executeRealTool:async()=>{
             state.routerCallbacks++;
-            return gateway.readFileWithCapability(capability,call,'file-read');
+            throw new Error('strict held reads must not use the generic path callback');
           },
         });
         return{dispatch:(call:unknown)=>{
           const candidate=(call as any)?.args?.path;
-          if(candidate!=='agent-canary-public.txt')throw new TypeError('M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');
+          if(candidate!=='agent-canary-public.txt'){state.unregisteredPaths.push(typeof candidate==='string'?candidate:'<non-string>');throw new TypeError('M2_SECURITY_GATEWAY_PATH_NOT_REGISTERED');}
           if(!options.gateway.verifyFileReadCapability(capability,call,'file-read'))throw new TypeError('M2_SECURITY_GATEWAY_CAPABILITY_INVALID');
           return router.dispatch(call);
         }};
       }};
       },
       createSecurityToolRouter(options:Record<string,any>){
-        const gateway=options.executeRealTool;
+        const provider=options.fileReadCapability;
         return{
-          async dispatch(call:unknown){return gateway(call,{signal:new AbortController().signal,fileReadCapability:capability});},
+          async dispatch(call:unknown){
+            const resolved=provider.resolve(call);
+            if(!resolved||provider.verify(resolved,call,'file-read')!==true)throw new TypeError('M5_HELD_FILE_CAPABILITY_INVALID');
+            return provider.readFileWithCapability(resolved,call,new AbortController().signal);
+          },
           pendingApprovals(){return[];},
           inspectPolicy(){return{action:'ALLOW',mode:'OBSERVE'};},
         };
@@ -540,11 +555,67 @@ test('protected-read action reports PASS only after the fixed positive, alias de
     assert.equal(serialized.includes(dependencies.state.workspaceRoot??''),false);
     assert.deepEqual(dependencies.state.fixedFiles,[{path:'agent-canary-public.txt'}]);
     assert.deepEqual(dependencies.state.routeArguments,{name:'protected_read',args:{path:'agent-canary-public.txt'}});
-    assert.equal(dependencies.state.routerCallbacks,1,'only the fixed positive control may reach M5');
+    assert.equal(dependencies.state.unregisteredPaths.length,2,'the lexical alias and physical junction alias must both be rejected by the fixed M2 map');
+    assert.equal(dependencies.state.unregisteredPaths[0],'./agent-canary-public.txt');
+    assert.ok(dependencies.state.unregisteredPaths[1].startsWith('..'+path.sep));
+    assert.ok(dependencies.state.unregisteredPaths[1].includes('agent-canary-console-probe-alias-'));
+    assert.equal(dependencies.state.heldReadCallbacks,1,'only the fixed positive control may reach the M2 held-read provider');
+    assert.equal(dependencies.state.routerCallbacks,0,'strict file reads must bypass the generic path-only callback');
     assert.equal(dependencies.state.gatewayEvidence,1,'alias and same-path replacement denials must not add M1 read evidence');
     assert.equal(dependencies.state.gatewayCloses,1);
     assert.equal(fs.existsSync(dependencies.state.workspaceRoot??''),false,'the exact temporary probe directory is removed after the held Gateway closes');
   }finally{await console.close();}
+});
+
+test('default first-party Console CLI reads through the M2 held-file capability and M5 router',async(t)=>{
+  const prefix='agent-canary-console-probe-';
+  assert.equal(hasPublicM2GatewayAdapter,true,'the M2 facade must be resolved through its public package entry');
+  assert.equal(hasPublicM5PolicyRouter,true,'the M5 router must be resolved through its public package entry');
+  const [sdk,adapter,policy]=await Promise.all([
+    import('@dorianchn/agent-canary/sdk'),
+    import('@dorianchn/agent-canary/gateway-adapter'),
+    import('@dorianchn/agent-canary/policy-router'),
+  ]);
+  assert.equal(typeof sdk.createTrustedExecutionGateway,'function');
+  assert.equal(typeof adapter.createSecurityGatewayHostAdapter,'function');
+  assert.equal(typeof policy.createSecurityToolRouter,'function');
+  const childTempRoot=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-cli-temp-'));
+  const before=new Set(fs.readdirSync(childTempRoot).filter(name=>name.startsWith(prefix)));
+  const child=spawn(process.execPath,[path.resolve('dist/index.js'),'ai','console','--port','0'],{
+    cwd:process.cwd(),
+    env:{...process.env,AGENT_CANARY_OPERATOR_CODE:'OPERATOR_FIXTURE',AGENT_CANARY_HOME:path.join(childTempRoot,'home'),TMP:childTempRoot,TEMP:childTempRoot,TMPDIR:childTempRoot},
+    stdio:['ignore','pipe','pipe'],
+    windowsHide:true,
+  });
+  let stdout='',stderr='';
+  child.stdout.setEncoding('utf8').on('data',(chunk:string)=>stdout+=chunk);
+  child.stderr.setEncoding('utf8').on('data',(chunk:string)=>stderr+=chunk);
+  const closed=new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>child.once('close',(code,signal)=>resolve({code,signal})));
+  t.after(async()=>{
+    if(child.exitCode===null&&child.signalCode===null)child.kill();
+    await Promise.race([closed,new Promise(resolve=>setTimeout(resolve,5_000))]);
+    fs.rmSync(childTempRoot,{recursive:true,force:true});
+  });
+  const consoleUrl=await new Promise<string>((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(new Error('default Console CLI did not report its loopback URL: '+stderr.slice(-1000))),10_000);
+    child.once('error',error=>{clearTimeout(timer);reject(error);});
+    child.once('close',exit=>{clearTimeout(timer);reject(new Error('default Console CLI exited before startup: '+JSON.stringify(exit)+' '+stderr.slice(-1000)));});
+    child.stdout.on('data',()=>{
+      const match=stdout.match(/Agent Canary 中文控制台: (http:\/\/127\.0\.0\.1:\d+)/);
+      if(match){clearTimeout(timer);resolve(match[1]);}
+    });
+  });
+  try{
+    const csrf=await csrfFor(consoleUrl);
+    const response=await fetch(consoleUrl+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},body:'{}'});
+    assert.equal(response.status,200);
+    assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true},'PASS requires the M1 held-file positive read plus alias and same-path replacement denials through M2/M5');
+  }finally{
+    if(child.exitCode===null&&child.signalCode===null)child.kill();
+    await Promise.race([closed,new Promise(resolve=>setTimeout(resolve,5_000))]);
+  }
+  const after=fs.readdirSync(childTempRoot).filter(name=>name.startsWith(prefix));
+  assert.deepEqual(after.filter(name=>!before.has(name)),[],'the first-party fixed probe and its junction alias must be cleaned up');
 });
 
 test('protected-read action stays UNKNOWN before owner composition when the M1 evidence surface is absent',async()=>{
@@ -624,4 +695,151 @@ test('protected-read action treats unexpected markers as UNKNOWN and missing com
     const afterIncomplete=fs.readdirSync(os.tmpdir()).filter(name=>name.startsWith(prefix));
     assert.deepEqual(afterIncomplete.filter(name=>!beforeIncomplete.has(name)),[],'an unavailable M2 composition must fail before any probe filesystem, Gateway, or router callback');
   }finally{await incompleteConsole.close();}
+});
+
+function actualM1M2M5TargetDependencies(){
+  let gateway:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+  let router:{pendingApprovals:()=>unknown[]}|undefined;
+  let heldReadCallbacks=0;
+  const loader=async()=>({
+    createGuard:(options:{sessionId?:string;alert?:boolean})=>createAgentGuard(options),
+    createEvidenceRecorder:()=>new EvidenceRecorder(),
+    createGateway:(options:Parameters<typeof createTrustedExecutionGateway>[0])=>gateway=createTrustedExecutionGateway(options),
+    loadM2Facade:async()=>({createSecurityGatewayHostAdapter}),
+    createSecurityToolRouter:(options:any)=>{
+      const provider=options.fileReadCapability;
+      const monitoredProvider={
+        resolve:(call:any)=>provider.resolve(call),
+        verify:(capability:any,call:any,operation:any)=>provider.verify(capability,call,operation),
+        readFileWithCapability:(capability:any,call:any,signal?:AbortSignal)=>{
+          heldReadCallbacks++;
+          return provider.readFileWithCapability(capability,call,signal);
+        },
+      };
+      router=createSecurityToolRouter({...options,fileReadCapability:monitoredProvider});
+      return router;
+    },
+  });
+  return{loader,get gateway(){return gateway;},get heldReadCallbacks(){return heldReadCallbacks;},get pendingApprovals(){return router?.pendingApprovals().length??0;}};
+}
+
+async function postConfiguredTargetRead(url:string,csrf:string,body:unknown){
+  return fetch(url+'/api/security-center/target-read',{
+    method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf,'x-canary-operator-code':'OPERATOR_FIXTURE'},
+    body:JSON.stringify(body),
+  });
+}
+
+test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERVE with target-ID-only responses',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-positive-'));
+  fs.mkdirSync(path.join(workspace,'notes'));
+  const targetPath=path.join(workspace,'notes','summary.txt'),original='PRIVATE_TARGET_CONTENT_MUST_NOT_ESCAPE';
+  fs.writeFileSync(targetPath,original);
+  const dependencies=actualM1M2M5TargetDependencies();
+  const console=await startAIConsole({
+    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+    securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],securityCenterTargetDependencies:dependencies.loader as never,
+  });
+  try{
+    const csrf=await csrfFor(console.url),gateway=dependencies.gateway;
+    assert.ok(gateway,'the CLI startup dependency seam should construct M1 before accepting requests');
+    const evidenceBefore=gateway.evidence().length;
+    for(const request of [{path:'notes/summary.txt'},{targetId:'not-configured'},{targetId:'summary',path:'notes/summary.txt'}]){
+      const response=await postConfiguredTargetRead(console.url,csrf,request);
+      assert.equal(response.status,200);
+      assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    }
+    assert.equal(dependencies.heldReadCallbacks,0,'path-only, extra-path, and unconfigured requests must stop before M5');
+    assert.equal(gateway.evidence().length,evidenceBefore,'invalid requests must not append M1 evidence');
+    assert.equal(dependencies.pendingApprovals,0,'OBSERVE must not create approvals');
+
+    const positive=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'});
+    assert.equal(positive.status,200);
+    const positiveBody=await positive.json();
+    assert.deepEqual(positiveBody,{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
+    assert.equal(JSON.stringify(positiveBody).includes(original),false);
+    assert.equal(JSON.stringify(positiveBody).includes(targetPath),false);
+    assert.equal(dependencies.heldReadCallbacks,1);
+    const evidenceAfterPositive=gateway.evidence();
+    assert.ok(evidenceAfterPositive.length>evidenceBefore);
+    assert.ok(evidenceAfterPositive.some(event=>event.decision==='ALLOW'));
+    assert.equal(dependencies.pendingApprovals,0);
+
+    const heldPath=targetPath+'.held',replacement='REPLACEMENT_CONTENT_MUST_NOT_ESCAPE';
+    fs.renameSync(targetPath,heldPath);
+    fs.writeFileSync(targetPath,replacement);
+    const replacementEvidence=gateway.evidence().length,callbacksBefore=dependencies.heldReadCallbacks;
+    const deniedReplacement=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'});
+    assert.deepEqual(await deniedReplacement.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    assert.equal(dependencies.heldReadCallbacks,callbacksBefore,'M2 must reject the replaced M1 identity before M5 read callback');
+    assert.equal(gateway.evidence().length,replacementEvidence,'replacement rejection must add no M1 read evidence');
+    assert.equal(dependencies.pendingApprovals,0);
+    assert.equal(fs.readFileSync(targetPath,'utf8'),replacement);
+    assert.equal(fs.readFileSync(heldPath,'utf8'),original);
+  }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
+});
+
+test('configured sensitive and symlink targets fail closed before M5 callbacks or M1 read evidence',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-denials-'));
+  fs.mkdirSync(path.join(workspace,'.ssh'));
+  fs.writeFileSync(path.join(workspace,'.ssh','id_rsa'),'SENSITIVE_ALIAS_FIXTURE');
+  fs.mkdirSync(path.join(workspace,'real'));
+  fs.writeFileSync(path.join(workspace,'real','notes.txt'),'SAFE_TARGET_FIXTURE');
+  fs.symlinkSync(path.join(workspace,'real'),path.join(workspace,'alias'),process.platform==='win32'?'junction':'dir');
+  const dependencies=actualM1M2M5TargetDependencies();
+  const console=await startAIConsole({
+    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+    securityCenterProtectedTargets:[{id:'credentials',path:'.ssh/id_rsa'},{id:'linked',path:'alias/notes.txt'}],
+    securityCenterTargetDependencies:dependencies.loader as never,
+  });
+  try{
+    const csrf=await csrfFor(console.url);
+    for(const targetId of ['credentials','linked']){
+      const response=await postConfiguredTargetRead(console.url,csrf,{targetId});
+      assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    }
+    assert.equal(dependencies.heldReadCallbacks,0);
+    assert.equal(dependencies.gateway?.evidence().length,0);
+    assert.equal(dependencies.pendingApprovals,0);
+  }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
+});
+
+test('normal ai console CLI binds configured targets at process startup',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-cli-'));
+  fs.mkdirSync(path.join(workspace,'notes'));
+  fs.writeFileSync(path.join(workspace,'notes','brief.txt'),'CLI_TARGET_PRIVATE_CONTENT');
+  const child=spawn(process.execPath,[
+    path.resolve('dist/index.js'),'ai','console','--port','0','--workspace-root',workspace,'--protected-target','brief=notes/brief.txt',
+  ],{
+    cwd:process.cwd(),env:{...process.env,AGENT_CANARY_OPERATOR_CODE:'OPERATOR_FIXTURE'},
+    stdio:['ignore','pipe','pipe'],windowsHide:true,
+  });
+  let stdout='',stderr='';
+  child.stdout?.on('data',(chunk:Buffer)=>{stdout+=chunk.toString('utf8');});
+  child.stderr?.on('data',(chunk:Buffer)=>{stderr+=chunk.toString('utf8');});
+  try{
+    const url=await new Promise<string>((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error('CLI_START_TIMEOUT '+stderr.slice(-1000))),15_000);
+      const inspect=()=>{
+        const match=stdout.match(/Agent Canary 中文控制台: (http:\/\/127\.0\.0\.1:\d+)/);
+        if(match){clearTimeout(timer);resolve(match[1]);}
+      };
+      child.stdout?.on('data',inspect);
+      child.once('error',error=>{clearTimeout(timer);reject(error);});
+      child.once('exit',code=>{clearTimeout(timer);reject(new Error(`CLI_EXIT_${code} ${stderr.slice(-1000)}`));});
+      inspect();
+    });
+    const csrf=await csrfFor(url);
+    const response=await postConfiguredTargetRead(url,csrf,{targetId:'brief'});
+    assert.equal(response.status,200);
+    const body=await response.json();
+    assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
+    assert.equal(JSON.stringify(body).includes('CLI_TARGET_PRIVATE_CONTENT'),false);
+  }finally{
+    if(child.exitCode===null&&child.signalCode===null){
+      child.kill();
+      await new Promise<void>(resolve=>child.once('exit',()=>resolve()));
+    }
+    fs.rmSync(workspace,{recursive:true,force:true});
+  }
 });
