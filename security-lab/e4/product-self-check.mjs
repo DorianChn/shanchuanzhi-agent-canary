@@ -18,6 +18,28 @@ const check = (condition, code) => { if (!condition) throw Error(code); };
 const sha = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const gitSha = value => typeof value === 'string' && /^[a-f0-9]{40}$/.test(value);
 
+export function assertOutputOutsideInput(inputDir, outputDir, errorCode) {
+  const input = fs.realpathSync(inputDir);
+  let ancestor = path.resolve(outputDir);
+  const suffix = [];
+  // The output need not exist. Resolve its nearest existing ancestor so a
+  // junction in either path cannot disguise a write back into the input.
+  for (;;) {
+    try {
+      const output = path.resolve(fs.realpathSync(ancestor), ...suffix);
+      const relative = path.relative(input, output);
+      check(relative.startsWith('..' + path.sep) || path.isAbsolute(relative), errorCode);
+      return;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      const parent = path.dirname(ancestor);
+      if (parent === ancestor) throw error;
+      suffix.unshift(path.basename(ancestor));
+      ancestor = parent;
+    }
+  }
+}
+
 function read(root, name) {
   check(safe(name), 'PRODUCT_UNSAFE_PATH');
   let file = root;
@@ -110,9 +132,7 @@ export function createProductSelfCheck(options) {
   const input = inspectProductArtifact(options);
   const output = path.resolve(options.outputDir);
   check(!fs.existsSync(output), 'PRODUCT_OUTPUT_ALREADY_EXISTS');
-  const artifactRoot = path.resolve(options.artifactDir);
-  const relative = path.relative(artifactRoot, output);
-  check(relative.startsWith('..' + path.sep) || path.isAbsolute(relative), 'PRODUCT_OUTPUT_INSIDE_INPUT');
+  assertOutputOutsideInput(options.artifactDir, output, 'PRODUCT_OUTPUT_INSIDE_INPUT');
   fs.mkdirSync(output, {recursive: true});
   const startedAt = new Date().toISOString();
   const after = inspectProductArtifact(options);
