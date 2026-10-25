@@ -8633,3 +8633,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Additional M5 integration-risk finding (P1): read-only diff of `package.json` confirms PR #122's `test` script omits `test/m9-security-composition.test.ts`, which is present on current feature base `b0d8d77`. The test file remains present, but would stop running in the M5 candidate's full `npm test`. M5 must preserve the current base's full test list while adding M5 tests and rerun the full suite; M0 did not edit M5. Recorded in PR #122 and Issue #124.
 - Exact local M5 results from the 13:33 matrix: `npm test` at `dde81d6` is 500 total (489 PASS, 0 FAIL, 11 SKIPPED) and omits the current-base M9 security-composition test noted above. `npm run pack:check` fails at `scripts/check-sdk-types.mjs:9` with ENOENT for the unpacked `@dorianchn/agent-canary/package.json`. M5 owner follow-up now covers preserving the test and repairing this package-check path.
+
+## M0 Draft PR post-push checks — 2026-10-25 14:05 UTC
+
+- PR #119 exact head `2b5c9c01468c9538c274d2802985af6fb6d4b53f` is OPEN/Draft and all 12 checks are SUCCESS: six OS/Node CI tests, Docker, sponsor, package smoke, ownership-contract evidence, and M9 Ubuntu/Windows.
+- M9 PR-event run `40200283880` passed both platforms, but its immutable selection is feature base `b0d8d77` with merged-source refs M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, and M8 `84ee6a7`. This is baseline composition evidence for PR #119; it is not the follow-up candidate run.
+- Separate M9 candidate workflow run `40198737633` remains SUCCESS on Ubuntu/Windows at M9 SHA `b5b9f71`, pinning active M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`. This candidate pass does not erase old checks on PRs #120–#123 or the M5 ownership/package blockers.
+- PR #24 remains OPEN/Draft with unchanged head `b0d8d77` and base `competition/shanchuanzhi-release-readiness`. No merge, Release, or module implementation edit occurred.
