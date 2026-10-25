@@ -1,5 +1,16 @@
 # M9 最终集成计划
 
+## 冻结候选的两阶段精确 pin 流程 — 2026-10-25
+
+该流程处理已注册模块分支上的新候选 SHA，避免移动中的 feature base 与 M9 精确来源 pin 互相追逐；它不豁免任何检查，也不改变模块所有权。
+
+1. **冻结模块候选。** 模块 owner 将候选推送到原有稳定分支及目标为 `feature/agent-canary-3.0` 的同一 PR，记下确切 PR 号、分支和 40 位 head SHA。进入 M9 精确组合期间不得继续改写该 head；若 head 改变，从第一阶段重新开始。
+2. **先更新并验证 M9 pin。** 在既有 M9 分支创建 follow-up，只把该模块的 manifest PR 号和 SHA 更新为已冻结候选，稳定 branchRef 不变，其余模块 pin、历史来源和 owner disposition 均保持原值。按 exact-source manifest、owner review 和 Ubuntu/Windows 组合门运行；全部必需检查成功后才将此 M9 manifest 更新合入 feature。该候选检查结果是指定 SHA 的组合证据，不替代模块 owner 对精确代码/文件的接受。
+3. **刷新同一模块 PR 的 base 事件。** M9 pin 已进入 feature 后，关闭并重新打开同一个模块 PR；不更改分支或 head。当前 M9 workflow 对非 M9 PR 从 `pull_request.base.sha` 选择并 checkout M9 源，同时 validator 要求 PR 号、稳定 head ref、head SHA 与新 manifest pin 完全相等。GitHub 默认 `pull_request` 活动包括 `reopened`，因此这会产生一个新的候选检查 run；以该 run 的事件快照及日志为准，确认 `PR_BASE_SHA` 是含新 M9 manifest 的当前 feature SHA、M9 checkout 正是该 SHA、模块 head 仍等于 pin。若事件或 checkout 仍指向旧 base，结果保持失败并需刷新后重跑，不能据此放行。
+4. **只按新鲜精确 head 结果合并模块 PR。** 要求新 run 的所有必需检查在冻结 head 上成功，并继续满足 AC3 的批准共同基线及无冲突组合检查，再合并模块 PR。旧 base 上的失败 run 保留为历史证据，不删除、不覆盖，也不通过跳过或降低 required checks 来改变结论。
+
+M9 manifest PR 自身仍使用其精确 PR head；所有八个 module pins 及现有 M1/M6 精确 blob/owner gates 仍严格执行。模块候选 run 不构成最终 M9 接受；最终 M9 合成与 owner disposition 仍须在记录该精确来源并通过相应门后才成立。GitHub 的 [pull request workflow events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows) 说明默认活动包括 reopen；本仓库实际使用和记录的是事件里的不可变 `pull_request.base.sha` 与 `pull_request.head.sha`，每次都必须核对具体 run，不能仅凭 reopen 动作推断它已刷新。
+
 ## 当前 exact-source composition 快照（2026-10-23）
 
 - 当前 M1–M8 exact source pins、模块级覆盖、owner 审阅范围及证据限制见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md)。M3 已刷新到已发布 head `cac8f4627aceb5dd3732036129e42ade7e4790e9`；截至刷新时该 SHA 没有可报告的 hosted run。M8 本地候选 `4fb07ed` 尚未推送/CI 验证，故继续固定已发布 head `84ee6a7a8d65706f694b7949e82fd8c83cc11523`。
