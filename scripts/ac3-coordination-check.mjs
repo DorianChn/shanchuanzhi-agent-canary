@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { composeAc3Candidate } from './ac3-baseline.mjs';
+import { composeAc3Candidate, resolveAc3EventBase } from './ac3-baseline.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const policy = JSON.parse(readFileSync(path.join(root, 'scripts/ac3-ownership.json'), 'utf8'));
@@ -25,9 +25,11 @@ if (pull.head?.sha !== headSha) errors.push('AC3_HEAD_SHA must match the pull_re
 const moduleId = policy.moduleBranches[headRef];
 if (!moduleId) errors.push(`Branch ${headRef} is not registered in scripts/ac3-ownership.json.`);
 
+const context = resolveAc3EventBase({ eventBaseSha: baseSha, headSha, testMergeSha: process.env.GITHUB_SHA, cwd: root });
+errors.push(...context.errors);
 const composition = composeAc3Candidate({
   baselineSha: policy.approvedCommonSourceBaseline,
-  baseSha,
+  baseSha: context.baseSha,
   headSha,
   cwd: root
 });
@@ -68,4 +70,4 @@ if (errors.length) {
 }
 
 console.log(`AC3 coordination checks passed for ${moduleId} (${headRef}); ${changed.length} changed paths checked.`);
-console.log(`AC3 source composition: approved baseline ${policy.approvedCommonSourceBaseline}; current feature base ${baseSha}; PR head ${headSha}; merge-tree ${composition.tree}.`);
+console.log(`AC3 source composition: approved baseline ${policy.approvedCommonSourceBaseline}; event base ${baseSha}; immutable test-merge ${process.env.GITHUB_SHA}; actual feature base ${context.baseSha}; PR head ${headSha}; merge-tree ${composition.tree}.`);

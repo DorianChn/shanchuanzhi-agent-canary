@@ -12,6 +12,30 @@ function isCommit(cwd, sha) {
   return runGit(cwd, ['cat-file', '-e', `${sha}^{commit}`]).status === 0;
 }
 
+export function resolveAc3EventBase({ eventBaseSha, headSha, testMergeSha, cwd }) {
+  const errors = [];
+  for (const sha of [eventBaseSha, headSha, testMergeSha]) {
+    if (typeof sha !== 'string' || !SHA1.test(sha) || !isCommit(cwd, sha)) {
+      errors.push('AC3 event base, candidate head and immutable test-merge SHA must be available exact commits.');
+    }
+  }
+  if (errors.length) return { ok: false, baseSha: null, errors };
+  if (runGit(cwd, ['rev-parse', 'HEAD']).stdout.trim() !== testMergeSha) {
+    errors.push('AC3 checkout must equal the immutable GitHub test-merge SHA.');
+  }
+  const result = runGit(cwd, ['show', '-s', '--format=%P', testMergeSha]);
+  const parents = result.stdout.trim().split(/\s+/);
+  if (result.status !== 0 || parents.length !== 2 || parents.some((sha) => !SHA1.test(sha))) {
+    errors.push('AC3 test-merge must have exactly two valid parents.');
+  } else {
+    if (parents[1] !== headSha) errors.push('AC3 test-merge second parent must equal the event candidate head.');
+    if (runGit(cwd, ['merge-base', '--is-ancestor', eventBaseSha, parents[0]]).status !== 0) {
+      errors.push('AC3 event base must be an ancestor of the immutable test-merge first parent.');
+    }
+  }
+  return { ok: errors.length === 0, baseSha: errors.length ? null : parents[0], errors };
+}
+
 export function composeAc3Candidate({ baselineSha, baseSha, headSha, cwd }) {
   const errors = [];
   const refs = [
