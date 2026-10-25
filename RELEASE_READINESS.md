@@ -6,9 +6,9 @@
 
 ### 续审：M7 包装器来源 pin 修正 — HOLD
 
-- 续审起点为本地提交 2c2ff20cf7c52acb083c0b2ff5e910f3d08b1d77；当前远端产品基线 origin/feature/agent-canary-3.0 为 7cd34454c4bd6aa7176e0e076f5333639e3ccd5d。GitHub 对该基线的 CI run 39957424939 为 9/9 success，Windows Community run 39957424871 为 4/4 success（包括 hosted installer lifecycle job）。这些是远端基线结果，不是本地未发布候选的 exact-head CI。
+- 续审起点为本地提交 2c2ff20cf7c52acb083c0b2ff5e910f3d08b1d77；当前远端产品基线 origin/feature/agent-canary-3.0 为 b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097。GitHub 对该基线的 CI run 40162947429 为 9/9 success；Windows Community run 40162947358 的 wrapper 两 job 与 build-evidence job success，installer lifecycle job skipped。它们是远端基线结果，不是本地未发布候选的 exact-head CI。
 - PR #40 已合并（merge c13c40f06fd066ef204c3fb082f070b5b4c8a93d），M8 当前 head 为 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841。已接受的 M8 source pin 为 24b8651730d57d860ba136e77db1526031abb1fc；仓库验证其为当前 PR head 祖先，固定 demo Git blob 与 PR head blob 均为 3428f297c28845ae054c0ca63aa6c5c4d7ef785f。
-- 复现旧 M7 断言：test/windows-packaging.test.mjs 要求 refs/pull/40/head 仍等于旧 SHA 90fcde0…，但远端实际头为 1c94ed4…。M7 分支比当前 feature 基线 68 ahead / 372 behind；M0 Issue #41 的复核要求不要整体合入此分叉分支。目标 workflow 还把 lifecycle job 限为手动触发，故未合并或覆盖整文件；仅同步已合并 M8 source pin/祖先/blob 校验契约，并保留 PR lifecycle 门禁。
+- 复现旧 M7 断言：test/windows-packaging.test.mjs 要求 refs/pull/40/head 仍等于旧 SHA 90fcde0…，但远端实际头为 1c94ed4…。刷新到完整远端历史并提交本地修复后，M7 分支相对当前 feature 基线为 69 ahead / 414 behind，唯一 merge base 为 5c7d95db6062118eaf90a5004b18f6ebe7c6b238；M0 Issue #41 的复核要求不要整体合入此分叉分支。目标 workflow 还把 lifecycle job 限为手动触发，故未合并或覆盖整文件；仅同步已合并 M8 source pin/祖先/blob 校验契约，并保留 PR lifecycle 门禁。
 - M7-owned 本地候选改动：.github/workflows/windows-community.yml、security-lab/build-community.py、test/windows-packaging.test.mjs。新校验把 immutable source pin、当前 PR head 祖先关系、两个精确 demo blob 和构建报告 provenance 都绑定起来；测试另保留非祖先负例。没有移除断言、跳过测试或改弱 Hook/installer 安全策略。
 - 定向结果：node --import tsx --test test/reliability.test.mjs packaging/windows/test-worker.mjs 为 39 pass / 0 fail / 2 symlink-permission skip；两个受影响 JS 测试文件的 node --check 与 git diff --check 通过。node --import tsx --test test/windows-packaging.test.mjs 为 25 pass / 1 fail / 1 skip；失败项现已越过旧 M8 SHA 断言、祖先和 blob 检查，停在 build fixture 要求 Python 的步骤。本机只有 Windows Store 的 python.exe 执行别名（提示 Python 未找到），无 py.exe；未安装系统工具。不能把此项记为通过，需在有 Python 的受支持 Windows CI 运行 exact candidate。
 - 本机没有可用 YAML parser；没有声称做过完整 YAML parse。PR lifecycle 条件在本地回归中仍保持对 pull_request 启用。
