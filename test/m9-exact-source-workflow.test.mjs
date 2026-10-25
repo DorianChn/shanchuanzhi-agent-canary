@@ -36,7 +36,7 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
   const validated = validateExactSourceManifest(manifest);
   assert.deepEqual(Object.keys(validated.modules).sort(), exactModuleNames);
   assert.equal(validated.modules.M2.pullRequest, 110);
-  assert.equal(validated.modules.M6.pullRequest, 111);
+  assert.equal(validated.modules.M6.pullRequest, 123);
   assert.equal(validated.modules.M8.pullRequest, 40);
   assert.notEqual(validated.historical.sha, validated.modules.M8.sha);
   assert.equal(validated.review.status, 'ACCEPT');
@@ -74,7 +74,7 @@ test('a module PR only composes when PR number, stable branch, and exact head SH
   }
 });
 
-test('M6 follow-up PR #111 uses its exact source and rejects historical PR #100', () => {
+test('M6 follow-up PR #123 uses its exact source and rejects historical PR #100', () => {
   const source = manifest.modules.M6;
   assert.throws(() => validateExactSourceManifest(manifest, {
     eventName: 'pull_request',
