@@ -8624,3 +8624,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - This hosted M9 candidate result resolves the stale M3/M6 provenance assertion in the candidate manifest. It does not erase the earlier failures still attached to PR #120/#121/#123, whose pull-request checks read the older `feature/agent-canary-3.0` manifest, and it does not clear M5 PR #122's ownership-contract failure or M1 review requirement. Issues #124 and #125 were updated with this distinction (comments `6398436384`, `6398436696`).
 - M9 candidate readiness is now GREEN for the exact pinned M1–M8 composition at `b5b9f71`; full M9 integration acceptance remains OPEN for M5 approved-baseline sync/review, owner follow-ups, M7/M8 local pin drift, product-host and E4 acceptance gates. Do not merge PR #24, merge `main`, or publish a Release.
 
+
+## M0 owner-slot handoff — 2026-10-25 13:47 UTC
+
+- M1 source-only Gateway issue #118 is now assigned as the next active M1 lane in place of waiting indefinitely on the external/product portion of #52. Exact one-click rerun reproduced both synthetic failures (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected synthetic targets were unchanged. M1 must preserve fail-closed behavior and run focused Windows/Linux regressions in the existing M1 worktree. #52 stays OPEN/P0/NOT_VERIFIED and is not considered resolved by #118. Evidence and acceptance request are in #118 comment `6398463559`.
+- Scheduler Issue #29 now records two active lanes only: M1 #118 source regression and M2 #45 native-host boundary disposition. Neither lane reserves VMware/installer/real-model resources; those remain exclusive and unreserved. No global trust, ACL, or sandbox configuration changes were authorized. Scheduler comment `6398463939`.
+- The M9 hosted candidate result remains green at `b5b9f71` on Ubuntu and Windows. M5 approved-baseline sync/review and direct PR checks using the older feature-base manifest remain unresolved; no merge or release action was taken.
+
