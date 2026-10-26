@@ -109,14 +109,14 @@ foreach ($module in $modules) {
                 'function\s+run\s*\(\s*command\s*,\s*args\s*,\s*cwd\s*=\s*root\s*\)\s*\{[\s\S]*?execFileSync\(\s*command\s*,\s*args\s*,\s*\{\s*cwd\s*,',
                 'function\s+runNpm\s*\(\s*args\s*,\s*cwd\s*=\s*root\s*\)\s*\{[\s\S]*?return\s+run\(\s*process\.execPath\s*,\s*\[\s*npmCli\s*,\s*\.\.\.args\s*\]\s*,\s*cwd\s*\)',
                 'const\s+installDir\s*=\s*path\.join\(\s*temp\s*,\s*["'']install["'']\s*\)',
-                'runNpm\(\s*\[\s*["'']install["''][^\]]*packageFile\s*\]\s*,\s*installDir\s*\)'
+                'runNpm\(\s*\[\s*["'']install["''][^\]]*["'']--prefix["'']\s*,\s*installDir\s*,[^\]]*packageFile\s*\]\s*,\s*installDir\s*\)'
             )
             $isScopedToTempInstallDir = $true
             foreach ($pattern in $isolatedCwdPatterns) {
                 if ($packageChecker -notmatch $pattern) { $isScopedToTempInstallDir = $false; break }
             }
             if (-not $isScopedToTempInstallDir) {
-                $details = 'Skipped because the checker does not prove that npm install runs with its child OS-temporary installDir as cwd through the npm wrapper. Require the verified temporary root, cwd propagation, and install call before rerunning this check.'
+                $details = 'Skipped because the checker does not prove that npm install is explicitly prefixed to its child OS-temporary installDir and runs there through the npm wrapper. cwd alone is insufficient because npm may resolve a user-level project prefix. Require the verified temporary root, cwd propagation, --prefix installDir, and install call before rerunning this check.'
                 Add-Result -Name "$module/$stepName" -Status 'BLOCKED' -Root $root -Sha $sha -Dirty $dirty -Log '' -Details $details
                 Write-Host "BLOCKED $module $stepName (unsafe install root; see report)" -ForegroundColor Yellow
                 continue
