@@ -9306,3 +9306,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M9 current pins remain M7 bba0f0f89c610f8198660e799de7a652b8ea8e96 vs local bf9faeeb96625325e6fab8e497954ff6db4e78ea, and M8 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841 vs local 685520cbb000b3dc6950876f115199cdebf81ea5. No pin changed because exact owner dispositions/reviews remain missing.
 - Issues #52 (P0), #126, #124, and #125 remain OPEN. The #52 protected OBSERVE alias/TOCTOU and zero-side-effect acceptance evidence is still absent. Owner dirty state remains preserved in M6/M7 .gitignore and M8 .gitignore plus M8_MERGE_RESOLUTION_RESULT.json.
 - No module source, M9 manifest, PR #24, main, or Release was changed. No VMware, clean-VM, installer, or real-model slot was used.
+
+## 2026-10-26 19:31 UTC — latest M0 CI and installer-resource audit
+
+- The 2026-10-26 19:23:34 UTC push moved existing M0 PR #131 to b7a7c4176b20ac5c4ea7036d5792b9f9ba21bdf2. Its exact-head Ubuntu/Windows composition, ownership, package smoke, sponsor smoke, and Node 20/22 cross-platform jobs are now terminal: 12/12 pass. PR #131 remains OPEN/Draft.
+- Read-only workflow audit of M7 current head bf9faeeb96625325e6fab8e497954ff6db4e78ea found .github/workflows/windows-community.yml has a pull_request trigger and the installer-lifecycle job condition admits every pull_request; no concurrency group is defined. This conflicts with the explicit-dispatch/exclusive-slot contract in API_CONTRACTS.md. Current PR #128 is CONFLICTING with zero checks, so no lifecycle ran. Existing Issue #29's latest readback says there is no clean VM or reserved resource slot. M7 owns the fix; M0 only records it in INTEGRATION_RISKS.md.
+- The latest desktop matrix remains run 20261026T191058924Z: 38 PASS, 9 dependency-install SKIPPED, 9 FAIL, and 1 BLOCKED. PR #24 and all module branches remain untouched; no clean-VM, installer, VMware, or real-model test was started.
