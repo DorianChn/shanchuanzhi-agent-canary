@@ -8868,3 +8868,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Scheduler Issue #29 records this result in comment `6407804179`. No module source, integration pin, main branch, or Release was changed.
 - Fresh remote-ref comparison at 03:52 UTC confirms M1–M6 local heads equal their published module refs. M7 local `bf9faee` differs from origin `ab9b03f` by three commits; M8 local `685520c` differs from origin/M9-approved `1c94ed4` by one commit. The owner disposition request and exact hashes are recorded in #124 comment `6407840951`; dirty paths remain untouched.
 - Scheduler clarification at 03:56 UTC: M5 #122 and M6 #57 are M0-allocated slots, not owner-confirmed RUNNING tasks. GitHub/worktree evidence shows no new owner reply or module head movement; separate Codex-chat activity is UNKNOWN because no thread-read/control tool is available. The two-slot cap is retained. Issue #29 comment `6407870207` records the distinction.
+
+## 2026-10-26 04:02 UTC — owner checkpoint and remote heads
+
+- Fresh local/remote readback shows M1 `89be11e`, M5 `dde81d6`, and M6 `fae72ea` equal their published refs; M7 local `bf9faee` remains ahead of origin `ab9b03f` by 3 commits; M8 local `685520c` remains ahead of origin `1c94ed4` by 1 commit. No owner-authored reply is visible on the M5/M6 handoffs. Separate Codex-chat activity is UNKNOWN.
+- M0-allocated lanes remain M5 #122 and M6 #57; M1 #118 is queued for owner review, P0 #52 remains OPEN, and M7/M8 local commits and M9 pins remain untouched. Scheduler #29 comment `6407935887` records the checkpoint. PR #24 remains OPEN/Draft at unchanged `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
