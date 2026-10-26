@@ -8788,3 +8788,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Fresh GitHub and worktree readback still shows M1 at clean local head `89be11e` and M5 at `dde81d6`, with no new visible owner disposition or implementation commit. M0 requested the next concrete status by 02:42 UTC: exact candidate plus focused evidence, or the blocker/dependency and earliest verification path.
 - Checkpoints are recorded on existing M1 Issue #118 comment `6406904225` and M5 PR #122 comment `6406904646`. M1 denial/quarantine and independent-session acceptance remain unchanged; the M5 temporary-install-root safety gate remains enforced.
 - No new development slot or branch was opened. The next M0 push batch is due no earlier than 02:42 UTC.
+
+## 2026-10-26 02:34 UTC — exact-head M3/M4/M6 integration check refresh
+
+- PR #119 exact head `474abcc266e42eb06a91450f2e77d6499e4ee9b8` has terminal SUCCESS for standard CI `40258785216`, AC3 coordination `40258785184`, and M9 composition `40258785183` on Ubuntu/Windows. This validates that PR #119 workflow and its selected refs only.
+- Separate module exact-head gates remain failed: M3 PR #120 head `91695529787f07111f5256d3c9d6e0e556f6eac1` has Ubuntu/Windows composition failure in run `40191658779`; M4 PR #121 head `5d975b7927a66be26a8bfc3740530bb27a703f2c` has both composition jobs fail in `40197158659`; M6 PR #123 head `fae72ea3d0c4498dfddb7d04421e41b87179895b` has both composition jobs fail in `40172587383` plus earlier ownership-contract failures. These exact-head failures are not cured by PR #119's green composition result.
+- Refreshed evidence and the separate scopes were added to scheduler Issue #29. M1/M5 owner checkpoints remain due 02:42 UTC; no module source or pin was changed by M0.
