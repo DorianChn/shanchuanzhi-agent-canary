@@ -8735,3 +8735,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Existing M1 Issue #118 now carries the source-level acceptance: preserve quarantine and cancellation, classify expected decoy cancellation explicitly, retain fail-closed behavior, assert follow-up write denial and unchanged target plus independent Guard B, and do not claim PASS absent actual evidence (comment `6406434507`).
 - Existing M6 Issue #57 now has a queued harness task behind active M1/M5 slots: preserve raw logs and target snapshots in `finally`/catch before closing; catch only the expected fail-closed decoy outcome so both controls run. This harness change alone cannot prove execution/rollback correctness or product E4 (comment `6406434897`).
 - No module source or owner worktree was modified; no new development lane was opened. M1 focused tests and E4/full-matrix verification remain pending an owner patch.
+
+## 2026-10-26 — M2 native-host boundary audit
+
+- M2 worktree `feature/ac3-execution-isolation` at `941fd22d5e43e1de91a76b8c73006e57a4c15496` is clean; public PR #37 is already MERGED at `db98c7d` and is not an open lane.
+- Read-only audit found no trusted-worker interception of native Codex Shell: M2's agent hook supports Claude/Cursor; Codex detection remains `activation: unverified`; the separate Codex Hook fragment is not installed/trusted. Protocol deny fixtures explicitly do not prove host interception; callback failure/timeout and specialized tool paths remain bypass risks.
+- Existing owner evidence records a native-shell synthetic sentinel write and no effective Desktop sandbox/Hook attestation or host-observed deny. This establishes no verified enforcement in the observed session, not that Codex generally lacks a host enforcement option.
+- M2 implementation status is accurately documented and surfaced as `UNPROTECTED / BLOCKED_NOT_VERIFIED`. Issue #45 stays OPEN/P1 pending a supported trusted fail-closed host verification or explicit product-owner acceptance of the unsupported-boundary alternative. Audit and disposition are recorded in #45 comment `6406457504`; no M2 files or host settings changed.
