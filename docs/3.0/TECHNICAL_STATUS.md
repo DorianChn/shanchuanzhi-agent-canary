@@ -9004,3 +9004,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 | M9 | Candidate `b5b9f71`, clean/synchronized; no open follow-up PR | Candidate composition passed run `40277802172`; updated manifest is not in shared feature-base for direct follow-up PR checks. Owner-reviewed follow-up PR/ref disposition is pending (#124/#126). |
 
 This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does not clear the module, host, installer, real-model, independent-review, or security-alert gates listed above.
+
+## 2026-10-26 06:17 UTC — file-level M7/M8 pin safety
+
+- Read-only commit diff confirms M7's three local commits beyond origin alter `windows-community.yml`, `security-lab/build-community.py`, Windows/reliability tests, and release/acceptance reports. Against M9's `bba0f0f` pin, merge base is `7cd3445`, with 259 pin-only and 70 local-only commits. Do not treat `bf9faee` as a safe direct pin advancement; M7 must supply an owner-reviewed exact candidate/increment and review the M8 workflow boundary.
+- M8's single local follow-up `685520c` touches nine files, including `scripts/check-docs.mjs`, beyond merged PR #40 head `1c94ed4`. Dirty `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched.
+- Issue #124 now records the file-level comparison and requests named exact commit/blob dispositions. M0 made no M7/M8 file or ref changes.
