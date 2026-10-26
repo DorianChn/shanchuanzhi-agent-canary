@@ -16,5 +16,5 @@ if exist "%~dp0..\..\main\package.json" if exist "%~dp0..\..\agents\M1\package.j
   powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0Run-E4-OneClick.ps1" -OpenReport
 )
 set "TEST_EXIT=%ERRORLEVEL%"
-if not "%TEST_EXIT%"=="0" pause
+if not "%TEST_EXIT%"=="0" echo Automated checks finished with failures; see the report opened by the test runner.
 exit /b %TEST_EXIT%
