@@ -8900,3 +8900,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Re-read exact local and upstream refs. M7 `bf9faee` is 3 commits ahead of origin `ab9b03f` across shared Windows workflow, installer/release reports, builder, and reliability/package tests. M8 `685520c` is one commit ahead of pin/upstream `1c94ed4`, changing documentation and the docs checker. M7 local ancestry is divergent from the M9 candidate base; M8 source commit `1c94ed4` is already merged, while the local follow-up requires owner review.
 - M0 posted file-level details and exact acceptance request to Issue #124 comment `6408287466`. M7/M8 dirty owner files remain untouched; M9 manifest pins remain unchanged pending owner disposition and exact-head validation.
+## 2026-10-26 04:34 UTC — M4 exact-head M9 check disposition
+
+- PR #121 remains OPEN/Draft at `5d975b7`; standard CI and ownership evidence pass, while both direct M9 composition checks fail against the feature-base manifest's stale M4 ref `892d329`.
+- Existing M9 candidate run `40198737633` passes Ubuntu/Windows composition with M4 `5d975b7`; it is not itself a passing direct check on PR #121. The exact distinction and owner acceptance/rerun request were posted to Issue #125 comment `6408292906`. No M4 source or M9 pin was changed.
