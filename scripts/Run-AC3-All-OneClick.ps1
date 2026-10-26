@@ -164,15 +164,129 @@ else {
     Add-Result -Name 'M9/manifest-structure' -Status 'BLOCKED' -Root $m9Root -Sha '' -Dirty $false -Log '' -Details 'M9 exact-source manifest or validator is missing.'
 }
 
+# Read the latest GitHub PR and CI state for the baseline and every existing
+# module branch. This is read-only and records a hosted PASS only when CI checks
+# correspond to the exact local HEAD tested above.
+$trackedWorktrees = [System.Collections.Generic.List[object]]::new()
+$trackedWorktrees.Add([ordered]@{scope='BASELINE';root=$mainRoot})
+$trackedWorktrees.Add([ordered]@{scope='M0';root=$coordinatorRoot})
+foreach ($module in $modules) {
+    $moduleRoot = if ($module -eq 'M9') { Join-Path $workspaceRoot 'integration/M9' } else { Join-Path $workspaceRoot "agents/$module" }
+    $trackedWorktrees.Add([ordered]@{scope=$module;root=$moduleRoot})
+}
+$remotePrStatuses = [System.Collections.Generic.List[object]]::new()
+$ghCommand = Get-Command gh.exe -ErrorAction SilentlyContinue
+$ghExecutable = if ($ghCommand) { $ghCommand.Source } else { '' }
+if (-not $ghExecutable) {
+    $ghCandidate = Join-Path $env:ProgramFiles 'GitHub CLI/gh.exe'
+    if (Test-Path -LiteralPath $ghCandidate -PathType Leaf) { $ghExecutable = $ghCandidate }
+}
+
+if (-not $ghExecutable) {
+    Add-Result -Name 'GitHub/PR-CI-preflight' -Status 'BLOCKED' -Root $workspaceRoot -Sha '' -Dirty $false -Log '' -Details 'GitHub CLI is unavailable; hosted PR and CI state was not checked.'
+}
+else {
+    try {
+        $previousErrorActionPreference = $ErrorActionPreference
+        try {
+            $ErrorActionPreference = 'Continue'
+            $prListOutput = & $ghExecutable pr list --repo DorianChn/shanchuanzhi-agent-canary --state all --limit 100 --json number,title,headRefName,headRefOid,state,isDraft,updatedAt,url 2>&1 | Out-String
+            $prListExitCode = [int]$LASTEXITCODE
+        }
+        finally { $ErrorActionPreference = $previousErrorActionPreference }
+        if ($prListExitCode -ne 0) { throw 'GitHub PR listing failed.' }
+        $parsedPrList = ConvertFrom-Json -InputObject $prListOutput
+        $allPrs = if ($parsedPrList -is [System.Array]) { $parsedPrList } else { @($parsedPrList) }
+
+        foreach ($entry in $trackedWorktrees) {
+            $scope = $entry.scope
+            $root = $entry.root
+            $branch = (& $git.Source -C $root branch --show-current 2>$null | Out-String).Trim()
+            $localSha = (& $git.Source -C $root rev-parse HEAD 2>$null | Out-String).Trim()
+            $dirty = [bool]((& $git.Source -C $root status --porcelain=v1 --untracked-files=all 2>$null | Out-String).Trim())
+            $branchPrs = @($allPrs | Where-Object { $_.headRefName -eq $branch } | Sort-Object updatedAt -Descending)
+            $openPrs = @($branchPrs | Where-Object { $_.state -eq 'OPEN' })
+            $exactHeadPrs = @($branchPrs | Where-Object { $_.headRefOid -eq $localSha })
+            $exactOpenPrs = @($openPrs | Where-Object { $_.headRefOid -eq $localSha })
+            $selectedPr = if ($exactOpenPrs.Count -gt 0) { $exactOpenPrs[0] }
+                elseif ($openPrs.Count -gt 0) { $openPrs[0] }
+                elseif ($exactHeadPrs.Count -gt 0) { $exactHeadPrs[0] }
+                elseif ($branchPrs.Count -gt 0) { $branchPrs[0] }
+                else { $null }
+            if (-not $selectedPr) {
+                Add-Result -Name "GitHub/$scope-PR-CI" -Status 'SKIPPED' -Root $root -Sha $localSha -Dirty $dirty -Log '' -Details "No GitHub PR was found for local branch $branch."
+                continue
+            }
+
+            try {
+                $previousErrorActionPreference = $ErrorActionPreference
+                try {
+                    $ErrorActionPreference = 'Continue'
+                    $prViewOutput = & $ghExecutable pr view $selectedPr.number --repo DorianChn/shanchuanzhi-agent-canary --json number,title,headRefName,headRefOid,state,isDraft,mergeable,url 2>&1 | Out-String
+                    $prViewExitCode = [int]$LASTEXITCODE
+                    $checksOutput = & $ghExecutable pr checks $selectedPr.number --repo DorianChn/shanchuanzhi-agent-canary --json name,state,bucket,workflow 2>&1 | Out-String
+                    $checksExitCode = [int]$LASTEXITCODE
+                }
+                finally { $ErrorActionPreference = $previousErrorActionPreference }
+                if ($prViewExitCode -ne 0) { throw 'GitHub PR details could not be read.' }
+                $remotePr = $prViewOutput | ConvertFrom-Json
+                $checks = @()
+                if ($checksExitCode -eq 0) {
+                    $parsedChecks = ConvertFrom-Json -InputObject $checksOutput
+                    $checks = if ($parsedChecks -is [System.Array]) { $parsedChecks } else { @($parsedChecks) }
+                }
+                elseif ($checksOutput -notmatch 'no checks reported') {
+                    throw 'GitHub CI checks could not be read.'
+                }
+
+                $failedChecks = @($checks | Where-Object { $_.bucket -eq 'fail' -or $_.state -in @('FAILURE','ERROR','TIMED_OUT','CANCELLED','ACTION_REQUIRED') })
+                $pendingChecks = @($checks | Where-Object { $_.bucket -eq 'pending' -or $_.state -in @('PENDING','QUEUED','IN_PROGRESS') })
+                $knownChecks = @($checks | Where-Object { $_.bucket -in @('pass','skipping','fail','pending') })
+                $unknownCheckCount = $checks.Count - $knownChecks.Count
+                $headMatches = $localSha -and $remotePr.headRefOid -and ($localSha -eq $remotePr.headRefOid)
+                $status = if ($remotePr.mergeable -eq 'CONFLICTING' -or $failedChecks.Count -gt 0) { 'FAIL' }
+                    elseif (-not $headMatches) { 'BLOCKED' }
+                    elseif ($dirty) { 'BLOCKED' }
+                    elseif ($checks.Count -eq 0) { 'BLOCKED' }
+                    elseif ($pendingChecks.Count -gt 0 -or $unknownCheckCount -gt 0) { 'BLOCKED' }
+                    else { 'PASS' }
+                $failedNames = ($failedChecks | ForEach-Object { $_.name }) -join ','
+                $pendingNames = ($pendingChecks | ForEach-Object { $_.name }) -join ','
+                $details = "branch=$branch; state=$($remotePr.state); draft=$($remotePr.isDraft); mergeable=$($remotePr.mergeable); localHead=$localSha; remoteHead=$($remotePr.headRefOid); checks=$($checks.Count); failed=$failedNames; pending=$pendingNames; unknown=$unknownCheckCount"
+                Add-Result -Name "GitHub/$scope-PR-$($remotePr.number)-CI" -Status $status -Root $root -Sha $remotePr.headRefOid -Dirty $dirty -Log '' -Details $details
+                Write-Host "$status GitHub $scope PR #$($remotePr.number) CI ($($checks.Count) checks)" -ForegroundColor $(if($status -eq 'PASS'){'Green'}elseif($status -eq 'FAIL'){'Red'}else{'Yellow'})
+                $remotePrStatuses.Add([ordered]@{
+                    scope=$scope; number=$remotePr.number; title=$remotePr.title; url=$remotePr.url
+                    branch=$branch; state=$remotePr.state; isDraft=$remotePr.isDraft; mergeable=$remotePr.mergeable
+                    localHead=$localSha; remoteHead=$remotePr.headRefOid; localDirty=$dirty; status=$status
+                    checkCount=$checks.Count; failedChecks=@($failedNames -split ',' | Where-Object { $_ })
+                    pendingChecks=@($pendingNames -split ',' | Where-Object { $_ }); unknownCheckCount=$unknownCheckCount
+                    checks=@($checks | Select-Object name,state,bucket,workflow)
+                })
+            }
+            catch {
+                $errorSummary = ($_.Exception.Message -replace '\s+',' ').Trim()
+                if ($errorSummary.Length -gt 180) { $errorSummary = $errorSummary.Substring(0,180) }
+                $errorType = $_.Exception.GetType().Name
+                Add-Result -Name "GitHub/$scope-PR-$($selectedPr.number)-CI" -Status 'BLOCKED' -Root $root -Sha $localSha -Dirty $dirty -Log '' -Details "Could not read exact-head PR metadata or CI check status ($errorType): $errorSummary"
+            }
+        }
+    }
+    catch {
+        Add-Result -Name 'GitHub/PR-CI-preflight' -Status 'BLOCKED' -Root $workspaceRoot -Sha '' -Dirty $false -Log '' -Details 'Could not enumerate GitHub PRs; check CLI authentication, network, and repository access.'
+    }
+}
+
 $env:CANARY_PYTHON = $previousCanaryPython
 $env:AGENT_CANARY_HOME = $previousAgentCanaryHome
 
 $failed = @($results | Where-Object { $_.status -in @('FAIL','BLOCKED') })
 $result = [ordered]@{
-    schema='agent-canary.ac3-all-one-click.v1'
+    schema='agent-canary.ac3-all-one-click.v2'
     runId=$runId
     repository='DorianChn/shanchuanzhi-agent-canary'
     modules=@($modules)
+    remotePullRequests=@($remotePrStatuses)
     automatedChecks=if($failed.Count -eq 0){'PASS'}else{'FAIL'}
     resultCount=$results.Count
     nonPassingCount=$failed.Count
@@ -200,7 +314,7 @@ $lines.Add("- Report directory: $reportRoot"); $lines.Add('')
 $lines.Add('## Results'); $lines.Add('')
 foreach ($row in $results) { $tail = if($row.details){" — $($row.details)"}else{''}; $logPart = if($row.log){" (log: $($row.log))"}else{''}; $lines.Add("- **$($row.status)** $($row.name)$tail$logPart") }
 $lines.Add(''); $lines.Add('## Acceptance boundary'); $lines.Add('')
-$lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, M0 baseline, and synthetic E4 tests. Test processes receive isolated AGENT_CANARY_HOME directories inside this run report so synthetic token-store writes do not target the user profile. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
+$lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, M0 baseline, synthetic E4 tests, and read-only GitHub PR/CI state for the exact local branch heads. Test processes receive isolated AGENT_CANARY_HOME directories inside this run report so synthetic token-store writes do not target the user profile. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
 $lines.Add(''); $lines.Add('## Remaining acceptance gates'); $lines.Add('')
 foreach ($gate in $result.remainingAcceptanceGates) { $lines.Add("- $gate") }
 $lines -join [Environment]::NewLine | Set-Content -LiteralPath $mdPath -Encoding UTF8
