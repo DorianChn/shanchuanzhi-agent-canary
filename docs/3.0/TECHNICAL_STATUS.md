@@ -8892,3 +8892,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Pushed coordinator head `728f6257a0ca1e1c9243a827dd3e5992a1f7dbdc` to the existing PR #119 branch after confirming the remote ref and PR #24 head/base were unchanged.
 - On this exact PR head, standard CI run `40268978449`, ownership-contract run `40268978369`, and M9 composition run `40268978358` all reached terminal SUCCESS. M9 composition passed on Ubuntu and Windows. This validates the M0 coordinator docs and approved manifest-selected refs only; local product E4 synthetic failures, M5 package-check guard, M7/M8 local-only commits, and separate product/VM/model acceptance remain open.
 - No module source, integration pins, `main`, PR #24, or Release changed.
+## 2026-10-26 04:32 UTC — M5 package-check owner handoff
+
+- The fresh matrix again confirmed M5 `dde81d6` build/tests PASS while package-check is BLOCKED by the isolation guard; M0 repeated the exact safe temporary-prefix acceptance request on PR #122 (comment `6408276176`). The unsafe package check was not executed.
+- The M5 branch and remote remain at the same exact head; M0 changed no module files. Keep the M5 gate open until the owner supplies the isolated-prefix change and a successful exact-head package check plus complete current-base test list.
