@@ -8936,3 +8936,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - `git check-ignore -q --no-index` confirmed representative `.env`/`.env.local`, key/certificate/container credentials, `.token`/`.secret`/`.secrets`, log, temp, `/tmp`, and Python cache paths are ignored in all 11 active M0/M1–M9 worktrees.
 - No `.gitignore` edits were made by this audit. Existing M6–M8 owner additions remain additive and untouched.
+## 2026-10-26 05:39 UTC — desktop one-click full matrix rerun
+
+- Re-ran the actual desktop launcher target `一键E4自动测试.cmd`; it completed all 46 matrix checks and opened the generated report. Full matrix result is FAIL with 4 non-passing items: M0 baseline/synthetic E4 FAIL, M5 package check BLOCKED by the explicit safe temporary-install-prefix guard, and local M7/M8 heads differing from the immutable M9 pins. M1–M4, M6–M9 build/test/package checks and M9 manifest structure passed.
+- M0 nested E4 report: full project suite 507/518 passed, 0 failed, 11 skipped; package content, E4 bundle/self-check tests, and generated-bundle verification passed. Synthetic `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` each fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`. Three real acceptance cases remain blocked for absent VM/install/model receipts.
+- Exact reports: `security-lab/e4-one-click-runs/20261026T053810502Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md` and `security-lab/e4-one-click-runs/20261026T053810919Z/ONE_CLICK_RESULT.md`. Product E4 and independent review remain NOT_VERIFIED; no real model, installer, or VM was invoked.
+- Coordinator worktree remains clean before recording this entry. The generated reports are ignored; owner worktrees and M9 pins were not modified. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
