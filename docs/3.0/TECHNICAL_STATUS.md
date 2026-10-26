@@ -8982,3 +8982,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - PR #119 head `aaed91564a66a2e599e85d9d4c14efbe63c88bb9` remains OPEN/Draft. Standard CI run `40277802181`, ownership-contract run `40277802170`, and M9 composition run `40277802172` all reached terminal SUCCESS; composition passed both Ubuntu and Windows.
 - This validates the M0 coordination documentation at this exact head and the existing M9 selected immutable composition set. It does not resolve module PR source/pin/ownership blockers, M0 synthetic E4 harness failures, Issue #52 product-host P0, native-Shell protection, clean-VM lifecycle, Hono alert, real-model evidence, or independent review. PR #24 remains OPEN/Draft and unchanged.
+
+## 2026-10-26 06:11 UTC — M9 candidate vs shared-base integration
+
+- M9 worktree is clean and synchronized at `b5b9f71e057b185f0492438f9b53e980a5b6beb6`. PRs #112, #115, #117 are MERGED; latest merged M9 head is #117 `7b6edae85f082c94c3a19e005f90656544a7198d`. The current b5b9 follow-up has no open PR.
+- Exact M9 composition for M0 PR #119 passed on candidate-selected refs at run `40277802172` (Ubuntu and Windows). Direct M3–M6 PR checks still load the older manifest from their shared `feature/agent-canary-3.0` base and fail exact candidate-head equality. Candidate composition PASS therefore does not establish the follow-up manifest is present in the shared base.
+- Issues #124/#126 now ask the M9 owner to identify or publish the reviewed follow-up via the existing M9 branch after module owner ref dispositions. M0 did not create a PR, change pins, or merge PR #24.
