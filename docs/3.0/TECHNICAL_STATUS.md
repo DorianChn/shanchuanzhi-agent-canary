@@ -8965,3 +8965,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - GitHub Dependabot alert #2 remains OPEN and reports default-branch `package-lock.json` at Hono `4.13.7`; advisory first patched version is `4.13.11`. Read directly from GitHub's alert and default-main lock file.
 - Existing non-draft PR #67 remains OPEN at `cda74e9860f1d96d7404871378c0c737535fa77e`, changes only `SOURCE_MANIFEST.json` and `package-lock.json`, and exact CI run `39827204460` is terminal SUCCESS across all nine jobs including `package-smoke`. The stale Issue #70 claim that this PR currently fails package-smoke was corrected with exact evidence.
 - The default-branch alert has not resolved because PR #67 is unmerged. No merge was performed; Issue #70 remains OPEN/P1 until the alert resolves or a reviewed non-applicability disposition is accepted.
+
+## 2026-10-26 06:00 UTC — module PR contract-check diagnostics
+
+- PR #122/M5 ownership runs `40190440590` and `40172687461` report that head `dde81d6` does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; the latter also requires explicit `API-Contract-Change: yes|no`. M0 linked this to existing Issue #126 and requested owner disposition plus complete PR metadata.
+- PR #123/M6 ownership run `40172587299` requires a non-placeholder `Test-Evidence` command/report path (or reasoned N/A) and explicit `API-Contract-Change: yes|no`. Its separate direct composition mismatch is already on Issue #57. M0 added the exact check evidence to PR #123.
+- These failures are enforced ownership/evidence contracts, not reasons to weaken CI. No module branch, PR source, or M9 pin was edited.
