@@ -8971,3 +8971,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - PR #122/M5 ownership runs `40190440590` and `40172687461` report that head `dde81d6` does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; the latter also requires explicit `API-Contract-Change: yes|no`. M0 linked this to existing Issue #126 and requested owner disposition plus complete PR metadata.
 - PR #123/M6 ownership run `40172587299` requires a non-placeholder `Test-Evidence` command/report path (or reasoned N/A) and explicit `API-Contract-Change: yes|no`. Its separate direct composition mismatch is already on Issue #57. M0 added the exact check evidence to PR #123.
 - These failures are enforced ownership/evidence contracts, not reasons to weaken CI. No module branch, PR source, or M9 pin was edited.
+
+## 2026-10-26 06:00 UTC — M7/M8 merged-PR and local-follow-up reconciliation
+
+- M7 PR #39 is MERGED at `a099d049`; subsequent PR #96 is MERGED at `40d024fb6089cd72a186107912bd6baed824f301`. Local M7 head `bf9faee` is four commits past #96's merged head (three ahead of its branch upstream) and has a dirty `.gitignore`. The 05:39 one-click matrix passed M7 build, tests, and package check, but did not run installer/VM lifecycle. Issue #41 was corrected; clean-VM acceptance stays OPEN/P1/NOT_VERIFIED.
+- M8 PR #40 is MERGED at `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`; local M8 head `685520c` is one docs commit past it and retains dirty `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`. There is no open PR for either current local follow-up branch.
+- Exact PR/head relationships and owner disposition requests were posted to Issues #41 and #124. M0 left all M7/M8 dirty/untracked files untouched and did not push module refs or change M9 pins.
