@@ -8948,3 +8948,20 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - Exact PR #119 head `0d11915b83a7c84e1f2ce0a5fb66574fb5275d5d` reached terminal SUCCESS: ownership contract run `40275941092`, standard CI run `40275941120`, and M9 composition run `40275941126` (Ubuntu + Windows).
 - Follow-up source audit compared baseline `main` and M1: `src/runtime/gateway.ts` and `security-lab/e4/run.mjs` are byte-identical. The Gateway's decoy-read quarantine aborts the current session controller; the E4 scenarios do not catch that expected first dispatch abort before checking the subsequent protected denial and cross-session positive control. The run report's `fileState` for both failed cases is empty; therefore this output does not establish a target write or data-loss effect. This remains a source-based diagnosis pending M1 owner confirmation, not a declared fix.
 - The owner-facing explanation and request to retain fail-closed behavior while aligning the E4 fixture with cancellation semantics were added to Issue #118. M0 changed neither M1 source nor its tests. PR #24 remains unchanged.
+
+## 2026-10-26 05:53 UTC — direct M3–M6 PR composition diagnostics
+
+- Fresh `gh pr view` confirms the existing Draft PR heads are unchanged and their direct M9 checks remain terminal failures: M3 PR #120 `9169552` vs event-base manifest pin `0d61b43` (run `40191658779`); M4 PR #121 `5d975b7` vs pin `892d329` (run `40197158659`); M5 PR #122 `dde81d6` vs pin `cca42cd` (run `40172583837`); M6 PR #123 `fae72ea` vs pin `2a88d8b` (run `40172587383`). These exact logs fail manifest-to-PR-head equality.
+- The current M0/M9 candidate workflow run `40275941126` passed on PR #119's selected integration manifest. That pass does not make the direct module PR checks pass, because their event base still selects the feature-base M9 manifest.
+- Exact SHA comparison/run IDs and requested owner-reviewed dispositions were posted to existing Issues #124 (M3/M5), #125 (M4), and #57 (M6). M0 did not alter module branches, M9 pins, or PR state.
+
+## 2026-10-26 05:58 UTC — M2 native-shell and M1/M2/M4/M5 P0 boundaries
+
+- Current M2 evidence in `execution-isolation/codex/hook-test-results.json` remains `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`; project Hook is not installed, trusted, or lifecycle-tested. PR #37 is MERGED at `db98c7d` (merge `49af6d3`), and the existing M2 worktree is at `941fd22`. Its AppContainer evidence is limited to child-process behavior. Issue #45 was updated with the exact current refs and required owner disposition; no host Hook was installed by M0.
+- The M9 exact-source composition run `40275941126` passed Ubuntu and Windows on PR #119, including the declared offline M1–M8 composition regressions. P0 Issue #52 remains OPEN/NOT_VERIFIED because those tests do not establish a shipping host OBSERVE callsite consuming a protected identity with alias/junction/replacement controls. Issue #52 now records this exact evidence boundary.
+
+## 2026-10-26 05:55 UTC — Hono advisory PR #67 refresh
+
+- GitHub Dependabot alert #2 remains OPEN and reports default-branch `package-lock.json` at Hono `4.13.7`; advisory first patched version is `4.13.11`. Read directly from GitHub's alert and default-main lock file.
+- Existing non-draft PR #67 remains OPEN at `cda74e9860f1d96d7404871378c0c737535fa77e`, changes only `SOURCE_MANIFEST.json` and `package-lock.json`, and exact CI run `39827204460` is terminal SUCCESS across all nine jobs including `package-smoke`. The stale Issue #70 claim that this PR currently fails package-smoke was corrected with exact evidence.
+- The default-branch alert has not resolved because PR #67 is unmerged. No merge was performed; Issue #70 remains OPEN/P1 until the alert resolves or a reviewed non-applicability disposition is accepted.
