@@ -15,6 +15,7 @@ New-Item -ItemType Directory -Path $reportRoot -Force | Out-Null
 $results = [System.Collections.Generic.List[object]]::new()
 $modules = @('M1','M2','M3','M4','M5','M6','M7','M8','M9')
 $previousCanaryPython = $env:CANARY_PYTHON
+$previousAgentCanaryHome = $env:AGENT_CANARY_HOME
 
 function Add-Result {
     param([string]$Name,[string]$Status,[string]$Root,[string]$Sha,[bool]$Dirty,[string]$Log,[string]$Details)
@@ -39,9 +40,15 @@ function Invoke-LoggedCommand {
 # Run the existing E4 bootstrap first so its verified portable Python runtime
 # can be reused by every Windows packaging regression in the module worktrees.
 $baselineLog = Join-Path $reportRoot 'baseline-e4-one-click.log'
+$baselineCanaryHome = Join-Path $reportRoot 'isolated-agent-state/baseline'
+New-Item -ItemType Directory -Path $baselineCanaryHome -Force | Out-Null
 Write-Host "`n=== M0 baseline and E4 automation ===" -ForegroundColor Cyan
-& powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File (Join-Path $scriptRoot 'Run-E4-OneClick.ps1') 2>&1 | Tee-Object -FilePath $baselineLog | Out-Null
-$baselineCode = [int]$LASTEXITCODE
+try {
+    $env:AGENT_CANARY_HOME = $baselineCanaryHome
+    & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File (Join-Path $scriptRoot 'Run-E4-OneClick.ps1') 2>&1 | Tee-Object -FilePath $baselineLog | Out-Null
+    $baselineCode = [int]$LASTEXITCODE
+}
+finally { $env:AGENT_CANARY_HOME = $previousAgentCanaryHome }
 Write-Host "M0/E4 result: $(if($baselineCode -eq 0){'PASS'}else{'FAIL'}); detailed log saved." -ForegroundColor $(if($baselineCode -eq 0){'Green'}else{'Yellow'})
 Add-Result -Name 'M0/baseline-and-synthetic-E4' -Status $(if($baselineCode -eq 0){'PASS'}else{'FAIL'}) -Root $mainRoot -Sha ((& $git.Source -C $mainRoot rev-parse HEAD 2>$null | Out-String).Trim()) -Dirty ([bool]((& $git.Source -C $mainRoot status --porcelain | Out-String).Trim())) -Log (Split-Path $baselineLog -Leaf) -Details "exitCode=$baselineCode; see nested E4 report for case-level outcomes."
 $latestE4JsonFile = Get-ChildItem -LiteralPath (Join-Path $coordinatorRoot 'security-lab/e4-one-click-runs') -Filter 'ONE_CLICK_RESULT.json' -File -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
@@ -116,7 +123,16 @@ foreach ($module in $modules) {
             }
         }
         $log = Join-Path $reportRoot "$module-$stepName.log"
-        $code = Invoke-LoggedCommand -Name "$module $stepName" -WorkingDirectory $root -Executable $npm.Source -Arguments $args -LogPath $log
+        $previousStepCanaryHome = $env:AGENT_CANARY_HOME
+        try {
+            if ($stepName -eq 'tests') {
+                $moduleCanaryHome = Join-Path $reportRoot "isolated-agent-state/$module"
+                New-Item -ItemType Directory -Path $moduleCanaryHome -Force | Out-Null
+                $env:AGENT_CANARY_HOME = $moduleCanaryHome
+            }
+            $code = Invoke-LoggedCommand -Name "$module $stepName" -WorkingDirectory $root -Executable $npm.Source -Arguments $args -LogPath $log
+        }
+        finally { $env:AGENT_CANARY_HOME = $previousStepCanaryHome }
         Add-Result -Name "$module/$stepName" -Status $(if($code -eq 0){'PASS'}else{'FAIL'}) -Root $root -Sha $sha -Dirty $dirty -Log (Split-Path $log -Leaf) -Details "exitCode=$code"
     }
 }
@@ -149,6 +165,7 @@ else {
 }
 
 $env:CANARY_PYTHON = $previousCanaryPython
+$env:AGENT_CANARY_HOME = $previousAgentCanaryHome
 
 $failed = @($results | Where-Object { $_.status -in @('FAIL','BLOCKED') })
 $result = [ordered]@{
@@ -183,7 +200,7 @@ $lines.Add("- Report directory: $reportRoot"); $lines.Add('')
 $lines.Add('## Results'); $lines.Add('')
 foreach ($row in $results) { $tail = if($row.details){" — $($row.details)"}else{''}; $logPart = if($row.log){" (log: $($row.log))"}else{''}; $lines.Add("- **$($row.status)** $($row.name)$tail$logPart") }
 $lines.Add(''); $lines.Add('## Acceptance boundary'); $lines.Add('')
-$lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, M0 baseline, and synthetic E4 tests. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
+$lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, M0 baseline, and synthetic E4 tests. Test processes receive isolated AGENT_CANARY_HOME directories inside this run report so synthetic token-store writes do not target the user profile. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
 $lines.Add(''); $lines.Add('## Remaining acceptance gates'); $lines.Add('')
 foreach ($gate in $result.remainingAcceptanceGates) { $lines.Add("- $gate") }
 $lines -join [Environment]::NewLine | Set-Content -LiteralPath $mdPath -Encoding UTF8
