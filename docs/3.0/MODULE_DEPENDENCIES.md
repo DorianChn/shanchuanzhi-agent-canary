@@ -259,3 +259,7 @@ Use the cross-module map above as the current dependency order; repeated 09:21 a
 ## AC3 coordination baseline
 
 M0 owns the immutable shared-source floor `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. AC3 verifies that both the live feature base from the PR event and the PR head descend from that commit, then computes and records their prospective merge tree with `git merge-tree --write-tree`. A clean coordination-only advance on the feature line can therefore coexist with a module branch that still has the approved baseline; an unrelated lineage or real merge conflict remains a hard failure. M9 exact pins and owner dispositions are separate strict gates and are not inferred from this baseline. After integration, the exact candidate still needs passing CI.
+
+## 2026-10-26 05:11 UTC — branch-source dependency gate (#126)
+
+M9's immutable refs provide reproducible candidate composition, but do not normalize M1–M8 history. Existing module refs were created from their matching module remotes and have distinct merge bases against PR #24 head `b0d8d77`; see exact per-module counts in OPEN P1 Issue #126. M0 must not rebase or rewrite owner branches. Each owner confirms the intended base or a reviewed exception before source-root consistency can be accepted; rerun exact-source M9 composition after any approved ref change.

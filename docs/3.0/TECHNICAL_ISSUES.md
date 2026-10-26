@@ -1820,3 +1820,7 @@ Priority basis: #118/#45/#122/#41/#57/#124 remain P1 because current evidence sh
 | #124 M7/M8 pins | Latest local matrix still fails M7 and M8 exact local worktree-to-M9-manifest comparisons; their dirty owner paths remain preserved. | Reconcile existing branches, then review and test exact source before M9 changes pins. |
 
 No module files or worktree changes were made by M0. Current active source lanes remain M1 #118 and M5 PR #122; M6 #57 and M7/M8 #124 follow-up remain queued.
+
+## 2026-10-26 05:11 UTC — P1 Issue #126 branch-source provenance
+
+Issue #126 is OPEN/P1. Current M1–M8 branches have distinct source ancestry; exact origin, merge-base and ahead/behind evidence plus owner acceptance criteria are in the issue and `TECHNICAL_STATUS.md`. Worktree separation is true; a common source SHA is not established. M0 has not created, rebased, or rewritten module branches. Keep M9 pins unchanged until owners declare intended anchors and exact-head composition is revalidated.
