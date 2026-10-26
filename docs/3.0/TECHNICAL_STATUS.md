@@ -8896,3 +8896,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - The fresh matrix again confirmed M5 `dde81d6` build/tests PASS while package-check is BLOCKED by the isolation guard; M0 repeated the exact safe temporary-prefix acceptance request on PR #122 (comment `6408276176`). The unsafe package check was not executed.
 - The M5 branch and remote remain at the same exact head; M0 changed no module files. Keep the M5 gate open until the owner supplies the isolated-prefix change and a successful exact-head package check plus complete current-base test list.
+## 2026-10-26 04:33 UTC — M7/M8 pin reconciliation audit
+
+- Re-read exact local and upstream refs. M7 `bf9faee` is 3 commits ahead of origin `ab9b03f` across shared Windows workflow, installer/release reports, builder, and reliability/package tests. M8 `685520c` is one commit ahead of pin/upstream `1c94ed4`, changing documentation and the docs checker. M7 local ancestry is divergent from the M9 candidate base; M8 source commit `1c94ed4` is already merged, while the local follow-up requires owner review.
+- M0 posted file-level details and exact acceptance request to Issue #124 comment `6408287466`. M7/M8 dirty owner files remain untouched; M9 manifest pins remain unchanged pending owner disposition and exact-head validation.
