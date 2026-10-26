@@ -60,11 +60,18 @@ function Invoke-TestStep {
     Write-Host "`n=== $Name ===" -ForegroundColor Cyan
     $start = [DateTime]::UtcNow
     Push-Location $repoRoot
+    $previousErrorActionPreference = $ErrorActionPreference
     try {
+        # npm can emit normal notices on stderr. Windows PowerShell may wrap
+        # those as ErrorRecords, so keep logging them without aborting the run.
+        $ErrorActionPreference = 'Continue'
         & $Executable @Arguments 2>&1 | Tee-Object -FilePath $logPath | Out-Host
         $exitCode = $LASTEXITCODE
     }
-    finally { Pop-Location }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+        Pop-Location
+    }
     $row = [ordered]@{
         name = $Name
         exitCode = $exitCode
