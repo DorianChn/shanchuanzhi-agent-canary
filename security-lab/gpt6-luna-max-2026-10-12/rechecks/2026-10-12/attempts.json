@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-12",
+  "failedBeforeModel": [
+    {
+      "reason": "Codex refused untrusted working directory; no model request",
+      "run": "B-direct",
+      "result": "BLOCKED"
+    },
+    {
+      "reason": "Codex CLI argument quoting error; no model request",
+      "run": "B-direct-r2",
+      "result": "FAILED"
+    },
+    {
+      "reason": "--sandbox conflicts with --approve-for-me; no model request",
+      "run": "B-direct-r4",
+      "result": "FAILED"
+    }
+  ],
+  "completedModelCalls": [
+    {
+      "run": "B-direct-r3",
+      "result": "HOST_APPROVAL_BLOCKED_BEFORE_GATEWAY",
+      "note": "Model session completed, MCP requests rejected by Codex approval=never; no Gateway callback/evidence"
+    },
+    {
+      "run": "B-direct-r5",
+      "result": "COMPLETED"
+    },
+    {
+      "run": "C-direct-r1",
+      "result": "COMPLETED"
+    },
+    {
+      "run": "C-normal-recheck",
+      "result": "COMPLETED"
+    },
+    {
+      "run": "A-direct-r1",
+      "result": "COMPLETED"
+    },
+    {
+      "run": "native-shell-boundary",
+      "result": "COMPLETED"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "sourceSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "files": {
+    "Agent_Canary_3_0_Community_Preview_99660b36.zip": {
+      "local": "Agent_Canary_3_0_Community_Preview_99660b36.zip",
+      "sha256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+      "bytes": 348655
+    },
+    "Agent_Canary_3_0_Evidence.zip": {
+      "local": "Agent_Canary_3_0_Evidence.zip",
+      "sha256": "94ee64c47927403eba55e2b091237746ab01b462c9f9bf4a92d3a320f0f2767c",
+      "bytes": 193986
+    },
+    "Agent_Canary_3_0_Submission_Materials.zip": {
+      "local": "Agent_Canary_3_0_参赛材料.zip",
+      "sha256": "2bf8a7b721902c0d3c6bca445f168db7f79aaa907dac770e0ed0c4a81ebad41e",
+      "bytes": 1053586
+    },
+    "Agent_Canary_3_0_Project_Overview.pdf": {
+      "local": "Agent_Canary_3_0_项目介绍.pdf",
+      "sha256": "7cfdc0a9fb9b219b18ef527ff3e319cab476a1c211a7a21f834895b1b76f111e",
+      "bytes": 414450
+    },
+    "Agent_Canary_3_0_Technical_Innovation.pdf": {
+      "local": "Agent_Canary_3_0_技术创新.pdf",
+      "sha256": "c55ea9185be1de58c2e031122e2f35694f75cdfaa406ec800ef79f1661d9b88a",
+      "bytes": 147192
+    },
+    "Agent_Canary_3_0_Real_Model_Evaluation.pdf": {
+      "local": "Agent_Canary_3_0_真实模型实验报告.pdf",
+      "sha256": "5c413bc6671657bc9ae887c9d28f17bc7c43eda95730eba89c2be6ccdae49e32",
+      "bytes": 326885
+    },
+    "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm": {
+      "local": "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm",
+      "sha256": "ea4e22ff9f0a474b359ebe067cbd4f3d12eaff2f838eaa1479166f0514201a84",
+      "bytes": 7897441
+    },
+    "Agent_Canary_3_0_Chinese_Subtitles.srt": {
+      "local": "Agent_Canary_3_0_候选字幕.srt",
+      "sha256": "115f2b62b30d86be21a5a9b5b5ce84a2b8724a2ba8890fced81bc3dc37491a60",
+      "bytes": 1312
+    },
+    "INSTALL_AND_REPRODUCE.md": {
+      "local": "安装与独立复现.md",
+      "sha256": "405b2e29af83fb7f914877be4787710a88df3f6eeef3806b1135d6132e10e312",
+      "bytes": 3866
+    },
+    "SECURITY_ARCHITECTURE.png": {
+      "local": "安全架构图.png",
+      "sha256": "50fc2ae9de54a55d3f2bb409fa83cc1de64d6aee7d5bd55012efed6b1715d43c",
+      "bytes": 111311
+    },
+    "DELIVERY_MANIFEST.json": {
+      "local": "DELIVERY_MANIFEST.json",
+      "sha256": "38b5c17006490468d656c469163aa8a9fe4b05cc3d614d7bab425f35e0102c3a",
+      "bytes": 3084
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "checkedAt": "2026-10-11T17:09:23.422Z",
+  "files": 125,
+  "mismatches": [],
+  "runtimeSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "scope": "actual downloaded ZIP then build; same current user"
+}

@@ -1,0 +1,38 @@
+{
+  "engineeringBaseline": "9a0819b52f3b9df3abb5e32cbf7fc10934a0a541",
+  "researchSHA": "b44ac747dbe0c3045dd5fb8314654d6353c95c58",
+  "crossReviewSHA": "0109fe250f59d0257ae6b418c8d825b23f54dc2b",
+  "reads": [
+    {
+      "branch": "research/agent-canary-3.0",
+      "path": "docs/3.0/research/ENGINEERING_HANDOFF.md",
+      "sha256": "53376ede0547f5d38d5273f64be982f2cde5d854daca5730c2e949a8a8a5d23a"
+    },
+    {
+      "branch": "research/agent-canary-3.0",
+      "path": "docs/3.0/research/CURRENT_3_0_MAPPING.md",
+      "sha256": "3bb0bc1be0f1749f3dfcbda2ce4c1279c96605191ae7f726b5afc2f2c107b06e"
+    },
+    {
+      "branch": "shanchuanzhi/3.0-evidence-cross-review",
+      "path": "docs/3.0/ENGINEERING_CROSS_REVIEW.md",
+      "sha256": "72ce835f12a5b2355f4e5e512a025c0a1da9cb0194b7268a4ceed36c5885281d"
+    },
+    {
+      "branch": "research/agent-canary-3.0",
+      "path": "docs/3.0/research/SECURITY_INVARIANTS.md",
+      "sha256": "91d2f21452d587c9393b1e6546d1dbbf02921a8b479bcd8ae34300a7162a353b"
+    },
+    {
+      "branch": "research/agent-canary-3.0",
+      "path": "docs/3.0/research/SECURITY_ASSURANCE_LEVELS.md",
+      "sha256": "8888001554f3f97058b9b6575443ad5172ec77a3c20dd3437b22bd545dba10a7"
+    }
+  ],
+  "missingRequestedPath": {
+    "branch": "research/agent-canary-3.0",
+    "path": "docs/3.0/research/ENGINEERING_CROSS_REVIEW.md",
+    "status": "NOT_FOUND_IN_COMMITTED_TREE",
+    "actualLocation": "shanchuanzhi/3.0-evidence-cross-review:docs/3.0/ENGINEERING_CROSS_REVIEW.md"
+  }
+}

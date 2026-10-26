@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\36712\Desktop\工作\agent-canary-3.0-engineering\security-lab\build-community.py", line 36, in <module>
+    f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(),encoding='utf-8')
+                                                                                                                                                                                                                                                                                                                                                         ^^^^^^^^^^^^^
+  File "C:\Users\36712\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1028, in read_text
+    return f.read()
+           ^^^^^^^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0xac in position 43: illegal multibyte sequence

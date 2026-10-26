@@ -1,0 +1,8 @@
+{
+  "bytes": 7897441,
+  "sha256": "ea4e22ff9f0a474b359ebe067cbd4f3d12eaff2f838eaa1479166f0514201a84",
+  "scope": "actual copied frozen final video bytes; prior browser playback verification retained",
+  "newRecording": false,
+  "sourceVerification": "competition-submission/3.0-final/video-final-verification.json",
+  "publicURL": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Competition_Demo_Final_1080p.webm"
+}

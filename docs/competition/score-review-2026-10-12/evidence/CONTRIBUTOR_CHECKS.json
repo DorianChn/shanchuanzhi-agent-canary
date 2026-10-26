@@ -1,0 +1,87 @@
+{
+  "mode": "SAME_OPERATOR_PUBLIC_COMMUNITY_PACKAGE_NOT_E4",
+  "node": "v22.23.1",
+  "runtimeSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "steps": [
+    {
+      "name": "published-sdk-types",
+      "exitCode": 2,
+      "durationSeconds": 1.1749672889709473,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\node_modules\\typescript\\bin\\tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "ES2022",
+        "--module",
+        "NodeNext",
+        "--moduleResolution",
+        "NodeNext",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\contributor-review-run\\typed-host.ts"
+      ],
+      "expectedToPass": false,
+      "meaning": "KNOWN_RELEASE_TYPING_GAP",
+      "expectationMatched": true
+    },
+    {
+      "name": "derive-types",
+      "exitCode": 0,
+      "durationSeconds": 2.8729636669158936,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\node_modules\\typescript\\bin\\tsc",
+        "-p",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\tsconfig.json",
+        "--declaration",
+        "--emitDeclarationOnly",
+        "--outDir",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\contributor-review-run\\types"
+      ],
+      "expectedToPass": true,
+      "meaning": "new contributor helper validation",
+      "expectationMatched": true
+    },
+    {
+      "name": "derived-type-consumer",
+      "exitCode": 0,
+      "durationSeconds": 1.4616291522979736,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\node_modules\\typescript\\bin\\tsc",
+        "--noEmit",
+        "--strict",
+        "--skipLibCheck",
+        "--target",
+        "ES2022",
+        "--module",
+        "NodeNext",
+        "--moduleResolution",
+        "NodeNext",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3\\contributor-review-run\\kit\\typed-host-derived.ts"
+      ],
+      "expectedToPass": true,
+      "meaning": "new contributor helper validation",
+      "expectationMatched": true
+    },
+    {
+      "name": "sdk-contributor-template",
+      "exitCode": 0,
+      "durationSeconds": 0.7406561374664307,
+      "command": [
+        "C:/Users/36712/AppData/Local/hermes/node/node.exe",
+        "C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\docs\\competition\\score-review-2026-10-12\\contributor-kit\\check-template.mjs",
+        "--root=C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\Node22 普通用户 中文 空格\\agent-canary-community-3",
+        "--output=C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\docs\\competition\\score-review-2026-10-12\\evidence\\SDK_TEMPLATE_RESULT.json"
+      ],
+      "expectedToPass": true,
+      "meaning": "new contributor helper validation",
+      "expectationMatched": true
+    }
+  ],
+  "publishedSdkDeclarationsPresent": false,
+  "allExpectedResults": true,
+  "productionDataAccessed": false,
+  "modelCalled": false
+}

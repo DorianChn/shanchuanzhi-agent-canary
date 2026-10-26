@@ -1,0 +1,467 @@
+name: Windows Community wrapper
+on:
+  pull_request:
+    paths:
+      - 'packaging/windows/**'
+      - 'src/runtime/**'
+      - 'scripts/gateway-benchmark-core.mjs'
+      - 'scripts/benchmark-gateway.mjs'
+      - 'scripts/stability-soak.mjs'
+      - 'scripts/install-nsis-compiler.mjs'
+      - 'scripts/verify-installer-template.mjs'
+      - 'security-lab/claude-native-hook.mjs'
+      - 'test/reliability.test.mjs'
+      - 'test/auto-e4.test.mjs'
+      - 'test/windows-packaging.test.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/windows-community.yml'
+  workflow_dispatch:
+    inputs:
+      run_installer_lifecycle:
+        description: Run the installer lifecycle smoke on an isolated hosted runner
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+jobs:
+  wrapper-regressions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - name: Install pinned NSIS compiler on Windows
+        if: runner.os == 'Windows'
+        run: node scripts/install-nsis-compiler.mjs
+      - name: Compile installer template on Windows
+        if: runner.os == 'Windows'
+        run: node scripts/verify-installer-template.mjs
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: node --import tsx --test test/reliability.test.mjs
+      - run: npm audit --audit-level=high
+      - run: npm run pack:check
+      - run: node --check packaging/windows/build.mjs
+      - run: node --check packaging/windows/prepare.mjs
+      - run: node --check packaging/windows/render-installer.mjs
+      - run: node --check packaging/windows/durable-files.mjs
+      - run: node --check scripts/install-nsis-compiler.mjs
+      - run: node --check scripts/gateway-benchmark-core.mjs
+      - run: node --check scripts/benchmark-gateway.mjs
+      - run: node --check scripts/stability-soak.mjs
+      - run: node --check scripts/verify-installer-template.mjs
+
+  windows-community-build-evidence:
+    needs: wrapper-regressions
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    env:
+      AGENT_CANARY_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      COMMUNITY_CANDIDATE_ID: competition-candidate.2
+      M8_SOURCE_SHA: 24b8651730d57d860ba136e77db1526031abb1fc
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Fetch current M8 PR head and verify pinned source ancestry and demo blobs
+        id: m8-source
+        shell: pwsh
+        run: |
+          $m8SourceSha = $env:M8_SOURCE_SHA
+          if ($m8SourceSha -ne '24b8651730d57d860ba136e77db1526031abb1fc') { throw 'M8_SOURCE_SHA_PIN_MISMATCH' }
+          $baseRepository = "https://github.com/$env:GITHUB_REPOSITORY.git"
+          $isShallow = (& git rev-parse --is-shallow-repository).Trim()
+          if ($LASTEXITCODE -ne 0) { throw 'M8_CHECKOUT_DEPTH_CHECK_FAILED' }
+          if ($isShallow -eq 'true') {
+            & git fetch --unshallow --no-tags $baseRepository refs/pull/40/head
+          } else {
+            & git fetch --no-tags $baseRepository refs/pull/40/head
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'M8_SOURCE_FETCH_FAILED' }
+          $m8PrHeadSha = (& git rev-parse FETCH_HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $m8PrHeadSha -notmatch '^[a-f0-9]{40}$') { throw 'M8_PR_HEAD_SHA_INVALID' }
+          & git rev-parse --verify "${m8SourceSha}^{commit}" | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw 'M8_SOURCE_COMMIT_UNAVAILABLE' }
+          & git merge-base --is-ancestor $m8SourceSha $m8PrHeadSha
+          if ($LASTEXITCODE -ne 0) { throw 'M8_SOURCE_NOT_ANCESTOR_OF_PR_HEAD' }
+          $m8DemoPath = 'competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs'
+          $pinnedDemoBlob = (& git rev-parse --verify "${m8SourceSha}:$m8DemoPath").Trim()
+          if ($LASTEXITCODE -ne 0 -or $pinnedDemoBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f') { throw 'M8_PINNED_DEMO_BLOB_MISMATCH' }
+          $prHeadDemoBlob = (& git rev-parse --verify "${m8PrHeadSha}:$m8DemoPath").Trim()
+          if ($LASTEXITCODE -ne 0 -or $prHeadDemoBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f' -or $prHeadDemoBlob -ne $pinnedDemoBlob) { throw 'M8_PR_HEAD_DEMO_BLOB_MISMATCH' }
+          "prHeadSha=$m8PrHeadSha" >> $env:GITHUB_OUTPUT
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - name: Install pinned NSIS compiler
+        run: node scripts/install-nsis-compiler.mjs
+      - name: Build Windows Community package and sanitized evidence
+        env:
+          M8_PR_HEAD_SHA: ${{ steps.m8-source.outputs.prHeadSha }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sourceSha = $env:AGENT_CANARY_SOURCE_SHA
+          if ($sourceSha -notmatch '^[a-f0-9]{40}$') { throw 'SOURCE_SHA_INVALID' }
+          $checkoutSha = (& git rev-parse HEAD).Trim()
+          if ($checkoutSha -ne $sourceSha) { throw 'SOURCE_SHA_CHECKOUT_MISMATCH' }
+
+          $nsisExe = $env:NSIS_COMPILER_PATH
+          if (-not $nsisExe -or -not (Test-Path -LiteralPath $nsisExe -PathType Leaf)) { throw 'NSIS_COMPILER_MISSING' }
+          $nsisVersion = (& $nsisExe /VERSION).Trim()
+          if ($LASTEXITCODE -ne 0 -or $nsisVersion -notmatch '^v?3\.13(?:\.|$)') { throw 'NSIS_COMPILER_VERSION_INVALID' }
+          Write-Output "Pinned NSIS compiler version: $nsisVersion"
+
+          $workRoot = Join-Path $env:RUNNER_TEMP "agent-canary-windows-build-$sourceSha"
+          $artifactRoot = Join-Path $env:RUNNER_TEMP "agent-canary-build-evidence-$sourceSha"
+          if ((Test-Path -LiteralPath $workRoot) -or (Test-Path -LiteralPath $artifactRoot)) { throw 'BUILD_OUTPUT_ALREADY_EXISTS' }
+          New-Item -ItemType Directory -Path $workRoot | Out-Null
+
+          $nodeExe = (Get-Command node.exe -ErrorAction Stop).Source
+          $npmCli = Join-Path (Split-Path -Parent $nodeExe) 'node_modules\npm\bin\npm-cli.js'
+          if (-not (Test-Path -LiteralPath $npmCli -PathType Leaf)) { throw 'NPM_CLI_MISSING' }
+          $pythonExe = (Get-Command python.exe -ErrorAction Stop).Source
+          $communityBuildRoot = Join-Path $env:GITHUB_WORKSPACE "competition-submission/.m7-source-build-$sourceSha"
+          if (Test-Path -LiteralPath $communityBuildRoot) { throw 'COMMUNITY_BUILD_OUTPUT_ALREADY_EXISTS' }
+          $communityBuildStdout = & $pythonExe security-lab/build-community.py `
+            --node $nodeExe `
+            --npm-cli $npmCli `
+            --sha $sourceSha `
+            --m8-source-sha $env:M8_SOURCE_SHA `
+            --m8-pr-head-sha $env:M8_PR_HEAD_SHA `
+            --candidate-id $env:COMMUNITY_CANDIDATE_ID `
+            --output-dir $communityBuildRoot
+          if ($LASTEXITCODE -ne 0) { throw 'SOURCE_SHA_COMMUNITY_BUILD_FAILED' }
+          $communityBuildSummary = ($communityBuildStdout | Out-String).Trim() | ConvertFrom-Json
+          if ($communityBuildSummary.status -ne 'VERIFIED_POSITIVE_LIST_BUILD' -or $communityBuildSummary.sourceSHA -ne $sourceSha -or $communityBuildSummary.m8SourceSHA -ne $env:M8_SOURCE_SHA -or $communityBuildSummary.m8PRHeadSHA -ne $env:M8_PR_HEAD_SHA -or $communityBuildSummary.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f' -or $communityBuildSummary.m8PRHeadBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f' -or $communityBuildSummary.files -lt 1) { throw 'COMMUNITY_BUILD_SUMMARY_INVALID' }
+          $communityZip = Join-Path $communityBuildRoot "Agent_Canary_3_0_Community_Preview_$($sourceSha.Substring(0,8)).zip"
+          $reportedCommunityZipPath = [System.IO.Path]::GetFullPath([string]$communityBuildSummary.file)
+          $expectedCommunityZipPath = [System.IO.Path]::GetFullPath($communityZip)
+          if (-not [System.String]::Equals($reportedCommunityZipPath, $expectedCommunityZipPath, [System.StringComparison]::OrdinalIgnoreCase)) { throw 'COMMUNITY_BUILD_PATH_MISMATCH' }
+          $communityBuildRawReportPath = Join-Path $communityBuildRoot "community-build-$($sourceSha.Substring(0,8)).json"
+          if (-not (Test-Path -LiteralPath $communityZip -PathType Leaf) -or -not (Test-Path -LiteralPath $communityBuildRawReportPath -PathType Leaf)) { throw 'COMMUNITY_BUILD_OUTPUT_MISSING' }
+          $communityZipSha256 = (Get-FileHash -LiteralPath $communityZip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($communityZipSha256 -ne [string]$communityBuildSummary.sha256) { throw 'COMMUNITY_ZIP_SHA256_MISMATCH' }
+          $communityBuildRawReport = Get-Content -LiteralPath $communityBuildRawReportPath -Raw | ConvertFrom-Json
+          if ($communityBuildRawReport.version.sourceSHA -ne $sourceSha -or $communityBuildRawReport.version.candidateId -ne $env:COMMUNITY_CANDIDATE_ID -or $communityBuildRawReport.version.m8SourceSHA -ne $env:M8_SOURCE_SHA -or $communityBuildRawReport.version.m8PRHeadSHA -ne $env:M8_PR_HEAD_SHA -or $communityBuildRawReport.version.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f' -or $communityBuildRawReport.version.m8PRHeadBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f') { throw 'COMMUNITY_BUILD_REPORT_PROVENANCE_MISMATCH' }
+          $communityBuildSteps = @($communityBuildRawReport.steps.PSObject.Properties | ForEach-Object {
+            if ([int]$_.Value.exitCode -ne 0) { throw 'COMMUNITY_BUILD_VALIDATION_FAILED' }
+            [ordered]@{ name = [string]$_.Name; exitCode = [int]$_.Value.exitCode }
+          })
+          if ($communityBuildSteps.Count -lt 1) { throw 'COMMUNITY_BUILD_VALIDATION_STEPS_MISSING' }
+          $communityBuildEvidence = [ordered]@{
+            schemaVersion = 1
+            status = [string]$communityBuildSummary.status
+            sourceSHA = $sourceSha
+            m8SourceSHA = [string]$communityBuildRawReport.version.m8SourceSHA
+            m8PRHeadSHA = [string]$communityBuildRawReport.version.m8PRHeadSHA
+            m8SourceBlob = [string]$communityBuildRawReport.version.m8SourceBlob
+            m8PRHeadBlob = [string]$communityBuildRawReport.version.m8PRHeadBlob
+            candidateId = [string]$communityBuildRawReport.version.candidateId
+            sourceZip = [System.IO.Path]::GetFileName($communityZip)
+            sourceZipSHA256 = $communityZipSha256
+            sourceZipBytes = (Get-Item -LiteralPath $communityZip).Length
+            sourceFileCount = [int]$communityBuildSummary.files
+            validationSteps = $communityBuildSteps
+            rawValidationOutputUploaded = $false
+          }
+
+          $buildRoot = Join-Path $workRoot 'windows-build'
+          & $nodeExe packaging/windows/prepare.mjs $buildRoot $pythonExe $npmCli $communityZip $communityZipSha256
+          if ($LASTEXITCODE -ne 0) { throw 'COMMUNITY_PAYLOAD_PREPARE_FAILED' }
+
+          $payloadRoot = Join-Path $buildRoot 'payload'
+          & $nodeExe packaging/windows/build.mjs $payloadRoot (Split-Path -Parent $nsisExe) $communityZip $sourceSha
+          if ($LASTEXITCODE -ne 0) { throw 'WINDOWS_COMMUNITY_PACKAGE_BUILD_FAILED' }
+
+          $buildResultPath = Join-Path $buildRoot 'BUILD_RESULT.json'
+          $payloadManifestPath = Join-Path $payloadRoot 'PAYLOAD_MANIFEST.json'
+          $installerPath = Join-Path $buildRoot 'AgentCanary-Community-Setup.exe'
+          foreach ($required in @($buildResultPath, $payloadManifestPath, $installerPath, "$installerPath.sha256")) {
+            if (-not (Test-Path -LiteralPath $required -PathType Leaf)) { throw 'BUILD_OUTPUT_MISSING' }
+          }
+
+          $buildResult = Get-Content -LiteralPath $buildResultPath -Raw | ConvertFrom-Json
+          $payloadManifest = Get-Content -LiteralPath $payloadManifestPath -Raw | ConvertFrom-Json
+          if ($buildResult.version.wrapperSourceSHA -ne $sourceSha) { throw 'BUILD_SOURCE_SHA_MISMATCH' }
+          if ($buildResult.version.communityZIP_SHA256 -ne $communityZipSha256) { throw 'BUILD_COMMUNITY_SHA_MISMATCH' }
+
+          $installerSha256 = (Get-FileHash -LiteralPath $installerPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($installerSha256 -ne $buildResult.installerSHA256) { throw 'INSTALLER_SHA256_MISMATCH' }
+          $installerShaReceipt = (Get-Content -LiteralPath "$installerPath.sha256" -Raw).Trim()
+          if ($installerShaReceipt -ne "$installerSha256  AgentCanary-Community-Setup.exe") { throw 'INSTALLER_SHA256_RECEIPT_MISMATCH' }
+          $payloadManifestSha256 = (Get-FileHash -LiteralPath $payloadManifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($payloadManifestSha256 -ne $buildResult.manifestSHA256) { throw 'PAYLOAD_MANIFEST_SHA256_MISMATCH' }
+
+          $toolchain = Get-Content -LiteralPath 'packaging/windows/TOOLCHAIN_PROVENANCE.json' -Raw | ConvertFrom-Json
+          $setupExtractor = $toolchain.setupExtractor
+          if ($setupExtractor.name -ne '7-Zip' -or $setupExtractor.version -ne '26.04' -or $setupExtractor.sha256 -notmatch '^[a-f0-9]{64}$') { throw 'SETUP_EXTRACTOR_PIN_INVALID' }
+          $extractorMsi = Join-Path $workRoot '7zip-extractor.msi'
+          $extractorRoot = Join-Path $workRoot '7zip-admin-image'
+          if ((Test-Path -LiteralPath $extractorMsi) -or (Test-Path -LiteralPath $extractorRoot)) { throw 'SETUP_EXTRACTOR_OUTPUT_ALREADY_EXISTS' }
+          Invoke-WebRequest -Uri $setupExtractor.source -OutFile $extractorMsi
+          $extractorMsiSha256 = (Get-FileHash -LiteralPath $extractorMsi -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractorMsiSha256 -ne $setupExtractor.sha256) { throw 'SETUP_EXTRACTOR_MSI_SHA256_MISMATCH' }
+          New-Item -ItemType Directory -Path $extractorRoot | Out-Null
+          $msiexec = Join-Path $env:WINDIR 'System32/msiexec.exe'
+          $msiStartInfo = [System.Diagnostics.ProcessStartInfo]::new($msiexec)
+          $msiStartInfo.ArgumentList.Add('/a')
+          $msiStartInfo.ArgumentList.Add($extractorMsi)
+          $msiStartInfo.ArgumentList.Add('/qn')
+          $msiStartInfo.ArgumentList.Add("TARGETDIR=$extractorRoot")
+          $msiStartInfo.UseShellExecute = $false
+          $msiStartInfo.CreateNoWindow = $true
+          $msiProcess = [System.Diagnostics.Process]::Start($msiStartInfo)
+          if (-not $msiProcess) { throw 'SETUP_EXTRACTOR_ADMIN_EXTRACTION_START_FAILED' }
+          $msiProcess.WaitForExit()
+          $msiExitCode = $msiProcess.ExitCode
+          $msiProcess.Dispose()
+          if ($msiExitCode -ne 0) { throw 'SETUP_EXTRACTOR_ADMIN_EXTRACTION_FAILED' }
+          $extractorCandidates = @(Get-ChildItem -LiteralPath $extractorRoot -Filter '7z.exe' -File -Recurse)
+          if ($extractorCandidates.Count -ne 1) { throw 'SETUP_EXTRACTOR_BINARY_MISSING_OR_AMBIGUOUS' }
+          $extractorExe = $extractorCandidates[0].FullName
+          $extractorExeSha256 = (Get-FileHash -LiteralPath $extractorExe -Algorithm SHA256).Hash.ToLowerInvariant()
+          $extractorVersionText = (& $extractorExe -h 2>&1 | Out-String)
+          if ($LASTEXITCODE -ne 0 -or $extractorVersionText -notmatch "(?m)^7-Zip\s+$([regex]::Escape([string]$setupExtractor.version))\b") { throw 'SETUP_EXTRACTOR_VERSION_MISMATCH' }
+          Write-Output "Pinned Setup extractor: $($setupExtractor.name) $($setupExtractor.version); MSI_SHA256=$extractorMsiSha256; EXE_SHA256=$extractorExeSha256"
+
+          $setupExtractRoot = Join-Path $workRoot 'setup-extracted'
+          if (Test-Path -LiteralPath $setupExtractRoot) { throw 'SETUP_EXTRACTION_OUTPUT_ALREADY_EXISTS' }
+          New-Item -ItemType Directory -Path $setupExtractRoot | Out-Null
+          $extractorTestOutput = & $extractorExe t $installerPath -bd -bb0 -bso0 -bsp0 -bse0 2>&1
+          $extractorTestExitCode = $LASTEXITCODE
+          if ($extractorTestExitCode -ne 0) { throw 'SETUP_ARCHIVE_INTEGRITY_CHECK_FAILED' }
+          $extractorOutput = & $extractorExe x $installerPath "-o$setupExtractRoot" -y -bd -bb0 -bso0 -bsp0 -bse0 2>&1
+          $extractorExitCode = $LASTEXITCODE
+          if ($extractorExitCode -ne 0) { throw 'SETUP_ARCHIVE_EXTRACTION_FAILED' }
+
+          $extractedManifestPath = Join-Path $setupExtractRoot 'PAYLOAD_MANIFEST.json'
+          if (-not (Test-Path -LiteralPath $extractedManifestPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_MANIFEST_MISSING' }
+          $extractedManifestSha256 = (Get-FileHash -LiteralPath $extractedManifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractedManifestSha256 -ne $payloadManifestSha256) { throw 'SETUP_EXTRACTED_MANIFEST_MISMATCH' }
+          $extractedManifest = Get-Content -LiteralPath $extractedManifestPath -Raw | ConvertFrom-Json
+
+          $sourceHookPath = 'packaging/windows/claude-native-hook.mjs'
+          $packagedHookPath = Join-Path $payloadRoot 'claude-native-hook.mjs'
+          $expectedHookRelativePath = 'claude-native-hook.mjs'
+          $hookEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -ceq $expectedHookRelativePath })
+          if ($hookEntries.Count -ne 1) { throw 'SETUP_EXTRACTED_HOOK_MANIFEST_MISMATCH' }
+          $extractedHookPath = Join-Path $setupExtractRoot $expectedHookRelativePath
+          if (-not (Test-Path -LiteralPath $extractedHookPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HOOK_MISSING' }
+          $extractedHookItem = Get-Item -LiteralPath $extractedHookPath
+          if (($extractedHookItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'SETUP_EXTRACTED_HOOK_REPARSE_POINT' }
+          $extractedHookRelativePath = [System.IO.Path]::GetRelativePath($setupExtractRoot, $extractedHookPath).Replace('\','/')
+          if ($extractedHookRelativePath -ne 'claude-native-hook.mjs' -or $hookEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $packagedHookPath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HOOK_MANIFEST_MISMATCH' }
+          $sourceHookBlobSha = (& git rev-parse "HEAD:$sourceHookPath").Trim()
+          $packagedHookBlobSha = (& git hash-object $packagedHookPath).Trim()
+          $extractedHookBlobSha = (& git hash-object $extractedHookPath).Trim()
+          if ($sourceHookBlobSha -ne $packagedHookBlobSha -or $sourceHookBlobSha -ne $extractedHookBlobSha) { throw 'SETUP_EXTRACTED_HOOK_BLOB_MISMATCH' }
+          $reviewedHookBlobShas = @('b7ed4aba70a597f4f63a05decc6de1b32f67372e')
+          if ($reviewedHookBlobShas -notcontains $sourceHookBlobSha) { throw 'HOOK_NOT_CANONICAL_OWNER_BLOB' }
+          $canonicalHookBlobSha = $sourceHookBlobSha
+          if ($buildResult.version.wrapperSourceBlobSHA -ne $canonicalHookBlobSha) { throw 'BUILD_REPORT_HOOK_BLOB_MISMATCH' }
+          $packagedHookSha256 = (Get-FileHash -LiteralPath $packagedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $extractedHookSha256 = (Get-FileHash -LiteralPath $extractedHookPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($buildResult.version.wrapperSourceContentSHA256 -ne $packagedHookSha256) { throw 'BUILD_REPORT_HOOK_SHA256_MISMATCH' }
+          if ($packagedHookSha256 -ne $extractedHookSha256 -or $extractedHookSha256 -ne $hookEntries[0].sha256) { throw 'SETUP_EXTRACTED_HOOK_HASH_MISMATCH' }
+          $packagedHookBytes = [System.IO.File]::ReadAllBytes($packagedHookPath)
+          $extractedHookBytes = [System.IO.File]::ReadAllBytes($extractedHookPath)
+          $hookBytesIdentical = $packagedHookBytes.Length -eq $extractedHookBytes.Length
+          if ($hookBytesIdentical) {
+            for ($i = 0; $i -lt $packagedHookBytes.Length; $i++) {
+              if ($packagedHookBytes[$i] -ne $extractedHookBytes[$i]) { $hookBytesIdentical = $false; break }
+            }
+          }
+          if (-not $hookBytesIdentical) { throw 'SETUP_EXTRACTED_HOOK_BYTE_COMPARISON_FAILED' }
+
+          $extractedHarnessPath = Join-Path $setupExtractRoot 'e4-hook-faults.mjs'
+          $extractedNodePath = Join-Path $setupExtractRoot 'runtime/node.exe'
+          $harnessEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq 'e4-hook-faults.mjs' })
+          $nodeEntries = @($extractedManifest.files | Where-Object { ([string]$_.path).Replace('\','/') -eq 'runtime/node.exe' })
+          if ($harnessEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $extractedHarnessPath -PathType Leaf) -or $nodeEntries.Count -ne 1 -or -not (Test-Path -LiteralPath $extractedNodePath -PathType Leaf)) { throw 'SETUP_EXTRACTED_HARNESS_OR_NODE_MISSING' }
+          $extractedHarnessSha256 = (Get-FileHash -LiteralPath $extractedHarnessPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $sourceHarnessSha256 = (Get-FileHash -LiteralPath 'packaging/windows/e4-hook-faults.mjs' -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractedHarnessSha256 -ne $sourceHarnessSha256 -or $extractedHarnessSha256 -ne $harnessEntries[0].sha256) { throw 'SETUP_EXTRACTED_HARNESS_MISMATCH' }
+          $extractedNodeSha256 = (Get-FileHash -LiteralPath $extractedNodePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($extractedNodeSha256 -ne $nodeEntries[0].sha256 -or $extractedNodeSha256 -ne $toolchain.node.sha256) { throw 'SETUP_EXTRACTED_NODE_MISMATCH' }
+          $sourceManifestPath = Join-Path $payloadRoot 'app/SOURCE_MANIFEST.json'
+          if (-not (Test-Path -LiteralPath $sourceManifestPath -PathType Leaf)) { throw 'SOURCE_MANIFEST_MISSING' }
+          $sourceManifestSha256 = (Get-FileHash -LiteralPath $sourceManifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $communityBuildEvidence['sourceManifestPath'] = 'app/SOURCE_MANIFEST.json'
+          $communityBuildEvidence['sourceManifestSHA256'] = $sourceManifestSha256
+
+          New-Item -ItemType Directory -Path $artifactRoot | Out-Null
+          $communityBuildEvidencePath = Join-Path $artifactRoot 'COMMUNITY_BUILD_REPORT.json'
+          [System.IO.File]::WriteAllText($communityBuildEvidencePath, (($communityBuildEvidence | ConvertTo-Json -Depth 4) + "`n"), [System.Text.UTF8Encoding]::new($false))
+          Copy-Item -LiteralPath $installerPath -Destination (Join-Path $artifactRoot 'AgentCanary-Community-Setup.exe')
+          Copy-Item -LiteralPath $buildResultPath -Destination (Join-Path $artifactRoot 'BUILD_RESULT.json')
+          Copy-Item -LiteralPath (Join-Path $payloadRoot 'VERSION.json') -Destination (Join-Path $artifactRoot 'VERSION.json')
+          Copy-Item -LiteralPath $extractedManifestPath -Destination (Join-Path $artifactRoot 'PAYLOAD_MANIFEST.json')
+          Copy-Item -LiteralPath $sourceManifestPath -Destination (Join-Path $artifactRoot 'SOURCE_MANIFEST.json')
+          $extractedHookRoot = Join-Path $artifactRoot 'extracted-hook'
+          New-Item -ItemType Directory -Path $extractedHookRoot | Out-Null
+          $hookArtifactPath = Join-Path $extractedHookRoot 'claude-native-hook.mjs'
+          $harnessArtifactPath = Join-Path $extractedHookRoot 'e4-hook-faults.mjs'
+          Copy-Item -LiteralPath $extractedHookPath -Destination $hookArtifactPath
+          Copy-Item -LiteralPath $extractedHarnessPath -Destination $harnessArtifactPath
+          Copy-Item -LiteralPath 'packaging/windows/installer-lifecycle-smoke.ps1' -Destination (Join-Path $artifactRoot 'installer-lifecycle-smoke.ps1')
+
+          $payloadNodeExe = $extractedNodePath
+          $rawCanaryOutputPath = Join-Path $workRoot 'canary-raw-output.json'
+          $rawCanaryErrorPath = Join-Path $workRoot 'canary-raw-error.txt'
+          $oldTemp = $env:TEMP
+          $oldTmp = $env:TMP
+          try {
+            $env:TEMP = $workRoot
+            $env:TMP = $workRoot
+            & $payloadNodeExe $extractedHarnessPath "--app-root=$setupExtractRoot" 1> $rawCanaryOutputPath 2> $rawCanaryErrorPath
+            $canaryExitCode = $LASTEXITCODE
+          } finally {
+            $env:TEMP = $oldTemp
+            $env:TMP = $oldTmp
+          }
+          if ($canaryExitCode -ne 0) { throw 'EXTRACTED_HOOK_CANARY_FAILED' }
+          $rawCanary = Get-Content -LiteralPath $rawCanaryOutputPath -Raw | ConvertFrom-Json
+          if ($rawCanary.status -ne 'PASS' -or $rawCanary.positiveControl.decision -ne 'allow' -or -not $rawCanary.positiveControl.logContractSatisfied -or -not $rawCanary.sideEffects.protectedVictimUnchanged -or $rawCanary.sideEffects.unsafeCallbackStarts -ne 0 -or $rawCanary.faultCases.Count -ne 7) { throw 'EXTRACTED_HOOK_CANARY_ASSERTION_FAILED' }
+          $workRootPrefix = [System.IO.Path]::GetFullPath($workRoot).TrimEnd([char[]]@('\','/')) + [System.IO.Path]::DirectorySeparatorChar
+          $fixtureRoot = [System.IO.Path]::GetFullPath([string]$rawCanary.root)
+          if (-not $fixtureRoot.StartsWith($workRootPrefix, [System.StringComparison]::OrdinalIgnoreCase)) { throw 'HARNESS_FIXTURE_PATH_OUTSIDE_BUILD_ROOT' }
+          Remove-Item -LiteralPath $fixtureRoot -Recurse -Force
+          $canaryReport = [ordered]@{
+            schemaVersion = 1
+            sourceSHA = $sourceSha
+            workflowRunId = $env:GITHUB_RUN_ID
+            workflowRunAttempt = $env:GITHUB_RUN_ATTEMPT
+            installerSHA256 = $installerSha256
+            extractedHookSHA256 = $extractedHookSha256
+            extractedHookSourceBlobSHA = $extractedHookBlobSha
+            status = $rawCanary.status
+            scope = $rawCanary.scope
+            syntheticInput = 'JSONL with synthetic argument, reason, and path canaries'
+            callerCanariesAbsent = [bool]$rawCanary.positiveControl.logContractSatisfied
+            allowControlObserved = [bool]$rawCanary.positiveControl.sideEffectObserved
+            protectedFixtureUnchanged = [bool]$rawCanary.sideEffects.protectedVictimUnchanged
+            unsafeCallbackStarts = [int]$rawCanary.sideEffects.unsafeCallbackStarts
+            faultCaseCount = [int]$rawCanary.faultCases.Count
+          }
+          $canaryReportPath = Join-Path $artifactRoot 'CANARY_RESULT.json'
+          $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+          [System.IO.File]::WriteAllText($canaryReportPath, (($canaryReport | ConvertTo-Json -Depth 4) + "`n"), $utf8NoBom)
+          Write-Output "EXTRACTED_HOOK_CANARY=PASS; CALLER_CANARIES_ABSENT=True; SOURCE_SHA=$sourceSha"
+          $report = [ordered]@{
+            schemaVersion = 1
+            status = 'BUILT_NOT_INSTALLED; PACKAGED_HOOK_CANARY_EXECUTED'
+            installerExecuted = $false
+            sourceSHA = $sourceSha
+            workflowRunId = $env:GITHUB_RUN_ID
+            workflowRunAttempt = $env:GITHUB_RUN_ATTEMPT
+            communityZipSHA256 = $communityZipSha256
+            communityBuildReport = 'COMMUNITY_BUILD_REPORT.json'
+            communityCandidateId = [string]$communityBuildRawReport.version.candidateId
+            nsisVersion = $nsisVersion
+            setupExtractor = [ordered]@{
+              name = [string]$setupExtractor.name
+              version = [string]$setupExtractor.version
+              source = [string]$setupExtractor.source
+              packageSHA256 = $extractorMsiSha256
+              executableSHA256 = $extractorExeSha256
+              commands = @(
+                '7z.exe t AgentCanary-Community-Setup.exe -bd -bb0 -bso0 -bsp0 -bse0',
+                '7z.exe x AgentCanary-Community-Setup.exe -o<runner-temp>/setup-extracted -y -bd -bb0 -bso0 -bsp0 -bse0'
+              )
+              archiveIntegrityCheck = 'PASS'
+              extraction = 'PASS'
+            }
+            packageVersion = [string]$buildResult.version.desktopVersion
+            candidateId = [string]$buildResult.version.candidateId
+            launcherSHA256 = [string]$buildResult.launcherSHA256
+            installerSHA256 = $installerSha256
+            installerBytes = [long]$buildResult.installerBytes
+            payloadManifestSHA256 = $payloadManifestSha256
+            extractedPayloadManifestSHA256 = $extractedManifestSha256
+            canonicalHookBlobSHA = $canonicalHookBlobSha
+            hookBytesIdenticalToCanonical = $hookBytesIdentical
+            hook = [ordered]@{
+              path = 'claude-native-hook.mjs'
+              sourcePath = $sourceHookPath
+              packagedPayloadPath = 'claude-native-hook.mjs'
+              setupExtractedPath = $extractedHookRelativePath
+              sourceSHA256 = $packagedHookSha256
+              sha256 = $extractedHookSha256
+              bytes = (Get-Item -LiteralPath $extractedHookPath).Length
+              sourceBlobSHA = $sourceHookBlobSha
+              setupExtractedBlobSHA = $extractedHookBlobSha
+              setupExtractedHarnessSHA256 = $extractedHarnessSha256
+            }
+            canaryStatus = $canaryReport.status
+            callerCanariesAbsent = $canaryReport.callerCanariesAbsent
+          }
+          $reportPath = Join-Path $artifactRoot 'BUILD_REPORT.json'
+          [System.IO.File]::WriteAllText($reportPath, (($report | ConvertTo-Json -Depth 5) + "`n"), $utf8NoBom)
+          $artifactPaths = @('AgentCanary-Community-Setup.exe', 'BUILD_REPORT.json', 'BUILD_RESULT.json', 'COMMUNITY_BUILD_REPORT.json', 'VERSION.json', 'SOURCE_MANIFEST.json', 'PAYLOAD_MANIFEST.json', 'CANARY_RESULT.json', 'extracted-hook/claude-native-hook.mjs', 'extracted-hook/e4-hook-faults.mjs', 'installer-lifecycle-smoke.ps1')
+          $checksums = foreach ($relativePath in $artifactPaths) {
+            $absolutePath = Join-Path $artifactRoot ($relativePath.Replace('/', '\'))
+            $digest = (Get-FileHash -LiteralPath $absolutePath -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$digest  $relativePath"
+          }
+          $checksumsText = ($checksums -join "`n") + "`n"
+          [System.IO.File]::WriteAllText((Join-Path $artifactRoot 'SHA256SUMS.txt'), $checksumsText, $utf8NoBom)
+
+      - name: Upload pinned Windows package and sanitized evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-community-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/agent-canary-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: error
+          retention-days: 7
+
+  windows-community-installer-lifecycle:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_installer_lifecycle
+    # Reuse this key for future VM/model/installer jobs; ordinary PR builds stay outside this lock.
+    concurrency:
+      group: agent-canary-exclusive-e4
+      cancel-in-progress: false
+    needs: windows-community-build-evidence
+    runs-on: windows-latest
+    permissions: {}
+    timeout-minutes: 15
+    env:
+      AGENT_CANARY_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Download exact package from this workflow run
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: windows-community-build-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/agent-canary-lifecycle-input-${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Install, verify, and uninstall exact candidate in disposable runner
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          'GITHUB_TOKEN', 'ACTIONS_RUNTIME_TOKEN', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN', 'ACTIONS_ID_TOKEN_REQUEST_URL' | ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+          $artifactRoot = Join-Path $env:RUNNER_TEMP "agent-canary-lifecycle-input-$env:AGENT_CANARY_SOURCE_SHA"
+          $evidencePath = Join-Path (Join-Path $env:RUNNER_TEMP 'agent-canary-lifecycle-result') 'INSTALLER_LIFECYCLE_RESULT.json'
+          New-Item -ItemType Directory -Path (Split-Path -Parent $evidencePath) -Force | Out-Null
+          & (Join-Path $artifactRoot 'installer-lifecycle-smoke.ps1') `
+            -ArtifactRoot $artifactRoot `
+            -ExpectedSourceSHA $env:AGENT_CANARY_SOURCE_SHA `
+            -EvidencePath $evidencePath
+      - name: Upload bounded installer lifecycle result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-community-installer-lifecycle-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/agent-canary-lifecycle-result/INSTALLER_LIFECYCLE_RESULT.json
+          if-no-files-found: warn
+          retention-days: 7
+
+# Building and GUI acceptance are separate evidence, not inferred from these tests.

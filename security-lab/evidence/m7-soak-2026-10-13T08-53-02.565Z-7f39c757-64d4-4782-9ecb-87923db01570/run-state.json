@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "agent-canary.m7.stability-soak.v1",
+  "status": "COMPLETED_WITHOUT_HARNESS_ERRORS",
+  "startedAt": "2026-10-13T08:53:02.569Z",
+  "updatedAt": "2026-10-13T08:53:13.382Z",
+  "requestedHours": 0.003,
+  "elapsedMs": 10813,
+  "samples": 11,
+  "successfulOperations": 110,
+  "failedOperations": 0,
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v22.23.1",
+    "osRelease": "10.0.26200",
+    "cpuCount": 32,
+    "totalMemoryBytes": 33479172096
+  },
+  "parameters": {
+    "intervalSeconds": 1,
+    "operations": 10,
+    "concurrency": 4,
+    "workload": "synthetic in-process read-only MCP callback"
+  },
+  "baseline": {
+    "rss": 53592064,
+    "heap": 8915152,
+    "activeResources": 4
+  },
+  "eventsFile": "samples.jsonl",
+  "infrastructureError": null,
+  "completedAt": "2026-10-13T08:53:13.382Z",
+  "durationMs": 10812.5064,
+  "completedDuration": true,
+  "cpuTotalMs": {
+    "user": 812,
+    "system": 453
+  },
+  "memoryEnd": {
+    "rss": 69709824,
+    "heapUsed": 19338552
+  },
+  "interpretation": "Harness execution status only. A completed run records this synthetic workload and environment; it is not proof of product-wide reliability or installer acceptance."
+}

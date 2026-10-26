@@ -1,0 +1,37 @@
+{
+  "scope": "only executable locations; no account/config files opened",
+  "checks": [
+    {
+      "id": "codex",
+      "executableLocated": true,
+      "paths": [
+        "C:\\Users\\36712\\AppData\\Local\\OpenAI\\Codex\\bin\\9691020b546a15b2\\codex.exe"
+      ],
+      "coverage": "LOCATION_ONLY_NOT_GUARD_E2E"
+    },
+    {
+      "id": "claude",
+      "executableLocated": false,
+      "paths": [],
+      "coverage": "LOCATION_ONLY_NOT_GUARD_E2E"
+    },
+    {
+      "id": "cursor",
+      "executableLocated": false,
+      "paths": [],
+      "coverage": "LOCATION_ONLY_NOT_GUARD_E2E"
+    },
+    {
+      "id": "cline",
+      "executableLocated": false,
+      "paths": [],
+      "coverage": "LOCATION_ONLY_NOT_GUARD_E2E"
+    },
+    {
+      "id": "docker",
+      "executableLocated": false,
+      "paths": [],
+      "coverage": "LOCATION_ONLY_NOT_GUARD_E2E"
+    }
+  ]
+}

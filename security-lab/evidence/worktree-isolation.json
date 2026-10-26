@@ -1,0 +1,6 @@
+{
+  "engineeringIndex": "/mnt/c/Users/36712/Documents/Codex/2026-09-21/github-pull-shark-pr-readme-github/agent-canary/.git/worktrees/agent-canary-3.0-engineering/index",
+  "worktrees": "worktree /mnt/c/Users/36712/Documents/Codex/2026-09-21/github-pull-shark-pr-readme-github/agent-canary\nHEAD 97e9d13aefbba99e1ed6aa5a21d93065b3b32551\nbranch refs/heads/shanchuanzhi/discover-all-tests\n\nworktree /mnt/c/Users/36712/Desktop/工作/agent-canary-3.0-engineering\nHEAD 9f00b6ba7475e8bccc5410e1484ed74a7806b7d1\nbranch refs/heads/feature/agent-canary-3.0\n\nworktree /mnt/c/Users/36712/Desktop/工作/agent-canary-3.0-research\nHEAD b44ac747dbe0c3045dd5fb8314654d6353c95c58\nbranch refs/heads/research/agent-canary-3.0\n\nworktree /mnt/c/Users/36712/Desktop/工作/agent-canary-competition-audit\nHEAD dc8d0092b35141b295d5ff42873584ed488e4ee7\nbranch refs/heads/competition/shanchuanzhi-release-readiness\n\nworktree /mnt/c/Users/36712/Desktop/工作/agent-canary-v2-free-open\nHEAD d0ee5b87e52c692cb269f1b94e695391555a0e35\nbranch refs/heads/shanchuanzhi/v2-free-open-20261010\n\n",
+  "original2WorktreeStatus": "",
+  "researchPolicy": "independent index; do not write research files; research conclusions not yet adopted"
+}
