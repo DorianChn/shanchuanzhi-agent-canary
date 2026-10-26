@@ -8697,3 +8697,8 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Exact M0 head `ddd24799dacccdc2d1b2da8905b0f03cb27bc5ac`: standard CI run `40252061962` completed SUCCESS across Ubuntu/Windows/macOS Node 20/22, Docker, package smoke, and sponsor smoke; M9 exact-source composition run `40252061994` completed SUCCESS on both Ubuntu and Windows; AC3 ownership workflow `40252061948` completed SUCCESS.
 - PR #119 remains OPEN/Draft. This verifies the M0 test-runner change and current hosted composition workflow; it does not override the local M5 package-check failure, M7/M8 local pin mismatches, or E4 NOT_VERIFIED state recorded above.
+
+## 2026-10-26 01:10 UTC — repository double-click entry point
+
+- Added the previously documented but missing `scripts/一键E4自动测试.cmd`. It discovers already-installed local Node/npm and GitHub Desktop Git for desktop launches where those tools are absent from inherited `PATH`, then invokes the E4 runner and opens the report; on failure the console remains visible. The existing desktop workspace shortcut continues to run the broader M0–M9 matrix.
+- Exercised the new repository entry point from the current restricted `PATH`: project build PASS, full suite 507/518 (0 failed, 11 skipped), package-content check PASS, E4 self-check/bundle tests PASS, generated bundle verification PASS. Synthetic E4 still FAILS in the two Gateway cases and the three external-evidence gates remain BLOCKED. Report: `coordinator/security-lab/e4-one-click-runs/20261026T010800262Z/ONE_CLICK_RESULT.md`.
