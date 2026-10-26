@@ -8831,3 +8831,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M1 is still clean at `89be11e`, M5 at `dde81d6`; there is no new owner reply since the 03:02 checkpoint. The 03:22 checkpoint is tracked on #118 comment `6407264657` and #122 comment `6407264985`.
 - PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. No module source or pin was changed by M0.
 - M0 requested current M7/M8 delivery intent and earliest safe review path on existing Issue #124 comment `6407343678`; their owner-owned dirty files remain untouched and no extra development slot was opened.
+
+## 2026-10-26 03:12 UTC — M9 candidate step-level acceptance scope
+
+- Inspected both jobs of exact M9 candidate run `40198737633` at M9 SHA `b5b9f71`. Ubuntu and Windows each completed 54 successful steps and skipped only the event-base ancestry check, which is inapplicable to this workflow-dispatch run. Exact-source manifest validation, module checkouts, and the defined M1–M8/M9 regression steps passed.
+- The M1 held-Gateway regression at SHA `89be11e` passed both platforms; the M6 bundle-verification and Auto E4 lifecycle regressions at SHA `fae72ea` also passed both platforms. These focused checks do not resolve the separate failing M0 synthetic E4 pair or supply independent product E4 acceptance.
+- Scope clarification was posted to M1 Issue #118 comment `6407364198` and M6 Issue #57 comment `6407364620`. No source or pin changes were made.
