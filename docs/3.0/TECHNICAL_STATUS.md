@@ -8912,3 +8912,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - PR #119 exact head `8226b1f4e396a19a31a114311da04972c4fe9fbf` is OPEN/Draft. Standard CI run `40270671152`, ownership-contract run `40270670967`, and M9 composition run `40270671203` all reached terminal SUCCESS, including Ubuntu and Windows composition.
 - This is exact-head validation for the M0 coordination update and current manifest-selected refs. It does not cure the red direct M3/M4/M6 feature-base checks, M5 package guard, M0 synthetic E4 pair, M7/M8 local-source disposition, or P0/product/VM/model/independent acceptance gates. PR #24 remains unchanged.
+## 2026-10-26 04:50 UTC — branch-source reconciliation tracked
+
+- Created P1 Issue #126 for the verified nonuniform M1–M8 source ancestry, with the exact per-module base-only/module-only counts, owner responsibilities, and acceptance criteria. It explicitly forbids M0 from creating module branches or rewriting owner branches; M9 must continue using exact pins until owners disposition the history.
+- PR #119 head `8226b1f` has terminal SUCCESS across standard CI, ownership-contract, and Ubuntu/Windows M9 composition (`40270671152`, `40270670967`, `40270671203`). These green checks do not close #126 or module/product acceptance.
