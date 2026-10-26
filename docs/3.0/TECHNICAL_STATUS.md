@@ -8830,3 +8830,4 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - The result validates this M0 head and the configured composition refs. It does not change the M9 candidate/source-pin boundaries recorded above. Direct #120/#121/#123 stale feature-base checks remain unresolved pending owner acceptance or a fresh approved evidence route.
 - M1 is still clean at `89be11e`, M5 at `dde81d6`; there is no new owner reply since the 03:02 checkpoint. The 03:22 checkpoint is tracked on #118 comment `6407264657` and #122 comment `6407264985`.
 - PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. No module source or pin was changed by M0.
+- M0 requested current M7/M8 delivery intent and earliest safe review path on existing Issue #124 comment `6407343678`; their owner-owned dirty files remain untouched and no extra development slot was opened.
