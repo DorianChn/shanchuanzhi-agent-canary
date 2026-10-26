@@ -8816,3 +8816,10 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - The success validates the PR #119 workflow source selection. Separate exact candidate run `40198737633` on M9 `b5b9f71` also passes with published M1–M6 refs; direct PR #120/#121/#123 checks still fail against the feature-base manifest's older M3/M4/M6 pins. Owner acceptance/recheck path remains tracked in #120, #123, #124, #125, and #57.
 - At the 02:42 checkpoint no M1/M5 owner response or source-head change was visible. M1 remains `89be11e`, M5 `dde81d6`; M7/M8 dirty paths are preserved. The local full matrix still has four non-passing outcomes and product E4 is NOT_VERIFIED.
 - PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` / base `competition/shanchuanzhi-release-readiness`. No module source or integration pin was changed by M0.
+
+## 2026-10-26 03:02 UTC — M1/M5 follow-up checkpoint and next batch
+
+- Current PR #119 head `ebd75787a167b2aa20bd2ff98eb08b11ebc745f5` has terminal SUCCESS for standard CI, AC3 coordination, and Ubuntu/Windows M9 composition. PR #24 remains OPEN/Draft at unchanged `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+- M1 remains at clean `89be11e`; M5 remains at `dde81d6`. Since the prior checkpoint, no new owner disposition or implementation head was visible. M0 recorded the next owner checkpoint as 03:22 UTC on M1 Issue #118 comment `6407264657` and M5 PR #122 comment `6407264985`.
+- Keep M1's synthetic E4 and M5's isolated pack-check gates open. The exact M9 candidate `b5b9f71` passes published M1–M6 source composition, but M7/M8 local-only commits remain unreviewed and outside the manifest.
+- No module worktree/source, integration pin, PR #24, `main`, or Release was changed by M0.
