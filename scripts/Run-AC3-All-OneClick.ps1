@@ -99,7 +99,7 @@ foreach ($module in $modules) {
             $packageChecker = if (Test-Path -LiteralPath $packageCheckerPath -PathType Leaf) { Get-Content -LiteralPath $packageCheckerPath -Raw } else { '' }
             $isolatedPrefixPattern = 'runNpm\s*\(\s*\[\s*["'']install["'']\s*,\s*["'']--prefix["'']\s*,\s*installDir\b'
             if ($packageChecker -notmatch $isolatedPrefixPattern) {
-                $details = 'Skipped to prevent pack:check npm install from resolving outside its temporary installDir. Add an explicit --prefix installDir (or an equivalently verified isolated root) in scripts/check-package.mjs before rerunning this check.'
+                $details = 'Skipped to prevent pack:check npm install from resolving outside its temporary installDir. The current safety gate requires an explicit --prefix installDir in scripts/check-package.mjs before rerunning this check.'
                 Add-Result -Name "$module/$stepName" -Status 'BLOCKED' -Root $root -Sha $sha -Dirty $dirty -Log '' -Details $details
                 Write-Host "BLOCKED $module $stepName (unsafe install root; see report)" -ForegroundColor Yellow
                 continue
