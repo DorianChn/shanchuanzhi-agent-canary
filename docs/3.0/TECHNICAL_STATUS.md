@@ -8904,3 +8904,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - PR #121 remains OPEN/Draft at `5d975b7`; standard CI and ownership evidence pass, while both direct M9 composition checks fail against the feature-base manifest's stale M4 ref `892d329`.
 - Existing M9 candidate run `40198737633` passes Ubuntu/Windows composition with M4 `5d975b7`; it is not itself a passing direct check on PR #121. The exact distinction and owner acceptance/rerun request were posted to Issue #125 comment `6408292906`. No M4 source or M9 pin was changed.
+## 2026-10-26 04:35 UTC — module branch-base consistency audit
+
+- All M1–M8 worktree directories are separate, but current branch provenance is not one common commit: local reflogs show each existing `feature/ac3-*` branch was created from its matching existing `origin/feature/ac3-*` branch. A comparison against PR #24 head `b0d8d77` yields `base-only/branch-only`: M1 `8/0` (merge base `89be11e`), M2 `153/0` (`941fd22`), M3 `0/2` (`b0d8d77`), M4 `0/10` (`b0d8d77`), M5 `418/51` (`7cd3445`), M6 `155/1` (`2a88d8b`), M7 `414/70` (`7cd3445`), M8 `115/1` (`1c94ed4`).
+- Therefore worktree isolation is verified, but a uniform common branch-source SHA is not. These are pre-existing feature branches with module-specific history; no branch was rebased or rewritten. M9 currently uses explicit immutable pins, which establish the candidate composition scope but do not retroactively make branch roots uniform. Owner/base disposition is required before marking that acceptance item complete.
