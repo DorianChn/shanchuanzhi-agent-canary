@@ -14,24 +14,24 @@
       "sha": "941fd22d5e43e1de91a76b8c73006e57a4c15496"
     },
     "M3": {
-      "pullRequest": 107,
+      "pullRequest": 120,
       "branchRef": "feature/ac3-agent-onboarding",
-      "sha": "0d61b434ba2ac81e313b82432f4ac00afedd3cbc"
+      "sha": "91695529787f07111f5256d3c9d6e0e556f6eac1"
     },
     "M4": {
-      "pullRequest": 98,
+      "pullRequest": 121,
       "branchRef": "feature/ac3-desktop-security-center",
-      "sha": "892d3290338fe811da127f8f51ab91de0b9fc18b"
+      "sha": "5d975b7927a66be26a8bfc3740530bb27a703f2c"
     },
     "M5": {
-      "pullRequest": 94,
+      "pullRequest": 122,
       "branchRef": "feature/ac3-policy-audit",
-      "sha": "cca42cd1762f995e92454d55ffa5e63951e39144"
+      "sha": "dde81d6a989ba39aa0d57dfeed0c9283f4459682"
     },
     "M6": {
-      "pullRequest": 111,
+      "pullRequest": 123,
       "branchRef": "feature/ac3-e4-validation-ac3",
-      "sha": "2a88d8b7e099ce865c9900bb9313d4b8bdef8299"
+      "sha": "fae72ea3d0c4498dfddb7d04421e41b87179895b"
     },
     "M7": {
       "pullRequest": 113,
