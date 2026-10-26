@@ -8702,3 +8702,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Added the previously documented but missing `scripts/一键E4自动测试.cmd`. It discovers already-installed local Node/npm and GitHub Desktop Git for desktop launches where those tools are absent from inherited `PATH`, then invokes the E4 runner and opens the report; on failure the console remains visible. The existing desktop workspace shortcut continues to run the broader M0–M9 matrix.
 - Exercised the new repository entry point from the current restricted `PATH`: project build PASS, full suite 507/518 (0 failed, 11 skipped), package-content check PASS, E4 self-check/bundle tests PASS, generated bundle verification PASS. Synthetic E4 still FAILS in the two Gateway cases and the three external-evidence gates remain BLOCKED. Report: `coordinator/security-lab/e4-one-click-runs/20261026T010800262Z/ONE_CLICK_RESULT.md`.
+
+## 2026-10-26 01:16 UTC — tracked launcher full-matrix verification
+
+- Exercised the tracked `scripts/一键E4自动测试.cmd` from the Agent Canary-Dev worktree layout; it selected `Run-AC3-All-OneClick.ps1` and completed the M0–M9 matrix. Final report: `coordinator/security-lab/e4-one-click-runs/20261026T011024428Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`.
+- Result remains 4 non-passing checks of 46: M0 synthetic E4, M5 `pack:check`, and M9 exact pins for M7/M8. M1–M4 and M6–M9 build/test/package stages passed; M7/M8 worktree-to-manifest pins remain the two M9 failures. The baseline E4 full suite passed 507/518 (0 failed, 11 skipped), bundle/self-check tests passed, and generated bundle verification passed; product E4 remains NOT_VERIFIED.
+- The desktop aggregator and tracked repository entry now both resolve local Node/npm/Git without persistent PATH changes. The tracked entry chooses the full matrix when the sibling M0–M9 workspace exists, otherwise the E4 single-repository runner.
