@@ -7,6 +7,7 @@
 | sponsor/smoke.mjs, smoke-process.mjs and smoke-isolation.test.mjs | M8; agents/M8, existing PR40 branch | Smoke harness only; server/payment/state-store ownership is not transferred. |
 | Exact-source manifest, its validator and M9 composition/workflow regressions | M9; integration/M9, existing feature/ac3-m9-integration / PR112 | Owner-reviewed immutable module refs; no module implementation edits. |
 | Coordination docs, ignore patterns and GitHub scheduling records | M0; coordinator / PR119 | Substantive batched publication; no main/PR24 merge or Release. |
+| One-click M0–M9 local test orchestration and root launcher (Run-AC3-All-OneClick.ps1, Run-E4-OneClick.ps1, repository-root 一键E4自动测试.cmd) | M0; coordinator / PR119 | Owns the local runner and launcher; may invoke module build/test/package checks and synthetic E4, but does not certify product E4, real-model, VM/installer lifecycle, or independent acceptance. |
 
 Actual original M1/M2/M6/M8 sessions were resumed through CLI and produced recorded results. Original M7 refused a second writer; M7 follow-up work above was performed by an explicitly assigned worker in its already existing clean worktree. Neither GitHub comments nor idle UI processes are reported as proof of running development. M3/M4/M5's selected source trees are consumed by M9 without edits to their implementation.
 
