@@ -8878,3 +8878,12 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - PR #119 exact head `612545ace7f2218548f59213d964cf6b1cb3198e` remains OPEN/Draft. Standard CI `40267218513`, ownership-contract `40267218778`, and M9 composition `40267218467` all completed SUCCESS; M9 passed Ubuntu and Windows with the manifest-selected refs.
 - This validates coordinator documentation and the selected approved module commits only. The local synthetic E4 failures, M5 pack-check guard, M7/M8 local-only commits, and distinct product/host/installer gates remain unresolved. Scheduler #29 comment `6408029223` records the exact-head evidence. PR #24 remains OPEN/Draft and unchanged.
+
+## 2026-10-26 04:14 UTC — desktop one-click M0–M9 matrix rerun
+
+- Launched the existing desktop shortcut once. The run completed from baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`; report: `security-lab/e4-one-click-runs/20261026T041310001Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. Matrix: 46 checks, 33 PASS, 9 dependency-install SKIPPED, 4 non-passing.
+- M0 build, 507/518 full-suite tests (0 failed, 11 skipped), package-content check, E4 bundle/self-check, and generated-evidence verification passed. Synthetic E4 still fails `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; the three real-environment cases remain blocked/not verified. Detailed E4 report: `security-lab/e4-one-click-runs/20261026T041310344Z/ONE_CLICK_RESULT.md`.
+- M1–M4 and M6–M9 build/test/package checks passed. M5 package-check remained BLOCKED by its isolation guard. M9 exact pins matched M1–M6, but M7 local `bf9faee` differs from manifest `bba0f0f` and M8 local `685520c` differs from manifest/remote `1c94ed4`.
+- Posted the fresh synthetic E4 evidence and exact M6 harness handoff to existing Issue #57 (comment `6408156842`). No M1–M8 source, M9 pin, PR #24, or `main` was changed. M6 `.gitignore`, M7 `.gitignore`, and M8 `.gitignore` plus `M8_MERGE_RESOLUTION_RESULT.json` remain owner-owned and preserved.
+- PR #119 remains OPEN/Draft at remote head `612545ace7f2218548f59213d964cf6b1cb3198e`, with its last verified CI, ownership-contract, and M9 composition checks all SUCCESS. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+- Updated the local desktop `.cmd` launcher to exit without waiting for a key after a failed run; the report still opens automatically. This launcher is in the coordination workspace root, outside the tracked coordinator worktree.
