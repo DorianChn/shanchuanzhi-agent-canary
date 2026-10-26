@@ -9163,3 +9163,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Read-only `git worktree list` confirms the requested M0/M1–M8/M9 directories are separate registered worktree paths with their expected current branches. `main`, coordinator, M1–M3, M5–M6, M8, and M9 use the coordinator repository's common Git directory. M4 and M7 are registered in an existing separate repository at `C:\Users\36712\Documents\Codex\2026-10-15\agent-canary-3-0-windows-e4\.git`; both report the same GitHub `origin` and have distinct requested worktree paths/branches.
 - That existing repository also registers `agents/M7-followup`, `integration/issue-70-hono`, and `integration/m4-on-m1-check`. Numerous historical exact-source worktrees remain registered under the user's Temp directory. M0 did not remove, prune, move, or rewrite any of these paths.
 - Owner changes remain preserved: M6's existing `.gitignore` edit, M7's `.gitignore` plus three unpublished commits, and M8's `.gitignore` plus untracked merge-result receipt. No module branch or working tree was changed by this audit.
+
+## 2026-10-26 15:27 UTC — toolchain readback
+
+- Git `2.53.0.windows.3`, GitHub CLI `2.102.0`, Codex CLI `0.164.0-alpha.11.1`, and Node.js `v22.23.1` are available and were exercised for this coordination/test run.
+- `python.exe` resolves only to the Windows App Execution Alias, not an installed runtime. The E4 one-click runner downloaded the pinned official Python.org embeddable `3.13.17` runtime into its ignored report directory and verified its SHA-256; it did not install Python system-wide.
