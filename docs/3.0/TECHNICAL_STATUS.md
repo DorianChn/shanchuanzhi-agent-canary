@@ -9182,3 +9182,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Hosted synthetic composition does not prove an installed host reading user files. M4 Security Center continues to expose first-party OBSERVE read as `NOT_VERIFIED`; Issue #52 remains OPEN/P0 pending exact M1 disposition for M2 `941fd22d5e43e1de91a76b8c73006e57a4c15496` and product-host evidence. No local product or module changes were made.
 - PRs #120–#123 still fail direct exact-source composition against their event-base manifest; the green M0 candidate job above is not a substitute for those direct checks. PR #24 remains OPEN/Draft at its unchanged head and base.
 - Follow-up exact-run summaries are posted on Issue #52 comment `6420298346` and Issue #126 comment `6420299199`; no pins were changed.
+
+## 2026-10-26 15:46 UTC — cross-module issue evidence readback
+
+- GitHub readback after the 15:41 CI terminal: PR #119 is CLEAN with 12/12 checks; direct module PRs #120 10/12, #121 10/12, #122 9/14, and #123 10/14. PR #24 remains OPEN/Draft at unchanged head/base with 14 successes and one skipped check.
+- Current issue follow-ups are recorded on #52 comment `6420298346`, #126 comment `6420299199`, and M5 PR #122 comment `6420316651`. The M5 comment asks the owner to capture the scoped npm install layout without another M0 install attempt; no M5 code was changed.
+- No current module owner response or ref movement was visible at this checkpoint. The three M0 report commits remain local for the next 20-minute batch.
