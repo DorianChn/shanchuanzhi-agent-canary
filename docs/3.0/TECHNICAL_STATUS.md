@@ -8932,3 +8932,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - PR #119 exact head `9a5d6f58e95e1d06ba2161d372d930c0c243a7f5` is OPEN/Draft. Standard CI `40274141189`, ownership-contract `40274141141`, and M9 composition `40274141132` all reached terminal SUCCESS, including Ubuntu and Windows composition.
 - This verifies the M0 coordination issue/docs update against the approved manifest-selected refs. Issue #126 remains OPEN/P1 pending owner branch-source disposition; M1–M8/product acceptance blockers remain unchanged. PR #24 remains OPEN/Draft and untouched.
+## 2026-10-26 05:31 UTC — ignore-rule coverage across active worktrees
+
+- `git check-ignore -q --no-index` confirmed representative `.env`/`.env.local`, key/certificate/container credentials, `.token`/`.secret`/`.secrets`, log, temp, `/tmp`, and Python cache paths are ignored in all 11 active M0/M1–M9 worktrees.
+- No `.gitignore` edits were made by this audit. Existing M6–M8 owner additions remain additive and untouched.
