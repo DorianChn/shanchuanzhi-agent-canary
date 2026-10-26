@@ -8920,3 +8920,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Read-only diff of existing dirty owner `.gitignore` files found only additive generated-artifact ignore patterns: M6 `/security-lab/e4-handoffs/`, M7 `/competition-submission/.m7-m8-acceptance-*/`, and M8 `/sponsor/.smoke-watchdog-*/` plus `/sponsor/.smoke-supervisor-*/`. No tracked patterns were removed or negated in these deltas.
 - M0 left all three owner changes untouched and unstaged. M8's untracked `M8_MERGE_RESOLUTION_RESULT.json` also remains preserved.
+## 2026-10-26 04:56 UTC — repository one-click launcher no longer pauses
+
+- The actual desktop shortcut points to the workspace-root wrapper; its run completed the full matrix and opened the report. Follow-up review found the tracked repository launcher `scripts/一键E4自动测试.cmd` still paused after any failing result. M0 removed that interactive pause while preserving the test exit code and report-open behavior (`e407532`).
+- Verified the tracked launcher contains no `pause` and `git diff --check` passes. The full test runner itself was not rerun for this one-line batch-file-only change; its prior completed run is recorded above. The next click will run to completion and return its exit status without waiting for a key.
