@@ -94,6 +94,17 @@ foreach ($module in $modules) {
             Add-Result -Name "$module/$stepName" -Status 'BLOCKED' -Root $root -Sha $sha -Dirty $dirty -Log '' -Details 'package.json has no pack:check script.'
             continue
         }
+        if ($module -eq 'M5' -and $stepName -eq 'package-check') {
+            $packageCheckerPath = Join-Path $root 'scripts/check-package.mjs'
+            $packageChecker = if (Test-Path -LiteralPath $packageCheckerPath -PathType Leaf) { Get-Content -LiteralPath $packageCheckerPath -Raw } else { '' }
+            $isolatedPrefixPattern = 'runNpm\s*\(\s*\[\s*["'']install["'']\s*,\s*["'']--prefix["'']\s*,\s*installDir\b'
+            if ($packageChecker -notmatch $isolatedPrefixPattern) {
+                $details = 'Skipped to prevent pack:check npm install from resolving outside its temporary installDir. Add an explicit --prefix installDir (or an equivalently verified isolated root) in scripts/check-package.mjs before rerunning this check.'
+                Add-Result -Name "$module/$stepName" -Status 'BLOCKED' -Root $root -Sha $sha -Dirty $dirty -Log '' -Details $details
+                Write-Host "BLOCKED $module $stepName (unsafe install root; see report)" -ForegroundColor Yellow
+                continue
+            }
+        }
         $log = Join-Path $reportRoot "$module-$stepName.log"
         $code = Invoke-LoggedCommand -Name "$module $stepName" -WorkingDirectory $root -Executable $npm.Source -Arguments $args -LogPath $log
         Add-Result -Name "$module/$stepName" -Status $(if($code -eq 0){'PASS'}else{'FAIL'}) -Root $root -Sha $sha -Dirty $dirty -Log (Split-Path $log -Leaf) -Details "exitCode=$code"
