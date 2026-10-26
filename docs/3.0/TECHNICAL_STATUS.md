@@ -9297,3 +9297,12 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Product acceptance still needs an isolated clean Windows VM and install receipt, a configured real-model tool call, and an independent signed operator/reviewer receipt. No security policy was weakened and no failing test was removed.
 - Added the desktop shortcut Agent Canary M0-M9 一键全量测试.lnk pointing to the existing unattended launcher 一键E4自动测试.cmd; it runs the full matrix and opens the Markdown report when finished. The older shortcut remains available.
 - The M0 change set is limited to scripts/Run-AC3-All-OneClick.ps1 and this status report. PR #24, main, module source, and Releases remain untouched.
+
+## 2026-10-26 19:17 UTC — committed one-click rerun and hosted CI refresh
+
+- Re-ran the desktop full-matrix entry on a clean M0 coordinator branch after commit c1091aea487e5778666ca4252ce640dec6952dc3. Run 20261026T191058924Z completed at 19:16:59 UTC with 57 rows: 38 PASS, 9 dependency-install SKIPPED, 9 FAIL, and 1 BLOCKED. Markdown/JSON evidence is under security-lab/e4-one-click-runs/20261026T191058924Z/full-matrix/.
+- The local failures are the synthetic baseline E4 result and M9 exact-pin mismatches for current M7/M8 heads. M5 pack:check safely BLOCKED before npm because explicit temporary-prefix proof is missing. Product E4 and external independence remain NOT_VERIFIED.
+- Current read-only hosted status: PR #24 is OPEN/Draft with 14 successful checks and one skipped Windows installer-lifecycle check; PR #131 at c1091aea has 12/12 successful checks; M1 #114, M2 #110, and M9 #127 are green. Direct PRs #120/#121/#123 fail both Ubuntu and Windows exact-source composition; #122/#129 additionally fail ownership-contract evidence; #128 is CONFLICTING with no checks.
+- M9 current pins remain M7 bba0f0f89c610f8198660e799de7a652b8ea8e96 vs local bf9faeeb96625325e6fab8e497954ff6db4e78ea, and M8 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841 vs local 685520cbb000b3dc6950876f115199cdebf81ea5. No pin changed because exact owner dispositions/reviews remain missing.
+- Issues #52 (P0), #126, #124, and #125 remain OPEN. The #52 protected OBSERVE alias/TOCTOU and zero-side-effect acceptance evidence is still absent. Owner dirty state remains preserved in M6/M7 .gitignore and M8 .gitignore plus M8_MERGE_RESOLUTION_RESULT.json.
+- No module source, M9 manifest, PR #24, main, or Release was changed. No VMware, clean-VM, installer, or real-model slot was used.
