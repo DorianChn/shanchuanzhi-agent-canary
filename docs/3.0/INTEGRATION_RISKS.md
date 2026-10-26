@@ -1382,6 +1382,19 @@ The one-click matrix is available at `coordinator/security-lab/e4-one-click-runs
 | M1–M8 distinct source ancestry | P1 | Reflogs name separate `origin/feature/ac3-*` creation refs; exact common ancestors and left/right counts are recorded in #126. | Owners declare one canonical base or a reviewed intentional exception. Preserve existing branches and dirty files; update exact M9 pins only after owner review and terminal composition checks. |
 
 This is a history/integration risk; no module code failure or data loss is claimed. PR #24 and `main` remain protected.
+
 ## 2026-10-26 20:02 UTC — merge-tree simulation against current feature baseline
 
 The M0 one-click runner now simulates committed M1–M8 source merges against baseline `34fbe6d35d4dea30795525bf538f97194758c6c4`, without modifying refs or worktrees. Current result: M5 conflicts in `docs/RISK_POLICY.md`, `package.json`, and `test/policy-management.test.ts`; M7 conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`; M1–M4, M6, and M8 have no textual conflicts. GitHub reports #122 as mergeable despite the local simulation; its stored PR base SHA is `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, while the target branch is now `34fbe6d35d4dea30795525bf538f97194758c6c4`. Keep the discrepancy open for owner reconciliation; M0 did not resolve conflicts or alter module branches.
+
+## 2026-10-26 20:18 UTC — exact-head one-click refresh
+
+| Gate | Priority | Current verified state | Required owner action |
+| --- | --- | --- | --- |
+| Synthetic Gateway quarantine (#118) | P1 | Run `20261026T200804848Z`: both `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; fixture state unchanged. Product E4 remains NOT_VERIFIED. | M1 fixes the triggering decoy-read cancellation ordering while preserving quarantine, follow-up DENY, zero effects, and positive controls; rerun focused Windows/Linux cases. |
+| Direct module composition (#124/#125/#126) | P1 | PRs #120–#123 are still based on stored SHA `b0d8d77…`; exact-source composition fails. Candidate M9 PR #127 is green at `635f8bc…`, but its current M7/M8 pins do not match local owner heads. | Owners reconcile common-source ancestry and provide exact commit disposition; M9 updates pins only after required reviews. |
+| M5/M7 branch integration (#126) | P1 | `merge-tree` against current `34fbe6d…` reports M5 conflicts in `docs/RISK_POLICY.md`, `package.json`, `test/policy-management.test.ts`, and M7 conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, `package.json`. | M5 and M7 resolve conflicts on their existing branches without dropping commits or weakening security gates; rerun direct checks. |
+| M5 package verification (#124/#122) | P1 | One-click safely BLOCKED `pack:check` before npm because explicit `--prefix installDir` safety is not proven. | M5 updates the owner checker to prove a child OS-temp install root and npm `--prefix`; rerun package/type checks. |
+| Product E4 and external environment (#29/#41/#57) | P1 | Clean VM, matched installer receipt, real-model tool call, and independent reviewer receipt remain absent; no exclusive VM/model/installer test was started. | Reserve and record the exclusive slot and exact artifact/VM before any installer/model run; obtain independent signed review separately. |
+
+The fresh full-matrix report is `coordinator/security-lab/e4-one-click-runs/20261026T200804542Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. Its 44 PASS rows do not close these owner or product acceptance gates. PR #24 and `main` remain protected.
