@@ -9370,3 +9370,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - This corrects the time-scoped local-matrix row that marked #131 BLOCKED at pre-push local head `48bb4a6…` versus then-remote `686d1dc…`. The pushed head is the exact one whose checks passed.
 - Read-only M5 checker inspection confirms the safety guard is not a false positive: `agents/M5/scripts/check-package.mjs` runs `npm install` with `cwd=installDir` but omits `--prefix installDir`, then expects the package under `installDir/node_modules`. Keep the package check blocked until the M5 owner adds the explicit isolated prefix and the owner branch passes the package check.
 - PR #24 remains OPEN/Draft at head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no change or merge was made. Direct module PRs still need their own source-anchor and ownership dispositions; passing #131's selected M9 composition does not close those direct-PR gates, M7/M8 owner review, or product E4.
+
+## 2026-10-26 20:57 UTC — clean-VM exclusive-slot recheck
+
+- Read-only VMware check: `vmrun list` reports 0 running VMs; VMware inventory has 0 registered VM entries; the known clean-VM paths `D:\AgentCanary-3.0-Win11-VM`, `C:\Users\36712\Documents\Virtual Machines`, `D:\Virtual Machines`, and `D:\VMs` are absent. Issue #29's exclusive installer/VM/model slot remains unavailable. No VM was created or started and no installer/model was run.
+- M7 lifecycle remains HOLD: PR #128 is still CONFLICTING and the available M7 artifact is unsigned and binds stale M8 source. Do not launch it in a non-clean environment.
