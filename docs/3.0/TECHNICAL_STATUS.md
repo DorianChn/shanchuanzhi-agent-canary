@@ -8803,3 +8803,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M7/M8 local-only commits `bf9faee`/`685520c` remain outside the approved M9 manifest and have dirty owner paths. The candidate run does not integrate those worktree changes, resolve M1 synthetic E4, or replace M6's independent product E4 acceptance.
 - Evidence scopes and owner requests were posted to existing Issues #124, #125, and #57 (comments `6406950910`, `6406951228`, `6406951626`). No module source or M9 pin was changed by M0.
 - Exact direct-check versus candidate-run evidence was also posted to M3 PR #120 and M6 PR #123 (comments `6406957249`, `6406957641`), asking the respective owners to record acceptance or require a fresh authorized rerun.
+
+## 2026-10-26 02:42 UTC — M1/M5 owner checkpoint result
+
+- Current filesystem readback still shows M1 clean at `89be11e` and M5 clean at `dde81d6`; no new implementation head or owner disposition was visible at the scheduled 02:42 checkpoint.
+- Recorded this checkpoint on existing M1 Issue #118 comment `6407042097` and M5 PR #122 comment `6407042382`. M1's synthetic E4 acceptance and M5's isolated package-check requirements remain open; the M5 safety guard is retained.
+- M7/M8 owner paths remain preserved. No third development lane, module branch, or module-source change was opened by M0.
