@@ -9375,3 +9375,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Read-only VMware check: `vmrun list` reports 0 running VMs; VMware inventory has 0 registered VM entries; the known clean-VM paths `D:\AgentCanary-3.0-Win11-VM`, `C:\Users\36712\Documents\Virtual Machines`, `D:\Virtual Machines`, and `D:\VMs` are absent. Issue #29's exclusive installer/VM/model slot remains unavailable. No VM was created or started and no installer/model was run.
 - M7 lifecycle remains HOLD: PR #128 is still CONFLICTING and the available M7 artifact is unsigned and binds stale M8 source. Do not launch it in a non-clean environment.
+
+## 2026-10-26 20:58 UTC — exact owner-evidence failure refresh
+
+- Re-read the current failed checks for PRs #120/#121/#122/#123/#129; their run/job URLs match the previously inspected exact-source failure logs. M8 PR #129's current ownership job `40361147188` / job `121707360907` fails because its PR body lacks a non-placeholder `Test-Evidence` command/report path and an explicit `API-Contract-Change: yes|no` field. M8 owner must update the existing PR description with exact-head evidence; M0 did not edit the M8 PR.
+- M5 PR #122's ownership job still fails because its head lacks the approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. PR #128 remains CONFLICTING with no checks. Direct composition failures stop at exact-source manifest validation before module composition tests.
