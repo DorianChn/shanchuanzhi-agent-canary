@@ -9110,3 +9110,13 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M9 exact-source validation requires the M6 current-M8 review target to equal the M8 manifest SHA. The recorded M6 disposition covers only `1c94ed4`; M8 `685520c` therefore cannot be pinned until it is published and receives a new exact-head M6 disposition on Issue #80. M8 `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched.
 - M0 recorded the current source boundary on Issues #29 (`6418742129`) and #126 (`6418741971`), and refreshed M1/M2 acceptance evidence on Issues #52 (`6418741940`) and #45 (`6418741941`). M1 protected alias/TOCTOU P0 and M2 native Codex Shell host-boundary P1 remain OPEN/NOT_VERIFIED; the pinned-source M9 pass does not clear them.
 - No exclusive VM, real-model, or installer test was dispatched. The resource slot remains idle pending M7's static non-cancelling mutex and exact-source reservation. No M1-M8 code, `main`, PR #24, or Release was changed.
+
+## 2026-10-26 14:42 UTC — direct module-PR M9 manifest failures
+
+- Fresh REST check-run and failed-step log inspection confirms direct M9 composition on PRs #120-#123 fails at step `Validate exact-source manifest and checkout refs`, before the module composition tests run. The event base remains `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and carries stale exact-source refs:
+  - M3 PR #120 head `91695529787f07111f5256d3c9d6e0e556f6eac1` vs event-base manifest PR #107 / `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` (run `40191658779`).
+  - M4 PR #121 head `5d975b7927a66be26a8bfc3740530bb27a703f2c` vs manifest PR #98 / `892d3290338fe811da127f8f51ab91de0b9fc18b` (run `40197158659`).
+  - M5 PR #122 head `dde81d6a989ba39aa0d57dfeed0c9283f4459682` vs manifest PR #94 / `cca42cd1762f995e92454d55ffa5e63951e39144` (run `40172583837`); the separate ownership contract check also fails on the approved-common-source/baseline evidence field (run `40190440590`).
+  - M6 PR #123 head `fae72ea3d0c4498dfddb7d04421e41b87179895b` vs manifest PR #111 / `2a88d8b7e099ce865c9900bb9313d4b8bdef8299` (run `40172587383`); its latest ownership check `40190443162` passes.
+- M0 recorded exact failure evidence and responsible integration/module owner actions on existing Issues #124 (`6418797669`), #125 (`6418797752`), #57 (`6418797666`), and #126 (`6418802783`). Existing M9 candidate composition on PR #119 passed on its separate reviewed manifest; this does not refresh the event-base manifest or clear direct PR failures.
+- M0 report-only head `325b3e9` is local and not yet pushed; the next 20-minute batch begins no earlier than 14:50 UTC. The M7 mutex blocker and exact M8 review requirement remain active; no module code or source pin was changed.
