@@ -9111,6 +9111,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M0 recorded the current source boundary on Issues #29 (`6418742129`) and #126 (`6418741971`), and refreshed M1/M2 acceptance evidence on Issues #52 (`6418741940`) and #45 (`6418741941`). M1 protected alias/TOCTOU P0 and M2 native Codex Shell host-boundary P1 remain OPEN/NOT_VERIFIED; the pinned-source M9 pass does not clear them.
 - Module lineage readback: M1 PR #114 merged at head `89be11e5f95f2b191880a4fc88f50e15f405121e` into feature-base merge `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`; M2 PR #110 merged at head `941fd22d5e43e1de91a76b8c73006e57a4c15496` via merge commit `20a57bbd78b93692bd22e1f988c9841c727d627e`. These merges do not satisfy the separate open host-boundary issues.
 - No exclusive VM, real-model, or installer test was dispatched. The resource slot remains idle pending M7's static non-cancelling mutex and exact-source reservation. No M1-M8 code, `main`, PR #24, or Release was changed.
+- Fresh ignore checks confirm generated one-click report/log paths are excluded by the coordinator `/coordinator/` rule, `.env` and `.env.*` are ignored, and `/tmp/` is ignored; the coordinator worktree has no unstaged or untracked files.
 
 ## 2026-10-26 14:42 UTC — direct module-PR M9 manifest failures
 
