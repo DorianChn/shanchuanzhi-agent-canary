@@ -8916,3 +8916,7 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 
 - Created P1 Issue #126 for the verified nonuniform M1–M8 source ancestry, with the exact per-module base-only/module-only counts, owner responsibilities, and acceptance criteria. It explicitly forbids M0 from creating module branches or rewriting owner branches; M9 must continue using exact pins until owners disposition the history.
 - PR #119 head `8226b1f` has terminal SUCCESS across standard CI, ownership-contract, and Ubuntu/Windows M9 composition (`40270671152`, `40270670967`, `40270671203`). These green checks do not close #126 or module/product acceptance.
+## 2026-10-26 04:52 UTC — preserve and audit owner `.gitignore` deltas
+
+- Read-only diff of existing dirty owner `.gitignore` files found only additive generated-artifact ignore patterns: M6 `/security-lab/e4-handoffs/`, M7 `/competition-submission/.m7-m8-acceptance-*/`, and M8 `/sponsor/.smoke-watchdog-*/` plus `/sponsor/.smoke-supervisor-*/`. No tracked patterns were removed or negated in these deltas.
+- M0 left all three owner changes untouched and unstaged. M8's untracked `M8_MERGE_RESOLUTION_RESULT.json` also remains preserved.
