@@ -8748,3 +8748,9 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - PR #121 is OPEN/Draft at exact M4 head `5d975b7927a66be26a8bfc3740530bb27a703f2c`. Its standard CI/package/Docker/Sponsor/ownership checks pass, but its exact M9 Ubuntu/Windows checks in run `40197158659` fail because the PR base manifest still pins M4 to `892d3290338fe811da127f8f51ab91de0b9fc18b`.
 - PR #119 run `40255381695` passing M9 does not validate M4 PR #121; it checks the feature-base manifest and older M4 pin. Separate M9 candidate run `40198737633` did compose exact M4 `5d975b7` and passed Ubuntu/Windows, but this is not a green check on PR #121's exact head.
 - Issue #125 now distinguishes these evidence scopes (comment `6406465319`). Required sequence: M4 owner disposition on exact SHA, reviewed pin promotion via existing M9 integration branch, then exact-head M9 rerun on PR #121. This is queued behind M1/M5; no pin or M4 code changed by M0.
+
+## 2026-10-26 — M5 npm install-prefix side-effect confirmation
+
+- In a newly created empty temp directory, the installed npm CLI resolved `npm prefix` to `C:\Users\36712` and `npm root` to `C:\Users\36712\node_modules`. M5 `check-package.mjs` uses `cwd=installDir` but omitted `--prefix installDir`; this confirms npm resolves outside the intended per-run temp install on this host.
+- Read-only inspection found `C:\Users\36712\node_modules\@dorianchn\agent-canary\package.json`, version `1.2.7`, timestamp 2026-10-26 00:46 UTC. The install's exact origin is UNKNOWN, so M0 did not delete or alter it. Treat the check as a possible persistent user-profile install side effect; restoring a temp prefix and proving the home `node_modules` inventory is unchanged are required before closure.
+- M5 owner received this exact root-resolution result and safety acceptance in PR #122 comment `6406485103`. No M5 files or user-profile files were changed by M0.
