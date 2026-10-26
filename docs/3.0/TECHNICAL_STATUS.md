@@ -9168,3 +9168,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Git `2.53.0.windows.3`, GitHub CLI `2.102.0`, Codex CLI `0.164.0-alpha.11.1`, and Node.js `v22.23.1` are available and were exercised for this coordination/test run.
 - `python.exe` resolves only to the Windows App Execution Alias, not an installed runtime. The E4 one-click runner downloaded the pinned official Python.org embeddable `3.13.17` runtime into its ignored report directory and verified its SHA-256; it did not install Python system-wide.
+
+## 2026-10-26 15:37 UTC — M1 alias gate exact-head verification
+
+- On current clean M1 head `89be11e5f95f2b191880a4fc88f50e15f405121e` (PR #114 merged), Windows Node `v22.23.1` focused Gateway tests passed for workspace-local symlink/junction alias denial, held-file identity revalidation, and Windows hard-link replacement after pre-read. No M1/M2 code was changed. The exact command and case result are recorded in Issue #52 comment `6420170905`.
+- Current M2 head `941fd22d5e43e1de91a76b8c73006e57a4c15496` is PR #110's merged head. GitHub reports no submitted reviews on PR #110 or #114, and Issue #52 has no current M1 disposition for this exact M2 SHA. M4's current Security Center still renders first-party OBSERVE read as `NOT_VERIFIED`; no installed-host receipt was found. Keep #52 OPEN/P0/NOT_VERIFIED pending the required owner disposition and product-host evidence; the passing synthetic/unit cases do not prove deployed-host enforcement.
+- PR #119 M0 head `9e56b10bb0bfcd58b5d5e9df89c58209d0a39d38` remains OPEN/Draft. At 15:34 UTC, 9/11 checks were successful and Windows M9 composition plus macOS Node 22 were pending. PR #24 remained OPEN/Draft at unchanged head/base.
+- Current exact-source pin mismatches remain M7 `bf9faeeb96625325e6fab8e497954ff6db4e78ea` vs manifest `bba0f0f89c610f8198660e799de7a652b8ea8e96`, and M8 `685520cbb000b3dc6950876f115199cdebf81ea5` vs manifest `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`. Existing M7/M8 local owner changes remain untouched. The M0 update is report-only and will wait for the next 20-minute push batch.
