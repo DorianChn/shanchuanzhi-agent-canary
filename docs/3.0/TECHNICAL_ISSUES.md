@@ -1809,3 +1809,14 @@ M0 has not modified M1–M8 implementation files, merged `main`/PR #24, created 
 | PR #24 | — / protected | OPEN/Draft at unchanged head `b0d8d77`, base `competition/shanchuanzhi-release-readiness`. | No merge, release, or base/head mutation by M0. |
 
 Priority basis: #118/#45/#122/#41/#57/#124 remain P1 because current evidence shows key functionality or integration acceptance is unavailable/unverified; no actual sensitive-data leak or confirmed serious data damage was observed in this checkpoint, so no new P0 is asserted. #29 remains P2 coordination hygiene.
+
+## 2026-10-26 01:49 UTC — evidence refresh for active and queued blockers
+
+| Issue / PR | Updated evidence | Current owner action |
+| --- | --- | --- |
+| #118 M1 Gateway E4 | Source ordering confirms decoy `read_file` calls `guard.trip()` after reading; synchronous quarantine aborts the current controller and the cancellation catch maps to generic rollback failure. Exact race winner / actual effect is UNKNOWN because raw failing-case logs are absent. Harness cases exit on uncaught expected quarantine before asserting denial or independent-session control. | Preserve quarantine/cancel fail-closed behavior; report expected decoy cancellation distinctly; keep follow-up write denied/NOT_STARTED, target snapshot unchanged, independent Guard B positive. M1 focused tests. M0/M6 evidence handoff in #57. |
+| #57 M6 E4 evidence (queued) | `e4/run.mjs` saves raw evidence only on normal path; failing paths have empty details and no failing Gateway/Guard JSONL. | In `finally`/catch, persist logs and before/after snapshots before close; catch only expected fail-closed result so both controls execute. Queued behind the two active lanes. |
+| PR #122 M5 package | Source diff confirms missing `--prefix installDir` while subsequent consumers still require the package under that path; exact ENOENT reproduced. Actual alternate npm install root is not yet independently inspected. M5 `npm test` also omits baseline `test/m9-security-composition.test.ts`. | Restore explicit/canonical install root; restore baseline test; prove full TAP includes it; run build/test/pack:check on exact head. Owner handoff in PR comment `6406424443`. |
+| #124 M7/M8 pins | Latest local matrix still fails M7 and M8 exact local worktree-to-M9-manifest comparisons; their dirty owner paths remain preserved. | Reconcile existing branches, then review and test exact source before M9 changes pins. |
+
+No module files or worktree changes were made by M0. Current active source lanes remain M1 #118 and M5 PR #122; M6 #57 and M7/M8 #124 follow-up remain queued.
