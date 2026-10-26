@@ -8988,3 +8988,19 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - M9 worktree is clean and synchronized at `b5b9f71e057b185f0492438f9b53e980a5b6beb6`. PRs #112, #115, #117 are MERGED; latest merged M9 head is #117 `7b6edae85f082c94c3a19e005f90656544a7198d`. The current b5b9 follow-up has no open PR.
 - Exact M9 composition for M0 PR #119 passed on candidate-selected refs at run `40277802172` (Ubuntu and Windows). Direct M3–M6 PR checks still load the older manifest from their shared `feature/agent-canary-3.0` base and fail exact candidate-head equality. Candidate composition PASS therefore does not establish the follow-up manifest is present in the shared base.
 - Issues #124/#126 now ask the M9 owner to identify or publish the reviewed follow-up via the existing M9 branch after module owner ref dispositions. M0 did not create a PR, change pins, or merge PR #24.
+
+## 2026-10-26 06:12 UTC — M1–M9 consolidated acceptance snapshot
+
+| Scope | Current ref / PR state | Remaining gate |
+|---|---|---|
+| M1 | `89be11e`; no open follow-up PR | P0 protected-read alias/TOCTOU and product consumer evidence (#52); Gateway/E4 cancellation fixture disposition (#118). |
+| M2 | `941fd22`; PR #37 merged at `db98c7d` | Native Codex Shell remains `UNPROTECTED` / `BLOCKED_NOT_VERIFIED` (#45). |
+| M3 | PR #120 at `9169552` | Direct M9 composition expects old M3 pin `0d61b43`; owner-reviewed current manifest disposition (#124). |
+| M4 | PR #121 at `5d975b7` | Direct M9 composition expects old M4 pin `892d329` (#125); P0 host-path evidence also remains in #52. |
+| M5 | PR #122 at `dde81d6` | Approved common-source baseline `e4732d97` absent; `API-Contract-Change` metadata missing; `pack:check` held by safe-prefix guard. |
+| M6 | PR #123 at `fae72ea` | Required `Test-Evidence` / `API-Contract-Change` PR metadata missing; direct M9 pin mismatch and independent product E4 remains NOT_VERIFIED (#57). |
+| M7 | PR #96 merged; owner worktree `bf9faee`, 4 commits beyond merged head, dirty `.gitignore` | Publish or disposition owner follow-ups; clean-VM installer lifecycle NOT_VERIFIED (#41); local head differs from M9 pin (#124). |
+| M8 | PR #40 merged; owner worktree `685520c`, 1 docs commit beyond merged head, dirty/untracked owner files | Publish or disposition follow-up; local head differs from M9 pin (#124). |
+| M9 | Candidate `b5b9f71`, clean/synchronized; no open follow-up PR | Candidate composition passed run `40277802172`; updated manifest is not in shared feature-base for direct follow-up PR checks. Owner-reviewed follow-up PR/ref disposition is pending (#124/#126). |
+
+This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does not clear the module, host, installer, real-model, independent-review, or security-alert gates listed above.
