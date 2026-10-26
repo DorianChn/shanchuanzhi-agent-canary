@@ -164,6 +164,45 @@ else {
     Add-Result -Name 'M9/manifest-structure' -Status 'BLOCKED' -Root $m9Root -Sha '' -Dirty $false -Log '' -Details 'M9 exact-source manifest or validator is missing.'
 }
 
+# Reproduce direct M1-M8 merge conflicts against the current checked-out
+# feature baseline. `merge-tree` writes only an unreachable tree object; it
+# does not update any branch, index, worktree, or module-owned file.
+$baselineSha = (& $git.Source -C $mainRoot rev-parse HEAD 2>$null | Out-String).Trim()
+if (-not $baselineSha) {
+    Add-Result -Name 'Git/current-baseline-merge-tree' -Status 'BLOCKED' -Root $mainRoot -Sha '' -Dirty $false -Log '' -Details 'Could not resolve the current feature baseline commit.'
+}
+else {
+    foreach ($module in @('M1','M2','M3','M4','M5','M6','M7','M8')) {
+        $moduleRoot = Join-Path $workspaceRoot "agents/$module"
+        $moduleSha = (& $git.Source -C $moduleRoot rev-parse HEAD 2>$null | Out-String).Trim()
+        $moduleDirty = [bool]((& $git.Source -C $moduleRoot status --porcelain=v1 --untracked-files=all 2>$null | Out-String).Trim())
+        if (-not $moduleSha) {
+            Add-Result -Name "Git/merge-tree-$module" -Status 'BLOCKED' -Root $moduleRoot -Sha '' -Dirty $moduleDirty -Log '' -Details "Could not resolve the $module source commit."
+            continue
+        }
+        $mergeOutput = @(& $git.Source -C $moduleRoot merge-tree --write-tree --name-only $baselineSha $moduleSha 2>&1 | ForEach-Object { "$($_)" })
+        $mergeExitCode = [int]$LASTEXITCODE
+        $mergeLines = @($mergeOutput | ForEach-Object { $_.TrimEnd() })
+        $conflictFiles = [System.Collections.Generic.List[string]]::new()
+        if ($mergeLines.Count -gt 0 -and $mergeLines[0] -match '^[0-9a-f]{40}$') {
+            for ($i = 1; $i -lt $mergeLines.Count; $i++) {
+                $candidate = $mergeLines[$i].Trim()
+                if (-not $candidate) { break }
+                $conflictFiles.Add($candidate)
+            }
+        }
+        $mergeStatus = if ($mergeExitCode -eq 0) { 'PASS' } elseif ($conflictFiles.Count -gt 0) { 'FAIL' } else { 'BLOCKED' }
+        $mergeDetails = if ($conflictFiles.Count -gt 0) {
+            "baseline=$baselineSha; moduleHead=$moduleSha; conflicts=$($conflictFiles -join ',')"
+        } elseif ($mergeExitCode -eq 0) {
+            "baseline=$baselineSha; moduleHead=$moduleSha; conflicts=none"
+        } else {
+            "baseline=$baselineSha; moduleHead=$moduleSha; gitExitCode=$mergeExitCode; conflictListUnavailable"
+        }
+        Add-Result -Name "Git/merge-tree-$module" -Status $mergeStatus -Root $moduleRoot -Sha $moduleSha -Dirty $moduleDirty -Log '' -Details $mergeDetails
+    }
+}
+
 # Read the latest GitHub PR and CI state for the baseline and every existing
 # module branch. This is read-only and records a hosted PASS only when CI checks
 # correspond to the exact local HEAD tested above.
@@ -314,7 +353,7 @@ $lines.Add("- Report directory: $reportRoot"); $lines.Add('')
 $lines.Add('## Results'); $lines.Add('')
 foreach ($row in $results) { $tail = if($row.details){" — $($row.details)"}else{''}; $logPart = if($row.log){" (log: $($row.log))"}else{''}; $lines.Add("- **$($row.status)** $($row.name)$tail$logPart") }
 $lines.Add(''); $lines.Add('## Acceptance boundary'); $lines.Add('')
-$lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, M0 baseline, synthetic E4 tests, and read-only GitHub PR/CI state for the exact local branch heads. Test processes receive isolated AGENT_CANARY_HOME directories inside this run report so synthetic token-store writes do not target the user profile. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
+$lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, committed M1-M8 merge-tree compatibility against the current feature baseline, M0 baseline, synthetic E4 tests, and read-only GitHub PR/CI state for the exact local branch heads. Merge-tree checks do not update branches or worktrees. Test processes receive isolated AGENT_CANARY_HOME directories inside this run report so synthetic token-store writes do not target the user profile. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
 $lines.Add(''); $lines.Add('## Remaining acceptance gates'); $lines.Add('')
 foreach ($gate in $result.remainingAcceptanceGates) { $lines.Add("- $gate") }
 $lines -join [Environment]::NewLine | Set-Content -LiteralPath $mdPath -Encoding UTF8
