@@ -9271,3 +9271,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - The first M9 Windows attempt failed only M7 packaging test 27 because the in-box `csc.exe` exceeded the existing 60-second test timeout (`ETIMEDOUT`); the unchanged failed job passed on attempt 2. Record as a transient runner timeout, not as an erased failure or an M7 code fix. Existing test threshold was not changed.
 - The hosted green composition validates M9's manifest-selected M7/M8 refs, not the newer local owner heads. M7/M8 exact-commit disposition is still outstanding. Both PRs remain OPEN/Draft; PR #24 remains OPEN/Draft at unchanged head/base. No module source or pin, `main`, or Release was changed.
 - The current Windows one-click report remains run `20261026T174902623Z`: 33 PASS, 9 dependency-install SKIPPED, 3 FAIL, 1 BLOCKED. E4 synthetic Gateway failures and M9 local M7/M8 pin mismatches remain; M5 package-check remains safely BLOCKED until its owner checker proves explicit `--prefix installDir`.
+
+## 2026-10-26 18:14 UTC — current owner-gate refresh
+
+- Updated Issues #124 and #125 with the M9 candidate-vs-shared-base distinction: PR #127's candidate composition passes, while direct PR #120/#121/#122 checks still fail against stale event-base manifest refs. The issues remain OPEN pending approved common-source ancestry and direct checks.
+- Added current M1 synthetic E4 evidence to Issue #118 and M6 harness-isolation evidence to Issue #130. M1 and M6 source-level owner gates remain open; the M0 test wrapper does not close either module issue.
+- Refreshed Draft PR #127's body to state the current exact head, hosted 12/12 checks, local E4/M5/pin blockers, and the M7/M8 owner disposition gate. The PR body edit triggered a new ownership-evidence check; as of 18:14 UTC, 12 checks passed and that check was pending. No code or M9 pin changed.
