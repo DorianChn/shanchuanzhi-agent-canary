@@ -9596,3 +9596,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Re-read run `40530320961` job steps: besides manifest-selected exact refs, both Ubuntu and Windows separately passed `Run current M8 PR` and the scoped M6/M8 lifecycle-disposition check. The manifest still pins M8's reviewed prior SHA for the M6-scoped regression; M7 still pins `bba0f0f`, not conflicting PR #128 head `bf9faee`.
 - Corrected PR #131 comment `6446255281` and PR #127 comment `6446254755` to distinguish current-M8 PR regression evidence from manifest pin promotion/owner acceptance. No source pins changed.
+
+## 2026-10-27 15:41 UTC — coordinated worktree and blocker refresh
+
+- Rechecked canonical `agents/M1`–`agents/M8`: all eight expected `feature/ac3-*` branches exist and track their upstreams. M1–M5 are clean; M6 and M7 retain only their pre-existing `.gitignore` edits; M8 retains that edit and its untracked resolution-result JSON. No owner worktree content was changed.
+- PR heads remain M3 #120 `9169552`, M4 #121 `5d975b7`, M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee` (CONFLICTING), and M8 #129 `685520c`. M7 has no workflow run for its current head. Old M3/M4 branch-specific composition failures predate the latest passing M9 run `40530320961`; do not treat that historical run as current-head acceptance.
+- Open security/integration blockers remain P0 #52 and P1 #118, #132, #126, #124, #80, #57, #41, and #45. No non-M0 replies/updates appeared on the inspected coordination PR discussions since the prior checkpoint; activity in separate Codex chats is UNKNOWN.
+- PR #24 remains OPEN/Draft at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module changes, merge, or Release were made.
