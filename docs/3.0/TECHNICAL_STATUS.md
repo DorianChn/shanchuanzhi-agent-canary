@@ -9462,3 +9462,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - All workflows on this exact pushed head completed successfully: CI run `40503022540` (9/9 jobs), coordination audit `40503022733`, and M9 exact-source composition `40503022546` (Ubuntu and Windows). Windows completed the exact-source M1–M8/M9 regression step and current M8 lifecycle-disposition check. These hosted source checks do not establish independent installed-product E4, production-host protected identity/TOCTOU, clean-VM installer, or real-model acceptance.
 - Recorded the terminal results in PR #131 comment `6441848986`. PR #131 remains OPEN/Draft. Module pins and branches, `main`, PR #24, and Release remain unchanged by this batch.
 - Also recorded the successful refresh on M9 PR #127 in comment `6441857414`; it explicitly retains the owner-approval and independent-product evidence limitations.
+
+## 2026-10-27 12:30 UTC — PR #24 preservation recheck
+
+- After the M0 push, fetched PR #24 from GitHub: still OPEN/Draft, head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; its updated timestamp is unchanged. No operation in this M0 batch targeted PR #24 or `main`.
