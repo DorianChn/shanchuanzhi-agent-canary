@@ -9512,3 +9512,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - M0 head `be8e65be402f6dd1f1904913a5b25b04edabae99` completed all checks: CI `40511289982` (9/9), coordination audit `40511289185`, M9 composition `40511289138` (Ubuntu + Windows). The exact M1–M8/M9 matrix, full M7 Windows packaging suite, current M8 PR checks, and scoped M6/M8 disposition step passed.
 - Recorded on PR #131 comment `6443039911` and M9 PR #127 comment `6443040390`. Both PRs remain Draft; open owner and product acceptance gates remain open.
+
+## 2026-10-27 13:32 UTC — M5 ancestry gate confirmed from direct CI log
+
+- Re-read M5 ownership job `121160104768` for exact PR #122 head `dde81d6a989ba39aa0d57dfeed0c9283f4459682` (run `40190440590`). Exact failure: the head lacks approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; Git reports multiple merge bases and selects `7cd3445…`. This is the ancestry gate tracked by #126, not a test failure.
+- M9 refreshed candidate run `40511289138` passed the same M5 exact source, but that does not satisfy M5’s owner/base disposition. Recorded the exact log and request on PR #122 comment `6443175777`; M9 pins and module branches remain unchanged.
