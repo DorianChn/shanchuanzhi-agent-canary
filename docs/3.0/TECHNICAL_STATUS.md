@@ -9523,3 +9523,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - M0 head `a1d02d646904072464a1d1c9db183660ddc09852` completed CI `40514255662` (9/9), coordination audit `40514255610`, and exact M9 composition `40514255570` on Ubuntu and Windows. Windows completed the full M7 packaging, current M8 PR and M1–M8/M9 exact-source regressions; all passed.
 - Results recorded on PR #131 comment `6443492163` and M9 PR #127 comment `6443492696`. These validate hosted source/package behavior only; open owner and independent product acceptance gates remain.
+
+## 2026-10-27 13:52 UTC — E4 issue refreshed with latest passing source rerun
+
+- Updated P1 issue #132 in comment `6443683569`: latest M9 run `40514255570` passes exact M1/M6 source regressions on Ubuntu and Windows, but missing target snapshots and failure logs remain unaddressed. No owner source change/disposition is visible. #132 remains OPEN; absent observations must remain UNKNOWN and product E4 stays NOT_VERIFIED.
