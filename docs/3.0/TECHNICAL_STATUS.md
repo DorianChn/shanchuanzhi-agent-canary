@@ -9527,3 +9527,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-27 13:52 UTC — E4 issue refreshed with latest passing source rerun
 
 - Updated P1 issue #132 in comment `6443683569`: latest M9 run `40514255570` passes exact M1/M6 source regressions on Ubuntu and Windows, but missing target snapshots and failure logs remain unaddressed. No owner source change/disposition is visible. #132 remains OPEN; absent observations must remain UNKNOWN and product E4 stays NOT_VERIFIED.
+
+## 2026-10-27 14:16 UTC — GitHub job status discrepancy on latest push
+
+- For M0 head `43c3661af5a84443726a150b1b4ac8461eb49b12`, workflow summaries report completed/success and all steps, including `Complete job`, show success. However `gh pr checks 131` and the Jobs API still report M9 Windows job `122234008114` and CI Ubuntu Node 22 job `122234009087` as `in_progress` with `completed_at=null` (started 14:02:10Z and 14:01:40Z). Other jobs, the coordination audit, and M9 Ubuntu are terminal/pass.
+- Recorded the discrepancy on PR #131 comment `6444367112`. M0 did not cancel or rerun jobs; do not mark this head fully green until the two GitHub job records reach terminal conclusions.
