@@ -9498,3 +9498,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-27 13:10 UTC — independent product E4 evidence boundary
 
 - Added M0 update to P1 issue #57 (comment `6442679209`): M6 source-level lifecycle/bundle checks passed within M9 run `40508430275`, but this is not the required clean independent product artifact, hash provenance, or external-copy mismatch-control evidence. #57 remains OPEN / NOT_VERIFIED; no exclusive VM/installer/model slot was used.
+
+## 2026-10-27 13:12 UTC — M5 worktree status correction
+
+- Rechecked canonical module worktrees after the prior status snapshot: M5 `.gitignore` is now clean; normalized contents still equal its committed `HEAD` blob `e633caa`. The earlier modified status had no diff and did not represent an owner change. M6, M7, and M8 worktree deltas remain preserved and unresolved as described above.
