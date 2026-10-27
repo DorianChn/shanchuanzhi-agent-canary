@@ -9757,3 +9757,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - GitHub compare M7 pin `bba0f0f` to PR #128 head `bf9faee` reports `diverged`, 70 commits ahead / 259 behind, merge base `7cd3445`; changed files include Windows community workflow, installer/release acceptance, package metadata, packaging and tests. M0 asked the M7 owner to reconcile the source anchor and conflicts; M0 will not edit those module-owned files.
 - M8 pin `1c94ed4` to PR #129 head `685520c` is one commit ahead / zero behind. GitHub lists documentation/readiness files plus `scripts/check-docs.mjs`; no runtime source files are in the comparison. This narrows the review surface but does not replace the M8 owner's exact-head disposition or candidate composition.
 - Updated handoffs are on PR #128 comment `6450878950` and PR #129 comment `6450814402`. No module files or pins changed.
+
+## 2026-10-27 18:57 UTC — owner heads unchanged after handoffs
+
+- Live readback after M0 comments `6450878950` (#128) and `6450814402` (#129): both PR heads remain unchanged; #128 is still conflicting and #129 remains open/draft. No new owner disposition or source commit was observed.
+- The existing M0 push checks are terminal: coordination audit passed, CI 9/9 passed, and M9 base-manifest composition passed on Windows and Ubuntu. Exact candidate/pin distinctions remain as recorded above.
