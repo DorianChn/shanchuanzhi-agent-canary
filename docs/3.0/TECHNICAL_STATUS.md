@@ -9532,3 +9532,12 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - For M0 head `43c3661af5a84443726a150b1b4ac8461eb49b12`, workflow summaries report completed/success and all steps, including `Complete job`, show success. However `gh pr checks 131` and the Jobs API still report M9 Windows job `122234008114` and CI Ubuntu Node 22 job `122234009087` as `in_progress` with `completed_at=null` (started 14:02:10Z and 14:01:40Z). Other jobs, the coordination audit, and M9 Ubuntu are terminal/pass.
 - Recorded the discrepancy on PR #131 comment `6444367112`. M0 did not cancel or rerun jobs; do not mark this head fully green until the two GitHub job records reach terminal conclusions.
+
+## 2026-10-27 14:29 UTC — latest terminal checks and worktree provenance
+
+- Rechecked GitHub head metadata: M0 PR #131 remains OPEN/Draft at `58fe09ffd770a3575b7b1a304dadf146ab200e29`; PR #24 remains OPEN/Draft at `34fbe6d35d4dea30795525bf538f97194758c6c4`. No branch, pin, merge, or release action was taken.
+- For M0 head `58fe09f`, coordination run `40520358173`, CI run `40520358561` (9/9 jobs), and M9 composition run `40520358522` (Ubuntu + Windows) are now terminal success. Exact-source tests do not close product E4, installer lifecycle, or P0 real-host acceptance.
+- Posted the terminal evidence to PR #131 comment `6444647950` and PR #127 comment `6444648593`.
+- Rechecked canonical `agents/M1`–`agents/M8`: all eight directories exist on their expected `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 use the coordinator repository's common Git directory. M4 and M7 are linked to the separate existing clone at `Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4/.git`; their origin URL is the same repository and their heads match PR #121 (`5d975b7`) and PR #128 (`bf9faee`). This is a provenance split, not evidence of source corruption.
+- M6/M7 `.gitignore` deltas and M8 `.gitignore`/untracked stale result JSON remain owner-local and untouched. M7 PR #128 remains conflicting; M9 PR #127 still pins the previously reviewed M7/M8 revisions. Posted the verified provenance readback to PR #131 comment `6444676413`; no migration, cherry-pick, pin update, or history rewrite was performed.
+- Remaining blocking evidence: Issue #52 P0 held-identity/native-host boundary; Issue #132 two failed E4 rows with missing target snapshots; Issue #41 clean-VM lifecycle; Issue #57 independent product E4. Keep all NOT_VERIFIED until the owning module supplies the required evidence and M9 reruns the selected exact heads.
