@@ -9581,3 +9581,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Pushed M0 head `f793acc8075952a4ad42305b04d5ff6484cbcf74` to PR #131 after the 20-minute interval. Coordination audit run `40530321319` passed; M9 exact-source run `40530320961` passed on Ubuntu and Windows.
 - CI run `40530321257` has eight jobs terminal success; macOS Node 20 job `122281018675` is still queued (`started_at=2026-10-27T15:22:28Z`, no runner assigned as of 15:31 UTC). M0 did not cancel or rerun it. Do not mark this head's full CI terminal until the queued job resolves.
 - PR #24 remains OPEN/Draft at its unchanged head/base; no module source, M9 pin, merge, or Release was changed in this batch.
+
+## 2026-10-27 15:35 UTC — queued macOS check reached terminal success
+
+- For M0 head `f793acc8075952a4ad42305b04d5ff6484cbcf74`, CI run `40530321257` is now 9/9 success; delayed macOS Node 20 job `122281018675` completed successfully. Coordination audit `40530321319` and M9 Ubuntu/Windows composition `40530320961` also passed. All 12 `gh pr checks 131` rows are green.
+- Recorded the terminal status on PR #131 comment `6446255281` and M9 PR #127 comment `6446254755`. Only the current manifest-selected refs were validated.
