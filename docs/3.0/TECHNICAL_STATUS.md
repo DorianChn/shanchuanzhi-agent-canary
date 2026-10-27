@@ -9490,3 +9490,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - M0 head `37467156dd5943aa43eb35e28873da19884b7898` completed all workflows successfully: CI run `40508430302` (9/9), coordination audit `40508430281`, M9 exact-source composition `40508430275` (Ubuntu and Windows). PR #131 remains OPEN/Draft.
 - Recorded results on PR #131 comment `6442664997` and M9 PR #127 comment `6442665718`. Evidence is limited to hosted source composition and CI; open owner/product acceptance gates remain unchanged.
+
+## 2026-10-27 13:09 UTC — M7 installer acceptance remains separate
+
+- Added M0 update to existing P1 issue #41 (comment `6442673209`): M9 run `40508430275` passed exact M7 Windows packaging tests, but no clean-VM install/first launch/upgrade/uninstall/user-cancel rollback was run. #41 remains OPEN / NOT_VERIFIED / HOLD; hosted packaging is not lifecycle acceptance.
