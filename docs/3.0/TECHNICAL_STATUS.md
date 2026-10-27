@@ -9690,3 +9690,12 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Therefore run `40556520264` is green for the base manifest, but it is not a full-current-head M1–M8 integration result. This corrects the broader “M9 manifest” phrasing in the earlier status entry.
 - Separately verified PR #127''s own run `40373243860` (both OS jobs passed, exact M9 source `635f8bc55216b044627fa83f0b402003d0eaa893`). Its log selects current PR heads for M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`, plus matching M1/M2; it still pins M7 `bba0f0f` rather than owner PR #128 head `bf9faee`, and M8 historical/candidate refs `84ee6a7` / `1c94ed4` rather than current PR #129 head `685520c`. Thus M9 composition is partially ready, with M7/M8 exact-head review/promotion unresolved. M5 source-anchor/provenance issue #126 remains open even though its PR SHA is tested by this M9 candidate.
 - PR #127''s direct candidate run and PR #131''s base-manifest run are distinct evidence; do not conflate them. PR #24, main, all module worktrees, and release state remain unchanged.
+
+
+## 2026-10-27 18:16:25 UTC — local workspace and ownership acceptance recheck
+
+- Confirmed the required top-level directories `main`, `agents`, `coordinator`, `integration`, `reports`, and `logs` exist. All six M0 coordination documents exist under `coordinator/docs/3.0`.
+- Confirmed the coordinator `.gitignore` excludes `.env` and secret files, temporary files, and `/logs/`.
+- Checked each `agents/M1`–`agents/M8` path with `git rev-parse --show-toplevel`, `--git-common-dir`, branch, HEAD, status, and remote. Each has a distinct expected `feature/ac3-*` branch, exact head matching its current PR, and the same repository origin. M1/M2/M3/M5/M6/M8 use the coordinator repository''s common Git dir; M4/M7 are genuine worktrees from the existing separate clone at `C:/Users/36712/Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4`, also pointing at this origin. No worktree was relocated or rewritten.
+- Existing owner dirt is intact: M6 and M7 each have a modified `.gitignore`; M8 has a modified `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`. All other M1–M5/M8 status lines are clean except those enumerated; no M0 file was staged from an owner worktree.
+- This confirms directory/branch isolation, not common ancestry. Distinct source anchors and M7/M8 pin mismatch remain open as recorded above.
