@@ -9620,3 +9620,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M0 head `929efd1372e5feeea3be30f9ae5de19bb50af28e` is present on PR #131. CI run `40537078553` passed 9/9, coordination audit `40537078285` passed, and M9 composition `40537078291` passed on Ubuntu and Windows; `gh pr checks 131` reports 12/12 passing.
 - The run checks the current manifest pins and the separate current-M8/lifecycle-disposition path. M7 remains pinned to the previously reviewed source, and open Issue #126 still needs owner ancestry/source-anchor disposition. PR #24 remains OPEN/Draft at unchanged head/base; no module source, merge, or Release was changed.
 - Triage of M5 exact-head ownership audit `40190440590` / job `121160104768` confirms a P1 provenance failure, not a policy-test failure: at `AC3_BASE_SHA=b0d8d77` and head `dde81d6`, the checker warns of multiple merge bases (selected `7cd3445`) and fails because the M5 head does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. Existing M0 diagnosis is on PR #122; this is covered by open #126. Preserve the failing gate pending M5 owner source-anchor disposition.
+
+## 2026-10-27 16:29 UTC — M0 head `afee0d3` checks terminal
+
+- M0 head `afee0d3cc4285dc1b23b5b02e286ac9c10c475ff` is present on PR #131. CI run `40540423276` passed 9/9; coordination audit `40540423201` passed; M9 exact-source composition `40540423926` passed on Ubuntu and Windows. `gh pr checks 131` reports 12/12 success.
+- Updated the existing M0 status comments on PR #131 and M9 PR #127 with exact-head run links, unresolved M5 ownership-gate failure, open #126 ancestry disposition, and current acceptance limits. M9's M7 pin remains reviewed prior source; no owner branch was changed.
