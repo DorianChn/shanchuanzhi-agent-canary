@@ -9837,3 +9837,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M7/M8 heads, owner worktree dirt, and PR #24 state remain unchanged at this readback. The committed M0 notes are local ahead of the just-pushed PR head; next push remains no earlier than 20:04 UTC.
 - Updated the existing PR #131 body at 19:51 UTC to record its current 12/12 checks, exact-source limitations, owner handoffs, and remaining acceptance gates. The PR remains OPEN/Draft; base/head are unchanged.
 - The body edit triggered AC3 audit run `40572878429`, which passed. Its audit output flagged missing `Test-Evidence` and `API-Contract-Change` markers in M7 PR #128; M0 updated handoff comment `6451781764` with these requirements and the needed `Coordinated-with: M8` acknowledgment for shared packaging/test paths. A read-only `git merge-tree --write-tree` on 2026-10-27 found two merge bases (`7cd3445`, `5c7d95d`) and conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`; the exact file list was added to PR #128 and Issue #126 comment `6452115155`. No M7 file or ref was changed.
+
+## 2026-10-27 20:10 UTC — second scheduled M0 push verified
+
+- Fast-forward pushed the M0 coordination report at 20:04 UTC from remote `491f6dfdcb1834e3b2d17a2628ad4af280f938b2` to `06c1d56c89c32de32064e4908a58ef9a2f015856`. Preflight verified the expected remote SHA; local and remote branch heads match after push.
+- PR #131 current head `06c1d56` has 12/12 passing checks: AC3 audit `40574727336`, CI `40574728046` (9/9), and exact-source composition `40574727297` on Ubuntu/Windows.
+- Windows composition logs identify the tested M7 source as `bba0f0f` and M8 sources as historical `84ee6a7` plus reviewed candidate `1c94ed4`. They are not current PR heads `bf9faee` and `685520c`. M0 manifest audit reports M1–M6 MATCH and M7/M8 STALE_PIN.
+- Updated PR #131 body with this head/check evidence and explicit limits at 20:10 UTC. PR #24 remains OPEN/Draft at unchanged head/base. No module head, source, pin, merge, or Release changed. Next push no earlier than 20:24 UTC.
