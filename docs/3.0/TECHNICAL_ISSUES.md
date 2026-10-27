@@ -1,3 +1,8 @@
+## E4 report artifact readback — 2026-10-27 19:14 UTC
+
+- Opened `security-lab/e4-one-click-runs/20261025T133314087Z/e4/20261025T133403Z/report.json`. Both `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` are `FAIL` with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; both have empty `fileState.before`/`after` arrays and `unchanged: true`. This does not prove either target stayed unchanged. The saved evidence directory contains no raw logs for those failed cases.
+- M1 owns the decoy-read/quarantine outcome; M6 owns snapshots/log preservation on failure and UNKNOWN for missing observations; M8 owns the public readiness claim. M0 recorded this exact result on #132 comment `6451235130` and updated PR #129 handoff `6450814402`. No test or policy was weakened and no module code changed.
+
 ## Live cross-module triage snapshot — 2026-10-27 19:01 UTC
 
 - **P0 #52:** protected OBSERVE path aliases/identity/TOCTOU remain unverified at a first-party host. Keep open; synthetic tests are not installed-host evidence.

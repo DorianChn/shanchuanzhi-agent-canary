@@ -9775,3 +9775,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M9 run `40565749165` was verified from Windows job logs: it selected base M9 `34fbe6d`, M1 `89be11e`, M2 `941fd22`, M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, and M8 history/candidate `84ee6a7`/`1c94ed4`. It is not current-head M3–M8 composition or PR #127 candidate validation.
 - AC3 audit `40565749164` compares PR #127's manifest against live canonical branches and flags only M7/M8 stale. Current M7/M8 PR heads, merge conflict, and empty submitted-review lists were rechecked; no owner source change was observed.
 - PR #24 remains OPEN/Draft at unchanged head/base. No module file, M9 pin, merge state, or Release was changed. Next M0 push batch is no earlier than 19:24 UTC.
+
+## 2026-10-27 19:14 UTC — E4 missing-observation artifact verified
+
+- Read the exact local report `security-lab/e4-one-click-runs/20261025T133314087Z/e4/20261025T133403Z/report.json`: both `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` are FAIL with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`, empty before/after arrays, and `unchanged: true`; no named target observation exists. The matching evidence folder has no raw Gateway/Guard logs for these cases.
+- Updated existing M8 PR #129 handoff `6450814402` to request correction of the unsupported public claim and add current Issue #80 status; recorded the exact reproduction evidence in Issue #132 comment `6451235130`. M1/M6/M8 ownership boundaries remain unchanged. No module code, tests, security policy, or pin was changed.
+- This coordinator-only documentation change is queued for the next 20-minute push batch, no earlier than 19:24 UTC.
