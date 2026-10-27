@@ -9717,3 +9717,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M5: current head `dde81d6` policy and M3 consumer checks pass in M9 candidate; exact ownership audit still fails against approved baseline `e4732d9`; existing-branch conflicts and safe package-install confinement remain (#124/#126).
 - M6: current head `fae72ea` bundle/lifecycle source regressions pass in M9 candidate; source-level checks do not satisfy product E4; test-home isolation and missing-observation reporting remain (#57/#130/#132).
 - These comments are handoffs, not owner acceptance or new test results. No module source, tests, pins, or owner worktree state was changed.
+
+
+## 2026-10-27 18:32:43 UTC — formal review records still missing for M9 pin promotion
+
+- Queried GitHub submitted-review lists for PR #127 (M9), #128 (M7), #129 (M8), #122 (M5), and #123 (M6). Each returned an empty review list; there is no formal submitted review record on those PRs at this checkpoint.
+- Updated the existing M0 status comments on PR #127 and Issue #126 to distinguish passing candidate composition from review approval. The PR #127 M9 manifest still selects reviewed older M7/M8 refs, not current owner heads. No pin promotion is authorized by a green run alone.
+- M9 acceptance still requires explicit owner review/disposition for M7/M8 exact refs and M5''s approved-source provenance. PR #127 remains Draft; no source refs changed.
