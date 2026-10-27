@@ -1410,3 +1410,7 @@ The existing M9 candidate PR #127 passes composition for the refs in its own man
 M0 PR #131 at exact head `01e2142434c5805b4fcb1bcb2815009d559fac3b` now has 12/12 hosted checks passing, including both OS composition jobs. This validates the selected M9 candidate in the M0 integration workflow; it does not update the shared-base manifest used by direct PR #120/#121/#122/#123/#129 runs and does not waive the M7/M8 review gates. PR #131 and PR #127 remain Draft; do not merge either while the owner dispositions are outstanding.
 
 The 20:57 UTC local resource recheck found no running or registered VMware VMs and none of the known clean-VM paths. Issue #29 remains the environment gate. M7 PR #128 is still conflicting, and the inspected M7 artifact is unsigned and bound to stale M8 source; no installer lifecycle may be inferred or run from that artifact.
+
+## 2026-10-27 03:05 UTC — M8 evidence correction
+
+PR #129's current body contains the requested `Test-Evidence` and `API-Contract-Change` fields. Pull-request run `40361313177` passed `ownership-contract-evidence` on M8 head `685520c`, while GitHub's PR check listing still reports the earlier failed job `121707360907` and both direct composition jobs. The integration returned HTTP 403 to M0's request to rerun the failed ownership job; no bypass was attempted. Issue #80 still requires M6's disposition of `685520c`, so the older M9 M8 pin must not be advanced on the basis of the separate passing ownership run alone.
