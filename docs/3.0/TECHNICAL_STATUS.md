@@ -9736,7 +9736,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Pushed M0 coordination head `82320c0acde0c9196de1a8ae5a6966fe1b691418` to the existing branch. PR #131 coordination audit passed; CI passed 9/9 jobs.
 - M9 composition run `40562751203` passed on Windows and Ubuntu. Its logs show event-base M9 `34fbe6d35d4dea30795525bf538f97194758c6c4`, not M9 PR #127 head `635f8bc55216b044627fa83f0b402003d0eaa893`; treat it as base-manifest composition evidence only.
-- The same run separately exercised current M8 candidate `685520cbb000b3dc6950876f115199cdebf81ea5`. It verified that M6's scoped `ACCEPT_WITH_CONDITIONS` target `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` and M1's Hook disposition source `1abdfe3890c6c263eea667789deb7eab5038e828` remain ancestors, with reviewed Hook blobs unchanged. These scoped checks do not constitute blanket approval of all M8 changes or product E4 acceptance.
+- The same run checked M8 candidate `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841` (the existing pin), not current PR #129 head `685520cbb000b3dc6950876f115199cdebf81ea5`. M6/M1 scoped checks apply only to the checked-out candidate and do not constitute approval of PR #129's full current head.
 - The exact-pin audit still reports M7 and M8 pins stale against their canonical branch heads. M0 added this scope correction and owner action to PR #129 comment `6450814402`; no M9 pin was changed.
 - PR #24 remains OPEN/Draft at its verified unchanged head/base. No merge, Release, or module-source modification occurred. This report entry is local and queued for the next 20-minute push batch.
 
