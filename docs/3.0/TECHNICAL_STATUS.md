@@ -9885,6 +9885,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - At 21:44 UTC, pushed M0 commit `fc4175c9a1a2fbfe82d3c3285c124858a876dfad`; remote readback matched. PR #131 has 12/12 passing checks: AC3 `40589241559`, CI `40589241430` (9/9), and M9 composition `40589241480` on Ubuntu/Windows.
 - Inspected the Windows composition log: it selected feature-base M9 `34fbe6d`; M1/M2 `89be11e`/`941fd22`; M3–M6 `0d61b43`/`892d329`/`cca42cd`/`2a88d8b`; M7 `bba0f0f`; and M8 historical `84ee6a7` plus scoped candidate `1c94ed4`. It did not test the open follow-up PR heads M3–M8. Issue #126 comment `6454517338` records this exact evidence limit; no M9 pin promotion is justified.
+- Added the same exact-source handoff directly to M9 PR #127 as comment `6454534249`, requesting unchanged pins until owner dispositions and a candidate-head Ubuntu/Windows run are available.
 - PR #24 remains OPEN/Draft at its original head/base. M3–M8 follow-up heads remain unchanged in the 21:30–21:50 readbacks. No module source, test, branch, pin, or Release changed. Next M0 push is no earlier than 22:04 UTC.
 - Scheduler Issue #29 was refreshed at `6454524740` with the current manifest-scope limit, two-lane cap, and UNKNOWN external-chat/exclusive-resource occupancy.
 
