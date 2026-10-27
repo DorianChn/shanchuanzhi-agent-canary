@@ -9466,3 +9466,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-27 12:30 UTC — PR #24 preservation recheck
 
 - After the M0 push, fetched PR #24 from GitHub: still OPEN/Draft, head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; its updated timestamp is unchanged. No operation in this M0 batch targeted PR #24 or `main`.
+
+## 2026-10-27 12:32 UTC — additional M6/M7 uncommitted owner deltas
+
+- Follow-up inspection of canonical worktrees found additional owner-owned `.gitignore` deltas not yet present on published heads: M6 #123 adds `/security-lab/e4-handoffs/` (last write Oct 25); M7 #128 adds `/competition-submission/.m7-m8-acceptance-*/` (last write Oct 25). M0 preserved both and did not stage or edit them.
+- Asked M6 in PR #123 comment `6441938196` to verify required E4 handoff evidence remains available and disposition the ignore rule; asked M7 in PR #128 comment `6441938628` to verify no installer/release acceptance evidence is hidden and disposition the rule. These local deltas are not committed candidate evidence and do not change the published PR heads.
