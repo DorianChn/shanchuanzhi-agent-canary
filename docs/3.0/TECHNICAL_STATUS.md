@@ -9939,3 +9939,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at 91e622e has 12/12 successful checks: AC3 40601952222, CI 40601952263 (9/9), and M9 composition 40601952234 on Ubuntu/Windows.
 - Windows evidence job 122531994428 selects feature-base M9 34fbe6d; M1/M2 89be11e/941fd22; older M3–M6 0d61b43/892d329/cca42cd/2a88d8b; M7 bba0f0f; and M8 1c94ed4 plus historical M8 84ee6a7. This does not include current M7 PR #128 bf9faee or M8 PR #129 685520c. Refreshed Issue #126 comment 6456148476; no pin or owner PR state changed.
 - PR #24 remains OPEN/Draft at unchanged head/base. No module source/test, main, or Release action occurred. Next coordinator push is no earlier than 23:44 UTC.
+
+## 2026-10-27 23:30 UTC — focused M1 P0 regression verification
+
+- In the clean M1 worktree at `feature/ac3-security-core@89be11e5f95f2b191880a4fc88f50e15f405121e`, ran `node --import tsx --test --test-name-pattern="M1 pre-execution denial reason is accepted only for the OBSERVE symlink alias" test/risk-policy.test.ts`; result: 1/1 matching test passed. The fixture asserts denial before callback, zero approvals/callbacks, and unchanged synthetic secret content/hash.
+- Posted the bounded result to P0 Issue #52 comment `6456161668`. This confirms only the synthetic regression; production-host held-identity consumption, full M2/M4/M5 composition, OS-atomic TOCTOU, installer, and product E4 remain unverified. Issue #52 remains OPEN/P0/NOT_VERIFIED.
+- No module file or test was changed. The M1 worktree remained clean after test execution. PR #24 and `main` remain untouched.
