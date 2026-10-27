@@ -9799,3 +9799,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Refetched PR #131 and appended a coordination follow-up describing the M9 exact-pin audit, the current M7/M8 drift, six-document status refresh, 12/12 checks, and the evidence limit of its base-manifest M9 run. PR remains OPEN/Draft; no base, head, or merge state changed.
 - Owner PR heads/reviews remain unchanged. PR #24 remains untouched; no module code or M9 pin changed.
+
+## 2026-10-27 19:34 UTC — PR #127 candidate source selection verified
+
+- Refetched PR #127 candidate run `40373243860` job logs. Both OS jobs succeeded with selection mode `exact-m9-pr-head` at PR head `635f8bc55216b044627fa83f0b402003d0eaa893`; it used M7 `bba0f0f` and M8 history/candidate `84ee6a7` / `1c94ed4`, not current M7/M8 PR heads.
+- This confirms the direct candidate result is green for its manifest-selected sources only. The latest M0 audit flags M7 and M8 pins stale against canonical heads. Updated M9 handoff comment `6450843141`; no M9 or module ref was changed.
