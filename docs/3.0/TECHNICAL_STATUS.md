@@ -9846,3 +9846,12 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Updated PR #131 body with this head/check evidence and explicit limits at 20:10 UTC. PR #24 remains OPEN/Draft at unchanged head/base. No module head, source, pin, merge, or Release changed. Next push no earlier than 20:24 UTC.
 - PR #131 body edit triggered AC3 audit run `40575638672`, which completed successfully at the same head. No source or base/head changed.
 - Refreshed scheduling Issue #29 with comment `6452442598`: keep the two-task cap, separate Codex-chat occupancy UNKNOWN, and no M0 use/reservation of VMware, real-model, or installer tests. This does not infer other-chat idleness.
+
+## 2026-10-27 20:13 UTC — current security and integration gates rechecked
+
+- PR #24 remains OPEN/Draft with unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- M1 Issue #52 remains OPEN/P0; its last activity is the M0 evidence request at 19:40 UTC. M1 branch `89be11e` is clean and matches its remote; merged PR #114 does not provide the required symlink/junction, path-replacement, cross-platform, and zero-side-effect acceptance evidence. M2 Issue #45 remains OPEN/P1; branch `941fd22` is clean and matches remote, merged PR #110 does not resolve the native Shell boundary, and the requested host-hook proof or explicit UNPROTECTED/BLOCKED limitation is still absent.
+- M9 PR #127 remains OPEN/Draft with candidate head `635f8bc`; its composition checks pass on Ubuntu/Windows but test older M7/M8 refs (`bba0f0f` / `1c94ed4`), while M1–M6 pins match their current branches. Do not promote pins from this result.
+- M7 PR #128 remains OPEN/Draft at `bf9faee`, DIRTY, with no checks reported. The previously recorded conflicts remain in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`; no owner disposition or exact-head validation was observed.
+- M8 PR #129 remains OPEN/Draft at `685520c`, one docs/readiness commit beyond the M9 pin. Its exact-head composition (`40361147155`) and ownership audit (`40361147188`) fail; ordinary CI/build/package tests pass. M8 still needs to correct the stale Issue #80 / unsupported E4 effect statements already identified in the existing handoff.
+- Issues #126 and #132 remain OPEN. The M1–M8 owner branches and PR heads showed no new commits or dispositions during this readback. No module source, tests, M9 manifest, refs, PR state, or Release was changed. Next M0 push remains no earlier than 20:24 UTC.
