@@ -9431,3 +9431,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Fresh source heads after handoff remain unchanged: M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee`, M8 #129 `685520c`, M9 #127 `635f8bc`. The comments explain handoffs only; no module owner acceptance or implementation is implied by comment timestamps.
 - M9 #127 has 12/12 checks passing on its existing reviewed/pinned candidate; it does not validate newer M7/M8 candidate SHAs. M5 #122 currently has 3 failed checks, M6 #123 has 2, and M7 #128 reports no checks because it remains conflicting. #24 remains OPEN/Draft at `34fbe6d35d4dea30795525bf538f97194758c6c4`.
 - Original eight Codex task threads remain outside this session's available tool set. Independent product E4, clean-VM lifecycle, and real-model acceptance remain unverified. No module implementation, main merge, PR #24 merge, or Release was performed.
+
+## 2026-10-27 — M3/M4 configured-target contract handoff
+
+- M4 PR #121 source/report says the UI cannot discover a trusted fixed target ID or action/auth readiness, so its operation remains disabled and UNKNOWN. M3 PR #120 is the interface-owner handoff. Proposed contract is recorded in `API_CONTRACTS.md` as pending M3 decision; no public schema is yet approved.
+- Handoffs were posted to M3 #120 and M4 #121; P0 #52 remains OPEN/NOT_VERIFIED. Current M4 UI boundary tests do not establish host-side held-identity consumption, sensitive-path alias rejection, or TOCTOU resistance. Do not enable the UI action until M3 defines the metadata semantics and actual host evidence meets #52.

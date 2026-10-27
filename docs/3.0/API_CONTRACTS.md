@@ -438,3 +438,14 @@ The current feature tip remains the actual comparison and merge-tree input. M9's
 ### Immutable test-merge base versus webhook base (M0/M9, 2026-10-25)
 
 A reopened PR can retain an older `pull_request.base.sha` even though its actual GitHub test-merge first parent is the new feature tip. Both values must be recorded separately. AC3 checks out the exact `github.sha` test merge, requires exactly two parents and second-parent equality with the event head, then composes its first parent with that frozen head. The event base must be an ancestor of that first parent. Missing merge metadata, wrong checkout/head, unrelated base or actual merge conflicts fail closed. M9 uses the equivalent immutable parent contract before selecting its source checkout; strict manifest PR/ref/head and owner acceptance remain unchanged. Reopening alone is never evidence of a refreshed base.
+
+## 2026-10-27 — M3 to M4 configured-target metadata proposal (owner decision pending)
+
+M4 PR #121 reports that the existing configured-target POST route is not discoverable from the desktop page because the status snapshot exposes neither trusted target IDs nor operation/auth readiness. This entry records the proposed handoff contract; M3 remains the interface owner and has not approved or implemented it yet.
+
+- M3 should expose only immutable configured target IDs and operation/auth readiness from the same startup manifest. Define schema, unavailable/error states, and freshness semantics with M4 before implementation.
+- The discovery response must not expose paths, file bytes, credentials, held capabilities, or model-controlled target choices. The UI must remain disabled and `UNKNOWN` when metadata is absent, stale, or malformed.
+- M4 may adapt the owner-approved metadata at its boundary, allow an operator to choose among fixed IDs and explicitly trigger the existing read route, and render only the documented status/scope result. It must not infer product/native/OS protection from a route result.
+- Acceptance remains separate: metadata/schema tests; actual authorized host read using the M1-bound capability; sensitive alias, junction, replacement and TOCTOU denials before effects; independent E4/installed-product evidence. P0 #52 remains OPEN/NOT_VERIFIED until the host identity and effect criteria are met.
+
+Handoff was posted on M3 PR #120, M4 PR #121 and P0 #52. This M0 documentation does not authorize M0 to alter the shared API or module implementation.
