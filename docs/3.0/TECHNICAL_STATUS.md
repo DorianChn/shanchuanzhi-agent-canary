@@ -9699,3 +9699,11 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Checked each `agents/M1`–`agents/M8` path with `git rev-parse --show-toplevel`, `--git-common-dir`, branch, HEAD, status, and remote. Each has a distinct expected `feature/ac3-*` branch, exact head matching its current PR, and the same repository origin. M1/M2/M3/M5/M6/M8 use the coordinator repository''s common Git dir; M4/M7 are genuine worktrees from the existing separate clone at `C:/Users/36712/Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4`, also pointing at this origin. No worktree was relocated or rewritten.
 - Existing owner dirt is intact: M6 and M7 each have a modified `.gitignore`; M8 has a modified `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`. All other M1–M5/M8 status lines are clean except those enumerated; no M0 file was staged from an owner worktree.
 - This confirms directory/branch isolation, not common ancestry. Distinct source anchors and M7/M8 pin mismatch remain open as recorded above.
+
+
+## 2026-10-27 18:31:01 UTC — M0 20-minute docs batch reached terminal checks
+
+- Pushed docs-only M0 commits through `7c25b28926127c95b72a5b58e5f8f7d6d747abd5` to existing branch `feature/ac3-m0-coordination` at 2026-10-27 18:24 UTC; verified remote ref, PR #131 head, and clean coordinator worktree.
+- Exact-head CI run `40559718962` completed 9/9 success; AC3 audit run `40559718590` passed; M9 composition run `40559718588` passed on Ubuntu and Windows. PR #131 remains OPEN/Draft.
+- M9 run `40559718588` is against M0 PR #131 and still selected M9 source `34fbe6d` with the base manifest, not M9 PR #127''s candidate SHA. Thus terminal green is limited to that base manifest; the separate candidate evidence and M7/M8 pin mismatches remain as recorded in the exact-source table above.
+- PR #24 remains OPEN/Draft at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module files/refs, `main`, merge state, or Release changed.
