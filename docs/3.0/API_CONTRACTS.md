@@ -1,3 +1,7 @@
+## Live contract acceptance delta — 2026-10-27 19:01 UTC
+
+No public API contract changed in this M0 batch. The owner boundaries and invariants in the table below remain authoritative. PR #127's exact-head manifest currently matches M1–M6 and is stale for M7/M8; its 12 hosted checks validate only those pinned sources. M0 PR #131's base-triggered M9 composition passed on Windows/Ubuntu but selected M9 `34fbe6d` and older module refs, so it is not current-head integration evidence. P0 #52 (first-party held identity/TOCTOU) and product E4/clean-VM acceptance remain NOT_VERIFIED.
+
 # Current cross-module contract and acceptance snapshot — 2026-10-26 19:17 UTC
 
 This snapshot supersedes older dated status rows below without changing any public API. Only the owning module may change a shared contract; consumers implement adapters at their own boundary. M0 records evidence and coordinates promotion but does not edit module implementation.

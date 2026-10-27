@@ -1,3 +1,11 @@
+## Live dependency and resource snapshot — 2026-10-27 19:01 UTC
+
+- Dependency chain: M1 owns canonical held-file identity and Gateway/Hook decisions → M2 adapts execution isolation → M5 owns policy/Guard/audit → M3 owns host onboarding and configured-target/status routes → M4 consumes read-only status → M6 validates evidence → M7 packages/lifecycle → M8 documents public behavior → M9 composes exact reviewed refs. Consumers adapt at their boundary; M0 does not change module implementation.
+- M1/M2 PRs #114/#110 are merged. M3–M6 PRs #120–#123 remain Draft; M7 #128 is Draft/conflicting; M8 #129 is Draft at `685520c`; M9 #127 is Draft at `635f8bc`. PR #24 remains OPEN/Draft and unchanged.
+- The current PR #127 manifest matches live canonical M1–M6 heads; its M7 pin `bba0f0f` and M8 pin `1c94ed4` are stale versus `bf9faee` and `685520c`. Do not promote pins without owner dispositions and exact-head candidate checks.
+- Keep the latest user-set cap at two concurrent module lanes. GitHub timestamps do not reveal active Codex-window occupancy; treat it as UNKNOWN. VMware, real-model, and installer execution share one exclusive slot; the last M0 Issue #29 readback recorded no reservation, but refresh the issue before any such work. M0 did not run these tests. Quota monitoring was later removed by the user; do not persist old percentage snapshots as current.
+- Last M0 push: `82320c0` at 18:44 UTC. Current M0-only docs are local; next push is no earlier than 19:04 UTC after checking remote head and PR #24.
+
 ## Current configured-target dependency status — 2026-10-25 06:31 UTC
 
 The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. Exact M9 composition run `40169026928` passed on Ubuntu and Windows for M0 PR #119 head `ac48cdb`, checking the current M1–M8 refs. M3's protected-read endpoint remains a fixed temporary-marker probe; the M4 UI intentionally does not call it. M3/M4 shipped-package/native-host acceptance remains outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.

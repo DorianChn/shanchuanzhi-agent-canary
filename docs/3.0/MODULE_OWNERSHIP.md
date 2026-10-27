@@ -1,3 +1,10 @@
+## Live ownership and worktree delta — 2026-10-27 19:01 UTC
+
+- `agents/M1`–`agents/M8` all exist on their existing `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 share the coordinator repository's common Git directory; M4/M7 are genuine worktrees from the existing Windows/E4 clone, still located under this workspace. No worktree was moved or recreated.
+- Owner dirt remains untouched: M6 `.gitignore`; M7 `.gitignore`; M8 `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`.
+- Current remote module PR heads are M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 `bf9faee`, and M8 `685520c`; PRs #120–#123 and #127–#129 remain Draft. M7 conflicts; M8's current head is one docs/readiness commit beyond M9's pin and still needs owner disposition.
+- M0 remote head is `82320c0` with passing coordination audit and CI 9/9; local coordinator has seven M0-only documentation commits queued. Next push no earlier than 19:04 UTC. PR #24 remains OPEN/Draft, unmodified.
+
 ## Current owner map and exact PR/worktree snapshot — 2026-10-26 20:54 UTC
 
 This is the current ownership/source snapshot; dated sections below are retained as history. M0 owns coordination and verification orchestration only. The PR file scopes below are the current GitHub diffs, while each module's stable contract boundary remains authoritative for any files not listed in that current diff.

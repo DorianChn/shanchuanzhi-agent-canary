@@ -1,3 +1,13 @@
+## Live integration risk snapshot — 2026-10-27 19:01 UTC
+
+| Priority | Current blocker | Evidence and owner action |
+| --- | --- | --- |
+| P0 | First-party protected OBSERVE open with stable M1-held identity and OS-atomic path/TOCTOU behavior | #52 remains OPEN. Require the real supported host/API callsite plus alias, replacement, and zero-side-effect evidence; synthetic controls alone do not close it. M1/M2/M4/M5 retain their respective ownership. |
+| P1 | Failed E4 cases claim unchanged target state despite missing snapshots | #118/#132 remain OPEN. Preserve the failures, capture named observations/logs on exception, and report absent evidence UNKNOWN. M1 owns trigger/quarantine semantics; M6 owns evidence reporting. |
+| P1 | Current M7/M8 sources differ from M9 pins | PR #127's audit finds M7 `bba0f0f` stale against `bf9faee` and M8 `1c94ed4` stale against `685520c`. M7 is diverged/conflicting; M8 is one documentation/readiness commit ahead. Owners must disposition exact heads; M9 alone changes pins. |
+| P1 | Green base composition can be mistaken for current candidate acceptance | Run `40562751203` passed both OSes using base M9 `34fbe6d` and older M3–M8 refs. PR #127's own run `40373243860` passed on its manifest pins, not current M7/M8 heads. Keep the evidence scopes distinct. |
+| P1 | Shipping/package/independent acceptance incomplete | #41 clean-VM installer, #45 native shell protection, #57 independent E4, and #130 test-home isolation remain separate gates. VMware/installer/model runs require Issue #29's exclusive reservation and an actual terminal result. |
+
 ## 2026-10-27 — M5 merge and protected-read documentation conflict
 
 PR #122's current API snapshot uses base `b0d8d77` and reports MERGEABLE, while the remote feature ref is `34fbe6d`; M0's non-mutating merge-tree against the latter reports conflicts in `docs/RISK_POLICY.md`, `package.json` and `test/policy-management.test.ts`. The documentation conflict must be resolved by M1/M5 against their shared held-read contract: both sides have the same router and policy source blobs, and the saved M5 tests pass a registered M1-held read while denying unpinned generic file callbacks. This is source-fixture evidence only, not installed-host or OS-atomic protection. Preserve the feature M9 composition test and M5's corrupted-audit-cache regression/import when resolving. M5's separate package installation check remains blocked pending explicit temporary `--prefix` confinement. M0 changed no M5 files.

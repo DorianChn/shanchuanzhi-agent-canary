@@ -1,3 +1,12 @@
+## Live cross-module triage snapshot — 2026-10-27 19:01 UTC
+
+- **P0 #52:** protected OBSERVE path aliases/identity/TOCTOU remain unverified at a first-party host. Keep open; synthetic tests are not installed-host evidence.
+- **P1 #118/#132:** failed E4 cases have empty target snapshots, so `unchanged: true` is unsupported. Preserve failures and report missing observations as UNKNOWN.
+- **P1 #124/#126:** M5 source ancestry/provenance and cross-branch baselines remain unresolved. Current M7 branch is diverged from its M9 pin (70 ahead / 259 behind; merge base `7cd3445`) and PR #128 conflicts.
+- **P1 #125/#130 and #41/#45/#57:** M4 direct composition, M6 test-home isolation, clean-VM lifecycle, Native Codex Shell protection, and independent product E4 remain separate open acceptance gates.
+- M0's live exact-pin audit for PR #127 reports M1–M6 MATCH, M7 and M8 STALE_PIN. PR #127's candidate checks pass on its selected immutable refs; that does not cover current M7/M8 heads. M0's latest base-triggered M9 run selected feature-base M9 `34fbe6d`, not PR #127's candidate.
+- GitHub read/write access is available through the connected integration; updated owner handoffs are recorded on PRs #127–#129. Older snapshots claiming comments cannot be written are superseded. No module source, pin, main, PR #24, or Release was changed by M0.
+
 ## 2026-10-27 — P2 historical tracked-log inventory
 
 - The current M0 tree and feature baseline `34fbe6d` each contain 83 tracked `.log` files; the M0 PR diff adds none. Ignore rules prevent matching new untracked logs but do not untrack existing files. M0 preserved those historical evidence files and did not rewrite repository history.
