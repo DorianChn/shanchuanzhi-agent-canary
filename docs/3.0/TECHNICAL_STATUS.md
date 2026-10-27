@@ -9906,3 +9906,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Representative git check-ignore checks confirm the coordinator rules exclude *.log, *.tmp, *.secret, .env, *.pem, and node_modules outputs. This is a targeted rule check, not a scan of all repository history or owner-local outputs.
 - M1–M5 worktrees are clean. M6 and M7 retain dirty .gitignore; M8 retains dirty .gitignore and untracked M8_MERGE_RESOLUTION_RESULT.json. All remain untouched. No module source/tests, M9 pins, PR state, main, or Release was changed.
 - Next M0 push is no earlier than 22:24 UTC to preserve the requested 20-minute cadence.
+## 2026-10-27 22:25 UTC — default-branch Hono advisory rechecked
+
+- The push warning is Dependabot alert #2, GHSA-5r4p-p66f-jhc7, on default-branch Hono 4.13.7; the vulnerable range is >=4.12.4 and <4.13.11, with 4.13.11 the first patched version. On the actual default-branch tree, the lockfile shows Hono is transitive through @hono/node-server and @modelcontextprotocol/sdk; git grep found no serveStatic or direct Hono import/require callsite. No reachable protected static route or sensitive-file exposure is established by this check.
+- Existing P1 Issue #70 and Dependabot PR #67 remain the remediation path. PR #67 proposes Hono 4.13.13, targets main, and its nine CI jobs pass; the alert remains OPEN until the default branch is updated or a documented non-applicability disposition is accepted. No main merge was attempted. This finding does not establish a P0 protected-path bypass or sensitive-data disclosure.
