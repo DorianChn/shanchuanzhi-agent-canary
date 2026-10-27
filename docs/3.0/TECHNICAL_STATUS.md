@@ -9517,3 +9517,4 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Re-read M5 ownership job `121160104768` for exact PR #122 head `dde81d6a989ba39aa0d57dfeed0c9283f4459682` (run `40190440590`). Exact failure: the head lacks approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; Git reports multiple merge bases and selects `7cd3445…`. This is the ancestry gate tracked by #126, not a test failure.
 - M9 refreshed candidate run `40511289138` passed the same M5 exact source, but that does not satisfy M5’s owner/base disposition. Recorded the exact log and request on PR #122 comment `6443175777`; M9 pins and module branches remain unchanged.
+- Linked the exact M5 baseline failure to the cross-module source issue #126 in comment `6443180106`; this confirms the owner disposition gate without changing branch history.
