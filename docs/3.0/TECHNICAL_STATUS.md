@@ -9502,3 +9502,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-27 13:12 UTC — M5 worktree status correction
 
 - Rechecked canonical module worktrees after the prior status snapshot: M5 `.gitignore` is now clean; normalized contents still equal its committed `HEAD` blob `e633caa`. The earlier modified status had no diff and did not represent an owner change. M6, M7, and M8 worktree deltas remain preserved and unresolved as described above.
+
+## 2026-10-27 13:13 UTC — scheduler and exclusive resource refresh
+
+- Updated Issue #29 in comment `6442742925`: all eight canonical module worktrees and expected branches were reverified; local M6/M7/M8 deltas are recorded as pending work, not confirmed running slots. Actual Codex-window activity remains UNKNOWN, so the two-slot cap is retained.
+- Rechecked standard VMware Workstation paths and known clean-VM directories: no `vmrun.exe` was found there and all listed VM directories are absent. The exclusive VMware/installer/model slot remains unreserved; no such test was run. M1/M6 E4, P0 host identity/TOCTOU, M7 clean-VM lifecycle, and independent product E4 remain open.
