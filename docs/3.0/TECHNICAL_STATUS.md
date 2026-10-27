@@ -9591,3 +9591,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Refetched M1/M5/M6/M7/M8 PR metadata and discussion tails. M1 #114 remains merged at `89be11e`; M5 #122 remains at `dde81d6`; M6 #123 at `fae72ea`; M7 #128 at `bf9faee` with `mergeable=false`; M8 #129 at `685520c`. No newer owner commit or owner-authored PR discussion appeared after the M0 handoffs.
 - Local M6/M7/M8 worktree deltas remain present (`.gitignore` on M6/M7; `.gitignore` plus stale untracked M8 resolution JSON). They remain unstaged and untouched. This is a visibility snapshot; activity in separate Codex sessions remains UNKNOWN.
+
+## 2026-10-27 15:37 UTC — M9 current-M8 scope wording correction
+
+- Re-read run `40530320961` job steps: besides manifest-selected exact refs, both Ubuntu and Windows separately passed `Run current M8 PR` and the scoped M6/M8 lifecycle-disposition check. The manifest still pins M8's reviewed prior SHA for the M6-scoped regression; M7 still pins `bba0f0f`, not conflicting PR #128 head `bf9faee`.
+- Corrected PR #131 comment `6446255281` and PR #127 comment `6446254755` to distinguish current-M8 PR regression evidence from manifest pin promotion/owner acceptance. No source pins changed.
