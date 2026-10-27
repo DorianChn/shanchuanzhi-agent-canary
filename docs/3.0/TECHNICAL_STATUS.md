@@ -9481,3 +9481,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - GitHub submitted-review lists are empty for Draft PRs #120, #121, #122, #123, #127, #128, and #129. The follow-up requests in each PR conversation are handoffs only; no owner approval/rejection is inferred. Exact source checks on M0 #131 pass but do not substitute for module owner review.
 - PR #24 remains OPEN/Draft at its unchanged exact head. M0 continues to leave all owner worktrees and M9 pins untouched while review dispositions are pending.
+
+## 2026-10-27 12:51 UTC — P0 #52 exact-source evidence boundary
+
+- Added and verified Issue #52 comment `6442322087`: M0 head `ab95d19` passed exact M1 held-Gateway regressions within hosted M9 composition `40505648683` on Ubuntu and Windows. This remains synthetic source-composition evidence; production host consumption of M1-bound identity and TOCTOU are still NOT_VERIFIED, with no real secret exposure asserted. #52 remains OPEN/P0.
