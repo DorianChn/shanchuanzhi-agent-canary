@@ -9762,3 +9762,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Live readback after M0 comments `6450878950` (#128) and `6450814402` (#129): both PR heads remain unchanged; #128 is still conflicting and #129 remains open/draft. No new owner disposition or source commit was observed.
 - The existing M0 push checks are terminal: coordination audit passed, CI 9/9 passed, and M9 base-manifest composition passed on Windows and Ubuntu. Exact candidate/pin distinctions remain as recorded above.
+
+## 2026-10-27 19:00 UTC — M1–M8 worktree acceptance readback
+
+- Read-only inspection confirmed `agents/M1` through `agents/M8` all exist and are checked out on their intended existing `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 use the coordinator repository's shared Git common directory; M4 and M7 are independent worktrees backed by the pre-existing Windows/E4 clone, also under this workspace.
+- Preserved owner dirt: M6 `.gitignore`; M7 `.gitignore`; M8 `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`. No owner files were staged or modified.
+- The coordinator Git registry contains many stale Temp worktree entries whose gitdir paths no longer exist. They were left untouched; no prune or cleanup was run.
