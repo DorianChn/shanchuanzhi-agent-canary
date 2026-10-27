@@ -9745,3 +9745,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Correction to the 18:52 note above: Windows job logs show the checked-out M8 candidate was `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`, the existing M9 pin, not current PR #129 head `685520cbb000b3dc6950876f115199cdebf81ea5`. The run did not validate current PR #129's M8 changes.
 - The run still passed its M6/M1 scoped checks on the pinned M8 candidate and passed M9 composition on both operating systems using feature-base M9 `34fbe6d35d4dea30795525bf538f97194758c6c4`. It is not a current M9 PR #127 candidate result.
 - Corrected M0's PR #129 handoff comment `6450814402`; the exact-current-head pin drift remains an owner-review gate. No M8/M9 source or pin was changed.
+
+## 2026-10-27 18:54 UTC — exact refs selected by the base-manifest composition
+
+- M0 PR #131's AC3 audit run `40562751089` passed and compared PR #127's exact-head manifest with live canonical module branches: M1–M6 MATCH; M7 pin `bba0f0f` is stale versus `bf9faee`; M8 pin `1c94ed4` is stale versus `685520c`.
+- M9 composition run `40562751203` passed both OSes but its job environment selected feature-base M9 `34fbe6d`; expected sources were M1 `89be11e`, M2 `941fd22`, M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, M8 history `84ee6a7`, and M8 candidate `1c94ed4`. This is not current-head M1–M8 composition and not a run of PR #127's candidate.
+- Updated M0 handoffs on M9 PR #127 (`6450843141`) and M8 PR #129 (`6450814402`) with exact source selection and owner actions. No module source or M9 pin was changed.
