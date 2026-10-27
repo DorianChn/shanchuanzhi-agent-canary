@@ -9985,7 +9985,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Refreshed M8 PR #129 with the exact current head, stale ownership-check boundary, exact M9 M8 pin mismatch, and remaining dated-doc corrections; explicitly preserve local M8 dirt. Comment `6456514715`.
 - No M6/M8 files, branch refs, or M9 pins were changed.
 
-## 2026-10-27 23:56 UTC — M2 native-Shell status display verified
+## 2026-10-27 23:52 UTC — M2 native-Shell status display verified
 
 - Read-only inspection of current feature base confirms `src/ai/console-page.ts:33-34` visibly renders Native Codex Shell as `UNPROTECTED / BLOCKED_NOT_VERIFIED` with `data-status="NOT_PROTECTED"`; `test/runtime-console.test.ts:34` asserts the status and explanatory copy. M2 head `941fd22` is an ancestor of the current feature base.
 - This verifies only the user-facing fail-honest status subcheck. It does not prove Desktop hook installation/trust/invocation or blocking of a synthetic protected-path operation. Issue #45 remains OPEN/P1 and actual host enforcement NOT_VERIFIED; comment `6456528538` requests owner confirmation or supported-host evidence.
