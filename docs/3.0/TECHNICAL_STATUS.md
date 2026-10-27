@@ -9448,3 +9448,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-27 12:11 UTC — M1 E4 handoff linked to evidence issue
 
 - Added a focused follow-up on existing M1 issue #118 (comment `6441545072`) linking the preserved decoy-read/quarantine and explicit DENY acceptance to M6's missing-snapshot work in #132. The note distinguishes green source composition from E4 acceptance and requests exact reviewed-source regressions after owner changes. No module implementation was edited.
+
+## 2026-10-27 12:12 UTC — canonical worktree inventory and M8 local delta
+
+- Read-only `git worktree list` and per-path status confirmed all eight canonical `agents/M1`–`agents/M8` directories exist on their expected `feature/ac3-*` branches. Their committed HEADs remain aligned with the corresponding published module heads. No canonical worktree was reset, staged, pruned, or overwritten. Git also lists numerous old temporary verification worktree paths that no longer exist; M0 left that metadata untouched.
+- M5 reports `.gitignore` modified, but `git diff` is empty and its normalized worktree blob equals `HEAD`; last-write time is Oct 23. M0 preserved the flag and did not refresh or alter the index.
+- M8 has a real uncommitted `.gitignore` delta (four sponsor smoke watchdog/supervisor ignore rules; last write Oct 25) and an untracked `M8_MERGE_RESOLUTION_RESULT.json` whose content identifies a historical Oct 24 `60cfe8d` state rather than the current `685520c` head. M0 did not stage, edit, or delete either file. M0 requested owner disposition in existing PR #129 comment `6441576214`; exact-source M9 pins remain unchanged.
+- This local evidence corrects the earlier inference from unchanged remote refs: M8 has pending local work; no owner commit/response is yet visible on GitHub. Keep its report separate from evidence for the current candidate until refreshed and reviewed.
