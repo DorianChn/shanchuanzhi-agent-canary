@@ -9925,3 +9925,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at 69f4c62 has 12/12 successful checks: AC3 audit 40597115201, CI 40597125938 (9/9), and M9 composition 40597115303 on Ubuntu and Windows.
 - Inspected Windows evidence record 122515723310: selected feature-base M9 34fbe6d; M1/M2 89be11e/941fd22; older M3–M6 0d61b43/892d329/cca42cd/2a88d8b; M7 bba0f0f; historical M8 84ee6a7; and scoped M8 candidate 1c94ed4. It does not include current M7 PR #128 head bf9faee or M8 PR #129 head 685520c. Added this source-scope distinction to Issue #126 comment 6455526499; no pins or owner PR states changed.
 - PR #24 remains OPEN/Draft at its unchanged head/base. No module source/test, main, or Release action occurred. Next coordinator push is no earlier than 23:04 UTC.
+
+## 2026-10-27 23:12 UTC — post-push checks and stale-source gate
+
+- At 23:04 UTC, pushed coordinator-only documentation commit 2d6bf38a429cd30a93896b3bcd8e0f80bb8dbd27; remote readback matched.
+- PR #131 at 2d6bf38 has 12/12 successful checks: AC3 40599531927, CI 40599532095 (9/9), and M9 composition 40599531950 on Ubuntu/Windows.
+- The Windows exact-source record in job 122523893794 confirms the passing composition still uses feature-base M9 34fbe6d, M7 bba0f0f, M8 historical 84ee6a7 and scoped candidate 1c94ed4. It does not include current M7 PR #128 head bf9faee or M8 PR #129 head 685520c. Refreshed Issue #126 with this exact run in comment 6455835782; no pin or Draft state changed.
+- PR #24 remains OPEN/Draft at unchanged head/base. No module source/test, main, or Release action occurred. Next coordinator push is no earlier than 23:24 UTC.
