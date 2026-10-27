@@ -9608,3 +9608,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Pushed `af54307045b1d23250bd1fa2d648404042af3852` to PR #131 after the 20-minute interval; verified the remote ref and GitHub PR head. CI run `40533678922` passed all 9 jobs, coordination audit `40533678943` passed, and M9 exact-source composition `40533679034` passed on Ubuntu and Windows. `gh pr checks 131` reports 12/12 passing.
 - This run verifies the current M9 manifest-selected refs and the workflow's separate current-M8/lifecycle-disposition checks. It does not resolve the open owner issues or advance M7/M8 pins. PR #24 remains OPEN/Draft at the same head/base. No merge or Release was made.
+
+## 2026-10-27 15:50 UTC — exact module ancestry against PR #24
+
+- Computed `git merge-base` for each canonical M1–M8 HEAD against PR #24's base/head candidate `34fbe6d35d4dea30795525bf538f97194758c6c4`. Results: M1 `89be11e5f95f2b191880a4fc88f50e15f405121e`; M2 `941fd22d5e43e1de91a76b8c73006e57a4c15496`; M3/M4 `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`; M5/M7 `7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`; M6 `2a88d8b7e099ce865c9900bb9313d4b8bdef8299`; M8 `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`.
+- The module branches do not share one identical merge-base with PR #24, so source ancestry is not yet reconciled. This is tracked by open Issue #126. M0 will preserve all owner branches and dirt and require owner disposition before M9 pin or branch-source promotion; no rebase/cherry-pick was performed.
