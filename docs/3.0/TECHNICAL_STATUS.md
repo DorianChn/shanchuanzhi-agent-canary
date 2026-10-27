@@ -9707,3 +9707,13 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Exact-head CI run `40559718962` completed 9/9 success; AC3 audit run `40559718590` passed; M9 composition run `40559718588` passed on Ubuntu and Windows. PR #131 remains OPEN/Draft.
 - M9 run `40559718588` is against M0 PR #131 and still selected M9 source `34fbe6d` with the base manifest, not M9 PR #127''s candidate SHA. Thus terminal green is limited to that base manifest; the separate candidate evidence and M7/M8 pin mismatches remain as recorded in the exact-source table above.
 - PR #24 remains OPEN/Draft at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module files/refs, `main`, merge state, or Release changed.
+
+
+## 2026-10-27 18:32:10 UTC — owner-specific M3–M6 handoffs refreshed
+
+- Refetched PR #120/#121/#122/#123; their module heads remain unchanged. Updated existing M0 handoff comments on those Draft PRs with the exact-source evidence from M9 candidate run `40373243860` and their remaining owner actions.
+- M3: current head `9169552` focused build/onboarding/adapter checks pass in M9 candidate; approved source anchor and status-only target/readiness contract remain pending (#124/#126).
+- M4: current head `5d975b7` focused desktop security checks pass in M9 candidate; PR #121 direct feature-base check still selects `892d329`; keep target operation disabled until the M3 interface contract and owner anchor are reviewed (#125/#126).
+- M5: current head `dde81d6` policy and M3 consumer checks pass in M9 candidate; exact ownership audit still fails against approved baseline `e4732d9`; existing-branch conflicts and safe package-install confinement remain (#124/#126).
+- M6: current head `fae72ea` bundle/lifecycle source regressions pass in M9 candidate; source-level checks do not satisfy product E4; test-home isolation and missing-observation reporting remain (#57/#130/#132).
+- These comments are handoffs, not owner acceptance or new test results. No module source, tests, pins, or owner worktree state was changed.
