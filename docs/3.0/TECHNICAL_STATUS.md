@@ -9547,3 +9547,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Current coordinator shell: Git 2.51.0.windows.1, GitHub CLI 2.102.0, Codex CLI 0.164.0-alpha.11.1, Node.js v24.22.1. The Windows App Execution Alias resolves for `python`/`python3`, but no usable system Python runtime or `py` launcher is installed; do not treat the alias as Python.
 - `gh auth status --hostname github.com` confirms the active DorianChn account. The authenticated GitHub app connector independently lists this repository with `admin/maintain/push` permissions. No credentials or token value were recorded.
 - This is a coordinator-environment inventory only; it does not change module status or imply a Python-dependent test ran.
+
+## 2026-10-27 14:35 UTC — owner review gate remains open
+
+- Rechecked submitted reviews on M3/M4/M5/M6/M9/M7/M8 follow-up PRs #120, #121, #122, #123, #127, #128, and #129: no review submissions are recorded. The latest visible discussions on #128/#129 still contain M0 handoffs only; activity in separate Codex windows remains UNKNOWN.
+- PR #128 remains OPEN/Draft and GitHub reports `mergeable=false` at `bf9faeeb96625325e6fab8e497954ff6db4e78ea`. PR #129 remains OPEN/Draft at `685520cbb000b3dc6950876f115199cdebf81ea5`.
+- Therefore no M9 pin promotion or owner-branch integration is authorized by CI success alone. Preserve the current selected manifest and wait for owner review/disposition; no owner code or branch was changed.
