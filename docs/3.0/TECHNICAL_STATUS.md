@@ -9625,3 +9625,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - M0 head `afee0d3cc4285dc1b23b5b02e286ac9c10c475ff` is present on PR #131. CI run `40540423276` passed 9/9; coordination audit `40540423201` passed; M9 exact-source composition `40540423926` passed on Ubuntu and Windows. `gh pr checks 131` reports 12/12 success.
 - Updated the existing M0 status comments on PR #131 and M9 PR #127 with exact-head run links, unresolved M5 ownership-gate failure, open #126 ancestry disposition, and current acceptance limits. M9's M7 pin remains reviewed prior source; no owner branch was changed.
+
+## 2026-10-27 16:51 UTC — M0 head `b95191c` checks terminal
+
+- M0 head `b95191c625a00b4201f21b71de6f1391c0549ec7` passed CI run `40543902284` (9/9), coordination audit `40543901223`, and M9 composition `40543901294` on Ubuntu and Windows. `gh pr checks 131` reports 12/12 success.
+- Updated the existing PR #131 and PR #127 exact-head status comments with this run and the unchanged acceptance boundaries. M1–M8 owner PR heads/issues remain outstanding; PR #24 and `main` were not changed.
