@@ -9835,3 +9835,4 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - The same M0 audit read M9 PR #127's manifest and live canonical refs: M1–M6 MATCH; M7 and M8 STALE_PIN. Therefore the all-green composition is valid only for the manifest-selected refs, not the two newer owner heads.
 - Added M5 exact-head ownership-gate handoff on PR #122 comment `6452017672`: failed run `40190440590` says head `dde81d6` lacks approved common-source baseline `e4732d9`; M5 owner must reconcile and rerun its gate. No M5 branch changes were made.
 - M7/M8 heads, owner worktree dirt, and PR #24 state remain unchanged at this readback. The committed M0 notes are local ahead of the just-pushed PR head; next push remains no earlier than 20:04 UTC.
+- Updated the existing PR #131 body at 19:51 UTC to record its current 12/12 checks, exact-source limitations, owner handoffs, and remaining acceptance gates. The PR remains OPEN/Draft; base/head are unchanged.
