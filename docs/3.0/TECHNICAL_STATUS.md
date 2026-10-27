@@ -9724,3 +9724,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Queried GitHub submitted-review lists for PR #127 (M9), #128 (M7), #129 (M8), #122 (M5), and #123 (M6). Each returned an empty review list; there is no formal submitted review record on those PRs at this checkpoint.
 - Updated the existing M0 status comments on PR #127 and Issue #126 to distinguish passing candidate composition from review approval. The PR #127 M9 manifest still selects reviewed older M7/M8 refs, not current owner heads. No pin promotion is authorized by a green run alone.
 - M9 acceptance still requires explicit owner review/disposition for M7/M8 exact refs and M5''s approved-source provenance. PR #127 remains Draft; no source refs changed.
+
+## 2026-10-27 18:37 UTC — M9 exact-pin audit and GitHub link verified
+
+- GitHub access is live through the connected GitHub integration and the local `origin` remote points to `DorianChn/shanchuanzhi-agent-canary`. PR #24 is still OPEN/Draft, head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no merge or Release action occurred.
+- Added an M0 read-only PR audit that reads the M9 manifest at the exact open M9 PR head, compares each pin with its canonical GitHub branch head, and reports MATCH, STALE_PIN, MISSING_PIN, or UNKNOWN. If the manifest cannot be read, results are UNKNOWN_MANIFEST rather than false missing-pin claims. It does not promote pins or block/close PRs.
+- Verified live against PR #127 head `635f8bc55216b044627fa83f0b402003d0eaa893`: M1 `89be11e`, M2 `941fd22`, M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea` match current canonical branch heads. M7 pin `bba0f0f` is stale versus current `bf9faee`; M8 pin `1c94ed4` is stale versus current `685520c`. Preserve M7/M8 pins until owners review exact heads; do not infer approval from CI.
+- Targeted audit tests pass 6/6; `git diff --check` passes. M0-only changes are committed locally as `a68eac8` plus three earlier status commits and are queued for the next 20-minute push batch. They have not yet been pushed; PR #131 still reflects remote head `7c25b28`.
