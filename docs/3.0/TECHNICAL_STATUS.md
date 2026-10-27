@@ -9541,3 +9541,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Rechecked canonical `agents/M1`–`agents/M8`: all eight directories exist on their expected `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 use the coordinator repository's common Git directory. M4 and M7 are linked to the separate existing clone at `Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4/.git`; their origin URL is the same repository and their heads match PR #121 (`5d975b7`) and PR #128 (`bf9faee`). This is a provenance split, not evidence of source corruption.
 - M6/M7 `.gitignore` deltas and M8 `.gitignore`/untracked stale result JSON remain owner-local and untouched. M7 PR #128 remains conflicting; M9 PR #127 still pins the previously reviewed M7/M8 revisions. Posted the verified provenance readback to PR #131 comment `6444676413`; no migration, cherry-pick, pin update, or history rewrite was performed.
 - Remaining blocking evidence: Issue #52 P0 held-identity/native-host boundary; Issue #132 two failed E4 rows with missing target snapshots; Issue #41 clean-VM lifecycle; Issue #57 independent product E4. Keep all NOT_VERIFIED until the owning module supplies the required evidence and M9 reruns the selected exact heads.
+
+## 2026-10-27 14:32 UTC — coordinator toolchain and GitHub connection
+
+- Current coordinator shell: Git 2.51.0.windows.1, GitHub CLI 2.102.0, Codex CLI 0.164.0-alpha.11.1, Node.js v24.22.1. The Windows App Execution Alias resolves for `python`/`python3`, but no usable system Python runtime or `py` launcher is installed; do not treat the alias as Python.
+- `gh auth status --hostname github.com` confirms the active DorianChn account. The authenticated GitHub app connector independently lists this repository with `admin/maintain/push` permissions. No credentials or token value were recorded.
+- This is a coordinator-environment inventory only; it does not change module status or imply a Python-dependent test ran.
