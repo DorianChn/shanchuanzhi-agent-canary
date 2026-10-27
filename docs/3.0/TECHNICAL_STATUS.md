@@ -9960,3 +9960,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Opened the actual failed Windows composition job logs for M3 PR #120, M4 #121, M5 #122, M6 #123, and M8 #129. Each log explicitly rejects composition because the follow-up PR head differs from that module's immutable M9 manifest SHA; it instructs to update the manifest only after required owner review. This is a source-selection gate, not evidence that those PRs' ordinary tests failed.
 - Posted the current/head-vs-manifest SHA table, exact run links, and the ACCEPT/REJECT -> M9 pin update -> Ubuntu/Windows exact composition sequence to Issue #126 in comment `6456209189`. No pins or module refs were changed.
 - M7 #128 remains the distinct blocker: conflicting source ancestry and no checks. PR #24 and `main` remain untouched; no merge or Release action occurred.
+
+## 2026-10-27 23:36 UTC — ownership-check root causes and freshness
+
+- Read the failed AC3 ownership job steps for M5 #122, M6 #123, and M8 #129. M5 run `40190440590` rejects head `dde81d6` because it does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
+- M6 run `40172587299` and M8 run `40361147188` failed at the time because the PR bodies lacked `Test-Evidence` and `API-Contract-Change`. Current PR #123/#129 descriptions include both fields, but no newer successful ownership run was found; this is a stale-run limitation, not a confirmed current metadata defect.
+- M0 recorded these distinctions and next actions on Issue #126 comment `6456226216`. No source refs, M9 pins, or owner files were changed.
