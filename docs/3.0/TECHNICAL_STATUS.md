@@ -9554,3 +9554,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #128 remains OPEN/Draft and GitHub reports `mergeable=false` at `bf9faeeb96625325e6fab8e497954ff6db4e78ea`. PR #129 remains OPEN/Draft at `685520cbb000b3dc6950876f115199cdebf81ea5`.
 - Therefore no M9 pin promotion or owner-branch integration is authorized by CI success alone. Preserve the current selected manifest and wait for owner review/disposition; no owner code or branch was changed.
 - Sent the latest exact-source M3/M4 regression result and the remaining first-party host-consumer/contract questions to their existing PRs: #120 comment `6444796805` and #121 comment `6444798608`. Both explicitly retain Issue #52 as OPEN/P0/NOT_VERIFIED; M0 made no API or product change.
+
+## 2026-10-27 14:48 UTC — exact-head checks terminal for new M0 batch
+
+- Pushed coordinator-only docs to PR #131 head `2415ddc56b669c90e9088becae9e112cf14eb9e5`; CI run `40523622818` passed 9/9, coordination audit `40523623120` passed, and M9 exact-source run `40523622780` passed on Ubuntu and Windows. `gh pr checks 131` shows all 12 checks passing.
+- Recorded the terminal result on PR #131 comment `6445088002` and M9 PR #127 comment `6445087433`. M9 tested only the exact refs in its current manifest; no module pin or branch was changed.
+- PR #24 rechecked OPEN/Draft at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Open gates remain: #52 P0 host/identity protection, #132 missing E4 target snapshots, #41 clean-VM installer lifecycle, #57 independent product E4, and M7/M8 owner disposition before any pin change. Green exact-source CI does not close them.
