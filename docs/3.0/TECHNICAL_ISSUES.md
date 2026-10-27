@@ -1,3 +1,9 @@
+## 2026-10-27 — P2 historical tracked-log inventory
+
+- The current M0 tree and feature baseline `34fbe6d` each contain 83 tracked `.log` files; the M0 PR diff adds none. Ignore rules prevent matching new untracked logs but do not untrack existing files. M0 preserved those historical evidence files and did not rewrite repository history.
+- A local filename-only inventory found no tracked `.env`, `.pem`, `.key`, `.p12`, `.pfx` or `credentials*` name other than the allowed `sponsor/.env.example`. A limited local content-pattern scan of all 83 tracked logs found no GitHub-token, OpenAI-key, AWS-access-key or private-key-header patterns; it printed no values. This is not a comprehensive secret audit or proof that every log is safe.
+- M0 added ignore rules for `credentials.json`, `.credentials.json`, `client_secret*.json`, and `service-account-key*.json`, with explicitly named `.example.json` exceptions. `git check-ignore` verified the new rules, existing `.env`/key/log rules, and the sample exceptions. Owners should review historical evidence retention and any required redaction through the existing ownership process; do not delete or silently rewrite tracked evidence. The dirty M6/M7/M8 `.gitignore` files were not changed.
+
 ## 2026-10-27 — M5 merge and held-read contract handoff (#122 / #126 / #52)
 
 - **P1 / M5 owner; M1 owns Gateway/held-file contract; M9 verifies composition.** GitHub's PR #122 API currently reports base SHA `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and `MERGEABLE`, while the remote `feature/agent-canary-3.0` ref is `34fbe6d35d4dea30795525bf538f97194758c6c4`. A local non-mutating merge-tree against `34fbe6d` and M5 head `dde81d6a989ba39aa0d57dfeed0c9283f4459682` yields tree `fb7f82542959f9889f8a850856d8a0b7e6d138dc` with conflicts in `docs/RISK_POLICY.md`, `package.json`, and `test/policy-management.test.ts`. The PR's reported state at the older base does not establish a conflict-free merge against the current feature ref.
