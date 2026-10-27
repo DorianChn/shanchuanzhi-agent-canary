@@ -9875,6 +9875,12 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Refreshed scheduler Issue #29 again at 21:10 UTC (`6453652609`) after the 21:04 push and green checks; it records the two-lane cap, UNKNOWN external-chat occupancy, and no M0 exclusive-resource reservation.
 - Corrected the evidence inventory directly on Issue #132 (`6453659631`): `raw.log` exists and contains failure summaries, while named target snapshots/effect observations remain absent. E4 stays FAIL/NOT_VERIFIED; no result was fabricated or weakened.
 
+## 2026-10-27 21:30 UTC — sixth scheduled M0 push verified
+
+- At 21:24 UTC, pushed M0 commit `0cf31c8734c1bb991899487caf30aa535fd45d90`; remote readback matched that SHA.
+- PR #131 head `0cf31c8` has 12/12 passing checks: AC3 `40586495397`, CI `40586495615` (9/9), and M9 composition `40586495451` on Ubuntu/Windows. The composition uses feature-base M9 and does not establish current M7/M8 PR-head integration. PR #24 remains OPEN/Draft at unchanged head/base.
+- No module PR head movement or owner response was visible in this readback. Scheduler Issue #29 was refreshed at `6454045217` with the two-lane cap, UNKNOWN external-chat occupancy, no M0 exclusive test reservation, and next push no earlier than 21:44 UTC.
+
 ## 2026-10-27 21:10 UTC — fifth scheduled M0 push verified
 
 - At 21:04 UTC, pushed the M0-only documentation overlay from `f583732c899f8f1c621924a804fb36b640dba916` to `0b565d3aacbe63923195b1ef4253b5269c029b08`; the remote SHA matched after normal fast-forward.
