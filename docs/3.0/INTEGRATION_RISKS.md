@@ -1,3 +1,10 @@
+## Current integration risk overlay — 2026-10-27 20:57 UTC
+
+- **P0:** #52 remains OPEN; first-party protected OBSERVE alias/replacement/zero-side-effect evidence is absent. Keep fail-closed.
+- **P1:** #45 remains OPEN; native Shell is not proven protected. #124/#125 remain OPEN with M3/M4 direct composition failures. #126 remains OPEN with M5 ownership failure and M7/M8 source/pin blockers. #130/#132 remain OPEN; E4 is NOT_VERIFIED because named failure snapshots are missing.
+- M9 PR #127 checks pass only for immutable manifest pins. Its M7/M8 pins are stale against current PR #128/#129 heads. M0 PR #131 passes current automation at `f583732`, but its composition uses feature-base M9; this is not current M7/M8 integration evidence.
+- Keep all affected issues open, do not promote pins, and do not merge PR #24 or publish a Release. M0 has made no module-source edits.
+
 ## Live integration risk snapshot — 2026-10-27 19:01 UTC
 
 | Priority | Current blocker | Evidence and owner action |
