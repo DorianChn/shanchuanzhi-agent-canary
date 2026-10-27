@@ -9827,3 +9827,11 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Exact new M0 head `491f6dfdcb1834e3b2d17a2628ad4af280f938b2`: coordination audit run `40571789927` passed; repository CI run `40571790116` completed successfully (9/9 jobs); M9 composition run `40571789918` passed Ubuntu. The Windows composition job `122427635455` remained in progress/pending at this readback, so PR #131 is not yet fully green on the new head.
 - These checks validate M0's updated coordination branch and the pinned manifest source set; they do not resolve the documented current M7/M8 source drift, P0 #52, native-Shell #45, independent product E4, or clean-VM installer gates.
 - Next push no earlier than 20:04 UTC.
+
+## 2026-10-27 19:52 UTC — exact-source scope and M5 ownership follow-up
+
+- PR #131 at `491f6dfdcb1834e3b2d17a2628ad4af280f938b2` now has all 12 checks successful: AC3 coordination audit `40571789927`, CI `40571790116` (9/9), and M9 composition `40571789918` on Ubuntu and Windows.
+- Read the completed Windows composition log. It selected M9 feature base `34fbe6d`; M7 source `bba0f0f89c610f8198660e799de7a652b8ea8e96`; M8 current candidate `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`; and historical M8 `84ee6a7a8d65706f694b7949e82fd8c83cc11523` for the narrow M6-scoped regression. It did **not** test current M7 PR head `bf9faee` or M8 PR head `685520c`.
+- The same M0 audit read M9 PR #127's manifest and live canonical refs: M1–M6 MATCH; M7 and M8 STALE_PIN. Therefore the all-green composition is valid only for the manifest-selected refs, not the two newer owner heads.
+- Added M5 exact-head ownership-gate handoff on PR #122 comment `6452017672`: failed run `40190440590` says head `dde81d6` lacks approved common-source baseline `e4732d9`; M5 owner must reconcile and rerun its gate. No M5 branch changes were made.
+- M7/M8 heads, owner worktree dirt, and PR #24 state remain unchanged at this readback. The committed M0 notes are local ahead of the just-pushed PR head; next push remains no earlier than 20:04 UTC.
