@@ -9781,3 +9781,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Read the exact local report `security-lab/e4-one-click-runs/20261025T133314087Z/e4/20261025T133403Z/report.json`: both `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` are FAIL with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`, empty before/after arrays, and `unchanged: true`; no named target observation exists. The matching evidence folder has no raw Gateway/Guard logs for these cases.
 - Updated existing M8 PR #129 handoff `6450814402` to request correction of the unsupported public claim and add current Issue #80 status; recorded the exact reproduction evidence in Issue #132 comment `6451235130`. M1/M6/M8 ownership boundaries remain unchanged. No module code, tests, security policy, or pin was changed.
 - This coordinator-only documentation change is queued for the next 20-minute push batch, no earlier than 19:24 UTC.
+
+## 2026-10-27 19:16 UTC — source-anchor handoff on Issue #126
+
+- Added current branch ancestry comparison to existing Issue #126 comment `6451268483`: M7 pin/head diverge 70/259 from merge base `7cd3445` and PR #128 conflicts; M8 current PR is one docs/readiness commit ahead of its pin. M1–M6 pins match current canonical heads.
+- PR #127's 12 checks remain on its exact manifest refs. Latest M0 M9 base run passed both OSes but selected older feature-base refs, not current M3–M8 heads. No pin promotion is justified by that run.
+- M7/M8 heads and review records remain unchanged after the handoffs; next push no earlier than 19:24 UTC.
