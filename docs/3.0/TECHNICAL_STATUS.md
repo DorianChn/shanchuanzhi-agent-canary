@@ -9978,3 +9978,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at this head passed 12/12 visible checks: ownership `40604154195`, CI `40604154496` (9/9), and M9 composition `40604154230` on Ubuntu/Windows.
 - Windows composition log confirms the selected M9 source SHA is feature-base `34fbe6d35d4dea30795525bf538f97194758c6c4`. This is a passing pinned-source integration check, not exact-current follow-up promotion. The M9 manifest pins and owner dispositions remain unchanged; latest source-scope details are recorded in the preceding 23:30/23:32 sections and Issue #126 comment `6456505070`.
 - PR #24 remains OPEN/Draft and unchanged. No module files, main, pins, merge, or Release were changed.
+
+## 2026-10-27 23:53 UTC — M6/M8 owner handoff refresh
+
+- Refreshed M6 Issue #132 with current bounded product E4 status: both synthetic failure cases remain FAIL with empty named-target snapshots and UNKNOWN observed effects; requested M6 source-level snapshot/effect evidence and test-local token-state isolation, preserving NOT_VERIFIED. Comment `6456514007`.
+- Refreshed M8 PR #129 with the exact current head, stale ownership-check boundary, exact M9 M8 pin mismatch, and remaining dated-doc corrections; explicitly preserve local M8 dirt. Comment `6456514715`.
+- No M6/M8 files, branch refs, or M9 pins were changed.
