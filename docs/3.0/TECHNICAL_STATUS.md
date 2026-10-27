@@ -9751,3 +9751,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M0 PR #131's AC3 audit run `40562751089` passed and compared PR #127's exact-head manifest with live canonical module branches: M1–M6 MATCH; M7 pin `bba0f0f` is stale versus `bf9faee`; M8 pin `1c94ed4` is stale versus `685520c`.
 - M9 composition run `40562751203` passed both OSes but its job environment selected feature-base M9 `34fbe6d`; expected sources were M1 `89be11e`, M2 `941fd22`, M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, M8 history `84ee6a7`, and M8 candidate `1c94ed4`. This is not current-head M1–M8 composition and not a run of PR #127's candidate.
 - Updated M0 handoffs on M9 PR #127 (`6450843141`) and M8 PR #129 (`6450814402`) with exact source selection and owner actions. No module source or M9 pin was changed.
+
+## 2026-10-27 18:55 UTC — owner-branch comparison details
+
+- GitHub compare M7 pin `bba0f0f` to PR #128 head `bf9faee` reports `diverged`, 70 commits ahead / 259 behind, merge base `7cd3445`; changed files include Windows community workflow, installer/release acceptance, package metadata, packaging and tests. M0 asked the M7 owner to reconcile the source anchor and conflicts; M0 will not edit those module-owned files.
+- M8 pin `1c94ed4` to PR #129 head `685520c` is one commit ahead / zero behind. GitHub lists documentation/readiness files plus `scripts/check-docs.mjs`; no runtime source files are in the comparison. This narrows the review surface but does not replace the M8 owner's exact-head disposition or candidate composition.
+- Updated handoffs are on PR #128 comment `6450878950` and PR #129 comment `6450814402`. No module files or pins changed.
