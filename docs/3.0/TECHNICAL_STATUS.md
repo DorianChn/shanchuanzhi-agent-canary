@@ -9669,3 +9669,24 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #24 remains OPEN/Draft at head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M1–M8 owner heads are unchanged; P0 #52, P1 #118/#132/#126/#124/#125/#57/#41/#45, M7 conflict, independent product E4, and clean-VM installer remain open/NOT_VERIFIED gates.
 - This terminal run validates only refs selected by the exact-source manifest; it does not close cross-branch ancestry or product/environment gates. No owner worktree, module ref, PR #24, `main`, merge state, or Release was changed.
 - Report update is local and docs-only. Last M0 push remains `4e52cbe` at 18:04:23 UTC; next push is not before 18:24:23 UTC under the 20-minute cadence.
+
+
+## 2026-10-27 18:15:03 UTC — exact M9 source selection audit
+
+- Read the completed job logs, not only workflow conclusions, for M0 M9 run `40556520264` (Ubuntu job `122373925720`, Windows job `122373926386`). Both report M9 source `34fbe6d35d4dea30795525bf538f97194758c6c4`, the PR #24 feature-base commit, with the following manifest refs:
+
+| Source | M0 run ref | Current owner PR head | Match |
+| --- | --- | --- | --- |
+| M1 | `89be11e5f95f2b191880a4fc88f50e15f405121e` | `89be11e5f95f2b191880a4fc88f50e15f405121e` | yes |
+| M2 | `941fd22d5e43e1de91a76b8c73006e57a4c15496` | `941fd22d5e43e1de91a76b8c73006e57a4c15496` | yes |
+| M3 | `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` | `91695529787f07111f5256d3c9d6e0e556f6eac1` | no |
+| M4 | `892d3290338fe811da127f8f51ab91de0b9fc18b` | `5d975b7927a66be26a8bfc3740530bb27a703f2c` | no |
+| M5 | `cca42cd1762f995e92454d55ffa5e63951e39144` | `dde81d6a989ba39aa0d57dfeed0c9283f4459682` | no |
+| M6 | `2a88d8b7e099ce865c9900bb9313d4b8bdef8299` | `fae72ea3d0c4498dfddb7d04421e41b87179895b` | no |
+| M7 | `bba0f0f89c610f8198660e799de7a652b8ea8e96` | `bf9faeeb96625325e6fab8e497954ff6db4e78ea` | no |
+| M8 historical | `84ee6a7a8d65706f694b7949e82fd8c83cc11523` | `685520cbb000b3dc6950876f115199cdebf81ea5` | no |
+| M8 candidate | `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841` | same current M8 PR head not established | no |
+
+- Therefore run `40556520264` is green for the base manifest, but it is not a full-current-head M1–M8 integration result. This corrects the broader “M9 manifest” phrasing in the earlier status entry.
+- Separately verified PR #127''s own run `40373243860` (both OS jobs passed, exact M9 source `635f8bc55216b044627fa83f0b402003d0eaa893`). Its log selects current PR heads for M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`, plus matching M1/M2; it still pins M7 `bba0f0f` rather than owner PR #128 head `bf9faee`, and M8 historical/candidate refs `84ee6a7` / `1c94ed4` rather than current PR #129 head `685520c`. Thus M9 composition is partially ready, with M7/M8 exact-head review/promotion unresolved. M5 source-anchor/provenance issue #126 remains open even though its PR SHA is tested by this M9 candidate.
+- PR #127''s direct candidate run and PR #131''s base-manifest run are distinct evidence; do not conflate them. PR #24, main, all module worktrees, and release state remain unchanged.
