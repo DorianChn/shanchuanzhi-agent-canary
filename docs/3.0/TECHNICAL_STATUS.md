@@ -9494,3 +9494,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-27 13:09 UTC — M7 installer acceptance remains separate
 
 - Added M0 update to existing P1 issue #41 (comment `6442673209`): M9 run `40508430275` passed exact M7 Windows packaging tests, but no clean-VM install/first launch/upgrade/uninstall/user-cancel rollback was run. #41 remains OPEN / NOT_VERIFIED / HOLD; hosted packaging is not lifecycle acceptance.
+
+## 2026-10-27 13:10 UTC — independent product E4 evidence boundary
+
+- Added M0 update to P1 issue #57 (comment `6442679209`): M6 source-level lifecycle/bundle checks passed within M9 run `40508430275`, but this is not the required clean independent product artifact, hash provenance, or external-copy mismatch-control evidence. #57 remains OPEN / NOT_VERIFIED; no exclusive VM/installer/model slot was used.
