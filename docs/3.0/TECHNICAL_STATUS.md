@@ -9561,3 +9561,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Recorded the terminal result on PR #131 comment `6445088002` and M9 PR #127 comment `6445087433`. M9 tested only the exact refs in its current manifest; no module pin or branch was changed.
 - PR #24 rechecked OPEN/Draft at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - Open gates remain: #52 P0 host/identity protection, #132 missing E4 target snapshots, #41 clean-VM installer lifecycle, #57 independent product E4, and M7/M8 owner disposition before any pin change. Green exact-source CI does not close them.
+
+## 2026-10-27 14:48 UTC — M6 failed-case snapshot root cause isolated
+
+- Read the exact `security-lab/e4/run.mjs` blob `a305671e11bb8356038e4c26a83ae66cad4dc7b8` at the current base and M1/M6/M9 refs. For `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION`, outer `runCase` receives `files=[]`; a decoy-dispatch exception bypasses returned scenario `fileState`, so the fallback emits empty before/after arrays and `sameSnapshot([], [])` incorrectly yields `unchanged: true`. This matches Issue #132's stated failure mode.
+- Sent a targeted failure-path evidence fix and acceptance request to M6 PR #123 comment `6445108776`: retain named observations and raw Gateway/Guard logs on exceptions, report missing observations as UNKNOWN, and preserve quarantine/subsequent-denial assertions. M0 changed no module code; #132 remains OPEN until M6's exact owner fix and M9 rerun.
