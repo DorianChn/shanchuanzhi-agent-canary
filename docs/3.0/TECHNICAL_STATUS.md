@@ -9787,3 +9787,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Added current branch ancestry comparison to existing Issue #126 comment `6451268483`: M7 pin/head diverge 70/259 from merge base `7cd3445` and PR #128 conflicts; M8 current PR is one docs/readiness commit ahead of its pin. M1–M6 pins match current canonical heads.
 - PR #127's 12 checks remain on its exact manifest refs. Latest M0 M9 base run passed both OSes but selected older feature-base refs, not current M3–M8 heads. No pin promotion is justified by that run.
 - M7/M8 heads and review records remain unchanged after the handoffs; next push no earlier than 19:24 UTC.
+
+## 2026-10-27 19:33 UTC — d590828 terminal CI and composition scope
+
+- Remotely rechecked M0 head `d590828e4638ed42315b4042eb5140298de003d6`: PR #131 has 12/12 successful checks, including coordination audit `40568796323`, CI 9/9, and M9 composition `40568796015` on both OSes.
+- Windows job logs confirm base M9 `34fbe6d`; tested M1/M2 `89be11e`/`941fd22`, M3/M4/M5 `0d61b43`/`892d329`/`cca42cd`, M6/M7 `2a88d8b`/`bba0f0f`, and M8 history/candidate `84ee6a7`/`1c94ed4`. These are not current M3–M8 heads and not PR #127 candidate validation.
+- M0 AC3 audit compared PR #127's exact-head manifest against live canonical branches: M1–M6 match; M7 and M8 pins remain stale. Updated the existing M9 handoff comment `6450843141`; no source pin changed.
+- PR #24 remains OPEN/Draft, unchanged. No module source, merge, or Release action occurred. Next push no earlier than 19:44 UTC.

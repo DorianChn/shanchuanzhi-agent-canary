@@ -1,3 +1,9 @@
+## Latest remote verification — 2026-10-27 19:33 UTC
+
+- M0 remote head `d590828e4638ed42315b4042eb5140298de003d6` has 12/12 passing checks; all local M0 changes through this snapshot are pushed.
+- M3–M8 PR heads remain unchanged. M7 #128 is still conflicting; M8 #129 still has no submitted formal review for its current head. Dirty M6/M7/M8 owner files remain untouched.
+- The successful M9 run is tied to base M9 `34fbe6d` and older refs; it does not prove current M7/M8 integration or resolve #52/#132.
+
 ## Post-push ownership readback — 2026-10-27 19:11 UTC
 
 - M0 remote/PR #131 head is `78e82e71049469fe5057c3b8b7a24bcb1313da36`; all 12 checks passed. The next push window is no earlier than 19:24 UTC.

@@ -1,3 +1,9 @@
+## Post-push verification — 2026-10-27 19:33 UTC
+
+- M0 PR #131 head `d590828e4638ed42315b4042eb5140298de003d6` passed all 12 checks. M9 base composition `40568796015` passed both OSes but used feature-base M9 `34fbe6d` and the older M3–M8 refs listed in TECHNICAL_STATUS; it is not current-head integration proof.
+- Exact PR #127 manifest audit passed and flags M7/M8 stale versus their live branches. M9 pins remain unchanged pending owner dispositions.
+- Last M0 push: 19:24 UTC. Next push no earlier than 19:44 UTC after remote/PR #24 preflight.
+
 ## Post-push readback — 2026-10-27 19:11 UTC
 
 - M0 head `78e82e71049469fe5057c3b8b7a24bcb1313da36` is pushed to the existing branch; PR #131's 12 checks passed. Next push batch is no earlier than 19:24 UTC.
