@@ -9650,3 +9650,22 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - M0 head `796c8234b0601480f52fec4202bb511472189bc8` passed CI run `40553369296` (9/9), coordination audit `40553369146`, and M9 composition `40553369151` on Ubuntu and Windows. `gh pr checks 131` reports 12/12 success.
 - Updated the existing PR #131 and PR #127 status comments with the terminal result and remaining owner/tester gates. Owner PRs and acceptance Issues remain unchanged; no module source, PR #24, `main`, or Release was changed.
+
+## 2026-10-27 18:08 UTC — GitHub connection and current exact-head check snapshot
+
+- GitHub connector access was verified against `DorianChn/shanchuanzhi-agent-canary`: repository is public; authenticated `DorianChn` has admin/maintain/push permissions. This confirms repository access, not that separate Codex chats are readable.
+- PR #24 remains OPEN/Draft, head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. PR #131 remains OPEN/Draft at `4e52cbe5ebc71516da3f84b06947e229c93bee42`; local coordinator HEAD matches and its worktree is clean.
+- For PR #131 head `4e52cbe`, CI run `40556520435` is terminal success (9/9); AC3 coordination run `40556520352` is terminal success. M9 run `40556520264` is not yet terminal: Ubuntu exact-source composition passed; Windows is still executing package smoke after setup/build and earlier focused steps passed. Do not count M9 as fully green until the Windows job reaches a terminal result.
+- Current owner PR heads are unchanged from the prior snapshot: M3 #120 `9169552`, M4 #121 `5d975b7`, M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee` (CONFLICTING), M8 #129 `685520c`, and M9 #127 `635f8bc`. PR #114 and #110 are closed at their recorded module heads. No module-owner change was visible in these PR heads.
+- `agents/M4` and `agents/M7` are separate checkouts; M4 is clean, while M7's pre-existing `.gitignore` delta remains. M6 retains its `.gitignore` edit; M8 retains `.gitignore` plus the untracked merge-resolution JSON. These owner changes are preserved. Canonical M1–M8 branch HEADs still match the listed owner PR heads; no owner files or refs were changed.
+- Cross-module acceptance remains incomplete: P0 #52, P1 #118/#132/#126/#124/#125/#57/#41/#45 and the M7 conflict remain open gates; product-level E4 and clean-VM installer evidence remain NOT_VERIFIED. The successful M9 Linux job is limited to its exact manifest-selected sources and does not resolve owner dispositions or environmental acceptance.
+- No M0 push was made in this snapshot. Last M0 push was `4e52cbe` at 18:04:23 UTC; next push remains governed by the user's 20-minute cadence. No changes to PR #24, `main`, module code, merge state, or Release.
+
+## 2026-10-27 18:12 UTC — exact M9 run reached terminal success
+
+- M9 run `40556520264` completed successfully: `compose-current-module-refs` passed on Ubuntu and Windows. Windows completed all 55 reported steps; the exact M1–M8/M9 composition regressions and final evidence steps passed.
+- Together with CI `40556520435` (9/9) and AC3 coordination audit `40556520352` (pass), the current M0 PR #131 head `4e52cbe5ebc71516da3f84b06947e229c93bee42` has all 12 hosted checks successful. PR #131 remains OPEN/Draft.
+- Updated existing status comments on PR #131 (`6446255281`), PR #127 (`6446254755`), and issue #132 (`6443683569`); added issue #126 owner-source disposition refresh (`6449982690`). The comments distinguish manifest-selected-source success from owner-head acceptance and product/environment evidence.
+- PR #24 remains OPEN/Draft at head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. M1–M8 owner heads are unchanged; P0 #52, P1 #118/#132/#126/#124/#125/#57/#41/#45, M7 conflict, independent product E4, and clean-VM installer remain open/NOT_VERIFIED gates.
+- This terminal run validates only refs selected by the exact-source manifest; it does not close cross-branch ancestry or product/environment gates. No owner worktree, module ref, PR #24, `main`, merge state, or Release was changed.
+- Report update is local and docs-only. Last M0 push remains `4e52cbe` at 18:04:23 UTC; next push is not before 18:24:23 UTC under the 20-minute cadence.
