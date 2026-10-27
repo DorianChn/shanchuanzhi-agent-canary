@@ -9966,3 +9966,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Read the failed AC3 ownership job steps for M5 #122, M6 #123, and M8 #129. M5 run `40190440590` rejects head `dde81d6` because it does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`.
 - M6 run `40172587299` and M8 run `40361147188` failed at the time because the PR bodies lacked `Test-Evidence` and `API-Contract-Change`. Current PR #123/#129 descriptions include both fields, but no newer successful ownership run was found; this is a stale-run limitation, not a confirmed current metadata defect.
 - M0 recorded these distinctions and next actions on Issue #126 comment `6456226216`. No source refs, M9 pins, or owner files were changed.
+
+## 2026-10-27 23:39 UTC — M3/M4 owner handoff refresh
+
+- Refreshed existing Issues #124 and #125 with the exact Windows composition mismatch and owner actions: M3 exact SHA disposition/source anchor; M4 remains disabled/UNKNOWN until the M3 fixed-target contract is accepted; M9 updates pins only after owner acceptance. Comments `6456317316` and `6456317732`.
+- These follow-ups preserve the existing branch and pin boundaries. No module files, PR #24, `main`, or Release state changed.
