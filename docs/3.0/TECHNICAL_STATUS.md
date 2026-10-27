@@ -9471,3 +9471,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Follow-up inspection of canonical worktrees found additional owner-owned `.gitignore` deltas not yet present on published heads: M6 #123 adds `/security-lab/e4-handoffs/` (last write Oct 25); M7 #128 adds `/competition-submission/.m7-m8-acceptance-*/` (last write Oct 25). M0 preserved both and did not stage or edit them.
 - Asked M6 in PR #123 comment `6441938196` to verify required E4 handoff evidence remains available and disposition the ignore rule; asked M7 in PR #128 comment `6441938628` to verify no installer/release acceptance evidence is hidden and disposition the rule. These local deltas are not committed candidate evidence and do not change the published PR heads.
+
+## 2026-10-27 12:46 UTC — exact-head Windows composition terminal
+
+- On pushed M0 head `ab95d199eb3a3756674dd2a752fdf8e2eb00964e`, all checks completed successfully: repository CI `40505648814` (9/9), coordination audit `40505648717`, M9 exact-source composition `40505648683` on Ubuntu and Windows. Windows completed the full M7 packaging suite, current M8 PR checks, exact-source M1–M8/M9 composition regressions, and scoped M6/M8 lifecycle disposition validation.
+- Recorded terminal results in PR #131 comment `6442228176` and M9 PR #127 comment `6442228798`. PRs remain Draft. The workflow validates the selected M9 manifest and tested candidates; it does not constitute owner approval for new pins or independent installed-product E4, VM/installer, or model acceptance.
