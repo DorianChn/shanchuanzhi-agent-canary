@@ -1,8 +1,8 @@
-## Current ownership and worktree overlay — 2026-10-27 21:10 UTC
+## Current ownership and worktree overlay — 2026-10-27 21:50 UTC
 
 - M1 owns held-file identity/Gateway/Hook denial; M2 owns its execution-isolation adapter; M3 owns onboarding and the status-only configured-target/readiness contract; M4 consumes read-only status; M5 owns strict policy and audit; M6 owns E4 evidence/snapshot reporting; M7 owns packaging/lifecycle; M8 owns public readiness claims; M9 alone owns exact-source pins and composition. Shared contracts change only through their named owner; consumers use adapters.
 - Existing owner branches and PR heads are unchanged: M1 `89be11e`, M2 `941fd22`, M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 `bf9faee`, M8 `685520c`; M9 candidate `635f8bc`. No new module branches were created.
-- M3/M4 have current GitHub handoffs on #124/#125 (`6453354271`, `6453356195`); no owner reply or source-head movement is visible. M1/M2 P0/P1 follow-ups are #52/#45 (`6453264879`, `6453265604`). M5/M6/M7/M8 gates remain as recorded on #122/#123/#126/#129.
+- M3/M4 have current GitHub handoffs on #124/#125 (`6453354271`, `6453356195`); no owner reply or source-head movement is visible. M1/M2 P0/P1 follow-ups are #52/#45 (`6453264879`, `6453265604`). M5/M6/M7/M8 gates remain as recorded on #122/#123/#126/#129. Issue #126 scope clarification `6454517338` distinguishes the M0 base manifest from open M3–M8 follow-up PR heads.
 - M6/M7 dirty `.gitignore` and M8 dirty `.gitignore` plus `M8_MERGE_RESOLUTION_RESULT.json` remain owner-owned and unmodified. No module code or test was changed by M0. M0 coordinator worktree is on `feature/ac3-m0-coordination`; current unpushed changes are M0 documentation only.
 
 ## Latest remote verification — 2026-10-27 19:33 UTC

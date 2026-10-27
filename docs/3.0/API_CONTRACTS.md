@@ -1,10 +1,10 @@
-## Current contract acceptance overlay — 2026-10-27 21:10 UTC
+## Current contract acceptance overlay — 2026-10-27 21:50 UTC
 
 No public API contract changed in this snapshot. The contract table below remains authoritative: M1 owns Gateway/held identity and Hook decisions; M2 adapts execution isolation; M5 owns policy; M3 owns host onboarding and status-only readiness; M4 consumes read-only status; M6 owns validation evidence; M7 owns packaged-copy parity; M8 owns accurate public capability claims; M9 composes reviewed exact refs. Consumers adapt at their own boundaries.
 
 - M3's fixed-target/readiness disposition is still pending; M4 keeps configured-target operations disabled/UNKNOWN until it is reviewed. Direct M3/M4 composition runs `40191658779`/`40197158659` fail on Ubuntu and Windows.
 - M8 candidate `685520c` remains one docs/readiness change beyond reviewed M9 pin `1c94ed4`; exact-head composition and ownership checks fail. The M8 public report must retain E4 failures and label target effect UNKNOWN when snapshots are absent.
-- Passing M0 composition at head `0b565d3` checked feature-base M9 `34fbe6d`; it does not promote M9 pins or establish current M7/M8 integration. No interface change or owner disposition is inferred.
+- Passing M0 composition at head `fc4175c` checked feature-base M9 `34fbe6d` and refs M3–M8 older than the open follow-up PR heads. It does not promote M9 pins or establish current M3–M8 integration. No interface change or owner disposition is inferred.
 
 ## Live contract acceptance delta — 2026-10-27 19:01 UTC
 

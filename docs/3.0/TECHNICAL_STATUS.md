@@ -9881,6 +9881,13 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 head `0cf31c8` has 12/12 passing checks: AC3 `40586495397`, CI `40586495615` (9/9), and M9 composition `40586495451` on Ubuntu/Windows. The composition uses feature-base M9 and does not establish current M7/M8 PR-head integration. PR #24 remains OPEN/Draft at unchanged head/base.
 - No module PR head movement or owner response was visible in this readback. Scheduler Issue #29 was refreshed at `6454045217` with the two-lane cap, UNKNOWN external-chat occupancy, no M0 exclusive test reservation, and next push no earlier than 21:44 UTC.
 
+## 2026-10-27 21:50 UTC — seventh scheduled push and manifest-scope audit
+
+- At 21:44 UTC, pushed M0 commit `fc4175c9a1a2fbfe82d3c3285c124858a876dfad`; remote readback matched. PR #131 has 12/12 passing checks: AC3 `40589241559`, CI `40589241430` (9/9), and M9 composition `40589241480` on Ubuntu/Windows.
+- Inspected the Windows composition log: it selected feature-base M9 `34fbe6d`; M1/M2 `89be11e`/`941fd22`; M3–M6 `0d61b43`/`892d329`/`cca42cd`/`2a88d8b`; M7 `bba0f0f`; and M8 historical `84ee6a7` plus scoped candidate `1c94ed4`. It did not test the open follow-up PR heads M3–M8. Issue #126 comment `6454517338` records this exact evidence limit; no M9 pin promotion is justified.
+- PR #24 remains OPEN/Draft at its original head/base. M3–M8 follow-up heads remain unchanged in the 21:30–21:50 readbacks. No module source, test, branch, pin, or Release changed. Next M0 push is no earlier than 22:04 UTC.
+- Scheduler Issue #29 was refreshed at `6454524740` with the current manifest-scope limit, two-lane cap, and UNKNOWN external-chat/exclusive-resource occupancy.
+
 ## 2026-10-27 21:10 UTC — fifth scheduled M0 push verified
 
 - At 21:04 UTC, pushed the M0-only documentation overlay from `f583732c899f8f1c621924a804fb36b640dba916` to `0b565d3aacbe63923195b1ef4253b5269c029b08`; the remote SHA matched after normal fast-forward.

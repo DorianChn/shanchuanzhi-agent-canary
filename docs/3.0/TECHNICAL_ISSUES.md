@@ -1,9 +1,10 @@
-## Current open-gate snapshot — 2026-10-27 21:10 UTC
+## Current open-gate snapshot — 2026-10-27 21:50 UTC
 
 - **P0 #52 (M1):** OPEN at M1 head `89be11e`. M0 follow-up `6453264879` requests focused Windows/Linux alias, path-replacement, and zero-side-effect evidence; merged PR #114 does not close the product-host acceptance gate.
 - **P1 #45 (M2):** OPEN at M2 head `941fd22`. M0 follow-up `6453265604` requests either trusted host-hook denial before execution or an explicit supported-host boundary with native Shell shown UNPROTECTED/BLOCKED.
 - **P1 #124/#125 (M3/M4):** OPEN. Direct composition runs `40191658779` and `40197158659` fail on both platforms. M0 follow-ups `6453354271`/`6453356195` request M3's source-anchor and status-only readiness contract, with M4 operations remaining disabled/UNKNOWN until that contract is reviewed.
 - **P1 #126 (M5/M7/M8/M9):** OPEN. M5 ownership check `40190440590` fails because its head lacks approved baseline `e4732d9`; M7 PR #128 remains DIRTY/no checks; M8 PR #129 exact-head composition/ownership runs `40361147155`/`40361147188` fail. Current M9 pins remain unchanged.
+- Scope note (`#126` comment `6454517338`): M0 composition run `40589241480` passed only for feature-base M9 `34fbe6d` and selected older refs, not current M3–M8 follow-up PR heads. Keep candidate, base, and current follow-up evidence distinct.
 - **P1 #130/#132 (M6):** OPEN. M6 PR #123 direct composition fails (`40172583837`). The local E4 report remains `NOT_VERIFIED`; both failed named cases have zero before/after target observations, so `unchanged: true` is unsupported. Preserve failures and report missing observations as UNKNOWN.
 - E4 evidence correction (`#132` comment `6453659631`): the saved `raw.log` file exists (2516 bytes) and includes the failed case summaries; it does not provide target before/after snapshots or underlying effect observations. This supersedes the older wording below that the directory contained no raw log file.
 - M0 has not modified module source/tests, changed owner refs, weakened policy, closed any gate, or changed PR #24.
