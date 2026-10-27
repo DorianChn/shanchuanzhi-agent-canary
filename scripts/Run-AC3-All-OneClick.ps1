@@ -22,6 +22,22 @@ function Add-Result {
     $results.Add([ordered]@{name=$Name;status=$Status;root=$Root;sha=$Sha;dirtyAtStart=$Dirty;log=$Log;details=$Details})
 }
 
+function Format-ResultLine {
+    param($Row)
+    $tail = if ($Row.details) { " — $($Row.details)" } else { '' }
+    $logPart = if ($Row.log) { " (log: $($Row.log))" } else { '' }
+    $dirtyPart = if ($Row.dirtyAtStart) {
+        if ($Row.name -match '^M9/pin-') {
+            ' [DIRTY module worktree; pin comparison uses its committed HEAD, not uncommitted module changes.]'
+        } elseif ($Row.name -match '^(GitHub/|Git/)') {
+            ' [DIRTY local worktree; this check concerns committed HEAD, not uncommitted changes.]'
+        } else {
+            ' [DIRTY worktree when captured; local results may include uncommitted changes.]'
+        }
+    } else { '' }
+    return "- **$($Row.status)** $($Row.name)$tail$logPart$dirtyPart"
+}
+
 function Invoke-LoggedCommand {
     param([string]$Name,[string]$WorkingDirectory,[string]$Executable,[string[]]$Arguments,[string]$LogPath)
     Write-Host "`n=== $Name ===" -ForegroundColor Cyan
@@ -375,9 +391,10 @@ $lines.Add("- Automated checks: **$($result.automatedChecks)**")
 $lines.Add("- Non-passing checks: **$($result.nonPassingCount)** / $($result.resultCount)")
 $lines.Add('- Product E4: **NOT_VERIFIED**')
 $lines.Add('- Independent review: **NOT_VERIFIED**')
+$lines.Add('- Local checks use the working tree; GitHub and merge-tree checks concern committed heads.')
 $lines.Add("- Report directory: $reportRoot"); $lines.Add('')
 $lines.Add('## Results'); $lines.Add('')
-foreach ($row in $results) { $tail = if($row.details){" — $($row.details)"}else{''}; $logPart = if($row.log){" (log: $($row.log))"}else{''}; $lines.Add("- **$($row.status)** $($row.name)$tail$logPart") }
+foreach ($row in $results) { $lines.Add((Format-ResultLine $row)) }
 $lines.Add(''); $lines.Add('## Acceptance boundary'); $lines.Add('')
 $lines.Add('This button checks the current local M1-M8 worktrees, M9 integration worktree, M9 source pins, committed M1-M8 merge-tree compatibility against the current feature baseline, M0 baseline, synthetic E4 tests, and read-only GitHub PR/CI state for the exact local branch heads. Merge-tree checks do not update branches or worktrees. Test processes receive isolated AGENT_CANARY_HOME directories inside this run report so synthetic token-store writes do not target the user profile. It does not execute a real model, install in a clean VM, or create independent acceptance evidence. Dirty worktrees are reported and left untouched.')
 $lines.Add(''); $lines.Add('## Remaining acceptance gates'); $lines.Add('')
