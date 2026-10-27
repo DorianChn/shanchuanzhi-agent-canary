@@ -1,4 +1,4 @@
-## Current ownership and worktree overlay — 2026-10-27 20:57 UTC
+## Current ownership and worktree overlay — 2026-10-27 21:10 UTC
 
 - M1 owns held-file identity/Gateway/Hook denial; M2 owns its execution-isolation adapter; M3 owns onboarding and the status-only configured-target/readiness contract; M4 consumes read-only status; M5 owns strict policy and audit; M6 owns E4 evidence/snapshot reporting; M7 owns packaging/lifecycle; M8 owns public readiness claims; M9 alone owns exact-source pins and composition. Shared contracts change only through their named owner; consumers use adapters.
 - Existing owner branches and PR heads are unchanged: M1 `89be11e`, M2 `941fd22`, M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 `bf9faee`, M8 `685520c`; M9 candidate `635f8bc`. No new module branches were created.

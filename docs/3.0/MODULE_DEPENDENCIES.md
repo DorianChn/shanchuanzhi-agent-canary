@@ -1,10 +1,10 @@
-## Current live dependency and integration snapshot — 2026-10-27 20:57 UTC
+## Current live dependency and integration snapshot — 2026-10-27 21:10 UTC
 
 - Dependency chain remains M1 held-file identity/Gateway/Hook → M2 execution-isolation adapter → M5 policy/Guard/audit → M3 host onboarding and status-only readiness → M4 read-only UI consumer → M6 evidence validation → M7 packaging/lifecycle → M8 public documentation → M9 exact reviewed-source composition. Each consumer adapts at its boundary; M0 records and coordinates only.
 - Current M3–M8 PR heads are #120 `9169552`, #121 `5d975b7`, #122 `dde81d6`, #123 `fae72ea`, #128 `bf9faee`, and #129 `685520c`; M9 PR #127 is `635f8bc`. M1–M6 refs match the current M9 manifest, while M7/M8 remain stale pins. Do not advance M9 until M7/M8 owner dispositions and exact-head checks pass.
-- M0 PR #131 head `f583732` has 12/12 passing checks (AC3 `40580684516`, CI `40580684601`, M9 base composition `40580684741`). The composition is feature-base M9 evidence, not proof that current M7/M8 PR heads integrate. PR #24 remains OPEN/Draft with its original head/base.
-- Two coding lanes maximum; independent Codex-chat occupancy remains UNKNOWN because this session has no thread-read/control tool. No M0 VMware/model/installer/manual product-E4 run or exclusive-resource reservation is active. Scheduler Issue #29 was refreshed at `6453367632`. Quota percentages are not monitored per the later user instruction.
-- Worktrees M6/M7 retain dirty `.gitignore` files; M8 retains dirty `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`. Preserve all owner dirt. Last M0 push: 20:44 UTC; next no earlier than 21:04 UTC after preflight.
+- M0 PR #131 head `0b565d3` has 12/12 passing checks (AC3 `40583618365`, CI `40583618479`, M9 base composition `40583618399`). The composition is feature-base M9 evidence, not proof that current M7/M8 PR heads integrate. PR #24 remains OPEN/Draft with its original head/base.
+- Two coding lanes maximum; independent Codex-chat occupancy remains UNKNOWN because this session has no thread-read/control tool. No M0 VMware/model/installer/manual product-E4 run or exclusive-resource reservation is active. Scheduler Issue #29 was refreshed at `6453652609`. Quota percentages are not monitored per the later user instruction.
+- Worktrees M6/M7 retain dirty `.gitignore` files; M8 retains dirty `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`. Preserve all owner dirt. Last M0 push: 21:04 UTC; next no earlier than 21:24 UTC after preflight.
 
 ## Post-push verification — 2026-10-27 19:33 UTC
 
