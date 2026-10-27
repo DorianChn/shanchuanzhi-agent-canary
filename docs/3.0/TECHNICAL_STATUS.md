@@ -9768,3 +9768,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Read-only inspection confirmed `agents/M1` through `agents/M8` all exist and are checked out on their intended existing `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 use the coordinator repository's shared Git common directory; M4 and M7 are independent worktrees backed by the pre-existing Windows/E4 clone, also under this workspace.
 - Preserved owner dirt: M6 `.gitignore`; M7 `.gitignore`; M8 `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`. No owner files were staged or modified.
 - The coordinator Git registry contains many stale Temp worktree entries whose gitdir paths no longer exist. They were left untouched; no prune or cleanup was run.
+
+## 2026-10-27 19:12 UTC — 78e82e7 exact-head verification
+
+- M0 head `78e82e71049469fe5057c3b8b7a24bcb1313da36` is remotely verified. PR #131 has 12/12 checks passed: coordination audit, CI 9/9, and M9 composition on Ubuntu/Windows.
+- M9 run `40565749165` was verified from Windows job logs: it selected base M9 `34fbe6d`, M1 `89be11e`, M2 `941fd22`, M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, and M8 history/candidate `84ee6a7`/`1c94ed4`. It is not current-head M3–M8 composition or PR #127 candidate validation.
+- AC3 audit `40565749164` compares PR #127's manifest against live canonical branches and flags only M7/M8 stale. Current M7/M8 PR heads, merge conflict, and empty submitted-review lists were rechecked; no owner source change was observed.
+- PR #24 remains OPEN/Draft at unchanged head/base. No module file, M9 pin, merge state, or Release was changed. Next M0 push batch is no earlier than 19:24 UTC.

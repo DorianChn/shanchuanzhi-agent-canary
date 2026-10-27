@@ -1,3 +1,9 @@
+## Post-push readback — 2026-10-27 19:11 UTC
+
+- M0 head `78e82e71049469fe5057c3b8b7a24bcb1313da36` is pushed to the existing branch; PR #131's 12 checks passed. Next push batch is no earlier than 19:24 UTC.
+- M9 composition run `40565749165` passed both OSes on feature-base M9 `34fbe6d`; its selected module refs are historical/base refs, not current M3–M8 heads. The separate PR #127 exact-source comparison reports M1–M6 current and M7/M8 stale.
+- Live readback did not show new M7/M8 commits or formal reviews. Preserve owner dirt and keep M9 pins unchanged.
+
 ## Live dependency and resource snapshot — 2026-10-27 19:01 UTC
 
 - Dependency chain: M1 owns canonical held-file identity and Gateway/Hook decisions → M2 adapts execution isolation → M5 owns policy/Guard/audit → M3 owns host onboarding and configured-target/status routes → M4 consumes read-only status → M6 validates evidence → M7 packages/lifecycle → M8 documents public behavior → M9 composes exact reviewed refs. Consumers adapt at their boundary; M0 does not change module implementation.

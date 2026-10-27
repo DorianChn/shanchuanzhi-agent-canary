@@ -1,3 +1,9 @@
+## Post-push ownership readback — 2026-10-27 19:11 UTC
+
+- M0 remote/PR #131 head is `78e82e71049469fe5057c3b8b7a24bcb1313da36`; all 12 checks passed. The next push window is no earlier than 19:24 UTC.
+- M3–M8 owner PR heads remain unchanged. M7 #128 remains conflicting; M8 #129 remains one documentation/readiness commit ahead of the current M9 pin. No formal review record appeared for #128/#129.
+- The M9 Windows/Ubuntu run tested feature-base M9 `34fbe6d` plus historical/base M1–M8 refs; it is not current-head evidence. Owner worktrees and dirty files remain preserved.
+
 ## Live ownership and worktree delta — 2026-10-27 19:01 UTC
 
 - `agents/M1`–`agents/M8` all exist on their existing `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 share the coordinator repository's common Git directory; M4/M7 are genuine worktrees from the existing Windows/E4 clone, still located under this workspace. No worktree was moved or recreated.
