@@ -9603,3 +9603,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR heads remain M3 #120 `9169552`, M4 #121 `5d975b7`, M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee` (CONFLICTING), and M8 #129 `685520c`. M7 has no workflow run for its current head. Old M3/M4 branch-specific composition failures predate the latest passing M9 run `40530320961`; do not treat that historical run as current-head acceptance.
 - Open security/integration blockers remain P0 #52 and P1 #118, #132, #126, #124, #80, #57, #41, and #45. No non-M0 replies/updates appeared on the inspected coordination PR discussions since the prior checkpoint; activity in separate Codex chats is UNKNOWN.
 - PR #24 remains OPEN/Draft at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module changes, merge, or Release were made.
+
+## 2026-10-27 15:49 UTC — M0 head `af54307` checks terminal
+
+- Pushed `af54307045b1d23250bd1fa2d648404042af3852` to PR #131 after the 20-minute interval; verified the remote ref and GitHub PR head. CI run `40533678922` passed all 9 jobs, coordination audit `40533678943` passed, and M9 exact-source composition `40533679034` passed on Ubuntu and Windows. `gh pr checks 131` reports 12/12 passing.
+- This run verifies the current M9 manifest-selected refs and the workflow's separate current-M8/lifecycle-disposition checks. It does not resolve the open owner issues or advance M7/M8 pins. PR #24 remains OPEN/Draft at the same head/base. No merge or Release was made.
