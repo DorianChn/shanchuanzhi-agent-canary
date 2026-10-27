@@ -9739,3 +9739,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - The same run separately exercised current M8 candidate `685520cbb000b3dc6950876f115199cdebf81ea5`. It verified that M6's scoped `ACCEPT_WITH_CONDITIONS` target `72b4aab0fb5cb2dd4cd3b75ee8a73ad22dd001db` and M1's Hook disposition source `1abdfe3890c6c263eea667789deb7eab5038e828` remain ancestors, with reviewed Hook blobs unchanged. These scoped checks do not constitute blanket approval of all M8 changes or product E4 acceptance.
 - The exact-pin audit still reports M7 and M8 pins stale against their canonical branch heads. M0 added this scope correction and owner action to PR #129 comment `6450814402`; no M9 pin was changed.
 - PR #24 remains OPEN/Draft at its verified unchanged head/base. No merge, Release, or module-source modification occurred. This report entry is local and queued for the next 20-minute push batch.
+
+## 2026-10-27 18:53 UTC — correction to M9 run #40562751203 source selection
+
+- Correction to the 18:52 note above: Windows job logs show the checked-out M8 candidate was `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`, the existing M9 pin, not current PR #129 head `685520cbb000b3dc6950876f115199cdebf81ea5`. The run did not validate current PR #129's M8 changes.
+- The run still passed its M6/M1 scoped checks on the pinned M8 candidate and passed M9 composition on both operating systems using feature-base M9 `34fbe6d35d4dea30795525bf538f97194758c6c4`. It is not a current M9 PR #127 candidate result.
+- Corrected M0's PR #129 handoff comment `6450814402`; the exact-current-head pin drift remains an owner-review gate. No M8/M9 source or pin was changed.
