@@ -9630,3 +9630,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - M0 head `b95191c625a00b4201f21b71de6f1391c0549ec7` passed CI run `40543902284` (9/9), coordination audit `40543901223`, and M9 composition `40543901294` on Ubuntu and Windows. `gh pr checks 131` reports 12/12 success.
 - Updated the existing PR #131 and PR #127 exact-head status comments with this run and the unchanged acceptance boundaries. M1–M8 owner PR heads/issues remain outstanding; PR #24 and `main` were not changed.
+
+## 2026-10-27 16:54 UTC — exclusive-resource tracker refreshed
+
+- Updated Issue #29 with a current scheduling readback, explicitly superseding its stale Oct 16 quota, branch, and slot snapshot while retaining the historical record. Current status of separate Codex conversations and active module slots is UNKNOWN; no current VMware/real-model/installer reservation is recorded. M0 has not run those exclusive tests. Older quota readings were marked stale per the user's later instruction not to monitor quota.
+- Issue #29 now records PR #24, #127, and #131 current heads and the terminal `b95191c` M0 CI/coordination/M9 run IDs. No module branch, PR #24, `main`, or Release was changed.
