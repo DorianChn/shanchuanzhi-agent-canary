@@ -51,11 +51,25 @@ try {
 finally { $env:AGENT_CANARY_HOME = $previousAgentCanaryHome }
 Write-Host "M0/E4 result: $(if($baselineCode -eq 0){'PASS'}else{'FAIL'}); detailed log saved." -ForegroundColor $(if($baselineCode -eq 0){'Green'}else{'Yellow'})
 Add-Result -Name 'M0/baseline-and-synthetic-E4' -Status $(if($baselineCode -eq 0){'PASS'}else{'FAIL'}) -Root $mainRoot -Sha ((& $git.Source -C $mainRoot rev-parse HEAD 2>$null | Out-String).Trim()) -Dirty ([bool]((& $git.Source -C $mainRoot status --porcelain | Out-String).Trim())) -Log (Split-Path $baselineLog -Leaf) -Details "exitCode=$baselineCode; see nested E4 report for case-level outcomes."
-$latestE4JsonFile = Get-ChildItem -LiteralPath (Join-Path $coordinatorRoot 'security-lab/e4-one-click-runs') -Filter 'ONE_CLICK_RESULT.json' -File -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-$latestE4Json = if ($latestE4JsonFile) { $latestE4JsonFile.FullName } else { '' }
-if ($latestE4Json -and (Test-Path -LiteralPath $latestE4Json -PathType Leaf)) {
+$nestedE4Json = ''
+$e4Result = $null
+$reportLine = $null
+if (Test-Path -LiteralPath $baselineLog -PathType Leaf) {
+    $reportLine = Select-String -LiteralPath $baselineLog -Pattern '^Report:\s+(.+ONE_CLICK_RESULT\.md)\s*$' | Select-Object -Last 1
+}
+if ($reportLine) {
     try {
-        $e4Result = Get-Content -LiteralPath $latestE4Json -Raw | ConvertFrom-Json
+        $nestedMd = [System.IO.Path]::GetFullPath($reportLine.Matches[0].Groups[1].Value.Trim())
+        $allowedRoot = [System.IO.Path]::GetFullPath((Join-Path $coordinatorRoot 'security-lab/e4-one-click-runs')).TrimEnd([System.IO.Path]::DirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
+        if ($nestedMd.StartsWith($allowedRoot, [System.StringComparison]::OrdinalIgnoreCase) -and [System.IO.Path]::GetFileName($nestedMd) -eq 'ONE_CLICK_RESULT.md') {
+            $nestedE4Json = [System.IO.Path]::ChangeExtension($nestedMd, '.json')
+        }
+    }
+    catch { Write-Warning 'Nested E4 report path is invalid; its evidence remains NOT_VERIFIED.' }
+}
+if ($nestedE4Json -and (Test-Path -LiteralPath $nestedE4Json -PathType Leaf)) {
+    try {
+        $e4Result = Get-Content -LiteralPath $nestedE4Json -Raw | ConvertFrom-Json
         $pythonPath = $e4Result.environment.pythonRuntimePath
         if ($pythonPath -and (Test-Path -LiteralPath $pythonPath -PathType Leaf)) {
             $env:CANARY_PYTHON = $pythonPath
@@ -63,6 +77,18 @@ if ($latestE4Json -and (Test-Path -LiteralPath $latestE4Json -PathType Leaf)) {
         }
     }
     catch { Write-Warning "Could not reuse E4 Python runtime metadata: $($_.Exception.Message)" }
+}
+if ($e4Result -and $e4Result.PSObject.Properties['syntheticE4SnapshotEvidenceIssues']) {
+    $snapshotIssues = @($e4Result.syntheticE4SnapshotEvidenceIssues | Where-Object { $null -ne $_ })
+    $snapshotDetails = if ($snapshotIssues.Count -gt 0) {
+        'Target observations NOT_VERIFIED: ' + (($snapshotIssues | ForEach-Object { "$($_.id):$($_.target)" }) -join ', ') + "; nested report=$nestedE4Json"
+    } else {
+        "Required target snapshot records are present; this does not verify target state or product protection. nested report=$nestedE4Json"
+    }
+    Add-Result -Name 'M0/E4-snapshot-presence' -Status $(if($snapshotIssues.Count -gt 0){'BLOCKED'}else{'PASS'}) -Root $mainRoot -Sha ((& $git.Source -C $mainRoot rev-parse HEAD 2>$null | Out-String).Trim()) -Dirty ([bool]((& $git.Source -C $mainRoot status --porcelain | Out-String).Trim())) -Log '' -Details $snapshotDetails
+}
+else {
+    Add-Result -Name 'M0/E4-snapshot-presence' -Status 'BLOCKED' -Root $mainRoot -Sha ((& $git.Source -C $mainRoot rev-parse HEAD 2>$null | Out-String).Trim()) -Dirty ([bool]((& $git.Source -C $mainRoot status --porcelain | Out-String).Trim())) -Log '' -Details 'Current nested E4 snapshot metadata is unavailable; target observations are NOT_VERIFIED.'
 }
 
 foreach ($module in $modules) {
