@@ -9444,3 +9444,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M9 PR #127 remains pinned to M7 `bba0f0f89c610f8198660e799de7a652b8ea8e96` and M8 `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`. Follow-up candidates M7 #128 `bf9faeeb96625325e6fab8e497954ff6db4e78ea` and M8 #129 `685520cbb000b3dc6950876f115199cdebf81ea5` remain distinct and are not promoted into the manifest; source ancestry/review issue #126 is still OPEN. Pins were not changed.
 - P1 issue #132 is now labeled P1 and records M0's clarification (comment `6441500259`): green M9 composition does not resolve missing E4 target observations; M1/M6 must preserve fail-closed behavior, capture available evidence, and report absent snapshots as UNKNOWN. The issue remains OPEN. P0 #52 remains OPEN/NOT_VERIFIED for production-host protected-identity consumption and TOCTOU.
 - No module implementation, M9 pin, PR #24, `main`, or Release was changed. The coordinator worktree was clean before this report update. No installer, VM, or real-model test was run.
+
+## 2026-10-27 12:11 UTC — M1 E4 handoff linked to evidence issue
+
+- Added a focused follow-up on existing M1 issue #118 (comment `6441545072`) linking the preserved decoy-read/quarantine and explicit DENY acceptance to M6's missing-snapshot work in #132. The note distinguishes green source composition from E4 acceptance and requests exact reviewed-source regressions after owner changes. No module implementation was edited.
