@@ -10604,3 +10604,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 ## 16:31 UTC — M9 owner notified of M1 pin blocker
 
 - M0 cross-posted the verified M1 merge-conflict state and five path list to M9 Draft PR #127 comment `6474675177`. M9 owner is asked to leave historical M1/M7 pins unchanged until the existing M1 conflict is resolved, exact owner approvals exist, and both OS composition checks can validate the selected SHAs.
+
+## 16:44 UTC — exact M0 head 60baf97 validated
+
+- PR #131 exact head `60baf97c1c5ddd0e98753349d9d00f5343b7a893` has 12/12 hosted checks passing: AC3 `40727461157`, CI `40727461390`, and Ubuntu/Windows M9 composition `40727461155` (Windows job `122954463134`). This validates coordinator docs against the event-base M9 manifest, not PR #127's current candidate pins. Exact readback: PR comment `6474971238`.
+- M1 conflict gate, M7 unpublished candidate, and M9 historical pins remain unchanged. PR #24 remains unchanged OPEN/Draft.
