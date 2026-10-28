@@ -10553,3 +10553,7 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `7ebe8b74c9c0ccabbcebd6ad0074ca7a83e1e1ae` has 12/12 completed checks passing; both Ubuntu and Windows composition passed (Windows job `122871605198`). This is event-base M9 validation, not a certification of PR #127's current pins or unpublished M7 `a0f2c78`. Readback: PR comment `6471520634`.
 - The M7 test comparison is now scoped: the two exact test blobs at M7 candidate `a0f2c78` match M1 PR head `f150248`, and M0's M1 build + focused suite passed them; M7's branch source still throws after decoy quarantine. M7 candidate remains unpushed, M0 recorded exact hashes and blocker in Issue #126 comments `6471249337` and `6471391949`.
+
+## 14:27 UTC — M7 candidate linked to module PR
+
+- M0 cross-posted the exact local M7 candidate result to M7 Draft PR #128 comment `6471661406`, linking Issue #126. No code, local commit, or dirty file was changed. M7 candidate `a0f2c78` remains unpushed until owner review provides a passing exact source path.
