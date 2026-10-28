@@ -10166,3 +10166,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Read-only `git merge-tree --write-tree` for base `34fbe6d` + M8 head `685520c` completed without conflicts; resulting tree `509c8efc42aedf54d0088118800e1e860627a1cc`. The single M8 commit changes nine docs/docs-check paths and is a direct descendant of the existing M9 pin `1c94ed4`.
 - Remaining gate is exact M8 owner ACCEPT/REJECT, then M9 manifest pin change on its existing branch and exact-source composition if accepted. Posted the evidence on PR #129. M0 did not alter the pin, merge, or M8 local dirt.
+
+## 2026-10-28 01:55 UTC — M1/M6 source-level E4 gate refresh
+
+- Read-only current-blob comparison across feature base `34fbe6d`, M1 `89be11e`, and M6 `fae72ea` finds `security-lab/e4/run.mjs` (blob `a305671e…`), `test/auto-e4.test.mjs` (`d1705c20…`), and `src/config.ts` (`e28e5b40…`) identical across all three refs.
+- Thus #132's source-level failure snapshots and #130's test-owned `AGENT_CANARY_HOME` isolation have not landed in current M1/M6 heads. M0 outer harness isolation is not a substitute. Posted exact evidence and owner responsibilities to Issue #132; changed no module files.
