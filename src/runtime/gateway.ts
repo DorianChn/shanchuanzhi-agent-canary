@@ -197,7 +197,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     if(!options.evidence.canRecord(2))throw Error('GATEWAY_EVIDENCE_CAPACITY');
     audit(r,'ALLOW',decision.reason,'RUNNING','NOT_STARTED',approval);
     const abort=new AbortController(),cancel=()=>abort.abort();track(abort);signal?.addEventListener('abort',cancel,{once:true});
-    let timer:ReturnType<typeof setTimeout>|undefined,abortListener:(()=>void)|undefined;
+    let timer:ReturnType<typeof setTimeout>|undefined,abortListener:(()=>void)|undefined,decoyReadId:string|undefined;
     try{
       const cancelled=new Promise<never>((_,reject)=>{abortListener=()=>reject(Error('GATEWAY_REQUEST_ABORTED'));abort.signal.addEventListener('abort',abortListener,{once:true});if(abort.signal.aborted)abortListener();});
       // File effects are synchronous fd operations: quarantine cannot interleave in this JS turn.
@@ -219,7 +219,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           if(!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
           const text=buffer.subarray(0,offset).toString('utf8');
           if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
-          if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}
+          if(f.descriptor.decoyId)decoyReadId=f.descriptor.decoyId;
           return {content:text};
         }
         if(r.name==='write_file'){
@@ -244,6 +244,9 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
         });
       };
       const result=await Promise.race([Promise.resolve().then(perform),cancelled,new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
+      // Trip after the synchronous read has settled so quarantine aborts sibling/queued
+      // work without racing away the decoy read result itself.
+      if(decoyReadId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(decoyReadId);}
       const output=typeof result==='string'?result:JSON.stringify(result)??'';
       if(secretPattern.test(output)){history.sensitiveObserved=true;flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
       audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'||r.name==='write_file'?'VERIFIED':'NOT_VERIFIED',approval);

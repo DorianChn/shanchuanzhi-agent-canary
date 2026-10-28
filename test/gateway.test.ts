@@ -193,6 +193,31 @@ test('workspace-local symlink or junction aliases cannot read registered sensiti
  }finally{await runtime.close();}
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+test('decoy read returns its result and quarantines before a protected follow-up write',async()=>{
+ const decoyEvents:string[]=[];
+ const s=setup({files:[{path:'.env',sensitive:true,decoyId:'synthetic-decoy'},{path:'result.txt',writable:true}],onDecoyRead:(id:string)=>decoyEvents.push(id)});
+ const target=path.join(s.root,'result.txt'),before=fs.readFileSync(target),beforeHash=createHash('sha256').update(before).digest('hex');
+ try{
+  const result=await s.runtime.agent.dispatch({name:'read_file',args:{path:'.env'}});
+  assert.deepEqual(result,{content:'NOT_A_REAL_CREDENTIAL'});
+  assert.equal(s.guard.state,'QUARANTINED');
+  assert.deepEqual(decoyEvents,['synthetic-decoy']);
+  assert.equal(s.evidence.snapshot().at(-1)?.tool_id,'read_file');
+  assert.equal(s.evidence.snapshot().at(-1)?.decision,'ALLOW');
+  assert.equal(s.evidence.snapshot().at(-1)?.execution_status,'SUCCEEDED');
+  assert.equal(s.runtime.operator.pending().length,0);
+
+  await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'FORBIDDEN_AFTER_DECOY'}}),/guard_quarantined/);
+  const denied=s.evidence.snapshot().at(-1)!;
+  assert.equal(denied.decision,'DENY');
+  assert.equal(denied.decision_reason,'guard_quarantined');
+  assert.equal(denied.execution_status,'NOT_STARTED');
+  assert.equal(s.runtime.operator.pending().length,0);
+  const after=fs.readFileSync(target);
+  assert.equal(after.toString('hex'),before.toString('hex'));
+  assert.equal(createHash('sha256').update(after).digest('hex'),beforeHash);
+ }finally{await s.runtime.close();}
+});
 test('Windows NTFS short-name alias cannot register a protected credential file',{skip:process.platform!=='win32'},async(t)=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-short-name-alias-'));let runtime:any;
  try{
