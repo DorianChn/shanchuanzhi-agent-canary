@@ -10493,3 +10493,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `c5093fd3c1a6a1aa016f7a665e79244d23fe4cd4` has 12/12 hosted checks passing, including Ubuntu/Windows composition `40683052643`. This validates M0 docs against the event-base M9 manifest, not the current PR #127 candidate. Readback is PR comment `6468358310`.
 - No module owner replies or head movement appeared. M1 exact CI remains absent; M3/M6/M8 dispositions remain open; #52 and product E4 remain NOT_VERIFIED.
+
+## 12:17 UTC — exact M0 head d2b7cfc validated
+
+- PR #131 exact head `d2b7cfc4d03bed68def4381cca72aecc7c676dbe` has 12/12 hosted checks passing, including both OS composition run `40685818026`. It validates the feature-base M9 manifest, not the current PR #127 candidate. PR comment `6468754121` records the boundary.
+- No owner responses or module PR head changes appeared; M1 #133 still has no exact-head checks, M3/M6/M8 gates remain open, and #52/product E4 remain NOT_VERIFIED.
