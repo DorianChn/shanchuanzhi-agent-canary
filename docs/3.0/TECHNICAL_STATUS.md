@@ -10477,3 +10477,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 head `6fdd6be9bf5ed61b3cfa3ad9b72d983612b85fed` has 12/12 hosted checks passing. This validates the M0 coordination docs and event-base composition against M9 `34fbe6d`; it does not integrate current module follow-up heads. Readback is PR comment `6467593670`.
 - No new module commits or owner decisions appeared in #125/#80/#126. M1 #133 still has zero exact-head check runs; M3/M6/M8 decisions remain open. M9 pins remain unchanged.
+
+## 11:37 UTC — exact M0 head e2ad2b4 validated
+
+- PR #131 exact head `e2ad2b41b7baaed2fcc827bc09c2101b08e5e3c6` has 12/12 checks passing. CI/ownership and both composition jobs passed; composition run `40680673119` validates event-base M9, not PR #127's current candidate pins. M0 recorded this on PR comment `6467980770`.
+- No module owner response or source-head movement has appeared for M1 #133, M3 #120, M6 #123, M7 #128, M8 #129, or M9 #127. #52 remains OPEN/P0/NOT_VERIFIED; product E4 remains NOT_VERIFIED.
