@@ -10137,3 +10137,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #127 M7 pin `bba0f0f` matches the feature-base manifest and merged PR #113 source. New M7 PR #128 head `bf9faee` is a separate divergent branch, not descended from current base or that pin; reconcile its lineage before promotion.
 - PR #127 M8 pin `1c94ed4` also matches feature-base; current M8 PR #129 head `685520c` is its one-commit descendant. Explicit owner disposition and exact-head composition are still required.
 - PR #131 latest 12/12 composition used M7 `bba0f0f`, not `bf9faee`. Posted this scoped matrix on Issue #126; M0 changed no pin/ref.
+
+## 2026-10-28 01:35 UTC — M9 owner direct handoff
+
+- Sent the exact M9 manifest/branch matrix directly to PR #127. M1–M6 current heads match candidate pins. M8 `1c94ed4` → current `685520c` is one commit but lacks explicit disposition and exact-head composition. M7 pin `bba0f0f` is the merged PR #113 source; PR #128 `bf9faee` is divergent with three conflicts and a dropped M9 test. PR #131's green M7 regression ran against `bba0f0f`, not #128.
+- M9 owner should keep pins until M8 ACCEPT+composition and M7 reconciliation/exact-head checks. No manifest/ref changed by M0.
