@@ -10491,5 +10491,5 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 ## 11:57 UTC — exact M0 head c5093fd validated
 
-- PR #131 exact head `c5093fd3c1a6a1aa016f7a665e79244d23fe4cd4` has 12/12 hosted checks passing, including Ubuntu/Windows composition `40683052643`. This validates M0 docs against the event-base M9 manifest, not the current PR #127 candidate. Readback is PR comment `6468359772`.
+- PR #131 exact head `c5093fd3c1a6a1aa016f7a665e79244d23fe4cd4` has 12/12 hosted checks passing, including Ubuntu/Windows composition `40683052643`. This validates M0 docs against the event-base M9 manifest, not the current PR #127 candidate. Readback is PR comment `6468358310`.
 - No module owner replies or head movement appeared. M1 exact CI remains absent; M3/M6/M8 dispositions remain open; #52 and product E4 remain NOT_VERIFIED.
