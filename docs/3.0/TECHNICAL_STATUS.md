@@ -9996,3 +9996,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Pushed four M0-only coordination-document commits by fast-forward at 00:04 UTC. Remote/local branch head is `cd9d0baf23f58006628204e4878cc55b33a0ffc0`; worktree is clean after push.
 - PR #131 checks started at this exact head. At the time of this entry, ownership had passed and CI/M9 composition were still running; no result is claimed here.
 - PR #24, `main`, module code/worktrees, and M9 pins remain untouched.
+
+## 2026-10-28 00:10 UTC — second scheduled push checks complete
+
+- PR #131 at `cd9d0baf23f58006628204e4878cc55b33a0ffc0` passed 12/12 visible checks: ownership `40606348227`, CI `40606348354` (9/9), and M9 composition `40606348235` on Ubuntu/Windows.
+- Windows log confirms the selected actual M9 source was feature-base `34fbe6d35d4dea30795525bf538f97194758c6c4`. The check therefore validates the unchanged pinned feature-base composition, not current M3–M8 follow-up promotion. No manifest pin changed. Issue #126 was updated in comment `6456962457`.
+- No M1–M8 source, `main`, PR #24, merge, or Release action occurred.
