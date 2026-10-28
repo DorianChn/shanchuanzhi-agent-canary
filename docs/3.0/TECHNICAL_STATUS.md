@@ -10390,3 +10390,10 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 - On M1 contract head `6a64cc0`, M7 prepared owner-authored test commit `f1502489fbf807c16aad72c50b522c373ac07746`, changing only `test/reliability-gateway-lifecycle.test.ts` and `test/honeypot-runtime.test.ts`. It is a detached local commit whose parent is exactly `6a64cc0`; it can fast-forward existing M1 branch `feature/ac3-security-core` without creating a branch.
 - Combined exact-source tests passed 59/59 in `integration/M7-tests-on-M1-6a64`; diff-check passed. The M7-owned patch has not been pushed and is scheduled for the next five-minute batch.
 - M0 PR #131 head `9394f208e0869656d290c5dfd5a8e15adb22e206` has standard tests/package/Docker/sponsor/ownership passing; Ubuntu and Windows exact-source composition remain in progress (`40665038097`).
+
+### 09:41 UTC — M1/M7 candidate hosted-status boundary
+
+- PR #133 current head `f1502489fbf807c16aad72c50b522c373ac07746` is a coordinated M1/M7 candidate on the existing M1 branch. The M7-authored test commit changes only the two M7 reliability files; local detached combined tests pass 59/59.
+- GitHub currently reports no check runs for exact head `f150248`; earlier failures at `3f0921f` are superseded by the contract and M7 test commits, but they are not current-head CI evidence. M7 exact-head owner confirmation is being recorded.
+- M0 PR #131 head `9394f208e0869656d290c5dfd5a8e15adb22e206` has all standard tests, package, Docker, sponsor, ownership, and Ubuntu composition passing. Windows composition remains pending in run `40665702631`; its checkouts still use feature-base manifest pins.
+- #52 remains OPEN/P0/NOT_VERIFIED for the product-host held-identity path. No M9 pin, main, PR #24, or Release change occurred.
