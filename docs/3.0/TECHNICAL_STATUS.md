@@ -9990,3 +9990,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Read-only inspection of current feature base confirms `src/ai/console-page.ts:33-34` visibly renders Native Codex Shell as `UNPROTECTED / BLOCKED_NOT_VERIFIED` with `data-status="NOT_PROTECTED"`; `test/runtime-console.test.ts:34` asserts the status and explanatory copy. M2 head `941fd22` is an ancestor of the current feature base.
 - This verifies only the user-facing fail-honest status subcheck. It does not prove Desktop hook installation/trust/invocation or blocking of a synthetic protected-path operation. Issue #45 remains OPEN/P1 and actual host enforcement NOT_VERIFIED; comment `6456528538` requests owner confirmation or supported-host evidence.
 - No M2 source/test was changed or run by M0.
+
+## 2026-10-28 00:04 UTC — second scheduled M0 push
+
+- Pushed four M0-only coordination-document commits by fast-forward at 00:04 UTC. Remote/local branch head is `cd9d0baf23f58006628204e4878cc55b33a0ffc0`; worktree is clean after push.
+- PR #131 checks started at this exact head. At the time of this entry, ownership had passed and CI/M9 composition were still running; no result is claimed here.
+- PR #24, `main`, module code/worktrees, and M9 pins remain untouched.
