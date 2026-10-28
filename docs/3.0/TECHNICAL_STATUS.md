@@ -10342,3 +10342,13 @@ Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in c
 - M0 PR #131 head `ea05cf434ad3362140451924e6bfbc67937d1e4a` has 12/12 hosted checks passing, including Ubuntu/Windows composition, six OS/Node jobs, Docker, package, sponsor, and ownership.
 - Run `40660741566` logs show M9 feature-base `34fbe6d` and M7 pin `bba0f0f89c610f8198660e799de7a652b8ea8e96`; current M7 PR #128 head `86748604a489eae49dcf5ea6963f5eb35d29e0d9` was not composed. The green run does not clear M7's current-source pin gate.
 - PR #24 is verified OPEN/Draft at exact head `34fbe6d35d4dea30795525bf538f97194758c6c4`; main and M9 pins remain unchanged.
+
+### 09:08 UTC — M1–M8 exact-source blockers
+
+- M3 #120 (`6830cf8`) and M4 #121 (`efd552d`) standard jobs pass; composition stops at the exact manifest gate because feature-base M9 pins M3 `0d61b43` and M4 `892d329`. M4 has accepted current M3 schema; M3 exact-head confirmation was requested on Issue #125.
+- M5 #122 (`51a64f0`) standard matrix, package, Docker, sponsor, and ownership pass; composition stops because feature-base M9 pins M5 `cca42cd`. M1 exact policy disposition remains open on Issue #124.
+- M6 #123 (`b7e186b`) platform tests, wrapper jobs, Docker, package, and sponsor pass, but ownership evidence fails because the shared E4 test requires `Coordinated-with: M7, M8`; M7 has a scoped conditional acceptance, M8 exact-head disposition remains requested on #80/PR #129. Product E4 is not verified.
+- M7 #128 (`8674860`) current-head matrix, wrapper regressions, package, Docker, sponsor, ownership, and Windows community build pass; installer lifecycle is skipped. Its composition workflow succeeds only with the historical M7 manifest pin `bba0f0f`, so current-candidate M7 pin integration remains unverified.
+- M8 #129 (`685520c`) standard checks pass; current exact-source composition/ownership remains blocked pending cross-module disposition. M9 manifest pins were not changed.
+- M0 follow-up head `404dbd3` has standard platform jobs passing; at 09:08 package and both composition jobs were pending. Parent `ea05cf4` had 12/12 checks pass, with M7 still at historical pin `bba0f0f`.
+- P0 #52 protected-path alias gate, P1 #118 decoy-read, #124 M1 policy disposition, #125 M3 disposition, #80 M6/M8 disposition, #132 product E4 evidence, #41 clean-VM installer acceptance, and #57 independent product E4 remain open. No failed tests were removed, no security denial was relaxed, and no main/#24 merge, release, or M9 pin change occurred.
