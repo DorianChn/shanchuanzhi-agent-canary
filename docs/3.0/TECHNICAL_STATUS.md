@@ -10176,3 +10176,4 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Confirmed PR #131 includes coordinator-side isolated `AGENT_CANARY_HOME` roots and snapshot-integrity reporting (`syntheticE4SnapshotEvidenceIssues`); its exact-head CI at `7d88787` is 12/12 green. Product E4 remains NOT_VERIFIED.
 - Updated Issues #130 and #132: M0 harness guard is not a substitute for M6 test-owned token-state isolation or M1/M6 source-level failure snapshot/effect evidence. Both issues remain open pending owner changes.
+- Owner handoffs are Issue #130 comment `6458565436` and Issue #132 comment `6458565793`.
