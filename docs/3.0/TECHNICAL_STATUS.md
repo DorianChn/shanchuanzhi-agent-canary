@@ -1,4 +1,3 @@
-
 ## Current M0-M9 coordination snapshot — 2026-10-28 02:34 UTC
 
 - M0 coordinator PR #131 is open at `24332e37e8500ce8325b91f442b1c03ae3ceeee3`; its 12 checks pass. Run `40620845912` passed Ubuntu and Windows composition, but used feature-base M9 `34fbe6d`, M1-M6 current refs, and M7 merged pin `bba0f0f`; the logs did not check out M8. This is not exact-current M8 integration evidence.
