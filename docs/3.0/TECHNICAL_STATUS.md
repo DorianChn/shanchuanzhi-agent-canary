@@ -10256,6 +10256,51 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 ## 2026-10-28 02:12 UTC — repository ignore safety check
 
+## 2026-10-28 08:35 UTC — current exact-source and mergeability gate refresh
+
+### GitHub and baseline
+
+- `gh auth status` confirms the authenticated `DorianChn` account has `repo` and `workflow` scopes. The repository is public and remains `DorianChn/shanchuanzhi-agent-canary`.
+- PR #24 remains OPEN/DRAFT at head `34fbe6d35d4dea30795525bf538f97194758c6c4`, targeting `competition/shanchuanzhi-release-readiness`; no update to `main` or PR #24 was made.
+- The current `feature/agent-canary-3.0` remote head is `34fbe6d35d4dea30795525bf538f97194758c6c4`.
+- M0 PR #131 remains OPEN/DRAFT/CLEAN at `f487017e959c2dd0edb350ee2088c26192fcc989`; all 12 checks pass (`40656420041`, `40656420060`, `40656420297`). Its composition run selects feature-base M9 `34fbe6d`, not candidate PR #127.
+
+### Current module and M9 source references
+
+M9 PR #127 head `635f8bc55216b044627fa83f0b402003d0eaa893` still pins M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 `bba0f0f`, and M8 `1c94ed4`. Current follow-up PR heads differ for M3 `6830cf8` (#120), M4 `efd552d` (#121), M5 `c413719` (#122), M6 `b7e186b` (#123), and M8 `685520c` (#129). M1 `89be11e` and M2 `941fd22` match their merged source refs. M7 #128 remains at `bf9faee` pending exact-head review and a safe source/base disposition.
+
+Hosted composition failures are consistent with the stale manifest checks, not a test defect: PR #120 run `40657031358` reports its head differs from M9's M3 pin; PR #121 run `40657035777` reports its head differs from the M4 pin; PR #123 run `40656364245` reports its head differs from the M6 pin. The older PR #129 run `40361147155` similarly checked an M8 source different from #129's current head. M0 recorded the exact-source refresh and required owner review on PR #127 comment `6464389031`.
+
+M0 also refreshed the owner-facing records: Issue #125 comment `6464444609` requests exact-head M3/M4 disposition for `6830cf8`/`efd552d`; Issue #80 comment `6464445359` requests M6's exact M8 `685520c` disposition and preserves the historical-pin boundary.
+
+PR #127 remains OPEN/DRAFT/CLEAN at `635f8bc55216b044627fa83f0b402003d0eaa893`, with its recorded 12-check hosted suite green. This is evidence only for the immutable refs in that manifest, not for the five newer follow-up PR heads listed above.
+
+The ownership audit for M3 PR #120 run `40657031356` found shared `src/ai/console.ts` needs M4 coordination; the current PR body now contains `Coordinated-with: M4`, but that failed run predates a fresh check on the corrected metadata. M6 PR #123 run `40656364255` says shared `test/auto-e4.test.mjs` needs M7 and M8 coordination; M0 recorded the exact requirement in PR #123 comment `6464389640`.
+
+### M7 local reconciliation candidate
+
+An isolated reconciliation worktree contains merge commit `1575ad8b116f9aee4da9c430d4eefb92c7e95dc1`, whose parents are exact PR #128 head `bf9faeeb96625325e6fab8e497954ff6db4e78ea` and feature baseline `34fbe6d35d4dea30795525bf538f97194758c6c4`. It resolves only the three known conflicts in `windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`; the feature-base M9 test list is retained and the five M9/coordination test blobs match the feature baseline. `git diff --check` passes; coordination/M9 workflow checks are 20/20 and the Windows packaging worker is 24 pass / 1 permission skip. The full Windows packaging suite still has one environment-limited Python runtime failure; M7 reliability/package smoke cannot run locally because `npm` and generated `src/sdk.js` are absent; the M9 community composition tests require workflow-provided independent source checkouts. This candidate is not pushed, and exact-head PR CI and clean-VM installer acceptance remain outstanding. The original M7 worktree's `.gitignore` dirt remains untouched.
+
+M0 posted this local-only evidence and its limits to Issue #126 comment `6464492593`; it is not an M7 owner acceptance or an exact-head hosted check.
+
+### Open acceptance gates
+
+- P0 #52 remains OPEN / NOT_VERIFIED: synthetic source regression does not prove a supported production OBSERVE host consumes the Gateway-bound identity or provide OS-atomic alias/TOCTOU evidence.
+- #80, #124, #125, #126, and #132 remain OPEN. Product E4 is NOT_VERIFIED; M6 exact-source M8 disposition, M1 policy/security owner dispositions, M5 approved-baseline ownership, M7 ancestry/CI, and M1/M6 failed-case evidence remain separately gated.
+- M5 local merge commit `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7` now has parents exact M5 head `c41371946f073cc64e03b63c3b4469a4ec9603ae` and current feature baseline `34fbe6d35d4dea30795525bf538f97194758c6c4`. Its net PR diff is eight M5-owned paths, contains no conflict markers, and retains the baseline M9 security test. `pack:check` (103 files), policy tests (22/22), M9 security composition (4/4), build, baseline unit tests (8/8), and local ownership/source-composition synthesis pass. Windows packaging is 25 pass / 1 skip / 1 environment-limited Python failure. It is not pushed; M1 exact-head policy disposition remains open.
+- M0 recorded the current M5 reconciliation and test evidence in Issue #124 comment `6464519327`.
+- M6 Issue #130 is CLOSED after exact-head standalone token isolation passed: `node --import tsx --test test/tokens.test.ts` yielded 16 pass / 0 fail / 1 POSIX permission skip. Its source now sets/restores `AGENT_CANARY_HOME` around dynamic imports and removes the temporary root. Exact PR #123 test matrix run `40656364350` passed all six OS/Node jobs; wrapper run `40656364206` passed Ubuntu and Windows. This closes token-fixture isolation only, not E4 Issue #132 or product E4 #57.
+- At exact M6 head `b7e186b`, `node --test test/auto-e4.test.mjs` passes 16/16; M0 recorded the M6-owned completion boundary and remaining M1 requirement in Issue #132 comment `6464572050`. Issue #132 stays open for M1's decoy-read/fail-closed evidence; product E4 remains NOT_VERIFIED.
+- A read-only `git merge-tree` of M6 `b7e186b` and M7 reconciliation candidate `1575ad8` produced tree `1fb0fdac9c6930fb028343aebe57e8d432c5619d` without conflict and retained the M6 named-snapshot E4 regression test. M0 recorded this limited source-composition evidence on PR #123 comment `6464572686`; M7/M8 owner coordination and hosted integration tests remain required.
+- M7's scoped `ACCEPT_WITH_CONDITIONS` is now recorded on PR #123 comment `6464610123`; it validates source compatibility only and explicitly does not claim runtime or product E4 pass. M0 requested M8's separate scoped review on PR #129 comment `6464613349`; awaiting that owner response before adding the M8 coordination marker.
+
+### Next actions
+
+1. Review the M5 owner's exact-base reconciliation candidate and retain all tests and ownership checks.
+2. Review M7 merge candidate diff, then batch any approved existing-branch pushes after the 20-minute cadence; verify new exact-head PR checks.
+3. Wait for exact owner dispositions before changing M9 pins; rerun Ubuntu and Windows composition only against the resulting reviewed M9 head.
+4. Keep PRs Draft and keep `main`, PR #24, Release, and independent product E4 state unchanged.
+
 - Re-read the current `.gitignore` and verified representative paths with `git check-ignore -v`: root `logs/`, credential JSON patterns, `*.tmp`, and editor swap files are ignored. Existing ignore rules also cover `.env*`, private key/certificate formats, `.agent-canary/`, M0 workspaces, and generated E4 one-click bundles.
 - The only explicit `.gitignore` delta in M0's PR is additional credential JSON names; no log/key/temp exception was introduced. Examples remain explicitly unignored only for reviewed `client_secret.example.json` and `service-account-key.example.json` fixtures.
 - This satisfies the repository hygiene check for the current tree; no ignore rule was changed during this verification.
