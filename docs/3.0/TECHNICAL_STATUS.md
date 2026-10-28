@@ -10581,3 +10581,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `26dff85db50e79ce6beebf930e222521c9e60daf` has 12/12 completed checks passing: CI `40720872237`, AC3 `40720871830`, and Ubuntu/Windows composition `40720871796`. This validates the coordinator docs against the event-base M9 manifest, not PR #127's current pins. Readback: PR comment `6473971568`.
 - No M1–M8/M9 PR head changes or owner dispositions appeared in the 16:00 UTC recheck. PR #24 remains unchanged OPEN/Draft.
+
+## 16:06 UTC — M1/M7 source-blob reconciliation
+
+- Independent read-only review confirms the M7 candidate's Gateway source blob `636926c…` differs from M1 #133 exact-head blob `bace4ea…`; its two modified test blobs (`daef910b…`, `45b1b3ce…`) exactly match the M1 tests. M1's quarantine-order change explains why the tests pass on current M1 source but fail on older M7 source; M0 directly observed 17/19 focused tests on M7. This is a source dependency, not a changed test payload.
+- M7 candidate remains local/unpublished. PR #133 exact head has zero hosted checks; #128 hosted checks cover only remote `8674860`, and M9 #127 pins historical sources. M0 recorded this dependency and acceptance chain in Issue #126 comment `6474083905`.
