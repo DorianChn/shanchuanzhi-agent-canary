@@ -1,3 +1,11 @@
+## Current M0-M9 coordination snapshot — 2026-10-28 08:09 UTC
+
+- M0 PR #131 head `6a9735834985e69eba95116b441954555a4464b6` is OPEN/DRAFT/CLEAN. All 12 exact-head checks pass: regular CI `40654120530`, ownership contract `40654120430`, and Ubuntu/Windows composition `40654120419`.
+- The Windows composition log confirms selected M9 source `34fbe6d35d4dea30795525bf538f97194758c6c4` (feature-base manifest), not M9 candidate PR #127. Thus this verifies M0's source-boundary suite, but does not validate #127's current candidate pins or exact current M7/M8 PR heads.
+- Follow-up PR heads remain M3 #120 `9169552`, M4 #121 `5d975b7`, M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee` (DIRTY), M8 #129 `685520c`; M9 #127 remains `635f8bc` (CLEAN). M7/M8 pins remain historical. P0 #52 and owner/integration gates #80/#124/#125/#126 remain OPEN.
+- Security dependency readback for P1 #70: Hono resolves to 4.13.7 on `main` and PR #24's base, but 4.13.13 on `feature/agent-canary-3.0`. Dependabot alert #2 is still OPEN; PR #67 targets `main`, proposes 4.13.13, is CLEAN, and all 9 checks pass. Branch scope is recorded in Issue #70 comment `6463912405`; nothing was merged.
+- M1–M8 worktree branches remain present at the heads listed in the previous snapshot. Dirty M6/M7 `.gitignore` files and M8 `.gitignore` plus untracked resolution-result JSON are preserved. M3–M8 ancestry still has distinct bases against PR #24; no branch rewrites occurred.
+- PR #24 remains OPEN/DRAFT at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `competition/shanchuanzhi-release-readiness`. No module source, main, or Release action was changed.
 ## Current M0-M9 coordination snapshot — 2026-10-28 08:03 UTC
 
 - M0 PR #131 head `0878f6660753b843af9b35b2c15d134623000e7e` is OPEN/DRAFT/CLEAN. Exact-head checks are 12/12 green: regular CI `40653347737`, ownership contract `40653347654`, and Ubuntu/Windows composition `40653347653`.
