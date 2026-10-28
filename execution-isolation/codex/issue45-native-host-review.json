@@ -1,0 +1,71 @@
+{
+  "schema": "agent-canary.m2.issue45-owner-review.v1",
+  "observedAtUtc": "2026-10-24T15:57:41.579Z",
+  "sourceHead": "26cdb8781e57a05f57362e3078d77ce18614481c",
+  "owner": "M2 execution-isolation owner",
+  "issue": 45,
+  "disposition": "UNPROTECTED",
+  "acceptance": "BLOCKED_NOT_VERIFIED",
+  "host": {
+    "os": "Windows 11 25H2 26200.9168",
+    "shell": "PowerShell 7.6.5",
+    "node": "v22.23.1",
+    "codexCli": "0.163.0-alpha.11.2",
+    "desktopAppVersion": "NOT_OBSERVED_THIS_REVIEW",
+    "effectiveSandboxImplementation": "NOT_ATTESTED",
+    "declaredSessionPolicy": "workspace-write; restricted network; approval never",
+    "declarationIsEnforcementProof": false
+  },
+  "hook": {
+    "repositoryFragment": "execution-isolation/codex/codex-hooks.fragment.json",
+    "handler": "execution-isolation/codex/pre-tool-use.mjs",
+    "projectHooksJsonPresent": false,
+    "projectConfigPresent": false,
+    "userManagedPluginLayersInspected": false,
+    "exactDefinitionTrustReceipt": "UNAVAILABLE",
+    "nativeInvocationTelemetry": "UNAVAILABLE",
+    "installationOrTrustChanged": false
+  },
+  "controls": {
+    "nativeAllowedWrite": {
+      "status": "PASS_ALLOWED_ROOT_ONLY",
+      "toolPath": "exec_command -> PowerShell -> Node.js",
+      "sentinelScope": "unique process-owned directory under execution-isolation/codex",
+      "beforeSha256": "604b16952f8956d960112ae451fd833c96ec062646a6addf6ef91df6d914afef",
+      "afterSha256": "8863d0bdf9ad7a73e088a044c01b33335a139f9aa03393d911ef93e3914e7d98",
+      "bytesChanged": true,
+      "protectedPath": false,
+      "hostHookDecision": "NOT_OBSERVED",
+      "gatewayTelemetry": "NOT_INSTRUMENTED; control imports no Gateway/M2 adapter"
+    },
+    "standaloneHook": {
+      "status": "PASS_PROTOCOL_ONLY",
+      "proposedCommandExecuted": false,
+      "handlerExitCode": 0,
+      "decision": "deny",
+      "warning": "UNPROTECTED_NATIVE_SHELL",
+      "stderrEmpty": true,
+      "beforeSha256": "8863d0bdf9ad7a73e088a044c01b33335a139f9aa03393d911ef93e3914e7d98",
+      "afterSha256": "8863d0bdf9ad7a73e088a044c01b33335a139f9aa03393d911ef93e3914e7d98",
+      "unchanged": true,
+      "provesHostInterception": false
+    }
+  },
+  "focusedChecks": {
+    "preToolUseProtocol": "PASS; malformed input/event and audit-write-failure deny, unrelated tool pass-through",
+    "gatewayMcpBinder": "PASS; declared native surface rejected before backend; backend isolation not established"
+  },
+  "unperformedAcceptance": [
+    "actual protected-path native Shell write",
+    "effective sandbox/permission-profile attestation",
+    "trusted Hook loading/invocation receipt",
+    "host error/timeout/malformed-response and specialized-path denial controls",
+    "OS-atomic TOCTOU acceptance"
+  ],
+  "scope": "No ACL, host security configuration, Hook trust, VM, installer, real model, or Gateway changes. Allowed-root write and standalone handler controls cannot establish native-host protection.",
+  "sources": [
+    "https://learn.chatgpt.com/docs/hooks",
+    "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+    "https://learn.chatgpt.com/docs/permissions"
+  ]
+}

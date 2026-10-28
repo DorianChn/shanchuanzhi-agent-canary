@@ -105,6 +105,8 @@ M3 的 `test/agent-hook.test.ts` 已在既有提交 `f9bd818` 使用异步 marke
 
 ### M3 产品入口与 M1/M2/M5 调用链
 
+> 历史快照：以下入口审计反映 2026-10-21 的实现。其“没有 M3 到 M2/M5 的 Host probe 调用链”结论已被本文末尾“P0 #52 fixed-path Host probe/status”记录取代；Hook 与原生工具保护边界仍然有效。
+
 - `package.json` 的 `agent-canary` bin 指向 `dist/index.js`，构建为 `tsc`。M3 向导生成的项目 MCP 入口为 `node dist/competition.js serve --stdio`；`src/competition.ts` 调用 `src/server.ts` 的 decoy MCP handler，工具表来自 `DECOY_TOOLS`，调用由 `handleDecoyCall` 处理。此 Codex 接入入口不导入 M2 adapter，也不创建或消费 M1 Gateway capability。
 - 独立的内置演示入口 `agent-canary ai console`（`package.json` 的 `ai:console` 指向 `node dist/index.js ai console`）会从 `src/ai/console.ts` 创建 `src/runtime/demo.ts`。该 demo 直接创建 M1 `createTrustedExecutionGateway`，经 `runtime.agent.dispatch` 执行固定的读/写调用，目标为 `HoneypotRuntime` 创建的临时演示文件；不经过 M2 adapter。它证明内置隔离 demo 调用 Gateway，不是外部 Agent 宿主 callback、用户 workspace 文件或 Codex 原生工具已受保护的证据。Console 中 Agent 配置演示也使用隔离的临时项目。
 - `connect-check` 确实运行已安装 Codex CLI，但使用临时、ephemeral 配置与独立的 `dist/codex-connection-mcp.js`。该测试服务器直接创建 M1 `createTrustedExecutionGateway`，登记固定 `public_read`/`hook_probe` 合成回调，且 `files: []`；它没有调用 M2 adapter，也不消费用户文件、原生 Codex callback 或项目刚安装的配置。因此 `ALLOW` 仅是该合成路径证据。
@@ -241,3 +243,286 @@ owner artifact and M2/M5 exports have been integrated into one checkout.
 The existing `npm run pack:check` also passed for the standalone M3 package
 (same 96-file tarball); that smoke check covers the current SDK/CLI surface only
 and does not establish M2/M5 subpath availability.
+
+## M3 normal-CLI Host probe and status boundary — 2026-10-24
+
+This section supersedes earlier claims that the checked-out default Console
+route completes a positive M1/M2/M5 probe. At the start of this follow-up, the
+existing branch was `feature/ac3-agent-onboarding` at local report commit
+`75388fd619da884e072b4c0e51167777e1dd295d`, based on public PR #90 head
+`a49c0f796e4ab487de86089245cc1ea123a92b86`. The saved
+`test/agent-hook.test.ts` delta in `stash@{0}` was left untouched; no shared Hook
+path was edited.
+
+M3's ordinary Console keeps the exact, empty-body,
+`POST /api/security-center/protected-read` action behind origin, CSRF, and
+operator checks. It creates only a process-owned temporary
+`agent-canary-public.txt`, binds that exact registered file to M1, and asks
+M2's public `createSecurityGatewayHostAdapter` to compose M5's public
+`createSecurityToolRouter` with `mode: OBSERVE` and `verifyRealPaths: true`.
+The result is reduced to the fixed scope/status/reason/marker fields. The
+read-only `GET /api/security-center` route invokes only a trusted injected
+snapshot provider, applies the existing allowlist sanitizer, and returns
+UNKNOWN when the normal CLI has no provider. It never runs the POST probe.
+Sanitized M2 status now preserves only the exact coverage value
+`M2_FIXED_FILE_READS_ONLY`; paths, arguments, contents, hook state, and native
+tool protection remain excluded or UNKNOWN.
+
+The M3 adapter wrapper now requires M2's capability provider to expose the
+owner-reviewed `readFileWithCapability(capability, call, signal?)` method.
+It forwards those values unchanged through M5's strict router and counts only
+that held-read provider invocation. It does not adapt or fall back to M2's
+generic `executeRealTool` path callback. If the method is absent, composition
+fails closed with internal adapter reason
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE` before a protected callback or M1 read
+evidence can occur. The Console response keeps its existing fixed public reason
+enum and returns sanitized `UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; it does not
+expose the internal adapter reason through HTTP.
+
+The current M3 checkout does export `./gateway-adapter`, but the exact file
+`execution-isolation/gateway-adapter/gateway-adapter.mjs` in that checkout
+still supplies only `resolve` and `verify` on `fileReadCapability`. The M1-
+reviewed M2 candidate is PR #91 head
+`92dd42b900b10ce0294e9e3faa7e175d728228b3` (OPEN/Draft; M1 scoped ACCEPT in
+Issue #91 comment `6374194267`); its patch adds the
+missing provider method and routes it directly to M1's held-file read. That
+candidate is not integrated into the current M3 package. M5 PR #94 remains
+OPEN/Draft at `cca42cd1762f995e92454d55ffa5e63951e39144`; M3 continues to load
+only the public `./policy-router` subpath and never substitutes its local
+router if that export is unavailable. This is the precise blocker to a
+successful normal-CLI positive probe on the current package snapshot.
+
+The M3 contract fixture supplies the accepted M2 provider shape synthetically,
+then exercises M3's wrapper with a real M1 Gateway and the package's M5 router.
+It verifies a safe registered-read positive, a side-effect-free status query,
+physical junction/symlink alias denial, and same-path identity replacement
+denial before another held-read-provider invocation, generic callback, or M1
+read-evidence event. The separate default-package test confirms the checked-out
+M2 gap stays `UNKNOWN`; the Security Center GET regressions cover CSRF, exact
+route handling, UNKNOWN defaults, and sanitized status filtering. The synthetic
+contract fixture is not evidence that current M2 PR/package bytes are
+integrated.
+
+Local Windows validation for this M3 revision passed: `npm run build`;
+`node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
+(27/27); and `git diff --check`.
+
+Issue #52 remains OPEN / P0 / NOT_VERIFIED. M4 is a read-only status consumer;
+the default normal CLI currently supplies no M2 status provider, so its GET
+status correctly remains UNKNOWN. No real product-host callback, native tool,
+installer, M4 UI protection, or OS-atomic path/open transaction is verified.
+M9 must pin the exact M1/M2/M3/M5 sources and pass its Ubuntu and Windows
+composition checks before this P0 can advance.
+
+### Exact-head CI follow-up — 2026-10-24
+
+PR #90 run `40027402261` on exact head
+`ed9f5b4e1cb27a09d217509671c31bd20430ceb6` failed on macOS Node 22 in the new
+synthetic M2-contract test's cleanup hook. The test compared a `/var/...`
+temporary path with macOS `realpath`'s `/private/var/...` spelling. This was a
+test cleanup assertion, not a Host/capability decision failure. Ubuntu Node 20
+and 22, Docker, sponsor smoke, and ownership-contract evidence passed; the
+other matrix jobs were cancelled after the macOS failure.
+
+Test-only commit `c462b29c65c47f385ccaabcb69b8bb8b0895085b` verifies the
+temporary directory's device/inode identity and canonical containment before
+cleanup, without comparing noncanonical path spellings. It is included in
+public PR #90 head `606395eae6173384711afa1aafc5f71614b26ab9`. Exact-head main
+workflow run `40028179680` passed all 9 jobs, including macOS, Ubuntu, and
+Windows Node 20/22. A separate ownership-contract-evidence run
+`40028487559` failed because the PR body used a `## Test-Evidence` heading
+instead of the required `Test-Evidence:` metadata line; no code failure was
+reported by that check.
+
+Current local verification after the Console reason-enum correction and the
+missing-M2-provider regression: `npm run build` PASS; the two focused files
+PASS (27/27); `git diff --check` PASS. The public response remains within the
+existing fixed enum, while internal M3 diagnostics retain the precise missing
+M2 method. The ordinary CLI still lacks that method in its checked-out M2
+adapter and therefore remains UNKNOWN. No M1/M2/M4/M5 owner file or shared M0
+contract was changed.
+
+Exact-head PR CI for `98a034fa2066cec18f833440cc51275c389681c6` completed:
+workflow run `40031961789` passed 9/9 jobs (Docker, package smoke, sponsor
+smoke, and macOS/Ubuntu/Windows Node 20/22); ownership-contract-evidence run
+`40031991694` passed. This M3 branch CI does not replace M9's exact-source
+M1/M2/M3/M5 Ubuntu/Windows composition gate. Issue #52 remains OPEN / P0 /
+NOT_VERIFIED; M1 review of the host seam and M2/M5 package integration are
+still pending.
+
+### M9 ordinary-CLI composition failure — 2026-10-24
+
+M9 run `40031324000` on M9 head `b72d54eb7daeef4765ffe854edf9733ee3ffd865`
+checked out M3 `606395eae6173384711afa1aafc5f71614b26ab9`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. On both Ubuntu and Windows, M9
+subtest 11, “M3 ordinary CLI passes only after its fixed protected-read and
+replacement controls,” expected `PASS / FIXED_PROBE_CONTROLS_PASSED` but got
+`UNKNOWN / M2_CAPABILITY_PROVIDER_UNAVAILABLE`. M9 subtests 16 and 17 pass when
+the M3 adapter is directly composed with the packed exact M2 facade and M5
+router, including alias denials.
+
+The M9 CLI test resolves the public self-reference
+`@dorianchn/agent-canary/gateway-adapter` under `M3_ROOT`. Its package path is
+the same relative export path as M2's, but the checked-out target bytes differ:
+M3 tree blob `7a05ed64300c6345222dff13a4e929a250646acc`; exact M2 candidate blob
+`0d7053114e87177669ec2c3b416028e05affb62f`, which contains
+`fileReadCapability.readFileWithCapability`. Thus the ordinary CLI reaches the
+stale M2 copy in the M3 tree and correctly fails closed. M3 must not copy M2's
+implementation, import its private source tree, or fall back to a generic path
+callback. The next step is for the M9/package-composition owner to place the
+exact M2 public export bytes at the M3 package export target, assert blob
+identity, and rerun both hosts against current reviewed refs.
+
+M9 run `40031324000` is not exact-current-M3 evidence because it pins M3
+`606395e`; the current M3 head is `98a034fa2066cec18f833440cc51275c389681c6`.
+The run also has an unrelated M8 candidate assertion failure. M9 wrapper runs
+`40031323821` fail `npm audit --audit-level=high` for existing Hono,
+ip-address, and zod advisories; M3 did not change those dependencies. Issue #52
+remains OPEN / P0 / NOT_VERIFIED until the composition blocker is resolved and
+M9 exact-source Ubuntu/Windows composition passes.
+
+### Current-M3 exact-source M9 rerun — 2026-10-24
+
+M9 PR #36 advanced to head `ebd7c7e2fdc049a8d9e0f07d93b89e8934c870d5` and
+run `40032565764` now pins current M3 PR #90 head
+`98a034fa2066cec18f833440cc51275c389681c6`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. The M3 ordinary-CLI subtest 11
+still fails on both Ubuntu and Windows with response
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE` instead of the expected fixed-probe
+PASS. The internal adapter reason remains
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`; PR #90 `98a034f` keeps that internal
+reason out of the fixed Console response enum.
+This is now exact-current-M3 failure evidence, not only the earlier stale-pin
+run. The M2 packed-adapter composition and alias-denial controls still pass;
+the public-export target blob mismatch documented above remains the cause.
+
+The same run has an independent M8 candidate test failure. Current wrapper
+regression run `40032565853` still fails only its `npm audit --audit-level=high`
+step on existing Hono, ip-address, and zod advisories. M3 does not own those
+paths/dependencies. Issue #52 remains OPEN / P0 / NOT_VERIFIED until the M9
+composition owner fixes the public package contents and the exact-current
+Ubuntu/Windows run passes.
+
+### Latest M9 completion — 2026-10-24
+
+M9 PR #36 advanced to `80b721f02d5aa861654b89d3fd019b369caa3a39`; exact
+composition run `40034276936` uses M3 code `98a034fa2066cec18f833440cc51275c389681c6`
+(the subsequent M3 PR head `de12f31` is documentation-only), M2
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5
+`cca42cd1762f995e92454d55ffa5e63951e39144`. M3 ordinary-CLI subtest 11 fails
+on both Ubuntu and Windows. The actual HTTP result is
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; the internal M3 reason is
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`. Subtests 16 and 17 pass on both hosts
+when the M3 adapter is composed directly with the packed exact M2 facade and
+M5 router, including alias denial. The same run has a separate M8 candidate
+subtest 10 failure.
+
+M9 wrapper run `40034276939` fails the audit step on existing Hono,
+ip-address, and zod advisories. PR #90 code checks remain passing; this M9
+composition result leaves Issue #52 OPEN / P0 / NOT_VERIFIED pending exact M2
+public-export bytes in the M3 package target and a passing exact-source rerun.
+
+### Exact-current-PR M9 rerun — 2026-10-24
+
+M9 PR #36 advanced to `405a4fbbbe41a192f2dad8a8e52c246ed5c7bc2e`; run
+`40035799661` pins current M3 PR #90 head
+`10d488336ce8873f7eeade59064f6601f468e126`, M2 PR #91
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M5 PR #94
+`cca42cd1762f995e92454d55ffa5e63951e39144`. The M3 ordinary-CLI subtest 11
+fails on both Ubuntu and Windows. Its actual HTTP result is
+`UNKNOWN / OWNER_ADAPTER_UNAVAILABLE`; the internal M3 adapter reason is
+`M2_CAPABILITY_PROVIDER_UNAVAILABLE`. Direct packed exact-M2/M5 composition
+subtests 16/17 pass on both hosts, including alias denial; the public export
+target blob mismatch remains. A separate M8 subtest 10 fails in the same run.
+
+M9 wrapper run `40035799522` fails its audit step on existing Hono,
+ip-address, and zod advisories. M3 PR checks pass; Issue #52 stays OPEN / P0 /
+NOT_VERIFIED until M9/package composition aligns the M2 bytes and reruns the
+exact-source Ubuntu/Windows test successfully.
+
+### P0 #52 fixed-path Host probe/status — 2026-10-24
+
+Current M3 PR #90 exact head is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`.
+M4's exact audit report commit `7922309da0f6ea60c02b9bd17e6872aa98d753e5`
+and Issue #52 evidence confirm M4 is a read-only consumer of the sanitized
+Security Center status; the missing normal-CLI probe/route is M3-owned.
+The first-party Console protected-read action in
+`src/codex-connection-mcp.ts` is written against the public M1 Gateway
+capability, M2 `createSecurityGatewayHostAdapter`, and M5 strict OBSERVE router
+contracts. M3 fixes the tool name, relative file, and argument shape; its M2
+bridge verifies the opaque capability before passing it to M5 through the
+M2 capability-bound executor/provider. The M5 router is requested with
+`verifyRealPaths:true`. Missing M1/M2/M5 methods or exports leave the adapter
+`UNKNOWN`; the Console route exposes only its bounded status enum and never
+falls back to a path-only callback.
+
+The default Console process resolves these public self-reference subpaths from
+the M3 package. Its `gateway-adapter` target blob is
+`7a05ed64300c6345222dff13a4e929a250646acc`, which differs from exact M2 PR #91
+blob `0d7053114e87177669ec2c3b416028e05affb62f`. The local first-party CLI test
+therefore validates the checked-in M3 package path and synthetic capability
+fixture, not composition with the exact M2 candidate. M9 must repin current M3
+and run its package-composition check to resolve this boundary.
+
+The protected-read POST validates CSRF/operator/body before loading probe
+dependencies. It returns PASS only after the fixed registered-file positive
+control and alias/path-replacement denials. The GET Security Center route reads
+only an injected, sanitized M2 snapshot, checks the Console CSRF boundary, and
+does not start the protected probe. Native Codex tools and real installed-host
+callback activation remain `UNPROTECTED / NOT_VERIFIED`.
+
+Verification on this exact M3 head: `node --import tsx --test
+test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
+passed 27/27; `npm run build` passed. Exact PR workflow `40037861929` passed
+9/9 jobs, including package smoke and macOS/Ubuntu/Windows Node 20/22; separate
+ownership-contract evidence run `40037861836` passed. These tests use fixed
+fixtures and synthetic owner-contract seams; they do not establish activation
+inside a user-installed Codex process.
+
+M9 PR #36 run `40037657193` is not a current-source result: its log records M3
+`a84ee13fa0e7e8ba0ace371235236f1d6b203780`, M2
+`92dd42b900b10ce0294e9e3faa7e175d728228b3`, and M1 baseline
+`7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. Ubuntu and Windows both stopped in
+the M3 focused regression step: the missing-executor case expected internal
+reason `M2_CAPABILITY_PROVIDER_UNAVAILABLE` but `a84ee13` returned
+`M5_STRICT_ROUTER_COMPOSITION_UNAVAILABLE`. M3 commit `3a377ff` corrects this
+classification and current M3 CI is green. A later M9 run checked out
+`3a377ff` but failed its stale M3 pin assertion before the exact composition
+regression; see the current M9 pin result below. The M3 package subpath still has
+a different adapter blob from the exact M2 package export; the runs so far do
+not establish whether that byte difference affects the corrected ordinary-CLI
+path.
+
+No M1 review of exact M3 head `3a377ff` is recorded on PR #90. Keep Issue #52
+OPEN / P0 / NOT_VERIFIED until M9 pins the current M3 head and the exact-source
+Ubuntu and Windows composition checks pass. Do not infer real host activation,
+installer effectiveness, native-tool protection, or E4 from local/PR synthetic
+checks.
+
+### Current M9 pin assertion — 2026-10-24
+
+M9 PR #36 head `759f5f88ecc21ab4fe485d6a5683754828bbf374`, run
+`40037963937`, checked out the current M3 code `3a377ffe1d1f34b97a71ae6657accb9126d052f2`,
+M2 `92dd42b900b10ce0294e9e3faa7e175d728228b3`, M5
+`cca42cd1762f995e92454d55ffa5e63951e39144`, and M1 baseline
+`7cd34454c4bd6aa7176e0e076f5333639e3ccd5d`. Ubuntu and Windows both fail at
+the first M9 composition-test assertion in `test/m9-cross-module-composition.test.mjs`:
+the test expects M3 `10d488336ce8873f7eeade59064f6601f468e126`, while the checked-out
+M3 source is `3a377ffe1d1f34b97a71ae6657accb9126d052f2`. The remaining composition
+assertions do not run. This is an M9 pin/test freshness blocker; no M3 source
+failure was reached in this run. M9 must update its expected M3 SHA and rerun
+both hosts. Issue #52 remains OPEN / P0 / NOT_VERIFIED.
+
+### Latest M9 composition gate — 2026-10-24
+
+M9 PR #36 run `40039180984` checked out the exact current M3 source
+`3a377ffe1d1f34b97a71ae6657accb9126d052f2`; its M3 pin assertion now matches.
+Both Ubuntu and Windows nevertheless fail in the same M9 test-file setup at
+`M6 current source root must use the recorded actual merge tree`: actual M6 tree
+`d768ae07b109f978072c8805e29424d49f49f154`, expected
+`bbb5eea8678ebfaaa1826bd529079cf16e6bdeda`. The setup aborts before M3-specific
+composition assertions run. This is an M6/M9 provenance-gate blocker, not an
+observed M3 behavior failure. M9 must update/verify its M6 merge-tree record and
+rerun both hosts before #52 can be considered for promotion.
