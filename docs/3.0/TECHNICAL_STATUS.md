@@ -10130,3 +10130,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at `c77faa38d1c9bcfcaa638dd6d39051ec719b633a` passed all 12/12 checks, including Windows M9 composition run `40614821141`.
 - Inspected the actual Windows job log: `Checkout exact M7 source` selected `bba0f0f89c610f8198660e799de7a652b8ea8e96` from the current feature-base M9 manifest, not current PR #128 head `bf9faeeb96625325e6fab8e497954ff6db4e78ea`. Therefore the green M7 package/installer composition steps validate the already-merged pinned source only; they do not satisfy current #128 exact-head validation.
 - Added this bounded source-scope note to Issue #126. No M7 source, M9 pin, PR #24, or `main` changed.
+
+## 2026-10-28 01:33 UTC — M9 manifest versus branch matrix
+
+- Compared feature-base manifest (`34fbe6d`), M9 candidate PR #127 (`635f8bc`), and all current remote module branch heads. PR #127 pins M1–M6 exactly to their current heads.
+- PR #127 M7 pin `bba0f0f` matches the feature-base manifest and merged PR #113 source. New M7 PR #128 head `bf9faee` is a separate divergent branch, not descended from current base or that pin; reconcile its lineage before promotion.
+- PR #127 M8 pin `1c94ed4` also matches feature-base; current M8 PR #129 head `685520c` is its one-commit descendant. Explicit owner disposition and exact-head composition are still required.
+- PR #131 latest 12/12 composition used M7 `bba0f0f`, not `bf9faee`. Posted this scoped matrix on Issue #126; M0 changed no pin/ref.
