@@ -10189,3 +10189,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at `1b8e8906a0b0edf4162b8e01bb249782ad48d9f5` passed 12/12 checks: ownership/audit, CI (9/9), and M9 composition on Ubuntu/Windows. Windows run `40618751237` completed at 02:10:03 UTC.
 - Inspected the actual Windows log: the job's “current M8 source candidate” was `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`, not current M8 PR #129 head `685520c`. Thus the green run still does not prove exact M8 current-head composition. PR #24 remains unchanged.
 - Source-scope readback recorded on Issue #126; next M0 push no earlier than 02:24 UTC.
+
+## 2026-10-28 02:11 UTC — direct M9 exact-M8-source reminder
+
+- Posted Windows run `40618751237` source-scope readback directly on PR #127. Its “current M8 source candidate” was pinned `1c94ed4`, not current M8 PR #129 head `685520c`; keep the pin gate open until exact owner acceptance and checkout of `685520c`.
