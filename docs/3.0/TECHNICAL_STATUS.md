@@ -10445,3 +10445,14 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 - PR #133 exact head `f1502489fbf807c16aad72c50b522c373ac07746` still has zero check runs (`check_runs.total_count=0`). The M0 request for genuine exact-head CI and event diagnosis is PR comment `6465959567`.
 - M3 has not recorded an exact-head disposition for #120 `6830cf8`; M6/M8 owner dispositions remain open. M0's exact source audit and requests remain on Issues #125/#80/#126 and PR #127; no M9 pin changed.
 - Posted the exact-head 12/12 check readback on PR #131 comment `6466062137`, explicitly separating feature-base composition from current M9 source validation.
+
+## 10:14 UTC — default-branch Hono advisory gate
+
+- GitHub alert #2 is still OPEN for `hono@4.13.7` in `main`; GHSA-5r4p-p66f-jhc7 affects `>=4.12.4, <4.13.11`, first patched in `4.13.11`. Existing Dependabot PR #67 proposes `4.13.13`, remains OPEN, and has 9/9 exact-head checks passing at `cda74e9` (package-smoke included).
+- A source grep of `origin/main` found no `serveStatic` callsite. This narrows likely applicability but does not resolve the advisory. M0 refreshed P1 Issue #70 in comment `6466290024`; no merge to `main` was made.
+- Official advisory: https://github.com/honojs/hono/security/advisories/GHSA-5r4p-p66f-jhc7
+
+## 10:18 UTC — exact M0 checks and scope
+
+- PR #131 exact head `05be2f046754136c3ba01cd4cc3de143e88f9fd8` has 12/12 hosted checks passing: CI `40670248108`, ownership `40670247619`, Ubuntu/Windows composition `40670247565`. The workflow validates event-base M9 `34fbe6d`, not PR #127's current M9 manifest candidate. Exact readback is PR comment `6466398007`.
+- M0 did not change module PRs, module pins, `main`, PR #24, or Release. M1 exact-head checks remain absent; M3 and M6/M8 owner responses remain missing on #125/#80.
