@@ -10514,3 +10514,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `9d26adcf7e29f61cfced3345dca275373f6cdda2` has 12/12 hosted checks passing, including composition run `40691614390` on both platforms. It validates event-base M9 `34fbe6d`, not current PR #127 candidate pins. Exact readback is PR comment `6469636156`.
 - M1–M8 owner gates, M9 exact-current composition, P0 #52, and product E4 acceptance remain unresolved. No module head change appeared.
+
+## 13:08 UTC — cross-module monitor
+
+- No new owner comments or source heads since the 12:59 snapshot. Current M3/M6/M8 exact-head dispositions remain absent; M1 #133 still has no check runs; M9 candidate pins remain unchanged.
+- M0 PR #131 latest pushed head `9d26adc` has 12/12 hosted checks passing. Its composition remains event-base only. PR #24 remains OPEN/Draft at the original SHA/base.
