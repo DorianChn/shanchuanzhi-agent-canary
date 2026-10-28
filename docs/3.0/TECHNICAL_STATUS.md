@@ -10524,3 +10524,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `d0eb6e901cf2186fac1eedc0ae18fc19ca6c3376` has 12/12 hosted checks passing, including Ubuntu/Windows composition `40694323096`. It validates event-base M9 `34fbe6d`, not current PR #127 pins. PR comment `6470028486` records this distinction.
 - No new module heads or owner dispositions appeared. Product E4 and P0 #52 remain NOT_VERIFIED.
+
+## 13:40 UTC — exact M0 head b9e8695 validated
+
+- PR #131 exact head `b9e8695aefc98522d1a74fb2428f2f57bf9d305f` has 12/12 completed checks passing. Both Ubuntu and Windows composition passed (`40697821200` for Windows). These checks validate the coordinator docs against the workflow's event-base M9 manifest, not PR #127's latest candidate pins. The exact-head readback is recorded in PR comment `6470587848`.
+- Module follow-up heads remain unchanged. M1 #133 has zero hosted check runs; M3 exact-head owner disposition and M6/M8 shared-source coordination/review remain open. Issue #52 remains OPEN/P0/NOT_VERIFIED; product E4 remains NOT_VERIFIED. PR #24 is unchanged OPEN/Draft.
