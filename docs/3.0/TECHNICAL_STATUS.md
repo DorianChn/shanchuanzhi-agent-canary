@@ -10586,3 +10586,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - Independent read-only review confirms the M7 candidate's Gateway source blob `636926c…` differs from M1 #133 exact-head blob `bace4ea…`; its two modified test blobs (`daef910b…`, `45b1b3ce…`) exactly match the M1 tests. M1's quarantine-order change explains why the tests pass on current M1 source but fail on older M7 source; M0 directly observed 17/19 focused tests on M7. This is a source dependency, not a changed test payload.
 - M7 candidate remains local/unpublished. PR #133 exact head has zero hosted checks; #128 hosted checks cover only remote `8674860`, and M9 #127 pins historical sources. M0 recorded this dependency and acceptance chain in Issue #126 comment `6474083905`.
+
+## 16:07 UTC — M1 exact-head check suppression explained
+
+- Independent read-only audit confirmed PR #133 current head `f1502489fbf807c16aad72c50b522c373ac07746` is `mergeable=false` / `mergeable_state=dirty`; it has zero exact-head Actions runs, check-runs, and commit statuses. GitHub's official trigger guidance says `pull_request` workflows do not run when a PR has a merge conflict. Prior runs target superseded `3f0921f`. Exact conflict onset is not exposed publicly.
+- No verified exact-head manual rerun path exists for the current workflows. Manual `workflow_dispatch` requires the workflow file on default branch, and CI/AC3 lack a usable default-branch dispatch. The minimal owner action is a real conflict resolution/change on the existing M1 branch, then publish new head and verify fresh hosted checks. M0 recorded source and owner action on PR #133 comment `6474118030` and integration Issue #126 comment `6474118948`.
