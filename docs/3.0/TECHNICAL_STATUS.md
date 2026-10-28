@@ -10193,3 +10193,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-28 02:11 UTC — direct M9 exact-M8-source reminder
 
 - Posted Windows run `40618751237` source-scope readback directly on PR #127. Its “current M8 source candidate” was pinned `1c94ed4`, not current M8 PR #129 head `685520c`; keep the pin gate open until exact owner acceptance and checkout of `685520c`.
+
+## 2026-10-28 02:12 UTC — repository ignore safety check
+
+- Re-read the current `.gitignore` and verified representative paths with `git check-ignore -v`: root `logs/`, credential JSON patterns, `*.tmp`, and editor swap files are ignored. Existing ignore rules also cover `.env*`, private key/certificate formats, `.agent-canary/`, M0 workspaces, and generated E4 one-click bundles.
+- The only explicit `.gitignore` delta in M0's PR is additional credential JSON names; no log/key/temp exception was introduced. Examples remain explicitly unignored only for reviewed `client_secret.example.json` and `service-account-key.example.json` fixtures.
+- This satisfies the repository hygiene check for the current tree; no ignore rule was changed during this verification.
