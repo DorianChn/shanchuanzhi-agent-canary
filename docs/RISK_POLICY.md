@@ -37,17 +37,17 @@ await router.dispatch({ name: 'read_file', args: { path: 'README.md' } });
 
 工具描述必须由可信宿主提供，不能来自模型参数。工具别名和参数都会参与判断。类型：READ_ONLY、WRITE、EXECUTE、NETWORK、SENSITIVE_DATA、DESTRUCTIVE。
 
-真实文件系统宿主可通过 `createSecurityToolRouter({ verifyRealPaths: true })` 显式启用真实路径检查。此选项拒绝 file-read/file-write/delete 中的符号链接、Windows junction 或硬链接别名，并将**所有启用此选项的 file-read/file-write/delete** 在 callback 前以 `path_execution_not_pinned` 拒绝：当前 `executeRealTool` 仅接收含路径的调用，M5 无法证明 callback 按校验过的文件身份访问，而不是重新打开可变路径。公开文件也会被拒绝；文件操作要恢复放行，需 M0 所有的共享接口先定义由 M1 Gateway 提供、绑定已校验文件身份的能力，M5 再调用该能力且不调用通用 path callback。缺省/`false` 保持旧版词法路径行为，但不提供真实路径保护。
+真实文件系统宿主可通过 `verifyRealPaths: true` 启用真实路径检查，拒绝符号链接、Windows junction 和硬链接别名。file-write/delete 仍以不可由 OBSERVE 覆盖的 `path_execution_not_pinned` 拒绝；安全 file-read 必须绑定由可信宿主提供并通过校验的 `fileReadCapability`，实际读取直接调用其 `readFileWithCapability()` provider，绝不落到通用 path callback。缺少能力、provider 不完整或校验失败都 hard-deny。STRICT 的 file-read 无论该开关是否设置都要求此 held-file 路径；OBSERVE 无论该开关都检查 canonical alias/越界；BALANCED 未启用该开关时保留词法兼容行为。
 
 | 模式 | 默认/`verifyRealPaths: false` 的正常公开读取、审定只读命令 | 写入、构建、未审定网络 | 明显秘密外传、越界路径 | 已隔离 Guard |
 |---|---|---|---|---|
 | OBSERVE | 执行并记录 | 执行并记录 | 拒绝 | 拒绝 |
 | BALANCED | 执行 | 人工批准 | 拒绝 | 拒绝 |
-| STRICT | 执行 | 拒绝 | 拒绝 | 拒绝 |
+| STRICT | 文件读取需可信 held-file provider；审定命令可执行 | 拒绝 | 拒绝 | 拒绝 |
 
 OBSERVE 会放行已登记工具的普通审批类风险，仍禁止明显秘密外传、敏感数据读取和越界路径；不要把模式名称理解为安全保证。BALANCED 的构建、写入审批会中断无人值守工作流。STRICT 有明确兼容性影响。
 
-启用 `verifyRealPaths: true` 时，所有注册的 file-read/file-write/delete 在所有模式下都 fail closed；此保护配置不提供文件 I/O 正向路径，见下方原因说明。
+启用 `verifyRealPaths: true` 时，通用路径 callback 的 file-read/file-write/delete 都 fail closed；唯一的正向读取路径是上表所述、经验证并被实际消费的 held-file capability。M5 provider 夹具测试不等于已安装产品、原生 Hook 或 OS-atomic TOCTOU 已验证；M1 Gateway 仍负责持有资源身份与最终授权。
 
 ## 决策语义
 
@@ -76,7 +76,7 @@ if (preview.conflicts.length === 0) router.policyManager.apply(preview.rules, 'a
 
 预览列出新增、移除、变更和选择器冲突。移除拒绝规则、替换工具选择器或缩窄风险范围属于项目策略放宽，`apply` 必须显式传入 `acknowledgeWeakening: true`；扩大拒绝范围可直接应用。`rollback(version, operator, true)` 会新增一个更高版本来恢复历史规则，不重写旧记录。传入的操作者字符串由宿主认证流程提供，SDK 本身不验证身份。
 
-托管 Router 在真实 callback 开始前用同一存储锁再次检查当前项目策略，并在 callback 完成/失败后记录结果再释放锁。执行期间的策略更改会因存储忙而失败并保持旧策略，宿主可在执行结束后重试；不要把更新失败误报为已应用。
+托管 Router 在真实 callback 或 held-file provider 开始前用同一存储锁再次检查当前项目策略，并在完成/失败后重验审计链、记录结果再释放锁。执行期间的策略更改会因存储忙而失败并保持旧策略，宿主可在执行结束后重试；不要把更新失败误报为已应用。结果审计失败会隔离后续调用，同时保留该次操作的原始结果/异常，不能据此声称它未执行或已撤销。
 
 管理器的 `reviewDecision` 可与 `createRiskPolicyRouter()` 配合，也由 `createManagedRiskPolicyRouter()` 自动接线。该托管路由可记录 `SDK`、`NATIVE_HOOK`、`GATEWAY`、`HOST` 来源，但 Hook/Gateway 适配器需由宿主显式调用 `policyManager.recordDecision()`；当前 M1 Hook 和 Gateway 的既有日志协议尚未自动迁移到此 M5 格式。
 

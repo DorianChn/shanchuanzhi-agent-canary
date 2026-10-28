@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -175,6 +176,219 @@ test('a project rule added after initial review is rechecked before the callback
   assert.ok(router.policyManager.evidence().some(e => e.policy_version === 1 && e.decision_source === 'PROJECT_POLICY' && e.execution_status === 'NOT_STARTED'));
 });
 
+test('managed held reads recheck a new project denial before the provider starts', async () => {
+  const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
+  for (const mode of ['OBSERVE', 'STRICT'] as const) {
+    const root = fs.realpathSync(workspace()), target = path.join(root, 'public.txt');
+    const sentinel = 'M5_MANAGED_HELD_READ_FIXTURE';
+    fs.writeFileSync(target, sentinel);
+    const before = createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+    const capability = Object.freeze(Object.create(null));
+    let providerReads = 0, pathCallbacks = 0;
+    let router!: ReturnType<typeof createManagedRiskPolicyRouter<string>>;
+    router = createManagedRiskPolicyRouter({
+      guard: createAgentGuard({ sessionId: `managed-held-project-denial-${mode}`, alert: false }),
+      workspaceRoot: root, policyStorageDirectory: storage(), mode, verifyRealPaths: true,
+      tools: { read_file: { operation: 'file-read' } },
+      fileReadCapability: {
+        resolve: () => capability,
+        verify: (candidate, call, operation) => candidate === capability && call.name === 'read_file' && call.args.path === 'public.txt' && operation === 'file-read',
+        readFileWithCapability: async () => { providerReads++; return fs.readFileSync(target, 'utf8'); },
+      },
+      reviewDecision: async () => {
+        assert.equal(router.policyManager.apply([
+          { id: 'deny_held_read', tool: 'read_file', effect: 'DENY', reasonCode: 'project_read_restricted' },
+        ], 'operator').applied, true);
+        return 'UNCHANGED';
+      },
+      executeRealTool: () => { pathCallbacks++; return 'path callback must not run'; },
+    });
+
+    await assert.rejects(router.dispatch({ name: 'read_file', args: { path: 'public.txt' } }), (error: unknown) =>
+      error instanceof PolicyBlockedError && error.decision.action === 'DENY' && error.decision.reason === 'project_read_restricted');
+    assert.equal(providerReads, 0);
+    assert.equal(pathCallbacks, 0);
+    assert.equal(router.pendingApprovals().length, 0);
+    assert.equal(fs.readFileSync(target, 'utf8'), sentinel);
+    assert.equal(createHash('sha256').update(fs.readFileSync(target)).digest('hex'), before);
+    const final = router.policyManager.evidence().at(-1);
+    assert.equal(final?.decision_source, 'PROJECT_POLICY');
+    assert.equal(final?.decision, 'DENY');
+    assert.equal(final?.reason_code, 'project_read_restricted');
+    assert.equal(final?.policy_version, 1);
+    assert.equal(final?.execution_status, 'NOT_STARTED');
+    assert.equal(router.policyManager.verifyEvidence().valid, true);
+  }
+});
+
+test('managed held reads fail closed when audit corrupts after initial review', async () => {
+  const { createAgentGuard } = await import('../src/sdk.js');
+  const root = fs.realpathSync(workspace()), store = storage(), capability = Object.freeze(Object.create(null));
+  fs.writeFileSync(path.join(root, 'public.txt'), 'M5_MANAGED_AUDIT_FIXTURE');
+  let providerReads = 0, pathCallbacks = 0;
+  let router!: ReturnType<typeof createManagedRiskPolicyRouter<string>>;
+  router = createManagedRiskPolicyRouter({
+    guard: createAgentGuard({ sessionId: 'managed-held-audit-corruption', alert: false }),
+    workspaceRoot: root, policyStorageDirectory: store, mode: 'OBSERVE', verifyRealPaths: true,
+    tools: { read_file: { operation: 'file-read' } },
+    fileReadCapability: {
+      resolve: () => capability, verify: candidate => candidate === capability,
+      readFileWithCapability: async () => { providerReads++; return 'must not read'; },
+    },
+    reviewDecision: async () => {
+      fs.appendFileSync(path.join(store, 'project-policies', `${router.policyManager.projectId}.jsonl`), '{}\n');
+      return 'UNCHANGED';
+    },
+    executeRealTool: () => { pathCallbacks++; return 'path callback must not run'; },
+  });
+
+  await assert.rejects(router.dispatch({ name: 'read_file', args: { path: 'public.txt' } }), /POLICY_AUDIT/);
+  assert.equal(providerReads, 0);
+  assert.equal(pathCallbacks, 0);
+  assert.equal(router.pendingApprovals().length, 0);
+  assert.equal(fs.readFileSync(path.join(root, 'public.txt'), 'utf8'), 'M5_MANAGED_AUDIT_FIXTURE');
+});
+
+test('managed held reads record successful and uncertain provider outcomes', async () => {
+  const { createAgentGuard } = await import('../src/sdk.js');
+  for (const failed of [false, true]) {
+    const root = fs.realpathSync(workspace()), capability = Object.freeze(Object.create(null));
+    const sentinel = 'M5_HELD_OUTCOME_DO_NOT_LOG';
+    fs.writeFileSync(path.join(root, 'public.txt'), sentinel);
+    let providerReads = 0, pathCallbacks = 0;
+    const failure = Error('M5_HELD_FAILURE_DO_NOT_LOG');
+    const router = createManagedRiskPolicyRouter({
+      guard: createAgentGuard({ sessionId: `managed-held-outcome-${failed}`, alert: false }),
+      workspaceRoot: root, policyStorageDirectory: storage(), mode: 'STRICT',
+      tools: { read_file: { operation: 'file-read' } },
+      fileReadCapability: {
+        resolve: () => capability, verify: candidate => candidate === capability,
+        readFileWithCapability: async candidate => {
+          assert.equal(candidate, capability);
+          providerReads++;
+          if (failed) throw failure;
+          return fs.readFileSync(path.join(root, 'public.txt'), 'utf8');
+        },
+      },
+      executeRealTool: () => { pathCallbacks++; return 'path callback must not run'; },
+    });
+
+    const read = router.dispatch({ name: 'read_file', args: { path: 'public.txt' } });
+    if (failed) await assert.rejects(read, error => error === failure);
+    else assert.equal(await read, sentinel);
+    assert.equal(providerReads, 1);
+    assert.equal(pathCallbacks, 0);
+    assert.equal(router.pendingApprovals().length, 0);
+    const events = router.policyManager.evidence(), outcome = events.at(-1);
+    assert.ok(events.some(event => event.reason_code === 'final_pre_execution_check'));
+    assert.equal(outcome?.event_type, 'EXECUTION_RESULT');
+    assert.equal(outcome?.decision_source, 'TOOL');
+    assert.equal(outcome?.decision, 'NOT_APPLICABLE');
+    assert.equal(outcome?.execution_status, failed ? 'UNKNOWN' : 'SUCCEEDED');
+    assert.equal(outcome?.side_effect_verification, failed ? 'UNKNOWN' : 'NOT_VERIFIED');
+    assert.equal(router.policyManager.exportEvidence().includes(sentinel), false);
+    assert.equal(router.policyManager.exportEvidence().includes(failure.message), false);
+    assert.equal(router.policyManager.verifyEvidence().valid, true);
+  }
+});
+
+test('managed held reads hold the policy lock through provider completion', { timeout: 5000 }, async () => {
+  const { createAgentGuard } = await import('../src/sdk.js');
+  const root = fs.realpathSync(workspace()), capability = Object.freeze(Object.create(null));
+  fs.writeFileSync(path.join(root, 'public.txt'), 'M5_HELD_LOCK_FIXTURE');
+  let release!: () => void, entered!: () => void, pathCallbacks = 0;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const started = new Promise<void>(resolve => { entered = resolve; });
+  const rule = { id: 'deny_held_read', tool: 'read_file', effect: 'DENY', reasonCode: 'project_read_restricted' };
+  const router = createManagedRiskPolicyRouter({
+    guard: createAgentGuard({ sessionId: 'managed-held-policy-lock', alert: false }),
+    workspaceRoot: root, policyStorageDirectory: storage(), mode: 'STRICT',
+    tools: { read_file: { operation: 'file-read' } },
+    fileReadCapability: {
+      resolve: () => capability, verify: candidate => candidate === capability,
+      readFileWithCapability: async () => { entered(); await gate; return 'M5_HELD_LOCK_FIXTURE'; },
+    },
+    executeRealTool: () => { pathCallbacks++; return 'path callback must not run'; },
+  });
+
+  const read = router.dispatch({ name: 'read_file', args: { path: 'public.txt' } });
+  try {
+    await started;
+    assert.throws(() => router.policyManager.apply([rule], 'operator'), /POLICY_STORE_LOCKED_OR_UNAVAILABLE/);
+  } finally {
+    release();
+    await read;
+  }
+  assert.equal(await read, 'M5_HELD_LOCK_FIXTURE');
+  assert.equal(pathCallbacks, 0);
+  assert.equal(router.policyManager.currentVersion(), 0, 'the concurrent policy mutation must not be reported as applied');
+  assert.equal(router.policyManager.evidence().at(-1)?.policy_version, 0);
+  assert.equal(router.policyManager.apply([rule], 'operator').applied, true, 'the completed read must release the policy lock');
+  assert.equal(router.policyManager.verifyEvidence().valid, true);
+});
+
+test('managed held reads keep missing and invalid providers fail closed', async () => {
+  const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
+  for (const scenario of ['missing', 'missing_reader', 'invalid'] as const) {
+    const root = fs.realpathSync(workspace()), capability = Object.freeze(Object.create(null));
+    fs.writeFileSync(path.join(root, 'public.txt'), 'M5_MANAGED_INVALID_PROVIDER_FIXTURE');
+    let providerReads = 0, pathCallbacks = 0;
+    const provider = {
+      resolve: () => capability, verify: () => scenario !== 'invalid',
+      ...(scenario === 'missing_reader' ? {} : { readFileWithCapability: async () => { providerReads++; return 'must not read'; } }),
+    };
+    const router = createManagedRiskPolicyRouter({
+      guard: createAgentGuard({ sessionId: `managed-held-${scenario}`, alert: false }),
+      workspaceRoot: root, policyStorageDirectory: storage(), mode: 'STRICT',
+      tools: { read_file: { operation: 'file-read' } },
+      // Deliberately incomplete host-provider shape must retain its hard denial.
+      fileReadCapability: scenario === 'missing' ? undefined : provider as any,
+      executeRealTool: () => { pathCallbacks++; return 'path callback must not run'; },
+    });
+
+    await assert.rejects(router.dispatch({ name: 'read_file', args: { path: 'public.txt' } }), (error: unknown) =>
+      error instanceof PolicyBlockedError && error.decision.action === 'DENY' && error.decision.reason === 'path_execution_not_pinned');
+    assert.equal(providerReads, 0);
+    assert.equal(pathCallbacks, 0);
+    assert.equal(router.pendingApprovals().length, 0);
+  }
+});
+
+test('managed held reads quarantine after result audit failure and retain the original outcome', async () => {
+  const { createAgentGuard, CanaryBlockedError } = await import('../src/sdk.js');
+  for (const failed of [false, true]) {
+    const root = fs.realpathSync(workspace()), store = storage(), capability = Object.freeze(Object.create(null));
+    fs.writeFileSync(path.join(root, 'public.txt'), 'M5_HELD_COMPLETED_FIXTURE');
+    const guard = createAgentGuard({ sessionId: `managed-held-outcome-audit-failure-${failed}`, alert: false });
+    const failure = Error('M5_HELD_UNCERTAIN_FIXTURE');
+    let providerReads = 0, pathCallbacks = 0;
+    let router!: ReturnType<typeof createManagedRiskPolicyRouter<string>>;
+    router = createManagedRiskPolicyRouter({
+      guard, workspaceRoot: root, policyStorageDirectory: store, mode: 'STRICT',
+      tools: { read_file: { operation: 'file-read' } },
+      fileReadCapability: {
+        resolve: () => capability, verify: candidate => candidate === capability,
+        readFileWithCapability: async () => {
+          providerReads++;
+          fs.appendFileSync(path.join(store, 'project-policies', `${router.policyManager.projectId}.jsonl`), '{}\n');
+          if (failed) throw failure;
+          return 'M5_HELD_COMPLETED_FIXTURE';
+        },
+      },
+      executeRealTool: () => { pathCallbacks++; return 'path callback must not run'; },
+    });
+
+    const outcome = router.dispatch({ name: 'read_file', args: { path: 'public.txt' } });
+    if (failed) await assert.rejects(outcome, error => error === failure);
+    else assert.equal(await outcome, 'M5_HELD_COMPLETED_FIXTURE');
+    assert.equal(guard.state, 'QUARANTINED');
+    await assert.rejects(router.dispatch({ name: 'read_file', args: { path: 'public.txt' } }), CanaryBlockedError);
+    assert.equal(providerReads, 1, 'the completed read must not be retried or described as blocked');
+    assert.equal(pathCallbacks, 0);
+    assert.equal(router.policyManager.verifyEvidence().valid, false);
+  }
+});
+
 test('a newly added project denial invalidates a previously pending human approval', async () => {
   const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
   let callbacks = 0;
@@ -345,6 +559,21 @@ test('missing policy log with a retained checkpoint fails closed in warm and fre
 
   const fresh = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });
   assert.throws(() => fresh.currentRules(), /POLICY_AUDIT_HEAD_MISMATCH/);
+});
+test('failed audit validation never caches a corrupted log as trusted', () => {
+  const root = workspace(), store = storage();
+  const manager = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });
+  manager.apply([denyRule()], 'operator');
+  fs.appendFileSync(path.join(store, 'project-policies', `${manager.projectId}.jsonl`), '{}\n');
+
+  assert.throws(() => manager.currentRules(), /POLICY_AUDIT_CHAIN_INVALID/);
+  assert.throws(() => manager.currentRules(), /POLICY_AUDIT_CHAIN_INVALID/, 'repeating a failed read must not return the previous cache');
+  assert.throws(() => manager.apply([], 'operator', true), /POLICY_AUDIT_CHAIN_INVALID/);
+  assert.throws(() => manager.exportEvidence(), /POLICY_AUDIT_CHAIN_INVALID/);
+  assert.equal(manager.verifyEvidence().valid, false);
+  assert.equal(manager.verifyEvidence().valid, false);
+  const fresh = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });
+  assert.throws(() => fresh.currentRules(), /POLICY_AUDIT_CHAIN_INVALID/);
 });
 
 test('native lab hook logs only the fixed allowlist and drops synthetic sensitive canaries', t => {

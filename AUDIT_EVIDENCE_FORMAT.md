@@ -80,6 +80,10 @@ manager.writeEvidenceExport('/path/outside/project/policy-evidence.json');
 
 项目策略证据有 100,000 事件及 32 MiB 上限；到达上限或校验/存储故障时策略管理器 fail closed，不继续执行托管回调。托管 callback 执行期间持有该项目的排他存储锁，以保证最终决策与执行结果引用同一策略版本；同时发生的策略写入会报忙并未应用，宿主可在回调完成后重试。导出不加密；宿主需保护数据目录、HMAC key 与外部锚点。Windows ACL 由宿主环境管理。
 
+严格文件读取的 `readFileWithCapability()` provider 也属于托管执行边界：读取前重查项目策略，持同一锁执行，并单独记录结果；不会回落到通用路径 callback。异步执行结束后先重验磁盘链再追加结果。缓存只接纳已完整校验的链，校验失败不会让后续读取复用旧事件而绕过坏链。
+
+如果结果审计失败，provider 可能已经完成读取或产生副作用；托管路由保留其原始结果/异常，触发 Guard 隔离后续调用，不自动重试、不记录为 `DENY / NOT_STARTED`。对应 `managed held reads` 与 `failed audit validation` 回归覆盖此边界，不能据此推断任意外部执行器的副作用已撤销。
+
 ## 脱敏边界
 
 - 不把原始 `args`、工具结果、完整 URL、请求正文、文件路径或异常消息写入 M5 证据。

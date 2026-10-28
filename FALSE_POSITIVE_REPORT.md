@@ -19,6 +19,8 @@
 
 对应测试：`test/false-positive.test.ts` 的四个正常任务用例、`test/risk-policy.test.ts` 中三种模式的只读与 Guard 测试、`test/policy-management.test.ts` 中项目策略人工审批用例。
 
+2026-10-25 补充托管严格读取正向控制：`managed held reads record successful and uncertain provider outcomes` 确认有效能力通过专用 provider 读取一次、通用路径 callback=0、无需审批，正常结果有 `SUCCEEDED / NOT_VERIFIED` 事件。`managed held reads hold the policy lock through provider completion` 确认并发策略修改明确报忙、读取完成后可重试修改；不把报忙视为策略已经生效。缺失能力或新增项目 DENY 的拒绝是预期安全边界。本轮 M5 四套测试 73/73（包括既有四个开发任务用例），仍为合成夹具结果。
+
 ## 判断
 
 目前这些样本没有发现正常读取和已审定状态命令被误拒；常见写入与构建会被暂停等待人工确认，但不会在等待期间执行。按这个策略语义，审批提示不计为误拒。未知工具即使实际无害也会被拒绝，因为宿主未注册能力描述；应通过审阅并登记能力来解决，而不是让模型或 `OBSERVE` 模式代替注册。
@@ -28,7 +30,7 @@
 - 这是小规模合成用例，不是生产遥测，也不能据此给出统计误报率。
 - `READ_COMMANDS` 是精确集合；未列入的 Shell 命令会要求确认。不能据此推断任意 `git` 命令、脚本或构建步骤只读。
 - `OBSERVE` 会允许普通、已登记操作的可选审批类风险继续到宿主 callback，适合受控演练；敏感数据读取/外发、明显硬拒绝及越界路径仍被阻止。它不是减少误拦截的安全默认值；Canary Guard 与未登记工具拒绝仍有效。
-- 文件路径策略不解析 symlink/realpath，也不替代宿主文件权限；HTTP origin allowlist 不替代宿主 DNS/IP/出口控制。测试未启动真实网络/文件执行器。
+- OBSERVE 和显式 `verifyRealPaths: true` 会检查 canonical path 与链接别名；STRICT 文件读取无论该开关都需要可信 held-file provider。BALANCED 未启用该开关时保留词法兼容行为。它们不替代宿主文件权限或证明 OS-wide 原子性；HTTP origin allowlist 不替代 DNS/IP/出口控制。本轮托管读取 provider 是临时文件夹具，没有真实网络或已安装宿主证据。
 - Canary 事件可能由合法误操作触发；需要人工调查。不能用 AI 复核作为自动重置或放行依据。
 
 测试命令与整体验证结果由 Draft PR 记录。
