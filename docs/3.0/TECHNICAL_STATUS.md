@@ -10301,6 +10301,26 @@ M0 posted this local-only evidence and its limits to Issue #126 comment `6464492
 3. Wait for exact owner dispositions before changing M9 pins; rerun Ubuntu and Windows composition only against the resulting reviewed M9 head.
 4. Keep PRs Draft and keep `main`, PR #24, Release, and independent product E4 state unchanged.
 
+## 2026-10-28 08:49 UTC — coordinated existing-branch push batch
+
+At the scheduled 20-minute batch, M0 pushed coordinator docs commit `7a454908de8b5114b5f3c500169fea9f2a5c9a47`, M5 pushed reconciliation merge `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7`, and M7 pushed reconciliation merge `1575ad8b116f9aee4da9c430d4eefb92c7e95dc1`. All three updates were sent in one non-force atomic Git push; each local candidate descended from the fetched remote head. M5/M7 retain their existing branches and Draft PRs #122/#128.
+
+GitHub immediately started exact-head checks. At the initial read, PR #122 checks were pending (composition run `40659482140`, CI run `40659482117`, ownership run `40659482083`); PR #128 checks were pending (composition `40659481496`, CI `40659481607`, ownership `40659481599`); PR #131 checks were pending for the updated report commit (composition `40659482457`, CI `40659482665`, ownership `40659482406`). PR #122 and #128 bodies now describe exact heads and local validation limits.
+
+M0 recorded the refreshed exact-source status on PR #127 comment `6464683865`, M5 Issue #124 comment `6464684429`, and M7 Issue #126 comment `6464685109`. M9 pins remain unchanged pending exact checks and owner dispositions. PR #24 remains OPEN/DRAFT at `34fbe6d...`; `main` and Release were not changed.
+
+### 08:52 UTC check readback
+
+- M5 PR #122 at `51a64f0`: six OS/Node test jobs, Docker, package, sponsor, and ownership pass; both composition jobs fail because feature-base M9 still selects historical M5 PR #94 `cca42cd`. M9 exact pin remains gated on M1 policy disposition and M9 owner review.
+- M7 PR #128 at `1575ad8`: platform tests, Docker, package, sponsor, ownership, and Ubuntu composition pass; Windows composition was still pending. Wrapper regression fails on both OSes because the merged test suite has contradictory installer lifecycle event assertions. M7 is fixing the test while preserving manual-only dispatch and the exclusive lock. No pin update.
+- M0 recorded this exact-source caution on PR #127 comment `6464727020`; PR #122/#128 remain Draft.
+
+### 08:52 UTC current check details
+
+- PR #122's standard CI is green across six OS/Node jobs, Docker, package, sponsor, and ownership. Its two composition jobs fail exactly at the M5 manifest pin mismatch (`cca42cd` vs `51a64f0`). PR #122 is OPEN/DRAFT/UNSTABLE.
+- PR #128's standard test matrix, Docker, package, sponsor, ownership, and Ubuntu composition pass; Windows composition is pending. The two wrapper-regression jobs fail at the contradictory lifecycle test described above. The installer lifecycle job is skipped as designed. PR #128 is OPEN/DRAFT/UNSTABLE.
+- PR #131 current M0 checks pass except Windows exact-source composition remains pending; all ordinary tests, ownership, Docker, package, sponsor, and Ubuntu composition pass.
+
 - Re-read the current `.gitignore` and verified representative paths with `git check-ignore -v`: root `logs/`, credential JSON patterns, `*.tmp`, and editor swap files are ignored. Existing ignore rules also cover `.env*`, private key/certificate formats, `.agent-canary/`, M0 workspaces, and generated E4 one-click bundles.
 - The only explicit `.gitignore` delta in M0's PR is additional credential JSON names; no log/key/temp exception was introduced. Examples remain explicitly unignored only for reviewed `client_secret.example.json` and `service-account-key.example.json` fixtures.
 - This satisfies the repository hygiene check for the current tree; no ignore rule was changed during this verification.
