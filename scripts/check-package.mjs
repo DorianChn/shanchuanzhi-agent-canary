@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   isPublicPackageFile,
   validateGatewayAdapterPackage,
@@ -63,11 +63,22 @@ try {
   const packageFile = path.join(temp, pack.filename);
   const installDir = path.join(temp, "install");
   fs.mkdirSync(installDir);
-  runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
+  runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", pathToFileURL(packageFile).href], installDir);
 
-  run(process.execPath, [path.join(policyRoot, 'scripts', 'check-sdk-types.mjs'), '--package-root', path.join(installDir, 'node_modules', '@dorianchn', 'agent-canary')], installDir);
+  const installedPackageRoot = path.join(installDir, "node_modules", "@dorianchn", "agent-canary");
+  if (!fs.existsSync(installedPackageRoot) || !fs.statSync(installedPackageRoot).isDirectory()) {
+    fail("installed package root was not found");
+  }
+  const installedManifestPath = path.join(installedPackageRoot, "package.json");
+  if (!fs.existsSync(installedManifestPath)) fail("installed package manifest was not found");
+  const installedManifest = JSON.parse(fs.readFileSync(installedManifestPath, "utf8"));
+  if (installedManifest.name !== packageManifest.name || installedManifest.version !== packageManifest.version) {
+    fail("installed package identity does not match the packed package");
+  }
 
-  const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "index.js");
+  run(process.execPath, [path.join(policyRoot, 'scripts', 'check-sdk-types.mjs'), '--package-root', installedPackageRoot], installDir);
+
+  const cli = path.join(installedPackageRoot, "dist", "index.js");
   if (!fs.existsSync(cli)) fail("installed CLI entrypoint was not found");
   const help = run(process.execPath, [cli, "--help"], installDir);
   if (!help.includes("self-test")) fail("installed CLI help does not include self-test");
