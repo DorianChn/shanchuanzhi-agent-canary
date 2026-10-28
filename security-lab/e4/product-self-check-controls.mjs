@@ -3,7 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {digest} from './product-self-check.mjs';
+import {digest,assertOutputOutsideInput} from './product-self-check.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const verifier=path.join(here,'verify-bundle.mjs');
@@ -11,8 +11,7 @@ const files=['evidence.zip','bundle.json','bundle.sha256','SHA256SUMS.txt','repo
 export function verifyBundleControls(bundleDir, outputDir) {
   const source=path.resolve(bundleDir), output=path.resolve(outputDir);
   if(fs.existsSync(output)) throw Error('CONTROL_OUTPUT_ALREADY_EXISTS');
-  const relative=path.relative(source,output);
-  if(!relative || (!relative.startsWith('..'+path.sep) && !path.isAbsolute(relative))) throw Error('CONTROL_OUTPUT_INSIDE_BUNDLE');
+  assertOutputOutsideInput(source,output,'CONTROL_OUTPUT_INSIDE_BUNDLE');
   if(fs.lstatSync(source).isSymbolicLink() || !fs.lstatSync(source).isDirectory()) throw Error('CONTROL_SOURCE_INVALID');
   const original=new Map();
   for(const name of files) {
