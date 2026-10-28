@@ -10068,3 +10068,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at pushed head `a763bcb1b6a1938019b76f8fb59ff307c15d1c11` passed all 12/12 visible checks: audit/ownership `40610653584`, CI `40610653717` (9/9), and M9 composition `40610653651` on Ubuntu/Windows. Windows completed at 00:49:47 UTC with success.
 - This validates PR #131's exact job-selected source set only; it does not resolve M7/M8 owner disposition or M5/M6/product E4 gates. PR #24 remains OPEN at unchanged head/base. No module code/pin, `main`, merge, or Release action occurred. Completion was recorded on Issue #126.
 - Next M0 push no earlier than 01:04 UTC.
+
+## 2026-10-28 00:52 UTC — M8 ownership-gate evidence refresh
+
+- Corrected the M8 status after a fresh read: PR #129 head `685520c` has successful `ownership-contract-evidence` run `40361313177` / job `121707201004`. The workflow skipped its approved-baseline merge-composition step, so this only advances the metadata/ownership-field check.
+- M9 PR #127 is still `635f8bc` and its manifest pins the older M8 source `1c94ed4`; exact M8 head integration remains outstanding. Old direct #129 composition failures select feature-base M9 `34fbe6d`, and do not establish a failure of PR #127's candidate composition.
+- Posted this scoped correction to Issue #126. No M8 code, local dirt, M9 pin, PR #24, or `main` changed.
