@@ -396,6 +396,31 @@ M1 PR #43 exact `src/runtime/gateway.ts` blob `40bfe437ea70f0cc21a5a5dbc2bcdf304
 - **Response:** the route returns only `{ "scope": "M3_CONFIGURED_TARGET_READ", "status": "ALLOW" | "DENY" | "UNKNOWN" }`. File bytes, absolute paths, relative paths, arguments, exception text, secrets, and tokens are not returned. `ALLOW` means the configured held-file dispatch completed with one M5 callback; it does not prove OS-atomic TOCTOU protection or installed Hook enforcement.
 - **Acceptance:** M3's focused CLI/source fixtures and exact-source M9 Ubuntu/Windows run `40066875122` provide source-composition evidence for the configured-target route and its safe-read, sensitive/alias/junction, and path-replacement controls. Required product evidence is still outstanding: M3/M4 owner disposition, shipped-package/runtime proof, and any native-host/OS-atomic TOCTOU claim. Keep Issue #52 OPEN/P0/NOT_VERIFIED until those scoped gates are accepted.
 
+## M3 to M4 configured-target readiness metadata — 2026-10-28
+
+M3 owns the additive read-only `GET /api/security-center/configured-target-readiness` endpoint so M4 can discover the immutable startup-configured target labels without receiving paths or capabilities. It requires the Console's same-origin/Host/Origin and CSRF checks. It does not require or return the operator credential.
+
+The exact version-1 response shape is:
+
+```json
+{
+  "scope": "M3_CONFIGURED_TARGET_READINESS",
+  "schemaVersion": 1,
+  "generatedAt": "<ISO-8601 UTC timestamp>",
+  "configurationStatus": "CONFIGURED | NOT_CONFIGURED | UNKNOWN",
+  "bindingStatus": "BOUND | BLOCKED | UNAVAILABLE | UNKNOWN",
+  "actionReadiness": "READY | BLOCKED | UNAVAILABLE | UNKNOWN",
+  "operatorAuthStatus": "CONFIGURED | NOT_CONFIGURED",
+  "targets": [{ "targetId": "stable-public-label", "bindingStatus": "BOUND | BLOCKED | UNKNOWN" }]
+}
+```
+
+`targets` comes only from the process-startup manifest, is sorted by ID, and each item contains exactly `targetId` and `bindingStatus`. A target ID is a non-sensitive operator-defined stable label matching `^[a-z][a-z0-9_-]{0,62}$`; labels must not encode paths, filenames, secrets, credentials, or capabilities. It is an identifier, not an authorization token. The separate POST `target-read` route still requires CSRF and operator-code authorization and resolves the ID against the immutable startup binding.
+
+`configurationStatus` is `NOT_CONFIGURED` only for absent/empty config, `CONFIGURED` when non-empty config is supplied, otherwise `UNKNOWN`. `bindingStatus` is `BOUND` when at least one configured binding passes the M1/M2/M5 startup chain, `BLOCKED` when all recognized configured IDs fail closed before binding, `UNAVAILABLE` when configuration is absent, otherwise `UNKNOWN`. `actionReadiness` is `READY` only when a binding is `BOUND` and operator authentication is configured; it is `BLOCKED` for known-blocked bindings or a bound target without configured auth, `UNAVAILABLE` without configuration, otherwise `UNKNOWN`. These fields report backend readiness only: they do not authorize a caller, guarantee a later read, or establish product/native-host/OS-atomic protection. `operatorAuthStatus` reports only whether a non-empty server-side operator code is configured, never its value or whether the caller supplied it.
+
+`schemaVersion` is exactly `1`; `generatedAt` is generated per response and the route sends `Cache-Control: no-store`. M4 must require the exact field set, known enum values, a valid UTC timestamp no older than 15 seconds and no more than 5 seconds in the future. Missing, stale, malformed, extra-field, or unsupported-version metadata maps to disabled controls and `UNKNOWN`. M4 must not infer action authorization from `actionReadiness`; any execution remains a separate explicitly operator-triggered flow using fixed IDs and the existing POST checks.
+
 ## Current cross-module contract matrix — 2026-10-24 10:14 UTC
 
 Public semantics remain owned by the module that implements them. This matrix records the current boundaries and evidence limits; it does not change runtime APIs. Other modules adapt at their owned edge and must not copy or weaken another owner's implementation.

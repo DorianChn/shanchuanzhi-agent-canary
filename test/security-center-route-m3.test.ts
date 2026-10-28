@@ -760,6 +760,23 @@ async function getConfiguredTargetReadiness(url:string,csrf:string){
   });
 }
 
+async function assertConfiguredTargetReadiness(response:Response,expected:Record<string,unknown>){
+  assert.equal(response.status,200);
+  assert.equal(response.headers.get('cache-control'),'no-store');
+  const body=await response.json();
+  assert.deepEqual(Object.keys(body).sort(),[
+    'actionReadiness','bindingStatus','configurationStatus','generatedAt','operatorAuthStatus','schemaVersion','scope','targets',
+  ]);
+  assert.equal(body.schemaVersion,1);
+  const generatedAt=Date.parse(body.generatedAt);
+  assert.ok(Number.isFinite(generatedAt));
+  assert.ok(Date.now()-generatedAt<=15_000,'fresh response timestamps are at most 15 seconds old');
+  assert.ok(Date.now()-generatedAt>=-5_000,'response timestamp is not materially in the future');
+  const{schemaVersion:_schemaVersion,generatedAt:_generatedAt,...payload}=body;
+  assert.deepEqual(payload,expected);
+  return body;
+}
+
 test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERVE with target-ID-only responses',async()=>{
   const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-positive-'));
   fs.mkdirSync(path.join(workspace,'notes'));
@@ -775,9 +792,7 @@ test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERV
     assert.ok(gateway,'the CLI startup dependency seam should construct M1 before accepting requests');
     const evidenceBefore=gateway.evidence().length;
     const readiness=await getConfiguredTargetReadiness(console.url,csrf);
-    assert.equal(readiness.status,200);
-    const readinessBody=await readiness.json();
-    assert.deepEqual(readinessBody,{
+    const readinessBody=await assertConfiguredTargetReadiness(readiness,{
       scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'CONFIGURED',bindingStatus:'BOUND',
       actionReadiness:'READY',operatorAuthStatus:'CONFIGURED',targets:[{targetId:'summary',bindingStatus:'BOUND'}],
     });
@@ -838,7 +853,7 @@ test('configured sensitive and symlink targets fail closed before M5 callbacks o
   try{
     const csrf=await csrfFor(console.url);
     const readiness=await getConfiguredTargetReadiness(console.url,csrf);
-    assert.deepEqual(await readiness.json(),{
+    await assertConfiguredTargetReadiness(readiness,{
       scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'CONFIGURED',bindingStatus:'BLOCKED',
       actionReadiness:'BLOCKED',operatorAuthStatus:'CONFIGURED',targets:[
         {targetId:'credentials',bindingStatus:'BLOCKED'},
@@ -863,8 +878,7 @@ test('configured-target readiness reports unavailable without configuration and 
   const console=await startAIConsole({port:0});
   try{
     const response=await getConfiguredTargetReadiness(console.url,await csrfFor(console.url));
-    assert.equal(response.status,200);
-    assert.deepEqual(await response.json(),{
+    await assertConfiguredTargetReadiness(response,{
       scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'NOT_CONFIGURED',bindingStatus:'UNAVAILABLE',
       actionReadiness:'UNAVAILABLE',operatorAuthStatus:'NOT_CONFIGURED',targets:[],
     });
@@ -875,7 +889,7 @@ test('configured-target readiness preserves UNKNOWN for malformed configuration'
   const console=await startAIConsole({port:0,securityCenterProtectedTargets:'malformed' as never});
   try{
     const response=await getConfiguredTargetReadiness(console.url,await csrfFor(console.url));
-    assert.deepEqual(await response.json(),{
+    await assertConfiguredTargetReadiness(response,{
       scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'UNKNOWN',bindingStatus:'UNKNOWN',
       actionReadiness:'UNKNOWN',operatorAuthStatus:'NOT_CONFIGURED',targets:[],
     });
@@ -892,7 +906,7 @@ test('configured-target readiness exposes only aggregate readiness when a bindin
   });
   try{
     const readiness=await getConfiguredTargetReadiness(console.url,await csrfFor(console.url));
-    assert.deepEqual(await readiness.json(),{
+    await assertConfiguredTargetReadiness(readiness,{
       scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'CONFIGURED',bindingStatus:'BOUND',
       actionReadiness:'BLOCKED',operatorAuthStatus:'NOT_CONFIGURED',targets:[{targetId:'safe',bindingStatus:'BOUND'}],
     });

@@ -450,6 +450,8 @@ function configuredTargetReadinessEnvelope(runtime:ConfiguredTargetRuntime,opera
       :bindingStatus==='BOUND'&&operatorAuthStatus==='CONFIGURED'?'READY':'UNKNOWN';
   return{
     scope:configuredTargetReadinessScope,
+    schemaVersion:1,
+    generatedAt:new Date().toISOString(),
     configurationStatus:runtime.configurationStatus,
     bindingStatus,
     actionReadiness,

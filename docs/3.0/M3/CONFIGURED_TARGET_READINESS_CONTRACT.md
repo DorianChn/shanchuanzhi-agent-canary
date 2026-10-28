@@ -11,6 +11,8 @@ The response has exactly these fields:
 ```json
 {
   "scope": "M3_CONFIGURED_TARGET_READINESS",
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-28T08:17:00.000Z",
   "configurationStatus": "CONFIGURED",
   "bindingStatus": "BOUND",
   "actionReadiness": "READY",
@@ -25,13 +27,15 @@ The response has exactly these fields:
 
 No dynamic path, path mapping, content, exception, held-file capability, credential, or executable token is returned. The response never includes a callback, authorization header, or caller/model-selected target.
 
+`schemaVersion` is the integer `1`. `generatedAt` is an ISO-8601 UTC timestamp created for each request; responses use `Cache-Control: no-store`. M4 must validate the version, timestamp, scope, exact field set and every enum before using metadata. A snapshot older than 15 seconds, or more than 5 seconds in the future, is stale/invalid and must produce disabled controls with `UNKNOWN`.
+
 ## Stable field semantics
 
 - `scope` is always `M3_CONFIGURED_TARGET_READINESS`.
 - `configurationStatus` is `CONFIGURED` when a non-empty fixed-target configuration was supplied, `NOT_CONFIGURED` when absent or empty, and `UNKNOWN` when the configuration container is malformed.
 - `bindingStatus` is `BOUND` when at least one startup-configured target was validated and bound through the M1/M2/M5 owner chain; `BLOCKED` when configured targets are known and all recognized IDs failed closed before binding; `UNAVAILABLE` when configuration is absent; otherwise `UNKNOWN`.
 - `operatorAuthStatus` is `CONFIGURED` when a non-empty server-side operator code is configured, and `NOT_CONFIGURED` otherwise. This reports configuration presence only; it does not report or validate a caller's submitted code.
-- `actionReadiness` is `READY` only when `bindingStatus` is `BOUND` and `operatorAuthStatus` is `CONFIGURED`; `BLOCKED` when the binding is blocked or operator auth is not configured; `UNAVAILABLE` when no fixed-target configuration exists; otherwise `UNKNOWN`.
+- `actionReadiness` is `READY` only when `bindingStatus` is `BOUND` and `operatorAuthStatus` is `CONFIGURED`; `BLOCKED` when the binding is known blocked or a bound target lacks configured operator auth; `UNAVAILABLE` when no fixed-target configuration exists; otherwise `UNKNOWN`.
 - Each `targets[]` entry contains exactly `targetId` and `bindingStatus`. The ID is the fixed public label supplied at Console startup, not the path or capability; M4 may present those labels for explicit operator selection only after validating this exact response shape.
 
 Missing, malformed, or internally inconsistent state must not be upgraded to `READY`. The aggregate values make no claim that a later read will succeed; replacement, policy, authorization, or owner-adapter failures still fail closed in the separate read route.
