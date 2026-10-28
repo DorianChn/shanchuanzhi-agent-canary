@@ -10015,3 +10015,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - GitHub head/status refresh shows no owner head change on PRs #120–#123, #127–#129 since the 00:12 snapshot. M3/M4/M5/M6/M8 remain OPEN/Draft with their exact-source/ownership gates unresolved; M7 #128 remains OPEN/Draft, conflicting, with no checks; M9 #127 remains OPEN/Draft and CLEAN on its existing manifest.
 - No owner response/disposition was visible on Issues #45/#52/#70/#80/#124/#125/#126/#130/#132 as of this readback. Keep these gates open; no issue was closed by M0.
 - No module branch, source file, pin, PR #24, or `main` was changed.
+
+## 2026-10-28 00:22 UTC — correction: M9 candidate versus feature-base pins
+
+- Corrected earlier M0 comments `6456209189`/`6456226216` and the M3/M4 handoffs: direct module-PR composition jobs select their event's feature-base M9 source `34fbe6d`, while the current M9 candidate is PR #127 at `635f8bc`.
+- AC3 open-PR audit run `40606348227` (from M0 PR #131 at `cd9d0ba`) reads PR #127's exact manifest and reports M1–M6 pins MATCH current canonical branch heads; M7/M8 are STALE_PIN (`bba0f0f` vs `bf9faee`; `1c94ed4` vs `685520c`). PR #127 itself has 13/13 successful checks. Thus the module PR #120–#123 red exact-source checks are stale against the feature-base manifest and do not show that PR #127's M3–M6 pins are stale.
+- Independent gates remain: M3/M4 explicit source/contract owner disposition; M5 approved common-source baseline; M6 product E4; M7/M8 owner decisions and exact candidate integration. M0 changed no pins/refs. Posted corrections to Issues #126/#124/#125 in comments `6457248623`, `6457249029`, `6457249515`.
