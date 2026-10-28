@@ -10538,3 +10538,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `d0e0b9c863fbb526cdf376a35553d41279673228` has 12/12 completed checks passing, including Ubuntu and Windows exact-source composition. Windows job `122860126802` completed successfully. As with prior M0 runs, composition resolves the workflow's event-base M9 manifest and does not certify PR #127's current pins. Exact readback: PR comment `6471051496`.
 - No M1–M8/M9 source head movement or new module-owner dispositions appeared. M1 #133 remains without hosted checks on exact head `f150248`; local M1 validation is separately documented. P0 #52 and product E4 remain NOT_VERIFIED; PR #24 remains unchanged OPEN/Draft.
+
+## 14:09 UTC — M7 unpublished candidate test gate
+
+- Read-only audit found M7 worktree commit `a0f2c789babd652c0ee3c27fdba8864bb37386b1` ahead of PR #128 by one commit; its `.gitignore` edit remains uncommitted and untouched. The commit changes two test files. On the exact M7 source, the focused run produced 17/19 passing and 2 failures: both new tests expect a successful synthetic decoy read, while current M7 `src/runtime/gateway.ts:255` throws `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK` after quarantine. The candidate was not pushed.
+- M0 recorded the P1 cross-source blocker, reproducer, M7/M1/M9 owners, and acceptance criteria in Issue #126 comment `6471249337`. Resolve standalone branch expectation first, then validate reviewed exact M1/M7 pins through both M9 OS jobs. Existing M7 dirty state remains preserved.
