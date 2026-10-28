@@ -560,7 +560,6 @@ test('missing policy log with a retained checkpoint fails closed in warm and fre
   const fresh = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });
   assert.throws(() => fresh.currentRules(), /POLICY_AUDIT_HEAD_MISMATCH/);
 });
-
 test('failed audit validation never caches a corrupted log as trusted', () => {
   const root = workspace(), store = storage();
   const manager = createProjectPolicyManager({ workspaceRoot: root, storageDirectory: store });

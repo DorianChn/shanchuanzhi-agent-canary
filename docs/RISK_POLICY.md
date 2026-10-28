@@ -47,7 +47,7 @@ await router.dispatch({ name: 'read_file', args: { path: 'README.md' } });
 
 OBSERVE 会放行已登记工具的普通审批类风险，仍禁止明显秘密外传、敏感数据读取和越界路径；不要把模式名称理解为安全保证。BALANCED 的构建、写入审批会中断无人值守工作流。STRICT 有明确兼容性影响。
 
-启用 `verifyRealPaths: true` 后，文件读取的正向路径限于已绑定的安全 held-file provider。M5 校验和 provider 夹具通过不等于已安装产品、原生 Hook 或 OS-atomic TOCTOU 已验证；M1 Gateway 仍负责持有资源身份与最终授权。
+启用 `verifyRealPaths: true` 时，通用路径 callback 的 file-read/file-write/delete 都 fail closed；唯一的正向读取路径是上表所述、经验证并被实际消费的 held-file capability。M5 provider 夹具测试不等于已安装产品、原生 Hook 或 OS-atomic TOCTOU 已验证；M1 Gateway 仍负责持有资源身份与最终授权。
 
 ## 决策语义
 

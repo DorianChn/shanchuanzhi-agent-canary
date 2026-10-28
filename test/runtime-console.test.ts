@@ -1,6 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import os from 'node:os';import fs from 'node:fs';import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import http from 'node:http';
+import {Script} from 'node:vm';
 import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
@@ -75,6 +76,41 @@ test('security and E4 status stay unknown or unavailable behind the existing Hos
  }finally{await console.close();}
 });
 
+test('protected-read rejects caller-supplied lexical, junction, and replacement paths before host dependencies',async()=>{
+ const fixtureRoot=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m4-protected-read-boundary-'));
+ const workspace=path.join(fixtureRoot,'workspace'),outside=path.join(fixtureRoot,'outside');
+ fs.mkdirSync(workspace);fs.mkdirSync(outside);
+ const target=path.join(outside,'private.txt'),replacement=path.join(outside,'private.txt.replacement');
+ const alias=path.join(workspace,'outside-alias');
+ fs.writeFileSync(target,'UNCHANGED_PRIVATE_FIXTURE');fs.writeFileSync(replacement,'UNCHANGED_REPLACEMENT_FIXTURE');
+ fs.symlinkSync(outside,alias,process.platform==='win32'?'junction':'dir');
+ const targetIdentity=fs.statSync(target),replacementIdentity=fs.statSync(replacement);
+ let protectedReadDependencyLoads=0;
+ const app=await startAIConsole({
+  port:0,operatorApprovalCode:'FIXTURE_OPERATOR_ONLY',
+  securityCenterProtectedReadDependencies:async()=>{protectedReadDependencyLoads++;throw new Error('invalid request must stop before Host dependencies');},
+ });
+ try{
+  const html=await (await fetch(app.url)).text(),csrf=html.match(/const csrf='([a-f0-9]+)'/)?.[1];assert(csrf);
+  const requests=[
+   {path:'./agent-canary-public.txt'},
+   {path:path.join(alias,'private.txt')},
+   {path:'agent-canary-public.txt.replacement'},
+  ];
+  for(const body of requests){
+   const response=await fetch(app.url+'/api/security-center/protected-read',{method:'POST',headers:{'content-type':'application/json','x-canary-csrf':csrf!,'x-canary-operator-code':'FIXTURE_OPERATOR_ONLY'},body:JSON.stringify(body)});
+   assert.equal(response.status,400);
+   assert.deepEqual(await response.json(),{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'UNKNOWN',reason:'REQUEST_INVALID',markerMatched:false});
+   assert.equal(protectedReadDependencyLoads,0,'caller-controlled paths must be rejected before the Host/M1/M2/M5 composition loads');
+  }
+  assert.equal(fs.readFileSync(target,'utf8'),'UNCHANGED_PRIVATE_FIXTURE');
+  assert.equal(fs.readFileSync(replacement,'utf8'),'UNCHANGED_REPLACEMENT_FIXTURE');
+  assert.deepEqual([fs.statSync(target).dev,fs.statSync(target).ino],[targetIdentity.dev,targetIdentity.ino]);
+  assert.deepEqual([fs.statSync(replacement).dev,fs.statSync(replacement).ino],[replacementIdentity.dev,replacementIdentity.ino]);
+  assert.equal(fs.realpathSync(alias),fs.realpathSync(outside),'the junction/symlink fixture itself must remain unchanged');
+ }finally{await app.close();fs.rmSync(fixtureRoot,{recursive:true,force:true});}
+});
+
 test('missing security-center provider leaves UI protection UNKNOWN whether the status route is absent or present',async()=>{
  const console=await startAIConsole({port:0});
  try{
@@ -104,6 +140,39 @@ test('missing security-center provider leaves UI protection UNKNOWN whether the 
  }finally{await console.close();}
 });
 
+test('security endpoint availability is visible without claiming protection or E4 completion',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  assert.match(html,/后端状态接口可用性/);
+  assert.match(html,/id="securityCenterSourceStatus" class="security-status" data-status="UNKNOWN">UNKNOWN · 未知<\/strong>/);
+  assert.match(html,/id="e4SourceStatus" class="security-status" data-status="UNKNOWN">UNKNOWN · 未知<\/strong>/);
+  const start=html.indexOf('function renderSecurityEndpointAvailability(){');
+  const end=html.indexOf('async function securityGet',start);
+  assert.ok(start>=0&&end>start,'the served UI should include its endpoint availability renderer');
+  const elements=new Map<string,{dataset:Record<string,string>,textContent:string}>();
+  for(const id of ['securityCenterSourceStatus','securityCenterSourceDetail','e4SourceStatus','e4SourceDetail'])elements.set(id,{dataset:{},textContent:''});
+  const sourceText:Record<string,string>={UNSUPPORTED:'未实现',AVAILABLE:'可读取',UNKNOWN:'未知'};
+  const script=html.slice(start,end)+'renderSecurityEndpointAvailability();';
+  const run=(states:Record<string,string>)=>new Script(script).runInNewContext({
+   securitySources:states,
+   sourceStateLabel:(state:string)=>sourceText[state]||'未知',
+   getEl:(id:string)=>elements.get(id),
+  });
+  run({securityCenter:'UNSUPPORTED',e4:'UNSUPPORTED'});
+  assert.equal(elements.get('securityCenterSourceStatus')?.dataset.status,'UNSUPPORTED');
+  assert.equal(elements.get('securityCenterSourceStatus')?.textContent,'UNSUPPORTED · 未实现');
+  assert.match(elements.get('securityCenterSourceDetail')?.textContent||'',/防护字段保持 UNKNOWN/);
+  assert.equal(elements.get('e4SourceStatus')?.dataset.status,'UNSUPPORTED');
+  assert.equal(elements.get('e4SourceStatus')?.textContent,'UNSUPPORTED · 未实现');
+  assert.match(elements.get('e4SourceDetail')?.textContent||'',/E4 运行结果仍为 UNKNOWN/);
+  run({securityCenter:'AVAILABLE',e4:'AVAILABLE'});
+  assert.match(elements.get('securityCenterSourceDetail')?.textContent||'',/未返回的防护字段保持 UNKNOWN/);
+  assert.match(elements.get('e4SourceDetail')?.textContent||'',/不代表 E4 已运行或通过/);
+  assert.equal(adaptSecuritySnapshot({}).protectionStatus,'UNKNOWN');
+ }finally{await app.close();}
+});
+
 
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({
@@ -122,9 +191,9 @@ test('security-center adapter keeps absent backend data UNKNOWN and ignores demo
  assert.equal(normalizeProtectionStatus('PARTIAL'),'UNKNOWN');assert.equal(normalizeProtectionStatus('protected'),'UNKNOWN');
 });
 
-test('Gateway binding status and temporary demo reads do not verify a first-party OBSERVE consumer',()=>{
+test('Gateway status and an exact M3 fixed-probe PASS do not verify a first-party OBSERVE consumer',()=>{
  const view=adaptSecuritySnapshot({
-  securityCenter:{protectionStatus:'PARTIALLY_PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},hook:{protectionStatus:'UNKNOWN'},canaryIsolation:{protectionStatus:'UNKNOWN'},policy:{name:'M2_FIXED_FILE_READS',protectionStatus:'PROTECTED'},protectedToolCount:1,unprotectedExecutionPaths:null,coverage:'M2_FIXED_FILE_READS_ONLY',firstPartyObserveReadStatus:'PROTECTED',observeRead:{status:'PROTECTED',successfulReads:1,negativeCases:4}},
+  securityCenter:{protectionStatus:'PARTIALLY_PROTECTED',gateway:{protectionStatus:'PROTECTED',connectionStatus:'CONNECTED'},hook:{protectionStatus:'UNKNOWN'},canaryIsolation:{protectionStatus:'UNKNOWN'},policy:{name:'M2_FIXED_FILE_READS',protectionStatus:'PROTECTED'},protectedToolCount:1,unprotectedExecutionPaths:null,coverage:'M2_FIXED_FILE_READS_ONLY',firstPartyObserveReadStatus:'PROTECTED',observeRead:{status:'PROTECTED',successfulReads:1,negativeCases:4},protectedReadProbe:{scope:'M3_FIXED_TEMP_PROBE_ONLY',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true}},
   runtime3:{mode:'DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL',agent:'controlled-sdk-demo',coverage:'REGISTERED_CAPABILITIES_ONLY',guard:'SAFE'},
   policyState:{mode:'OBSERVE',scope:'VIRTUAL_EXECUTORS'},
  });
@@ -136,6 +205,7 @@ test('Gateway binding status and temporary demo reads do not verify a first-part
  const diagnostic=buildSecurityDiagnostic(view,{securityCenter:'AVAILABLE'});
  assert.equal(diagnostic.protection.firstPartyObserveRead,'NOT_VERIFIED','status-provider claims cannot promote the first-party read indicator');
  assert.equal(JSON.stringify(diagnostic).includes('successfulReads'),false,'provider-supplied read claims are not copied into diagnostic evidence');
+ assert.equal(JSON.stringify(diagnostic).includes('M3_FIXED_TEMP_PROBE_ONLY'),false,'the actual fixed-temp probe envelope is not product-file evidence and is not exported as such');
 });
 
 test('existing policy and Runtime APIs are shown only within their backend-declared demo scope',()=>{
@@ -222,6 +292,29 @@ test('security-center data-source failures preserve timeout, permission, missing
  assert.equal(classifyDataSourceFailure(404,'Error'),'UNSUPPORTED');
  assert.equal(classifyDataSourceFailure(undefined,'InvalidResponseError'),'INVALID_RESPONSE');
  assert.equal(classifyDataSourceFailure(503,'Error'),'UNAVAILABLE');
+});
+
+test('unexpected security refresh errors release controls and keep protection UNKNOWN',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)];
+  assert.ok(scripts.length,'Console should include its local UI script');
+  for(const [,source] of scripts)assert.doesNotThrow(()=>new Script(source),'Console client script should parse');
+  const start=html.indexOf("async function refreshSecurityCenter(reason='manual')");
+  const end=html.indexOf('function showSecurityRefreshFailure',start);
+  assert.ok(start>=0&&end>start,'refresh implementation and its failure handler should be present');
+  const refresh=html.slice(start,end);
+  assert.match(refresh,/finally\s*\{\s*securityRefreshBusy=false;getEl\('securityHealthButton'\)\.disabled=false;getEl\('securityExportButton'\)\.disabled=false;/);
+  assert.ok(html.includes("function showSecurityRefreshFailure(error){"));
+  assert.ok(html.includes("securitySources={state:'UNKNOWN',agents:'UNKNOWN',policyState:'UNKNOWN',runtime3:'UNKNOWN',securityCenter:securityCenterFailure,e4:'UNKNOWN'};"),'unexpected refresh errors must not preserve stale source availability');
+  assert.ok(html.includes("securitySnapshot=securityCenterAdapter.adaptSecuritySnapshot({});"),'unexpected refresh errors must discard stale protection values');
+  assert.ok(html.includes("status('securityHealthStatus','健康检查异常：'+sourceStateLabel(securityCenterFailure)+'。防护状态保持 UNKNOWN。',true);"),'unexpected backend error text must not be copied into the status banner');
+  assert.ok(html.includes("getEl('securityHealthButton').onclick=()=>refreshSecurityCenter('manual').catch(showSecurityRefreshFailure);"));
+  assert.ok(html.includes("refreshSecurityCenter('initial').catch(showSecurityRefreshFailure);"));
+  assert.ok(html.includes("refreshSecurityCenter('automatic').catch(showSecurityRefreshFailure)"));
+  assert.ok(html.includes("status('securityHealthStatus','诊断报告导出失败；防护状态仍按最近一次后端读取结果显示。',true);"),'download errors must not be mislabeled as failed protection reads');
+ }finally{await app.close();}
 });
 
 test('diagnostic distinguishes an empty audit feed from an unavailable source',()=>{
