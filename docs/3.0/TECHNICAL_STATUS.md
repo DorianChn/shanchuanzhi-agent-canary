@@ -10124,3 +10124,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Pushed five M0-only documentation commits by fast-forward to `c77faa38d1c9bcfcaa638dd6d39051ec719b633a`; local/remote readback matches. PR #131 is OPEN at this head with new checks just starting.
 - The batch records M5/M7 standard-test omissions, M7's divergent branch lineage plus three merge-conflict paths, and M8's one-commit descendant and explicit-disposition path.
 - PR #24, module source/refs, `main`, merge, and Release were not changed. Next M0 push no earlier than 01:44 UTC.
+
+## 2026-10-28 01:31 UTC — 01:24 M0 CI source-scope audit
+
+- PR #131 at `c77faa38d1c9bcfcaa638dd6d39051ec719b633a` passed all 12/12 checks, including Windows M9 composition run `40614821141`.
+- Inspected the actual Windows job log: `Checkout exact M7 source` selected `bba0f0f89c610f8198660e799de7a652b8ea8e96` from the current feature-base M9 manifest, not current PR #128 head `bf9faeeb96625325e6fab8e497954ff6db4e78ea`. Therefore the green M7 package/installer composition steps validate the already-merged pinned source only; they do not satisfy current #128 exact-head validation.
+- Added this bounded source-scope note to Issue #126. No M7 source, M9 pin, PR #24, or `main` changed.
