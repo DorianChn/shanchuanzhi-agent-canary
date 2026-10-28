@@ -10543,3 +10543,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - Read-only audit found M7 worktree commit `a0f2c789babd652c0ee3c27fdba8864bb37386b1` ahead of PR #128 by one commit; its `.gitignore` edit remains uncommitted and untouched. The commit changes two test files. On the exact M7 source, the focused run produced 17/19 passing and 2 failures: both new tests expect a successful synthetic decoy read, while current M7 `src/runtime/gateway.ts:255` throws `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK` after quarantine. The candidate was not pushed.
 - M0 recorded the P1 cross-source blocker, reproducer, M7/M1/M9 owners, and acceptance criteria in Issue #126 comment `6471249337`. Resolve standalone branch expectation first, then validate reviewed exact M1/M7 pins through both M9 OS jobs. Existing M7 dirty state remains preserved.
+
+## 14:17 UTC — exact M7/M1 test-source comparison
+
+- Follow-up blob comparison confirms M7 candidate `a0f2c78` and M1 exact head `f150248` have identical test blobs for both failing files (`daef910b…` and `45b1b3ce…`). Those exact tests passed within M0's M1 build + 59-test focused run. Thus the 2/19 failure is confined to running M7's test-only candidate against its older Gateway source; the failure does not occur with the exact M1 source. The candidate remains unpublished pending owner review and a reviewable composition path. Correction recorded in Issue #126 comment `6471391949`.
+- M0 latest head `7ebe8b74c9c0ccabbcebd6ad0074ca7a83e1e1ae` has 5/11 checks passing, 6 in progress, and no failures at 14:16 UTC.
