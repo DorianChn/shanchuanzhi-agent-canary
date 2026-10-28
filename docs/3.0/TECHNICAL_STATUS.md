@@ -10370,3 +10370,10 @@ Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in c
 ### 09:20 UTC — M0 Windows composition check
 
 For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are complete and passing; Ubuntu exact-source composition passes, while Windows composition remains in progress in run `40662951586`. All platform tests, package, Docker, sponsor, and ownership checks pass. The M9 manifest path exercised by this job remains the feature-base manifest and does not update any module pin.
+
+### 09:23 UTC — M1 P1 decoy-read fix candidate
+
+- Existing M1 branch `feature/ac3-security-core` has local commit `3f0921fe94c845714d1b4d9a2832cde9501164bd` on exact parent `89be11e5f95f2b191880a4fc88f50e15f405121e`; it changes only `src/runtime/gateway.ts` and `test/gateway.test.ts`, and is not yet pushed.
+- M1 owner reports `node --import tsx --test test/gateway.test.ts` 40/40, TypeScript build passed, and the E4 runner has 0 FAIL among 10 cases; its status remains `E4_STILL_NOT_VERIFIED` due to 3 BLOCKED cases and external acceptance. The two #118 targets record quarantine/denial and expected unchanged/positive-control outcomes.
+- M7-owned `test/reliability-gateway-lifecycle.test.ts` still has 1/13 failure because it expects the old cancellation race. M7 confirmed the assertion and duplicate honeypot scenario need adaptation while retaining synthetic result, quarantine, follow-up DENY, unchanged target, and event-count assertions.
+- The separate `SHELL-BOUNDARY-BYPASS` observation writes only an E4 temporary fixture outside Gateway, with no Gateway callback; it is not Issue #52's OBSERVE alias path. Keep #52 OPEN/P0 until the exact alias/cross-host controls pass.
