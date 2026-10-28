@@ -10039,3 +10039,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - PR #127 remains OPEN/Draft at `635f8bc`; GitHub `reviewDecision` is empty and there are no submitted PR reviews. Its body keeps the explicit gate: M7/M8 owners must ACCEPT/REJECT their exact newer commits before M9 promotes those pins; product E4 and clean-VM/independent review remain NOT_VERIFIED.
 - The current candidate manifest already matches M3–M6 exact branch heads; M0 did not update those pins. M7/M8 remain the only `STALE_PIN` results in the latest automated audit. No pin or PR state changed.
+
+## 2026-10-28 00:33 UTC — M1 exact-source regression rerun
+
+- PR #131 exact-source run `40608540660` passed the exact M1 held-Gateway boundary regression on Ubuntu and Windows. The recorded source-composition regression summary reports 23 passed, 0 failed; M9 source is feature-base `34fbe6d` and M1 source is `89be11e`.
+- This is synthetic/source-level evidence only. It does not establish a production host consuming M1's held identity or OS-atomic path/TOCTOU protection. P0 Issue #52 stays OPEN/NOT_VERIFIED; updated with the bounded result in comment `6457403251`.
+- No M1 source/test, M9 pin, PR #24, or `main` was changed.
