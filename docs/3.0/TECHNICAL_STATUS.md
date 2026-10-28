@@ -1,4 +1,4 @@
-## Current M0-M9 coordination snapshot — 2026-10-28 06:36 UTC
+## Current M0-M9 coordination snapshot — 2026-10-28 06:50 UTC
 
 - M0 PR #131 is OPEN/MERGEABLE/DRAFT at `09455a4` (full SHA verified in GitHub); all 12 checks pass in runs `40645785335`, `40645785362`, and `40645785484`. The Ubuntu and Windows composition jobs pass, but the run log explicitly selects feature-base M9 `34fbe6d35d4dea30795525bf538f97194758c6c4`, whose manifest still pins historical M3/M4/M5/M6/M7/M8 SHAs (M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, M8 `1c94ed4`) rather than current module PR heads. This green run validates that historical manifest only; it does not establish exact-current M1-M8 integration or validate M9 candidate PR #127.
 - No module head or exact-head owner disposition changed in the latest PR/issue review. M5 package/ownership/test-script gates (#122/#124), M6's exact M8 disposition (#80), M7 PR #128's conflict/lineage issue, and M8's exact-current review gate remain open. M7's successful hosted wrapper/package build evidence is recorded on #128; installer lifecycle remains unrun.
