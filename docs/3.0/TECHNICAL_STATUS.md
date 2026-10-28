@@ -10519,3 +10519,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - No new owner comments or source heads since the 12:59 snapshot. Current M3/M6/M8 exact-head dispositions remain absent; M1 #133 still has no check runs; M9 candidate pins remain unchanged.
 - M0 PR #131 latest pushed head `9d26adc` has 12/12 hosted checks passing. Its composition remains event-base only. PR #24 remains OPEN/Draft at the original SHA/base.
+
+## 13:17 UTC — exact M0 head d0eb6e9 validated
+
+- PR #131 exact head `d0eb6e901cf2186fac1eedc0ae18fc19ca6c3376` has 12/12 hosted checks passing, including Ubuntu/Windows composition `40694323096`. It validates event-base M9 `34fbe6d`, not current PR #127 pins. PR comment `6470028486` records this distinction.
+- No new module heads or owner dispositions appeared. Product E4 and P0 #52 remain NOT_VERIFIED.
