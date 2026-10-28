@@ -1,4 +1,4 @@
-## Current contract acceptance overlay — 2026-10-28 02:13 UTC
+## Current contract acceptance overlay — 2026-10-28 03:30 UTC
 
 No public API contract changed in this refresh. The ownership table below remains authoritative: M1 owns Gateway/held identity and canonical Hook decisions; M2 owns the execution adapter; M3 owns host onboarding/configured-target status; M4 consumes read-only UI status; M5 owns policy/audit decisions; M6 owns E4 evidence; M7 owns packaged-copy/installer parity; M8 owns public capability claims; M9 owns exact source pins and composition. Consumers adapt at their boundary; only the owner changes a shared contract.
 
