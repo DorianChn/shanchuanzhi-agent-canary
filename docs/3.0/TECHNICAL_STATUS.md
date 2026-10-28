@@ -10397,3 +10397,9 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 - GitHub currently reports no check runs for exact head `f150248`; earlier failures at `3f0921f` are superseded by the contract and M7 test commits, but they are not current-head CI evidence. M7 exact-head owner confirmation is being recorded.
 - M0 PR #131 head `9394f208e0869656d290c5dfd5a8e15adb22e206` has all standard tests, package, Docker, sponsor, ownership, and Ubuntu composition passing. Windows composition remains pending in run `40665702631`; its checkouts still use feature-base manifest pins.
 - #52 remains OPEN/P0/NOT_VERIFIED for the product-host held-identity path. No M9 pin, main, PR #24, or Release change occurred.
+
+### 09:46 UTC — M7 exact-head disposition recorded
+
+- M7 owner posted `ACCEPT_WITH_CONDITIONS` on exact M1/M7 PR #133 head `f1502489fbf807c16aad72c50b522c373ac07746` in comment `6465655146`, superseding the precursor SHA review.
+- M1/M7 combined local test evidence remains 59/59; no hosted check run has been generated for `f150248`. The previous failures are on old M1 head `3f0921f` and must not be presented as current results.
+- M0 PR #131 head `f4d13a8` has all checks passing except Windows exact-source composition, still pending in run `40666324208` at 09:46 UTC.
