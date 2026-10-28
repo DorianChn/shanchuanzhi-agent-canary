@@ -10107,3 +10107,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Sent the all-module test-list audit directly to PR #122: exact head `dde81d6` omits `test/m9-security-composition.test.ts` from ordinary `npm test`; asked M5 to preserve it and verify TAP output after full-suite rerun.
 - M7 has the same omission and a separate handoff on PR #128. These remain merge gates; no package/test file was edited by M0.
+
+## 2026-10-28 01:14 UTC — M7 branch lineage audit
+
+- Current M7 PR #128 head `bf9faee` is not a descendant of current base `34fbe6d` or of merged M7 source-pin PR #113 commit `bba0f0f` (the latter is an ancestor of current base). Their common merge base is `7cd3445`; `rev-list --left-right --count base...M7` returns `415 70`.
+- This means the 3 conflict paths from merge-tree do not fully characterize integration risk. Owner must review and reconcile the whole divergent history with current base and already-merged M7 behavior before M9 pin promotion; do not blindly pin #128 head. Preserve all M7 assertions and M9 test coverage; exact-head CI/installer lifecycle remain required.
+- Sent this lineage evidence to PR #128. No M7 source/ref was changed.
