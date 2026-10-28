@@ -10498,3 +10498,9 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `d2b7cfc4d03bed68def4381cca72aecc7c676dbe` has 12/12 hosted checks passing, including both OS composition run `40685818026`. It validates the feature-base M9 manifest, not the current PR #127 candidate. PR comment `6468754121` records the boundary.
 - No owner responses or module PR head changes appeared; M1 #133 still has no exact-head checks, M3/M6/M8 gates remain open, and #52/product E4 remain NOT_VERIFIED.
+
+## 12:26 UTC — owner and dependency follow-up
+
+- No new comments or head changes on Issues #125/#80/#126 or module PRs #120/#123/#127/#128/#129. M3 exact-head review, M6/M8 shared-source coordination, M7/M8 source-anchor decisions remain open.
+- Hono alert #2 remains OPEN/medium; PR #67 is OPEN at `cda74e9` with 9/9 checks passing. No `main` merge or alert dismissal occurred.
+- PR #131 last pushed exact head `d2b7cfc` is 12/12 green. PR #24 is still unchanged OPEN/Draft. M0 worktree is documentation-only.
