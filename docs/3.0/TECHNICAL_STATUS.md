@@ -10384,3 +10384,9 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 - M7 owner recorded `ACCEPT_WITH_CONDITIONS` on exact M1 code SHA `3f0921f` in PR #133 comment `6465407815`. Combined temporary exact-source tests for Gateway plus both M7 reliability suites pass 59/59, conflict-free. M7 test commit `a0f2c78` remains local/unpushed while being applied to the current M1 PR candidate.
 - PR #133 is Draft. Its initial CI showed stale M9 M1 pin `89be11e` and missing contract doc; the doc has now been committed locally and both M1 commits will be published in the next batch. The M9 pin remains unchanged pending exact owner review/CI.
 - Issue #52 remains OPEN/P0/NOT_VERIFIED: synthetic alias denials pass current M1/M5 controls, but the first-party product host still lacks a demonstrated configured-target callsite consuming the M1-bound identity. No actual data access or disclosure is established.
+
+### 09:34 UTC — M7 authored test adaptation prepared
+
+- On M1 contract head `6a64cc0`, M7 prepared owner-authored test commit `f1502489fbf807c16aad72c50b522c373ac07746`, changing only `test/reliability-gateway-lifecycle.test.ts` and `test/honeypot-runtime.test.ts`. It is a detached local commit whose parent is exactly `6a64cc0`; it can fast-forward existing M1 branch `feature/ac3-security-core` without creating a branch.
+- Combined exact-source tests passed 59/59 in `integration/M7-tests-on-M1-6a64`; diff-check passed. The M7-owned patch has not been pushed and is scheduled for the next five-minute batch.
+- M0 PR #131 head `9394f208e0869656d290c5dfd5a8e15adb22e206` has standard tests/package/Docker/sponsor/ownership passing; Ubuntu and Windows exact-source composition remain in progress (`40665038097`).
