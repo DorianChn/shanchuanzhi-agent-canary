@@ -10461,3 +10461,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `d62e6e64146df8375e851b6c5744545f8155f9a5` has 12/12 passing hosted checks: CI `40672819282`, coordination/ownership `40672819167`, and Ubuntu/Windows composition `40672819242`. The composition uses event-base M9 `34fbe6d`; it does not validate PR #127's current M9 candidate pins or all open module follow-up heads. M0 recorded the result in PR comment `6466807821`.
 - PR #24 remains OPEN/Draft at head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+
+## 10:58 UTC — latest M0 docs PR validation
+
+- PR #131 head `59a2ebfcf6d98c89378a53d5e2c5a66fc2be0b94` has 12/12 hosted checks passing (CI, coordination, package/Docker/sponsor, ownership, Ubuntu/Windows composition). Composition selects event-base M9 `34fbe6d`; it does not validate M9 PR #127's current candidate manifest. Exact status recorded at PR comment `6467215965`.
+- Owner gates are unchanged: no exact M3 disposition for #120; no M6/M8 acceptance/coordination for current shared source; no current hosted check runs for M1 #133. Keep M9 Draft and pins unchanged. #52 remains OPEN/P0/NOT_VERIFIED and product E4 remains NOT_VERIFIED.
