@@ -10086,7 +10086,7 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Read-only comparison of current feature base and M7 head `package.json` confirms `scripts.test` on M7 omits `test/m9-security-composition.test.ts`, which is in the base script. The Windows packaging test remains present. This is a concrete lost baseline test, beyond the merge conflict itself.
 - Posted M7 owner instruction on PR #128: preserve the complete base test list, add M7 coverage, rerun full `npm test`, and verify the M9 test in TAP. Do not replace it with a focused M7-only run. M0 edited no module files.
 
-## 2026-10-28 00:56 UTC — all-module standard-test inventory
+## 2026-10-28 00:55 UTC — all-module standard-test inventory
 
 - Compared the current `scripts.test` path list in all M1–M8 PR heads against feature base `34fbe6d`. M1/M2/M3/M4/M6/M8 retain every baseline test path. M5 and M7 each omit exactly `test/m9-security-composition.test.ts`.
 - M5 has existing owner guidance on #124; M7 was notified on PR #128. Both must preserve the M9 test in the standard full suite. No module package manifest or test was edited. Posted the cross-module inventory on Issue #126.
