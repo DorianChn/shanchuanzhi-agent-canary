@@ -10567,3 +10567,7 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `55cbe87e58a91dfc557043cff9c7e888ec418ad6` has 12/12 hosted checks passing: AC3 `40710738860`, CI `40710738943`, and M9 composition `40710738831` on Ubuntu/Windows (Windows job `122895000543`). It validates coordinator docs against the event-base manifest, not the current PR #127 candidate pins. Exact readback: PR comment `6472536323`.
 - No module PR head changes or owner dispositions appeared; M7 `a0f2c78` stays unpublished because the branch-specific focused run remains 17/19. PR #24 remains unchanged OPEN/Draft.
+
+## 15:36 UTC — macOS CI runner retry
+
+- On exact M0 head `d688b9e1e0b57a6de857d329578c67f6ac5ea975`, Ubuntu and Windows composition passed; the other completed CI jobs passed. GitHub cancelled macOS Node 20 after a 15-minute queue wait. M0 reran only that cancelled job (`gh run rerun 40714073151 --failed`); attempt 2 remains queued at 15:36, with 10/11 visible checks successful, 0 failed, 1 pending. Therefore this head is not yet fully green. No source changes were made. Readback: PR comment `6473354439`.
