@@ -10352,3 +10352,8 @@ Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in c
 - M8 #129 (`685520c`) standard checks pass; current exact-source composition/ownership remains blocked pending cross-module disposition. M9 manifest pins were not changed.
 - M0 follow-up head `404dbd3` has standard platform jobs passing; at 09:08 package and both composition jobs were pending. Parent `ea05cf4` had 12/12 checks pass, with M7 still at historical pin `bba0f0f`.
 - P0 #52 protected-path alias gate, P1 #118 decoy-read, #124 M1 policy disposition, #125 M3 disposition, #80 M6/M8 disposition, #132 product E4 evidence, #41 clean-VM installer acceptance, and #57 independent product E4 remain open. No failed tests were removed, no security denial was relaxed, and no main/#24 merge, release, or M9 pin change occurred.
+
+### 09:09 UTC — M0 404dbd exact-head CI
+
+- M0 PR #131 head `404dbd35534f604c9047b207d0680aac225016be` has 11/12 checks pass: six OS/Node jobs, package, Docker, sponsor, ownership, and Ubuntu composition. Windows exact-source composition is pending in run `40661642988`.
+- The local report-only follow-up is `cf56683`; it has not yet been pushed and has no hosted checks. No behavior or module source changed.
