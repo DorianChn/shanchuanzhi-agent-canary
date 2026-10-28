@@ -10595,3 +10595,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 ## 16:08 UTC — exact M1 conflict paths identified
 
 - A read-only `git merge-tree --trivial-merge` for base `34fbe6d35d4dea30795525bf538f97194758c6c4` and M1 head `f1502489fbf807c16aad72c50b522c373ac07746` identifies conflicts in `docs/3.0/API_CONTRACTS.md`, `src/runtime/gateway.ts`, `test/gateway.test.ts`, `test/honeypot-runtime.test.ts`, and `test/reliability-gateway-lifecycle.test.ts`. No worktree change occurred. M0 posted the exact list on PR #133 comment `6474167116` and linked Issue #126.
+
+## 16:23 UTC — exact M0 head 1f6928b validated
+
+- PR #131 exact head `1f6928b8a738d834f07b349781f7001ef94b2136` has 12/12 completed checks passing: AC3 `40724206864`, CI `40724206902`, and Ubuntu/Windows composition `40724206936` (Windows job `122942938311`). This validates the coordinator docs against the workflow event-base M9 manifest, not the current PR #127 candidate pins. Exact readback: PR comment `6474495012`.
+- M1 PR #133 remains `CONFLICTING/DIRTY`; current exact-head workflows remain absent until its owner resolves five listed conflicts. M7 candidate stays unpublished. PR #24 remains unchanged OPEN/Draft.
