@@ -1,3 +1,11 @@
+## Current M0-M9 coordination snapshot — 2026-10-28 08:03 UTC
+
+- M0 PR #131 head `0878f6660753b843af9b35b2c15d134623000e7e` is OPEN/DRAFT/CLEAN. Exact-head checks are 12/12 green: regular CI `40653347737`, ownership contract `40653347654`, and Ubuntu/Windows composition `40653347653`.
+- Windows composition log records `M9_SHA=34fbe6d35d4dea30795525bf538f97194758c6c4` and M1–M8 refs from that feature-base manifest (including historical M7 `bba0f0f` and M8 `84ee6a7`, with review candidate `1c94ed4`). This does not validate M9 candidate PR #127 or current M7/M8 PR heads. PR #127 remains OPEN/DRAFT/CLEAN at `635f8bc`; its pins for M7/M8 remain stale against #128/#129.
+- Follow-up module heads remain M3 #120 `9169552`, M4 #121 `5d975b7`, M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee` (DIRTY), and M8 #129 `685520c`; M1/M2 are merged at `89be11e` / `941fd22`. No module head moved during this CI batch.
+- P0 Issue #52 remains OPEN/NOT_VERIFIED for first-party OBSERVE host consumption and OS-atomic/TOCTOU evidence; latest M0 synthetic composition readback is recorded there as comment `6463797524`. P1 owner gates #80/#124/#125 remain open. Keep policy hard denials and all failure assertions unchanged.
+- M1–M8 worktree paths and branches were read back. Existing dirty `.gitignore` changes in M6/M7/M8 and M8's untracked `M8_MERGE_RESOLUTION_RESULT.json` are preserved. Branch ancestry differences M3–M8 remain recorded in #126; no rebase or rewrite occurred.
+- PR #24 remains OPEN/DRAFT at unchanged `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `competition/shanchuanzhi-release-readiness`. No main merge, module source edit, or Release action occurred.
 ## Current M0-M9 coordination snapshot — 2026-10-28 07:56 UTC
 
 - M0 coordinator head `6135044073a1016e27e3fb81adb55b0ac6cfcdb5` is pushed to PR #131, which remains OPEN/DRAFT. On this exact head, 11/12 checks have passed; only Windows exact-source composition is still running (`40652827044`). The run's immutable M9 source is feature-base `34fbe6d35d4dea30795525bf538f97194758c6c4`, not M9 candidate PR #127.
