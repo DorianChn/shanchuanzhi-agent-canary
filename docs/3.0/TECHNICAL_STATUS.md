@@ -10600,3 +10600,7 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `1f6928b8a738d834f07b349781f7001ef94b2136` has 12/12 completed checks passing: AC3 `40724206864`, CI `40724206902`, and Ubuntu/Windows composition `40724206936` (Windows job `122942938311`). This validates the coordinator docs against the workflow event-base M9 manifest, not the current PR #127 candidate pins. Exact readback: PR comment `6474495012`.
 - M1 PR #133 remains `CONFLICTING/DIRTY`; current exact-head workflows remain absent until its owner resolves five listed conflicts. M7 candidate stays unpublished. PR #24 remains unchanged OPEN/Draft.
+
+## 16:31 UTC — M9 owner notified of M1 pin blocker
+
+- M0 cross-posted the verified M1 merge-conflict state and five path list to M9 Draft PR #127 comment `6474675177`. M9 owner is asked to leave historical M1/M7 pins unchanged until the existing M1 conflict is resolved, exact owner approvals exist, and both OS composition checks can validate the selected SHAs.
