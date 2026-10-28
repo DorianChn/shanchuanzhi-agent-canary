@@ -10315,11 +10315,17 @@ M0 recorded the refreshed exact-source status on PR #127 comment `6464683865`, M
 - M7 PR #128 at `1575ad8`: platform tests, Docker, package, sponsor, ownership, and Ubuntu composition pass; Windows composition was still pending. Wrapper regression fails on both OSes because the merged test suite has contradictory installer lifecycle event assertions. M7 is fixing the test while preserving manual-only dispatch and the exclusive lock. No pin update.
 - M0 recorded this exact-source caution on PR #127 comment `6464727020`; PR #122/#128 remain Draft.
 
+M7 prepared a local correction commit `86748604a489eae49dcf5ea6963f5eb35d29e0d9` on top of pushed `1575ad8`. It changes only the installer job to manual `workflow_dispatch` plus checkbox, keeps the exclusive group, and updates the M7 test to assert pull requests do not start the lifecycle while retaining manual checkbox cases. Static condition behavior and diff-check pass; full reliability test cannot start locally because `src/sdk.js` is absent. This fix is unpushed pending the next 20-minute batch; exact hosted failures still refer to `1575ad8`. M0 recorded it on PR #128 comment `6464777004` and Issue #126 comment `6464777679`.
+
 ### 08:52 UTC current check details
 
 - PR #122's standard CI is green across six OS/Node jobs, Docker, package, sponsor, and ownership. Its two composition jobs fail exactly at the M5 manifest pin mismatch (`cca42cd` vs `51a64f0`). PR #122 is OPEN/DRAFT/UNSTABLE.
 - PR #128's standard test matrix, Docker, package, sponsor, ownership, and Ubuntu composition pass; Windows composition is pending. The two wrapper-regression jobs fail at the contradictory lifecycle test described above. The installer lifecycle job is skipped as designed. PR #128 is OPEN/DRAFT/UNSTABLE.
 - PR #131 current M0 checks pass except Windows exact-source composition remains pending; all ordinary tests, ownership, Docker, package, sponsor, and Ubuntu composition pass.
+
+### 08:56 UTC — M2 native-Shell boundary disposition
+
+Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in comment `6464801719`. Current feature base marks native Codex Shell `UNPROTECTED / BLOCKED_NOT_VERIFIED` in the Console, rejects unsupported direct dispatch, and documents the limit in English/Chinese README, SECURITY, Compatibility, and API contracts. M2 PR #110 is merged and its product/platform/package/ownership checks passed; composition was skipped. This closes the boundary-disclosure issue only; it does not claim native-host enforcement or a protected write test.
 
 - Re-read the current `.gitignore` and verified representative paths with `git check-ignore -v`: root `logs/`, credential JSON patterns, `*.tmp`, and editor swap files are ignored. Existing ignore rules also cover `.env*`, private key/certificate formats, `.agent-canary/`, M0 workspaces, and generated E4 one-click bundles.
 - The only explicit `.gitignore` delta in M0's PR is additional credential JSON names; no log/key/temp exception was introduced. Examples remain explicitly unignored only for reviewed `client_secret.example.json` and `service-account-key.example.json` fixtures.
