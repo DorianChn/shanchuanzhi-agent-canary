@@ -10049,3 +10049,10 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 ## 2026-10-28 00:34 UTC — M9 candidate-owner handoff
 
 - Posted the latest automated M9 source audit and remaining exact M7/M8 owner gates directly on PR #127 in comment `6457406116`. PR #127 stays OPEN/Draft with no submitted review decision; no pin was changed.
+
+## 2026-10-28 00:34 UTC — M5/M6 source-scope handoff refresh
+
+- PR #127 was re-read after its 00:32 update: it remains OPEN/Draft at `635f8bc`, CLEAN, with its previously reported successful candidate checks; its manifest still matches M5 `dde81d6` and M6 `fae72ea`. Its body and validation summary are unchanged; M7/M8 pins and product E4 remain pending owner/evidence gates.
+- M6 clarification was posted on PR #123 in comment `6457409137`: #127 already includes the M6 head; direct red composition on #123 selects old feature-base M9 `34fbe6d`; source token-test isolation and product E4 evidence remain unresolved.
+- The prior attempted M5 clarification was not present in PR #122 comments. Reposted successfully at comment `6457426199`: #127 includes the current M5 head, while M5 remains blocked by ownership baseline `e4732d9` and the independent #124 package-prefix/full-test-list findings.
+- PR #120/#121 remain at `9169552`/`5d975b7`; #122/#123 remain at `dde81d6`/`fae72ea`; #128/#129 remain at `bf9faee`/`685520c`. No module refs, code, worktree dirt, M9 pin, PR #24, or `main` changed. M0 coordination comments only; no merge or Release action.
