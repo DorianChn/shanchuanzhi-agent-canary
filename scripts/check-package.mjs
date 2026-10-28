@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import {
   isPublicPackageFile,
   validateGatewayAdapterPackage,
@@ -63,7 +63,8 @@ try {
   const packageFile = path.join(temp, pack.filename);
   const installDir = path.join(temp, "install");
   fs.mkdirSync(installDir);
-  runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", pathToFileURL(packageFile).href], installDir);
+  const packageSpec = `./${path.basename(packageFile)}`;
+  runNpm(["install", "--prefix", installDir, "--ignore-scripts", "--no-audit", "--no-fund", packageSpec], temp);
 
   const installedPackageRoot = path.join(installDir, "node_modules", "@dorianchn", "agent-canary");
   if (!fs.existsSync(installedPackageRoot) || !fs.statSync(installedPackageRoot).isDirectory()) {
