@@ -10080,3 +10080,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Git `merge-tree --write-tree` compared current `feature/agent-canary-3.0` with PR #128 head `bf9faee` without writing a worktree or commit. It found content conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`.
 - It auto-merged `RELEASE_READINESS.md`, `STABILITY_REPORT.md`, `packaging/windows/installer-lifecycle-smoke.ps1`, `packaging/windows/prepare.mjs`, `test/auto-e4.test.mjs`, and `test/reliability.test.mjs`. No conflict resolution was applied by M0.
 - Posted the exact file list and owner handoff on PR #128. M7 must resolve on its existing branch and rerun checks; M9's M7 pin/disposition remains separate. No M7 file or ref changed.
+
+## 2026-10-28 00:57 UTC — M7 package conflict drops a security test
+
+- Read-only comparison of current feature base and M7 head `package.json` confirms `scripts.test` on M7 omits `test/m9-security-composition.test.ts`, which is in the base script. The Windows packaging test remains present. This is a concrete lost baseline test, beyond the merge conflict itself.
+- Posted M7 owner instruction on PR #128: preserve the complete base test list, add M7 coverage, rerun full `npm test`, and verify the M9 test in TAP. Do not replace it with a focused M7-only run. M0 edited no module files.
