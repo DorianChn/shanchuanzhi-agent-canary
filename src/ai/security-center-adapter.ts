@@ -31,6 +31,7 @@ const SECURITY_CENTER_FIELDS = [
   'protectionStatus', 'gateway', 'hook', 'canaryIsolation', 'policy',
   'protectedToolCount', 'unprotectedExecutionPaths', 'agents', 'coverage',
 ] as const;
+const READINESS_FIELDS = ['scope', 'schemaVersion', 'generatedAt', 'configurationStatus', 'bindingStatus', 'actionReadiness', 'operatorAuthStatus', 'targets'] as const;
 const RISK_LEVELS = ['SAFE', 'READ', 'WRITE', 'NETWORK', 'EXECUTE', 'SECRET', 'DESTRUCTIVE'] as const;
 const EVENT_EXPLANATIONS: Record<string, string> = {
   decoy_called: '调用触发了 Canary 诱饵信号；事件本身不能证明当前会话仍处于隔离状态。',
@@ -79,6 +80,45 @@ export function normalizeProtectionStatus(value: unknown): ProtectionStatus {
 
 export function normalizeSecurityCoverage(value: unknown): SecurityCoverage {
   return value === 'M2_FIXED_FILE_READS_ONLY' ? value : 'UNKNOWN';
+}
+
+export function adaptConfiguredTargetReadiness(input: unknown, now = Date.now()) {
+  const unknown = { valid: false, configurationStatus: 'UNKNOWN' as const, bindingStatus: 'UNKNOWN' as const,
+    actionReadiness: 'UNKNOWN' as const, operatorAuthStatus: 'NOT_CONFIGURED' as const, targets: [] as Array<{targetId:string;bindingStatus:string}> };
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return unknown;
+  const value = input as Record<string, unknown>;
+  if (Object.keys(value).sort().join('|') !== [...READINESS_FIELDS].sort().join('|') ||
+      value.scope !== 'M3_CONFIGURED_TARGET_READINESS' || value.schemaVersion !== 1 ||
+      typeof value.generatedAt !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value.generatedAt)) return unknown;
+  const age = now - Date.parse(value.generatedAt);
+  if (!Number.isFinite(age) || age > 15_000 || age < -5_000) return unknown;
+  const configs = ['CONFIGURED','NOT_CONFIGURED','UNKNOWN'];
+  const bindings = ['BOUND','BLOCKED','UNAVAILABLE','UNKNOWN'];
+  const readiness = ['READY','BLOCKED','UNAVAILABLE','UNKNOWN'];
+  const auth = ['CONFIGURED','NOT_CONFIGURED'];
+  if (!configs.includes(value.configurationStatus as string) || !bindings.includes(value.bindingStatus as string) ||
+      !readiness.includes(value.actionReadiness as string) || !auth.includes(value.operatorAuthStatus as string) ||
+      !Array.isArray(value.targets)) return unknown;
+  const targets: Array<{targetId:string;bindingStatus:string}> = [];
+  const ids = new Set<string>();
+  for (const item of value.targets) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return unknown;
+    const target = item as Record<string, unknown>;
+    if (Object.keys(target).sort().join('|') !== 'bindingStatus|targetId' || typeof target.targetId !== 'string' ||
+        !/^[a-z][a-z0-9_-]{0,62}$/.test(target.targetId) || ids.has(target.targetId) ||
+        !['BOUND','BLOCKED','UNKNOWN'].includes(target.bindingStatus as string)) return unknown;
+    ids.add(target.targetId);
+    targets.push({targetId:target.targetId,bindingStatus:target.bindingStatus as string});
+  }
+  if ((value.configurationStatus === 'NOT_CONFIGURED' && (targets.length || value.bindingStatus !== 'UNAVAILABLE' || value.actionReadiness !== 'UNAVAILABLE')) ||
+      (value.actionReadiness === 'READY' && (value.bindingStatus !== 'BOUND' || value.operatorAuthStatus !== 'CONFIGURED')) ||
+      (value.bindingStatus === 'BOUND' && (!targets.some(target => target.bindingStatus === 'BOUND') || value.configurationStatus !== 'CONFIGURED')) ||
+      (value.bindingStatus === 'BLOCKED' && (value.configurationStatus !== 'CONFIGURED' || value.actionReadiness !== 'BLOCKED')) ||
+      (value.bindingStatus === 'UNAVAILABLE' && (value.configurationStatus !== 'NOT_CONFIGURED' || value.actionReadiness !== 'UNAVAILABLE')) ||
+      (value.bindingStatus === 'UNKNOWN' && (value.configurationStatus !== 'UNKNOWN' || value.actionReadiness !== 'UNKNOWN'))) return unknown;
+  return { valid:true, generatedAt:value.generatedAt, configurationStatus:value.configurationStatus as typeof unknown.configurationStatus,
+    bindingStatus:value.bindingStatus as typeof unknown.bindingStatus, actionReadiness:value.actionReadiness as typeof unknown.actionReadiness,
+    operatorAuthStatus:value.operatorAuthStatus as typeof unknown.operatorAuthStatus, targets };
 }
 
 /** Reject malformed snapshots before the UI labels their source as available. */
@@ -374,6 +414,7 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const DATA_SOURCE_STATUSES = ' + JSON.stringify(DATA_SOURCE_STATUSES) + ';',
   'const AGENT_IDS = ' + JSON.stringify(AGENT_IDS) + ';',
   'const SECURITY_CENTER_FIELDS = ' + JSON.stringify(SECURITY_CENTER_FIELDS) + ';',
+  'const READINESS_FIELDS = ' + JSON.stringify(READINESS_FIELDS) + ';',
   'const RISK_LEVELS = ' + JSON.stringify(RISK_LEVELS) + ';',
   'const EVENT_EXPLANATIONS = ' + JSON.stringify(EVENT_EXPLANATIONS) + ';',
   'const asRecord = ' + asRecord.toString() + ';',
@@ -381,6 +422,7 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const sanitizePolicyName = ' + sanitizePolicyName.toString() + ';',
   'const normalizeProtectionStatus = ' + normalizeProtectionStatus.toString() + ';',
   'const normalizeSecurityCoverage = ' + normalizeSecurityCoverage.toString() + ';',
+  'const adaptConfiguredTargetReadiness = ' + adaptConfiguredTargetReadiness.toString() + ';',
   'const isValidSecurityCenterStatusPayload = ' + isValidSecurityCenterStatusPayload.toString() + ';',
   'const normalizeConnectionStatus = ' + normalizeConnectionStatus.toString() + ';',
   'const mapEvent = ' + mapEvent.toString() + ';',
@@ -389,6 +431,6 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const preparePolicyResultForDisplay = ' + preparePolicyResultForDisplay.toString() + ';',
   'const explainSecurityEvent = ' + explainSecurityEvent.toString() + ';',
   'const buildSecurityDiagnostic = ' + buildSecurityDiagnostic.toString() + ';',
-  'return {normalizeProtectionStatus, normalizeSecurityCoverage, isValidSecurityCenterStatusPayload, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
+  'return {normalizeProtectionStatus, normalizeSecurityCoverage, isValidSecurityCenterStatusPayload, adaptConfiguredTargetReadiness, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
   '})();',
 ].join('\n');
