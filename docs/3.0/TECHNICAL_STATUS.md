@@ -10614,3 +10614,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `f7e6eed8adb9ba1c92c56c450dd12202aa08072f` has 12/12 completed checks passing: AC3 `40730738658`, CI `40730738495`, and Ubuntu/Windows composition `40730738612` (Windows job `122966033215`). This validates coordinator docs against event-base M9 refs, not PR #127's current pins. Exact readback: PR comment `6475413551`.
 - No new module heads or owner dispositions appeared. M1 merge-conflict gate, M7 candidate, and M9 current-pin gate remain open. PR #24 remains unchanged OPEN/Draft.
+
+## 17:23 UTC — exact M0 head 81378e3 validated
+
+- PR #131 exact head `81378e3a6144b845791ad0a886b7fe81fac773cb` has 12/12 completed checks passing: AC3 `40733986784`, CI `40733986977`, and Ubuntu/Windows M9 composition `40733986781` (Windows job `122977473778`). This validates coordinator docs against event-base M9 refs, not PR #127's current candidate pins. Readback: PR comment `6475827624`.
+- No module PR heads or owner decisions changed. PR #24 remains unchanged OPEN/Draft.
