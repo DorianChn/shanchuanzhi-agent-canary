@@ -754,6 +754,12 @@ async function postConfiguredTargetRead(url:string,csrf:string,body:unknown){
   });
 }
 
+async function getConfiguredTargetReadiness(url:string,csrf:string){
+  return fetch(url+'/api/security-center/configured-target-readiness',{
+    headers:{'x-canary-csrf':csrf},
+  });
+}
+
 test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERVE with target-ID-only responses',async()=>{
   const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-positive-'));
   fs.mkdirSync(path.join(workspace,'notes'));
@@ -768,6 +774,17 @@ test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERV
     const csrf=await csrfFor(console.url),gateway=dependencies.gateway;
     assert.ok(gateway,'the CLI startup dependency seam should construct M1 before accepting requests');
     const evidenceBefore=gateway.evidence().length;
+    const readiness=await getConfiguredTargetReadiness(console.url,csrf);
+    assert.equal(readiness.status,200);
+    const readinessBody=await readiness.json();
+    assert.deepEqual(readinessBody,{
+      scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'CONFIGURED',bindingStatus:'BOUND',
+      actionReadiness:'READY',operatorAuthStatus:'CONFIGURED',targets:[{targetId:'summary',bindingStatus:'BOUND'}],
+    });
+    const readinessJson=JSON.stringify(readinessBody);
+    for(const secret of [targetPath,original,'OPERATOR_FIXTURE','m3-target-summary','notes/summary.txt'])assert.equal(readinessJson.includes(secret),false);
+    assert.equal(dependencies.heldReadCallbacks,0,'readiness inspection must not execute a configured target');
+    assert.equal(gateway.evidence().length,evidenceBefore,'readiness inspection must not append execution evidence');
     for(const request of [{path:'notes/summary.txt'},{targetId:'not-configured'},{targetId:'summary',path:'notes/summary.txt'}]){
       const response=await postConfiguredTargetRead(console.url,csrf,request);
       assert.equal(response.status,200);
@@ -820,6 +837,15 @@ test('configured sensitive and symlink targets fail closed before M5 callbacks o
   });
   try{
     const csrf=await csrfFor(console.url);
+    const readiness=await getConfiguredTargetReadiness(console.url,csrf);
+    assert.deepEqual(await readiness.json(),{
+      scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'CONFIGURED',bindingStatus:'BLOCKED',
+      actionReadiness:'BLOCKED',operatorAuthStatus:'CONFIGURED',targets:[
+        {targetId:'credentials',bindingStatus:'BLOCKED'},
+        {targetId:'linked',bindingStatus:'BLOCKED'},
+        {targetId:'linked-credentials',bindingStatus:'BLOCKED'},
+      ],
+    });
     for(const targetId of ['credentials','linked','linked-credentials']){
       const response=await postConfiguredTargetRead(console.url,csrf,{targetId});
       assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
@@ -830,6 +856,48 @@ test('configured sensitive and symlink targets fail closed before M5 callbacks o
     assert.equal(dependencies.genericCallbacks,0);
     assert.equal(fs.readFileSync(path.join(workspace,'.ssh','id_rsa'),'utf8'),'SENSITIVE_ALIAS_FIXTURE');
     assert.equal(fs.readFileSync(path.join(workspace,'real','notes.txt'),'utf8'),'SAFE_TARGET_FIXTURE');
+  }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
+});
+
+test('configured-target readiness reports unavailable without configuration and never invents readiness',async()=>{
+  const console=await startAIConsole({port:0});
+  try{
+    const response=await getConfiguredTargetReadiness(console.url,await csrfFor(console.url));
+    assert.equal(response.status,200);
+    assert.deepEqual(await response.json(),{
+      scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'NOT_CONFIGURED',bindingStatus:'UNAVAILABLE',
+      actionReadiness:'UNAVAILABLE',operatorAuthStatus:'NOT_CONFIGURED',targets:[],
+    });
+  }finally{await console.close();}
+});
+
+test('configured-target readiness preserves UNKNOWN for malformed configuration',async()=>{
+  const console=await startAIConsole({port:0,securityCenterProtectedTargets:'malformed' as never});
+  try{
+    const response=await getConfiguredTargetReadiness(console.url,await csrfFor(console.url));
+    assert.deepEqual(await response.json(),{
+      scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'UNKNOWN',bindingStatus:'UNKNOWN',
+      actionReadiness:'UNKNOWN',operatorAuthStatus:'NOT_CONFIGURED',targets:[],
+    });
+  }finally{await console.close();}
+});
+
+test('configured-target readiness exposes only aggregate readiness when a binding lacks operator auth',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-auth-readiness-'));
+  fs.writeFileSync(path.join(workspace,'safe.txt'),'AUTH_READINESS_FIXTURE');
+  const dependencies=actualM1M2M5TargetDependencies();
+  const console=await startAIConsole({
+    port:0,securityCenterWorkspaceRoot:workspace,securityCenterProtectedTargets:[{id:'safe',path:'safe.txt'}],
+    securityCenterTargetDependencies:dependencies.loader as never,
+  });
+  try{
+    const readiness=await getConfiguredTargetReadiness(console.url,await csrfFor(console.url));
+    assert.deepEqual(await readiness.json(),{
+      scope:'M3_CONFIGURED_TARGET_READINESS',configurationStatus:'CONFIGURED',bindingStatus:'BOUND',
+      actionReadiness:'BLOCKED',operatorAuthStatus:'NOT_CONFIGURED',targets:[{targetId:'safe',bindingStatus:'BOUND'}],
+    });
+    assert.equal(dependencies.heldReadCallbacks,0);
+    assert.equal(dependencies.gateway?.evidence().length,0);
   }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
 });
 
