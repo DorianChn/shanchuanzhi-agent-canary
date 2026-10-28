@@ -316,3 +316,98 @@ test('Auto E4 finalization prevents later stages or event mutation',async t=>{
     run.release();
   }
 });
+
+test('E4 failures retain named target snapshots and raw gateway evidence; missing observations stay UNKNOWN', t => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-m6-e4-failed-evidence-'));
+  t.after(() => fs.rmSync(temp, { recursive: true, force: true }));
+  const inheritedHome = path.join(temp, 'inherited-canary-home');
+  const outputRoot = path.join(temp, 'runs');
+  fs.mkdirSync(inheritedHome, { recursive: true });
+  fs.mkdirSync(outputRoot, { recursive: true });
+  const tokenState = path.join(inheritedHome, 'tokens.json');
+  const originalTokenState = JSON.stringify([{ token: 'cnry_M6_SYNTHETIC_SENTINEL' }]) + '\n';
+  fs.writeFileSync(tokenState, originalTokenState, { flag: 'wx' });
+
+  const env = {
+    ...process.env,
+    NODE_ENV: 'test',
+    AGENT_CANARY_HOME: inheritedHome
+  };
+  for (const key of Object.keys(env)) if (key.startsWith('E4_MODEL_')) delete env[key];
+  const result = spawnSync(process.execPath, [path.join(repo, 'security-lab', 'e4', 'run.mjs'), `--out-dir=${outputRoot}`], {
+    cwd: repo, env, encoding: 'utf8', windowsHide: true, timeout: 60000, maxBuffer: 8 * 1024 * 1024
+  });
+  assert.equal(result.error, undefined, result.error?.message);
+  assert.equal(result.status, 1, `injected failures must remain failures; stdout=${result.stdout}\nstderr=${result.stderr}`);
+  const summary = JSON.parse(result.stdout.trim());
+  assert.equal(summary.evidenceScope, 'BUNDLE_INTEGRITY_ONLY');
+  assert.equal(summary.productE4Accepted, false);
+  assert.equal(fs.readFileSync(tokenState, 'utf8'), originalTokenState);
+  assert.deepEqual(fs.readdirSync(inheritedHome), ['tokens.json']);
+
+  const runDirs = fs.readdirSync(outputRoot).map(name => path.join(outputRoot, name));
+  assert.equal(runDirs.length, 1);
+  const runDir = runDirs[0];
+  const report = JSON.parse(fs.readFileSync(path.join(runDir, 'report.json'), 'utf8'));
+  assert.equal(report.e4Status, 'NOT_VERIFIED');
+  assert.equal(report.overall, 'AUTHOR_AUTOMATION_FAILED_E4_STILL_NOT_VERIFIED');
+  assert.equal(report.artifact.status, 'NOT_SUPPLIED');
+
+  const expectedCases = new Map([
+    ['GW-CANARY-BLOCK', ['gateway-canary/instructions.txt', 'gateway-canary/target.txt']],
+    ['CANARY-SESSION-ISOLATION', ['session-isolation/session-a-decoy.txt', 'session-isolation/session-a-target.txt', 'session-isolation/session-b-target.txt']]
+  ]);
+  for (const [id, paths] of expectedCases) {
+    const row = report.cases.find(item => item.id === id);
+    assert.equal(row.status, 'FAIL', id);
+    assert.equal(row.reason, 'GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK', id);
+    assert.equal(row.fileState.status, 'OBSERVED', id);
+    assert.equal(row.fileState.unchanged, true, id);
+    assert.deepEqual(row.fileState.before.map(item => item.path), paths, id);
+    assert.deepEqual(row.fileState.after.map(item => item.path), paths, id);
+    assert.ok(row.fileState.before.every(item => typeof item.sha256 === 'string'), id);
+    assert.ok(row.fileState.after.every(item => typeof item.sha256 === 'string'), id);
+  }
+
+  const noTarget = report.cases.find(item => item.id === 'ARTIFACT-VM-BINDING');
+  assert.equal(noTarget.fileState.status, 'UNKNOWN');
+  assert.equal(noTarget.fileState.reason, 'NO_TARGETS_REGISTERED');
+  assert.equal(noTarget.fileState.before, null);
+  assert.equal(noTarget.fileState.after, null);
+  assert.equal(noTarget.fileState.unchanged, null);
+
+  const rawLog = fs.readFileSync(path.join(runDir, 'raw.log'), 'utf8').trim().split(/\r?\n/).map(line => JSON.parse(line));
+  for (const id of expectedCases.keys()) {
+    assert.ok(rawLog.some(event => event.event === 'target-snapshot-before' && event.id === id && event.status === 'OBSERVED'), `${id} before log`);
+    assert.ok(rawLog.some(event => event.event === 'target-snapshot-after' && event.id === id && event.status === 'OBSERVED' && event.unchanged === true), `${id} after log`);
+    assert.ok(rawLog.some(event => event.event === 'case-complete' && event.id === id && event.status === 'FAIL'), `${id} failure log`);
+  }
+  const expectedStreams = [
+    ['GW-CANARY-BLOCK', 'GW-CANARY-BLOCK-gateway'], ['GW-CANARY-BLOCK', 'GW-CANARY-BLOCK-guard'],
+    ['CANARY-SESSION-ISOLATION', 'CANARY-SESSION-ISOLATION-gateway-a'], ['CANARY-SESSION-ISOLATION', 'CANARY-SESSION-ISOLATION-gateway-b'],
+    ['CANARY-SESSION-ISOLATION', 'CANARY-SESSION-ISOLATION-guard-a'], ['CANARY-SESSION-ISOLATION', 'CANARY-SESSION-ISOLATION-guard-b']
+  ];
+  const evidenceDir = path.join(runDir, 'evidence');
+  for (const [caseId, label] of expectedStreams) {
+    const stream = rawLog.find(event => event.event === 'case-evidence-stream' && event.caseId === caseId && event.label === label);
+    assert.ok(stream, `${caseId}/${label} stream record`);
+    if (stream.status === 'PRESENT') {
+      assert.ok(stream.bytes > 0);
+      assert.equal(stream.archived, true);
+      assert.ok(fs.statSync(path.join(evidenceDir, `${label}.jsonl`)).size > 0, label);
+    } else if (stream.status === 'EMPTY') {
+      assert.equal(stream.bytes, 0);
+      assert.equal(stream.archived, true);
+      assert.equal(fs.statSync(path.join(evidenceDir, `${label}.jsonl`)).size, 0, label);
+    } else {
+      assert.equal(stream.status, 'UNKNOWN');
+      assert.equal(stream.bytes, null);
+      assert.equal(stream.archived, false);
+    }
+  }
+  assert.ok(expectedStreams.filter(([caseId]) => caseId === 'GW-CANARY-BLOCK').some(([caseId, label]) => rawLog.some(event => event.event === 'case-evidence-stream' && event.caseId === caseId && event.label === label && event.status === 'PRESENT')));
+  assert.ok(expectedStreams.filter(([caseId]) => caseId === 'CANARY-SESSION-ISOLATION').some(([caseId, label]) => rawLog.some(event => event.event === 'case-evidence-stream' && event.caseId === caseId && event.label === label && event.status === 'PRESENT')));
+  const bundle = JSON.parse(fs.readFileSync(path.join(runDir, 'bundle.json'), 'utf8'));
+  assert.equal(bundle.manifest.valid, true);
+  assert.equal(bundle.e4Status, 'NOT_VERIFIED');
+});
