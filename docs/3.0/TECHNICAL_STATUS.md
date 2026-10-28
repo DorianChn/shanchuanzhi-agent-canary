@@ -10330,3 +10330,15 @@ Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in c
 - Re-read the current `.gitignore` and verified representative paths with `git check-ignore -v`: root `logs/`, credential JSON patterns, `*.tmp`, and editor swap files are ignored. Existing ignore rules also cover `.env*`, private key/certificate formats, `.agent-canary/`, M0 workspaces, and generated E4 one-click bundles.
 - The only explicit `.gitignore` delta in M0's PR is additional credential JSON names; no log/key/temp exception was introduced. Examples remain explicitly unignored only for reviewed `client_secret.example.json` and `service-account-key.example.json` fixtures.
 - This satisfies the repository hygiene check for the current tree; no ignore rule was changed during this verification.
+
+### 09:05 UTC — M7 corrected exact-head CI and composition scope
+
+- M7 candidate `86748604a489eae49dcf5ea6963f5eb35d29e0d9` is pushed to PR #128. Exact-head six OS/Node checks, Ubuntu/Windows wrapper-regression checks, package, Docker, sponsor, ownership, and Windows community build evidence pass. Installer lifecycle is skipped.
+- Cross-module run `40660730337` passes both OSes. Its workflow log records M9 source `34fbe6d` and manifest M7 source `bba0f0f89c610f8198660e799de7a652b8ea8e96`; it does not check out M7 candidate `8674860`. This run is not current-M7 exact composition evidence and does not clear the M9 pin gate.
+- PR #128 body, PR comment, and Issue #126 were updated with this distinction. M9 pins remain unchanged. No clean-VM installer, product E4, or full local Windows package pass is claimed.
+
+### 09:05 UTC — M0 exact-head CI readback
+
+- M0 PR #131 head `ea05cf434ad3362140451924e6bfbc67937d1e4a` has 12/12 hosted checks passing, including Ubuntu/Windows composition, six OS/Node jobs, Docker, package, sponsor, and ownership.
+- Run `40660741566` logs show M9 feature-base `34fbe6d` and M7 pin `bba0f0f89c610f8198660e799de7a652b8ea8e96`; current M7 PR #128 head `86748604a489eae49dcf5ea6963f5eb35d29e0d9` was not composed. The green run does not clear M7's current-source pin gate.
+- PR #24 is verified OPEN/Draft at exact head `34fbe6d35d4dea30795525bf538f97194758c6c4`; main and M9 pins remain unchanged.
