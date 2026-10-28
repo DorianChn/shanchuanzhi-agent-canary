@@ -10456,3 +10456,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `05be2f046754136c3ba01cd4cc3de143e88f9fd8` has 12/12 hosted checks passing: CI `40670248108`, ownership `40670247619`, Ubuntu/Windows composition `40670247565`. The workflow validates event-base M9 `34fbe6d`, not PR #127's current M9 manifest candidate. Exact readback is PR comment `6466398007`.
 - M0 did not change module PRs, module pins, `main`, PR #24, or Release. M1 exact-head checks remain absent; M3 and M6/M8 owner responses remain missing on #125/#80.
+
+## 10:39 UTC — exact M0 head d62e6e6 validated
+
+- PR #131 exact head `d62e6e64146df8375e851b6c5744545f8155f9a5` has 12/12 passing hosted checks: CI `40672819282`, coordination/ownership `40672819167`, and Ubuntu/Windows composition `40672819242`. The composition uses event-base M9 `34fbe6d`; it does not validate PR #127's current M9 candidate pins or all open module follow-up heads. M0 recorded the result in PR comment `6466807821`.
+- PR #24 remains OPEN/Draft at head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
