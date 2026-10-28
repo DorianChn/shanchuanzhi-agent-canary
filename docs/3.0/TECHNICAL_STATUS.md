@@ -10142,3 +10142,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Sent the exact M9 manifest/branch matrix directly to PR #127. M1–M6 current heads match candidate pins. M8 `1c94ed4` → current `685520c` is one commit but lacks explicit disposition and exact-head composition. M7 pin `bba0f0f` is the merged PR #113 source; PR #128 `bf9faee` is divergent with three conflicts and a dropped M9 test. PR #131's green M7 regression ran against `bba0f0f`, not #128.
 - M9 owner should keep pins until M8 ACCEPT+composition and M7 reconciliation/exact-head checks. No manifest/ref changed by M0.
+
+## 2026-10-28 01:39 UTC — module PR rollup refresh
+
+- Refreshed open module/M9 PRs: #120/#121 each 12 completed checks with two old feature-base composition failures; #122 has 14 completed/5 failures (ownership + feature-base composition); #123 has 14/4 failures (ownership + feature-base composition); #127 is CLEAN with 13/13 successful candidate checks; #128 remains DIRTY with zero checks; #129 has 13 completed/3 failures (ownership + feature-base composition).
+- Current heads are unchanged from the preceding audit: M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 follow-up `bf9faee`, M8 `685520c`, M9 `635f8bc`. PR #127's candidate evidence is distinct from the direct module-PR feature-base composition checks.
+- P0 Issue #52 and P1 Issue #45 remain OPEN. No module head/check change was observed; unresolved gates remain as recorded. Refreshed this snapshot for the next scheduled documentation push.
