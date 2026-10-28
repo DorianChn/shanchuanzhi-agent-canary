@@ -10366,3 +10366,7 @@ Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in c
 
 - Current M0 PR #131 head `c38428cde2c481178c2077a1bc563cf2081548e0`: 11/12 checks passed (six OS/Node tests, package, Docker, sponsor, ownership, Ubuntu composition); Windows exact-source composition remained in progress at 09:16 UTC in run `40662306223`.
 - M7 PR #128 exact current head `86748604a489eae49dcf5ea6963f5eb35d29e0d9` has all applicable checks passed; the installer lifecycle job is skipped by its manual-only condition. M9 composition selected historical M7 `bba0f0f`, so exact current M7 pin acceptance remains open.
+
+### 09:20 UTC — M0 Windows composition check
+
+For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are complete and passing; Ubuntu exact-source composition passes, while Windows composition remains in progress in run `40662951586`. All platform tests, package, Docker, sponsor, and ownership checks pass. The M9 manifest path exercised by this job remains the feature-base manifest and does not update any module pin.
