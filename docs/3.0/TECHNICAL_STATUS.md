@@ -10361,3 +10361,8 @@ Issue #45 is CLOSED via its documented-limitation acceptance path, recorded in c
 ### 09:11 UTC — M0 report batch pushed
 
 - Pushed report-only commits through `c38428cde2c481178c2077a1bc563cf2081548e0` to existing M0 PR #131. Prior exact head `404dbd35534f604c9047b207d0680aac225016be` completed 12/12 checks; exact new-head checks are pending. Only coordination status documentation changed.
+
+### 09:16 UTC — M0 c38428c CI progress
+
+- Current M0 PR #131 head `c38428cde2c481178c2077a1bc563cf2081548e0`: 11/12 checks passed (six OS/Node tests, package, Docker, sponsor, ownership, Ubuntu composition); Windows exact-source composition remained in progress at 09:16 UTC in run `40662306223`.
+- M7 PR #128 exact current head `86748604a489eae49dcf5ea6963f5eb35d29e0d9` has all applicable checks passed; the installer lifecycle job is skipped by its manual-only condition. M9 composition selected historical M7 `bba0f0f`, so exact current M7 pin acceptance remains open.
