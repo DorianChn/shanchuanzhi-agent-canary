@@ -10548,3 +10548,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - Follow-up blob comparison confirms M7 candidate `a0f2c78` and M1 exact head `f150248` have identical test blobs for both failing files (`daef910b…` and `45b1b3ce…`). Those exact tests passed within M0's M1 build + 59-test focused run. Thus the 2/19 failure is confined to running M7's test-only candidate against its older Gateway source; the failure does not occur with the exact M1 source. The candidate remains unpublished pending owner review and a reviewable composition path. Correction recorded in Issue #126 comment `6471391949`.
 - M0 latest head `7ebe8b74c9c0ccabbcebd6ad0074ca7a83e1e1ae` has 5/11 checks passing, 6 in progress, and no failures at 14:16 UTC.
+
+## 14:22 UTC — exact M0 head 7ebe8b7 validated
+
+- PR #131 exact head `7ebe8b74c9c0ccabbcebd6ad0074ca7a83e1e1ae` has 12/12 completed checks passing; both Ubuntu and Windows composition passed (Windows job `122871605198`). This is event-base M9 validation, not a certification of PR #127's current pins or unpublished M7 `a0f2c78`. Readback: PR comment `6471520634`.
+- The M7 test comparison is now scoped: the two exact test blobs at M7 candidate `a0f2c78` match M1 PR head `f150248`, and M0's M1 build + focused suite passed them; M7's branch source still throws after decoy quarantine. M7 candidate remains unpushed, M0 recorded exact hashes and blocker in Issue #126 comments `6471249337` and `6471391949`.
