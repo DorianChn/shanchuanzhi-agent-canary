@@ -1,3 +1,11 @@
+## Live exact-source dependency snapshot — 2026-10-28 10:45 UTC
+
+- Dependency flow remains M1 Gateway/Hook held identity → M2 execution adapter → M5 policy/Guard/audit → M3 host readiness contract → M4 read-only desktop consumer → M6 evidence validator → M7 packaging/lifecycle → M8 onboarding/docs → M9 exact-source composition. Consumers adapt at module boundaries; M0 coordinates and records evidence.
+- Current candidates: M1 #133 `f150248`; M2 #110 `941fd22` (merged); M3 #120 `6830cf8`; M4 #121 `efd552d`; M5 #122 `51a64f0`; M6 #123 `b7e186b`; M7 #128 `8674860`; M8 #129 `685520c`; M9 #127 `635f8bc`.
+- Only the M2 manifest pin exactly matches its current merged module head. M1/M3/M4/M5/M6/M7/M8 follow-up refs are not all accepted/integrated. M3 exact-head owner disposition is missing; M6/M8 shared-test and candidate reviews remain missing; M1 #133 has no hosted checks. Do not promote M9 pins until required owner dispositions and fresh Ubuntu/Windows exact-source composition pass.
+- Existing branch anchors differ (Issue #126 comment `6465910277`); module owners retain their worktrees and local edits. M6/M7/M8 dirt remains untouched. Product E4 remains NOT_VERIFIED and P0 #52 remains OPEN.
+- Latest M0 report is PR #131 head `d62e6e6` with 12/12 hosted checks passing. Its composition exercises feature-base M9 `34fbe6d`, not PR #127's candidate manifest.
+
 ## Current live dependency and integration snapshot — 2026-10-27 21:54 UTC
 
 - Dependency chain remains M1 held-file identity/Gateway/Hook → M2 execution-isolation adapter → M5 policy/Guard/audit → M3 host onboarding and status-only readiness → M4 read-only UI consumer → M6 evidence validation → M7 packaging/lifecycle → M8 public documentation → M9 exact reviewed-source composition. Each consumer adapts at its boundary; M0 records and coordinates only.
