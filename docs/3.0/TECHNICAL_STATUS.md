@@ -10090,3 +10090,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Compared the current `scripts.test` path list in all M1–M8 PR heads against feature base `34fbe6d`. M1/M2/M3/M4/M6/M8 retain every baseline test path. M5 and M7 each omit exactly `test/m9-security-composition.test.ts`.
 - M5 has existing owner guidance on #124; M7 was notified on PR #128. Both must preserve the M9 test in the standard full suite. No module package manifest or test was edited. Posted the cross-module inventory on Issue #126.
+
+## 2026-10-28 01:04 UTC — scheduled documentation push
+
+- Pushed seven M0-only documentation commits by fast-forward to `0af9bb286d750924668c02baf4cb5ff9545b5488`; local/remote readback matches. PR #131 remains OPEN at this head, with new checks just starting.
+- The batch records M8 ownership check scope, M7's three exact merge-conflict files, and the all-module baseline test inventory showing M5/M7 each omit `test/m9-security-composition.test.ts`. Owner handoffs are on PR #128 and Issue #126.
+- No module source/ref, PR #24, or `main` changed. No merge or Release action occurred. Next push no earlier than 01:24 UTC.
