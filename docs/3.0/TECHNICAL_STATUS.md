@@ -1,3 +1,10 @@
+## Current M0-M9 coordination snapshot — 2026-10-28 07:56 UTC
+
+- M0 coordinator head `6135044073a1016e27e3fb81adb55b0ac6cfcdb5` is pushed to PR #131, which remains OPEN/DRAFT. On this exact head, 11/12 checks have passed; only Windows exact-source composition is still running (`40652827044`). The run's immutable M9 source is feature-base `34fbe6d35d4dea30795525bf538f97194758c6c4`, not M9 candidate PR #127.
+- M1–M8 working directories/branches are present and resolve to: M1 `89be11e5f95f` / `feature/ac3-security-core`; M2 `941fd22d5e43` / `feature/ac3-execution-isolation`; M3 `91695529787f` / `feature/ac3-agent-onboarding`; M4 `5d975b7927a6` / `feature/ac3-desktop-security-center`; M5 `dde81d6a989b` / `feature/ac3-policy-audit`; M6 `fae72ea3d0c4` / `feature/ac3-e4-validation-ac3`; M7 `bf9faeeb9662` / `feature/ac3-reliability-ac3`; M8 `685520cbb000` / `feature/ac3-open-source-product`.
+- Existing dirty state is preserved: M6 `.gitignore`, M7 `.gitignore`, and M8 `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`. M1–M5 are clean. M4 and M7 use a separate shared Git common directory, while retaining their own worktree paths and branches.
+- Ancestry is still not uniform: Issue #126 records distinct merge bases for M3–M8 against PR #24 head `34fbe6d`. No rebase or branch rewrite was performed. M7 #128 remains DIRTY; M9 #127 is CLEAN but still pins historical M7/M8 sources. Owner gates #80/#124/#125 remain open.
+- PR #24 remains OPEN/DRAFT at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `competition/shanchuanzhi-release-readiness`. No module code, main, or Release was changed.
 ## Current M0-M9 coordination snapshot — 2026-10-28 07:51 UTC
 
 - M0 PR #131 is OPEN/DRAFT at `663b0941ba3d4f99cc6f5b1941bf23304bf7f6ef`; exact-head CI is 12/12 green: regular CI `40652102275`, ownership-contract audit `40652102292`, and Ubuntu/Windows composition `40652102177`. PR #131 remains UNSTABLE; the composition workflow evaluates the feature-base M9 source `34fbe6d35d4dea30795525bf538f97194758c6c4`; this green run does not validate M9 candidate PR #127 or substitute for module owner dispositions.
