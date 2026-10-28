@@ -10009,3 +10009,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - M1–M5 worktrees are clean. M6 and M7 retain their local `.gitignore` modifications. M8 retains its `.gitignore` modification and untracked `M8_MERGE_RESOLUTION_RESULT.json`. No owner dirt was changed.
 - PRs #120–#123 and #128–#129 remain OPEN/Draft at those heads; M3/M4/M5/M6/M8 composition still needs exact owner acceptance and M9 manifest reconciliation; M5 still lacks approved common-source baseline; M7 remains DIRTY with no check runs; M8 current head still requires an ownership rerun and its dated-doc correction. M9 PR #127 remains OPEN/Draft on its reviewed manifest pins.
 - PR #131 at `cd9d0ba` passed 12/12; PR #24 remains OPEN/Draft at its unchanged head/base. Dependabot PR #67 is OPEN against `main` with 9/9 checks, and P1 Issue #70 remains OPEN; no merge was performed.
+
+## 2026-10-28 00:15 UTC — module PR movement check
+
+- GitHub head/status refresh shows no owner head change on PRs #120–#123, #127–#129 since the 00:12 snapshot. M3/M4/M5/M6/M8 remain OPEN/Draft with their exact-source/ownership gates unresolved; M7 #128 remains OPEN/Draft, conflicting, with no checks; M9 #127 remains OPEN/Draft and CLEAN on its existing manifest.
+- No owner response/disposition was visible on Issues #45/#52/#70/#80/#124/#125/#126/#130/#132 as of this readback. Keep these gates open; no issue was closed by M0.
+- No module branch, source file, pin, PR #24, or `main` was changed.
