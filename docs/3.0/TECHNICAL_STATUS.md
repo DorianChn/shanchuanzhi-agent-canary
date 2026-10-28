@@ -1,3 +1,10 @@
+
+## Current M0-M9 coordination snapshot — 2026-10-28 02:34 UTC
+
+- M0 coordinator PR #131 is open at `24332e37e8500ce8325b91f442b1c03ae3ceeee3`; its 12 checks pass. Run `40620845912` passed Ubuntu and Windows composition, but used feature-base M9 `34fbe6d`, M1-M6 current refs, and M7 merged pin `bba0f0f`; the logs did not check out M8. This is not exact-current M8 integration evidence.
+- M9 candidate PR #127 remains open/CLEAN at `635f8bc` with 13/13 checks. It pins current M1-M6, M7 `bba0f0f`, and M8 `1c94ed4`. M7 PR #128 remains DIRTY at `bf9faee` with no checks; branch ancestry and three merge conflicts remain unresolved, and its standard test script omits `test/m9-security-composition.test.ts`. M8 PR #129 remains UNSTABLE at `685520c`; its normal CI/ownership check passed, merge is clean, but explicit owner disposition and exact candidate composition are absent.
+- M5 PR #122 remains at `dde81d6`; the approved-baseline ownership gate and package-check path issue remain unresolved, and its standard test script omits `test/m9-security-composition.test.ts`. M1/M6 E4 source gaps remain tracked by P0 #52 and P1 #130/#132. P1 #45 remains open. M3/M4 heads remain `9169552`/`5d975b7`; their candidate-pin CI is distinct from direct feature-base composition failures, and M3 target-readiness disposition remains pending.
+- PR #24 remains OPEN at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4` and base `competition/shanchuanzhi-release-readiness`. No module code/ref, `main`, merge, or Release was changed by this M0 batch.
 ## One-click M0-M9 matrix and live owner snapshot — 2026-10-25 13:00 UTC
 
 - Added `scripts/Run-AC3-All-OneClick.ps1` and routed the existing desktop shortcut through it. A click runs build, full tests, and package smoke in each existing M1-M8 and M9 worktree; validates the M9 exact-source manifest and compares its pins with local module HEADs; runs the M0 baseline/E4 suite; and opens a local report. It records dirty state and leaves module files untouched. Product E4 is still explicitly NOT_VERIFIED because real model, clean-VM lifecycle, and independent acceptance evidence are not created by this runner.
