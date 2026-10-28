@@ -10171,3 +10171,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 
 - Read-only current-blob comparison across feature base `34fbe6d`, M1 `89be11e`, and M6 `fae72ea` finds `security-lab/e4/run.mjs` (blob `a305671e…`), `test/auto-e4.test.mjs` (`d1705c20…`), and `src/config.ts` (`e28e5b40…`) identical across all three refs.
 - Thus #132's source-level failure snapshots and #130's test-owned `AGENT_CANARY_HOME` isolation have not landed in current M1/M6 heads. M0 outer harness isolation is not a substitute. Posted exact evidence and owner responsibilities to Issue #132; changed no module files.
+
+## 2026-10-28 01:55 UTC — M0 one-click guard status
+
+- Confirmed PR #131 includes coordinator-side isolated `AGENT_CANARY_HOME` roots and snapshot-integrity reporting (`syntheticE4SnapshotEvidenceIssues`); its exact-head CI at `7d88787` is 12/12 green. Product E4 remains NOT_VERIFIED.
+- Updated Issues #130 and #132: M0 harness guard is not a substitute for M6 test-owned token-state isolation or M1/M6 source-level failure snapshot/effect evidence. Both issues remain open pending owner changes.
