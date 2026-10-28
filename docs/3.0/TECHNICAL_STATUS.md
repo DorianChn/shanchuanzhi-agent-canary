@@ -10074,3 +10074,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Corrected the M8 status after a fresh read: PR #129 head `685520c` has successful `ownership-contract-evidence` run `40361313177` / job `121707201004`. The workflow skipped its approved-baseline merge-composition step, so this only advances the metadata/ownership-field check.
 - M9 PR #127 is still `635f8bc` and its manifest pins the older M8 source `1c94ed4`; exact M8 head integration remains outstanding. Old direct #129 composition failures select feature-base M9 `34fbe6d`, and do not establish a failure of PR #127's candidate composition.
 - Posted this scoped correction to Issue #126. No M8 code, local dirt, M9 pin, PR #24, or `main` changed.
+
+## 2026-10-28 00:54 UTC — M7 read-only merge-conflict map
+
+- Git `merge-tree --write-tree` compared current `feature/agent-canary-3.0` with PR #128 head `bf9faee` without writing a worktree or commit. It found content conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`.
+- It auto-merged `RELEASE_READINESS.md`, `STABILITY_REPORT.md`, `packaging/windows/installer-lifecycle-smoke.ps1`, `packaging/windows/prepare.mjs`, `test/auto-e4.test.mjs`, and `test/reliability.test.mjs`. No conflict resolution was applied by M0.
+- Posted the exact file list and owner handoff on PR #128. M7 must resolve on its existing branch and rerun checks; M9's M7 pin/disposition remains separate. No M7 file or ref changed.
