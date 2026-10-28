@@ -10403,3 +10403,11 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 - M7 owner posted `ACCEPT_WITH_CONDITIONS` on exact M1/M7 PR #133 head `f1502489fbf807c16aad72c50b522c373ac07746` in comment `6465655146`, superseding the precursor SHA review.
 - M1/M7 combined local test evidence remains 59/59; no hosted check run has been generated for `f150248`. The previous failures are on old M1 head `3f0921f` and must not be presented as current results.
 - M0 PR #131 head `f4d13a8` has all checks passing except Windows exact-source composition, still pending in run `40666324208` at 09:46 UTC.
+
+## 09:50 UTC — exact GitHub state refresh
+
+- M0 PR #131 remains OPEN/Draft at `50898f655c886dd5f12ac1d497516a3c1bf344f9`. Exact-head CI (`40666974108`) and ownership (`40667093260`) pass; Ubuntu exact-source composition passes, Windows composition is still pending in `40666974144`. The composition workflow is on the feature-base manifest and does not promote M9 pins.
+- M5 PR #122 remains OPEN/Draft at `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7`. Standard OS/Node, Docker, sponsor, and ownership checks pass; Ubuntu composition passes while Windows is pending. M1 conditional acceptance is recorded in PR comment `6465749828`; exact M9 pin and both-platform composition remain conditions.
+- M1/M7 PR #133 remains OPEN/Draft at `f1502489fbf807c16aad72c50b522c373ac07746`. GitHub reports no check runs for this exact head; previous failures were for older `3f0921f` and are not current-head results. Local combined tests remain 59/59, not hosted CI evidence.
+- Module worktrees M1–M8 remain separate branches. M6/M7/M8 worktrees show local dirty changes; these are preserved and not included in this coordinator report. PR #24 is unchanged OPEN/Draft at `34fbe6d35d4dea30795525bf538f97194758c6c4` on base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- GitHub CLI is authenticated as `DorianChn`; repository remote resolves to `https://github.com/DorianChn/shanchuanzhi-agent-canary.git`. No merge, M9 pin promotion, Release, or PR #24 modification occurred.
