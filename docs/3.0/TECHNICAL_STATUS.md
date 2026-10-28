@@ -10183,3 +10183,9 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Pushed six M0-only documentation commits by fast-forward to `1b8e8906a0b0edf4162b8e01bb249782ad48d9f5`; local/remote readback matches. PR #131 is OPEN at this exact head; checks had not appeared at immediate readback.
 - Batch includes the M8 no-conflict merge-tree evidence, M0 harness guard scope vs M1/M6 source-level E4 gates, and the exact shared-source blob findings.
 - PR #24 and all module code/refs remain unchanged; no merge or Release action occurred. Next push no earlier than 02:24 UTC.
+
+## 2026-10-28 02:11 UTC — 02:04 M0 push CI completion and source scope
+
+- PR #131 at `1b8e8906a0b0edf4162b8e01bb249782ad48d9f5` passed 12/12 checks: ownership/audit, CI (9/9), and M9 composition on Ubuntu/Windows. Windows run `40618751237` completed at 02:10:03 UTC.
+- Inspected the actual Windows log: the job's “current M8 source candidate” was `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`, not current M8 PR #129 head `685520c`. Thus the green run still does not prove exact M8 current-head composition. PR #24 remains unchanged.
+- Source-scope readback recorded on Issue #126; next M0 push no earlier than 02:24 UTC.
