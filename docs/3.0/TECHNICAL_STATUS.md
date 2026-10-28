@@ -10034,3 +10034,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at this exact head passed 12/12 checks: audit/ownership `40608540654`, CI `40608540679` (9/9), and M9 composition `40608540660` on Ubuntu/Windows. Windows log confirms selected M9 source `34fbe6d35d4dea30795525bf538f97194758c6c4`; this checks pinned feature-base source only.
 - The same audit confirms the current M9 PR #127 manifest has M1–M6 MATCH and M7/M8 STALE_PIN, no unregistered PR branch, and no current same-path overlap. Issue #126 was refreshed at comment `6457358995`. M7 #128 still lacks exact-head checks/evidence fields and has lifecycle SKIPPED.
 - PR #24, `main`, module heads, module dirty worktrees, and M9 pins were not changed; no merge or Release action occurred. Next M0 push no earlier than 00:44 UTC.
+
+## 2026-10-28 00:30 UTC — M9 review/disposition readback
+
+- PR #127 remains OPEN/Draft at `635f8bc`; GitHub `reviewDecision` is empty and there are no submitted PR reviews. Its body keeps the explicit gate: M7/M8 owners must ACCEPT/REJECT their exact newer commits before M9 promotes those pins; product E4 and clean-VM/independent review remain NOT_VERIFIED.
+- The current candidate manifest already matches M3–M6 exact branch heads; M0 did not update those pins. M7/M8 remain the only `STALE_PIN` results in the latest automated audit. No pin or PR state changed.
