@@ -10591,3 +10591,7 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - Independent read-only audit confirmed PR #133 current head `f1502489fbf807c16aad72c50b522c373ac07746` is `mergeable=false` / `mergeable_state=dirty`; it has zero exact-head Actions runs, check-runs, and commit statuses. GitHub's official trigger guidance says `pull_request` workflows do not run when a PR has a merge conflict. Prior runs target superseded `3f0921f`. Exact conflict onset is not exposed publicly.
 - No verified exact-head manual rerun path exists for the current workflows. Manual `workflow_dispatch` requires the workflow file on default branch, and CI/AC3 lack a usable default-branch dispatch. The minimal owner action is a real conflict resolution/change on the existing M1 branch, then publish new head and verify fresh hosted checks. M0 recorded source and owner action on PR #133 comment `6474118030` and integration Issue #126 comment `6474118948`.
+
+## 16:08 UTC — exact M1 conflict paths identified
+
+- A read-only `git merge-tree --trivial-merge` for base `34fbe6d35d4dea30795525bf538f97194758c6c4` and M1 head `f1502489fbf807c16aad72c50b522c373ac07746` identifies conflicts in `docs/3.0/API_CONTRACTS.md`, `src/runtime/gateway.ts`, `test/gateway.test.ts`, `test/honeypot-runtime.test.ts`, and `test/reliability-gateway-lifecycle.test.ts`. No worktree change occurred. M0 posted the exact list on PR #133 comment `6474167116` and linked Issue #126.
