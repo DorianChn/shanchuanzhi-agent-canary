@@ -10407,7 +10407,41 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 ## 09:50 UTC — exact GitHub state refresh
 
 - M0 PR #131 remains OPEN/Draft at `50898f655c886dd5f12ac1d497516a3c1bf344f9`. Exact-head CI (`40666974108`) and ownership (`40667093260`) pass; Ubuntu exact-source composition passes, Windows composition is still pending in `40666974144`. The composition workflow is on the feature-base manifest and does not promote M9 pins.
-- M5 PR #122 remains OPEN/Draft at `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7`. Standard OS/Node, Docker, sponsor, and ownership checks pass; Ubuntu composition passes while Windows is pending. M1 conditional acceptance is recorded in PR comment `6465749828`; exact M9 pin and both-platform composition remain conditions.
+- M5 PR #122 remains OPEN/Draft at `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7`. Standard OS/Node, Docker, sponsor, and ownership checks pass; its own Ubuntu and Windows composition jobs fail at the stale M9 manifest pin (run `40659482140`), before tests. M1 conditional acceptance is recorded in PR comment `6465749828`; exact M9 pin and successful both-platform composition remain conditions. The pending Ubuntu/Windows jobs mentioned above belong to M0 PR #131, not M5.
 - M1/M7 PR #133 remains OPEN/Draft at `f1502489fbf807c16aad72c50b522c373ac07746`. GitHub reports no check runs for this exact head; previous failures were for older `3f0921f` and are not current-head results. Local combined tests remain 59/59, not hosted CI evidence.
 - Module worktrees M1–M8 remain separate branches. M6/M7/M8 worktrees show local dirty changes; these are preserved and not included in this coordinator report. PR #24 is unchanged OPEN/Draft at `34fbe6d35d4dea30795525bf538f97194758c6c4` on base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
 - GitHub CLI is authenticated as `DorianChn`; repository remote resolves to `https://github.com/DorianChn/shanchuanzhi-agent-canary.git`. No merge, M9 pin promotion, Release, or PR #24 modification occurred.
+
+### Additional cross-module gates
+
+- M3 PR #120 head `6830cf8bb883592bb9438cd86ed36d9d48e95e4` has regular CI and ownership/API checks passing; M4 accepted this schema, but M3 exact-head owner disposition is still missing. Its direct M9 composition fails manifest validation on both platforms at the old M3 pin and skips composition tests (run `40657031358`). M0 posted exact-head requests on PR #120 and Issue #125 (`6465852275`, `6465855208`).
+- M6 PR #123 remains blocked on exact shared-test owner dispositions and the `Coordinated-with: M7, M8` ownership contract; M7 provided only its scoped conditional review. M8 PR #129 still has stale M9 composition refs and lacks M6 disposition on its exact candidate. Issue #80 now records the two separate acceptance gates; do not infer product E4 acceptance from synthetic tests.
+
+## 09:55 UTC — ancestry and check-run follow-up
+
+- M0 PR #131 at `7d161837d9eccb258773414f52e449530e32f7c8`: Ubuntu composition passes; Windows composition and package smoke remain pending. Remaining CI matrix jobs, Docker, sponsor, and ownership pass. Exact run IDs: CI `40667659111`, composition `40667659151`, ownership `40667658958`.
+- PR #133 at exact head `f1502489fbf807c16aad72c50b522c373ac07746` still has no reported check runs. Do not reuse prior-head failures as current validation.
+- M0 recomputed M1–M8 worktree ancestry against candidate base `34fbe6d`. The merge bases are not uniform: M1 `89be11e5`, M2 `941fd22d` (already an ancestor), M3/M4 `b0d8d77c`, M5/M7 `34fbe6d3`, M6 `2a88d8b7`, M8 `1c94ed4b`. M6/M7/M8 retain local dirty files; no cleanup or branch rewrite was performed. The exact table and owner reconciliation criteria are recorded in Issue #126 comment `6465910277`.
+- M3 exact-head owner disposition remains missing for `6830cf8`; M4's schema review is not a substitute. M6/M8 exact-head dispositions remain open on Issue #80. M9 pins remain unchanged until owner decisions and exact-source dual-platform composition.
+
+## 09:58 UTC — M9 exact-manifest audit
+
+- M9 PR #127 remains OPEN/Draft at `635f8bc55216b044627fa83f0b402003d0eaa893`. All 14 hosted checks and its Ubuntu/Windows exact-source run `40373243860` pass for the pins in the PR manifest; only the M2 pin `941fd22` matches the current merged module head. Pins for current M1/M3/M4/M5/M6/M7/M8 follow-up PR heads are stale. M0 recorded the exact list and preconditions in PR #127 comment `6465945330`.
+- M1's earlier M2 adapter acceptance remains applicable to the unchanged adapter/test blobs from merged PR #91 at M2 PR #110 head `941fd22`; PR #110 only adds owner-evidence reports. M9 already pins `941fd22`. This does not prove product-host enforcement or resolve P0 #52.
+- PR #131 exact head `7d16183` has Ubuntu composition and all other reported CI/ownership checks passing; Windows composition and package smoke were pending on the latest readback. PR #133 remains without exact-head check runs.
+- The local report includes a correction: the earlier 09:50 note's pending composition statuses were M0 PR #131, not M5 PR #122. M5's own direct composition run `40659482140` fails both platforms at the stale M9 M5 pin before source tests.
+
+- M0 opened current exact-head coordination on PR #133 comment `6465959567`: obtain real hosted checks for `f150248` and explain the missing pull-request run; do not add an empty commit. M0 leaves the M1/M9 source pin unchanged until evidence is current.
+
+## 10:00 UTC — local toolchain and ignore-state verification
+
+- Coordinator host: Git `2.51.0.windows.1`, GitHub CLI `2.102.0`, Codex CLI `0.164.0-alpha.11.1`, Node `v24.22.1`. GitHub CLI is authenticated as `DorianChn` with repository access.
+- Python is unavailable: `python` resolves only to the Microsoft Store app-execution alias and `py` is not installed. Treat Python-dependent local packaging/installer checks as environment-blocked; do not claim completion or install a runtime without an explicit scope change.
+- `.gitignore` covers root logs/reports, `.env*`, tokens/secrets, temp files, and build artifacts. `git check-ignore` confirmed representative `.log`, `.tmp`, and `.env.local` paths are excluded. M0 working tree change remains only this coordination report.
+
+## 10:02 UTC — M0 exact-head hosted checks complete
+
+- PR #131 exact head `7d161837d9eccb258773414f52e449530e32f7c8` now has 12/12 hosted checks passing: CI matrix, Docker, package, sponsor, ownership, and Ubuntu/Windows composition (`40667659111`, `40667658958`, `40667659151`). This validates M0 report/coordinator changes against the event-base manifest; it does not validate current follow-up module heads or product E4.
+- PR #133 exact head `f1502489fbf807c16aad72c50b522c373ac07746` still has zero check runs (`check_runs.total_count=0`). The M0 request for genuine exact-head CI and event diagnosis is PR comment `6465959567`.
+- M3 has not recorded an exact-head disposition for #120 `6830cf8`; M6/M8 owner dispositions remain open. M0's exact source audit and requests remain on Issues #125/#80/#126 and PR #127; no M9 pin changed.
+- Posted the exact-head 12/12 check readback on PR #131 comment `6466062137`, explicitly separating feature-base composition from current M9 source validation.
