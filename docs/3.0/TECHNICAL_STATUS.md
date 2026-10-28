@@ -10102,3 +10102,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 at pushed head `0af9bb286d750924668c02baf4cb5ff9545b5488` passed all 12/12 checks: audit/ownership `40612771971`, CI `40612772016` (9/9), and M9 exact-source composition `40612771985` on Ubuntu/Windows. Windows completed at 01:09:20 UTC with success.
 - PR #24 remains OPEN at unchanged head/base. M5/M7 baseline security test omissions, M7 conflict resolution, and M8/M9 exact-head disposition remain open. No module source/ref, `main`, merge, or Release action occurred. Completion recorded on Issue #126.
 - Next M0 push no earlier than 01:24 UTC.
+
+## 2026-10-28 01:10 UTC — M5 direct owner handoff
+
+- Sent the all-module test-list audit directly to PR #122: exact head `dde81d6` omits `test/m9-security-composition.test.ts` from ordinary `npm test`; asked M5 to preserve it and verify TAP output after full-suite rerun.
+- M7 has the same omission and a separate handoff on PR #128. These remain merge gates; no package/test file was edited by M0.
