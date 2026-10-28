@@ -10113,3 +10113,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - Current M7 PR #128 head `bf9faee` is not a descendant of current base `34fbe6d` or of merged M7 source-pin PR #113 commit `bba0f0f` (the latter is an ancestor of current base). Their common merge base is `7cd3445`; `rev-list --left-right --count base...M7` returns `415 70`.
 - This means the 3 conflict paths from merge-tree do not fully characterize integration risk. Owner must review and reconcile the whole divergent history with current base and already-merged M7 behavior before M9 pin promotion; do not blindly pin #128 head. Preserve all M7 assertions and M9 test coverage; exact-head CI/installer lifecycle remain required.
 - Sent this lineage evidence to PR #128. No M7 source/ref was changed.
+
+## 2026-10-28 01:15 UTC — M8 current-head disposition path
+
+- Confirmed M9-pinned M8 `1c94ed4` is an ancestor of PR #129 current head `685520c`; exactly one M8 commit follows it, the source/onboarding readiness doc refresh. Successful ownership-contract run `40361313177` targets that exact head.
+- Exact M9 composition for `685520c` and explicit owner ACCEPT/REJECT are still missing. Asked M8 owner on PR #129 to state disposition; if accepted, M9 owner should update the manifest only on the existing integration branch and rerun exact-source composition. M0 did not alter any M8/M9 refs or M8 dirty files.
