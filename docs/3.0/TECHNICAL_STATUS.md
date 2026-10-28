@@ -10533,3 +10533,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 ## 13:44 UTC — M1 exact-head local verification
 
 - M1 PR #133 exact head `f1502489fbf807c16aad72c50b522c373ac07746` was independently built with TypeScript and passed the focused gateway, honeypot, and reliability suites (59/59) on Windows Node `v24.22.1`; worktree was clean before and after. This is local M0 verification, not hosted CI. GitHub still has zero check runs on this exact head; visible hosted runs are for superseded `3f0921f`. M0 recorded the evidence and requested the owner restore genuine exact-head checks or document why GitHub did not create them in PR comment `6470643699`.
+
+## 14:01 UTC — exact M0 head d0e0b9c validated
+
+- PR #131 exact head `d0e0b9c863fbb526cdf376a35553d41279673228` has 12/12 completed checks passing, including Ubuntu and Windows exact-source composition. Windows job `122860126802` completed successfully. As with prior M0 runs, composition resolves the workflow's event-base M9 manifest and does not certify PR #127's current pins. Exact readback: PR comment `6471051496`.
+- No M1–M8/M9 source head movement or new module-owner dispositions appeared. M1 #133 remains without hosted checks on exact head `f150248`; local M1 validation is separately documented. P0 #52 and product E4 remain NOT_VERIFIED; PR #24 remains unchanged OPEN/Draft.
