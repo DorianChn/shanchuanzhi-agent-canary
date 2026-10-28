@@ -10529,3 +10529,7 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 
 - PR #131 exact head `b9e8695aefc98522d1a74fb2428f2f57bf9d305f` has 12/12 completed checks passing. Both Ubuntu and Windows composition passed (`40697821200` for Windows). These checks validate the coordinator docs against the workflow's event-base M9 manifest, not PR #127's latest candidate pins. The exact-head readback is recorded in PR comment `6470587848`.
 - Module follow-up heads remain unchanged. M1 #133 has zero hosted check runs; M3 exact-head owner disposition and M6/M8 shared-source coordination/review remain open. Issue #52 remains OPEN/P0/NOT_VERIFIED; product E4 remains NOT_VERIFIED. PR #24 is unchanged OPEN/Draft.
+
+## 13:44 UTC — M1 exact-head local verification
+
+- M1 PR #133 exact head `f1502489fbf807c16aad72c50b522c373ac07746` was independently built with TypeScript and passed the focused gateway, honeypot, and reliability suites (59/59) on Windows Node `v24.22.1`; worktree was clean before and after. This is local M0 verification, not hosted CI. GitHub still has zero check runs on this exact head; visible hosted runs are for superseded `3f0921f`. M0 recorded the evidence and requested the owner restore genuine exact-head checks or document why GitHub did not create them in PR comment `6470643699`.
