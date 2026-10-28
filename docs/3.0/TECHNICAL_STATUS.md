@@ -1,3 +1,11 @@
+## Current M0-M9 coordination snapshot — 2026-10-28 08:16 UTC
+
+- M0 PR #131 head `ea34c271a4f3616be8755843817f6b9ccf769318` is OPEN/DRAFT/CLEAN and has 12/12 exact-head checks passing: regular CI `40654843806`, ownership contract `40654843762`, and Ubuntu/Windows composition `40654844104`. The composition log still selects feature-base M9 `34fbe6d35d4dea30795525bf538f97194758c6c4`, so it does not validate candidate PR #127 or current M7/M8 PR heads.
+- New owner work is active locally on existing branches, not yet committed or pushed: M3 #120 at `9169552` has edits to its Console, focused route tests, and a new readiness contract doc; M6 #123 at `fae72ea` has edits to `security-lab/e4/run.mjs`, E4/token tests, while retaining its pre-existing `.gitignore` delta. These are separate worktrees and file scopes; no test pass or owner acceptance is claimed until each agent completes and M0 reviews exact diffs.
+- Current PR heads remain M3 #120 `9169552`, M4 #121 `5d975b7`, M5 #122 `dde81d6`, M6 #123 `fae72ea`, M7 #128 `bf9faee` (DIRTY, no PR checks), M8 #129 `685520c`, and M9 #127 `635f8bc` (CLEAN). M7/M8 candidate pins in feature-base M9 remain historical. Issues #52 (P0) and #80/#124/#125/#126/#70 (P1) remain OPEN.
+- Hono alert scope is recorded on #70: Hono 4.13.7 remains in `main` and PR #24's base; `feature/agent-canary-3.0` is already 4.13.13. Dependabot PR #67 targets `main`, proposes 4.13.13, has 9 passing checks, and remains open/unmerged.
+- M1–M8 worktree branches remain present; M6/M7 `.gitignore` changes and M8 `.gitignore` plus untracked resolution-result JSON remain preserved. No branch rewrite occurred.
+- PR #24 remains OPEN/DRAFT at unchanged head `34fbe6d35d4dea30795525bf538f97194758c6c4`, base `competition/shanchuanzhi-release-readiness`. No main merge, module code edit by M0, or Release action occurred.
 ## Current M0-M9 coordination snapshot — 2026-10-28 08:09 UTC
 
 - M0 PR #131 head `6a9735834985e69eba95116b441954555a4464b6` is OPEN/DRAFT/CLEAN. All 12 exact-head checks pass: regular CI `40654120530`, ownership contract `40654120430`, and Ubuntu/Windows composition `40654120419`.
