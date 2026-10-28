@@ -10571,3 +10571,8 @@ For M0 PR #131 head `ee05ee08055e755f5f6f3ce48a07d9a4b7ede9bd`, 11/12 checks are
 ## 15:36 UTC — macOS CI runner retry
 
 - On exact M0 head `d688b9e1e0b57a6de857d329578c67f6ac5ea975`, Ubuntu and Windows composition passed; the other completed CI jobs passed. GitHub cancelled macOS Node 20 after a 15-minute queue wait. M0 reran only that cancelled job (`gh run rerun 40714073151 --failed`); attempt 2 remains queued at 15:36, with 10/11 visible checks successful, 0 failed, 1 pending. Therefore this head is not yet fully green. No source changes were made. Readback: PR comment `6473354439`.
+
+## 15:43 UTC — exact M0 head 5c2fc51 validated
+
+- PR #131 exact head `5c2fc51890c34df756f992c9a8ee1b78ddd41b81` has 12/12 completed checks passing: AC3 `40717689936`, CI `40717690104`, and both OS composition run `40717689848` (Windows job `122919734052`). The prior macOS Node 20 cancellation was on superseded `d688b9e`; the latest exact head is fully green. This M0 workflow resolves the event-base M9 manifest, not the current PR #127 pins. Exact readback: PR comment `6473513822`.
+- No new module heads or owner dispositions appeared. M7 candidate remains unpublished; its local source/test dependency status is logged in Issue #126 and PR #128.
