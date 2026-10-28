@@ -10161,3 +10161,8 @@ This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does n
 - PR #131 pushed head `7d887879537693a66cb76f4aaf32cc048d41b394` passed 12/12 checks. Windows M9 composition `40616816817` completed at 01:49:51 UTC with success; CI was 9/9.
 - The workflow selected feature-base M9 source refs; its M7 regression is against pinned `bba0f0f`, not current PR #128 `bf9faee`. PR #24 remains OPEN at unchanged head/base.
 - Completion recorded on Issue #126. No module code/ref, `main`, merge, or Release action occurred; next M0 push no earlier than 02:04 UTC.
+
+## 2026-10-28 01:52 UTC — M8 clean-base integration check
+
+- Read-only `git merge-tree --write-tree` for base `34fbe6d` + M8 head `685520c` completed without conflicts; resulting tree `509c8efc42aedf54d0088118800e1e860627a1cc`. The single M8 commit changes nine docs/docs-check paths and is a direct descendant of the existing M9 pin `1c94ed4`.
+- Remaining gate is exact M8 owner ACCEPT/REJECT, then M9 manifest pin change on its existing branch and exact-source composition if accepted. Posted the evidence on PR #129. M0 did not alter the pin, merge, or M8 local dirt.
