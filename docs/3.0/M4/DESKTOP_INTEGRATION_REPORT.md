@@ -1,5 +1,23 @@
 # M4 Desktop Integration Report
 
+## 2026-10-25 configured-target UI disposition
+
+Existing worktree: `C:\Users\36712\Desktop\Agent-Canary-Dev\agents\M4`; branch `feature/ac3-desktop-security-center`; clean starting HEAD `892d3290338fe811da127f8f51ab91de0b9fc18b`. This section supersedes historical statements below that no configured host callsite exists.
+
+Source reviewed at the live feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` (Console blob `d2171f20dca2714792117beae8d5bc420d380562`):
+
+- [`src/ai/cli.ts:64-73`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097/src/ai/cli.ts#L64-L73) passes `--workspace-root`, `--protected-target <id=relative-path>` and backend-only `AGENT_CANARY_OPERATOR_CODE` into `startAIConsole`.
+- [`src/ai/console.ts:343-424`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097/src/ai/console.ts#L343-L424) constructs `createConfiguredTargetRuntime` and implements `runConfiguredTargetRead`. The exact POST body is `{targetId}`; its fixed ID resolves to a construction-time binding, then M2/M5/M1-held-capability dispatch. The sanitized response is `{scope:"M3_CONFIGURED_TARGET_READ",status:"ALLOW"|"DENY"|"UNKNOWN"}`.
+- [`src/ai/console.ts:568-620`](https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097/src/ai/console.ts#L568-L620) keeps Host/Origin, CSRF and constant-time `x-canary-operator-code` checks. `GET /api/security-center` is status-only. `/api/security-center/protected-read` is the separate temporary-marker probe.
+
+**M3-owned interface blocker:** the configured IDs stay in `ConfiguredTargetRuntime.configuredIds`/`bindings`. `normalizeSecurityCenterSnapshot` exposes no target IDs or operation/auth readiness, and the root handler substitutes only CSRF into `CONSOLE_PAGE`. Neither the current GET nor rendered page provides M4 with a trusted configured target ID. The operator code remains backend-only; an operator may enter it for an explicit action, but it must never be returned by a discovery response or sourced from model output. The M4 checkout also predates the configured-target backend; no backend synchronization or owner source was changed in this UI-only task.
+
+**Required M3 handoff:** provide an owner-approved, status-only source of the immutable configured target IDs and action/auth readiness from the same startup manifest (sanitized GET metadata or safely encoded render-time configuration). The owner must define the schema and disabled/error semantics. Return no paths, bytes, credentials, capabilities or model-controlled target choices. Once that source exists, M4 can let an operator explicitly select one supplied fixed ID and enter the operator code, send only `{targetId}` with existing CSRF plus `x-canary-operator-code`, and display only the allowlisted measured route/scope/status. M4 has not invented a metadata field, target ID, endpoint, or fallback.
+
+The UI now shows a separate configured-target operation with a disabled button and the precise missing-target explanation. The endpoint and `M3_CONFIGURED_TARGET_READ` label describe the contract; the measured result and scope remain `UNKNOWN / not executed`. No target/path/credential input is collected and no POST is wired while the trusted configuration source is absent. The ordinary status refresh remains GET-only. Whole-product, native-tool, and OS-atomic acceptance remain **NOT_VERIFIED**; #52 remains **OPEN / P0 / NOT_VERIFIED**.
+
+Validation: `node --import tsx --test test/runtime-console.test.ts` **17/17 PASS**, `npm run build` **PASS**, and `git diff --check` **PASS**. A real local Chrome render at 1277×825 confirmed the disabled operation, readable blocker and UNKNOWN/NOT_VERIFIED boundary. This is UI evidence, not a configured-target execution, alias/junction/replacement acceptance, installed-host or OS-atomic proof. Changes are confined to the M4 page, its focused tests and M4 reports. Commit stays local pending the coordinated push batch; no hosted CI has run for it.
+
 Date: 2026-10-13
 Branch: **feature/ac3-desktop-security-center**
 Base: **feature/agent-canary-3.0** at **62496d4020bd90ba2eede49b2e80a2bbebb036b4**

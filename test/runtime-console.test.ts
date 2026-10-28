@@ -2,7 +2,7 @@ import {test} from 'node:test';import assert from 'node:assert/strict';import os
 import {spawnSync} from 'node:child_process';
 import http from 'node:http';
 import {Script} from 'node:vm';
-import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
+import {adaptConfiguredTargetReadiness,adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
 test('desktop branch native hook audit log omits synthetic sensitive canaries',()=>{
@@ -173,6 +173,52 @@ test('security endpoint availability is visible without claiming protection or E
  }finally{await app.close();}
 });
 
+
+test('configured-target read consumes only fresh fixed-label readiness and preserves explicit authorization boundary',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  const panel=html.match(/<section id="configuredTargetReadPanel"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(panel,'the configured-target operation must have a visible, separate boundary');
+  assert.match(panel,/<button id="configuredTargetReadButton"[^>]*\sdisabled\s[^>]*aria-describedby="configuredTargetReadBlocker"/);
+  assert.match(panel,/宿主固定目标/);
+  assert.match(panel,/操作员口令/);
+  assert.match(panel,/POST \/api\/security-center\/target-read/);
+  assert.match(panel,/契约范围：<code>M3_CONFIGURED_TARGET_READ<\/code>/);
+  assert.match(panel,/data-status="UNKNOWN"[^>]*>UNKNOWN · 未执行；实测范围 UNKNOWN/);
+  assert.match(panel,/完整产品、原生工具和 OS 原子保护仍为 NOT_VERIFIED/);
+  assert.match(panel,/<input id="configuredTargetReadCode" type="password" autocomplete="off" disabled>/);
+  assert.match(panel,/<select id="configuredTargetReadTarget" disabled>/);
+  const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).join('\n');
+  assert.match(scripts,/security-center\/configured-target-readiness/);
+  assert.match(scripts,/security-center\/target-read/);
+  assert.match(scripts,/x-canary-operator-code/);
+  assert.match(scripts,/configuredReadinessCheckedAt>15000/);
+
+  // A route result is not a status snapshot or evidence of native/product coverage.
+  const routeResult={scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW',targetId:'M4_TARGET_ID_CANARY',content:'M4_FILE_CONTENT_CANARY'};
+  const snapshot=adaptSecuritySnapshot({securityCenter:routeResult});
+  assert.equal(snapshot.protectionStatus,'UNKNOWN');
+  assert.equal(snapshot.firstPartyObserveReadStatus,'NOT_VERIFIED');
+  const diagnostic=JSON.stringify(buildSecurityDiagnostic(snapshot,{}));
+  assert.doesNotMatch(diagnostic,/M4_TARGET_ID_CANARY|M4_FILE_CONTENT_CANARY/);
+ }finally{await app.close();}
+});
+
+test('configured-target readiness adapter rejects malformed, stale, future, unsupported and capability-like labels',()=>{
+ const now=Date.parse('2026-10-28T08:17:00.000Z');
+ const payload={scope:'M3_CONFIGURED_TARGET_READINESS',schemaVersion:1,generatedAt:new Date(now).toISOString(),configurationStatus:'CONFIGURED',bindingStatus:'BOUND',actionReadiness:'READY',operatorAuthStatus:'CONFIGURED',targets:[{targetId:'summary',bindingStatus:'BOUND'}]};
+ assert.equal(adaptConfiguredTargetReadiness(payload,now).valid,true);
+ for(const bad of [null,{...payload,schemaVersion:2},{...payload,scope:'wrong'},{...payload,extra:'no'},
+  {...payload,generatedAt:new Date(now-15001).toISOString()},{...payload,generatedAt:new Date(now+5001).toISOString()},
+  {...payload,actionReadiness:'READY',operatorAuthStatus:'NOT_CONFIGURED'},
+  {...payload,targets:[{targetId:'../secret',bindingStatus:'BOUND'}]},
+  {...payload,targets:[{targetId:'summary',bindingStatus:'BOUND',path:'C:/secret'}]},
+  {...payload,targets:[{targetId:'summary',bindingStatus:'BOUND'},{targetId:'summary',bindingStatus:'BOUND'}]}]) {
+  assert.equal(adaptConfiguredTargetReadiness(bad,now).valid,false);
+  assert.deepEqual(adaptConfiguredTargetReadiness(bad,now).targets,[]);
+ }
+});
 
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({
