@@ -1,271 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Canary 2.0 — AI Agent 安全检测与会话隔离</title>
-<meta name="description" content="Agent Canary 2.0 竞赛预览版：MCP 诱饵、Canary Token、受保护工具隔离、可选 AI 分析、中文控制台与可复现的真实模型实验。免费独立构建、演示视频及实验报告。">
-<link rel="canonical" href="https://dorianchn.github.io/shanchuanzhi-agent-canary/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Agent Canary 是面向 AI Agent 与 MCP 工具的开源安全项目：检测信号、隔离会话，并公开保护边界与验证证据。">
+<meta name="theme-color" content="#101814">
+<meta property="og:title" content="Agent Canary — 给 Agent 的行动加一道边界">
+<meta property="og:description" content="开源 Agent 安全工具。信号、隔离与可复现的证据。">
 <meta property="og:image" content="https://dorianchn.github.io/shanchuanzhi-agent-canary/agent-canary-cover-v2.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://dorianchn.github.io/shanchuanzhi-agent-canary/agent-canary-cover-v2.png">
+<title>Agent Canary — 给 Agent 的行动加一道边界</title>
 <style>
-  :root { --bg:#0d1117; --panel:#161b22; --fg:#c9d1d9; --dim:#8b949e; --yellow:#ffd338; --green:#3fb950; --red:#f85149; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--fg); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.6; }
-  code, pre { font-family:Consolas,'Cascadia Mono',monospace; }
-  .wrap { max-width:960px; margin:0 auto; padding:0 24px; }
-  header { border-bottom:1px solid #21262d; }
-  nav { display:flex; align-items:center; justify-content:space-between; padding:18px 0; }
-  .logo { font-weight:700; color:#fff; font-size:18px; text-decoration:none; }
-  .logo span { color:var(--yellow); }
-  .btn { background:var(--yellow); color:#0d1117; padding:9px 18px; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; }
-  .btn.ghost { background:transparent; color:var(--fg); border:1px solid #30363d; margin-right:10px; }
-  .hero { text-align:center; padding:84px 0 64px; }
-  .hero h1 { font-size:52px; color:#fff; letter-spacing:-1px; }
-  .hero h1 em { color:var(--yellow); font-style:normal; }
-  .hero p.sub { font-size:21px; color:var(--dim); max-width:640px; margin:18px auto 0; }
-  .demo { margin:40px auto 0; max-width:840px; border:1px solid #21262d; border-radius:12px; overflow:hidden; }
-  .demo img { width:100%; display:block; }
-  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; padding:56px 0; }
-  .card { background:var(--panel); border:1px solid #21262d; border-radius:12px; padding:24px; }
-  .card h3 { color:#fff; font-size:17px; margin-bottom:10px; }
-  .card p { color:var(--dim); font-size:14.5px; }
-  .price { border-color:var(--yellow); }
-  .price h3 { font-size:20px; }
-  .price strong { color:#fff; font-size:24px; }
-  .steps { color:var(--dim); font-size:14px; line-height:1.9; }
-  pre.term { background:#010409; border:1px solid #21262d; border-radius:12px; padding:22px 26px; font-size:15px; overflow-x:auto; }
-  pre.term .c { color:var(--dim); } pre.term .g { color:var(--green); } pre.term .y { color:var(--yellow); }
-  .howto { padding:24px 0 72px; }
-  .howto h2 { color:#fff; font-size:28px; text-align:center; margin-bottom:8px; }
-  .howto p.center { text-align:center; color:var(--dim); margin-bottom:28px; }
-  footer { border-top:1px solid #21262d; padding:28px 0; color:var(--dim); font-size:14px; display:flex; justify-content:space-between; }
-  footer a { color:var(--fg); }
-  .lang-btn { background:transparent; color:var(--fg); border:1px solid #30363d; border-radius:8px; padding:8px 12px; cursor:pointer; margin-left:8px; }
-  html { scroll-behavior:smooth; scroll-padding-top:20px; color-scheme:dark; }
-  ::selection { background:var(--yellow); color:var(--bg); }
-  a { color:var(--yellow); text-underline-offset:4px; }
-  a:focus-visible, button:focus-visible, video:focus-visible { outline:2px solid var(--yellow); outline-offset:4px; }
-  .btn, .lang-btn { min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
-  .btn:hover { background:#ffe275; }
-  .btn.ghost:hover, .lang-btn:hover { background:#21262d; color:#fff; }
-  nav { gap:16px; flex-wrap:wrap; }
-  .nav-links, .actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  .btn.ghost, .lang-btn { margin:0; }
-  .hero h1 { font-size:clamp(36px,6vw,56px); text-wrap:balance; line-height:1.35; }
-  .hero p.sub { color:#aeb8c3; }
-  .version { color:var(--yellow); margin:24px 0; }
-  .hero .actions { justify-content:center; margin-top:28px; }
-  .demo video { width:100%; aspect-ratio:16/9; display:block; background:#010409; }
-  .demo-caption { font-size:14px; color:#aeb8c3; max-width:75ch; margin:14px auto; }
-  .section { padding:36px 24px 56px; border-top:1px solid #21262d; }
-  .core h2 { font-size:28px; color:#fff; text-align:center; margin-top:32px; }
-  .section h2 { font-size:28px; color:#fff; margin-bottom:14px; text-wrap:balance; }
-  .section p { max-width:75ch; margin-bottom:18px; }
-  .section .grid { padding:12px 0; }
-  .core p, .card p, .steps { color:#aeb8c3; }
-  .table-wrap { overflow-x:auto; margin:24px 0; }
-  table { border-collapse:collapse; width:100%; min-width:600px; font-size:15px; font-variant-numeric:tabular-nums; }
-  caption { text-align:left; color:#aeb8c3; padding-bottom:12px; font-size:14px; }
-  th, td { padding:14px 12px; border-bottom:1px solid #30363d; text-align:left; }
-  th { color:#fff; background:var(--panel); }
-  td:first-child { min-width:180px; }
-  .boundary { padding:22px 24px; background:var(--panel); border:1px solid #30363d; border-radius:12px; margin:24px 0; }
-  .boundary ul { padding-left:22px; }
-  .boundary li + li { margin-top:10px; }
-  .files { list-style:none; }
-  .files li { padding:16px 0; border-bottom:1px solid #30363d; display:flex; justify-content:space-between; gap:16px; align-items:center; }
-  .files span { color:#aeb8c3; font-size:14px; }
-  .skip { position:absolute; left:16px; top:-80px; background:var(--yellow); color:#010409; padding:12px; z-index:10; }
-  .skip:focus { top:12px; }
-  footer .wrap { display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; }
-  @media (max-width:720px){ .grid{grid-template-columns:1fr;} nav{align-items:flex-start;} .nav-links{width:100%;gap:8px;} .nav-links .btn,.lang-btn{padding:8px 10px;font-size:13px;} .hero{padding:52px 0 36px;} .wrap{padding:0 20px;} .files li{align-items:flex-start;flex-direction:column;gap:4px;} .section{padding:28px 20px 40px;} }
-  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 */
+:root{--ink:#121a15;--paper:#f2f1e9;--white:#fffef9;--muted:#536057;--line:#c5cbc0;--dark:#101814;--darkmuted:#c5cec1;--accent:#e9d853;--green:#afc9a9;--font-body:"Segoe UI","Noto Sans SC",sans-serif;--font-display:Georgia,"Songti SC","SimSun",serif;--font-code:Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth;overflow-x:clip}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.65;overflow-x:clip}::selection{background:var(--accent);color:var(--ink)}a{color:inherit;text-underline-offset:.22em}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}button{font:inherit}h1,h2,h3,p{margin:0}h1,h2,h3{font-family:var(--font-display);font-style:normal;overflow-wrap:anywhere;line-height:1.1;letter-spacing:-.025em}p{max-width:70ch}.wrap{width:min(1380px,calc(100% - 64px));margin:auto}.skip{position:absolute;top:-100px;left:1rem;z-index:10;background:var(--accent);padding:.8rem;color:var(--ink)}.skip:focus{top:1rem}
+header{background:var(--dark);color:var(--white)}.nav{min-height:82px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{text-decoration:none;font-weight:700;letter-spacing:-.02em;font-size:1.2rem;white-space:nowrap}.brand-mark{display:inline-block;width:11px;height:11px;background:var(--accent);border-radius:50%;margin-right:9px}.nav-links{display:flex;gap:26px;align-items:center}.nav-links a{text-decoration:none;font-size:.92rem;white-space:nowrap}.nav-links a:hover{text-decoration:underline}.lang{border:1px solid var(--darkmuted);color:var(--white);background:transparent;padding:8px 13px;min-height:42px;cursor:pointer}.lang:hover{background:var(--white);color:var(--dark)}
+.hero{background:var(--dark);color:var(--white);padding:clamp(70px,10vw,150px) 0 0}.hero h1{animation:arrive .8s ease-out both}@keyframes arrive{from{opacity:.5;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}.hero h1{font-size:clamp(3.6rem,9vw,8.5rem);line-height:.96;max-width:1100px;font-weight:400}.hero h1 span{color:var(--accent)}.hero-bottom{display:flex;align-items:end;justify-content:space-between;gap:32px;padding:58px 0 64px}.hero-bottom p{color:var(--darkmuted);font-size:clamp(1.05rem,1.5vw,1.3rem);max-width:41rem}.button{display:inline-flex;justify-content:center;align-items:center;gap:12px;text-decoration:none;font-weight:700;min-height:54px;padding:12px 22px;background:var(--accent);color:var(--dark);white-space:nowrap}.button:hover{background:var(--white)}.hero-line{border-top:1px solid #657166;padding:17px 0;color:var(--darkmuted);display:flex;gap:20px;justify-content:space-between;font-size:.9rem}
+.intro{padding:clamp(90px,12vw,160px) 0}.intro-inner{display:grid;grid-template-columns:1fr 2fr;gap:5vw}.section-title{font-size:clamp(2.8rem,5.5vw,5.6rem);font-weight:400}.intro p{font-size:clamp(1.35rem,2.3vw,2.25rem);line-height:1.35;letter-spacing:-.02em;max-width:38ch}.intro p strong{font-weight:600}.minor{color:var(--muted);font-size:1rem!important;line-height:1.7!important;margin-top:24px}
+.mechanism{background:var(--green);padding:clamp(80px,10vw,140px) 0}.mechanism-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:60px}.mechanism-head p{max-width:28rem}.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--ink)}.step{padding:28px 28px 10px 0}.step+.step{padding-left:28px;border-left:1px solid var(--ink)}.step small{display:block;font-family:var(--font-code);font-size:.85rem;margin-bottom:65px}.step h3{font-size:clamp(1.9rem,3vw,3rem);font-weight:400;margin-bottom:18px}.step p{max-width:31ch}
+.boundary{background:var(--dark);color:var(--white);padding:clamp(90px,11vw,150px) 0}.boundary-layout{display:grid;grid-template-columns:1fr 1fr;gap:8vw}.boundary h2{max-width:10ch}.boundary-copy{color:var(--darkmuted);font-size:1.1rem}.boundary-list{margin-top:44px}.boundary-item{display:grid;grid-template-columns:1fr auto;gap:20px;padding:20px 0;border-top:1px solid #59645b}.boundary-item strong{font-weight:500}.status{font-family:var(--font-body);font-size:.82rem;color:var(--accent);white-space:nowrap}
+.evidence{padding:clamp(90px,11vw,150px) 0}.evidence-top{display:grid;grid-template-columns:1fr 1fr;gap:8vw;align-items:start;margin-bottom:55px}.evidence-top p{color:var(--muted);font-size:1.1rem}.historical{margin-top:70px;display:grid;grid-template-columns:2fr 1fr;gap:30px;align-items:end}.historical video{display:block;width:100%;height:auto;background:var(--dark)}.historical p{color:var(--muted);font-size:.95rem}.evidence-list{border-top:1px solid var(--line)}.evidence-link{display:grid;grid-template-columns:1.4fr 2fr auto;gap:25px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line);text-decoration:none}.evidence-link:hover{color:#355e39}.evidence-link strong{font-size:1.3rem;font-weight:600}.evidence-link span{color:var(--muted)}.arrow{font-size:1.5rem!important;color:inherit!important}
+.start{background:var(--accent);padding:clamp(80px,10vw,130px) 0}.start-layout{display:grid;grid-template-columns:1fr 1fr;gap:8vw}.start-copy p{margin-top:22px}.start-copy .button{background:var(--ink);color:var(--white);margin-top:30px}.start-copy .button:hover{background:#32483a}.code{margin:0;background:var(--dark);color:var(--white);padding:28px;overflow:auto;font:0.9rem/1.9 var(--font-code);align-self:center}.fine{font-size:.9rem;color:var(--ink);margin-top:18px!important}
+footer{background:var(--dark);color:var(--white);padding:65px 0 30px}.footer-top{display:flex;justify-content:space-between;gap:40px;align-items:start}.footer-name{font:400 clamp(2.4rem,6vw,5rem)/1 var(--font-display)}.footer-links{display:flex;gap:22px;flex-wrap:wrap}.footer-links a{white-space:nowrap}.footer-bottom{border-top:1px solid #59645b;margin-top:70px;padding-top:18px;color:var(--darkmuted);font-size:.9rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:760px){.wrap{width:calc(100% - 36px)}.nav{min-height:70px;align-items:flex-start;padding:20px 0;flex-wrap:wrap}.nav-links{width:100%;gap:14px;flex-wrap:wrap}.nav-links a{font-size:.85rem}.hero{padding-top:70px}.hero h1{font-size:clamp(2.35rem,9vw,4rem)}.hero-bottom{display:block;padding:38px 0 45px}.hero-bottom .button{margin-top:26px}.hero-line{display:block}.hero-line span{display:block}.intro-inner,.boundary-layout,.evidence-top,.start-layout,.historical{grid-template-columns:1fr;gap:32px}.mechanism-head{display:block}.mechanism-head p{margin-top:20px}.flow{grid-template-columns:1fr}.step,.step+.step{padding:25px 0;border-left:0;border-bottom:1px solid var(--ink)}.step small{margin-bottom:18px}.evidence-link{grid-template-columns:1fr auto;gap:8px}.evidence-link span:not(.arrow){grid-column:1}.evidence-link .arrow{grid-column:2;grid-row:1}.footer-top{display:block}.footer-links{margin-top:30px}.code{font-size:.78rem;padding:18px}.section-title{font-size:clamp(2.6rem,10vw,4.4rem)}}
+@media(max-width:360px){.hero h1{font-size:2rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero h1{animation:none}}
 </style>
 </head>
 <body>
-<a class="skip" href="#main" id="skip">跳到主要内容</a>
-<header><div class="wrap"><nav>
-  <a class="logo" href="#main">Agent<span> Canary</span></a>
-  <div class="nav-links">
-    <a class="btn ghost" href="https://github.com/DorianChn/shanchuanzhi-agent-canary">GitHub</a>
-    <a id="nav-results" class="btn ghost" href="#results">真实实验</a>
-    <a id="nav-start" class="btn" href="#start">开始使用</a>
-    <button id="lang-toggle" class="lang-btn" type="button" aria-label="Switch website language">English</button>
-  </div>
-</nav></div></header>
-
+<a class="skip" href="#main" data-zh="跳到主要内容" data-en="Skip to content">跳到主要内容</a>
+<header><nav class="wrap nav" aria-label="Main navigation">
+<a class="brand" href="#main"><span class="brand-mark" aria-hidden="true"></span>Agent Canary</a>
+<div class="nav-links"><a href="#how" data-zh="工作方式" data-en="How it works">工作方式</a><a href="#boundary" data-zh="保护边界" data-en="Scope">保护边界</a><a href="#results" data-zh="证据" data-en="Evidence">证据</a><a href="#start" data-zh="开始使用" data-en="Get started">开始使用</a><a href="https://github.com/DorianChn/shanchuanzhi-agent-canary">GitHub</a><button class="lang" id="lang-toggle" type="button" aria-label="Switch language">English</button></div>
+</nav></header>
 <main id="main">
 <section class="hero"><div class="wrap">
-  <h1 id="hero-title">Agent Canary 2.0<br><em>检测信号，隔离风险。</em></h1>
-  <p id="hero-sub" class="sub">面向 AI Agent 的安全诱饵与会话隔离工具。确定性策略负责执行，可选 AI 提供解释；保护范围由宿主接入的工具决定。</p>
-  <p id="version-note" class="version">竞赛预览版 · MIT · Node.js 20+ · 云端模型默认不发送数据</p>
-  <div class="actions">
-    <a id="hero-download" class="btn" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v2.0.0-competition-preview.1/Agent_Canary_Competition_2_0.zip">下载免费竞赛版</a>
-    <a id="hero-release" class="btn ghost" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-competition-preview.1">查看发行说明</a>
-  </div>
-  <div class="demo">
-    <video id="demo-video" controls playsinline preload="none" poster="agent-canary-cover-v2.png" aria-label="Agent Canary 2.0 实际程序演示">
-      <source src="https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_Demo.mp4" type="video/mp4">
-      <span id="video-fallback">浏览器无法播放时，请下载演示视频。</span>
-    </video>
-  </div>
-  <p id="demo-caption" class="demo-caption">4 分 35 秒 · 实际程序界面与本地 AI 分析 · 危险操作均为虚拟执行器。程序触发的隔离演示与真实模型自主实验分别标注；中文字幕，无音轨。</p>
-  <p><a id="video-download" href="https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_Demo.mp4">打开或下载视频</a></p>
+<h1><span data-zh="给 Agent 的行动" data-en="Give agent actions">给 Agent 的行动</span><br><span data-zh="加一道边界。" data-en="a boundary.">加一道边界。</span></h1>
+<div class="hero-bottom"><p data-zh="开源安全工具，用诱饵与 Canary 信号发现异常，在已接入的工具调用中执行策略、隔离会话并记录证据。" data-en="Open-source security for AI agents. Detect signals with decoys and canaries, enforce policies on integrated tool calls, and keep evidence.">开源安全工具，用诱饵与 Canary 信号发现异常，在已接入的工具调用中执行策略、隔离会话并记录证据。</p><a class="button" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.1.0"><span data-zh="查看 3.1 源码" data-en="Explore 3.1 source">查看 3.1 源码</span> <span aria-hidden="true">↗</span></a></div>
+<div class="hero-line"><span data-zh="开源 · MIT · Node.js 20+" data-en="Open source · MIT · Node.js 20+">开源 · MIT · Node.js 20+</span><span data-zh="3.1 为源码发布，不含安装包" data-en="3.1 is a source release; no installer">3.1 为源码发布，不含安装包</span></div>
 </div></section>
-
-<section class="wrap core"><h2 id="core-title">安全核心与可选增强</h2><div class="grid">
-  <div class="card"><h3 id="decoy-title">MCP 诱饵与 Canary Token</h3><p id="decoy-copy">12 个不执行所模拟操作的诱饵工具，加上已登记令牌的精确匹配，产生可审计信号。误调用也可能触发，仍需结合上下文核查。</p></div>
-  <div class="card"><h3 id="guard-title">确定性策略与会话隔离</h3><p id="guard-copy">Guard 同步执行 SAFE → TRIPPED → QUARANTINED；已隔离会话的后续受守卫危险调用被拒绝。可信宿主可增加参数策略与有限敏感来源追踪。</p></div>
-  <div class="card"><h3 id="ai-title">可选 AI 与中文控制台</h3><p id="ai-copy">本地 Ollama/Qwen 已真实验证，云端适配器待真实连通验证。AI 不能授予权限或解除隔离；分析失败时基础 Guard 继续工作。</p></div>
-</div></section>
-
-<section class="wrap section" id="results">
-  <h2 id="results-title">真实模型实验，保留失败结果</h2>
-  <p id="results-copy">Qwen 9B 完成 168 次真实自主工具选择。每组 19 个可比攻击任务、8 个正常任务和 1 个预先隔离案例；危险效果均虚拟。下表分母不包含预先隔离案例。</p>
-  <div class="table-wrap"><table>
-    <caption id="table-caption">原始任务口径 · 小屏可横向滚动查看完整表格</caption>
-    <thead><tr><th id="table-mode" scope="col">保护模式</th><th id="table-attack" scope="col">攻击成功</th><th id="table-normal" scope="col">正常任务完成</th><th id="table-fp" scope="col">正常任务硬误拒绝</th></tr></thead>
-    <tbody>
-      <tr><td id="arm-a">A · 无保护</td><td>4 / 19</td><td>8 / 8</td><td>0 / 8</td></tr>
-      <tr><td id="arm-b">B · 仅 Canary 检测</td><td>6 / 19</td><td>8 / 8</td><td>0 / 8</td></tr>
-      <tr><td id="arm-c">C · Canary + Guard</td><td>6 / 19</td><td>8 / 8</td><td>0 / 8</td></tr>
-      <tr><td id="arm-d1">D1 · 确定性风险策略</td><td>1 / 19</td><td>6 / 8</td><td>0 / 8</td></tr>
-      <tr><td id="arm-d2">D2 · 策略 + 事后 AI</td><td>1 / 19</td><td>6 / 8</td><td>0 / 8</td></tr>
-      <tr><td id="arm-e">E · 策略 + 事前 AI</td><td>1 / 19</td><td>6 / 8</td><td>2 / 8</td></tr>
-    </tbody>
-  </table></div>
-  <p id="results-limit">模型自主诱饵触发均为 0/19。策略改善了本次样本的结果，但不是全局防护保证；事前 AI 未优于 D1，且增加误拒绝，默认关闭。D1/D2 的正常任务中断含 2/8 人工审批等待，不能计作已完成。单模型、单次重复的小样本无法证明普遍效果。</p>
-  <div class="actions"><a id="results-raw" class="btn ghost" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/evidence/v2-summary.json">查看原始统计与分母</a><a id="results-audit" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/main/docs/competition/AGENT_CANARY_2_FINAL_REPORT.md">完整审计与已知风险</a></div>
-</section>
-
-<section class="wrap section" id="start">
-  <h2 id="how-title">从独立免费包开始</h2>
-  <p id="how-sub">下载 ZIP 并解压，在解压目录运行以下命令。无需模型也能自检并运行控制台；使用 AI 时再连接已有本地模型或明确授权的接口。</p>
-  <pre class="term">npm ci
-npm run build
-npm test
-npm run ai:console</pre>
-  <p id="start-note" style="margin-top:18px">控制台仅在本机 loopback 启动，使用命令输出的网址。AI 事前审查默认关闭。独立竞赛包不是原商业 CLI，MCP 启动命令是 node dist/competition.js serve --stdio。</p>
-  <div class="actions"><a id="sdk-docs" class="btn ghost" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/main/docs/SECURITY_ROUTER_2.md">SDK 与安全 Router</a><a id="agent-docs" class="btn ghost" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/main/docs/AGENT_INTEGRATIONS_2.md">Agent 接入与覆盖范围</a><a id="provider-docs" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/main/docs/AI_PROVIDERS.md">AI Provider 配置</a></div>
-  <div class="boundary"><h3 id="boundary-title">使用前了解保护边界</h3><ul>
-    <li id="boundary-guard">安装 MCP 诱饵不等于全局 Agent 防护。只有宿主接入 Guard / Router 的调用受其隔离策略保护；未接入的原生工具和其他 MCP 服务在范围外。</li>
-    <li id="boundary-before">未产生 Canary 信号的首次危险调用不由原始 Guard 自动识别；可选风险策略能检查宿主声明的参数边界，但不是完整命令语义验证器。</li>
-    <li id="boundary-ai">AI 只辅助分析，不能自行批准、重置 Guard 或解除隔离。不能撤销已经开始的外部操作，实际桌面 Agent 的全链路保护尚未验证。</li>
-    <li id="boundary-package">请选择本页的独立免费 ZIP。普通 npm/Docker 的 V1/V2 分发边界风险仍未关闭，本次不发布这些渠道，不迁移商业用户。</li>
-  </ul></div>
-</section>
-
-<section class="wrap section" id="materials">
-  <h2 id="materials-title">项目材料与可复现证据</h2>
-  <p id="materials-copy">三个 PDF、视频和独立免费 ZIP 对应同一冻结核心 a0e8c2f；后续网站更新不改动这些交付物。中英文文档、原始实验日志与失败记录公开保留。</p>
-  <ul class="files">
-    <li><a id="pdf-project" href="https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pdf">项目介绍 PDF</a><span id="pdf-project-info">12 页 · 系统架构、场景与边界</span></li>
-    <li><a id="pdf-innovation" href="https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_%E6%8A%80%E6%9C%AF%E5%88%9B%E6%96%B0.pdf">技术创新 PDF</a><span id="pdf-innovation-info">4 页 · 机制、集成与限制</span></li>
-    <li><a id="pdf-experiment" href="https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_%E7%9C%9F%E5%AE%9E%E6%A8%A1%E5%9E%8B%E5%AE%9E%E9%AA%8C.pdf">真实模型实验 PDF</a><span id="pdf-experiment-info">7 页 · A–E 对照与统计局限</span></li>
-    <li><a id="ci-evidence" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/actions">构建、测试与 CI</a><span id="ci-info">229 项本机通过 / 5 跳过 · 冻结提交 CI 9/9 通过</span></li>
-  </ul>
-</section>
-
-<details class="wrap section" id="plans"><summary id="legacy-title">已有 V1 与商业版用户</summary>
-  <h2 id="plans-title" style="color:#fff;font-size:28px;text-align:center">Free V1.2.7 / V2 unlocked by subscription</h2>
-  <p id="plans-sub" style="color:var(--dim);text-align:center;margin:10px 0 28px">The current main branch tracks license-gated V2 implementations; a runtime license gate does not separate their source from this public tree.</p>
-  <div class="grid">
-    <div class="card price">
-      <h3 id="v1-title">V1.2.7 Basic · Free</h3>
-      <p id="v1-price"><strong>Free forever</strong></p>
-      <p id="v1-features" class="steps">Decoys · canary tokens · leak scanning · local alerts · MCP install · guarded circuit breaker · shared identity quarantine</p>
-<a id="v1-download" class="btn ghost" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v1.2.7" style="margin-top:14px;display:inline-block">Download V1.2.7</a>
-    </div>
-    <div class="card price">
-      <h3 id="v2-title">V2 Personal · Paid</h3>
-      <p id="v2-price"><strong>Activate after subscription</strong></p>
-      <p id="v2-features" class="steps">Advanced eval · attack-chain dashboard · SIEM export · signed license</p>
-      <a id="v2-download" class="btn" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v2.0.0-personal" style="margin-top:14px;display:inline-block">Download software →</a>
-      <a id="v2-subscribe" class="btn ghost" href="pay.html" style="margin-top:14px;display:inline-block">View payment options →</a>
-    </div>
-  </div>
-  <p style="color:var(--dim);text-align:center;font-size:13px;max-width:720px;margin:0 auto">V2 Personal currently uses a manual WeChat Pay / Alipay confirmation flow. After payment, email the activation identifier and payment reference; delivery happens only after the seller verifies the transfer. <a href="pay.html" style="color:var(--yellow)">View payment instructions →</a></p>
-</details>
-
-<section class="howto" id="cooperation"><div class="wrap">
-  <h2 id="cooperation-title">Cooperation &amp; integration</h2>
-  <p id="cooperation-sub" class="center">For MCP clients, AI-agent teams, security researchers, and DevSecOps pilots: integration, reproducible evaluation, private deployment, and custom support.</p>
-  <div style="text-align:center"><a id="cooperation-link" class="btn" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions">Start a collaboration →</a></div>
-</section>
-
+<section class="intro"><div class="wrap intro-inner"><h2 class="section-title" data-zh="安全，从看清开始。" data-en="Clarity before confidence.">安全，从看清开始。</h2><div><p data-zh="Agent 可以调用工具，也可能遇到不可信的指令。Agent Canary 把<strong>可观察的信号</strong>和<strong>受守卫的执行</strong>连在一起。" data-en="Agents use tools and encounter untrusted instructions. Agent Canary connects <strong>observable signals</strong> with <strong>guarded execution</strong>.">Agent 可以调用工具，也可能遇到不可信的指令。Agent Canary 把<strong>可观察的信号</strong>和<strong>受守卫的执行</strong>连在一起。</p><p class="minor" data-zh="它不是覆盖所有桌面工具的系统级沙箱。效果取决于宿主如何接入、策略如何配置，以及实际执行路径。" data-en="It is not a system-wide sandbox for every desktop tool. Coverage depends on host integration, policy configuration, and the actual execution path.">它不是覆盖所有桌面工具的系统级沙箱。效果取决于宿主如何接入、策略如何配置，以及实际执行路径。</p></div></div></section>
+<section class="mechanism" id="how"><div class="wrap"><div class="mechanism-head"><h2 class="section-title" data-zh="从信号到行动" data-en="From signal to action">从信号到行动</h2><p data-zh="宿主需要主动接入受保护的路径；以下步骤描述项目中的机制，而非对所有 Agent 的覆盖承诺。" data-en="The host must route calls through protected paths. These steps describe project mechanisms, not universal agent coverage.">宿主需要主动接入受保护的路径；以下步骤描述项目中的机制，而非对所有 Agent 的覆盖承诺。</p></div><div class="flow">
+<article class="step"><h3 data-zh="发现信号" data-en="Notice a signal">发现信号</h3><p data-zh="诱饵工具和已登记令牌提供可检查的异常线索。触发后仍需结合上下文判断。" data-en="Decoy tools and registered tokens provide inspectable signals. Investigate the context of each trigger.">诱饵工具和已登记令牌提供可检查的异常线索。触发后仍需结合上下文判断。</p></article>
+<article class="step"><h3 data-zh="限制后续调用" data-en="Contain later calls">限制后续调用</h3><p data-zh="Guard 和策略约束接入路径中的调用；会话隔离不能撤销已经开始的外部操作。" data-en="Guard and policy constrain calls on integrated paths. Quarantine cannot undo external effects already started.">Guard 和策略约束接入路径中的调用；会话隔离不能撤销已经开始的外部操作。</p></article>
+<article class="step"><h3 data-zh="留下证据" data-en="Keep the evidence">留下证据</h3><p data-zh="记录决策与执行状态，保留测试失败和未验证事项，供复现和审查。" data-en="Record decisions and execution status; retain failures and unverified findings for reproduction and review.">记录决策与执行状态，保留测试失败和未验证事项，供复现和审查。</p></article>
+</div></div></section>
+<section class="boundary" id="boundary"><div class="wrap boundary-layout"><h2 class="section-title" data-zh="边界不是小字。" data-en="The boundary is the point.">边界不是小字。</h2><div><p class="boundary-copy" data-zh="了解哪些路径接入、哪些效果已经核验，是使用安全工具的第一步。" data-en="Know which paths are integrated and which effects have been verified before relying on a security tool.">了解哪些路径接入、哪些效果已经核验，是使用安全工具的第一步。</p><div class="boundary-list">
+<div class="boundary-item"><strong data-zh="原生 Codex Shell 的全局保护" data-en="Global protection of native Codex Shell">原生 Codex Shell 的全局保护</strong><span class="status">UNPROTECTED</span></div>
+<div class="boundary-item"><strong data-zh="真实宿主的受保护读取与路径替换" data-en="Protected reads and path replacement in a real host">真实宿主的受保护读取与路径替换</strong><span class="status">NOT VERIFIED</span></div>
+<div class="boundary-item"><strong data-zh="独立产品级 E4 验收" data-en="Independent product-level E4 acceptance">独立产品级 E4 验收</strong><span class="status">NOT VERIFIED</span></div>
+</div><p class="minor" style="color:var(--darkmuted)" data-zh="合成测试、源码构建和基线 CI 不能替代真实宿主或独立产品验收。" data-en="Synthetic tests, source builds, and baseline CI do not replace real-host or independent product acceptance.">合成测试、源码构建和基线 CI 不能替代真实宿主或独立产品验收。</p></div></div></section>
+<section class="evidence" id="results"><span id="materials"></span><div class="wrap"><div class="evidence-top"><h2 class="section-title" data-zh="把证据留在台面上。" data-en="Evidence, in the open.">把证据留在台面上。</h2><p data-zh="查看可复现的材料、失败记录和当前未完成的问题。历史实验基于特定版本和受控场景，不代表全局防护效果。" data-en="Explore reproducible material, failures, and open issues. Historical experiments use specific versions and controlled scenarios; they do not establish global protection.">查看可复现的材料、失败记录和当前未完成的问题。历史实验基于特定版本和受控场景，不代表全局防护效果。</p></div><div class="evidence-list">
+<a class="evidence-link" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52"><strong data-zh="受保护读取边界" data-en="Protected read boundary">受保护读取边界</strong><span data-zh="开放问题、复现条件与验收标准" data-en="Open issue, reproduction, and acceptance criteria">开放问题、复现条件与验收标准</span><span class="arrow" aria-hidden="true">↗</span></a>
+<a class="evidence-link" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/feature/agent-canary-3.0/docs/3.0/E4_EVIDENCE_INDEX.md"><strong data-zh="E4 证据索引" data-en="E4 evidence index">E4 证据索引</strong><span data-zh="区分源码检查、产品测试与独立复现" data-en="Source checks, product tests, and independent reproduction">区分源码检查、产品测试与独立复现</span><span class="arrow" aria-hidden="true">↗</span></a>
+<a class="evidence-link" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/evidence/v2-summary.json"><strong data-zh="历史模型实验" data-en="Historical model experiments">历史模型实验</strong><span data-zh="查看原始统计、分母和局限" data-en="Original statistics, denominators, and limitations">查看原始统计、分母和局限</span><span class="arrow" aria-hidden="true">↗</span></a>
+<a class="evidence-link" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/actions"><strong data-zh="构建与测试" data-en="Builds and tests">构建与测试</strong><span data-zh="按提交查看 GitHub Actions 实际结果" data-en="Inspect GitHub Actions results by commit">按提交查看 GitHub Actions 实际结果</span><span class="arrow" aria-hidden="true">↗</span></a>
+</div><figure class="historical"><video controls playsinline preload="none" poster="agent-canary-cover-v2.png" aria-label="Agent Canary 2.0 historical demonstration"><source src="https://raw.githubusercontent.com/DorianChn/shanchuanzhi-agent-canary/0255c153da943c07fbb37d7bf2c10b140e81f1e6/competition-submission/Agent_Canary_2_0_Demo.mp4" type="video/mp4"></video><figcaption><p data-zh="历史 2.0 演示：程序界面和本地 AI 分析，危险效果使用虚拟执行器。该视频不代表 3.1 的验收结果。" data-en="Historical 2.0 demonstration: application UI and local AI analysis, with risky effects simulated. This video is not 3.1 acceptance evidence.">历史 2.0 演示：程序界面和本地 AI 分析，危险效果使用虚拟执行器。该视频不代表 3.1 的验收结果。</p></figcaption></figure></div></section>
+<section class="start" id="start"><div class="wrap start-layout"><div class="start-copy"><h2 class="section-title" data-zh="从源码开始。" data-en="Start with the source.">从源码开始。</h2><p data-zh="3.1 GitHub 版本提供源码归档，未附带安装程序。请使用 Node.js 20 或更新版本，并在受控环境中评估自己的接入路径。" data-en="The 3.1 GitHub release provides source archives, not an installer. Use Node.js 20 or newer and evaluate your integration in a controlled environment.">3.1 GitHub 版本提供源码归档，未附带安装程序。请使用 Node.js 20 或更新版本，并在受控环境中评估自己的接入路径。</p><a class="button" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.1.0"><span data-zh="打开源码版本" data-en="Open source release">打开源码版本</span> <span aria-hidden="true">↗</span></a><p class="fine" data-zh="GitHub 标签为 v3.1.0；源码中的 npm 包版本仍是 1.2.7。" data-en="The GitHub tag is v3.1.0; the npm package metadata remains 1.2.7.">GitHub 标签为 v3.1.0；源码中的 npm 包版本仍是 1.2.7。</p></div><pre class="code"><code>git clone --branch v3.1.0 https://github.com/DorianChn/shanchuanzhi-agent-canary.git
+cd shanchuanzhi-agent-canary
+npm ci
+npm run build</code></pre></div></section>
 </main>
-<footer><div class="wrap">
-  <span>Agent Canary · MIT · 2.0 competition preview</span>
-  <span><a id="footer-payment" href="pay.html">既有商业版支持</a> · <a href="https://github.com/DorianChn/shanchuanzhi-agent-canary">GitHub</a></span>
-</div></footer>
+<footer><div class="wrap"><div class="footer-top"><div class="footer-name">Agent Canary<span style="color:var(--accent)">.</span></div><div class="footer-links"><a href="https://github.com/DorianChn/shanchuanzhi-agent-canary">GitHub</a><a id="cooperation" href="https://github.com/DorianChn/shanchuanzhi-agent-canary/discussions" data-zh="讨论" data-en="Discussions">讨论</a><a href="https://github.com/DorianChn/shanchuanzhi-agent-canary/blob/feature/agent-canary-3.0/README.zh-CN.md" data-zh="文档" data-en="Documentation">文档</a><a id="plans" href="pay.html" data-zh="既有商业支持" data-en="Existing commercial support">既有商业支持</a></div></div><div class="footer-bottom"><span>MIT · Agent Canary</span><span data-zh="为审慎的 Agent 接入而构建" data-en="Built for thoughtful agent integration">为审慎的 Agent 接入而构建</span></div></div></footer>
 <script>
-// Language switcher: keeps the choice locally and defaults to the browser language.
-(function () {
-  const copy = {
-    en: {
-      "nav-results": "Experiments", "nav-start": "Get started", "lang-toggle": "中文", "skip": "Skip to content",
-      "hero-title": "Agent Canary 2.0<br><em>Detect signals. Contain risk.</em>",
-      "hero-sub": "Security tripwires and session containment for AI agents. Deterministic policies control execution; optional AI explains risks. Coverage depends on host-integrated tools.",
-      "version-note": "Competition preview · MIT · Node.js 20+ · Cloud data sharing off by default", "hero-download": "Download free competition build", "hero-release": "Release notes",
-      "demo-caption": "4 min 35 sec · Actual program UI and local AI analysis · Risky effects are virtual. Program-triggered containment and autonomous model experiments are labeled separately. Chinese captions, no audio.", "video-download": "Open or download video", "video-fallback": "Download the video if your browser cannot play it.",
-      "core-title": "Security core and optional enhancements", "table-caption": "Original task definitions · Scroll horizontally on small screens", "decoy-title": "MCP decoys and canary tokens", "decoy-copy": "12 inert decoy tools and exact registered-token matching produce auditable signals. Accidental calls can also trigger a signal; investigate context.",
-      "guard-title": "Deterministic policy and quarantine", "guard-copy": "Guard synchronously transitions SAFE → TRIPPED → QUARANTINED. Later guarded dangerous calls are denied. Trusted hosts can add parameter policies and bounded source provenance.",
-      "ai-title": "Optional AI and local console", "ai-copy": "Ollama/Qwen was verified live; cloud adapters await live verification. AI cannot grant permissions or undo quarantine. AI failures leave the core Guard working.",
-      "results-title": "Real-model experiments, including failures", "results-copy": "168 autonomous Qwen 9B trials. Each arm has 19 comparable attacks, 8 normal tasks and 1 seeded-quarantine case. Risky effects are virtual. The table excludes seeded cases.",
-      "table-mode": "Protection mode", "table-attack": "Successful attacks", "table-normal": "Normal tasks completed", "table-fp": "Normal tasks falsely denied",
-      "arm-a": "A · Unprotected", "arm-b": "B · Canary only", "arm-c": "C · Canary + Guard", "arm-d1": "D1 · Deterministic policy", "arm-d2": "D2 · Policy + post-hoc AI", "arm-e": "E · Policy + pre-execution AI",
-      "results-limit": "Autonomous decoy triggers: 0/19 in every arm. Policy improved results in these samples, not a global safety guarantee. E did not outperform D1 and added false denials, so pre-review is off by default. D1/D2 normal-task interruptions include 2/8 pending approvals, not completions. One model and one repetition cannot establish general effectiveness.",
-      "results-raw": "Raw statistics and denominators", "results-audit": "Full audit and known risks",
-      "how-title": "Start with the standalone free ZIP", "how-sub": "Download and extract the ZIP, then run these commands in its directory. Self-test and the console work without a model. Connect an existing local model or an explicitly authorized API when using AI.",
-      "start-note": "The console binds to local loopback; use the printed URL. Pre-execution AI review is off by default. This ZIP is not the commercial CLI. Start MCP with node dist/competition.js serve --stdio.",
-      "sdk-docs": "SDK and security router", "agent-docs": "Agent integration and coverage", "provider-docs": "AI provider configuration",
-      "boundary-title": "Understand the protection boundary", "boundary-guard": "Installing decoys is not global agent protection. Only calls routed through the host's Guard / Router receive its containment policy. Native tools and other MCP servers outside this route are out of scope.",
-      "boundary-before": "The original Guard does not identify a first dangerous call without a canary signal. Optional policies inspect host-declared parameter boundaries, not complete shell semantics.", "boundary-ai": "AI cannot approve, reset Guard or release quarantine. External effects already started cannot be undone. Actual desktop-agent end-to-end protection is not verified.", "boundary-package": "Use the standalone free ZIP. Ordinary npm/Docker V1/V2 distribution boundaries still carry an open risk; those channels are not released and commercial users are not migrated.",
-      "materials-title": "Materials and reproducible evidence", "materials-copy": "Three PDFs, the video and the standalone free ZIP correspond to frozen core a0e8c2f. Later website changes do not change those artifacts. Bilingual docs, raw traces and failure records remain public.",
-      "pdf-project": "Project overview PDF", "pdf-project-info": "12 pages · Architecture, scenarios and boundaries", "pdf-innovation": "Technical innovation PDF", "pdf-innovation-info": "4 pages · Mechanisms, integration and limits", "pdf-experiment": "Real-model experiments PDF", "pdf-experiment-info": "7 pages · A–E comparison and limitations", "ci-evidence": "Build, tests and CI", "ci-info": "229 local passes / 5 skips · Frozen commit CI 9/9 passed", "legacy-title": "Existing V1 and commercial users", "footer-payment": "Existing commercial support",
-      "plans-title": "V1.2.7 and commercial compatibility",
-      "plans-sub": "The current main branch tracks license-gated V2 implementations; a runtime license gate does not separate their source from this public tree.",
-      "v1-title": "V1.2.7 Basic · Free", "v1-price": "<strong>Free forever</strong>",
-      "v1-features": "Decoys · canary tokens · leak scanning · local alerts · MCP install · guarded circuit breaker · shared identity quarantine", "v1-download": "Download V1.2.7",
-      "v2-title": "V2 Personal · Paid", "v2-price": "<strong>Activate after subscription</strong>",
-      "v2-features": "Advanced eval · attack-chain dashboard · SIEM export · signed license", "v2-download": "Download software →",
-      "v2-subscribe": "View payment options →",
-      "cooperation-title": "Cooperation &amp; integration", "cooperation-sub": "For MCP clients, AI-agent teams, security researchers, and DevSecOps pilots: integration, reproducible evaluation, private deployment, and custom support.", "cooperation-link": "Start a collaboration →"
-    },
-    zh: {
-      "nav-start": "开始使用", "lang-toggle": "English", "plans-title": "V1.2.7 与商业版兼容入口",
-      "plans-sub": "当前 main 分支跟踪了受许可门控的 V2 实现；运行时许可门控并没有把源码从公开代码树中隔离。",
-      "v1-title": "V1.2.7 基础版 · 免费", "v1-price": "<strong>永久免费</strong>",
-      "v1-features": "诱饵工具 · 金丝雀令牌 · 泄露扫描 · 本地告警 · MCP 安装 · 受守卫熔断器 · 共享身份隔离", "v1-download": "下载 V1.2.7",
-      "v2-title": "V2 Personal · 付费", "v2-price": "<strong>订阅后激活</strong>",
-      "v2-features": "进阶评测 · 攻击链面板 · SIEM 导出 · 签名许可证", "v2-download": "下载软件 →",
-      "v2-subscribe": "查看付款方式 →",
-      "cooperation-title": "合作与集成", "cooperation-sub": "面向 MCP 客户端、AI Agent 团队、安全研究者和 DevSecOps 试点，支持集成、可复现评测、私有部署与定制支持。", "cooperation-link": "发起合作讨论 →"
-    }
-  };
-  // HTML contains the full Chinese default. Capture it so every English field switches back.
-  for (const id of Object.keys(copy.en)) {
-    const element = document.getElementById(id);
-    if (element && !(id in copy.zh)) copy.zh[id] = element.innerHTML;
-  }
-  const button = document.getElementById("lang-toggle");
-  function apply(lang) {
-    for (const [id, value] of Object.entries(copy[lang])) {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = value;
-    }
-    document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
-    try { localStorage.setItem("agent-canary-lang", lang); } catch { /* Storage may be disabled. */ }
-  }
-  let saved;
-  try { saved = localStorage.getItem("agent-canary-lang"); } catch { /* Keep the usable default. */ }
-  let lang = saved === "en" ? "en" : "zh";
-  apply(lang);
-  button.addEventListener("click", () => { lang = lang === "zh" ? "en" : "zh"; apply(lang); });
-})();
-
+(function(){const button=document.getElementById('lang-toggle');const nodes=document.querySelectorAll('[data-zh][data-en]');let saved;try{saved=localStorage.getItem('agent-canary-lang')}catch{}let lang=saved==='en'?'en':'zh';function render(){nodes.forEach(node=>{node.innerHTML=node.dataset[lang]});document.documentElement.lang=lang==='zh'?'zh-CN':'en';button.textContent=lang==='zh'?'English':'中文';button.setAttribute('aria-label',lang==='zh'?'Switch to English':'切换为中文');try{localStorage.setItem('agent-canary-lang',lang)}catch{}}button.addEventListener('click',()=>{lang=lang==='zh'?'en':'zh';render()});render()})();
 </script>
 </body>
 </html>
