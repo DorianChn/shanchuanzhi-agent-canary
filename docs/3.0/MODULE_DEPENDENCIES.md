@@ -1,3 +1,39 @@
+## Live exact-source dependency snapshot — 2026-10-28 10:45 UTC
+
+- Dependency flow remains M1 Gateway/Hook held identity → M2 execution adapter → M5 policy/Guard/audit → M3 host readiness contract → M4 read-only desktop consumer → M6 evidence validator → M7 packaging/lifecycle → M8 onboarding/docs → M9 exact-source composition. Consumers adapt at module boundaries; M0 coordinates and records evidence.
+- Current candidates: M1 #133 `f150248`; M2 #110 `941fd22` (merged); M3 #120 `6830cf8`; M4 #121 `efd552d`; M5 #122 `51a64f0`; M6 #123 `b7e186b`; M7 #128 `8674860`; M8 #129 `685520c`; M9 #127 `635f8bc`.
+- Only the M2 manifest pin exactly matches its current merged module head. M1/M3/M4/M5/M6/M7/M8 follow-up refs are not all accepted/integrated. M3 exact-head owner disposition is missing; M6/M8 shared-test and candidate reviews remain missing; M1 #133 has no hosted checks. Do not promote M9 pins until required owner dispositions and fresh Ubuntu/Windows exact-source composition pass.
+- Existing branch anchors differ (Issue #126 comment `6465910277`); module owners retain their worktrees and local edits. M6/M7/M8 dirt remains untouched. Product E4 remains NOT_VERIFIED and P0 #52 remains OPEN.
+- Latest M0 report is PR #131 head `d62e6e6` with 12/12 hosted checks passing. Its composition exercises feature-base M9 `34fbe6d`, not PR #127's candidate manifest.
+
+## Current live dependency and integration snapshot — 2026-10-27 21:54 UTC
+
+- Dependency chain remains M1 held-file identity/Gateway/Hook → M2 execution-isolation adapter → M5 policy/Guard/audit → M3 host onboarding and status-only readiness → M4 read-only UI consumer → M6 evidence validation → M7 packaging/lifecycle → M8 public documentation → M9 exact reviewed-source composition. Each consumer adapts at its boundary; M0 records and coordinates only.
+- Current M3–M8 PR heads are #120 `9169552`, #121 `5d975b7`, #122 `dde81d6`, #123 `fae72ea`, #128 `bf9faee`, and #129 `685520c`; M9 PR #127 is `635f8bc`. M1–M6 refs match the current M9 manifest, while M7/M8 remain stale pins. Do not advance M9 until M7/M8 owner dispositions and exact-head checks pass.
+- M0 PR #131 head `fc4175c` has 12/12 passing checks (AC3 `40589241559`, CI `40589241430`, M9 composition `40589241480`). That composition is feature-base M9 `34fbe6d` and does not test open M3–M8 follow-up PR heads. Separately, PR #127's own run `40373243860` passed using current M3–M6 heads, stale M7 `bba0f0f`, and historical/scoped M8 refs `84ee6a7`/`1c94ed4`; this still does not integrate current M7/M8 PR heads. PR #24 remains OPEN/Draft with its original head/base.
+- Two coding lanes maximum; independent Codex-chat occupancy remains UNKNOWN because this session has no thread-read/control tool. No M0 VMware/model/installer/manual product-E4 run or exclusive-resource reservation is active. Scheduler Issue #29 was refreshed at `6454524740`. Quota percentages are not monitored per the later user instruction.
+- Worktrees M6/M7 retain dirty `.gitignore` files; M8 retains dirty `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`. Preserve all owner dirt. Last M0 push: 21:44 UTC; next no earlier than 22:04 UTC after preflight.
+
+## Post-push verification — 2026-10-27 19:33 UTC
+
+- M0 PR #131 head `d590828e4638ed42315b4042eb5140298de003d6` passed all 12 checks. M9 base composition `40568796015` passed both OSes but used feature-base M9 `34fbe6d` and the older M3–M8 refs listed in TECHNICAL_STATUS; it is not current-head integration proof.
+- Exact PR #127 manifest audit passed and flags M7/M8 stale versus their live branches. M9 pins remain unchanged pending owner dispositions.
+- Last M0 push: 19:24 UTC. Next push no earlier than 19:44 UTC after remote/PR #24 preflight.
+
+## Post-push readback — 2026-10-27 19:11 UTC
+
+- M0 head `78e82e71049469fe5057c3b8b7a24bcb1313da36` is pushed to the existing branch; PR #131's 12 checks passed. Next push batch is no earlier than 19:24 UTC.
+- M9 composition run `40565749165` passed both OSes on feature-base M9 `34fbe6d`; its selected module refs are historical/base refs, not current M3–M8 heads. The separate PR #127 exact-source comparison reports M1–M6 current and M7/M8 stale.
+- Live readback did not show new M7/M8 commits or formal reviews. Preserve owner dirt and keep M9 pins unchanged.
+
+## Live dependency and resource snapshot — 2026-10-27 19:01 UTC
+
+- Dependency chain: M1 owns canonical held-file identity and Gateway/Hook decisions → M2 adapts execution isolation → M5 owns policy/Guard/audit → M3 owns host onboarding and configured-target/status routes → M4 consumes read-only status → M6 validates evidence → M7 packages/lifecycle → M8 documents public behavior → M9 composes exact reviewed refs. Consumers adapt at their boundary; M0 does not change module implementation.
+- M1/M2 PRs #114/#110 are merged. M3–M6 PRs #120–#123 remain Draft; M7 #128 is Draft/conflicting; M8 #129 is Draft at `685520c`; M9 #127 is Draft at `635f8bc`. PR #24 remains OPEN/Draft and unchanged.
+- The current PR #127 manifest matches live canonical M1–M6 heads; its M7 pin `bba0f0f` and M8 pin `1c94ed4` are stale versus `bf9faee` and `685520c`. Do not promote pins without owner dispositions and exact-head candidate checks.
+- Keep the latest user-set cap at two concurrent module lanes. GitHub timestamps do not reveal active Codex-window occupancy; treat it as UNKNOWN. VMware, real-model, and installer execution share one exclusive slot; the last M0 Issue #29 readback recorded no reservation, but refresh the issue before any such work. M0 did not run these tests. Quota monitoring was later removed by the user; do not persist old percentage snapshots as current.
+- Last M0 push: `82320c0` at 18:44 UTC. Current M0-only docs are local; next push is no earlier than 19:04 UTC after checking remote head and PR #24.
+
 ## Current configured-target dependency status — 2026-10-25 06:31 UTC
 
 The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. Exact M9 composition run `40169026928` passed on Ubuntu and Windows for M0 PR #119 head `ac48cdb`, checking the current M1–M8 refs. M3's protected-read endpoint remains a fixed temporary-marker probe; the M4 UI intentionally does not call it. M3/M4 shipped-package/native-host acceptance remains outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.

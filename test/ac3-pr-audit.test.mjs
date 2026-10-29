@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { summarizePrAudit } from '../scripts/ac3-pr-audit.mjs';
+import { summarizeM9SourceRefAudit, summarizePrAudit } from '../scripts/ac3-pr-audit.mjs';
 
 const base = 'feature/agent-canary-3.0';
 const rules = {
@@ -154,4 +154,57 @@ test('reports every overlapping file even when the PR set exceeds 100 paths', ()
   );
   assert.match(report, /overlap\/file-100\.md/);
   assert.doesNotMatch(report, /Overlap table truncated/);
+});
+
+test('compares the exact M9 manifest pins with canonical remote branch heads', () => {
+  const sourceRules = {
+    m9SourceManifestPath: 'docs/3.0/M9_EXACT_SOURCE_REFS.json',
+    canonicalSourceBranches: {
+      M3: 'feature/ac3-agent-onboarding',
+      M7: 'feature/ac3-reliability-ac3',
+      M8: 'feature/ac3-open-source-product'
+    }
+  };
+  const report = summarizeM9SourceRefAudit({
+    m9Pull: pr(127, 'feature/ac3-m9-integration', 'm9-candidate-sha', ''),
+    manifest: {
+      modules: {
+        M3: { sha: 'm3-current-sha' },
+        M7: { sha: 'm7-reviewed-old-sha' }
+      }
+    },
+    branchHeads: new Map([
+      ['M3', { sha: 'm3-current-sha' }],
+      ['M7', { sha: 'm7-owner-head-sha' }],
+      ['M8', { sha: 'm8-current-sha' }]
+    ]),
+    sourcePulls: new Map([
+      ['feature/ac3-agent-onboarding', pr(120, 'feature/ac3-agent-onboarding', 'm3-current-sha', '')],
+      ['feature/ac3-reliability-ac3', pr(128, 'feature/ac3-reliability-ac3', 'm7-owner-head-sha', '')],
+      ['feature/ac3-open-source-product', pr(129, 'feature/ac3-open-source-product', 'm8-current-sha', '')]
+    ]),
+    rules: sourceRules
+  });
+
+  assert.match(report, /M9 candidate PR #127 at m9-candidate-sha/);
+  assert.match(report, /\| M3 \| feature\/ac3-agent-onboarding \| m3-current-sha \| m3-current-sha \| #120 \| MATCH \|/);
+  assert.match(report, /\| M7 \| feature\/ac3-reliability-ac3 \| m7-reviewed-old-sha \| m7-owner-head-sha \| #128 \| STALE_PIN \|/);
+  assert.match(report, /\| M8 \| feature\/ac3-open-source-product \| MISSING \| m8-current-sha \| #129 \| MISSING_PIN \|/);
+  assert.match(report, /Do not promote a pin without the module owner disposition/);
+});
+
+test('does not report pins as missing when the exact-head manifest is unavailable', () => {
+  const report = summarizeM9SourceRefAudit({
+    m9Pull: pr(127, 'feature/ac3-m9-integration', 'm9-candidate-sha', ''),
+    manifest: null,
+    branchHeads: new Map([['M8', { sha: 'm8-current-sha' }]]),
+    sourcePulls: new Map(),
+    rules: {
+      canonicalSourceBranches: { M8: 'feature/ac3-open-source-product' }
+    }
+  });
+
+  assert.match(report, /UNKNOWN_MANIFEST/);
+  assert.doesNotMatch(report, /MISSING_PIN/);
+  assert.match(report, /all comparisons are incomplete/);
 });
