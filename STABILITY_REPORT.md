@@ -1,5 +1,27 @@
 # 稳定性与恢复报告（M7）
 
+## 当前审计：2026-10-25
+
+**24h NOT_RUN；7d NOT_RUN；clean-VM lifecycle NOT_VERIFIED。** 本轮只运行本机临时 fixture 和短时 synthetic SDK harness，没有运行安装器、VMware 或真实模型。
+
+- 候选起点 `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`。已提交 workflow 的 manual-only 条件让 PR lifecycle job 被跳过，先失败复现已保留在 `lifecycle-before.log`。原有 workflow 修正不变；新增回归执行实际布尔条件，验证 PR 在缺失/false/true checkbox 时均运行，manual 缺失/false 时不运行、true 时运行。
+- `node --import tsx --test test/reliability.test.mjs packaging/windows/test-worker.mjs`：**39 pass / 0 fail / 2 skip**，包含新的事件门禁回归、损坏状态/ENOSPC/原子发布和 fail-closed 断言。
+- `node --import tsx --test test/windows-packaging.test.mjs`：**25 pass / 1 fail / 1 skip**。旧 M8 PR-head 相等断言仍失败并保留；精确 Hook provenance、tamper rejection 和 caller-canary 相关用例在这次 suite 中通过。当前产品已采用 source ancestry/blob 规则；未把旧分支整树合入目标。
+- 本机只有 Node `v22.23.1` 可用，本轮没有重新执行 Windows Node 20；当前产品 hosted Windows Node 20 job 成功不替代本地新候选验证。
+- 短 soak 命令：`node --import tsx scripts/stability-soak.mjs --hours=0.000555556 --interval-seconds=1 --operations=10 --concurrency=2 --output-root=<external-temp>/soak`。实际 **2,003.374 ms**、2 samples、20 successes、0 errors，`COMPLETED_WITHOUT_HARNESS_ERRORS`。这只验证记录器的短时运行路径。
+- 原始证据根目录：`%TEMP%/m7-audit-20261025-7d170b1d1a794767916d548e38678a28/`。短 soak 子目录 `soak/m7-soak-2026-10-25T07-20-38.148Z-21afb536-bf72-4a38-907c-9bb15e353763/`；`run-state.json` SHA-256 为 `4db65196b5083482ea11a1c8c3731a7ce1b979e18e0d6b29ff2547d2b348a010`，`samples.jsonl` 为 `5b567398c67c25c8843e46bc6134b7ff04f8a0e4c51e92a2fec9782cd7fb4fd9`。raw logs 仅保存在本机临时目录。
+
+安排独立环境后可直接运行现有脚本（当前 manifest 不提供旧报告中的 npm aliases）：
+
+```sh
+node --import tsx scripts/stability-soak.mjs --hours=24 --output-root=<external-temp>
+node --import tsx scripts/stability-soak.mjs --hours=168 --output-root=<external-temp>
+```
+
+完成声明必须绑定实际 elapsed time、source SHA、环境、完整 run-state/samples 与错误数。不得由本轮 2 秒 smoke、历史 10 秒 smoke 或绿色源码 CI 推断 24h/7d、GUI 自动恢复或真实磁盘故障验收。
+
+## 2026-10-13 起的历史记录
+
 日期：2026-10-13
 结论：**24 小时与 7 天测试均未运行；当前只能报告短时回归和 Soak 工具冒烟结果。**
 
