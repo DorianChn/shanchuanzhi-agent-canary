@@ -4,9 +4,9 @@
   "targetBaseRef": "feature/agent-canary-3.0",
   "modules": {
     "M1": {
-      "pullRequest": 101,
+      "pullRequest": 114,
       "branchRef": "feature/ac3-security-core",
-      "sha": "47501fc090ee67f7f96d84d231c7ce7cc70379cd"
+      "sha": "89be11e5f95f2b191880a4fc88f50e15f405121e"
     },
     "M2": {
       "pullRequest": 110,

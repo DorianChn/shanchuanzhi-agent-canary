@@ -1,3 +1,64 @@
+## One-click M0-M9 matrix and live owner snapshot — 2026-10-25 13:00 UTC
+
+- Added `scripts/Run-AC3-All-OneClick.ps1` and routed the existing desktop shortcut through it. A click runs build, full tests, and package smoke in each existing M1-M8 and M9 worktree; validates the M9 exact-source manifest and compares its pins with local module HEADs; runs the M0 baseline/E4 suite; and opens a local report. It records dirty state and leaves module files untouched. Product E4 is still explicitly NOT_VERIFIED because real model, clean-VM lifecycle, and independent acceptance evidence are not created by this runner.
+- Full local matrix report: `security-lab/e4-one-click-runs/20261025T125208838Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. Result: 31 PASS, 9 dependency-install SKIPPED (existing `node_modules`), 6 FAIL. M0/E4 reproduces the two synthetic Gateway failures on issue #118; M5 `npm run pack:check` fails because the temporary installed package path passed to `check-sdk-types.mjs` has no `package.json`; M9 pins differ from local owner heads for M4 (`892d329` pinned / `5d975b7` local), M5 (`cca42cd` / `dde81d6`), M7 (`bba0f0f` / `bf9faee`), and M8 (`1c94ed4` / `685520c`). M9 manifest structure itself passes.
+- Current worktree/remote comparison: M1 `89be11e`, M2 `941fd22`, M3 `9169552`, M5 `dde81d6`, and M6 `fae72ea` match their remote branches; M6 retains a dirty `.gitignore`. M4 has a clean owner commit `5d975b7` ahead of the existing remote branch and is queued for the next push batch. M7 has three local commits through `bf9faee`, a dirty `.gitignore`, and still conflicts with feature baseline `b0d8d77` in the Windows workflow, installer acceptance doc, and package manifest; M0 will not resolve those M7-owned conflicts. M8 has one local commit `685520c`, dirty `.gitignore`, and the pre-existing untracked merge-resolution JSON; all are preserved. M9 `b140d44` matches its remote branch.
+- Pushed M0 `5ed9d08` to the existing `feature/ac3-m0-coordination` branch; PR #119 remains open/draft. AC3 run `40195483677` passed and CI run `40195483699` passed all 9 jobs. M9 composition run `40195483659` passed Ubuntu and Windows, but exact job logs show the workflow selected feature-base M9 `b0d8d77` via the authenticated PR test-merge first parent; it did not test M9 candidate `b140d44`. M9 candidate has local full-suite/manifest validation only; hosted exact-candidate composition remains unverified because no PR exists for that branch. No merge of main or PR #24 occurred.
+- Follow-up M9 commit `08869a9` now pins current M4 PR #121 head `5d975b7` and tree `657cef4`; exact-manifest validator passed, M9 workflow-contract tests passed 12/12, and M9 security-composition tests passed 4/4. This M9 commit and M4 owner commit are queued together for the next 20-minute push batch; hosted exact-candidate M9 checks are still pending. The remaining M5/M7/M8 source-head differences are unchanged.
+- M0 attempted to post the exact M5 package-smoke reproduction to PR #122 for owner action. GitHub returned HTTP 403 `Resource not accessible by integration`; no alternate write path was used. The evidence and required M5 action are recorded here; M5 remains owner of its package checker.
+
+## Owner worktree updates — 2026-10-25 12:35 UTC
+
+- M4 owner has a clean local merge commit `5d975b7927a66be26a8bfc3740530bb27a703f2c` on the existing `feature/ac3-desktop-security-center` branch. It merges current feature base `b0d8d77` into PR #121 head `5d1b6f3`, contains approved baseline `e4732d9`, and resolves the previously observed `test/runtime-console.test.ts` merge conflict. Exact-head `npm run build` and `test/runtime-console.test.ts` pass (17/17); the commit is not yet pushed. The no-write merge tree against `b0d8d77` is conflict-free.
+- M7 owner has three local commits through `bf9faee` on existing `feature/ac3-reliability-ac3`, with a preserved dirty `.gitignore`. Build passed; reliability tests pass 15/16 with one platform symlink skip; Windows packaging tests pass 26/27 with one platform symlink skip; package smoke passes (103 files). The M7 docs-check script is absent on this older branch, so no docs-check pass is claimed. The branch does not contain approved baseline `e4732d9`; a no-write merge simulation against `b0d8d77` conflicts in `.github/workflows/windows-community.yml`, `INSTALLER_ACCEPTANCE.md`, and `package.json`. M0 will not resolve M7-owned conflicts.
+- M4 owner commit and M0 status docs are queued for the next authorized 20-minute push batch; M7 is not publishable until its owner resolves the baseline conflicts. Existing M6/M7/M8 dirty `.gitignore` files and M8's untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched.
+
+## Push batch update — 2026-10-25 12:26 UTC
+
+- Pushed M9 commit `b140d44c02795e9e1298b1cd9a46b741b7ac083a` to the existing `feature/ac3-m9-integration` branch and M0 coordination commits through `fd9d396ec614af146710537a23db9ddc3c8deff3` to the existing `feature/ac3-m0-coordination` branch. No new branch was created; no main or PR #24 merge occurred.
+- PR #119 now points to `fd9d396`. AC3 run `40193124199`, CI `40193124272`, and M9 `40193124204` all passed; the M9 workflow passed on Ubuntu and Windows. Its job log explicitly selects feature-base M9 source `b0d8d77`, not candidate `b140d44`, so it does not validate the pushed M9 pin update.
+- M9 needs a new Draft PR because prior PR #117 is already merged. The GitHub integration denied PR creation with HTTP 403, so no follow-up PR exists yet; no alternate write route was used. M9 commit `b140d44` is pushed, with focused 16/16 tests and exact-manifest validation locally verified.
+
+## Live coordination update — 2026-10-25 12:15 UTC
+
+- Re-ran the Windows one-click suite on feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`; report: `coordinator/security-lab/e4-one-click-runs/20261025T121409837Z/ONE_CLICK_RESULT.md`. Build, full tests (507/518 pass; 0 fail; 11 skipped), package check, E4 self-check (41/41), and bundle verification passed. Synthetic E4 still has two failures and three blocked cases; product E4 remains NOT_VERIFIED.
+- Added a desktop shortcut `Agent Canary E4 一键自动测试.lnk` pointing to the existing launcher. This is local-only and outside the repository.
+- M9 candidate `b140d44` passes focused composition/workflow tests 16/16 and the exact-source manifest validator when validated against its actual checkout SHA. The prior public M9 run #40191658779 failed at manifest validation; the corrected M3/M6 pins are still local pending the next 20-minute push batch.
+- PR #123 exact CI `40172587357` and AC3 `40190443162` pass; its M9 run still reflects the old pin. PR #120 CI `40191658828` and AC3 `40191658696` pass; its M9 run failed at old-manifest validation. PR #121 head `5d1b6f3` has no pull-request workflow runs; issue #125 remains open and the event reason is not established. M4's head also lacks the approved `e4732d9` baseline; a no-write merge simulation against `b0d8d77` finds a conflict in `test/runtime-console.test.ts`. M4 must sync and resolve it on the existing branch.
+- Independent detached worktree `C:\Users\36712\AppData\Local\Temp\ac3-m4-pr121-20261025` verified exact M4 head `5d1b6f3`: lockfile `npm ci`, `npm run build`, and `test/runtime-console.test.ts` all passed (17/17). This is auditable local exact-head evidence; it does not replace missing hosted CI or resolve the base-merge conflict.
+- PR #122 AC3 run `40190440590` fails because head `dde81d6` lacks approved baseline `e4732d9`. A no-write merge simulation against feature baseline `b0d8d77` finds conflicts in `docs/RISK_POLICY.md`, `package.json`, and `test/policy-management.test.ts`; the M5 owner must resolve these on the existing branch. GitHub lists no PR reviews on #122, so M1's exact-SHA review is still pending. Both a PR #122 coordination comment and an update to Issue #124 were denied by GitHub integration with HTTP 403; no GitHub change was posted.
+- Issue #118 remains M1-owned and open. The #52 owner disposition has released the earlier queue dependency, but M0 has not edited M1 code or tests. PR #24 remains OPEN/Draft; `main` and Release are untouched.
+
+## Live coordination snapshot — 2026-10-25 12:11 UTC
+
+- Product feature baseline remains `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. PR #24 remains OPEN/Draft and unmerged; `main` and Release are unchanged.
+- M0 PR #119 remains OPEN/Draft at `b3e6aacd888a0a1a27008d594265a517788df60d`; its AC3, CI, and M9 workflows pass on that head (runs `40171303782`, `40171303703`, `40171303653`).
+- M1 PR #114 is closed/merged at `89be11e`; owner disposition on P0 #52 is BLOCKED/NOT_VERIFIED for installed/native-host and OS-atomic acceptance. P1 #118 still reproduces a M1 Gateway cancellation failure in the synthetic decoy-read cases; the fix remains M1-owned on the existing branch.
+- M2 PR #110 is closed/merged at `941fd22`. Issue #52 still lacks installed-host consumer and OS-atomic evidence; the native Shell boundary remains explicitly unprotected.
+- M3 PR #120 now points to `91695529787f07111f5256d3c9d6e0e556f6eac1`, normally merged from current feature baseline `b0d8d77`. Exact-head CI passed 9/9 (run `40191658828`) and ownership contract passed (run `40191658696`). Its M9 check `40191658779` failed at exact-manifest validation because the feature-base M9 manifest still pinned the older M3 source.
+- M4 PR #121 remains OPEN/Draft at `5d1b6f3`; its owner-local build, 17/17 runtime-console tests, and browser check are recorded, but GitHub has no hosted checks for the head. Mergeability is currently false; Issue #125 tracks the missing checks/conflict.
+- M5 PR #122 remains OPEN/Draft at `dde81d6`; module CI passed, but coordination/M9 gates remain unresolved. M1's exact-diff review for this follow-up is still pending; Issue #124 tracks it.
+- M6 PR #123 remains OPEN/Draft at `fae72ea`; module CI and ownership contract passed (runs `40172587357`, `40190443162`). Its M9 check failed because the base manifest still pinned old M6 `2a88d8b`.
+- M7 PR #113 and M8 PR #40 are merged at `bba0f0f` and `1c94ed4`. Local M7 ref `feature/ac3-reliability-ac3` is at `5a7540b` without a public follow-up PR. M8 has owner-authored local commit `685520c` on its existing branch, with pre-existing dirty/untracked files preserved and no follow-up PR yet.
+- M9 PR #117 is merged at `7b6edae` (merge commit `de65fd2`). M0 has prepared local M9 commit `b140d44`, updating exact pins to M3 #120 and M6 #123; it is not yet pushed/PR'd. M9 build and package smoke passed; with the verified portable Python runtime, full suite passed 507/518, 0 failed, 11 skipped; exact-source workflow test passed 12/12 and manifest validation passed.
+- One-click E4 on baseline `b0d8d77` still reports two synthetic FAILs (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) and three BLOCKED real-environment cases. Product E4 and independent review remain NOT_VERIFIED. Latest report: `coordinator/security-lab/e4-one-click-runs/20261025T120007055Z/ONE_CLICK_RESULT.md`.
+- Open acceptance gates include P0 #52; P1 #118, #124, #125, #41, #45, #57, and #70. M9 pins for M4/M5/M7/M8 are still older than current follow-up candidates; M5 owner review and M4 hosted checks must land before those pins can be refreshed. No source/CI fixture is presented as real-host, clean-VM, or independent E4 evidence.
+
+## One-click runner update — 2026-10-25 06:39 UTC
+
+- Updated `scripts/Run-E4-OneClick.ps1`: when Windows has no usable Python, it downloads the official Python.org 3.13.17 embeddable runtime into the per-run report folder and verifies the architecture-specific SHA-256 before execution. It does not install Python globally or modify PATH.
+- Re-ran the single-click flow against feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` (tree `b02f14e3ac183f203d7b7cc0d39dedfaeb10182b`). Python bootstrap, build, full source tests (507/518 pass, 0 fail, 11 skipped), package-content check, E4 bundle/self-check (41/41), and generated-bundle verification all PASS.
+- Synthetic E4 remains FAIL for `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; three VM/installer/model cases remain BLOCKED. Product E4 and independent review remain NOT_VERIFIED. Detailed report: `coordinator/security-lab/e4-one-click-runs/20261025T063921101Z/ONE_CLICK_RESULT.md`.
+
+## Live coordination snapshot — 2026-10-25 06:36 UTC
+
+- Product feature baseline: `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. M1–M8 implementation PRs have been merged into this feature baseline; PR #24 remains OPEN/Draft on its original competition base and has not been merged.
+- M0 PR #119 remains OPEN/Draft at `ac48cdb1985e20121fe9fb44f385d90171d4ca5f`. Exact-head checks: AC3 coordination `40169026922` SUCCESS; general CI `40169026941` 9/9 SUCCESS; M9 exact-source composition `40169026928` Ubuntu+Windows SUCCESS.
+- Existing M9 branch head `7b6edae` is an ancestor of feature `b0d8d77` and is five commits behind. Current M9 workflow has validated exact M1–M8 refs for the current feature event; the existing branch still needs final synchronization after the coordinated feature candidate is settled.
+- Latest local one-click run is `coordinator/security-lab/e4-one-click-runs/20261025T062320151Z/ONE_CLICK_RESULT.md`: build/package/E4 verifier 41/41/bundle integrity PASS; full suite 506/518, one Python-runtime-dependent failure, 11 skips; two synthetic Gateway failures and three BLOCKED cases. Product E4 remains NOT_VERIFIED.
+- Open acceptance gates: P0 #52 protected identity/native host/OS-atomic TOCTOU; P1 #45 native Codex Shell, #118 Gateway cancellation, #41 Windows 11 lifecycle, #57 independent E4, #51/#54 historical trigger disposition, and #70 default-branch dependency state. No external/clean-VM acceptance is inferred from green composition CI.
+- Usage Overview read at 06:32 UTC showed 94% five-hour and 99% weekly remaining. VMware, real-model and installer resource remains unreserved. M1 #52 and M2 #45 remain the last registered owner slots; direct status requests were posted at 06:35 and 06:36.
+
 ## Verified source cohort merged — 2026-10-24 17:49 UTC
 
 M7 #113 is now MERGED at 97c52430117596f74b5f94c77ade7a23fa910540, following M2 #110, M6 #111 and M8 #40. Manual run40117125609 verified actual installation at bba0f0f, canonical installed Hook b7ed4ab, all11 installed Hook/fault/decision checks, and clean uninstall with residue0. #93 is closed with that bounded evidence; #29 installer resource is released (comment6387514754). #41's untested platform/user/upgrade cases remain open.
@@ -12,6 +73,12 @@ M0 coordination fixes and M9 final integration are the remaining source integrat
 - M0 fixes the moving-baseline/source-pin cycle using approved common source e4732d9 plus exact current base/head lineage and a conflict-free git merge-tree result. Five synthetic DAG regressions passed; missing/invalid baseline, wrong lineage, and actual conflicts fail closed. Runtime security policies, M9 source pins, and owner/evidence guards are retained.
 - Latest open-PR audit found no file overlap or unregistered branches among #109/#112/#113. Original M7 dirty files, M6 handoffs and the previously denied M8 fixture cleanup remain preserved.
 - Remaining delivery gates: real installed-path result for current M7; publish and verify M0 changes; merge M7/M0 only after their checks; align M9 to resulting feature and verify/merge M9 last. Product issues #45/#52/#57 and uncompleted platform/permission/upgrade cases remain explicitly unverified.
+
+## One-click E4 automation result — 2026-10-25
+
+- Added a Windows double-click entry point that installs pinned development dependencies when absent, runs full project verification, E4 self-check/verifier tests, deterministic synthetic E4, and validates the generated evidence bundle. Logs and result reports are written under `security-lab/e4-one-click-runs/`.
+- Tested on product baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` (tree `b02f14e3ac183f203d7b7cc0d39dedfaeb10182b`). Result: automated checks FAIL; 506/518 full-suite tests passed, one test could not find Python; E4 bundle tests passed 41/41; synthetic Gateway cases `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` failed with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`. Their protected fixture targets remained unchanged. Issue #118 OPEN/P1 is queued to M1 behind active P0 work.
+- The run does not invoke a real model, execute the installer, operate a VM, or establish independent review. Product E4 remains NOT_VERIFIED. Detailed report: `security-lab/e4-one-click-runs/20261025T050440262Z/ONE_CLICK_RESULT.md`.
 
 ## Current verified cohort — 2026-10-24 17:30 UTC
 
@@ -8499,3 +8566,651 @@ M0 refreshed GitHub, the existing M0 Draft PR, issue owners, and Usage Overview.
 - No owner-authored replies or M1–M8 head movement since the 15:05 branch audit. M7's two local worktree changes remain intact; the other seven module worktrees remain clean.
 - Last pushed M0 head `3f584ef` passed CI 9/9 and AC3, while M9 composition was SKIPPED. PR #24 remains unchanged OPEN/Draft.
 - This is a docs-only coordination batch; next push no earlier than 15:38 UTC. No quota check or exclusive test run occurred.
+
+## M0 coordination checkpoint — 2026-10-25 06:01 UTC
+
+- PR #24 remains OPEN/Draft at feature head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, with its existing competition readiness base; M0 has not changed PR #24, merged `main`, or created a Release. M0 PR #119 remains OPEN/Draft at `971cc711003e8162288967f1457e7fdc2a758839`; exact-head CI `40165627761`, coordination `40165627631`, and M9 composition `40165627637` succeeded.
+- M9 integration PR #36 and exact-source gate repair PR #117 are merged. The current exact-head M9 workflow passes on Ubuntu and Windows; this does not close product-host/installer/E4 acceptance issues below.
+- Existing M1 slot remains P0 #52: current branch worktree `feature/ac3-security-core` at `89be11e` is clean and source fixtures passed 64/64, but trusted product-host held-identity use and OS-atomic TOCTOU remain NOT_VERIFIED. P1 #118 is queued behind #52 after repeat one-click E4 reproduced `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` failures; protected synthetic targets did not change.
+- Existing M2 slot remains P1 #45: clean worktree `feature/ac3-execution-isolation` at `941fd22`; protocol fixtures deny, but native Codex Shell remains UNPROTECTED / BLOCKED_NOT_VERIFIED. No global Hook trust, ACL, or OS policy was changed.
+- M3/M4/M5/M6/M7/M8 module PRs are merged into the feature baseline. M6 #57 still lacks an independent product E4 run and separate reviewer receipt. M7 #41 remains OPEN for clean-VM lifecycle; the old `feature/ac3-reliability-ac3` candidate at `ab9b03f` is 372 commits behind / 67 ahead of current product after a fresh fetch, with multiple merge bases and preserved workflow/evidence modifications; M0 did not reconcile or reset it. M7's other candidate `bba0f0f` is already an ancestor of current product (no unique diff), so it needs no separate PR.
+- Current one-click run on Windows 11 build 26200 / Node 22.23.1: build passed; full suite 506/518 passed, 1 failed because Python is absent, 11 skipped; E4 evidence/self-check tests 41/41 passed; two synthetic Gateway cases failed and three external-evidence cases blocked. Product E4 remains NOT_VERIFIED. No real model, installer, or VM was run.
+- M0 added path-specific generated-output ignore rules in the existing M6/M7/M8 worktrees, all ignored by `git check-ignore -v` and still physically present. No files were staged/committed; M0 requested owner review on #29.
+- GitHub API comment writes returned 403; issue comments were posted and read back in the logged-in browser. The browser remains on issue #29. No stale temporary worktree registrations were pruned.
+## 2026-10-25 06:01 UTC — module worktree cross-check correction
+
+- M4's existing branch `892d329` passes `npm run build` and `node --import tsx --test test/runtime-console.test.ts` (16/16). Its current M4 report, UI page, and console regression-test blobs match the current PR #24 feature tree exactly. No M4-only source delta remains to open as a new PR; #52 product-host acceptance remains a separate P0.
+- M5 PR #94 is MERGED. The current M5 `test/policy-management.test.ts` blob (`7c332e3c323cc77e230ef5ca1df71e49bb010fcd`) and native Hook blob (`b7ed4aba70a597f4f63a05decc6de1b32f67372e`) match the current feature tree. M5 policy tests pass 15/15 on its existing checkout; its graph has multiple merge bases and must not be used as a direct branch merge.
+- After fetching the actual current feature head, M7 follow-up `bba0f0f` is an ancestor of PR #24 head `b0d8d77` with zero unique commits; the three commits are already integrated. The separate M7 reliability branch `ab9b03f` is stale and divergent (372 behind / 67 ahead, multiple merge bases); its local workflow edit and evidence remain preserved. Do not merge it wholesale. M7 #41 remains OPEN for current-source lifecycle acceptance.
+## M0 one-click test runner update — 2026-10-25 06:08 UTC
+
+- Improved scripts/Run-E4-OneClick.ps1 so build, full suite, package-content validation, E4 self-check, synthetic run, and generated bundle verification execute as separate stages. A failed suite no longer prevents package verification, and a synthetic FAIL no longer suppresses bundle verification.
+- Re-ran the single-click flow against feature baseline b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097. Build PASS; full suite 506/518 (1 failed, 11 skipped); package-content check PASS; E4 evidence/self-check 41/41 PASS; synthetic E4 FAIL in GW-CANARY-BLOCK and CANARY-SESSION-ISOLATION; generated bundle verification PASS.
+- The sole full-suite failure requires a working Python runtime. WindowsApps python.exe/python3.exe aliases exist but no usable Python runtime was found; no runtime was installed. Product E4 and independent review remain NOT_VERIFIED; real model, installer, and VM were not run.
+- Latest detailed report: security-lab/e4-one-click-runs/20261025T060650238Z/ONE_CLICK_RESULT.md.
+
+## M0 current integration checkpoint — 2026-10-25 13:20 UTC
+
+- PR #24 remains OPEN/Draft at head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, base `competition/shanchuanzhi-release-readiness`; its current check set is 14 SUCCESS and one SKIPPED Windows installer-lifecycle job. M0 did not change PR #24, merge `main`, or publish a Release.
+- Current active coordination PRs: #119 M0 `5ed9d08` (12 successful checks); #120 M3 `9169552`; #121 M4 remote head `5d1b6f3` (merge state DIRTY); #122 M5 `dde81d6`; #123 M6 `fae72ea`. PRs #120/#122/#123 currently report M9 composition failures because the feature-base M9 manifest still names the former M3 PR #107/head `0d61b43`; exact failed run `40191658779` confirms the validator rejection. The local M9 integration branch now pins active M3 PR #120, M4 PR #121, and M5 PR #122 heads; exact-manifest validation, M9 workflow tests (12/12), and M9 security-composition tests (4/4) pass locally at `2249cac`. The candidate branch still needs its own hosted run.
+- M4's existing worktree contains merge commit `5d975b7` with parents PR #121 remote head `5d1b6f3` and current feature base `b0d8d77`; its tree differs from the base only in four M4-owned files (62 added lines), and the full M4 build, tests, and package check passed. The remote PR has not yet received this sync commit.
+- Latest one-click matrix completed at `20261025T131010433Z`: 33 PASS, 9 SKIPPED, 4 FAIL. Failures are M0 synthetic E4, M5 package check, and local M9 pin drift for M7/M8. The E4 sub-run reports 507/518 project tests passed, zero failed, 11 skipped; `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` remain synthetic FAIL, while VM binding, APP-01, and real-model tool-call cases remain BLOCKED. M5 package check fails with ENOENT for the unpacked SDK package metadata; M0 did not edit M5 files. The M7/M8 local heads are ahead of their remote refs and contain owner-owned dirty/untracked files, so their pins were not silently moved.
+- No clean-VM lifecycle, real-model call, or independent reviewer receipt is established by this local matrix. Product E4 remains NOT_VERIFIED.
+- At this checkpoint the last remote push was the M0 runner batch at approximately 12:57 UTC. Subsequent publication is held to the agreed 20-minute batch cadence and limited to verified commits on existing PR branches.
+
+## M9 exact-candidate run and M5 baseline blocker — 2026-10-25 13:29 UTC
+
+- M9 candidate run `40197176565` executed from existing branch `feature/ac3-m9-integration` at `2249cac`. Both Ubuntu and Windows validated the exact-source manifest and passed all module-specific setup/build/regression steps; the final M9 composition suite reported 22/23 PASS on Windows and failed identically on Ubuntu. The failure was a stale M9 test provenance assertion expecting M3 PR #107 head `0d61b43` after active PR #120 advanced to `9169552`.
+- M9 commit `47dffcc` updates only that exact M3 candidate provenance tuple: owner fix `2567d51` / tree `c07e189`, source base `0d61b43`, and current PR #120 head `9169552` / tree `797ffdc`. The historical M1 review anchor remains `0d61b43`; review scope was not widened. Exact M9 CI must be rerun after the next allowed push batch.
+- A local run of the exact provenance assertion then exposed the same stale metadata for active M6 PR #123. M9 commit `b5b9f71` records its owner fix and current PR head as `fae72ea` / tree `adce276`, with direct source base `2a88d8b`. With both current candidates updated, the exact-source provenance test passes 1/1, manifest/workflow tests pass 12/12, and security-composition tests pass 4/4. Hosted M9 composition is still pending.
+- M5 PR #122 ownership-contract run `40190440590` still fails because M5 head `dde81d6` does not contain approved baseline `e4732d9`; current base `b0d8d77` is its descendant. A read-only merge-tree preflight against the current base found content conflicts in `docs/RISK_POLICY.md`, `package.json`, and `test/policy-management.test.ts`. M0 left M5 untouched; the module owner must resolve those conflicts and preserve its tests/policy.
+- M6 PR #123's later ownership-contract run `40190443162` succeeded; the remaining current PR failures are its two M9 composition jobs. M3/M4/M5 PR checks still consume the older feature-base M9 manifest until the M9 candidate is accepted into that base; the M9 candidate is not a currently open PR.
+- The 13:20 UTC batch pushed M4 PR #121 to `5d975b7`, the existing M9 branch to `2249cac`, and M0 PR #119 to `b25ddb2`; each remote SHA was read back and matched. PR #119 now has all 12 checks successful. No M1–M8 implementation files, `main`, or PR #24 were changed by M0.
+- M9's `47dffcc` provenance correction is local and awaits the next allowed batch, no earlier than 13:40:41 UTC.
+
+## M0 current-head verification — 2026-10-25 13:39 UTC
+
+- A fresh desktop one-click M0–M9 matrix completed at `20261025T133313640Z`: 33 PASS, 9 SKIPPED, 4 FAIL across 46 checks. The failures are synthetic M0/E4 (two synthetic scenarios fail and three external-evidence cases remain blocked), M5 package check (ENOENT for the unpacked SDK package metadata), and M9 local pins for M7/M8 because their owner worktrees are ahead of their pinned merged candidates. Full report: `coordinator/security-lab/e4-one-click-runs/20261025T133313640Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. Product E4 remains NOT_VERIFIED.
+- PR #24 was re-read from GitHub: OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, base `competition/shanchuanzhi-release-readiness`, 14 SUCCESS and one SKIPPED installer-lifecycle check. M0 did not change PR #24, merge `main`, or publish a Release.
+- PR #119 remains OPEN/Draft and its latest published head `b25ddb2` has all 12 checks passing. Local M0 documentation is two commits ahead and contains only coordination status updates.
+- PR #121 exact current head `5d975b7` has standard CI, package, Docker, sponsor, and ownership-contract checks passing. Its M9 Ubuntu/Windows composition jobs failed in run `40197158659` against the older feature-base manifest. Issue #125 was updated with this corrected diagnosis (comment `6398365977`).
+- PR #122 current head `dde81d6` still fails ownership-contract run `40190440590` because it lacks approved common baseline `e4732d9`; a read-only merge-tree preflight found conflicts in `docs/RISK_POLICY.md`, `package.json`, and `test/policy-management.test.ts`. The M5 owner must resolve these conflicts and M1 must review the exact policy diff. Issue #124 now records the precise current disposition (comment `6398366372`).
+- M9 local commits `47dffcc` and `b5b9f71` update current M3 #120 / M6 #123 provenance. Exact-source assertion 1/1, M9 workflow contract 12/12, and security composition 4/4 pass locally. The hosted candidate rerun is pending publication at the next allowed 20-minute push batch; no M9 PR was created and no module implementation files were changed by M0.
+- The 13:33 one-click report and issue updates are coordination evidence only; they do not establish clean-VM installation, real-model tool-call, or independent-review acceptance.
+
+## M9 exact-candidate hosted result — 2026-10-25 13:46 UTC
+
+- After the 13:40 push batch, M9 workflow run `40198737633` on exact SHA `b5b9f71e057b185f0492438f9b53e980a5b6beb6` completed SUCCESS on Ubuntu and Windows. Both jobs validated the manifest and checked out current exact candidates M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, alongside M1/M2/M7/M8 refs, then passed the full exact-source cross-module regressions including M7 packaging checks.
+- This hosted M9 candidate result resolves the stale M3/M6 provenance assertion in the candidate manifest. It does not erase the earlier failures still attached to PR #120/#121/#123, whose pull-request checks read the older `feature/agent-canary-3.0` manifest, and it does not clear M5 PR #122's ownership-contract failure or M1 review requirement. Issues #124 and #125 were updated with this distinction (comments `6398436384`, `6398436696`).
+- M9 candidate readiness is now GREEN for the exact pinned M1–M8 composition at `b5b9f71`; full M9 integration acceptance remains OPEN for M5 approved-baseline sync/review, owner follow-ups, M7/M8 local pin drift, product-host and E4 acceptance gates. Do not merge PR #24, merge `main`, or publish a Release.
+
+
+## M0 owner-slot handoff — 2026-10-25 13:47 UTC
+
+- M1 source-only Gateway issue #118 is now assigned as the next active M1 lane in place of waiting indefinitely on the external/product portion of #52. Exact one-click rerun reproduced both synthetic failures (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected synthetic targets were unchanged. M1 must preserve fail-closed behavior and run focused Windows/Linux regressions in the existing M1 worktree. #52 stays OPEN/P0/NOT_VERIFIED and is not considered resolved by #118. Evidence and acceptance request are in #118 comment `6398463559`.
+- Scheduler Issue #29 now records two active lanes only: M1 #118 source regression and M2 #45 native-host boundary disposition. Neither lane reserves VMware/installer/real-model resources; those remain exclusive and unreserved. No global trust, ACL, or sandbox configuration changes were authorized. Scheduler comment `6398463939`.
+- The M9 hosted candidate result remains green at `b5b9f71` on Ubuntu and Windows. M5 approved-baseline sync/review and direct PR checks using the older feature-base manifest remain unresolved; no merge or release action was taken.
+
+- Additional M5 integration-risk finding (P1): read-only diff of `package.json` confirms PR #122's `test` script omits `test/m9-security-composition.test.ts`, which is present on current feature base `b0d8d77`. The test file remains present, but would stop running in the M5 candidate's full `npm test`. M5 must preserve the current base's full test list while adding M5 tests and rerun the full suite; M0 did not edit M5. Recorded in PR #122 and Issue #124.
+- Exact local M5 results from the 13:33 matrix: `npm test` at `dde81d6` is 500 total (489 PASS, 0 FAIL, 11 SKIPPED) and omits the current-base M9 security-composition test noted above. `npm run pack:check` fails at `scripts/check-sdk-types.mjs:9` with ENOENT for the unpacked `@dorianchn/agent-canary/package.json`. M5 owner follow-up now covers preserving the test and repairing this package-check path.
+
+## M0 Draft PR post-push checks — 2026-10-25 14:05 UTC
+
+- PR #119 exact head `2b5c9c01468c9538c274d2802985af6fb6d4b53f` is OPEN/Draft and all 12 checks are SUCCESS: six OS/Node CI tests, Docker, sponsor, package smoke, ownership-contract evidence, and M9 Ubuntu/Windows.
+- M9 PR-event run `40200283880` passed both platforms, but its immutable selection is feature base `b0d8d77` with merged-source refs M3 `0d61b43`, M4 `892d329`, M5 `cca42cd`, M6 `2a88d8b`, M7 `bba0f0f`, and M8 `84ee6a7`. This is baseline composition evidence for PR #119; it is not the follow-up candidate run.
+- Separate M9 candidate workflow run `40198737633` remains SUCCESS on Ubuntu/Windows at M9 SHA `b5b9f71`, pinning active M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`. This candidate pass does not erase old checks on PRs #120–#123 or the M5 ownership/package blockers.
+- PR #24 remains OPEN/Draft with unchanged head `b0d8d77` and base `competition/shanchuanzhi-release-readiness`. No merge, Release, or module implementation edit occurred.
+
+## M7 clean-VM resource preflight — 2026-10-25 14:07 UTC
+
+- Read-only `D:\虚拟机\vmrun.exe list` returned `Total running VMs: 0`; the previously named `D:\AgentCanary-3.0-Win11-VM` path is absent. No VM or installer was started; no recursive scan of D: was made.
+- Issue #41 remains OPEN/P1/NOT_VERIFIED. Before an installer run, M7 must identify the exact clean VM (`.vmx`) and matched candidate/hash, then reserve the mutually exclusive VMware/installer slot in #29. Issue comment `6398644196` records the preflight.
+- Issue #57 now records the exact M6 head `fae72ea` source-level bundle/lifecycle regressions passing in M9 run `40198737633`; independent product artifact provenance, real-model execution, clean VM, and a separate signed reviewer receipt remain absent. Product E4 remains NOT_VERIFIED; comment `6398640188`.
+
+## 2026-10-25 15:32 UTC — one-click rerun and M1/M5 handoff
+
+- The desktop one-click runner completed the full M0–M9 local matrix on Windows 11 / Node 22.23.1 against feature baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`: 33 PASS, 9 SKIPPED, 4 FAIL across 46 checks. Full report: `security-lab/e4-one-click-runs/20261025T140810076Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`.
+- M1–M4 and M6–M9 build, `npm test`, and `pack:check` passed on the exact local heads recorded in the matrix. M5 build and `npm test` exited 0; M5 `pack:check` failed at `scripts/check-sdk-types.mjs:9` because the packed install's `node_modules/@dorianchn/agent-canary/package.json` was absent. Existing test-script omission of `test/m9-security-composition.test.ts` remains an independent M5 concern.
+- The nested E4 run completed 507/518 project tests (0 failed, 11 skipped), E4 self-check and evidence-bundle verification passed. Synthetic `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` both failed with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; product E4 remains NOT_VERIFIED. VM binding, matched install, and real-model tool call remained blocked for missing environment evidence.
+- M9's manifest validator passed; exact local pins for M1–M6 passed. Local M7 head `bf9faeeb` is three commits ahead of the manifest pin `bba0f0f`; local M8 head `685520c` is one commit ahead of pin `1c94ed4`. The respective worktrees remain dirty and were preserved; no pin was rewritten.
+- Current worktree readback: M0 coordination branch is two commits ahead of origin; M6/M7/M8 have owner-owned dirty paths; other inspected worktrees are clean. No module source was edited by M0.
+- GitHub API comments returned 403; authenticated `gh` CLI was available. The 14:08 run and task handoffs were posted and read back: #118 comment `6399562388`, M5 PR #122 comment `6399562773`, scheduler #29 comment `6399563136`. Slot 1 is M1 #118, slot 2 M5 #122. M2 #45 remains documented UNPROTECTED/BLOCKED_NOT_VERIFIED without a safe source-only host action.
+- Fresh remote readback: PR #24 remains OPEN/Draft at unchanged head `b0d8d77` against `competition/shanchuanzhi-release-readiness`; PR #119 remains OPEN/Draft at remote head `2b5c9c0`. No merge, release, installer, VMware, or real-model action occurred. The M0 documentation batch was pushed after the 14:00:55 UTC prior push, exceeding the 20-minute minimum.
+
+## 2026-10-26 00:20 UTC — hosted M0 checks and exact M7/M8 candidate ancestry
+
+- M0 PR #119 head `63e1d78b388deb95232656fef53a8b2ea2c0d017` completed all hosted checks successfully: Node 20/22 on Ubuntu, Windows, macOS; Docker; Sponsor; package smoke; ownership contract; and M9 composition on Ubuntu and Windows (workflow runs `40207488319`, `40207488262`, `40207488296`). PR #119 remains OPEN/Draft.
+- PR #24 remains OPEN/Draft, head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, base `competition/shanchuanzhi-release-readiness`; no changes to its head/base and no merge/release.
+- Recomputed source ancestry from the current local refs. M7 `feature/ac3-reliability-ac3` head `bf9faeeb` has 3 commits over upstream `ab9b03f`, but is 414 behind / 70 ahead of `origin/feature/agent-canary-3.0`. The M9 manifest M7 ref `bba0f0f` has zero unique commits and is an ancestor of the current feature base. Do not mechanically pin M9 to the divergent M7 worktree. M8 `685520c` is one docs-only commit beyond merged PR #40 head `1c94ed4`, but its branch is 115 behind the current feature base; review/sync is required before updating M9 provenance. M7/M8 dirty owner-owned files and the untracked M8 resolution artifact remain untouched.
+- Exact ancestry correction was posted to scheduler Issue #29, comment `6405428475`. Fresh one-click and handoff evidence remains in #118 comment `6399562388` and M5 PR #122 comment `6399562773`. Two active slots are M1 #118 and M5 #122; M2 #45 remains documented BLOCKED_NOT_VERIFIED/UNPROTECTED. No exclusive VM/installer/real-model slot was used.
+- Direct feature-base M9 checks on PRs #120–#123 still report historical failures tied to the older manifest. The separate exact M9 candidate run `40198737633` passed Ubuntu/Windows at `b5b9f71`; it does not rewrite those direct checks or resolve M5 packaging/test-list and M7/M8 branch reconciliation.
+
+## 2026-10-26 00:27 UTC — PR #119 CI attempt 2 readback
+
+- PR #119 exact head `37069552619cc307c689af6760af23b6dd750003` is OPEN/Draft. Workflow run `40248889562` attempt 1 had one Windows Node 20 suite failure at `test/agent-hook.test.ts:149`: timeout-wrapper child process returned `status: null` at the outer five-second bound (TAP 507/518 pass, 1 fail, 10 skipped). No assertion was removed or weakened. The same failed job was rerun in attempt 2; the test passed, and the whole run concluded SUCCESS. Ubuntu/Windows M9 composition runs `40248889432` both passed. All current PR #119 checks now read PASS.
+- PR #24 was read back again: OPEN/Draft, unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `competition/shanchuanzhi-release-readiness`.
+- The initial timeout is recorded as an intermittent CI observation pending further recurrence; it is not called fixed from a single rerun. Local one-click failures (synthetic Gateway E4, M5 package-check, and M7/M8 worktree-to-manifest mismatch) remain open and are recorded above. The module owners' existing branches/worktrees were not modified.
+- Exact M7/M8 ancestry findings and handoffs are in scheduler #29 comment `6405428475` and M7 lifecycle issue #41 comment `6405439398`. No source pins, owner changes, PR #24, `main`, or release artifacts were changed.
+
+## M5 package-check source-diff finding — 2026-10-26 00:29 UTC
+
+- Read-only direct comparison of M5 `dde81d6` against current feature ref shows `scripts/check-package.mjs` removed the explicit npm install prefix targeting the temporary `installDir`, while the following `check-sdk-types.mjs` call still expects `installDir/node_modules/@dorianchn/agent-canary/package.json`. This is a plausible cause for the observed ENOENT in #122; the actual install root was not preserved by the current checker log, so treat it as a hypothesis until M5 verifies. Suggested owner check: inspect the installed package location; restore explicit prefix or initialize the temp consumer package, while keeping the expected-path assertion.
+- Direct file comparison also confirms M5 `package.json` dropped `test/m9-security-composition.test.ts` from the standard `npm test` script. It remains a file, not part of the current M5 full-suite run. M5 owner owns both corrections; M0 changed no M5 source. Existing exact failure evidence and request remain in PR #122 comment `6399562773`.
+
+## 2026-10-26 01:00 UTC — one-click runner fix and M1/M5 current evidence
+
+- Fixed `scripts/Run-E4-OneClick.ps1` to log native-command stderr notices without letting PowerShell promote ordinary `npm notice` output into a terminating error. The focused M0/E4 rerun completed build, full suite (507/518, 0 failed, 11 skipped), package check, E4 self-check/bundle tests (41/41), synthetic E4, and bundle verification. The runner fix is commit `ddd24799dacccdc2d1b2da8905b0f03cb27bc5ac`, pushed to existing Draft PR #119; its hosted CI/M9 workflows are in progress.
+- The full Windows one-click matrix at `coordinator/security-lab/e4-one-click-runs/20261026T005023886Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md` finished with 4 non-passing checks of 46: synthetic M0/E4, M5 package check, and M9 M7/M8 source-pin mismatches. M1–M4 and M6–M9 build/test/package checks passed; M5 build/tests passed but pack check failed.
+- Synthetic E4 again reports `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` FAIL (`GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`). VM binding, matched installation receipt, and real-model tool call remain BLOCKED; product E4 remains NOT_VERIFIED. Exact case report: `coordinator/security-lab/e4-one-click-runs/20261026T005024230Z/ONE_CLICK_RESULT.md`.
+- Fresh M5 `pack:check` failure on unchanged head `dde81d6` again reports ENOENT for temporary `install/node_modules/@dorianchn/agent-canary/package.json`; the cause is still unconfirmed. M1 and M5 owners were notified with this run's precise evidence on Issue #118 comment `6405908644` and PR #122 comment `6405908882`. Active development slots remain M1 #118 and M5 #122.
+- M9 manifest structure passes, but local M7 `bf9faeeb` and M8 `685520c` still differ from pins `bba0f0f` and `1c94ed4`. M7's existing worktree remains three commits ahead with dirty `.gitignore`; M8 remains one commit ahead with dirty `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`. Both are preserved; no mechanical pin update, push, reset, or branch replacement was made.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `competition/shanchuanzhi-release-readiness`. PR #119 remains OPEN/Draft. No module source, `main`, Release, VM, installer, or real-model state was changed by M0.
+
+## 2026-10-26 01:06 UTC — E4 failure-path triage and hosted CI
+
+- PR #119 standard CI run `40252061962` completed SUCCESS on Node 20/22 for Ubuntu, Windows, and macOS, plus Docker and package smoke. M9 composition Ubuntu job in run `40252061994` passed; its Windows job was still IN_PROGRESS at the latest poll. PR #119 remains OPEN/Draft.
+- Read-only source-path audit suggests the two synthetic decoy-read failures may be caused by cancellation of the currently executing read: `AgentGuard.trip()` synchronously latches quarantine and notifies the Gateway, whose quarantine subscriber aborts all session controllers; the Gateway then races cancellation against the executor and maps every caught error to `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`. This is a hypothesis from current source, not proof that a file effect occurred.
+- The E4 raw summary says the synthetic cases' file state was unchanged, but their report details are empty and `evidence.zip` lacks their failing Gateway/Guard JSONL. This is insufficient to verify the actual event order, denial, and target snapshots. M1 was asked on #118 comment `6405932385` to validate the event flow without weakening quarantine/denial assertions; M6 evidence retention was queued on #57 comment `6405934755` behind current M1 and M5 slots.
+- M5 current ENOENT and exact run were reiterated on PR #122 comment `6405908882`; current pin mismatches and owner reconciliation request were recorded on #124 comment `6405916484`. No owner-authored response was visible at this checkpoint.
+
+## 2026-10-26 01:08 UTC — PR #119 terminal hosted verification
+
+- Exact M0 head `ddd24799dacccdc2d1b2da8905b0f03cb27bc5ac`: standard CI run `40252061962` completed SUCCESS across Ubuntu/Windows/macOS Node 20/22, Docker, package smoke, and sponsor smoke; M9 exact-source composition run `40252061994` completed SUCCESS on both Ubuntu and Windows; AC3 ownership workflow `40252061948` completed SUCCESS.
+- PR #119 remains OPEN/Draft. This verifies the M0 test-runner change and current hosted composition workflow; it does not override the local M5 package-check failure, M7/M8 local pin mismatches, or E4 NOT_VERIFIED state recorded above.
+
+## 2026-10-26 01:10 UTC — repository double-click entry point
+
+- Added the previously documented but missing `scripts/一键E4自动测试.cmd`. It discovers already-installed local Node/npm and GitHub Desktop Git for desktop launches where those tools are absent from inherited `PATH`, then invokes the E4 runner and opens the report; on failure the console remains visible. The existing desktop workspace shortcut continues to run the broader M0–M9 matrix.
+- Exercised the new repository entry point from the current restricted `PATH`: project build PASS, full suite 507/518 (0 failed, 11 skipped), package-content check PASS, E4 self-check/bundle tests PASS, generated bundle verification PASS. Synthetic E4 still FAILS in the two Gateway cases and the three external-evidence gates remain BLOCKED. Report: `coordinator/security-lab/e4-one-click-runs/20261026T010800262Z/ONE_CLICK_RESULT.md`.
+
+## 2026-10-26 01:16 UTC — tracked launcher full-matrix verification
+
+- Exercised the tracked `scripts/一键E4自动测试.cmd` from the Agent Canary-Dev worktree layout; it selected `Run-AC3-All-OneClick.ps1` and completed the M0–M9 matrix. Final report: `coordinator/security-lab/e4-one-click-runs/20261026T011024428Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`.
+- Result remains 4 non-passing checks of 46: M0 synthetic E4, M5 `pack:check`, and M9 exact pins for M7/M8. M1–M4 and M6–M9 build/test/package stages passed; M7/M8 worktree-to-manifest pins remain the two M9 failures. The baseline E4 full suite passed 507/518 (0 failed, 11 skipped), bundle/self-check tests passed, and generated bundle verification passed; product E4 remains NOT_VERIFIED.
+- The desktop aggregator and tracked repository entry now both resolve local Node/npm/Git without persistent PATH changes. The tracked entry chooses the full matrix when the sibling M0–M9 workspace exists, otherwise the E4 single-repository runner.
+
+## 2026-10-26 01:26 UTC — PR #119 latest-head CI terminal result
+
+- PR #119 head `33704954cc57c67db59632dd493b234cef55fecc` remains OPEN/Draft. Standard CI `40253753620` completed SUCCESS across Ubuntu/Windows/macOS Node 20/22, Docker, package smoke, and Sponsor; AC3 ownership workflow `40253753654` completed SUCCESS; exact-source M9 composition `40253753680` completed SUCCESS on both Ubuntu and Windows.
+- These hosted results verify the M0 launcher/docs batch and the current M9 workflow only. Local M0–M9 matrix still has the four failures documented above; M5 pack check, M7/M8 local pin reconciliation, synthetic Gateway E4 failures, and external product E4 gates remain open. PR #24 remains OPEN/Draft at unchanged head and base.
+
+## 2026-10-26 01:29 UTC — desktop one-click matrix rerun
+
+- The desktop shortcut `Agent Canary M0-M9 全量自动测试.lnk` was verified to target `C:\Users\36712\Desktop\Agent-Canary-Dev\一键E4自动测试.cmd`; launching that target from a normal desktop command environment completed the entire local matrix and opened the report. The shortcut is local-only; no test output, report, or shortcut is staged in Git.
+- Exact report: `security-lab/e4-one-click-runs/20261026T012919910Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`; 46 checks total, with 4 failing entries. M1–M4 and M6–M9 build/test/package checks passed; M5 build/tests passed but `pack:check` failed with ENOENT for the packed install's `node_modules/@dorianchn/agent-canary/package.json`.
+- M0 E4 nested run on baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`: full source suite 507/518, 0 failures, 11 skipped; E4 self-check 41/41 and generated bundle verification passed. Synthetic `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` remain failing with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; target state remained unchanged. Product E4 remains NOT_VERIFIED.
+- M9 manifest structure passes, while exact local pins still fail for M7 (`bf9faeeb96625325e6fab8e497954ff6db4e78ea` vs `bba0f0f89c610f8198660e799de7a652b8ea8e96`) and M8 (`685520cbb000b3dc6950876f115199cdebf81ea5` vs `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`). Existing dirty owner paths were preserved.
+- The new run confirms existing evidence and does not resolve the module-owner actions already recorded in #118, PR #122, and #124. PR #119 remains OPEN/Draft at remote head `33704954cc57c67db59632dd493b234cef55fecc` with all reported checks SUCCESS; PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. No merge, Release, or module-source edit occurred.
+- Local one-click tests cannot supply a clean-VM matched installer receipt, real-model tool-call receipt, or independent operator/reviewer acceptance. Those gates remain open under #41/#57.
+
+## 2026-10-26 01:46 UTC — PR #119 pushed-head CI terminal result
+
+- M0 coordination head `a4bc992d15abb4e3b97418102e7d20e79a6dafae` is OPEN/Draft. Standard CI run `40255381804` completed SUCCESS across Ubuntu/Windows/macOS Node 20/22, Docker, Sponsor, and package smoke. AC3 ownership run `40255381701` completed SUCCESS. M9 exact-source composition run `40255381695` completed SUCCESS on Ubuntu and Windows.
+- This is current PR #119 workflow evidence only; it does not resolve the local synthetic Gateway failure, M5 package-check failure, M7/M8 local pin mismatches, or product acceptance gates. PR #24 remains OPEN/Draft with unchanged head/base.
+
+## 2026-10-26 01:49 UTC — split M1 Gateway and M6 evidence actions
+
+- A read-only M1 source audit confirms the likely self-cancellation path: the decoy `read_file` invokes `guard.trip()` after reading bytes (`agents/M1/src/runtime/gateway.ts:211-223`); synchronous quarantine notification aborts every session controller including the triggering request (`:89-92,334`); the cancellation race is then mapped to generic `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK` (`:246,251-255`). Because failing-case raw records are missing, the exact Promise.race winner and any attempted effect remain UNKNOWN; unchanged target state does not prove no read.
+- A separate harness audit confirms both E4 cases await the expected decoy quarantine rejection without catching it (`coordinator/security-lab/e4/run.mjs:159-184,187-219`). Thus they exit before follow-up denial / independent Guard B positive control assertions. Failure evidence preservation is only on the normal path, leaving empty details and no failing-case Gateway/Guard JSONL.
+- Existing M1 Issue #118 now carries the source-level acceptance: preserve quarantine and cancellation, classify expected decoy cancellation explicitly, retain fail-closed behavior, assert follow-up write denial and unchanged target plus independent Guard B, and do not claim PASS absent actual evidence (comment `6406434507`).
+- Existing M6 Issue #57 now has a queued harness task behind active M1/M5 slots: preserve raw logs and target snapshots in `finally`/catch before closing; catch only the expected fail-closed decoy outcome so both controls run. This harness change alone cannot prove execution/rollback correctness or product E4 (comment `6406434897`).
+- No module source or owner worktree was modified; no new development lane was opened. M1 focused tests and E4/full-matrix verification remain pending an owner patch.
+
+## 2026-10-26 — M2 native-host boundary audit
+
+- M2 worktree `feature/ac3-execution-isolation` at `941fd22d5e43e1de91a76b8c73006e57a4c15496` is clean; public PR #37 is already MERGED at `db98c7d` and is not an open lane.
+- Read-only audit found no trusted-worker interception of native Codex Shell: M2's agent hook supports Claude/Cursor; Codex detection remains `activation: unverified`; the separate Codex Hook fragment is not installed/trusted. Protocol deny fixtures explicitly do not prove host interception; callback failure/timeout and specialized tool paths remain bypass risks.
+- Existing owner evidence records a native-shell synthetic sentinel write and no effective Desktop sandbox/Hook attestation or host-observed deny. This establishes no verified enforcement in the observed session, not that Codex generally lacks a host enforcement option.
+- M2 implementation status is accurately documented and surfaced as `UNPROTECTED / BLOCKED_NOT_VERIFIED`. Issue #45 stays OPEN/P1 pending a supported trusted fail-closed host verification or explicit product-owner acceptance of the unsupported-boundary alternative. Audit and disposition are recorded in #45 comment `6406457504`; no M2 files or host settings changed.
+
+## 2026-10-26 — M4 PR #121 exact M9 check scope
+
+- PR #121 is OPEN/Draft at exact M4 head `5d975b7927a66be26a8bfc3740530bb27a703f2c`. Its standard CI/package/Docker/Sponsor/ownership checks pass, but its exact M9 Ubuntu/Windows checks in run `40197158659` fail because the PR base manifest still pins M4 to `892d3290338fe811da127f8f51ab91de0b9fc18b`.
+- PR #119 run `40255381695` passing M9 does not validate M4 PR #121; it checks the feature-base manifest and older M4 pin. Separate M9 candidate run `40198737633` did compose exact M4 `5d975b7` and passed Ubuntu/Windows, but this is not a green check on PR #121's exact head.
+- Issue #125 now distinguishes these evidence scopes (comment `6406465319`). Required sequence: M4 owner disposition on exact SHA, reviewed pin promotion via existing M9 integration branch, then exact-head M9 rerun on PR #121. This is queued behind M1/M5; no pin or M4 code changed by M0.
+
+## 2026-10-26 — M5 npm install-prefix side-effect confirmation
+
+- In a newly created empty temp directory, the installed npm CLI resolved `npm prefix` to `C:\Users\36712` and `npm root` to `C:\Users\36712\node_modules`. M5 `check-package.mjs` uses `cwd=installDir` but omitted `--prefix installDir`; this confirms npm resolves outside the intended per-run temp install on this host.
+- Read-only inspection found `C:\Users\36712\node_modules\@dorianchn\agent-canary\package.json`, version `1.2.7`, timestamp 2026-10-26 00:46 UTC. The install's exact origin is UNKNOWN, so M0 did not delete or alter it. Treat the check as a possible persistent user-profile install side effect; restoring a temp prefix and proving the home `node_modules` inventory is unchanged are required before closure.
+- M5 owner received this exact root-resolution result and safety acceptance in PR #122 comment `6406485103`. No M5 files or user-profile files were changed by M0.
+
+## 2026-10-26 01:55 UTC — one-click M5 isolation guard verified
+
+- Direct invocation of `Run-AC3-All-OneClick.ps1` from the restricted shell exited before any test because `node.exe` was absent from that shell's PATH. The actual desktop entry `Agent-Canary-Dev\一键E4自动测试.cmd` resolved the installed runtimes and completed all 46 matrix entries.
+- Result: 33 PASS, 9 SKIPPED dependency installs, 4 non-passing entries. M0 synthetic E4 remains FAIL; M5 `pack:check` is now explicitly BLOCKED by the new coordinator guard because its source does not isolate npm's install root; local M9 pins still FAIL for M7/M8. M1–M4 and M6–M9 build/test/package checks passed; M5 build/tests passed. Product E4 and independent review remain NOT_VERIFIED.
+- Exact report: `security-lab/e4-one-click-runs/20261026T015527342Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. The guard checks that M5's install command explicitly uses `--prefix installDir`; without it, the runner records BLOCKED and continues, avoiding another user-profile install. Parser/guard match checks passed. All other current M1–M9 package-check scripts explicitly use the temp prefix.
+- After this guarded run, `C:\Users\36712\node_modules\@dorianchn\agent-canary\package.json` still had the previously observed 00:46 UTC timestamp; no M0 action changed or removed it. Its origin remains UNKNOWN.
+
+## 2026-10-26 02:07 UTC — PR #119 guarded-runner CI terminal result
+
+- Exact PR #119 head `0146cbe8b83e4e1feb9918df31bda332ebefc842` remains OPEN/Draft. CI run `40257118493` passed Ubuntu/Windows/macOS Node 20/22, Docker, Sponsor, and package smoke; ownership workflow `40257118485` passed; M9 composition run `40257118491` passed Ubuntu and Windows.
+- The change under test adds an M5 package-check safety gate to the full one-click runner and documents its BLOCKED state until M5 restores a verified temp install root. Parser/guard checks and the actual desktop matrix passed their intended behavior; local product-level matrix still reports M0 synthetic E4 failure, M5 pack-check BLOCKED, and M7/M8 pin mismatch.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `competition/shanchuanzhi-release-readiness`. No module source, Release, or merge action occurred. The existing user-profile package timestamp remained unchanged after the guarded matrix.
+
+## 2026-10-26 02:14 UTC — exact M8 reconciliation audit
+
+- Refreshed M8 worktree `feature/ac3-open-source-product`: HEAD `685520cbb000b3dc6950876f115199cdebf81ea5`, one commit ahead of tracked upstream `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`. The local-only commit changes nine documentation/checker files. Dirty `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched; the JSON records a stale HEAD and is not staging authority.
+- PR #40 source `1c94ed4` and merge commit `c13c40f06fd066ef204c3fb082f070b5b4c8a93d` are already ancestors of feature baseline `b0d8d77`; no re-integration is needed. M9 continues to pin M8 to `1c94ed4`. Do not promote `685520c` until the owner reviews its doc/readiness assertions and provides a reconciled exact-base candidate plus focused checks and hosted composition evidence.
+- Posted the current M8 evidence and requested owner disposition on existing Issue #124, comment `6406727551`. M7's separate three-commit ancestry and shared-workflow review finding remains in #124 comment `6406680061`.
+- At the 02:16 UTC owner checkpoint, no newer M1/M5 implementation head or owner disposition was visible. Posted focused progress/action checkpoints to existing M1 Issue #118 (comment `6406735662`) and M5 PR #122 (comment `6406736069`); the active lanes and safety criteria are unchanged.
+- Current active source lanes remain M1 #118 and M5 PR #122; M6 #57 and M4/M7/M8/M9 reconciliation remain queued. The one-click report still has four non-passing checks: M0 synthetic E4, guarded M5 package check, and local M9 pins for M7/M8. Product E4 remains NOT_VERIFIED.
+- Current GitHub readback keeps PR #119 OPEN/Draft with hosted checks green and PR #24 OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` / base `competition/shanchuanzhi-release-readiness`. No module files, PR #24, `main`, or Release were changed.
+
+## 2026-10-26 02:28 UTC — PR #119 exact-head terminal checks
+
+- PR #119 exact head `474abcc266e42eb06a91450f2e77d6499e4ee9b8` remains OPEN/Draft. Standard CI run `40258785216` completed SUCCESS across Node 20/22 on Ubuntu, Windows, and macOS, plus Docker, Sponsor, and package smoke. AC3 coordination run `40258785184` completed SUCCESS.
+- M9 cross-module composition run `40258785183` completed SUCCESS on Ubuntu and Windows. This is the configured PR #119 workflow result; it does not prove the unpinned local M7/M8 worktree commits are integrated. The local matrix still shows M9 pins `bba0f0f`/`1c94ed4` differ from M7/M8 worktree HEADs `bf9faee`/`685520c`.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `competition/shanchuanzhi-release-readiness`. M1/M5 owner checkpoints and M8 reconciliation request remain unanswered at this readback. No module source or pin was changed by M0.
+
+## 2026-10-26 02:30 UTC — M1/M5 scheduled owner checkpoints
+
+- Fresh GitHub and worktree readback still shows M1 at clean local head `89be11e` and M5 at `dde81d6`, with no new visible owner disposition or implementation commit. M0 requested the next concrete status by 02:42 UTC: exact candidate plus focused evidence, or the blocker/dependency and earliest verification path.
+- Checkpoints are recorded on existing M1 Issue #118 comment `6406904225` and M5 PR #122 comment `6406904646`. M1 denial/quarantine and independent-session acceptance remain unchanged; the M5 temporary-install-root safety gate remains enforced.
+- No new development slot or branch was opened. The next M0 push batch is due no earlier than 02:42 UTC.
+
+## 2026-10-26 02:34 UTC — exact-head M3/M4/M6 integration check refresh
+
+- PR #119 exact head `474abcc266e42eb06a91450f2e77d6499e4ee9b8` has terminal SUCCESS for standard CI `40258785216`, AC3 coordination `40258785184`, and M9 composition `40258785183` on Ubuntu/Windows. This validates that PR #119 workflow and its selected refs only.
+- Separate module exact-head gates remain failed: M3 PR #120 head `91695529787f07111f5256d3c9d6e0e556f6eac1` has Ubuntu/Windows composition failure in run `40191658779`; M4 PR #121 head `5d975b7927a66be26a8bfc3740530bb27a703f2c` has both composition jobs fail in `40197158659`; M6 PR #123 head `fae72ea3d0c4498dfddb7d04421e41b87179895b` has both composition jobs fail in `40172587383` plus earlier ownership-contract failures. These exact-head failures are not cured by PR #119's green composition result.
+- Refreshed evidence and the separate scopes were added to scheduler Issue #29. M1/M5 owner checkpoints remain due 02:42 UTC; no module source or pin was changed by M0.
+
+## 2026-10-26 02:35 UTC — existing M9 candidate composition evidence
+
+- Read the exact manifest on existing M9 branch `feature/ac3-m9-integration` at `b5b9f71e057b185f0492438f9b53e980a5b6beb6`. It pins published M1–M6 refs to M1 `89be11e`, M2 `941fd22`, M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`; M7/M8 remain approved PR refs `bba0f0f`/`1c94ed4`.
+- Workflow-dispatch composition run `40198737633` is on that exact M9 SHA and completed SUCCESS for Ubuntu and Windows. This is positive candidate evidence for those manifest-pinned published module heads.
+- Direct PR #120, #121, and #123 M9 checks remain red because their pull-request workflows select the feature-base manifest, which pins M3/M4/M6 to older PR heads `0d61b43`/`892d329`/`2a88d8b`. The exact failure messages were read from run logs. Candidate evidence does not rewrite those failed checks; owner disposition/evidence acceptance is still required.
+- M7/M8 local-only commits `bf9faee`/`685520c` remain outside the approved M9 manifest and have dirty owner paths. The candidate run does not integrate those worktree changes, resolve M1 synthetic E4, or replace M6's independent product E4 acceptance.
+- Evidence scopes and owner requests were posted to existing Issues #124, #125, and #57 (comments `6406950910`, `6406951228`, `6406951626`). No module source or M9 pin was changed by M0.
+- Exact direct-check versus candidate-run evidence was also posted to M3 PR #120 and M6 PR #123 (comments `6406957249`, `6406957641`), asking the respective owners to record acceptance or require a fresh authorized rerun.
+
+## 2026-10-26 02:42 UTC — M1/M5 owner checkpoint result
+
+- Current filesystem readback still shows M1 clean at `89be11e` and M5 clean at `dde81d6`; no new implementation head or owner disposition was visible at the scheduled 02:42 checkpoint.
+- Recorded this checkpoint on existing M1 Issue #118 comment `6407042097` and M5 PR #122 comment `6407042382`. M1's synthetic E4 acceptance and M5's isolated package-check requirements remain open; the M5 safety guard is retained.
+- M7/M8 owner paths remain preserved. No third development lane, module branch, or module-source change was opened by M0.
+
+## 2026-10-26 02:49 UTC — PR #119 batch terminal checks
+
+- PR #119 exact head `ebd75787a167b2aa20bd2ff98eb08b11ebc745f5` remains OPEN/Draft. Standard CI `40260471347`, AC3 coordination `40260471158`, and M9 composition `40260471212` completed SUCCESS; M9 passed Ubuntu and Windows.
+- The success validates the PR #119 workflow source selection. Separate exact candidate run `40198737633` on M9 `b5b9f71` also passes with published M1–M6 refs; direct PR #120/#121/#123 checks still fail against the feature-base manifest's older M3/M4/M6 pins. Owner acceptance/recheck path remains tracked in #120, #123, #124, #125, and #57.
+- At the 02:42 checkpoint no M1/M5 owner response or source-head change was visible. M1 remains `89be11e`, M5 `dde81d6`; M7/M8 dirty paths are preserved. The local full matrix still has four non-passing outcomes and product E4 is NOT_VERIFIED.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` / base `competition/shanchuanzhi-release-readiness`. No module source or integration pin was changed by M0.
+
+## 2026-10-26 03:02 UTC — M1/M5 follow-up checkpoint and next batch
+
+- Current PR #119 head `ebd75787a167b2aa20bd2ff98eb08b11ebc745f5` has terminal SUCCESS for standard CI, AC3 coordination, and Ubuntu/Windows M9 composition. PR #24 remains OPEN/Draft at unchanged `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+- M1 remains at clean `89be11e`; M5 remains at `dde81d6`. Since the prior checkpoint, no new owner disposition or implementation head was visible. M0 recorded the next owner checkpoint as 03:22 UTC on M1 Issue #118 comment `6407264657` and M5 PR #122 comment `6407264985`.
+- Keep M1's synthetic E4 and M5's isolated pack-check gates open. The exact M9 candidate `b5b9f71` passes published M1–M6 source composition, but M7/M8 local-only commits remain unreviewed and outside the manifest.
+- No module worktree/source, integration pin, PR #24, `main`, or Release was changed by M0.
+
+## 2026-10-26 03:09 UTC — PR #119 exact-head verification
+
+- PR #119 exact head `c1733189b8886a4a3c770400c762953f5e6a7ddd` remains OPEN/Draft. AC3 coordination `40262114397`, standard CI `40262114501`, and M9 composition `40262114389` all completed SUCCESS; M9 passed Ubuntu and Windows.
+- The result validates this M0 head and the configured composition refs. It does not change the M9 candidate/source-pin boundaries recorded above. Direct #120/#121/#123 stale feature-base checks remain unresolved pending owner acceptance or a fresh approved evidence route.
+- M1 is still clean at `89be11e`, M5 at `dde81d6`; there is no new owner reply since the 03:02 checkpoint. The 03:22 checkpoint is tracked on #118 comment `6407264657` and #122 comment `6407264985`.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`. No module source or pin was changed by M0.
+- M0 requested current M7/M8 delivery intent and earliest safe review path on existing Issue #124 comment `6407343678`; their owner-owned dirty files remain untouched and no extra development slot was opened.
+
+## 2026-10-26 03:12 UTC — M9 candidate step-level acceptance scope
+
+- Inspected both jobs of exact M9 candidate run `40198737633` at M9 SHA `b5b9f71`. Ubuntu and Windows each completed 54 successful steps and skipped only the event-base ancestry check, which is inapplicable to this workflow-dispatch run. Exact-source manifest validation, module checkouts, and the defined M1–M8/M9 regression steps passed.
+- The M1 held-Gateway regression at SHA `89be11e` passed both platforms; the M6 bundle-verification and Auto E4 lifecycle regressions at SHA `fae72ea` also passed both platforms. These focused checks do not resolve the separate failing M0 synthetic E4 pair or supply independent product E4 acceptance.
+- Scope clarification was posted to M1 Issue #118 comment `6407364198` and M6 Issue #57 comment `6407364620`. No source or pin changes were made.
+
+## 2026-10-26 03:17 UTC — full local one-click matrix and owner routing
+
+- Ran the full-matrix PowerShell runner against current worktrees with the desktop launcher’s resolved Node/Git PATH and `-OpenReport` behavior. The root `.cmd` wrapper points to this same runner. The report records 46 checks: 33 PASS, 9 dependency-install SKIPPED, and 4 non-passing. M1–M9 builds and test suites passed; M5 package-check was BLOCKED by the npm temp-prefix safety guard; M9 manifest structure and M1–M6 exact pins passed; local M7/M8 heads do not match their still-approved pins.
+- M0 baseline/E4 nested report records 507/518 tests passed, 0 failed, 11 skipped. Synthetic E4 remains FAIL for `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` (`GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`); evidence bundle integrity passed. Product E4 and independent review remain NOT_VERIFIED. Real-model calls and VM/installer lifecycle were not run.
+- Exact report: `security-lab/e4-one-click-runs/20261026T031628263Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`; E4 detail: `security-lab/e4-one-click-runs/20261026T031628659Z/ONE_CLICK_RESULT.md`. The desktop shortcut `Agent Canary 一键自动测试.lnk` targets the existing root `.cmd` launcher.
+- Routed fresh evidence to the existing channels: scheduler Issue #29 comment `6407525676`; M6 E4 Issue #57 comment `6407526066`; M7/M8 reconciliation Issue #124 comment `6407526404`; M5 existing PR #122 comment `6407526718`. No new module branch or third development slot was opened.
+- Post-run worktree readback confirms M1–M5 clean; M6 and M7 dirty `.gitignore` and M8 dirty `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json` remain preserved. M7 remains 3 commits ahead and M8 1 commit ahead of upstream. No module source or M9 pin was modified by M0.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `competition/shanchuanzhi-release-readiness`. PR #119 remains OPEN/Draft; the previously recorded exact-head green checks remain valid only for their checked head. M0 does not merge `main`/PR #24 or publish a Release.
+
+## 2026-10-26 03:31 UTC — PR #119 pushed head terminal CI
+
+- Pushed M0 docs-only head `9ea52386327aa08db1b1ded72b4f78ee3ad95ce1` to the existing Draft PR #119 after verifying the remote still matched `c1733189b8886a4a3c770400c762953f5e6a7ddd` and the prior push interval had elapsed.
+- Exact-head standard CI run `40264036475`, ownership-contract run `40264036448`, and M9 composition run `40264036518` are terminal SUCCESS. M9 composition passed Ubuntu and Windows using the reviewed manifest refs. This does not promote the local M7/M8 commits or clear the separately recorded local matrix failures.
+- Scheduler Issue #29 records the terminal result and next owner checkpoint in comment `6407596202`. No M1–M8 source or M9 pin changed. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+- Rechecked worktree registration from both Git common directories: M1/M2/M3/M5/M6/M8 are distinct registered worktrees on the coordinator repository; M4/M7 are distinct registered worktrees on the existing Windows E4 repository. Their branches and working directories are separate. No worktree was moved, pruned, or rewritten.
+- M5's blocked package check has a source-exact remediation reference: current feature-base `scripts/check-package.mjs:66` explicitly passes `--prefix installDir` while keeping `cwd=installDir`; M5 candidate line 66 omits that flag. This was reported to the existing PR #122 in comment `6407647450`; the coordinator guard stays enabled and no unsafe install was attempted.
+- Verified coordinator `.gitignore` rules against the actual one-click report, test logs, downloaded report-local Python archive, and sample report/log paths: generated E4 run directories, logs, reports, `.env` files, and temporary files are ignored. No generated test artifact is staged.
+
+## 2026-10-26 03:42 UTC — two-slot owner checkpoint
+
+- No owner reply or module HEAD movement is visible since the 03:17 handoffs. The two active slots remain M5 PR #122 (explicit npm `--prefix installDir` and additive M9 test registration) and M6 Issue #57 (synthetic E4 harness failure-path assertions). M1 #118 is queued for owner review; P0 #52 remains OPEN / NOT_VERIFIED. M7/M8 exact-head dispositions remain queued on #124.
+- VMware, real-model, and installer resources remain unreserved; M6–M8 dirty owner paths are preserved. Scheduler Issue #29 records the checkpoint in comment `6407717986`. No third slot, module branch, M9 pin, or module-source change was made.
+
+## 2026-10-26 03:50 UTC — second push batch checks complete
+
+- PR #119 head `e293254e2f17a9b547985b53b56149e4a3dbe452` remains OPEN/Draft. Exact-head standard CI `40265599062`, ownership-contract `40265598996`, and M9 composition `40265599004` all completed SUCCESS; M9 passed Ubuntu and Windows.
+- This verifies the coordinator documentation and current manifest-selected refs only. The local full-matrix failures and unreviewed M7/M8 pin divergence remain unchanged. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+- Scheduler Issue #29 records this result in comment `6407804179`. No module source, integration pin, main branch, or Release was changed.
+- Fresh remote-ref comparison at 03:52 UTC confirms M1–M6 local heads equal their published module refs. M7 local `bf9faee` differs from origin `ab9b03f` by three commits; M8 local `685520c` differs from origin/M9-approved `1c94ed4` by one commit. The owner disposition request and exact hashes are recorded in #124 comment `6407840951`; dirty paths remain untouched.
+- Scheduler clarification at 03:56 UTC: M5 #122 and M6 #57 are M0-allocated slots, not owner-confirmed RUNNING tasks. GitHub/worktree evidence shows no new owner reply or module head movement; separate Codex-chat activity is UNKNOWN because no thread-read/control tool is available. The two-slot cap is retained. Issue #29 comment `6407870207` records the distinction.
+
+## 2026-10-26 04:02 UTC — owner checkpoint and remote heads
+
+- Fresh local/remote readback shows M1 `89be11e`, M5 `dde81d6`, and M6 `fae72ea` equal their published refs; M7 local `bf9faee` remains ahead of origin `ab9b03f` by 3 commits; M8 local `685520c` remains ahead of origin `1c94ed4` by 1 commit. No owner-authored reply is visible on the M5/M6 handoffs. Separate Codex-chat activity is UNKNOWN.
+- M0-allocated lanes remain M5 #122 and M6 #57; M1 #118 is queued for owner review, P0 #52 remains OPEN, and M7/M8 local commits and M9 pins remain untouched. Scheduler #29 comment `6407935887` records the checkpoint. PR #24 remains OPEN/Draft at unchanged `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+
+## 2026-10-26 04:12 UTC — third push batch checks complete
+
+- PR #119 exact head `612545ace7f2218548f59213d964cf6b1cb3198e` remains OPEN/Draft. Standard CI `40267218513`, ownership-contract `40267218778`, and M9 composition `40267218467` all completed SUCCESS; M9 passed Ubuntu and Windows with the manifest-selected refs.
+- This validates coordinator documentation and the selected approved module commits only. The local synthetic E4 failures, M5 pack-check guard, M7/M8 local-only commits, and distinct product/host/installer gates remain unresolved. Scheduler #29 comment `6408029223` records the exact-head evidence. PR #24 remains OPEN/Draft and unchanged.
+
+## 2026-10-26 04:14 UTC — desktop one-click M0–M9 matrix rerun
+
+- Launched the existing desktop shortcut once. The run completed from baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`; report: `security-lab/e4-one-click-runs/20261026T041310001Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. Matrix: 46 checks, 33 PASS, 9 dependency-install SKIPPED, 4 non-passing.
+- M0 build, 507/518 full-suite tests (0 failed, 11 skipped), package-content check, E4 bundle/self-check, and generated-evidence verification passed. Synthetic E4 still fails `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; the three real-environment cases remain blocked/not verified. Detailed E4 report: `security-lab/e4-one-click-runs/20261026T041310344Z/ONE_CLICK_RESULT.md`.
+- M1–M4 and M6–M9 build/test/package checks passed. M5 package-check remained BLOCKED by its isolation guard. M9 exact pins matched M1–M6, but M7 local `bf9faee` differs from manifest `bba0f0f` and M8 local `685520c` differs from manifest/remote `1c94ed4`.
+- Posted the fresh synthetic E4 evidence and exact M6 harness handoff to existing Issue #57 (comment `6408156842`). No M1–M8 source, M9 pin, PR #24, or `main` was changed. M6 `.gitignore`, M7 `.gitignore`, and M8 `.gitignore` plus `M8_MERGE_RESOLUTION_RESULT.json` remain owner-owned and preserved.
+- PR #119 remains OPEN/Draft at remote head `612545ace7f2218548f59213d964cf6b1cb3198e`, with its last verified CI, ownership-contract, and M9 composition checks all SUCCESS. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+- Updated the local desktop `.cmd` launcher to exit without waiting for a key after a failed run; the report still opens automatically. This launcher is in the coordination workspace root, outside the tracked coordinator worktree.
+## 2026-10-26 04:31 UTC — PR #119 latest batch terminal CI
+
+- Pushed coordinator head `728f6257a0ca1e1c9243a827dd3e5992a1f7dbdc` to the existing PR #119 branch after confirming the remote ref and PR #24 head/base were unchanged.
+- On this exact PR head, standard CI run `40268978449`, ownership-contract run `40268978369`, and M9 composition run `40268978358` all reached terminal SUCCESS. M9 composition passed on Ubuntu and Windows. This validates the M0 coordinator docs and approved manifest-selected refs only; local product E4 synthetic failures, M5 package-check guard, M7/M8 local-only commits, and separate product/VM/model acceptance remain open.
+- No module source, integration pins, `main`, PR #24, or Release changed.
+## 2026-10-26 04:32 UTC — M5 package-check owner handoff
+
+- The fresh matrix again confirmed M5 `dde81d6` build/tests PASS while package-check is BLOCKED by the isolation guard; M0 repeated the exact safe temporary-prefix acceptance request on PR #122 (comment `6408276176`). The unsafe package check was not executed.
+- The M5 branch and remote remain at the same exact head; M0 changed no module files. Keep the M5 gate open until the owner supplies the isolated-prefix change and a successful exact-head package check plus complete current-base test list.
+## 2026-10-26 04:33 UTC — M7/M8 pin reconciliation audit
+
+- Re-read exact local and upstream refs. M7 `bf9faee` is 3 commits ahead of origin `ab9b03f` across shared Windows workflow, installer/release reports, builder, and reliability/package tests. M8 `685520c` is one commit ahead of pin/upstream `1c94ed4`, changing documentation and the docs checker. M7 local ancestry is divergent from the M9 candidate base; M8 source commit `1c94ed4` is already merged, while the local follow-up requires owner review.
+- M0 posted file-level details and exact acceptance request to Issue #124 comment `6408287466`. M7/M8 dirty owner files remain untouched; M9 manifest pins remain unchanged pending owner disposition and exact-head validation.
+## 2026-10-26 04:34 UTC — M4 exact-head M9 check disposition
+
+- PR #121 remains OPEN/Draft at `5d975b7`; standard CI and ownership evidence pass, while both direct M9 composition checks fail against the feature-base manifest's stale M4 ref `892d329`.
+- Existing M9 candidate run `40198737633` passes Ubuntu/Windows composition with M4 `5d975b7`; it is not itself a passing direct check on PR #121. The exact distinction and owner acceptance/rerun request were posted to Issue #125 comment `6408292906`. No M4 source or M9 pin was changed.
+## 2026-10-26 04:35 UTC — module branch-base consistency audit
+
+- All M1–M8 worktree directories are separate, but current branch provenance is not one common commit: local reflogs show each existing `feature/ac3-*` branch was created from its matching existing `origin/feature/ac3-*` branch. A comparison against PR #24 head `b0d8d77` yields `base-only/branch-only`: M1 `8/0` (merge base `89be11e`), M2 `153/0` (`941fd22`), M3 `0/2` (`b0d8d77`), M4 `0/10` (`b0d8d77`), M5 `418/51` (`7cd3445`), M6 `155/1` (`2a88d8b`), M7 `414/70` (`7cd3445`), M8 `115/1` (`1c94ed4`).
+- Therefore worktree isolation is verified, but a uniform common branch-source SHA is not. These are pre-existing feature branches with module-specific history; no branch was rebased or rewritten. M9 currently uses explicit immutable pins, which establish the candidate composition scope but do not retroactively make branch roots uniform. Owner/base disposition is required before marking that acceptance item complete.
+## 2026-10-26 04:49 UTC — PR #119 04:45 batch exact-head checks
+
+- PR #119 exact head `8226b1f4e396a19a31a114311da04972c4fe9fbf` is OPEN/Draft. Standard CI run `40270671152`, ownership-contract run `40270670967`, and M9 composition run `40270671203` all reached terminal SUCCESS, including Ubuntu and Windows composition.
+- This is exact-head validation for the M0 coordination update and current manifest-selected refs. It does not cure the red direct M3/M4/M6 feature-base checks, M5 package guard, M0 synthetic E4 pair, M7/M8 local-source disposition, or P0/product/VM/model/independent acceptance gates. PR #24 remains unchanged.
+## 2026-10-26 04:50 UTC — branch-source reconciliation tracked
+
+- Created P1 Issue #126 for the verified nonuniform M1–M8 source ancestry, with the exact per-module base-only/module-only counts, owner responsibilities, and acceptance criteria. It explicitly forbids M0 from creating module branches or rewriting owner branches; M9 must continue using exact pins until owners disposition the history.
+- PR #119 head `8226b1f` has terminal SUCCESS across standard CI, ownership-contract, and Ubuntu/Windows M9 composition (`40270671152`, `40270670967`, `40270671203`). These green checks do not close #126 or module/product acceptance.
+## 2026-10-26 04:52 UTC — preserve and audit owner `.gitignore` deltas
+
+- Read-only diff of existing dirty owner `.gitignore` files found only additive generated-artifact ignore patterns: M6 `/security-lab/e4-handoffs/`, M7 `/competition-submission/.m7-m8-acceptance-*/`, and M8 `/sponsor/.smoke-watchdog-*/` plus `/sponsor/.smoke-supervisor-*/`. No tracked patterns were removed or negated in these deltas.
+- M0 left all three owner changes untouched and unstaged. M8's untracked `M8_MERGE_RESOLUTION_RESULT.json` also remains preserved.
+## 2026-10-26 04:56 UTC — repository one-click launcher no longer pauses
+
+- The actual desktop shortcut points to the workspace-root wrapper; its run completed the full matrix and opened the report. Follow-up review found the tracked repository launcher `scripts/一键E4自动测试.cmd` still paused after any failing result. M0 removed that interactive pause while preserving the test exit code and report-open behavior (`e407532`).
+- Verified the tracked launcher contains no `pause` and `git diff --check` passes. The full test runner itself was not rerun for this one-line batch-file-only change; its prior completed run is recorded above. The next click will run to completion and return its exit status without waiting for a key.
+## 2026-10-26 05:11 UTC — PR #119 05:05 batch terminal CI
+
+- PR #119 exact head `04f8de6ef0f35d529f1a1087a66b6790961555bd` is OPEN/Draft. Standard CI `40272378452`, ownership-contract `40272378358`, and M9 composition `40272378352` all reached terminal SUCCESS, including Ubuntu and Windows composition.
+- This validates the coordinator-doc and noninteractive one-click launcher change on the current M0 head. It does not mark any module/product blocker resolved. PR #24 remains OPEN/Draft and unchanged.
+## 2026-10-26 05:32 UTC — PR #119 05:25 batch terminal CI
+
+- PR #119 exact head `9a5d6f58e95e1d06ba2161d372d930c0c243a7f5` is OPEN/Draft. Standard CI `40274141189`, ownership-contract `40274141141`, and M9 composition `40274141132` all reached terminal SUCCESS, including Ubuntu and Windows composition.
+- This verifies the M0 coordination issue/docs update against the approved manifest-selected refs. Issue #126 remains OPEN/P1 pending owner branch-source disposition; M1–M8/product acceptance blockers remain unchanged. PR #24 remains OPEN/Draft and untouched.
+## 2026-10-26 05:31 UTC — ignore-rule coverage across active worktrees
+
+- `git check-ignore -q --no-index` confirmed representative `.env`/`.env.local`, key/certificate/container credentials, `.token`/`.secret`/`.secrets`, log, temp, `/tmp`, and Python cache paths are ignored in all 11 active M0/M1–M9 worktrees.
+- No `.gitignore` edits were made by this audit. Existing M6–M8 owner additions remain additive and untouched.
+## 2026-10-26 05:39 UTC — desktop one-click full matrix rerun
+
+- Re-ran the actual desktop launcher target `一键E4自动测试.cmd`; it completed all 46 matrix checks and opened the generated report. Full matrix result is FAIL with 4 non-passing items: M0 baseline/synthetic E4 FAIL, M5 package check BLOCKED by the explicit safe temporary-install-prefix guard, and local M7/M8 heads differing from the immutable M9 pins. M1–M4, M6–M9 build/test/package checks and M9 manifest structure passed.
+- M0 nested E4 report: full project suite 507/518 passed, 0 failed, 11 skipped; package content, E4 bundle/self-check tests, and generated-bundle verification passed. Synthetic `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` each fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`. Three real acceptance cases remain blocked for absent VM/install/model receipts.
+- Exact reports: `security-lab/e4-one-click-runs/20261026T053810502Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md` and `security-lab/e4-one-click-runs/20261026T053810919Z/ONE_CLICK_RESULT.md`. Product E4 and independent review remain NOT_VERIFIED; no real model, installer, or VM was invoked.
+- Coordinator worktree remains clean before recording this entry. The generated reports are ignored; owner worktrees and M9 pins were not modified. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`.
+
+## 2026-10-26 05:50 UTC — PR #119 checks and synthetic E4 diagnosis
+
+- Exact PR #119 head `0d11915b83a7c84e1f2ce0a5fb66574fb5275d5d` reached terminal SUCCESS: ownership contract run `40275941092`, standard CI run `40275941120`, and M9 composition run `40275941126` (Ubuntu + Windows).
+- Follow-up source audit compared baseline `main` and M1: `src/runtime/gateway.ts` and `security-lab/e4/run.mjs` are byte-identical. The Gateway's decoy-read quarantine aborts the current session controller; the E4 scenarios do not catch that expected first dispatch abort before checking the subsequent protected denial and cross-session positive control. The run report's `fileState` for both failed cases is empty; therefore this output does not establish a target write or data-loss effect. This remains a source-based diagnosis pending M1 owner confirmation, not a declared fix.
+- The owner-facing explanation and request to retain fail-closed behavior while aligning the E4 fixture with cancellation semantics were added to Issue #118. M0 changed neither M1 source nor its tests. PR #24 remains unchanged.
+
+## 2026-10-26 05:53 UTC — direct M3–M6 PR composition diagnostics
+
+- Fresh `gh pr view` confirms the existing Draft PR heads are unchanged and their direct M9 checks remain terminal failures: M3 PR #120 `9169552` vs event-base manifest pin `0d61b43` (run `40191658779`); M4 PR #121 `5d975b7` vs pin `892d329` (run `40197158659`); M5 PR #122 `dde81d6` vs pin `cca42cd` (run `40172583837`); M6 PR #123 `fae72ea` vs pin `2a88d8b` (run `40172587383`). These exact logs fail manifest-to-PR-head equality.
+- The current M0/M9 candidate workflow run `40275941126` passed on PR #119's selected integration manifest. That pass does not make the direct module PR checks pass, because their event base still selects the feature-base M9 manifest.
+- Exact SHA comparison/run IDs and requested owner-reviewed dispositions were posted to existing Issues #124 (M3/M5), #125 (M4), and #57 (M6). M0 did not alter module branches, M9 pins, or PR state.
+
+## 2026-10-26 05:58 UTC — M2 native-shell and M1/M2/M4/M5 P0 boundaries
+
+- Current M2 evidence in `execution-isolation/codex/hook-test-results.json` remains `UNPROTECTED` / `BLOCKED_NOT_VERIFIED`; project Hook is not installed, trusted, or lifecycle-tested. PR #37 is MERGED at `db98c7d` (merge `49af6d3`), and the existing M2 worktree is at `941fd22`. Its AppContainer evidence is limited to child-process behavior. Issue #45 was updated with the exact current refs and required owner disposition; no host Hook was installed by M0.
+- The M9 exact-source composition run `40275941126` passed Ubuntu and Windows on PR #119, including the declared offline M1–M8 composition regressions. P0 Issue #52 remains OPEN/NOT_VERIFIED because those tests do not establish a shipping host OBSERVE callsite consuming a protected identity with alias/junction/replacement controls. Issue #52 now records this exact evidence boundary.
+
+## 2026-10-26 05:55 UTC — Hono advisory PR #67 refresh
+
+- GitHub Dependabot alert #2 remains OPEN and reports default-branch `package-lock.json` at Hono `4.13.7`; advisory first patched version is `4.13.11`. Read directly from GitHub's alert and default-main lock file.
+- Existing non-draft PR #67 remains OPEN at `cda74e9860f1d96d7404871378c0c737535fa77e`, changes only `SOURCE_MANIFEST.json` and `package-lock.json`, and exact CI run `39827204460` is terminal SUCCESS across all nine jobs including `package-smoke`. The stale Issue #70 claim that this PR currently fails package-smoke was corrected with exact evidence.
+- The default-branch alert has not resolved because PR #67 is unmerged. No merge was performed; Issue #70 remains OPEN/P1 until the alert resolves or a reviewed non-applicability disposition is accepted.
+
+## 2026-10-26 06:00 UTC — module PR contract-check diagnostics
+
+- PR #122/M5 ownership runs `40190440590` and `40172687461` report that head `dde81d6` does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73`; the latter also requires explicit `API-Contract-Change: yes|no`. M0 linked this to existing Issue #126 and requested owner disposition plus complete PR metadata.
+- PR #123/M6 ownership run `40172587299` requires a non-placeholder `Test-Evidence` command/report path (or reasoned N/A) and explicit `API-Contract-Change: yes|no`. Its separate direct composition mismatch is already on Issue #57. M0 added the exact check evidence to PR #123.
+- These failures are enforced ownership/evidence contracts, not reasons to weaken CI. No module branch, PR source, or M9 pin was edited.
+
+## 2026-10-26 06:00 UTC — M7/M8 merged-PR and local-follow-up reconciliation
+
+- M7 PR #39 is MERGED at `a099d049`; subsequent PR #96 is MERGED at `40d024fb6089cd72a186107912bd6baed824f301`. Local M7 head `bf9faee` is four commits past #96's merged head (three ahead of its branch upstream) and has a dirty `.gitignore`. The 05:39 one-click matrix passed M7 build, tests, and package check, but did not run installer/VM lifecycle. Issue #41 was corrected; clean-VM acceptance stays OPEN/P1/NOT_VERIFIED.
+- M8 PR #40 is MERGED at `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`; local M8 head `685520c` is one docs commit past it and retains dirty `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`. There is no open PR for either current local follow-up branch.
+- Exact PR/head relationships and owner disposition requests were posted to Issues #41 and #124. M0 left all M7/M8 dirty/untracked files untouched and did not push module refs or change M9 pins.
+
+## 2026-10-26 06:10 UTC — PR #119 06:05 batch exact-head checks terminal
+
+- PR #119 head `aaed91564a66a2e599e85d9d4c14efbe63c88bb9` remains OPEN/Draft. Standard CI run `40277802181`, ownership-contract run `40277802170`, and M9 composition run `40277802172` all reached terminal SUCCESS; composition passed both Ubuntu and Windows.
+- This validates the M0 coordination documentation at this exact head and the existing M9 selected immutable composition set. It does not resolve module PR source/pin/ownership blockers, M0 synthetic E4 harness failures, Issue #52 product-host P0, native-Shell protection, clean-VM lifecycle, Hono alert, real-model evidence, or independent review. PR #24 remains OPEN/Draft and unchanged.
+
+## 2026-10-26 06:11 UTC — M9 candidate vs shared-base integration
+
+- M9 worktree is clean and synchronized at `b5b9f71e057b185f0492438f9b53e980a5b6beb6`. PRs #112, #115, #117 are MERGED; latest merged M9 head is #117 `7b6edae85f082c94c3a19e005f90656544a7198d`. The current b5b9 follow-up has no open PR.
+- Exact M9 composition for M0 PR #119 passed on candidate-selected refs at run `40277802172` (Ubuntu and Windows). Direct M3–M6 PR checks still load the older manifest from their shared `feature/agent-canary-3.0` base and fail exact candidate-head equality. Candidate composition PASS therefore does not establish the follow-up manifest is present in the shared base.
+- Issues #124/#126 now ask the M9 owner to identify or publish the reviewed follow-up via the existing M9 branch after module owner ref dispositions. M0 did not create a PR, change pins, or merge PR #24.
+
+## 2026-10-26 06:12 UTC — M1–M9 consolidated acceptance snapshot
+
+| Scope | Current ref / PR state | Remaining gate |
+|---|---|---|
+| M1 | `89be11e`; no open follow-up PR | P0 protected-read alias/TOCTOU and product consumer evidence (#52); Gateway/E4 cancellation fixture disposition (#118). |
+| M2 | `941fd22`; PR #37 merged at `db98c7d` | Native Codex Shell remains `UNPROTECTED` / `BLOCKED_NOT_VERIFIED` (#45). |
+| M3 | PR #120 at `9169552` | Direct M9 composition expects old M3 pin `0d61b43`; owner-reviewed current manifest disposition (#124). |
+| M4 | PR #121 at `5d975b7` | Direct M9 composition expects old M4 pin `892d329` (#125); P0 host-path evidence also remains in #52. |
+| M5 | PR #122 at `dde81d6` | Approved common-source baseline `e4732d97` absent; `API-Contract-Change` metadata missing; `pack:check` held by safe-prefix guard. |
+| M6 | PR #123 at `fae72ea` | Required `Test-Evidence` / `API-Contract-Change` PR metadata missing; direct M9 pin mismatch and independent product E4 remains NOT_VERIFIED (#57). |
+| M7 | PR #96 merged; owner worktree `bf9faee`, 4 commits beyond merged head, dirty `.gitignore` | Publish or disposition owner follow-ups; clean-VM installer lifecycle NOT_VERIFIED (#41); local head differs from M9 pin (#124). |
+| M8 | PR #40 merged; owner worktree `685520c`, 1 docs commit beyond merged head, dirty/untracked owner files | Publish or disposition follow-up; local head differs from M9 pin (#124). |
+| M9 | Candidate `b5b9f71`, clean/synchronized; no open follow-up PR | Candidate composition passed run `40277802172`; updated manifest is not in shared feature-base for direct follow-up PR checks. Owner-reviewed follow-up PR/ref disposition is pending (#124/#126). |
+
+This is a coordination snapshot only. Exact M0 CI at `aaed915` passed; it does not clear the module, host, installer, real-model, independent-review, or security-alert gates listed above.
+
+## 2026-10-26 06:17 UTC — file-level M7/M8 pin safety
+
+- Read-only commit diff confirms M7's three local commits beyond origin alter `windows-community.yml`, `security-lab/build-community.py`, Windows/reliability tests, and release/acceptance reports. Against M9's `bba0f0f` pin, merge base is `7cd3445`, with 259 pin-only and 70 local-only commits. Do not treat `bf9faee` as a safe direct pin advancement; M7 must supply an owner-reviewed exact candidate/increment and review the M8 workflow boundary.
+- M8's single local follow-up `685520c` touches nine files, including `scripts/check-docs.mjs`, beyond merged PR #40 head `1c94ed4`. Dirty `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched.
+- Issue #124 now records the file-level comparison and requests named exact commit/blob dispositions. M0 made no M7/M8 file or ref changes.
+
+## 2026-10-26 06:32 UTC — one-click retest and PR #119 CI terminal
+
+- Re-ran the desktop shortcut `Agent Canary 一键自动测试.lnk` (target `一键E4自动测试.cmd`). Full matrix report: `coordinator/security-lab/e4-one-click-runs/20261026T053810502Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`; 46 checks, four nonpassing: baseline/synthetic E4 FAIL, M5 package check safely BLOCKED on install-prefix validation, M9 M7 and M8 local pins differ from owner worktree heads. Nested E4 report: `coordinator/security-lab/e4-one-click-runs/20261026T053810919Z/ONE_CLICK_RESULT.md`; 507/518 suite checks passed, zero ordinary test failures, 11 skipped; `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` still fail because expected quarantine cancellation aborts the dispatch before fixture follow-up assertions. Artifact/VM, matched installer receipt, and real-model gates remain NOT_VERIFIED.
+- M0 added a scoped owner-action/acceptance comment to existing Issue #118 (`6409785302`): M1 confirms Gateway cancellation contract and retains fail-closed regression; M6 adjusts only the two fixtures to assert expected cancellation and continue denial/isolation checks. No source changes or security-policy weakening by M0.
+- PR #119 exact head `dc7f975625e6ea1eae0019d3c3b72f55e5b08bd8` is OPEN/Draft; CI `40279710934`, ownership `40279710930`, and M9 composition `40279710909` all completed SUCCESS, including Ubuntu and Windows composition jobs.
+- PR #24 remains OPEN/Draft and unchanged at head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No main merge, PR #24 merge, Release, module source edits, or owner-worktree cleanup occurred.
+- Current owner-worktree state observed: M6 has modified `.gitignore`; M7 is three commits ahead of its tracked branch and has modified `.gitignore`; M8 is one commit ahead with modified `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`. Preserve these owner files and local commits pending owner disposition. M9 worktree remains clean at `b5b9f71`.
+- Outstanding hard gates remain: M1 protected-read alias/TOCTOU and host evidence (#52), M2 native Shell (#45), M3/M4/M5/M6 follow-up PR checks and metadata, M5 package check guard, M7 clean-VM lifecycle (#41), M7/M8 exact-ref reconciliation (#124/#126), and independent product E4 (#57). Green PR #119 composition verifies its selected exact sources only; it does not clear these gates.
+- M0 added a concrete safe package-check fix proposal to existing M5 PR #122 comment `6409802721`: pass explicit `--prefix installDir`, preserve the temp package install and cleanup, then rerun exact-head package and full one-click checks. Guard remains active until M5 owner changes its checker.
+
+## 2026-10-26 — M7/M8 owner-ref reconciliation audit
+
+- Read-only M7/M8 parallel audits confirm no owner branch movement. M0 recorded fresh owner acceptance actions on Issue #126 comment `6409838236`; no module source, pin, branch, or dirty/untracked owner file changed.
+- M7 local `bf9faeeb96625325e6fab8e497954ff6db4e78ea` remains 3 commits ahead of upstream `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`, while M9 remains pinned to `bba0f0f89c610f8198660e799de7a652b8ea8e96`. Its local commits touch Community workflow, builder/package and reliability tests, and readiness evidence. Owner must disposition each commit and review workflow interaction before providing a candidate SHA. Do not direct-pin local HEAD.
+- M8 PR #40 head `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841` is already in the feature base and remains the M9 pin; local docs/checker commit `685520cbb000b3dc6950876f115199cdebf81ea5` is one commit ahead and has no open PR. Owner must accept/reject it and, if accepted, provide exact-base checker/CI evidence. Preserve dirty `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json`.
+- Green PR #119 composition run `40279710909` validates only pinned M7/M8 sources; M7/M8 owner-head reconciliation and M7 clean-VM lifecycle remain OPEN/NOT_VERIFIED.
+
+## 2026-10-26 — M1/M2/M4/M5 P0 host-boundary audit
+
+- Read-only source/PR review confirmed Issue #52 remains OPEN/P0/NOT_VERIFIED. M1 `89be11e5`, M2 `941fd22d`, M4 `5d975b7`, and M5 `dde81d6` are the current M9 pins. M2 #37 and M5 #47 are merged with passing PR CI, but no real first-party OBSERVE file-read callsite consuming the shared M1 held identity was verified.
+- M4 #121's current changes are UI/integration/report/tests; its exact-head M9 checks fail against stale shared-base pins. PR #119 candidate composition passes Ubuntu/Windows against its manifest-selected sources; that does not verify PR #121's product-host path or close the P0.
+- M0 posted the exact source refs, evidence boundary, and owner actions for M1/M2/M4/M5/M9 to Issue #52 comment `6409858158`. Alias/junction/path-replacement denial and zero-side-effect target evidence remain required; no actual secret exposure is claimed.
+- Toolchain recheck: Git `2.53.0.windows.3`, GitHub CLI `2.102.0`, Codex CLI `0.164.0-alpha.11.1`; Node is available to the launcher at `%LOCALAPPDATA%\hermes\node\node.exe` (`v22.23.1`) though not in the interactive shell PATH. No system Python is available through PATH; the one-click runner used its per-run portable Python (`python-portable\python.exe` exists in the report directory), and reports Python-runtime PASS.
+
+## 2026-10-26 — M2 native Shell acceptance boundary
+
+- Read-only M2 audit confirms Issue #45 remains OPEN/P1/UNPROTECTED/NOT_VERIFIED. Current M1/M2 refs are pinned by M9; PR #37 has 9 successful checks, and PR #119 Ubuntu/Windows composition does not launch native Codex Shell.
+- M2 hook evidence is protocol/fixture only (`commandExecuted=false`, no project hook installed/trusted, lifecycle `NOT_TESTED`). Direct Bash/exec fixture changed its synthetic target but `gatewayCallInHarness=false`; this is not global native-host enforcement. No host config was installed or changed.
+- M0 posted the evidence boundary and owner next step on Issue #45 comment `6409904522`: prove supported host install/trust and actual Shell lifecycle with deny/allow and zero-side-effect evidence, or record the exact host/API blocker while retaining visible `UNPROTECTED` status.
+- M0 refreshed M6 independent product-E4 Issue #57 with the current exact local report and two synthetic failure IDs (comment `6409909150`). It explicitly keeps product E4 NOT_VERIFIED pending both the M1/M6 fixture fix and clean-VM/real-model/independent-review evidence.
+
+## 2026-10-26 06:51 UTC — PR #119 06:45 report batch CI terminal
+
+- Pushed M0 report-only commit `581d6486cb750585c7c56972062b61345e216c9e` to existing `feature/ac3-m0-coordination` after the 20-minute batch interval. PR #24 preflight confirmed the same OPEN/Draft head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; neither PR #24 nor main changed.
+- PR #119 exact-head checks are 12/12 SUCCESS: M9 composition Ubuntu+Windows run `40281706256`; repository CI run `40281706404` (Docker, sponsor, package-smoke, Node 20/22 macOS/Ubuntu/Windows); ownership run `40281706318`. M0 recorded the terminal result on scheduler Issue #29 comment `6410053503`.
+- This report-only CI result does not clear owner follow-ups, #52/#45 product-host gates, M5 package-check safe-prefix gate, M7/M8 ref dispositions, clean-VM/installer, real-model, or independent E4. Next M0 push is no earlier than 07:05 UTC.
+- M0 refreshed existing M4 PR #121 with the exact-head distinction (comment `6410060747`): PR #121 base-manifest composition remains failed, while the M9 candidate selected M4 `5d975b7` and passed Ubuntu/Windows in #119 run `40281706256`; owner disposition and current-base follow-up remain pending.
+- `.gitignore` acceptance readback: base `.gitignore` excludes `node_modules/`, `*.log`, `.env`/`.env.*`, `*.tmp`/`*.temp`, `*.secret(s)`, `/tmp/`, `/reports/`, and `/logs/`; `git check-ignore -v` confirmed representative generated log/report, dotenv, secret, temp, and dependency paths are ignored. Existing M6/M7/M8 dirty `.gitignore` deltas each add narrow local generated-artifact patterns (E4 handoffs, M7/M8 acceptance fixtures, sponsor smoke fixtures); they were inspected and left untouched.
+- M0 published the refreshed M3–M8/M9 dependency snapshot on Issue #124 comment `6410078525`: candidate M9 Ubuntu/Windows pass vs direct follow-up PR base-pin/metadata failures are separate; M7/M8 unreviewed local heads remain excluded from pins. The next exact-source manifest update is M9-owner work on the existing integration path.
+
+## 2026-10-26 — PR #119 07:05 report batch CI terminal
+
+- Pushed M0 coordination-only batch `9118862b951d6025e4fca6e05cf02c70c54061c3` to existing `feature/ac3-m0-coordination` after the scheduled 20-minute interval. PR #24 preflight matched the unchanged OPEN/Draft head and base; no module source/ref, `main`, PR #24, or Release changed.
+- PR #119 exact-head checks finished 12/12 SUCCESS: M9 composition Ubuntu+Windows run `40283703015`; ownership run `40283702944`; Docker, package-smoke, sponsor-smoke, and Node 20/22 macOS/Ubuntu/Windows matrix run `40283703061`. Scheduler Issue #29 records this terminal result in comment `6410354229`.
+- These checks verify the M0 report batch and selected exact-source M9 candidate only. All module-owner actions and product host / native Shell / clean-VM / installer / real-model / independent E4 gates remain OPEN or NOT_VERIFIED. Next push no earlier than 07:25 UTC.
+
+## 2026-10-26 — owner-wait checkpoint after 07:05 batch
+
+- Current live GitHub list still shows M3–M6 follow-up PRs #120–#123 at unchanged heads and their existing failed exact-base/metadata checks; M1/M2/M7/M8 remote branch heads also remain unchanged. No owner-authored response followed the M0 actions on #118, #45, #52, #57, #122, #121, #124, or #126.
+- PR #119 head `9118862b951d6025e4fca6e05cf02c70c54061c3` remains 12/12 green. The local one-click E4 result remains FAIL/NOT_VERIFIED (two synthetic cancellation fixtures, M5 package guard, M7/M8 local-ref mismatch); no source change has invalidated that report.
+- M0 cannot clear the product-host, owner-ref, clean-VM/installer, real-model, or independent-review gates under the current M0 boundary. Owner worktree modifications remain preserved. This checkpoint is report-only; no `main`, PR #24, module code/ref, or Release change.
+
+## 2026-10-26 07:31 UTC — owner gates unchanged after 07:25 batch
+
+- PR #119 head `9878385546bf89dbd79cc2851a26d8539336b57b` finished 12/12 SUCCESS: exact M9 Ubuntu/Windows composition run `40285770853`; ownership run `40285770855`; repository CI run `40285770839`. Scheduler Issue #29 records this in comment `6410655955`.
+- PR #24 remains OPEN/Draft at its unchanged head/base. Live PR/Issue inventory shows no M1–M8 owner-authored branch movement or response since M0 posted the acceptance actions. M3–M6 direct PRs remain red on the known exact-base/ownership metadata gates; M7/M8 local commits remain owner-unreviewed.
+- Completion is currently dependent on owner source dispositions/fixes and external acceptance evidence: first-party protected-read host/TOCTOU (#52), native Shell lifecycle (#45), clean-VM installer lifecycle (#41), real model tool-call and independent E4 receipt (#57). M0 has exhausted the authorized coordinator actions for these gates; no module code, pins, owner worktree contents, `main`, PR #24, or Release were changed. Report saved locally; next push window is no earlier than 07:45 UTC.
+
+## 2026-10-26 13:18 UTC — desktop one-click M0–M9 full matrix and owner gates
+
+- Re-ran the desktop one-click target `一键E4自动测试.cmd` through `coordinator/scripts/Run-AC3-All-OneClick.ps1`. Run `20261026T131805131Z` finished all 46 rows: 33 PASS, 9 SKIPPED (existing `node_modules`), 3 FAIL, and 1 BLOCKED. M1–M9 build/test rows passed; all package checks passed except M5's guarded `pack:check`. M9 manifest structure passed; pins M1–M6 matched and M7/M8 did not.
+- Synthetic E4 subrun `20261026T131805532Z` remains `NOT_VERIFIED`: 10 cases (3 PASS_FIXTURE, 1 PASS_CONTROL, 1 OBSERVED_BYPASS, 3 BLOCKED, 2 FAIL). `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` report `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; this does not show a protected write succeeded and does not establish product acceptance.
+- M5 package check was intentionally blocked because its checker does not explicitly scope `npm install` with `--prefix installDir`; no unsafe install was attempted. M7 local `bf9faeeb96625325e6fab8e497954ff6db4e78ea` differs from M9 pin `bba0f0f89c610f8198660e799de7a652b8ea8e96`; M8 local `685520cbb000b3dc6950876f115199cdebf81ea5` differs from M9 pin `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`.
+- M0 recorded this fresh evidence on existing Issue #118 (comment `6417147681`), PR #122 (comment `6417148284`), and Issue #126 (comment `6417148900`), requesting exact owner commits/reruns and preserving the existing fail-closed/security and pin-review gates.
+- Preserved existing M6/M7/M8 dirty/untracked owner files; made no M1–M8 code/ref changes. PR #24 remains OPEN/Draft at head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. Clean-VM installer, real-model tool-call, and independent E4 evidence remain NOT_VERIFIED.
+
+## 2026-10-26 13:39 UTC — PR #119 report-batch CI terminal
+
+- M0 report-only head `f328e9ad3f005de667f7b146614d55bfdcc7f18d` is OPEN/Draft with `CLEAN` merge state and 12/12 required checks successful. Repository CI `40330698854` passed Docker, sponsor smoke, package smoke, and Node 20/22 on macOS, Ubuntu, and Windows; ownership contract `40330698867` passed; M9 exact-source composition `40330698872` passed on Ubuntu and Windows.
+- The CI validates the M0 coordination/report batch and its selected exact-source M9 manifest. It does not clear the local one-click failures recorded above, nor product-host, native-Shell, clean-VM/installer, real-model, or independent E4 acceptance gates.
+- Scheduler Issue #29 terminal status is comment `6417416760`. The earlier one-click evidence remains recorded on #118, PR #122, and #126; owner dispositions and reruns are still pending. PR #24 remains OPEN/Draft at the unchanged head/base.
+- M0 corrected the stale M4 Issue #125 reproduction via append-only comment `6417505752`: current PR #121 checks are present, with only direct exact-source composition failing on the event-base pin. The issue title/body still contain stale text because an automatic approval review rejected the requested issue-body edit; no alternate mutation was attempted.
+## 2026-10-26 13:53 UTC — corrected M4 issue and second CI batch terminal
+
+- PR #119 head `d87794a3561f5b205ec50119bd495c54c3af52f3` is OPEN/Draft, CLEAN, and 12/12 checks pass: repository CI `40333708225`, ownership `40333708016`, M9 Ubuntu/Windows composition `40333708041`. Scheduler Issue #29 records terminal evidence in comment `6417738428`.
+- Issue #125's stale hosted-check-missing description is clarified in append-only comment `6417505752`; title/body edit was blocked by automatic review and was not retried through another API. Current direct M4 composition remains red on the event-base pin mismatch, despite green standard CI and green separate candidate composition.
+- No module-owner refs or responses changed. No exclusive VM, real-model, or installer slot is reserved or running. PR #24 is still OPEN/Draft at the same head/base; no module source/ref, `main`, PR #24, or Release change occurred.
+## 2026-10-26 13:57 UTC — VM, installer and real-model preflight
+
+- M7 remote `windows-community.yml` on `feature/ac3-reliability-ac3` at `ab9b03f1211443af3f905863113dd2b4a5c8ab0c` has the opt-in `run_installer_lifecycle` dispatch input, but no exclusive concurrency group. M7 local head `bf9faee` is three commits ahead of the remote ref and differs from M9 M7 pin `bba0f0f`; M0 did not dispatch. Issue #41 records the mutex and exact-source owner actions in comments `6417785797` and `6417795147`.
+- VMware's `vmrun.exe` exists, but the current `vmrun list` reports zero running guests and no `.vmx` was found in the checked common VM roots. No source-matched installer artifact was found in the inspected local handoff/package directories; no VM or installer was started.
+- E4 target-model variables are absent at process/user/machine scope. Ollama CLI exists but no Ollama process is running; the E4 gate requires GPT-6 Luna Max identity and a real Gateway tool call, so no alternate local model was substituted and no API request was sent. Issue #57 records the exact missing prerequisites in comment `6417789683`.
+- Product E4, clean-VM/installer lifecycle, independent review, and real-model tool-call remain NOT_VERIFIED. A hosted M7 lifecycle run is also blocked until M7 owner adds the required static non-cancelling exclusive group and dispositions the exact source; GitHub issue #29 has no active exclusive-resource reservation.
+
+## 2026-10-26 14:12 UTC — runtime-preflight batch CI terminal
+
+- PR #119 head `b4b938d7f9a634df2f8552b4beb6cbac5e243756` is OPEN/Draft, CLEAN, with 12/12 checks successful: repository CI `40336807311`, ownership `40336807223`, and M9 Ubuntu/Windows exact-source composition `40336807255`. Scheduler Issue #29 records this terminal state in comment `6418177339`.
+- These checks validate the coordinator report and selected M9 candidate only. The preflight blockers remain: M7 workflow has no required non-cancelling exclusive concurrency group and its refs require owner disposition (#41); no disposable VM/source-matched local installer is available; E4 target-model variables are absent and no model request was made (#57).
+- PR #24 remains OPEN/Draft at unchanged head/base. M1/M5/M7/M8 owner refs/replies remain unchanged; no module source/ref, `main`, PR #24, or Release was altered.
+- M0 supplied the exact job-level concurrency shape for the existing M7 installer lifecycle gate in Issue #41 comment `6418185975`: static `agent-canary-exclusive-e4`, `cancel-in-progress: false`, followed by a reviewed-SHA reservation in #29 before explicit dispatch.
+
+## 2026-10-26 14:37 UTC — current-source coordination checkpoint
+
+- M0 pushed two report-only commits to the existing PR #119 branch; head `9da2da292d04f66c0d7170a9f536d5d842ec21bb`. All 12 checks passed: CI `40340327255`, ownership `40340326965`, and M9 exact-source composition `40340327231` on Ubuntu and Windows. PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`.
+- Green M9 composition covers the manifest-selected M7 `bba0f0f89c610f8198660e799de7a652b8ea8e96` and M8 `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841` sources only. Current owner worktrees remain newer: M7 `bf9faeeb96625325e6fab8e497954ff6db4e78ea` is 3 commits ahead of remote `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`; M8 `685520cbb000b3dc6950876f115199cdebf81ea5` is 1 commit ahead of remote `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`.
+- M7 current local `windows-community.yml` enables the installer lifecycle job on every pull request and has no `concurrency` block. M0 recorded the exact blocker and owner action on Issue #41 comment `6418701667`; no M7 commit was pushed or installer job dispatched. The M7 `.gitignore` edit remains untouched.
+- M9 exact-source validation requires the M6 current-M8 review target to equal the M8 manifest SHA. The recorded M6 disposition covers only `1c94ed4`; M8 `685520c` therefore cannot be pinned until it is published and receives a new exact-head M6 disposition on Issue #80. M8 `.gitignore` and untracked `M8_MERGE_RESOLUTION_RESULT.json` remain untouched.
+- M0 reconciled that untracked M8 receipt on Issue #126 comment `6418953623`: it records interim HEAD `60cfe8d`, but current `685520c` descends from it and `git ls-files -u` is empty. Only the existing M8 `.gitignore` edit and the untracked receipt remain dirty; neither will be staged or included in the next push.
+
+- M0 recorded the current source boundary on Issues #29 (`6418742129`) and #126 (`6418741971`), and refreshed M1/M2 acceptance evidence on Issues #52 (`6418741940`) and #45 (`6418741941`). M1 protected alias/TOCTOU P0 and M2 native Codex Shell host-boundary P1 remain OPEN/NOT_VERIFIED; the pinned-source M9 pass does not clear them.
+- Module lineage readback: M1 PR #114 merged at head `89be11e5f95f2b191880a4fc88f50e15f405121e` into feature-base merge `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`; M2 PR #110 merged at head `941fd22d5e43e1de91a76b8c73006e57a4c15496` via merge commit `20a57bbd78b93692bd22e1f988c9841c727d627e`. These merges do not satisfy the separate open host-boundary issues.
+- No exclusive VM, real-model, or installer test was dispatched. The resource slot remains idle pending M7's static non-cancelling mutex and exact-source reservation. No M1-M8 code, `main`, PR #24, or Release was changed.
+- Fresh ignore checks confirm generated one-click report/log paths are excluded by the coordinator `/coordinator/` rule, `.env` and `.env.*` are ignored, and `/tmp/` is ignored; the coordinator worktree has no unstaged or untracked files.
+
+## 2026-10-26 14:42 UTC — direct module-PR M9 manifest failures
+
+- Fresh REST check-run and failed-step log inspection confirms direct M9 composition on PRs #120-#123 fails at step `Validate exact-source manifest and checkout refs`, before the module composition tests run. The event base remains `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and carries stale exact-source refs:
+  - M3 PR #120 head `91695529787f07111f5256d3c9d6e0e556f6eac1` vs event-base manifest PR #107 / `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` (run `40191658779`).
+  - M4 PR #121 head `5d975b7927a66be26a8bfc3740530bb27a703f2c` vs manifest PR #98 / `892d3290338fe811da127f8f51ab91de0b9fc18b` (run `40197158659`).
+  - M5 PR #122 head `dde81d6a989ba39aa0d57dfeed0c9283f4459682` vs manifest PR #94 / `cca42cd1762f995e92454d55ffa5e63951e39144` (run `40172583837`); the separate ownership check says this head does not contain approved common-source baseline `e4732d9745bb4fbbebf6896a35b4657ad82abd73` (run `40190440590`). M0 recorded this exact ancestry failure on PR #122 comment `6418834983`.
+  - M6 PR #123 head `fae72ea3d0c4498dfddb7d04421e41b87179895b` vs manifest PR #111 / `2a88d8b7e099ce865c9900bb9313d4b8bdef8299` (run `40172587383`); its latest ownership check `40190443162` passes.
+- M0 recorded exact failure evidence and responsible integration/module owner actions on existing Issues #124 (`6418797669`), #125 (`6418797752`), #57 (`6418797666`), and #126 (`6418802783`). Existing M9 candidate composition on PR #119 passed on its separate reviewed manifest; this does not refresh the event-base manifest or clear direct PR failures.
+- M0 report-only head `325b3e9` is local and not yet pushed; the next 20-minute batch begins no earlier than 14:50 UTC. The M7 mutex blocker and exact M8 review requirement remain active; no module code or source pin was changed.
+
+## 2026-10-26 14:50 UTC — M0/M8 batch and PR #119 terminal
+
+- In the authorized 20-minute batch, M8 owner commit `685520cbb000b3dc6950876f115199cdebf81ea5` was pushed to its existing `feature/ac3-open-source-product` branch, and the M0 report batch was pushed to the existing `feature/ac3-m0-coordination` branch at `6de3116840304f785e86e53f9eb575ac62365678`. M8 `.gitignore` changes and untracked `M8_MERGE_RESOLUTION_RESULT.json` remain local and untouched.
+- PR #119 is OPEN/Draft, CLEAN, and 12/12 checks pass on exact head `6de3116840304f785e86e53f9eb575ac62365678`: CI `40343523469`, ownership `40343523244`, and M9 composition `40343523245` on Ubuntu and Windows. Scheduler Issue #29 records terminal evidence in comment `6419198279`.
+- This M9 result validates the manifest-selected M7 pin `bba0f0f89c610f8198660e799de7a652b8ea8e96` and M8 pin `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`, not the newer local M7/M8 owner heads. M8 issue #80 was reopened for exact-head M6 disposition; comment `6419071354` asks M6 to review published `685520c`, and M0 cross-posted the review request to active M6 PR #123 comment `6419227918`. M9 pins stay unchanged until that review is recorded.
+- M7 current local workflow still enables installer lifecycle on every pull request without the required static concurrency mutex. M7 commits remain unpushed, no installer/VM/model session was dispatched, and the shared exclusive slot remains idle. Issue #41 records the required owner change; Issue #126 records the M7/M8 pin gates in comment `6419198299`.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No `main` merge, PR #24 merge, Release, M1-M8 code edit, or owner-worktree cleanup occurred.
+
+## 2026-10-26 15:08 UTC — one-click full matrix terminal and owner readback
+
+- Confirmed the desktop shortcut `C:\Users\36712\Desktop\Agent Canary 一键自动测试.lnk` targets the repository-root `一键E4自动测试.cmd`; one invocation ran the M0/E4 suite, M1–M8 build/test/package checks, and M9 manifest/pin checks, then opened its report.
+- Full-matrix run `20261026T145937208Z` ended with 46 rows: 33 PASS, 9 SKIPPED, 3 FAIL, 1 BLOCKED. The only module package-check block is M5: its checker lacks an explicit temporary-install `--prefix installDir` guard, so `pack:check` was not run. M9 manifest structure passed; exact local-head pins matched M1–M6 and failed M7/M8.
+- Nested E4 run `20261026T145937544Z`: build and all 518 source tests passed (507 pass, 0 fail, 11 skipped); package-content, E4 bundle/self-check, and generated-evidence verification passed. Synthetic `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` still fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`. Artifact/VM binding, matched installer, and real-model tool-call checks remain blocked for missing required receipts/configuration; product E4 is NOT_VERIFIED.
+- Fresh M9 comparison: M7 local `bf9faeeb96625325e6fab8e497954ff6db4e78ea` versus pin `bba0f0f89c610f8198660e799de7a652b8ea8e96`; M8 local `685520cbb000b3dc6950876f115199cdebf81ea5` versus pin `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`. M0 did not change pins or owner files. The result is recorded on existing Issues #118 comment `6419463665` and #126 comment `6419464604`.
+- At 15:08 UTC, Issues #52/#45/#41/#80 remain OPEN without newer owner evidence after the current exact requests. M1/M2 host-boundary gates, M7's required static installer mutex, and M6's exact review of M8 `685520c` remain outstanding. The active exclusive VMware/installer/model slot was not used.
+- PR #24 remains OPEN/Draft at head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. At the 15:08 checkpoint, PR #119 remote is OPEN/Draft at `6de3116840304f785e86e53f9eb575ac62365678`, and coordinator HEAD `653fecd` is two report-only commits ahead of origin; this entry will join them in the next authorized 20-minute push batch. no module source/ref, `main`, PR #24, or Release was changed.
+
+## 2026-10-26 15:21 UTC — scoped M5 package gate and full-matrix rerun
+
+- M0 refined `coordinator/scripts/Run-AC3-All-OneClick.ps1` to recognize M5's isolated install pattern only when the checker creates an OS-temp root, derives a child `installDir`, passes `cwd` through `execFileSync`/the npm wrapper, and passes that exact directory to `npm install`. The previous `--prefix`-only check incorrectly blocked this source shape; no M5 file was changed.
+- Full-matrix run `20261026T151529101Z` ended with 46 rows: 33 PASS, 9 SKIPPED, 4 FAIL, 0 BLOCKED. M1–M4 and M6–M9 build/test/package checks passed; M5 build/tests passed and its package check executed, then failed in `check-sdk-types.mjs` with `ENOENT` for the expected temporary `install/node_modules/@dorianchn/agent-canary/package.json`. M5 worktree remains clean. M0 recorded the actionable failure on PR #122 comment `6419773083`; M5 owns diagnosis/fix and exact Windows rerun.
+- Nested E4 run `20261026T151529398Z` again passed build, 518 source tests (507 pass, 0 fail, 11 skipped), package-content, E4 bundle/self-check, and generated-evidence verification. The same two synthetic Gateway cases fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; product E4 remains NOT_VERIFIED. No test or security assertion was removed or weakened.
+- M9 manifest structure passed; M7/M8 local heads still differ from pins. The standalone PR #119 candidate composition remains green on its manifest-selected M7/M8 refs. On PR #119 head `f0bd6c2e56b8a1af099bce70d032cd5ff192a6d2`, all 12 required checks passed: coordination `40346976061`, CI `40346976237`, and M9 composition `40346976292` on Ubuntu/Windows.
+- Current owner requests are recorded on #41 comment `6419585044` (M7 static installer mutex), #80 comment `6419585858` (M6 exact M8 disposition), and PR #122 comment `6419773083` (M5 package-check failure). M1/M2 host-boundary Issues #52/#45 and M6 product E4 #57 remain OPEN / NOT_VERIFIED. No exclusive VM/installer/model slot was used.
+- The M0 runner scope-gate change and its status entry are local and await the next 20-minute push batch (not before 15:31 UTC). PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no module files/refs, `main`, PR #24, or Release were changed.
+
+## 2026-10-26 15:23 UTC — direct follow-up PR and owner-channel readback
+
+- Current Draft PR heads remain unchanged: M3 #120 `91695529787f07111f5256d3c9d6e0e556f6eac1`, M4 #121 `5d975b7927a66be26a8bfc3740530bb27a703f2c`, M5 #122 `dde81d6a989ba39aa0d57dfeed0c9283f4459682`, M6 #123 `fae72ea3d0c4498dfddb7d04421e41b87179895b`; all target feature base `b0d8d77`. Hosted direct M9 composition remains failed on #120/#121/#122/#123 against stale event-base refs. M5 ownership run `40190440590` also fails its approved common-source baseline. M6 latest ownership run `40190443162` passes; its direct M9 composition still fails.
+- Fresh owner actions were cross-posted to existing tracking channels: #124 `6419818836` (M3/M5 source disposition and new M5 package failure), #125 `6419819625` (M4 source anchor), #57 `6419820707` (M6 product-E4 boundary), #41 `6419585044` (M7 static mutex), #80 `6419585858` (M6 exact review of M8), and PR #122 `6419773083` (M5 ENOENT failure). No owner response was visible in the immediate readback; these Issues remain OPEN.
+- PR #119 at `f0bd6c2e56b8a1af099bce70d032cd5ff192a6d2` is OPEN/Draft, CLEAN, with all 12 checks passed (CI `40346976237`, ownership `40346976061`, M9 Ubuntu/Windows composition `40346976292`). The local M0 runner correction is committed as `7a7dc56` and awaits the next 20-minute push batch; no earlier than 15:31 UTC.
+- PR #24 remains OPEN/Draft with unchanged head/base. M7/M8 owner dirty/untracked files remain preserved; no module code/pins, `main`, PR #24, or Release was changed.
+
+## 2026-10-26 15:25 UTC — worktree registry recheck
+
+- Read-only `git worktree list` confirms the requested M0/M1–M8/M9 directories are separate registered worktree paths with their expected current branches. `main`, coordinator, M1–M3, M5–M6, M8, and M9 use the coordinator repository's common Git directory. M4 and M7 are registered in an existing separate repository at `C:\Users\36712\Documents\Codex\2026-10-15\agent-canary-3-0-windows-e4\.git`; both report the same GitHub `origin` and have distinct requested worktree paths/branches.
+- That existing repository also registers `agents/M7-followup`, `integration/issue-70-hono`, and `integration/m4-on-m1-check`. Numerous historical exact-source worktrees remain registered under the user's Temp directory. M0 did not remove, prune, move, or rewrite any of these paths.
+- Owner changes remain preserved: M6's existing `.gitignore` edit, M7's `.gitignore` plus three unpublished commits, and M8's `.gitignore` plus untracked merge-result receipt. No module branch or working tree was changed by this audit.
+
+## 2026-10-26 15:27 UTC — toolchain readback
+
+- Git `2.53.0.windows.3`, GitHub CLI `2.102.0`, Codex CLI `0.164.0-alpha.11.1`, and Node.js `v22.23.1` are available and were exercised for this coordination/test run.
+- `python.exe` resolves only to the Windows App Execution Alias, not an installed runtime. The E4 one-click runner downloaded the pinned official Python.org embeddable `3.13.17` runtime into its ignored report directory and verified its SHA-256; it did not install Python system-wide.
+
+## 2026-10-26 15:37 UTC — M1 alias gate exact-head verification
+
+- On current clean M1 head `89be11e5f95f2b191880a4fc88f50e15f405121e` (PR #114 merged), Windows Node `v22.23.1` focused Gateway tests passed for workspace-local symlink/junction alias denial, held-file identity revalidation, and Windows hard-link replacement after pre-read. No M1/M2 code was changed. The exact command and case result are recorded in Issue #52 comment `6420170905`.
+- Current M2 head `941fd22d5e43e1de91a76b8c73006e57a4c15496` is PR #110's merged head. GitHub reports no submitted reviews on PR #110 or #114, and Issue #52 has no current M1 disposition for this exact M2 SHA. M4's current Security Center still renders first-party OBSERVE read as `NOT_VERIFIED`; no installed-host receipt was found. Keep #52 OPEN/P0/NOT_VERIFIED pending the required owner disposition and product-host evidence; the passing synthetic/unit cases do not prove deployed-host enforcement.
+- PR #119 M0 head `9e56b10bb0bfcd58b5d5e9df89c58209d0a39d38` remains OPEN/Draft. At 15:34 UTC, 9/11 checks were successful and Windows M9 composition plus macOS Node 22 were pending. PR #24 remained OPEN/Draft at unchanged head/base.
+- Current exact-source pin mismatches remain M7 `bf9faeeb96625325e6fab8e497954ff6db4e78ea` vs manifest `bba0f0f89c610f8198660e799de7a652b8ea8e96`, and M8 `685520cbb000b3dc6950876f115199cdebf81ea5` vs manifest `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`. Existing M7/M8 local owner changes remain untouched. The M0 update is report-only and will wait for the next 20-minute push batch.
+
+## 2026-10-26 15:41 UTC — PR #119 exact-source composition terminal
+
+- PR #119 M0 head `9e56b10bb0bfcd58b5d5e9df89c58209d0a39d38` reached CLEAN with 12/12 checks successful. Repository CI run `40350194887` passed; M9 exact-source composition run `40350194776` passed both Ubuntu and Windows. Each OS ran the full 23-case M1–M8/M9 composition set with 23 pass, 0 fail, including fixed protected-read, alias/replacement denial, and M4 read-only security-center status checks.
+- This validates the M9 manifest-selected sources, including M7 pin `bba0f0f89c610f8198660e799de7a652b8ea8e96` and M8 pin `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`; it does not validate newer owner worktrees M7 `bf9faeeb96625325e6fab8e497954ff6db4e78ea` / M8 `685520cbb000b3dc6950876f115199cdebf81ea5`. The desktop full matrix still correctly flags those current-head pin mismatches and the M5 package-check failure.
+- Hosted synthetic composition does not prove an installed host reading user files. M4 Security Center continues to expose first-party OBSERVE read as `NOT_VERIFIED`; Issue #52 remains OPEN/P0 pending exact M1 disposition for M2 `941fd22d5e43e1de91a76b8c73006e57a4c15496` and product-host evidence. No local product or module changes were made.
+- PRs #120–#123 still fail direct exact-source composition against their event-base manifest; the green M0 candidate job above is not a substitute for those direct checks. PR #24 remains OPEN/Draft at its unchanged head and base.
+- Follow-up exact-run summaries are posted on Issue #52 comment `6420298346` and Issue #126 comment `6420299199`; no pins were changed.
+
+## 2026-10-26 15:46 UTC — cross-module issue evidence readback
+
+- GitHub readback after the 15:41 CI terminal: PR #119 is CLEAN with 12/12 checks; direct module PRs #120 10/12, #121 10/12, #122 9/14, and #123 10/14. PR #24 remains OPEN/Draft at unchanged head/base with 14 successes and one skipped check.
+- Current issue follow-ups are recorded on #52 comment `6420298346`, #126 comment `6420299199`, and M5 PR #122 comment `6420316651`. The M5 comment asks the owner to capture the scoped npm install layout without another M0 install attempt; no M5 code was changed.
+- No current module owner response or ref movement was visible at this checkpoint. The three M0 report commits remain local for the next 20-minute batch.
+
+## 2026-10-26 15:54 UTC — user-requested one-click full matrix
+
+- Invoked the desktop launcher `一键E4自动测试.cmd` once. Full matrix run `20261026T154910074Z` completed 46 rows: 33 PASS, 9 SKIPPED (existing `node_modules`; dependency installs were not exercised), and 4 FAIL. The Markdown and JSON reports are under `coordinator/security-lab/e4-one-click-runs/20261026T154910074Z/full-matrix/`.
+- M1–M4 and M6–M8 build, test, and package checks passed. M5 build/tests passed; `pack:check` failed in `check-sdk-types.mjs` with ENOENT for the expected temporary `install/node_modules/@dorianchn/agent-canary/package.json`. This reproduces the existing M5 owner gate; no M5 source was changed.
+- M9 build/tests/package-check and exact-manifest structure passed. Pins M1–M6 match local heads. M7 local `bf9faeeb96625325e6fab8e497954ff6db4e78ea` differs from pin `bba0f0f89c610f8198660e799de7a652b8ea8e96`; M8 local `685520cbb000b3dc6950876f115199cdebf81ea5` differs from pin `1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841`. Pins were not changed.
+- Nested E4 run `20261026T154910387Z` built successfully; the full source suite reported 507/518 pass, 0 fail, 11 skipped; package-content, evidence/self-check tests, and generated-bundle verification passed. Synthetic E4 still reports `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` as FAIL with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; their report shows empty before/after file-state arrays. `SHELL-BOUNDARY-BYPASS` is an `OBSERVED_BYPASS` fixture write outside Gateway and is explicitly neither a Gateway pass nor Gateway fail. Three cases remain BLOCKED for missing VM/install receipts and a real-model flag. Product E4 remains `NOT_VERIFIED`; no real model, installer, or VM was run.
+- PR #119's earlier composition run `40350194776` selected event-base M9 SHA `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, not the current local M9 branch `b5b9f71e057b185f0492438f9b53e980a5b6beb6`; its green checks do not validate that newer M9 head. PR #119 itself remains OPEN/Draft at `9e56b10bb0bfcd58b5d5e9df89c58209d0a39d38`, CLEAN, 12/12 checks successful before this status update.
+- Post-run status matches the recorded pre-run state: M6's `.gitignore`, M7's `.gitignore` and three local commits, and M8's `.gitignore` plus untracked merge-resolution receipt are preserved. PR #24 was read back OPEN/Draft with unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`; no module source/ref, `main`, PR #24, or Release was changed.
+
+## 2026-10-26 16:09 UTC — current M9 exact-head PR and issue coordination
+
+- Opened Draft PR #127 from the existing `feature/ac3-m9-integration` branch at `b5b9f71e057b185f0492438f9b53e980a5b6beb6`; no new branch or merge. Its first ownership check failed because the PR body lacked machine-readable evidence/API fields; the body was corrected, and rerun `40355288652` passed.
+- M9 exact-head composition run `40355144151` checked out `b5b9f71e057b185f0492438f9b53e980a5b6beb6` and passed 23/23 on Ubuntu and 23/23 on Windows. It used the manifest-selected M7 `bba0f0f89c610f8198660e799de7a652b8ea8e96` and M8 historical/current refs; this does not disposition the newer local M7/M8 heads. PR #127 CI run `40355144373` has all completed jobs passing, but macOS Node 20 is still QUEUED; keep the PR Draft.
+- The M0 status commit `f3edefa59f975c20fa0951d838b91dd5b0621cca` is now CLEAN on existing PR #119 with all 12 checks successful. Its green CI confirms the coordination report batch; it does not substitute for PR #127 exact-head checks or module-owner actions.
+- Fresh run findings are recorded in existing Issue #118 (`6420773286`), Issue #52 (`6420777141`), Issue #45 (`6420779079`), Issue #57 (`6420782064`), M5 PR #122 (`6420784505`), M7/M8 Issue #126 (`6420786795`), and M9 PR #127 (`6420904996`). No owner-authored response was visible in the immediate readback; issues remain OPEN.
+- PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` and base `dc8d0092b35141b295d5ff42873584ed488e4ee7`. No module source/ref, `main`, PR #24, or Release was changed.
+
+## 2026-10-26 16:24 UTC — M7 publish and M9 queue checkpoint
+
+- Published the three already-committed M7 owner changes to the existing `feature/ac3-reliability-ac3` branch, advancing it from `ab9b03f1211443af3f905863113dd2b4a5c8ab0c` to `bf9faeeb96625325e6fab8e497954ff6db4e78ea`. The uncommitted M7 `.gitignore` edit remains local and untouched. The one-click run already recorded M7 build, tests, and package check as passing on this head.
+- No M7 PR is open for the newly published head. Its current feature-base ancestry has two merge bases; a direct tree comparison to `feature/agent-canary-3.0` shows 79 changed paths including 9,255 deleted lines. Do not open a PR from this branch until the M7 owner confirms the intended base/source, to avoid proposing a historical tree rollback. Issue #126 remains the source-pin coordination channel.
+- PR #127 remains OPEN/Draft at M9 `b5b9f71e057b185f0492438f9b53e980a5b6beb6`. Exact M9 composition run `40355144151` passed 23/23 on Ubuntu and Windows, and ownership-contract run `40355288652` passed. CI run `40355144373` has every other job successful but macOS Node 20 remains QUEUED since 16:18:19 UTC; it is still live and has not been restarted again.
+- PR #119 remains OPEN/Draft and CLEAN at remote head `f3edefa59f975c20fa0951d838b91dd5b0621cca`; the coordinator worktree has report-only commit `5279e368f89198d3b207b787814215a0b290ed7c` plus this status update pending the next M0 push batch. PRs #120–#123 remain OPEN/Draft with UNSTABLE merge states.
+- Live GitHub readback confirms PR #24 remains OPEN/Draft at unchanged head `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`, with current base `competition/shanchuanzhi-release-readiness`; it was not changed. M6 `.gitignore`, M7 `.gitignore`, and M8 `.gitignore` plus untracked merge receipt remain preserved.

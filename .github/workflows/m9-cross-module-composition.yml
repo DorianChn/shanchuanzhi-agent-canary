@@ -26,24 +26,76 @@ jobs:
       PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       MANUAL_SHA: ${{ github.sha }}
     steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
       - name: Select immutable M9 source SHA
         id: m9-ref
         shell: bash
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          m9_source_sha=''
+          selection_mode=''
+          test_merge_sha=''
+          test_merge_base_sha=''
+          test_merge_head_sha=''
           if [[ "$EVENT_NAME" == 'pull_request' ]]; then
             if [[ "$PR_HEAD_REF" == 'feature/ac3-m9-integration' ]]; then
               m9_source_sha="$PR_HEAD_SHA"
+              selection_mode='exact-m9-pr-head'
             else
-              m9_source_sha="$PR_BASE_SHA"
+              if [[ "$PR_BASE_REF" != 'feature/agent-canary-3.0' ]]; then
+                echo "Module pull request base must be feature/agent-canary-3.0, got $PR_BASE_REF" >&2
+                exit 1
+              fi
+              if [[ ! "$PR_BASE_SHA" =~ ^[a-f0-9]{40}$ || ! "$PR_HEAD_SHA" =~ ^[a-f0-9]{40}$ || ! "$MANUAL_SHA" =~ ^[a-f0-9]{40}$ ]]; then
+                echo 'Module pull request requires immutable 40-character event base, head, and test-merge SHAs.' >&2
+                exit 1
+              fi
+              merge_commit_json="$(gh api --jq '{sha: .sha, parents: [.parents[].sha]}' "repos/$GITHUB_REPOSITORY/git/commits/$MANUAL_SHA")" || {
+                echo "Unable to read GitHub test-merge commit $MANUAL_SHA and its parent SHAs." >&2
+                exit 1
+              }
+              selected_source="$(printf '%s' "$merge_commit_json" | env PR_BASE_REF="$PR_BASE_REF" PR_BASE_SHA="$PR_BASE_SHA" PR_HEAD_SHA="$PR_HEAD_SHA" MANUAL_SHA="$MANUAL_SHA" node -e '
+                const mergeCommit = JSON.parse(require("node:fs").readFileSync(0, "utf8"));
+                const validSha = (value) => typeof value === "string" && /^[a-f0-9]{40}$/.test(value);
+                const fail = (message) => { console.error(message); process.exit(1); };
+                if (process.env.PR_BASE_REF !== "feature/agent-canary-3.0") fail("PR base ref is not the registered feature integration base.");
+                if (!validSha(process.env.PR_BASE_SHA) || !validSha(process.env.PR_HEAD_SHA) || !validSha(process.env.MANUAL_SHA)) fail("Event base, event head, and test-merge must be immutable 40-character SHAs.");
+                if (!mergeCommit || mergeCommit.sha !== process.env.MANUAL_SHA) fail("GitHub API commit SHA does not match the immutable test-merge SHA.");
+                const parents = mergeCommit.parents;
+                if (!Array.isArray(parents) || parents.length !== 2) fail("GitHub pull-request test-merge must have exactly two parents.");
+                if (!parents.every(validSha)) fail("GitHub pull-request test-merge contains an invalid parent SHA.");
+                if (parents[1] !== process.env.PR_HEAD_SHA) fail("GitHub test-merge second parent does not match the immutable pull-request head SHA.");
+                process.stdout.write([parents[0], process.env.MANUAL_SHA, parents[0], parents[1]].join("\n") + "\n");
+              ')"
+              mapfile -t selected <<< "$selected_source"
+              if [[ "${#selected[@]}" -ne 4 ]]; then
+                echo 'Unable to parse the validated GitHub test-merge parent selection.' >&2
+                exit 1
+              fi
+              m9_source_sha="${selected[0]}"
+              test_merge_sha="${selected[1]}"
+              test_merge_base_sha="${selected[2]}"
+              test_merge_head_sha="${selected[3]}"
+              selection_mode='authenticated-pr-test-merge-first-parent'
             fi
           else
             m9_source_sha="$MANUAL_SHA"
+            selection_mode='exact-manual-github-sha'
           fi
           if [[ ! "$m9_source_sha" =~ ^[a-f0-9]{40}$ ]]; then
             echo "M9 source must be an immutable 40-character commit SHA: $m9_source_sha" >&2
             exit 1
           fi
           printf 'sha=%s\n' "$m9_source_sha" >> "$GITHUB_OUTPUT"
+          printf 'selection_mode=%s\n' "$selection_mode" >> "$GITHUB_OUTPUT"
+          printf 'test_merge_sha=%s\n' "$test_merge_sha" >> "$GITHUB_OUTPUT"
+          printf 'test_merge_base_sha=%s\n' "$test_merge_base_sha" >> "$GITHUB_OUTPUT"
+          printf 'test_merge_head_sha=%s\n' "$test_merge_head_sha" >> "$GITHUB_OUTPUT"
 
       - name: Checkout exact M9 source SHA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -52,6 +104,24 @@ jobs:
           ref: ${{ steps.m9-ref.outputs.sha }}
           path: module-sources/m9
           fetch-depth: 0
+
+      - name: Verify event base is an ancestor of the selected feature-base M9 source
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'feature/ac3-m9-integration'
+        working-directory: module-sources/m9
+        shell: bash
+        env:
+          EXPECTED_M9_SHA: ${{ steps.m9-ref.outputs.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ ! "$PR_BASE_SHA" =~ ^[a-f0-9]{40}$ || ! "$EXPECTED_M9_SHA" =~ ^[a-f0-9]{40}$ ]]; then
+            echo 'Event base and selected M9 source must be immutable 40-character SHAs.' >&2
+            exit 1
+          fi
+          git merge-base --is-ancestor "$PR_BASE_SHA" "$EXPECTED_M9_SHA" || {
+            echo "Event base $PR_BASE_SHA is not an ancestor of selected actual M9 source $EXPECTED_M9_SHA." >&2
+            exit 1
+          }
+          printf 'Event base %s is an ancestor of selected actual M9 source %s.\n' "$PR_BASE_SHA" "$EXPECTED_M9_SHA" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Validate exact-source manifest and checkout refs
         id: source-manifest
@@ -160,6 +230,10 @@ jobs:
           M6_REVIEW_ISSUE: ${{ steps.source-manifest.outputs.m6_review_issue }}
           M6_REVIEW_TEST_BLOB: ${{ steps.source-manifest.outputs.m6_review_test_blob }}
           M6_REVIEW_VERIFIER_TEST_BLOB: ${{ steps.source-manifest.outputs.m6_review_verifier_test_blob }}
+          M9_SELECTION_MODE: ${{ steps.m9-ref.outputs.selection_mode }}
+          M9_TEST_MERGE_SHA: ${{ steps.m9-ref.outputs.test_merge_sha }}
+          M9_TEST_MERGE_BASE_SHA: ${{ steps.m9-ref.outputs.test_merge_base_sha }}
+          M9_TEST_MERGE_HEAD_SHA: ${{ steps.m9-ref.outputs.test_merge_head_sha }}
         run: |
           m9_sha="$(git -C module-sources/m9 rev-parse --verify HEAD)"
           m1_sha="$(git -C module-sources/m1 rev-parse --verify HEAD)"
@@ -207,6 +281,10 @@ jobs:
           verify_exact_source M7 "$m7_sha" "$EXPECTED_M7_SHA" || exit 1
           verify_exact_source M8-history "$m8_sha" "$EXPECTED_M8_HISTORY_SHA" || exit 1
           verify_exact_source M8-candidate "$m8_candidate_sha" "$EXPECTED_M8_SHA" || exit 1
+          if [[ "$M9_SELECTION_MODE" == 'authenticated-pr-test-merge-first-parent' ]]; then
+            verify_exact_source M9-test-merge-first-parent "$m9_sha" "$M9_TEST_MERGE_BASE_SHA" || exit 1
+            verify_exact_source M9-test-merge-second-parent "$M9_TEST_MERGE_HEAD_SHA" "$PR_HEAD_SHA" || exit 1
+          fi
           m1_m2_review_status='APPROVE'
           m1_m2_review_sha='a5eff766ebe041bc2c6cc13758827d5a96205de9'
           m1_m2_review_target_sha='099ad64e4a09330920cbd40847adec3fe631e91e'
@@ -350,17 +428,13 @@ jobs:
           } >> "$GITHUB_ENV"
           printf 'M1-to-M3 reviewed Hook source: %s (historical M1 review SHA %s; current M1 %s; reviewed M3 commit %s; current M3 source %s; changed reviewed files:%s; historical blobs verified; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_sha" "$m1_sha" "$m1_m3_review_target_sha" "$m3_sha" "${m1_m3_review_changed_files:- none}" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'Exact source SHAs: M9=%s M1=%s M2=%s M3=%s M4=%s M5=%s M6=%s M7=%s M8=%s\n' "$m9_sha" "$m1_sha" "$m2_sha" "$m3_sha" "$m4_sha" "$m5_sha" "$m6_sha" "$m7_sha" "$m8_sha" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf 'M9 source selection: mode=%s; source=%s; test-merge=%s; first-parent=%s; second-parent=%s; event-base=%s; event-head=%s\n' "$M9_SELECTION_MODE" "$m9_sha" "${M9_TEST_MERGE_SHA:-none}" "${M9_TEST_MERGE_BASE_SHA:-none}" "${M9_TEST_MERGE_HEAD_SHA:-none}" "${PR_BASE_SHA:-none}" "${PR_HEAD_SHA:-none}" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M2 Issue #52: %s (historical M1 review SHA %s; current M1 %s; exact reviewed M2 %s; current M2 %s; comment %s; scope %s; boundary %s)\n' "$m1_m2_review_status" "$m1_m2_review_sha" "$m1_sha" "$m1_m2_review_target_sha" "$m2_sha" "$m1_m2_review_comment" "$m1_m2_review_scope" "$m1_m2_review_condition" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M3 Hook disposition: %s (reviewed M3 %s; current M3 %s; changed reviewed files:%s; historical blobs verified; Issue #72 comment %s)\n' "$m1_m3_review_status" "$m1_m3_review_target_sha" "$m3_sha" "${m1_m3_review_changed_files:- none}" "$m1_m3_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M1-to-M8 Hook disposition: %s (reviewed source %s; exact Hook/output-test blobs unchanged at current candidate %s; Issue #%s comment %s)\n' "$m1_m8_hook_review_status" "$m1_m8_hook_review_source_sha" "$m8_candidate_sha" "$m1_m8_hook_review_issue" "$m1_m8_hook_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M6-to-M8 scoped disposition: %s (reviewed M6 contract %s; current M6 %s; exact reviewed M8 %s; current M8 %s; Issue #59 comment %s)\n' "$m6_m8_review_status" "$m6_m8_review_m6_contract_sha" "$m6_sha" "$m6_m8_review_target_sha" "$m8_sha" "$m6_m8_review_comment" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'M6-to-M8 current lifecycle disposition: %s (manifest target %s; reviewed SHA %s; candidate test blob fingerprint %s; Issue #%s comment %s; no product E4 acceptance implied)\n' "$m6_m8_current_lifecycle_review_status" "$m6_m8_current_lifecycle_review_sha" "${m6_m8_current_lifecycle_reviewed_sha:-none}" "$m6_m8_current_lifecycle_review_blob" "$m6_m8_current_lifecycle_review_issue" "${m6_m8_current_lifecycle_review_comment:-none}" | tee -a "$GITHUB_STEP_SUMMARY"
           printf 'Current M8 PR candidate: %s (exact source pinned for M9 checks; owner dispositions are file-scoped and do not establish product E4 or host/VM acceptance)\n' "$m8_candidate_sha" | tee -a "$GITHUB_STEP_SUMMARY"
-
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        if: always() && steps.source-manifest.outcome == 'success'
-        with:
-          node-version: 22
 
       - name: Validate M9 exact-source manifest and workflow contract
         if: always() && steps.source-manifest.outcome == 'success'

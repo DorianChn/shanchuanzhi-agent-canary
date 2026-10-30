@@ -1,6 +1,6 @@
-## Current configured-target dependency status — 2026-10-24 09:21 UTC
+## Current configured-target dependency status — 2026-10-25 06:31 UTC
 
-The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. M3's focused CLI/source fixtures plus M9 run `40066875122` pass Ubuntu and Windows. M3/M4 owner confirmation and shipped-package/native-host acceptance are still outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.
+The current feature source contains M3's normal-CLI configured-target route; older entries below saying the route is absent are historical snapshots. Dependency order is M1 held-file identity/capability → M2 public fixed-resource host adapter → M5 strict OBSERVE router → M3 CLI configuration, binding, and status-only route → M4 read-only Security Center consumer → M9 exact-ref composition. Exact M9 composition run `40169026928` passed on Ubuntu and Windows for M0 PR #119 head `ac48cdb`, checking the current M1–M8 refs. M3's protected-read endpoint remains a fixed temporary-marker probe; the M4 UI intentionally does not call it. M3/M4 shipped-package/native-host acceptance remains outstanding; keep #52 OPEN/P0/NOT_VERIFIED and do not infer OS-atomic TOCTOU protection.
 
 ## M0 ownership/dependency delta — 2026-10-15 21:16 UTC
 
@@ -259,3 +259,7 @@ Use the cross-module map above as the current dependency order; repeated 09:21 a
 ## AC3 coordination baseline
 
 M0 owns the immutable shared-source floor `e4732d9745bb4fbbebf6896a35b4657ad82abd73`. AC3 verifies that both the live feature base from the PR event and the PR head descend from that commit, then computes and records their prospective merge tree with `git merge-tree --write-tree`. A clean coordination-only advance on the feature line can therefore coexist with a module branch that still has the approved baseline; an unrelated lineage or real merge conflict remains a hard failure. M9 exact pins and owner dispositions are separate strict gates and are not inferred from this baseline. After integration, the exact candidate still needs passing CI.
+
+## 2026-10-26 05:11 UTC — branch-source dependency gate (#126)
+
+M9's immutable refs provide reproducible candidate composition, but do not normalize M1–M8 history. Existing module refs were created from their matching module remotes and have distinct merge bases against PR #24 head `b0d8d77`; see exact per-module counts in OPEN P1 Issue #126. M0 must not rebase or rewrite owner branches. Each owner confirms the intended base or a reviewed exception before source-root consistency can be accepted; rerun exact-source M9 composition after any approved ref change.
