@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
-const home=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-'));process.env.AGENT_CANARY_HOME=home;
+const home=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-')));process.env.AGENT_CANARY_HOME=home;
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain,canonicalJSON}=await import('../src/sdk.js');
 function setup(extra:any={}){
   const root=fs.mkdtempSync(path.join(home,'fixture-'));
@@ -202,7 +202,7 @@ test('gateway rejects a reused file ID when creation and change timestamps ident
  }
 });
 test('POSIX parent symlink swapped at the open boundary is rejected before content reads',{skip:process.platform==='win32'},()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-open-parent-symlink-')),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
+ const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-open-parent-symlink-'))),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'unregistered external file');
  const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
  let replaced=false,openedFd:number|undefined,closedOpenedFd=false,readCalls=0;
