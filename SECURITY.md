@@ -35,6 +35,17 @@ canary token found by `guard.inspect()` changes that state synchronously before
 JSONL/webhook/desktop alert delivery starts. In quarantine, every non-allowlisted
 guarded call is blocked; the callback is not invoked.
 
+## 3.0 registered file Gateway boundary
+
+The 3.0 SDK Gateway can read ordinary files explicitly registered by the trusted
+host inside its workspace. It holds the opened file descriptor and checks the
+registered identity and file version around the read. Protected-looking paths
+are deny-only. File writes fail closed, including when a legacy descriptor sets
+`writable: true`; no safe write primitive is currently shipped. Calls outside
+the registered Gateway path are not covered. Identity rechecks narrow race
+windows but are not an atomic OS-wide path/operation transaction. Synthetic
+fixtures do not establish independent E4 or installed-host protection.
+
 ## Vulnerabilities in scope
 
 - A bypass or defect in a Guard, Router, SDK, or registered Gateway callback that causes a later guarded callback to run after quarantine.
@@ -55,7 +66,7 @@ must never submit credentials or full tool payloads as event metadata.
 
 ## Current host and status boundary
 
-Native Codex Shell remains **UNPROTECTED**. AppContainer evidence covers only tested child-process operations. Current Console status and separately authorized fixed-probe/configured-target reads do not imply general native-host, product-file or OS-atomic protection. M4 consumes status only. Missing/404 Security Center or E4 status is **UNKNOWN**; fixtures are not independent E4 passes. See [COMPATIBILITY.md](COMPATIBILITY.md) and [API contracts](docs/3.0/API_CONTRACTS.md).
+Native Codex Shell remains **UNPROTECTED**. AppContainer evidence covers only tested child-process operations. Current Console status and separately authorized fixed-probe/configured-target reads do not imply general native-host, product-file or OS-atomic protection. M4 displays status and can issue an operator-triggered read for a configured target; it does not accept an arbitrary model-selected path. Missing/404 Security Center or E4 status is **UNKNOWN**; fixtures are not independent E4 passes. See [COMPATIBILITY.md](COMPATIBILITY.md) and [API contracts](docs/3.0/API_CONTRACTS.md).
 
 ## Intended use
 

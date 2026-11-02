@@ -18,6 +18,7 @@ const files = [
   "RELEASE_NOTES_DRAFT.md",
   "UPGRADING.md",
   "THIRD_PARTY_NOTICES.md",
+  "docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md",
   ".github/pull_request_template.md",
 ];
 // Feature removed SUPPORT.md and the dedicated feedback form.

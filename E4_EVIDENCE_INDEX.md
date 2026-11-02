@@ -132,7 +132,7 @@ This section records maintainer-run validation of candidate tree `a7620db78fbfed
 | `npm --prefix sponsor run smoke` | All 12 smoke checks passed |
 | `git diff --check origin/feature/agent-canary-3.0...HEAD` | PASS |
 
-The exact-head GitHub matrix is tracked separately on [PR #40](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/40). Hosted results from older PR heads are not acceptance evidence for this candidate. The M8 Hook-output expectations still require M1 owner review; Issue #80 remains open for M6/M8 E4 reason-contract disposition. No test or security policy was weakened.
+The exact-head GitHub matrix is tracked separately on [PR #40](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/40). Hosted results from older PR heads are not acceptance evidence for this candidate. At that receipt date, M1 review and Issue #80 disposition were pending; those historical statements are superseded by the current dated audit below. No test or security policy was weakened.
 
 ## M8 PR #40 synchronized candidate validation — 2026-10-24
 
@@ -149,3 +149,7 @@ This section records maintainer-run checks on synchronized candidate `8cf751badc
 | exact M9 composition and full cross-platform candidate matrix | Pending on the published PR #40 head; older-head runs are not acceptance for this candidate |
 
 At the time of this historical receipt, M1 Hook-output review and Issue #80 disposition were outstanding. This is not a current owner-status claim; see the current contract and Issue #99 snapshot in COMPATIBILITY.md. Older checks do not validate this merge-resolution candidate.
+
+## Current source audit — 2026-10-25
+
+PR #40 is merged into feature at M8 head 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841. Exact CI 40116479494 passed 9/9; Hook-output 40116479476 and wrapper/build 40116479427 passed; installer lifecycle was skipped. M9 run 40116481278 passed Ubuntu/Windows with that M8 pin. Issues #53/#59/#65/#75/#80/#99 are closed in their recorded scopes; this does not close #41/#45/#52/#57 or Gateway behavior issue #118. See [current readiness and evidence links](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md). Independent product E4 remains NOT_VERIFIED.

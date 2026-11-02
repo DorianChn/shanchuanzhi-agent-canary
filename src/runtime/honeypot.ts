@@ -1,6 +1,7 @@
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import type {GatewayFile} from './gateway.js';
+import {issueSyntheticDecoyGatewayFile} from './synthetic-decoy-capability.js';
 export type DecoyKind='ENV'|'SSH'|'DATABASE'|'INTERNAL_API'|'MCP';
 export type DecoyInteraction='DEPLOYED'|'EXPOSED'|'DISCOVERED'|'READ'|'REFERENCED'|'COPIED'|'TOOL_INVOKED'|'EXFIL_ATTEMPTED'|'BLOCKED'|'QUARANTINED';
 export interface DecoyEvent {eventId:string;decoyId:string;sessionId:string;kind:DecoyInteraction;timestamp:string}
@@ -19,7 +20,11 @@ export class HoneypotRuntime {
   private readonly content=new Map<string,string>();
   constructor(readonly sessionId:string,kinds:readonly DecoyKind[]=['ENV','SSH','DATABASE','INTERNAL_API','MCP']){
     if(!/^[A-Za-z0-9_.:-]{1,100}$/.test(sessionId)||!kinds.length||new Set(kinds).size!==kinds.length||kinds.some(k=>!['ENV','SSH','DATABASE','INTERNAL_API','MCP'].includes(k)))throw Error('HONEYPOT_CONFIG_INVALID');
-    this.root=fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-honeypot-'));fs.chmodSync(this.root,0o700);
+    // Keep the host capability root on the same canonical path Gateway uses.
+    // macOS may expose the temp directory through /var while realpath resolves
+    // it to /private/var; issuing a proof against the lexical alias would make
+    // an otherwise valid synthetic decoy fail closed during Gateway setup.
+    this.root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-honeypot-')));fs.chmodSync(this.root,0o700);
     const files:Record<DecoyKind,string>={ENV:'.env',SSH:'ssh/id_ed25519',DATABASE:'database.json',INTERNAL_API:'internal-api.json',MCP:'mcp-tool.json'};
     for(const kind of kinds){
       const id='decoy-'+randomUUID(),file=files[kind];
@@ -29,7 +34,7 @@ export class HoneypotRuntime {
     }
   }
   descriptions(){return this.decoys.map(d=>({...d}));}
-  gatewayFiles():GatewayFile[]{return this.decoys.map(d=>({path:d.path,decoyId:d.id,sensitive:true}));}
+  gatewayFiles():GatewayFile[]{return this.decoys.map(d=>issueSyntheticDecoyGatewayFile(this.root,d.path,d.id,this.content.get(d.id)!));}
   record(decoyId:string,kind:DecoyInteraction){
     if(!this.content.has(decoyId)||!['DEPLOYED','EXPOSED','DISCOVERED','READ','REFERENCED','COPIED','TOOL_INVOKED','EXFIL_ATTEMPTED','BLOCKED','QUARANTINED'].includes(kind))throw Error('HONEYPOT_EVENT_INVALID');
     if(this.events.length>=1024)throw Error('HONEYPOT_EVENT_LIMIT');

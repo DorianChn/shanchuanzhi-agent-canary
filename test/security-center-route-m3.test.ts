@@ -1,6 +1,7 @@
 import { after, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn, spawnSync } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -10,7 +11,7 @@ import { createTrustedExecutionGateway } from '../src/sdk.js';
 import { createProtectedHostAdapter } from '../src/codex-connection-mcp.js';
 import {createSecurityToolRouter} from '../src/security-router.js';
 import {createSecurityGatewayHostAdapter} from '../execution-isolation/gateway-adapter/gateway-adapter.mjs';
-import { isValidSecurityCenterStatusPayload } from '../src/ai/security-center-adapter.js';
+import { adaptConfiguredTargetReadiness, isValidSecurityCenterStatusPayload } from '../src/ai/security-center-adapter.js';
 
 const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
 const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-security-center-route-'));
@@ -716,7 +717,7 @@ function actualM1M2M5TargetDependencies(){
           return provider.readFileWithCapability(capability,call,signal);
         },
       };
-      router=createSecurityToolRouter({...options,fileReadCapability:monitoredProvider});
+      router=createSecurityToolRouter({...options,eventsFile:path.join(testHome,'target-policy-events.jsonl'),fileReadCapability:monitoredProvider});
       return router;
     },
   });
@@ -729,6 +730,73 @@ async function postConfiguredTargetRead(url:string,csrf:string,body:unknown){
     body:JSON.stringify(body),
   });
 }
+
+test('configured-target Console uses the built M1/M2/M5 package exports and denies replacement',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'default-package-target-read-'));
+  const notes=path.join(workspace,'notes');fs.mkdirSync(notes);
+  const target=path.join(notes,'summary.txt'),held=target+'.held',replacement=path.join(notes,'replacement.txt');
+  fs.writeFileSync(target,'DEFAULT_PACKAGE_HELD_TARGET');
+  fs.writeFileSync(replacement,'UNREGISTERED_REPLACEMENT_MUST_NOT_READ');
+  const console=await startAIConsole({
+    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+    securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],
+  });
+  try{
+    const csrf=await csrfFor(console.url);
+    const readiness=await fetch(console.url+'/api/security-center/configured-target-readiness',{headers:{'x-canary-csrf':csrf}});
+    assert.equal(readiness.status,200);
+    const state=await readiness.json();
+    assert.equal(state.configurationStatus,'CONFIGURED');
+    assert.equal(state.bindingStatus,'BOUND');
+    assert.equal(state.actionReadiness,'READY');
+    assert.deepEqual(await (await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'})).json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
+
+    fs.renameSync(target,held);fs.renameSync(replacement,target);
+    assert.deepEqual(await (await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'})).json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    assert.equal(fs.readFileSync(target,'utf8'),'UNREGISTERED_REPLACEMENT_MUST_NOT_READ');
+    assert.equal(fs.readFileSync(held,'utf8'),'DEFAULT_PACKAGE_HELD_TARGET');
+  }finally{await console.close();}
+});
+
+test('configured-target readiness returns only fresh fixed labels and fails closed when unconfigured',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-readiness-'));
+  fs.mkdirSync(path.join(workspace,'notes'));
+  const privatePath=path.join(workspace,'notes','summary.txt'),privateContent='READINESS_PRIVATE_CONTENT';
+  fs.writeFileSync(privatePath,privateContent);
+  const dependencies=actualM1M2M5TargetDependencies();
+  const configured=await startAIConsole({
+    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+    securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],securityCenterTargetDependencies:dependencies.loader as never,
+  });
+  try{
+    const csrf=await csrfFor(configured.url);
+    const response=await fetch(configured.url+'/api/security-center/configured-target-readiness',{headers:{'x-canary-csrf':csrf}});
+    assert.equal(response.status,200);
+    const readiness=await response.json();
+    assert.deepEqual(Object.keys(readiness).sort(),['scope','schemaVersion','generatedAt','configurationStatus','bindingStatus','actionReadiness','operatorAuthStatus','targets'].sort());
+    assert.equal(readiness.scope,'M3_CONFIGURED_TARGET_READINESS');
+    assert.equal(readiness.schemaVersion,1);assert.equal(readiness.configurationStatus,'CONFIGURED');
+    assert.equal(readiness.bindingStatus,'BOUND');assert.equal(readiness.actionReadiness,'READY');
+    assert.equal(readiness.operatorAuthStatus,'CONFIGURED');
+    assert.deepEqual(readiness.targets,[{targetId:'summary',bindingStatus:'BOUND'}]);
+    assert.equal(adaptConfiguredTargetReadiness(readiness).valid,true);
+    const serialized=JSON.stringify(readiness);
+    for(const secret of [privatePath,privateContent,'OPERATOR_FIXTURE'])assert.equal(serialized.includes(secret),false);
+    const missingCsrf=await fetch(configured.url+'/api/security-center/configured-target-readiness');
+    assert.equal(missingCsrf.status,403);
+    const wrongMethod=await fetch(configured.url+'/api/security-center/configured-target-readiness',{method:'POST',headers:{'x-canary-csrf':csrf,'content-type':'application/json'},body:'{}'});
+    assert.equal(wrongMethod.status,405);
+  }finally{await configured.close();fs.rmSync(workspace,{recursive:true,force:true});}
+
+  const unconfigured=await startAIConsole({port:0});
+  try{
+    const csrf=await csrfFor(unconfigured.url);
+    const response=await fetch(unconfigured.url+'/api/security-center/configured-target-readiness',{headers:{'x-canary-csrf':csrf}});
+    const readiness=await response.json();
+    assert.deepEqual({configurationStatus:readiness.configurationStatus,bindingStatus:readiness.bindingStatus,actionReadiness:readiness.actionReadiness,operatorAuthStatus:readiness.operatorAuthStatus,targets:readiness.targets},{configurationStatus:'NOT_CONFIGURED',bindingStatus:'UNAVAILABLE',actionReadiness:'UNAVAILABLE',operatorAuthStatus:'NOT_CONFIGURED',targets:[]});
+    assert.equal(adaptConfiguredTargetReadiness(readiness).valid,true);
+  }finally{await unconfigured.close();}
+});
 
 test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERVE with target-ID-only responses',async()=>{
   const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-positive-'));
@@ -779,37 +847,319 @@ test('configured product target uses M1 held identity, M2 adapter, and M5 OBSERV
   }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
 });
 
-test('configured sensitive and symlink targets fail closed before M5 callbacks or M1 read evidence',async()=>{
+test('configured-target Console rejects a relocated workspace junction even when the selected file identity is unchanged',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-root-junction-'));
+  const notes=path.join(workspace,'notes'),relocated=workspace+'-relocated';fs.mkdirSync(notes);
+  const targetPath=path.join(notes,'summary.txt');fs.writeFileSync(targetPath,'AUTHORIZED_ROOT_BOUND_FIXTURE');
+  const selectedFileIdentity=fs.lstatSync(targetPath,{bigint:true});
+  const dependencies=actualM1M2M5TargetDependencies(),baseLoader=dependencies.loader,originalOpenSync=fs.openSync;
+  let relocatedTargetOpenCalls=0,console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
+  const loader=async()=>{
+    const loaded=await baseLoader();
+    fs.renameSync(workspace,relocated);
+    fs.symlinkSync(relocated,workspace,process.platform==='win32'?'junction':'dir');
+    (fs as any).openSync=(candidate:any,...args:any[])=>{
+      if(path.resolve(String(candidate))===path.resolve(path.join(relocated,'notes','summary.txt')))relocatedTargetOpenCalls++;
+      return(originalOpenSync as any)(candidate,...args);
+    };
+    return loaded;
+  };
+  try{
+    console=await startAIConsole({
+      port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+      securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],securityCenterTargetDependencies:loader as never,
+    });
+    (fs as any).openSync=originalOpenSync;
+    const csrf=await csrfFor(console.url);
+    const readiness=await (await fetch(console.url+'/api/security-center/configured-target-readiness',{headers:{'x-canary-csrf':csrf}})).json();
+    assert.equal(readiness.configurationStatus,'CONFIGURED');
+    assert.equal(readiness.bindingStatus,'BLOCKED');
+    assert.equal(readiness.actionReadiness,'BLOCKED');
+    const response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'});
+    assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'UNKNOWN'});
+    assert.equal(relocatedTargetOpenCalls,0,'M1 rejects the changed canonical root before opening the selected file');
+    assert.equal(dependencies.heldReadCallbacks,0,'the root alias never reaches M5');
+    assert.equal(dependencies.pendingApprovals,0);
+    const relocatedStat=fs.lstatSync(path.join(relocated,'notes','summary.txt'),{bigint:true});
+    assert.deepEqual({dev:relocatedStat.dev,ino:relocatedStat.ino,birthtimeNs:relocatedStat.birthtimeNs,ctimeNs:relocatedStat.ctimeNs,mtimeNs:relocatedStat.mtimeNs,size:relocatedStat.size},
+      {dev:selectedFileIdentity.dev,ino:selectedFileIdentity.ino,birthtimeNs:selectedFileIdentity.birthtimeNs,ctimeNs:selectedFileIdentity.ctimeNs,mtimeNs:selectedFileIdentity.mtimeNs,size:selectedFileIdentity.size},
+      'the negative control preserves the exact file identity so only the root binding rejects it');
+  }finally{
+    (fs as any).openSync=originalOpenSync;
+    await console?.close();
+    try{fs.rmSync(workspace,{recursive:true,force:true});}catch{}
+    fs.rmSync(relocated,{recursive:true,force:true});
+  }
+});
+
+test('configured-target Console denies a replacement between its identity check and M1 registration',async()=>{
+  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-registration-race-'));
+  const notes=path.join(workspace,'notes');fs.mkdirSync(notes);
+  const targetPath=path.join(notes,'summary.txt'),heldPath=path.join(notes,'summary-held.txt'),original='AUTHORIZED_CONFIGURED_TARGET',replacement='UNAUTHORIZED_REPLACEMENT_MUST_NOT_BE_BOUND';
+  fs.writeFileSync(targetPath,original);
+  const dependencies=actualM1M2M5TargetDependencies(),baseLoader=dependencies.loader;
+  const originalOpenSync=fs.openSync;let targetOpenCalls=0,console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
+  const loader=async()=>{
+    const loaded=await baseLoader();
+    // This runs after the Console captures the target identity but before M1 registers it.
+    fs.renameSync(targetPath,heldPath);fs.writeFileSync(targetPath,replacement);
+    (fs as any).openSync=(candidate:any,...args:any[])=>{
+      if(path.resolve(String(candidate))===path.resolve(targetPath))targetOpenCalls++;
+      return(originalOpenSync as any)(candidate,...args);
+    };
+    return loaded;
+  };
+  try{
+    console=await startAIConsole({
+      port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+      securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],securityCenterTargetDependencies:loader as never,
+    });
+    (fs as any).openSync=originalOpenSync;
+    const csrf=await csrfFor(console.url),response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'});
+    assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'UNKNOWN'});
+    assert.equal(targetOpenCalls,0,'M1 rejects the stale expected identity before opening the replacement path');
+    assert.equal(dependencies.heldReadCallbacks,0,'the replaced path never reaches the M5 callback');
+    assert.equal(dependencies.pendingApprovals,0);
+    assert.equal(fs.readFileSync(heldPath,'utf8'),original);
+    assert.equal(fs.readFileSync(targetPath,'utf8'),replacement);
+  }finally{
+    (fs as any).openSync=originalOpenSync;
+    await console?.close();fs.rmSync(workspace,{recursive:true,force:true});
+  }
+});
+
+test('built-package Console rejects an external junction swap to a protected hardlink before content reads',{skip:process.platform!=='win32'},async()=>{
+  const workspace=fs.realpathSync.native(fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-open-')));
+  const movedWorkspace=workspace+'-held',outside=fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-outside-'));
+  const targetPath=path.join(workspace,'notes','summary.txt'),outsideTarget=path.join(outside,'notes','summary.txt'),protectedTarget=path.join(outside,'.ssh','id_rsa');
+  fs.mkdirSync(path.dirname(targetPath),{recursive:true});fs.mkdirSync(path.dirname(outsideTarget),{recursive:true});fs.mkdirSync(path.dirname(protectedTarget),{recursive:true});
+  const original='AUTHORIZED_SUMMARY_FIXTURE',secret='PROTECTED_SSH_KEY_CANARY_MUST_NOT_ESCAPE';
+  fs.writeFileSync(targetPath,original);fs.writeFileSync(protectedTarget,secret);fs.linkSync(protectedTarget,outsideTarget);
+  const protectedHash=createHash('sha256').update(fs.readFileSync(protectedTarget)).digest('hex');
+  const originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalCloseSync=fs.closeSync;
+  let junctionInstalled=false,workspaceRestored=false,targetOpenCalls=0,targetFd:number|undefined,targetFdClosed=false,targetReadCalls=0,swapError='',openedIdentity:{dev:bigint;ino:bigint}|undefined;
+  let console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
+  const swapScript="const fs=require('node:fs');const [mode,root,moved,outside]=process.argv.slice(1);if(mode==='install'){fs.renameSync(root,moved);fs.symlinkSync(outside,root,'junction');process.stdout.write('JUNCTION_INSTALLED');}else if(mode==='restore'){fs.rmdirSync(root);fs.renameSync(moved,root);process.stdout.write('JUNCTION_RESTORED');}else process.exit(2);";
+  try{
+    assert.equal(hasPublicM2GatewayAdapter,true,'the Console must resolve the built M2 package entry');
+    assert.equal(hasPublicM5PolicyRouter,true,'the Console must resolve the built M5 package entry');
+    (fs as any).openSync=(candidate:any,...args:any[])=>{
+      if(path.resolve(String(candidate))===path.resolve(targetPath)){
+        targetOpenCalls++;
+        if(targetFd===undefined){
+          let result='';
+          try{result=execFileSync(process.execPath,['-e',swapScript,'install',workspace,movedWorkspace,outside],{encoding:'utf8',windowsHide:true});}
+          catch(error){swapError=String(error);throw error;}
+          assert.equal(result,'JUNCTION_INSTALLED','an independent process must install the workspace junction');
+          junctionInstalled=true;
+          let fd:number|undefined;
+          try{
+            fd=originalOpenSync(candidate,...args);targetFd=fd;
+            const opened=fs.fstatSync(fd,{bigint:true});openedIdentity={dev:opened.dev,ino:opened.ino};
+            return fd;
+          }finally{
+            const restored=execFileSync(process.execPath,['-e',swapScript,'restore',workspace,movedWorkspace,outside],{encoding:'utf8',windowsHide:true});
+            workspaceRestored=restored==='JUNCTION_RESTORED'&&fs.existsSync(targetPath)&&!fs.existsSync(movedWorkspace);
+          }
+        }
+      }
+      return originalOpenSync(candidate,...args);
+    };
+    (fs as any).closeSync=(fd:number)=>{if(fd===targetFd)targetFdClosed=true;return(originalCloseSync as any)(fd);};
+    (fs as any).readSync=(fd:number,...args:any[])=>{if(fd===targetFd&&!targetFdClosed)targetReadCalls++;return(originalReadSync as any)(fd,...args);};
+    console=await startAIConsole({
+      port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+      securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],
+    });
+    (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs as any).closeSync=originalCloseSync;
+    const outsideIdentity=fs.statSync(outsideTarget,{bigint:true});
+    assert.equal(junctionInstalled,true,`the external junction must be installed at the M1 open boundary; openCalls=${targetOpenCalls}, swapError=${swapError}`);
+    assert.equal(workspaceRestored,true,'the independent process must restore the original workspace before M1 validates the opened file');
+    assert.equal(targetOpenCalls,1);
+    assert.deepEqual(openedIdentity,{dev:outsideIdentity.dev,ino:outsideIdentity.ino},'M1 opened a transient alias to the protected SSH key and must reject its identity');
+    assert.equal(targetReadCalls,0,'M1 must reject the outside descriptor before reading its content');
+    assert.equal(targetFdClosed,true,'M1 must close the rejected protected-file descriptor before returning UNKNOWN');
+    const csrf=await csrfFor(console.url),response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'}),body=await response.json();
+    assert.equal(response.status,200);
+    assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:'UNKNOWN'});
+    assert.equal(JSON.stringify(body).includes(original),false);
+    assert.equal(JSON.stringify(body).includes(secret),false);
+    assert.equal(JSON.stringify(body).includes(targetPath),false);
+    assert.equal(fs.readFileSync(targetPath,'utf8'),original);
+    assert.equal(fs.readFileSync(outsideTarget,'utf8'),secret);
+    assert.equal(fs.readFileSync(protectedTarget,'utf8'),secret);
+    assert.equal(createHash('sha256').update(fs.readFileSync(protectedTarget)).digest('hex'),protectedHash);
+  }finally{
+    (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs as any).closeSync=originalCloseSync;
+    if(fs.existsSync(workspace)){
+      try{if(fs.lstatSync(workspace).isSymbolicLink())fs.rmdirSync(workspace);}catch{}
+    }
+    if(fs.existsSync(movedWorkspace)&&!fs.existsSync(workspace))fs.renameSync(movedWorkspace,workspace);
+    await console?.close();fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});
+  }
+});
+
+test('built-package Console route never redirects a held read during a protected-key transient alias swap',async()=>{
+  const workspace=fs.realpathSync.native(fs.mkdtempSync(path.join(testHome,'configured-target-transient-alias-')));
+  const notes=path.join(workspace,'notes'),heldNotes=path.join(workspace,'notes-held'),outside=fs.mkdtempSync(path.join(testHome,'configured-target-transient-outside-'));
+  fs.mkdirSync(notes);const targetPath=path.join(notes,'summary.txt'),heldTarget=path.join(notes,'summary-held.txt'),external=path.join(outside,'.ssh','id_rsa');
+  const original='AUTHORIZED_SUMMARY_FIXTURE',secret='SYNTHETIC_PROTECTED_SSH_KEY_MUST_NOT_ESCAPE',externalBefore=Buffer.from(secret);
+  fs.writeFileSync(targetPath,original);fs.mkdirSync(path.dirname(external),{recursive:true});fs.writeFileSync(external,secret);
+  const originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+  let registeredFd:number|undefined,observedReadFd:number|undefined,aliasInstalled=false,restored=false,readText='',readIntercepts=0,swapError='',console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
+  const externalSwapScript="const fs=require('node:fs');const [mode,target,held,external]=process.argv.slice(1);if(mode==='install'){fs.renameSync(target,held);fs.linkSync(external,target);process.stdout.write('ALIAS_INSTALLED');}else if(mode==='restore'){fs.unlinkSync(target);fs.renameSync(held,target);process.stdout.write('ALIAS_RESTORED');}else process.exit(2);";
+  try{
+    assert.equal(hasPublicM2GatewayAdapter,true,'the built Console must resolve the M2 package entry');
+    assert.equal(hasPublicM5PolicyRouter,true,'the built Console must resolve the M5 package entry');
+    (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=originalOpenSync(candidate,...args);if(path.resolve(String(candidate))===path.resolve(targetPath)&&registeredFd===undefined)registeredFd=fd;return fd;};
+    console=await startAIConsole({
+      port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+      securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],
+    });
+    (fs as any).openSync=originalOpenSync;
+    const csrf=await csrfFor(console.url);
+    (fs as any).readSync=(fd:number,...args:any[])=>{
+      readIntercepts++;
+      if(!aliasInstalled){
+        let moved=false,alias=false;
+        try{
+          if(process.platform==='win32'){
+            let result='';
+            try{result=execFileSync(process.execPath,['-e',externalSwapScript,'install',targetPath,heldTarget,external],{encoding:'utf8',windowsHide:true});}
+            catch(error){swapError=String(error);throw error;}
+            assert.equal(result,'ALIAS_INSTALLED','a separate OS process must install the transient NTFS hard-link alias');
+            aliasInstalled=true;
+          }else{
+            aliasInstalled=true;
+            fs.renameSync(notes,heldNotes);moved=true;fs.symlinkSync(outside,notes,'dir');alias=true;
+          }
+          const count=(originalReadSync as any)(fd,...args);observedReadFd=fd;
+          if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')readText+=args[0].subarray(args[1],args[1]+count).toString('utf8');
+          return count;
+        }finally{
+          if(process.platform==='win32'){
+            if(aliasInstalled){
+              const result=execFileSync(process.execPath,['-e',externalSwapScript,'restore',targetPath,heldTarget,external],{encoding:'utf8',windowsHide:true});
+              restored=result==='ALIAS_RESTORED'&&fs.existsSync(targetPath)&&!fs.existsSync(heldTarget);
+            }
+          }else{
+            if(alias)try{fs.unlinkSync(notes);}catch{}
+            if(moved&&fs.existsSync(heldNotes)&&!fs.existsSync(notes))fs.renameSync(heldNotes,notes);
+            restored=fs.existsSync(notes)&&!fs.existsSync(heldNotes);
+          }
+        }
+      }
+      observedReadFd=fd;const count=(originalReadSync as any)(fd,...args);
+      if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')readText+=args[0].subarray(args[1],args[1]+count).toString('utf8');
+      return count;
+    };
+    const response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'}),body=await response.json();
+    assert.equal(response.status,200);
+    assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:process.platform==='win32'?'UNKNOWN':'ALLOW'});
+    assert.equal(aliasInstalled,true,`the alias must be installed during the built M1/M2/M5 route read; intercepts=${readIntercepts}, body=${JSON.stringify(body)}, swapError=${swapError}`);
+    assert.equal(restored,true,'the original target path must be restored before the Gateway post-read check');
+    assert.equal(observedReadFd,registeredFd,'the Console route reads only through the M1 descriptor retained at startup');
+    assert.equal(readText,original,'the route never reads bytes from the transient external alias');
+    assert.equal(readIntercepts,1,'the configured package route must read the registered fixture through one held-descriptor operation');
+    assert.equal(JSON.stringify(body).includes(secret),false);
+    assert.equal(JSON.stringify(body).includes(original),false);
+    assert.equal(JSON.stringify(body).includes(targetPath),false);
+    assert.deepEqual(fs.readFileSync(external),externalBefore);
+    assert.deepEqual(fs.readFileSync(targetPath,'utf8'),original);
+  }finally{
+    (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+    if(process.platform==='win32'&&fs.existsSync(heldTarget)){
+      try{if(fs.existsSync(targetPath))fs.unlinkSync(targetPath);fs.renameSync(heldTarget,targetPath);}catch{}
+    }
+    if(console)await console.close();
+    fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});
+  }
+});
+
+test('configured sensitive, symlink, and hard-link aliases fail before M1 opens or M5 callbacks',async()=>{
   const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-denials-'));
-  fs.mkdirSync(path.join(workspace,'.ssh'));
-  fs.writeFileSync(path.join(workspace,'.ssh','id_rsa'),'SENSITIVE_ALIAS_FIXTURE');
+  const outside=fs.mkdtempSync(path.join(testHome,'configured-target-outside-'));
+  const protectedTargets=[
+    {id:'env',path:'.env'},
+    {id:'ssh-private-key',path:'.ssh/id_rsa'},
+    {id:'aws-credentials',path:'.aws/credentials'},
+    {id:'azure-tokens',path:'.azure/accessTokens.json'},
+    {id:'kube-config',path:'.kube/config'},
+    {id:'docker-config',path:'.docker/config.json'},
+    {id:'gnupg-private-key',path:'.gnupg/private-keys-v1.d/key'},
+    {id:'server-key',path:'tls/server.key'},
+    {id:'public-pem',path:'certificates/signing.pem'},
+    {id:'client-p12',path:'keystores/client.p12'},
+    {id:'client-pfx',path:'keystores/client.pfx'},
+    {id:'ssh-ppk',path:'ssh/workstation.ppk'},
+    {id:'java-keystore',path:'stores/keys.jks'},
+    {id:'java-encrypted-keystore',path:'stores/secrets.jceks'},
+    {id:'app-keystore',path:'stores/app.keystore'},
+    {id:'keepass-database',path:'stores/passwords.kdbx'},
+    {id:'credential-database',path:'stores/passwords.kdb'},
+    {id:'kerberos-keytab',path:'krb5/user.keytab'},
+    {id:'openvpn-config',path:'vpn/client.ovpn'},
+    {id:'service-account',path:'service-account-credentials.json'},
+    {id:'ssh-security-key',path:'id_ecdsa_sk'},
+  ] as const;
+  for(const {path:relative} of protectedTargets){const target=path.join(workspace,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,'SENSITIVE_EXTENSION_FIXTURE_'+relative);}
+  const protectedHashes=new Map(protectedTargets.map(({path:relative})=>[relative,createHash('sha256').update(fs.readFileSync(path.join(workspace,relative))).digest('hex')]));
+  fs.writeFileSync(path.join(outside,'outside.txt'),'OUTSIDE_FIXTURE');
+  const outsideProtectedPath=path.join(outside,'.ssh','id_rsa'),hardlinkAliasPath=path.join(workspace,'notes','credential-copy.txt');
+  fs.mkdirSync(path.dirname(outsideProtectedPath),{recursive:true});fs.mkdirSync(path.dirname(hardlinkAliasPath),{recursive:true});
+  fs.writeFileSync(outsideProtectedPath,'OUTSIDE_PROTECTED_HARDLINK_FIXTURE');fs.linkSync(outsideProtectedPath,hardlinkAliasPath);
+  const outsideProtectedHash=createHash('sha256').update(fs.readFileSync(outsideProtectedPath)).digest('hex');
   fs.mkdirSync(path.join(workspace,'real'));
   fs.writeFileSync(path.join(workspace,'real','notes.txt'),'SAFE_TARGET_FIXTURE');
   fs.symlinkSync(path.join(workspace,'real'),path.join(workspace,'alias'),process.platform==='win32'?'junction':'dir');
+  fs.symlinkSync(path.join(workspace,'.ssh'),path.join(workspace,'secret-alias'),process.platform==='win32'?'junction':'dir');
+  fs.symlinkSync(outside,path.join(workspace,'outside-alias'),process.platform==='win32'?'junction':'dir');
   const dependencies=actualM1M2M5TargetDependencies();
-  const console=await startAIConsole({
-    port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
-    securityCenterProtectedTargets:[{id:'credentials',path:'.ssh/id_rsa'},{id:'linked',path:'alias/notes.txt'}],
-    securityCenterTargetDependencies:dependencies.loader as never,
-  });
+  const protectedAbsolutePaths=new Set([...protectedTargets.map(({path:relative})=>path.resolve(workspace,relative)),path.resolve(hardlinkAliasPath)]),originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+  let protectedOpenCalls=0,protectedReadCalls=0,console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(protectedAbsolutePaths.has(path.resolve(String(candidate))))protectedOpenCalls++;return(originalOpenSync as any)(candidate,...args);};
+  (fs as any).readSync=(...args:any[])=>{protectedReadCalls++;return(originalReadSync as any)(...args);};
   try{
+    console=await startAIConsole({
+      port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+       securityCenterProtectedTargets:[{id:'safe',path:'real/notes.txt'},...protectedTargets,{id:'linked',path:'alias/notes.txt'},{id:'secret-alias',path:'secret-alias/id_rsa'},{id:'outside-alias',path:'outside-alias/outside.txt'},{id:'hardlink-alias',path:'notes/credential-copy.txt'}],
+      securityCenterTargetDependencies:dependencies.loader as never,
+    });
     const csrf=await csrfFor(console.url);
-    for(const targetId of ['credentials','linked']){
+    assert.deepEqual(await (await postConfiguredTargetRead(console.url,csrf,{targetId:'safe'})).json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
+    assert.equal(dependencies.heldReadCallbacks,1);
+    const evidenceAfterSafe=dependencies.gateway!.evidence().length;
+    assert.ok(evidenceAfterSafe>0);
+    const protectedReadCountAfterSafe=protectedReadCalls;
+     for(const targetId of [...protectedTargets.map(target=>target.id),'linked','secret-alias','outside-alias','hardlink-alias']){
       const response=await postConfiguredTargetRead(console.url,csrf,{targetId});
       assert.deepEqual(await response.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
     }
-    assert.equal(dependencies.heldReadCallbacks,0);
-    assert.equal(dependencies.gateway?.evidence().length,0);
+    assert.equal(dependencies.heldReadCallbacks,1);
+    assert.equal(dependencies.gateway?.evidence().length,evidenceAfterSafe);
     assert.equal(dependencies.pendingApprovals,0);
-  }finally{await console.close();fs.rmSync(workspace,{recursive:true,force:true});}
+     assert.equal(protectedOpenCalls,0,'M1/M2/M5 configured-target routing never opens any configured sensitive credential target');
+     assert.equal(protectedReadCalls,protectedReadCountAfterSafe,'denied sensitive targets never read content');
+     for(const {path:relative} of protectedTargets)assert.equal(createHash('sha256').update(fs.readFileSync(path.join(workspace,relative))).digest('hex'),protectedHashes.get(relative));
+    assert.equal(fs.readFileSync(path.join(outside,'outside.txt'),'utf8'),'OUTSIDE_FIXTURE');
+    assert.equal(fs.statSync(hardlinkAliasPath).nlink,2);
+    assert.equal(createHash('sha256').update(fs.readFileSync(outsideProtectedPath)).digest('hex'),outsideProtectedHash);
+  }finally{(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;await console?.close();fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});}
 });
 
 test('normal ai console CLI binds configured targets at process startup',async()=>{
   const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-cli-'));
+  const outside=fs.mkdtempSync(path.join(testHome,'configured-target-cli-outside-'));
   fs.mkdirSync(path.join(workspace,'notes'));
-  fs.writeFileSync(path.join(workspace,'notes','brief.txt'),'CLI_TARGET_PRIVATE_CONTENT');
+  const targetPath=path.join(workspace,'notes','brief.txt');
+  const heldTargetPath=targetPath+'.held';
+  const original='CLI_TARGET_PRIVATE_CONTENT',outsideCanary='CLI_OUTSIDE_JUNCTION_CANARY';
+  fs.writeFileSync(targetPath,original);
+  fs.writeFileSync(path.join(outside,'brief.txt'),outsideCanary);
+  fs.symlinkSync(outside,path.join(workspace,'linked'),process.platform==='win32'?'junction':'dir');
   const child=spawn(process.execPath,[
-    path.resolve('dist/index.js'),'ai','console','--port','0','--workspace-root',workspace,'--protected-target','brief=notes/brief.txt',
+    path.resolve('dist/index.js'),'ai','console','--port','0','--workspace-root',workspace,
+    '--protected-target','brief=notes/brief.txt','--protected-target','linked=linked/brief.txt',
   ],{
     cwd:process.cwd(),env:{...process.env,AGENT_CANARY_OPERATOR_CODE:'OPERATOR_FIXTURE'},
     stdio:['ignore','pipe','pipe'],windowsHide:true,
@@ -834,12 +1184,52 @@ test('normal ai console CLI binds configured targets at process startup',async()
     assert.equal(response.status,200);
     const body=await response.json();
     assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW'});
-    assert.equal(JSON.stringify(body).includes('CLI_TARGET_PRIVATE_CONTENT'),false);
+    assert.equal(JSON.stringify(body).includes(original),false);
+
+    const notesDirectory=path.join(workspace,'notes');
+    const heldNotesDirectory=path.join(workspace,'notes-held');
+    if(process.platform==='win32'){
+      assert.throws(
+        ()=>fs.renameSync(notesDirectory,heldNotesDirectory),
+        (error:NodeJS.ErrnoException)=>error.code==='EPERM'||error.code==='EACCES',
+        'the normal CLI must keep its bound parent directory from being replaced while the M1 handle is live',
+      );
+    }else{
+      fs.renameSync(notesDirectory,heldNotesDirectory);
+      try{
+        fs.symlinkSync(outside,notesDirectory,'dir');
+        const parentAlias=await postConfiguredTargetRead(url,csrf,{targetId:'brief'});
+        assert.deepEqual(await parentAlias.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+        assert.equal(fs.readFileSync(path.join(outside,'brief.txt'),'utf8'),outsideCanary);
+      }finally{
+        try{if(fs.lstatSync(notesDirectory).isSymbolicLink())fs.unlinkSync(notesDirectory);}catch{}
+        if(fs.existsSync(heldNotesDirectory)&&!fs.existsSync(notesDirectory))fs.renameSync(heldNotesDirectory,notesDirectory);
+      }
+    }
+    assert.equal(fs.readFileSync(targetPath,'utf8'),original);
+    assert.equal(fs.readFileSync(path.join(outside,'brief.txt'),'utf8'),outsideCanary);
+
+    const junctionAlias=await postConfiguredTargetRead(url,csrf,{targetId:'linked'});
+    assert.deepEqual(await junctionAlias.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+
+    const extraPath=await postConfiguredTargetRead(url,csrf,{targetId:'brief',path:'notes/brief.txt'});
+    assert.deepEqual(await extraPath.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+
+    fs.renameSync(targetPath,heldTargetPath);
+    fs.linkSync(path.join(outside,'brief.txt'),targetPath);
+    assert.equal(fs.statSync(targetPath).nlink,2,'the replacement path must be a hard-link alias');
+    const replaced=await postConfiguredTargetRead(url,csrf,{targetId:'brief'});
+    assert.deepEqual(await replaced.json(),{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+    assert.equal(fs.readFileSync(heldTargetPath,'utf8'),original);
+    assert.equal(fs.readFileSync(targetPath,'utf8'),outsideCanary);
+    assert.equal(fs.readFileSync(path.join(outside,'brief.txt'),'utf8'),outsideCanary);
+    assert.equal(JSON.stringify(body).includes(outsideCanary),false);
   }finally{
     if(child.exitCode===null&&child.signalCode===null){
       child.kill();
       await new Promise<void>(resolve=>child.once('exit',()=>resolve()));
     }
     fs.rmSync(workspace,{recursive:true,force:true});
+    fs.rmSync(outside,{recursive:true,force:true});
   }
 });

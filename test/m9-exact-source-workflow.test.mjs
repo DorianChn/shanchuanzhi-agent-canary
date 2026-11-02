@@ -35,15 +35,25 @@ function runMergeParentSelector(parents, overrides = {}) {
 test('the manifest pins exactly eight immutable module commits and a separate historical M8 checkout', () => {
   const validated = validateExactSourceManifest(manifest);
   assert.deepEqual(Object.keys(validated.modules).sort(), exactModuleNames);
-  assert.equal(validated.modules.M2.pullRequest, 110);
-  assert.equal(validated.modules.M6.pullRequest, 111);
-  assert.equal(validated.modules.M8.pullRequest, 40);
+  assert.deepEqual(Object.fromEntries(exactModuleNames.map((name) => [name, {
+    pullRequest: validated.modules[name].pullRequest,
+    sha: validated.modules[name].sha,
+  }])), {
+    M1: { pullRequest: 133, sha: '42d362a9a1f4f1972400f2d3414d77982b0fb4e6' },
+    M2: { pullRequest: 110, sha: '941fd22d5e43e1de91a76b8c73006e57a4c15496' },
+    M3: { pullRequest: 120, sha: '6830cf8bb883592bb9438cd86ed36d9d48e95e4e' },
+    M4: { pullRequest: 121, sha: '96de861cafdce3105c5f2412b3f5a431a378dfb7' },
+    M5: { pullRequest: 122, sha: '51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7' },
+    M6: { pullRequest: 123, sha: '9a414228f49806b46c5cd9cd2539a464e80edb44' },
+    M7: { pullRequest: 128, sha: 'f9636b52c33761d38e15b2c3bd573724f0e8a8d6' },
+    M8: { pullRequest: 129, sha: '75f22da5af43ceae612a2cc40f001b2e8c6339ed' },
+  });
   assert.notEqual(validated.historical.sha, validated.modules.M8.sha);
   assert.equal(validated.review.status, 'ACCEPT');
   assert.equal(validated.review.targetSha, manifest.modules.M8.sha);
   assert.equal(validated.review.reviewedSha, manifest.modules.M8.sha);
-  assert.equal(validated.review.commentId, '6387136527');
-  assert.equal(validated.review.candidateLifecycleBlobSha, 'd1705c204ef3f511ee4828e90b35731b36f92238');
+  assert.equal(validated.review.commentId, '6571870339');
+  assert.equal(validated.review.candidateLifecycleBlobSha, '2c7d5808022edec755e6ba200a069aa8e5816bb1');
   assert.equal(validated.review.m6VerifierTestBlobSha, '2e9b0c00c853193ea50eaecf1209747e8f64affe');
 });
 
@@ -74,7 +84,7 @@ test('a module PR only composes when PR number, stable branch, and exact head SH
   }
 });
 
-test('M6 follow-up PR #111 uses its exact source and rejects historical PR #100', () => {
+test('M6 follow-up PR #123 uses its exact source and rejects historical PR #100', () => {
   const source = manifest.modules.M6;
   assert.throws(() => validateExactSourceManifest(manifest, {
     eventName: 'pull_request',
@@ -188,6 +198,18 @@ test('module PR selection rejects an API commit response for a different test-me
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /does not match the immutable test-merge SHA/);
+});
+
+test('M6 exact-source lifecycle regressions install and build the pinned checkout before execution', () => {
+  const installIndex = workflow.indexOf('name: Install M6 exact-source dependencies');
+  const buildIndex = workflow.indexOf('name: Build M6 exact-source runtime');
+  const bundleTestIndex = workflow.indexOf('name: Run M6 exact-source bundle verification regression');
+  const lifecycleTestIndex = workflow.indexOf('name: Run M6 exact-source Auto E4 lifecycle regression');
+  assert.ok(installIndex >= 0 && buildIndex > installIndex, 'M6 dependencies are installed before build');
+  assert.ok(bundleTestIndex > buildIndex && lifecycleTestIndex > bundleTestIndex, 'M6 regressions run after the exact source build');
+  const setup = workflow.slice(installIndex, bundleTestIndex);
+  assert.match(setup, /working-directory: module-sources\/m6[\s\S]*?run: npm ci/);
+  assert.match(setup, /working-directory: module-sources\/m6[\s\S]*?run: npm run build/);
 });
 
 test('M6 exact-current-head acceptance is a final fail-closed gate after all composition assertions', () => {

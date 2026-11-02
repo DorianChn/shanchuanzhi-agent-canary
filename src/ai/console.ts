@@ -17,10 +17,12 @@ import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgen
 import {createRuntimeDemo} from '../runtime/demo.js';
 import type {AgentGuard} from '../containment.js';
 import type {EvidenceRecorder} from '../runtime/evidence.js';
+import type {GatewayFileIdentity,GatewayWorkspaceIdentity} from '../runtime/gateway.js';
 import {createProtectedHostAdapter,type ProtectedHostAdapter,type PublicM2Facade,type PublicM2HostAdapter,type ProtectedHostDependencies} from '../codex-connection-mcp.js';
 
 const protectedReadRoute='/api/security-center/protected-read';
 const configuredTargetReadRoute='/api/security-center/target-read';
+const configuredTargetReadinessRoute='/api/security-center/configured-target-readiness';
 const configuredTargetReadScope='M3_CONFIGURED_TARGET_READ';
 const configuredTargetIdPattern=/^[a-z][a-z0-9_-]{0,62}$/;
 const protectedReadFile='agent-canary-public.txt';
@@ -35,7 +37,7 @@ type ProtectedReadGateway={
   evidence?:()=>unknown[];
   close:()=>Promise<void>;
 };
-type ProtectedReadGatewayFactory=(options:{agentId:string;guard:AgentGuard;workspaceRoot:string;files:readonly {path:string}[];evidence:EvidenceRecorder})=>ProtectedReadGateway;
+type ProtectedReadGatewayFactory=(options:{agentId:string;guard:AgentGuard;workspaceRoot:string;expectedWorkspaceIdentity?:GatewayWorkspaceIdentity;files:readonly {path:string;expectedIdentity?:GatewayFileIdentity}[];evidence:EvidenceRecorder})=>ProtectedReadGateway;
 type ProtectedReadDependencies={
   createGuard:(options:{sessionId:string;alert:boolean})=>AgentGuard;
   createEvidenceRecorder:()=>EvidenceRecorder;
@@ -46,9 +48,9 @@ type ProtectedReadDependencies={
 export type SecurityCenterProtectedReadDependencies=()=>Promise<ProtectedReadDependencies>;
 
 async function loadDefaultProtectedReadDependencies():Promise<ProtectedReadDependencies>{
-  // These are package self-references to the public M1 Gateway, M5 policy
-  // router, and M2 facade. Keep them runtime-resolved: this M3-only checkout
-  // does not yet export the M5/M2 subpaths, while integration adds them.
+  // Resolve the exact built package exports for the M1 Gateway, M5 policy
+  // router, and M2 facade. M3-only builds without these exports fail closed
+  // before registering targets or creating a protected-read host.
   const sdkSpecifier:string='@dorianchn/agent-canary/sdk';
   const policyRouterSpecifier:string='@dorianchn/agent-canary/policy-router';
   const adapterSpecifier:string='@dorianchn/agent-canary/gateway-adapter';
@@ -302,6 +304,22 @@ function configuredTargetEnvelope(status:'ALLOW'|'DENY'|'UNKNOWN'){
   return{scope:configuredTargetReadScope,status};
 }
 
+function configuredTargetReadiness(runtime:ConfiguredTargetRuntime,operatorCode?:string){
+  const targets=[...runtime.configuredIds].sort().map(targetId=>({
+    targetId,
+    bindingStatus:runtime.bindings.has(targetId)?'BOUND':runtime.blockedIds.has(targetId)?'BLOCKED':'UNKNOWN',
+  }));
+  const configured=targets.length>0,bound=targets.some(target=>target.bindingStatus==='BOUND');
+  const configurationStatus=configured?'CONFIGURED':'NOT_CONFIGURED';
+  const bindingStatus=!configured?'UNAVAILABLE':bound?'BOUND':'BLOCKED';
+  const actionReadiness=!configured?'UNAVAILABLE':bound&&operatorCode?'READY':'BLOCKED';
+  return{
+    scope:'M3_CONFIGURED_TARGET_READINESS',schemaVersion:1,generatedAt:new Date().toISOString(),
+    configurationStatus,bindingStatus,actionReadiness,
+    operatorAuthStatus:operatorCode?'CONFIGURED':'NOT_CONFIGURED',targets,
+  };
+}
+
 function isConfiguredTargetPath(value:string):boolean{
   return value.length>0&&!value.includes('\\')&&!value.includes('\0')&&!value.includes(':')&&
     !path.isAbsolute(value)&&!path.win32.isAbsolute(value)&&!path.posix.isAbsolute(value)&&
@@ -331,13 +349,14 @@ function readConfiguredTargets(value:unknown):{configuredIds:Set<string>;blocked
   return{configuredIds,blockedIds,targets:targets.filter(target=>!blockedIds.has(target.id))};
 }
 
-function targetFileIsInitiallySafe(root:string,relativePath:string):boolean{
+function targetFileIsInitiallySafe(root:string,relativePath:string):GatewayFileIdentity|undefined{
   try{
     const absolute=path.resolve(root,relativePath),relative=path.relative(root,absolute);
-    if(relative===''||relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative))return false;
-    const stat=fs.lstatSync(absolute);
-    return fs.realpathSync.native(absolute)===absolute&&stat.isFile()&&!stat.isSymbolicLink()&&stat.nlink===1&&stat.size<=65_536;
-  }catch{return false;}
+    if(relative===''||relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative))return undefined;
+    const stat=fs.lstatSync(absolute,{bigint:true});
+    if(fs.realpathSync.native(absolute)!==absolute||!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1n||stat.size>65_536n)return undefined;
+    return Object.freeze({dev:stat.dev.toString(),ino:stat.ino.toString(),birthtimeNs:stat.birthtimeNs.toString(),ctimeNs:stat.ctimeNs.toString(),mtimeNs:stat.mtimeNs.toString(),size:stat.size.toString()});
+  }catch{return undefined;}
 }
 
 async function createConfiguredTargetRuntime(
@@ -350,20 +369,23 @@ async function createConfiguredTargetRuntime(
   if(!configuredTargets?.length||parsed.targets.length===0)return runtime;
   let gateway:ProtectedReadGateway|undefined;
   try{
-    const candidateRoot=path.resolve(workspaceRoot??process.cwd()),root=fs.realpathSync.native(candidateRoot),rootStat=fs.lstatSync(root);
+    const candidateRoot=path.resolve(workspaceRoot??process.cwd()),root=fs.realpathSync.native(candidateRoot),rootStat=fs.lstatSync(root,{bigint:true});
     if(!rootStat.isDirectory()||rootStat.isSymbolicLink()){
       for(const target of parsed.targets)runtime.blockedIds.add(target.id);
       return runtime;
     }
+    const expectedWorkspaceIdentity:GatewayWorkspaceIdentity=Object.freeze({path:root,dev:rootStat.dev.toString(),ino:rootStat.ino.toString(),birthtimeNs:rootStat.birthtimeNs.toString()});
+    const targetIdentities=new Map<string,GatewayFileIdentity>();
     const filesystemSafeTargets=parsed.targets.filter(target=>{
-      const safe=targetFileIsInitiallySafe(root,target.relativePath);if(!safe)runtime.blockedIds.add(target.id);return safe;
+      const identity=targetFileIsInitiallySafe(root,target.relativePath);if(!identity){runtime.blockedIds.add(target.id);return false;}
+      targetIdentities.set(target.id,identity);return true;
     });
     if(filesystemSafeTargets.length===0)return runtime;
     const dependencies=await loadDependencies();
     const guard=dependencies.createGuard({sessionId:'console-target-'+randomBytes(12).toString('hex'),alert:false});
     gateway=dependencies.createGateway({
-      agentId:'agent-canary-console-targets',guard,workspaceRoot:root,
-      files:filesystemSafeTargets.map(target=>({path:target.relativePath})),
+      agentId:'agent-canary-console-targets',guard,workspaceRoot:root,expectedWorkspaceIdentity,
+      files:filesystemSafeTargets.map(target=>({path:target.relativePath,expectedIdentity:targetIdentities.get(target.id)!})),
       evidence:dependencies.createEvidenceRecorder(),
     });
     runtime.gateway=gateway;
@@ -575,6 +597,10 @@ export async function startAIConsole(options: {
         res.end(CONSOLE_PAGE.replace('<style>', '<style nonce="' + csrf + '">').replace('<script>', '<script nonce="' + csrf + '">').replace('__CSRF__', csrf)); return;
       }
       if (req.headers['x-canary-csrf'] !== csrf) { reply(configuredTargetReadAction?configuredTargetEnvelope('DENY'):protectedReadAction?protectedReadEnvelope('UNKNOWN','REQUEST_AUTH_REQUIRED',false):{ error: 'AI_CONSOLE_CSRF_REJECTED' }, 403); return; }
+      if(req.url===configuredTargetReadinessRoute){
+        if(req.method!=='GET'){reply({error:'METHOD_NOT_ALLOWED'},405);return;}
+        reply(configuredTargetReadiness(configuredTargetRuntime,operatorCode));return;
+      }
       if (req.method === 'GET' && req.url === '/api/state') {
         const events = readEvents(options.eventsFile, 100).map(e => JSON.parse(JSON.stringify(e), (_k, v) => typeof v === 'string' ? redactAnalysisText(v, secrets) : v));
         let experiments: unknown = '尚无保存的模型实验结果。';
@@ -697,5 +723,5 @@ export async function startAIConsole(options: {
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('AI_CONSOLE_LISTEN_FAILED');
   url = 'http://127.0.0.1:' + address.port;
-  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); try{await configuredTargetRuntime.close();}finally{sandbox.close();await runtime3.close();} } };
+  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); try{await configuredTargetRuntime.close();}finally{try{await sandbox.close();}finally{await runtime3.close();}} } };
 }

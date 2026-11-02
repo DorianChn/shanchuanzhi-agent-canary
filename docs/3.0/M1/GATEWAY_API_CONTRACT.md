@@ -97,11 +97,39 @@ the Gateway cannot force-stop a callback that ignores it or roll back external
 effects already performed by that callback. This contract does not claim to
 protect native shell, file, or network operations that bypass the Gateway.
 
-## Held-file read identity checks
+## Held-file and workspace identity checks
 
-Gateway file resources are opened once during construction. The constructor
-checks the configured path and compares its `lstat` identity with the opened
-descriptor's `fstat` identity before retaining the descriptor. Capability bind
+Before asynchronous adapter loading, a trusted host may capture the canonical
+workspace root and its directory identity, then provide
+`GatewayOptions.expectedWorkspaceIdentity`. M1 requires the resolved root path
+to remain that exact canonical path and compares its BigInt directory identity
+before registering any file. This rejects a workspace directory moved behind a
+new symlink or junction even when the selected child file keeps the same file
+identity.
+
+Gateway converts both slash styles to the same relative-path form before path
+validation and protected-path classification. M1 stores that classification on
+the registered resource and reuses it for dispatch and capability checks, so a
+Windows-style path cannot receive a weaker decision than its slash-normalized
+equivalent. The regression `gateway applies sensitive-path checks after
+Windows separator normalization` verifies that credential-pattern targets are
+denied before content is returned and before an M2 read capability is issued.
+Non-decoy protected targets are stored as deny-only entries before target-path
+resolution, stat, or open. Dispatch denies them before touching the target
+path. Only a private in-memory synthetic-decoy capability may use a
+sensitive-looking path; caller-supplied labels do not grant that exception.
+
+Disk-backed Gateway file resources are opened once during construction. A trusted host may
+provide `GatewayFile.expectedIdentity`, a decimal-string snapshot captured when
+the host authorizes a fixed target. The constructor validates that snapshot and
+compares it with the target's BigInt `lstat` identity before opening the path,
+then compares it again with the opened descriptor's `fstat` identity before
+reading or hashing content and retaining the descriptor. This carries a host's
+earlier target binding across asynchronous dependency loading; if the path was
+replaced in between, construction fails closed before opening the replacement.
+When no expected identity is supplied, the constructor still compares the
+configured path's `lstat` identity with the opened descriptor's `fstat` identity.
+Capability bind
 and verification check the exact registered path, link count, resolved path,
 and held descriptor identity. The serialized file read repeats those checks
 immediately before I/O and after the read. File bytes are read only from the
@@ -112,14 +140,28 @@ are not returned.
 
 These checks do not create an OS-wide atomic transaction between pathname
 validation and reading. Node.js on Windows does not expose `O_NOFOLLOW`
-(`fs.constants.O_NOFOLLOW` is undefined in the tested Node 22.23.1 runtime), so
-the open flag is omitted there; the identity checks and held-descriptor read
-remain in force. A path change that is introduced and reverted entirely between
-the checks is not reported as an atomic pathname revocation. The Windows
-junction regression replaces a workspace directory at the `readSync` boundary
-and verifies that the call fails, returns no content, and leaves the outside
-fixture SHA-256 unchanged. It does not prove behavior for every filesystem or
-claim general kernel-level path locking.
+(`fs.constants.O_NOFOLLOW` is undefined in the tested Node 22.23.1 and 24.22.1
+runtimes), so the open flag is omitted there; the identity checks and
+held-descriptor read remain in force. A path change that is introduced and
+reverted entirely between the checks is not reported as an atomic pathname
+revocation. The Windows junction regression replaces a workspace directory at
+the `readSync` boundary and verifies that the call fails, returns no content,
+and leaves the outside fixture SHA-256 unchanged. It does not prove behavior
+for every filesystem or claim general kernel-level path locking. The
+[Node.js Windows flag list](https://nodejs.org/api/fs.html#file-open-constants)
+does not include `O_NOFOLLOW` or `O_SYMLINK`.
+
+Synthetic decoys are not disk-backed Gateway resources. Their opaque
+HoneypotRuntime capability carries the fixed synthetic content in memory, so
+M1 does not resolve, stat, open, or read the corresponding sensitive-looking
+pathname. Replacing the decoy file on disk cannot change the returned content.
+
+`expectedWorkspaceIdentity` and `expectedIdentity` are host-to-Gateway
+consistency checks, not unforgeable OS capabilities. They assume the trusted
+caller captures the expected root and file identities for the resource it
+authorized. They detect replacements observable at registration and do not
+claim to prevent a same-privilege actor from changing and restoring a pathname
+entirely between checks.
 
 ## Contract regression coverage
 
