@@ -43,10 +43,13 @@ infer the development candidate's path behavior from that tag.
 
 The current `feature/agent-canary-3.0` candidate opens registered workspace files
 component-by-component relative to a held workspace handle, rejects symlink or
-reparse-point components, and retains the opened file handle for the read. It
-checks that the ordinary read descriptor names the same file object before
-reading, then reads only through that retained descriptor. These controls cover
-the registered Gateway file-read path and its configured-target Console route.
+reparse-point components and mounted child filesystems, and retains the opened
+file handle for the read. Linux compares kernel mount IDs for each opened
+component through `/proc/self/fdinfo` and fails closed when that identity is
+unavailable; other supported POSIX platforms reject device changes. It checks
+that the ordinary read descriptor names the same file object before reading,
+then reads only through that retained descriptor. These controls cover the
+registered Gateway file-read path and its configured-target Console route.
 Protected-looking paths are deny-only. File writes fail closed, including when
 a legacy descriptor sets `writable: true`; no safe write primitive is currently
 shipped.
