@@ -92,3 +92,9 @@ This exact-head owner decision accepts only adapter-to-M1 API compatibility. It 
 ### Limits
 
 This is a bounded source-level owner disposition, not an independent review or installed-product certification. The fixtures are synthetic even when the real product route and M1/M2/M5 code are exercised. No test proves that every OS/filesystem resolves paths atomically, prevents change-and-revert races, or protects native Shell and unregistered host tools. No real secret exposure is claimed. Independent product E4 and clean Windows installer lifecycle remain separate acceptance gates. Preserve all current denials and keep Issue #52 open.
+
+## 2026-11-03 M1 secure-path source alignment
+
+PR #149 merged the handle-relative workspace traversal implementation. Its exact head `5eaf323b4188dc4228eadd099d2e27af3e61ae79` and merge commit `0831ed4979ae4d9f4c6698296726732d427fb7ae` have the same tree `04a73c2701489e00fb2ffb341772c822d65ec2e7`. The M9 manifest and provenance test now pin that M1 source; PR #133's `42d362a9a1f4f1972400f2d3414d77982b0fb4e6` is retained only as the historical source that preceded the path-open fix.
+
+On Windows / Node.js `v24.22.1`, the merged candidate's Gateway and configured-target Console suites passed 87 tests with 4 platform-specific skips and no failures. The tests use temporary synthetic files but exercise the real configured-target route and real junction/hard-link swaps. The updated M9 exact-source composition is still pending its hosted Ubuntu/Windows run. This does not close Issue #52 or establish OS-wide atomicity, native-host protection, independent E4, or clean-VM installation acceptance.
