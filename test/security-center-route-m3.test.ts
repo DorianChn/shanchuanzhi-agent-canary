@@ -930,55 +930,51 @@ test('configured-target Console denies a replacement between its identity check 
 
 test('built-package Console rejects an external junction swap to a protected hardlink before content reads',{skip:process.platform!=='win32'},async()=>{
   const workspace=fs.realpathSync.native(fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-open-')));
-  const movedWorkspace=workspace+'-held',outside=fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-outside-'));
-  const targetPath=path.join(workspace,'notes','summary.txt'),outsideTarget=path.join(outside,'notes','summary.txt'),protectedTarget=path.join(outside,'.ssh','id_rsa');
+  const notesPath=path.join(workspace,'notes'),movedNotes=path.join(workspace,'notes-held'),outside=fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-outside-'));
+  const targetPath=path.join(notesPath,'summary.txt'),outsideNotes=path.join(outside,'notes'),outsideTarget=path.join(outsideNotes,'summary.txt'),protectedTarget=path.join(outside,'.ssh','id_rsa');
   fs.mkdirSync(path.dirname(targetPath),{recursive:true});fs.mkdirSync(path.dirname(outsideTarget),{recursive:true});fs.mkdirSync(path.dirname(protectedTarget),{recursive:true});
   const original='AUTHORIZED_SUMMARY_FIXTURE',secret='PROTECTED_SSH_KEY_CANARY_MUST_NOT_ESCAPE';
   fs.writeFileSync(targetPath,original);fs.writeFileSync(protectedTarget,secret);fs.linkSync(protectedTarget,outsideTarget);
   const protectedHash=createHash('sha256').update(fs.readFileSync(protectedTarget)).digest('hex');
-  const originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalCloseSync=fs.closeSync;
-  let junctionInstalled=false,workspaceRestored=false,targetOpenCalls=0,targetFd:number|undefined,targetFdClosed=false,targetReadCalls=0,swapError='',openedIdentity:{dev:bigint;ino:bigint}|undefined;
+  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+  let junctionInstalled=false,notesRestored=false,targetLstatCalls=0,targetOpenCalls=0,targetFd:number|undefined,targetReadCalls=0,swapError='';
   let console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
-  const swapScript="const fs=require('node:fs');const [mode,root,moved,outside]=process.argv.slice(1);if(mode==='install'){fs.renameSync(root,moved);fs.symlinkSync(outside,root,'junction');process.stdout.write('JUNCTION_INSTALLED');}else if(mode==='restore'){fs.rmdirSync(root);fs.renameSync(moved,root);process.stdout.write('JUNCTION_RESTORED');}else process.exit(2);";
+  const swapScript="const fs=require('node:fs');const [mode,notes,moved,outsideNotes]=process.argv.slice(1);if(mode==='install'){fs.renameSync(notes,moved);fs.symlinkSync(outsideNotes,notes,'junction');process.stdout.write('JUNCTION_INSTALLED');}else if(mode==='restore'){fs.rmdirSync(notes);fs.renameSync(moved,notes);process.stdout.write('JUNCTION_RESTORED');}else process.exit(2);";
   try{
     assert.equal(hasPublicM2GatewayAdapter,true,'the Console must resolve the built M2 package entry');
     assert.equal(hasPublicM5PolicyRouter,true,'the Console must resolve the built M5 package entry');
-    (fs as any).openSync=(candidate:any,...args:any[])=>{
-      if(path.resolve(String(candidate))===path.resolve(targetPath)){
-        targetOpenCalls++;
-        if(targetFd===undefined){
-          let result='';
-          try{result=execFileSync(process.execPath,['-e',swapScript,'install',workspace,movedWorkspace,outside],{encoding:'utf8',windowsHide:true});}
-          catch(error){swapError=String(error);throw error;}
-          assert.equal(result,'JUNCTION_INSTALLED','an independent process must install the workspace junction');
+    (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+      const stat=(originalLstatSync as any)(candidate,...args);
+      if(path.resolve(String(candidate))===path.resolve(targetPath)&&++targetLstatCalls===2){
+        try{
+          const result=execFileSync(process.execPath,['-e',swapScript,'install',notesPath,movedNotes,outsideNotes],{encoding:'utf8',windowsHide:true});
+          assert.equal(result,'JUNCTION_INSTALLED','an independent process must install the child junction after Gateway lstat');
           junctionInstalled=true;
-          let fd:number|undefined;
-          try{
-            fd=originalOpenSync(candidate,...args);targetFd=fd;
-            const opened=fs.fstatSync(fd,{bigint:true});openedIdentity={dev:opened.dev,ino:opened.ino};
-            return fd;
-          }finally{
-            const restored=execFileSync(process.execPath,['-e',swapScript,'restore',workspace,movedWorkspace,outside],{encoding:'utf8',windowsHide:true});
-            workspaceRestored=restored==='JUNCTION_RESTORED'&&fs.existsSync(targetPath)&&!fs.existsSync(movedWorkspace);
-          }
-        }
+        }catch(error){swapError=String(error);throw error;}
       }
-      return originalOpenSync(candidate,...args);
+      return stat;
     };
-    (fs as any).closeSync=(fd:number)=>{if(fd===targetFd)targetFdClosed=true;return(originalCloseSync as any)(fd);};
-    (fs as any).readSync=(fd:number,...args:any[])=>{if(fd===targetFd&&!targetFdClosed)targetReadCalls++;return(originalReadSync as any)(fd,...args);};
+    (fs as any).openSync=(candidate:any,...args:any[])=>{
+      const fd=(originalOpenSync as any)(candidate,...args);
+      if(path.resolve(String(candidate))===path.resolve(targetPath)){targetOpenCalls++;targetFd=fd;}
+      return fd;
+    };
+    (fs as any).readSync=(fd:number,...args:any[])=>{if(fd===targetFd)targetReadCalls++;return(originalReadSync as any)(fd,...args);};
     console=await startAIConsole({
       port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
       securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],
     });
-    (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs as any).closeSync=originalCloseSync;
+    (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+    if(junctionInstalled){
+      const restored=execFileSync(process.execPath,['-e',swapScript,'restore',notesPath,movedNotes,outsideNotes],{encoding:'utf8',windowsHide:true});
+      notesRestored=restored==='JUNCTION_RESTORED'&&fs.existsSync(targetPath)&&!fs.existsSync(movedNotes);
+    }
     const outsideIdentity=fs.statSync(outsideTarget,{bigint:true});
-    assert.equal(junctionInstalled,true,`the external junction must be installed at the M1 open boundary; openCalls=${targetOpenCalls}, swapError=${swapError}`);
-    assert.equal(workspaceRestored,true,'the independent process must restore the original workspace before M1 validates the opened file');
-    assert.equal(targetOpenCalls,1);
-    assert.deepEqual(openedIdentity,{dev:outsideIdentity.dev,ino:outsideIdentity.ino},'M1 opened a transient alias to the protected SSH key and must reject its identity');
-    assert.equal(targetReadCalls,0,'M1 must reject the outside descriptor before reading its content');
-    assert.equal(targetFdClosed,true,'M1 must close the rejected protected-file descriptor before returning UNKNOWN');
+    assert.equal(junctionInstalled,true,`the external junction must be installed after M1 lstat; targetLstatCalls=${targetLstatCalls}, swapError=${swapError}`);
+    assert.equal(notesRestored,true,'the independent process must restore the original parent directory after no-follow rejection');
+    assert.equal(targetOpenCalls,0,'M1 rejects the junction before attempting a path-based file open');
+    assert.equal(outsideIdentity.nlink,2n,'the external fixture is a protected hard link before the attempted read');
+    assert.equal(targetReadCalls,0,'M1 reads no content from the external hard-link target');
     const csrf=await csrfFor(console.url),response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'}),body=await response.json();
     assert.equal(response.status,200);
     assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:'UNKNOWN'});
@@ -990,11 +986,11 @@ test('built-package Console rejects an external junction swap to a protected har
     assert.equal(fs.readFileSync(protectedTarget,'utf8'),secret);
     assert.equal(createHash('sha256').update(fs.readFileSync(protectedTarget)).digest('hex'),protectedHash);
   }finally{
-    (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs as any).closeSync=originalCloseSync;
-    if(fs.existsSync(workspace)){
-      try{if(fs.lstatSync(workspace).isSymbolicLink())fs.rmdirSync(workspace);}catch{}
+    (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+    if(fs.existsSync(notesPath)){
+      try{if(fs.lstatSync(notesPath).isSymbolicLink())fs.rmdirSync(notesPath);}catch{}
     }
-    if(fs.existsSync(movedWorkspace)&&!fs.existsSync(workspace))fs.renameSync(movedWorkspace,workspace);
+    if(fs.existsSync(movedNotes)&&!fs.existsSync(notesPath))fs.renameSync(movedNotes,notesPath);
     await console?.close();fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});
   }
 });
