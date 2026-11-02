@@ -38,4 +38,17 @@ To start the server directly over standard input/output, run:
 node dist/competition.js serve --stdio
 ```
 
+## Configure a protected file target
+
+The console can bind explicit workspace files at process startup. Set `AGENT_CANARY_OPERATOR_CODE` in the current shell environment, then run:
+
+```sh
+npm run build
+node dist/competition.js ai console --workspace-root . --protected-target handbook=README.md
+```
+
+Repeat `--protected-target id=relative-path` for each fixed target. The path must name an existing regular file inside the workspace. Symlinks, junctions, hard links, sensitive paths, and paths outside the workspace are denied. `POST /api/security-center/target-read` accepts only `{"targetId":"handbook"}` and requires the current page's CSRF value plus the `AGENT_CANARY_OPERATOR_CODE` request header. A successful response contains `status: ALLOW` only; it never returns file content.
+
+This is Agent Canary's controlled read path through the M5 OBSERVE router, fixed Gateway adapter, and M1 held-file Gateway. It does not take over native Agent file tools and does not establish independent E4 acceptance or OS-wide atomic TOCTOU guarantees.
+
 For the published npm package and container options, see the [installation section](README.md#install). GitHub Packages authentication can be required; the source build above avoids that registry login.
