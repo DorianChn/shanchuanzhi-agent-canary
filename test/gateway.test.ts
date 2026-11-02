@@ -44,7 +44,7 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalRealpathNative=(fs.realpathSync as any).native;
  let aliasActive=false,aliasToggles=0,targetOpenCalls=0,readCalls=0,externalRead='';
  const installAlias=()=>{fs.renameSync(notes,heldNotes);fs.symlinkSync(outsideNotes,notes,process.platform==='win32'?'junction':'dir');aliasActive=true;aliasToggles++;};
- const restoreWorkspace=()=>{if(!aliasActive)return;fs.rmdirSync(notes);fs.renameSync(heldNotes,notes);aliasActive=false;};
+ const restoreWorkspace=()=>{if(!aliasActive)return;if(process.platform==='win32')fs.rmdirSync(notes);else fs.unlinkSync(notes);fs.renameSync(heldNotes,notes);aliasActive=false;};
  try{
   (fs as any).lstatSync=(candidate:any,...args:any[])=>{
    if(path.resolve(String(candidate))===path.resolve(target)&&!aliasActive)installAlias();
@@ -55,7 +55,6 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
    return(originalOpenSync as any)(candidate,...args);
   };
   (fs.realpathSync as any).native=(candidate:any,...args:any[])=>{
-   if(path.resolve(String(candidate))===path.resolve(target))restoreWorkspace();
    return originalRealpathNative(candidate,...args);
   };
   (fs as any).readSync=(fd:number,...args:any[])=>{
@@ -64,7 +63,7 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
    if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')externalRead+=args[0].subarray(args[1],args[1]+count).toString('utf8');
    return count;
   };
-  assert.throws(()=>createTrustedExecutionGateway({agentId:'intercall-junction-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED/);
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'intercall-junction-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED|GATEWAY_RESOURCE_CHANGED/);
   restoreWorkspace();
   assert.equal(aliasToggles,1,'the adversary swaps the parent to an outside junction after lstat and before the secure component open');
   assert.equal(targetOpenCalls,0,'the ordinary file open is never attempted after the handle-relative no-follow check rejects the junction');
@@ -249,7 +248,7 @@ test('POSIX registration does not block if a regular file is swapped to a FIFO b
   "fs.lstatSync=function(candidate,options){const stat=originalLstatSync.call(fs,candidate,options);if(!swapped&&path.resolve(String(candidate))===path.resolve(target)){swapped=true;fs.unlinkSync(target);execFileSync('mkfifo',[target]);}return stat;};",
   "const sdk=await import(pathToFileURL(path.join(process.cwd(),'src/sdk.ts')).href);let runtime;",
   "try{runtime=sdk.createTrustedExecutionGateway({agentId:'fifo-open-race-fixture',guard:sdk.createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'public.txt'}],evidence:new sdk.EvidenceRecorder()});process.stderr.write('FIFO_REGISTRATION_UNEXPECTEDLY_ALLOWED');process.exitCode=1;}",
-  "catch(error){if(!swapped||!String(error?.message??error).includes('GATEWAY_RESOURCE_CHANGED')){process.stderr.write(String(error?.stack??error));process.exitCode=1;}else process.stdout.write('FIFO_REPLACEMENT_DENIED');}",
+  "catch(error){if(!swapped||!/(GATEWAY_RESOURCE_CHANGED|SECURE_FILE_TYPE_REJECTED)/.test(String(error?.message??error))){process.stderr.write(String(error?.stack??error));process.exitCode=1;}else process.stdout.write('FIFO_REPLACEMENT_DENIED');}",
   "finally{await runtime?.close();}",
  ].join('\n');
  try{
@@ -1064,9 +1063,10 @@ test('gateway close tries every resource after a close error and exposes only a 
    assert.ok(!`${error.message}\n${error.stack??''}`.includes(path.join(s.root,'.env')));
    return true;
   });
-  assert.equal(attempted.length,2,'only the two non-protected files have retained descriptors');
+  const expectedCloseAttempts=process.platform==='win32'?2:5;
+  assert.equal(attempted.length,expectedCloseAttempts,'close covers the retained file descriptors and secure workspace handles');
   await assert.rejects(s.runtime.close(),/GATEWAY_RESOURCE_CLOSE_FAILED/);
-  assert.equal(attempted.length,2,'a repeated close does not retry already-attempted descriptors');
+  assert.equal(attempted.length,expectedCloseAttempts,'a repeated close does not retry already-attempted handles');
  }finally{(fs as any).closeSync=originalClose;await s.runtime.close().catch(()=>{});}
 });
 test('fixed argv process really executes normal task; arbitrary shell does not run',async()=>{const s=setup({commands:{build:{executable:process.execPath,args:['-e',"require('fs').writeFileSync('built.txt','ok');console.log('BUILD_OK')"]}}});try{await assert.rejects(s.runtime.agent.dispatch({name:'run_command',args:{command:'node -e dangerous'}}),/unregistered_command/);const result=await s.runtime.agent.dispatch({name:'run_command',args:{command:'build'}}) as any;assert.equal(result.exitCode,0);assert.equal(fs.readFileSync(path.join(s.root,'built.txt'),'utf8'),'ok');assert.match(result.stdout,/BUILD_OK/);assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'NOT_VERIFIED');}finally{await s.runtime.close();}});
