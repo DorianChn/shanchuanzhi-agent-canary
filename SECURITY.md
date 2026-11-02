@@ -38,12 +38,16 @@ patterns alone.
 - Calls made directly by native host tools, arbitrary Shell, unregistered
   callbacks, or other processes bypass the Gateway. Hook protection applies
   only when the hook is installed, enabled, and matches the host operation.
-- File registration checks workspace containment, common aliases, and held
-  file identity. Revalidation narrows path-replacement races, but it is not an
-  atomic operating-system path-resolution guarantee. Do not describe Agent
-  Canary as preventing every TOCTOU race or protecting every file on the host.
-  File reads use the already-open descriptor; file writes remain disabled so a
-  path alias cannot turn a Gateway write into an unauthorized external effect.
+- Registered file paths are resolved component by component relative to a held
+  workspace directory handle with no-follow OS opens on Windows, Linux, and
+  macOS; Linux also rejects mount crossings. Registration compares that handle
+  with the file descriptor used for reads, and reads recheck the held and named
+  file identities before returning content. These checks reject observed
+  junction, symlink, and path-replacement races, but they are not an atomic
+  operating-system path-resolution guarantee or a host-wide sandbox. Do not
+  describe Agent Canary as preventing every TOCTOU race or protecting every
+  file on the host. File writes remain disabled until a path-safe write
+  primitive exists.
 - Filename rules cover common credential stores, not every secret format.
   Mark additional confidential resources explicitly and keep the registration
   list under trusted host control.
