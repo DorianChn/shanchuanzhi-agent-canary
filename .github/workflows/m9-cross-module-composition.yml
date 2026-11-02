@@ -565,6 +565,16 @@ jobs:
           }
           node --test test/packaged-owner-consumer.test.mjs
 
+      - name: Install M6 exact-source dependencies
+        if: always() && steps.source-manifest.outcome == 'success'
+        working-directory: module-sources/m6
+        run: npm ci
+
+      - name: Build M6 exact-source runtime
+        if: always() && steps.source-manifest.outcome == 'success'
+        working-directory: module-sources/m6
+        run: npm run build
+
       - name: Run M6 exact-source bundle verification regression
         if: always() && steps.source-manifest.outcome == 'success'
         working-directory: module-sources/m6
@@ -592,7 +602,7 @@ jobs:
           node --test --test-name-pattern="prepare build command carries the same Community ZIP and exact Hook source commit in documented argument order|Windows Hook provenance keeps LF checkout bytes equal to the tracked blob" test/windows-packaging.test.mjs
           node --test --test-name-pattern="co-located E4 payload wrapper logs only allowlisted metadata" test/auto-e4.test.mjs
 
-      - name: Run current M8 PR #40 Hook output regression
+      - name: Run current M8 PR #129 Hook output regression
         if: always() && steps.source-manifest.outcome == 'success'
         working-directory: module-sources/m8-candidate
         run: node --test security-lab/claude-native-hook-output.test.mjs

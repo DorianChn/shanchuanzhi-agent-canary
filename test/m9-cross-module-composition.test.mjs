@@ -44,13 +44,13 @@ const mergedSourceProvenance = {
 };
 
 const currentCandidateProvenance = {
-  M1: { ownerHead: '89be11e5f95f2b191880a4fc88f50e15f405121e', ownerTree: '0b89411b706b0624cd10871a1922845a02392aa7', sourceBase: 'f4e728e3b28961dd2559df8cf10707f906d087d6', firstParent: 'f4e728e3b28961dd2559df8cf10707f906d087d6', targetBase: 'f4e728e3b28961dd2559df8cf10707f906d087d6', prHead: '89be11e5f95f2b191880a4fc88f50e15f405121e', prTree: '0b89411b706b0624cd10871a1922845a02392aa7' },
-  M6: { ownerHead: '681a6221c4e5e327d1a6e5eb8c0bf6f4d5e59c18', ownerTree: 'd18b254f6393b8b287c6d4715e7e07c51ccd01c7', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: '6eb6f528b13f2bc51924adb3d3d1b94a0fde305d', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: '2a88d8b7e099ce865c9900bb9313d4b8bdef8299', prTree: 'd64ab5c58b20995034ed33bf5aab8bdbfe03ca12' },
+  M1: { ownerHead: '89be11e5f95f2b191880a4fc88f50e15f405121e', ownerTree: '0b89411b706b0624cd10871a1922845a02392aa7', sourceBase: 'f4e728e3b28961dd2559df8cf10707f906d087d6', firstParent: 'f830b1c4feb766849c9b67251eabf3ef9270c3ec', targetBase: '34fbe6d35d4dea30795525bf538f97194758c6c4', prHead: '42d362a9a1f4f1972400f2d3414d77982b0fb4e6', prTree: '261ef1f5f5ddc70985286fce0980f87223641cf5' },
+  M6: { ownerHead: 'fae72ea3d0c4498dfddb7d04421e41b87179895b', ownerTree: 'adce276fd07fbe21743ce9a448f3978c84d3e0fc', sourceBase: '2a88d8b7e099ce865c9900bb9313d4b8bdef8299', prHead: '9a414228f49806b46c5cd9cd2539a464e80edb44', prTree: 'aef150be270549184b38bf1dcb0c20c1f6692ca8' },
   M2: { ownerHead: '941fd22d5e43e1de91a76b8c73006e57a4c15496', ownerTree: '969fd968d14c04e35648281924028f6702a65a2a', sourceBase: '7736ec936d575c86a347058cc60107b2ae31109d', firstParent: '7736ec936d575c86a347058cc60107b2ae31109d', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: '941fd22d5e43e1de91a76b8c73006e57a4c15496', prTree: '969fd968d14c04e35648281924028f6702a65a2a' },
-  M3: { ownerHead: 'ea9754c8b7275bf508e5338b3ddc11edc7d6a106', ownerTree: '76830b2068cc74dd7c9976141a112cf0a1c7f51c', sourceBase: '416f1ba4848d5be4011ac72d42066d4c72b42d49', prHead: '0d61b434ba2ac81e313b82432f4ac00afedd3cbc', prTree: 'e9674f6c6222e7f496ad2aaf641f0083b61b8271' },
-  M4: { ownerHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', ownerTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c', prHead: '892d3290338fe811da127f8f51ab91de0b9fc18b', prTree: 'd61bfb606f00ce3b43b7ea3f64b8b670a286929c' },
-  M5: { ownerHead: '2e547e8c730b8facf745f33826ec807b1401f6e8', ownerTree: '7ebca98c93ca9ceb48735a8d83508b6f0824f206', prHead: 'cca42cd1762f995e92454d55ffa5e63951e39144', prTree: 'f090b8a59b56abc33ccbd705eee9cb707ba15703' },
-  M7: { ownerHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', ownerTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: 'c03176fbce3741bd756bfdad4576ff807572134b', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', prTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228' },
+  M3: { ownerHead: '2567d51a67b9e934088f7915f27a06cc772a4360', ownerTree: 'c07e189f8ea88c4b131ae0d07a8a766d81e9f996', sourceBase: '0d61b434ba2ac81e313b82432f4ac00afedd3cbc', prHead: '6830cf8bb883592bb9438cd86ed36d9d48e95e4e', prTree: 'c19e08036e5475135289355c4799a3ec89b07b86' },
+  M4: { ownerHead: '5d975b7927a66be26a8bfc3740530bb27a703f2c', ownerTree: '657cef4dbb0e47065a6e1edeef7424a17834142d', prHead: '96de861cafdce3105c5f2412b3f5a431a378dfb7', prTree: 'd08d8b1ceeb2d76c83597286fdef8ca652d0ee19' },
+  M5: { ownerHead: 'dde81d6a989ba39aa0d57dfeed0c9283f4459682', ownerTree: '643416f94b419c24c869fdc74e13de1f636a23a1', prHead: '51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7', prTree: '1cd838d02e1bec8f4b674aaae8161a820729abce' },
+  M7: { ownerHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', ownerTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: '3b60ce0cc0f0c29929e82363ff05be61ecfeda9b', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: 'f9636b52c33761d38e15b2c3bd573724f0e8a8d6', prTree: '57d61ea397d2e7928a543a9d18b688a3b0130edd' },
 };
 
 const historicalCandidateProvenance = {
@@ -729,7 +729,7 @@ test('historical M8 source matches its exact M1-approved Hook blob', () => {
   );
 });
 
-test('current M8 PR #40 candidate keeps its lifecycle fingerprint and sanitizes Hook output', () => {
+test('current M8 PR #129 candidate matches the manifest fingerprint and reports owner review status honestly', () => {
   const candidateSha = pinnedSourceShas.M8_CANDIDATE;
   assert.equal(candidateSha, m6M8CurrentLifecycleReview.sha, 'the M6 disposition record must target the manifest-pinned exact M8 head');
   assert.equal(process.env.M1_M8_HOOK_REVIEW_STATUS, m1M8HookReview.status);
@@ -746,7 +746,7 @@ test('current M8 PR #40 candidate keeps its lifecycle fingerprint and sanitizes 
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_COMMENT, m6M8CurrentLifecycleReview.comment);
   assert.equal(process.env.M6_M8_CURRENT_LIFECYCLE_REVIEW_ISSUE, m6M8CurrentLifecycleReview.issue);
   assertAncestor('M8_CANDIDATE', m1M8HookReview.sourceSha, candidateSha, 'M1-reviewed M8 Hook source');
-  assertAncestor('M8_CANDIDATE', m6M8ReviewedSourceSha, candidateSha, 'M6-reviewed M8 source in the current PR #40 candidate');
+  assertAncestor('M8_CANDIDATE', m6M8ReviewedSourceSha, candidateSha, 'M6-reviewed M8 source in the current PR #129 candidate');
   assert.equal(
     readBlobIdAt('M8_CANDIDATE', m6M8ReviewedSourceSha, 'test/auto-e4.test.mjs'),
     m8ReviewedE4TestBlob,
@@ -758,11 +758,22 @@ test('current M8 PR #40 candidate keeps its lifecycle fingerprint and sanitizes 
     m6M8CurrentLifecycleReview.blob,
     'the current M8 candidate lifecycle-file blob must match the manifest fingerprint',
   );
-  assert.equal(
-    readTrackedBlobId('M6', 'test/auto-e4.test.mjs'),
-    m6M8CurrentLifecycleReview.blob,
-    'the exact M6 candidate must retain the lifecycle test blob covered by the M6 owner disposition',
-  );
+  const m6LifecycleBlob = readTrackedBlobId('M6', 'test/auto-e4.test.mjs');
+  if (m6M8CurrentLifecycleReview.status === 'NOT_VERIFIED') {
+    assert.equal(m6M8CurrentLifecycleReview.reviewedSha, '', 'an unverified M6 review must not imply a reviewed source SHA');
+    assert.equal(m6M8CurrentLifecycleReview.comment, '', 'an unverified M6 review must not imply an owner comment');
+    assert.notEqual(
+      m6LifecycleBlob,
+      m6M8CurrentLifecycleReview.blob,
+      'the current M6/M8 lifecycle test fingerprint mismatch must remain visible while the owner disposition is NOT_VERIFIED',
+    );
+  } else {
+    assert.equal(
+      m6LifecycleBlob,
+      m6M8CurrentLifecycleReview.blob,
+      'an accepted exact-head disposition must bind the M6 candidate to the reviewed lifecycle test blob',
+    );
+  }
   assert.equal(
     readTrackedBlobId('M6', 'security-lab/e4/verify-bundle.test.mjs'),
     m6M8CurrentLifecycleReview.m6VerifierBlob,
@@ -954,7 +965,7 @@ test('M3 ordinary CLI passes only after its fixed protected-read and replacement
   );
 });
 
-test('M3 snapshot-only status route feeds the exact M4 read-only consumer without protected-read work', async () => {
+test('M3 status GET stays passive while exact M4 page exposes an explicit fixed-probe action', async () => {
   const isolatedTemp = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-m4-status-route-'));
   const priorEnv = Object.fromEntries(['AGENT_CANARY_HOME', 'TEMP', 'TMP', 'TMPDIR'].map((key) => [key, process.env[key]]));
   const isolatedHome = path.join(isolatedTemp, 'home');
@@ -1049,7 +1060,11 @@ test('M3 snapshot-only status route feeds the exact M4 read-only consumer withou
       .map((match) => match[1]).join('\n');
     assert.match(clientScripts, /securityCenterAdapter\.isValidSecurityCenterStatusPayload\(data\)/);
     assert.match(clientScripts, /\['securityCenter','security-center'\]/);
-    assert.doesNotMatch(clientScripts, /security-center\/protected-read/i, 'the M4 page must not call the separate fixed-marker POST');
+    assert.match(clientScripts, /getEl\('runProtectedReadProbe'\)\.onclick=async\(\)=>/, 'the M4 fixed-probe POST must require an explicit button click');
+    assert.match(clientScripts, /api\('security-center\/protected-read',\{\},undefined,\{'x-canary-operator-code':code\}\)/, 'the fixed-probe request must send an empty body and operator authorization');
+    assert.match(clientScripts, /adaptFixedProtectedReadProbe/, 'the UI must validate the exact probe scope before displaying PASS');
+    assert.match(clientScripts, /codeInput\.value=''/, 'the one-time operator code must be cleared after the request');
+    assert.match(m4Page.CONSOLE_PAGE, /id="protectedReadProbeCode" type="password"/);
     assert.match(m4Page.CONSOLE_PAGE, /id="securityCoverage"/);
     assert.match(m4Page.CONSOLE_PAGE, /NOT_VERIFIED · 未验证/);
 

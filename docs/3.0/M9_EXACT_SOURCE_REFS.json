@@ -4,9 +4,9 @@
   "targetBaseRef": "feature/agent-canary-3.0",
   "modules": {
     "M1": {
-      "pullRequest": 114,
+      "pullRequest": 133,
       "branchRef": "feature/ac3-security-core",
-      "sha": "89be11e5f95f2b191880a4fc88f50e15f405121e"
+      "sha": "42d362a9a1f4f1972400f2d3414d77982b0fb4e6"
     },
     "M2": {
       "pullRequest": 110,
@@ -14,34 +14,34 @@
       "sha": "941fd22d5e43e1de91a76b8c73006e57a4c15496"
     },
     "M3": {
-      "pullRequest": 107,
+      "pullRequest": 120,
       "branchRef": "feature/ac3-agent-onboarding",
-      "sha": "0d61b434ba2ac81e313b82432f4ac00afedd3cbc"
+      "sha": "6830cf8bb883592bb9438cd86ed36d9d48e95e4e"
     },
     "M4": {
-      "pullRequest": 98,
+      "pullRequest": 121,
       "branchRef": "feature/ac3-desktop-security-center",
-      "sha": "892d3290338fe811da127f8f51ab91de0b9fc18b"
+      "sha": "96de861cafdce3105c5f2412b3f5a431a378dfb7"
     },
     "M5": {
-      "pullRequest": 94,
+      "pullRequest": 122,
       "branchRef": "feature/ac3-policy-audit",
-      "sha": "cca42cd1762f995e92454d55ffa5e63951e39144"
+      "sha": "51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7"
     },
     "M6": {
-      "pullRequest": 111,
+      "pullRequest": 123,
       "branchRef": "feature/ac3-e4-validation-ac3",
-      "sha": "2a88d8b7e099ce865c9900bb9313d4b8bdef8299"
+      "sha": "9a414228f49806b46c5cd9cd2539a464e80edb44"
     },
     "M7": {
-      "pullRequest": 113,
-      "branchRef": "feature/ac3-m7-m8-source-pin",
-      "sha": "bba0f0f89c610f8198660e799de7a652b8ea8e96"
+      "pullRequest": 128,
+      "branchRef": "feature/ac3-reliability-ac3",
+      "sha": "f9636b52c33761d38e15b2c3bd573724f0e8a8d6"
     },
     "M8": {
-      "pullRequest": 40,
+      "pullRequest": 129,
       "branchRef": "feature/ac3-open-source-product",
-      "sha": "1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841"
+      "sha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed"
     }
   },
   "historicalSources": {
@@ -55,10 +55,10 @@
       "issue": 80,
       "scope": "M6 lifecycle disposition for the exact current M8 candidate",
       "status": "ACCEPT",
-      "targetSha": "1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841",
-      "reviewedSha": "1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841",
-      "commentId": "6387136527",
-      "candidateLifecycleBlobSha": "d1705c204ef3f511ee4828e90b35731b36f92238",
+      "targetSha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed",
+      "reviewedSha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed",
+      "commentId": "6571870339",
+      "candidateLifecycleBlobSha": "2c7d5808022edec755e6ba200a069aa8e5816bb1",
       "m6VerifierTestBlobSha": "2e9b0c00c853193ea50eaecf1209747e8f64affe"
     }
   }
