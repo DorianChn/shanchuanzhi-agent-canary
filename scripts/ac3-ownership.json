@@ -19,7 +19,8 @@
     "shanchuanzhi/issue52-protected-read-20261102": "M9",
     "shanchuanzhi/issue52-cli-route-evidence-20261102": "M4",
     "shanchuanzhi/3.0-security-docs-sdk-20261102": "M0",
-    "shanchuanzhi/issue41-launcher-smoke": "M7"
+    "shanchuanzhi/issue41-launcher-smoke": "M7",
+    "shanchuanzhi/e4-unicode-copy-20261102": "M6"
   },
   "sharedPaths": {
     ".gitattributes": [
@@ -202,6 +203,9 @@
         "M7"
       ],
       "branchLocalException": "M7 may add only synthetic canary input/log-exclusion assertions; preserve every fail-closed and interruption assertion; broader fixture or Hook semantics require M1 review"
+    },
+    "security-lab/e4/verify-bundle.test.mjs": {
+      "owner": "M6"
     }
   },
   "publicApiCandidates": [
