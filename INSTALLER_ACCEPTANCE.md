@@ -1,5 +1,21 @@
 # Windows 安装器验收记录（M7）
 
+## 当前审计：2026-10-25
+
+结论：**HOLD / NOT_VERIFIED。** 本轮没有运行 Setup.exe、已安装桌面应用、VMware 或真实模型。下方 2026-10-23 及更早的安装结果均是历史 source SHA 的限定证据。
+
+- 工作区：`agents/M7`，分支 `feature/ac3-reliability-ac3`，起始 HEAD `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`。该 HEAD 没有查询到 PR-triggered Actions run；PR #96 已合并，不能将旧 PR 的绿色结果用于本地后续候选。
+- 当前产品源码 `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`：[CI 40162947429](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40162947429) 为 9/9 成功；[Windows wrapper 40162947358](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40162947358) 的 Ubuntu/Windows wrapper 与 Windows package build 成功，installer-lifecycle **skipped**。
+- 该 run 的 artifact `12587596245` 名称为 `windows-community-build-evidence-b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`，39,147,048 bytes；GitHub 元数据 digest 为 `sha256:d3ad5f642dfc2eeea5c964aaba86c42e304471518018b6b7e71744fb0223fb29`。本轮只读取元数据，没有重新下载、验证内部 Setup.exe/manifest 哈希或解包；此 digest 不是 Setup.exe 哈希。
+- 本地 `packaging/windows/claude-native-hook.mjs` 的 tracked 与 raw worktree Git blob 均为 M1 canonical `b7ed4aba70a597f4f63a05decc6de1b32f67372e`，原字节 SHA-256 为 `ff0bfef67e92c9ee387f78dd617408b63db6a9646566e16ca0f8e02c842c511d`。这是源码字节检查，不代表本轮生成或验证了安装包内部字节。
+- 在已提交 workflow 条件上复现：`pull_request` 被手动专用条件选为 false，断言失败。保留原有的一行工作树修正，使 PR 恒运行、manual dispatch 服从 checkbox；新增回归读取实际 job 条件并检查两种事件，不执行安装器。M8 对这个共享 workflow 变更的新协调确认仍待取得。
+- Windows Node `v22.23.1`：`node --import tsx --test test/reliability.test.mjs packaging/windows/test-worker.mjs` 为 **39 pass / 0 fail / 2 symlink privilege skips**；`node --import tsx --test test/windows-packaging.test.mjs` 为 **25 pass / 1 fail / 1 symlink privilege skip**。唯一失败为旧分支要求 M8 PR head `90fcde0…`，实际为已合并的 `1c94ed4…`；没有删除或跳过该检查。当前产品已有固定 source `24b8651…` 的 ancestry/blob 检查，此旧分支失败不证明产品失败。
+- [M0 只读 VM 清单 6394453501](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41#issuecomment-6394453501) 记录没有可安全定位的已注册 clean Win11 VM：inventory 为空，预期 `D:\AgentCanary-3.0-Win11-VM` 不存在。本轮没有重新探测或预约资源。**标准用户、首次启动、升级/重装、EFS、真实取消/失败回滚仍 NOT_VERIFIED；#41 保持 OPEN。**
+
+本机完整日志保留在 `%TEMP%/m7-audit-20261025-7d170b1d1a794767916d548e38678a28/`，未上传 raw logs。工作树中已有 workflow 与 `.gitignore` 的内容均按原字节保留。
+
+## 2026-10-23 及更早的历史记录
+
 证据刷新：2026-10-23
 历史本机候选复核：2026-10-14
 结论：**HOLD。被测 source SHA 的 NSIS 模板编译、Windows Community 包静态构建/提取，以及 GitHub 托管 Windows runner 中的限界安装、重复目标拒绝检查与卸载 smoke 均通过；干净 Windows 11 VM、标准用户令牌、EFS 和失败回滚仍未验证。**

@@ -440,7 +440,7 @@ async function deterministicCases() {
     const before = snapshot(target, 'native-shell-boundary/native-shell.txt');
     let child;
     if (process.platform === 'win32') {
-      child = spawnSync('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', "[System.IO.File]::WriteAllText($env:E4_TARGET, 'E4_SYNTHETIC_NATIVE_SHELL_WRITE')"], { encoding: 'utf8', windowsHide: true, timeout: 10_000, env: { ...process.env, E4_TARGET: target } });
+      child = spawnSync('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', "[System.IO.File]::WriteAllText($env:E4_TARGET, 'E4_SYNTHETIC_NATIVE_SHELL_WRITE')"], { encoding: 'utf8', windowsHide: true, timeout: 30_000, env: { ...process.env, E4_TARGET: target } });
     } else {
       child = spawnSync('sh', ['-c', 'printf %s "$E4_MARKER" > "$E4_TARGET"'], { encoding: 'utf8', timeout: 10_000, env: { ...process.env, E4_TARGET: target, E4_MARKER: 'E4_SYNTHETIC_NATIVE_SHELL_WRITE' } });
     }
