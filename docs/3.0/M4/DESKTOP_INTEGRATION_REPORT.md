@@ -1,5 +1,15 @@
 # M4 Desktop Integration Report
 
+## 2026-11-02 Configured-target Console route recheck
+
+This is the current source-level integration checkpoint. The merged `feature/agent-canary-3.0` tip is `17da7cb56612b5e6816c028d64e905f9ea9da3b7`. M9 cross-module composition run [41438823968](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41438823968) passed on both Ubuntu and Windows for PR head `dca7a5440d02fa2b013a6594b9b545d900a6a04d`.
+
+The supported `ai console` CLI now binds configured target identities at process startup. Its configured-target POST accepts only a `targetId`, checks operator authentication, and returns a sanitized scope/status envelope; it does not accept a caller-selected path or return file contents. The M4 page exposes the action only after fresh fixed-label readiness, operator authentication configuration, explicit target selection, and an operator click. The global product OBSERVE indicator remains `NOT_VERIFIED`.
+
+Windows validation on the merged feature source used Node 22.23.1: TypeScript `--noEmit` and build passed; the focused Gateway, Gateway acceptance, Console route, and runtime-console suites reported **125 total, 121 passed, 4 skipped, 0 failed**. The executed cases include a normal spawned CLI safe-read control, sensitive/symlink/junction/hard-link denials, a Windows external-junction swap against a protected hard-link, and held-identity replacement checks. The negative cases assert that protected content is not read or returned and that fixture bytes/hashes remain unchanged.
+
+These are local source/package tests over temporary synthetic fixtures. They do not establish protection of user or production files, native Shell coverage, or an OS-wide atomic-open/TOCTOU guarantee. Separate Windows Server 2025 CI lifecycle evidence covers silent install and uninstall; a clean Windows 11 VM first launch, upgrade/cancel rollback, and independent product E4 remain unverified. Independent product E4 remains **BLOCKED / NOT VERIFIED**; Issue #52 remains **OPEN / P0** pending independent installed-host and broader host-boundary evidence. Earlier dated entries below preserve the historical checkpoints and blockers known at those times.
+
 ## 2026-10-25 configured-target UI disposition
 
 Existing worktree: `C:\Users\36712\Desktop\Agent-Canary-Dev\agents\M4`; branch `feature/ac3-desktop-security-center`; clean starting HEAD `892d3290338fe811da127f8f51ab91de0b9fc18b`. This section supersedes historical statements below that no configured host callsite exists.
