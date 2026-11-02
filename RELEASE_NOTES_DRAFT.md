@@ -15,7 +15,7 @@ The repository has source tags for `v3.0.0`, `v3.0.0-competition`, and `v3.0.0-c
 
 ## Current development integration gate
 
-M8 accepts the M7 interface documented in [COMPATIBILITY.md](COMPATIBILITY.md). This resolution integrates baseline e4732d9745bb4fbbebf6896a35b4657ad82abd73; final source SHA, CI and artifacts are not frozen. Do not relabel prior hosted checks for this candidate. Retain installer/clean-VM and independent E4 gates; this document remains a draft.
+M8 accepts the M7 interface documented in [COMPATIBILITY.md](COMPATIBILITY.md). Reviewed M8 source 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841 is merged into feature with passing exact source checks. A future release source/tag and artifact set are not frozen. These checks do not establish package retrieval, installer or E4 acceptance. Retain installer/clean-VM and independent E4 gates; this document remains a draft.
 
 ## Proposed release summary
 
@@ -41,6 +41,8 @@ Do not include a feature merely because it appears on a development branch, in a
 ## Release gate checklist
 
 - [ ] Freeze source and build from the exact source commit.
+- [ ] Resolve/revalidate Gateway decoy-read and explicit follow-up denial in [issue #118](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/118), retaining unchanged-target evidence.
+- [ ] Reconcile CLI entrypoints and packaged guides with the intended channel; see [the M8 audit](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md).
 - [ ] Record artifact SHA-256 values, package contents, and dependency-license inventory.
 - [ ] Run `npm ci`, `npm run build`, `npm test`, `npm run pack:check`, and `node scripts/check-docs.mjs`; retain failures.
 - [ ] Verify install, self-test, uninstall, and repeat-install from the exact public artifact on each claimed platform.

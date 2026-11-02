@@ -35,6 +35,29 @@ canary token found by `guard.inspect()` changes that state synchronously before
 JSONL/webhook/desktop alert delivery starts. In quarantine, every non-allowlisted
 guarded call is blocked; the callback is not invoked.
 
+## 3.0 registered file Gateway boundary
+
+The exact artifact matters. The `v3.0.0` tag predates the current handle-relative
+open implementation and does not contain `src/runtime/secure-file.ts`; do not
+infer the development candidate's path behavior from that tag.
+
+The current `feature/agent-canary-3.0` candidate opens registered workspace files
+component-by-component relative to a held workspace handle, rejects symlink or
+reparse-point components, and retains the opened file handle for the read. It
+checks that the ordinary read descriptor names the same file object before
+reading, then reads only through that retained descriptor. These controls cover
+the registered Gateway file-read path and its configured-target Console route.
+Protected-looking paths are deny-only. File writes fail closed, including when
+a legacy descriptor sets `writable: true`; no safe write primitive is currently
+shipped.
+
+This does not intercept native Shell, arbitrary host callbacks, or tools that
+bypass the Gateway. It is not an operating-system sandbox or a guarantee about
+all filesystems. Race and alias regressions use synthetic fixtures, even when
+they exercise real Windows junctions/hard links and the first-party Console
+route. Issue #52 remains OPEN / P0 / NOT_VERIFIED for broader host and
+OS-level acceptance; independent E4 remains NOT_VERIFIED.
+
 ## Vulnerabilities in scope
 
 - A bypass or defect in a Guard, Router, SDK, or registered Gateway callback that causes a later guarded callback to run after quarantine.
@@ -55,7 +78,7 @@ must never submit credentials or full tool payloads as event metadata.
 
 ## Current host and status boundary
 
-Native Codex Shell remains **UNPROTECTED**. AppContainer evidence covers only tested child-process operations. Current Console status and separately authorized fixed-probe/configured-target reads do not imply general native-host, product-file or OS-atomic protection. M4 consumes status only. Missing/404 Security Center or E4 status is **UNKNOWN**; fixtures are not independent E4 passes. See [COMPATIBILITY.md](COMPATIBILITY.md) and [API contracts](docs/3.0/API_CONTRACTS.md).
+Native Codex Shell remains **UNPROTECTED**. AppContainer evidence covers only tested child-process operations. Current Console status and separately authorized fixed-probe/configured-target reads do not imply general native-host, product-file or OS-atomic protection. M4 displays status and can issue an operator-triggered read for a configured target; it does not accept an arbitrary model-selected path. Missing/404 Security Center or E4 status is **UNKNOWN**; fixtures are not independent E4 passes. See [COMPATIBILITY.md](COMPATIBILITY.md) and [API contracts](docs/3.0/API_CONTRACTS.md).
 
 ## Intended use
 

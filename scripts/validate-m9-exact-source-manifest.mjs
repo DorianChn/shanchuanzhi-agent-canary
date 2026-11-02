@@ -23,9 +23,12 @@ export function validateExactSourceManifest(manifest, event = {}) {
   }
   for (const moduleName of exactModuleNames) {
     const source = modules[moduleName];
+    const stableFeatureBranch = /^feature\/ac3-[a-z0-9-]+$/.test(source?.branchRef ?? '');
+    const mergedM1SecurityFollowup = moduleName === 'M1' && source?.pullRequest === 149 &&
+      source?.branchRef === 'shanchuanzhi/issue52-toctou-race-20261102';
     if (!Number.isInteger(source?.pullRequest) || source.pullRequest < 1 ||
-        !/^feature\/ac3-[a-z0-9-]+$/.test(source?.branchRef ?? '') || !isSha(source?.sha)) {
-      fail(`${moduleName} must name a PR, stable feature/ac3 branch, and immutable 40-character SHA.`);
+        !(stableFeatureBranch || mergedM1SecurityFollowup) || !isSha(source?.sha)) {
+      fail(`${moduleName} must name a PR, recognized stable source branch, and immutable 40-character SHA.`);
     }
   }
   if (new Set(exactModuleNames.map((name) => modules[name].branchRef)).size !== exactModuleNames.length) {

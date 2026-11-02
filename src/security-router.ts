@@ -16,7 +16,7 @@ export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
   cloudConsent?:boolean;
   reviewTimeoutMs?:number;
   callbackTimeoutMs?:number;
-  /** Generic path-string file callbacks are denied when true; execution then requires a separate host-owned pinned-handle adapter. False/omitted keeps legacy lexical checks without canonical-path or protected-open guarantees. */
+  /** @deprecated Kept for source compatibility. All filesystem callbacks require pinned execution in every mode. */
   verifyRealPaths?:boolean;
   dataflowTtlMs?:number;
   onReview?:(record:{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number})=>void;
@@ -30,7 +30,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   const root=path.resolve(options.workspaceRoot);
   const reviews:Array<{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number}>=[];
   function pathDenied(call:ToolCall){
-    const d=trustedTools[call.name];if(!options.verifyRealPaths||!d||!['file-read','file-write','delete'].includes(d.operation))return false;
+    const d=trustedTools[call.name];if(!d||!['file-read','file-write','delete'].includes(d.operation))return false;
     const raw=call.args?.[d.pathArg??'path'];if(typeof raw!=='string'||raw.includes('\0'))return true;
     try{
       const realRoot=fs.realpathSync(root),candidate=path.resolve(root,raw.replaceAll('\\','/'));
@@ -51,7 +51,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   }
   function fileOperationRequiresPinnedExecution(call:ToolCall){
     const d=trustedTools[call.name];
-    return (options.verifyRealPaths===true||options.mode==='STRICT')&&!!d&&['file-read','file-write','delete'].includes(d.operation);
+    return !!d&&['file-read','file-write','delete'].includes(d.operation);
   }
   function hasValidHeldFileRead(call:ToolCall){
     const d=trustedTools[call.name],provider=options.fileReadCapability;
@@ -95,9 +95,9 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     return review(call,d);
   }
   const router=createRiskPolicyRouter({...options,reviewDecision:dispatchReview,executeRealTool:async(call)=>{
-    // This callback only receives path strings. Strict held-file reads must be
-    // served by the policy router's capability provider and must never fall
-    // through to the generic executor, even when the capability is valid.
+    // This callback only receives path strings. Held-file reads must be served
+    // by the policy router's capability provider and must never fall through
+    // to the generic executor, even when the capability is valid.
     if(fileOperationRequiresPinnedExecution(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'path_execution_not_pinned',mode:options.mode??'BALANCED'});
     if(pathDenied(call)||options.mode!=='OBSERVE'&&privateTarget(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'execution_boundary_changed',mode:options.mode??'BALANCED'});
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;

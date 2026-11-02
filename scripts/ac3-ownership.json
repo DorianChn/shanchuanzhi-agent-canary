@@ -10,11 +10,23 @@
     "feature/ac3-e4-validation": "M6",
     "feature/ac3-reliability": "M7",
     "feature/ac3-open-source-product": "M8",
+    "shanchuanzhi/e4-runner-contract-20261102": "M6",
+    "shanchuanzhi/e4-runner-contract-current-20261102": "M6",
     "feature/ac3-m0-coordination": "M0",
     "feature/ac3-m9-integration": "M9",
     "feature/ac3-e4-validation-ac3": "M6",
     "feature/ac3-reliability-ac3": "M7",
-    "feature/ac3-m7-m8-source-pin": "M7"
+    "feature/ac3-m7-m8-source-pin": "M7",
+    "shanchuanzhi/issue52-protected-read-20261102": "M9",
+    "shanchuanzhi/issue52-toctou-race-20261102": "M1",
+    "shanchuanzhi/issue52-cli-route-evidence-20261102": "M4",
+    "shanchuanzhi/m4-configured-read-evidence-20261102": "M4",
+    "shanchuanzhi/3.0-security-docs-sdk-20261102": "M0",
+    "shanchuanzhi/3.0-eol-repro-20261103": "M0",
+    "shanchuanzhi/m9-m1-secure-ref-20261103": "M0",
+    "shanchuanzhi/issue41-launcher-smoke": "M7",
+    "shanchuanzhi/e4-unicode-copy-20261102": "M6",
+    "feature/ac3-m9-pin-m1-mount-boundary": "M0"
   },
   "sharedPaths": {
     ".gitattributes": [
@@ -197,6 +209,9 @@
         "M7"
       ],
       "branchLocalException": "M7 may add only synthetic canary input/log-exclusion assertions; preserve every fail-closed and interruption assertion; broader fixture or Hook semantics require M1 review"
+    },
+    "security-lab/e4/verify-bundle.test.mjs": {
+      "owner": "M6"
     }
   },
   "publicApiCandidates": [

@@ -29,10 +29,12 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }
 });
 
-test('Windows Community packaging requires the exact 37 runtime files and SDK declaration',()=>{
+test('Windows Community packaging requires the exact 39 runtime files and SDK declaration',()=>{
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   const worker=fs.readFileSync(path.join(repo,'packaging/windows/worker.mjs'),'utf8');
-  assert.equal(communityRuntimeFiles.length,37);
+  assert.equal(communityRuntimeFiles.length,39);
+  assert.ok(communityRuntimeFiles.includes('runtime/secure-file.js'));
+  assert.ok(communityRuntimeFiles.includes('runtime/synthetic-decoy-capability.js'));
   assert.equal(new Set(communityRuntimeFiles).size,communityRuntimeFiles.length);
   assert.deepEqual(validateCommunityRuntime([...communityRuntimeFiles].reverse(),true),communityRuntimeFiles);
   assert.throws(()=>validateCommunityRuntime(communityRuntimeFiles.slice(1),true),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
@@ -53,6 +55,13 @@ test('installer lifecycle smoke accepts only the BUILD_REPORT status emitted by 
   assert.equal(acceptedStatus[1],emittedStatus[1]);
   assert.match(workflow,/installerExecuted = \$false/);
   assert.match(lifecycle,/\$buildReport\.installerExecuted -eq \$false/);
+});
+
+test('installed launcher payload smoke is explicit and does not claim an interactive GUI first launch',()=>{
+  const lifecycle=fs.readFileSync(path.join(repo,'packaging/windows/installer-lifecycle-smoke.ps1'),'utf8');
+  assert.match(lifecycle,/\$launcherSmokeResult = Invoke-Nsis \$launcherPath '--smoke' -TimeoutMs 30000/);
+  assert.match(lifecycle,/Add-Check 'installed-launcher-payload-smoke' 'PASS'/);
+  assert.match(lifecycle,/firstLaunchGui = 'NOT_TESTED_HEADLESS_SMOKE_ONLY'/);
 });
 
 test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
@@ -132,7 +141,7 @@ test('Community source build transfers the patched dependency tree and keeps can
   const pkg=JSON.parse(fs.readFileSync(path.join(repo,'package.json'),'utf8'));
   const lock=JSON.parse(fs.readFileSync(path.join(repo,'package-lock.json'),'utf8'));
   const lockRoot=lock.packages[''];
-  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','security-lab/claude-native-hook.mjs']){
+  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','src/runtime/synthetic-decoy-capability.ts','src/runtime/secure-file.ts','security-lab/claude-native-hook.mjs']){
     assert.ok(source.includes(`'${requiredSource}'`),`candidate source allowlist must include ${requiredSource}`);
   }
   assert.match(source,/lock=json\.loads\(\(root\/'package-lock\.json'\)\.read_text\(encoding='utf-8'\)\)/);
@@ -208,33 +217,35 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
   const builder=fs.readFileSync(path.join(repo,'security-lab/build-community.py'),'utf8');
   const workflow=fs.readFileSync(path.join(repo,'.github/workflows/windows-community.yml'),'utf8');
   const m8SourceSHA='24b8651730d57d860ba136e77db1526031abb1fc';
-  const m8DemoBlob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
+  const m8SourceDemoBlob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f';
+  const m8PRHeadDemoBlob='bd2cd0512002e0a3f80a523e31d7e0ec679915f7';
   const m8DemoPath='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs';
   assert.match(builder,/p\.add_argument\('--m8-source-sha',required=True\)/);
   assert.match(builder,/p\.add_argument\('--m8-pr-head-sha',required=True\)/);
   assert.match(builder,/expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'/);
-  assert.match(builder,/expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(builder,/expected_m8_source_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(builder,/expected_m8_pr_demo_blob='bd2cd0512002e0a3f80a523e31d7e0ec679915f7'/);
   assert.match(builder,/m8_demo_ref=f'\{a\.m8_source_sha\}:\{m8_demo_relative\}'/);
   assert.match(builder,/merge-base','--is-ancestor',a\.m8_source_sha,a\.m8_pr_head_sha/);
   assert.match(builder,/m8_pr_demo_ref=f'\{a\.m8_pr_head_sha\}:\{m8_demo_relative\}'/);
   assert.match(builder,/community_demo_path\.write_bytes\(m8_demo_bytes\)/);
-  assert.match(builder,/if candidate_m8_demo!=m8_demo_bytes[\s\S]*?expected_m8_demo_blob/);
+  assert.match(builder,/if candidate_m8_demo!=m8_demo_bytes[\s\S]*?expected_m8_pr_demo_blob/);
   assert.match(builder,/m8SourceSHA':a\.m8_source_sha[\s\S]*?'m8PRHeadSHA':a\.m8_pr_head_sha[\s\S]*?'m8PRHeadBlob':m8_pr_demo_blob_id/);
   assert.match(workflow,/M8_SOURCE_SHA: 24b8651730d57d860ba136e77db1526031abb1fc/);
-  assert.match(workflow,/refs\/pull\/40\/head/);
-  assert.match(workflow,/git fetch --unshallow --no-tags \$baseRepository refs\/pull\/40\/head/);
+  assert.match(workflow,/refs\/pull\/129\/head/);
+  assert.match(workflow,/git fetch --unshallow --no-tags \$baseRepository refs\/pull\/129\/head/);
   assert.match(workflow,/git merge-base --is-ancestor \$m8SourceSha \$m8PrHeadSha/);
   assert.match(workflow,/--m8-source-sha \$env:M8_SOURCE_SHA/);
   assert.match(workflow,/--m8-pr-head-sha \$env:M8_PR_HEAD_SHA/);
   assert.match(workflow,/communityBuildSummary\.m8SourceBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
-  assert.match(workflow,/communityBuildSummary\.m8PRHeadBlob -ne '3428f297c28845ae054c0ca63aa6c5c4d7ef785f'/);
+  assert.match(workflow,/communityBuildSummary\.m8PRHeadBlob -ne 'bd2cd0512002e0a3f80a523e31d7e0ec679915f7'/);
 
   const runRepoGit=(...args)=>spawnSync('git',['-C',repo,...args],{encoding:'utf8',windowsHide:true});
   let gitResult=runRepoGit('rev-parse','--is-shallow-repository');
   assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
   const fetchArgs=['fetch','--no-tags'];
   if(gitResult.stdout.trim()==='true')fetchArgs.push('--unshallow');
-  fetchArgs.push('origin','refs/pull/40/head');
+  fetchArgs.push('origin','refs/pull/129/head');
   gitResult=runRepoGit(...fetchArgs);
   assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
   gitResult=runRepoGit('rev-parse','FETCH_HEAD');
@@ -243,25 +254,26 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
   assert.match(m8PrHeadSHA,/^[a-f0-9]{40}$/,'the fetched M8 PR head must be an exact commit SHA');
   gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,m8PrHeadSHA);
   assert.equal(gitResult.status,0,'the immutable reviewed M8 source must remain an ancestor of the current PR head');
-  for(const commitSHA of [m8SourceSHA,m8PrHeadSHA]){
+  for(const [commitSHA,expectedDemoBlob] of [[m8SourceSHA,m8SourceDemoBlob],[m8PrHeadSHA,m8PRHeadDemoBlob]]){
     gitResult=runRepoGit('rev-parse','--verify',`${commitSHA}:${m8DemoPath}`);
     assert.equal(gitResult.status,0,(gitResult.stderr??'').toString());
-    assert.equal(gitResult.stdout.trim(),m8DemoBlob,'both the pinned M8 commit and current PR head must contain the exact demo blob');
+    assert.equal(gitResult.stdout.trim(),expectedDemoBlob,'the pinned source and current PR head must each match their exact offline-demo blob');
   }
+  assert.notEqual(m8SourceDemoBlob,m8PRHeadDemoBlob,'the contract update must be visible as a new exact M8 PR blob');
   gitResult=runRepoGit('rev-parse','--verify',`${m8SourceSHA}^`);
   assert.equal(gitResult.status,0,'the immutable M8 source commit must have a parent for the negative fixture');
   const unrelatedHeadSHA=gitResult.stdout.trim();
   gitResult=runRepoGit('merge-base','--is-ancestor',m8SourceSHA,unrelatedHeadSHA);
   assert.notEqual(gitResult.status,0,'the negative fixture must not descend from the immutable M8 source commit');
-  const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8SourceSHA}:${m8DemoPath}`],{windowsHide:true});
+  const m8Demo=spawnSync('git',['-C',repo,'cat-file','blob',`${m8PrHeadSHA}:${m8DemoPath}`],{windowsHide:true});
   assert.equal(m8Demo.status,0,(m8Demo.stderr??'').toString());
   const expectedBlob=createHash('sha1').update(`blob ${m8Demo.stdout.length}\0`).update(m8Demo.stdout).digest('hex');
-  assert.equal(expectedBlob,m8DemoBlob);
+  assert.equal(expectedBlob,m8PRHeadDemoBlob);
   const expectedText=m8Demo.stdout.toString('utf8');
-  assert.match(expectedText,/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
-  assert.match(expectedText,/g\.state,'QUARANTINED'/);
-  assert.match(expectedText,/guard_quarantined/);
-  assert.match(expectedText,/NORMAL_OK/);
+  assert.match(expectedText,/write_capability_disabled_pending_path_safe_primitive/);
+  assert.match(expectedText,/API_KEY=NOT_A_REAL_CREDENTIAL_/);
+  assert.match(expectedText,/decision,'DENY'/);
+  assert.match(expectedText,/NOT_VERIFIED_NO_EXTERNAL_OPERATOR/);
 
   const pythonCandidates=[process.env.CANARY_PYTHON,...(process.platform==='win32'?['python.exe','python']:['python3','python'])].filter(Boolean);
   let pythonCommand;
@@ -305,14 +317,14 @@ test('Community candidate stages the exact M8 offline-demo Git blob and provenan
     const summary=JSON.parse(build.stdout.trim());
     assert.equal(summary.m8SourceSHA,m8SourceSHA);
     assert.equal(summary.m8PRHeadSHA,m8PrHeadSHA);
-    assert.equal(summary.m8SourceBlob,m8DemoBlob);
-    assert.equal(summary.m8PRHeadBlob,m8DemoBlob);
+    assert.equal(summary.m8SourceBlob,m8SourceDemoBlob);
+    assert.equal(summary.m8PRHeadBlob,m8PRHeadDemoBlob);
     const rawReport=JSON.parse(fs.readFileSync(path.join(outputDir,`community-build-${sourceSHA.stdout.trim().slice(0,8)}.json`),'utf8'));
     assert.equal(rawReport.version.m8SourceSHA,m8SourceSHA);
     assert.equal(rawReport.version.m8PRHeadSHA,m8PrHeadSHA);
     assert.equal(rawReport.version.m8SourcePath,m8DemoPath);
-    assert.equal(rawReport.version.m8SourceBlob,m8DemoBlob);
-    assert.equal(rawReport.version.m8PRHeadBlob,m8DemoBlob);
+    assert.equal(rawReport.version.m8SourceBlob,m8SourceDemoBlob);
+    assert.equal(rawReport.version.m8PRHeadBlob,m8PRHeadDemoBlob);
     stageDir=rawReport.temporaryBuild;
     const staged=fs.readFileSync(path.join(stageDir,'reproduction-kit/run-offline-demo.mjs'));
     assert.deepEqual(staged,m8Demo.stdout,'the actual staged candidate must contain the exact M8 Git blob');

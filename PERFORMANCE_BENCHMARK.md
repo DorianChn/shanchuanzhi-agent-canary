@@ -1,5 +1,27 @@
 # Gateway 性能基准（M7）
 
+## 当前短测：2026-10-25
+
+Windows `10.0.26200` / x64 / Node `v22.23.1` / 32 logical CPUs；源码为 M7 起始 HEAD `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`，本轮改动只涉及 CI 事件门禁、测试及报告。负载为进程内、只读 synthetic MCP callback，无网络或模型调用。未测试安装包吞吐，也不能据此证明长期无资源泄漏。
+
+```sh
+node --import tsx scripts/benchmark-gateway.mjs --iterations=1000 --concurrency=16 --rounds=3 --warmup=100 --output-root=<external-temp> --output=<external-temp>/gateway-benchmark.json
+```
+
+| 指标 | 实测 |
+|---|---:|
+| 正式请求 / 错误 | 3,000 / 0 |
+| 吞吐三轮中位数 | 8,366.451 ops/s |
+| 三轮 p50 / p95 / p99 中位数 | 0.941 / 1.709 / 2.028 ms |
+| 三轮累计 Node CPU 时间 | 500 ms |
+| 每轮 RSS 变化中位数 | +1,380,352 bytes |
+| 每轮 heap 变化中位数 | -893,864 bytes |
+| 证据链检查 | 三轮有效 |
+
+原始 JSON：`%TEMP%/m7-audit-20261025-7d170b1d1a794767916d548e38678a28/gateway-benchmark.json`；SHA-256 `ec042c4af41641a474c92ba9e2c1f6d4fc6b887ff8bfc10ca05b22a309419bc2`。这是单主机短时采样；GC、调度与主机负载未隔离，不能直接用与历史结果的差值推断性能优化或回退。CPU 不含其他进程；RSS/heap 差值不是连续峰值或 Windows Handle 泄漏测量。
+
+## 2026-10-13 历史结果
+
 日期：2026-10-13
 状态：**本机合成负载已测；不是安装包或端到端产品基准。**
 

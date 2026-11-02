@@ -26,19 +26,15 @@ node security-lab/run-sdk-agent.mjs --execution-proof --sha="$(git rev-parse HEA
 
 ## 最小 SDK 接入
 
-```typescript
-import {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder} from '@dorianchn/agent-canary/sdk';
-// root 与文件必须由可信宿主建立。不要把用户工作区全部注册，也不要传生产 Key。
-const guard = createAgentGuard({alert:false});
-const gateway = createTrustedExecutionGateway({
-  agentId:'my-controlled-agent', guard, workspaceRoot:root,
-  files:[{path:'README.md'},{path:'result.txt',writable:true}],
-  evidence:new EvidenceRecorder(4096, newAuditFile),
-});
-// 只把这个方法接到模型工具循环；绝不暴露 gateway.operator 或 Guard reset。
-const result = await gateway.agent.dispatch({name:'read_file',args:{path:'README.md'}});
-await gateway.close();
+示例使用真实构建后的 SDK，创建临时工作区，演示一个已登记文件读取成功、未登记路径被拒绝，并校验本地证据链：
+
+```bash
+npm run build
+node examples/sdk/quick-start.mjs
+node --import tsx --test test/sdk.test.ts
 ```
+
+这只是合成 fixture 的 SDK 示例，不是模型、安装器、原生宿主或独立 E4 验收。写入能力目前 fail-closed；不要设置 `writable: true` 来表示写入可用。
 
 固定命令通过可信 executable / argv 注册，无模型传入的 Shell 字符串。MCP 回调必须声明 risk 和审批规则；未知风险默认待审批，敏感 / 破坏性 MCP 默认拒绝。持有 operator 对象的可信宿主可以批准一次，模型的 approved 字段不能授权。
 
