@@ -2,9 +2,17 @@ import {test} from 'node:test';import assert from 'node:assert/strict';import os
 import {spawnSync} from 'node:child_process';
 import http from 'node:http';
 import {Script} from 'node:vm';
-import {adaptConfiguredTargetReadiness,adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
+import {adaptConfiguredTargetReadiness,adaptFixedProtectedReadProbe,adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
+test('fixed protected-read probe result stays scoped to its synthetic temporary fixture',()=>{
+ const scope='M3_FIXED_TEMP_PROBE_ONLY';
+ const passed=adaptFixedProtectedReadProbe({scope,status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true});
+ assert.equal(passed.status,'PASS');assert.match(passed.message,/用户文件和原生 Shell 仍未验证/);
+ assert.equal(adaptFixedProtectedReadProbe({scope,status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:false}).status,'UNKNOWN');
+ assert.equal(adaptFixedProtectedReadProbe({scope:'USER_FILE_PROTECTION',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true}).status,'UNKNOWN');
+ assert.equal(adaptFixedProtectedReadProbe({scope,status:'DENY',reason:'OWNER_POLICY_DENIED',markerMatched:false}).status,'DENY');
+});
 test('desktop branch native hook audit log omits synthetic sensitive canaries',()=>{
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m4-hook-log-'));
  try{
@@ -32,9 +40,9 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
   assert.equal((await fetch(console.url+'/api/e4/status',{headers:{'x-canary-csrf':csrf!}})).status,404);
   assert.match(html,/Agent Canary 安全控制中心/);assert.match(html,/自动 E4 测试入口/);assert.match(html,/PARTIALLY_PROTECTED/);assert.match(html,/security-center/);assert.match(html,/currentPolicyScopeDetail/);assert.match(html,/canaryIsolationScopeDetail/);assert.match(html,/Console 虚拟执行器策略/);assert.match(html,/受控 Runtime 示例 Guard/);assert.match(html,/显式 DENY 和 SENSITIVE_DATA 仍会拒绝/);assert.match(html,/preparePolicyResultForDisplay/);assert.match(html,/POLICY_CONFLICT/);assert.match(html,/catch\(e\)\{status\('policyStatus',warning\|\|e\.message,true\);\}/);assert.match(html,/policyResult/);
   assert.match(html,/id="nativeCodexShellBoundary"[^>]*role="note"/);assert.match(html,/id="nativeCodexShellStatus" class="security-status" data-status="NOT_PROTECTED">UNPROTECTED \/ BLOCKED_NOT_VERIFIED<\/span>/);assert.match(html,/尚未完成 Codex 原生 Shell 路径的端到端验证，也未控制该路径/);assert.match(html,/MCP 或 Gateway 中受保护的回调不代表原生 Shell 已受保护/);
-  assert.match(html,/id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证<\/strong>/);assert.match(html,/GET \/api\/security-center 仅返回状态，不执行文件读取/);assert.match(html,/M3 的 POST \/api\/security-center\/protected-read 是独立的固定临时标记探针；本页面不调用或读取其结果/);assert.match(html,/该探针不证明用户文件或原生宿主路径已受保护/);assert.match(html,/MCP 探针、Gateway 绑定状态、Runtime 临时文件演示和虚拟策略读取也不能替代此验证/);
+  assert.match(html,/id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证<\/strong>/);assert.match(html,/GET \/api\/security-center 仅返回状态，不执行文件读取/);assert.match(html,/id="protectedReadProbeCode" type="password" autocomplete="off"/);assert.match(html,/id="runProtectedReadProbe"[^>]*>运行固定临时探针/);assert.match(html,/M1 Gateway、M2 适配器和 M5 策略读取合成标记/);assert.match(html,/通过只证明固定探针；不代表用户文件或原生 Shell 已受保护/);assert.match(html,/MCP 探针、Gateway 绑定状态、Runtime 临时演示和虚拟策略读取也不能替代此验证/);
   assert.match(html,/securityCenterAdapter\.isValidSecurityCenterStatusPayload\(data\)/);assert.match(html,/id="securityCoverage"/);assert.match(html,/UNKNOWN 不代表已保护或未保护/);
-  const clientScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]);assert.ok(clientScripts.length);assert.doesNotMatch(clientScripts.join('\n'),/security-center\/protected-read/i,'the Security Center must not invoke the fixed temporary-marker probe');
+  const clientScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]);assert.ok(clientScripts.length);assert.match(clientScripts.join('\n'),/getEl\('runProtectedReadProbe'\)\.onclick=async\(\)=>/);assert.match(clientScripts.join('\n'),/api\('security-center\/protected-read',\{\},undefined,\{'x-canary-operator-code':code\}\)/);assert.match(clientScripts.join('\n'),/codeInput\.value=''/);assert.match(clientScripts.join('\n'),/adaptFixedProtectedReadProbe/);
   assert.match(html,/const readable=\['state','agents','policyState','runtime3'\]\.filter\(k=>securitySources\[k\]==='AVAILABLE'\)\.length/);
   assert.match(html,/readable\+'\/4 个已有只读接口可读/);
   const get=async()=>{const r=await fetch(console.url+'/api/runtime3',{headers:{'x-canary-csrf':csrf!}});return r.json();};

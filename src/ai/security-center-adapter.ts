@@ -82,6 +82,20 @@ export function normalizeSecurityCoverage(value: unknown): SecurityCoverage {
   return value === 'M2_FIXED_FILE_READS_ONLY' ? value : 'UNKNOWN';
 }
 
+export function adaptFixedProtectedReadProbe(input: unknown) {
+  const value = asRecord(input);
+  if (value.scope !== 'M3_FIXED_TEMP_PROBE_ONLY') {
+    return {status: 'UNKNOWN' as const, message: 'UNKNOWN · 固定临时探针结果无效；用户文件和原生 Shell 仍未验证。'};
+  }
+  if (value.status === 'PASS' && value.reason === 'FIXED_PROBE_CONTROLS_PASSED' && value.markerMatched === true) {
+    return {status: 'PASS' as const, message: 'PASS · 固定临时探针通过；用户文件和原生 Shell 仍未验证。'};
+  }
+  if (value.status === 'DENY' && value.markerMatched === false) {
+    return {status: 'DENY' as const, message: 'DENY · 固定临时探针未获执行；用户文件保护仍未验证。'};
+  }
+  return {status: 'UNKNOWN' as const, message: 'UNKNOWN · 固定临时探针未能验证；用户文件和原生 Shell 仍未验证。'};
+}
+
 export function adaptConfiguredTargetReadiness(input: unknown, now = Date.now()) {
   const unknown = { valid: false, configurationStatus: 'UNKNOWN' as const, bindingStatus: 'UNKNOWN' as const,
     actionReadiness: 'UNKNOWN' as const, operatorAuthStatus: 'NOT_CONFIGURED' as const, targets: [] as Array<{targetId:string;bindingStatus:string}> };
@@ -422,6 +436,7 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const sanitizePolicyName = ' + sanitizePolicyName.toString() + ';',
   'const normalizeProtectionStatus = ' + normalizeProtectionStatus.toString() + ';',
   'const normalizeSecurityCoverage = ' + normalizeSecurityCoverage.toString() + ';',
+  'const adaptFixedProtectedReadProbe = ' + adaptFixedProtectedReadProbe.toString() + ';',
   'const adaptConfiguredTargetReadiness = ' + adaptConfiguredTargetReadiness.toString() + ';',
   'const isValidSecurityCenterStatusPayload = ' + isValidSecurityCenterStatusPayload.toString() + ';',
   'const normalizeConnectionStatus = ' + normalizeConnectionStatus.toString() + ';',
@@ -431,6 +446,6 @@ export const SECURITY_CENTER_ADAPTER_SCRIPT = [
   'const preparePolicyResultForDisplay = ' + preparePolicyResultForDisplay.toString() + ';',
   'const explainSecurityEvent = ' + explainSecurityEvent.toString() + ';',
   'const buildSecurityDiagnostic = ' + buildSecurityDiagnostic.toString() + ';',
-  'return {normalizeProtectionStatus, normalizeSecurityCoverage, isValidSecurityCenterStatusPayload, adaptConfiguredTargetReadiness, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
+  'return {normalizeProtectionStatus, normalizeSecurityCoverage, adaptFixedProtectedReadProbe, isValidSecurityCenterStatusPayload, adaptConfiguredTargetReadiness, normalizeConnectionStatus, adaptSecuritySnapshot, classifyDataSourceFailure, preparePolicyResultForDisplay, explainSecurityEvent, buildSecurityDiagnostic};',
   '})();',
 ].join('\n');
