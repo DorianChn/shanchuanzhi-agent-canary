@@ -1,7 +1,7 @@
 // M7-owned regression fixture. Gateway behavior is implemented and owned by M1.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
+import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';import {createHash} from 'node:crypto';
 const home=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-'));process.env.AGENT_CANARY_HOME=home;
 const {HoneypotRuntime,createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder,verifyEvidenceChain,canonicalJSON}=await import('../src/sdk.js');
 function setup(extra:any={}){
@@ -221,4 +221,31 @@ test('gateway close tries every resource after a close error and exposes only a 
 });
 test('approval expires with no actual callback',async()=>{let called=0,id:string|undefined;const s=setup({approvalTtlMs:5,mcpTools:{ambiguous:{approvalRequired:true,execute:async()=>++called}}});try{await assert.rejects(s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'ambiguous',arguments:{}}}),error=>{const denial=error as {decision?:unknown;requestId?:unknown};assert.equal(denial.decision,'REQUIRE_APPROVAL');assert.equal(typeof denial.requestId,'string');id=denial.requestId as string;return true;});await new Promise(r=>setTimeout(r,15));await assert.rejects(s.runtime.operator.approve(id!),/EXPIRED/);assert.equal(called,0);}finally{await s.runtime.close();}});
 test('restarting the gateway with the same Guard cannot erase prior sensitive tool history',async()=>{let sent=0;const s=setup({mcpTools:{source:{risk:'READ_ONLY',approvalRequired:false,execute:async()=> 'NOT_A_REAL_CREDENTIAL_PERSIST'}}});let replacement:any;try{await s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'source',arguments:{}}});await s.runtime.close();replacement=createTrustedExecutionGateway({agentId:'replacement-host',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),mcpTools:{sink:{risk:'NETWORK',approvalRequired:false,execute:async()=>++sent}}});await assert.rejects(replacement.agent.dispatch({name:'mcp_tool',args:{tool:'sink',arguments:{data:'unrelated'}}}),/sensitive_session_egress_denied/);assert.equal(sent,0);}finally{await replacement?.close();await s.runtime.close();}});
-test('M7 reliability evidence: a real honeypot read quarantines before the next write',async()=>{const guard=createAgentGuard({alert:false}),pot=new HoneypotRuntime(guard.sessionId,['ENV']);fs.writeFileSync(path.join(pot.root,'result.txt'),'unchanged');const runtime=createTrustedExecutionGateway({agentId:'fixture',guard,workspaceRoot:pot.root,files:[...pot.gatewayFiles(),{path:'result.txt',writable:true}],evidence:new EvidenceRecorder(),onDecoyRead:id=>{pot.record(id,'READ');if(guard.state==='QUARANTINED')pot.record(id,'QUARANTINED');}});try{await assert.rejects(runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);assert.equal(guard.state,'QUARANTINED');await assert.rejects(runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'bad'}}),/guard_quarantined/);assert.equal(fs.readFileSync(path.join(pot.root,'result.txt'),'utf8'),'unchanged');assert.equal(pot.snapshot().filter(e=>e.kind==='READ').length,1);assert.equal(pot.snapshot().filter(e=>e.kind==='QUARANTINED').length,1);}finally{await runtime.close();}});
+test('M7 reliability evidence: a real honeypot read returns only synthetic content, quarantines, and blocks the next write',async()=>{
+ const guard=createAgentGuard({alert:false});
+ const pot=new HoneypotRuntime(guard.sessionId,['ENV']);
+ const target=path.join(pot.root,'result.txt');
+ fs.writeFileSync(target,'unchanged');
+ const before=fs.readFileSync(target),beforeHash=createHash('sha256').update(before).digest('hex');
+ const evidence=new EvidenceRecorder();
+ const runtime=createTrustedExecutionGateway({agentId:'fixture',guard,workspaceRoot:pot.root,files:[...pot.gatewayFiles(),{path:'result.txt',writable:true}],evidence,onDecoyRead:id=>{pot.record(id,'READ');if(guard.state==='QUARANTINED')pot.record(id,'QUARANTINED');}});
+ try{
+  const decoy=fs.readFileSync(path.join(pot.root,'.env'),'utf8');
+  assert.match(decoy,/^API_KEY=NOT_A_REAL_CREDENTIAL_[A-Za-z0-9-]+\n$/);
+  assert.deepEqual(await runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),{content:decoy});
+  assert.equal(guard.state,'QUARANTINED');
+  const read=evidence.snapshot().find(event=>event.tool_id==='read_file'&&event.execution_status==='SUCCEEDED');
+  assert.equal(read?.decision,'ALLOW');
+  assert.equal(read?.execution_status,'SUCCEEDED');
+  await assert.rejects(runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'bad'}}),/guard_quarantined/);
+  const denied=evidence.snapshot().at(-1)!;
+  assert.equal(denied.decision,'DENY');
+  assert.equal(denied.decision_reason,'guard_quarantined');
+  assert.equal(denied.execution_status,'NOT_STARTED');
+  const after=fs.readFileSync(target);
+  assert.equal(after.toString('hex'),before.toString('hex'));
+  assert.equal(createHash('sha256').update(after).digest('hex'),beforeHash);
+  assert.equal(pot.snapshot().filter(event=>event.kind==='READ').length,1);
+  assert.equal(pot.snapshot().filter(event=>event.kind==='QUARANTINED').length,1);
+ }finally{await runtime.close();}
+});

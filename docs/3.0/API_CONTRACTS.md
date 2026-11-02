@@ -421,6 +421,12 @@ M0 records `e4732d9745bb4fbbebf6896a35b4657ad82abd73` as the approved immutable 
 
 The current feature tip remains the actual comparison and merge-tree input. M9's exact source pins, exact owner-approved blobs, sensitive-path policy, and required API/evidence fields remain unchanged and exact; post-merge CI remains required. This source-lineage rule does not alter or weaken Gateway, Hook, or policy security semantics.
 
+## M1 Gateway decoy-read contract — 2026-10-28
+
+- A read of a registered synthetic `HoneypotRuntime` decoy may return its fake fixture content. After the synchronous read settles and before `dispatch` returns, M1 latches Guard quarantine (`honeypot_read`) and invokes the decoy notification. This preserves the decoy result while invalidating queued and sibling work.
+- After quarantine is latched, a subsequent protected write is `DENY` / `NOT_STARTED`, before approval or the write's host callback. Sensitive-path and symlink/junction alias hard-denials are unchanged and still occur before approval, callback, or file effect.
+- This is synthetic Gateway regression evidence only. It is not product-host E4 acceptance, does not prove an installed host consumes the Gateway, and does not establish protection of real user data. Keep Issue #52 P0 OPEN / NOT_VERIFIED until the product-host and TOCTOU gates pass.
+
 ### Immutable test-merge base versus webhook base (M0/M9, 2026-10-25)
 
 A reopened PR can retain an older `pull_request.base.sha` even though its actual GitHub test-merge first parent is the new feature tip. Both values must be recorded separately. AC3 checks out the exact `github.sha` test merge, requires exactly two parents and second-parent equality with the event head, then composes its first parent with that frozen head. The event base must be an ancestor of that first parent. Missing merge metadata, wrong checkout/head, unrelated base or actual merge conflicts fail closed. M9 uses the equivalent immutable parent contract before selecting its source checkout; strict manifest PR/ref/head and owner acceptance remain unchanged. Reopening alone is never evidence of a refreshed base.
