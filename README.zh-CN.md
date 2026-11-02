@@ -6,6 +6,7 @@ Agent Canary 3.0 是面向 AI Agent 的开源 MCP 与 SDK 安全工具，提供�
 
 - [GitHub 发行版](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0)
 - [项目网页与测试结果](https://dorianchn.github.io/shanchuanzhi-agent-canary/)
+- [快速开始：固定源码快照](GETTING_STARTED.zh-CN.md)
 - [English](README.md)
 - [架构与验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md)
 - [源码与问题反馈](https://github.com/DorianChn/shanchuanzhi-agent-canary)
