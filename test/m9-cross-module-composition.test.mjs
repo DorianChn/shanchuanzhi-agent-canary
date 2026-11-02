@@ -661,7 +661,7 @@ test('exact M2 merge tree pins M7 package policy while current M7 merge adds rel
   }
 });
 
-test('exact current M7 Community runtime contract requires all 37 paths and rejects missing or extra JavaScript and missing sdk.d.ts', async () => {
+test('exact current M7 Community runtime contract requires all 38 paths and rejects missing or extra JavaScript and missing sdk.d.ts', async () => {
   const runtimeContractPath = path.join(sourceRoots.M7.root, 'packaging/windows/runtime-contract.mjs');
   const { communityRuntimeFiles, validateCommunityRuntime } = await import(pathToFileURL(runtimeContractPath).href);
   const expectedRuntimeFiles = [
@@ -696,6 +696,7 @@ test('exact current M7 Community runtime contract requires all 37 paths and reje
     'runtime/evidence.js',
     'runtime/gateway.js',
     'runtime/honeypot.js',
+    'runtime/synthetic-decoy-capability.js',
     'sdk.js',
     'security-router.js',
     'self-test.js',
@@ -703,10 +704,10 @@ test('exact current M7 Community runtime contract requires all 37 paths and reje
     'tokens.js',
     'webhook.js',
   ];
-  assert.equal(readTrackedBlobId('M7', 'packaging/windows/runtime-contract.mjs'), 'd8e03e4d697930ed87eb979a8ae3b611cd888a24', 'the runtime guard must remain tied to the exact M7 candidate source blob');
-  assert.equal(communityRuntimeFiles.length, 37, 'the exact M7 runtime manifest has 37 entries');
-  assert.deepEqual(communityRuntimeFiles, expectedRuntimeFiles, 'all 37 exact runtime paths remain fixed');
-  assert.equal(new Set(communityRuntimeFiles).size, 37, 'the runtime manifest has no duplicate paths');
+  assert.equal(readTrackedBlobId('M7', 'packaging/windows/runtime-contract.mjs'), '1af46bc56463d83da57f8d053337100350ae5f98', 'the runtime guard must remain tied to the exact M7 candidate source blob');
+  assert.equal(communityRuntimeFiles.length, 38, 'the exact M7 runtime manifest has 38 entries');
+  assert.deepEqual(communityRuntimeFiles, expectedRuntimeFiles, 'all 38 exact runtime paths remain fixed');
+  assert.equal(new Set(communityRuntimeFiles).size, 38, 'the runtime manifest has no duplicate paths');
   assert.deepEqual(validateCommunityRuntime([...expectedRuntimeFiles].reverse(), true), expectedRuntimeFiles, 'the complete path set with sdk.d.ts is accepted');
   assert.throws(() => validateCommunityRuntime(expectedRuntimeFiles.slice(1), true), /COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/, 'a missing runtime JavaScript path is rejected');
   assert.throws(() => validateCommunityRuntime([...expectedRuntimeFiles, 'unexpected.js'], true), /COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/, 'an extra runtime JavaScript file is rejected');
@@ -715,7 +716,7 @@ test('exact current M7 Community runtime contract requires all 37 paths and reje
   const build = readTrackedTextAt('M7', pinnedSourceShas.M7, 'packaging/windows/build.mjs').join('\n');
   const ownerTests = readTrackedTextAt('M7', pinnedSourceShas.M7, 'test/windows-packaging.test.mjs').join('\n');
   assert.match(build, /validateCommunityRuntime\(walk\(path\.join\(root,'app\/dist'\)\)\.filter\(p=>p\.endsWith\('\.js'\)\),fs\.existsSync\(path\.join\(root,'app\/dist\/sdk\.d\.ts'\)\)\)/, 'the builder validates the emitted JavaScript inventory and sdk.d.ts');
-  assert.match(ownerTests, /Windows Community packaging requires the exact 37 runtime files and SDK declaration/);
+  assert.match(ownerTests, /Windows Community packaging requires the exact 38 runtime files and SDK declaration/);
   assert.match(ownerTests, /communityRuntimeFiles\.slice\(1\)/, 'the exact M7 owner suite retains its missing-file negative control');
   assert.match(ownerTests, /unexpected\.js/, 'the exact M7 owner suite retains its extra-JavaScript negative control');
   assert.match(ownerTests, /validateCommunityRuntime\(communityRuntimeFiles,false\)/, 'the exact M7 owner suite retains its missing-sdk.d.ts negative control');
