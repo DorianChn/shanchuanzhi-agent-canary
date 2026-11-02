@@ -42,12 +42,16 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
  fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outsideNotes,{recursive:true});
  fs.writeFileSync(target,'AUTHORIZED_WORKSPACE_FIXTURE');fs.writeFileSync(outsideTarget,'SYNTHETIC_OUTSIDE_SENTINEL');
  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalRealpathNative=(fs.realpathSync as any).native;
- let aliasActive=false,aliasToggles=0,targetOpenCalls=0,readCalls=0,externalRead='';
+ let aliasActive=false,aliasToggles=0,targetLstatCalls=0,targetOpenCalls=0,readCalls=0,externalRead='';
+ const sameTargetPath=(candidate:any)=>{
+  const actual=path.resolve(String(candidate)),expected=path.resolve(target);
+  return process.platform==='win32'?actual.toLowerCase()===expected.toLowerCase():actual===expected;
+ };
  const installAlias=()=>{fs.renameSync(notes,heldNotes);fs.symlinkSync(outsideNotes,notes,process.platform==='win32'?'junction':'dir');aliasActive=true;aliasToggles++;};
  const restoreWorkspace=()=>{if(!aliasActive)return;if(process.platform==='win32')fs.rmdirSync(notes);else fs.unlinkSync(notes);fs.renameSync(heldNotes,notes);aliasActive=false;};
  try{
   (fs as any).lstatSync=(candidate:any,...args:any[])=>{
-   if(path.resolve(String(candidate))===path.resolve(target)&&!aliasActive)installAlias();
+   if(sameTargetPath(candidate)){targetLstatCalls++;if(!aliasActive)installAlias();}
    return(originalLstatSync as any)(candidate,...args);
   };
   (fs as any).openSync=(candidate:any,...args:any[])=>{
@@ -63,7 +67,13 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
    if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')externalRead+=args[0].subarray(args[1],args[1]+count).toString('utf8');
    return count;
   };
-  assert.throws(()=>createTrustedExecutionGateway({agentId:'intercall-junction-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED|GATEWAY_RESOURCE_CHANGED/);
+  let runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,rejection:unknown;
+  try{runtime=createTrustedExecutionGateway({agentId:'intercall-junction-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()});}catch(error){rejection=error;}
+  await runtime?.close();restoreWorkspace();
+  assert.ok(targetLstatCalls>0,'the test reaches the file stat boundary before installing its parent junction');
+  assert.equal(aliasToggles,1,'the adversary installs exactly one outside junction');
+  assert.ok(rejection,`Gateway accepted the parent junction; path opens=${targetOpenCalls}, byte reads=${readCalls}, external bytes=${externalRead}`);
+  assert.match(String((rejection as Error).message??rejection),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED|GATEWAY_RESOURCE_CHANGED/);
   restoreWorkspace();
   assert.equal(aliasToggles,1,'the adversary swaps the parent to an outside junction after lstat and before the secure component open');
   assert.equal(targetOpenCalls,0,'the ordinary file open is never attempted after the handle-relative no-follow check rejects the junction');
