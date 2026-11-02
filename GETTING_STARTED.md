@@ -53,7 +53,11 @@ agent-canary self-test --json
 
 The CLI self-test reports its result as JSON. The v3.0.0 source verification receipt records four passing self-test checks. A self-test verifies only its local code path; it does not connect Codex or establish protection of Codex's built-in tools.
 
-The npm token is managed by npm in the user's configuration. Use a personal account, keep the token out of project files, and remove credentials you no longer need. The v3.0.0 source tag is available and corresponds to the published GitHub Release; that Release has no attached assets.
+The npm token is managed by npm in the user's configuration. Use a personal account, keep the token out of project files, and remove credentials you no longer need. GitHub Packages requires a classic personal access token with `read:packages` and account permission to the package; npm 9+ uses `--auth-type=legacy` for prompt-based login. See GitHub's [npm registry instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) and [package permission scopes](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages).
+
+If authentication returns 401, confirm the token is a classic PAT with `read:packages`, that the account can read the package, and that the `@dorianchn` scope points to `https://npm.pkg.github.com`. If npm returns 404, first check that the requested package version exists and is visible to that account; package retrieval for this project has not been independently verified. Do not paste a token into chat or commit it to a project `.npmrc`.
+
+The v3.0.0 source tag is available and corresponds to the published GitHub Release; that Release has no attached assets.
 
 ### Build from the v3.0.0 source tag
 

@@ -24,7 +24,8 @@ Current onboarding, exact checks, package gaps and open product gates: [M8 readi
 This development branch is a separate candidate; its current package manifest remains 1.2.7.
 
 Works with MCP hosts that support stdio; non-MCP agents can use the SDK (see
-below). This audit verified the stdio protocol with the MCP JavaScript client,
+the [developer guide](docs/3.0/DEVELOPER_GUIDE.md) for a runnable allow/deny example).
+This audit verified the stdio protocol with the MCP JavaScript client,
 not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 中文文档：[README.zh-CN.md](README.zh-CN.md)
@@ -37,7 +38,7 @@ not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 - **Native Codex Shell — UNPROTECTED:** built-in Shell is outside Agent Canary's route; MCP/Guard setup does not change that.
 - **AppContainer — LIMITED:** only tested child-process operations are covered; whole-host and general Shell protection are not established.
-- **Security Center — PARTIAL / product acceptance NOT_VERIFIED:** current Console implements GET status and separately authorized fixed-probe/configured-target read routes. M4 consumes status only. These routes do not establish general product-file or OS-atomic protection. See [API contracts](docs/3.0/API_CONTRACTS.md) and [issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52).
+- **Security Center — PARTIAL / product acceptance NOT_VERIFIED:** current Console implements GET status and separately authorized fixed-probe/configured-target read routes. M4 displays status and can request a read for a configured target after operator action; it does not accept an arbitrary model-selected path. These routes do not establish general product-file or OS-atomic protection. See [API contracts](docs/3.0/API_CONTRACTS.md) and [issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52).
 - **Missing Security Center / E4 backend — UNKNOWN:** 404 or unavailable status must remain UNKNOWN, without inferring protection or a successful denial.
 - **E4 — NOT_VERIFIED:** synthetic fixtures, source checks and CI are not independent product E4 passes.
 
