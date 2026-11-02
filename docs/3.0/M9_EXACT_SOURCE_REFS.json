@@ -4,9 +4,9 @@
   "targetBaseRef": "feature/agent-canary-3.0",
   "modules": {
     "M1": {
-      "pullRequest": 149,
-      "branchRef": "shanchuanzhi/issue52-toctou-race-20261102",
-      "sha": "5eaf323b4188dc4228eadd099d2e27af3e61ae79"
+      "pullRequest": 152,
+      "branchRef": "feature/ac3-m1-mount-boundary",
+      "sha": "17c2ffcbf0824db2cda7da44c147efd2a86f8794"
     },
     "M2": {
       "pullRequest": 110,
