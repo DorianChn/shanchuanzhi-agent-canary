@@ -16,6 +16,17 @@
     "feature/ac3-reliability-ac3": "M7",
     "feature/ac3-m7-m8-source-pin": "M7"
   },
+  "canonicalSourceBranches": {
+    "M1": "feature/ac3-security-core",
+    "M2": "feature/ac3-execution-isolation",
+    "M3": "feature/ac3-agent-onboarding",
+    "M4": "feature/ac3-desktop-security-center",
+    "M5": "feature/ac3-policy-audit",
+    "M6": "feature/ac3-e4-validation-ac3",
+    "M7": "feature/ac3-reliability-ac3",
+    "M8": "feature/ac3-open-source-product"
+  },
+  "m9SourceManifestPath": "docs/3.0/M9_EXACT_SOURCE_REFS.json",
   "sharedPaths": {
     ".gitattributes": [
       "M6",

@@ -51,6 +51,12 @@ __pycache__/
 *.token
 *.secret
 *.secrets
+credentials.json
+.credentials.json
+client_secret*.json
+service-account-key*.json
+!client_secret.example.json
+!service-account-key.example.json
 
 # Additional temporary editor artifacts.
 *.swo

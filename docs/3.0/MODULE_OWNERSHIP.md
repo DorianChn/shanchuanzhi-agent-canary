@@ -1,3 +1,49 @@
+## Current ownership and worktree overlay — 2026-10-27 21:50 UTC
+
+- M1 owns held-file identity/Gateway/Hook denial; M2 owns its execution-isolation adapter; M3 owns onboarding and the status-only configured-target/readiness contract; M4 consumes read-only status; M5 owns strict policy and audit; M6 owns E4 evidence/snapshot reporting; M7 owns packaging/lifecycle; M8 owns public readiness claims; M9 alone owns exact-source pins and composition. Shared contracts change only through their named owner; consumers use adapters.
+- Existing owner branches and PR heads are unchanged: M1 `89be11e`, M2 `941fd22`, M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 `bf9faee`, M8 `685520c`; M9 candidate `635f8bc`. No new module branches were created.
+- M3/M4 have current GitHub handoffs on #124/#125 (`6453354271`, `6453356195`); no owner reply or source-head movement is visible. M1/M2 P0/P1 follow-ups are #52/#45 (`6453264879`, `6453265604`). M5/M6/M7/M8 gates remain as recorded on #122/#123/#126/#129. Issue #126 scope clarification `6454517338` distinguishes the M0 base manifest from open M3–M8 follow-up PR heads.
+- M6/M7 dirty `.gitignore` and M8 dirty `.gitignore` plus `M8_MERGE_RESOLUTION_RESULT.json` remain owner-owned and unmodified. No module code or test was changed by M0. M0 coordinator worktree is on `feature/ac3-m0-coordination`; current unpushed changes are M0 documentation only.
+
+## Latest remote verification — 2026-10-27 19:33 UTC
+
+- M0 remote head `d590828e4638ed42315b4042eb5140298de003d6` has 12/12 passing checks; all local M0 changes through this snapshot are pushed.
+- M3–M8 PR heads remain unchanged. M7 #128 is still conflicting; M8 #129 still has no submitted formal review for its current head. Dirty M6/M7/M8 owner files remain untouched.
+- The successful M9 run is tied to base M9 `34fbe6d` and older refs; it does not prove current M7/M8 integration or resolve #52/#132.
+
+## Post-push ownership readback — 2026-10-27 19:11 UTC
+
+- M0 remote/PR #131 head is `78e82e71049469fe5057c3b8b7a24bcb1313da36`; all 12 checks passed. The next push window is no earlier than 19:24 UTC.
+- M3–M8 owner PR heads remain unchanged. M7 #128 remains conflicting; M8 #129 remains one documentation/readiness commit ahead of the current M9 pin. No formal review record appeared for #128/#129.
+- The M9 Windows/Ubuntu run tested feature-base M9 `34fbe6d` plus historical/base M1–M8 refs; it is not current-head evidence. Owner worktrees and dirty files remain preserved.
+
+## Live ownership and worktree delta — 2026-10-27 19:01 UTC
+
+- `agents/M1`–`agents/M8` all exist on their existing `feature/ac3-*` branches. M1/M2/M3/M5/M6/M8 share the coordinator repository's common Git directory; M4/M7 are genuine worktrees from the existing Windows/E4 clone, still located under this workspace. No worktree was moved or recreated.
+- Owner dirt remains untouched: M6 `.gitignore`; M7 `.gitignore`; M8 `.gitignore` plus untracked `M8_MERGE_RESOLUTION_RESULT.json`.
+- Current remote module PR heads are M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, M6 `fae72ea`, M7 `bf9faee`, and M8 `685520c`; PRs #120–#123 and #127–#129 remain Draft. M7 conflicts; M8's current head is one docs/readiness commit beyond M9's pin and still needs owner disposition.
+- M0 remote head is `82320c0` with passing coordination audit and CI 9/9; local coordinator has seven M0-only documentation commits queued. Next push no earlier than 19:04 UTC. PR #24 remains OPEN/Draft, unmodified.
+
+## Current owner map and exact PR/worktree snapshot — 2026-10-26 20:54 UTC
+
+This is the current ownership/source snapshot; dated sections below are retained as history. M0 owns coordination and verification orchestration only. The PR file scopes below are the current GitHub diffs, while each module's stable contract boundary remains authoritative for any files not listed in that current diff.
+
+| Module | Existing branch and worktree | Current HEAD / PR state | Stable owner boundary and current PR file scope |
+| --- | --- | --- | --- |
+| M0 | feature/ac3-m0-coordination / coordinator | Remote PR #131 `01e2142434c5805b4fcb1bcb2815009d559fac3b` OPEN/Draft, exact-head 12/12 checks pass; a docs-only coordination batch is queued for the next 20-minute push window | Coordination docs, GitHub issue/PR status, schedules, and Run-AC3-All-OneClick.ps1. Does not edit module implementation or module tests. |
+| M1 | feature/ac3-security-core / agents/M1 | 89be11e5f95f2b191880a4fc88f50e15f405121e; PR #114 MERGED, 14/14 checks pass | Gateway/Guard, canonical path and held-file identity, canonical Hook semantics, file-state store, and security assertions. PR #114 delta: test/file-state-store.test.ts. |
+| M2 | feature/ac3-execution-isolation / agents/M2 | 941fd22d5e43e1de91a76b8c73006e57a4c15496; PR #110 MERGED, 11/11 checks pass | Execution-isolation and supported host adapter; consumes M1's Gateway/Hook contract. PR #110 delta: execution-isolation/codex/issue45-native-host-review.json and execution-isolation/reports/NATIVE_SHELL_BYPASS_REPORT.md. Issue #45 remains OPEN/P1/UNPROTECTED. |
+| M3 | feature/ac3-agent-onboarding / agents/M3 | 91695529787f07111f5256d3c9d6e0e556f6eac1; PR #120 OPEN/Draft, 10/12 checks pass | Onboarding and configured-target CLI/route tests; composes M1 Gateway, M2 adapter, and M5 policy. PR #120 delta: ONBOARDING_TEST_REPORT.md and test/security-center-route-m3.test.ts. Its two exact-source composition checks fail. |
+| M4 | feature/ac3-desktop-security-center / agents/M4 | 5d975b7927a66be26a8bfc3740530bb27a703f2c; PR #121 OPEN/Draft, 10/12 checks pass | Desktop Security Center UI and UI tests; consumes supported APIs. PR #121 delta: docs/3.0/M4/DESKTOP_INTEGRATION_REPORT.md, docs/3.0/M4/UI_TEST_RESULTS.md, src/ai/console-page.ts, test/runtime-console.test.ts. No first-party OBSERVE file-read consumer is verified for P0 #52. |
+| M5 | feature/ac3-policy-audit / agents/M5 | dde81d6a989ba39aa0d57dfeed0c9283f4459682; PR #122 OPEN/Draft, 9/12 checks pass | Risk policy, security-router decisions, audit fields, and policy regressions; consumes M1-validated capabilities. PR #122 delta: AUDIT_EVIDENCE_FORMAT.md, CANARY_LIFECYCLE_TESTS.md, FALSE_POSITIVE_REPORT.md, POLICY_AUDIT_REPORT.md, docs/RISK_POLICY.md, src/policy-management.ts, test/policy-management.test.ts. pack:check remains safely blocked pending explicit temporary --prefix proof. |
+| M6 | feature/ac3-e4-validation-ac3 / agents/M6 | fae72ea3d0c4498dfddb7d04421e41b87179895b; PR #123 OPEN/Draft, 10/12 checks pass; .gitignore dirty | E4 verifier, evidence schema/bundle validation, and product SELF_CHECK. PR #123 delta: security-lab/e4/PRODUCT_SELF_CHECK.md and product-self-check-controls.mjs, product-self-check.mjs, product-self-check.test.mjs. SELF_CHECK does not replace independent product acceptance. |
+| M7 | feature/ac3-reliability-ac3 / agents/M7 | bf9faeeb96625325e6fab8e497954ff6db4e78ea; PR #128 OPEN/Draft, CONFLICTING, no checks; .gitignore dirty | Windows packaging, installer lifecycle, reliability workflow/tests; M1 retains canonical Hook semantics and M7 owns its packaged copy. PR #128 delta: .github/workflows/windows-community.yml, INSTALLER_ACCEPTANCE.md, PERFORMANCE_BENCHMARK.md, RELEASE_READINESS.md, STABILITY_REPORT.md, package-lock.json, packaging/windows/*, scripts/check-package.mjs, security-lab/build-community.py, test/reliability.test.mjs, test/windows-packaging.test.mjs. |
+| M8 | feature/ac3-open-source-product / agents/M8 | 685520cbb000b3dc6950876f115199cdebf81ea5; PR #129 OPEN/Draft, 9/12 checks pass; .gitignore dirty and M8_MERGE_RESOLUTION_RESULT.json untracked | Open-source, security and compatibility docs plus documentation checks; does not take ownership of M6 verifier or M7 packaging. PR #129 delta: COMPATIBILITY.md, E4_EVIDENCE_INDEX.md, GETTING_STARTED.md, README.md, README.zh-CN.md, RELEASE_NOTES_DRAFT.md, UPGRADING.md, docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md, scripts/check-docs.mjs. |
+| M9 | feature/ac3-m9-integration / integration/M9 | 635f8bc55216b044627fa83f0b402003d0eaa893; PR #127 OPEN/Draft, 12/12 checks pass | Exact-source manifest, validator, integration tests/workflow, and cross-module risk aggregation. Manifest-selected M7/M8 pass hosted composition; local M7/M8 heads do not equal pinned SHAs. |
+
+The baseline worktree is feature/agent-canary-3.0 at 34fbe6d35d4dea30795525bf538f97194758c6c4; PR #24 remains OPEN/Draft with 14 successful checks and one skipped Windows installer-lifecycle check. It is not merged. M4 and M7 are distinct worktrees backed by the separate Git common directory at Documents/Codex/2026-10-15/agent-canary-3-0-windows-e4/.git; other listed AC3 worktrees are registered with the Agent-Canary-Dev common repository. Every module path has its own feature branch. Use git -C against the intended path; do not move/recreate M4 or M7 to normalize metadata. Preserve all owner dirty/untracked files. The detached integration/M9-pinned-M7-37034 worktree is validation-only, not an owner branch. No stale/prunable worktree metadata was cleaned.
+
+Cross-module order remains: M1 owns canonical Gateway/held-identity and Hook semantics; M2 consumes that contract; M3 composes M1/M2 with M5 policy; M4 consumes supported APIs but has no verified first-party OBSERVE callsite; M6 owns verification artifacts, not independent operator acceptance; M7 owns packaging/lifecycle; M8 owns public docs/redaction; M9 pins only owner-reviewed immutable sources. Do not change M9 pins until M7/M8 exact-source owner dispositions and M6's scoped review of the exact M8 head are recorded.
 ## Current follow-up ownership — 2026-10-24 17:30 UTC
 
 | Scope | Owner and existing workspace | Boundary |

@@ -227,6 +227,28 @@ $e4ReportPath = Get-ChildItem -LiteralPath (Join-Path $outputRoot 'e4') -Filter 
 $e4Report = if ($e4ReportPath) { Get-Content -LiteralPath $e4ReportPath.FullName -Raw | ConvertFrom-Json } else { $null }
 $e4Failures = if ($e4Report) { @($e4Report.cases | Where-Object { $_.status -eq 'FAIL' } | ForEach-Object { [ordered]@{ id=$_.id; status=$_.status; reason=$_.reason } }) } else { @() }
 $e4Blocked = if ($e4Report) { @($e4Report.cases | Where-Object { $_.status -eq 'BLOCKED' } | ForEach-Object { [ordered]@{ id=$_.id; reason=$_.reason } }) } else { @() }
+$snapshotEvidenceIssues = [System.Collections.Generic.List[object]]::new()
+$snapshotTargets = [ordered]@{
+    'GW-CANARY-BLOCK' = @('gateway-canary/target.txt')
+    'CANARY-SESSION-ISOLATION' = @('session-isolation/session-a-target.txt', 'session-isolation/session-b-target.txt')
+}
+foreach ($caseId in $snapshotTargets.Keys) {
+    $matchingCases = @()
+    if ($e4Report) { $matchingCases = @($e4Report.cases | Where-Object { $_.id -eq $caseId }) }
+    foreach ($target in $snapshotTargets[$caseId]) {
+        $before = @(); $after = @(); $reportedUnchanged = $null
+        if ($matchingCases.Count -eq 1) {
+            $before = @($matchingCases[0].fileState.before | Where-Object { $_.path -eq $target })
+            $after = @($matchingCases[0].fileState.after | Where-Object { $_.path -eq $target })
+            $reportedUnchanged = $matchingCases[0].fileState.unchanged
+        }
+        $validBefore = $before.Count -eq 1 -and $before[0].exists -eq $true -and $before[0].sha256 -match '^[0-9a-f]{64}$'
+        $validAfter = $after.Count -eq 1 -and $after[0].exists -eq $true -and $after[0].sha256 -match '^[0-9a-f]{64}$'
+        if (-not $validBefore -or -not $validAfter) {
+            $snapshotEvidenceIssues.Add([ordered]@{ id=$caseId; target=$target; beforeCount=$before.Count; afterCount=$after.Count; reportedUnchanged=$reportedUnchanged; reason='TARGET_SNAPSHOT_MISSING_OR_INVALID' })
+        }
+    }
+}
 $result = [ordered]@{
     schema = 'agent-canary.e4-one-click.v1'
     runId = $runId
@@ -236,6 +258,7 @@ $result = [ordered]@{
     fullProjectFailureLines = $fullSuiteFindings
     syntheticE4Failures = $e4Failures
     syntheticE4BlockedCases = $e4Blocked
+    syntheticE4SnapshotEvidenceIssues = @($snapshotEvidenceIssues)
     automatedChecks = if ($overallExit -eq 0) { 'PASS' } else { 'FAIL' }
     e4Status = 'NOT_VERIFIED'
     productE4Accepted = $false
@@ -274,6 +297,7 @@ if ($fullSuite) { $mdLines.Add("- Full suite: $($fullSuite.pass)/$($fullSuite.te
 foreach ($line in $fullSuiteFindings) { $mdLines.Add("- Full-suite output: $line") }
 foreach ($case in $e4Failures) { $mdLines.Add("- Synthetic E4 FAIL: $($case.id): $($case.reason)") }
 foreach ($case in $e4Blocked) { $mdLines.Add("- Synthetic E4 BLOCKED: $($case.id): $($case.reason)") }
+foreach ($issue in $snapshotEvidenceIssues) { $mdLines.Add("- Snapshot evidence NOT_VERIFIED: $($issue.id), $($issue.target) (before=$($issue.beforeCount), after=$($issue.afterCount)). A reported unchanged flag alone does not establish target state.") }
 if ($fullSuiteFindings.Count -eq 0 -and $e4Failures.Count -eq 0 -and $e4Blocked.Count -eq 0) { $mdLines.Add('No automated test failures or blocked synthetic cases were reported.') }
 $mdLines.Add('')
 $mdLines.Add('## Acceptance boundary')

@@ -169,6 +169,37 @@ export function summarizePrAudit(pulls, filesByPr, checksByPr, artifactsBySha, r
   return lines.join('\n') + '\n';
 }
 
+export function summarizeM9SourceRefAudit({ m9Pull, manifest, branchHeads, sourcePulls, rules }) {
+  const lines = ['## M9 exact-source pins versus current module branches', ''];
+  if (!m9Pull) {
+    lines.push('No open M9 PR targeting the AC3 base was found; current exact-source pins were not compared.');
+    return lines.join('\n') + '\n';
+  }
+
+  lines.push('M9 candidate PR #' + m9Pull.number + ' at ' + clean(m9Pull.head?.sha) +
+    '; manifest: ' + clean(rules.m9SourceManifestPath ?? 'docs/3.0/M9_EXACT_SOURCE_REFS.json') + '.', '');
+  lines.push('| Module | Canonical branch | M9 pin | Current branch head | Source PR | Status |',
+    '|:---|:---|:---|:---|---:|:---|');
+
+  for (const [module, branch] of Object.entries(rules.canonicalSourceBranches ?? {})) {
+    const pin = manifest?.modules?.[module]?.sha;
+    const current = branchHeads?.get?.(module) ?? branchHeads?.[module];
+    const sourcePr = sourcePulls?.get?.(branch);
+    let status = 'MATCH';
+    if (!manifest) status = 'UNKNOWN_MANIFEST';
+    else if (!pin) status = 'MISSING_PIN';
+    else if (!current?.sha) status = current?.error ? 'UNKNOWN (' + clean(current.error) + ')' : 'UNKNOWN_HEAD';
+    else if (pin !== current.sha) status = 'STALE_PIN';
+    lines.push('| ' + clean(module) + ' | ' + clean(branch) + ' | ' + clean(pin ?? 'MISSING') +
+      ' | ' + clean(current?.sha ?? 'UNKNOWN') + ' | ' + (sourcePr ? '#' + sourcePr.number : '—') +
+      ' | ' + status + ' |');
+  }
+
+  if (!manifest) lines.push('', 'Manifest could not be read from the exact M9 PR head; all comparisons are incomplete.');
+  lines.push('', 'A stale pin is a coordination/review gate, not proof of a runtime defect. Do not promote a pin without the module owner disposition and exact-source checks.');
+  return lines.join('\n') + '\n';
+}
+
 function withPage(url, page) {
   const parsed = new URL(url);
   parsed.searchParams.set('per_page', '100');
@@ -188,6 +219,36 @@ async function getPages(url, key, headers, fetchImpl) {
     if (batch.length < 100) return items;
   }
   throw new Error('GitHub API pagination exceeded 30 pages for ' + new URL(url).pathname);
+}
+
+async function getJson(url, headers, fetchImpl) {
+  const response = await fetchImpl(url, { headers });
+  if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + new URL(url).pathname);
+  return response.json();
+}
+
+async function readM9Manifest(api, m9Pull, rules, headers, fetchImpl) {
+  const manifestPath = rules.m9SourceManifestPath ?? 'docs/3.0/M9_EXACT_SOURCE_REFS.json';
+  const url = api + '/contents/' + manifestPath.split('/').map(encodeURIComponent).join('/') +
+    '?ref=' + encodeURIComponent(m9Pull.head.sha);
+  const payload = await getJson(url, headers, fetchImpl);
+  if (payload.encoding !== 'base64' || typeof payload.content !== 'string') {
+    throw new Error('M9 manifest response is not base64 content.');
+  }
+  return JSON.parse(Buffer.from(payload.content, 'base64').toString('utf8'));
+}
+
+async function readCanonicalBranchHeads(api, rules, headers, fetchImpl) {
+  const entries = await Promise.all(Object.entries(rules.canonicalSourceBranches ?? {}).map(async ([module, branch]) => {
+    const url = api + '/branches/' + encodeURIComponent(branch);
+    try {
+      const payload = await getJson(url, headers, fetchImpl);
+      return [module, { sha: payload.commit?.sha ?? null }];
+    } catch (error) {
+      return [module, { sha: null, error: error.message }];
+    }
+  }));
+  return new Map(entries);
 }
 
 export async function auditOpenPullRequests({ repository, baseRef, token, rules = policy, fetchImpl = fetch }) {
@@ -216,7 +277,28 @@ export async function auditOpenPullRequests({ repository, baseRef, token, rules 
     if (!sha) continue;
     artifactsBySha.set(sha, (artifactsBySha.get(sha) ?? 0) + 1);
   }
-  return summarizePrAudit(branchPulls, filesByPr, checksByPr, artifactsBySha, rules);
+
+  const sourcePulls = new Map(branchPulls.map((pr) => [pr.head?.ref, pr]));
+  const m9Pull = branchPulls
+    .filter((pr) => rules.moduleBranches[pr.head?.ref] === 'M9')
+    .sort((a, b) => String(b.updated_at ?? '').localeCompare(String(a.updated_at ?? '')))[0] ?? null;
+  let manifest = null;
+  let manifestError = '';
+  let branchHeads = new Map();
+  if (m9Pull) {
+    try {
+      manifest = await readM9Manifest(api, m9Pull, rules, headers, fetchImpl);
+    } catch (error) {
+      manifestError = error.message;
+    }
+    branchHeads = await readCanonicalBranchHeads(api, rules, headers, fetchImpl);
+  }
+  const baseReport = summarizePrAudit(branchPulls, filesByPr, checksByPr, artifactsBySha, rules);
+  const pinReport = summarizeM9SourceRefAudit({ m9Pull, manifest, branchHeads, sourcePulls, rules });
+  return baseReport + '\n' + (manifestError
+    ? pinReport.replace('Manifest could not be read from the exact M9 PR head; all comparisons are incomplete.',
+      'Manifest could not be read from the exact M9 PR head (' + clean(manifestError) + '); all comparisons are incomplete.')
+    : pinReport);
 }
 
 async function main() {
