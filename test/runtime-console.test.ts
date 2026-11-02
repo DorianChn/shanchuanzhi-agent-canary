@@ -2,9 +2,17 @@ import {test} from 'node:test';import assert from 'node:assert/strict';import os
 import {spawnSync} from 'node:child_process';
 import http from 'node:http';
 import {Script} from 'node:vm';
-import {adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
+import {adaptConfiguredTargetReadiness,adaptFixedProtectedReadProbe,adaptSecuritySnapshot,buildSecurityDiagnostic,classifyDataSourceFailure,explainSecurityEvent,isValidSecurityCenterStatusPayload,normalizeProtectionStatus,preparePolicyResultForDisplay} from '../src/ai/security-center-adapter.js';
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-console-test-'));
 const {startAIConsole}=await import('../src/ai/console.js');
+test('fixed protected-read probe result stays scoped to its synthetic temporary fixture',()=>{
+ const scope='M3_FIXED_TEMP_PROBE_ONLY';
+ const passed=adaptFixedProtectedReadProbe({scope,status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true});
+ assert.equal(passed.status,'PASS');assert.match(passed.message,/用户文件和原生 Shell 仍未验证/);
+ assert.equal(adaptFixedProtectedReadProbe({scope,status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:false}).status,'UNKNOWN');
+ assert.equal(adaptFixedProtectedReadProbe({scope:'USER_FILE_PROTECTION',status:'PASS',reason:'FIXED_PROBE_CONTROLS_PASSED',markerMatched:true}).status,'UNKNOWN');
+ assert.equal(adaptFixedProtectedReadProbe({scope,status:'DENY',reason:'OWNER_POLICY_DENIED',markerMatched:false}).status,'DENY');
+});
 test('desktop branch native hook audit log omits synthetic sensitive canaries',()=>{
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-m4-hook-log-'));
  try{
@@ -32,16 +40,16 @@ test('3.0 console API preserves CSRF, operator identity, replay control and real
   assert.equal((await fetch(console.url+'/api/e4/status',{headers:{'x-canary-csrf':csrf!}})).status,404);
   assert.match(html,/Agent Canary 安全控制中心/);assert.match(html,/自动 E4 测试入口/);assert.match(html,/PARTIALLY_PROTECTED/);assert.match(html,/security-center/);assert.match(html,/currentPolicyScopeDetail/);assert.match(html,/canaryIsolationScopeDetail/);assert.match(html,/Console 虚拟执行器策略/);assert.match(html,/受控 Runtime 示例 Guard/);assert.match(html,/显式 DENY 和 SENSITIVE_DATA 仍会拒绝/);assert.match(html,/preparePolicyResultForDisplay/);assert.match(html,/POLICY_CONFLICT/);assert.match(html,/catch\(e\)\{status\('policyStatus',warning\|\|e\.message,true\);\}/);assert.match(html,/policyResult/);
   assert.match(html,/id="nativeCodexShellBoundary"[^>]*role="note"/);assert.match(html,/id="nativeCodexShellStatus" class="security-status" data-status="NOT_PROTECTED">UNPROTECTED \/ BLOCKED_NOT_VERIFIED<\/span>/);assert.match(html,/尚未完成 Codex 原生 Shell 路径的端到端验证，也未控制该路径/);assert.match(html,/MCP 或 Gateway 中受保护的回调不代表原生 Shell 已受保护/);
-  assert.match(html,/id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证<\/strong>/);assert.match(html,/GET \/api\/security-center 仅返回状态，不执行文件读取/);assert.match(html,/M3 的 POST \/api\/security-center\/protected-read 是独立的固定临时标记探针；本页面不调用或读取其结果/);assert.match(html,/该探针不证明用户文件或原生宿主路径已受保护/);assert.match(html,/MCP 探针、Gateway 绑定状态、Runtime 临时文件演示和虚拟策略读取也不能替代此验证/);
+  assert.match(html,/id="firstPartyObserveReadStatus" class="security-status" data-status="UNKNOWN">NOT_VERIFIED · 未验证<\/strong>/);assert.match(html,/GET \/api\/security-center 仅返回状态，不执行文件读取/);assert.match(html,/id="protectedReadProbeCode" type="password" autocomplete="off"/);assert.match(html,/id="runProtectedReadProbe"[^>]*>运行固定临时探针/);assert.match(html,/M1 Gateway、M2 适配器和 M5 策略读取合成标记/);assert.match(html,/通过只证明固定探针；不代表用户文件或原生 Shell 已受保护/);assert.match(html,/MCP 探针、Gateway 绑定状态、Runtime 临时演示和虚拟策略读取也不能替代此验证/);
   assert.match(html,/securityCenterAdapter\.isValidSecurityCenterStatusPayload\(data\)/);assert.match(html,/id="securityCoverage"/);assert.match(html,/UNKNOWN 不代表已保护或未保护/);
-  const clientScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]);assert.ok(clientScripts.length);assert.doesNotMatch(clientScripts.join('\n'),/security-center\/protected-read/i,'the Security Center must not invoke the fixed temporary-marker probe');
+  const clientScripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]);assert.ok(clientScripts.length);assert.match(clientScripts.join('\n'),/getEl\('runProtectedReadProbe'\)\.onclick=async\(\)=>/);assert.match(clientScripts.join('\n'),/api\('security-center\/protected-read',\{\},undefined,\{'x-canary-operator-code':code\}\)/);assert.match(clientScripts.join('\n'),/codeInput\.value=''/);assert.match(clientScripts.join('\n'),/adaptFixedProtectedReadProbe/);
   assert.match(html,/const readable=\['state','agents','policyState','runtime3'\]\.filter\(k=>securitySources\[k\]==='AVAILABLE'\)\.length/);
   assert.match(html,/readable\+'\/4 个已有只读接口可读/);
   const get=async()=>{const r=await fetch(console.url+'/api/runtime3',{headers:{'x-canary-csrf':csrf!}});return r.json();};
   const policyResponse=await fetch(console.url+'/api/policy/state',{headers:{'x-canary-csrf':csrf!}});assert.equal(policyResponse.status,200);const policyState=await policyResponse.json() as any;assert.equal(policyState.mode,'BALANCED');assert.match(policyState.scope,/VIRTUAL_EXECUTORS/);
   const runtimeState=await get() as any;assert.equal(runtimeState.mode,'DEMO_REAL_TEMPORARY_FILE_IO_NO_AGENT_MODEL');assert.equal(runtimeState.agent,'controlled-sdk-demo');assert.equal(runtimeState.guard,'SAFE');
   const post=async(route:string,body:unknown)=>fetch(console.url+'/api/'+route,{method:'POST',headers:{'x-canary-csrf':csrf!,'content-type':'application/json'},body:JSON.stringify(body)});
-  let response=await post('runtime3/action',{action:'write'});assert.equal(response.status,200);assert.equal((await response.json() as any).evidence.at(-1).side_effect_verification,'VERIFIED');
+  let response=await post('runtime3/action',{action:'write'});assert.equal(response.status,200);const writeState=await response.json() as any,writeEvent=writeState.evidence.at(-1);assert.equal(writeState.guard,'SAFE');assert.equal(writeEvent.decision,'DENY');assert.equal(writeEvent.execution_status,'NOT_STARTED');assert.equal(writeEvent.side_effect_verification,'NOT_STARTED');assert.match(writeState.lastResult.error,/GATEWAY_DENY:write_capability_disabled_pending_path_safe_primitive/);
   response=await post('runtime3/action',{action:'approval'});const request=(await response.json() as any).pending[0].requestId;
   assert.equal((await post('runtime3/approve',{requestId:request,confirm:true,operatorCode:'MODEL_FORGED'})).status,403);
   assert.equal((await post('runtime3/approve',{requestId:request,confirm:true,operatorCode:'FIXTURE_OPERATOR_ONLY'})).status,200);
@@ -173,6 +181,63 @@ test('security endpoint availability is visible without claiming protection or E
  }finally{await app.close();}
 });
 
+
+test('configured-target read consumes only fresh fixed-label readiness and preserves explicit authorization boundary',async()=>{
+ const app=await startAIConsole({port:0});
+ try{
+  const html=await (await fetch(app.url)).text();
+  const panel=html.match(/<section id="configuredTargetReadPanel"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(panel,'the configured-target operation must have a visible, separate boundary');
+  assert.match(panel,/<button id="configuredTargetReadButton"[^>]*\sdisabled\s[^>]*aria-describedby="configuredTargetReadBlocker"/);
+  assert.match(panel,/宿主固定目标/);
+  assert.match(panel,/操作员口令/);
+  assert.match(panel,/POST \/api\/security-center\/target-read/);
+  assert.match(panel,/契约范围：<code>M3_CONFIGURED_TARGET_READ<\/code>/);
+  assert.match(panel,/data-status="UNKNOWN"[^>]*>UNKNOWN · 未执行；实测范围 UNKNOWN/);
+  assert.match(panel,/完整产品、原生工具和 OS 原子保护仍为 NOT_VERIFIED/);
+  assert.match(panel,/<input id="configuredTargetReadCode" type="password" autocomplete="off" disabled>/);
+  assert.match(panel,/<select id="configuredTargetReadTarget" disabled>/);
+  const scripts=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).join('\n');
+  assert.match(scripts,/security-center\/configured-target-readiness/);
+  assert.match(scripts,/security-center\/target-read/);
+  assert.match(scripts,/x-canary-operator-code/);
+  assert.match(scripts,/configuredReadinessCheckedAt>15000/);
+
+  // A route result is not a status snapshot or evidence of native/product coverage.
+  const routeResult={scope:'M3_CONFIGURED_TARGET_READ',status:'ALLOW',targetId:'M4_TARGET_ID_CANARY',content:'M4_FILE_CONTENT_CANARY'};
+  const snapshot=adaptSecuritySnapshot({securityCenter:routeResult});
+  assert.equal(snapshot.protectionStatus,'UNKNOWN');
+  assert.equal(snapshot.firstPartyObserveReadStatus,'NOT_VERIFIED');
+  const diagnostic=JSON.stringify(buildSecurityDiagnostic(snapshot,{}));
+  assert.doesNotMatch(diagnostic,/M4_TARGET_ID_CANARY|M4_FILE_CONTENT_CANARY/);
+ }finally{await app.close();}
+});
+
+test('configured-target readiness adapter rejects malformed, stale, future, unsupported and capability-like labels',()=>{
+ const now=Date.parse('2026-10-28T08:17:00.000Z');
+ const payload={scope:'M3_CONFIGURED_TARGET_READINESS',schemaVersion:1,generatedAt:new Date(now).toISOString(),configurationStatus:'CONFIGURED',bindingStatus:'BOUND',actionReadiness:'READY',operatorAuthStatus:'CONFIGURED',targets:[{targetId:'summary',bindingStatus:'BOUND'}]};
+ assert.equal(adaptConfiguredTargetReadiness(payload,now).valid,true);
+ for(const bad of [null,{...payload,schemaVersion:2},{...payload,scope:'wrong'},{...payload,extra:'no'},
+  {...payload,generatedAt:new Date(now-15001).toISOString()},{...payload,generatedAt:new Date(now+5001).toISOString()},
+  {...payload,actionReadiness:'READY',operatorAuthStatus:'NOT_CONFIGURED'},
+  {...payload,targets:[{targetId:'../secret',bindingStatus:'BOUND'}]},
+  {...payload,targets:[{targetId:'summary',bindingStatus:'BOUND',path:'C:/secret'}]},
+  {...payload,targets:[{targetId:'summary',bindingStatus:'BOUND'},{targetId:'summary',bindingStatus:'BOUND'}]}]) {
+  assert.equal(adaptConfiguredTargetReadiness(bad,now).valid,false);
+  assert.deepEqual(adaptConfiguredTargetReadiness(bad,now).targets,[]);
+ }
+});
+
+test('configured-target readiness preserves a valid configured-but-unknown binding without enabling action',()=>{
+ const now=Date.parse('2026-10-28T08:17:00.000Z');
+ const payload={scope:'M3_CONFIGURED_TARGET_READINESS',schemaVersion:1,generatedAt:new Date(now).toISOString(),configurationStatus:'CONFIGURED',bindingStatus:'UNKNOWN',actionReadiness:'UNKNOWN',operatorAuthStatus:'CONFIGURED',targets:[{targetId:'brief',bindingStatus:'UNKNOWN'}]};
+ const normalized=adaptConfiguredTargetReadiness(payload,now);
+ assert.equal(normalized.valid,true);
+ assert.equal(normalized.configurationStatus,'CONFIGURED');
+ assert.equal(normalized.bindingStatus,'UNKNOWN');
+ assert.equal(normalized.actionReadiness,'UNKNOWN');
+ assert.deepEqual(normalized.targets,[{targetId:'brief',bindingStatus:'UNKNOWN'}]);
+});
 
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({

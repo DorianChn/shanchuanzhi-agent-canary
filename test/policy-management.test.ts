@@ -95,17 +95,17 @@ test('managed router enforces project denial before the callback and records ver
   assert.ok(!router.policyManager.exportEvidence().includes('DO_NOT_LOG_ME'));
 });
 
-test('known risky development work waits for a human even when a reviewer returns unchanged', async () => {
+test('known risky builds wait for a human even when a reviewer returns unchanged', async () => {
   const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
   let callbacks = 0;
   const router = createManagedRiskPolicyRouter({
     guard: createAgentGuard({ sessionId: 'managed-approval', alert: false }),
     workspaceRoot: workspace(), policyStorageDirectory: storage(), mode: 'BALANCED',
-    tools: { write_file: { operation: 'file-write' } },
+    tools: { run_shell: { operation: 'shell' } },
     reviewDecision: async () => 'UNCHANGED', reviewDecisionSource: 'MODEL_REVIEW',
-    executeRealTool: () => { callbacks++; return 'written'; },
+    executeRealTool: () => { callbacks++; return 'built'; },
   });
-  await assert.rejects(router.dispatch({ name: 'write_file', args: { path: 'src/app.ts', content: 'normal source' } }), (error: unknown) => {
+  await assert.rejects(router.dispatch({ name: 'run_shell', args: { command: 'npm run build' } }), (error: unknown) => {
     assert.ok(error instanceof PolicyBlockedError);
     assert.equal(error.decision.action, 'APPROVAL_REQUIRED');
     return true;
@@ -175,28 +175,28 @@ test('a project rule added after initial review is rechecked before the callback
   assert.ok(router.policyManager.evidence().some(e => e.policy_version === 1 && e.decision_source === 'PROJECT_POLICY' && e.execution_status === 'NOT_STARTED'));
 });
 
-test('a newly added project denial invalidates a previously pending human approval', async () => {
+test('a newly added project denial invalidates a previously pending build approval', async () => {
   const { createAgentGuard, PolicyBlockedError } = await import('../src/sdk.js');
   let callbacks = 0;
   const router = createManagedRiskPolicyRouter({
     guard: createAgentGuard({ sessionId: 'managed-pending-policy-update', alert: false }),
     workspaceRoot: workspace(), policyStorageDirectory: storage(), mode: 'BALANCED',
-    tools: { write_file: { operation: 'file-write' } },
-    executeRealTool: () => { callbacks++; return 'should not write'; },
+    tools: { run_shell: { operation: 'shell' } },
+    executeRealTool: () => { callbacks++; return 'should not build'; },
   });
-  await assert.rejects(router.dispatch({ name: 'write_file', args: { path: 'src/app.ts', content: 'safe source' } }), (error: unknown) => {
+  await assert.rejects(router.dispatch({ name: 'run_shell', args: { command: 'npm run build' } }), (error: unknown) => {
     assert.ok(error instanceof PolicyBlockedError);
     assert.equal(error.decision.action, 'APPROVAL_REQUIRED');
     return true;
   });
   const requestId = router.pendingApprovals()[0].requestId;
   assert.equal(router.policyManager.apply([
-    { id: 'deny_writes', tool: 'write_file', risk: 'WRITE', effect: 'DENY', reasonCode: 'project_write_restricted' },
+    { id: 'deny_builds', tool: 'run_shell', risk: 'EXECUTE', effect: 'DENY', reasonCode: 'project_execution_restricted' },
   ], 'operator').applied, true);
 
   await assert.rejects(router.approve(requestId, 'host-operator'), (error: unknown) => {
     assert.ok(error instanceof PolicyBlockedError);
-    assert.equal(error.decision.reason, 'project_write_restricted');
+    assert.equal(error.decision.reason, 'project_execution_restricted');
     return true;
   });
   assert.equal(callbacks, 0);
@@ -265,8 +265,9 @@ test('managed router records Canary quarantine, blocks callbacks, and resumes on
   let callbacks = 0;
   const router = createManagedRiskPolicyRouter({
     guard, workspaceRoot: workspace(), policyStorageDirectory: storage(), mode: 'BALANCED',
-    tools: { read_file: { operation: 'file-read' } },
-    executeRealTool: () => { callbacks++; return 'README'; },
+    tools: { read_status: { operation: 'http', urlArg: 'url' } },
+    allowedReadOrigins: ['https://status.example.test'],
+    executeRealTool: () => { callbacks++; return 'clean'; },
   });
 
   const decoyReply = await router.dispatch({ name: 'canary_read_secrets', args: {} });
@@ -275,12 +276,12 @@ test('managed router records Canary quarantine, blocks callbacks, and resumes on
   assert.match(JSON.stringify(decoyReply), /cnry_/);
   assert.ok(router.policyManager.evidence().some(e => e.decision_source === 'CANARY_GUARD' && e.reason_code === 'canary_decoy_quarantined' && e.execution_status === 'NOT_STARTED'));
 
-  await assert.rejects(router.dispatch({ name: 'read_file', args: { path: 'README.md' } }), CanaryBlockedError);
+  await assert.rejects(router.dispatch({ name: 'read_status', args: {} }), CanaryBlockedError);
   assert.equal(callbacks, 0, 'quarantine blocks subsequent ordinary tool calls');
 
   guard.reset({ acknowledgedBy: 'incident-responder', note: 'reviewed canary incident' });
   assert.equal(guard.state, 'SAFE');
-  assert.equal(await router.dispatch({ name: 'read_file', args: { path: 'README.md' } }), 'README');
+  assert.equal(await router.dispatch({ name: 'read_status', args: { url: 'https://status.example.test/health', method: 'GET' } }), 'clean');
   assert.equal(callbacks, 1);
   assert.ok(router.policyManager.evidence().some(e => e.decision_source === 'DETERMINISTIC_POLICY' && e.decision === 'ALLOW'));
 });
@@ -325,13 +326,14 @@ test('corrupt policy audit fails closed before a real callback starts', async ()
   const router = createManagedRiskPolicyRouter({
     guard: createAgentGuard({ sessionId: 'policy-corrupt', alert: false }),
     workspaceRoot: root, policyStorageDirectory: store, mode: 'BALANCED',
-    tools: { read_file: { operation: 'file-read' } },
-    executeRealTool: () => { callbacks++; return 'read'; },
+    tools: { read_status: { operation: 'http', urlArg: 'url' } },
+    allowedReadOrigins: ['https://status.example.test'],
+    executeRealTool: () => { callbacks++; return 'clean'; },
   });
-  router.policyManager.recordDecision({ decisionSource: 'HOST', decision: 'ALLOW', executionStatus: 'NOT_STARTED', reasonCode: 'host_initialized', toolId: 'read_file' });
+  router.policyManager.recordDecision({ decisionSource: 'HOST', decision: 'ALLOW', executionStatus: 'NOT_STARTED', reasonCode: 'host_initialized', toolId: 'read_status' });
   const file = path.join(store, 'project-policies', `${router.policyManager.projectId}.jsonl`);
   fs.appendFileSync(file, '{}\n');
-  await assert.rejects(router.dispatch({ name: 'read_file', args: { path: 'README.md' } }));
+  await assert.rejects(router.dispatch({ name: 'read_status', args: { url: 'https://status.example.test/health', method: 'GET' } }));
   assert.equal(callbacks, 0);
 });
 

@@ -8,7 +8,8 @@ if len(a.sha)!=40 or any(c not in '0123456789abcdef' for c in a.sha):raise Syste
 if not a.candidate_id or len(a.candidate_id)>64 or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789.-' for c in a.candidate_id):raise SystemExit('Invalid candidate identifier')
 community_hook_relative='security-lab/claude-native-hook.mjs'
 expected_m8_source_sha='24b8651730d57d860ba136e77db1526031abb1fc'
-expected_m8_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'
+expected_m8_source_demo_blob='3428f297c28845ae054c0ca63aa6c5c4d7ef785f'
+expected_m8_pr_demo_blob='bd2cd0512002e0a3f80a523e31d7e0ec679915f7'
 m8_demo_relative='competition-submission/roadshow-3.0/reproduction-kit/run-offline-demo.mjs'
 if len(a.m8_source_sha)!=40 or any(c not in '0123456789abcdef' for c in a.m8_source_sha) or a.m8_source_sha!=expected_m8_source_sha:raise SystemExit('Pinned M8 source SHA mismatch')
 m8_source_commit=subprocess.run(['git','-C',str(root),'rev-parse','--verify',a.m8_source_sha+'^{commit}'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',errors='replace')
@@ -20,14 +21,14 @@ m8_ancestor=subprocess.run(['git','-C',str(root),'merge-base','--is-ancestor',a.
 if m8_ancestor.returncode:raise SystemExit('Pinned M8 source is not an ancestor of current PR head')
 m8_demo_ref=f'{a.m8_source_sha}:{m8_demo_relative}'
 m8_demo_blob_id=subprocess.run(['git','-C',str(root),'rev-parse','--verify',m8_demo_ref],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='ascii',errors='replace')
-if m8_demo_blob_id.returncode or m8_demo_blob_id.stdout.strip().lower()!=expected_m8_demo_blob:raise SystemExit('Pinned M8 offline demo blob mismatch')
+if m8_demo_blob_id.returncode or m8_demo_blob_id.stdout.strip().lower()!=expected_m8_source_demo_blob:raise SystemExit('Pinned M8 source offline demo blob mismatch')
 m8_pr_demo_ref=f'{a.m8_pr_head_sha}:{m8_demo_relative}'
 m8_pr_demo_blob_id=subprocess.run(['git','-C',str(root),'rev-parse','--verify',m8_pr_demo_ref],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='ascii',errors='replace')
-if m8_pr_demo_blob_id.returncode or m8_pr_demo_blob_id.stdout.strip().lower()!=expected_m8_demo_blob:raise SystemExit('Current M8 PR offline demo blob mismatch')
-m8_demo_blob= subprocess.run(['git','-C',str(root),'cat-file','blob',expected_m8_demo_blob],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+if m8_pr_demo_blob_id.returncode or m8_pr_demo_blob_id.stdout.strip().lower()!=expected_m8_pr_demo_blob:raise SystemExit('Current M8 PR offline demo blob mismatch')
+m8_demo_blob= subprocess.run(['git','-C',str(root),'cat-file','blob',expected_m8_pr_demo_blob],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 if m8_demo_blob.returncode:raise SystemExit('Pinned M8 offline demo blob unavailable')
 m8_demo_bytes=m8_demo_blob.stdout
-if hashlib.sha1(b'blob '+str(len(m8_demo_bytes)).encode('ascii')+b'\0'+m8_demo_bytes).hexdigest()!=expected_m8_demo_blob:raise SystemExit('Pinned M8 offline demo blob failed integrity check')
+if hashlib.sha1(b'blob '+str(len(m8_demo_bytes)).encode('ascii')+b'\0'+m8_demo_bytes).hexdigest()!=expected_m8_pr_demo_blob:raise SystemExit('Current M8 PR offline demo blob failed integrity check')
 source_commit=subprocess.run(['git','-C',str(root),'rev-parse','--verify',a.sha+'^{commit}'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding='utf-8',errors='replace')
 if source_commit.returncode or source_commit.stdout.strip().lower()!=a.sha:raise SystemExit('Exact source commit unavailable')
 hook_blob_ref=f'{a.sha}:{community_hook_relative}'
@@ -49,7 +50,7 @@ with zipfile.ZipFile(seed) as z:
   relative=Path(*parts[1:])
   if relative.parts and relative.parts[0]=='dist':continue
   dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(z.read(info))
-for relative in ['src/competition.ts','src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/agent-hook.ts','security-lab/claude-native-hook.mjs','competition-submission/lab/agent-hook.mjs','src/file-state-store.ts','src/ai/console.ts','src/ai/console-page.ts','src/ai/security-center-adapter.ts','src/runtime/gateway.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/product-identity.test.ts','test/file-state-store.test.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','test/evidence-conformance.test.ts','test/evidence-vectors.json','test/gateway-acceptance.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs','security-lab/holdout-v1.json','security-lab/holdout-protocol.md','packaging/ubuntu/install.sh','packaging/ubuntu/install.mjs','scripts/claude-hook-preview.mjs']:
+for relative in ['src/competition.ts','src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/agent-hook.ts','security-lab/claude-native-hook.mjs','competition-submission/lab/agent-hook.mjs','src/file-state-store.ts','src/ai/console.ts','src/ai/console-page.ts','src/ai/security-center-adapter.ts','src/runtime/gateway.ts','src/runtime/secure-file.ts','src/runtime/evidence.ts','src/runtime/honeypot.ts','src/runtime/synthetic-decoy-capability.ts','src/runtime/dataflow.ts','src/runtime/demo.ts','test/product-identity.test.ts','test/file-state-store.test.ts','test/gateway.test.ts','test/honeypot-runtime.test.ts','test/runtime-console.test.ts','test/evidence-conformance.test.ts','test/evidence-vectors.json','test/gateway-acceptance.test.ts','security-lab/evidence.schema.json','security-lab/run-sdk-agent.mjs','security-lab/holdout-v1.json','security-lab/holdout-protocol.md','packaging/ubuntu/install.sh','packaging/ubuntu/install.mjs','scripts/claude-hook-preview.mjs']:
  if relative==community_hook_relative:continue
  dest=stage/relative;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes((root/relative).read_bytes())
 community_hook_path=stage/community_hook_relative;community_hook_path.parent.mkdir(parents=True,exist_ok=True);community_hook_path.write_bytes(hook_blob)
@@ -67,6 +68,8 @@ for line in (root/'src/sdk.ts').read_text(encoding='utf-8').splitlines():
  if "from './runtime/" in line:text+='\n'+line
 sdk.write_text(text+'\n',encoding='utf-8')
 pkg=json.loads((stage/'package.json').read_text());pkg['version']='3.0.0-'+a.candidate_id;pkg['private']=True
+current_pkg=json.loads((root/'package.json').read_text(encoding='utf-8'))
+pkg.setdefault('dependencies',{})['koffi']=current_pkg['dependencies']['koffi']
 pkg['exports']['./sdk']={'types':'./dist/sdk.d.ts','import':'./dist/sdk.js','default':'./dist/sdk.js'}
 (stage/'tsconfig.json').write_bytes((root/'tsconfig.json').read_bytes())
 (stage/'scripts').mkdir(exist_ok=True)
@@ -77,7 +80,7 @@ for name in ['run-offline-demo.mjs','verify-community-manifest.mjs','RESULT_RECE
  (stage/'reproduction-kit'/name).write_bytes((root/'competition-submission/roadshow-3.0/reproduction-kit'/name).read_bytes())
 community_demo_path=stage/'reproduction-kit/run-offline-demo.mjs';community_demo_path.write_bytes(m8_demo_bytes)
 candidate_m8_demo=community_demo_path.read_bytes()
-if candidate_m8_demo!=m8_demo_bytes or hashlib.sha1(b'blob '+str(len(candidate_m8_demo)).encode('ascii')+b'\0'+candidate_m8_demo).hexdigest()!=expected_m8_demo_blob:raise SystemExit('Community candidate M8 offline demo blob mismatch')
+if candidate_m8_demo!=m8_demo_bytes or hashlib.sha1(b'blob '+str(len(candidate_m8_demo)).encode('ascii')+b'\0'+candidate_m8_demo).hexdigest()!=expected_m8_pr_demo_blob:raise SystemExit('Community candidate M8 PR offline demo blob mismatch')
 pkg['scripts']['types:check']='node scripts/check-sdk-types.mjs'
 pkg['scripts']['acceptance:offline']='npm run self-test && npm run types:check && node reproduction-kit/run-offline-demo.mjs --root=.'
 pkg['scripts']['test']='node --import tsx --test test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts'
@@ -89,7 +92,7 @@ if lock.get('name')!=pkg.get('name') or lock_root.get('name')!=pkg.get('name'):r
 for field in ('dependencies','devDependencies','optionalDependencies'):
  if lock_root.get(field,{})!=pkg.get(field,{}):raise SystemExit('Community package lock '+field+' mismatch')
 lock['version']=pkg['version'];lock_root['version']=pkg['version'];(stage/'package-lock.json').write_text(json.dumps(lock,indent=2)+'\n',encoding='utf-8')
-version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8PRHeadSHA':a.m8_pr_head_sha,'m8SourcePath':m8_demo_relative,'m8SourceBlob':expected_m8_demo_blob,'m8PRHeadBlob':m8_pr_demo_blob_id.stdout.strip().lower(),'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True,'runtimeBaselineSHA':'99660b36db9d5b1121eea6fe06b026c5f1e36bcf','candidateId':a.candidate_id,'securityRuntimeModified':True,'repair':'Explicit product identity, Hook module-load denial, and recheck held file identity before effects; historical experiments are not relabelled as this build'}
+version={'product':'Agent Canary 3.0 Community Engineering Preview','sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8PRHeadSHA':a.m8_pr_head_sha,'m8SourcePath':m8_demo_relative,'m8SourceBlob':expected_m8_source_demo_blob,'m8PRHeadBlob':m8_pr_demo_blob_id.stdout.strip().lower(),'seedSHA256':hashlib.sha256(seed.read_bytes()).hexdigest(),'license':'MIT','scope':'curated free entry and SDK, no legacy license/dashboard/eval/export commercial modules','notStable':True,'runtimeBaselineSHA':'99660b36db9d5b1121eea6fe06b026c5f1e36bcf','candidateId':a.candidate_id,'securityRuntimeModified':True,'repair':'Explicit product identity, Hook module-load denial, and recheck held file identity before effects; historical experiments are not relabelled as this build'}
 (stage/'FREE_BUILD_VERSION.json').write_text(json.dumps(version,indent=2)+'\n')
 for readme in ['README.md','README.zh-CN.md']:
  f=stage/readme;f.write_text('# Agent Canary 3.0 Community Engineering Preview\n\nSource: '+a.sha+'\n\n本候选内置dist/sdk.d.ts和类型导出；原candidate.1及其已发送材料保持不变。快速复验：npm ci → npm run build → npm run acceptance:offline。另人独立环境真实运行后才可能支持E4，目前NOT_VERIFIED。\n\n独立免费候选，MIT；不是稳定版，不保护未接入的工具。真实模型结果见 docs/3.0，AI 独立收益与自适应蜜罐收益尚未测得。\n\n`npm ci` → `npm run build` → `npm test` → `npm run self-test` → `npm run ai:console`。\n\n原有文档（2.0 历史基线）：\n\n'+f.read_text(encoding='utf-8'),encoding='utf-8')
@@ -122,4 +125,4 @@ manifest={str(rel).replace('\\','/'):hashlib.sha256(file.read_bytes()).hexdigest
 artifact=out/('Agent_Canary_3_0_Community_Preview_'+a.sha[:8]+'.zip')
 with zipfile.ZipFile(artifact,'x',zipfile.ZIP_DEFLATED)as z:
  for file,rel in included:z.write(file,str(Path('agent-canary-community-3')/rel))
-print(json.dumps({'file':str(artifact),'sha256':hashlib.sha256(artifact.read_bytes()).hexdigest(),'files':len(included),'sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8PRHeadSHA':a.m8_pr_head_sha,'m8SourceBlob':expected_m8_demo_blob,'m8PRHeadBlob':m8_pr_demo_blob_id.stdout.strip().lower(),'status':'VERIFIED_POSITIVE_LIST_BUILD'},ensure_ascii=False))
+print(json.dumps({'file':str(artifact),'sha256':hashlib.sha256(artifact.read_bytes()).hexdigest(),'files':len(included),'sourceSHA':a.sha,'m8SourceSHA':a.m8_source_sha,'m8PRHeadSHA':a.m8_pr_head_sha,'m8SourceBlob':expected_m8_source_demo_blob,'m8PRHeadBlob':m8_pr_demo_blob_id.stdout.strip().lower(),'status':'VERIFIED_POSITIVE_LIST_BUILD'},ensure_ascii=False))

@@ -1,12 +1,13 @@
-## Current integration risks — 2026-10-24 16:44 UTC
+## Current integration risks — 2026-10-25 06:31 UTC
 
 | Gate | Verified change | Remaining acceptance |
 | --- | --- | --- |
-| M9 #112 / #76 | New workflow actually runs both platform jobs on the current feature-target PR. First Ubuntu attempt reached the offline composition gate and failed on its remaining old M8 SHA constant; source-selection success is not full composition success. | M9 fixes its remaining stale constant without weakening assertions and reruns exact full composition. |
-| M8 #40 / #99 | Twelve conflicts resolved at e3d89ba; CI 9/9, canonical Hook output and Windows build passed. M6 ACCEPT is #80 comment6386655050; M7 scoped prepare.mjs compatibility review is complete. | Finish bounded sponsor smoke review and actual current-source composition before readiness. |
-| M7 #41 / #93 | Existing clean M7 follow-up now has a local 11-entry inventory correction and job-level exclusive lock, at c03176f. Primary M7 dirty files remain untouched. | Publish the substantive batch, pass exact candidate checks, then reserve the resource before hosted installation. No installed result is claimed yet. |
-| M6 #111 / #57 | Product intake/control and verifier tests 41/41 passed; real artifact SELF_CHECK bundle generated with all product cases NOT_VERIFIED. | Independent operator lifecycle/tool effects and reviewer receipt remain external gates. |
-| M1 #62 / #51 | #62 closed after actual owner traced the historical fixture race and verified the existing deterministic fix; source fixes are in feature. | #51 retains UNKNOWN for its original lock-holder/scheduling trigger; green reruns do not establish that cause. |
+| M9 #112 / #117 | M9 exact-source composition on M0 PR #119 head `ac48cdb` passed on Ubuntu and Windows in run `40169026928`; general CI passed 9/9 in `40169026941`. | Integration branch `7b6edae` is an ancestor of feature `b0d8d77` and is five commits behind. Resynchronize the existing M9 branch only after the feature integration candidate is settled; do not create a branch or infer product-host acceptance. |
+| M8 #40 / #99 | M8 PR #40 is merged into the feature baseline; current exact-source M9 composition passes. | Sponsor smoke is source/CI evidence only; retain independent service, secret and payment-scope boundaries. |
+| M7 #41 | M7 PR #113 is merged; current package/source composition passes. | Windows 11 standard-user, upgrade, cancellation/rollback and EFS lifecycle matrix remains unverified; reserve the exclusive resource before execution. |
+| M6 #111 / #57 | M6 PR #111 is merged; evidence intake and bundle verifier source checks pass. | Independent operator lifecycle/tool effects and reviewer receipt are absent; #57 remains open. |
+| M1/M2 #52 / #45 / #118 | Current source composition passes, while the protected-read UI remains explicitly UNKNOWN and native Codex Shell is unprotected. | Obtain owner evidence/blocker on #52/#45; keep #118 queued behind M1 P0 work and preserve all effect assertions. |
+| M1 #51 / M9 #54 / M7 #70 | Later current runs pass; historical triggers remain UNKNOWN, and the main-target Hono remediation is still separate. | Retain #51/#54 open absent original-trace disposition; keep #70 open until default-branch remediation is accepted. |
 
 Integration order must preserve both ancestry and source provenance: complete owner-reviewed module candidates before final M9 manifest integration, then synchronize the M9 branch with the resulting feature tip and revalidate its explicit pins. Never silently relabel an old module pin as a newer candidate or bypass a failed baseline/owner gate to force a merge. main, PR #24 and Release remain outside this integration authorization.
 
@@ -1324,3 +1325,48 @@ Current exact-source composition remains 15/20 on both Ubuntu and Windows; no M9
 | PR #24 current-head CI | P1 | Head `e4732d9`; standard CI `40068981954` passed 9/9 and Community/wrapper run `40068981872` passed. Current-ref composition `40068981943` and installer lifecycle were skipped. | M9 must run the intended current refs on both OSes; M7 must fix the checksum contract and reserve a serialized installer attempt before lifecycle acceptance. |
 | M8 reconciliation (#40/#99) | P1 | PR #40 remains Draft at `60cfe8d`, based on `416f1ba`; read-only merge-tree against `e4732d9` still reports 12 conflicts and the M8 owner disposition is absent. | M8 resolves the existing branch against the current base by ownership, posts its #99 disposition, and passes current-base checks plus exact-source composition. |
 | Product acceptance (#52/#93/#41/#57) | P0/P1 | Separate host, packaged-Hook, clean-VM lifecycle, and independent E4 acceptance remain NOT_VERIFIED. | Each owner supplies artifact/runtime/operator evidence for its own acceptance scope; source CI and skipped jobs do not close these gates. |
+
+## 2026-10-25 06:01 UTC — current integrated feature risks
+
+| Gate | Priority | Verified state | Required next evidence |
+| --- | --- | --- | --- |
+| Protected file identity / OS-atomic TOCTOU (#52) | P0 | M1 source fixtures pass; product-host held-identity consumption and atomic replacement race remain NOT_VERIFIED. | M1 supplies exact supported host/build, effective trusted integration state, safe-read positive control, alias/junction/replacement denials before callback, zero effects, and OS-atomic TOCTOU control, or a precise blocked boundary. |
+| Native Codex Shell (#45) | P1 | M2 protocol fixture denies; native host path remains UNPROTECTED / BLOCKED_NOT_VERIFIED. | M2 demonstrates host-observable deny with trusted active policy and unchanged inert target, or documents exact unsupported host capability and visible boundary. |
+| E4 synthetic Gateway canary failures (#118) | P1 | Reproduced twice at product baseline: both scenarios end `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; fixture targets stay unchanged. | M1 owns diagnosis after #52 slot; preserve quarantine, explicit denial, and zero-effect assertions. |
+| M6 independent product E4 (#57) | P1 | Developer SELF_CHECK and 41/41 evidence tests are not independent install/model acceptance; separate reviewer receipt absent. | Authenticated artifact provenance, clean independent installed-product run, and distinct signed reviewer receipt. |
+| M7 installer lifecycle (#41) | P1 | Prior hosted install/uninstall bounded job passed; Windows 11, standard-user, upgrade/cancel rollback, EFS, and independent acceptance remain unverified. | Owner-reviewed current-source lifecycle run and explicit environment/limitation report; keep installer/VM resource serialized. |
+| Full local verification | P1 | One-click run: build passed; 506/518 suite tests passed, one Python-dependent failure, 11 skipped; 41/41 E4 self-check passed. | Provide the pinned Python runtime to reproduce the builder regression; do not convert missing prerequisites to PASS or skip the assertion. |
+| Current M9 composition | P1 | Exact-head M0 PR #119 run 40165627637 passed Ubuntu/Windows; M9 integration PR #36 and repair PR #117 are merged. | Keep composition bound to immutable current refs and rerun when module source heads change; green composition alone does not close the product-level gates above. |
+## 2026-10-25 06:01 UTC — branch comparison correction
+
+M4 and M5 current source/test contents are already present in PR #24's feature tree (verified by exact Git blob identity); M5 follow-up PR #94 is merged. M7 `bba0f0f` is also already an ancestor of the feature tree. The old M7 reliability branch has a stale divergent graph and must not be merged wholesale. Remaining M4/M5/M7 risks are their scoped host/lifecycle acceptance gates, not missing duplicate source changes.
+## 2026-10-25 06:08 UTC — one-click automation completeness
+
+The one-click runner now executes each local stage independently and verifies a generated evidence bundle even when the synthetic E4 command returns FAIL. Latest run: build PASS, full suite 506/518 (one unusable-Python prerequisite failure, 11 skipped), package-content check PASS, E4 self-check 41/41 PASS, generated bundle verification PASS, and two repeatable synthetic Gateway failures remain open under #118. Product E4 remains NOT_VERIFIED.
+
+## 2026-10-25 13:50 UTC — current M9 and owner acceptance risks
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| Exact M9 candidate composition (#124/#125) | P1 | Candidate SHA `b5b9f71` passed exact-source composition on Ubuntu and Windows in run `40198737633`, including M3 `9169552`, M4 `5d975b7`, M5 `dde81d6`, and M6 `fae72ea`. PRs #120/#121/#123 still show older feature-base manifest failures; candidate dispatch does not rewrite those checks. | M5 approved-baseline sync and M1 policy review; current PR events must consume an accepted current M9 source before module PRs leave Draft. |
+| M5 package/test coverage (#122/#124) | P1 | M5 `npm test` at `dde81d6` reports 500 total (489 pass, 0 fail, 11 skipped) but its package script omits current-base `test/m9-security-composition.test.ts`. `npm run pack:check` fails ENOENT in `scripts/check-sdk-types.mjs:9` for the unpacked package metadata. Read-only merge-tree shows conflicts in `docs/RISK_POLICY.md`, `package.json`, and `test/policy-management.test.ts`. | M5 owner synchronizes/resolves the existing branch, preserves the full base test list, repairs package-check path, and reruns exact-head tests. M1 reviews the exact policy diff. |
+| Synthetic Gateway quarantine behavior (#118) | P1 | Product baseline `b0d8d77` run `20261025T133314087Z`: two E4 cases fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected fixtures remain unchanged. Full suite has 0 failed tests and 11 skipped. | M1 fixes/evaluates the race on the existing branch; require decoy result, immediate quarantine, subsequent DENY/NOT_STARTED, byte-identical target, session positive control, and Windows/Linux regressions. Keep P0 #52 separately OPEN. |
+| Product-held path and native Shell (#52/#45) | P0/P1 | M1 source audit finds no reproduced source defect; product host/OS-atomic behavior remains BLOCKED/NOT_VERIFIED. M2 protocol evidence does not attest a trusted active native Shell boundary; feature remains UNPROTECTED. | Obtain supported-host effective policy/Hook evidence and harmless native sentinel controls, or retain explicit blocked/unprotected product status. No global trust/ACL/sandbox change was made. |
+| Clean-VM installer lifecycle (#41) | P1 | Current source checks are not installer evidence; no current clean VM lifecycle receipt is attached. | Reserve the exclusive VMware/installer slot, then complete install/upgrade/cancel/uninstall/EFS controls with matched current artifact and receipt. |
+| Independent product E4 (#57) | P1 | One-click E4 and M9 composition are automated source/evidence checks; independent operator/reviewer receipt and real-model call remain absent. Product E4 is NOT_VERIFIED. | Obtain authenticated artifact/source provenance, clean isolated product run with real tool call, and separate signed reviewer receipt. |
+
+The one-click matrix is available at `coordinator/security-lab/e4-one-click-runs/20261025T133313640Z/full-matrix/AC3_ALL_ONE_CLICK_RESULT.md`. It reported 33 PASS, 9 SKIPPED, and 4 FAIL. Do not interpret the green M9 candidate as closing clean-VM, product-host, real-model, or independent-review gates.
+
+## 2026-10-25 13:53 UTC — worktree metadata ownership
+
+| Gate | Priority | Verified state | Remaining acceptance |
+| --- | --- | --- | --- |
+| M4/M7 worktree administration | P2 | M4 and M7 are separate working directories with the expected branch/origin, but their `.git` files point into the pre-existing Windows-E4 repository's worktree metadata, outside the coordinator repository. M4 is clean; M7 is 3 commits ahead with a dirty `.gitignore`. A separate M7-followup worktree exists under the coordinator repository. | Preserve both worktrees and M7 changes. Confirm owner/metadata handoff before any migration; do not unregister or relocate them during active work. |
+
+## 2026-10-26 05:11 UTC — module source-root ambiguity (#126)
+
+| Risk | Priority | Evidence | Gate |
+| --- | --- | --- | --- |
+| M1–M8 distinct source ancestry | P1 | Reflogs name separate `origin/feature/ac3-*` creation refs; exact common ancestors and left/right counts are recorded in #126. | Owners declare one canonical base or a reviewed intentional exception. Preserve existing branches and dirty files; update exact M9 pins only after owner review and terminal composition checks. |
+
+This is a history/integration risk; no module code failure or data loss is claimed. PR #24 and `main` remain protected.

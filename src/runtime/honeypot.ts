@@ -20,7 +20,10 @@ export class HoneypotRuntime {
   private readonly content=new Map<string,string>();
   constructor(readonly sessionId:string,kinds:readonly DecoyKind[]=['ENV','SSH','DATABASE','INTERNAL_API','MCP']){
     if(!/^[A-Za-z0-9_.:-]{1,100}$/.test(sessionId)||!kinds.length||new Set(kinds).size!==kinds.length||kinds.some(k=>!['ENV','SSH','DATABASE','INTERNAL_API','MCP'].includes(k)))throw Error('HONEYPOT_CONFIG_INVALID');
-    // Issue the proof against the canonical path used by Gateway.
+    // Keep the host capability root on the same canonical path Gateway uses.
+    // macOS may expose the temp directory through /var while realpath resolves
+    // it to /private/var; issuing a proof against the lexical alias would make
+    // an otherwise valid synthetic decoy fail closed during Gateway setup.
     this.root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'agent-canary-honeypot-')));fs.chmodSync(this.root,0o700);
     const files:Record<DecoyKind,string>={ENV:'.env',SSH:'ssh/id_ed25519',DATABASE:'database.json',INTERNAL_API:'internal-api.json',MCP:'mcp-tool.json'};
     for(const kind of kinds){

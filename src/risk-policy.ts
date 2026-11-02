@@ -8,13 +8,14 @@ import { CanaryBlockedError, type AgentGuard, type ToolCall } from './containmen
 
 export type ProtectionMode = 'OBSERVE' | 'BALANCED' | 'STRICT';
 export type ToolRisk = 'READ_ONLY' | 'WRITE' | 'EXECUTE' | 'NETWORK' | 'SENSITIVE_DATA' | 'DESTRUCTIVE';
+/** `static-read` stays source-compatible but is denied unless an M1-bound contract replaces the generic callback. */
 export type ToolOperation = 'file-read' | 'file-write' | 'shell' | 'http' | 'delete' | 'sensitive-read' | 'static-read';
 export interface RiskToolDescriptor { operation: ToolOperation; pathArg?: string; commandArg?: string; urlArg?: string; bodyArg?: string }
 /** Host-only resolver for an M1-issued capability bound to one registered read. */
 export interface TrustedFileReadCapabilityProvider {
   resolve(call: Readonly<ToolCall>): unknown;
   verify(capability: unknown, call: Readonly<ToolCall>, operation: 'file-read'): boolean;
-  /** Strict reads use this provider directly; never delegate the held-file read to a path callback. */
+  /** Every filesystem read uses this provider directly; never delegate the held-file read to a path callback. */
   readFileWithCapability(capability: unknown, call: Readonly<ToolCall>, signal?: AbortSignal): Promise<unknown>;
 }
 /** The host-only portion of M1's Gateway used to issue and revalidate held-file capabilities. */
@@ -124,9 +125,9 @@ export function createGatewayFileReadCapabilityProvider<TCapability extends obje
 export interface RiskPolicyOptions {
   mode?: ProtectionMode;
   workspaceRoot: string;
-  /** Opt in to M1-pinned reads and fail-closed writes/deletes outside STRICT. STRICT always requires held-file reads. OBSERVE always rejects canonical aliases/escapes, even when omitted or false. */
+  /** @deprecated Kept for source compatibility. Filesystem safety is always enforced; false does not enable path-only callbacks. */
   verifyRealPaths?: boolean;
-  /** Trusted host lookup, M1 verification, and held-file read for a constructor-registered safe file. Path strings alone never satisfy verifyRealPaths. */
+  /** Trusted host lookup, M1 verification, and held-file read for a constructor-registered safe file. Path strings alone never authorize reads. */
   fileReadCapability?: TrustedFileReadCapabilityProvider;
   /** Trusted host registration; never accept these descriptors from model arguments. */
   tools: Record<string, RiskToolDescriptor>;
@@ -145,7 +146,8 @@ export class PolicyBlockedError extends Error {
 }
 
 const READ_COMMANDS = new Set(['pwd', 'git status', 'git status --short', 'git diff', 'git diff --stat', 'ls', 'ls -la']);
-const SENSITIVE_PATH = /(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
+// Keep M5 path classification aligned with M1's deny-only file handling.
+const SENSITIVE_PATH = /(^|\/)(?:\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|[^/]*\.(?:key|pem|p12|pfx|ppk|jks|jceks|keystore|kdbx|kdb|keytab|ovpn))(\/|$)/i;
 const SECRET_CONTENT = /cnry_[A-Za-z0-9_-]+|NOT_A_REAL_CREDENTIAL|sk-[A-Za-z0-9_-]{16,}|-----BEGIN .*PRIVATE KEY|(?:api[_-]?key|password|secret|authorization)\s*[:=]\s*\S+/i;
 // Mode/router replacement must not erase sensitive history for the same Guard.
 const riskStates=new WeakMap<AgentGuard,{sensitiveRead:boolean;tail:Promise<unknown>;queued:number}>();
@@ -173,8 +175,8 @@ function hasPathAlias(root:string,target:string,rawPath?:string):boolean {
     if(relative==='..'||relative.startsWith('..'+path.sep)||path.isAbsolute(relative))return true;
     // Do not derive the walk only from `target`: path.resolve has already
     // collapsed `alias/..`, hiding a symlink/junction that the caller supplied.
-    // Preserve those components so OBSERVE and verifyRealPaths reject the alias
-    // before a host callback can interpret the original path differently.
+    // Preserve those components so every mode rejects the alias before a host
+    // callback can interpret the original path differently.
     let walkPath=relative;
     if(typeof rawPath==='string'){
       const supplied=rawPath.replaceAll('\\','/');
@@ -226,10 +228,11 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   const guard=options.guard;
   const mode=options.mode??'BALANCED';
   if(!['OBSERVE','BALANCED','STRICT'].includes(mode))throw new Error('POLICY_MODE_INVALID');
-  // OBSERVE must not turn a lexically in-workspace symlink/junction into a read.
-  // Keep the legacy lexical option for other modes, but never let it downgrade
-  // OBSERVE's sensitive-path and workspace-boundary checks.
-  const checkRealPaths=options.verifyRealPaths===true||mode==='OBSERVE';
+  // No mode may turn a symlink/junction into a filesystem operation. A
+  // pathname check cannot pin a later callback's open: reads need M1's
+  // held-file capability, while writes/deletes fail closed without a
+  // capability-bound executor. The legacy flag cannot weaken this contract.
+  const checkRealPaths=true;
   if(!options.workspaceRoot||!path.isAbsolute(options.workspaceRoot))throw new Error('POLICY_ROOT_INVALID');
   const root=path.resolve(options.workspaceRoot);
   const tools=new Map<string,RiskToolDescriptor>();
@@ -251,16 +254,16 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   const callbackContexts=new WeakMap<object,RiskPolicyExecutionContext>();
   const router=createGuardedToolRouter({guard,executeRealTool:async(call)=>{
     const executionContext=callbackContexts.get(call);
-    if(isStrictFileRead(call)&&!hasValidFileReadCapability(call,executionContext)){
+    if(isBoundFileRead(call)&&!hasValidFileReadCapability(call,executionContext)){
       const decision:PolicyDecision={action:'DENY',risks:['READ_ONLY'],reason:'path_execution_not_pinned',mode};
       await recordRecheckedDenial(call,decision);audit('policy_blocked',call,decision);throw new PolicyBlockedError(decision);
     }
-    if(isStrictFileRead(call)){
+    if(isBoundFileRead(call)){
       const provider=options.fileReadCapability;
       const capability=executionContext?.fileReadCapability;
-      // The held-file provider is the executor for strict reads. A generic
+      // The held-file provider is the executor for every file read. A generic
       // callback can reinterpret the path and ignore a capability, so it must
-      // never receive a strict read after the policy checks pass.
+      // never receive a path-based file read after policy checks pass.
       if(!provider||typeof provider.readFileWithCapability!=='function'||capability===undefined||capability===null){
         const decision:PolicyDecision={action:'DENY',risks:['READ_ONLY'],reason:'path_execution_not_pinned',mode};
         await recordRecheckedDenial(call,decision);audit('policy_blocked',call,decision);throw new PolicyBlockedError(decision);
@@ -279,9 +282,9 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     if(options.reviewDecision)await options.reviewDecision(call,Object.freeze({...decision,risks:Object.freeze([...decision.risks]) as unknown as ToolRisk[]}));
   }
   function sweep(){for(const [id,p]of pending)if(p.expires<Date.now())pending.delete(id);}
-  function isStrictFileRead(call:ToolCall):boolean{return (options.verifyRealPaths===true||mode==='STRICT')&&tools.get(call.name)?.operation==='file-read';}
+  function isBoundFileRead(call:ToolCall):boolean{return tools.get(call.name)?.operation==='file-read';}
   function resolveExecutionContext(call:ToolCall):RiskPolicyExecutionContext|undefined {
-    if(!isStrictFileRead(call)||!options.fileReadCapability)return undefined;
+    if(!isBoundFileRead(call)||!options.fileReadCapability)return undefined;
     try{
       const capability=options.fileReadCapability.resolve(call);
       return capability===undefined||capability===null?undefined:Object.freeze({fileReadCapability:capability});
@@ -289,7 +292,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
   }
   function hasValidFileReadCapability(call:ToolCall,context:RiskPolicyExecutionContext|undefined):boolean {
     const capability=context?.fileReadCapability;
-    if(!isStrictFileRead(call)||capability===undefined||capability===null||!options.fileReadCapability||typeof options.fileReadCapability.readFileWithCapability!=='function')return false;
+    if(!isBoundFileRead(call)||capability===undefined||capability===null||!options.fileReadCapability||typeof options.fileReadCapability.readFileWithCapability!=='function')return false;
     try{return options.fileReadCapability.verify(capability,call,'file-read')===true;}catch{return false;}
   }
   function classify(call:ToolCall,executionContext?:RiskPolicyExecutionContext):PolicyDecision {
@@ -303,7 +306,11 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     // UNKNOWN and stays blocked even in OBSERVE; only a registered, understood
     // operation can use the mode's explicit observation override.
     if(!d){risks.push('EXECUTE');deny('unregistered_tool');}
-    else if(d.operation==='static-read')risks.push('READ_ONLY');
+    else if(d.operation==='static-read'){
+      // A host label cannot prove the callback is static or read-only. Route
+      // file access through the explicit M1-held `file-read` capability.
+      risks.push('READ_ONLY');deny('path_execution_not_pinned');
+    }
     else if(d.operation==='sensitive-read'){risks.push('SENSITIVE_DATA');requireApproval('sensitive_data_read');}
     else if(['file-read','file-write','delete'].includes(d.operation)){
       const raw=a[d.pathArg??'path'];
@@ -321,8 +328,8 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
         else if(mode==='OBSERVE'&&sensitivePath)deny('observe_sensitive_data_blocked');
         else if(pathAlias)deny('path_alias_rejected');
         else if(filesystemOperation&&(
-          (options.verifyRealPaths===true&&d.operation!=='file-read')||
-          (isStrictFileRead(call)&&!hasValidFileReadCapability(call,executionContext))
+          d.operation!=='file-read'||
+          (isBoundFileRead(call)&&!hasValidFileReadCapability(call,executionContext))
         ))deny('path_execution_not_pinned');
         else if(sensitivePath)requireApproval('sensitive_path');
         else if(d.operation!=='file-read')requireApproval(d.operation==='delete'?'destructive_write':'workspace_write');
@@ -330,8 +337,12 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
     }else if(d.operation==='shell'){
       risks.push('EXECUTE');const command=a[d.commandArg??'command'];
       if(typeof command!=='string'||command.length>4096)deny('invalid_command');
-      else if(READ_COMMANDS.has(command.trim())){risks.push('READ_ONLY');reason='reviewed_read_command';}
       else if(/(?:\.env\b|credentials|id_rsa|\bcurl\b|\bwget\b|\brm\b|remove-item|invoke-expression|\biex\b)/i.test(command))deny('sensitive_or_destructive_shell');
+      // A command string is not a path-bound capability. OBSERVE cannot prove
+      // that a generic host shell callback stays away from protected paths,
+      // even for names that look read-only or ordinary.
+      else if(mode==='OBSERVE')deny('observe_shell_callback_unpinned');
+      else if(READ_COMMANDS.has(command.trim())){risks.push('READ_ONLY');reason='reviewed_read_command';}
       else requireApproval('unreviewed_shell');
     }else if(d.operation==='http'){
       risks.push('NETWORK');const body=a[d.bodyArg??'body'];
@@ -380,7 +391,7 @@ export function createRiskPolicyRouter<T>(options: RiskPolicyOptions & { guard: 
         decision.action='DENY';decision.reason='host_pre_execution_review_denied';
       }
       // Recheck before creating any approval request or starting an execution.
-      if(decision.action!=='DENY'&&isStrictFileRead(safe)&&!hasValidFileReadCapability(safe,executionContext)){
+      if(decision.action!=='DENY'&&isBoundFileRead(safe)&&!hasValidFileReadCapability(safe,executionContext)){
         decision.action='DENY';decision.reason='path_execution_not_pinned';
       }
       if(decision.action==='APPROVAL_REQUIRED'){

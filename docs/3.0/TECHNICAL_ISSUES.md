@@ -1,3 +1,18 @@
+## Current E4 one-click Windows run — 2026-10-25 06:23 UTC
+
+- Latest one-click runner result (2026-10-25 06:39 UTC, baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097`): Windows automatically downloaded Python.org embeddable Python 3.13.17 and verified SHA-256 `9e35319bffedab8b36ad44d8f377cb4f1733bcec257a0b6d04d94f01486ddb38`; full suite is 507/518 passed, 0 failed, 11 skipped; E4 bundle/self-check suite 41/41; build/package/bundle verification passed. Synthetic Gateway still reports two failures (`GW-CANARY-BLOCK`, `CANARY-SESSION-ISOLATION`) and three product/external cases BLOCKED. Full report: `security-lab/e4-one-click-runs/20261025T063921101Z/ONE_CLICK_RESULT.md`.
+- #118 is OPEN/P1, owned by M1 Gateway semantics and queued behind its active P0 slot. Both synthetic cases report `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected fixture targets remained unchanged, so no successful protected write was observed. Do not claim E4 acceptance or weaken the assertions.
+- Local JSON/Markdown/log report: `security-lab/e4-one-click-runs/20261025T062320151Z/ONE_CLICK_RESULT.{json,md}`. Product E4 and independent review remain NOT_VERIFIED.
+
+## Current open acceptance blockers — 2026-10-25 06:36 UTC
+
+- **P0 #52 — M1/M2/M3/M4/M5:** source-level exact M9 composition passes on Ubuntu and Windows (`40169026928`), but the shipped first-party route remains a fixed temporary-marker probe and the M4 page does not consume it. Installed/native held-identity and OS-atomic TOCTOU evidence remain NOT_VERIFIED. M0 requested evidence-bounded DONE/BLOCKED updates from M1/M2 at 06:35 UTC.
+- **P1 #45 — M2:** native Codex Shell remains UNPROTECTED; no effective host sandbox/Hook attestation or protected sentinel result is recorded. M0 requested an exact verification or blocker update at 06:36 UTC.
+- **P1 #118 — M1:** two deterministic synthetic E4 Gateway cases fail with `GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK`; protected fixtures remained unchanged. It remains queued behind #52.
+- **P1 #41:** the remaining Windows 11 standard-user, upgrade, cancellation/rollback and EFS lifecycle matrix is not verified. **P1 #57:** independent operator/reviewer E4 receipt is absent.
+- **P1 #51/#54:** historical retry and Windows AI 503 triggers remain UNKNOWN despite later green/current recurrence runs. **P1 #70:** default-branch Hono remediation remains open; do not merge its main-target PR as part of feature coordination.
+- M0 PR #119 exact head `ac48cdb` has AC3 coordination success, CI 9/9 and exact M9 composition success on Ubuntu/Windows. These are source/CI checks, not product acceptance.
+
 ## Current acceptance delta — 2026-10-24 17:30 UTC
 
 - #62 CLOSED: actual M1 owner traced the historical fixture race, confirmed deterministic fixes in feature, reused the unchanged-head2/2 result and added a controlled-clock comparison. Closure comment6386808187. No expiry/zero-callback assertion was removed.
@@ -1764,3 +1779,48 @@ All current M1/M3/M5/M6 and M8 dedicated per-module steps pass; only M9 composit
 - Workflow run `40068894360` used exact feature source `f313e5ffd1c604198a0e653a91eb66813fd111ee`: both wrapper regressions and Community build evidence passed; lifecycle failed before Setup.exe with `SHA256SUMS_PATH_UNEXPECTED`. The uploaded result confirms `installerExecuted=false` and `installerProcessStarted=false`.
 - Producer `.github/workflows/windows-community.yml` hashes 11 exact artifact paths. Consumer `packaging/windows/installer-lifecycle-smoke.ps1` accepts only 7; the four producer entries missing from the consumer list are `BUILD_RESULT.json`, `COMMUNITY_BUILD_REPORT.json`, `VERSION.json`, and `SOURCE_MANIFEST.json`. M7 owns the exact allowlist reconciliation in #41 comment `6380772102`; keep all checks strict and rerun only after the fix.
 - Installer slot is FREE after run completion (#29 comment `6380772831`). No VMware, real-model, installation, or clean-VM acceptance is claimed by the failed run.
+
+## Current coordination snapshot — 2026-10-25 13:54 UTC
+
+| Issue / PR | Priority / owner | Current evidence | Next action |
+| --- | --- | --- | --- |
+| #29 scheduler | P2 / M0 | Two source lanes only: M1 #118 and M2 #45. No VMware, installer, or real-model slot is reserved. M4/M7 worktrees use an existing external Git common directory; same origin, separate branch/path; M7 dirty state preserved. | Keep resource exclusivity and two-lane cap; record M4/M7 metadata ownership before any migration. |
+| #52 protected path | P0 / M1 + host owner | M1 source audit finds no current source defect; installed/native host-held identity and OS-atomic TOCTOU remain BLOCKED/NOT_VERIFIED. | Keep OPEN/P0; obtain supported-host evidence or exact blocker. |
+| #118 synthetic Gateway | P1 / M1 | One-click rerun reproduces two failures with unchanged protected fixtures; exact report `20261025T133314087Z/ONE_CLICK_RESULT.md`. | M1 implement/reject the bounded race fix on the existing branch; preserve quarantine, denial, no-effect, and session-positive controls; Windows/Linux tests. |
+| #45 native Codex Shell | P1 / M2 | Protocol evidence only; native host remains UNPROTECTED/BLOCKED_NOT_VERIFIED. | Provide a host-observable sentinel result or exact unsupported boundary; do not change global host policy from this lane. |
+| #41 clean-VM lifecycle / #57 independent E4 | P1 / M7 and M6 + external reviewers | No current clean-VM lifecycle receipt, real-model call, or independent reviewer receipt. Product E4 stays NOT_VERIFIED. | Reserve one exclusive test slot when an exact artifact and VM are available; preserve separate independent review. |
+| PR #120 M3, #121 M4, #123 M6 | P1 / module owners + M9 | Current module CI/ownership checks pass; their direct M9 checks still reflect the older base. Candidate M9 SHA `b5b9f71` passed Ubuntu/Windows run `40198737633` with exact current M3/M4/M5/M6 refs. | Keep Draft until current-base checks consume the accepted M9 source; candidate success is not product acceptance. |
+| PR #122 M5 / #124 | P1 / M5 with M1 review, M0/M9 coordination | Head `dde81d6` lacks approved baseline `e4732d9`; read-only conflicts span policy docs, package manifest, and policy tests. Its package script omits current-base M9 composition test; pack check fails ENOENT at `scripts/check-sdk-types.mjs:9`. | M5 resolve current-base conflicts, preserve all base tests and repair package check; M1 review exact policy diff; rerun exact head. |
+| PR #24 | — / protected | OPEN/Draft, unchanged head `b0d8d77`, base `competition/shanchuanzhi-release-readiness`, merge state CLEAN. | No merge or release action by M0. |
+
+M0 has not modified M1–M8 implementation files, merged `main`/PR #24, created a new module branch, or published a Release. Owner replies and worktree changes remain UNKNOWN until a fresh GitHub/filesystem read shows them.
+
+## Current coordination snapshot — 2026-10-26 01:26 UTC
+
+| Issue / PR | Priority / owner | Current evidence | Next action |
+| --- | --- | --- | --- |
+| #29 scheduler | P2 / M0 | Two active slots: M1 #118 and M5 PR #122. M6 #57 and M7/M8 #124 are queued; M2 #45 remains a separate product-boundary blocker. No VMware, installer, or real-model slot is active. | Keep the two-task cap; do not start queued lanes until an active slot ends. |
+| #118 synthetic Gateway | P1 / M1 | Full local suite 507/518, 0 failed, 11 skipped; synthetic `GW-CANARY-BLOCK` and `CANARY-SESSION-ISOLATION` still FAIL. Target state is reported unchanged, but failing-case raw Gateway/Guard JSONL is missing. Source audit suggests synchronous quarantine cancels the current decoy read; this remains a hypothesis. | Validate event ordering and denial/effect behavior on the existing M1 branch; retain both assertions and produce target snapshots plus failure logs. |
+| #45 native Codex Shell | P1 / M2 | Existing product boundary remains `UNPROTECTED / BLOCKED_NOT_VERIFIED`; native Shell observation is explicitly outside Gateway proof. | M2 to provide a supported host-observable result or record the unsupported boundary; no global host policy changes from M0. |
+| PR #122 M5 | P1 / M5 | Current local head `dde81d6`: build/tests pass (489/500, 0 failed, 11 skipped), but `pack:check` again gets ENOENT at `scripts/check-sdk-types.mjs:9`. Read-only diff finds removed install prefix while verifier still expects `installDir/node_modules`; cause is not yet confirmed. `test/m9-security-composition.test.ts` is omitted from the M5 `npm test` script. | Repair the install layout on the existing branch, restore the current-base security test to the full suite, then rerun build/tests/package check. |
+| #41 clean-VM lifecycle / #57 independent E4 | P1 / M7, M6 + external reviewers | Local synthetic evidence does not supply clean-VM install lifecycle, matched artifact receipt, real model tool call, or independent signed review. | Keep queued; reserve one exclusive test slot only when exact artifact/VM and required operator evidence are available. |
+| #124 M9 pins | P1 / M7, M8, M9 | Local M7 `bf9faee` is 70 commits ahead and 414 behind feature base; M8 `685520c` is 1 ahead and 115 behind. M7/M8 owner dirty files remain preserved; manifest validator passes but local pin checks fail. | Owners reconcile on existing branches; M9 only updates pins after reviewable exact-source composition succeeds. |
+| PR #120 M3, #121 M4, #123 M6 | P1 / module owners + M9 | Their latest direct M9 failures are historical at prior heads; exact-source M0 workflows on PR #119 now pass Ubuntu/Windows. Local module build/test/package checks passed for M3/M4/M6 in the latest matrix. | Keep Draft and require current-base exact checks for each new module head; do not treat PR #119 workflow as a substitute for each PR's head check. |
+| PR #24 | — / protected | OPEN/Draft at unchanged head `b0d8d77`, base `competition/shanchuanzhi-release-readiness`. | No merge, release, or base/head mutation by M0. |
+
+Priority basis: #118/#45/#122/#41/#57/#124 remain P1 because current evidence shows key functionality or integration acceptance is unavailable/unverified; no actual sensitive-data leak or confirmed serious data damage was observed in this checkpoint, so no new P0 is asserted. #29 remains P2 coordination hygiene.
+
+## 2026-10-26 01:49 UTC — evidence refresh for active and queued blockers
+
+| Issue / PR | Updated evidence | Current owner action |
+| --- | --- | --- |
+| #118 M1 Gateway E4 | Source ordering confirms decoy `read_file` calls `guard.trip()` after reading; synchronous quarantine aborts the current controller and the cancellation catch maps to generic rollback failure. Exact race winner / actual effect is UNKNOWN because raw failing-case logs are absent. Harness cases exit on uncaught expected quarantine before asserting denial or independent-session control. | Preserve quarantine/cancel fail-closed behavior; report expected decoy cancellation distinctly; keep follow-up write denied/NOT_STARTED, target snapshot unchanged, independent Guard B positive. M1 focused tests. M0/M6 evidence handoff in #57. |
+| #57 M6 E4 evidence (queued) | `e4/run.mjs` saves raw evidence only on normal path; failing paths have empty details and no failing Gateway/Guard JSONL. | In `finally`/catch, persist logs and before/after snapshots before close; catch only expected fail-closed result so both controls execute. Queued behind the two active lanes. |
+| PR #122 M5 package | Source diff confirms missing `--prefix installDir` while subsequent consumers still require the package under that path; exact ENOENT reproduced. Actual alternate npm install root is not yet independently inspected. M5 `npm test` also omits baseline `test/m9-security-composition.test.ts`. | Restore explicit/canonical install root; restore baseline test; prove full TAP includes it; run build/test/pack:check on exact head. Owner handoff in PR comment `6406424443`. |
+| #124 M7/M8 pins | Latest local matrix still fails M7 and M8 exact local worktree-to-M9-manifest comparisons; their dirty owner paths remain preserved. | Reconcile existing branches, then review and test exact source before M9 changes pins. |
+
+No module files or worktree changes were made by M0. Current active source lanes remain M1 #118 and M5 PR #122; M6 #57 and M7/M8 #124 follow-up remain queued.
+
+## 2026-10-26 05:11 UTC — P1 Issue #126 branch-source provenance
+
+Issue #126 is OPEN/P1. Current M1–M8 branches have distinct source ancestry; exact origin, merge-base and ahead/behind evidence plus owner acceptance criteria are in the issue and `TECHNICAL_STATUS.md`. Worktree separation is true; a common source SHA is not established. M0 has not created, rebased, or rewritten module branches. Keep M9 pins unchanged until owners declare intended anchors and exact-head composition is revalidated.

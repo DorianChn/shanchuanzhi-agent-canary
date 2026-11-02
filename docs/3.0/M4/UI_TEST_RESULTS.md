@@ -1,5 +1,13 @@
 # M4 UI Test Results
 
+## 2026-10-25 configured-target UI boundary
+
+- Actual worktree: `C:\Users\36712\Desktop\Agent-Canary-Dev\agents\M4`, existing branch `feature/ac3-desktop-security-center`, clean starting HEAD `892d3290338fe811da127f8f51ab91de0b9fc18b`.
+- Windows x64 / Node `v22.23.1`: `node --import tsx --test test/runtime-console.test.ts` — **17 passed, 0 failed, 0 skipped/cancelled**. `npm run build` — **PASS** (`tsc`); `git diff --check` — **PASS**.
+- New regression checks the served configured-target panel stays disabled without a trusted host ID; the panel collects no ID/path/content/credential inputs; no page script invokes either read route; a configured-target `ALLOW` envelope cannot promote product protection or first-party/native acceptance, or copy target/content canaries into diagnostics. These are UI/adapter assertions, not actual host denial or zero-effect evidence.
+- Local Chrome at **1277×825**: inspected the rendered panel and its DOM. The disabled button, missing-target guidance, contract route/scope and measured `UNKNOWN` were visible; full-product/native/OS-atomic status remained `NOT_VERIFIED`. The inspection tab and M4-only preview server were closed after inspection.
+- M3 baseline `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` has the configured-target POST, but exposes no trusted ID/auth-readiness source to this page. The exact required M3 interface is recorded in `DESKTOP_INTEGRATION_REPORT.md`. No configured read was attempted. #52 remains **OPEN / P0 / NOT_VERIFIED**. New local-commit hosted CI is **NOT_RUN**, pending the coordinated push batch.
+
 Date: 2026-10-13
 Worktree: **agents/M4-desktop-security-center**
 Branch: **feature/ac3-desktop-security-center**
@@ -79,3 +87,10 @@ No VMware test, real-model test, full Auto E4 run, or real installation test was
 - A synthetic **403** from `/api/security-center` showed permission-recovery guidance while overall protection stayed **UNKNOWN** and first-party OBSERVE stayed **NOT_VERIFIED**.
 - `npm run build`: passed. `node --import tsx --test test/runtime-console.test.ts`: **13/13** passed; the new test checks that the generated Console page includes stable event identity and focus/selection restoration. Impeccable detector on `src/ai/console-page.ts`: **no findings**.
 - The browser check used the manual health action to exercise the same refresh handler; the background-window timer was paused by the existing `document.hidden` guard. No model, protected-read probe, or real Agent/tool execution was used.
+
+## Current fixed temporary probe action — 2026-11-02
+
+- The Security Center now invokes the existing M3 fixed temporary probe only after an explicit button click. The request carries an empty JSON object, CSRF token, and one-time operator code; the password input is cleared in finally. No user-supplied path or file contents enter the request.
+- The UI labels any success as a fixed temporary probe result and keeps the product OBSERVE indicator at NOT_VERIFIED. Adapter regressions reject wrong scope, wrong marker, or an incomplete PASS envelope.
+- Windows checks: npm run build passed; node --import tsx --test test/runtime-console.test.ts passed 19/19; authenticated local probe returned HTTP 200 with M3_FIXED_TEMP_PROBE_ONLY / PASS / FIXED_PROBE_CONTROLS_PASSED.
+- This confirms the Console can invoke the fixed synthetic probe through the local M1/M2/M5 composition. It is not evidence of arbitrary user-file protection, native-host enforcement, clean-VM installation, or independent product E4.
