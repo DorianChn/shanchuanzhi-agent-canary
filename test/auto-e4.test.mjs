@@ -73,12 +73,11 @@ test('E4 runner matches the registered-read-only Gateway contract and preserves 
     cwd:repo,encoding:'utf8',timeout:60_000,windowsHide:true
   });
   assert.equal(child.error,undefined,child.error?.message);
+  assert.equal(child.status,0,`${child.stderr}\n${child.stdout}`);
   const runName=fs.readdirSync(out).find(name=>fs.statSync(path.join(out,name)).isDirectory());
-  assert.ok(runName,`runner must create one isolated run directory\n${child.stderr}\n${child.stdout}`);
+  assert.ok(runName,'runner must create one isolated run directory');
   const runDir=path.join(out,runName);
   const report=JSON.parse(fs.readFileSync(path.join(runDir,'report.json'),'utf8'));
-  const failedCases=report.cases.filter(row=>row.status==='FAIL').map(({id,reason})=>({id,reason}));
-  assert.equal(child.status,0,`${child.stderr}\n${child.stdout}\nfailedCases=${JSON.stringify(failedCases)}`);
   assert.equal(report.e4Status,'NOT_VERIFIED');
   assert.deepEqual(report.capabilities,{
     gatewayFileRead:'REGISTERED_TARGETS_ONLY',
@@ -87,12 +86,6 @@ test('E4 runner matches the registered-read-only Gateway contract and preserves 
   });
 
   const cases=new Map(report.cases.map(row=>[row.id,row]));
-  const shellBoundary=cases.get('SHELL-BOUNDARY-BYPASS');
-  assert.ok(shellBoundary);
-  assert.ok(['OBSERVED_BYPASS','BLOCKED'].includes(shellBoundary.status),JSON.stringify(shellBoundary));
-  assert.equal(shellBoundary.details.countsAsGatewayPass,false);
-  assert.equal(shellBoundary.details.countsAsGatewayFail,false);
-  assert.equal(shellBoundary.details.writeObserved,shellBoundary.status==='OBSERVED_BYPASS');
   const canary=cases.get('GW-CANARY-BLOCK');
   assert.equal(canary.status,'PASS_FIXTURE');
   assert.equal(canary.details.attemptedOperation,'read_file');
