@@ -28,7 +28,7 @@
   "competition-submission/lab/v2-scenarios.mjs": "4f96f19bbea460ba5c5054533ce9d52ef89f9e88ec09cd1cc417c50fdc1cf026",
   "competition-submission/lab/verify-v2-mcp.mjs": "6add237740fb7340251723d99967c047c3a8e885e1eacbefafaf4762fd37a960",
   "dist/agent-hook.d.ts": "2ead1ec5bc24ba624ef7e6396095bf2158f3145c64c22817acb5570e99ec3c0f",
-  "dist/agent-hook.js": "972f5bcd5ff64c7567e8e98df387d2a0527f14c8fd4977e7ed1354cbb85e72e7",
+  "dist/agent-hook.js": "f2eb9f8bbdac31ea5421c60ad179c815c4ab49213efd7425b28a9aad996726bc",
   "dist/agent-integrations.d.ts": "55d5614ea490cafc0d5642ecabf023b816ec6580d1f1cc2792c0fa0e349a6333",
   "dist/agent-integrations.js": "077d7cbc369186ec51fafaca1a54b3db5b4cb6ab8739fa5f87e6ac44a74b19b3",
   "dist/ai/cli.d.ts": "f7a9dffd99457c6ec54ee16a7acf99fa44dfbde3074eae09a868ff38fee734a5",
@@ -119,7 +119,7 @@
   "docs/3.0/SECURITY_LIMITATIONS.md": "6a8ac3e7682292f3c282a68655669346540322bdc23022a0e748f35dd35bb6d1",
   "docs/3.0/TEST_RESULTS.md": "39a1831bf463f68f965f5b5920a3f82b2a9b4d93cb5b01203494bf30a7aeec7a",
   "docs/3.0/THREAT_MODEL.md": "413459c540b2f2b94a98233484628193b041f4aeb7c1b357110fe5363e8f5743",
-  "docs/AGENT_INTEGRATIONS_2.md": "bff125e53f7a24d7a3b05c82f7a8c5ad414e30068d9638c9692ed5fe0a55b4f6",
+  "docs/AGENT_INTEGRATIONS_2.md": "a98a7bcb2f00c453c04c2789183afcac95700153e1a90dc08c1416e269eb6e72",
   "docs/AI_PROVIDERS.md": "8d6a37a0f6176a02fba716b0f25c388a784ae1c6fbaa0f9b954c491a14247f64",
   "docs/FILE_STATE_STORE.md": "555340eea76a140bad038973c5284d935aba0912028195d97212e816e7a63566",
   "docs/RISK_POLICY.md": "61ffb9d3b6cab378873a63795733bc52bb0bf383cce6664e14dc9648a831d335",
@@ -127,7 +127,7 @@
   "docs/index.html": "2989482ef63fc2d28797e205388a8cfce522c905afaf0965fe1ab5210c7cc37c",
   "docs/pay.html": "f87dea88263cd4abfec82abd477420592e8724ded2f3ac5b93a28489fdcc36b8",
   "package-lock.json": "92975698c61642d0bd379395a1785b4b5adda36ac634623f8cea87b81e2f14e2",
-  "package.json": "ec94e2fb4af4ed3bd5b3633d1f65b1356b946f0fb91f8f47f6c069d688bea269",
+  "package.json": "231aba5aa71cbd7c8c8fd4dcee7582e5aa3c4423935574ddc12e8976d839c8a1",
   "packaging/ubuntu/install.mjs": "381932349787bcc086229e8391f0b1b11a8aa66efd42616ccb7633053ce38cd8",
   "packaging/ubuntu/install.sh": "7c4395723739dd6af90c4a6131367ce6337b46892d1d4ef5f26e3c89506d5737",
   "reproduction-kit/RESULT_RECEIPT_TEMPLATE.md": "ae965c411e1bc52350947c461b1afea496a3ff3fc3c135b2cfdc508e51e8b12a",
@@ -140,7 +140,7 @@
   "security-lab/holdout-protocol.md": "4f9e88b0489c2e4ed9cc665ef3801a7bb5b739ae24c22afd786f3f5b2befd2d4",
   "security-lab/holdout-v1.json": "3fa0beadac61b09cc44d4eaa1615836b5e26cfe2e58d04bed6de118f9b8745b9",
   "security-lab/run-sdk-agent.mjs": "8bc860028e114826c29bb5ae006030350b0e1f4c31fb296ec35c51fc6517382d",
-  "src/agent-hook.ts": "3da8cd6910cf6d918a3476638e107ee8faf3709f8e83f2817906fdcdabfc159f",
+  "src/agent-hook.ts": "c1eac5438b44749d62b5f490c7b3b856f463cf3c16b69aed38b694997c43ddd3",
   "src/agent-integrations.ts": "05551d8c94cad6d26e07718e067af631fce7ffd6e842cd899636549d0cad7a1d",
   "src/ai/cli.ts": "1c8b1802609c7df6f3c189de5b89ba83235cdf5dd6759900cf5278661a0619cd",
   "src/ai/console-page.ts": "f7fa4b0a9647ac8a0ca152141b87035a98fbd880215f18e9840d843cb1c9b52f",
@@ -186,5 +186,5 @@
   "src/runtime/secure-file.ts": "c03b5940c38e37ea55db7bf02413a2e4a5cf1407c486e3711adacf6f3d88b008",
   "dist/runtime/secure-file.js": "d5ba25b7def011b879d8932958027875495d1e1bff75e887406e82112ce76bde",
   "dist/runtime/secure-file.d.ts": "5b4cb05ab6d1c525f345926055d215a85f48a46600d7f7cdd9e7a810b3cc2a2f",
-  "SECURITY.md": "969277e9cee5548162c21e0dd83fccfbdbc0e985a52448445fed30f0d3306ce1"
+  "SECURITY.md": "7ba8f5dd828309a4c3c98ce7a1d997b775349c5214a03704dc387c50003c4f19"
 }

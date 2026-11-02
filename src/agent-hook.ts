@@ -25,7 +25,14 @@ export async function decideAgentHook(client:'claude'|'cursor',workspaceRoot:str
   const tool=shell?'shell':read?'read':write?'write':del?'delete':'unknown';let target=raw.file_path??raw.path;
   if(typeof target==='string'&&path.isAbsolute(target))target=path.relative(workspaceRoot,target);
   const router=createSecurityToolRouter({guard,workspaceRoot,verifyRealPaths:true,tools:{shell:{operation:'shell'},read:{operation:'file-read'},write:{operation:'file-write'},delete:{operation:'delete'}},executeRealTool:()=>{throw Error('HOOK_NEVER_EXECUTES');}});
-  const d=await router.decide({name:tool,args:{...(target===undefined?{}:{path:target}),...(raw.command===undefined?{}:{command:raw.command})}});permission=d.action==='ALLOW'?'allow':d.action==='DENY'?'deny':'ask';reason=d.reason;
+  const d=await router.decide({name:tool,args:{...(target===undefined?{}:{path:target}),...(raw.command===undefined?{}:{command:raw.command})}});
+  // This Hook returns a decision to a native client; it cannot transfer the
+  // checked path or held-file identity to the client's later file operation.
+  // Never turn a realpath pre-check into permission for an unpinned native I/O.
+  const nativeFileOperation=read||write||del;
+  const unpinnedNativeFileOperation=nativeFileOperation&&(d.action!=='DENY'||d.reason==='path_execution_not_pinned');
+  permission=unpinnedNativeFileOperation?'deny':d.action==='ALLOW'?'allow':d.action==='DENY'?'deny':'ask';
+  reason=unpinnedNativeFileOperation?'native_file_execution_not_pinned':d.reason;
  }
  return client==='claude'?{hookSpecificOutput:{hookEventName:'PreToolUse',permissionDecision:permission,permissionDecisionReason:'Agent Canary: '+reason}}:{permission,user_message:'Agent Canary: '+reason,agent_message:'Trusted host policy decision; no model may change this authorization.'};
 }

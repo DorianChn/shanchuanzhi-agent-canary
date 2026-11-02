@@ -36,8 +36,12 @@ patterns alone.
 ### Limits and safe deployment
 
 - Calls made directly by native host tools, arbitrary Shell, unregistered
-  callbacks, or other processes bypass the Gateway. Hook protection applies
-  only when the hook is installed, enabled, and matches the host operation.
+  callbacks, or other processes bypass the Gateway. The Claude/Cursor permission
+  Hook cannot pass a held-file identity to the native client's later I/O, so it
+  denies native file reads, writes, and deletes instead of treating a path
+  pre-check as an execution capability. Hook decisions apply only when the
+  hook is installed, enabled, and matches the host operation; they are not an
+  operating-system sandbox.
 - Registered file paths are resolved component by component relative to a held
   workspace directory handle with no-follow OS opens on Windows, Linux, and
   macOS; Linux also rejects mount crossings. Registration compares that handle
