@@ -9,6 +9,7 @@ import {SessionDataFlow} from '../dataflow.js';
 import {DataFlowTracker} from './dataflow.js';
 import {executePinnedJSONTool} from '../network-tool.js';
 import {canonicalJSON,EvidenceRecorder,type EvidenceDecision,type ExecutionStatus,type SideEffectVerification} from './evidence.js';
+import {openSecureWorkspace,type SecureFileHandle,type SecureFileStat} from './secure-file.js';
 
 export interface GatewayFile {
   path:string;
@@ -31,20 +32,22 @@ export interface GatewayOptions {
 export class GatewayDeniedError extends Error {
   constructor(readonly reason:string,readonly requestId:string,readonly decision:EvidenceDecision='DENY'){super('GATEWAY_'+decision+':'+reason);}
 }
-type Resource={descriptor:Readonly<GatewayFile>;fd:number;dev:number;ino:number;absolute:string};
+type FileSnapshot=Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'|'ctimeNs'|'mtimeNs'|'size'>;
+type Resource={descriptor:Readonly<GatewayFile>}&FileSnapshot&{fd:number;absolute:string;relative:string;secureHandle:SecureFileHandle};
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
 const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
-const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
+const sameFileAtOpen=(a:FileSnapshot,b:FileSnapshot)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs&&a.ctimeNs===b.ctimeNs&&a.mtimeNs===b.mtimeNs&&a.size===b.size;
+const sameWorkspaceIdentity=(a:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>,b:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
 const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>}>();
 
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
-  const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
+  const root=fs.realpathSync.native(options.workspaceRoot),resources=new Map<string,Resource>();
   const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve()};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
@@ -52,26 +55,47 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   const origins=new Set((options.readOrigins??[]).map(o=>{const u=new URL(o);if(u.protocol!=='https:'||o!==u.origin||u.username||u.password)throw Error('GATEWAY_ORIGIN_INVALID');return o;}));
   const deadline=options.timeoutMs??10_000,reviewMs=options.reviewTimeoutMs??10_000,ttl=options.approvalTtlMs??60_000;
   for(const n of [deadline,reviewMs,ttl])if(!Number.isInteger(n)||n<1||n>180_000)throw Error('GATEWAY_TIMEOUT_INVALID');
+  const secureWorkspace=openSecureWorkspace(root);
+  let rootIdentity:SecureFileStat;
+  try{
+    rootIdentity=secureWorkspace.stat();const namedRoot=fs.lstatSync(root,{bigint:true});
+    if(rootIdentity.kind!=='directory'||!namedRoot.isDirectory()||namedRoot.isSymbolicLink()||!sameWorkspaceIdentity(rootIdentity,namedRoot)||fs.realpathSync.native(root)!==root)throw Error('GATEWAY_WORKSPACE_CHANGED');
+  }catch(error){try{secureWorkspace.close();}catch{}throw error;}
+  function workspaceStillBound():boolean{
+    try{const named=fs.lstatSync(root,{bigint:true}),held=secureWorkspace.stat();return named.isDirectory()&&!named.isSymbolicLink()&&sameWorkspaceIdentity(rootIdentity,named)&&sameWorkspaceIdentity(rootIdentity,held)&&fs.realpathSync.native(root)===root;}catch{return false;}
+  }
   try{
     for(const f of options.files){
       const relative=filePath(f.path);
       if(!relative||relative.includes('\0')||relative.includes(':')||path.isAbsolute(relative)||relative!==path.posix.normalize(relative)||relative.split('/').includes('..')||resources.has(relative))throw Error('GATEWAY_RESOURCE_INVALID');
-      const absolute=path.join(root,relative),real=fs.realpathSync(absolute),rel=path.relative(root,real);
+      if(!workspaceStillBound())throw Error('GATEWAY_WORKSPACE_CHANGED');
+      const absolute=path.join(root,relative),real=fs.realpathSync.native(absolute),rel=path.relative(root,real);
       if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel)||real!==absolute)throw Error('GATEWAY_RESOURCE_LINK_REJECTED');
-      const before=fs.lstatSync(absolute);
-      if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1||before.size>65_536)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
-      // Identity compared before any content access. Operations use the held fd afterwards.
-      const fd=fs.openSync(absolute,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0));
-      const after=fs.fstatSync(fd);
-      if(!sameFile(before,after)){fs.closeSync(fd);throw Error('GATEWAY_RESOURCE_CHANGED');}
-      resources.set(relative,{descriptor:Object.freeze({...f}),fd,dev:after.dev,ino:after.ino,absolute});
+      const before=fs.lstatSync(absolute,{bigint:true});
+      if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1n||before.size>65_536n)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
+      const secureHandle=secureWorkspace.openFile(relative);let secureRetained=false,fd:number|undefined;
+      try{
+        const securelyOpened=secureHandle.stat();
+        if(securelyOpened.kind!=='file'||securelyOpened.nlink!==1n||securelyOpened.size>65_536n||!sameFileAtOpen(before,securelyOpened))throw Error('GATEWAY_RESOURCE_CHANGED');
+        const noFollow=process.platform==='win32'?0:(fs.constants.O_NOFOLLOW??0),nonBlocking=process.platform==='win32'?0:fs.constants.O_NONBLOCK;
+        if(!Number.isInteger(noFollow)||!Number.isInteger(nonBlocking))throw Error('GATEWAY_NONBLOCK_OPEN_UNAVAILABLE');
+        const openedFd=fs.openSync(absolute,fs.constants.O_RDONLY|noFollow|nonBlocking);fd=openedFd;
+        const after=fs.fstatSync(openedFd,{bigint:true});
+        if(!after.isFile()||after.nlink!==1n||after.size>65_536n||!sameFileAtOpen(securelyOpened,after))throw Error('GATEWAY_RESOURCE_CHANGED');
+        const bound=fs.lstatSync(absolute,{bigint:true});
+        if(!bound.isFile()||bound.isSymbolicLink()||bound.nlink!==1n||!sameFileAtOpen(after,bound)||fs.realpathSync.native(absolute)!==absolute||!workspaceStillBound())throw Error('GATEWAY_RESOURCE_CHANGED');
+        resources.set(relative,{descriptor:Object.freeze({...f}),fd:openedFd,dev:after.dev,ino:after.ino,birthtimeNs:after.birthtimeNs,ctimeNs:after.ctimeNs,mtimeNs:after.mtimeNs,size:after.size,absolute,relative,secureHandle});
+        secureRetained=true;fd=undefined;
+      }finally{
+        if(!secureRetained){if(fd!==undefined)try{fs.closeSync(fd);}catch{}try{secureHandle.close();}catch{}}
+      }
     }
     for(const [name,c]of Object.entries(options.commands??{})){
       if(!idPattern.test(name)||!path.isAbsolute(c.executable)||!Array.isArray(c.args)||c.args.length>32||c.args.some(a=>typeof a!=='string'||a.length>4096||a.includes('\0')))throw Error('GATEWAY_COMMAND_INVALID');
       commands.set(name,Object.freeze({...c,args:Object.freeze([...c.args])}));
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
-  }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
+  }catch(error){for(const r of resources.values()){try{fs.closeSync(r.fd);}catch{}try{r.secureHandle.close();}catch{}}try{secureWorkspace.close();}catch{}throw error;}
   let closed=false;
   const pending=new Map<string,{request:Request;expires:number}>();
   function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
@@ -86,7 +110,16 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   function blocked(r:Request,reason:string,decision:EvidenceDecision='DENY'):never {audit(r,decision,reason,'NOT_STARTED','NOT_STARTED');throw new GatewayDeniedError(reason,r.id,decision);}
   function resource(r:Request):Resource|undefined{return typeof r.args.path==='string'?resources.get(filePath(r.args.path)):undefined;}
-  function stillBound(r:Resource):boolean{try{const named=fs.lstatSync(r.absolute),held=fs.fstatSync(r.fd);return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1&&sameFile(r,named)&&sameFile(r,held)&&fs.realpathSync(r.absolute)===r.absolute;}catch{return false;}}
+  function stillBound(r:Resource):boolean{
+    try{
+      if(!workspaceStillBound())return false;
+      const named=secureWorkspace.openFile(r.relative);
+      try{
+        const securelyNamed=named.stat(),heldSecure=r.secureHandle.stat(),heldNode=fs.fstatSync(r.fd,{bigint:true}),bound=fs.lstatSync(r.absolute,{bigint:true});
+        return securelyNamed.kind==='file'&&securelyNamed.nlink===1n&&heldNode.isFile()&&heldNode.nlink===1n&&bound.isFile()&&!bound.isSymbolicLink()&&bound.nlink===1n&&sameFileAtOpen(r,securelyNamed)&&sameFileAtOpen(r,heldSecure)&&sameFileAtOpen(r,heldNode)&&sameFileAtOpen(r,bound)&&fs.realpathSync.native(r.absolute)===r.absolute;
+      }finally{named.close();}
+    }catch{return false;}
+  }
   function policy(r:Request):{decision:EvidenceDecision;reason:string}{
     const schemas:Record<string,string[]>={read_file:['path'],write_file:['path','content'],run_command:['command'],http_request:['url'],mcp_tool:['tool','arguments']};
     if(!schemas[r.name]||Object.keys(r.args).some(k=>!schemas[r.name].includes(k)))return{decision:'DENY',reason:'unregistered_tool_or_parameter'};
@@ -145,9 +178,13 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           const f=resource(r);if(!f||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_EFFECT');
         }
         if(r.name==='read_file'){
-          const f=resource(r)!;const stat=fs.fstatSync(f.fd);if(stat.size>65_536)throw Error('GATEWAY_READ_LIMIT');
-          const buffer=Buffer.alloc(stat.size);let offset=0;while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
-          const text=buffer.subarray(0,offset).toString('utf8');
+          const f=resource(r)!;const stat=fs.fstatSync(f.fd,{bigint:true});if(!stat.isFile()||stat.nlink!==1n||!sameFileAtOpen(f,stat))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');if(stat.size>65_536n)throw Error('GATEWAY_READ_LIMIT');
+          const buffer=Buffer.alloc(Number(stat.size));let offset=0,text='';
+          try{
+            while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
+            const afterRead=fs.fstatSync(f.fd,{bigint:true});if(!sameFileAtOpen(f,afterRead)||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
+            text=buffer.subarray(0,offset).toString('utf8');
+          }finally{buffer.fill(0);}
           if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}
           return {content:text};
@@ -204,6 +241,6 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     reject(requestId:string){sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return blocked(p.request,'operator_rejected');},
   });
   return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
-    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values())fs.closeSync(f.fd);}
+    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values()){try{fs.closeSync(f.fd);}finally{f.secureHandle.close();}}secureWorkspace.close();}
   });
 }

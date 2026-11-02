@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Harden registered file reads with held workspace-directory handles,
+  no-follow relative path resolution, file-identity checks, and a regression
+  for a parent junction inserted during registration. This narrows path-race
+  exposure without claiming a host-wide atomic TOCTOU guarantee.
+
 ## 3.0.0 — Agent Canary 3.0 mainline
 
 - Promote the open-source CLI, MCP server, SDK, offline self-test, and risk-policy console as the repository mainline.

@@ -31,3 +31,39 @@ test('invalid suspicious AI output stays pending instead of being accepted as a 
 test('sensitive MCP output blocks later registered network capability before its callback',async()=>{let sent=0;const s=setup({mcpTools:{source:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>({secret:'NOT_A_REAL_CREDENTIAL_FLOW'})},sink:{risk:'NETWORK',approvalRequired:false,execute:async()=>++sent}}});try{await s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'source',arguments:{}}});await assert.rejects(s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'sink',arguments:{data:'encoded'}}}),/sensitive_session_egress_denied/);assert.equal(sent,0);}finally{await s.runtime.close();}});
 test('deadline aborts registered callback, quarantines and refuses queued real file effect',async()=>{let signal:AbortSignal|undefined;const s=setup({timeoutMs:5,mcpTools:{wait:{risk:'READ_ONLY',approvalRequired:false,execute:async(_args:any,s:AbortSignal)=>{signal=s;return new Promise(()=>{});}}}});try{const first=s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'wait',arguments:{}}});const second=s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'bad'}});await assert.rejects(first);await assert.rejects(second,/guard_quarantined/);assert.equal(signal!.aborted,true);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');}finally{await s.runtime.close();}});
 test('replacing gateway for same Guard cannot erase prior sensitive tool history',async()=>{let sent=0;const s=setup({mcpTools:{source:{risk:'READ_ONLY',approvalRequired:false,execute:async()=> 'NOT_A_REAL_CREDENTIAL_PERSIST'}}});let replacement:any;try{await s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'source',arguments:{}}});replacement=createTrustedExecutionGateway({agentId:'replacement-host',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),mcpTools:{sink:{risk:'NETWORK',approvalRequired:false,execute:async()=>++sent}}});await assert.rejects(replacement.agent.dispatch({name:'mcp_tool',args:{tool:'sink',arguments:{data:'unrelated'}}}),/sensitive_session_egress_denied/);assert.equal(sent,0);}finally{await replacement?.close();await s.runtime.close();}});
+
+test('gateway rejects a parent junction installed between path validation and file open',async()=>{
+ const parent=fs.mkdtempSync(path.join(home,'gateway-registration-junction-race-'));
+ const root=path.join(parent,'workspace'),notes=path.join(root,'notes'),heldNotes=path.join(root,'notes-held'),outside=path.join(parent,'outside');
+ const target=path.join(notes,'public.txt'),outsideNotes=path.join(outside,'notes'),outsideTarget=path.join(outsideNotes,'public.txt');
+ fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outsideNotes,{recursive:true});
+ fs.writeFileSync(target,'AUTHORIZED_WORKSPACE_FIXTURE');fs.writeFileSync(outsideTarget,'SYNTHETIC_OUTSIDE_SENTINEL');
+ const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ const canonicalTarget=fs.realpathSync.native(target);
+ let aliasActive=false,aliasToggles=0,targetLstatCalls=0,targetOpenCalls=0,readCalls=0,externalRead='';
+ const sameTargetPath=(candidate:any)=>{
+  const actual=path.resolve(String(candidate)),expected=path.resolve(canonicalTarget);
+  return process.platform==='win32'?actual.toLowerCase()===expected.toLowerCase():actual===expected;
+ };
+ const installAlias=()=>{fs.renameSync(notes,heldNotes);fs.symlinkSync(outsideNotes,notes,process.platform==='win32'?'junction':'dir');aliasActive=true;aliasToggles++;};
+ const restoreWorkspace=()=>{if(!aliasActive)return;if(process.platform==='win32')fs.rmdirSync(notes);else fs.unlinkSync(notes);fs.renameSync(heldNotes,notes);aliasActive=false;};
+  let runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,rejection:unknown,workspaceAfter='',outsideAfter='';
+ try{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{if(sameTargetPath(candidate)){targetLstatCalls++;if(!aliasActive)installAlias();}return(originalLstatSync as any)(candidate,...args);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))targetOpenCalls++;return(originalOpenSync as any)(candidate,...args);};
+  (fs as any).readSync=(fd:number,...args:any[])=>{readCalls++;const count=(originalReadSync as any)(fd,...args);if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')externalRead+=args[0].subarray(args[1],args[1]+count).toString('utf8');return count;};
+  try{runtime=createTrustedExecutionGateway({agentId:'registration-junction-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()});}catch(error){rejection=error;}
+ }finally{
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+    restoreWorkspace();await runtime?.close();workspaceAfter=fs.readFileSync(target,'utf8');outsideAfter=fs.readFileSync(outsideTarget,'utf8');fs.rmSync(parent,{recursive:true,force:true});
+ }
+ assert.ok(targetLstatCalls>0,'the attack reaches the target stat boundary');
+ assert.equal(aliasToggles,1,'the parent directory is replaced by exactly one outside junction');
+ assert.ok(rejection,`Gateway accepted an external file handle; path opens=${targetOpenCalls}, byte reads=${readCalls}`);
+ assert.match(String((rejection as Error).message??rejection),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED|GATEWAY_RESOURCE_CHANGED/);
+ assert.equal(targetOpenCalls,0,'the ordinary path-based file open is never reached');
+ assert.equal(readCalls,0,'registration reads no bytes');
+ assert.equal(externalRead,'','the outside sentinel is never read');
+  assert.equal(workspaceAfter,'AUTHORIZED_WORKSPACE_FIXTURE');
+  assert.equal(outsideAfter,'SYNTHETIC_OUTSIDE_SENTINEL');
+});
