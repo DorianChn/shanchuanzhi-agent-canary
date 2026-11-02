@@ -1,6 +1,7 @@
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import type {GatewayFile} from './gateway.js';
+import {issueSyntheticDecoyGatewayFile} from './synthetic-decoy-capability.js';
 export type DecoyKind='ENV'|'SSH'|'DATABASE'|'INTERNAL_API'|'MCP';
 export type DecoyInteraction='DEPLOYED'|'EXPOSED'|'DISCOVERED'|'READ'|'REFERENCED'|'COPIED'|'TOOL_INVOKED'|'EXFIL_ATTEMPTED'|'BLOCKED'|'QUARANTINED';
 export interface DecoyEvent {eventId:string;decoyId:string;sessionId:string;kind:DecoyInteraction;timestamp:string}
@@ -29,7 +30,7 @@ export class HoneypotRuntime {
     }
   }
   descriptions(){return this.decoys.map(d=>({...d}));}
-  gatewayFiles():GatewayFile[]{return this.decoys.map(d=>({path:d.path,decoyId:d.id,sensitive:true}));}
+  gatewayFiles():GatewayFile[]{return this.decoys.map(d=>issueSyntheticDecoyGatewayFile(this.root,d.path,d.id,this.content.get(d.id)!));}
   record(decoyId:string,kind:DecoyInteraction){
     if(!this.content.has(decoyId)||!['DEPLOYED','EXPOSED','DISCOVERED','READ','REFERENCED','COPIED','TOOL_INVOKED','EXFIL_ATTEMPTED','BLOCKED','QUARANTINED'].includes(kind))throw Error('HONEYPOT_EVENT_INVALID');
     if(this.events.length>=1024)throw Error('HONEYPOT_EVENT_LIMIT');
