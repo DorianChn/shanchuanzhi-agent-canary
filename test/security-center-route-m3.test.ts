@@ -929,7 +929,7 @@ test('configured-target Console denies a replacement between its identity check 
 });
 
 test('built-package Console rejects an external junction swap to a protected hardlink before content reads',{skip:process.platform!=='win32'},async()=>{
-  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-open-'));
+  const workspace=fs.realpathSync.native(fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-open-')));
   const movedWorkspace=workspace+'-held',outside=fs.mkdtempSync(path.join(testHome,'configured-target-external-junction-outside-'));
   const targetPath=path.join(workspace,'notes','summary.txt'),outsideTarget=path.join(outside,'notes','summary.txt'),protectedTarget=path.join(outside,'.ssh','id_rsa');
   fs.mkdirSync(path.dirname(targetPath),{recursive:true});fs.mkdirSync(path.dirname(outsideTarget),{recursive:true});fs.mkdirSync(path.dirname(protectedTarget),{recursive:true});
@@ -973,7 +973,7 @@ test('built-package Console rejects an external junction swap to a protected har
     });
     (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs as any).closeSync=originalCloseSync;
     const outsideIdentity=fs.statSync(outsideTarget,{bigint:true});
-    assert.equal(junctionInstalled,true,`the external junction must be installed at the M1 open boundary; swapError=${swapError}`);
+    assert.equal(junctionInstalled,true,`the external junction must be installed at the M1 open boundary; openCalls=${targetOpenCalls}, swapError=${swapError}`);
     assert.equal(workspaceRestored,true,'the independent process must restore the original workspace before M1 validates the opened file');
     assert.equal(targetOpenCalls,1);
     assert.deepEqual(openedIdentity,{dev:outsideIdentity.dev,ino:outsideIdentity.ino},'M1 opened a transient alias to the protected SSH key and must reject its identity');
