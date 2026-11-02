@@ -10,15 +10,36 @@ Tripwires for AI coding agents. It plants decoy MCP tools and canary tokens in
 your environment, then gives SDK integrations a session circuit breaker to
 contain the next guarded action after a compromise signal.
 
+## Version and distribution scope
+
+- **Release status:** v3.0.0 is published as the [Agent Canary 3.0 GitHub Release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0). The release is tied to its source snapshot.
+- **Install:** the v3.0.0 source manifest declares a CLI package on GitHub Packages, which requires a GitHub token with `read:packages`. Package retrieval was not verified in this review; see [Getting Started](GETTING_STARTED.md) for the tag-pinned source-build path.
+- **Container image:** Current GHCR package/tag availability, local pull, and runtime behavior are **NOT_VERIFIED** in this review. Do not assume the `3.0.0` or `latest` tags are pullable.
+- **Independent E4 reproduction:** NOT_VERIFIED; the evidence index records what was and was not tested.
+- **License:** MIT for this repository. Third-party dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **Runtime:** Node.js 20 or newer for the source build.
+
+This development branch is a separate candidate; its current package manifest remains 1.2.7.
+
 Works with MCP hosts that support stdio; non-MCP agents can use the SDK (see
 below). This audit verified the stdio protocol with the MCP JavaScript client,
 not every editor's installation UI. Node 20+, MIT, no telemetry.
 
 中文文档：[README.zh-CN.md](README.zh-CN.md)
 
-**3.0 engineering candidate acceptance:** [core report](docs/3.0/FINAL_3_0_ACCEPTANCE.md), [fair real-model comparison](docs/3.0/FAIR_CORE_EVALUATION.md), [E0–E4 evidence mapping](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md). Actual pre-execution effects were verified for a controlled SDK Agent. Native clients' global protection, independent AI benefit and adaptive decoy efficacy remain unverified. The 2.0 candidate is preserved; 3.0 is not a stable release.
+**Historical 3.0 engineering candidate evidence (2026-10-12):** [core report](docs/3.0/FINAL_3_0_ACCEPTANCE.md), [fair real-model comparison](docs/3.0/FAIR_CORE_EVALUATION.md), [E0–E4 evidence mapping](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md). Actual pre-execution effects were verified for a controlled SDK Agent. Native clients' global protection, independent AI benefit and adaptive decoy efficacy remain unverified. The 2.0 candidate is preserved; this report does not qualify the current development branch as a stable release.
 
 **Type-fixed supplementary candidate:** [candidate.2](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.2) includes dist/sdk.d.ts, matching ./sdk types and a three-command offline acceptance flow. Its 33 runtime JS files match candidate.1 byte-for-byte. The emailed candidate.1 and its original video/slides are preserved. [Limited native Claude Read/Bash evidence](docs/3.0/AGENT_COVERAGE_MATRIX.md) is separate direct-admission testing, not global protection or a new prompt-injection rate.
+
+## Coverage and limitations
+
+- **Native Codex Shell — UNPROTECTED:** built-in Shell is outside Agent Canary's route; MCP/Guard setup does not change that.
+- **AppContainer — LIMITED:** only tested child-process operations are covered; whole-host and general Shell protection are not established.
+- **Security Center — PARTIAL / product acceptance NOT_VERIFIED:** current Console implements GET status and separately authorized fixed-probe/configured-target read routes. M4 consumes status only. These routes do not establish general product-file or OS-atomic protection. See [API contracts](docs/3.0/API_CONTRACTS.md) and [issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52).
+- **Missing Security Center / E4 backend — UNKNOWN:** 404 or unavailable status must remain UNKNOWN, without inferring protection or a successful denial.
+- **E4 — NOT_VERIFIED:** synthetic fixtures, source checks and CI are not independent product E4 passes.
+
+See [COMPATIBILITY.md](COMPATIBILITY.md) for host and feature status.
 
 ## 3.0 competition candidate and development gates
 

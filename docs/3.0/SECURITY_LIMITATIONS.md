@@ -24,3 +24,17 @@
 在同一轮 A/B/C 直接对照中，A 的 loopback sink 确实收到请求，但合成凭据匹配器结果为 false；只确认发生网络副作用，不确认请求正文含有完整虚拟凭据。B/C 的文件哈希、Gateway 拒绝和 sink 空记录提供该测试夹具范围内的副作用证据，不形成总体防护率。
 
 本机 Ollama/Qwen 预审一次将无害写入判为 suspicious 并硬拒绝；无 AI 基线会等待人工审批。历史 Qwen 汇总 D1/E 的 ASR 同为 1/19，且 E 正常任务误报为 2/8；AI 独立因果收益 NOT_MEASURED。AI 预审应被视为可造成兼容性中断的辅助策略，不是已经证明增加防护率的功能。
+
+## 2026-10-23 M8 桌面接入状态补充 / M8 desktop integration status
+
+Historical source-audit snapshot only / 仅保留当时源码审查的历史范围。Current Console routes and status semantics are defined by [API_CONTRACTS](API_CONTRACTS.md) and [the current compatibility matrix](../../COMPATIBILITY.md): GET status and separately authorized reads now exist; missing backend status is UNKNOWN. The dated 404 observations below are not current-route or product-acceptance claims.
+
+以下是当前 M4 源码审计补充，不改写上文 2026-10-12 的历史验收结果。/ This is a current M4 source-audit addendum; it does not rewrite the historical 2026-10-12 acceptance record.
+
+- [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) remains `OPEN / P0 / NOT_VERIFIED` for the first-party OBSERVE product-file path. The reviewed desktop UI has no protected-read action that consumes an M1-bound identity through the M2 adapter. Its status adapter hardcodes `NOT_VERIFIED`; the reviewed server has no `GET /api/security-center` handler and returns 404.
+- M4's Runtime demo uses a generated temporary file through a demo Gateway; its policy demo is virtual. Neither reads a user/product file or establishes product-file protection. M1/M2/M5 fixtures and API compatibility do not establish a supported desktop host callsite.
+- Keep path replacement/identity checks distinct from an OS-atomic TOCTOU guarantee. No OS-atomic guarantee, user-file protection, or actual secret exposure is established by this source audit. Preserve fail-closed behavior and report missing routes as `NOT_VERIFIED`, not as a successful denial.
+
+- [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) 仍为 `OPEN / P0 / NOT_VERIFIED`：第一方 OBSERVE 产品文件读取路径尚未验证。已审查的桌面 UI 没有通过 M2 adapter 消费 M1 绑定身份的受保护读取动作；状态 adapter 固定返回 `NOT_VERIFIED`，服务端也没有 `GET /api/security-center` 路由（返回 404）。
+- M4 Runtime 演示只通过演示 Gateway 读取新建的临时文件；策略演示使用虚拟回调。二者都不读取用户/产品文件，也不能证明产品文件保护。M1/M2/M5 fixture 和 API 兼容性不能证明桌面宿主已接线。
+- 路径替换/身份复核与操作系统原子 TOCTOU 保证必须分开描述。本次源码审计没有证明 OS 原子保证、用户文件保护或实际敏感信息泄露。保持 fail-closed；缺失路由应标为 `NOT_VERIFIED`，不能描述成成功拒绝。
