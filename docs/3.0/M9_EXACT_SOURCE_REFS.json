@@ -16,7 +16,7 @@
     "M3": {
       "pullRequest": 120,
       "branchRef": "feature/ac3-agent-onboarding",
-      "sha": "6830cf8bb883592bb9438cd86ed36d9d48e95e4e"
+      "sha": "9b208fc6399a857c36391aae3bfe194248dc5cbf"
     },
     "M4": {
       "pullRequest": 121,
@@ -26,7 +26,7 @@
     "M5": {
       "pullRequest": 122,
       "branchRef": "feature/ac3-policy-audit",
-      "sha": "5d4d6cb60be6eddd6b883d236166a715c40c070b"
+      "sha": "9868c3ef73f32facbe6e80ec8140c744ad44aefa"
     },
     "M6": {
       "pullRequest": 123,
