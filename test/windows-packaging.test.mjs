@@ -29,10 +29,11 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }
 });
 
-test('Windows Community packaging requires the exact 37 runtime files and SDK declaration',()=>{
+test('Windows Community packaging requires the exact 38 runtime files and SDK declaration',()=>{
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   const worker=fs.readFileSync(path.join(repo,'packaging/windows/worker.mjs'),'utf8');
-  assert.equal(communityRuntimeFiles.length,37);
+  assert.equal(communityRuntimeFiles.length,38);
+  assert.ok(communityRuntimeFiles.includes('runtime/synthetic-decoy-capability.js'));
   assert.equal(new Set(communityRuntimeFiles).size,communityRuntimeFiles.length);
   assert.deepEqual(validateCommunityRuntime([...communityRuntimeFiles].reverse(),true),communityRuntimeFiles);
   assert.throws(()=>validateCommunityRuntime(communityRuntimeFiles.slice(1),true),/COMMUNITY_RUNTIME_OR_TYPES_INCOMPLETE/);
@@ -132,7 +133,7 @@ test('Community source build transfers the patched dependency tree and keeps can
   const pkg=JSON.parse(fs.readFileSync(path.join(repo,'package.json'),'utf8'));
   const lock=JSON.parse(fs.readFileSync(path.join(repo,'package-lock.json'),'utf8'));
   const lockRoot=lock.packages[''];
-  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','security-lab/claude-native-hook.mjs']){
+  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','src/runtime/synthetic-decoy-capability.ts','security-lab/claude-native-hook.mjs']){
     assert.ok(source.includes(`'${requiredSource}'`),`candidate source allowlist must include ${requiredSource}`);
   }
   assert.match(source,/lock=json\.loads\(\(root\/'package-lock\.json'\)\.read_text\(encoding='utf-8'\)\)/);

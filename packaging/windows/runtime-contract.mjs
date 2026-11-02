@@ -30,6 +30,7 @@ export const communityRuntimeFiles=Object.freeze([
   'runtime/evidence.js',
   'runtime/gateway.js',
   'runtime/honeypot.js',
+  'runtime/synthetic-decoy-capability.js',
   'sdk.js',
   'security-router.js',
   'self-test.js',

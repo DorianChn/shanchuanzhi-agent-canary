@@ -228,6 +228,17 @@ test('configured-target readiness adapter rejects malformed, stale, future, unsu
  }
 });
 
+test('configured-target readiness preserves a valid configured-but-unknown binding without enabling action',()=>{
+ const now=Date.parse('2026-10-28T08:17:00.000Z');
+ const payload={scope:'M3_CONFIGURED_TARGET_READINESS',schemaVersion:1,generatedAt:new Date(now).toISOString(),configurationStatus:'CONFIGURED',bindingStatus:'UNKNOWN',actionReadiness:'UNKNOWN',operatorAuthStatus:'CONFIGURED',targets:[{targetId:'brief',bindingStatus:'UNKNOWN'}]};
+ const normalized=adaptConfiguredTargetReadiness(payload,now);
+ assert.equal(normalized.valid,true);
+ assert.equal(normalized.configurationStatus,'CONFIGURED');
+ assert.equal(normalized.bindingStatus,'UNKNOWN');
+ assert.equal(normalized.actionReadiness,'UNKNOWN');
+ assert.deepEqual(normalized.targets,[{targetId:'brief',bindingStatus:'UNKNOWN'}]);
+});
+
 test('security-center adapter keeps absent backend data UNKNOWN and ignores demo install claims',()=>{
  const view=adaptSecuritySnapshot({
   state:{events:[{ts:'2026-10-13T00:00:00.000Z',kind:'action_blocked',reason:'token=cnry_secret',toolName:'read_file',args:{token:'cnry_secret'},path:'C:\\private'}]},

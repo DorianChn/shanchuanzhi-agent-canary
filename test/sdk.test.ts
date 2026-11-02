@@ -1,14 +1,35 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 process.env.AGENT_CANARY_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-sdk-"));
 
 const sdk = await import("../src/sdk.js");
 const { plantIntoFile, scanCanary } = sdk;
 const { readEvents } = await import("../src/alerts.js");
+
+test("SDK quick-start runs the built package and verifies allow/deny evidence", () => {
+  const examplePath = path.join(repoRoot, "examples", "sdk", "quick-start.mjs");
+  const result = spawnSync(process.execPath, [examplePath], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    timeout: 15_000,
+  });
+
+  assert.equal(result.error, undefined, result.error?.message);
+  assert.equal(result.status, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.registeredRead, "allowed-and-verified");
+  assert.deepEqual(output.unregisteredRead, { status: "denied", reason: "resource_not_bound" });
+  assert.equal(output.writes, "disabled-by-contract");
+  assert.equal(output.evidence.validLocalChain, true);
+  assert.ok(output.evidence.eventCount >= 3);
+});
 
 test("decoyToolDefs emits native schemas for both formats", () => {
   const openai = sdk.decoyToolDefs("openai");

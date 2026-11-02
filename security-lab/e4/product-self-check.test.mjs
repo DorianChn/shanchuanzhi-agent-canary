@@ -101,6 +101,38 @@ test('product intake rejects writes inside input artifact directory',t=>{
   const {options}=fixture(t);
   assert.throws(()=>createProductSelfCheck({...options,outputDir:path.join(options.artifactDir,'output')}),/OUTPUT_INSIDE_INPUT/);
 });
+test('product intake rejects an output junction leading back into the artifact',t=>{
+  const {root,options}=fixture(t), alias=path.join(root,'artifact-alias');
+  const before=inspectProductArtifact(options).inventory;
+  fs.symlinkSync(options.artifactDir,alias,'junction');
+  assert.throws(()=>createProductSelfCheck({...options,outputDir:path.join(alias,'nested','output')}),/PRODUCT_OUTPUT_INSIDE_INPUT/);
+  assert.equal(fs.existsSync(path.join(options.artifactDir,'nested')),false);
+  assert.deepEqual(inspectProductArtifact(options).inventory,before);
+});
+test('product intake resolves input parent aliases when rejecting output inside the artifact',t=>{
+  const {root,options}=fixture(t), alias=path.join(root,'parent-alias');
+  fs.symlinkSync(root,alias,'junction');
+  assert.throws(()=>createProductSelfCheck({...options,artifactDir:path.join(alias,'artifact'),outputDir:path.join(options.artifactDir,'output')}),/PRODUCT_OUTPUT_INSIDE_INPUT/);
+  assert.equal(fs.existsSync(path.join(options.artifactDir,'output')),false);
+});
+test('product intake accepts an output junction leading to a separate directory',t=>{
+  const {root,options}=fixture(t), parent=path.join(root,'separate-output'), alias=path.join(root,'output-alias');
+  fs.mkdirSync(parent);fs.symlinkSync(parent,alias,'junction');
+  const result=createProductSelfCheck({...options,outputDir:path.join(alias,'nested','bundle')});
+  assert.equal(result.productE4Accepted,false);
+  assert.equal(fs.statSync(path.join(parent,'nested','bundle','evidence.zip')).isFile(),true);
+  assert.equal(fs.existsSync(path.join(options.artifactDir,'nested')),false);
+});
+test('verifier controls reject an output junction leading back into the original bundle',t=>{
+  const {root,options}=fixture(t);
+  createProductSelfCheck(options);
+  const before=fs.readdirSync(options.outputDir).sort();
+  const archive=fs.readFileSync(path.join(options.outputDir,'evidence.zip'));
+  const alias=path.join(root,'bundle-alias');fs.symlinkSync(options.outputDir,alias,'junction');
+  assert.throws(()=>verifyBundleControls(options.outputDir,path.join(alias,'nested','controls')),/CONTROL_OUTPUT_INSIDE_BUNDLE/);
+  assert.deepEqual(fs.readdirSync(options.outputDir).sort(),before);
+  assert.deepEqual(fs.readFileSync(path.join(options.outputDir,'evidence.zip')),archive);
+});
 test('disposable verifier controls reject all four external mismatches and ZIP truncation',t=>{
   const {root,options}=fixture(t);
   createProductSelfCheck(options);

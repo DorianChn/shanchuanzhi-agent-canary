@@ -10,9 +10,28 @@ import {SessionDataFlow} from '../dataflow.js';
 import {DataFlowTracker} from './dataflow.js';
 import {executePinnedJSONTool} from '../network-tool.js';
 import {canonicalJSON,EvidenceRecorder,type EvidenceDecision,type ExecutionStatus,type SideEffectVerification} from './evidence.js';
+import {getSyntheticDecoyGatewayFileProof} from './synthetic-decoy-capability.js';
 
+/** Exact host-captured file version for binding a pre-authorized target to M1. */
+export type GatewayFileIdentity=Readonly<{
+  dev:string;
+  ino:string;
+  birthtimeNs:string;
+  ctimeNs:string;
+  mtimeNs:string;
+  size:string;
+}>;
+/** Canonical workspace directory captured by a trusted host before asynchronous setup. */
+export type GatewayWorkspaceIdentity=Readonly<{
+  path:string;
+  dev:string;
+  ino:string;
+  birthtimeNs:string;
+}>;
 export interface GatewayFile {
   path:string;
+  /** When supplied, registration must match this host-captured identity before any content is read. */
+  expectedIdentity?:GatewayFileIdentity;
   /** @deprecated Retained for source compatibility; M1 writes fail closed until a path-safe replacement primitive exists. */
   writable?:boolean;
   approvalRequired?:boolean;
@@ -26,6 +45,8 @@ export type GatewayFileReadCapability={readonly [gatewayFileReadCapabilityBrand]
 export interface GatewayCommand {executable:string; args:readonly string[]; approvalRequired?:boolean}
 export interface GatewayOptions {
   agentId:string; guard:AgentGuard; workspaceRoot:string; files:readonly GatewayFile[];
+  /** When supplied, registration must stay on the host-captured canonical workspace directory. */
+  expectedWorkspaceIdentity?:GatewayWorkspaceIdentity;
   commands?:Record<string,GatewayCommand>; readOrigins?:readonly string[];
   evidence:EvidenceRecorder; provider?:AIProvider; cloudConsent?:boolean;
   timeoutMs?:number; reviewTimeoutMs?:number; approvalTtlMs?:number;
@@ -37,16 +58,59 @@ export class GatewayDeniedError extends Error {
   constructor(readonly reason:string,readonly requestId:string,readonly decision:EvidenceDecision='DENY'){super('GATEWAY_'+decision+':'+reason);}
 }
 type FileSnapshot={dev:bigint;ino:bigint;birthtimeNs:bigint;ctimeNs:bigint;mtimeNs:bigint;size:bigint};
-type Resource=FileSnapshot&{descriptor:Readonly<GatewayFile>;fd:number;absolute:string;contentTag:string|null};
+type ResourceMetadata={descriptor:Readonly<GatewayFile>;protectedPath:boolean;syntheticDecoy:boolean;syntheticDecoyContent:string|null};
+type Resource=ResourceMetadata&({fd:null;absolute:null;contentTag:null}|(FileSnapshot&{fd:number;absolute:string;contentTag:string|null}));
 type FileReadCapabilityRecord={owner:symbol;toolName:string;pathArg:string;relativePath:string;resource:Resource};
 const fileReadCapabilityRecords=new WeakMap<object,FileReadCapabilityRecord>();
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
-const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?)(\/|$)/i;
+// Conservatively deny common private-key and credential-container extensions.
+// Public certificates in PEM encoding are blocked too; a host can expose a
+// separately reviewed public certificate under a non-secret extension.
+const dangerousPath=/(^|\/)(?:\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|[^/]*\.(?:key|pem|p12|pfx|ppk|jks|jceks|keystore|kdbx|kdb|keytab|ovpn))(\/|$)/i;
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:bigint;ino:bigint},b:{dev:bigint;ino:bigint})=>a.dev===b.dev&&a.ino===b.ino;
 const sameFileAtOpen=(a:FileSnapshot,b:FileSnapshot)=>sameFile(a,b)&&a.birthtimeNs===b.birthtimeNs&&a.ctimeNs===b.ctimeNs&&a.mtimeNs===b.mtimeNs&&a.size===b.size;
+function normalizeExpectedIdentity(value:unknown):FileSnapshot{
+  try{
+    if(!value||typeof value!=='object'||Array.isArray(value))throw Error();
+    const prototype=Object.getPrototypeOf(value);
+    if(prototype!==Object.prototype&&prototype!==null)throw Error();
+    const keys=Reflect.ownKeys(value);
+    if(keys.some(key=>typeof key!=='string')||keys.slice().sort().join(',')!=='birthtimeNs,ctimeNs,dev,ino,mtimeNs,size')throw Error();
+    const descriptors=Object.getOwnPropertyDescriptors(value);
+    const decimal=(key:string,allowNegative=false)=>{
+      const descriptor=descriptors[key];
+      if(!descriptor||descriptor.get||descriptor.set||!('value'in descriptor)||typeof descriptor.value!=='string'||
+        !(allowNegative?/^-?(0|[1-9][0-9]*)$/:/^(0|[1-9][0-9]*)$/).test(descriptor.value))throw Error();
+      return BigInt(descriptor.value);
+    };
+    return{dev:decimal('dev'),ino:decimal('ino'),birthtimeNs:decimal('birthtimeNs',true),ctimeNs:decimal('ctimeNs',true),mtimeNs:decimal('mtimeNs',true),size:decimal('size')};
+  }catch{throw Error('GATEWAY_EXPECTED_IDENTITY_INVALID');}
+}
+type WorkspaceSnapshot={dev:bigint;ino:bigint;birthtimeNs:bigint};
+type NormalizedWorkspaceIdentity=WorkspaceSnapshot&{path:string};
+function normalizeExpectedWorkspaceIdentity(value:unknown):NormalizedWorkspaceIdentity{
+  try{
+    if(!value||typeof value!=='object'||Array.isArray(value))throw Error();
+    const prototype=Object.getPrototypeOf(value);
+    if(prototype!==Object.prototype&&prototype!==null)throw Error();
+    const keys=Reflect.ownKeys(value);
+    if(keys.some(key=>typeof key!=='string')||keys.slice().sort().join(',')!=='birthtimeNs,dev,ino,path')throw Error();
+    const descriptors=Object.getOwnPropertyDescriptors(value);
+    const pathDescriptor=descriptors.path;
+    if(!pathDescriptor||pathDescriptor.get||pathDescriptor.set||!('value'in pathDescriptor)||typeof pathDescriptor.value!=='string'||!path.isAbsolute(pathDescriptor.value)||pathDescriptor.value.includes('\0'))throw Error();
+    const decimal=(key:string,allowNegative=false)=>{
+      const descriptor=descriptors[key];
+      if(!descriptor||descriptor.get||descriptor.set||!('value'in descriptor)||typeof descriptor.value!=='string'||
+        !(allowNegative?/^-?(0|[1-9][0-9]*)$/:/^(0|[1-9][0-9]*)$/).test(descriptor.value))throw Error();
+      return BigInt(descriptor.value);
+    };
+    return{path:pathDescriptor.value,dev:decimal('dev'),ino:decimal('ino'),birthtimeNs:decimal('birthtimeNs',true)};
+  }catch{throw Error('GATEWAY_EXPECTED_WORKSPACE_IDENTITY_INVALID');}
+}
+const sameWorkspaceIdentity=(a:WorkspaceSnapshot,b:WorkspaceSnapshot)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
 const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>;controllers:Set<AbortController>;quarantineEpoch:number}>();
 
@@ -55,7 +119,17 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
   // Native Windows resolution expands NTFS short-name aliases before the
   // protected-path and held-resource identity checks below.
-  const root=fs.realpathSync.native(options.workspaceRoot),resources=new Map<string,Resource>();
+  const workspaceIdentityDescriptor=Object.getOwnPropertyDescriptor(options,'expectedWorkspaceIdentity');
+  if(workspaceIdentityDescriptor&&!('value'in workspaceIdentityDescriptor))throw Error('GATEWAY_EXPECTED_WORKSPACE_IDENTITY_INVALID');
+  const expectedWorkspaceIdentity=workspaceIdentityDescriptor?normalizeExpectedWorkspaceIdentity(workspaceIdentityDescriptor.value):undefined;
+  const root=fs.realpathSync.native(options.workspaceRoot);
+  let rootStat:fs.BigIntStats;
+  try{rootStat=fs.lstatSync(root,{bigint:true});}catch{throw Error('GATEWAY_WORKSPACE_CHANGED');}
+  if(!rootStat.isDirectory()||rootStat.isSymbolicLink())throw Error('GATEWAY_WORKSPACE_CHANGED');
+  const registeredWorkspaceIdentity:WorkspaceSnapshot={dev:rootStat.dev,ino:rootStat.ino,birthtimeNs:rootStat.birthtimeNs};
+  if(expectedWorkspaceIdentity&&(root!==expectedWorkspaceIdentity.path||!sameWorkspaceIdentity(expectedWorkspaceIdentity,rootStat)))throw Error('GATEWAY_WORKSPACE_CHANGED');
+  const resources=new Map<string,Resource>();
+  function workspaceStillBound():boolean{try{const named=fs.lstatSync(root,{bigint:true});return named.isDirectory()&&!named.isSymbolicLink()&&sameWorkspaceIdentity(registeredWorkspaceIdentity,named)&&fs.realpathSync.native(root)===root;}catch{return false;}}
   const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve(),controllers:new Set<AbortController>(),quarantineEpoch:0};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const contentTag=(content:Buffer)=>createHmac('sha256',key).update('gateway-file-content\0').update(content).digest('hex');
@@ -66,13 +140,39 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   for(const n of [deadline,reviewMs,ttl])if(!Number.isInteger(n)||n<1||n>180_000)throw Error('GATEWAY_TIMEOUT_INVALID');
   try{
     for(const f of options.files){
+      if(!workspaceStillBound())throw Error('GATEWAY_WORKSPACE_CHANGED');
+      const expectedIdentityDescriptor=Object.getOwnPropertyDescriptor(f,'expectedIdentity');
+      if(expectedIdentityDescriptor&&!('value'in expectedIdentityDescriptor))throw Error('GATEWAY_EXPECTED_IDENTITY_INVALID');
+      const expectedIdentity=expectedIdentityDescriptor?normalizeExpectedIdentity(expectedIdentityDescriptor.value):undefined;
+      const decoyIdDescriptor=Object.getOwnPropertyDescriptor(f,'decoyId'),syntheticDecoyProof=getSyntheticDecoyGatewayFileProof(f,root);
       const relative=filePath(f.path);
+      if(decoyIdDescriptor!==undefined&&!('value'in decoyIdDescriptor))throw Error('GATEWAY_DECOY_CAPABILITY_INVALID');
+      const configuredDecoyId=decoyIdDescriptor&&'value'in decoyIdDescriptor?decoyIdDescriptor.value:undefined;
+      if(configuredDecoyId!==undefined&&typeof configuredDecoyId!=='string')throw Error('GATEWAY_DECOY_CAPABILITY_INVALID');
+      const hasDecoyId=typeof configuredDecoyId==='string'&&configuredDecoyId.length>0,protectedPath=f.sensitive===true||dangerousPath.test(relative);
+      if(hasDecoyId&&protectedPath&&!syntheticDecoyProof||syntheticDecoyProof&&(configuredDecoyId!==syntheticDecoyProof.decoyId||f.path!==syntheticDecoyProof.path||f.sensitive!==true))throw Error('GATEWAY_DECOY_CAPABILITY_INVALID');
       if(!relative||relative.includes('\0')||relative.includes(':')||path.isAbsolute(relative)||relative!==path.posix.normalize(relative)||relative.split('/').includes('..')||resources.has(relative))throw Error('GATEWAY_RESOURCE_INVALID');
+      // The proof already carries synthetic content in memory. Never resolve,
+      // stat, open, or retain the protected-looking decoy pathname.
+      if(syntheticDecoyProof){
+        resources.set(relative,{descriptor:Object.freeze({...f}),fd:null,absolute:null,contentTag:null,protectedPath:true,syntheticDecoy:true,syntheticDecoyContent:syntheticDecoyProof.content});
+        continue;
+      }
+      // Keep real protected targets as deny-only entries. Do not resolve, stat,
+      // open, or retain their files.
+      if(protectedPath){
+        resources.set(relative,{descriptor:Object.freeze({...f}),fd:null,absolute:null,contentTag:null,protectedPath:true,syntheticDecoy:false,syntheticDecoyContent:null});
+        continue;
+      }
       const absolute=path.join(root,relative),real=fs.realpathSync.native(absolute),rel=path.relative(root,real);
       if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel)||real!==absolute)throw Error('GATEWAY_RESOURCE_LINK_REJECTED');
       // Number cannot distinguish adjacent 64-bit file IDs above MAX_SAFE_INTEGER.
       const before=fs.lstatSync(absolute,{bigint:true});
       if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1n||before.size>65_536n)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
+      // A caller such as M3 may have bound this path to a file identity before
+      // Gateway construction. Reject a replacement at this boundary before
+      // opening or hashing the replacement bytes.
+      if(expectedIdentity&&!sameFileAtOpen(expectedIdentity,before))throw Error('GATEWAY_RESOURCE_CHANGED');
       // Identity compared before any content access. Operations use the held fd afterwards.
       // O_NONBLOCK prevents a regular-file-to-FIFO swap between lstat and open
       // from hanging the Gateway constructor. It is inert for regular files.
@@ -82,14 +182,15 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       let retained=false;
       try{
         const after=fs.fstatSync(fd,{bigint:true});
-        if(!after.isFile()||after.nlink!==1n||after.size>65_536n||!sameFileAtOpen(before,after))throw Error('GATEWAY_RESOURCE_CHANGED');
+        if(!after.isFile()||after.nlink!==1n||after.size>65_536n||!sameFileAtOpen(before,after)||expectedIdentity&&!sameFileAtOpen(expectedIdentity,after))throw Error('GATEWAY_RESOURCE_CHANGED');
         // Re-resolve the pathname after open as well: its parent may have become
         // a symlink/junction after the initial canonicalization but before lstat.
         const bound=fs.lstatSync(absolute,{bigint:true});
         if(!bound.isFile()||bound.isSymbolicLink()||bound.nlink!==1n||!sameFileAtOpen(after,bound)||fs.realpathSync.native(absolute)!==absolute)throw Error('GATEWAY_RESOURCE_CHANGED');
+        if(!workspaceStillBound())throw Error('GATEWAY_WORKSPACE_CHANGED');
         // Pin readable content without retaining plaintext. Explicitly sensitive paths
         // stay unread at registration; synthetic decoys are fingerprinted without firing their trap.
-        const pinContent=Boolean(f.decoyId)||(!f.sensitive&&!dangerousPath.test(relative));
+        const pinContent=!syntheticDecoyProof&&!protectedPath;
         let integrityTag:string|null=null;
         if(pinContent){
           const content=Buffer.alloc(Number(after.size));
@@ -101,7 +202,8 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           const afterFingerprint=fs.fstatSync(fd,{bigint:true}),boundAfterFingerprint=fs.lstatSync(absolute,{bigint:true});
           if(!sameFileAtOpen(after,afterFingerprint)||!boundAfterFingerprint.isFile()||boundAfterFingerprint.isSymbolicLink()||boundAfterFingerprint.nlink!==1n||!sameFileAtOpen(afterFingerprint,boundAfterFingerprint)||fs.realpathSync.native(absolute)!==absolute)throw Error('GATEWAY_RESOURCE_CHANGED');
         }
-        resources.set(relative,{descriptor:Object.freeze({...f}),fd,dev:after.dev,ino:after.ino,birthtimeNs:after.birthtimeNs,ctimeNs:after.ctimeNs,mtimeNs:after.mtimeNs,size:after.size,absolute,contentTag:integrityTag});
+        if(!workspaceStillBound())throw Error('GATEWAY_WORKSPACE_CHANGED');
+        resources.set(relative,{descriptor:Object.freeze({...f}),fd,dev:after.dev,ino:after.ino,birthtimeNs:after.birthtimeNs,ctimeNs:after.ctimeNs,mtimeNs:after.mtimeNs,size:after.size,absolute,contentTag:integrityTag,protectedPath:false,syntheticDecoy:false,syntheticDecoyContent:null});
         retained=true;
       }finally{
         // Until registration succeeds, this scope owns the descriptor and must close it on failure.
@@ -113,7 +215,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       commands.set(name,Object.freeze({...c,args:Object.freeze([...c.args])}));
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
-  }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
+  }catch(error){for(const r of resources.values())if(r.fd!==null)fs.closeSync(r.fd);throw error;}
   let closed=false,closePromise:Promise<void>|undefined,unsubscribeQuarantine=()=>{};
   const capabilityOwner=Symbol('gateway-file-read-owner'),issuedCapabilities=new Set<object>();
   const activeControllers=new Set<AbortController>();
@@ -142,7 +244,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   function blocked(r:Request,reason:string,decision:EvidenceDecision='DENY'):never {audit(r,decision,reason,'NOT_STARTED','NOT_STARTED');throw new GatewayDeniedError(reason,r.id,decision);}
   function resource(r:Request):Resource|undefined{return typeof r.args.path==='string'?resources.get(filePath(r.args.path)):undefined;}
-  function stillBound(r:Resource):boolean{try{const named=fs.lstatSync(r.absolute,{bigint:true}),held=fs.fstatSync(r.fd,{bigint:true});return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1n&&held.isFile()&&held.nlink===1n&&sameFileAtOpen(r,named)&&sameFileAtOpen(r,held)&&fs.realpathSync.native(r.absolute)===r.absolute;}catch{return false;}}
+  function stillBound(r:Resource):boolean{try{if(!workspaceStillBound())return false;if(r.syntheticDecoy)return r.fd===null&&r.absolute===null&&r.syntheticDecoyContent!==null;if(r.fd===null||r.absolute===null)return false;const named=fs.lstatSync(r.absolute,{bigint:true}),held=fs.fstatSync(r.fd,{bigint:true});return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1n&&held.isFile()&&held.nlink===1n&&sameFileAtOpen(r,named)&&sameFileAtOpen(r,held)&&fs.realpathSync.native(r.absolute)===r.absolute;}catch{return false;}}
   function normalizeFileReadBinding(value:unknown):{toolName:string;operation:'file-read';path:string;pathArg:string}|undefined{
     try{
       if(!value||typeof value!=='object'||Array.isArray(value))return undefined;
@@ -162,7 +264,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   function registeredFileReadCapability(bindingValue:GatewayFileReadBinding):GatewayFileReadCapability{
     const binding=normalizeFileReadBinding(bindingValue),target=binding&&resources.get(binding.path);
-    if(closed||!binding||!target||target.descriptor.sensitive||target.descriptor.decoyId||dangerousPath.test(target.descriptor.path)||!stillBound(target))throw Error('GATEWAY_FILE_CAPABILITY_UNAVAILABLE');
+    if(closed||!binding||!target||target.protectedPath||target.syntheticDecoy||target.descriptor.decoyId||!stillBound(target))throw Error('GATEWAY_FILE_CAPABILITY_UNAVAILABLE');
     const capability=Object.freeze(Object.create(null)) as GatewayFileReadCapability;
     fileReadCapabilityRecords.set(capability,{owner:capabilityOwner,toolName:binding.toolName,pathArg:binding.pathArg,relativePath:binding.path,resource:target});
     issuedCapabilities.add(capability);
@@ -184,7 +286,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       if(argKeys.length!==1||argKeys[0]!==record.pathArg||argDescriptors[record.pathArg].get||argDescriptors[record.pathArg].set||!('value'in argDescriptors[record.pathArg]))return undefined;
       if(argDescriptors[record.pathArg].value!==record.relativePath)return undefined;
       const target=record.resource;
-      if(target.descriptor.sensitive||target.descriptor.decoyId||dangerousPath.test(target.descriptor.path)||!stillBound(target))return undefined;
+      if(target.protectedPath||target.syntheticDecoy||target.descriptor.decoyId||!stillBound(target))return undefined;
       return record;
     }catch{return undefined;}
   }
@@ -193,8 +295,9 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     if(!schemas[r.name]||Object.keys(r.args).some(k=>!schemas[r.name].includes(k)))return{decision:'DENY',reason:'unregistered_tool_or_parameter'};
     if(r.name==='read_file'||r.name==='write_file'){
       const target=resource(r);
-      if(!target||!stillBound(target))return{decision:'DENY',reason:'resource_not_bound'};
-      if((target.descriptor.sensitive||dangerousPath.test(target.descriptor.path))&&!target.descriptor.decoyId)return{decision:'DENY',reason:'credential_resource_denied'};
+      if(!target)return{decision:'DENY',reason:'resource_not_bound'};
+      if(target.protectedPath&&!target.syntheticDecoy)return{decision:'DENY',reason:'credential_resource_denied'};
+      if(!stillBound(target))return{decision:'DENY',reason:'resource_not_bound'};
       if(r.name==='write_file'&&(!target.descriptor.writable||typeof r.args.content!=='string'||Buffer.byteLength(r.args.content)>65_536))return{decision:'DENY',reason:'write_capability_or_size_denied'};
       if(r.name==='write_file')return{decision:'DENY',reason:'write_capability_disabled_pending_path_safe_primitive'};
       return{decision:target.descriptor.approvalRequired?'REQUIRE_APPROVAL':'ALLOW',reason:'host_scoped_file_capability'};
@@ -253,17 +356,26 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           const f=resource(r);if(!f||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_EFFECT');
         }
         if(r.name==='read_file'){
-          const f=resource(r)!;const stat=fs.fstatSync(f.fd,{bigint:true});if(!stat.isFile()||stat.nlink!==1n||!sameFileAtOpen(f,stat))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');if(stat.size>65_536n)throw Error('GATEWAY_READ_LIMIT');
-          const buffer=Buffer.alloc(Number(stat.size));let offset=0,text='';
-          try{
-            while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
-            // Reads use only the already-held descriptor, so a path swap cannot redirect I/O.
-            // Recheck the frozen file version as well; changed bytes are never returned.
-            const afterRead=fs.fstatSync(f.fd,{bigint:true});
-            if(!sameFileAtOpen(f,afterRead)||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
-            if(f.contentTag!==null&&!timingSafeEqual(Buffer.from(contentTag(buffer.subarray(0,offset)),'hex'),Buffer.from(f.contentTag,'hex')))throw Error('GATEWAY_RESOURCE_CONTENT_CHANGED');
-            text=buffer.subarray(0,offset).toString('utf8');
-          }finally{buffer.fill(0);}
+          const f=resource(r)!;let text='';
+          if(f.syntheticDecoy){
+            if(f.syntheticDecoyContent===null||Buffer.byteLength(f.syntheticDecoyContent)>65_536||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
+            // Synthetic decoys come from HoneypotRuntime's opaque in-memory capability;
+            // the corresponding sensitive-looking pathname is never read for content.
+            text=f.syntheticDecoyContent;
+          }else{
+            if(f.fd===null)throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');
+            const stat=fs.fstatSync(f.fd,{bigint:true});if(!stat.isFile()||stat.nlink!==1n||!sameFileAtOpen(f,stat))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');if(stat.size>65_536n)throw Error('GATEWAY_READ_LIMIT');
+            const buffer=Buffer.alloc(Number(stat.size));let offset=0;
+            try{
+              while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
+              // Reads use only the already-held descriptor, so a path swap cannot redirect I/O.
+              // Recheck the frozen file version as well; changed bytes are never returned.
+              const afterRead=fs.fstatSync(f.fd,{bigint:true});
+              if(!sameFileAtOpen(f,afterRead)||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
+              if(f.contentTag!==null&&!timingSafeEqual(Buffer.from(contentTag(buffer.subarray(0,offset)),'hex'),Buffer.from(f.contentTag,'hex')))throw Error('GATEWAY_RESOURCE_CONTENT_CHANGED');
+              text=buffer.subarray(0,offset).toString('utf8');
+            }finally{buffer.fill(0);}
+          }
           if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId)decoyReadId=f.descriptor.decoyId;
           return {content:text};
@@ -362,7 +474,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     const unsubscribe=unsubscribeQuarantine;unsubscribeQuarantine=()=>{};try{unsubscribe();}catch{}
     void history.tail.then(()=>{
       let failed=false;
-      for(const f of resources.values())if(f.fd>=0){
+      for(const f of resources.values())if(f.fd!==null&&f.fd>=0){
         const fd=f.fd;f.fd=-1;
         try{fs.closeSync(fd);}catch{failed=true;}
       }
@@ -376,7 +488,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     if(typeof unsubscribe!=='function')throw Error('GUARD_QUARANTINE_DISPOSER_INVALID');
     unsubscribeQuarantine=unsubscribe;
   }catch{
-    for(const f of resources.values())if(f.fd>=0){try{fs.closeSync(f.fd);}catch{}f.fd=-1;}
+    for(const f of resources.values())if(f.fd!==null&&f.fd>=0){try{fs.closeSync(f.fd);}catch{}f.fd=-1;}
     throw Error('GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED');
   }
   return Object.freeze({agent,operator,
