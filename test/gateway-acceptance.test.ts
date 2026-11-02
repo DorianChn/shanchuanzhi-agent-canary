@@ -56,16 +56,16 @@ test('disabled file writes cannot reach RUNNING or a path-swap callback',async()
   const denied=runtime.evidence().at(-1)!;assert.equal(denied.decision,'DENY');assert.equal(denied.execution_status,'NOT_STARTED');
  }finally{await runtime.close();await s.close();}
 });
-test('parent junction replacement at the read boundary is blocked or denied before reading outside',async()=>{
+test('parent junction swapped at the actual read syscall cannot redirect or disclose an outside file',async()=>{
  const s=await sinkFixture(),workspace=path.join(s.root,'workspace'),notes=path.join(workspace,'notes'),heldNotes=path.join(workspace,'notes.held'),outside=path.join(s.root,'outside');
  fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outside);
  const heldFile=path.join(notes,'public.txt'),outsideFile=path.join(outside,'public.txt');
  fs.writeFileSync(heldFile,'PUBLIC_HELD_FILE_FIXTURE');fs.writeFileSync(outsideFile,'OUTSIDE_ALIAS_SENTINEL');
- const recorder=new EvidenceRecorder(),record=recorder.record.bind(recorder);let aliasInstalled=false,aliasBlocked=false;
- const runtime=createTrustedExecutionGateway({agentId:'junction-read-race',guard:s.guard,workspaceRoot:workspace,files:[{path:'notes/public.txt'}],evidence:recorder});
- recorder.record=(event:any)=>{
-  if(!aliasInstalled&&event.execution_status==='RUNNING'&&event.tool_id==='read_file'){
-   let directoryMoved=false;
+ const runtime=createTrustedExecutionGateway({agentId:'junction-read-race',guard:s.guard,workspaceRoot:workspace,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()});
+ const originalReadSync=fs.readSync;let readAttempted=false,aliasInstalled=false,aliasBlocked=false;
+ (fs as any).readSync=(...args:any[])=>{
+  if(!readAttempted){
+   readAttempted=true;let directoryMoved=false;
    try{fs.renameSync(notes,heldNotes);directoryMoved=true;fs.symlinkSync(outside,notes,process.platform==='win32'?'junction':'dir');aliasInstalled=true;}
    catch(error){
     if(directoryMoved&&!fs.existsSync(notes))fs.renameSync(heldNotes,notes);
@@ -74,10 +74,12 @@ test('parent junction replacement at the read boundary is blocked or denied befo
     aliasBlocked=true;
    }
   }
-  return record(event);
+  return (originalReadSync as any)(...args);
  };
  try{
   const outcome=await Promise.allSettled([runtime.agent.dispatch({name:'read_file',args:{path:'notes/public.txt'}})]);
+  (fs as any).readSync=originalReadSync;
+  assert.equal(readAttempted,true,'the replacement attempt runs immediately before the actual descriptor read');
   assert.equal(aliasInstalled||aliasBlocked,true);
   if(aliasInstalled){
    assert.equal(outcome[0]?.status,'rejected');
@@ -91,7 +93,7 @@ test('parent junction replacement at the read boundary is blocked or denied befo
   }
   assert.equal(fs.readFileSync(path.join(aliasInstalled?heldNotes:notes,'public.txt'),'utf8'),'PUBLIC_HELD_FILE_FIXTURE');
   assert.equal(fs.readFileSync(outsideFile,'utf8'),'OUTSIDE_ALIAS_SENTINEL');
- }finally{await runtime.close();await s.close();}
+ }finally{(fs as any).readSync=originalReadSync;await runtime.close();await s.close();}
 });
 test('an executor ignoring cancellation may cause a late side effect, which is not verified safe',async()=>{
  const s=await sinkFixture();let finished!:()=>void;const done=new Promise<void>(r=>finished=r);
