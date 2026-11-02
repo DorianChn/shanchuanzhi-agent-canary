@@ -5,6 +5,7 @@ import {type AgentGuard,type ToolCall} from './containment.js';
 import {SessionDataFlow} from './dataflow.js';
 import {previewAnalysis} from './ai/provider.js';
 import type {AIProvider,SecurityAnalysisResult} from './ai/types.js';
+import {isSecurityGatewayHostAdapter,type SecurityGatewayHostAdapter} from './runtime/gateway-adapter.js';
 export type SecurityAction='ALLOW'|'DENY'|'REQUIRE_APPROVAL'|'SANDBOX'|'OBSERVE_ONLY';
 export interface SecurityDecision {action:SecurityAction;reason:string;risks:PolicyDecision['risks'];mode:PolicyDecision['mode'];coverage:'REGISTERED_HOST_CALLBACKS_ONLY'}
 export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
@@ -18,6 +19,8 @@ export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
   callbackTimeoutMs?:number;
   /** Defaults to true. Set false only for virtual callbacks that perform no real filesystem I/O. */
   verifyRealPaths?:boolean;
+  /** Required for real file reads when verifyRealPaths is enabled; created from a trusted M1 Gateway. */
+  secureFileReadAdapter?:SecurityGatewayHostAdapter;
   dataflowTtlMs?:number;
   onReview?:(record:{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number})=>void;
 }
@@ -29,10 +32,21 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   const flow=flows.get(options.guard)??new SessionDataFlow(options.dataflowTtlMs);flows.set(options.guard,flow);
   const trustedTools=Object.fromEntries(Object.entries(options.tools).map(([k,v])=>[k.toLowerCase(),Object.freeze({...v})]));
   const verifyRealPaths=options.verifyRealPaths!==false;
+  const secureFileReadAdapter=isSecurityGatewayHostAdapter(options.secureFileReadAdapter)?options.secureFileReadAdapter:undefined;
   const root=path.resolve(options.workspaceRoot);
   const reviews:Array<{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number}>=[];
+  function pathOperation(call:ToolCall){
+    const d=trustedTools[call.name];
+    return !!d&&(['file-read','file-write','delete'].includes(d.operation)||d.pathArg!==undefined);
+  }
+  function pathExecutionUnavailable(call:ToolCall){
+    const d=trustedTools[call.name];if(!d)return 'unregistered_tool';
+    if(!verifyRealPaths||!pathOperation(call))return undefined;
+    if(d.operation==='file-read'&&(d.pathArg===undefined||d.pathArg==='path')&&secureFileReadAdapter?.supports(call))return undefined;
+    return 'path_execution_not_pinned';
+  }
   function pathDenied(call:ToolCall){
-    const d=trustedTools[call.name];if(!verifyRealPaths||!d||(!['file-read','file-write','delete'].includes(d.operation)&&d.pathArg===undefined))return false;
+    const d=trustedTools[call.name];if(!verifyRealPaths||!d||!pathOperation(call))return false;
     const raw=call.args?.[d.pathArg??'path'];if(typeof raw!=='string'||raw.includes('\0')||raw.includes(':'))return true;
     try{
       const normalized=raw.replaceAll('\\','/');
@@ -62,7 +76,9 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   function privateTarget(call:ToolCall){const d=trustedTools[call.name];if(d?.operation!=='http')return false;try{const u=new URL(String(call.args?.[d.urlArg??'url']));const h=u.hostname;return h==='localhost'||h==='[::1]'||/^127\.|^10\.|^192\.168\.|^169\.254\.|^0\.|^172\.(1[6-9]|2\d|3[01])\.|^\[f[cd]|^\[fe[89ab]/i.test(h);}catch{return true;}}
   async function review(call:ToolCall,d:Readonly<PolicyDecision>):Promise<'DENY'|'UNCHANGED'>{
     // OBSERVE suppresses optional policy decisions, never filesystem boundary checks.
+    if(!trustedTools[call.name])return 'DENY';
     if(pathDenied(call))return 'DENY';
+    if(pathExecutionUnavailable(call))return 'DENY';
     if(options.mode==='OBSERVE')return 'UNCHANGED';
     if(privateTarget(call)||trustedTools[call.name]?.operation==='http'&&flow.hasSensitiveSource())return 'DENY';
     if(d.action!=='APPROVAL_REQUIRED'||!options.provider)return 'UNCHANGED';
@@ -78,9 +94,13 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   }
   const router=createRiskPolicyRouter({...options,reviewDecision:review,executeRealTool:async(call)=>{
     // Recheck realpath immediately before execution; a prior approval is not a path capability.
-    if(pathDenied(call)||options.mode!=='OBSERVE'&&privateTarget(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:'execution_boundary_changed',mode:options.mode??'BALANCED'});
+    const unavailable=pathExecutionUnavailable(call);
+    if(pathDenied(call)||unavailable||options.mode!=='OBSERVE'&&privateTarget(call))throw new PolicyBlockedError({action:'DENY',risks:[],reason:unavailable??'execution_boundary_changed',mode:options.mode??'BALANCED'});
     const abort=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;
-    try{const execute=options.executeSandboxTool??options.executeRealTool;
+    try{const descriptor=trustedTools[call.name];
+      const execute=verifyRealPaths&&descriptor?.operation==='file-read'
+        ?(current:ToolCall,context:{signal:AbortSignal})=>secureFileReadAdapter!.dispatch(current,context.signal)
+        :options.executeSandboxTool??options.executeRealTool;
       const result=await Promise.race([Promise.resolve(execute(call,{signal:abort.signal})),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'callback_timeout'});reject(new Error('SECURITY_CALLBACK_TIMEOUT_STARTED_EFFECTS_NOT_UNDONE'));},callbackMs);})]);
       const d=trustedTools[call.name],text=typeof result==='string'?result:JSON.stringify(result)??'';
       if(d?.operation==='sensitive-read'||/(?:NOT_A_REAL_CREDENTIAL|api[_-]?key\s*[:=]|BEGIN .*PRIVATE KEY)/i.test(text))flow.record('sensitive-source',text);
@@ -88,7 +108,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
     }finally{if(timer)clearTimeout(timer);abort.abort();}
   }});
   return {...router,
-    async decide(call:ToolCall):Promise<SecurityDecision>{const d=router.inspectPolicy(call),gd=options.guard.beforeToolCall(call);const denied=!gd.allowed||await review(Object.freeze({...call,name:call.name.toLowerCase()}),d)==='DENY';return {action:denied?'DENY':options.mode==='OBSERVE'?'OBSERVE_ONLY':d.action==='APPROVAL_REQUIRED'?'REQUIRE_APPROVAL':d.action==='ALLOW'&&options.executeSandboxTool?'SANDBOX':d.action,reason:!gd.allowed?'guard_quarantined':denied?'host_pre_execution_review_denied':d.reason,risks:d.risks,mode:d.mode,coverage:'REGISTERED_HOST_CALLBACKS_ONLY'};},
+    async decide(call:ToolCall):Promise<SecurityDecision>{const normalized=Object.freeze({...call,name:call.name.toLowerCase()}),d=router.inspectPolicy(normalized),gd=options.guard.beforeToolCall(normalized),unavailable=pathExecutionUnavailable(normalized),boundaryDenied=pathDenied(normalized);const denied=!gd.allowed||boundaryDenied||!!unavailable||await review(normalized,d)==='DENY';return {action:denied?'DENY':options.mode==='OBSERVE'?'OBSERVE_ONLY':d.action==='APPROVAL_REQUIRED'?'REQUIRE_APPROVAL':d.action==='ALLOW'&&options.executeSandboxTool?'SANDBOX':d.action,reason:!gd.allowed?'guard_quarantined':unavailable??(boundaryDenied?'path_boundary_denied':denied?'host_pre_execution_review_denied':d.reason),risks:d.risks,mode:d.mode,coverage:'REGISTERED_HOST_CALLBACKS_ONLY'};},
     dataflow:()=>flow.snapshot(),reviews:()=>reviews.map(r=>structuredClone(r)),
   };
 }

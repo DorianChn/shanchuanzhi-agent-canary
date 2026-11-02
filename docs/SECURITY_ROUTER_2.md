@@ -22,7 +22,9 @@ reviewTimeoutMs 默认 10 秒；callbackTimeoutMs 默认 30 秒。callback 接�
 
 ## 路径与网络
 
-`verifyRealPaths` 默认开启。真实文件宿主不要关闭；只有完全虚拟、不会进行任何真实文件 I/O 的测试 callback 才能显式设为 `false`。`file-read`、`file-write`、`delete` 操作，以及任何显式声明 `pathArg` 的工具，都会检查已有目标或新文件的最近已存在父目录是否真实位于工作区内；符号链接、Windows junction、硬链接、规范化别名和读取失败会在 callback 前保守拒绝，并在执行前复查。该预检不能让随后按路径重新打开文件的任意 callback 变成原子操作，检查与宿主 I/O 之间仍有 TOCTOU 窗口。真实宿主应使用绑定到已检查文件的句柄、no-follow 和实际 OS 沙箱及最小权限；本 Router 不是内核安全边界。
+`verifyRealPaths` 默认开启。真实文件读取必须提供 `createSecurityGatewayHostAdapter` 生成的 `secureFileReadAdapter`；适配器只能由 `createTrustedExecutionGateway` 的实例创建，并且只转发固定的 `read_file` / 路径绑定。开启检查时，Router 对文件读取不调用通用 `executeRealTool` callback；没有匹配的持有 Gateway 能力时，在 callback 前拒绝。`file-write`、`delete` 和其他声明 `pathArg` 的真实文件操作当前没有安全执行原语，因此 fail-closed。未注册工具也拒绝。符号链接、Windows junction、硬链接、敏感名称、规范化别名、越界和无法检查的路径仍会在执行前拒绝。
+
+只有完全虚拟、绝不进行真实文件 I/O 的 callback 才能显式设 `verifyRealPaths:false`。路径预检仍是纵深防御，不能让任意按路径打开的 callback 变成原子操作；真实读取由 Gateway 使用持有的文件描述符，并在返回内容前复核身份。该设计不能证明所有文件系统、所有操作的 OS 级原子 TOCTOU 消除，也不能替代 OS 沙箱或保护绕过 Gateway 的原生客户端工具。
 
 普通策略检测网络协议、明确私网字面地址、精确 origin、数据外传风险。任意自定义 callback 的 DNS 与实际连接不能由字符串检查保证。真实 JSON HTTP 可使用 executePinnedJSONTool：公共 HTTPS、DNS 检查并绑定 socket、禁止重定向、256 KB 上限、GET/POST 与取消支持。该 callback 不提供授权 Header，不用于生产凭据请求。自定义网络执行器必须提供等效控制，否则 DNS 重绑定 OUT_OF_SCOPE。
 

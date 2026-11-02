@@ -42,7 +42,8 @@ export async function createProtectedTargetRuntime(options:{workspaceRoot?:strin
     const router=createSecurityToolRouter({
       guard,workspaceRoot,mode:'OBSERVE',verifyRealPaths:true,
       tools:{read_file:{operation:'file-read'}},
-      executeRealTool:(call,context)=>adapter.dispatch(call,context.signal),
+      secureFileReadAdapter:adapter,
+      executeRealTool:()=>{throw Error('PROTECTED_TARGET_GATEWAY_ADAPTER_REQUIRED');},
     });
     return Object.freeze({
       configured:true as const,
