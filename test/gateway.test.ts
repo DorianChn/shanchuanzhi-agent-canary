@@ -42,9 +42,10 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
  fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outsideNotes,{recursive:true});
  fs.writeFileSync(target,'AUTHORIZED_WORKSPACE_FIXTURE');fs.writeFileSync(outsideTarget,'SYNTHETIC_OUTSIDE_SENTINEL');
  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalRealpathNative=(fs.realpathSync as any).native;
+ const canonicalTarget=originalRealpathNative(target);
  let aliasActive=false,aliasToggles=0,targetLstatCalls=0,targetOpenCalls=0,readCalls=0,externalRead='';
  const sameTargetPath=(candidate:any)=>{
-  const actual=path.resolve(String(candidate)),expected=path.resolve(target);
+  const actual=path.resolve(String(candidate)),expected=path.resolve(canonicalTarget);
   return process.platform==='win32'?actual.toLowerCase()===expected.toLowerCase():actual===expected;
  };
  const installAlias=()=>{fs.renameSync(notes,heldNotes);fs.symlinkSync(outsideNotes,notes,process.platform==='win32'?'junction':'dir');aliasActive=true;aliasToggles++;};
