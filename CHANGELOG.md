@@ -11,6 +11,11 @@
 - Add a first-party target-ID console read path through the M5 OBSERVE router,
   fixed M2 Gateway adapter, and M1 held-file Gateway. It returns status only;
   native Agent tools and OS-wide atomicity remain outside the claim.
+- Fail closed for registered real-file callbacks that lack a fixed M1 Gateway
+  adapter. Real reads use the branded adapter instead of generic callbacks;
+  writes, deletes, and other path-bearing tools remain disabled until a safe
+  execution primitive exists. Virtual-only hosts must explicitly set
+  `verifyRealPaths: false`.
 
 ## 3.0.0 — Agent Canary 3.0 mainline
 

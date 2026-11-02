@@ -12,7 +12,7 @@
 
 可用 `agent-canary ai console --workspace-root <目录> --protected-target <id=相对路径>` 在进程启动时登记一个或多个现有文件。调用方只能提交预登记的 `targetId`；读取经过 M5 `OBSERVE` Router、固定 M2 Gateway Adapter，再进入 M1 `createTrustedExecutionGateway` 的持有文件读取。控制台要求 CSRF 与启动时配置的 `AGENT_CANARY_OPERATOR_CODE`，响应只返回 `ALLOW`、`DENY` 或 `UNKNOWN`，不会返回文件路径或内容。符号链接 / junction、敏感路径、硬链接、路径规范化别名和越界目标会在回调前拒绝。
 
-该路径验证的是 Agent Canary 自己的固定目标控制台调用闭环。通用 `executeRealTool` callback 仍由宿主负责；`createSecurityToolRouter` 对 `file-read`、`file-write`、`delete` 和显式声明 `pathArg` 的工具默认检查真实路径，只有不接触真实文件系统的虚拟 callback 才应显式关闭。路径预检不能让随后重新打开路径的任意 callback 变成原子操作。Gateway 的描述符读取与身份复核缩小了替换窗口，但不提供所有文件系统、所有操作的 OS 级原子 TOCTOU 保证，也不会自动保护 Codex、Claude Code 或 Cursor 原生工具。源码回归不等于独立 E4。
+该路径验证的是 Agent Canary 自己的固定目标控制台调用闭环。`createSecurityToolRouter` 默认开启真实路径保护：文件读取必须使用由真实 M1 Gateway 创建的固定绑定 adapter，Router 不会把文件路径交给通用 callback；没有匹配的持有能力时，执行前拒绝。写入、删除和其他带 `pathArg` 的真实文件工具目前没有安全原语，fail-closed。只有完全虚拟且不会访问真实文件系统的 callback 才应显式关闭 `verifyRealPaths`。路径预检仍不能使任意按路径重新打开的 callback 原子化；Gateway 只通过已持有的文件描述符读取，并在返回内容前复核身份。该设计不能证明所有文件系统、所有操作的 OS 级原子 TOCTOU 消除，也不会自动保护 Codex、Claude Code 或 Cursor 原生工具。源码回归不等于独立 E4。
 
 这缩小了路径替换攻击面，但 **不是 OS 沙箱**。有宿主同等权限的本地进程仍能修改文件内容、删除目录、杀死进程或修改日志。Windows 权限由宿主目录 ACL 决定，不能把 POSIX mode 0600 当作 Windows ACL 验证。
 

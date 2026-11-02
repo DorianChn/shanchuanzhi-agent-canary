@@ -41,6 +41,10 @@ const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFileAtOpen=(a:FileSnapshot,b:FileSnapshot)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs&&a.ctimeNs===b.ctimeNs&&a.mtimeNs===b.mtimeNs&&a.size===b.size;
 const sameWorkspaceIdentity=(a:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>,b:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs;
+const trustedGatewayInstances=new WeakSet<object>();
+declare const trustedExecutionGatewayBrand:unique symbol;
+export interface TrustedExecutionGatewayReadHost {readonly [trustedExecutionGatewayBrand]:true;readonly agent:Readonly<{dispatch:(call:ToolCall,signal?:AbortSignal)=>Promise<unknown>}>}
+export function isTrustedExecutionGateway(value:unknown):value is TrustedExecutionGatewayReadHost{return typeof value==='object'&&value!==null&&trustedGatewayInstances.has(value as object);}
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
 const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>}>();
 
@@ -240,7 +244,9 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     approve(requestId:string){return serialize(async()=>{sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return execute(p.request,createHmac('sha256',key).update(requestId).digest('hex'));});},
     reject(requestId:string){sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return blocked(p.request,'operator_rejected');},
   });
-  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
+  const gateway=Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
     async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values()){try{fs.closeSync(f.fd);}finally{f.secureHandle.close();}}secureWorkspace.close();}
   });
+  trustedGatewayInstances.add(gateway);
+  return gateway as unknown as typeof gateway&TrustedExecutionGatewayReadHost;
 }

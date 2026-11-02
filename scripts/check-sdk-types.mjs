@@ -17,8 +17,8 @@ const parts=pkg.name.split('/'),link=path.join(scratch,'node_modules',...parts);
 fs.mkdirSync(path.dirname(link),{recursive:true});fs.symlinkSync(packageRoot,link,'junction');
 const consumer=path.join(scratch,'consumer.mts');
 fs.writeFileSync(consumer,[
- 'import {createTrustedExecutionGateway,type GatewayOptions} from '+JSON.stringify(pkg.name+'/sdk')+';',
- 'import {createSecurityGatewayHostAdapter,type FixedFileRead} from '+JSON.stringify(pkg.name+'/sdk')+';',
+ 'import {createAgentGuard,createSecurityToolRouter,createTrustedExecutionGateway,type GatewayOptions,type SecurityGatewayHostAdapter} from '+JSON.stringify(pkg.name+'/sdk')+';',
+ 'import {createSecurityGatewayHostAdapter,type FixedFileRead,type GatewayReadHost} from '+JSON.stringify(pkg.name+'/sdk')+';',
  'type Extension=NonNullable<GatewayOptions["mcpTools"]>[string];',
  'const fixture={risk:"READ_ONLY",approvalRequired:false,execute:async (_a:Record<string,unknown>,s:AbortSignal)=>({ok:!s.aborted})} satisfies Extension;',
  'void fixture;',
@@ -26,6 +26,16 @@ fs.writeFileSync(consumer,[
  'const fixedReads=[{toolName:"read_file",path:"README.md"}] satisfies readonly FixedFileRead[];',
  'const adapter=createSecurityGatewayHostAdapter({gateway:runtime,fixedFileReads:fixedReads});',
  'adapter.dispatch({name:"read_file",args:{path:"README.md"}});',
+ 'const guardedRouter=createSecurityToolRouter({guard:createAgentGuard(),workspaceRoot:process.cwd(),tools:{read_file:{operation:"file-read"}},secureFileReadAdapter:adapter,executeRealTool:()=>null});',
+ 'void guardedRouter;',
+ 'const lookalike={supports:()=>true,dispatch:async()=>({content:"untrusted"}),callbackCount:()=>0};',
+ '// @ts-expect-error Only the Gateway adapter factory can provide this capability.',
+ 'const forgedAdapter:SecurityGatewayHostAdapter=lookalike;',
+ 'void forgedAdapter;',
+ 'const lookalikeGateway={agent:{dispatch:async()=>({content:"unbound"})}};',
+ '// @ts-expect-error A callback-shaped object is not a branded M1 Gateway.',
+ 'const forgedGateway:GatewayReadHost=lookalikeGateway;',
+ 'void forgedGateway;',
  'runtime.agent.dispatch({name:"mcp_tool",args:{tool:"fixture_status",arguments:{}}});',
  '// @ts-expect-error Approval belongs to the operator, never to the Agent.',
  'runtime.agent.approve("forged");',
@@ -34,4 +44,4 @@ fs.writeFileSync(consumer,[
 ].join('\n')+'\n');
 const compiler=path.join(ownRoot,'node_modules/typescript/bin/tsc');
 execFileSync(process.execPath,[compiler,'--noEmit','--strict','--skipLibCheck','false','--module','NodeNext','--moduleResolution','NodeNext','--target','ES2022','--typeRoots',path.join(ownRoot,'node_modules/@types'),consumer],{encoding:'utf8',stdio:['ignore','pipe','pipe']});
-console.log(JSON.stringify({status:'VERIFIED',package:pkg.name,version:pkg.version,consumerDirectory:scratch,checks:['conditional SDK import','transitive declarations','READ_ONLY descriptor','fixed host-read adapter binding','Agent cannot approve','Agent cannot reset'],scope:'compile-time contract; not runtime security proof'}));
+console.log(JSON.stringify({status:'VERIFIED',package:pkg.name,version:pkg.version,consumerDirectory:scratch,checks:['conditional SDK import','transitive declarations','READ_ONLY descriptor','branded M1 Gateway and fixed file-read adapter','lookalike Gateway/adapter rejected by types','Agent cannot approve','Agent cannot reset'],scope:'compile-time contract; not runtime security proof'}));
