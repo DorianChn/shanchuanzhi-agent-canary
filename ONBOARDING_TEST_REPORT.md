@@ -526,3 +526,42 @@ Both Ubuntu and Windows nevertheless fail in the same M9 test-file setup at
 composition assertions run. This is an M6/M9 provenance-gate blocker, not an
 observed M3 behavior failure. M9 must update/verify its M6 merge-tree record and
 rerun both hosts before #52 can be considered for promotion.
+
+### Configured-target route validation — 2026-10-25
+
+Validated on base `0d61b434ba2ac81e313b82432f4ac00afedd3cbc` in the existing
+`feature/ac3-agent-onboarding` worktree. This follow-up changes only the
+M3 route regression tests and this report; no runtime or public API change
+was required by the reproduced checks.
+
+`POST /api/security-center/target-read` selects startup-configured IDs. Tests
+now load the public M1 SDK, M2 `gateway-adapter`, and M5 `policy-router`
+package entries, verify exact tool/path bindings for two ordinary files after
+the caller mutates its original configuration, and assert M5 `OBSERVE` with
+`verifyRealPaths: true`. Responses contain only the configured-read scope and
+status. The configured route does not load the fixed-marker probe.
+
+Unknown IDs, duplicate/invalid maps, lexical and junction/symlink aliases
+(including a sensitive target), same-path replacement, missing per-call
+capability, and a stale M1 capability all deny with no forbidden read callback,
+generic executor call, added M1 read evidence, approval, or fixture-content
+change. The missing per-call capability is a synthetic resolver fault at the
+trusted M3 test seam; the stale case uses the public M1 Gateway's real `close()`
+lifecycle. Unavailable owner dependencies remain sanitized `UNKNOWN`.
+Host/Origin, cross-site, CSRF, operator-code, content-type, malformed JSON, and
+oversized-body regressions assert sanitized DENY before dispatch. Raw HTTP is
+used for these headers because Node fetch rewrites a custom Host value.
+
+`POST /api/security-center/protected-read` retains its separate fixed temporary
+marker probe and its existing positive/alias/replacement controls. The ordinary
+CLI subprocess tests pass for both routes. Final local validation:
+`npm run build` passed;
+`node --import tsx --test test/codex-connection-check.test.ts test/security-center-route-m3.test.ts`
+passed **35/35**, with no skips; `git diff --check` passed.
+
+These are local source-fixture and CLI-process checks using this checkout's
+public package entries. They do not establish installed/native-host activation,
+user-machine coverage, OS-atomic TOCTOU acceptance, or an M9 exact-source
+composition result. Product acceptance remains `NOT_VERIFIED` from this
+evidence. Publishing and hosted validation of this local candidate remain for
+the coordinated batch.

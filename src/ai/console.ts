@@ -22,8 +22,9 @@ import {createProtectedHostAdapter,type ProtectedHostAdapter,type PublicM2Facade
 
 const protectedReadRoute='/api/security-center/protected-read';
 const configuredTargetReadRoute='/api/security-center/target-read';
-const configuredTargetReadinessRoute='/api/security-center/configured-target-readiness';
 const configuredTargetReadScope='M3_CONFIGURED_TARGET_READ';
+const configuredTargetReadinessRoute='/api/security-center/configured-target-readiness';
+const configuredTargetReadinessScope='M3_CONFIGURED_TARGET_READINESS';
 const configuredTargetIdPattern=/^[a-z][a-z0-9_-]{0,62}$/;
 const protectedReadFile='agent-canary-public.txt';
 const protectedReadMarker='AGENT_CANARY_CONSOLE_PROTECTED_READ_OK';
@@ -292,6 +293,7 @@ async function runConsoleProtectedRead(loadDependencies:SecurityCenterProtectedR
 export type SecurityCenterProtectedTarget={readonly id:string;readonly path:string};
 type ConfiguredTargetBinding={id:string;toolName:string;relativePath:string};
 type ConfiguredTargetRuntime={
+  configurationStatus:'CONFIGURED'|'NOT_CONFIGURED'|'UNKNOWN';
   configuredIds:Set<string>;
   blockedIds:Set<string>;
   bindings:Map<string,ConfiguredTargetBinding>;
@@ -302,22 +304,6 @@ type ConfiguredTargetRuntime={
 
 function configuredTargetEnvelope(status:'ALLOW'|'DENY'|'UNKNOWN'){
   return{scope:configuredTargetReadScope,status};
-}
-
-function configuredTargetReadiness(runtime:ConfiguredTargetRuntime,operatorCode?:string){
-  const targets=[...runtime.configuredIds].sort().map(targetId=>({
-    targetId,
-    bindingStatus:runtime.bindings.has(targetId)?'BOUND':runtime.blockedIds.has(targetId)?'BLOCKED':'UNKNOWN',
-  }));
-  const configured=targets.length>0,bound=targets.some(target=>target.bindingStatus==='BOUND');
-  const configurationStatus=configured?'CONFIGURED':'NOT_CONFIGURED';
-  const bindingStatus=!configured?'UNAVAILABLE':bound?'BOUND':'BLOCKED';
-  const actionReadiness=!configured?'UNAVAILABLE':bound&&operatorCode?'READY':'BLOCKED';
-  return{
-    scope:'M3_CONFIGURED_TARGET_READINESS',schemaVersion:1,generatedAt:new Date().toISOString(),
-    configurationStatus,bindingStatus,actionReadiness,
-    operatorAuthStatus:operatorCode?'CONFIGURED':'NOT_CONFIGURED',targets,
-  };
 }
 
 function isConfiguredTargetPath(value:string):boolean{
@@ -365,7 +351,10 @@ async function createConfiguredTargetRuntime(
   loadDependencies:SecurityCenterProtectedReadDependencies,
 ):Promise<ConfiguredTargetRuntime>{
   const parsed=readConfiguredTargets(configuredTargets);
-  const runtime:ConfiguredTargetRuntime={...parsed,bindings:new Map(),close:async()=>{}};
+  const configurationStatus=!Array.isArray(configuredTargets)
+    ?(configuredTargets===undefined?'NOT_CONFIGURED':'UNKNOWN')
+    :configuredTargets.length===0?'NOT_CONFIGURED':'CONFIGURED';
+  const runtime:ConfiguredTargetRuntime={...parsed,configurationStatus,bindings:new Map(),close:async()=>{}};
   if(!configuredTargets?.length||parsed.targets.length===0)return runtime;
   let gateway:ProtectedReadGateway|undefined;
   try{
@@ -404,7 +393,10 @@ async function createConfiguredTargetRuntime(
     runtime.host=host;
     runtime.close=async()=>{await gateway?.close();};
     return runtime;
-  }catch{
+  }catch(error){
+    if(error instanceof Error&&['GATEWAY_WORKSPACE_CHANGED','GATEWAY_RESOURCE_CHANGED'].includes(error.message)){
+      for(const target of parsed.targets)runtime.blockedIds.add(target.id);
+    }
     if(gateway){try{await gateway.close();}catch{}}
     runtime.gateway=undefined;runtime.host=undefined;
     runtime.close=async()=>{};
@@ -443,6 +435,37 @@ async function runConfiguredTargetRead(runtime:ConfiguredTargetRuntime,body:unkn
     ].includes(code);
     return configuredTargetEnvelope(ownerDenial?'DENY':'UNKNOWN');
   }
+}
+
+function configuredTargetReadinessEnvelope(runtime:ConfiguredTargetRuntime,operatorAuthStatus:'CONFIGURED'|'NOT_CONFIGURED'){
+  const targets=[...runtime.configuredIds].sort().map(targetId=>({
+    targetId,
+    bindingStatus:runtime.blockedIds.has(targetId)
+      ?'BLOCKED'
+      :runtime.bindings.has(targetId)?'BOUND':'UNKNOWN',
+  }));
+  const bindingStatus=runtime.configurationStatus==='NOT_CONFIGURED'
+    ?'UNAVAILABLE'
+    :runtime.configurationStatus==='UNKNOWN'||targets.length===0
+      ?'UNKNOWN'
+      :targets.some(target=>target.bindingStatus==='BOUND')
+        ?'BOUND'
+        :targets.every(target=>target.bindingStatus==='BLOCKED')?'BLOCKED':'UNKNOWN';
+  const actionReadiness=bindingStatus==='UNAVAILABLE'
+    ?'UNAVAILABLE'
+    :bindingStatus==='BLOCKED'||(bindingStatus==='BOUND'&&operatorAuthStatus==='NOT_CONFIGURED')
+      ?'BLOCKED'
+      :bindingStatus==='BOUND'&&operatorAuthStatus==='CONFIGURED'?'READY':'UNKNOWN';
+  return{
+    scope:configuredTargetReadinessScope,
+    schemaVersion:1,
+    generatedAt:new Date().toISOString(),
+    configurationStatus:runtime.configurationStatus,
+    bindingStatus,
+    actionReadiness,
+    operatorAuthStatus,
+    targets,
+  };
 }
 
 export type SecurityCenterStatusProvider = NonNullable<PublicM2HostAdapter['securityCenterStatusProvider']>;
@@ -599,7 +622,7 @@ export async function startAIConsole(options: {
       if (req.headers['x-canary-csrf'] !== csrf) { reply(configuredTargetReadAction?configuredTargetEnvelope('DENY'):protectedReadAction?protectedReadEnvelope('UNKNOWN','REQUEST_AUTH_REQUIRED',false):{ error: 'AI_CONSOLE_CSRF_REJECTED' }, 403); return; }
       if(req.url===configuredTargetReadinessRoute){
         if(req.method!=='GET'){reply({error:'METHOD_NOT_ALLOWED'},405);return;}
-        reply(configuredTargetReadiness(configuredTargetRuntime,operatorCode));return;
+        reply(configuredTargetReadinessEnvelope(configuredTargetRuntime,operatorCode?'CONFIGURED':'NOT_CONFIGURED'));return;
       }
       if (req.method === 'GET' && req.url === '/api/state') {
         const events = readEvents(options.eventsFile, 100).map(e => JSON.parse(JSON.stringify(e), (_k, v) => typeof v === 'string' ? redactAnalysisText(v, secrets) : v));
