@@ -8,6 +8,7 @@ import { validateExactSourceManifest, exactModuleNames } from '../scripts/valida
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, 'docs/3.0/M9_EXACT_SOURCE_REFS.json'), 'utf8'));
+const m1PinEvidence = fs.readFileSync(path.join(repoRoot, 'docs/3.0/M9_M1_SOURCE_PIN_EVIDENCE_2026-11-03.md'), 'utf8').replace(/\r\n/g, '\n');
 const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/m9-cross-module-composition.yml'), 'utf8').replace(/\r\n/g, '\n');
 const selectionStart = workflow.indexOf('name: Select immutable M9 source SHA');
 const selectionEnd = workflow.indexOf('name: Checkout exact M9 source SHA', selectionStart);
@@ -55,6 +56,14 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
   assert.equal(validated.review.commentId, '6571870339');
   assert.equal(validated.review.candidateLifecycleBlobSha, '2c7d5808022edec755e6ba200a069aa8e5816bb1');
   assert.equal(validated.review.m6VerifierTestBlobSha, '2e9b0c00c853193ea50eaecf1209747e8f64affe');
+});
+
+test('M1 source-pin evidence names the exact current manifest candidate and retained lineage', () => {
+  const m1 = manifest.modules.M1;
+  assert.ok(m1PinEvidence.includes(`PR #${m1.pullRequest} head \`${m1.sha}\``));
+  assert.ok(m1PinEvidence.includes('0831ed4979ae4d9f4c6698296726732d427fb7ae'));
+  assert.ok(m1PinEvidence.includes('301d169d5ae586f14a1a7acf9ac2d5c3784419e7'));
+  assert.match(m1PinEvidence, /intermediate head, not the current M9 pin/);
 });
 
 test('a module PR only composes when PR number, stable branch, and exact head SHA match the manifest', () => {
