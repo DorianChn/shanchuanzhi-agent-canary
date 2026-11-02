@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -24,5 +25,37 @@ test('Chinese README SDK example executes against the local Gateway and proves r
     assert.ok(exampleResult.evidence.some((event) => event.decision === 'DENY' && event.execution_status === 'NOT_STARTED'));
   } finally {
     fs.rmSync(examplePath, {force: true});
+  }
+});
+
+test('Chinese README SDK callback example executes allow, decoy, and deny without the blocked callback', () => {
+  const readme = fs.readFileSync(path.join(projectRoot, 'README.zh-CN.md'), 'utf8');
+  const start = readme.indexOf('<!-- sdk-guarded-router-example:start -->');
+  const end = readme.indexOf('<!-- sdk-guarded-router-example:end -->', start + 1);
+  assert.ok(start >= 0 && end > start, 'README callback example markers must be present');
+  const section = readme.slice(start, end);
+  const match = section.match(/\x60\x60\x60js\r?\n([\s\S]*?)\r?\n\x60\x60\x60/);
+  assert.ok(match, 'README must contain a runnable JavaScript callback example');
+
+  const testHome = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-canary-readme-sdk-test-'));
+  try {
+    const child = spawnSync(process.execPath, ['--input-type=module', '--eval', match[1]], {
+      cwd: projectRoot,
+      encoding: 'utf8',
+      env: {...process.env, AGENT_CANARY_HOME: testHome},
+      timeout: 15_000,
+      windowsHide: true,
+    });
+    assert.equal(child.error, undefined, child.error?.message);
+    assert.equal(child.status, 0, child.stderr || child.stdout);
+    const result = JSON.parse(child.stdout);
+    assert.deepEqual(result.allowedResult, {id: 'intro', text: '这是一条本地示例笔记。'});
+    assert.equal(result.decoyReplyReceived, true);
+    assert.equal(result.guardState, 'QUARANTINED');
+    assert.deepEqual(result.denied, {allowed: false, reason: 'session_quarantined'});
+    assert.deepEqual(result.callbackInvocations, ['read_note']);
+    assert.ok(result.toolDefinitionCount > 2);
+  } finally {
+    fs.rmSync(testHome, {recursive: true, force: true});
   }
 });

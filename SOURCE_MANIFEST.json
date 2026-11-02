@@ -8,7 +8,7 @@
   "FREE_BUILD_VERSION.json": "42d28166f5055f829d9bab106b8f3d361834145ce8e4911ea75a83a7a98f4d0c",
   "LICENSE": "2cdd4eedbf30e93f70c29e6797a81e772eb2e29990efc720544d63cedee426a3",
   "README.md": "c4b78bf5ab14848f2aa18f5957b75f3912c63fd2c761281f978746ed109286ec",
-  "README.zh-CN.md": "ddbef2ae9c242ee0ec8e9a8f6ccebb11d8d4d20e4cae00ef3492598aed85da99",
+  "README.zh-CN.md": "15778625ff6bc3a87c907e202f7f12bdfb202a4128d09f86098de915b5616a97",
   "THIRD_PARTY_NOTICES.md": "67332f007ea7a2b1d4b5e077f3137880238dbf1ca418265d96f5fae85cbb8aef",
   "competition-submission/evidence/analysis-summary.json": "46ecd7e09a2b9782bab22fdfb3da00f35094dfbd911bb1187a8939ee36301efe",
   "competition-submission/evidence/round4-summary.json": "de3eb94d13a28800617425eaa2e2ea2f395c306d65a1800ae61b1e476e299326",
@@ -178,7 +178,7 @@
   "test/gateway.test.ts": "8dec9dbf07ae1c68df426e990a48fb029ac656f3d7b408af91e4258b7ce3067a",
   "test/honeypot-runtime.test.ts": "80c89bb360a99dde91aee057e1236c9d25878469d22dea52f218cfc4a335151e",
   "test/product-identity.test.ts": "26331b77deb9b1be6f2516b3cb35a5e857435ca629c7b328200deb036d4574cc",
-  "test/readme-sdk-example.test.mjs": "dfa8b7230754c1ed16d1a545b0ab344a10c747e0c79ee93f3c9f8ef3d600f139",
+  "test/readme-sdk-example.test.mjs": "4fe44fe7acee0bdcd6d197713e74d6fa2181bf8798a9d7a0fe46e4ad5fb00e33",
   "test/runtime-console.test.ts": "185509ee8820d682a310503d0066e747eb906ad7f8cb7f50f6544af2fc264a03",
   "tsconfig.json": "3ff87d012157b175a375236695116d9684d729c09c84971c314c8defd01cd9a2"
 }
