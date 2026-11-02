@@ -17,6 +17,7 @@
     "feature/ac3-reliability-ac3": "M7",
     "feature/ac3-m7-m8-source-pin": "M7",
     "shanchuanzhi/issue52-protected-read-20261102": "M9",
+    "shanchuanzhi/issue52-cli-route-evidence-20261102": "M4",
     "shanchuanzhi/3.0-security-docs-sdk-20261102": "M0",
     "shanchuanzhi/issue41-launcher-smoke": "M7"
   },
