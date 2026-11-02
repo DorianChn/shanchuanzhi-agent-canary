@@ -44,16 +44,16 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
     M3: { pullRequest: 120, sha: '6830cf8bb883592bb9438cd86ed36d9d48e95e4e' },
     M4: { pullRequest: 121, sha: '96de861cafdce3105c5f2412b3f5a431a378dfb7' },
     M5: { pullRequest: 122, sha: '51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7' },
-    M6: { pullRequest: 123, sha: 'b7e186bd762a0b2e18bbad8fa34e0c473388de10' },
+    M6: { pullRequest: 123, sha: '9a414228f49806b46c5cd9cd2539a464e80edb44' },
     M7: { pullRequest: 128, sha: 'f9636b52c33761d38e15b2c3bd573724f0e8a8d6' },
-    M8: { pullRequest: 129, sha: 'aff6649600cde03b00a8367c05c55a6f2d0964a7' },
+    M8: { pullRequest: 129, sha: '75f22da5af43ceae612a2cc40f001b2e8c6339ed' },
   });
   assert.notEqual(validated.historical.sha, validated.modules.M8.sha);
-  assert.equal(validated.review.status, 'REJECT');
+  assert.equal(validated.review.status, 'ACCEPT');
   assert.equal(validated.review.targetSha, manifest.modules.M8.sha);
   assert.equal(validated.review.reviewedSha, manifest.modules.M8.sha);
   assert.equal(validated.review.commentId, '6571870339');
-  assert.equal(validated.review.candidateLifecycleBlobSha, 'd1705c204ef3f511ee4828e90b35731b36f92238');
+  assert.equal(validated.review.candidateLifecycleBlobSha, '2c7d5808022edec755e6ba200a069aa8e5816bb1');
   assert.equal(validated.review.m6VerifierTestBlobSha, '2e9b0c00c853193ea50eaecf1209747e8f64affe');
 });
 

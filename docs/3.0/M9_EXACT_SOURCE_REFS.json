@@ -31,7 +31,7 @@
     "M6": {
       "pullRequest": 123,
       "branchRef": "feature/ac3-e4-validation-ac3",
-      "sha": "b7e186bd762a0b2e18bbad8fa34e0c473388de10"
+      "sha": "9a414228f49806b46c5cd9cd2539a464e80edb44"
     },
     "M7": {
       "pullRequest": 128,
@@ -41,7 +41,7 @@
     "M8": {
       "pullRequest": 129,
       "branchRef": "feature/ac3-open-source-product",
-      "sha": "aff6649600cde03b00a8367c05c55a6f2d0964a7"
+      "sha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed"
     }
   },
   "historicalSources": {
@@ -54,11 +54,11 @@
     "M6_M8_CURRENT_LIFECYCLE": {
       "issue": 80,
       "scope": "M6 lifecycle disposition for the exact current M8 candidate",
-      "status": "REJECT",
-      "targetSha": "aff6649600cde03b00a8367c05c55a6f2d0964a7",
-      "reviewedSha": "aff6649600cde03b00a8367c05c55a6f2d0964a7",
+      "status": "ACCEPT",
+      "targetSha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed",
+      "reviewedSha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed",
       "commentId": "6571870339",
-      "candidateLifecycleBlobSha": "d1705c204ef3f511ee4828e90b35731b36f92238",
+      "candidateLifecycleBlobSha": "2c7d5808022edec755e6ba200a069aa8e5816bb1",
       "m6VerifierTestBlobSha": "2e9b0c00c853193ea50eaecf1209747e8f64affe"
     }
   }
