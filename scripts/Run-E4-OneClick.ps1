@@ -48,6 +48,80 @@ $envInfo = [ordered]@{
     pythonRuntimeSha256 = $null
     realModelRequested = $false
     installerExecuted = $false
+    environmentIsolation = 'Temporary user profile, temp directory, npm cache/config, and Git config; removed after the run.'
+}
+
+# Keep test fixtures, npm caches, Git configuration, and portable runtimes out
+# of the real user's profile. Every child process inherits this isolated env.
+$originalTempRoot = if ($env:TEMP) { $env:TEMP } else { [System.IO.Path]::GetTempPath() }
+$originalTempFullPath = [System.IO.Path]::GetFullPath($originalTempRoot).TrimEnd('\')
+$isolatedRootName = "agent-canary-e4-$runId"
+$isolatedRoot = Join-Path $originalTempFullPath $isolatedRootName
+$isolatedHome = Join-Path $isolatedRoot 'home'
+$isolatedAppData = Join-Path $isolatedRoot 'appdata'
+$isolatedLocalAppData = Join-Path $isolatedRoot 'localappdata'
+$isolatedTemp = Join-Path $isolatedRoot 'temp'
+$isolatedNpm = Join-Path $isolatedRoot 'npm'
+$isolatedGit = Join-Path $isolatedRoot 'git'
+foreach ($directory in @($isolatedHome,$isolatedAppData,$isolatedLocalAppData,$isolatedTemp,$isolatedNpm,$isolatedGit)) {
+    New-Item -ItemType Directory -Path $directory -Force -ErrorAction Stop | Out-Null
+}
+$isolatedGitConfig = Join-Path $isolatedGit 'config'
+[System.IO.File]::WriteAllText($isolatedGitConfig, '', [System.Text.UTF8Encoding]::new($false))
+$gitDirectory = Split-Path -Parent $gitCommand.Source
+$homeDrive = [System.IO.Path]::GetPathRoot($isolatedHome).TrimEnd('\')
+$homePath = $isolatedHome.Substring($homeDrive.Length)
+$pathBeforeIsolation = $env:PATH
+$environmentNames = @(
+    'USERPROFILE','HOME','HOMEDRIVE','HOMEPATH','APPDATA','LOCALAPPDATA','TEMP','TMP',
+    'XDG_CONFIG_HOME','XDG_CACHE_HOME','AGENT_CANARY_HOME','CODEX_HOME',
+    'npm_config_cache','npm_config_userconfig','npm_config_globalconfig','npm_config_prefix','npm_config_update_notifier',
+    'GIT_CONFIG_GLOBAL','AGENT_CANARY_GIT_EXE','NODE_OPTIONS','PATH'
+)
+$credentialEnvironmentNames = @(
+    Get-ChildItem Env: | Where-Object {
+        $_.Name -match '(?i)(API[_-]?KEY|ACCESS[_-]?KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL|PRIVATE[_-]?KEY|(?:^|_)AUTH(?:_|$)|GIT_ASKPASS|SSH_AUTH_SOCK|SSH_AGENT_PID)'
+    } | ForEach-Object { $_.Name }
+)
+$environmentNames = @($environmentNames + $credentialEnvironmentNames | Select-Object -Unique)
+$originalEnvironment = @{}
+foreach ($name in $environmentNames) { $originalEnvironment[$name] = [Environment]::GetEnvironmentVariable($name, 'Process') }
+$previousModelEnvironment = @{}
+Get-ChildItem Env: | Where-Object { $_.Name -like 'E4_MODEL_*' } | ForEach-Object {
+    $previousModelEnvironment[$_.Name] = $_.Value
+}
+$environmentOverrides = [ordered]@{
+    USERPROFILE = $isolatedHome
+    HOME = $isolatedHome
+    HOMEDRIVE = $homeDrive
+    HOMEPATH = $homePath
+    APPDATA = $isolatedAppData
+    LOCALAPPDATA = $isolatedLocalAppData
+    TEMP = $isolatedTemp
+    TMP = $isolatedTemp
+    XDG_CONFIG_HOME = (Join-Path $isolatedHome '.config')
+    XDG_CACHE_HOME = (Join-Path $isolatedHome '.cache')
+    AGENT_CANARY_HOME = (Join-Path $isolatedHome '.agent-canary')
+    CODEX_HOME = (Join-Path $isolatedHome '.codex')
+    npm_config_cache = (Join-Path $isolatedNpm 'cache')
+    npm_config_userconfig = (Join-Path $isolatedNpm 'user.npmrc')
+    npm_config_globalconfig = (Join-Path $isolatedNpm 'global.npmrc')
+    npm_config_prefix = (Join-Path $isolatedNpm 'global')
+    npm_config_update_notifier = 'false'
+    GIT_CONFIG_GLOBAL = $isolatedGitConfig
+    AGENT_CANARY_GIT_EXE = $gitCommand.Source
+    # Keep inherited Node hooks out of the run; do not spoof process identity.
+    NODE_OPTIONS = $null
+    PATH = "$gitDirectory;$pathBeforeIsolation"
+}
+foreach ($setting in $environmentOverrides.GetEnumerator()) {
+    [Environment]::SetEnvironmentVariable($setting.Key, $setting.Value, 'Process')
+}
+foreach ($name in @($previousModelEnvironment.Keys)) {
+    [Environment]::SetEnvironmentVariable([string]$name, $null, 'Process')
+}
+foreach ($name in $credentialEnvironmentNames) {
+    [Environment]::SetEnvironmentVariable([string]$name, $null, 'Process')
 }
 
 function Invoke-TestStep {
@@ -111,8 +185,8 @@ function Install-VerifiedPortablePython {
         'Arm64' { @{ file='python-3.13.17-embed-arm64.zip'; sha256='7b58787a047b400edbfcb539aa3cdb4e2ed77bf0f22cae42b7c01cedd7dd6614' } }
         default { throw "No pinned portable Python package is configured for Windows architecture $architecture." }
     }
-    $downloadPath = Join-Path $outputRoot $package.file
-    $runtimeDirectory = Join-Path $outputRoot 'python-portable'
+    $downloadPath = Join-Path $isolatedRoot $package.file
+    $runtimeDirectory = Join-Path $isolatedRoot 'python-portable'
     $uri = "https://www.python.org/ftp/python/3.13.17/$($package.file)"
     Write-Host "No usable Python runtime found; downloading the official portable Python package for $architecture." -ForegroundColor Yellow
     Invoke-WebRequest -Uri $uri -OutFile $downloadPath -UseBasicParsing
@@ -135,6 +209,16 @@ function Install-VerifiedPortablePython {
 
 $overallExit = 0
 try {
+    $remainingCredentialNames = @($credentialEnvironmentNames | Where-Object {
+        $null -ne [Environment]::GetEnvironmentVariable([string]$_.ToString(), 'Process')
+    })
+    if ($remainingCredentialNames.Count -gt 0) {
+        $steps.Add([ordered]@{ name='credential-environment-isolation'; status='FAIL'; reason='Inherited credential variables could not be removed before child processes started.' })
+        throw 'E4_CREDENTIAL_ENVIRONMENT_NOT_CLEARED'
+    }
+    $envInfo.credentialEnvironmentIsolation = 'PASS'
+    $steps.Add([ordered]@{ name='credential-environment-isolation'; status='PASS'; reason='Inherited credential and agent variables were removed from child processes and will be restored for the parent process.' })
+
     $pythonRuntime = Find-UsablePython
     if ($pythonRuntime) {
         $steps.Add([ordered]@{ name='python-runtime'; status='PASS'; reason="Using $($pythonRuntime.version) from preinstalled runtime." })
@@ -157,7 +241,12 @@ try {
         $envInfo.pythonVersion = $pythonRuntime.version
         $envInfo.pythonRuntimeSource = $pythonRuntime.source
         $envInfo.pythonRuntimeSha256 = $pythonRuntime.sha256
-        $envInfo.pythonRuntimePath = $pythonRuntime.path
+        $envInfo.pythonRuntimePath = if ($pythonRuntime.source -eq 'python.org-verified-portable') {
+            'TEMPORARY_RUNTIME_REMOVED_AFTER_RUN'
+        }
+        else {
+            'PREINSTALLED_RUNTIME_PATH_WITHHELD'
+        }
         $previousCanaryPython = $env:CANARY_PYTHON
         $env:CANARY_PYTHON = $pythonRuntime.path
     }
@@ -188,7 +277,24 @@ try {
     if (-not $focusedOk) { $overallExit = 1 }
 
     $e4Output = Join-Path $outputRoot 'e4'
-    $e4Ok = Invoke-TestStep -Name 'synthetic-e4-automation' -Executable $npmCommand.Source -Arguments @('run','e4:auto','--',"--out-dir=$e4Output")
+    $previousAgentCanaryGitExe = [Environment]::GetEnvironmentVariable('AGENT_CANARY_GIT_EXE', 'Process')
+    try {
+        # Pass the same Git executable already validated by this Windows runner.
+        # Some embedded Node environments cannot spawn the PATH-resolved `git` shim.
+        [Environment]::SetEnvironmentVariable('AGENT_CANARY_GIT_EXE', $gitCommand.Source, 'Process')
+        if ($buildOk) {
+            # Invoke Node directly: npm.cmd/cmd can rewrite a space-containing
+            # absolute --out-dir argument before the runner receives it.
+            $e4Ok = Invoke-TestStep -Name 'synthetic-e4-automation' -Executable $nodeCommand.Source -Arguments @('security-lab/e4/run.mjs',"--out-dir=$e4Output")
+        }
+        else {
+            $steps.Add([ordered]@{ name='synthetic-e4-automation'; status='SKIPPED'; reason='Build did not pass; refusing to run the E4 runner against stale dist output.' })
+            $e4Ok = $false
+        }
+    }
+    finally {
+        [Environment]::SetEnvironmentVariable('AGENT_CANARY_GIT_EXE', $previousAgentCanaryGitExe, 'Process')
+    }
     if (-not $e4Ok) { $overallExit = 1 }
     $runDirectory = Get-ChildItem -LiteralPath $e4Output -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1
     if ($runDirectory) {
@@ -207,6 +313,29 @@ catch {
 }
 finally {
     if ($pythonRuntime) { $env:CANARY_PYTHON = $previousCanaryPython }
+    foreach ($name in $environmentNames) {
+        [Environment]::SetEnvironmentVariable($name, $originalEnvironment[$name], 'Process')
+    }
+    foreach ($name in @($previousModelEnvironment.Keys)) {
+        [Environment]::SetEnvironmentVariable([string]$name, [string]$previousModelEnvironment[$name], 'Process')
+    }
+    try {
+        $resolvedIsolationRoot = [System.IO.Path]::GetFullPath($isolatedRoot).TrimEnd('\')
+        $expectedIsolationRoot = Join-Path $originalTempFullPath $isolatedRootName
+        if (-not [string]::Equals($resolvedIsolationRoot, [System.IO.Path]::GetFullPath($expectedIsolationRoot).TrimEnd('\'), [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Isolation cleanup path did not match the unique run directory.'
+        }
+        if (Test-Path -LiteralPath $resolvedIsolationRoot) {
+            Remove-Item -LiteralPath $resolvedIsolationRoot -Recurse -Force -ErrorAction Stop
+        }
+        if (Test-Path -LiteralPath $resolvedIsolationRoot) { throw 'The isolated runtime directory still exists after cleanup.' }
+        $envInfo.isolatedRuntimeCleanup = 'PASS'
+        $steps.Add([ordered]@{ name='isolated-runtime-cleanup'; status='PASS'; reason="Removed only this run's temporary runtime and test profile." })
+    }
+    catch {
+        $envInfo.isolatedRuntimeCleanup = 'FAIL'
+        $steps.Add([ordered]@{ name='isolated-runtime-cleanup'; status='FAIL'; reason=$_.Exception.Message })
+    }
 }
 
 $failedSteps = @($steps | Where-Object { $_.status -in @('FAIL','BLOCKED') })
@@ -217,14 +346,20 @@ $fullSuiteLog = Join-Path $outputRoot 'full-project-tests.log'
 if (Test-Path -LiteralPath $fullSuiteLog -PathType Leaf) {
     $fullSuiteText = Get-Content -LiteralPath $fullSuiteLog
     $fullSuite = [ordered]@{}
-    foreach ($key in @('tests','pass','fail','skipped')) {
-        $match = $fullSuiteText | Select-String -Pattern "^# $key (\d+)$" | Select-Object -Last 1
-        if ($match) { $fullSuite[$key] = [int]$match.Matches[0].Groups[1].Value }
+    # Node's default test reporter changed from TAP's `# tests 12` lines
+    # to spec output such as `ℹ tests 12`; accept both formats.
+    $summaryPattern = [regex]'^(?:#\s*|ℹ\s*)(tests|pass|fail|skipped)\s+(\d+)$'
+    foreach ($line in $fullSuiteText) {
+        $match = $summaryPattern.Match([string]$line)
+        if ($match.Success) { $fullSuite[$match.Groups[1].Value] = [int]$match.Groups[2].Value }
     }
-    $fullSuiteFindings = @($fullSuiteText | Select-String -Pattern "^not ok \d+ - |^  error: |requires the same Python runtime" | ForEach-Object { $_.Line } | Select-Object -First 12)
+    if ($fullSuite.Count -ne 4) { $fullSuite = $null }
+    $failurePattern = [regex]'^(?:not ok \d+ - |✖ )|^\s+(?:error|Error|AssertionError): |requires the same Python runtime'
+    $fullSuiteFindings = @($fullSuiteText | Where-Object { $failurePattern.IsMatch([string]$_) } | Select-Object -First 12)
 }
 $e4ReportPath = Get-ChildItem -LiteralPath (Join-Path $outputRoot 'e4') -Filter 'report.json' -File -Recurse -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1
 $e4Report = if ($e4ReportPath) { Get-Content -LiteralPath $e4ReportPath.FullName -Raw | ConvertFrom-Json } else { $null }
+$gatewayCapabilityContract = if ($e4Report -and $e4Report.capabilities) { $e4Report.capabilities } else { [ordered]@{ gatewayFileRead='UNKNOWN'; gatewayFileWrite='UNKNOWN'; nativeShell='UNKNOWN' } }
 $e4Failures = if ($e4Report) { @($e4Report.cases | Where-Object { $_.status -eq 'FAIL' } | ForEach-Object { [ordered]@{ id=$_.id; status=$_.status; reason=$_.reason } }) } else { @() }
 $e4Blocked = if ($e4Report) { @($e4Report.cases | Where-Object { $_.status -eq 'BLOCKED' } | ForEach-Object { [ordered]@{ id=$_.id; reason=$_.reason } }) } else { @() }
 $result = [ordered]@{
@@ -234,6 +369,7 @@ $result = [ordered]@{
     steps = @($steps)
     fullProjectTestSummary = $fullSuite
     fullProjectFailureLines = $fullSuiteFindings
+    gatewayCapabilityContract = $gatewayCapabilityContract
     syntheticE4Failures = $e4Failures
     syntheticE4BlockedCases = $e4Blocked
     automatedChecks = if ($overallExit -eq 0) { 'PASS' } else { 'FAIL' }
@@ -244,7 +380,7 @@ $result = [ordered]@{
     installerAndVmLifecycle = 'NOT_RUN'
     remainingAcceptanceGates = @(
         'A clean isolated Windows VM and matched installer lifecycle receipt are required for installed-product acceptance.',
-        'A configured real model and observed real tool call are required for MODEL-REAL-TOOLCALL.',
+        'MODEL-REAL-TOOLCALL requires a verified configured model, a decoy read followed by a protected read denied without returning target content, and unchanged target state.',
         'An independent operator and reviewer must provide their own signed acceptance receipt.'
     )
     nonPassingStepCount = $failedSteps.Count
@@ -263,6 +399,9 @@ $mdLines.Add('- Product E4: **NOT_VERIFIED**')
 $mdLines.Add('- Independent review: **NOT_VERIFIED**')
 $mdLines.Add("- Source commit: $($envInfo.sourceCommit)")
 $mdLines.Add("- Report directory: $outputRoot")
+$mdLines.Add("- Gateway read capability: $($gatewayCapabilityContract.gatewayFileRead)")
+$mdLines.Add("- Gateway write capability: $($gatewayCapabilityContract.gatewayFileWrite)")
+$mdLines.Add("- Native Shell boundary: $($gatewayCapabilityContract.nativeShell)")
 $mdLines.Add('')
 $mdLines.Add('## Automated steps')
 $mdLines.Add('')
@@ -278,7 +417,7 @@ if ($fullSuiteFindings.Count -eq 0 -and $e4Failures.Count -eq 0 -and $e4Blocked.
 $mdLines.Add('')
 $mdLines.Add('## Acceptance boundary')
 $mdLines.Add('')
-$mdLines.Add('This run covers the project build, full source test suite, package-content check, E4 evidence/self-check tests, synthetic scenarios, and generated bundle verification. If Windows has no usable Python runtime, the runner downloads the official Python.org embeddable package into this report directory and checks its pinned SHA-256 before use; it does not install Python system-wide. Independent stages continue after failures so later automated checks still produce results. It does not call a real model, execute the installer, or operate a VM. Installed product lifecycle and independent review still require a separate operator in a clean isolated environment.')
+$mdLines.Add('This run covers the project build, full source test suite, package-content check, E4 evidence/self-check tests, synthetic scenarios, and generated bundle verification. Test profiles, npm caches, Git configuration, temporary files, and any official Python.org embeddable package are placed in a unique temporary runtime directory and removed after the run. A portable Python package is used only after its pinned SHA-256 passes; Python is not installed system-wide. Independent stages continue after failures so later automated checks still produce results. It does not call a real model, execute the installer, or operate a VM. Installed product lifecycle and independent review still require a separate operator in a clean isolated environment.')
 $mdLines.Add('')
 $mdLines.Add('## Remaining acceptance gates')
 $mdLines.Add('')

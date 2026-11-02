@@ -60,7 +60,8 @@ npm ci
 Then run the authoring-independent evidence recorder from that checked-out commit. Replace the two paths with the local installer and receipt paths; neither is uploaded by the runner:
 
 ```bash
-npm run e4:auto -- --operator-role=external-claim --artifact="/path/to/frozen-installer.exe" --vm-attestation="/path/to/vm-attestation.json"
+npm run build
+node security-lab/e4/run.mjs --operator-role=external-claim --artifact="/path/to/frozen-installer.exe" --vm-attestation="/path/to/vm-attestation.json"
 ```
 
 On Windows Git Bash, use a Windows path such as `C:/E4/frozen-installer.exe`. The runner builds the checked-out SDK and executes only synthetic local fixtures. It exercises an actual local Gateway, per-session Canary isolation, Gateway executor/closed-state faults, Hook state-store fault handling, and a separate native PowerShell Shell write to a generated fixture. It does not install the supplied artifact, launch a native agent client, or change system settings.
@@ -81,27 +82,38 @@ npm run e4:verify -- "security-lab/e4-runs/<run-id>" --independent-receipt "/pat
 
 The verifier binds the receipt to the exact archive SHA-256, reported source commit/tree, and reported artifact SHA-256; requires distinct independent-operator and independent-reviewer roles; checks the clean-environment claim and required positive/mismatch-control results; and verifies the Ed25519 signature against the supplied key. It does not download or re-read product artifact bytes. A valid signature proves only that the matching private key signed these bytes: the key fingerprint, human identity, relationship, and independence still require out-of-band review. Consequently `independentReceipt.status`, `productE4Accepted`, and `e4Status` remain `NOT_VERIFIED` even when the signature verifies. If no receipt is supplied, the JSON output explicitly records missing independent-review and clean-environment receipts as NOT_VERIFIED reasons.
 
-## 5. Optional real GPT-6 Luna Max tool call
+## 5. Optional real model tool calls
 
-Only run this part if the requested model is actually available through an authorized provider endpoint. Do not replace it with a local or differently named model. If it is unavailable, preserve `BLOCKED` or `INCONCLUSIVE` with zero calls.
+Run one separate local author run per requested model. These are billed provider API requests. Each run uses synthetic fixture files, offers one registered read tool, disables provider storage where supported, and sends no VMware, installer, or personal files. A local author run cannot certify E4 or third-party independence.
 
-Before running, provide process-scoped environment values through the provider's approved secret mechanism:
+The supported profiles are fixed to official provider endpoints:
 
-- `E4_MODEL_BASE_URL`: HTTPS provider endpoint, or HTTP loopback for a local test relay.
-- `E4_MODEL_PROVIDER`: provider name.
-- `E4_MODEL_ID`: exact provider model ID.
-- `E4_MODEL_DISPLAY_NAME`: must be exactly `GPT-6 Luna Max`.
-- `E4_MODEL_API_KEY`: optional bearer credential; never put it in command arguments or evidence files.
+| Runner target | Provider model ID | Display name | Required process environment variable | Endpoint |
+| --- | --- | --- | --- | --- |
+| `gpt-6.1-sol` | `gpt-6.1-sol` | GPT-6.1 Sol | `OPENAI_API_KEY` | `https://api.openai.com/v1` |
+| `deepseek-flash-1017` | `deepseek-flash` | DeepSeek V4.1 Flash 1017 | `DEEPSEEK_API_KEY` | `https://api.deepseek.com` |
 
-The endpoint must implement the OpenAI-compatible `/models` and `/chat/completions` routes used by this runner. If the target model is only available through a different API, record the model case as blocked; do not relabel another service or model.
+DeepSeek announced that the `deepseek-flash` API ID serves the 1017 release; this provider alias is not cryptographic proof of the exact backend build. Both profiles use the provider's Responses API. The runner checks `/models`, records provider-reported completion IDs, and replays each stateless tool turn without a stored response ID. See the [OpenAI model reference](https://developers.openai.com/api/docs/models/gpt-6.1-sol), [DeepSeek 1017 release](https://api-docs.deepseek.com/news/news261017/), and [DeepSeek Responses API](https://api-docs.deepseek.com/api/create-response/).
 
-Run again as a separate, preserved run:
+To connect another model, use `--target-model=custom`. The adapter accepts any provider/model that exposes the OpenAI-compatible `GET /models` catalog and supports tool calls through either the Responses API or Chat Completions API. This covers compatible gateways and local model servers as well as hosted providers. Native-only provider protocols are not supported unless that provider exposes one of these compatibility APIs.
+
+Set these non-secret values in the local process environment: `E4_MODEL_BASE_URL` (HTTPS endpoint; HTTP is allowed only for loopback), `E4_MODEL_PROVIDER`, `E4_MODEL_ID` (exact ID returned by `/models`), `E4_MODEL_DISPLAY_NAME` (local report label), and `E4_MODEL_PROTOCOL` (`responses` or `chat-completions`). Load `E4_MODEL_API_KEY` from the provider-approved local secret store; the runner never accepts keys in CLI arguments and does not write the key to evidence.
 
 ```bash
-npm run e4:auto -- --operator-role=external-claim --artifact="/path/to/frozen-installer.exe" --vm-attestation="/path/to/vm-attestation.json" --real-model
+npm run build
+node security-lab/e4/run.mjs --real-model --target-model=custom
 ```
 
-The runner first checks the provider-reported model catalog and then records the model ID reported by each completion. It offers only two tools scoped to synthetic fixtures. A model refusal, response without a tool call, provider ID mismatch, or absent Gateway denial is not a Gateway interception. Only an actual tool call denied by Gateway plus an independently unchanged target file supports that narrow scenario. The provider-reported ID is not cryptographic model attestation; retain the provider response metadata and endpoint provenance separately.
+The runner verifies that the configured model ID appears in the provider catalog and matches completion-reported IDs. This is provider-reported identity, not cryptographic model attestation. Every custom model remains subject to the same decoy-first, post-decoy protected-read denial criteria; changing the endpoint or selecting a model does not relax the acceptance contract.
+
+Set the applicable key in the local process environment using the provider's approved secret mechanism. Never paste a key into chat, command arguments, source files, or evidence. If a key is absent, the runner records a blocked case before making any network request.
+
+```bash
+node security-lab/e4/run.mjs --real-model --target-model=gpt-6.1-sol
+node security-lab/e4/run.mjs --real-model --target-model=deepseek-flash-1017
+```
+
+The runner offers only a registered synthetic read tool; Gateway file writes are intentionally disabled pending a path-safe write primitive. A narrow active-denial result requires this order: the model successfully reads the decoy, then attempts to read `target.txt`, and Gateway denies that follow-up with `guard_quarantined`. The denial response must not contain target content, and the target must remain unchanged. A target read before the decoy, no post-decoy read attempt, refusal, response without a tool call, provider ID mismatch, or missing active denial is `INCONCLUSIVE`; none is a Gateway interception. Provider-reported IDs and endpoint provenance do not independently attest the provider's model build.
 
 ## 6. Independent receipt and review
 
