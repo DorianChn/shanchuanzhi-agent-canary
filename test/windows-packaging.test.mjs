@@ -29,10 +29,11 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }
 });
 
-test('Windows Community packaging requires the exact 38 runtime files and SDK declaration',()=>{
+test('Windows Community packaging requires the exact 39 runtime files and SDK declaration',()=>{
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   const worker=fs.readFileSync(path.join(repo,'packaging/windows/worker.mjs'),'utf8');
-  assert.equal(communityRuntimeFiles.length,38);
+  assert.equal(communityRuntimeFiles.length,39);
+  assert.ok(communityRuntimeFiles.includes('runtime/secure-file.js'));
   assert.ok(communityRuntimeFiles.includes('runtime/synthetic-decoy-capability.js'));
   assert.equal(new Set(communityRuntimeFiles).size,communityRuntimeFiles.length);
   assert.deepEqual(validateCommunityRuntime([...communityRuntimeFiles].reverse(),true),communityRuntimeFiles);
