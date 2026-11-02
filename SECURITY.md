@@ -6,11 +6,14 @@ Agent Canary is a defensive SDK and MCP security toolkit. Its guarantees apply
 to operations that a trusted host explicitly registers and routes through the
 Gateway. It is not a host-wide monitor or an operating-system sandbox.
 
-The 3.0 Gateway can mediate registered file capabilities, fixed-argument
-commands, host-owned MCP callbacks, and explicitly allowlisted HTTPS reads. A
-request outside those registrations is denied. Common credential paths are
-deny-only by default; hosts should also mark application-specific confidential
-files with `sensitive: true` rather than relying on filename patterns alone.
+The 3.0 Gateway can mediate registered read-only file capabilities,
+fixed-argument commands, host-owned MCP callbacks, and explicitly allowlisted
+HTTPS reads. A request outside those registrations is denied. `write_file` is
+denied before approval or execution until a path-safe write primitive exists;
+the legacy `writable` descriptor flag does not enable writes. Common credential
+paths are deny-only by default; hosts should also mark application-specific
+confidential files with `sensitive: true` rather than relying on filename
+patterns alone.
 
 ### Guarantees
 
@@ -39,6 +42,8 @@ files with `sensitive: true` rather than relying on filename patterns alone.
   file identity. Revalidation narrows path-replacement races, but it is not an
   atomic operating-system path-resolution guarantee. Do not describe Agent
   Canary as preventing every TOCTOU race or protecting every file on the host.
+  File reads use the already-open descriptor; file writes remain disabled so a
+  path alias cannot turn a Gateway write into an unauthorized external effect.
 - Filename rules cover common credential stores, not every secret format.
   Mark additional confidential resources explicitly and keep the registration
   list under trusted host control.

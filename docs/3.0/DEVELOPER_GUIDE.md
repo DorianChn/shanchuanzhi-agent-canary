@@ -32,13 +32,15 @@ import {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder} from '@
 const guard = createAgentGuard({alert:false});
 const gateway = createTrustedExecutionGateway({
   agentId:'my-controlled-agent', guard, workspaceRoot:root,
-  files:[{path:'README.md'},{path:'result.txt',writable:true}],
+  files:[{path:'README.md'}],
   evidence:new EvidenceRecorder(4096, newAuditFile),
 });
 // 只把这个方法接到模型工具循环；绝不暴露 gateway.operator 或 Guard reset。
 const result = await gateway.agent.dispatch({name:'read_file',args:{path:'README.md'}});
 await gateway.close();
 ```
+
+当前 Gateway 仅开放已注册文件的只读能力。`write_file` 会在审批和执行前拒绝，旧 `writable` 字段仅为源码兼容保留，不会启用写入。不要把宿主自身的文件写入回调包装成 Gateway 写入保证。
 
 固定命令通过可信 executable / argv 注册，无模型传入的 Shell 字符串。MCP 回调必须声明 risk 和审批规则；未知风险默认待审批，敏感 / 破坏性 MCP 默认拒绝。持有 operator 对象的可信宿主可以批准一次，模型的 approved 字段不能授权。
 
