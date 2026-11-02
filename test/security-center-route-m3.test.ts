@@ -1000,7 +1000,7 @@ test('built-package Console rejects an external junction swap to a protected har
 });
 
 test('built-package Console route never redirects a held read during a protected-key transient alias swap',async()=>{
-  const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-transient-alias-'));
+  const workspace=fs.realpathSync.native(fs.mkdtempSync(path.join(testHome,'configured-target-transient-alias-')));
   const notes=path.join(workspace,'notes'),heldNotes=path.join(workspace,'notes-held'),outside=fs.mkdtempSync(path.join(testHome,'configured-target-transient-outside-'));
   fs.mkdirSync(notes);const targetPath=path.join(notes,'summary.txt'),heldTarget=path.join(notes,'summary-held.txt'),external=path.join(outside,'.ssh','id_rsa');
   const original='AUTHORIZED_SUMMARY_FIXTURE',secret='SYNTHETIC_PROTECTED_SSH_KEY_MUST_NOT_ESCAPE',externalBefore=Buffer.from(secret);
