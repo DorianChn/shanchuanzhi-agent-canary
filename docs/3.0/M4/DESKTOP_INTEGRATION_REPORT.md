@@ -493,3 +493,18 @@ This update supersedes the earlier statement that the M4 page does not call the 
 The indicator for product OBSERVE file reads remains NOT_VERIFIED. This action exercises only a process-owned temporary marker. It does not accept a user-selected file or prove protection of arbitrary workspace files, native Shell, a clean installation, or a real model call. Issue #52 remains open for production-host held-identity coverage and independent TOCTOU evidence.
 
 Validation on Windows for this candidate: npm run build passed; node --import tsx --test test/runtime-console.test.ts passed 19/19; a local CSRF/operator-authenticated POST to the existing fixed probe returned HTTP 200 and the exact scoped PASS envelope. The local API test used a temporary synthetic marker and did not run a model, installer, or E4.
+
+## Configured-target read through the normal CLI — 2026-11-02
+
+This supersedes the earlier statement that the first-party Console has no configured product-target read. The supported `ai console` CLI accepts a workspace root and repeated `--protected-target <id=relative-path>` allowlist entries at process startup. The Security Center obtains only fixed target IDs and binding labels from the readiness route; an explicit read request supplies a target ID, never a file path. The Host binds the configured target through the M1 held-file Gateway, public M2 adapter, and M5 strict OBSERVE router. The response contains only `{ scope, status }`; target bytes and filesystem paths are not returned to the UI.
+
+The Windows route suite now covers the first-party CLI positive control and denial boundaries against synthetic fixtures: the ordinary `dist/index.js ai console` process binds the configured target before serving requests; the registered safe target is readable through the held identity; a caller-supplied path, extra path field, unregistered ID, sensitive target, symlink/junction alias, hard-link alias, relocated workspace, and same-path replacement are denied. The negative controls assert no M1 read-evidence increment, no M5 callback or approval, unchanged protected bytes and hashes, and no read of denied sensitive targets. On Windows, the live held parent directory cannot be renamed while the bound capability remains open. These tests do not access user secrets.
+
+Verification on the current feature source (`e22ac18`, with the runner-only PR #147 source change at `07fbc5b`):
+
+- `npm run build` — PASS.
+- `node --import tsx --test test/security-center-route-m3.test.ts` — Windows, 26/26 PASS.
+- [CI run 41453283025](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41453283025) — PASS across Windows/macOS/Linux Node 20/22, Docker, sponsor, and package smoke jobs.
+- [M9 exact-source run 41453282955](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41453282955) — PASS on Ubuntu and Windows.
+
+This establishes the configured-target CLI path and its tested alias/replacement controls on the recorded builds. The separate global `firstPartyObserveReadStatus` badge remains `NOT_VERIFIED` by design; this scoped operation does not prove protection of native or third-party Agent tools. It is not a claim of OS-wide atomicity across filesystems, an independent clean-install E4 result, or protection of an arbitrary unregistered path. Issue #52 remains open pending review of this evidence and any additional acceptance requested by its owner. Clean-install lifecycle, native-agent global coverage, and product E4 remain separate acceptance gates.
