@@ -37,14 +37,26 @@ guarded call is blocked; the callback is not invoked.
 
 ## 3.0 registered file Gateway boundary
 
-The 3.0 SDK Gateway can read ordinary files explicitly registered by the trusted
-host inside its workspace. It holds the opened file descriptor and checks the
-registered identity and file version around the read. Protected-looking paths
-are deny-only. File writes fail closed, including when a legacy descriptor sets
-`writable: true`; no safe write primitive is currently shipped. Calls outside
-the registered Gateway path are not covered. Identity rechecks narrow race
-windows but are not an atomic OS-wide path/operation transaction. Synthetic
-fixtures do not establish independent E4 or installed-host protection.
+The exact artifact matters. The `v3.0.0` tag predates the current handle-relative
+open implementation and does not contain `src/runtime/secure-file.ts`; do not
+infer the development candidate's path behavior from that tag.
+
+The current `feature/agent-canary-3.0` candidate opens registered workspace files
+component-by-component relative to a held workspace handle, rejects symlink or
+reparse-point components, and retains the opened file handle for the read. It
+checks that the ordinary read descriptor names the same file object before
+reading, then reads only through that retained descriptor. These controls cover
+the registered Gateway file-read path and its configured-target Console route.
+Protected-looking paths are deny-only. File writes fail closed, including when
+a legacy descriptor sets `writable: true`; no safe write primitive is currently
+shipped.
+
+This does not intercept native Shell, arbitrary host callbacks, or tools that
+bypass the Gateway. It is not an operating-system sandbox or a guarantee about
+all filesystems. Race and alias regressions use synthetic fixtures, even when
+they exercise real Windows junctions/hard links and the first-party Console
+route. Issue #52 remains OPEN / P0 / NOT_VERIFIED for broader host and
+OS-level acceptance; independent E4 remains NOT_VERIFIED.
 
 ## Vulnerabilities in scope
 
