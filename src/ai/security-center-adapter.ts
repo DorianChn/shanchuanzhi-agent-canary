@@ -129,7 +129,7 @@ export function adaptConfiguredTargetReadiness(input: unknown, now = Date.now())
       (value.bindingStatus === 'BOUND' && (!targets.some(target => target.bindingStatus === 'BOUND') || value.configurationStatus !== 'CONFIGURED')) ||
       (value.bindingStatus === 'BLOCKED' && (value.configurationStatus !== 'CONFIGURED' || value.actionReadiness !== 'BLOCKED')) ||
       (value.bindingStatus === 'UNAVAILABLE' && (value.configurationStatus !== 'NOT_CONFIGURED' || value.actionReadiness !== 'UNAVAILABLE')) ||
-      (value.bindingStatus === 'UNKNOWN' && (value.configurationStatus !== 'UNKNOWN' || value.actionReadiness !== 'UNKNOWN'))) return unknown;
+      (value.bindingStatus === 'UNKNOWN' && (!['CONFIGURED','UNKNOWN'].includes(value.configurationStatus as string) || value.actionReadiness !== 'UNKNOWN'))) return unknown;
   return { valid:true, generatedAt:value.generatedAt, configurationStatus:value.configurationStatus as typeof unknown.configurationStatus,
     bindingStatus:value.bindingStatus as typeof unknown.bindingStatus, actionReadiness:value.actionReadiness as typeof unknown.actionReadiness,
     operatorAuthStatus:value.operatorAuthStatus as typeof unknown.operatorAuthStatus, targets };

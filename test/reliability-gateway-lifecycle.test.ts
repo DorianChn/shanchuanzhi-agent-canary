@@ -214,9 +214,9 @@ test('gateway close tries every resource after a close error and exposes only a 
    assert.ok(!`${error.message}\n${error.stack??''}`.includes(path.join(s.root,'.env')));
    return true;
   });
-  assert.equal(attempted.length,3);
+  assert.equal(attempted.length,2,'only the two non-protected files have retained descriptors');
   await assert.rejects(s.runtime.close(),/GATEWAY_RESOURCE_CLOSE_FAILED/);
-  assert.equal(attempted.length,3);
+  assert.equal(attempted.length,2,'a repeated close does not retry already-attempted descriptors');
  }finally{(fs as any).closeSync=originalClose;await s.runtime.close().catch(()=>{});}
 });
 test('approval expires with no actual callback',async()=>{let called=0,id:string|undefined;const s=setup({approvalTtlMs:5,mcpTools:{ambiguous:{approvalRequired:true,execute:async()=>++called}}});try{await assert.rejects(s.runtime.agent.dispatch({name:'mcp_tool',args:{tool:'ambiguous',arguments:{}}}),error=>{const denial=error as {decision?:unknown;requestId?:unknown};assert.equal(denial.decision,'REQUIRE_APPROVAL');assert.equal(typeof denial.requestId,'string');id=denial.requestId as string;return true;});await new Promise(r=>setTimeout(r,15));await assert.rejects(s.runtime.operator.approve(id!),/EXPIRED/);assert.equal(called,0);}finally{await s.runtime.close();}});
