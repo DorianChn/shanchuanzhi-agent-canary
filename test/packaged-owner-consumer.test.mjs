@@ -49,6 +49,7 @@ function prepareSyntheticComposedPackage(label, exports) {
   const m2 = readPackage(roots.M2);
   const m3 = readPackage(roots.M3);
   const m5 = readPackage(roots.M5);
+  assert.equal(m3.dependencies?.koffi, m1.dependencies?.koffi, 'M3 composition must package the M1 secure-file runtime dependency');
   const packageRoot = path.join(scratch, label, 'package');
   fs.mkdirSync(packageRoot, { recursive: true });
 
@@ -60,7 +61,14 @@ function prepareSyntheticComposedPackage(label, exports) {
   // This is deliberately a synthetic composition fixture, not the M3 branch's
   // package or a release candidate. Each copied runtime file comes byte-for-byte
   // from that module's exact checkout so the test can exercise cross-owner code.
-  const m1Files = ['dist/sdk.js', 'dist/sdk.d.ts', 'dist/containment.js', 'dist/containment.d.ts', 'dist/file-state-store.js', 'dist/file-state-store.d.ts', 'dist/runtime/gateway.js', 'dist/runtime/gateway.d.ts'];
+  const m1Files = [
+    'dist/sdk.js', 'dist/sdk.d.ts',
+    'dist/containment.js', 'dist/containment.d.ts',
+    'dist/file-state-store.js', 'dist/file-state-store.d.ts',
+    'dist/runtime/gateway.js', 'dist/runtime/gateway.d.ts',
+    'dist/runtime/secure-file.js', 'dist/runtime/secure-file.d.ts',
+    'dist/runtime/synthetic-decoy-capability.js', 'dist/runtime/synthetic-decoy-capability.d.ts',
+  ];
   for (const file of m1Files) copyOwnerFile(roots.M1, `./${file}`, packageRoot);
 
   const m5Files = ['dist/policy-management.js', 'dist/policy-management.d.ts', 'dist/policy-router.js', 'dist/policy-router.d.ts', 'dist/security-router.js', 'dist/security-router.d.ts', 'dist/risk-policy.js', 'dist/risk-policy.d.ts'];

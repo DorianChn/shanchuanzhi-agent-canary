@@ -11,6 +11,7 @@
 | 隔离 | 常规受保护 callback 在 Guard 前置检查处被阻断；M5 额外记录 `CANARY_GUARD` 来源和 `NOT_STARTED` 状态。 | `test/containment.test.ts`：`a blocked callback is never executed`；`test/policy-management.test.ts`：`managed router records Canary quarantine, blocks callbacks, and resumes only after host reset` |
 | 并发 | 诱饵不等待已开始的普通 callback；隔离后尚未启动的 callback 拒绝。已经开始的外部副作用不能撤回。 | `test/containment.test.ts`：`no async race allows a post-decoy dangerous callback through`；`test/risk-policy.test.ts`：`a decoy quarantines immediately while another callback is in flight` |
 | 告警/撤销故障 | 本地 Guard 先隔离。告警或凭据撤销失败不把 Guard 恢复为 `SAFE`。 | `test/containment.test.ts`：`alert delivery failure cannot re-open a quarantined session`、`credential revoker failures do not re-open the circuit` |
+| 托管读取结果审计故障 | held-file provider 可能已返回或抛错；保留原结果/异常并隔离后续调用，不重试、不声称已撤销读取。 | `test/policy-management.test.ts`：`managed held reads quarantine after result audit failure and retain the original outcome`；成功与抛错两分支均断言 provider 总计一次、后续调用拒绝、通用 callback=0、坏链不可验证。 |
 | 显式恢复 | 空操作者拒绝 Reset；宿主确认后写入 `session_reset` 并恢复本地状态。 | `test/containment.test.ts`：`a human acknowledgement is required before reset restores normal operation`；M5 集成测试确认 Reset 后普通路由恢复。 |
 | 共享状态 | 身份作用域隔离可被新会话继承；共享 Store 出错时本地闭锁。 | `test/containment.test.ts`：共享 principal、新会话竞争及 shared-store 故障测试；`test/file-state-store.test.ts`：跨进程恢复和损坏/锁错误闭锁测试。 |
 

@@ -305,19 +305,19 @@ export function createProjectPolicyManager(options: {
 
   function readEvents(): PolicyAuditEvent[] {
     let text: string;
+    let signature = '';
     const head = readHead();
     if (!head.exists) throw Error('POLICY_AUDIT_HEAD_UNAVAILABLE');
     try {
       const stat = fs.lstatSync(logFile);
       if (!stat.isFile() || stat.isSymbolicLink() || stat.size > MAX_LOG_BYTES) throw Error('POLICY_AUDIT_UNAVAILABLE');
-      const signature = `${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}:${head.signature}`;
+      signature = `${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}:${head.signature}`;
       if (cachedEvents && signature === cachedSignature) {
         const cachedHead = cachedEvents.at(-1)?.event_digest ?? null;
         if (cachedHead !== head.head) throw Error('POLICY_AUDIT_HEAD_MISMATCH');
         return cachedEvents;
       }
       text = fs.readFileSync(logFile, 'utf8');
-      cachedSignature = signature;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         if (head.head !== null || (cachedEvents?.length ?? 0) > 0) throw Error('POLICY_AUDIT_HEAD_MISMATCH');
@@ -342,6 +342,7 @@ export function createProjectPolicyManager(options: {
       if (event.policy_version !== version) throw Error('POLICY_AUDIT_VERSION_SEQUENCE');
     }
     cachedEvents = events as PolicyAuditEvent[];
+    cachedSignature = signature;
     return cachedEvents;
   }
 
@@ -475,7 +476,7 @@ export function createProjectPolicyManager(options: {
     try { result = await operation(); }
     catch (error) {
       try {
-        appendBase(events, 'EXECUTION_RESULT', state.version, {
+        appendBase(readEvents(), 'EXECUTION_RESULT', state.version, {
           invocation_source: invocationSource, decision_source: 'TOOL', decision: 'NOT_APPLICABLE',
           execution_status: 'UNKNOWN', side_effect_verification: 'UNKNOWN',
           reason_code: 'tool_execution_failed_effects_unknown', tool_id: tool || null,
@@ -484,7 +485,9 @@ export function createProjectPolicyManager(options: {
       throw error;
     }
     try {
-      appendBase(events, 'EXECUTION_RESULT', state.version, {
+      // The operation may have outlived a storage failure or external edit.
+      // Revalidate the chain before claiming that its outcome was recorded.
+      appendBase(readEvents(), 'EXECUTION_RESULT', state.version, {
         invocation_source: invocationSource, decision_source: 'TOOL', decision: 'NOT_APPLICABLE',
         execution_status: 'SUCCEEDED', side_effect_verification: 'NOT_VERIFIED',
         reason_code: 'tool_callback_returned', tool_id: tool || null,
@@ -631,8 +634,24 @@ export function createManagedRiskPolicyRouter<T>(options: ManagedRiskPolicyOptio
   const reviewDecisionSource = options.reviewDecisionSource ?? 'HOST';
   const executeRealTool = riskOptions.executeRealTool;
   const reviewedCalls = new WeakMap<ToolCall, Readonly<PolicyDecision>>();
+  const executeReviewedOperation = <R>(call: ToolCall, operation: () => R | Promise<R>) => {
+    const decision = reviewedCalls.get(call);
+    if (!decision) throw new PolicyBlockedError({ action: 'DENY', risks: [], reason: 'policy_review_missing', mode: riskOptions.mode ?? 'BALANCED' });
+    return executeWithPolicyLease(call, decision, operation, () => {
+      riskOptions.guard.trip({ reason: 'policy_audit_outcome_unavailable' });
+    });
+  };
+  const provider = riskOptions.fileReadCapability;
+  // Strict reads bypass the generic executor. Keep their provider behind the
+  // same final project-policy check, audit lock, and result recording.
+  const fileReadCapability: RiskPolicyOptions['fileReadCapability'] = provider && typeof provider.readFileWithCapability === 'function' ? {
+    resolve: call => provider.resolve(call),
+    verify: (capability, call, operation) => provider.verify(capability, call, operation),
+    readFileWithCapability: (capability, call, signal) => executeReviewedOperation(call, () => provider.readFileWithCapability(capability, call, signal)),
+  } : provider;
   const router = createRiskPolicyRouter({
     ...riskOptions,
+    fileReadCapability,
     reviewDecision: async (call, decision) => {
       reviewedCalls.set(call, decision);
       if (await manager.reviewDecision(call, decision) === 'DENY' || decision.action === 'DENY') return 'DENY';
@@ -649,13 +668,7 @@ export function createManagedRiskPolicyRouter<T>(options: ManagedRiskPolicyOptio
       }
       return 'UNCHANGED';
     },
-    executeRealTool: async call => {
-      const decision = reviewedCalls.get(call);
-      if (!decision) throw new PolicyBlockedError({ action: 'DENY', risks: [], reason: 'policy_review_missing', mode: riskOptions.mode ?? 'BALANCED' });
-      return executeWithPolicyLease(call, decision, () => executeRealTool(call), () => {
-        riskOptions.guard.trip({ reason: 'policy_audit_outcome_unavailable' });
-      });
-    },
+    executeRealTool: call => executeReviewedOperation(call, () => executeRealTool(call)),
   });
   return Object.freeze({
     ...router,

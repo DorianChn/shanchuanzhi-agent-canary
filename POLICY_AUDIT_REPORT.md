@@ -2,6 +2,42 @@
 
 **范围**：`feature/ac3-policy-audit` 上的确定性风险策略、项目策略管理、策略决策证据和 Canary Guard 接入。检查了 M0/M1 相关接口边界、`src/risk-policy.ts`、`src/containment.ts`、Hook、Gateway、现有证据/日志实现和对应测试。
 
+## 2026-10-25 本地剩余验收缺口复核
+
+本节是本轮最新检查点；下文带日期的 PR、SHA 和 Issue 状态保留为历史记录。本轮从既有分支干净 HEAD `cca42cd1762f995e92454d55ffa5e63951e39144` 继续，没有新建分支/worktree，也没有改共享接口、M1 runtime 或 M6 E4 文件。在线读取的 AC3 目标 `src/policy-management.ts` blob `0dce03570491fe9aff06f1683f501ea4c2cfabf5` 同样含有以下修复前实现。
+
+### 已复现并修复的 M5 缺口
+
+1. **持有文件能力的读取绕过托管执行租约。** 当前严格读取有意直接调用 `fileReadCapability.readFileWithCapability()`，绝不落到通用路径 callback；但托管包装器原先只包装通用 executor。因此，在初始复核之后新增项目 DENY 或损坏审计链，读取 provider 仍可运行，且没有最终项目检查、持锁执行与结果事件。新增的前三条 `managed held reads` 回归在旧实现全部失败（0/3，两个 `Missing expected rejection`，一个缺失最终审计事件）。现在 provider 和普通 callback 共用已有的最终策略重查、排他存储锁与执行结果记录，不新增放行条件。
+2. **失败校验错误地推进审计缓存签名。** 损坏日志第一次校验失败后，旧缓存可能在后续读取被误判为已验证。新增结果审计故障测试实际观察到损坏链随后返回有效。现在仅在字段、摘要、项目及版本序列全部校验通过后提交缓存签名；重复读取、策略更改、导出与验证均保持失败关闭。
+3. **执行期间存储损坏未在结果入链前重验。** 执行结果不再只依据执行前读出的内存事件追加，而会重验当前存储。结果记录失败时保留 provider 原始返回值或原始异常，触发 Guard 隔离并阻止后续读取；不把已经发生的读取改写为“未启动”，也不发起自动重试。
+
+新增测试覆盖 OBSERVE/STRICT 的最终项目拒绝、读取前审计损坏、成功/异常结果、读取期间策略写入报忙、缺失/无效 provider、结果审计失败后的隔离及重复坏链读取。项目拒绝用例断言 `DENY / project_read_restricted`、approval=0、provider=0、通用 callback=0、固定内容与 SHA-256 不变。正向 provider 恰好运行一次；工具异常记录 `UNKNOWN / UNKNOWN`，正常返回记录 `SUCCEEDED / NOT_VERIFIED`，内容与异常文本不进入证据。
+
+### 本轮实际验证
+
+| 命令 | 结果 |
+|---|---|
+| `node --import tsx --test --test-name-pattern="managed held reads\|failed audit validation" test/policy-management.test.ts` | 7/7，exit 0 |
+| `node --import tsx --test test/risk-policy.test.ts test/policy-management.test.ts test/false-positive.test.ts test/policy-router-export.test.ts` | 73/73，exit 0；0 failed / skipped |
+| `npm run build` | exit 0 |
+
+测试使用本工作树已安装依赖；未安装或修改 manifest/lockfile。保留全部原有测试与 hard-deny，公共 API 签名不变。上述是本地 M5 代码/夹具证据，新提交尚未推送，未取得该新提交的 hosted CI 或 M9 pin 验证。
+
+### 原始验收项与剩余边界
+
+| 验收范围 | 当前 M5 状态与证据边界 |
+|---|---|
+| 确定性默认策略、DENY-only 项目规则、冲突、预览、回滚、确认语义（1–6） | M5 回归通过；默认 BALANCED 与显式放宽确认保留。严格读取仍必须通过可信 held-file provider，不能以日志或模型复核授权。 |
+| Canary 触发、隔离、恢复（7） | 托管路由隔离/Reset 回归通过，并新增结果审计故障后的隔离；不声称撤回在途副作用。完整 Guard 跨进程及安装生命周期本轮未重跑。 |
+| 版本、来源、原因、故障分类、结构化日志（8–10） | 现有来源分类测试通过；本轮补齐托管 held-read 的最终版本检查和结果事件。Hook/Gateway 来源需宿主按现有 API 显式记录，不推定自动接线。 |
+| 证据导出、完整性与脱敏（11–12） | 导出锚点/篡改及脱敏回归通过；新增失败缓存重读保护。可重写整个存储的本机权限仍须外部可信锚点防御。 |
+| 正常开发误拦截（13） | 既有四个开发任务测试通过，新增严格 held-read 正向控制保留；不据此计算生产误拦截率。 |
+
+- [Issue #92 的 M0 关闭记录](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/92#issuecomment-6379830072)已确认旧 Hook 输出缺口关闭，PR #94 已合并；本轮不重复修改 canonical Hook。
+- [Issue #52 的当前 M1 owner 边界](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52#issuecomment-6394611518)仍为 **OPEN/P0/NOT_VERIFIED**。源代码已有 configured Console consumer，不能再称“没有任何宿主调用点”；已安装/原生产品运行证据和 OS-wide 原子性仍不由本地 provider 夹具证明。
+- 本轮 provider 是合成宿主，不证明 M1/M2 产品接线、实际用户文件暴露或 OS-atomic TOCTOU。新代码的 M9 组合验证及 M0 批次推送仍待后续调度。
+
 ## 结论
 
 M5 增加了只能收紧策略的项目级规则、冲突预览、明确的放宽确认、追加式版本历史、托管策略路由及可校验的审计导出。未登记工具现在在 `OBSERVE`、`BALANCED`、`STRICT` 三种模式都直接拒绝。正常读取与审定开发命令保持可用；写入、构建等已知风险操作仍由宿主人工审批，不由模型批准。
