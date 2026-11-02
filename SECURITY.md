@@ -1,62 +1,70 @@
 # Security Policy
 
-## What agent-canary is
+## Agent Canary 3.0 security boundary
 
-agent-canary is a **defensive** tripwire and containment SDK. It plants decoys
-(fake MCP tools and fake secrets) in your development environment and records a
-signal when an agent touches them. A signal can indicate compromise, but an
-accidental integration call or copied fixture can also trigger it.
+Agent Canary is a defensive SDK and MCP security toolkit. Its guarantees apply
+to operations that a trusted host explicitly registers and routes through the
+Gateway. It is not a host-wide monitor or an operating-system sandbox.
 
-## Hard guarantees
+The 3.0 Gateway can mediate registered file capabilities, fixed-argument
+commands, host-owned MCP callbacks, and explicitly allowlisted HTTPS reads. A
+request outside those registrations is denied. Common credential paths are
+deny-only by default; hosts should also mark application-specific confidential
+files with `sensitive: true` rather than relying on filename patterns alone.
 
-- **The represented decoy action is inert.** `canary_run_shell` does not execute
-  commands, and `canary_transfer_funds` does not touch money. Each call does
-  mint a local trace token and write an audit event; configured webhook or
-  desktop notifications may also run. The decoy's represented operation is not
-  performed.
-- **Canary tokens are not credentials.** They are random strings with a `cnry_`
-  prefix that unlock nothing anywhere. They exist purely to be detected in output.
-- **No telemetry.** Events stay on your machine (JSONL file) unless you configure
-  your own webhook URL. Desktop notifications are local.
-- **Containment is opt-in at the integration boundary.** The V1.1 session
-  circuit breaker can block only real callbacks routed through
-  `guard.executeToolCall()` or checked with `guard.beforeToolCall()`. It does
-  not magically intercept a tool that an agent or host calls directly.
+### Guarantees
 
-## V1.1 containment boundary
+- A represented decoy action is inert. `canary_run_shell` does not run a
+  command, and `canary_transfer_funds` does not move money. A decoy call can
+  create a local trace token and audit event; configured notifications may run.
+- Canary tokens are random `cnry_` strings that unlock nothing.
+- Events stay local unless the operator configures a webhook. Desktop alerts
+  are local.
+- The Gateway accepts only registered tool names and parameters. It checks the
+  Guard and host policy before invoking the registered callback. The host-owned
+  approval capability must stay outside the model-callable tool set.
+- A registered decoy read can quarantine that Guard session. This is a signal
+  of possible compromise; accidental integration calls and copied fixtures
+  can also trigger it.
+- Optional AI analysis is advisory. It cannot approve an operation, reset the
+  Guard, change the registered policy, or execute a tool. Cloud analysis
+  requires host consent; input redaction is best effort, not a DLP guarantee.
 
-`createAgentGuard()` creates isolated in-memory state for one agent session:
-`SAFE → TRIPPED → QUARANTINED`. A decoy handled through `guard.runDecoy()` or a
-canary token found by `guard.inspect()` changes that state synchronously before
-JSONL/webhook/desktop alert delivery starts. In quarantine, every non-allowlisted
-guarded call is blocked; the callback is not invoked.
+### Limits and safe deployment
 
-This makes the useful guarantee deliberately narrow: if an attacker first causes
-the agent to touch a harmless decoy, later guarded actions can be contained. It
-does **not** claim to prevent all prompt injection, nor can it stop a first real
-dangerous call that bypasses the guard.
+- Calls made directly by native host tools, arbitrary Shell, unregistered
+  callbacks, or other processes bypass the Gateway. Hook protection applies
+  only when the hook is installed, enabled, and matches the host operation.
+- File registration checks workspace containment, common aliases, and held
+  file identity. Revalidation narrows path-replacement races, but it is not an
+  atomic operating-system path-resolution guarantee. Do not describe Agent
+  Canary as preventing every TOCTOU race or protecting every file on the host.
+- Filename rules cover common credential stores, not every secret format.
+  Mark additional confidential resources explicitly and keep the registration
+  list under trusted host control.
+- A callback that ignores cancellation, an operation already started, or a
+  subprocess outside the registered execution path can still cause side
+  effects. The Gateway cannot retroactively cancel or roll back such effects.
+- Evidence hash chains can reveal changes to a retained chain. They do not
+  prove the writer's identity or honesty, and a local operator can rewrite the
+  complete chain. Source tests and bundle hashes are not independent product
+  acceptance; see [3.0 acceptance](docs/3.0/FINAL_3_0_ACCEPTANCE.md) and the
+  [security limitations](docs/3.0/SECURITY_LIMITATIONS.md).
+- `guard.reset()` is a host API. Never expose it, approval authority, or
+  resource registration as a model-callable tool. Deploy decoys only on
+  systems you own or are authorized to test.
 
-`guard.reset()` requires an acknowledgement string and is intentionally an SDK
-host API. Do not expose reset as an MCP tool or a model-callable function; keep
-it behind a human incident-response control plane. Audit metadata and decoy
-arguments are redacted for common secret-bearing field names, but integrations
-must never submit credentials or full tool payloads as event metadata.
+## Legacy V1.1 containment API
 
-## Intended use
-
-Only deploy decoys on systems you own or are explicitly authorized to test.
-Using canary tripwires to entrap or frame a third party is not an intended use.
+The `createAgentGuard()` API remains available for compatibility. Its
+`SAFE → TRIPPED → QUARANTINED` circuit breaker can block callbacks that the host
+routes through `guard.executeToolCall()` or checks with
+`guard.beforeToolCall()`. A decoy signal cannot block a callback that bypasses
+the Guard, and it does not prevent a first dangerous operation that bypasses
+the Guard. Use the 3.0 Gateway for newly integrated execution paths.
 
 ## Reporting a vulnerability
 
-Open a private security advisory via GitHub ("Security" tab) or contact the
-maintainer directly. Please do not open public issues for exploitable bugs.
-## Optional AI analysis boundary
-
-AI adapters are advisory only and cannot reset Guard, change policy or execute tools.
-Cloud requests require explicit minimized-input consent; redaction is best effort,
-not a DLP guarantee. Keys stay in the host process. The local console binds only
-loopback and checks Host, Origin and CSRF; do not reverse-proxy it publicly.
-Report provider schema, evidence grounding, key disclosure, destination validation
-and console authorization issues through the private disclosure process below.
-Real cloud account behavior has not been verified by the local protocol fixtures.
+Open a private security advisory through the repository's GitHub Security tab.
+Do not publish exploitable details or attach credentials, tokens, private
+keys, or unredacted production data to a public issue.

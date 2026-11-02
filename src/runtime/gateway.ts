@@ -28,7 +28,7 @@ type Resource={descriptor:Readonly<GatewayFile>;fd:number;dev:number;ino:number;
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
-const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
+const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
