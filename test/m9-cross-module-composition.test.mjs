@@ -48,7 +48,7 @@ const currentCandidateProvenance = {
   M6: { ownerHead: 'fae72ea3d0c4498dfddb7d04421e41b87179895b', ownerTree: 'adce276fd07fbe21743ce9a448f3978c84d3e0fc', sourceBase: '2a88d8b7e099ce865c9900bb9313d4b8bdef8299', prHead: 'b7e186bd762a0b2e18bbad8fa34e0c473388de10', prTree: 'bbc13f1ce8de05de10bd3af969573a82ef6562f1' },
   M2: { ownerHead: '941fd22d5e43e1de91a76b8c73006e57a4c15496', ownerTree: '969fd968d14c04e35648281924028f6702a65a2a', sourceBase: '7736ec936d575c86a347058cc60107b2ae31109d', firstParent: '7736ec936d575c86a347058cc60107b2ae31109d', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: '941fd22d5e43e1de91a76b8c73006e57a4c15496', prTree: '969fd968d14c04e35648281924028f6702a65a2a' },
   M3: { ownerHead: '2567d51a67b9e934088f7915f27a06cc772a4360', ownerTree: 'c07e189f8ea88c4b131ae0d07a8a766d81e9f996', sourceBase: '0d61b434ba2ac81e313b82432f4ac00afedd3cbc', prHead: '6830cf8bb883592bb9438cd86ed36d9d48e95e4e', prTree: 'c19e08036e5475135289355c4799a3ec89b07b86' },
-  M4: { ownerHead: '5d975b7927a66be26a8bfc3740530bb27a703f2c', ownerTree: '657cef4dbb0e47065a6e1edeef7424a17834142d', prHead: 'efd552d79f67fa220610ff27baa022096ac224f0', prTree: '77f4b056d64063b658fa52eb01b521f720b0ba8b' },
+  M4: { ownerHead: '5d975b7927a66be26a8bfc3740530bb27a703f2c', ownerTree: '657cef4dbb0e47065a6e1edeef7424a17834142d', prHead: '96de861cafdce3105c5f2412b3f5a431a378dfb7', prTree: 'd08d8b1ceeb2d76c83597286fdef8ca652d0ee19' },
   M5: { ownerHead: 'dde81d6a989ba39aa0d57dfeed0c9283f4459682', ownerTree: '643416f94b419c24c869fdc74e13de1f636a23a1', prHead: '51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7', prTree: '1cd838d02e1bec8f4b674aaae8161a820729abce' },
   M7: { ownerHead: 'bba0f0f89c610f8198660e799de7a652b8ea8e96', ownerTree: 'ecd79ff94cef8a173486914639fe1b9ef24a7228', sourceBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', firstParent: '3b60ce0cc0f0c29929e82363ff05be61ecfeda9b', targetBase: 'e4732d9745bb4fbbebf6896a35b4657ad82abd73', prHead: 'f9636b52c33761d38e15b2c3bd573724f0e8a8d6', prTree: '57d61ea397d2e7928a543a9d18b688a3b0130edd' },
 };
@@ -965,7 +965,7 @@ test('M3 ordinary CLI passes only after its fixed protected-read and replacement
   );
 });
 
-test('M3 snapshot-only status route feeds the exact M4 read-only consumer without protected-read work', async () => {
+test('M3 status GET stays passive while exact M4 page exposes an explicit fixed-probe action', async () => {
   const isolatedTemp = fs.mkdtempSync(path.join(os.tmpdir(), 'm9-m3-m4-status-route-'));
   const priorEnv = Object.fromEntries(['AGENT_CANARY_HOME', 'TEMP', 'TMP', 'TMPDIR'].map((key) => [key, process.env[key]]));
   const isolatedHome = path.join(isolatedTemp, 'home');
@@ -1060,7 +1060,11 @@ test('M3 snapshot-only status route feeds the exact M4 read-only consumer withou
       .map((match) => match[1]).join('\n');
     assert.match(clientScripts, /securityCenterAdapter\.isValidSecurityCenterStatusPayload\(data\)/);
     assert.match(clientScripts, /\['securityCenter','security-center'\]/);
-    assert.doesNotMatch(clientScripts, /security-center\/protected-read/i, 'the M4 page must not call the separate fixed-marker POST');
+    assert.match(clientScripts, /getEl\('runProtectedReadProbe'\)\.onclick=async\(\)=>/, 'the M4 fixed-probe POST must require an explicit button click');
+    assert.match(clientScripts, /api\('security-center\/protected-read',\{\},undefined,\{'x-canary-operator-code':code\}\)/, 'the fixed-probe request must send an empty body and operator authorization');
+    assert.match(clientScripts, /adaptFixedProtectedReadProbe/, 'the UI must validate the exact probe scope before displaying PASS');
+    assert.match(clientScripts, /codeInput\.value=''/, 'the one-time operator code must be cleared after the request');
+    assert.match(m4Page.CONSOLE_PAGE, /id="protectedReadProbeCode" type="password"/);
     assert.match(m4Page.CONSOLE_PAGE, /id="securityCoverage"/);
     assert.match(m4Page.CONSOLE_PAGE, /NOT_VERIFIED · 未验证/);
 

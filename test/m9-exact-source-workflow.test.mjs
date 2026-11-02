@@ -42,7 +42,7 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
     M1: { pullRequest: 133, sha: '42d362a9a1f4f1972400f2d3414d77982b0fb4e6' },
     M2: { pullRequest: 110, sha: '941fd22d5e43e1de91a76b8c73006e57a4c15496' },
     M3: { pullRequest: 120, sha: '6830cf8bb883592bb9438cd86ed36d9d48e95e4e' },
-    M4: { pullRequest: 121, sha: 'efd552d79f67fa220610ff27baa022096ac224f0' },
+    M4: { pullRequest: 121, sha: '96de861cafdce3105c5f2412b3f5a431a378dfb7' },
     M5: { pullRequest: 122, sha: '51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7' },
     M6: { pullRequest: 123, sha: 'b7e186bd762a0b2e18bbad8fa34e0c473388de10' },
     M7: { pullRequest: 128, sha: 'f9636b52c33761d38e15b2c3bd573724f0e8a8d6' },
