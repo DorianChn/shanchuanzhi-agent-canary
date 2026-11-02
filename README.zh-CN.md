@@ -97,6 +97,81 @@ console.log(JSON.stringify(exampleResult, null, 2));
 
 宿主必须明确注册需要网关保护的回调。Agent Canary 不会自动接管未接入的工具、进程或原生宿主能力。
 
+### 注册并验证自定义工具回调
+
+下面的例子把两个宿主回调登记到 createGuardedToolRouter：先允许读取本地笔记，再触发惰性诱饵，最后验证消息回调在隔离状态下没有被调用。它不连接模型或发送消息；把模型返回的工具调用转换成 { name, args } 后交给 Router。诱饵工具定义可按 OpenAI 或 Anthropic 格式生成，其他模型也可由宿主适配到同一调用格式。
+
+保存为仓库根目录的 sdk-demo.mjs，先构建，再运行 node sdk-demo.mjs。此示例也由 npm test 自动执行：
+
+```sh
+npm run build
+npm test
+```
+
+<!-- sdk-guarded-router-example:start -->
+```js
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import {
+  CanaryBlockedError,
+  createAgentGuard,
+  createGuardedToolRouter,
+  decoyToolDefs,
+} from "@dorianchn/agent-canary/sdk";
+
+const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-sdk-example-"));
+try {
+  const notes = new Map([["intro", "这是一条本地示例笔记。"]]);
+  const callbacks = new Map([
+    ["read_note", async ({ id }) => ({ id, text: notes.get(id) ?? null })],
+    ["send_message", async ({ to }) => ({ queued: true, to })],
+  ]);
+  const callbackInvocations = [];
+  const toolDefinitions = [
+    { type: "function", function: { name: "read_note", description: "读取本地示例笔记", parameters: { type: "object", properties: { id: { type: "string" } }, required: ["id"] } } },
+    { type: "function", function: { name: "send_message", description: "示例消息回调", parameters: { type: "object", properties: { to: { type: "string" } }, required: ["to"] } } },
+    ...decoyToolDefs("openai"),
+  ];
+  const guard = createAgentGuard({
+    sessionId: "readme-sdk-example",
+    eventsFile: path.join(scratch, "events.jsonl"),
+    alert: false,
+  });
+  const router = createGuardedToolRouter({
+    guard,
+    executeRealTool: async (call) => {
+      const callback = callbacks.get(call.name);
+      if (!callback) throw new Error("UNREGISTERED_TOOL");
+      callbackInvocations.push(call.name);
+      return callback(call.args ?? {});
+    },
+  });
+
+  const allowedResult = await router.dispatch({ name: "read_note", args: { id: "intro" } });
+  const decoyResult = await router.dispatch({ name: "canary_read_secrets", args: {} });
+  let deniedDecision;
+  try {
+    await router.dispatch({ name: "send_message", args: { to: "demo@example.invalid" } });
+  } catch (error) {
+    if (!(error instanceof CanaryBlockedError)) throw error;
+    deniedDecision = error.decision;
+  }
+
+  console.log(JSON.stringify({
+    allowedResult,
+    decoyReplyReceived: Array.isArray(decoyResult.content),
+    guardState: guard.state,
+    denied: { allowed: deniedDecision?.allowed, reason: deniedDecision?.reason },
+    callbackInvocations,
+    toolDefinitionCount: toolDefinitions.length,
+  }, null, 2));
+} finally {
+  fs.rmSync(scratch, { recursive: true, force: true });
+}
+```
+<!-- sdk-guarded-router-example:end -->
+
 ## 测试结果
 
 冻结的 3.0 源码验收记录包含以下结果：
