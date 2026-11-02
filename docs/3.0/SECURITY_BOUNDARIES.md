@@ -8,6 +8,12 @@
 
 文件注册必须在宿主控制的目录中进行。已有文件以句柄持有，注册前后比较 inode / device，拒绝符号链接、不同 realpath、硬链接及超限文件。每次操作检查路径仍绑定原文件，实际读写使用 fd 而不是重新打开模型提供的路径。没有任意路径创建或递归删除接口。
 
+### 受保护目标控制台路径
+
+可用 `agent-canary ai console --workspace-root <目录> --protected-target <id=相对路径>` 在进程启动时登记一个或多个现有文件。调用方只能提交预登记的 `targetId`；读取经过 M5 `OBSERVE` Router、固定 M2 Gateway Adapter，再进入 M1 `createTrustedExecutionGateway` 的持有文件读取。控制台要求 CSRF 与启动时配置的 `AGENT_CANARY_OPERATOR_CODE`，响应只返回 `ALLOW`、`DENY` 或 `UNKNOWN`，不会返回文件路径或内容。符号链接 / junction、敏感路径、硬链接、路径规范化别名和越界目标会在回调前拒绝。
+
+该路径验证的是 Agent Canary 自己的固定目标控制台调用闭环。通用 `executeRealTool` callback 仍由宿主负责；路径预检不能让随后重新打开路径的任意 callback 变成原子操作。Gateway 的描述符读取与身份复核缩小了替换窗口，但不提供所有文件系统、所有操作的 OS 级原子 TOCTOU 保证，也不会自动保护 Codex、Claude Code 或 Cursor 原生工具。源码回归不等于独立 E4。
+
 这缩小了路径替换攻击面，但 **不是 OS 沙箱**。有宿主同等权限的本地进程仍能修改文件内容、删除目录、杀死进程或修改日志。Windows 权限由宿主目录 ACL 决定，不能把 POSIX mode 0600 当作 Windows ACL 验证。
 
 ## 执行范围

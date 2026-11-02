@@ -6,6 +6,11 @@
   no-follow relative path resolution, file-identity checks, and a regression
   for a parent junction inserted during registration. This narrows path-race
   exposure without claiming a host-wide atomic TOCTOU guarantee.
+- Keep real-path, sensitive-target, symlink/junction, hard-link, and path
+  normalization denials active in OBSERVE mode before host callbacks.
+- Add a first-party target-ID console read path through the M5 OBSERVE router,
+  fixed M2 Gateway adapter, and M1 held-file Gateway. It returns status only;
+  native Agent tools and OS-wide atomicity remain outside the claim.
 
 ## 3.0.0 — Agent Canary 3.0 mainline
 

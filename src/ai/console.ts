@@ -15,8 +15,10 @@ import {createPolicySandbox} from './policy-demo.js';
 import os from 'node:os';
 import {detectAgents,previewAgentIntegration,installAgentIntegration,restoreAgentIntegration,type AgentClient} from '../agent-integrations.js';
 import {createRuntimeDemo} from '../runtime/demo.js';
+import {createProtectedTargetRuntime,type SecurityCenterProtectedTarget} from '../runtime/protected-targets.js';
 
-export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number } = {}) {
+const protectedTargetReadScope='M3_CONFIGURED_TARGET_READ';
+export async function startAIConsole(options: { port?: number; apiKey?: string; keyOrigin?: string; eventsFile?: string; operatorApprovalCode?: string; preReviewTimeoutMs?:number; securityCenterWorkspaceRoot?:string; securityCenterProtectedTargets?:readonly SecurityCenterProtectedTarget[] } = {}) {
   const port = options.port ?? 4318;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('AI_CONSOLE_PORT_INVALID');
   const csrf = randomBytes(32).toString('hex');
@@ -29,6 +31,7 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   let child: ChildProcess | undefined;
   const operatorCode=options.operatorApprovalCode;
   const secrets = [...(options.apiKey?[options.apiKey]:[]),...(operatorCode?[operatorCode]:[])];
+  const protectedTargets=await createProtectedTargetRuntime({workspaceRoot:options.securityCenterWorkspaceRoot,targets:options.securityCenterProtectedTargets});
   const sandbox=createPolicySandbox({reviewTimeoutMs:options.preReviewTimeoutMs});
   const runtime3=createRuntimeDemo();
   const integrationProject=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-integration-'));
@@ -79,6 +82,14 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
       const chunks: Buffer[] = [];
       for await (const chunk of req) { size += chunk.length; if (size > 32_000) { reply({ error: 'AI_INPUT_TOO_LARGE' }, 413); return; } chunks.push(chunk); }
       const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      if(req.url==='/api/security-center/target-read'){
+        const keys=body&&typeof body==='object'&&!Array.isArray(body)?Object.keys(body):[];
+        const suppliedHeader=req.headers['x-canary-operator-code'];
+        const supplied=Buffer.from(typeof suppliedHeader==='string'?suppliedHeader:''),expected=Buffer.from(operatorCode??'');
+        if(!operatorCode||typeof suppliedHeader!=='string'||supplied.length!==expected.length||!timingSafeEqual(supplied,expected)){reply({scope:protectedTargetReadScope,status:'DENY'},403);return;}
+        if(keys.length!==1||keys[0]!=='targetId'){reply({scope:protectedTargetReadScope,status:'DENY'},400);return;}
+        reply({scope:protectedTargetReadScope,status:await protectedTargets.read(body.targetId)});return;
+      }
       if(req.url==='/api/runtime3/action'){reply(await runtime3.action(body.action));return;}
       if(req.url==='/api/runtime3/approve'){
         const supplied=Buffer.from(typeof body.operatorCode==='string'?body.operatorCode:''),expected=Buffer.from(operatorCode??'');
@@ -146,9 +157,10 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   server.requestTimeout = 10_000;
   server.headersTimeout = 10_000;
   server.maxConnections = 16;
-  await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
+  try{await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });}
+  catch(error){await protectedTargets.close();await sandbox.close();await runtime3.close();throw error;}
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('AI_CONSOLE_LISTEN_FAILED');
   url = 'http://127.0.0.1:' + address.port;
-  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); sandbox.close(); await runtime3.close(); } };
+  return { url, server, close: async () => { child?.kill(); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); await protectedTargets.close(); await sandbox.close(); await runtime3.close(); } };
 }

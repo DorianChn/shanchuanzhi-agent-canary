@@ -38,4 +38,17 @@ node dist/competition.js integrate --agent codex --project .
 node dist/competition.js serve --stdio
 ```
 
+## 配置一个受保护文件目标
+
+控制台可在启动时绑定明确的工作区文件。先在当前 shell 环境设置 `AGENT_CANARY_OPERATOR_CODE`，然后运行：
+
+```sh
+npm run build
+node dist/competition.js ai console --workspace-root . --protected-target handbook=README.md
+```
+
+可重复 `--protected-target id=相对路径` 添加固定目标。路径必须是工作区内已存在的普通文件；符号链接、junction、硬链接、敏感路径和越界路径会拒绝。Console 的 `POST /api/security-center/target-read` 只接受 `{"targetId":"handbook"}`，并要求当前页面的 CSRF 值和 `AGENT_CANARY_OPERATOR_CODE` 请求头；成功响应只包含 `status: ALLOW`，不会返回文件内容。
+
+这是 Agent Canary 自身经过 M5 OBSERVE、固定 Gateway Adapter 和 M1 持有文件 Gateway 的受控读取路径。它不接管 Agent 原生文件工具，也不是独立 E4 或 OS 级原子 TOCTOU 证明。
+
 npm 包和容器安装方式见[安装说明](README.zh-CN.md#安装)。GitHub Packages 可能要求认证；上面的源码构建路径不需要登录该 npm registry。
