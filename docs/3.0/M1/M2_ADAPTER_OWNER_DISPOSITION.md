@@ -69,3 +69,32 @@ This exact-head owner decision accepts only adapter-to-M1 API compatibility. It 
 - Added `test/gateway.test.ts:117`, using a temporary protected fixture and an actual Windows directory junction (the test uses a directory symlink on non-Windows platforms). The fixture confirms the alias resolves to the protected bytes; M1 rejects alias registration, refuses a read capability for both the sensitive file and alias, and rejects replay of a safe-file capability with the alias path before the synthetic host callback. The direct M1 path also denies both sensitive original and alias; the alias denial creates no approval or `RUNNING` event, Guard stays SAFE, and the protected fixture bytes/hash remain unchanged. A valid safe-file capability remains a positive control.
 - Windows / Node.js `v22.23.1`: targeted alias case passed (1/1); complete `test/gateway.test.ts` passed (37/37, 0 skipped, 0 failed). `git diff --check` passed before recording this result.
 - This is M1 Gateway coverage with a synthetic callback wrapper and temporary data. It is not first-party product-host, real-user-secret, native Shell, or OS-atomic change-and-revert race evidence. It does not establish whether an unreviewed OBSERVE host path bypasses M1. Keep Issue #52 open pending that product-host evidence and the broader acceptance criteria.
+
+## 2026-11-02 exact M9-pinned M2 disposition
+
+**Decision: ACCEPT M2 exact source `941fd22d5e43e1de91a76b8c73006e57a4c15496` for the M1 held-file adapter contract and the configured-target Console composition described below. Keep Issue #52 OPEN / P0 / NOT_VERIFIED for the remaining OS-level race and independent-product evidence.**
+
+### Exact source and reviewed delta
+
+- The current M9 manifest pins M1 `42d362a9a1f4f1972400f2d3414d77982b0fb4e6`, M2 `941fd22d5e43e1de91a76b8c73006e57a4c15496`, and M5 `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7`.
+- Compared with previously reviewed M2 `1c050abace5af6e09b7b934730f2361b78f9d938`, this exact M2 source adds `fileReadCapability.readFileWithCapability`, routes M5's strict read provider through that method, reserves the provider and generic callback fields in the M2 host composition, exports the M5 policy/router entry points, and adds regressions. It does not add a path-only fallback.
+- At exact M2 source, `security-gateway-adapter.mjs` obtains M1's `bindFileReadCapability`, `verifyFileReadCapability`, and `readFileWithCapability` methods. It binds a fixed tool/path map, checks the exact call and opaque capability before each M1 read, rejects an aborted/invalid signal, and forwards the same capability and call to M1. `gateway-adapter.mjs` accepts only `OBSERVE` with `verifyRealPaths: true`, controls the tools/callback/provider passed to M5, and preflights calls before entering the router.
+- The M1 source read remains descriptor-bound. M1 checks the named and held file identities and reads through the held descriptor; this narrows path replacement races but is not an OS-atomic pathname-to-operation transaction.
+
+### First-party route and verification
+
+- `src/ai/console.ts` binds configured target IDs at startup and composes the built package's M1 Gateway, M2 adapter, and M5 router. The HTTP action accepts only a preconfigured `targetId`, then returns a scoped status without returning path or file content.
+- On Windows / Node.js `v24.22.1`, `node --import tsx --test test/security-center-route-m3.test.ts` passed 26/26, 0 failed, 0 skipped. The suite exercised the actual Console CLI/package entry points, a registered safe-read positive control, path replacement, relocated junctions, symlink/junction/hard-link aliases, and the Windows external-junction-to-protected-hardlink case.
+- On the same host, the focused M1 path-alias run passed 16, skipped 2 POSIX-only cases, and failed 0. Windows junction swaps, short-name aliasing, hard-link replacement during a held read, transient alias swaps, and unchanged protected-target content were exercised.
+- Exact M2 adapter contract tests passed 13/13; the M5 policy-router package export test passed 1/1.
+- The exact candidate's hosted CI run `41457235022`, Windows Community wrapper run `41457234433`, and M1 concurrency run `41457234585` succeeded. Exact M9 composition run `41456190364` succeeded on Ubuntu and Windows for the manifest pins above.
+
+### Limits
+
+This is a bounded source-level owner disposition, not an independent review or installed-product certification. The fixtures are synthetic even when the real product route and M1/M2/M5 code are exercised. No test proves that every OS/filesystem resolves paths atomically, prevents change-and-revert races, or protects native Shell and unregistered host tools. No real secret exposure is claimed. Independent product E4 and clean Windows installer lifecycle remain separate acceptance gates. Preserve all current denials and keep Issue #52 open.
+
+## 2026-11-03 M1 secure-path source alignment
+
+PR #149 merged the handle-relative workspace traversal implementation. Its exact head `5eaf323b4188dc4228eadd099d2e27af3e61ae79` and merge commit `0831ed4979ae4d9f4c6698296726732d427fb7ae` have the same tree `04a73c2701489e00fb2ffb341772c822d65ec2e7`. The M9 manifest and provenance test now pin that M1 source; PR #133's `42d362a9a1f4f1972400f2d3414d77982b0fb4e6` is retained only as the historical source that preceded the path-open fix.
+
+On Windows / Node.js `v24.22.1`, the merged candidate's Gateway and configured-target Console suites passed 87 tests with 4 platform-specific skips and no failures. The tests use temporary synthetic files but exercise the real configured-target route and real junction/hard-link swaps. The updated M9 exact-source composition is still pending its hosted Ubuntu/Windows run. This does not close Issue #52 or establish OS-wide atomicity, native-host protection, independent E4, or clean-VM installation acceptance.

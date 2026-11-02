@@ -35,6 +35,58 @@ test('gateway rejects an in-place rewrite between path stat and open',()=>{
   assert.equal(readCalls,0,'registration rejects the changed version before content reads');
  }finally{(fs as any).lstatSync=originalLstatSync;(fs as any).readSync=originalReadSync;fs.rmSync(root,{recursive:true,force:true});}
 });
+test('gateway denies a parent-junction swap split across lstat, open, and realpath calls',async()=>{
+ const parent=fs.mkdtempSync(path.join(os.tmpdir(),'gateway-intercall-junction-race-'));
+ const root=path.join(parent,'workspace'),notes=path.join(root,'notes'),heldNotes=path.join(root,'notes-held'),outside=path.join(parent,'outside');
+ const target=path.join(notes,'public.txt'),outsideNotes=path.join(outside,'notes'),outsideTarget=path.join(outsideNotes,'public.txt');
+ fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outsideNotes,{recursive:true});
+ fs.writeFileSync(target,'AUTHORIZED_WORKSPACE_FIXTURE');fs.writeFileSync(outsideTarget,'SYNTHETIC_OUTSIDE_SENTINEL');
+ const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalRealpathNative=(fs.realpathSync as any).native;
+ const canonicalTarget=originalRealpathNative(target);
+ let aliasActive=false,aliasToggles=0,targetLstatCalls=0,targetOpenCalls=0,readCalls=0,externalRead='';
+ const sameTargetPath=(candidate:any)=>{
+  const actual=path.resolve(String(candidate)),expected=path.resolve(canonicalTarget);
+  return process.platform==='win32'?actual.toLowerCase()===expected.toLowerCase():actual===expected;
+ };
+ const installAlias=()=>{fs.renameSync(notes,heldNotes);fs.symlinkSync(outsideNotes,notes,process.platform==='win32'?'junction':'dir');aliasActive=true;aliasToggles++;};
+ const restoreWorkspace=()=>{if(!aliasActive)return;if(process.platform==='win32')fs.rmdirSync(notes);else fs.unlinkSync(notes);fs.renameSync(heldNotes,notes);aliasActive=false;};
+ try{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   if(sameTargetPath(candidate)){targetLstatCalls++;if(!aliasActive)installAlias();}
+   return(originalLstatSync as any)(candidate,...args);
+  };
+  (fs as any).openSync=(candidate:any,...args:any[])=>{
+   if(path.resolve(String(candidate))===path.resolve(target))targetOpenCalls++;
+   return(originalOpenSync as any)(candidate,...args);
+  };
+  (fs.realpathSync as any).native=(candidate:any,...args:any[])=>{
+   return originalRealpathNative(candidate,...args);
+  };
+  (fs as any).readSync=(fd:number,...args:any[])=>{
+   readCalls++;
+   const count=(originalReadSync as any)(fd,...args);
+   if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')externalRead+=args[0].subarray(args[1],args[1]+count).toString('utf8');
+   return count;
+  };
+  let runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,rejection:unknown;
+  try{runtime=createTrustedExecutionGateway({agentId:'intercall-junction-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()});}catch(error){rejection=error;}
+  await runtime?.close();restoreWorkspace();
+  assert.ok(targetLstatCalls>0,'the test reaches the file stat boundary before installing its parent junction');
+  assert.equal(aliasToggles,1,'the adversary installs exactly one outside junction');
+  assert.ok(rejection,`Gateway accepted the parent junction; path opens=${targetOpenCalls}, byte reads=${readCalls}, external bytes=${externalRead}`);
+  assert.match(String((rejection as Error).message??rejection),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED|GATEWAY_RESOURCE_CHANGED/);
+  restoreWorkspace();
+  assert.equal(aliasToggles,1,'the adversary swaps the parent to an outside junction after lstat and before the secure component open');
+  assert.equal(targetOpenCalls,0,'the ordinary file open is never attempted after the handle-relative no-follow check rejects the junction');
+  assert.equal(readCalls,0,'neither registration nor the denied alias reads any file bytes');
+  assert.equal(externalRead,'','the external sentinel is never read');
+  assert.equal(fs.readFileSync(target,'utf8'),'AUTHORIZED_WORKSPACE_FIXTURE');
+  assert.equal(fs.readFileSync(outsideTarget,'utf8'),'SYNTHETIC_OUTSIDE_SENTINEL');
+ }finally{
+  restoreWorkspace();(fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs.realpathSync as any).native=originalRealpathNative;
+  fs.rmSync(parent,{recursive:true,force:true});
+ }
+});
 test('gateway rejects a host-authorized file identity replaced at the open boundary before reading bytes',()=>{
  const root=fs.mkdtempSync(path.join(home,'expected-identity-open-race-')),target=path.join(root,'public.txt'),held=path.join(root,'public-held.txt');fs.writeFileSync(target,'authorized original');
  const stat=fs.lstatSync(target,{bigint:true}),expectedIdentity={dev:stat.dev.toString(),ino:stat.ino.toString(),birthtimeNs:stat.birthtimeNs.toString(),ctimeNs:stat.ctimeNs.toString(),mtimeNs:stat.mtimeNs.toString(),size:stat.size.toString()};
@@ -207,7 +259,7 @@ test('POSIX registration does not block if a regular file is swapped to a FIFO b
   "fs.lstatSync=function(candidate,options){const stat=originalLstatSync.call(fs,candidate,options);if(!swapped&&path.resolve(String(candidate))===path.resolve(target)){swapped=true;fs.unlinkSync(target);execFileSync('mkfifo',[target]);}return stat;};",
   "const sdk=await import(pathToFileURL(path.join(process.cwd(),'src/sdk.ts')).href);let runtime;",
   "try{runtime=sdk.createTrustedExecutionGateway({agentId:'fifo-open-race-fixture',guard:sdk.createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'public.txt'}],evidence:new sdk.EvidenceRecorder()});process.stderr.write('FIFO_REGISTRATION_UNEXPECTEDLY_ALLOWED');process.exitCode=1;}",
-  "catch(error){if(!swapped||!String(error?.message??error).includes('GATEWAY_RESOURCE_CHANGED')){process.stderr.write(String(error?.stack??error));process.exitCode=1;}else process.stdout.write('FIFO_REPLACEMENT_DENIED');}",
+  "catch(error){if(!swapped||!/(GATEWAY_RESOURCE_CHANGED|SECURE_FILE_TYPE_REJECTED)/.test(String(error?.message??error))){process.stderr.write(String(error?.stack??error));process.exitCode=1;}else process.stdout.write('FIFO_REPLACEMENT_DENIED');}",
   "finally{await runtime?.close();}",
  ].join('\n');
  try{
@@ -218,78 +270,69 @@ test('POSIX registration does not block if a regular file is swapped to a FIFO b
   assert.equal(output,'FIFO_REPLACEMENT_DENIED');
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
-test('gateway rejects a replaced file when distinct 64-bit identities collapse to one JavaScript number',async()=>{
+test('gateway rejects a bigint identity mismatch before opening a Node descriptor',async()=>{
  const root=fs.mkdtempSync(path.join(home,'identity-precision-')),workspace=path.join(root,'workspace'),target=path.join(workspace,'public.txt'),held=target+'.held',replacement=path.join(root,'replacement.txt');
  fs.mkdirSync(workspace);fs.writeFileSync(target,'authorized original');fs.writeFileSync(replacement,'unregistered replacement');
- const originalLstatSync=fs.lstatSync,originalFstatSync=fs.fstatSync,originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync;
- let replaced=false,openedFd:number|undefined,closedOpenedFd=false,requestedBigInt=false,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
- const rounded=9007199254740992n,distinct=9007199254740993n;
+ const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,requestedBigInt=false,readCalls=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+ const rounded=9007199254740992n;
  const statWithIdentity=(stat:any,ino:bigint,asBigInt:boolean)=>Object.assign(Object.create(Object.getPrototypeOf(stat)),stat,{dev:asBigInt?1n:1,ino:asBigInt?ino:Number(ino)});
  try{
   (fs as any).lstatSync=(candidate:any,options?:any)=>{
    const stat=originalLstatSync(candidate,options),asBigInt=options?.bigint===true;
-   if(path.resolve(String(candidate))===path.resolve(target)){
+   if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){
     requestedBigInt ||= asBigInt;
+    fs.renameSync(target,held);fs.renameSync(replacement,target);replaced=true;
     return statWithIdentity(stat,rounded,asBigInt);
    }
    return stat;
   };
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
-   if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){replaced=true;fs.renameSync(target,held);fs.renameSync(replacement,target);}
-   const fd=originalOpenSync(candidate,...args);
-   if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;
-   return fd;
-  };
-  (fs as any).fstatSync=(fd:number,options?:any)=>{
-   const stat=originalFstatSync(fd,options),asBigInt=options?.bigint===true;
-   if(fd===openedFd){requestedBigInt ||= asBigInt;return statWithIdentity(stat,distinct,asBigInt);}
-   return stat;
-  };
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
+  (fs as any).readSync=(...args:any[])=>{readCalls++;return(originalReadSync as any)(...args);};
   assert.throws(()=>{runtime=createTrustedExecutionGateway({agentId:'identity-precision-fixture',guard:createAgentGuard({alert:false}),workspaceRoot:workspace,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()});},/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the path is replaced at the actual open boundary');
+  assert.equal(replaced,true,'the file is replaced after the bigint path stat and before the handle-relative open');
   assert.equal(requestedBigInt,true,'M1 must request lossless filesystem identity values');
-  assert.equal(closedOpenedFd,true,'the rejected replacement descriptor must be closed');
+  assert.equal(openedPath,false,'identity mismatch is rejected before a Node path-based descriptor is opened');
+  assert.equal(readCalls,0,'no content is read from the replacement');
   assert.equal(fs.readFileSync(target,'utf8'),'unregistered replacement');
   assert.equal(fs.readFileSync(held,'utf8'),'authorized original');
  }finally{
-  (fs as any).lstatSync=originalLstatSync;(fs as any).fstatSync=originalFstatSync;(fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
   if(runtime)await runtime.close();
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
-test('gateway rejects a reused file ID when creation and change timestamps identify a replacement',async()=>{
+test('gateway rejects a reused file ID with mismatched creation and change timestamps before Node open',async()=>{
  const root=fs.mkdtempSync(path.join(home,'identity-reuse-')),workspace=path.join(root,'workspace'),target=path.join(workspace,'public.txt'),held=target+'.held',replacement=path.join(root,'replacement.txt');
  fs.mkdirSync(workspace);fs.writeFileSync(target,'authorized original');fs.writeFileSync(replacement,'unregistered replacement');
- const originalLstatSync=fs.lstatSync,originalFstatSync=fs.fstatSync,originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync;
- let replaced=false,openedFd:number|undefined,closedOpenedFd=false,requestedBigInt=false,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
- const statWithReusedId=(stat:any,birthtimeNs:bigint,ctimeNs:bigint,asBigInt:boolean)=>Object.assign(Object.create(Object.getPrototypeOf(stat)),stat,{dev:asBigInt?1n:1,ino:asBigInt?42n:42,birthtimeNs:asBigInt?birthtimeNs:Number(birthtimeNs),ctimeNs:asBigInt?ctimeNs:Number(ctimeNs)});
+ const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,requestedBigInt=false,readCalls=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+ const replacementStat=fs.lstatSync(replacement,{bigint:true});
+ const statWithReusedId=(stat:any,birthtimeNs:bigint,ctimeNs:bigint,asBigInt:boolean)=>Object.assign(Object.create(Object.getPrototypeOf(stat)),stat,{
+  dev:asBigInt?replacementStat.dev:Number(replacementStat.dev),ino:asBigInt?replacementStat.ino:Number(replacementStat.ino),
+  birthtimeNs:asBigInt?birthtimeNs:Number(birthtimeNs),ctimeNs:asBigInt?ctimeNs:Number(ctimeNs),
+  mtimeNs:asBigInt?replacementStat.mtimeNs:Number(replacementStat.mtimeNs),size:asBigInt?replacementStat.size:Number(replacementStat.size),
+ });
  try{
   (fs as any).lstatSync=(candidate:any,options?:any)=>{
    const stat=originalLstatSync(candidate,options),asBigInt=options?.bigint===true;
-   if(path.resolve(String(candidate))===path.resolve(target)){requestedBigInt ||= asBigInt;return statWithReusedId(stat,101n,201n,asBigInt);}
+   if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){
+    requestedBigInt ||= asBigInt;fs.renameSync(target,held);fs.renameSync(replacement,target);replaced=true;
+    return statWithReusedId(stat,101n,201n,asBigInt);
+   }
    return stat;
   };
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
-   if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){replaced=true;fs.renameSync(target,held);fs.renameSync(replacement,target);}
-   const fd=originalOpenSync(candidate,...args);
-   if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;
-   return fd;
-  };
-  (fs as any).fstatSync=(fd:number,options?:any)=>{
-   const stat=originalFstatSync(fd,options),asBigInt=options?.bigint===true;
-   if(fd===openedFd){requestedBigInt ||= asBigInt;return statWithReusedId(stat,301n,401n,asBigInt);}
-   return stat;
-  };
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
+  (fs as any).readSync=(...args:any[])=>{readCalls++;return(originalReadSync as any)(...args);};
   assert.throws(()=>{runtime=createTrustedExecutionGateway({agentId:'identity-reuse-fixture',guard:createAgentGuard({alert:false}),workspaceRoot:workspace,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()});},/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the pathname was replaced between the pre-open check and open');
+  assert.equal(replaced,true,'the pathname is replaced after stat and before the handle-relative open');
   assert.equal(requestedBigInt,true,'M1 must request lossless identity and timestamp values');
-  assert.equal(closedOpenedFd,true,'the replacement descriptor must close when its identity differs');
+  assert.equal(openedPath,false,'the timestamp mismatch is rejected before a Node descriptor is opened');
+  assert.equal(readCalls,0,'no content is read from the replacement');
   assert.equal(fs.readFileSync(target,'utf8'),'unregistered replacement');
   assert.equal(fs.readFileSync(held,'utf8'),'authorized original');
  }finally{
-  (fs as any).lstatSync=originalLstatSync;(fs as any).fstatSync=originalFstatSync;(fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
   if(runtime)await runtime.close();
   fs.rmSync(root,{recursive:true,force:true});
  }
@@ -319,72 +362,63 @@ test('POSIX parent symlink swapped at the open boundary is rejected before conte
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
-test('Windows directory junction swapped at the open boundary is rejected before file reads',{skip:process.platform!=='win32'},async()=>{
+test('Windows directory junction inserted after path stat is rejected by secure traversal',{skip:process.platform!=='win32'},()=>{
  const root=fs.mkdtempSync(path.join(home,'junction-open-race-')),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'unregistered external file');
- const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync;
- let replaced=false,openedFd:number|undefined,closedOpenedFd=false,readCalls=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
- const originalReadSync=fs.readSync;
+ const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,readCalls=0;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   const stat=(originalLstatSync as any)(candidate,...args);
    if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){replaced=true;fs.renameSync(workspace,heldWorkspace);fs.symlinkSync(outside,workspace,'junction');}
-   const fd=originalOpenSync(candidate,...args);
-   if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;
-   return fd;
+   return stat;
   };
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
   (fs as any).readSync=(...args:any[])=>{readCalls++;return (originalReadSync as any)(...args);};
-  assert.throws(()=>{runtime=createTrustedExecutionGateway({agentId:'windows-junction-open-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()});},/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the parent directory was swapped for an external junction at open');
-  assert.equal(closedOpenedFd,true,'the descriptor opened through the replacement junction is closed');
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'windows-junction-open-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_PATH_COMPONENT_REJECTED/);
+  assert.equal(replaced,true,'the parent directory is swapped after lstat and before handle-relative traversal');
+  assert.equal(openedPath,false,'a path-based file open is never attempted through the junction');
   assert.equal(readCalls,0,'the external file is rejected before any content read');
   assert.deepEqual(fs.readFileSync(external),externalBefore,'the external fixture remains unchanged');
   assert.equal(fs.readFileSync(path.join(heldWorkspace,'public.txt'),'utf8'),'authorized original');
  }finally{
-  (fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;(fs as any).readSync=originalReadSync;
-  if(runtime)await runtime.close();
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+  try{if(fs.lstatSync(workspace).isSymbolicLink())fs.rmdirSync(workspace);}catch{}
+  if(fs.existsSync(heldWorkspace)&&!fs.existsSync(workspace))fs.renameSync(heldWorkspace,workspace);
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
-test('parent symlink or junction swapped only during open cannot hide an external held descriptor',async()=>{
+test('parent symlink or junction installed after lstat is rejected before ordinary open',()=>{
  const root=fs.mkdtempSync(path.join(home,'parent-alias-restored-during-open-')),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'unregistered external file');
- const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
- let replaced=false,restored=false,openedFd:number|undefined,closedOpenedFd=false,readCalls=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+ const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,readCalls=0;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
-   if(path.resolve(String(candidate))!==path.resolve(target)||replaced)return originalOpenSync(candidate,...args);
-   replaced=true;fs.renameSync(workspace,heldWorkspace);
-   try{
-    fs.symlinkSync(outside,workspace,process.platform==='win32'?'junction':'dir');
-    openedFd=originalOpenSync(candidate,...args);
-    return openedFd;
-   }finally{
-    try{if(fs.lstatSync(workspace).isSymbolicLink()){if(process.platform==='win32')fs.rmdirSync(workspace);else fs.unlinkSync(workspace);}}catch{}
-    if(fs.existsSync(heldWorkspace)&&!fs.existsSync(workspace))fs.renameSync(heldWorkspace,workspace);
-    restored=fs.existsSync(workspace)&&!fs.existsSync(heldWorkspace);
-   }
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   const stat=(originalLstatSync as any)(candidate,...args);
+   if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){replaced=true;fs.renameSync(workspace,heldWorkspace);fs.symlinkSync(outside,workspace,process.platform==='win32'?'junction':'dir');}
+   return stat;
   };
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
   (fs as any).readSync=(...args:any[])=>{readCalls++;return(originalReadSync as any)(...args);};
-  assert.throws(()=>{runtime=createTrustedExecutionGateway({agentId:'parent-alias-restored-open',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()});},/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the external alias must be used during open');
-  assert.equal(restored,true,'the original workspace must be restored before Gateway post-open checks');
-  assert.equal(closedOpenedFd,true,'the descriptor opened through the transient alias is closed');
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'parent-alias-after-lstat',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED/);
+  assert.equal(replaced,true,'the parent alias is installed after lstat and before handle-relative traversal');
+  assert.equal(openedPath,false,'the ordinary pathname open is skipped after no-follow traversal rejects the alias');
   assert.equal(readCalls,0,'the external descriptor is rejected before content reads');
   assert.deepEqual(fs.readFileSync(external),externalBefore,'the external fixture remains unchanged');
-  assert.equal(fs.readFileSync(path.join(workspace,'public.txt'),'utf8'),'authorized original');
+  assert.equal(fs.readFileSync(path.join(heldWorkspace,'public.txt'),'utf8'),'authorized original');
  }finally{
-  (fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;(fs as any).readSync=originalReadSync;
-  if(runtime)await runtime.close();
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+  try{if(fs.lstatSync(workspace).isSymbolicLink()){if(process.platform==='win32')fs.rmdirSync(workspace);else fs.unlinkSync(workspace);}}catch{}
+  if(fs.existsSync(heldWorkspace)&&!fs.existsSync(workspace))fs.renameSync(heldWorkspace,workspace);
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
-test('parent symlink or junction installed after canonicalization is rejected before the descriptor is retained',async()=>{
+test('parent symlink or junction installed during lstat is rejected by no-follow traversal',()=>{
  const root=fs.mkdtempSync(path.join(home,'parent-alias-before-lstat-')),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'unregistered external file');
- const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
- let replaced=false,openedFd:number|undefined,closedOpenedFd=false,readCalls=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+ const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,readCalls=0;
  try{
   (fs as any).lstatSync=(candidate:any,...args:any[])=>{
    if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){
@@ -394,18 +428,16 @@ test('parent symlink or junction installed after canonicalization is rejected be
    }
    return (originalLstatSync as any)(candidate,...args);
   };
-  (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=(originalOpenSync as any)(candidate,...args);if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;return fd;};
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
   (fs as any).readSync=(...args:any[])=>{readCalls++;return (originalReadSync as any)(...args);};
-  assert.throws(()=>{runtime=createTrustedExecutionGateway({agentId:'parent-alias-before-lstat',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()});},/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the parent alias must be installed after realpath and before lstat');
-  assert.equal(closedOpenedFd,true,'an external descriptor cannot be retained in the Gateway resource map');
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'parent-alias-before-lstat',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_PATH_COMPONENT_REJECTED|SECURE_RELATIVE_OPEN_FAILED/);
+  assert.equal(replaced,true,'the parent alias is installed after realpath and before lstat');
+  assert.equal(openedPath,false,'an external file descriptor is never opened');
   assert.equal(readCalls,0,'registration rejects before reading external bytes');
   assert.deepEqual(fs.readFileSync(external),externalBefore,'the external fixture remains unchanged');
   assert.equal(fs.readFileSync(path.join(heldWorkspace,'public.txt'),'utf8'),'authorized original');
  }finally{
-  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;(fs as any).readSync=originalReadSync;
-  if(runtime)await runtime.close();
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
   try{if(fs.lstatSync(workspace).isSymbolicLink()){if(process.platform==='win32')fs.rmdirSync(workspace);else fs.unlinkSync(workspace);}}catch{}
   if(fs.existsSync(heldWorkspace))fs.renameSync(heldWorkspace,workspace);
   fs.rmSync(root,{recursive:true,force:true});
@@ -1042,9 +1074,10 @@ test('gateway close tries every resource after a close error and exposes only a 
    assert.ok(!`${error.message}\n${error.stack??''}`.includes(path.join(s.root,'.env')));
    return true;
   });
-  assert.equal(attempted.length,2,'only the two non-protected files have retained descriptors');
+  const expectedCloseAttempts=process.platform==='win32'?2:5;
+  assert.equal(attempted.length,expectedCloseAttempts,'close covers the retained file descriptors and secure workspace handles');
   await assert.rejects(s.runtime.close(),/GATEWAY_RESOURCE_CLOSE_FAILED/);
-  assert.equal(attempted.length,2,'a repeated close does not retry already-attempted descriptors');
+  assert.equal(attempted.length,expectedCloseAttempts,'a repeated close does not retry already-attempted handles');
  }finally{(fs as any).closeSync=originalClose;await s.runtime.close().catch(()=>{});}
 });
 test('fixed argv process really executes normal task; arbitrary shell does not run',async()=>{const s=setup({commands:{build:{executable:process.execPath,args:['-e',"require('fs').writeFileSync('built.txt','ok');console.log('BUILD_OK')"]}}});try{await assert.rejects(s.runtime.agent.dispatch({name:'run_command',args:{command:'node -e dangerous'}}),/unregistered_command/);const result=await s.runtime.agent.dispatch({name:'run_command',args:{command:'build'}}) as any;assert.equal(result.exitCode,0);assert.equal(fs.readFileSync(path.join(s.root,'built.txt'),'utf8'),'ok');assert.match(result.stdout,/BUILD_OK/);assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'NOT_VERIFIED');}finally{await s.runtime.close();}});

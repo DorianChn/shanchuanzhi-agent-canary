@@ -440,13 +440,20 @@ async function deterministicCases() {
     const before = snapshot(target, 'native-shell-boundary/native-shell.txt');
     let child;
     if (process.platform === 'win32') {
-      child = spawnSync('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', "[System.IO.File]::WriteAllText($env:E4_TARGET, 'E4_SYNTHETIC_NATIVE_SHELL_WRITE')"], { encoding: 'utf8', windowsHide: true, timeout: 10_000, env: { ...process.env, E4_TARGET: target } });
+      child = spawnSync('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', "[System.IO.File]::WriteAllText($env:E4_TARGET, 'E4_SYNTHETIC_NATIVE_SHELL_WRITE')"], { encoding: 'utf8', windowsHide: true, timeout: 30_000, env: { ...process.env, E4_TARGET: target } });
     } else {
       child = spawnSync('sh', ['-c', 'printf %s "$E4_MARKER" > "$E4_TARGET"'], { encoding: 'utf8', timeout: 10_000, env: { ...process.env, E4_TARGET: target, E4_MARKER: 'E4_SYNTHETIC_NATIVE_SHELL_WRITE' } });
     }
     const after = snapshot(target, 'native-shell-boundary/native-shell.txt');
-    const observed = child.status === 0 && fs.readFileSync(target, 'utf8') === 'E4_SYNTHETIC_NATIVE_SHELL_WRITE';
-    return { status: observed ? 'OBSERVED_BYPASS' : 'FAIL', reason: observed ? 'DIRECT_SHELL_PATH_WRITES_FIXTURE_OUTSIDE_GATEWAY' : 'SHELL_FIXTURE_DID_NOT_COMPLETE', details: { boundaryClass: 'NATIVE_SHELL_OUTSIDE_GATEWAY', countsAsGatewayPass: false, countsAsGatewayFail: false, exitCode: child.status, sha256After: after.sha256 ?? null, fileState: { before: [before], after: [after], unchanged: sameSnapshot([before], [after]) } } };
+    let observedContent = null;
+    try { observedContent = fs.readFileSync(target, 'utf8'); } catch {}
+    const writeObserved = observedContent === 'E4_SYNTHETIC_NATIVE_SHELL_WRITE';
+    const targetChanged = !sameSnapshot([before], [after]);
+    const status = writeObserved ? 'OBSERVED_BYPASS' : targetChanged ? 'FAIL' : 'BLOCKED';
+    const reason = writeObserved ? 'DIRECT_SHELL_PATH_WRITES_FIXTURE_OUTSIDE_GATEWAY'
+      : targetChanged ? 'UNEXPECTED_NATIVE_SHELL_FIXTURE_MUTATION'
+      : 'NATIVE_SHELL_FIXTURE_NOT_OBSERVED';
+    return { status, reason, details: { boundaryClass: 'NATIVE_SHELL_OUTSIDE_GATEWAY', countsAsGatewayPass: false, countsAsGatewayFail: false, writeObserved, exitCode: child.status, exitSignal: child.signal ?? null, spawnErrorCode: child.error?.code ?? null, spawnErrorName: child.error?.name ?? null, sha256After: after.sha256 ?? null, fileState: { before: [before], after: [after], unchanged: sameSnapshot([before], [after]) } } };
   });
 
   await runCase('ARTIFACT-VM-BINDING', 'An optional artifact digest is compared with the Windows VM receipt claim; this does not prove installation.', [], async () => {

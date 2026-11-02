@@ -2,7 +2,9 @@
 
 ## Status and scope
 
-The Windows Community desktop candidate includes an **Auto E4 / 自动 E4** action. It coordinates checks from the installed payload, streams stage status to the UI, prevents concurrent runs, and writes a run-specific JSON report, Markdown report, event log, evidence index, and ZIP bundle with a SHA-256 sidecar.
+The current source tree contains an **Auto E4 / 自动 E4** action for bounded, author-operated checks. The published `v3.0.0-competition-candidate.4` installer does **not** include this source change; a Windows package must be rebuilt from the reviewed source before the action is available. Do not infer that a published installer contains the action from this document alone.
+
+When present in a rebuilt package, the action coordinates checks from the installed payload, streams stage status to the UI, prevents concurrent runs, and writes a run-specific JSON report, Markdown report, event log, evidence index, and ZIP bundle with a SHA-256 sidecar.
 
 This is an author-operated acceptance runner, not an E4 certifier. It always reports **E4 EXTERNAL INDEPENDENCE NOT VERIFIED** until a different real operator performs and signs off an independent run. A claimed role or machine identity does not establish independence.
 
@@ -20,7 +22,7 @@ The fixed stages are `environment`, `clean-vm`, `release-package`, `sdk-side-eff
 
 ## Run and export
 
-Install the Windows Community candidate and click **自动 E4** once. While it runs, the controls are disabled and each stage reports `RUNNING`, `PASS`, `FAIL`, `BLOCKED`, `SKIPPED`, or `NOT_VERIFIED`. After completion, use **打开最终报告** to inspect the local Markdown report. Use **导出复现报告** only when you want the existing redacted JSON/Markdown export flow.
+Build and install a Windows Community package from the reviewed source revision that contains the action; the published candidate.4 installer does not expose it. Click **自动 E4** once. While it runs, the controls are disabled and each stage reports `RUNNING`, `PASS`, `FAIL`, `BLOCKED`, `SKIPPED`, or `NOT_VERIFIED`. After completion, use **打开最终报告** to inspect the local Markdown report. Use **导出复现报告** only when you want the existing redacted JSON/Markdown export flow.
 
 The evidence bundle is saved under the application's local data directory in `auto-e4-runs/<run-id>/`. It contains the run report, event log, and index; a `.sha256` sidecar accompanies the ZIP. Review the report before sharing it. Do not treat `DENY` alone as proof of no side effect; check the recorded before/after hashes and receiver count.
 

@@ -1,5 +1,50 @@
 # Agent Canary 3.0 发布准备情况（M7）
 
+## 当前审计：2026-10-25 — HOLD
+
+本轮仅在现有 `agents/M7` / `feature/ac3-reliability-ac3` 审计，起始 HEAD `ab9b03f1211443af3f905863113dd2b4a5c8ab0c`。保留已有 workflow/`.gitignore` 修改；没有 merge、push、Release、安装器/VM/真实模型执行。下方早期 PR/本地状态均为历史。
+
+### 续审：M7 包装器来源 pin 修正 — HOLD
+
+- 续审起点为本地提交 2c2ff20cf7c52acb083c0b2ff5e910f3d08b1d77；当前远端产品基线 origin/feature/agent-canary-3.0 为 b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097。GitHub 对该基线的 CI run 40162947429 为 9/9 success；Windows Community run 40162947358 的 wrapper 两 job 与 build-evidence job success，installer lifecycle job skipped。它们是远端基线结果，不是本地未发布候选的 exact-head CI。
+- PR #40 已合并（merge c13c40f06fd066ef204c3fb082f070b5b4c8a93d），M8 当前 head 为 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841。已接受的 M8 source pin 为 24b8651730d57d860ba136e77db1526031abb1fc；仓库验证其为当前 PR head 祖先，固定 demo Git blob 与 PR head blob 均为 3428f297c28845ae054c0ca63aa6c5c4d7ef785f。
+- 复现旧 M7 断言：test/windows-packaging.test.mjs 要求 refs/pull/40/head 仍等于旧 SHA 90fcde0…，但远端实际头为 1c94ed4…。刷新到完整远端历史并提交本地修复后，M7 分支相对当前 feature 基线为 69 ahead / 414 behind，唯一 merge base 为 5c7d95db6062118eaf90a5004b18f6ebe7c6b238；M0 Issue #41 的复核要求不要整体合入此分叉分支。目标 workflow 还把 lifecycle job 限为手动触发，故未合并或覆盖整文件；仅同步已合并 M8 source pin/祖先/blob 校验契约，并保留 PR lifecycle 门禁。
+- M7-owned 本地候选改动：.github/workflows/windows-community.yml、security-lab/build-community.py、test/windows-packaging.test.mjs。新校验把 immutable source pin、当前 PR head 祖先关系、两个精确 demo blob 和构建报告 provenance 都绑定起来；测试另保留非祖先负例。没有移除断言、跳过测试或改弱 Hook/installer 安全策略。
+- 定向结果：node --import tsx --test test/reliability.test.mjs packaging/windows/test-worker.mjs 为 39 pass / 0 fail / 2 symlink-permission skip；两个受影响 JS 测试文件的 node --check 与 git diff --check 通过。node --import tsx --test test/windows-packaging.test.mjs 为 25 pass / 1 fail / 1 skip；失败项现已越过旧 M8 SHA 断言、祖先和 blob 检查，停在 build fixture 要求 Python 的步骤。本机只有 Windows Store 的 python.exe 执行别名（提示 Python 未找到），无 py.exe；未安装系统工具。不能把此项记为通过，需在有 Python 的受支持 Windows CI 运行 exact candidate。
+- 本机没有可用 YAML parser；没有声称做过完整 YAML parse。PR lifecycle 条件在本地回归中仍保持对 pull_request 启用。
+- 现有 .gitignore 的原有脏改动保持原字节，SHA-256 3769d09de7ed13b1749a5117e61bfe75515d30705347681d589e74f1d24773a4。本轮不 push；候选尚无 hosted exact-head CI。
+- Issue #41 与 #70 仍 OPEN。Hosted lifecycle job 成功不等于用户要求的 clean Windows 11 VM / standard-user lifecycle 验收；EFS、完整首次启动/升级/取消回滚与重装仍按各自 gate 状态报告。24h 和 7d soak 均 NOT_RUN；本轮未运行 Setup.exe、VMware 或真实模型。
+
+### 上一检查点源码与 CI（保留历史快照）
+
+- PR #96 已合并，其最后 head `40d024fb6089cd72a186107912bd6baed824f301` 的 [CI 40051920265](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40051920265) 和 [wrapper 40051920252](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40051920252) 成功；lifecycle skipped。本地后续 `ab9b03f` 没有可见的 PR-triggered CI 或开放 PR。
+- 当前产品 `b0d8d77c1f13a6f3ee3a9270ddd4fc0507ff4097` 的 [CI 40162947429](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40162947429) 为 9/9 成功；[wrapper 40162947358](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/40162947358) 为 3 success + 1 skipped lifecycle。绿色总状态不代表 lifecycle 已运行。
+- `ab9b03f` 的 BUILD_REPORT status 修复在当前产品对应 workflow、lifecycle script 和回归中均已存在；此 hunk 已集成，无需重复 PR。产品 M8 pin 为 `24b8651730d57d860ba136e77db1526031abb1fc`，校验该 source 是 fetched PR head 的祖先且两个 demo blob 相同。旧分支仍要求 PR head 等于 `90fcde0…`；本轮完整 packaging suite 如实记录 25 pass / 1 fail / 1 skip。不能将这个旧分支整树直接作为新产品候选。
+- 本轮修复点为保留原有 lifecycle 事件门禁修正并补行为回归；39 pass / 0 fail / 2 skip。该回归只验证实际条件的布尔事件规则，不是完整 Actions/YAML parser 或 hosted job 执行验证。源/包 Hook provenance、tamper rejection、安全决策和 caller-canary 断言未被弱化。共享 workflow 的新 M8 协调确认与候选 hosted CI 仍待完成。
+
+### 当前开放外部门槛
+
+| 门槛 | 当前结论 |
+|---|---|
+| #41 clean Windows 11 VM / standard-user lifecycle | OPEN / NOT_VERIFIED；[M0 最新只读清单](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/41#issuecomment-6394453501) 没有可安全定位的已注册 clean VM，预期 VM 路径缺失。先登记隔离 VM、精确包与 Issue #29 资源窗口，再运行。 |
+| 首次启动、升级、重装、EFS、实际取消/失败回滚 | 未完成独立当前候选验收；历史 hosted install/uninstall 不能覆盖这些步骤。 |
+| 24h / 7d | 均 NOT_RUN；本轮仅 2.003 秒 smoke。 |
+| 当前产物内部复核 | 只读取产品 run 的 artifact 元数据；未重新下载/解包/执行，不提供本轮 Setup.exe 内部哈希验证声明。 |
+| #70 default-branch Hono remediation | OPEN；修复 PR #67 等待维护者决策，不在本轮授权合并范围。 |
+| 签名/SmartScreen、独立 product E4 / native-host 能力 | 不由本轮源码与合成测试证明；保持对应外部门槛。 |
+
+#53、#59、#93、#99 的 GitHub 当前 state 均为 CLOSED；这些限定 gate 的关闭不等于 #41 或整体 Release READY。
+
+### #70 依赖与 manifest 只读核验
+
+- 默认分支 `main@146be17ea924d09a78ceff90b83006cdd40dfc43` 由 `@modelcontextprotocol/sdk` 的 `hono:^4.11.4` 依赖解析到 Hono **4.13.7**。root lockfile SHA-256 `d3dfcec5c889f7be1699d69dc604b5cb4bba2016fb1090d96d1df18772627150` 与该提交 SOURCE_MANIFEST 条目匹配。
+- 现有 [PR #67](https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/67) head `cda74e9860f1d96d7404871378c0c737535fa77e` 为 Hono **4.13.13**，lockfile SHA-256 `de39f00b6496708fc738f944776b53800961dfa399691069c8b57065a73f4f38` 与 SOURCE_MANIFEST 匹配；[exact-source CI 39827204460](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/39827204460) SUCCESS。
+- 当前 feature 与本地 M7 lockfile 均解析到 Hono **4.13.13**，lockfile SHA-256 `243693054bb67e92ba22a0502fda105544cf9e22b4b26d9dbda8f4864a65ac94`。feature 不包含 root SOURCE_MANIFEST；未把它当成旧默认分支的 manifest 验证结果。
+- 对上述四个精确提交的 tracked `*.ts/*.js/*.mjs/*.cjs` 做 `git grep -n -E 'serveStatic|hono/serve-static|hono/(bun|deno|cloudflare-workers)'`，均无命中。它只说明这些源码中的直接调用未找到，不能证明依赖内部/动态调用不存在或将 advisory 判定为不适用。本轮未重跑 vulnerability feed，也未关闭告警。
+- 完整临时日志：`%TEMP%/m7-audit-20261025-7d170b1d1a794767916d548e38678a28/`。性能与稳定性实测见同目录报告和本仓库另外三份 M7 报告。
+
+## 2026-10-13 起的历史记录
+
 日期：2026-10-13
 整体状态：**HOLD — 不建议将当前 Windows 候选标为已通过安装与稳定性验收。**
 

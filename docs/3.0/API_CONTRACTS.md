@@ -1,3 +1,12 @@
+## Current protected-file candidate — 2026-11-03
+
+This section supersedes older exact-source and host-path snapshots below; those dated entries remain historical evidence.
+
+- The current feature candidate includes merged PR #149 (`0831ed4979ae4d9f4c6698296726732d427fb7ae`), whose tree matches the exact M1 security follow-up head `5eaf323b4188dc4228eadd099d2e27af3e61ae79`. The M9 manifest now pins that M1 commit instead of PR #133's older `42d362a9a1f4f1972400f2d3414d77982b0fb4e6`; M2 and M5 pins remain `941fd22d5e43e1de91a76b8c73006e57a4c15496` and `51a64f0dadf0e2ec8203387bc3fe4bfa494ed2e7`.
+- Windows / Node.js `v24.22.1`: the current merged candidate passed `npm run build` and `node --import tsx --test test/gateway.test.ts test/security-center-route-m3.test.ts` (91 tests: 87 passed, 0 failed, 4 platform skips). The Console tests call the configured-target route and use temporary synthetic files; the Windows race cases perform actual junction/hard-link replacements, including a separate process.
+- The tests support the registered Gateway/Console boundary only. They do not establish protection for native Shell, arbitrary host callbacks, every filesystem, or all operating-system operations. The independent M9 rerun against the updated exact-source manifest is required before calling module composition current; product E4 and clean-VM installer acceptance remain separate.
+- Keep Issue #52 OPEN / P0 / NOT_VERIFIED until exact-source M9, host ownership, and the remaining platform acceptance gates are satisfied. No actual secret exposure is claimed.
+
 ## M0 exclusive runtime resource contract — 2026-10-24
 
 - At most two module development tasks run concurrently. GitHub comments alone do not start chats; retain an actual worker/job handle or completed owner result before recording execution.

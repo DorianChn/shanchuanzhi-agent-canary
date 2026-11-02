@@ -29,10 +29,11 @@ test('payload inventory includes empty directories so NSIS can remove them non-r
   }
 });
 
-test('Windows Community packaging requires the exact 38 runtime files and SDK declaration',()=>{
+test('Windows Community packaging requires the exact 39 runtime files and SDK declaration',()=>{
   const build=fs.readFileSync(path.join(repo,'packaging/windows/build.mjs'),'utf8');
   const worker=fs.readFileSync(path.join(repo,'packaging/windows/worker.mjs'),'utf8');
-  assert.equal(communityRuntimeFiles.length,38);
+  assert.equal(communityRuntimeFiles.length,39);
+  assert.ok(communityRuntimeFiles.includes('runtime/secure-file.js'));
   assert.ok(communityRuntimeFiles.includes('runtime/synthetic-decoy-capability.js'));
   assert.equal(new Set(communityRuntimeFiles).size,communityRuntimeFiles.length);
   assert.deepEqual(validateCommunityRuntime([...communityRuntimeFiles].reverse(),true),communityRuntimeFiles);
@@ -54,6 +55,13 @@ test('installer lifecycle smoke accepts only the BUILD_REPORT status emitted by 
   assert.equal(acceptedStatus[1],emittedStatus[1]);
   assert.match(workflow,/installerExecuted = \$false/);
   assert.match(lifecycle,/\$buildReport\.installerExecuted -eq \$false/);
+});
+
+test('installed launcher payload smoke is explicit and does not claim an interactive GUI first launch',()=>{
+  const lifecycle=fs.readFileSync(path.join(repo,'packaging/windows/installer-lifecycle-smoke.ps1'),'utf8');
+  assert.match(lifecycle,/\$launcherSmokeResult = Invoke-Nsis \$launcherPath '--smoke' -TimeoutMs 30000/);
+  assert.match(lifecycle,/Add-Check 'installed-launcher-payload-smoke' 'PASS'/);
+  assert.match(lifecycle,/firstLaunchGui = 'NOT_TESTED_HEADLESS_SMOKE_ONLY'/);
 });
 
 test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
@@ -133,7 +141,7 @@ test('Community source build transfers the patched dependency tree and keeps can
   const pkg=JSON.parse(fs.readFileSync(path.join(repo,'package.json'),'utf8'));
   const lock=JSON.parse(fs.readFileSync(path.join(repo,'package-lock.json'),'utf8'));
   const lockRoot=lock.packages[''];
-  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','src/runtime/synthetic-decoy-capability.ts','security-lab/claude-native-hook.mjs']){
+  for(const requiredSource of ['src/agent-host-detection.ts','src/codex-connection-check.ts','src/agent-integrations.ts','src/codex-connection-mcp.ts','src/containment.ts','src/ai/security-center-adapter.ts','src/runtime/synthetic-decoy-capability.ts','src/runtime/secure-file.ts','security-lab/claude-native-hook.mjs']){
     assert.ok(source.includes(`'${requiredSource}'`),`candidate source allowlist must include ${requiredSource}`);
   }
   assert.match(source,/lock=json\.loads\(\(root\/'package-lock\.json'\)\.read_text\(encoding='utf-8'\)\)/);

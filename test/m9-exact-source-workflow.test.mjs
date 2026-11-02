@@ -39,7 +39,7 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
     pullRequest: validated.modules[name].pullRequest,
     sha: validated.modules[name].sha,
   }])), {
-    M1: { pullRequest: 133, sha: '42d362a9a1f4f1972400f2d3414d77982b0fb4e6' },
+    M1: { pullRequest: 149, sha: '5eaf323b4188dc4228eadd099d2e27af3e61ae79' },
     M2: { pullRequest: 110, sha: '941fd22d5e43e1de91a76b8c73006e57a4c15496' },
     M3: { pullRequest: 120, sha: '6830cf8bb883592bb9438cd86ed36d9d48e95e4e' },
     M4: { pullRequest: 121, sha: '96de861cafdce3105c5f2412b3f5a431a378dfb7' },
@@ -58,7 +58,7 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
 });
 
 test('a module PR only composes when PR number, stable branch, and exact head SHA match the manifest', () => {
-  for (const moduleName of ['M2', 'M6', 'M8']) {
+  for (const moduleName of ['M1', 'M2', 'M6', 'M8']) {
     const source = manifest.modules[moduleName];
     assert.doesNotThrow(() => validateExactSourceManifest(manifest, {
       eventName: 'pull_request',

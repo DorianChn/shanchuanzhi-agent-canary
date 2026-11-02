@@ -374,6 +374,19 @@ test('E4 verifier rejects an archive swapped after its outer hash is read', t =>
     const replacementDir = path.resolve(process.env.AC_E4_REPLACEMENT_RUN);
     const archivePath = path.join(runDir, 'evidence.zip');
     const originalReadFileSync = fs.readFileSync.bind(fs);
+    const copyFixturePath = (source, target) => {
+      const sourceInfo = fs.lstatSync(source);
+      if (sourceInfo.isSymbolicLink()) throw new Error('Unexpected symlink in E4 fixture');
+      if (sourceInfo.isDirectory()) {
+        fs.mkdirSync(target);
+        for (const entry of fs.readdirSync(source)) {
+          copyFixturePath(path.join(source, entry), path.join(target, entry));
+        }
+        return;
+      }
+      if (!sourceInfo.isFile()) throw new Error('Unsupported E4 fixture entry');
+      fs.copyFileSync(source, target);
+    };
     let swapped = false;
     fs.readFileSync = (file, ...args) => {
       const data = originalReadFileSync(file, ...args);
@@ -382,7 +395,7 @@ test('E4 verifier rejects an archive swapped after its outer hash is read', t =>
         for (const name of ['evidence.zip', 'SHA256SUMS.txt', 'report.json', 'report.md', 'raw.log', 'evidence']) {
           const target = path.join(runDir, name);
           fs.rmSync(target, { recursive: true, force: true });
-          fs.cpSync(path.join(replacementDir, name), target, { recursive: true });
+          copyFixturePath(path.join(replacementDir, name), target);
         }
       }
       return data;
