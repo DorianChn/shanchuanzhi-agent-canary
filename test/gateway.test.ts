@@ -83,12 +83,13 @@ test('gateway rejects workspace replacement between root capture and target regi
  const parent=fs.mkdtempSync(path.join(os.tmpdir(),'gateway-root-capture-race-'));
  const workspace=path.join(parent,'workspace'),movedWorkspace=path.join(parent,'workspace-held'),target=path.join(workspace,'public.txt');
  fs.mkdirSync(workspace);fs.writeFileSync(target,'AUTHORIZED_ROOT_CAPTURE_FIXTURE');
+ const canonicalWorkspace=fs.realpathSync.native(workspace);
  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
  let swapped=false,openCalls=0,readCalls=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
  try{
   (fs as any).lstatSync=(candidate:any,...args:any[])=>{
    const stat=(originalLstatSync as any)(candidate,...args);
-   if(!swapped&&path.resolve(String(candidate))===path.resolve(workspace)){
+   if(!swapped&&path.resolve(String(candidate))===path.resolve(canonicalWorkspace)){
     swapped=true;fs.renameSync(workspace,movedWorkspace);fs.mkdirSync(workspace);
     fs.renameSync(path.join(movedWorkspace,'public.txt'),target);
    }
@@ -110,6 +111,7 @@ test('gateway rejects a replaced workspace root even when the same registered fi
  const parent=fs.mkdtempSync(path.join(os.tmpdir(),'gateway-replaced-root-held-file-'));
  const workspace=path.join(parent,'workspace'),movedWorkspace=path.join(parent,'workspace-held'),target=path.join(workspace,'public.txt');
  fs.mkdirSync(workspace);fs.writeFileSync(target,'AUTHORIZED_ROOT_BOUND_FIXTURE');
+ const canonicalTarget=fs.realpathSync.native(target);
  const guard=createAgentGuard({alert:false,eventsFile:path.join(parent,'guard.jsonl')}),evidence=new EvidenceRecorder();
  let runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
  try{
@@ -117,7 +119,7 @@ test('gateway rejects a replaced workspace root even when the same registered fi
   const call={name:'read_public',args:{path:'public.txt'}},capability=runtime.bindFileReadCapability({toolName:'read_public',operation:'file-read',path:'public.txt'});
   fs.renameSync(workspace,movedWorkspace);fs.mkdirSync(workspace);
   fs.renameSync(path.join(movedWorkspace,'public.txt'),target);
-  assert.equal(fs.realpathSync.native(target),target,'the replacement root has the same lexical and canonical path');
+  assert.equal(fs.realpathSync.native(target),canonicalTarget,'the replacement root keeps the same canonical name');
   assert.equal(fs.readFileSync(target,'utf8'),'AUTHORIZED_ROOT_BOUND_FIXTURE','the exact originally registered file was moved into the replacement root');
   assert.equal(runtime.verifyFileReadCapability(capability,call,'file-read'),false,'the held file alone cannot authorize a replaced workspace root');
   await assert.rejects(runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_FILE_CAPABILITY_INVALID/);
@@ -604,7 +606,7 @@ test('Windows external process hard-link replacement during held read never disc
  }
 });
 test('transient path alias during held read never returns external content',async()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-transient-alias-read-')),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
+ const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-transient-alias-read-'))),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'NOT_A_REAL_CREDENTIAL');
  const target=path.join(workspace,'public.txt'),heldTarget=path.join(workspace,'public-held.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
  let registeredFd:number|undefined,observedReadFd:number|undefined,aliasInstalled=false,restored=false,readText='',runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
