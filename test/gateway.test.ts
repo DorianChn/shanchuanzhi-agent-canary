@@ -5,6 +5,7 @@ import {execFileSync} from 'node:child_process';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';
 const home=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-3-tests-')));process.env.AGENT_CANARY_HOME=home;
 const {createAgentGuard,createTrustedExecutionGateway,HoneypotRuntime,EvidenceRecorder,verifyEvidenceChain,canonicalJSON}=await import('../src/sdk.js');
+const {openSecureWorkspace}=await import('../src/runtime/secure-file.js');
 function setup(extra:any={}){
   const root=fs.mkdtempSync(path.join(home,'fixture-'));
   for(const [name,text]of Object.entries({'public.txt':'hello','result.txt':'before','.env':'NOT_A_REAL_CREDENTIAL'}))fs.writeFileSync(path.join(root,name),text);
@@ -12,6 +13,24 @@ function setup(extra:any={}){
   const runtime=createTrustedExecutionGateway({agentId:'sdk-fixture',guard,workspaceRoot:root,files:[{path:'public.txt'},{path:'result.txt',writable:true},{path:'.env',sensitive:true}],evidence,...extra});
   return{root,runtime,guard,evidence};
 }
+test('Linux secure workspaces reject mounted child filesystems before returning a file handle',t=>{
+ if(process.platform!=='linux'){t.skip('Linux mount IDs are specific to Linux');return;}
+ let rootFd:number|undefined,procFd:number|undefined,rootMountId:bigint,procMountId:bigint;
+ try{
+  rootFd=fs.openSync('/',fs.constants.O_RDONLY|fs.constants.O_DIRECTORY);
+  procFd=fs.openSync('/proc/uptime',fs.constants.O_RDONLY);
+  const readMountId=(fd:number)=>{
+   const info=fs.readFileSync(`/proc/self/fdinfo/${fd}`,'utf8'),match=/^mnt_id:\s*(\d+)\s*$/m.exec(info);
+   if(!match)throw Error('MOUNT_ID_UNAVAILABLE');return BigInt(match[1]);
+  };
+  rootMountId=readMountId(rootFd);procMountId=readMountId(procFd);
+ }catch{t.skip('A separate procfs mount and fdinfo are unavailable');return;}
+ finally{if(procFd!==undefined)fs.closeSync(procFd);if(rootFd!==undefined)fs.closeSync(rootFd);}
+ if(rootMountId===procMountId){t.skip('/proc is not mounted separately from the workspace root');return;}
+ const workspace=openSecureWorkspace('/');
+ try{assert.throws(()=>workspace.openFile('proc/uptime'),/SECURE_MOUNT_CROSSING_REJECTED/);}
+ finally{workspace.close();}
+});
 test('gateway reads through held handles and fails closed on writes',async()=>{const s=setup();try{assert.deepEqual(await s.runtime.agent.dispatch({name:'read_file',args:{path:'public.txt'}}),{content:'hello'});await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'正常任务'}}),/write_capability_disabled_pending_path_safe_primitive/);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');assert.equal(s.evidence.snapshot().at(-1)!.decision,'DENY');assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'NOT_STARTED');assert.equal(verifyEvidenceChain(s.evidence.snapshot()).valid,true);}finally{await s.runtime.close();}});
 test('gateway denies a registered file whose content version changed before dispatch',async()=>{
  const s=setup(),target=path.join(s.root,'public.txt'),originalReadSync=fs.readSync;let readCalls=0;

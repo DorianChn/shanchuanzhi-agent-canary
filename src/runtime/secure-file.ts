@@ -95,6 +95,14 @@ const posix=(()=>{
   const directoryFlags=fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW|closeOnExec;
   const fileFlags=fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW|fs.constants.O_NONBLOCK|closeOnExec;
   if(!Number.isInteger(fs.constants.O_DIRECTORY)||!Number.isInteger(fs.constants.O_NOFOLLOW))throw Error('SECURE_FILE_NOFOLLOW_UNAVAILABLE');
+  const mountId=(fd:number):bigint|undefined=>{
+    if(process.platform!=='linux')return undefined;
+    let info:string;
+    try{info=fs.readFileSync(`/proc/self/fdinfo/${fd}`,'utf8');}catch{throw Error('SECURE_MOUNT_ID_UNAVAILABLE');}
+    const match=/^mnt_id:\s*(\d+)\s*$/m.exec(info);
+    if(!match)throw Error('SECURE_MOUNT_ID_UNAVAILABLE');
+    return BigInt(match[1]);
+  };
   const open=(parent:number,name:string,flags:number)=>{
     const fd=openat(parent,name,flags,0);
     if(!Number.isInteger(fd)||fd<0)throw Error('SECURE_RELATIVE_OPEN_FAILED');
@@ -104,7 +112,7 @@ const posix=(()=>{
     const s=fs.fstatSync(fd,{bigint:true});
     return{dev:s.dev,ino:s.ino,birthtimeNs:s.birthtimeNs,ctimeNs:s.ctimeNs,mtimeNs:s.mtimeNs,size:s.size,nlink:s.nlink,kind:s.isDirectory()?'directory':s.isFile()?'file':'other'};
   };
-  return{directoryFlags,fileFlags,open,stat};
+  return{directoryFlags,fileFlags,open,stat,mountId};
 })();
 
 function components(relativePath:string):string[]{
@@ -149,8 +157,14 @@ export function openSecureWorkspace(rootPath:string):SecureDirectoryHandle{
     };
   }
 
-  const api=posix!,rootFd=api.open(atFdcwd,rootPath,api.directoryFlags),identity=api.stat(rootFd);let closed=false;
-  if(identity.kind!=='directory'){fs.closeSync(rootFd);throw Error('SECURE_WORKSPACE_TYPE_REJECTED');}
+  const api=posix!,rootFd=api.open(atFdcwd,rootPath,api.directoryFlags);let identity:SecureFileStat,rootMountId:bigint|undefined,closed=false;
+  try{
+    identity=api.stat(rootFd);
+    if(identity.kind!=='directory')throw Error('SECURE_WORKSPACE_TYPE_REJECTED');
+    rootMountId=api.mountId(rootFd);
+  }catch(error){try{fs.closeSync(rootFd);}catch{}throw error;}
+  const staysOnWorkspaceMount=(fd:number,stat:SecureFileStat)=>stat.dev===identity.dev&&
+    (rootMountId===undefined||api.mountId(fd)===rootMountId);
   return{
     stat(){if(closed)throw Error('SECURE_WORKSPACE_CLOSED');return api.stat(rootFd);},
     openFile(relativePath){
@@ -159,10 +173,13 @@ export function openSecureWorkspace(rootPath:string):SecureDirectoryHandle{
       try{
         for(const part of parts.slice(0,-1)){
           const next=api.open(parent,part,api.directoryFlags);parents.push(next);parent=next;
-          if(api.stat(next).kind!=='directory')throw Error('SECURE_PATH_COMPONENT_REJECTED');
+          const nextStat=api.stat(next);
+          if(nextStat.kind!=='directory')throw Error('SECURE_PATH_COMPONENT_REJECTED');
+          if(!staysOnWorkspaceMount(next,nextStat))throw Error('SECURE_MOUNT_CROSSING_REJECTED');
         }
         const opened=api.open(parent,parts.at(-1)!,api.fileFlags);fileFd=opened;
         const s=api.stat(opened);if(s.kind!=='file'){fs.closeSync(opened);fileFd=undefined;throw Error('SECURE_FILE_TYPE_REJECTED');}
+        if(!staysOnWorkspaceMount(opened,s))throw Error('SECURE_MOUNT_CROSSING_REJECTED');
         fileFd=undefined;let fileClosed=false;
         return{
           stat(){if(fileClosed)throw Error('SECURE_FILE_CLOSED');return api.stat(opened);},
