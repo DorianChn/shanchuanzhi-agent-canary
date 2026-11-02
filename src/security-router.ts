@@ -32,7 +32,7 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   const root=path.resolve(options.workspaceRoot);
   const reviews:Array<{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number}>=[];
   function pathDenied(call:ToolCall){
-    const d=trustedTools[call.name];if(!verifyRealPaths||!d||!['file-read','file-write','delete'].includes(d.operation))return false;
+    const d=trustedTools[call.name];if(!verifyRealPaths||!d||(!['file-read','file-write','delete'].includes(d.operation)&&d.pathArg===undefined))return false;
     const raw=call.args?.[d.pathArg??'path'];if(typeof raw!=='string'||raw.includes('\0')||raw.includes(':'))return true;
     try{
       const normalized=raw.replaceAll('\\','/');
