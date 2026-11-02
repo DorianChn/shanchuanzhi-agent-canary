@@ -4,13 +4,6 @@ import fs from 'node:fs';import os from 'node:os';import path from 'node:path';i
 process.env.AGENT_CANARY_HOME=fs.mkdtempSync(path.join(os.tmpdir(),'canary-acceptance-home-'));
 const {createAgentGuard,createTrustedExecutionGateway,EvidenceRecorder}=await import('../src/sdk.js');
 const fake='NOT_A_REAL_CREDENTIAL_ACCEPTANCE_ONLY';
-test('detected replacement after audit must not modify the previously held inode',async()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'ac-held-inode-')),file=path.join(root,'result.txt');fs.writeFileSync(file,'UNCHANGED');
- const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'events.jsonl')}),recorder=new EvidenceRecorder(),record=recorder.record.bind(recorder);
- const gateway=createTrustedExecutionGateway({agentId:'fixture',guard,workspaceRoot:root,files:[{path:'result.txt',writable:true}],evidence:recorder});
- recorder.record=(event:any)=>{if(event.execution_status==='RUNNING'){fs.renameSync(file,file+'.held');fs.writeFileSync(file,'REPLACEMENT');}return record(event);};
- try{await assert.rejects(gateway.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'MUST_NOT_WRITE'}}));assert.equal(fs.readFileSync(file+'.held','utf8'),'UNCHANGED');assert.equal(fs.readFileSync(file,'utf8'),'REPLACEMENT');}finally{await gateway.close();}
-});
 async function sinkFixture(){
  let received=0;const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-acceptance-'));
  fs.writeFileSync(path.join(root,'result.txt'),'before');
@@ -54,12 +47,13 @@ test('approval at the exact expiry boundary cannot execute',async()=>{
   await assert.rejects(runtime.operator.approve(id),/EXPIRED/);assert.equal(calls,0);
  }finally{Date.now=now;await runtime.close();await s.close();}
 });
-test('resource replacement in the check/use window cannot write the replacement inode',async()=>{
- const s=await sinkFixture(),file=path.join(s.root,'result.txt'),recorder=new EvidenceRecorder(),record=recorder.record.bind(recorder);
+test('disabled file writes cannot reach RUNNING or a path-swap callback',async()=>{
+ const s=await sinkFixture(),file=path.join(s.root,'result.txt'),recorder=new EvidenceRecorder(),record=recorder.record.bind(recorder);let running=0;
  const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[{path:'result.txt',writable:true}],evidence:recorder});
- recorder.record=(event:any)=>{if(event.execution_status==='RUNNING'){fs.renameSync(file,file+'.held');fs.writeFileSync(file,'replacement');}return record(event);};
- try{await assert.rejects(runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'authorized-held-inode'}}),/EFFECTS_NOT_ROLLED_BACK/);
-  assert.equal(fs.readFileSync(file,'utf8'),'replacement');assert.equal(fs.readFileSync(file+'.held','utf8'),'before');assert.equal(s.guard.state,'QUARANTINED');
+ recorder.record=(event:any)=>{if(event.execution_status==='RUNNING'){running++;fs.renameSync(file,file+'.held');fs.writeFileSync(file,'replacement');}return record(event);};
+ try{await assert.rejects(runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'authorized-held-inode'}}),/write_capability_disabled_pending_path_safe_primitive/);
+  assert.equal(running,0);assert.equal(fs.readFileSync(file,'utf8'),'before');assert.equal(fs.existsSync(file+'.held'),false);assert.equal(s.guard.state,'SAFE');
+  const denied=runtime.evidence().at(-1)!;assert.equal(denied.decision,'DENY');assert.equal(denied.execution_status,'NOT_STARTED');
  }finally{await runtime.close();await s.close();}
 });
 test('an executor ignoring cancellation may cause a late side effect, which is not verified safe',async()=>{

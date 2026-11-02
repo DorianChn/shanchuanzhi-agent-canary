@@ -10,7 +10,14 @@ import {DataFlowTracker} from './dataflow.js';
 import {executePinnedJSONTool} from '../network-tool.js';
 import {canonicalJSON,EvidenceRecorder,type EvidenceDecision,type ExecutionStatus,type SideEffectVerification} from './evidence.js';
 
-export interface GatewayFile {path:string; writable?:boolean; approvalRequired?:boolean; sensitive?:boolean; decoyId?:string}
+export interface GatewayFile {
+  path:string;
+  /** @deprecated File writes are denied until a path-safe write primitive exists. */
+  writable?:boolean;
+  approvalRequired?:boolean;
+  sensitive?:boolean;
+  decoyId?:string;
+}
 export interface GatewayCommand {executable:string; args:readonly string[]; approvalRequired?:boolean}
 export interface GatewayOptions {
   agentId:string; guard:AgentGuard; workspaceRoot:string; files:readonly GatewayFile[];
@@ -28,7 +35,7 @@ type Resource={descriptor:Readonly<GatewayFile>;fd:number;dev:number;ino:number;
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
-const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
+const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
@@ -54,7 +61,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       const before=fs.lstatSync(absolute);
       if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1||before.size>65_536)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
       // Identity compared before any content access. Operations use the held fd afterwards.
-      const fd=fs.openSync(absolute,(f.writable?fs.constants.O_RDWR:fs.constants.O_RDONLY)|(fs.constants.O_NOFOLLOW??0));
+      const fd=fs.openSync(absolute,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0));
       const after=fs.fstatSync(fd);
       if(!sameFile(before,after)){fs.closeSync(fd);throw Error('GATEWAY_RESOURCE_CHANGED');}
       resources.set(relative,{descriptor:Object.freeze({...f}),fd,dev:after.dev,ino:after.ino,absolute});
@@ -83,11 +90,11 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   function policy(r:Request):{decision:EvidenceDecision;reason:string}{
     const schemas:Record<string,string[]>={read_file:['path'],write_file:['path','content'],run_command:['command'],http_request:['url'],mcp_tool:['tool','arguments']};
     if(!schemas[r.name]||Object.keys(r.args).some(k=>!schemas[r.name].includes(k)))return{decision:'DENY',reason:'unregistered_tool_or_parameter'};
-    if(r.name==='read_file'||r.name==='write_file'){
+    if(r.name==='write_file')return{decision:'DENY',reason:'write_capability_disabled_pending_path_safe_primitive'};
+    if(r.name==='read_file'){
       const target=resource(r);
       if(!target||!stillBound(target))return{decision:'DENY',reason:'resource_not_bound'};
       if((target.descriptor.sensitive||dangerousPath.test(target.descriptor.path))&&!target.descriptor.decoyId)return{decision:'DENY',reason:'credential_resource_denied'};
-      if(r.name==='write_file'&&(!target.descriptor.writable||typeof r.args.content!=='string'||Buffer.byteLength(r.args.content)>65_536))return{decision:'DENY',reason:'write_capability_or_size_denied'};
       return{decision:target.descriptor.approvalRequired?'REQUIRE_APPROVAL':'ALLOW',reason:'host_scoped_file_capability'};
     }
     if(r.name==='run_command'){
@@ -120,6 +127,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   async function execute(r:Request,approval:string|null,signal?:AbortSignal):Promise<unknown>{
     if(signal?.aborted)return blocked(r,'cancelled_before_execution');
+    if(r.name==='write_file')return blocked(r,'write_capability_disabled_pending_path_safe_primitive');
     const decision=policy(r);
     if(decision.decision==='DENY')return blocked(r,decision.reason);
     // Recheck after review/approval/queue, directly before a trusted executor starts.
@@ -133,7 +141,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       const perform=()=>{
         // Audit callbacks may yield a changed path. Reject the observed change before fd I/O.
         // This narrows the window; it is not an atomic OS-wide path/operation transaction.
-        if(r.name==='read_file'||r.name==='write_file'){
+        if(r.name==='read_file'){
           const f=resource(r);if(!f||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_EFFECT');
         }
         if(r.name==='read_file'){
@@ -143,14 +151,6 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}
           return {content:text};
-        }
-        if(r.name==='write_file'){
-          const f=resource(r)!,buffer=Buffer.from(String(r.args.content));let offset=0;
-          while(offset<buffer.length){const n=fs.writeSync(f.fd,buffer,offset,buffer.length-offset,offset);if(n<=0)throw Error('GATEWAY_WRITE_SHORT');offset+=n;}
-          fs.ftruncateSync(f.fd,buffer.length);fs.fsyncSync(f.fd);
-          const check=Buffer.alloc(buffer.length);let pos=0;while(pos<check.length){const n=fs.readSync(f.fd,check,pos,check.length-pos,pos);if(!n)break;pos+=n;}
-          if(pos!==buffer.length||!check.equals(buffer)||!stillBound(f))throw Error('GATEWAY_WRITE_VERIFICATION_FAILED');
-          return {writtenBytes:buffer.length};
         }
         if(r.name==='http_request')return executePinnedJSONTool({name:r.name,args:{url:r.args.url,method:'GET'}},{signal:abort.signal});
         if(r.name==='mcp_tool')return mcp.get(String(r.args.tool))!.execute(r.args.arguments as Record<string,unknown>,abort.signal);
@@ -168,7 +168,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       const result=await Promise.race([Promise.resolve(perform()),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
       const output=typeof result==='string'?result:JSON.stringify(result)??'';
       if(secretPattern.test(output)){history.sensitiveObserved=true;flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
-      audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'||r.name==='write_file'?'VERIFIED':'NOT_VERIFIED',approval);
+      audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'?'VERIFIED':'NOT_VERIFIED',approval);
       return result;
     }catch(error){
       options.guard.trip({reason:'gateway_execution_failed'});

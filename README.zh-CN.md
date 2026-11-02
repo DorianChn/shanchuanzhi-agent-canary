@@ -21,6 +21,13 @@ npm install --global @dorianchn/agent-canary@3.0.0
 agent-canary --help
 ```
 
+常见认证问题：
+
+- `401`：检查 token 是否为 classic PAT、是否包含 `read:packages`，以及是否在提示时输入了 GitHub 用户名和 token。
+- `403`：检查账号是否有该包的访问权限；组织启用 SSO 时，需在 GitHub 为该 token 授权 SSO。
+- `404` 或找不到版本：先确认包名、版本和 scope registry。可运行 `npm config get @dorianchn:registry`，确认它指向 `https://npm.pkg.github.com`。
+- 不要把 token 写进仓库 `.npmrc`、示例配置、日志或聊天。GitHub Packages 的 npm registry 对公开包也要求认证；认证方式和权限以[官方说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)为准。
+
 Docker 镜像发布在 GitHub Container Registry：
 
 ```sh
@@ -30,11 +37,63 @@ docker run --rm ghcr.io/dorianchn/shanchuanzhi-agent-canary:3.0.0 --help
 
 要通过标准输入/输出运行 MCP 服务，可使用 agent-canary serve --stdio；容器运行时加 -i 并传入相同参数。
 
+已安装全局 npm 包的 MCP 客户端配置示例：
+
+```json
+{
+  "mcpServers": {
+    "agent-canary": {
+      "command": "agent-canary",
+      "args": ["serve", "--stdio"]
+    }
+  }
+}
+```
+
 ## SDK
 
+下面的例子创建一个隔离临时目录，只授权读取 `README.txt`；写请求会在审批和文件操作前被拒绝。可保存为 `sdk-example.ts` 并在已安装本包的 Node.js 项目中运行。
+
+<!-- sdk-minimal-example:start -->
 ```ts
-import { createTrustedExecutionGateway } from "@dorianchn/agent-canary/sdk";
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { createAgentGuard, createTrustedExecutionGateway, EvidenceRecorder } from '@dorianchn/agent-canary/sdk';
+
+export const exampleResult = await (async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'agent-canary-sdk-'));
+  await fs.writeFile(path.join(root, 'README.txt'), '仅授权读取的公开文本。\n', { flag: 'wx' });
+  const guard = createAgentGuard({ alert: false });
+  const gateway = createTrustedExecutionGateway({
+    agentId: 'sample-agent',
+    guard,
+    workspaceRoot: root,
+    files: [{ path: 'README.txt' }],
+    evidence: new EvidenceRecorder(),
+  });
+  try {
+    const read = await gateway.agent.dispatch({ name: 'read_file', args: { path: 'README.txt' } });
+    let writeDenied = false;
+    try {
+      await gateway.agent.dispatch({ name: 'write_file', args: { path: 'README.txt', content: '修改' } });
+    } catch {
+      writeDenied = true;
+    }
+    return {
+      read,
+      writeDenied,
+      evidence: gateway.evidence().map(({ decision, execution_status }) => ({ decision, execution_status })),
+    };
+  } finally {
+    await gateway.close();
+    await fs.rm(root, { recursive: true, force: true });
+  }
+})();
+
+console.log(JSON.stringify(exampleResult, null, 2));
 ```
+<!-- sdk-minimal-example:end -->
 
 宿主必须明确注册需要网关保护的回调。Agent Canary 不会自动接管未接入的工具、进程或原生宿主能力。
 
@@ -54,8 +113,12 @@ import { createTrustedExecutionGateway } from "@dorianchn/agent-canary/sdk";
 ## 本地开发
 
 ```sh
+git clone https://github.com/DorianChn/shanchuanzhi-agent-canary.git
+cd shanchuanzhi-agent-canary
+git checkout main
 npm ci
 npm run verify
+node dist/competition.js serve --stdio
 ```
 
 验证命令会构建 TypeScript、运行自动化测试、执行离线验收和 SDK 类型检查、核对源码清单，并对打包后的 npm 包做冒烟检查。
