@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
       - name: Check AC3 ownership, API contract, baseline, and evidence fields
         run: node scripts/ac3-coordination-check.mjs
@@ -26,6 +26,9 @@ jobs:
           AC3_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           AC3_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           AC3_HEAD_REF: ${{ github.head_ref }}
+      - name: Test approved baseline and exact merge composition
+        if: github.head_ref == 'feature/ac3-m0-coordination'
+        run: node --test test/ac3-coordination-baseline.test.mjs
       - name: Test open-PR audit report logic
         if: github.head_ref == 'feature/ac3-m0-coordination'
         run: node --test test/ac3-pr-audit.test.mjs

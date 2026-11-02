@@ -1,5 +1,16 @@
 # M9 最终集成计划
 
+## 冻结候选与 PR test-merge base 校验 — 2026-10-25
+
+该流程处理已注册模块分支上的新候选 SHA，避免移动中的 feature base 与 M9 精确来源 pin 互相追逐；它不豁免任何检查，也不改变模块所有权。已确认单独关闭/重开 PR 不保证 webhook 的 `pull_request.base.sha` 刷新：M1 PR #114 的 reopened run `40161615256` 仍报告旧 base `f4e728e3b28961dd2559df8cf10707f906d087d6`，但 GitHub API 当前 base 与该 run 的 test-merge 第一父提交均为 `747e8cd99376516d5d3e5943d26f76b0f8f0ab6a`；test-merge `ee5b2f05c69d792b172b6bc5fbe19303267c56df` 的第二父提交是精确 M1 head `89be11e5f95f2b191880a4fc88f50e15f405121e`。该失败 run 保留，重开动作本身不作为刷新证据。
+
+1. **冻结模块候选。** 模块 owner 将候选推送到原有稳定分支及目标为 `feature/agent-canary-3.0` 的同一 PR，记下确切 PR 号、分支和 40 位 head SHA。进入 M9 精确组合期间不得继续改写该 head；若 head 改变，从第一阶段重新开始。
+2. **先更新并验证 M9 pin。** 在既有 M9 分支创建 follow-up，只把该模块的 manifest PR 号和 SHA 更新为已冻结候选，稳定 branchRef 不变，其余模块 pin、历史来源和 owner disposition 均保持原值。按 exact-source manifest、owner review 和 Ubuntu/Windows 组合门运行；全部必需检查成功后才将此 M9 manifest 更新合入 feature。该候选检查结果是指定 SHA 的组合证据，不替代模块 owner 对精确代码/文件的接受。
+3. **从不可变 test-merge 识别实际 M9/base 来源。** 对 feature-target 的非 M9 PR，M9 workflow 使用只读 `github.token` 调用 GitHub API 查询 `github.sha` 对应的 test-merge commit；API 返回的 commit SHA 必须等于 `github.sha`，且必须恰有两个有效父 SHA。第二父提交必须等于事件 `pull_request.head.sha`，第一父提交作为实际 feature base 和 M9 精确 checkout SHA。workflow 记录 `github.sha`、两个父 SHA、事件 base/head SHA 及选择模式。完成 `fetch-depth: 0` checkout 后，还必须验证事件 `pull_request.base.sha` 是所选第一父提交的 ancestor；若不是则失败。该流程不查询可变 branch ref，也不把 test-merge commit 自身当作 M9 source。M9 分支 PR 仍只 checkout 其事件中的精确 PR head；手动运行仍只使用精确 `github.sha`。
+4. **只按新鲜精确 head 结果合并模块 PR。** M9 source 必须来自 test-merge 的第一父提交，因此包含当前组合基线中的新 manifest；validator 仍要求模块 PR 号、稳定 head ref、head SHA 与精确 M9 pin 完全相等。要求新 run 的所有必需检查在冻结 head 上成功，并继续满足 AC3 的批准共同基线及无冲突组合检查，再合并模块 PR。旧 base 上的失败 run 保留为历史证据，不删除、不覆盖，也不通过跳过或降低 required checks 来改变结论。
+
+M9 manifest PR 自身仍使用其精确 PR head；所有八个 module pins 及现有 M1/M6 精确 blob/owner gates 仍严格执行。模块候选 run 不构成最终 M9 接受；最终 M9 合成与 owner disposition 仍须在记录该精确来源并通过相应门后才成立。GitHub 的 [pull request workflow events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows) 说明默认活动包括 reopen，且该事件的 `github.sha` 是 PR merge branch 的提交；本仓库以该不可变提交的 API parents 解析实际 base，再校验其第二父等于事件 head。M9 acceptance 必须以具体 run 记录的 SHA 和验证结果为准，不能仅凭 reopen 或一个旧 event base 放行。
+
 ## 当前 exact-source composition 快照（2026-10-23）
 
 - 当前 M1–M8 exact source pins、模块级覆盖、owner 审阅范围及证据限制见 [M9 exact-source composition snapshot](M9_EXACT_SOURCE_COMPOSITION_2026-10-23.md)。M3 已刷新到已发布 head `cac8f4627aceb5dd3732036129e42ade7e4790e9`；截至刷新时该 SHA 没有可报告的 hosted run。M8 本地候选 `4fb07ed` 尚未推送/CI 验证，故继续固定已发布 head `84ee6a7a8d65706f694b7949e82fd8c83cc11523`。

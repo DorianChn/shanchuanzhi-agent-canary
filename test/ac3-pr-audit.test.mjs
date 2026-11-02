@@ -125,6 +125,20 @@ test('marks missing test evidence and non-success completed checks without chang
   assert.match(report, /Unregistered PR branches/);
 });
 
+test('lists skipped exact-head checks as non-success evidence without counting them as failures', () => {
+  const pulls = [pr(109, 'feature/ac3-m0-coordination', 'ddd999', 'Test-Evidence: CI\nAPI-Contract-Change: no')];
+  const report = summarizePrAudit(
+    pulls,
+    new Map([[109, []]]),
+    new Map([[109, [{ id: 9, name: 'compose-current-module-refs', app: { id: 1 }, status: 'completed', conclusion: 'skipped' }]]]),
+    new Map(),
+    rules
+  );
+  assert.match(report, /0\/0\/1\/0/);
+  assert.match(report, /compose-current-module-refs \(skipped\)/);
+  assert.match(report, /Pending\/non-success checks/);
+});
+
 test('reports every overlapping file even when the PR set exceeds 100 paths', () => {
   const pulls = [
     pr(43, 'feature/ac3-security-core', 'aaa111', ''),
