@@ -16,7 +16,7 @@ export interface SecurityRouterOptions<T> extends RiskPolicyOptions {
   cloudConsent?:boolean;
   reviewTimeoutMs?:number;
   callbackTimeoutMs?:number;
-  /** Real FS hosts should enable this. Virtual fixture hosts leave it false. */
+  /** Defaults to true. Set false only for virtual callbacks that perform no real filesystem I/O. */
   verifyRealPaths?:boolean;
   dataflowTtlMs?:number;
   onReview?:(record:{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number})=>void;
@@ -28,10 +28,11 @@ export function createSecurityToolRouter<T>(options:SecurityRouterOptions<T>){
   if(!Number.isInteger(reviewMs)||reviewMs<1||reviewMs>180_000||!Number.isInteger(callbackMs)||callbackMs<1||callbackMs>300_000)throw new Error('SECURITY_TIMEOUT_INVALID');
   const flow=flows.get(options.guard)??new SessionDataFlow(options.dataflowTtlMs);flows.set(options.guard,flow);
   const trustedTools=Object.fromEntries(Object.entries(options.tools).map(([k,v])=>[k.toLowerCase(),Object.freeze({...v})]));
+  const verifyRealPaths=options.verifyRealPaths!==false;
   const root=path.resolve(options.workspaceRoot);
   const reviews:Array<{tool:string;result:SecurityAnalysisResult|null;status:string;durationMs:number}>=[];
   function pathDenied(call:ToolCall){
-    const d=trustedTools[call.name];if(!options.verifyRealPaths||!d||!['file-read','file-write','delete'].includes(d.operation))return false;
+    const d=trustedTools[call.name];if(!verifyRealPaths||!d||!['file-read','file-write','delete'].includes(d.operation))return false;
     const raw=call.args?.[d.pathArg??'path'];if(typeof raw!=='string'||raw.includes('\0')||raw.includes(':'))return true;
     try{
       const normalized=raw.replaceAll('\\','/');

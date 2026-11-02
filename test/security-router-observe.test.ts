@@ -30,6 +30,29 @@ test('OBSERVE keeps a safe registered file-read positive control',async()=>{
   }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 
+test('OBSERVE enables real-path alias checks by default before callback dispatch',async()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-observe-default-path-check-'));
+  let callbacks=0;
+  try{
+    const secrets=path.join(root,'secrets');fs.mkdirSync(secrets);
+    fs.writeFileSync(path.join(secrets,'fixture.txt'),'SYNTHETIC_SECRET_SENTINEL');
+    fs.symlinkSync(secrets,path.join(root,'public'),process.platform==='win32'?'junction':'dir');
+    const router=createSecurityToolRouter({
+      guard:createAgentGuard({alert:false}),mode:'OBSERVE',workspaceRoot:root,
+      tools:{read_file:{operation:'file-read'}},
+      executeRealTool:()=>{callbacks++;return 'SHOULD_NOT_RUN';},
+    });
+    await assert.rejects(router.dispatch({name:'read_file',args:{path:'public/fixture.txt'}}));
+    assert.equal(callbacks,0);
+    assert.deepEqual(router.pendingApprovals(),[]);
+    assert.equal(fs.readFileSync(path.join(secrets,'fixture.txt'),'utf8'),'SYNTHETIC_SECRET_SENTINEL');
+  }finally{
+    const alias=path.join(root,'public');
+    try{const s=fs.lstatSync(alias);if(s.isSymbolicLink()){if(process.platform==='win32')fs.rmdirSync(alias);else fs.unlinkSync(alias);}}catch{}
+    fs.rmSync(root,{recursive:true,force:true});
+  }
+});
+
 test('OBSERVE denies an in-workspace junction alias to a sensitive file before approval or callback',async()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-observe-sensitive-alias-'));
   let callbacks=0;
