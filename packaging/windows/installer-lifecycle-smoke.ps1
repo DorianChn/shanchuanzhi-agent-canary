@@ -29,6 +29,7 @@ $result = [ordered]@{
   lifecycleLimits = @{
     cleanGitHubHostedWindowsVM = $true
     windows11Client = 'NOT_VERIFIED'
+    firstLaunchGui = 'NOT_TESTED_HEADLESS_SMOKE_ONLY'
     ordinaryUserToken = 'NOT_VERIFIED'
     cancelRollback = 'NOT_TESTED'
     upgrade = 'NOT_TESTED_IN_PLACE_UPGRADE_NOT_IMPLEMENTED'
@@ -535,6 +536,9 @@ try {
   }
   $launcherPath = Join-Path $installRoot 'AgentCanary.exe'
   Assert-Condition ((Get-Sha256 $launcherPath) -eq [string]$buildReport.launcherSHA256) 'INSTALLED_LAUNCHER_SHA256_MISMATCH'
+  $launcherSmokeResult = Invoke-Nsis $launcherPath '--smoke' -TimeoutMs 30000
+  Assert-Condition ($launcherSmokeResult.exitCode -eq 0) 'INSTALLED_LAUNCHER_PAYLOAD_SMOKE_FAILED'
+  Add-Check 'installed-launcher-payload-smoke' 'PASS' @{ exitCode = $launcherSmokeResult.exitCode; durationMs = $launcherSmokeResult.durationMs; scope = 'AgentCanary.exe --smoke validates installed payload; interactive GUI first launch is not tested' }
   $receiptPath = Join-Path $installRoot 'INSTALL_RECEIPT.json'
   $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
   Assert-Condition ($receipt.installerSHA256 -eq $installerSha256) 'INSTALL_RECEIPT_SHA256_MISMATCH'

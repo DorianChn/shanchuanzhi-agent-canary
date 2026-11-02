@@ -56,6 +56,13 @@ test('installer lifecycle smoke accepts only the BUILD_REPORT status emitted by 
   assert.match(lifecycle,/\$buildReport\.installerExecuted -eq \$false/);
 });
 
+test('installed launcher payload smoke is explicit and does not claim an interactive GUI first launch',()=>{
+  const lifecycle=fs.readFileSync(path.join(repo,'packaging/windows/installer-lifecycle-smoke.ps1'),'utf8');
+  assert.match(lifecycle,/\$launcherSmokeResult = Invoke-Nsis \$launcherPath '--smoke' -TimeoutMs 30000/);
+  assert.match(lifecycle,/Add-Check 'installed-launcher-payload-smoke' 'PASS'/);
+  assert.match(lifecycle,/firstLaunchGui = 'NOT_TESTED_HEADLESS_SMOKE_ONLY'/);
+});
+
 test('Windows build reaches Node integrity only after the exact Community runtime and SDK checks pass',{skip:process.platform!=='win32'},()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'canary-community-runtime-contract-'));
   const payload=path.join(temp,'payload'),app=path.join(payload,'app'),dist=path.join(app,'dist');
