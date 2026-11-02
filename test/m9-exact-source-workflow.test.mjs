@@ -49,7 +49,7 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
     M8: { pullRequest: 129, sha: 'aff6649600cde03b00a8367c05c55a6f2d0964a7' },
   });
   assert.notEqual(validated.historical.sha, validated.modules.M8.sha);
-  assert.equal(validated.review.status, 'ACCEPT');
+  assert.equal(validated.review.status, 'REJECT');
   assert.equal(validated.review.targetSha, manifest.modules.M8.sha);
   assert.equal(validated.review.reviewedSha, manifest.modules.M8.sha);
   assert.equal(validated.review.commentId, '6571870339');

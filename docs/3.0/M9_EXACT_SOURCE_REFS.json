@@ -54,7 +54,7 @@
     "M6_M8_CURRENT_LIFECYCLE": {
       "issue": 80,
       "scope": "M6 lifecycle disposition for the exact current M8 candidate",
-      "status": "ACCEPT",
+      "status": "REJECT",
       "targetSha": "aff6649600cde03b00a8367c05c55a6f2d0964a7",
       "reviewedSha": "aff6649600cde03b00a8367c05c55a6f2d0964a7",
       "commentId": "6571870339",
