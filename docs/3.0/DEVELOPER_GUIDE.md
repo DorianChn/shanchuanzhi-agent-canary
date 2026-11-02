@@ -31,7 +31,7 @@ node security-lab/run-sdk-agent.mjs --execution-proof --sha="$(git rev-parse HEA
 ```bash
 npm run build
 node examples/sdk/quick-start.mjs
-node --test test/sdk-example.test.mjs
+node --import tsx --test test/sdk.test.ts
 ```
 
 这只是合成 fixture 的 SDK 示例，不是模型、安装器、原生宿主或独立 E4 验收。写入能力目前 fail-closed；不要设置 `writable: true` 来表示写入可用。
