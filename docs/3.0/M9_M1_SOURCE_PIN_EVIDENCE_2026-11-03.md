@@ -10,6 +10,7 @@ The prior `5eaf323b4188dc4228eadd099d2e27af3e61ae79` value was PR #149's interme
 
 - Git ancestry checks confirmed PR #149 merge `0831ed4` and PR #151 merge `301d169` are ancestors of M1 pin `b08078b`.
 - M9 exact-source composition run [41526853771](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41526853771) passed on Ubuntu and Windows. Both jobs checked out the exact manifest pins and passed the M1 held-Gateway regression, cross-module composition suite, and M6/M8 disposition gate.
+- At M0 evidence PR head `ff24b4c7cb808170edf9afd165c44cacc9b74dbf`, the exact M1–M8 manifest validator passed with `EXPECTED_M9_SHA` set to that checkout SHA; no module pins were changed.
 - The earlier M9 pin workflow checks on PR #151 passed 21/21; the M1/M3/M5 tuple also passed hosted composition on Ubuntu and Windows in run [41508666850](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41508666850).
 
 ## Evidence limits
