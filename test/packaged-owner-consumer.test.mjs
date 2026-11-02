@@ -49,6 +49,7 @@ function prepareSyntheticComposedPackage(label, exports) {
   const m2 = readPackage(roots.M2);
   const m3 = readPackage(roots.M3);
   const m5 = readPackage(roots.M5);
+  assert.equal(m3.dependencies?.koffi, m1.dependencies?.koffi, 'M3 composition must package the M1 secure-file runtime dependency');
   const packageRoot = path.join(scratch, label, 'package');
   fs.mkdirSync(packageRoot, { recursive: true });
 
