@@ -373,25 +373,24 @@ test('gateway rejects a reused file ID with mismatched creation and change times
 test('POSIX parent symlink swapped at the open boundary is rejected before content reads',{skip:process.platform==='win32'},()=>{
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-open-parent-symlink-'))),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'unregistered external file');
- const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
- let replaced=false,openedFd:number|undefined,closedOpenedFd=false,readCalls=0;
+ const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,readCalls=0;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   const stat=(originalLstatSync as any)(candidate,...args);
    if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){replaced=true;fs.renameSync(workspace,heldWorkspace);fs.symlinkSync(outside,workspace,'dir');}
-   const fd=originalOpenSync(candidate,...args);
-   if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;
-   return fd;
+   return stat;
   };
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
   (fs as any).readSync=(...args:any[])=>{readCalls++;return (originalReadSync as any)(...args);};
-  assert.throws(()=>createTrustedExecutionGateway({agentId:'posix-open-parent-symlink-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the real parent directory was swapped for a symlink inside openSync');
-  assert.equal(closedOpenedFd,true,'the descriptor opened through the symlink target is closed');
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'posix-open-parent-symlink-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_RELATIVE_OPEN_FAILED/);
+  assert.equal(replaced,true,'the real parent directory was swapped for a symlink after path stat and before secure relative open');
+  assert.equal(openedPath,false,'a path-based file open is never attempted through the symlink');
   assert.equal(readCalls,0,'the external target is rejected before any content read');
   assert.deepEqual(fs.readFileSync(external),externalBefore,'the external fixture remains unchanged');
   assert.equal(fs.readFileSync(path.join(heldWorkspace,'public.txt'),'utf8'),'authorized original');
  }finally{
-  (fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;(fs as any).readSync=originalReadSync;
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
