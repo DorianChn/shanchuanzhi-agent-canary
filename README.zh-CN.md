@@ -51,6 +51,29 @@ docker run --rm ghcr.io/dorianchn/shanchuanzhi-agent-canary:3.0.0 --help
 }
 ```
 
+### 可选：向 Agent 提供固定文件读取工具
+
+如果要让 MCP 客户端读取文件，可单独启动 `serve-protected`，并只登记允许发送给 Agent 的文件：
+
+```json
+{
+  "mcpServers": {
+    "agent-canary-protected": {
+      "command": "agent-canary",
+      "args": [
+        "serve-protected",
+        "--workspace-root",
+        "C:\\Users\\you\\project",
+        "--path",
+        "docs/brief.md"
+      ]
+    }
+  }
+}
+```
+
+`--path` 可重复添加，最多 32 个固定相对路径。读取内容会返回给 MCP 客户端；不要登记不应提供给 Agent 的文件。服务通过 M1 Gateway、M2 固定绑定适配器和 M5 策略处理读取，拒绝未登记路径、敏感路径和路径别名。它只保护此 MCP 服务登记的读取工具，不拦截其他 MCP 服务或客户端原生文件工具。
+
 ## SDK
 
 下面的例子创建一个隔离临时目录，只授权读取 `README.txt`；写请求会在审批和文件操作前被拒绝。可保存为 `sdk-example.ts` 并在已安装本包的 Node.js 项目中运行。
