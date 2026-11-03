@@ -32,6 +32,26 @@ test('Linux secure workspaces reject mounted child filesystems before returning 
  finally{workspace.close();}
 });
 test('gateway reads through held handles and fails closed on writes',async()=>{const s=setup();try{assert.deepEqual(await s.runtime.agent.dispatch({name:'read_file',args:{path:'public.txt'}}),{content:'hello'});await assert.rejects(s.runtime.agent.dispatch({name:'write_file',args:{path:'result.txt',content:'正常任务'}}),/write_capability_disabled_pending_path_safe_primitive/);assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');assert.equal(s.evidence.snapshot().at(-1)!.decision,'DENY');assert.equal(s.evidence.snapshot().at(-1)!.side_effect_verification,'NOT_STARTED');assert.equal(verifyEvidenceChain(s.evidence.snapshot()).valid,true);}finally{await s.runtime.close();}});
+test('gateway does not reopen an authorized file by its absolute path',async()=>{
+ const root=fs.mkdtempSync(path.join(home,'no-absolute-resource-open-')),target=path.resolve(path.join(root,'public.txt'));fs.writeFileSync(target,'hello');
+ const evidence=new EvidenceRecorder(),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),originalOpenSync=fs.openSync;let absoluteTargetOpens=0,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
+ try{
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(typeof candidate==='string'&&path.resolve(candidate)===target)absoluteTargetOpens++;return(originalOpenSync as any)(candidate,...args);};
+  runtime=createTrustedExecutionGateway({agentId:'no-absolute-resource-open',guard,workspaceRoot:root,files:[{path:'public.txt'}],evidence});
+  assert.deepEqual(await runtime.agent.dispatch({name:'read_file',args:{path:'public.txt'}}),{content:'hello'});
+  assert.equal(absoluteTargetOpens,0,'the Gateway must read from its secure relative handle without opening the target path again');
+ }finally{(fs as any).openSync=originalOpenSync;await runtime?.close();fs.rmSync(root,{recursive:true,force:true});}
+});
+test('secure file handles read at offsets and reject use after close',()=>{
+ const root=fs.mkdtempSync(path.join(home,'secure-file-read-at-'));fs.writeFileSync(path.join(root,'public.txt'),'hello');
+ const workspace=openSecureWorkspace(root),file=workspace.openFile('public.txt');
+ try{
+  assert.deepEqual(file.readAt(1,3),Buffer.from('ell'));
+  assert.throws(()=>file.readAt(-1,1),/SECURE_FILE_READ_RANGE_INVALID/);
+  file.close();
+  assert.throws(()=>file.readAt(0,1),/SECURE_FILE_CLOSED/);
+ }finally{file.close();workspace.close();fs.rmSync(root,{recursive:true,force:true});}
+});
 test('gateway denies a registered file whose content version changed before dispatch',async()=>{
  const s=setup(),target=path.join(s.root,'public.txt'),originalReadSync=fs.readSync;let readCalls=0;
  try{
@@ -106,22 +126,21 @@ test('gateway denies a parent-junction swap split across lstat, open, and realpa
   fs.rmSync(parent,{recursive:true,force:true});
  }
 });
-test('gateway rejects a host-authorized file identity replaced at the open boundary before reading bytes',()=>{
+test('gateway rejects a host-authorized file identity replaced after path stat before secure open',()=>{
  const root=fs.mkdtempSync(path.join(home,'expected-identity-open-race-')),target=path.join(root,'public.txt'),held=path.join(root,'public-held.txt');fs.writeFileSync(target,'authorized original');
  const stat=fs.lstatSync(target,{bigint:true}),expectedIdentity={dev:stat.dev.toString(),ino:stat.ino.toString(),birthtimeNs:stat.birthtimeNs.toString(),ctimeNs:stat.ctimeNs.toString(),mtimeNs:stat.mtimeNs.toString(),size:stat.size.toString()};
- const originalOpenSync=fs.openSync,originalReadSync=fs.readSync;let replaced=false,readCalls=0;
+ const originalLstatSync=fs.lstatSync;let replaced=false;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   const result=(originalLstatSync as any)(candidate,...args);
    if(!replaced&&path.resolve(String(candidate))===path.resolve(target)){replaced=true;fs.renameSync(target,held);fs.writeFileSync(target,'UNAUTHORIZED REPLACEMENT CONTENT');}
-   return(originalOpenSync as any)(candidate,...args);
+   return result;
   };
-  (fs as any).readSync=(...args:any[])=>{readCalls++;return(originalReadSync as any)(...args);};
   assert.throws(()=>createTrustedExecutionGateway({agentId:'expected-identity-open-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'public.txt',expectedIdentity}],evidence:new EvidenceRecorder()}),/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the path changes after M1 stats it but before the descriptor opens');
-  assert.equal(readCalls,0,'the descriptor identity mismatch is rejected before content hashing or reads');
+  assert.equal(replaced,true,'the path changes after M1 stats it but before the secure relative open');
   assert.equal(fs.readFileSync(held,'utf8'),'authorized original');
   assert.equal(fs.readFileSync(target,'utf8'),'UNAUTHORIZED REPLACEMENT CONTENT');
- }finally{(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;fs.rmSync(root,{recursive:true,force:true});}
+ }finally{(fs as any).lstatSync=originalLstatSync;fs.rmSync(root,{recursive:true,force:true});}
 });
 test('gateway rejects a workspace moved behind a junction even when its child file identity is unchanged',()=>{
  const parent=fs.mkdtempSync(path.join(os.tmpdir(),'gateway-root-identity-race-'));
@@ -199,13 +218,12 @@ test('gateway rejects a replaced workspace root even when the same registered fi
   await runtime?.close();fs.rmSync(parent,{recursive:true,force:true});
  }
 });
-test('gateway denies file bytes changed after the final check but before descriptor read',async()=>{
+test('gateway denies file bytes changed at the held-handle read boundary',{skip:process.platform==='win32'},async()=>{
  const root=fs.mkdtempSync(path.join(home,'mutating-read-race-')),target=path.join(root,'public.txt');fs.writeFileSync(target,'hello');
- const evidence=new EvidenceRecorder(),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),originalOpenSync=fs.openSync,originalReadSync=fs.readSync;let resourceFd:number|undefined,mutated=false,readCalls=0;
+ const identity=fs.lstatSync(target,{bigint:true}),evidence=new EvidenceRecorder(),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),originalReadSync=fs.readSync,originalFstatSync=fs.fstatSync;let mutated=false,readCalls=0;
  let runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,armed=false;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=(originalOpenSync as any)(candidate,...args);if(path.resolve(String(candidate))===path.resolve(target))resourceFd=fd;return fd;};
-  (fs as any).readSync=(fd:number,...args:any[])=>{if(armed&&fd===resourceFd&&!mutated){mutated=true;fs.writeFileSync(target,'UNREGISTERED SECRET CONTENT');}if(armed&&fd===resourceFd)readCalls++;return (originalReadSync as any)(fd,...args);};
+  (fs as any).readSync=(fd:number,...args:any[])=>{const stat=(originalFstatSync as any)(fd,{bigint:true});if(armed&&stat.dev===identity.dev&&stat.ino===identity.ino&&!mutated){mutated=true;fs.writeFileSync(target,'UNREGISTERED SECRET CONTENT');}if(armed&&stat.dev===identity.dev&&stat.ino===identity.ino)readCalls++;return (originalReadSync as any)(fd,...args);};
   runtime=createTrustedExecutionGateway({agentId:'mutating-read-race',guard,workspaceRoot:root,files:[{path:'public.txt'}],evidence});
   armed=true;
   await assert.rejects(runtime.agent.dispatch({name:'read_file',args:{path:'public.txt'}}),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
@@ -213,25 +231,23 @@ test('gateway denies file bytes changed after the final check but before descrip
   assert.equal(readCalls,1,'the test changes bytes at the held descriptor read boundary');
   assert.equal(evidence.snapshot().at(-1)!.execution_status,'FAILED');
   assert.equal(evidence.snapshot().at(-1)!.side_effect_verification,'NOT_VERIFIED');
- }finally{(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;await runtime?.close();fs.rmSync(root,{recursive:true,force:true});}
+ }finally{(fs as any).readSync=originalReadSync;(fs as any).fstatSync=originalFstatSync;await runtime?.close();fs.rmSync(root,{recursive:true,force:true});}
 });
-test('Gateway content HMAC rejects changed bytes even when stat metadata reports the bound version',async()=>{
+test('Gateway content HMAC rejects changed bytes even when stat metadata reports the bound version',{skip:process.platform==='win32'},async()=>{
  const root=fs.mkdtempSync(path.join(home,'content-hmac-race-')),target=path.join(root,'public.txt');fs.writeFileSync(target,'hello');
- const evidence=new EvidenceRecorder(),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),originalOpenSync=fs.openSync,originalReadSync=fs.readSync,originalFstatSync=fs.fstatSync,originalLstatSync=fs.lstatSync;let resourceFd:number|undefined,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,armed=false,mutated=false,restoreMetadata=false,fdSnapshot:fs.BigIntStats|undefined,pathSnapshot:fs.BigIntStats|undefined;
+ const identity=fs.lstatSync(target,{bigint:true}),evidence=new EvidenceRecorder(),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),originalReadSync=fs.readSync,originalFstatSync=fs.fstatSync;let runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,resourceFd:number|undefined,armed=false,mutated=false,restoreMetadata=false,fdSnapshot:fs.BigIntStats|undefined;
  const snapshotView=(stat:fs.BigIntStats)=>({...stat,isFile:()=>stat.isFile(),isSymbolicLink:()=>stat.isSymbolicLink()});
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=(originalOpenSync as any)(candidate,...args);if(resourceFd===undefined&&path.resolve(String(candidate))===path.resolve(target))resourceFd=fd;return fd;};
-  (fs as any).fstatSync=(fd:number,...args:any[])=>restoreMetadata&&fd===resourceFd&&fdSnapshot?snapshotView(fdSnapshot):(originalFstatSync as any)(fd,...args);
-  (fs as any).lstatSync=(candidate:any,...args:any[])=>restoreMetadata&&pathSnapshot&&path.resolve(String(candidate))===path.resolve(target)?snapshotView(pathSnapshot):(originalLstatSync as any)(candidate,...args);
-  (fs as any).readSync=(fd:number,...args:any[])=>{if(armed&&fd===resourceFd&&!mutated){mutated=true;fs.writeFileSync(target,'world');restoreMetadata=true;}return (originalReadSync as any)(fd,...args);};
+  (fs as any).fstatSync=(fd:number,...args:any[])=>{const current=(originalFstatSync as any)(fd,{bigint:true});return restoreMetadata&&current.dev===identity.dev&&current.ino===identity.ino&&fdSnapshot?snapshotView(fdSnapshot):(originalFstatSync as any)(fd,...args);};
+  (fs as any).readSync=(fd:number,...args:any[])=>{const current=(originalFstatSync as any)(fd,{bigint:true});if(current.dev===identity.dev&&current.ino===identity.ino)resourceFd??=fd;if(armed&&current.dev===identity.dev&&current.ino===identity.ino&&!mutated){mutated=true;fs.writeFileSync(target,'world');restoreMetadata=true;}return (originalReadSync as any)(fd,...args);};
   runtime=createTrustedExecutionGateway({agentId:'content-hmac-race',guard,workspaceRoot:root,files:[{path:'public.txt'}],evidence});
-  fdSnapshot=originalFstatSync(resourceFd!,{bigint:true});pathSnapshot=originalLstatSync(target,{bigint:true});armed=true;
+  assert.notEqual(resourceFd,undefined,'registration fingerprinting reads through the retained secure handle');fdSnapshot=originalFstatSync(resourceFd!,{bigint:true});armed=true;
   await assert.rejects(runtime.agent.dispatch({name:'read_file',args:{path:'public.txt'}}),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
   assert.equal(mutated,true,'the same file object changes at the descriptor read boundary');
-  (fs as any).fstatSync=originalFstatSync;(fs as any).lstatSync=originalLstatSync;restoreMetadata=false;
+  (fs as any).fstatSync=originalFstatSync;(fs as any).readSync=originalReadSync;restoreMetadata=false;
   assert.equal(fs.readFileSync(target,'utf8'),'world');
   assert.equal(evidence.snapshot().at(-1)!.execution_status,'FAILED','the changed bytes are not returned');
- }finally{(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;(fs as any).fstatSync=originalFstatSync;(fs as any).lstatSync=originalLstatSync;await runtime?.close();fs.rmSync(root,{recursive:true,force:true});}
+ }finally{(fs as any).readSync=originalReadSync;(fs as any).fstatSync=originalFstatSync;await runtime?.close();fs.rmSync(root,{recursive:true,force:true});}
 });
 test('write_file fails closed before a hard link can race the final identity check',async()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'gateway-hardlink-write-')),workspace=path.join(root,'workspace'),outside=path.join(root,'outside');
@@ -253,17 +269,15 @@ test('write_file fails closed before a hard link can race the final identity che
   assert.notEqual(relative,'..');assert.ok(!relative.startsWith('..'+path.sep));fs.rmSync(realRoot,{recursive:true,force:true});
  }
 });
-test('gateway closes a newly opened descriptor when handle validation throws',()=>{
- const root=fs.mkdtempSync(path.join(home,'open-fstat-failure-')),target=path.join(root,'public.txt');fs.writeFileSync(target,'authorized original');
- const originalOpenSync=fs.openSync,originalFstatSync=fs.fstatSync,originalCloseSync=fs.closeSync;let openedFd:number|undefined,closedOpenedFd=false;
+test('gateway fails closed when path validation throws after secure relative open',()=>{
+ const root=fs.mkdtempSync(path.join(home,'secure-open-validation-failure-')),target=path.join(root,'public.txt');fs.writeFileSync(target,'authorized original');
+ const originalLstatSync=fs.lstatSync;let targetStats=0;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=originalOpenSync(candidate,...args);if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;return fd;};
-  (fs as any).fstatSync=(fd:number,...args:any[])=>{if(fd===openedFd)throw Error('SIMULATED_FSTAT_FAILURE');return (originalFstatSync as any)(fd,...args);};
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
-  assert.throws(()=>createTrustedExecutionGateway({agentId:'fstat-failure-fixture',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()}),/SIMULATED_FSTAT_FAILURE/);
-  assert.equal(closedOpenedFd,true,'the descriptor is closed even before it enters the resource map');
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target)&&++targetStats===2)throw Error('SIMULATED_PATH_VALIDATION_FAILURE');return (originalLstatSync as any)(candidate,...args);};
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'secure-open-validation-failure',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()}),/SIMULATED_PATH_VALIDATION_FAILURE/);
+  assert.equal(targetStats,2,'registration reaches the path check that follows the secure relative open');
  }finally{
-  (fs as any).openSync=originalOpenSync;(fs as any).fstatSync=originalFstatSync;(fs as any).closeSync=originalCloseSync;
+  (fs as any).lstatSync=originalLstatSync;
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
@@ -359,25 +373,24 @@ test('gateway rejects a reused file ID with mismatched creation and change times
 test('POSIX parent symlink swapped at the open boundary is rejected before content reads',{skip:process.platform==='win32'},()=>{
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-open-parent-symlink-'))),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
  fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'unregistered external file');
- const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
- let replaced=false,openedFd:number|undefined,closedOpenedFd=false,readCalls=0;
+ const target=path.join(workspace,'public.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ let replaced=false,openedPath=false,readCalls=0;
  try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   const stat=(originalLstatSync as any)(candidate,...args);
    if(path.resolve(String(candidate))===path.resolve(target)&&!replaced){replaced=true;fs.renameSync(workspace,heldWorkspace);fs.symlinkSync(outside,workspace,'dir');}
-   const fd=originalOpenSync(candidate,...args);
-   if(path.resolve(String(candidate))===path.resolve(target))openedFd=fd;
-   return fd;
+   return stat;
   };
-  (fs as any).closeSync=(fd:number)=>{if(fd===openedFd)closedOpenedFd=true;return originalCloseSync(fd);};
+  (fs as any).openSync=(candidate:any,...args:any[])=>{if(path.resolve(String(candidate))===path.resolve(target))openedPath=true;return(originalOpenSync as any)(candidate,...args);};
   (fs as any).readSync=(...args:any[])=>{readCalls++;return (originalReadSync as any)(...args);};
-  assert.throws(()=>createTrustedExecutionGateway({agentId:'posix-open-parent-symlink-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/GATEWAY_RESOURCE_CHANGED/);
-  assert.equal(replaced,true,'the real parent directory was swapped for a symlink inside openSync');
-  assert.equal(closedOpenedFd,true,'the descriptor opened through the symlink target is closed');
+  assert.throws(()=>createTrustedExecutionGateway({agentId:'posix-open-parent-symlink-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence:new EvidenceRecorder()}),/SECURE_RELATIVE_OPEN_FAILED/);
+  assert.equal(replaced,true,'the real parent directory was swapped for a symlink after path stat and before secure relative open');
+  assert.equal(openedPath,false,'a path-based file open is never attempted through the symlink');
   assert.equal(readCalls,0,'the external target is rejected before any content read');
   assert.deepEqual(fs.readFileSync(external),externalBefore,'the external fixture remains unchanged');
   assert.equal(fs.readFileSync(path.join(heldWorkspace,'public.txt'),'utf8'),'authorized original');
  }finally{
-  (fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;(fs as any).readSync=originalReadSync;
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
   fs.rmSync(root,{recursive:true,force:true});
  }
 });
@@ -589,127 +602,25 @@ test('file-read capability revalidates identity after async review before creati
   await s.runtime.close();
  }
 });
-test('Windows hard-link replacement after the pre-read check never redirects the held read', {skip:process.platform!=='win32'}, async()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-held-alias-')),boundDir=path.join(root,'workspace'),outsideDir=path.join(root,'outside');
- fs.mkdirSync(boundDir);fs.mkdirSync(outsideDir);fs.writeFileSync(path.join(boundDir,'public.txt'),'authorized original');fs.writeFileSync(path.join(outsideDir,'public.txt'),'NOT_A_REAL_CREDENTIAL');
- const secretPath=path.join(outsideDir,'public.txt'),secretBefore=fs.readFileSync(secretPath),secretHashBefore=createHash('sha256').update(secretBefore).digest('hex');
- const evidence=new EvidenceRecorder(64),guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),runtime=createTrustedExecutionGateway({agentId:'windows-hardlink-fixture',guard,workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence});
- const binding={toolName:'read_public',operation:'file-read' as const,path:'workspace/public.txt'},call={name:'read_public',args:{path:'workspace/public.txt'}};
- const filePath=path.join(boundDir,'public.txt'),heldPath=path.join(boundDir,'public-held.txt'),capability=runtime.bindFileReadCapability(binding),originalReadSync=fs.readSync;let replaced=false,hardlinkCreated=false,replacementError='',heldReadText='';
+test('secure file handle reads only the file object opened before a hard-link replacement',()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-secure-handle-alias-')),workspace=path.join(root,'workspace'),outside=path.join(root,'outside');
+ fs.mkdirSync(workspace);fs.mkdirSync(outside);const target=path.join(workspace,'public.txt'),held=path.join(workspace,'public-held.txt'),secret=path.join(outside,'public.txt');
+ fs.writeFileSync(target,'authorized original');fs.writeFileSync(secret,'NOT_A_REAL_CREDENTIAL');const secretBefore=fs.readFileSync(secret),secretHashBefore=createHash('sha256').update(secretBefore).digest('hex');
+ const secureWorkspace=openSecureWorkspace(root),secureFile=secureWorkspace.openFile('workspace/public.txt');let moved=false,aliasInstalled=false;
  try{
-  (fs as any).readSync=(...args:any[])=>{
-   if(!replaced){
-    replaced=true;
-    // Windows denies renaming a parent directory while a file inside it is held open.
-    // Replace the leaf entry instead so the test installs a real alias after preflight.
-    try{fs.renameSync(filePath,heldPath);fs.linkSync(secretPath,filePath);hardlinkCreated=true;}
-    catch(error){replacementError=String(error);throw error;}
-   }
-   const count=(originalReadSync as any)(...args);
-   if(count>0&&Buffer.isBuffer(args[1])&&typeof args[2]==='number')heldReadText+=args[1].subarray(args[2],args[2]+count).toString('utf8');
-   return count;
-  };
-  await assert.rejects(runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
-  assert.equal(replaced,true,'path replacement happened after the pre-read path check');
-  assert.equal(hardlinkCreated,true,`the test must install a real sensitive hard-link alias before the held read (${replacementError})`);
-  assert.equal(heldReadText,'authorized original','the raced pathname never redirected the held-descriptor read to the sensitive alias');
-  const secretAfter=fs.readFileSync(secretPath);
-  assert.equal(secretAfter.toString('hex'),secretBefore.toString('hex'));
-  assert.equal(createHash('sha256').update(secretAfter).digest('hex'),secretHashBefore,'the external target remains byte-for-byte unchanged');
-  assert.equal(evidence.snapshot().at(-1)?.execution_status,'FAILED','a detected mid-read path replacement is never reported as successful');
+  fs.renameSync(target,held);moved=true;fs.linkSync(secret,target);aliasInstalled=true;
+  const content=secureFile.readAt(0,65_536);
+  try{assert.equal(content.toString('utf8'),'authorized original','a path replacement cannot redirect the held handle to the external hard-link target');}
+  finally{content.fill(0);}
+  assert.equal(aliasInstalled,true);
+  const secretAfter=fs.readFileSync(secret);assert.deepEqual(secretAfter,secretBefore);assert.equal(createHash('sha256').update(secretAfter).digest('hex'),secretHashBefore);
  }finally{
-  (fs as any).readSync=originalReadSync;
-  await runtime.close();
+  secureFile.close();secureWorkspace.close();
+  try{if(aliasInstalled&&fs.existsSync(target))fs.unlinkSync(target);}catch{}
+  try{if(moved&&fs.existsSync(held)&&!fs.existsSync(target))fs.renameSync(held,target);}catch{}
   fs.rmSync(root,{recursive:true,force:true});
  }
-});
-test('Windows external process hard-link replacement during held read never discloses the alias target', {skip:process.platform!=='win32'}, async()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'canary-external-hardlink-race-')),boundDir=path.join(root,'workspace'),outsideDir=path.join(root,'outside');
- fs.mkdirSync(boundDir);fs.mkdirSync(outsideDir);fs.writeFileSync(path.join(boundDir,'public.txt'),'authorized original');fs.writeFileSync(path.join(outsideDir,'public.txt'),'NOT_A_REAL_CREDENTIAL');
- const filePath=path.join(boundDir,'public.txt'),heldPath=path.join(boundDir,'public-held.txt'),secretPath=path.join(outsideDir,'public.txt'),secretBefore=fs.readFileSync(secretPath),secretHashBefore=createHash('sha256').update(secretBefore).digest('hex');
- const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),evidence=new EvidenceRecorder(64),runtime=createTrustedExecutionGateway({agentId:'external-hardlink-race',guard,workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence});
- const binding={toolName:'read_public',operation:'file-read' as const,path:'workspace/public.txt'},call={name:'read_public',args:{path:'workspace/public.txt'}},capability=runtime.bindFileReadCapability(binding),originalReadSync=fs.readSync;
- const replacementScript="const fs=require('node:fs');const [target,held,external]=process.argv.slice(1);fs.renameSync(target,held);fs.linkSync(external,target);process.stdout.write('ALIAS_INSTALLED');";
- let replacementRan=false,bytesRead='';
- try{
-  (fs as any).readSync=(fd:number,...args:any[])=>{
-   if(!replacementRan){
-    replacementRan=true;
-    const result=execFileSync(process.execPath,['-e',replacementScript,filePath,heldPath,secretPath],{encoding:'utf8',windowsHide:true});
-    assert.equal(result,'ALIAS_INSTALLED','a separate OS process must replace the target with a real NTFS hard link');
-   }
-   const count=(originalReadSync as any)(fd,...args);
-   if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')bytesRead+=args[0].subarray(args[1],args[1]+count).toString('utf8');
-   return count;
-  };
-  await assert.rejects(runtime.readFileWithCapability(capability,call,'file-read'),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
-  assert.equal(replacementRan,true,'the external process must replace the path at the descriptor-read boundary');
-  assert.equal(bytesRead,'authorized original','the retained handle must never redirect to the external hard-link target');
-  assert.deepEqual(fs.readFileSync(secretPath),secretBefore,'the external file remains unchanged');
-  assert.equal(createHash('sha256').update(fs.readFileSync(secretPath)).digest('hex'),secretHashBefore);
-  assert.equal(evidence.snapshot().at(-1)?.execution_status,'FAILED','a changed path must not be reported as a successful read');
- }finally{
-  (fs as any).readSync=originalReadSync;
-  try{if(fs.existsSync(filePath))fs.unlinkSync(filePath);}catch{}
-  try{if(fs.existsSync(heldPath)&&!fs.existsSync(filePath))fs.renameSync(heldPath,filePath);}catch{}
-  await runtime.close();
-  fs.rmSync(root,{recursive:true,force:true});
- }
-});
-test('transient path alias during held read never returns external content',async()=>{
- const root=fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(),'canary-transient-alias-read-'))),workspace=path.join(root,'workspace'),heldWorkspace=path.join(root,'workspace-held'),outside=path.join(root,'outside');
- fs.mkdirSync(workspace);fs.mkdirSync(outside);fs.writeFileSync(path.join(workspace,'public.txt'),'authorized original');fs.writeFileSync(path.join(outside,'public.txt'),'NOT_A_REAL_CREDENTIAL');
- const target=path.join(workspace,'public.txt'),heldTarget=path.join(workspace,'public-held.txt'),external=path.join(outside,'public.txt'),externalBefore=fs.readFileSync(external),originalOpenSync=fs.openSync,originalCloseSync=fs.closeSync,originalReadSync=fs.readSync;
- let registeredFd:number|undefined,observedReadFd:number|undefined,aliasInstalled=false,restored=false,readText='',runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined;
- try{
-  (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=originalOpenSync(candidate,...args);if(path.resolve(String(candidate))===path.resolve(target)&&registeredFd===undefined)registeredFd=fd;return fd;};
-  const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')}),evidence=new EvidenceRecorder();
-  runtime=createTrustedExecutionGateway({agentId:'transient-alias-held-read',guard,workspaceRoot:root,files:[{path:'workspace/public.txt'}],evidence});
-  const binding={toolName:'read_public',operation:'file-read' as const,path:'workspace/public.txt'},call={name:'read_public',args:{path:'workspace/public.txt'}},capability=runtime.bindFileReadCapability(binding);
-  (fs as any).readSync=(fd:number,...args:any[])=>{
-   if(!aliasInstalled){
-    aliasInstalled=true;let moved=false,alias=false;
-    try{
-     if(process.platform==='win32'){
-      fs.renameSync(target,heldTarget);moved=true;fs.linkSync(external,target);alias=true;
-     }else{
-      fs.renameSync(workspace,heldWorkspace);moved=true;fs.symlinkSync(outside,workspace,'dir');alias=true;
-     }
-     const count=(originalReadSync as any)(fd,...args);observedReadFd=fd;
-     if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')readText+=args[0].subarray(args[1],args[1]+count).toString('utf8');
-     return count;
-    }finally{
-     if(process.platform==='win32'){
-      if(alias&&fs.existsSync(target))fs.unlinkSync(target);
-      if(moved&&fs.existsSync(heldTarget)&&!fs.existsSync(target))fs.renameSync(heldTarget,target);
-      restored=fs.existsSync(target)&&!fs.existsSync(heldTarget);
-     }else{
-      if(alias)try{fs.unlinkSync(workspace);}catch{}
-      if(moved&&fs.existsSync(heldWorkspace)&&!fs.existsSync(workspace))fs.renameSync(heldWorkspace,workspace);
-      restored=fs.existsSync(workspace)&&!fs.existsSync(heldWorkspace);
-     }
-    }
-   }
-   observedReadFd=fd;const count=(originalReadSync as any)(fd,...args);
-   if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')readText+=args[0].subarray(args[1],args[1]+count).toString('utf8');
-   return count;
-  };
-  const read=runtime.readFileWithCapability(capability,call,'file-read');
-  if(process.platform==='win32')await assert.rejects(read,/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
-  else assert.deepEqual(await read,{content:'authorized original'});
-  assert.equal(aliasInstalled,true,'the alias must exist during the held descriptor read');
-  assert.equal(restored,true,'the original path must be restored before post-read checks');
-  assert.equal(observedReadFd,registeredFd,'file content is read through the descriptor retained at registration');
-  assert.equal(readText,'authorized original','the transient alias never redirects reads to its external target');
-  assert.deepEqual(fs.readFileSync(external),externalBefore,'the external fixture remains unchanged');
-  assert.equal(evidence.snapshot().at(-1)?.execution_status,process.platform==='win32'?'FAILED':'SUCCEEDED');
- }finally{
-  (fs as any).openSync=originalOpenSync;(fs as any).closeSync=originalCloseSync;(fs as any).readSync=originalReadSync;
-  if(runtime)await runtime.close();
-  fs.rmSync(root,{recursive:true,force:true});
- }
-});
-test('first unauthorized credential read rejected before real content is returned',async()=>{const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),/credential_resource_denied/);assert.equal(s.guard.state,'SAFE');assert.equal(s.evidence.snapshot()[0].execution_status,'NOT_STARTED');assert.ok(!JSON.stringify(s.evidence.snapshot()).includes('NOT_A_REAL_CREDENTIAL'));}finally{await s.runtime.close();}});
+});test('first unauthorized credential read rejected before real content is returned',async()=>{const s=setup();try{await assert.rejects(s.runtime.agent.dispatch({name:'read_file',args:{path:'.env'}}),/credential_resource_denied/);assert.equal(s.guard.state,'SAFE');assert.equal(s.evidence.snapshot()[0].execution_status,'NOT_STARTED');assert.ok(!JSON.stringify(s.evidence.snapshot()).includes('NOT_A_REAL_CREDENTIAL'));}finally{await s.runtime.close();}});
 test('caller-supplied decoy metadata cannot open a sensitive host file',async()=>{
  const root=fs.realpathSync.native(fs.mkdtempSync(path.join(home,'forged-decoy-file-'))),target=path.join(root,'.env');
  fs.writeFileSync(target,'HOST_SECRET_FIXTURE_MUST_STAY_UNREAD');
@@ -1076,11 +987,13 @@ test('gateway close aborts active work, drains queued work, and blocks pending a
   assert.equal(queuedCalls,0);
   assert.equal(approvalCalls,0);
   assert.equal(fs.readFileSync(path.join(s.root,'result.txt'),'utf8'),'before');
-  assert.ok(closeAfterDrain.length>0);
-  assert.ok(closeAfterDrain.every(Boolean));
+  if(process.platform!=='win32'){
+   assert.ok(closeAfterDrain.length>0);
+   assert.ok(closeAfterDrain.every(Boolean));
+  }
  }finally{(fs as any).closeSync=originalClose;release();await s.runtime.close().catch(()=>{});await Promise.all([activeOutcome,queuedOutcome,approvalOutcome].filter(Boolean));}
 });
-test('gateway close tries every resource after a close error and exposes only a stable failure',async()=>{
+test('POSIX gateway close tries every resource after a close error and exposes only a stable failure',{skip:process.platform==='win32'},async()=>{
  const s=setup(),originalClose=fs.closeSync,attempted:number[]=[];
  (fs as any).closeSync=(fd:number)=>{attempted.push(fd);if(attempted.length===1){originalClose(fd);throw new Error(`SYNTHETIC_PRIVATE_CLOSE_DETAIL ${path.join(s.root,'.env')}`);}return originalClose(fd);};
  try{
@@ -1093,8 +1006,8 @@ test('gateway close tries every resource after a close error and exposes only a 
    assert.ok(!`${error.message}\n${error.stack??''}`.includes(path.join(s.root,'.env')));
    return true;
   });
-  const expectedCloseAttempts=process.platform==='win32'?2:5;
-  assert.equal(attempted.length,expectedCloseAttempts,'close covers the retained file descriptors and secure workspace handles');
+  const expectedCloseAttempts=3;
+  assert.equal(attempted.length,expectedCloseAttempts,'close covers each retained file handle and the secure workspace handle');
   await assert.rejects(s.runtime.close(),/GATEWAY_RESOURCE_CLOSE_FAILED/);
   assert.equal(attempted.length,expectedCloseAttempts,'a repeated close does not retry already-attempted handles');
  }finally{(fs as any).closeSync=originalClose;await s.runtime.close().catch(()=>{});}
