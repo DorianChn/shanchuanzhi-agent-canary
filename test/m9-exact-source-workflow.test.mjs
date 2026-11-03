@@ -40,7 +40,7 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
     pullRequest: validated.modules[name].pullRequest,
     sha: validated.modules[name].sha,
   }])), {
-    M1: { pullRequest: 152, sha: 'b08078b7f81589e6649d9a855c2ae18d802af9ca' },
+    M1: { pullRequest: 170, sha: '44aa316ca08cc90cc613db0459810524d99e4d1f' },
     M2: { pullRequest: 110, sha: '941fd22d5e43e1de91a76b8c73006e57a4c15496' },
     M3: { pullRequest: 120, sha: '9b208fc6399a857c36391aae3bfe194248dc5cbf' },
     M4: { pullRequest: 121, sha: '96de861cafdce3105c5f2412b3f5a431a378dfb7' },
@@ -61,9 +61,23 @@ test('the manifest pins exactly eight immutable module commits and a separate hi
 test('M1 source-pin evidence names the exact current manifest candidate and retained lineage', () => {
   const m1 = manifest.modules.M1;
   assert.ok(m1PinEvidence.includes(`PR #${m1.pullRequest} head \`${m1.sha}\``));
+  assert.ok(m1PinEvidence.includes('6692192c539108da4e65d34081fe6bd78a94af5b'));
   assert.ok(m1PinEvidence.includes('0831ed4979ae4d9f4c6698296726732d427fb7ae'));
   assert.ok(m1PinEvidence.includes('301d169d5ae586f14a1a7acf9ac2d5c3784419e7'));
-  assert.match(m1PinEvidence, /intermediate head, not the current M9 pin/);
+  assert.match(m1PinEvidence, /previous M9 source pin/);
+});
+
+test('only the merged M1 PR #170 follow-up branch is allowed outside stable feature branches', () => {
+  const source = manifest.modules.M1;
+  assert.doesNotThrow(() => validateExactSourceManifest(manifest));
+  for (const changed of [
+    { ...source, pullRequest: 169 },
+    { ...source, branchRef: 'shanchuanzhi/m1-held-handle-alternate-20261103' },
+  ]) {
+    const candidate = structuredClone(manifest);
+    candidate.modules.M1 = changed;
+    assert.throws(() => validateExactSourceManifest(candidate), /M1 must name a PR, recognized stable source branch/);
+  }
 });
 
 test('a module PR only composes when PR number, stable branch, and exact head SHA match the manifest', () => {
