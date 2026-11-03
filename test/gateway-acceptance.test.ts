@@ -63,6 +63,37 @@ test('resource replacement in the check/use window prevents a file read',async()
   assert.equal(fs.readFileSync(file,'utf8'),'replacement');assert.equal(fs.readFileSync(file+'.held','utf8'),'before');assert.equal(s.guard.state,'QUARANTINED');
  }finally{await runtime.close();await s.close();}
 });
+test('POSIX parent symlink swapped at the actual descriptor read cannot disclose outside bytes',{skip:process.platform==='win32'},async()=>{
+ const s=await sinkFixture(),workspace=path.join(s.root,'workspace'),notes=path.join(workspace,'notes'),heldNotes=path.join(workspace,'notes.held'),outside=path.join(s.root,'outside');
+ fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outside);
+ const heldFile=path.join(notes,'public.txt'),outsideFile=path.join(outside,'public.txt');
+ fs.writeFileSync(heldFile,'PUBLIC_HELD_FILE_FIXTURE');fs.writeFileSync(outsideFile,'OUTSIDE_ALIAS_SENTINEL');
+ const runtime=createTrustedExecutionGateway({agentId:'junction-read-race',guard:s.guard,workspaceRoot:workspace,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()});
+ const originalReadSync=fs.readSync;let readAttempted=false,aliasInstalled=false;
+ (fs as any).readSync=(...args:any[])=>{
+  if(!readAttempted){
+   readAttempted=true;let directoryMoved=false;
+   try{fs.renameSync(notes,heldNotes);directoryMoved=true;fs.symlinkSync(outside,notes,'dir');aliasInstalled=true;}
+   catch(error){
+    if(directoryMoved&&!fs.existsSync(notes))fs.renameSync(heldNotes,notes);
+    throw error;
+   }
+  }
+  return (originalReadSync as any)(...args);
+ };
+ try{
+  const outcome=await Promise.allSettled([runtime.agent.dispatch({name:'read_file',args:{path:'notes/public.txt'}})]);
+  (fs as any).readSync=originalReadSync;
+  assert.equal(readAttempted,true,'the replacement attempt runs immediately before the actual descriptor read');
+  assert.equal(aliasInstalled,true,'the POSIX race must install its symlink to exercise the actual redirection attempt');
+  assert.equal(outcome[0]?.status,'rejected');
+  assert.match(String((outcome[0] as PromiseRejectedResult).reason),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.equal(runtime.evidence().at(-1)?.execution_status,'FAILED');
+  assert.equal(runtime.evidence().some(event=>event.execution_status==='SUCCEEDED'),false);
+  assert.equal(fs.readFileSync(path.join(heldNotes,'public.txt'),'utf8'),'PUBLIC_HELD_FILE_FIXTURE');
+  assert.equal(fs.readFileSync(outsideFile,'utf8'),'OUTSIDE_ALIAS_SENTINEL');
+ }finally{(fs as any).readSync=originalReadSync;await runtime.close();await s.close();}
+});
 test('an executor ignoring cancellation may cause a late side effect, which is not verified safe',async()=>{
  const s=await sinkFixture();let finished!:()=>void;const done=new Promise<void>(r=>finished=r);
  const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],timeoutMs:5,evidence:new EvidenceRecorder(),mcpTools:{badHost:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>{await new Promise(r=>setTimeout(r,30));fs.writeFileSync(path.join(s.root,'late'),'late');finished();return 'ok';}}}});

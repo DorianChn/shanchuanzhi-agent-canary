@@ -24,6 +24,11 @@
 面向支持 stdio 的 MCP 客户端；非 MCP agent 可以用 SDK。本次审计用 MCP
 JavaScript 客户端验证了 stdio 协议，没有逐个验证各编辑器的安装界面。可运行的 SDK 允许/拒绝示例见[开发指南](docs/3.0/DEVELOPER_GUIDE.md)。Node 20+，MIT，无遥测。
 
+### 运行 3.0 SDK 示例
+
+在仓库根目录依次运行 `npm ci`、`npm run build` 和
+`node examples/sdk/quick-start.mjs`。示例允许读取已登记的合成文件、拒绝未登记路径、校验本地证据链，并明确报告写入仍被禁用。它不测试模型、安装器、原生宿主或独立 E4。查看[快速开始指南](GETTING_STARTED.zh-CN.md)、[英文指南](GETTING_STARTED.md)和[示例源码](examples/sdk/quick-start.mjs)。
+
 中文文档（本文件）｜ [English](README.md)
 
 **历史 3.0 工程候选证据（2026-10-12）**：[验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md) · [公平真实模型对照](docs/3.0/FAIR_CORE_EVALUATION.md) · [E0–E4证据映射](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md)。受控 SDK Agent 的执行前控制已有真实效果证据；原生客户端全局防护、AI 独立收益、自适应效果未验证。保留 2.0 竞赛版本；该报告不代表当前开发分支已成为稳定发行。

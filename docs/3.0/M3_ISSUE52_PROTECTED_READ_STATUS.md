@@ -604,3 +604,39 @@ test/security-center-route-m3.test.ts` passed 20/20; `git diff --check`
 passed. These are local synthetic fixture results. M9 must still run the exact
 pinned integrated composition on its required hosts, and Issue #52 remains
 OPEN / P0 until that and the wider product-host acceptance gates pass.
+
+## M9 exact-source composition baseline — 2026-11-03
+
+This section supersedes the dated M9 pin and missing-route blockers above; the
+older entries remain as historical evidence. The protected-read M9 composition
+was measured at candidate `426b0404267891b7a9e5de20422351b067975659` (tree
+`a669ff22303291cab77bf90c16647dc08fc328c1`). Its exact M1–M8 module refs are
+listed in [M9_EXACT_SOURCE_REFS.json](M9_EXACT_SOURCE_REFS.json). Later
+documentation and regression-test edits do not change those pinned module
+sources; they do require their own final repository validation.
+
+The first-party Console now has both a fixed synthetic probe and a distinct
+configured-target route. `POST /api/security-center/target-read` accepts only
+`{targetId}` for a target bound at process startup; the read passes the held M1
+file identity through the M2 adapter and M5 `OBSERVE` policy. The route does
+not accept a caller-supplied path or return file bytes. The real Console route,
+CLI lifecycle, positive control, replacement cases, symlink/junction aliases,
+and zero-dispatch denial cases are covered in
+`test/security-center-route-m3.test.ts`.
+
+Exact-source M9 composition passed on Ubuntu and Windows in [run
+41567266813](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567266813).
+Post-merge CI and the Windows Community build also passed in [run
+41567925591](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567925591)
+and [run
+41567925378](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567925378).
+These establish current integrated source/build regression coverage; they are
+not installed-host or independent E4 results.
+
+Issue #52 remains `OPEN / P0 / NOT_VERIFIED` for the broader security claim.
+The positive control uses a synthetic, preconfigured file. It does not prove
+protection for arbitrary user files, native Shell, unintegrated callbacks, or
+every filesystem operation, and it does not establish OS-atomic path
+resolution or eliminate every change-and-revert race. No actual sensitive-data
+exposure is established. Clean-Windows installer lifecycle and independent
+product E4 remain separate final acceptance gates.

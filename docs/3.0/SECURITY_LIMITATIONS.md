@@ -29,7 +29,7 @@
 
 Historical source-audit snapshot only / 仅保留当时源码审查的历史范围。Current Console routes and status semantics are defined by [API_CONTRACTS](API_CONTRACTS.md) and [the current compatibility matrix](../../COMPATIBILITY.md): GET status and separately authorized reads now exist; missing backend status is UNKNOWN. The dated 404 observations below are not current-route or product-acceptance claims.
 
-以下是当前 M4 源码审计补充，不改写上文 2026-10-12 的历史验收结果。/ This is a current M4 source-audit addendum; it does not rewrite the historical 2026-10-12 acceptance record.
+以下条目是 2026-10-23 的历史 M4 源码审计快照，已由下方 2026-11-03 当前状态更新覆盖；保留它们不代表当前路由仍缺失。/ The following M4 source-audit notes are historical as of 2026-10-23 and are superseded by the current 2026-11-03 status below; their presence does not mean the routes are still missing.
 
 - [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) remains `OPEN / P0 / NOT_VERIFIED` for the first-party OBSERVE product-file path. The reviewed desktop UI has no protected-read action that consumes an M1-bound identity through the M2 adapter. Its status adapter hardcodes `NOT_VERIFIED`; the reviewed server has no `GET /api/security-center` handler and returns 404.
 - M4's Runtime demo uses a generated temporary file through a demo Gateway; its policy demo is virtual. Neither reads a user/product file or establishes product-file protection. M1/M2/M5 fixtures and API compatibility do not establish a supported desktop host callsite.
@@ -38,3 +38,17 @@ Historical source-audit snapshot only / 仅保留当时源码审查的历史范�
 - [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) 仍为 `OPEN / P0 / NOT_VERIFIED`：第一方 OBSERVE 产品文件读取路径尚未验证。已审查的桌面 UI 没有通过 M2 adapter 消费 M1 绑定身份的受保护读取动作；状态 adapter 固定返回 `NOT_VERIFIED`，服务端也没有 `GET /api/security-center` 路由（返回 404）。
 - M4 Runtime 演示只通过演示 Gateway 读取新建的临时文件；策略演示使用虚拟回调。二者都不读取用户/产品文件，也不能证明产品文件保护。M1/M2/M5 fixture 和 API 兼容性不能证明桌面宿主已接线。
 - 路径替换/身份复核与操作系统原子 TOCTOU 保证必须分开描述。本次源码审计没有证明 OS 原子保证、用户文件保护或实际敏感信息泄露。保持 fail-closed；缺失路由应标为 `NOT_VERIFIED`，不能描述成成功拒绝。
+
+## 2026-11-03 当前受保护读取状态
+
+- 第一方 Security Center 现在提供 `POST /api/security-center/target-read`：只接受启动时配置的目标 ID，并通过 M1 持有文件句柄、M2 adapter 与 M5 `OBSERVE` policy 读取；原来的 `POST /api/security-center/protected-read` 仍是固定探针。精确模块引用见 [M9 exact source refs](M9_EXACT_SOURCE_REFS.json)。
+- 精确源码组合在 Ubuntu 与 Windows 的 [M9 workflow run 41567266813](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567266813) 通过；后合并的 CI 与 Windows Community 构建分别见 [run 41567925591](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567925591) 和 [run 41567925378](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567925378)。这些结果覆盖当前集成候选的源码与构建回归，不等于独立 E4。
+- [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) 仍为 `OPEN / P0 / NOT_VERIFIED`：当前正向读取使用合成、预先配置的目标；它不证明对任意用户文件、原生 Shell、未接入工具或整个操作系统的保护，也没有证明所有文件系统上的 OS 原子 TOCTOU 保证。没有证据表明真实敏感数据已泄露。
+- 独立产品 E4 与干净 Windows VM 安装生命周期仍待最后验收；不能用上述 CI、合成夹具或本机 GUI 记录替代。
+
+## Current protected-read status — 2026-11-03
+
+- The first-party Security Center now provides `POST /api/security-center/target-read`. It accepts only a target ID configured at startup and reads through the M1 held file handle, M2 adapter and M5 `OBSERVE` policy. The original `POST /api/security-center/protected-read` remains a fixed probe. See the [exact M9 source refs](M9_EXACT_SOURCE_REFS.json).
+- Exact-source composition passed on Ubuntu and Windows in [M9 workflow run 41567266813](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567266813). Post-merge CI and the Windows Community build passed in [runs 41567925591](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567925591) and [41567925378](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41567925378). These verify the integrated source/build regression, not independent E4.
+- [Issue #52](https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/52) remains `OPEN / P0 / NOT_VERIFIED`: the positive read uses a synthetic, preconfigured target. It does not prove protection for arbitrary user files, native Shell, unintegrated tools, or the whole operating system, and it does not establish an OS-atomic TOCTOU guarantee across filesystems. No actual sensitive-data exposure is established.
+- Independent product E4 and a clean Windows VM installer lifecycle remain pending final acceptance; CI, synthetic fixtures, and the local GUI record are not substitutes.

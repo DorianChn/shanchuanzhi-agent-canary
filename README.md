@@ -28,6 +28,15 @@ the [developer guide](docs/3.0/DEVELOPER_GUIDE.md) for a runnable allow/deny exa
 This audit verified the stdio protocol with the MCP JavaScript client,
 not every editor's installation UI. Node 20+, MIT, no telemetry.
 
+### Try the current 3.0 SDK example
+
+From the repository root, run `npm ci`, `npm run build`, then
+`node examples/sdk/quick-start.mjs`. The example allows a registered fixture
+read, denies an unregistered path, verifies its local evidence chain, and
+reports that writes are disabled. It uses synthetic files; it does not test a
+model, installer, native host, or independent E4. See [Getting Started](GETTING_STARTED.md)
+([中文](GETTING_STARTED.zh-CN.md)) and the [example source](examples/sdk/quick-start.mjs).
+
 中文文档：[README.zh-CN.md](README.zh-CN.md)
 
 **Historical 3.0 engineering candidate evidence (2026-10-12):** [core report](docs/3.0/FINAL_3_0_ACCEPTANCE.md), [fair real-model comparison](docs/3.0/FAIR_CORE_EVALUATION.md), [E0–E4 evidence mapping](docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md). Actual pre-execution effects were verified for a controlled SDK Agent. Native clients' global protection, independent AI benefit and adaptive decoy efficacy remain unverified. The 2.0 candidate is preserved; this report does not qualify the current development branch as a stable release.

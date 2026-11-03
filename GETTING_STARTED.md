@@ -1,5 +1,7 @@
 # Getting started
 
+中文指南：[GETTING_STARTED.zh-CN.md](GETTING_STARTED.zh-CN.md).
+
 Start with a source checkout so setup does not require a global CLI or registry credentials. The commands below use the moving development branch; record the reported commit and tree before sharing results. They require Node.js 20+, npm, Git and dependency-download access. Keep development source, immutable release tags and installer artifacts separate. The [M8 readiness audit](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md) is a historical snapshot; current protected-read source alignment is documented in [M9/M1 exact-source evidence](docs/3.0/M9_M1_SOURCE_PIN_EVIDENCE_2026-11-03.md).
 
 ## Source quick start
