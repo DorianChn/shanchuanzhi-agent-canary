@@ -21,6 +21,14 @@ const exactSourceManifest = JSON.parse(fs.readFileSync(
   path.join(sourceRoots.M9.root, 'docs/3.0/M9_EXACT_SOURCE_REFS.json'),
   'utf8',
 ));
+test('the integrated M9 tree contains the exact pinned M1 protected-read implementation', () => {
+  assert.equal(sourceRoots.M1.sha, exactSourceManifest.modules.M1.sha, 'the M1 checkout must match the immutable manifest pin');
+  for (const relativePath of ['src/runtime/gateway.ts', 'src/runtime/secure-file.ts']) {
+    const integratedSource = fs.readFileSync(path.join(sourceRoots.M9.root, relativePath));
+    const pinnedSource = fs.readFileSync(path.join(sourceRoots.M1.root, relativePath));
+    assert.ok(integratedSource.equals(pinnedSource), `the M9 delivery source must byte-match exact M1 ${relativePath}`);
+  }
+});
 const pinnedSourceShas = {
   M1: exactSourceManifest.modules.M1.sha,
   M2: exactSourceManifest.modules.M2.sha,

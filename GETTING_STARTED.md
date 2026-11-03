@@ -1,23 +1,24 @@
 # Getting started
 
-Start with a source snapshot so setup does not require changing the global CLI or registry configuration. The five-minute target assumes Node.js 20+, npm and Git are available and dependencies can be downloaded; it is not a measured setup-time claim. Keep development source, the historical v3.0.0 tag and candidate installers separate. See [the dated readiness audit](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md).
+Start with a source checkout so setup does not require a global CLI or registry credentials. The commands below use the moving development branch; record the reported commit and tree before sharing results. They require Node.js 20+, npm, Git and dependency-download access. Keep development source, immutable release tags and installer artifacts separate. The [M8 readiness audit](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md) is a historical snapshot; current protected-read source alignment is documented in [M9/M1 exact-source evidence](docs/3.0/M9_M1_SOURCE_PIN_EVIDENCE_2026-11-03.md).
 
-## Five-minute source quick start: reviewed development snapshot
+## Source quick start
 
-This example pins reviewed M8 source 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841. It is not the latest moving feature branch or a published package. Use a new directory:
+Use a new directory on Windows, macOS or Linux:
 
 ~~~sh
-git clone https://github.com/DorianChn/shanchuanzhi-agent-canary.git agent-canary-source
+git clone --single-branch --branch feature/agent-canary-3.0 https://github.com/DorianChn/shanchuanzhi-agent-canary.git agent-canary-source
 cd agent-canary-source
-git checkout --detach 1c94ed4b8beb8ab3f9e04004c0bc3b0f372b2841
 git rev-parse HEAD
+git rev-parse 'HEAD^{tree}'
 npm ci
 npm run build
 node dist/index.js --help
 node dist/index.js self-test --json
+node examples/sdk/quick-start.mjs
 ~~~
 
-At that source, the last command returns passed=true and four passing checks: safe_call, decoy_quarantine, blocked_callback and audit_order. This is an offline circuit-breaker test, not a host-connection, model, installer or E4 test. Failed checks remain failures.
+The CLI self-test is an offline check. The SDK sample creates temporary synthetic files, allows one registered read, denies an unregistered path, and verifies its local evidence chain. Neither checks a native agent host, installer, real-model outcome or independent E4. Run `npm run verify` for the full source and package check; its result is still not an independent product E4 pass.
 
 ### Two source CLI entrypoints
 
@@ -76,7 +77,7 @@ The source tag is the reproducible code snapshot for v3.0.0. `npm run verify` ru
 
 ## Moving development branches
 
-For another feature snapshot, record the full commit SHA and follow its CLI help/package metadata. A moving branch is not a Release artifact. The source example above pins the reviewed M8 head, not current feature or v3.0.0.
+The source quick start follows a moving feature branch, not a Release artifact. For a reproducible report, retain the full commit and tree SHA it prints, and switch to that detached commit before rerunning the same source. The historical v3.0.0 tag remains a separate snapshot.
 
 ## Codex MCP setup (v3.0.0 tag)
 

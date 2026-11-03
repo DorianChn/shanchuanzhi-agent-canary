@@ -50,21 +50,17 @@ test('M5 strict path-only read denies without the M1 capability provider',async(
   agentId:'m9-gateway-router-composition',guard,workspaceRoot:workspace,
   files:[{path:'public.txt'},{path:'private/.env',sensitive:true}],evidence:new EvidenceRecorder(),
  });
- if(typeof (gateway as any).bindFileReadCapability!=='function'){
-  await gateway.close();
-  t.skip('local M9 product source predates the M1 capability API; exact candidate behavior is covered by m9-cross-module-composition.test.mjs');
-  return;
- }
  let gatewayDispatches=0;
- const router=createSecurityToolRouter({
-  guard,workspaceRoot:workspace,mode:'OBSERVE',verifyRealPaths:true,
-  tools:{read:{operation:'file-read'}},
-  executeRealTool:(call,context)=>{
-   gatewayDispatches++;
-   return gateway.agent.dispatch({name:'read_file',args:{path:String(call.args.path)}},context.signal);
-  },
- });
  try{
+  assert.equal(typeof (gateway as any).bindFileReadCapability,'function','the integrated M9 source must include the pinned M1 held-file capability API');
+  const router=createSecurityToolRouter({
+   guard,workspaceRoot:workspace,mode:'OBSERVE',verifyRealPaths:true,
+   tools:{read:{operation:'file-read'}},
+   executeRealTool:(call,context)=>{
+    gatewayDispatches++;
+    return gateway.agent.dispatch({name:'read_file',args:{path:String(call.args.path)}},context.signal);
+   },
+  });
   const publicCall={name:'read',args:{path:'public.txt'}};
   const publicDecision=await router.decide(publicCall);
   assert.equal(publicDecision.action,'DENY');

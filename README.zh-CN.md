@@ -4,11 +4,11 @@
 
 # agent-canary
 
-> 自动 E4 源码工具与已发布候选资产分别记录，**尚未包含在公开 candidate.4**。当前源码流水线会生成有界本地证据包；不会启动/恢复虚拟机、调用 GPT-6、修改 GitHub，也不会自动证明外部 E4。详见[自动 E4 范围与复现](docs/3.0/AUTO_E4.md)。
+> 打包版“自动 E4”界面与公开 candidate.4 分开；它只生成有界本地证据，不会启动/恢复虚拟机或调用模型。另有独立源码 runner，只有显式选择才会用合成 fixture 发起真实模型请求。两者都不能证明独立产品 E4。见[自动 E4 范围](docs/3.0/AUTO_E4.md)与[E4 复现指南](docs/3.0/E4_REPRODUCTION_GUIDE.md)。
 
 给 AI 编程 agent 装绊线。它在你的环境里布置诱饵 MCP 工具和金丝雀令牌，并给 SDK 集成提供会话熔断器，在发现失陷信号后阻断下一次经过守卫的真实操作。
 
-当前上手、精确检查、打包缺口和开放产品门槛见 [M8 就绪审查（2026-10-25）](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md)。PR #40 已合入 feature；合并不会更新已发布资产。
+当前受保护文件源码对齐情况见 [M9/M1 精确源码证据（2026-11-03）](docs/3.0/M9_M1_SOURCE_PIN_EVIDENCE_2026-11-03.md)。独立产品 E4 仍为 NOT_VERIFIED，见[E4 当前结论](docs/3.0/E4_FINAL_VERDICT.md)和[操作员交接提示词](docs/3.0/INDEPENDENT_E4_OPERATOR_PROMPT.md)。[M8 就绪审查（2026-10-25）](docs/3.0/M8_OPEN_SOURCE_READINESS_2026-10-25.md)是历史快照，不代表最新源码改动或已发布资产。
 
 ## 版本与分发范围
 
