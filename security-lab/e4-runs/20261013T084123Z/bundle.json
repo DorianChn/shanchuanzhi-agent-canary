@@ -1,0 +1,14 @@
+{
+  "schema": "agent-canary.e4-bundle.v1",
+  "archive": "evidence.zip",
+  "sha256": "f1cda41498f984cddf54c19b096ec5e7f4ab6f98ed1b2e806129d233bf017a6a",
+  "size": 30772,
+  "entries": 13,
+  "manifest": {
+    "entries": 12,
+    "valid": true
+  },
+  "verification": "LOCAL_ZIP_CRC_AND_SHA256_MANIFEST_VERIFIED",
+  "e4Status": "NOT_VERIFIED",
+  "classification": "AUTHOR_AUTOMATION_RUN_NOT_E4"
+}

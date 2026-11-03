@@ -13,3 +13,4 @@ __pycache__/
 /competition-submission/evidence/round4-free-artifact-location.txt
 /competition-submission/evidence/v2-free-build-location.txt
 /competition-submission/evidence/v2-final-head.local.json
+!security-lab/e4-runs/**/raw.log

@@ -1,0 +1,2 @@
+{"ts":"2026-10-13T08:41:24.587Z","kind":"session_tripped","eventType":"session_tripped","sessionId":"e4-gw-fault-20261013T084123Z","reason":"gateway_execution_failed","riskLevel":"SAFE","traceId":"0686f747-c4af-4cbf-9059-d8c75a7bfdce"}
+{"ts":"2026-10-13T08:41:24.589Z","kind":"session_quarantined","eventType":"session_quarantined","sessionId":"e4-gw-fault-20261013T084123Z","reason":"gateway_execution_failed","riskLevel":"SAFE","traceId":"0686f747-c4af-4cbf-9059-d8c75a7bfdce"}

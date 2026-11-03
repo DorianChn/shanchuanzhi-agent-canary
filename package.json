@@ -48,13 +48,15 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node --import tsx --test test/readme-sdk-example.test.mjs test/agent-hook.test.ts test/gateway.test.ts test/gateway-adapter.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/security-router-observe.test.ts test/security-center-protected-read.test.ts test/security-center-live-process.test.ts test/protected-mcp-process.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts test/server.test.ts",
+    "test": "node --import tsx --test test/auto-e4.test.mjs test/community-manifest.test.mjs test/readme-sdk-example.test.mjs test/agent-hook.test.ts test/gateway.test.ts test/gateway-adapter.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/security-router-observe.test.ts test/security-center-protected-read.test.ts test/security-center-live-process.test.ts test/protected-mcp-process.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts test/server.test.ts",
     "ai:console": "node dist/competition.js ai console",
     "lab:agent": "node competition-submission/lab/run-agent-eval.mjs --profile=neutral_agent --v2",
     "types:check": "node scripts/check-sdk-types.mjs",
     "acceptance:offline": "npm run self-test && npm run types:check && node reproduction-kit/verify-community-manifest.mjs . && node reproduction-kit/run-offline-demo.mjs --root=.",
     "self-test": "node dist/competition.js self-test --json",
     "pack:check": "node scripts/check-package.mjs",
+    "e4:auto": "npm run build && node security-lab/e4/run.mjs",
+    "e4:verify": "node security-lab/e4/verify-bundle.mjs",
     "verify": "npm run build && npm test && npm run acceptance:offline && npm run pack:check",
     "prepublishOnly": "npm run build"
   },
