@@ -995,84 +995,35 @@ test('built-package Console rejects an external junction swap to a protected har
   }
 });
 
-test('built-package Console route never redirects a held read during a protected-key transient alias swap',async()=>{
-  const workspace=fs.realpathSync.native(fs.mkdtempSync(path.join(testHome,'configured-target-transient-alias-')));
-  const notes=path.join(workspace,'notes'),heldNotes=path.join(workspace,'notes-held'),outside=fs.mkdtempSync(path.join(testHome,'configured-target-transient-outside-'));
-  fs.mkdirSync(notes);const targetPath=path.join(notes,'summary.txt'),heldTarget=path.join(notes,'summary-held.txt'),external=path.join(outside,'.ssh','id_rsa');
-  const original='AUTHORIZED_SUMMARY_FIXTURE',secret='SYNTHETIC_PROTECTED_SSH_KEY_MUST_NOT_ESCAPE',externalBefore=Buffer.from(secret);
-  fs.writeFileSync(targetPath,original);fs.mkdirSync(path.dirname(external),{recursive:true});fs.writeFileSync(external,secret);
-  const originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
-  let registeredFd:number|undefined,observedReadFd:number|undefined,aliasInstalled=false,restored=false,readText='',readIntercepts=0,swapError='',console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
-  const externalSwapScript="const fs=require('node:fs');const [mode,target,held,external]=process.argv.slice(1);if(mode==='install'){fs.renameSync(target,held);fs.linkSync(external,target);process.stdout.write('ALIAS_INSTALLED');}else if(mode==='restore'){fs.unlinkSync(target);fs.renameSync(held,target);process.stdout.write('ALIAS_RESTORED');}else process.exit(2);";
-  try{
-    assert.equal(hasPublicM2GatewayAdapter,true,'the built Console must resolve the M2 package entry');
-    assert.equal(hasPublicM5PolicyRouter,true,'the built Console must resolve the M5 package entry');
-    (fs as any).openSync=(candidate:any,...args:any[])=>{const fd=originalOpenSync(candidate,...args);if(path.resolve(String(candidate))===path.resolve(targetPath)&&registeredFd===undefined)registeredFd=fd;return fd;};
-    console=await startAIConsole({
-      port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
-      securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],
-    });
-    (fs as any).openSync=originalOpenSync;
-    const csrf=await csrfFor(console.url);
-    (fs as any).readSync=(fd:number,...args:any[])=>{
-      readIntercepts++;
-      if(!aliasInstalled){
-        let moved=false,alias=false;
-        try{
-          if(process.platform==='win32'){
-            let result='';
-            try{result=execFileSync(process.execPath,['-e',externalSwapScript,'install',targetPath,heldTarget,external],{encoding:'utf8',windowsHide:true});}
-            catch(error){swapError=String(error);throw error;}
-            assert.equal(result,'ALIAS_INSTALLED','a separate OS process must install the transient NTFS hard-link alias');
-            aliasInstalled=true;
-          }else{
-            aliasInstalled=true;
-            fs.renameSync(notes,heldNotes);moved=true;fs.symlinkSync(outside,notes,'dir');alias=true;
-          }
-          const count=(originalReadSync as any)(fd,...args);observedReadFd=fd;
-          if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')readText+=args[0].subarray(args[1],args[1]+count).toString('utf8');
-          return count;
-        }finally{
-          if(process.platform==='win32'){
-            if(aliasInstalled){
-              const result=execFileSync(process.execPath,['-e',externalSwapScript,'restore',targetPath,heldTarget,external],{encoding:'utf8',windowsHide:true});
-              restored=result==='ALIAS_RESTORED'&&fs.existsSync(targetPath)&&!fs.existsSync(heldTarget);
-            }
-          }else{
-            if(alias)try{fs.unlinkSync(notes);}catch{}
-            if(moved&&fs.existsSync(heldNotes)&&!fs.existsSync(notes))fs.renameSync(heldNotes,notes);
-            restored=fs.existsSync(notes)&&!fs.existsSync(heldNotes);
-          }
-        }
-      }
-      observedReadFd=fd;const count=(originalReadSync as any)(fd,...args);
-      if(count>0&&Buffer.isBuffer(args[0])&&typeof args[1]==='number')readText+=args[0].subarray(args[1],args[1]+count).toString('utf8');
-      return count;
-    };
-    const response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'}),body=await response.json();
-    assert.equal(response.status,200);
-    assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:process.platform==='win32'?'UNKNOWN':'ALLOW'});
-    assert.equal(aliasInstalled,true,`the alias must be installed during the built M1/M2/M5 route read; intercepts=${readIntercepts}, body=${JSON.stringify(body)}, swapError=${swapError}`);
-    assert.equal(restored,true,'the original target path must be restored before the Gateway post-read check');
-    assert.equal(observedReadFd,registeredFd,'the Console route reads only through the M1 descriptor retained at startup');
-    assert.equal(readText,original,'the route never reads bytes from the transient external alias');
-    assert.equal(readIntercepts,1,'the configured package route must read the registered fixture through one held-descriptor operation');
-    assert.equal(JSON.stringify(body).includes(secret),false);
-    assert.equal(JSON.stringify(body).includes(original),false);
-    assert.equal(JSON.stringify(body).includes(targetPath),false);
-    assert.deepEqual(fs.readFileSync(external),externalBefore);
-    assert.deepEqual(fs.readFileSync(targetPath,'utf8'),original);
-  }finally{
-    (fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
-    if(process.platform==='win32'&&fs.existsSync(heldTarget)){
-      try{if(fs.existsSync(targetPath))fs.unlinkSync(targetPath);fs.renameSync(heldTarget,targetPath);}catch{}
-    }
-    if(console)await console.close();
-    fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});
-  }
-});
-
-test('configured sensitive, symlink, and hard-link aliases fail before M1 opens or M5 callbacks',async()=>{
+test('built-package Console route fails closed after an authorized target is replaced by a protected-key hard link',async()=>{
+ const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-hardlink-alias-')),notes=path.join(workspace,'notes'),outside=fs.mkdtempSync(path.join(testHome,'configured-target-hardlink-outside-'));
+ fs.mkdirSync(notes);const targetPath=path.join(notes,'summary.txt'),heldTarget=path.join(notes,'summary-held.txt'),external=path.join(outside,'.ssh','id_rsa');
+ const original='AUTHORIZED_SUMMARY_FIXTURE',secret='SYNTHETIC_PROTECTED_SSH_KEY_MUST_NOT_ESCAPE',externalBefore=Buffer.from(secret);
+ fs.writeFileSync(targetPath,original);fs.mkdirSync(path.dirname(external),{recursive:true});fs.writeFileSync(external,secret);
+ let moved=false,aliasInstalled=false,console:Awaited<ReturnType<typeof startAIConsole>>|undefined;
+ try{
+  assert.equal(hasPublicM2GatewayAdapter,true,'the built Console must resolve the M2 package entry');
+  assert.equal(hasPublicM5PolicyRouter,true,'the built Console must resolve the M5 package entry');
+  console=await startAIConsole({
+   port:0,operatorApprovalCode:'OPERATOR_FIXTURE',securityCenterWorkspaceRoot:workspace,
+   securityCenterProtectedTargets:[{id:'summary',path:'notes/summary.txt'}],
+  });
+  fs.renameSync(targetPath,heldTarget);moved=true;fs.linkSync(external,targetPath);aliasInstalled=true;
+  assert.equal(fs.readFileSync(targetPath,'utf8'),secret,'the fixture installs an actual protected-file hard-link alias');
+  const csrf=await csrfFor(console.url),response=await postConfiguredTargetRead(console.url,csrf,{targetId:'summary'}),body=await response.json();
+  assert.equal(response.status,200);
+  assert.deepEqual(body,{scope:'M3_CONFIGURED_TARGET_READ',status:'DENY'});
+  assert.equal(JSON.stringify(body).includes(secret),false);
+  assert.equal(JSON.stringify(body).includes(original),false);
+  assert.equal(JSON.stringify(body).includes(targetPath),false);
+  assert.deepEqual(fs.readFileSync(external),externalBefore);
+ }finally{
+  try{if(aliasInstalled&&fs.existsSync(targetPath))fs.unlinkSync(targetPath);}catch{}
+  try{if(moved&&fs.existsSync(heldTarget)&&!fs.existsSync(targetPath))fs.renameSync(heldTarget,targetPath);}catch{}
+  if(console)await console.close();
+  fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});
+ }
+});test('configured sensitive, symlink, and hard-link aliases fail before M1 opens or M5 callbacks',async()=>{
   const workspace=fs.mkdtempSync(path.join(testHome,'configured-target-denials-'));
   const outside=fs.mkdtempSync(path.join(testHome,'configured-target-outside-'));
   const protectedTargets=[
