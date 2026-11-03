@@ -26,8 +26,10 @@ export function validateExactSourceManifest(manifest, event = {}) {
     const stableFeatureBranch = /^feature\/ac3-[a-z0-9-]+$/.test(source?.branchRef ?? '');
     const mergedM1SecurityFollowup = moduleName === 'M1' && source?.pullRequest === 149 &&
       source?.branchRef === 'shanchuanzhi/issue52-toctou-race-20261102';
+    const mergedM1HeldHandleFollowup = moduleName === 'M1' && source?.pullRequest === 170 &&
+      source?.branchRef === 'shanchuanzhi/m1-held-handle-m9-20261103';
     if (!Number.isInteger(source?.pullRequest) || source.pullRequest < 1 ||
-        !(stableFeatureBranch || mergedM1SecurityFollowup) || !isSha(source?.sha)) {
+        !(stableFeatureBranch || mergedM1SecurityFollowup || mergedM1HeldHandleFollowup) || !isSha(source?.sha)) {
       fail(`${moduleName} must name a PR, recognized stable source branch, and immutable 40-character SHA.`);
     }
   }

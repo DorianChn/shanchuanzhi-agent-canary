@@ -4,9 +4,9 @@
   "targetBaseRef": "feature/agent-canary-3.0",
   "modules": {
     "M1": {
-      "pullRequest": 152,
-      "branchRef": "feature/ac3-m1-mount-boundary",
-      "sha": "b08078b7f81589e6649d9a855c2ae18d802af9ca"
+      "pullRequest": 170,
+      "branchRef": "shanchuanzhi/m1-held-handle-m9-20261103",
+      "sha": "44aa316ca08cc90cc613db0459810524d99e4d1f"
     },
     "M2": {
       "pullRequest": 110,
