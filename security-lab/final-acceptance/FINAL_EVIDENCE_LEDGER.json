@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "sourceSHA": "9ed69f3cfa8cae677ddc37351fa609c94c0c5616",
+  "report": "docs/3.0/FINAL_3_0_ACCEPTANCE.md",
+  "rootNodeTests": {
+    "total": 305,
+    "passed": 301,
+    "failed": 0,
+    "skipped": 4
+  },
+  "pythonAuxiliaryTests": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "targetedNodeSubset": {
+    "total": 78,
+    "passed": 78,
+    "includedInRootTotal": true
+  },
+  "candidateSubset": {
+    "total": 96,
+    "passed": 96,
+    "includedInRootTotal": true
+  },
+  "realTrials": {
+    "total": 48,
+    "uniqueScenarios": 12,
+    "repeats": 2,
+    "arms": [
+      "A",
+      "F"
+    ],
+    "errors": 0,
+    "notNativeThirdPartyAgent": true
+  },
+  "evidenceLevels": {
+    "E3": 20,
+    "E2": 4
+  },
+  "codeCI": {
+    "run": 38143747766,
+    "headSHA": "9ed69f3cfa8cae677ddc37351fa609c94c0c5616",
+    "successfulJobs": 9
+  },
+  "assets": {
+    "security-lab/evidence/2026-10-11T13-34-53-835Z/results.json": "54210c84a443853606926a174765a8759a655946120760f1ce963d9705997bb3",
+    "security-lab/evidence/2026-10-11T13-34-53-835Z/preregistration.json": "00d322c8a7bd4af1d82e8a537e51b19d4e871f89681cf0ef32b636495674c0d2",
+    "security-lab/final-acceptance/current-cohort-assurance.json": "dee305d48f655eb9c82ccc67f8b6f402f8390af246d3e9eab8dfcccb661e5585",
+    "security-lab/final-acceptance/full-verify.txt": "d2d70985d0668678a09af3078cde7473fc7b6986d522316cd933e8be82718bbd",
+    "security-lab/final-acceptance/verifier-negative-before.txt": "71c28002976146494a737fbd02af6e0fb3da5befb86cff2e39c2331c7b0629aa",
+    "security-lab/final-acceptance/verifier-negative-after.txt": "8aecb8a80130006b7acb0814c69a5021141fe60c2ac45b28a8d73faca0180bc8",
+    "competition-submission/3.0/Agent_Canary_3_0_Community_Preview_9ed69f3c.zip": "f972fc8b1ea142dfa01c1bd73f7a6a4bb2692f734a3c7df3e64656d82e635366",
+    "security-lab/final-acceptance/candidate-install.json": "af6fa09bbcb33742f94a8306d7150a063667178cd7055efc5265d8e282f40f3a",
+    "security-lab/final-acceptance/ci-code.json": "a326a89f40a5377446cb02636e809c6238f52942c386271720086e1a32fdbf34"
+  },
+  "limits": [
+    "No independent operator E4",
+    "Indirect injection improvement unmeasured",
+    "AI and adaptive independent contribution unmeasured",
+    "Old PDF/video retained; not current final materials",
+    "Ordinary npm/Docker commercial distribution P1 remains open"
+  ]
+}

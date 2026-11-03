@@ -1,0 +1,118 @@
+{
+  "sourceSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "tag": "v3.0.0-competition-candidate.1",
+  "checkedAssets": [
+    {
+      "name": "Agent_Canary_3_0_Community_Preview_99660b36.zip",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 348655,
+      "sha256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Community_Preview_99660b36.zip"
+    },
+    {
+      "name": "Agent_Canary_3_0_Evidence.zip",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 193986,
+      "sha256": "94ee64c47927403eba55e2b091237746ab01b462c9f9bf4a92d3a320f0f2767c",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Evidence.zip"
+    },
+    {
+      "name": "Agent_Canary_3_0_Submission_Materials.zip",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 1053586,
+      "sha256": "2bf8a7b721902c0d3c6bca445f168db7f79aaa907dac770e0ed0c4a81ebad41e",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Submission_Materials.zip"
+    },
+    {
+      "name": "Agent_Canary_3_0_Project_Overview.pdf",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 414450,
+      "sha256": "7cfdc0a9fb9b219b18ef527ff3e319cab476a1c211a7a21f834895b1b76f111e",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Project_Overview.pdf"
+    },
+    {
+      "name": "Agent_Canary_3_0_Technical_Innovation.pdf",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 147192,
+      "sha256": "c55ea9185be1de58c2e031122e2f35694f75cdfaa406ec800ef79f1661d9b88a",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Technical_Innovation.pdf"
+    },
+    {
+      "name": "Agent_Canary_3_0_Real_Model_Evaluation.pdf",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 326885,
+      "sha256": "5c413bc6671657bc9ae887c9d28f17bc7c43eda95730eba89c2be6ccdae49e32",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Real_Model_Evaluation.pdf"
+    },
+    {
+      "name": "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 7897441,
+      "sha256": "ea4e22ff9f0a474b359ebe067cbd4f3d12eaff2f838eaa1479166f0514201a84",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Competition_Demo_Final_1080p.webm"
+    },
+    {
+      "name": "Agent_Canary_3_0_Chinese_Subtitles.srt",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 1312,
+      "sha256": "115f2b62b30d86be21a5a9b5b5ce84a2b8724a2ba8890fced81bc3dc37491a60",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/Agent_Canary_3_0_Chinese_Subtitles.srt"
+    },
+    {
+      "name": "INSTALL_AND_REPRODUCE.md",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 3866,
+      "sha256": "405b2e29af83fb7f914877be4787710a88df3f6eeef3806b1135d6132e10e312",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/INSTALL_AND_REPRODUCE.md"
+    },
+    {
+      "name": "SECURITY_ARCHITECTURE.png",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 111311,
+      "sha256": "50fc2ae9de54a55d3f2bb409fa83cc1de64d6aee7d5bd55012efed6b1715d43c",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/SECURITY_ARCHITECTURE.png"
+    },
+    {
+      "name": "DELIVERY_MANIFEST.json",
+      "httpStatus": 200,
+      "anonymous": true,
+      "bytes": 3084,
+      "sha256": "38b5c17006490468d656c469163aa8a9fe4b05cc3d614d7bab425f35e0102c3a",
+      "matchesLocal": true,
+      "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/download/v3.0.0-competition-candidate.1/DELIVERY_MANIFEST.json"
+    }
+  ],
+  "status": "VERIFIED",
+  "additionalAssetChecks": [
+    {
+      "name": "RELEASE_ASSET_MAP.json",
+      "HTTP": 200,
+      "hashMatch": true
+    },
+    {
+      "httpStatus": 200,
+      "matchesLocal": true,
+      "sha256": "687b13dc590c4c4dc8c317884b3fce89c249c7143450aab5b670e25d4cb6c08f"
+    }
+  ]
+}

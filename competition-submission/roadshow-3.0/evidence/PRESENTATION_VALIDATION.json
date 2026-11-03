@@ -1,0 +1,721 @@
+[
+  {
+    "deck": "Agent_Canary_3_0_5分钟技术路演_答辩定稿",
+    "slideCount": 15,
+    "mainCount": 10,
+    "plannedSeconds": 300,
+    "chartOwners": [
+      6
+    ],
+    "tableOwners": [
+      11,
+      12,
+      13
+    ],
+    "receipt": {
+      "finalPath": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\competition-submission\\roadshow-3.0\\Agent_Canary_3_0_5分钟技术路演_答辩定稿.pptx",
+      "receiptPath": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\5min\\validation-final.json",
+      "schemaVersion": "presentation-finalization.v1",
+      "finalSha256": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+      "byteCount": 73338,
+      "packageIntegrity": {
+        "chart_count": 1,
+        "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
+        "finding_count": 0,
+        "findings": [],
+        "notes_parts_skipped": 15,
+        "relationship_part_count": 41,
+        "slide_count": 15,
+        "status": "pass",
+        "exitCode": 0,
+        "findingCount": 0,
+        "warnings": []
+      },
+      "presentationLayout": {
+        "finding_count": 0,
+        "findings": [],
+        "font_policy": {
+          "checked_text_script_count": 231,
+          "native_font_rendering_verified": false,
+          "observed_font_families": [
+            "Microsoft YaHei"
+          ],
+          "observed_font_use_counts": {
+            "Microsoft YaHei": 231
+          },
+          "passed": true,
+          "performed": true
+        },
+        "slide_count": 15,
+        "slide_size_in": [
+          13.3333,
+          7.5
+        ],
+        "warning_count": 0,
+        "warnings": [],
+        "exitCode": 0,
+        "findingCount": 0,
+        "fontPolicy": {
+          "checked_text_script_count": 231,
+          "native_font_rendering_verified": false,
+          "observed_font_families": [
+            "Microsoft YaHei"
+          ],
+          "observed_font_use_counts": {
+            "Microsoft YaHei": 231
+          },
+          "passed": true,
+          "performed": true
+        }
+      },
+      "fontSelection": {
+        "basis": "design",
+        "approvedFamilies": [
+          "Microsoft YaHei"
+        ],
+        "scriptFonts": {},
+        "referenceSha256": null,
+        "referenceFontsVerifiedInEncodedText": false,
+        "checked_text_script_count": 231,
+        "native_font_rendering_verified": false,
+        "observed_font_families": [
+          "Microsoft YaHei"
+        ],
+        "observed_font_use_counts": {
+          "Microsoft YaHei": 231
+        },
+        "passed": true,
+        "performed": true
+      },
+      "firstPartyImport": {
+        "performed": true,
+        "passed": true,
+        "slideCount": 15,
+        "sha256": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+        "runtimeNodeModules": "C:/Users/36712/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+        "nodeExecutable": "C:\\Users\\36712\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe"
+      },
+      "nativeTableArithmetic": {
+        "performed": true,
+        "checked_column_count": 0,
+        "checks": [],
+        "claim_boundary": "Displayed-value arithmetic with rounding tolerance; not source-data verification.",
+        "eligible_table_count": 0,
+        "finding_count": 0,
+        "findings": [],
+        "native_table_count": 3,
+        "passed": true,
+        "schema_version": "presentation-native-table-arithmetic.v1",
+        "skipped_tables": [
+          {
+            "reason": "no_numeric_amounts",
+            "slide": 11,
+            "table": 1
+          },
+          {
+            "reason": "no_numeric_amounts",
+            "slide": 12,
+            "table": 1
+          },
+          {
+            "reason": "no_numeric_amounts",
+            "slide": 13,
+            "table": 1
+          }
+        ],
+        "slide_count": 15,
+        "warning_count": 0,
+        "warnings": []
+      },
+      "nativeChartTitles": {
+        "performed": true,
+        "checks": [
+          {
+            "chart": 1,
+            "slide": 6,
+            "status": "absent"
+          }
+        ],
+        "finding_count": 0,
+        "findings": [],
+        "native_chart_count": 1,
+        "native_powerpoint_verified": false,
+        "passed": true,
+        "presentation_sha256": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+        "schema_version": "presentation-native-chart-titles.v1",
+        "slide_count": 15,
+        "source_text_emitted": false,
+        "unresolved_linked_title_count": 0
+      },
+      "sourceDerivedPolicyFlags": [
+        "--expected-slide-size-emu",
+        "12192000,6858000",
+        "--validate-heading-fit",
+        "--require-native-table-slide",
+        "11",
+        "--require-native-table-slide",
+        "12",
+        "--require-native-table-slide",
+        "13",
+        "--cover-role",
+        "none",
+        "--expected-slide-count",
+        "15",
+        "--approved-font-family",
+        "Microsoft YaHei"
+      ],
+      "nativeChartValidation": {
+        "detectedOwnerSlides": [
+          6
+        ],
+        "detectedChartCount": 1,
+        "targetApplication": "portable",
+        "sourceChartOwnersExplicitlyDeclared": true,
+        "validatorRan": true,
+        "passed": true
+      },
+      "nativeQuantitativeCharts": {
+        "report": {
+          "claim_boundary": "OOXML/workbook structural validation only; source provenance and native PowerPoint opening remain separate checks.",
+          "expected_quantitative_chart_slides": [
+            6
+          ],
+          "failed_slide_count": 0,
+          "failed_slides": [],
+          "formal_human_reviewed": false,
+          "native_application_open_verified": false,
+          "package_sha256": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+          "passed": true,
+          "results": [
+            {
+              "approved_source_figure_exception": false,
+              "charts": [
+                {
+                  "cache_reference_ranges_verified": true,
+                  "embedded_workbook_count": 1,
+                  "embedded_workbook_sheet_count": 1,
+                  "native_chart_types": [
+                    "barChart"
+                  ],
+                  "numeric_cache_point_count": 2,
+                  "series_formula_count": 2,
+                  "workbook_numeric_cell_count": 2
+                }
+              ],
+              "failure_codes": [],
+              "native_chart_count": 1,
+              "raster_picture_count": 0,
+              "required_native_chart_count": 1,
+              "slide_number": 6,
+              "status": "passed"
+            }
+          ],
+          "schema_version": "owner-private.quantitative-chart-native-gate.v1",
+          "slide_count": 15,
+          "source_attachments_accessed": false,
+          "validated_slide_count": 1
+        },
+        "exitCode": 0,
+        "validatedSlideCount": 1,
+        "requiredOwnerSlides": [
+          6
+        ],
+        "approvedSourceFigureExceptionSlides": []
+      },
+      "chartDataPackaging": {
+        "conversion": "chart_data_snapshot",
+        "converted_chart_count": 1,
+        "converted_charts": [
+          {
+            "chart_part": "ppt/slides/charts/chart1.xml",
+            "owner_slide": 6,
+            "point_count": 2,
+            "series_count": 1,
+            "workbook_part": "ppt/embeddings/chart-data-snapshot-001.xlsx"
+          }
+        ],
+        "detected_chart_owner_slides": [
+          6
+        ],
+        "experimental": true,
+        "input_sha256": "df5f92926fbcfa536f7d2477da45f60cb4d9f65360bf95d17231c44f545380ba",
+        "new_formulas_describe_snapshot_only": true,
+        "output_bytes": 73338,
+        "output_sha256": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+        "portable_chart_validation_passed": true,
+        "portable_validated_owner_slides": [
+          6
+        ],
+        "preserved_existing_workbook_chart_count": 0,
+        "preserved_existing_workbook_charts": [],
+        "schema_version": "experimental.literal-chart-workbook-snapshot.v1",
+        "source_formula_required_slides": [],
+        "source_formulas_preserved": false,
+        "source_workbook_preserved": false,
+        "source_workbook_required_slides": []
+      }
+    }
+  },
+  {
+    "deck": "Agent_Canary_3_0_3分钟核心展示_答辩定稿",
+    "slideCount": 6,
+    "mainCount": 6,
+    "plannedSeconds": 180,
+    "chartOwners": [
+      4
+    ],
+    "tableOwners": [],
+    "receipt": {
+      "finalPath": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\competition-submission\\roadshow-3.0\\Agent_Canary_3_0_3分钟核心展示_答辩定稿.pptx",
+      "receiptPath": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\3min\\validation-final.json",
+      "schemaVersion": "presentation-finalization.v1",
+      "finalSha256": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+      "byteCount": 41506,
+      "packageIntegrity": {
+        "chart_count": 1,
+        "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
+        "finding_count": 0,
+        "findings": [],
+        "notes_parts_skipped": 6,
+        "relationship_part_count": 23,
+        "slide_count": 6,
+        "status": "pass",
+        "exitCode": 0,
+        "findingCount": 0,
+        "warnings": []
+      },
+      "presentationLayout": {
+        "finding_count": 0,
+        "findings": [],
+        "font_policy": {
+          "checked_text_script_count": 84,
+          "native_font_rendering_verified": false,
+          "observed_font_families": [
+            "Microsoft YaHei"
+          ],
+          "observed_font_use_counts": {
+            "Microsoft YaHei": 84
+          },
+          "passed": true,
+          "performed": true
+        },
+        "slide_count": 6,
+        "slide_size_in": [
+          13.3333,
+          7.5
+        ],
+        "warning_count": 0,
+        "warnings": [],
+        "exitCode": 0,
+        "findingCount": 0,
+        "fontPolicy": {
+          "checked_text_script_count": 84,
+          "native_font_rendering_verified": false,
+          "observed_font_families": [
+            "Microsoft YaHei"
+          ],
+          "observed_font_use_counts": {
+            "Microsoft YaHei": 84
+          },
+          "passed": true,
+          "performed": true
+        }
+      },
+      "fontSelection": {
+        "basis": "design",
+        "approvedFamilies": [
+          "Microsoft YaHei"
+        ],
+        "scriptFonts": {},
+        "referenceSha256": null,
+        "referenceFontsVerifiedInEncodedText": false,
+        "checked_text_script_count": 84,
+        "native_font_rendering_verified": false,
+        "observed_font_families": [
+          "Microsoft YaHei"
+        ],
+        "observed_font_use_counts": {
+          "Microsoft YaHei": 84
+        },
+        "passed": true,
+        "performed": true
+      },
+      "firstPartyImport": {
+        "performed": true,
+        "passed": true,
+        "slideCount": 6,
+        "sha256": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+        "runtimeNodeModules": "C:/Users/36712/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+        "nodeExecutable": "C:\\Users\\36712\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe"
+      },
+      "nativeTableArithmetic": {
+        "performed": true,
+        "checked_column_count": 0,
+        "checks": [],
+        "claim_boundary": "Displayed-value arithmetic with rounding tolerance; not source-data verification.",
+        "eligible_table_count": 0,
+        "finding_count": 0,
+        "findings": [],
+        "native_table_count": 0,
+        "passed": true,
+        "schema_version": "presentation-native-table-arithmetic.v1",
+        "skipped_tables": [],
+        "slide_count": 6,
+        "warning_count": 0,
+        "warnings": []
+      },
+      "nativeChartTitles": {
+        "performed": true,
+        "checks": [
+          {
+            "chart": 1,
+            "slide": 4,
+            "status": "absent"
+          }
+        ],
+        "finding_count": 0,
+        "findings": [],
+        "native_chart_count": 1,
+        "native_powerpoint_verified": false,
+        "passed": true,
+        "presentation_sha256": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+        "schema_version": "presentation-native-chart-titles.v1",
+        "slide_count": 6,
+        "source_text_emitted": false,
+        "unresolved_linked_title_count": 0
+      },
+      "sourceDerivedPolicyFlags": [
+        "--expected-slide-size-emu",
+        "12192000,6858000",
+        "--validate-heading-fit",
+        "--cover-role",
+        "none",
+        "--expected-slide-count",
+        "6",
+        "--approved-font-family",
+        "Microsoft YaHei"
+      ],
+      "nativeChartValidation": {
+        "detectedOwnerSlides": [
+          4
+        ],
+        "detectedChartCount": 1,
+        "targetApplication": "portable",
+        "sourceChartOwnersExplicitlyDeclared": true,
+        "validatorRan": true,
+        "passed": true
+      },
+      "nativeQuantitativeCharts": {
+        "report": {
+          "claim_boundary": "OOXML/workbook structural validation only; source provenance and native PowerPoint opening remain separate checks.",
+          "expected_quantitative_chart_slides": [
+            4
+          ],
+          "failed_slide_count": 0,
+          "failed_slides": [],
+          "formal_human_reviewed": false,
+          "native_application_open_verified": false,
+          "package_sha256": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+          "passed": true,
+          "results": [
+            {
+              "approved_source_figure_exception": false,
+              "charts": [
+                {
+                  "cache_reference_ranges_verified": true,
+                  "embedded_workbook_count": 1,
+                  "embedded_workbook_sheet_count": 1,
+                  "native_chart_types": [
+                    "barChart"
+                  ],
+                  "numeric_cache_point_count": 2,
+                  "series_formula_count": 2,
+                  "workbook_numeric_cell_count": 2
+                }
+              ],
+              "failure_codes": [],
+              "native_chart_count": 1,
+              "raster_picture_count": 0,
+              "required_native_chart_count": 1,
+              "slide_number": 4,
+              "status": "passed"
+            }
+          ],
+          "schema_version": "owner-private.quantitative-chart-native-gate.v1",
+          "slide_count": 6,
+          "source_attachments_accessed": false,
+          "validated_slide_count": 1
+        },
+        "exitCode": 0,
+        "validatedSlideCount": 1,
+        "requiredOwnerSlides": [
+          4
+        ],
+        "approvedSourceFigureExceptionSlides": []
+      },
+      "chartDataPackaging": {
+        "conversion": "chart_data_snapshot",
+        "converted_chart_count": 1,
+        "converted_charts": [
+          {
+            "chart_part": "ppt/slides/charts/chart1.xml",
+            "owner_slide": 4,
+            "point_count": 2,
+            "series_count": 1,
+            "workbook_part": "ppt/embeddings/chart-data-snapshot-001.xlsx"
+          }
+        ],
+        "detected_chart_owner_slides": [
+          4
+        ],
+        "experimental": true,
+        "input_sha256": "8d7a7fbdd984450caf0e2373d0e46df9bf638f83b2c430ccb1a27443a20cf2a6",
+        "new_formulas_describe_snapshot_only": true,
+        "output_bytes": 41506,
+        "output_sha256": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+        "portable_chart_validation_passed": true,
+        "portable_validated_owner_slides": [
+          4
+        ],
+        "preserved_existing_workbook_chart_count": 0,
+        "preserved_existing_workbook_charts": [],
+        "schema_version": "experimental.literal-chart-workbook-snapshot.v1",
+        "source_formula_required_slides": [],
+        "source_formulas_preserved": false,
+        "source_workbook_preserved": false,
+        "source_workbook_required_slides": []
+      }
+    }
+  },
+  {
+    "deck": "Agent_Canary_3_0_60秒精简版_答辩定稿",
+    "slideCount": 3,
+    "mainCount": 3,
+    "plannedSeconds": 60,
+    "chartOwners": [
+      2
+    ],
+    "tableOwners": [],
+    "receipt": {
+      "finalPath": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\competition-submission\\roadshow-3.0\\Agent_Canary_3_0_60秒精简版_答辩定稿.pptx",
+      "receiptPath": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-roadshow-build\\60sec\\validation-final.json",
+      "schemaVersion": "presentation-finalization.v1",
+      "finalSha256": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+      "byteCount": 30174,
+      "packageIntegrity": {
+        "chart_count": 1,
+        "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
+        "finding_count": 0,
+        "findings": [],
+        "notes_parts_skipped": 3,
+        "relationship_part_count": 17,
+        "slide_count": 3,
+        "status": "pass",
+        "exitCode": 0,
+        "findingCount": 0,
+        "warnings": []
+      },
+      "presentationLayout": {
+        "finding_count": 0,
+        "findings": [],
+        "font_policy": {
+          "checked_text_script_count": 40,
+          "native_font_rendering_verified": false,
+          "observed_font_families": [
+            "Microsoft YaHei"
+          ],
+          "observed_font_use_counts": {
+            "Microsoft YaHei": 40
+          },
+          "passed": true,
+          "performed": true
+        },
+        "slide_count": 3,
+        "slide_size_in": [
+          13.3333,
+          7.5
+        ],
+        "warning_count": 0,
+        "warnings": [],
+        "exitCode": 0,
+        "findingCount": 0,
+        "fontPolicy": {
+          "checked_text_script_count": 40,
+          "native_font_rendering_verified": false,
+          "observed_font_families": [
+            "Microsoft YaHei"
+          ],
+          "observed_font_use_counts": {
+            "Microsoft YaHei": 40
+          },
+          "passed": true,
+          "performed": true
+        }
+      },
+      "fontSelection": {
+        "basis": "design",
+        "approvedFamilies": [
+          "Microsoft YaHei"
+        ],
+        "scriptFonts": {},
+        "referenceSha256": null,
+        "referenceFontsVerifiedInEncodedText": false,
+        "checked_text_script_count": 40,
+        "native_font_rendering_verified": false,
+        "observed_font_families": [
+          "Microsoft YaHei"
+        ],
+        "observed_font_use_counts": {
+          "Microsoft YaHei": 40
+        },
+        "passed": true,
+        "performed": true
+      },
+      "firstPartyImport": {
+        "performed": true,
+        "passed": true,
+        "slideCount": 3,
+        "sha256": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+        "runtimeNodeModules": "C:/Users/36712/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+        "nodeExecutable": "C:\\Users\\36712\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe"
+      },
+      "nativeTableArithmetic": {
+        "performed": true,
+        "checked_column_count": 0,
+        "checks": [],
+        "claim_boundary": "Displayed-value arithmetic with rounding tolerance; not source-data verification.",
+        "eligible_table_count": 0,
+        "finding_count": 0,
+        "findings": [],
+        "native_table_count": 0,
+        "passed": true,
+        "schema_version": "presentation-native-table-arithmetic.v1",
+        "skipped_tables": [],
+        "slide_count": 3,
+        "warning_count": 0,
+        "warnings": []
+      },
+      "nativeChartTitles": {
+        "performed": true,
+        "checks": [
+          {
+            "chart": 1,
+            "slide": 2,
+            "status": "absent"
+          }
+        ],
+        "finding_count": 0,
+        "findings": [],
+        "native_chart_count": 1,
+        "native_powerpoint_verified": false,
+        "passed": true,
+        "presentation_sha256": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+        "schema_version": "presentation-native-chart-titles.v1",
+        "slide_count": 3,
+        "source_text_emitted": false,
+        "unresolved_linked_title_count": 0
+      },
+      "sourceDerivedPolicyFlags": [
+        "--expected-slide-size-emu",
+        "12192000,6858000",
+        "--validate-heading-fit",
+        "--cover-role",
+        "none",
+        "--expected-slide-count",
+        "3",
+        "--approved-font-family",
+        "Microsoft YaHei"
+      ],
+      "nativeChartValidation": {
+        "detectedOwnerSlides": [
+          2
+        ],
+        "detectedChartCount": 1,
+        "targetApplication": "portable",
+        "sourceChartOwnersExplicitlyDeclared": true,
+        "validatorRan": true,
+        "passed": true
+      },
+      "nativeQuantitativeCharts": {
+        "report": {
+          "claim_boundary": "OOXML/workbook structural validation only; source provenance and native PowerPoint opening remain separate checks.",
+          "expected_quantitative_chart_slides": [
+            2
+          ],
+          "failed_slide_count": 0,
+          "failed_slides": [],
+          "formal_human_reviewed": false,
+          "native_application_open_verified": false,
+          "package_sha256": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+          "passed": true,
+          "results": [
+            {
+              "approved_source_figure_exception": false,
+              "charts": [
+                {
+                  "cache_reference_ranges_verified": true,
+                  "embedded_workbook_count": 1,
+                  "embedded_workbook_sheet_count": 1,
+                  "native_chart_types": [
+                    "barChart"
+                  ],
+                  "numeric_cache_point_count": 2,
+                  "series_formula_count": 2,
+                  "workbook_numeric_cell_count": 2
+                }
+              ],
+              "failure_codes": [],
+              "native_chart_count": 1,
+              "raster_picture_count": 0,
+              "required_native_chart_count": 1,
+              "slide_number": 2,
+              "status": "passed"
+            }
+          ],
+          "schema_version": "owner-private.quantitative-chart-native-gate.v1",
+          "slide_count": 3,
+          "source_attachments_accessed": false,
+          "validated_slide_count": 1
+        },
+        "exitCode": 0,
+        "validatedSlideCount": 1,
+        "requiredOwnerSlides": [
+          2
+        ],
+        "approvedSourceFigureExceptionSlides": []
+      },
+      "chartDataPackaging": {
+        "conversion": "chart_data_snapshot",
+        "converted_chart_count": 1,
+        "converted_charts": [
+          {
+            "chart_part": "ppt/slides/charts/chart1.xml",
+            "owner_slide": 2,
+            "point_count": 2,
+            "series_count": 1,
+            "workbook_part": "ppt/embeddings/chart-data-snapshot-001.xlsx"
+          }
+        ],
+        "detected_chart_owner_slides": [
+          2
+        ],
+        "experimental": true,
+        "input_sha256": "d499e378eb4a83232cb459276b2db3eda059488a637ba355aea5faff0f535548",
+        "new_formulas_describe_snapshot_only": true,
+        "output_bytes": 30174,
+        "output_sha256": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+        "portable_chart_validation_passed": true,
+        "portable_validated_owner_slides": [
+          2
+        ],
+        "preserved_existing_workbook_chart_count": 0,
+        "preserved_existing_workbook_charts": [],
+        "schema_version": "experimental.literal-chart-workbook-snapshot.v1",
+        "source_formula_required_slides": [],
+        "source_formulas_preserved": false,
+        "source_workbook_preserved": false,
+        "source_workbook_required_slides": []
+      }
+    }
+  }
+]

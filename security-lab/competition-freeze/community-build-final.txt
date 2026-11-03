@@ -1,0 +1,1 @@
+{"file": "C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\competition-submission\\3.0-final-package\\Agent_Canary_3_0_Community_Preview_99660b36.zip", "sha256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed", "files": 126, "sourceSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf", "status": "VERIFIED_POSITIVE_LIST_BUILD"}

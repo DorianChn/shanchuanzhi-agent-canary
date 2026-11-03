@@ -1,0 +1,36 @@
+{
+  "mode": "SAME_OPERATOR_FRESH_DIRECTORY_PUBLIC_ZIP_NOT_E4_NOT_CLEAN_VM",
+  "archiveSHA256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+  "root": "NEW_CHINESE_SPACE_PATH_ON_SAME_MACHINE",
+  "commands": [
+    {
+      "name": "npm ci",
+      "exitCode": 0,
+      "durationSeconds": 8.113142013549805,
+      "log": "npm-ci-final.txt"
+    },
+    {
+      "name": "npm run build",
+      "exitCode": 0,
+      "durationSeconds": 3.194941997528076,
+      "log": "npm-run-build-final.txt"
+    },
+    {
+      "name": "npm run self-test",
+      "exitCode": 0,
+      "durationSeconds": 1.2079567909240723,
+      "log": "npm-run-self-test-final.txt"
+    },
+    {
+      "name": "offline bounded demo",
+      "exitCode": 0,
+      "durationSeconds": 0.6658709049224854,
+      "log": "offline-bounded-demo-final.txt"
+    }
+  ],
+  "status": "VERIFIED_BOUNDED_INSTALL",
+  "notE4": true,
+  "notCleanVM": true,
+  "nodeVersion": "v24.19.0",
+  "localNode20And22": "NOT_VERIFIED"
+}

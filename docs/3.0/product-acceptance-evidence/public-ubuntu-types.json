@@ -1,0 +1,1 @@
+{"status":"VERIFIED","package":"@dorianchn/agent-canary","version":"3.0.0-competition-candidate.4","consumerDirectory":"/tmp/Canary SDK 类型 中文 空格 1Y4ZQg","checks":["conditional SDK import","transitive declarations","READ_ONLY descriptor","Agent cannot approve","Agent cannot reset"],"scope":"compile-time contract; not runtime security proof"}

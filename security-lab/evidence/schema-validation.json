@@ -1,0 +1,6 @@
+{
+  "validator": "jsonschema Draft202012Validator with format checker",
+  "eventsChecked": 100,
+  "schemaErrors": 0,
+  "note": "Mechanical schema validation, not authenticity or completeness proof"
+}

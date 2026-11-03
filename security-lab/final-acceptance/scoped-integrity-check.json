@@ -1,0 +1,13 @@
+{
+  "scope": "only current changed/untracked repository text files and candidate ZIP file-name allowlist; no production config or whole Git history read",
+  "filesScanned": 90,
+  "patterns": [
+    "private_key",
+    "cloud_key_literal"
+  ],
+  "matchesWithoutValues": [],
+  "candidateForbiddenPaths": [],
+  "licenseSHA256": "2cdd4eedbf30e93f70c29e6797a81e772eb2e29990efc720544d63cedee426a3",
+  "runtimeDiffAgainstFreeze": [],
+  "preservedHistoricalEvidenceChanged": []
+}

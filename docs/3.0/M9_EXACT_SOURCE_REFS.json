@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "repository": "DorianChn/shanchuanzhi-agent-canary",
+  "targetBaseRef": "feature/agent-canary-3.0",
+  "modules": {
+    "M1": {
+      "pullRequest": 170,
+      "branchRef": "shanchuanzhi/m1-held-handle-m9-20261103",
+      "sha": "44aa316ca08cc90cc613db0459810524d99e4d1f"
+    },
+    "M2": {
+      "pullRequest": 110,
+      "branchRef": "feature/ac3-execution-isolation",
+      "sha": "941fd22d5e43e1de91a76b8c73006e57a4c15496"
+    },
+    "M3": {
+      "pullRequest": 120,
+      "branchRef": "feature/ac3-agent-onboarding",
+      "sha": "9b208fc6399a857c36391aae3bfe194248dc5cbf"
+    },
+    "M4": {
+      "pullRequest": 121,
+      "branchRef": "feature/ac3-desktop-security-center",
+      "sha": "96de861cafdce3105c5f2412b3f5a431a378dfb7"
+    },
+    "M5": {
+      "pullRequest": 122,
+      "branchRef": "feature/ac3-policy-audit",
+      "sha": "9868c3ef73f32facbe6e80ec8140c744ad44aefa"
+    },
+    "M6": {
+      "pullRequest": 123,
+      "branchRef": "feature/ac3-e4-validation-ac3",
+      "sha": "9a414228f49806b46c5cd9cd2539a464e80edb44"
+    },
+    "M7": {
+      "pullRequest": 128,
+      "branchRef": "feature/ac3-reliability-ac3",
+      "sha": "05fa457823d42c91eec85ab386faccd6d8ce12ca"
+    },
+    "M8": {
+      "pullRequest": 129,
+      "branchRef": "feature/ac3-open-source-product",
+      "sha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed"
+    }
+  },
+  "historicalSources": {
+    "M8_M6_SCOPED_REGRESSION": {
+      "sha": "84ee6a7a8d65706f694b7949e82fd8c83cc11523",
+      "reason": "Independent checkout used only for the historical M6-scoped lifecycle regression; not the current M8 candidate."
+    }
+  },
+  "reviewDispositions": {
+    "M6_M8_CURRENT_LIFECYCLE": {
+      "issue": 80,
+      "scope": "M6 lifecycle disposition for the exact current M8 candidate",
+      "status": "ACCEPT",
+      "targetSha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed",
+      "reviewedSha": "75f22da5af43ceae612a2cc40f001b2e8c6339ed",
+      "commentId": "6571870339",
+      "candidateLifecycleBlobSha": "2c7d5808022edec755e6ba200a069aa8e5816bb1",
+      "m6VerifierTestBlobSha": "2e9b0c00c853193ea50eaecf1209747e8f64affe"
+    }
+  }
+}

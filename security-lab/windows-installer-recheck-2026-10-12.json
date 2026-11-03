@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-12",
+  "sourceCommit": "afe5f92cd888a64208a9cc2768caed89a904551a",
+  "originalPublicCandidate": {
+    "version": "3.0.0-competition-candidate.4",
+    "result": "FAIL on this EFS-encrypted LocalAppData path",
+    "sha256": "567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6"
+  },
+  "reproducedCause": {
+    "profileRootEncrypted": false,
+    "originalUninstall": "NSIS Error: Error launching installer",
+    "localAppDataEncrypted": true,
+    "differential": "same public installer succeeded from a plain profile path but old uninstall left its directory tree; the old script omitted empty payload directories"
+  },
+  "sourceFix": [
+    "Use a current-user profile path when LocalAppData is EFS encrypted",
+    "Check the chosen target and nearest existing ancestor; reject an encrypted target",
+    "Enumerate all payload directories (including empty ones) and remove bottom-up without recursive NSIS deletion",
+    "Derive installer candidate identity from FREE_BUILD_VERSION.json"
+  ],
+  "localDiagnostic": {
+    "sha256": "d3defdd1818d51b19565627fce6769e255e1d7d0697809939487f133f4dd94ef",
+    "signed": false,
+    "lifecycle": "Current-user GUI install, launch, environment check, bounded security verification, redacted report export, uninstall, reinstall, uninstall; two passes recorded",
+    "exeBytes": 38395643,
+    "installRootAfter": "The profile-scope diagnostic candidate.4 directory was absent after uninstall",
+    "preservedUserData": "Six existing Community report JSON files remained; original public candidate.4 installation path stayed present, but all old files were not rehashed after the diagnostic cycles",
+    "guiInteractionTranscript": "Not retained; lifecycle sequence was observed locally",
+    "status": "VERIFIED_LOCAL_DIAGNOSTIC_NOT_RELEASE",
+    "compiler": "Local NSIS 3.10; repository release build expects NSIS 3.13"
+  },
+  "oldCandidateOriginalInstallPathStillPresent": true,
+  "oldCandidateOriginalFileHashesRecompared": false,
+  "officialNewReleaseCreated": false,
+  "cleanVM": false,
+  "e4": "NOT_VERIFIED",
+  "knownResidual": "%LOCALAPPDATA%\\AgentCanary-EFS-Probe-20261012 remains with 3857 product files. Automated review blocked recursive removal. No manual deletion or registry edits were performed."
+}

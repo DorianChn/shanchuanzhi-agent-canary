@@ -1,0 +1,140 @@
+{
+  "status": "READY_WITH_LIMITATIONS",
+  "date": "2026-10-12T04:57:11.731Z",
+  "releaseURL": "https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0-competition-candidate.4",
+  "PR": "https://github.com/DorianChn/shanchuanzhi-agent-canary/pull/26",
+  "securityCoreSHA": "9007e3a9fa6def487416e1dbb183143829b44aca",
+  "communitySourceSHA": "48d5c440de4b1ced45075b2a1c347545576d2e10",
+  "wrapperSourceSHA": "725967fece0e3c8f5604765145a8a8906da88f4b",
+  "publicAssets": {
+    "date": "2026-10-12T04:53:10.197Z",
+    "authentication": "NONE anonymous public download",
+    "tag": "v3.0.0-competition-candidate.4",
+    "isPrerelease": true,
+    "checks": [
+      {
+        "name": "AgentCanary-candidate4-acceptance-evidence.zip",
+        "http": 200,
+        "bytes": 173289,
+        "expected": "9cba2d2193164f17d4a8b4ca93aaa0232ff0ae0b11b602ee01b83695f754bbb8",
+        "actual": "9cba2d2193164f17d4a8b4ca93aaa0232ff0ae0b11b602ee01b83695f754bbb8",
+        "status": "PASS"
+      },
+      {
+        "name": "AgentCanary-Community-Setup.exe",
+        "http": 200,
+        "bytes": 38296175,
+        "expected": "567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6",
+        "actual": "567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6",
+        "status": "PASS"
+      },
+      {
+        "name": "Agent_Canary_3_0_Community_Preview_48d5c440.zip",
+        "http": 200,
+        "bytes": 397618,
+        "expected": "2a0065b68f07003d46c3a3e766f1b20e9e059487d12e7185f1727d4d1f672a8e",
+        "actual": "2a0065b68f07003d46c3a3e766f1b20e9e059487d12e7185f1727d4d1f672a8e",
+        "status": "PASS"
+      },
+      {
+        "name": "INSTALL.zh-CN.md",
+        "http": 200,
+        "bytes": 1571,
+        "expected": "a39798a092af48f7b28dd6f6d02eb9c83030e06dfb1774c7793ca39331030adc",
+        "actual": "a39798a092af48f7b28dd6f6d02eb9c83030e06dfb1774c7793ca39331030adc",
+        "status": "PASS"
+      },
+      {
+        "name": "PACKAGE_RELEASE_VERIFICATION.json",
+        "http": 200,
+        "bytes": 1333,
+        "expected": "147bcc7e9fe392489ffe9b252f5f71bad4e148e6ea2bc9dc310a8984d759711f",
+        "actual": "147bcc7e9fe392489ffe9b252f5f71bad4e148e6ea2bc9dc310a8984d759711f",
+        "status": "PASS"
+      },
+      {
+        "name": "SHA256SUMS",
+        "http": 200,
+        "bytes": 600,
+        "expected": "7789e357f42c466c83dbae970191d5f188cbc2ba61dcd2cdaa7519b1e244dfb1",
+        "actual": "7789e357f42c466c83dbae970191d5f188cbc2ba61dcd2cdaa7519b1e244dfb1",
+        "status": "PASS"
+      },
+      {
+        "name": "WINDOWS_BUILD_RESULT.json",
+        "http": 200,
+        "bytes": 5464,
+        "expected": "2c2dca9257323fc79f5f34d736765c63f37a6fd998276629f59a012a15c6c2b6",
+        "actual": "2c2dca9257323fc79f5f34d736765c63f37a6fd998276629f59a012a15c6c2b6",
+        "status": "PASS"
+      }
+    ]
+  },
+  "publicWindowsZIP": {
+    "status": "PASS",
+    "steps": 9,
+    "communityTests": {
+      "total": 100,
+      "pass": 100,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "publicUbuntuZIP": {
+    "status": "PASS",
+    "SDKTypes": "PASS",
+    "doctor": "PASS",
+    "effects": "PASS",
+    "uninstall": "PASS",
+    "repeatUninstall": "PASS",
+    "environment": "same-operator WSL2 Ubuntu26.04, portable official Node22.23.1"
+  },
+  "GUI": {
+    "installerSHA256": "567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6",
+    "guiInstallation": "PASS actual current-user GUI",
+    "directory": "Chinese path from actual InstallLocation; requested alternate UIAutomation path was not used",
+    "environmentButton": "PASS",
+    "securityButton": "PASS",
+    "export": "PASS actual JSON and Markdown, default save name",
+    "restart": "PASS session persisted, unrun checks not marked passed",
+    "uninstall": {
+      "guiClick": "PASS actual uninstall button",
+      "programAbsent": true,
+      "registeredEntryAbsent": true,
+      "remainingFiles": [
+        "keep-user.txt"
+      ],
+      "unknownUserFilePreserved": true
+    },
+    "sideEffects": {
+      "id": "F_CALLBACK_AND_SIDE_EFFECT",
+      "status": "VERIFIED_BOUNDED_SAME_HOST",
+      "unsafeCalls": 0,
+      "sinkRequests": 0,
+      "victimChanged": false,
+      "victimHashBefore": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+      "victimHashAfter": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257"
+    },
+    "cleanVM": "BLOCKED",
+    "E4": "NOT_VERIFIED",
+    "unsigned": true
+  },
+  "CI": {
+    "codeSHA": "725967fece0e3c8f5604765145a8a8906da88f4b",
+    "core": "success 9/9",
+    "coreURL": "https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38204869796",
+    "wrapper": "success 2/2",
+    "wrapperURL": "https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/38204869795",
+    "firstFailurePreserved": true
+  },
+  "limitations": [
+    "No E4",
+    "No clean Windows VM",
+    "Unsigned setup",
+    "Current nativeClaude/Qwen hook validation BLOCKED",
+    "Ordinary npm/Docker legacy V2 boundary P1",
+    "External TOCTOU not atomic",
+    "Noncooperative executors may produce late effects"
+  ],
+  "historicalAssets": "Preserved; new candidate tag and files, no clobber/main merge/stable release/email"
+}

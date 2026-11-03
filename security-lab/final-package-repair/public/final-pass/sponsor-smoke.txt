@@ -1,0 +1,16 @@
+
+> agent-canary-sponsor@0.1.0 smoke
+> node smoke.mjs
+
+ok - server boots in demo mode
+ok - page renders personal plan card
+ok - page renders donation section (demo)
+ok - qr endpoint serves png
+ok - personal order created
+ok - demo pay page renders
+ok - order auto-confirms in demo
+ok - subscription activated (+30d)
+ok - personal order without handle rejected
+ok - manual claim accepted
+ok - activation 1-3 accepted
+ok - 4th machine rejected (machine_limit)

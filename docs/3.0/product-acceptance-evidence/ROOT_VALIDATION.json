@@ -1,0 +1,42 @@
+[
+  {
+    "name": "build",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "test",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "pack",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "verify",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "audit",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "sponsor-ci",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "sponsor-test",
+    "exit": 0,
+    "error": null
+  },
+  {
+    "name": "sponsor-audit",
+    "exit": 0,
+    "error": null
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-11T17:08:44.858Z",
+  "slides": [
+    {
+      "deck": "5min",
+      "count": 15
+    },
+    {
+      "deck": "3min",
+      "count": 6
+    },
+    {
+      "deck": "60sec",
+      "count": 3
+    }
+  ],
+  "method": "Artifact Tool render + individual image review",
+  "result": "VERIFIED_BOUNDED_RENDER",
+  "nativePowerPoint": "NOT_VERIFIED",
+  "pdf": "Raster backup of same rendered slides, not searchable",
+  "fixes": [
+    "forward arrow direction corrected",
+    "A baseline caption clarified"
+  ],
+  "plannedNotRehearsed": [
+    300,
+    180,
+    60
+  ]
+}

@@ -1,0 +1,167 @@
+[
+  {
+    "id": "request_id-0",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "request_id-1",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_id-2",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_id-3",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_id-4",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_id-5",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_id-6",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_id-7",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "evidence_id-array",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "evidence_id-object",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "evidence_id-boolean",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "evidence_id-valid",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "evidence_id-null",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_digest-array",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_digest-object",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_digest-boolean",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "request_digest-valid",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "request_digest-null",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "event_digest-array",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "event_digest-object",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "event_digest-boolean",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "event_digest-valid",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "event_digest-null",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "approval_reference-array",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "approval_reference-object",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "approval_reference-boolean",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "approval_reference-valid",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "approval_reference-null",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "previous_event_digest-array",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "previous_event_digest-object",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "previous_event_digest-boolean",
+    "expected": false,
+    "actual": false
+  },
+  {
+    "id": "previous_event_digest-valid",
+    "expected": true,
+    "actual": true
+  },
+  {
+    "id": "previous_event_digest-null",
+    "expected": true,
+    "actual": true
+  }
+]

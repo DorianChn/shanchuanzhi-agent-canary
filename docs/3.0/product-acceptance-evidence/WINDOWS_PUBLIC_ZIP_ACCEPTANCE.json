@@ -1,0 +1,101 @@
+{
+  "digest": "2a0065b68f07003d46c3a3e766f1b20e9e059487d12e7185f1727d4d1f672a8e",
+  "steps": [
+    {
+      "name": "extract",
+      "executable": "python.exe",
+      "arguments": [
+        "-c",
+        "import zipfile,sys,pathlib;z=zipfile.ZipFile(sys.argv[1]);assert z.testzip() is None;assert sum(x.file_size for x in z.infolist())<64*1024*1024;assert all(not pathlib.PurePosixPath(n).is_absolute() and \"..\" not in pathlib.PurePosixPath(n).parts and \":\" not in n for n in z.namelist());z.extractall(sys.argv[2])",
+        "<PUBLIC_ZIP>",
+        "<REPRO_DIR>"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "manifest",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3\\reproduction-kit\\verify-community-manifest.mjs",
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "install",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "version",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3\\dist\\competition.js",
+        "--version"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "identity",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3\\dist\\competition.js",
+        "build-info"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "doctor",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3\\dist\\competition.js",
+        "doctor"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "types",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-3.0-product-audit\\scripts\\check-sdk-types.mjs",
+        "--package-root",
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "effects",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3\\reproduction-kit\\run-offline-demo.mjs",
+        "--root=<USER_HOME>\\Desktop\\工作\\agent-canary-product-audit-evidence\\公开 ZIP 中文 空格 验收\\agent-canary-community-3"
+      ],
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "name": "test",
+      "executable": "node.exe",
+      "arguments": [
+        "<USER_HOME>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "test"
+      ],
+      "exitCode": 0,
+      "error": null
+    }
+  ]
+}

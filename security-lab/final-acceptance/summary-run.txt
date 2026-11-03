@@ -1,0 +1,1 @@
+{"runs": 6, "trials": 234, "output": "/mnt/c/Users/36712/Desktop/\u5de5\u4f5c/agent-canary-3.0-engineering/security-lab/evidence/console-summary.json"}

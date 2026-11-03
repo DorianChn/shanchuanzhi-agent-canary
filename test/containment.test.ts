@@ -49,6 +49,41 @@ test("3: a quarantined session blocks a dangerous real tool", () => {
   assert.ok(eventsFor("block-session").some((event) => event.kind === "action_blocked"));
 });
 
+test("quarantine subscribers run synchronously once per transition and unsubscribe cleanly", () => {
+  const guard = sdk.createAgentGuard({ sessionId: "quarantine-subscriber-session", eventsFile: containmentEvents, alert: false });
+  const notifications: string[] = [];
+  const unsubscribe = guard.subscribeQuarantine(() => notifications.push(guard.state));
+  const unsubscribeThrower = guard.subscribeQuarantine(() => { throw new Error("synthetic observer failure"); });
+  const unsubscribeAfterThrower = guard.subscribeQuarantine(() => notifications.push("after-thrower"));
+
+  guard.trip({ reason: "synthetic_external_trip" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower"]);
+  guard.trip({ reason: "duplicate_synthetic_trip" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower"]);
+
+  guard.reset({ acknowledgedBy: "test host" });
+  guard.trip({ reason: "second_synthetic_trip" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower", "QUARANTINED", "after-thrower"]);
+
+  unsubscribe();
+  unsubscribe();
+  unsubscribeThrower();
+  unsubscribeAfterThrower();
+  guard.reset({ acknowledgedBy: "test host" });
+  guard.trip({ reason: "trip_after_unsubscribe" });
+  assert.deepEqual(notifications, ["QUARANTINED", "after-thrower", "QUARANTINED", "after-thrower"]);
+
+  const alreadyQuarantined = sdk.createAgentGuard({ sessionId: "already-quarantined-subscriber-session", eventsFile: containmentEvents, alert: false });
+  alreadyQuarantined.trip({ reason: "preexisting_synthetic_quarantine" });
+  let lateNotifications = 0;
+  const unsubscribeLate = alreadyQuarantined.subscribeQuarantine(() => { lateNotifications += 1; });
+  assert.equal(lateNotifications, 1);
+  alreadyQuarantined.reset({ acknowledgedBy: "test host" });
+  alreadyQuarantined.trip({ reason: "post-reset_synthetic_quarantine" });
+  assert.equal(lateNotifications, 2);
+  unsubscribeLate();
+});
+
 test("4: a blocked callback is never executed", async () => {
   const guard = sdk.createAgentGuard({ sessionId: "callback-session", eventsFile: containmentEvents, alert: false });
   guard.trip({ reason: "test_compromise" });

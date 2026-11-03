@@ -1,0 +1,3 @@
+* text=auto eol=lf
+security-lab/claude-native-hook.mjs text eol=lf
+security-lab/e4-runs/** -text -eol

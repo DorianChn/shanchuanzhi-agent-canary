@@ -1,0 +1,1 @@
+{"status":"VERIFIED_BOUNDED_TEMPLATE","checks":9,"node":"v22.23.1","resultFile":"C:\\Users\\36712\\Desktop\\工作\\agent-canary-3.0-engineering\\docs\\competition\\score-review-2026-10-12\\evidence\\SDK_TEMPLATE_PACKAGED_FINAL_RESULT.json","fixture":"C:\\Users\\36712\\AppData\\Local\\Temp\\canary-contributor-fixture-uycgJl","E4":"NOT_VERIFIED_SAME_OPERATOR"}

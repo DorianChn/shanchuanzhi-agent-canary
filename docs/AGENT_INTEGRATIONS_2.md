@@ -11,10 +11,10 @@ SDK 提供 detectAgents / previewAgentIntegration / installAgentIntegration / re
 |Claude Code|项目 .mcp.json；用户 .claude.json|配置 fixture VERIFIED；实际客户端 NOT VERIFIED|独立诱饵无全局保护；可接入受保护 MCP 宿主|
 |Cursor|项目 .cursor/mcp.json|配置 fixture VERIFIED；实际客户端 NOT VERIFIED|本服务内 callback；内置/其他服务 OUT_OF_SCOPE|
 |Cline CLI|指定用户目录下 .cline/data/settings/cline_mcp_settings.json|配置 fixture VERIFIED；实际客户端 NOT VERIFIED|本服务内 callback；IDE 位置需从应用确认|
-|Codex|可信项目 .codex/config.toml|配置 fixture VERIFIED；实际任务 NOT VERIFIED|本服务内 callback；原生 Shell 等 OUT_OF_SCOPE|
+|Codex|可信项目 .codex/config.toml|配置 fixture VERIFIED；原生 Shell UNPROTECTED / BLOCKED_NOT_VERIFIED|仅本服务内 callback；Codex 桌面原生 Shell 未受保护，本轮未测试该路径|
 |自定义 MCP 宿主|serveProtectedMCP + 可信 tools / schemas / executor|实际 SDK Client stdio 握手及隔离 VERIFIED_PROTECTED|只包括该进程内三项虚拟 callback；不推断任意第三方部署|
 
-状态定义：MCP_DECOY_INSTALLED 仅表示配置已写；GUARD_INTEGRATED 表示宿主 callback 已接入；VERIFIED_PROTECTED 必须有对应真实运行证明；PARTIAL 表示缺少应用激活/任务验证；UNSUPPORTED 表示没有当前支持接口。
+状态定义：MCP_DECOY_INSTALLED 仅表示配置已写；GUARD_INTEGRATED 表示宿主 callback 已接入；VERIFIED_PROTECTED 必须有对应真实运行证明；PARTIAL 表示缺少应用激活/任务验证；UNSUPPORTED 表示没有当前支持接口。UNPROTECTED / BLOCKED_NOT_VERIFIED 表示原生 Shell 当前不在本服务保护边界内，且真实宿主验收未完成；不表示其已被拦截或测试通过。
 
 ## 官方 Hook 适配器
 

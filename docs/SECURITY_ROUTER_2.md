@@ -22,7 +22,7 @@ reviewTimeoutMs 默认 10 秒；callbackTimeoutMs 默认 30 秒。callback 接�
 
 ## 路径与网络
 
-真实文件宿主启用 verifyRealPaths。已有目标及新文件的最近已存在父目录必须真实解析到工作区内，符号链接、Windows junction、读取失败均保守拒绝；执行前复查。检查与宿主打开文件之间仍有 TOCTOU 窗口，宿主需结合句柄、no-follow、实际 OS 沙箱及最小权限；不是内核安全边界。
+真实文件宿主可启用 verifyRealPaths 检查路径 containment 和别名。由于此 M5 Router 的通用 path-based callback 无法绑定到已检查的文件身份，启用后所有 file-read/file-write/delete 都会在回调前以 `path_execution_not_pinned` 拒绝；当前没有 M5 文件 I/O 正向执行路径。`verifyRealPaths: false` 保留历史词法检查兼容行为，不代表真实路径保护。M1 Gateway 的 held-fd 路径是独立接口，M5 不会自动识别或接入；生产 host wiring 仍需单独验证。
 
 普通策略检测网络协议、明确私网字面地址、精确 origin、数据外传风险。任意自定义 callback 的 DNS 与实际连接不能由字符串检查保证。真实 JSON HTTP 可使用 executePinnedJSONTool：公共 HTTPS、DNS 检查并绑定 socket、禁止重定向、256 KB 上限、GET/POST 与取消支持。该 callback 不提供授权 Header，不用于生产凭据请求。自定义网络执行器必须提供等效控制，否则 DNS 重绑定 OUT_OF_SCOPE。
 

@@ -1,0 +1,3 @@
+{"runId":"B-direct-r5-20261012","mode":"B","tool":"read_file","status":"ERROR","message":"BLOCKED_OR_FAILED:credential_resource_denied","errorName":"Error"}
+{"runId":"B-direct-r5-20261012","mode":"B","tool":"write_file","status":"ERROR","message":"BLOCKED_OR_FAILED:write_capability_or_size_denied","errorName":"Error"}
+{"runId":"B-direct-r5-20261012","mode":"B","tool":"run_command","status":"RETURNED","outputLength":56,"outputSHA256":"3618e8b48b4cdc82948292803122bf3bcabd29f665919599b0222cf3bfe9a9da","containsSyntheticCredential":false}

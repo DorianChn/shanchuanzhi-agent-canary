@@ -1,0 +1,3 @@
+contributor-review-run/typed-host.ts(2,65): error TS7016: Could not find a declaration file for module '../dist/sdk.js'. 'C:/Users/36712/Desktop/工作/agent-canary-roadshow-build/Node22 普通用户 中文 空格/agent-canary-community-3/dist/sdk.js' implicitly has an 'any' type.
+contributor-review-run/typed-host.ts(9,1): error TS2578: Unused '@ts-expect-error' directive.
+contributor-review-run/typed-host.ts(11,1): error TS2578: Unused '@ts-expect-error' directive.

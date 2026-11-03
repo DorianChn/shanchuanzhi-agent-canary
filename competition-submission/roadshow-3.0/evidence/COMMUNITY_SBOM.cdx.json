@@ -1,0 +1,3614 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:2ec2a315-1a82-4692-9369-5fb82caab386",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-11T17:08:44.840Z",
+    "component": {
+      "type": "application",
+      "name": "Agent Canary Community competition candidate",
+      "version": "3.0.0-competition-candidate.1"
+    },
+    "properties": [
+      {
+        "name": "runtimeSHA",
+        "value": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf"
+      },
+      {
+        "name": "packageLockSHA256",
+        "value": "7e5f4ea2760f3f98567818684078d858ae4db9070e3320181cd6d68ea8b8b861"
+      },
+      {
+        "name": "claimBoundary",
+        "value": "Downloaded Community package-lock metadata; not full license approval, exploit audit, container or production inventory"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "@esbuild/aix-ppc64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Faix-ppc64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/aix-ppc64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/android-arm",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fandroid-arm@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/android-arm"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/android-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fandroid-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/android-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/android-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fandroid-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/android-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/darwin-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fdarwin-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/darwin-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/darwin-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fdarwin-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/darwin-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/freebsd-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Ffreebsd-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/freebsd-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/freebsd-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Ffreebsd-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/freebsd-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-arm",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-arm@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-arm"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-XlDnu2q5yoqems+xay6wSAcg9DDD7K9RLKZEBOMZm3ckNpJBvOX20tSfby8KfrrhINDyv9V2YVZKY/SpoGJI8w=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-pW4AC0P3it8c7do9MVM4p51FzHzdM/TZrerurgRcHJ2WTa1VQ1CIq18xncfpBJw4ojkiZZrKW2yIBWBP92j6Ug=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-ia32",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-ia32@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-ia32"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-CYbnj78HsIeA+DhgUKgFCfvNsTHFhMMrinUrMZpDXJXKN8T3XViTZ/+wtHeVxEWY8ewSzTFN+nRmSwO2tZaLUQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-loong64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-loong64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-loong64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-buwkd8nsph4R+ajRvw0qM5Hja/TXQow3ptzWO2EbG/cqcIkHloRrdlBtQlshyYGTNFvfkfJ5tpPLVkY4DtsPfQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-mips64el",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-mips64el@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-mips64el"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-ZVykbDyk7519VwiNb9Lcj9m8XM6v5V9uKPvrEMkkEedVewf+0itkhahp4HDpgERXhwLRpWFypsGbG/J8s0QjJA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-ppc64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-ppc64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-ppc64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-CAXl+Dtd9UUuJd8pKKdwh6MLm3MUMiqMPmhZ3tTSXPqfyQ3vDl6R5hZdZ/kYojK4ofXtdfSv1tFq8XzWx3heNQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-riscv64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-riscv64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-riscv64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-GeXCej4IQtU1B+QlDV8W/RRvbzI3O/Stss+/bCXv4lZls5WGRtu2a+3JkA3i4qIUlMXpcHebWpF8AkJhATowuA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-s390x",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-s390x@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-s390x"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-3H1weTYZPxt/WOhByszQZybS9w5lKzUn1FDMsgEChbHWQwHYQQRfBxgCcZvPhjHfKyJjIievvMmEUawJrdY9Dg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/linux-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Flinux-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/linux-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-4xTZr1FUmSoQW4XIWmit3tzQrUTZM+N3P0XV8xROKYF50XfI7xeO90+1bZvNwxIufQ9hDQVRJH5YhgPVF8A/HQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/netbsd-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fnetbsd-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/netbsd-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-sSATRjPeDBg3pdgHoQfoYBob11Kk1FGa9lui5RIHZCoCkJa9QKlvl3/vKz2usCmYYjs7ymJR/2Nnsqe+Hjt5nw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/netbsd-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fnetbsd-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/netbsd-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-lqnzCV+mM0gIADaKihiCg6ifgfU2L3h5E33rNQBN1Y4MaVGnzryzmvvf7UHxprpQdE8hpqLolJ9Rl+SkIRDpyw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/openbsd-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fopenbsd-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/openbsd-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-AL2qJILH7lNjrDmCQDvdxMfAUIv8KMNZOvrwAQ8i8//ntL9FflhOyMJ8OZSMBb8/AWXe3/5v5S20y3zCoZWKoQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/openbsd-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fopenbsd-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/openbsd-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-QtiuPytchRyC4rwUKhexJdQKvDuZ6hWloi3igqPQNUJCS1/v9EiO3UTOXR6A3FoMo4fnAKbWJdqaIwhOzh8qEw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/openharmony-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fopenharmony-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/openharmony-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-WkhYDmpTjLvGlScA1rwjRUmhl4k8oXR3cIbtqWmELgU/dFeHHlEllxDvdWcNJV9rbzCexB5vz8gtNewWLgCT7Q=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/sunos-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fsunos-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/sunos-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-GPMSkTOtMnv2U2F8gxe4Io6qmVs+YKyp832Etqqxr0hFngmXQ3rzwytelm3GIn7T4VviRUlf3sOgBOiTdvaf7g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/win32-arm64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fwin32-arm64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/win32-arm64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-PIhhEkE9uPBleRBrQEJpUn7MBnibZzbGzYWPmY3x+YoVg/95zbjB4CxPPOQ8l5tYYM4mMaCthF8/1DIfBQQyWQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/win32-ia32",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fwin32-ia32@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/win32-ia32"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-YmJbfTlvU7Sdn9BB+4PRES4oB6pxgS37MAONj+hBr/cpXS1aBPKXxNnDbu+QCWPj0o9dgyxeq79g6c5P8KeuYA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@esbuild/win32-x64",
+      "version": "0.28.2",
+      "purl": "pkg:npm/%40esbuild%2Fwin32-x64@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@esbuild/win32-x64"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@hono/node-server",
+      "version": "2.1.1",
+      "purl": "pkg:npm/%40hono%2Fnode-server@2.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@hono/node-server"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@modelcontextprotocol/sdk",
+      "version": "1.32.1",
+      "purl": "pkg:npm/%40modelcontextprotocol%2Fsdk@1.32.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@modelcontextprotocol/sdk"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "22.20.2",
+      "purl": "pkg:npm/%40types%2Fnode@22.20.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/@types/node"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-xlvWf4Vs9n1PEVYwP1n4vvG07M6y8WgvJ2t0vbrWTmijsIHp1cS+uJ2kMIRdY3nHZK0nCYKrPeD171+SzF4/zw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "accepts",
+      "version": "2.0.0",
+      "purl": "pkg:npm/accepts@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/accepts"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ajv",
+      "version": "8.20.0",
+      "purl": "pkg:npm/ajv@8.20.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/ajv"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ajv-formats",
+      "version": "3.0.1",
+      "purl": "pkg:npm/ajv-formats@3.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/ajv-formats"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "body-parser",
+      "version": "2.3.0",
+      "purl": "pkg:npm/body-parser@2.3.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/body-parser"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-type",
+      "version": "2.1.0",
+      "purl": "pkg:npm/content-type@2.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/body-parser/node_modules/content-type"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "bytes",
+      "version": "3.1.2",
+      "purl": "pkg:npm/bytes@3.1.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/bytes"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "call-bind-apply-helpers",
+      "version": "1.0.2",
+      "purl": "pkg:npm/call-bind-apply-helpers@1.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/call-bind-apply-helpers"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "call-bound",
+      "version": "1.0.4",
+      "purl": "pkg:npm/call-bound@1.0.4",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/call-bound"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "commander",
+      "version": "12.1.0",
+      "purl": "pkg:npm/commander@12.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/commander"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-disposition",
+      "version": "1.1.0",
+      "purl": "pkg:npm/content-disposition@1.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/content-disposition"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-5jRCH9Z/+DRP7rkvY83B+yGIGX96OYdJmzngqnw2SBSxqCFPd0w2km3s5iawpGX8krnwSGmF0FW5Nhr0Hfai3g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-type",
+      "version": "1.0.5",
+      "purl": "pkg:npm/content-type@1.0.5",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/content-type"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cookie",
+      "version": "0.7.2",
+      "purl": "pkg:npm/cookie@0.7.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/cookie"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cookie-signature",
+      "version": "1.2.2",
+      "purl": "pkg:npm/cookie-signature@1.2.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/cookie-signature"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cors",
+      "version": "2.8.6",
+      "purl": "pkg:npm/cors@2.8.6",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/cors"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "cross-spawn",
+      "version": "7.0.6",
+      "purl": "pkg:npm/cross-spawn@7.0.6",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/cross-spawn"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "debug",
+      "version": "4.4.3",
+      "purl": "pkg:npm/debug@4.4.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/debug"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "depd",
+      "version": "2.0.0",
+      "purl": "pkg:npm/depd@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/depd"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "dunder-proto",
+      "version": "1.0.1",
+      "purl": "pkg:npm/dunder-proto@1.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/dunder-proto"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ee-first",
+      "version": "1.1.1",
+      "purl": "pkg:npm/ee-first@1.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/ee-first"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "encodeurl",
+      "version": "2.0.0",
+      "purl": "pkg:npm/encodeurl@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/encodeurl"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "es-define-property",
+      "version": "1.0.1",
+      "purl": "pkg:npm/es-define-property@1.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/es-define-property"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "es-errors",
+      "version": "1.3.0",
+      "purl": "pkg:npm/es-errors@1.3.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/es-errors"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "es-object-atoms",
+      "version": "1.1.2",
+      "purl": "pkg:npm/es-object-atoms@1.1.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/es-object-atoms"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-HWcBoN6NileqtSydK2FqHbS/LoDd2pqrnQHLyJzBj4kOp/ky2MWMN694xOfkK8/SnUsW2DH7EfyVlydKCsm1Zw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "esbuild",
+      "version": "0.28.2",
+      "purl": "pkg:npm/esbuild@0.28.2",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/esbuild"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "escape-html",
+      "version": "1.0.3",
+      "purl": "pkg:npm/escape-html@1.0.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/escape-html"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "etag",
+      "version": "1.8.1",
+      "purl": "pkg:npm/etag@1.8.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/etag"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "eventsource",
+      "version": "3.0.7",
+      "purl": "pkg:npm/eventsource@3.0.7",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/eventsource"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "eventsource-parser",
+      "version": "3.1.1",
+      "purl": "pkg:npm/eventsource-parser@3.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/eventsource-parser"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-EKN1vKAMcZ8MlYMpaNuxN6R9yakzH6uajHcHVTqWJzvu5pWw9DyhbP35HH8MVBQ+dZjAfDxk+A8NiR9KWaXiyQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "express",
+      "version": "5.2.1",
+      "purl": "pkg:npm/express@5.2.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/express"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "express-rate-limit",
+      "version": "8.7.0",
+      "purl": "pkg:npm/express-rate-limit@8.7.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/express-rate-limit"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-hOwV7WOxXfjRpAM1DSJWZDXx3GhplwD8IfwuwvogD8i1Qnkgosw/H45s4ZnFAUHDAhPjlY9hLBvJhKmGMyY26g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "purl": "pkg:npm/fast-deep-equal@3.1.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/fast-deep-equal"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fast-uri",
+      "version": "3.1.8",
+      "purl": "pkg:npm/fast-uri@3.1.8",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/fast-uri"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "finalhandler",
+      "version": "2.1.1",
+      "purl": "pkg:npm/finalhandler@2.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/finalhandler"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-S8KoZgRZN+a5rNwqTxlZZePjT/4cnm0ROV70LedRHZ0p8u9fRID0hJUZQpkKLzro8LfmC8sx23bY6tVNxv8pQA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "forwarded",
+      "version": "0.2.0",
+      "purl": "pkg:npm/forwarded@0.2.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/forwarded"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fresh",
+      "version": "2.0.0",
+      "purl": "pkg:npm/fresh@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/fresh"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "purl": "pkg:npm/fsevents@2.3.3",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/fsevents"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "function-bind",
+      "version": "1.1.2",
+      "purl": "pkg:npm/function-bind@1.1.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/function-bind"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "get-intrinsic",
+      "version": "1.3.0",
+      "purl": "pkg:npm/get-intrinsic@1.3.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/get-intrinsic"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "get-proto",
+      "version": "1.0.1",
+      "purl": "pkg:npm/get-proto@1.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/get-proto"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "gopd",
+      "version": "1.2.0",
+      "purl": "pkg:npm/gopd@1.2.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/gopd"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "has-symbols",
+      "version": "1.1.0",
+      "purl": "pkg:npm/has-symbols@1.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/has-symbols"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "hasown",
+      "version": "2.0.4",
+      "purl": "pkg:npm/hasown@2.0.4",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/hasown"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "hono",
+      "version": "4.13.7",
+      "purl": "pkg:npm/hono@4.13.7",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/hono"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "http-errors",
+      "version": "2.0.1",
+      "purl": "pkg:npm/http-errors@2.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/http-errors"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "iconv-lite",
+      "version": "0.7.3",
+      "purl": "pkg:npm/iconv-lite@0.7.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/iconv-lite"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "inherits",
+      "version": "2.0.4",
+      "purl": "pkg:npm/inherits@2.0.4",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/inherits"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ip-address",
+      "version": "10.7.3",
+      "purl": "pkg:npm/ip-address@10.7.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/ip-address"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-A1kdq/tSb5QjvKvAMgIoEvDBIgL7qaqVP/jkvSwYYRZ9iEzvPpopxp2wQfu3SuZRHtpHNxMn8Fs0bS+gf5Xmwg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ipaddr.js",
+      "version": "1.9.1",
+      "purl": "pkg:npm/ipaddr.js@1.9.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/ipaddr.js"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "is-promise",
+      "version": "4.0.0",
+      "purl": "pkg:npm/is-promise@4.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/is-promise"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-hvpoI6korhJMnej285dSg6nu1+e6uxs7zG3BYAm5byqDsgJNWwxzM6z6iZiAgQR4TJ30JmBTOwqZUw3WlyH3AQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "isexe",
+      "version": "2.0.0",
+      "purl": "pkg:npm/isexe@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/isexe"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "jose",
+      "version": "6.2.12",
+      "purl": "pkg:npm/jose@6.2.12",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/jose"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "json-schema-traverse",
+      "version": "1.0.0",
+      "purl": "pkg:npm/json-schema-traverse@1.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/json-schema-traverse"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "json-schema-typed",
+      "version": "8.0.2",
+      "purl": "pkg:npm/json-schema-typed@8.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/json-schema-typed"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-fQhoXdcvc3V28x7C7BMs4P5+kNlgUURe2jmUT1T//oBRMDrqy1QPelJimwZGo7Hg9VPV3EQV5Bnq4hbFy2vetA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "math-intrinsics",
+      "version": "1.1.0",
+      "purl": "pkg:npm/math-intrinsics@1.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/math-intrinsics"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "media-typer",
+      "version": "1.1.1",
+      "purl": "pkg:npm/media-typer@1.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/media-typer"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-yz3xRaG20c6/BOzvYoDaGtPmGscs7YivItZEEqe6GbwNfHuxu9YNmvnEkMzKldAGY4/80pRcQRZSEnhquk9XuQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "merge-descriptors",
+      "version": "2.0.0",
+      "purl": "pkg:npm/merge-descriptors@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/merge-descriptors"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "mime-db",
+      "version": "1.54.0",
+      "purl": "pkg:npm/mime-db@1.54.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/mime-db"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-aU5EJuIN2WDemCcAp2vFBfp/m4EAhWJnUNSSw0ixs7/kXbd6Pg64EmwJkNdFhB8aWt1sH2CTXrLxo/iAGV3oPQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "mime-types",
+      "version": "3.0.2",
+      "purl": "pkg:npm/mime-types@3.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/mime-types"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Lbgzdk0h4juoQ9fCKXW4by0UJqj+nOOrI9MJ1sSj4nI8aI2eo1qmvQEie4VD1glsS250n15LsWsYtCugiStS5A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ms",
+      "version": "2.1.3",
+      "purl": "pkg:npm/ms@2.1.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/ms"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "negotiator",
+      "version": "1.1.0",
+      "purl": "pkg:npm/negotiator@1.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/negotiator"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-type",
+      "version": "2.1.0",
+      "purl": "pkg:npm/content-type@2.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/negotiator/node_modules/content-type"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "object-assign",
+      "version": "4.1.1",
+      "purl": "pkg:npm/object-assign@4.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/object-assign"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "object-inspect",
+      "version": "1.13.4",
+      "purl": "pkg:npm/object-inspect@1.13.4",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/object-inspect"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "on-finished",
+      "version": "2.4.1",
+      "purl": "pkg:npm/on-finished@2.4.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/on-finished"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "once",
+      "version": "1.4.0",
+      "purl": "pkg:npm/once@1.4.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/once"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "parseurl",
+      "version": "1.3.3",
+      "purl": "pkg:npm/parseurl@1.3.3",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/parseurl"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "path-key",
+      "version": "3.1.1",
+      "purl": "pkg:npm/path-key@3.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/path-key"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "path-to-regexp",
+      "version": "8.4.2",
+      "purl": "pkg:npm/path-to-regexp@8.4.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/path-to-regexp"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-qRcuIdP69NPm4qbACK+aDogI5CBDMi1jKe0ry5rSQJz8JVLsC7jV8XpiJjGRLLol3N+R5ihGYcrPLTno6pAdBA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pkce-challenge",
+      "version": "5.0.1",
+      "purl": "pkg:npm/pkce-challenge@5.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/pkce-challenge"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "proxy-addr",
+      "version": "2.0.8",
+      "purl": "pkg:npm/proxy-addr@2.0.8",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/proxy-addr"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "qs",
+      "version": "6.16.0",
+      "purl": "pkg:npm/qs@6.16.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/qs"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "range-parser",
+      "version": "1.3.0",
+      "purl": "pkg:npm/range-parser@1.3.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/range-parser"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-hek2mFQpPuI4E1BBKrSto+BU3e3x4xuarsbiwr3+lf7p44juvFMV0XFWQAP3xUyqXA4RrXLIoaSUGbSt056ZMw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "raw-body",
+      "version": "3.0.2",
+      "purl": "pkg:npm/raw-body@3.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/raw-body"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "require-from-string",
+      "version": "2.0.2",
+      "purl": "pkg:npm/require-from-string@2.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/require-from-string"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "router",
+      "version": "2.2.0",
+      "purl": "pkg:npm/router@2.2.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/router"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-nLTrUKm2UyiL7rlhapu/Zl45FwNgkZGaCpZbIHajDYgwlJCOzLSk+cIPAnsEqV955GjILJnKbdQC1nVPz+gAYQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "purl": "pkg:npm/safer-buffer@2.1.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/safer-buffer"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "send",
+      "version": "1.2.1",
+      "purl": "pkg:npm/send@1.2.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/send"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "serve-static",
+      "version": "2.2.1",
+      "purl": "pkg:npm/serve-static@2.2.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/serve-static"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-xRXBn0pPqQTVQiC8wyQrKs2MOlX24zQ0POGaj0kultvoOCstBQM5yvOhAVSUwOMjQtTvsPWoNCHfPGwaaQJhTw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "setprototypeof",
+      "version": "1.2.0",
+      "purl": "pkg:npm/setprototypeof@1.2.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/setprototypeof"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "shebang-command",
+      "version": "2.0.0",
+      "purl": "pkg:npm/shebang-command@2.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/shebang-command"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "shebang-regex",
+      "version": "3.0.0",
+      "purl": "pkg:npm/shebang-regex@3.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/shebang-regex"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel",
+      "version": "1.1.1",
+      "purl": "pkg:npm/side-channel@1.1.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/side-channel"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-6x6dK6zJdpTzF4sQeNYxwtvBzf6Eg4GtlesS94HOvTudUeyK2WXAaIfmDgsyslYrRBeFIlsi54AYsFGUuhmvrQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel-list",
+      "version": "1.0.1",
+      "purl": "pkg:npm/side-channel-list@1.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/side-channel-list"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-mjn/0bi/oUURjc5Xl7IaWi/OJJJumuoJFQJfDDyO46+hBWsfaVM65TBHq2eoZBhzl9EchxOijpkbRC8SVBQU0w=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel-map",
+      "version": "1.0.1",
+      "purl": "pkg:npm/side-channel-map@1.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/side-channel-map"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-VCjCNfgMsby3tTdo02nbjtM/ewra6jPHmpThenkTYh8pG9ucZ/1P8So4u4FGBek/BjpOVsDCMoLA/iuBKIFXRA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "side-channel-weakmap",
+      "version": "1.0.2",
+      "purl": "pkg:npm/side-channel-weakmap@1.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/side-channel-weakmap"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "smol-toml",
+      "version": "1.9.1",
+      "purl": "pkg:npm/smol-toml@1.9.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/smol-toml"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-j7WyPdf0CJoutMzMoPLF/bVXHtKZIT9Rb4eGeEbWw8X2t5oirjPgpL+OpaENZrILYaXqYwnVH+qgUwVbl+pUJQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "statuses",
+      "version": "2.0.2",
+      "purl": "pkg:npm/statuses@2.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/statuses"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "toidentifier",
+      "version": "1.0.1",
+      "purl": "pkg:npm/toidentifier@1.0.1",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/toidentifier"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "tsx",
+      "version": "4.23.13",
+      "purl": "pkg:npm/tsx@4.23.13",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/tsx"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-BL5MGkRln6aDYhb0xbQlEAGw743BaZYWdbWtdJOBriYJboKgUUYCadFp2/FpBBZquBC/ezNBn7wMMPx7FDZUDw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "type-is",
+      "version": "2.1.0",
+      "purl": "pkg:npm/type-is@2.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/type-is"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-faYHw0anBbc/kWF3zFTEnxSFOAGUX9GFbOBthvDdLsIlEoWOFOtS0zgCiQYwIskL9iGXZL3kAXD8OoZ4GmMATA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "content-type",
+      "version": "2.1.0",
+      "purl": "pkg:npm/content-type@2.1.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/type-is/node_modules/content-type"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "5.9.3",
+      "purl": "pkg:npm/typescript@5.9.3",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/typescript"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "undici-types",
+      "version": "6.21.0",
+      "purl": "pkg:npm/undici-types@6.21.0",
+      "scope": "optional",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/undici-types"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "unpipe",
+      "version": "1.0.0",
+      "purl": "pkg:npm/unpipe@1.0.0",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/unpipe"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "vary",
+      "version": "1.1.2",
+      "purl": "pkg:npm/vary@1.1.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/vary"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "which",
+      "version": "2.0.2",
+      "purl": "pkg:npm/which@2.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/which"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "wrappy",
+      "version": "1.0.2",
+      "purl": "pkg:npm/wrappy@1.0.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/wrappy"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "zod",
+      "version": "4.6.2",
+      "purl": "pkg:npm/zod@4.6.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/zod"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-lh5RCAGFa1Cm2hjtNwLQhSs/AsqdWnTQaBER9fEwN/88pSh7KOtJavtBx/0VlkN/uFd61SwYmljLMDAsHlvzBQ=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "zod-to-json-schema",
+      "version": "3.25.2",
+      "purl": "pkg:npm/zod-to-json-schema@3.25.2",
+      "scope": "required",
+      "licenses": [
+        {
+          "license": {
+            "name": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "lockLocation",
+          "value": "node_modules/zod-to-json-schema"
+        },
+        {
+          "name": "npmIntegrity",
+          "value": "sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA=="
+        },
+        {
+          "name": "licenseReview",
+          "value": "LOCK_METADATA_NOT_LEGAL_AUDIT"
+        }
+      ]
+    }
+  ]
+}

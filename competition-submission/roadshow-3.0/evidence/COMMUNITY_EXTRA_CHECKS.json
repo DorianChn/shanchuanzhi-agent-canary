@@ -1,0 +1,12 @@
+[
+  {
+    "name": "community-tests",
+    "exitCode": 0,
+    "log": "community-tests.txt"
+  },
+  {
+    "name": "community-audit",
+    "exitCode": 0,
+    "log": "community-audit.txt"
+  }
+]

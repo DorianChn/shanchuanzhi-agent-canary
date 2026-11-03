@@ -1,0 +1,18 @@
+file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-3.0-engineering/dist/ai/transport.js:104
+        req.on('error', () => reject(new AITransportError(signal.aborted ? 'AI_CANCELLED_OR_TIMEOUT' : 'AI_NETWORK_ERROR')));
+                                     ^
+
+AITransportError: AI_NETWORK_ERROR
+    at ClientRequest.<anonymous> (file:///C:/Users/36712/Desktop/%E5%B7%A5%E4%BD%9C/agent-canary-3.0-engineering/dist/ai/transport.js:104:38)
+    at ClientRequest.emit (node:events:531:35)
+    at emitErrorEvent (node:_http_client:108:11)
+    at Socket.socketErrorListener (node:_http_client:575:5)
+    at Socket.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  code: 'AI_NETWORK_ERROR',
+  retryable: false
+}
+
+Node.js v22.23.1

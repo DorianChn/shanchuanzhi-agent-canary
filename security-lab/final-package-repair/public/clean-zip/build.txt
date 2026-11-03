@@ -1,0 +1,4 @@
+
+> @dorianchn/agent-canary@3.0.0-competition-candidate.2 build
+> tsc
+

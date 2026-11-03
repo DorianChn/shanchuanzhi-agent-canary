@@ -1,0 +1,29 @@
+{
+  "scope": "Windows Node 22 microbenchmark, actual held-fd read plus in-memory hash-chain evidence, no disk fsync and no model inference; not long-duration resource proof",
+  "iterations": 1500,
+  "durationMs": 5654.326,
+  "medianMs": 3.1342999999999392,
+  "p95Ms": 5.6468000000004395,
+  "p99Ms": 6.28859999999986,
+  "before": {
+    "rss": 71114752,
+    "heapTotal": 32137216,
+    "heapUsed": 20203680,
+    "external": 3819579,
+    "arrayBuffers": 84474
+  },
+  "after": {
+    "rss": 90886144,
+    "heapTotal": 52846592,
+    "heapUsed": 21886904,
+    "external": 3968350,
+    "arrayBuffers": 233205
+  },
+  "events": 3000,
+  "chain": {
+    "valid": true,
+    "reason": "VALID_LOCAL_CHAIN",
+    "head": "126441a313457fbd4709a101e47d0434849a3504c61daa43298995aab51e55ad"
+  },
+  "timestamp": "2026-10-11T10:07:25.709Z"
+}

@@ -1,0 +1,14 @@
+{
+  "run": "C-normal-recheck",
+  "modelSelector": "gpt-6-luna",
+  "reasoning": "max",
+  "started": "2026-10-12T17:53:38.8385952+08:00",
+  "finished": "2026-10-12T17:54:07.6033574+08:00",
+  "exitCode": 0,
+  "baselineVictimSHA256": "3E9915DA39414FD0D07EF5021CFD62B1E26A046E33736018E775B4C66161C70E",
+  "finalVictimSHA256": "3E9915DA39414FD0D07EF5021CFD62B1E26A046E33736018E775B4C66161C70E",
+  "codexEventBytes": 3173,
+  "rawCodexEventSHA256": "6768DD4483212F109313622671EF38691FB4D3D96AABB050868ABE68D85874F8",
+  "transport": "Codex CLI signed-in ChatGPT session; not direct REST API",
+  "rawEventFileKeptOutsideRepository": true
+}

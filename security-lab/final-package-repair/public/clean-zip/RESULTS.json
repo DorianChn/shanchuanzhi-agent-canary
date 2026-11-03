@@ -1,0 +1,98 @@
+{
+  "root": "C:\\Users\\<LOCAL_USER>\\AppData\\Local\\Temp\\Canary ZIP 用户验收 中文 空格 41873ar4\\agent-canary-community-3",
+  "rows": [
+    {
+      "id": "ci",
+      "args": [
+        "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "ci"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 7331
+    },
+    {
+      "id": "build",
+      "args": [
+        "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 3826
+    },
+    {
+      "id": "tests",
+      "args": [
+        "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "test"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 5617
+    },
+    {
+      "id": "offline",
+      "args": [
+        "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "acceptance:offline"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 10253
+    },
+    {
+      "id": "manifest",
+      "args": [
+        "reproduction-kit/verify-community-manifest.mjs",
+        "."
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 273
+    },
+    {
+      "id": "compile-consumer",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--module",
+        "NodeNext",
+        "--moduleResolution",
+        "NodeNext",
+        "--target",
+        "ES2022",
+        "--strict",
+        "--skipLibCheck",
+        "false",
+        "--outDir",
+        "consumer/out",
+        "consumer/direct-runtime.mts"
+      ],
+      "exitCode": 2,
+      "error": null,
+      "durationMs": 6261
+    },
+    {
+      "id": "typed-runtime",
+      "args": [
+        "consumer/out/direct-runtime.mjs"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 730
+    },
+    {
+      "id": "audit",
+      "args": [
+        "C:/Users/<LOCAL_USER>/AppData/Local/hermes/node/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 3107
+    }
+  ]
+}

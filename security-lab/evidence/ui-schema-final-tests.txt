@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: AI console inline JavaScript parses independently of TypeScript build
+ok 1 - AI console inline JavaScript parses independently of TypeScript build
+  ---
+  duration_ms: 2.8525
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: ollama
+ok 2 - AI native wire protocol and usage: ollama
+  ---
+  duration_ms: 41.658
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: openai
+ok 3 - AI native wire protocol and usage: openai
+  ---
+  duration_ms: 9.7881
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: openai-compatible
+ok 4 - AI native wire protocol and usage: openai-compatible
+  ---
+  duration_ms: 7.5472
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: anthropic
+ok 5 - AI native wire protocol and usage: anthropic
+  ---
+  duration_ms: 7.2776
+  type: 'test'
+  ...
+# Subtest: AI native wire protocol and usage: gemini
+ok 6 - AI native wire protocol and usage: gemini
+  ---
+  duration_ms: 7.2056
+  type: 'test'
+  ...
+# Subtest: AI cloud requires consent before any network operation
+ok 7 - AI cloud requires consent before any network operation
+  ---
+  duration_ms: 1.0506
+  type: 'test'
+  ...
+# Subtest: AI evidence IDs are grounded by host-extracted original text
+ok 8 - AI evidence IDs are grounded by host-extracted original text
+  ---
+  duration_ms: 0.3283
+  type: 'test'
+  ...
+# Subtest: AI CSV export neutralizes spreadsheet formulas and limits report size
+ok 9 - AI CSV export neutralizes spreadsheet formulas and limits report size
+  ---
+  duration_ms: 7.7464
+  type: 'test'
+  ...
+# Subtest: AI input minimization redacts keys, email, phone, exact host secret and token
+ok 10 - AI input minimization redacts keys, email, phone, exact host secret and token
+  ---
+  duration_ms: 0.8819
+  type: 'test'
+  ...
+# Subtest: AI evidence input has bounds and unique secret-free IDs
+ok 11 - AI evidence input has bounds and unique secret-free IDs
+  ---
+  duration_ms: 0.4032
+  type: 'test'
+  ...
+# Subtest: AI rejects output: invalidJSON
+ok 12 - AI rejects output: invalidJSON
+  ---
+  duration_ms: 0.3644
+  type: 'test'
+  ...
+# Subtest: AI rejects output: hallucinatedEvidence
+ok 13 - AI rejects output: hallucinatedEvidence
+  ---
+  duration_ms: 0.2051
+  type: 'test'
+  ...
+# Subtest: AI rejects output: unknownQuote
+ok 14 - AI rejects output: unknownQuote
+  ---
+  duration_ms: 0.0874
+  type: 'test'
+  ...
+# Subtest: AI rejects output: invalidConfidence
+ok 15 - AI rejects output: invalidConfidence
+  ---
+  duration_ms: 0.0659
+  type: 'test'
+  ...
+# Subtest: AI rejects output: oversizedSummary
+ok 16 - AI rejects output: oversizedSummary
+  ---
+  duration_ms: 0.0932
+  type: 'test'
+  ...
+# Subtest: AI rejects output: extraReset
+ok 17 - AI rejects output: extraReset
+  ---
+  duration_ms: 0.0774
+  type: 'test'
+  ...
+# Subtest: AI rejects output: missingEvidence
+ok 18 - AI rejects output: missingEvidence
+  ---
+  duration_ms: 0.0613
+  type: 'test'
+  ...
+# Subtest: AI known key is removed from model explanation
+ok 19 - AI known key is removed from model explanation
+  ---
+  duration_ms: 7.0826
+  type: 'test'
+  ...
+# Subtest: AI model lookup cannot reflect the backend API key into the frontend
+ok 20 - AI model lookup cannot reflect the backend API key into the frontend
+  ---
+  duration_ms: 8.7902
+  type: 'test'
+  ...
+# Subtest: AI malformed response is uncertain, not benign
+ok 21 - AI malformed response is uncertain, not benign
+  ---
+  duration_ms: 5.9175
+  type: 'test'
+  ...
+# Subtest: AI timeout and caller cancellation abort outstanding requests
+ok 22 - AI timeout and caller cancellation abort outstanding requests
+  ---
+  duration_ms: 107.2189
+  type: 'test'
+  ...
+# Subtest: AI retries only configured 429/503, no unbounded retries
+ok 23 - AI retries only configured 429/503, no unbounded retries
+  ---
+  duration_ms: 219.5718
+  type: 'test'
+  ...
+# Subtest: AI refuses redirects, oversized responses and raw provider error bodies
+ok 24 - AI refuses redirects, oversized responses and raw provider error bodies
+  ---
+  duration_ms: 13.7829
+  type: 'test'
+  ...
+# Subtest: AI endpoint policy rejects SSRF and unsafe parameter combinations
+ok 25 - AI endpoint policy rejects SSRF and unsafe parameter combinations
+  ---
+  duration_ms: 0.8274
+  type: 'test'
+  ...
+# Subtest: AI public HTTPS private IP fails at DNS destination validation
+ok 26 - AI public HTTPS private IP fails at DNS destination validation
+  ---
+  duration_ms: 0.9932
+  type: 'test'
+  ...
+# Subtest: AI benign answer and provider outage cannot reopen a quarantined guard
+ok 27 - AI benign answer and provider outage cannot reopen a quarantined guard
+  ---
+  duration_ms: 18.0519
+  type: 'test'
+  ...
+# Subtest: AI offline demo is explicit and dangerous callback does not execute
+ok 28 - AI offline demo is explicit and dangerous callback does not execute
+  ---
+  duration_ms: 9.0063
+  type: 'test'
+  ...
+# Subtest: AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+ok 29 - AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+  ---
+  duration_ms: 128.6998
+  type: 'test'
+  ...
+# Subtest: 3.0 console API preserves CSRF, operator identity, replay control and real quarantine
+ok 30 - 3.0 console API preserves CSRF, operator identity, replay control and real quarantine
+  ---
+  duration_ms: 198.1992
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1762.6808

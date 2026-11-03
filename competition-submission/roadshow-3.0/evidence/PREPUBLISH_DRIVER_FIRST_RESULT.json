@@ -1,0 +1,8 @@
+{
+  "scope": "new roadshow materials only, no production or full Git history scan",
+  "files": 60,
+  "sensitiveFindings": [],
+  "brokenLocalLinks": [],
+  "qACount": 4,
+  "status": "FAILED"
+}

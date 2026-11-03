@@ -1,0 +1,23 @@
+{
+  "reason": "Command substitution for metadata was evaluated before a preceding commit in the multi-command tool cell. Source file hashes were recorded at runtime; original results stay unchanged. Subsequent operations supply SHA from a separate tool call.",
+  "corrections": [
+    {
+      "file": "security-lab/evidence/2026-10-11T09-48-51-595Z/preregistration.json",
+      "declaredSourceSHA": "08161ff6534507bb4d5ff831c132017b7258080d",
+      "verifiedMatchingSourceSHA": [
+        "ee8ebe1833d5a22c8b7e13a7786d92bb7e71cc8d"
+      ],
+      "rawPreserved": true,
+      "scope": "Matches all five recorded runtime/harness files. Other unchanged dependencies pinned by ancestry; compiled dist not independently recorded."
+    },
+    {
+      "file": "security-lab/evidence/2026-10-11T09-55-55-446Z/preregistration.json",
+      "declaredSourceSHA": "ee8ebe1833d5a22c8b7e13a7786d92bb7e71cc8d",
+      "verifiedMatchingSourceSHA": [
+        "13b44ad643ac856392827b86f6fd50b760a12b90"
+      ],
+      "rawPreserved": true,
+      "scope": "Matches all five recorded runtime/harness files. Other unchanged dependencies pinned by ancestry; compiled dist not independently recorded."
+    }
+  ]
+}

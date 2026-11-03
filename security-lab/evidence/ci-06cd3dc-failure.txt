@@ -1,0 +1,1561 @@
+test (windows-latest, 22)	Run npm test	﻿2026-10-11T10:15:26.9939896Z ##[group]Run npm test
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:26.9940362Z ^[[36;1mnpm test^[[0m
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:27.0055873Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:27.0056529Z ##[endgroup]
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:28.4870460Z 
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:28.4895096Z > @dorianchn/agent-canary@1.2.7 test
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:28.4903510Z > node --import tsx --test test/alerts.test.ts test/tokens.test.ts test/eval.test.ts test/dashboard.test.ts test/sdk.test.ts test/license.test.ts test/containment.test.ts test/install.test.ts test/config.test.ts test/install-backup.test.ts test/webhook.test.ts test/self-test.test.ts test/metadata.test.ts test/security-simulation.test.ts test/file-walk.test.ts test/watch.test.ts test/ai.test.ts test/risk-policy.test.ts test/security-router.test.ts test/agent-integrations.test.ts test/agent-hook.test.ts test/file-state-store.test.ts test/gateway.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:28.4907951Z 
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:28.6046355Z TAP version 13
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.4952341Z # Subtest: Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.4961117Z ok 1 - Claude and Cursor official hook shapes allow reviewed command and ask unreviewed build
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.4962307Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.4962868Z   duration_ms: 24.2175
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.4963595Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5003201Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5004521Z # Subtest: hook canary quarantine persists across process-style Guard instances
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5005790Z ok 2 - hook canary quarantine persists across process-style Guard instances
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5006601Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5006989Z   duration_ms: 49.0197
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5007430Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5007812Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5008588Z # Subtest: hook path boundary and model approvals cannot authorize dangerous calls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5009813Z ok 3 - hook path boundary and model approvals cannot authorize dangerous calls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5010648Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5024048Z   duration_ms: 4.1665
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5024461Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5024954Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5025840Z # Subtest: full persistent hook state fails closed for new identities without growing files
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5027902Z ok 4 - full persistent hook state fails closed for new identities without growing files
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5028852Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5029278Z   duration_ms: 908.927
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5029784Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5030226Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5031297Z # Subtest: quarantine writer contention leaves persistent fail-closed marker rather than losing signal
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5032897Z ok 5 - quarantine writer contention leaves persistent fail-closed marker rather than losing signal
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5041037Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5041409Z   duration_ms: 33.93
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5041956Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5042992Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5044477Z # Subtest: new native session cannot bypass workspace-bound quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5051918Z ok 6 - new native session cannot bypass workspace-bound quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5052716Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5056320Z   duration_ms: 21.4408
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5056886Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5057321Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5388520Z # Subtest: claude preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5389792Z ok 7 - claude preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5391498Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5391796Z   duration_ms: 230.1008
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5392147Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5392451Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5393120Z # Subtest: cursor preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5395747Z ok 8 - cursor preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5396747Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5397597Z   duration_ms: 19.6609
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5403332Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5403647Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5404239Z # Subtest: cline preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5405124Z ok 9 - cline preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5405938Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5406247Z   duration_ms: 57.9361
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5406601Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5406887Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5407539Z # Subtest: codex preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5408779Z ok 10 - codex preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5446137Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5447343Z   duration_ms: 214.4643
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5449738Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5451068Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5452181Z # Subtest: custom preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5453590Z ok 11 - custom preview, nonoverwriting install and verified restore
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5454585Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5455161Z   duration_ms: 95.0941
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5455755Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5456419Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5487460Z # Subtest: preserves other server and private config and refuses overwriting later user edits
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5489054Z ok 12 - preserves other server and private config and refuses overwriting later user edits
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5490052Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5490650Z   duration_ms: 116.2227
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5491640Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5492188Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5493001Z # Subtest: corrupt and changed configuration cannot be overwritten
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5494029Z ok 13 - corrupt and changed configuration cannot be overwritten
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5494878Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5495375Z   duration_ms: 2.6828
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5495901Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5496415Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5497220Z # Subtest: redirected parent config does not write outside chosen project
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5498429Z ok 14 - redirected parent config does not write outside chosen project
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5499247Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5499783Z   duration_ms: 8.4942
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5500313Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5500798Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5501860Z # Subtest: empty existing JSON fails closed; empty TOML presence and private outside-Git backup preserved
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5503276Z ok 15 - empty existing JSON fails closed; empty TOML presence and private outside-Git backup preserved
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5504103Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5504398Z   duration_ms: 136.4782
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5504741Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5505020Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5505732Z # Subtest: Codex preserves valid TOML exactly and rejects corruption or quoted duplicate server
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5507033Z ok 16 - Codex preserves valid TOML exactly and rejects corruption or quoted duplicate server
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5507753Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5508090Z   duration_ms: 80.7645
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5508448Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5509381Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5510722Z # Subtest: malformed JSON and TOML errors never echo sensitive source lines
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5511884Z ok 17 - malformed JSON and TOML errors never echo sensitive source lines
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5512593Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5512930Z   duration_ms: 52.43
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5513302Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5513858Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5516415Z # Subtest: AI console inline JavaScript parses independently of TypeScript build
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5517834Z ok 18 - AI console inline JavaScript parses independently of TypeScript build
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5518810Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5519166Z   duration_ms: 7.2304
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5519776Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5520133Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5520625Z # Subtest: AI native wire protocol and usage: ollama
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5600310Z ok 19 - AI native wire protocol and usage: ollama
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5604730Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5605275Z   duration_ms: 52.9518
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5606183Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5606580Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5608714Z # Subtest: AI native wire protocol and usage: openai
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5609660Z ok 20 - AI native wire protocol and usage: openai
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5610678Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5611089Z   duration_ms: 8.586
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5611491Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5611838Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5612408Z # Subtest: AI native wire protocol and usage: openai-compatible
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5613673Z ok 21 - AI native wire protocol and usage: openai-compatible
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5614249Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5614587Z   duration_ms: 13.4559
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5615283Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5626919Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5627507Z # Subtest: AI native wire protocol and usage: anthropic
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5628227Z ok 22 - AI native wire protocol and usage: anthropic
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5628734Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5629020Z   duration_ms: 9.8042
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5629352Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5630009Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5630527Z # Subtest: AI native wire protocol and usage: gemini
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5631194Z ok 23 - AI native wire protocol and usage: gemini
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5631678Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5631981Z   duration_ms: 7.4587
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5632315Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5632628Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5633163Z # Subtest: AI cloud requires consent before any network operation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5633990Z ok 24 - AI cloud requires consent before any network operation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5634514Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5634791Z   duration_ms: 0.9251
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5635114Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5635390Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5635955Z # Subtest: AI evidence IDs are grounded by host-extracted original text
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5636834Z ok 25 - AI evidence IDs are grounded by host-extracted original text
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5637414Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5637691Z   duration_ms: 0.2613
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5638013Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5638300Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5638965Z # Subtest: AI CSV export neutralizes spreadsheet formulas and limits report size
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5639955Z ok 26 - AI CSV export neutralizes spreadsheet formulas and limits report size
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5640569Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5640841Z   duration_ms: 8.3533
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5641175Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5641470Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5642145Z # Subtest: AI input minimization redacts keys, email, phone, exact host secret and token
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5643265Z ok 27 - AI input minimization redacts keys, email, phone, exact host secret and token
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5643930Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5644209Z   duration_ms: 0.8776
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5644546Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5644832Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5645362Z # Subtest: AI evidence input has bounds and unique secret-free IDs
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5646151Z ok 28 - AI evidence input has bounds and unique secret-free IDs
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5646675Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5646952Z   duration_ms: 0.4535
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5647273Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5647552Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5647918Z # Subtest: AI rejects output: invalidJSON
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5648447Z ok 29 - AI rejects output: invalidJSON
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5649198Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5649503Z   duration_ms: 0.3286
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5650265Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5650634Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5651106Z # Subtest: AI rejects output: hallucinatedEvidence
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5651740Z ok 30 - AI rejects output: hallucinatedEvidence
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5652218Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5652542Z   duration_ms: 0.4067
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5653416Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5653727Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5654330Z # Subtest: AI rejects output: unknownQuote
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5654861Z ok 31 - AI rejects output: unknownQuote
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5655267Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5655558Z   duration_ms: 0.2814
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5655888Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5656188Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5656635Z # Subtest: AI rejects output: invalidConfidence
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5657294Z ok 32 - AI rejects output: invalidConfidence
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5657771Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5658083Z   duration_ms: 0.2936
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5658433Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5658686Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5659060Z # Subtest: AI rejects output: oversizedSummary
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5659655Z ok 33 - AI rejects output: oversizedSummary
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5660084Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5660353Z   duration_ms: 0.1749
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5660649Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5660933Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5661295Z # Subtest: AI rejects output: extraReset
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5661845Z ok 34 - AI rejects output: extraReset
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5662256Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5662553Z   duration_ms: 0.166
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5662909Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5663224Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5663622Z # Subtest: AI rejects output: missingEvidence
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5664211Z ok 35 - AI rejects output: missingEvidence
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5664667Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5664966Z   duration_ms: 0.115
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5665272Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5665571Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5666108Z # Subtest: AI known key is removed from model explanation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5666790Z ok 36 - AI known key is removed from model explanation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5667271Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5667559Z   duration_ms: 10.7079
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5669797Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5670162Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5670846Z # Subtest: AI model lookup cannot reflect the backend API key into the frontend
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5671910Z ok 37 - AI model lookup cannot reflect the backend API key into the frontend
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5672588Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5672904Z   duration_ms: 8.7992
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5673273Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5673591Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5674120Z # Subtest: AI malformed response is uncertain, not benign
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5674881Z ok 38 - AI malformed response is uncertain, not benign
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5675426Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5675749Z   duration_ms: 5.1774
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5676121Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5676443Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5677062Z # Subtest: AI timeout and caller cancellation abort outstanding requests
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5678027Z ok 39 - AI timeout and caller cancellation abort outstanding requests
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5678660Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5679685Z   duration_ms: 118.7929
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5680427Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5680696Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5681041Z # Subtest: AI retries only configured 429/503, no unbounded retries
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5681546Z ok 40 - AI retries only configured 429/503, no unbounded retries
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5681865Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5682041Z   duration_ms: 221.7375
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5682246Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5682421Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5682819Z # Subtest: AI refuses redirects, oversized responses and raw provider error bodies
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5683415Z ok 41 - AI refuses redirects, oversized responses and raw provider error bodies
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5684044Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5684235Z   duration_ms: 15.0477
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5684440Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5684620Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5684999Z # Subtest: AI endpoint policy rejects SSRF and unsafe parameter combinations
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5685550Z ok 42 - AI endpoint policy rejects SSRF and unsafe parameter combinations
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5686104Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5686284Z   duration_ms: 1.5495
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5686489Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5686871Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5687212Z # Subtest: AI public HTTPS private IP fails at DNS destination validation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5687731Z ok 43 - AI public HTTPS private IP fails at DNS destination validation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5688322Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5688509Z   duration_ms: 1.1315
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5688705Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5688878Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5689248Z # Subtest: AI benign answer and provider outage cannot reopen a quarantined guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5689814Z ok 44 - AI benign answer and provider outage cannot reopen a quarantined guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5690168Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5690338Z   duration_ms: 60.3362
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5690537Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5690711Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5691063Z # Subtest: AI offline demo is explicit and dangerous callback does not execute
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5691599Z ok 45 - AI offline demo is explicit and dangerous callback does not execute
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5691950Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5692121Z   duration_ms: 7.332
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5692316Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5692483Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5692917Z # Subtest: AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5693822Z ok 46 - AI console enforces host/origin/CSRF, does not serialize keys, exports bounded analyses
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5694238Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5694400Z   duration_ms: 90.1628
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5694607Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:32.5694771Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0724004Z # Subtest: audit log omits raw arguments and redacts canary and secret values
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0756117Z ok 47 - audit log omits raw arguments and redacts canary and secret values
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0765169Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0791348Z   duration_ms: 5.871
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0794124Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0796527Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0797764Z # Subtest: audit fields cannot inject terminal control sequences or forged log lines
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0799209Z ok 48 - audit fields cannot inject terminal control sequences or forged log lines
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0800126Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0800683Z   duration_ms: 3.4823
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0801221Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0801683Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0802572Z # Subtest: legacy event headers and CLI display values cannot inject terminal controls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0803850Z ok 49 - legacy event headers and CLI display values cannot inject terminal controls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0804715Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0805176Z   duration_ms: 0.3302
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0805848Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0806411Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0807379Z # Subtest: new audit logs are owner-readable on POSIX systems
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0808677Z ok 50 - new audit logs are owner-readable on POSIX systems # SKIP
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0809449Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0809925Z   duration_ms: 0.1628
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0810511Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0811021Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0811734Z # Subtest: webhook receives the same sanitized event shape
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0812744Z ok 51 - webhook receives the same sanitized event shape
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0813505Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0819106Z   duration_ms: 38.0863
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0824147Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0824735Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0825781Z # Subtest: sendAlertTest reports event log success and webhook success without desktop notification
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0833948Z ok 52 - sendAlertTest reports event log success and webhook success without desktop notification
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0835171Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0835683Z   duration_ms: 21.4663
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0836186Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0836660Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0837430Z # Subtest: sendAlertTest reports webhook failures and does not throw
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0840609Z ok 53 - sendAlertTest reports webhook failures and does not throw
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0847683Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0848238Z   duration_ms: 6.9253
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0848811Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0849449Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0850539Z # Subtest: sendAlertTest sanitizes its webhook payload
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0854232Z ok 54 - sendAlertTest sanitizes its webhook payload
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0856613Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0878780Z   duration_ms: 6.3256
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0879816Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0880419Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0881906Z # Subtest: sendAlertTest reports an unconfigured webhook and event-log failure
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0883941Z ok 55 - sendAlertTest reports an unconfigured webhook and event-log failure
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0884545Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0885260Z   duration_ms: 3.1922
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0885710Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0888151Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0888840Z # Subtest: webhook delivery does not follow redirects to a second destination
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0889808Z ok 56 - webhook delivery does not follow redirects to a second destination
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0890404Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0890666Z   duration_ms: 20.5366
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0890961Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0891204Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0891848Z # Subtest: event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0892878Z ok 57 - event reads and rotation stay bounded on oversized, truncated, and corrupt JSONL
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0893536Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0893799Z   duration_ms: 23.0607
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0894184Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.0894478Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1022091Z # Subtest: writeFileAtomically creates a file and replaces it without leaving temp files
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1024039Z ok 58 - writeFileAtomically creates a file and replaces it without leaving temp files
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1040710Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1082129Z   duration_ms: 22.1985
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1158040Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1183526Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1198141Z # Subtest: writeFileAtomically leaves the existing file when the destination is invalid
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1199806Z ok 59 - writeFileAtomically leaves the existing file when the destination is invalid
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1223431Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1243380Z   duration_ms: 13.1108
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1244351Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1265239Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1277953Z # Subtest: private Agent Canary files and directories use owner-only POSIX permissions
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1279718Z ok 60 - private Agent Canary files and directories use owner-only POSIX permissions # SKIP
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1282178Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1290807Z   duration_ms: 0.305
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1292644Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1294150Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1295727Z # Subtest: first run uses defaults without writing a config file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1296628Z ok 61 - first run uses defaults without writing a config file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1297814Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1298458Z   duration_ms: 1.158
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1298811Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1299077Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1299815Z # Subtest: empty, truncated, malformed, and non-object config files fail closed without overwrite
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1301046Z ok 62 - empty, truncated, malformed, and non-object config files fail closed without overwrite
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1301791Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1302094Z   duration_ms: 4.3703
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1303880Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1304186Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1304839Z # Subtest: unreadable config path fails closed instead of returning defaults
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1305804Z ok 63 - unreadable config path fails closed instead of returning defaults
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1306409Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1306688Z   duration_ms: 1.06
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1307013Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1307305Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1308018Z # Subtest: invalid known config fields are rejected while omitted fields receive defaults
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1309560Z ok 64 - invalid known config fields are rejected while omitted fields receive defaults
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1338360Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1371880Z   duration_ms: 2.0747
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1443593Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.1445542Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.9189423Z # Subtest: 1: SAFE session permits a normal tool call
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.9281701Z ok 65 - 1: SAFE session permits a normal tool call
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.9427016Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:33.9625670Z   duration_ms: 4.3682
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.0035457Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.0312934Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.0455570Z # Subtest: 2: decoy invocation synchronously quarantines its own session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.0709490Z ok 66 - 2: decoy invocation synchronously quarantines its own session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.0859758Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.0860645Z   duration_ms: 59.4944
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.1022756Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.1245521Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.1413293Z # Subtest: 3: a quarantined session blocks a dangerous real tool
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.1879527Z ok 67 - 3: a quarantined session blocks a dangerous real tool
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.2317705Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.2701234Z   duration_ms: 3.5764
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.2866307Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.3444358Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.3993130Z # Subtest: 4: a blocked callback is never executed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.4326691Z ok 68 - 4: a blocked callback is never executed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.4906841Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.5309032Z   duration_ms: 18.4498
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.5703150Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.6179380Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.6511397Z # Subtest: 5: exact quarantine allowlist permits a reviewed safe operation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.6756695Z ok 69 - 5: exact quarantine allowlist permits a reviewed safe operation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.6945522Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.7190940Z   duration_ms: 1.88
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.7452757Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.7802222Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.8124201Z # Subtest: 6: a human acknowledgement is required before reset restores normal operation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.8455926Z ok 70 - 6: a human acknowledgement is required before reset restores normal operation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.8533795Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.8751075Z   duration_ms: 4.6707
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.9222259Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:34.9769265Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.0189809Z # Subtest: 7: one tripped session cannot quarantine another session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.0678883Z ok 71 - 7: one tripped session cannot quarantine another session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.1463439Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.1991272Z   duration_ms: 37.4431
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.3027720Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.3851449Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.4839824Z # Subtest: 8: alert delivery failure cannot re-open a quarantined session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.5491716Z ok 72 - 8: alert delivery failure cannot re-open a quarantined session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.6237355Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.7286018Z   duration_ms: 10.708
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.8593054Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:35.9611697Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:36.1442263Z # Subtest: 9: no async race allows a post-decoy dangerous callback through
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:36.4638579Z ok 73 - 9: no async race allows a post-decoy dangerous callback through
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:36.7699600Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.2609414Z   duration_ms: 41.7142
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.5947296Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.6809352Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.7266053Z # Subtest: token detection trips before its token event is emitted
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.7815983Z ok 74 - token detection trips before its token event is emitted
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8171798Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8390442Z   duration_ms: 98.3007
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8497357Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8508470Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8527253Z # Subtest: credential revoker receives no secret data and starts after quarantine before alerts
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8530336Z ok 75 - credential revoker receives no secret data and starts after quarantine before alerts
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8539315Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8544816Z   duration_ms: 3.1425
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8767119Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8902419Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8954988Z # Subtest: credential revoker failures do not re-open the circuit
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.8971160Z ok 76 - credential revoker failures do not re-open the circuit
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9021292Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9024158Z   duration_ms: 6.3805
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9035031Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9128784Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9173236Z # Subtest: shared principal state quarantines a fresh session without affecting another identity
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9202961Z ok 77 - shared principal state quarantines a fresh session without affecting another identity
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9207675Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9281654Z   duration_ms: 3.0107
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9293273Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9294461Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9295991Z # Subtest: a new session for the same principal cannot race a synchronous decoy trip
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9297627Z ok 78 - a new session for the same principal cannot race a synchronous decoy trip
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9298786Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9299604Z   duration_ms: 43.6072
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9300713Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9301439Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9302545Z # Subtest: principalId requires an explicit shared state store
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9303839Z ok 79 - principalId requires an explicit shared state store
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9304698Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9305267Z   duration_ms: 0.3559
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9305848Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9306443Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9307415Z # Subtest: a shared-store read failure during a trip latches the session closed after recovery
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9308918Z ok 80 - a shared-store read failure during a trip latches the session closed after recovery
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9309915Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9310365Z   duration_ms: 4.4055
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9310853Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9311331Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9312198Z # Subtest: a blocked call during a shared-store outage remains blocked after recovery
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9318727Z ok 81 - a blocked call during a shared-store outage remains blocked after recovery
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9319742Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9320322Z   duration_ms: 2.2555
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9320845Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9321344Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9322369Z # Subtest: a shared store returning SAFE after a failed quarantine cannot override the local latch
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9323906Z ok 82 - a shared store returning SAFE after a failed quarantine cannot override the local latch
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9324892Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9325419Z   duration_ms: 3.0137
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9326022Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9326614Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9327611Z # Subtest: a corrupt token registry quarantines a guard instead of returning a clean inspection
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9329070Z ok 83 - a corrupt token registry quarantines a guard instead of returning a clean inspection
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9329990Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9330446Z   duration_ms: 2.9914
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9330934Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9331383Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9332704Z # Subtest: dashboard renders summary cards and timeline
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9334664Z ok 84 - dashboard renders summary cards and timeline
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9335342Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9335796Z   duration_ms: 3.5424
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9336289Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9336738Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9337457Z # Subtest: dashboard escapes attacker-controlled payloads (XSS)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9338429Z ok 85 - dashboard escapes attacker-controlled payloads (XSS)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9339152Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9339916Z   duration_ms: 0.2989
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9340456Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9340919Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9341574Z # Subtest: empty event log renders friendly empty state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9342477Z ok 86 - empty event log renders friendly empty state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9343150Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9343605Z   duration_ms: 0.2342
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9344107Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9345064Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9345941Z # Subtest: CEF export: header, severity, escaped extension
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9346994Z ok 87 - CEF export: header, severity, escaped extension
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9347739Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9348277Z   duration_ms: 8.0588
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9348828Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9349538Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9350293Z # Subtest: JSON export: newline-delimited, parses back
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9351222Z ok 88 - JSON export: newline-delimited, parses back
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9351946Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9352429Z   duration_ms: 0.3608
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9352938Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9353408Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9353997Z # Subtest: CSV export: header + quoted cells
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9354724Z ok 89 - CSV export: header + quoted cells
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9355323Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9356172Z   duration_ms: 0.6478
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9356776Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9357278Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9358157Z # Subtest: CSV export neutralizes spreadsheet formula cells from event fields
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9359430Z ok 90 - CSV export neutralizes spreadsheet formula cells from event fields
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9360306Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9361180Z   duration_ms: 0.3508
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9361769Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9362273Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9373423Z # Subtest: payload suite sanity: unique ids, valid categories, decoy coverage
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9427920Z ok 91 - payload suite sanity: unique ids, valid categories, decoy coverage
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9583774Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9624546Z   duration_ms: 1.9583
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9680600Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9687648Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9780465Z # Subtest: isDecoyTool recognizes decoys and rejects normal names
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9825346Z ok 92 - isDecoyTool recognizes decoys and rejects normal names
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9827070Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9848467Z   duration_ms: 0.2333
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9877143Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9882020Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9882475Z # Subtest: resisting model scores 100
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9883451Z ok 93 - resisting model scores 100
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9884037Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9884533Z   duration_ms: 2.7963
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9885085Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9885572Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9886300Z # Subtest: tool-touching model scores 0 and every payload is flagged
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9887646Z ok 94 - tool-touching model scores 0 and every payload is flagged
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9888408Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9888900Z   duration_ms: 918.7424
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9889502Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9890868Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9892499Z # Subtest: token-leaking model is flagged as compromised
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9902323Z ok 95 - token-leaking model is flagged as compromised
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9903143Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9903667Z   duration_ms: 1.9855
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9904217Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9904731Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9907199Z # Subtest: provider failure fails closed instead of counting as resistance
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9908664Z ok 96 - provider failure fails closed instead of counting as resistance
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9909569Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9910100Z   duration_ms: 1.2033
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9910647Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9911184Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9912135Z # Subtest: eval rejects invalid turn limits instead of scoring skipped calls as resistance
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9914859Z ok 97 - eval rejects invalid turn limits instead of scoring skipped calls as resistance
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9915848Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9916336Z   duration_ms: 1.4287
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9916827Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9917251Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9918052Z # Subtest: OpenAI-compatible provider refuses redirects to a second endpoint
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9919228Z ok 98 - OpenAI-compatible provider refuses redirects to a second endpoint
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9920071Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9920544Z   duration_ms: 115.1708
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9921069Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9921556Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9922305Z # Subtest: decoy handler is invoked during eval (audit trail)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9924041Z ok 99 - decoy handler is invoked during eval (audit trail)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9924868Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9925384Z   duration_ms: 1077.5563
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9925947Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9926461Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9927194Z # Subtest: markdown report renders score and detail table
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9928138Z ok 100 - markdown report renders score and detail table
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9928836Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9929285Z   duration_ms: 1.2721
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9929777Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9930244Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9930923Z # Subtest: handleDecoyCall returns trace-tokened fake replies
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9934892Z ok 101 - handleDecoyCall returns trace-tokened fake replies
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9935607Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9936044Z   duration_ms: 39.0593
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9936515Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:37.9936946Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0640946Z # Subtest: memory store boundary: separate stores do not preserve quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0663080Z ok 102 - memory store boundary: separate stores do not preserve quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0767576Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0867444Z   duration_ms: 9.0165
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0884723Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0917156Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.0993150Z # Subtest: file store requires explicit bootstrap and never overwrites existing state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1040815Z ok 103 - file store requires explicit bootstrap and never overwrites existing state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1072797Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1154660Z   duration_ms: 502.8849
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1195329Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1266384Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1406947Z # Subtest: file store survives process restart and same principal gets quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1563908Z ok 104 - file store survives process restart and same principal gets quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1578116Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1624510Z   duration_ms: 1480.2562
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.1824977Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.2017404Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.2313074Z # Subtest: corruption empty truncation and schema errors reject without rewriting
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.2504064Z ok 105 - corruption empty truncation and schema errors reject without rewriting
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.2718576Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.2979896Z   duration_ms: 11.3499
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.3211115Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.3435320Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.3653708Z # Subtest: missing state after bootstrap latches guard fail-closed without regeneration
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.3881399Z ok 106 - missing state after bootstrap latches guard fail-closed without regeneration
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.3975071Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.4155061Z   duration_ms: 4.3158
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.4343733Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.4625690Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.4713744Z # Subtest: concurrent store instances preserve different scopes and enforce one quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.4928890Z ok 107 - concurrent store instances preserve different scopes and enforce one quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5052188Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5375957Z   duration_ms: 27.2229
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5425371Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5547668Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5677582Z # Subtest: busy lock, excessive file and scope capacity never permit sensitive callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5770522Z ok 108 - busy lock, excessive file and scope capacity never permit sensitive callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.5972366Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6066785Z   duration_ms: 13.6008
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6224022Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6298640Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6412209Z # Subtest: symlink/junction redirected state and parent are rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6501048Z ok 109 - symlink/junction redirected state and parent are rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6585732Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6721493Z   duration_ms: 3.4346
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.6997750Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.7255907Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.7583541Z # Subtest: trusted reset removes only one scope and invalid scopes are redacted errors
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.7713850Z ok 110 - trusted reset removes only one scope and invalid scopes are redacted errors
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.7936908Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.8205786Z   duration_ms: 34.5971
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.8348144Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.8580155Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.8919959Z # Subtest: active writer lock causes guard reads to latch fail-closed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.9097783Z ok 111 - active writer lock causes guard reads to latch fail-closed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.9371934Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.9372808Z   duration_ms: 8.1594
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.9633665Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:39.9964111Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.0274276Z # Subtest: prototype-looking scopes are data and cannot return inherited state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.0563702Z ok 112 - prototype-looking scopes are data and cannot return inherited state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.1147752Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.1457026Z   duration_ms: 47.8782
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.1546042Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.1587284Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.1838035Z # Subtest: string bootstrap flags cannot recreate missing state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.1954818Z ok 113 - string bootstrap flags cannot recreate missing state
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.2080254Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.2217860Z   duration_ms: 1.043
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.2388925Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:40.2828426Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1543272Z # Subtest: four concurrent processes preserve every quarantine without lost writes
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1577518Z not ok 114 - four concurrent processes preserve every quarantine without lost writes
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1632346Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1647877Z   duration_ms: 1832.4146
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1723293Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1733681Z   location: 'D:\\a\\shanchuanzhi-agent-canary\\shanchuanzhi-agent-canary\\test\\file-state-store.test.ts:1:5983'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1741558Z   failureType: 'testCodeFailure'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1743747Z   error: |-
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1745825Z     D:\a\shanchuanzhi-agent-canary\shanchuanzhi-agent-canary\src\file-state-store.ts:35
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1748072Z         if(process.platform==='win32'&&(code==='EPERM'||code==='EACCES')){try{fs.lstatSync(lock);}catch{throw Error('STATE_STORE_IO');}throw Error('STATE_STORE_BUSY');}
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1750281Z                                                                                                               ^
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1775768Z     
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1780935Z     Error: STATE_STORE_IO
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1788364Z         at transaction (D:\a\shanchuanzhi-agent-canary\shanchuanzhi-agent-canary\src\file-state-store.ts:35:107)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1812138Z         at Object.quarantine (D:\a\shanchuanzhi-agent-canary\shanchuanzhi-agent-canary\src\file-state-store.ts:60:40)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1828432Z         at file:///D:/a/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/[eval1]:1:316
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1829791Z     
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1851783Z     Node.js v22.23.3
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1852640Z     
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1853022Z   code: 'ERR_TEST_FAILURE'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1854097Z   stack: |-
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1855207Z     transaction (D:\a\shanchuanzhi-agent-canary\shanchuanzhi-agent-canary\src\file-state-store.ts:35:107)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1857784Z     Object.quarantine (D:\a\shanchuanzhi-agent-canary\shanchuanzhi-agent-canary\src\file-state-store.ts:60:40)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1859375Z     file:///D:/a/shanchuanzhi-agent-canary/shanchuanzhi-agent-canary/[eval1]:1:316
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1861147Z     ChildProcess.<anonymous> (D:\a\shanchuanzhi-agent-canary\shanchuanzhi-agent-canary\test\file-state-store.test.ts:22:233)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1862604Z     ChildProcess.emit (node:events:519:28)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1863486Z     maybeClose (node:internal/child_process:1101:16)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1864455Z     ChildProcess._handle.onexit (node:internal/child_process:304:5)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1865334Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1866289Z # Subtest: Windows transient rename sharing failures retry without losing quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1867957Z ok 115 - Windows transient rename sharing failures retry without losing quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1868914Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1869347Z   duration_ms: 52.3765
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1869814Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1870317Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1871305Z # Subtest: persistent rename failure never replaces the existing state or leaks details
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1872578Z ok 116 - persistent rename failure never replaces the existing state or leaks details
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1873359Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1873806Z   duration_ms: 248.0943
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1874322Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1874771Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1875504Z # Subtest: Windows lock EPERM with an existing writer is BUSY, not a data reset
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1876983Z ok 117 - Windows lock EPERM with an existing writer is BUSY, not a data reset
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1877735Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1878159Z   duration_ms: 3.2745
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1878608Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.1879076Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2114942Z # Subtest: directory enumeration errors are surfaced so a scan cannot report a false clean
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2119827Z ok 118 - directory enumeration errors are surfaced so a scan cannot report a false clean
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2149965Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2168220Z   duration_ms: 3.5233
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2172809Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2173504Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2174413Z # Subtest: recursive walking does not follow a symlink supplied as its root
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2176503Z ok 119 - recursive walking does not follow a symlink supplied as its root # SKIP
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2178043Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2178915Z   duration_ms: 0.183
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2179511Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2179977Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2180922Z # Subtest: gateway uses real held handles for authorized read and write and verifies bytes
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2182247Z ok 120 - gateway uses real held handles for authorized read and write and verifies bytes
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2183116Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2183625Z   duration_ms: 40.6899
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2184117Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2184592Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2185406Z # Subtest: first unauthorized credential read rejected before real content is returned
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2186715Z ok 121 - first unauthorized credential read rejected before real content is returned
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2187569Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2188020Z   duration_ms: 9.9305
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2188523Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2189847Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2190684Z # Subtest: path traversal and forged grant cannot write outside capability
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2191785Z ok 122 - path traversal and forged grant cannot write outside capability
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2192545Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2192992Z   duration_ms: 22.4853
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2193557Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2194023Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2194867Z # Subtest: replacement after gateway initialization never writes replacement inode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2196489Z ok 123 - replacement after gateway initialization never writes replacement inode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2197458Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2197940Z   duration_ms: 14.3582
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2198449Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2198874Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2199687Z # Subtest: symlink or Windows junction resource escape rejected at registration
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2200979Z ok 124 - symlink or Windows junction resource escape rejected at registration
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2201905Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2202358Z   duration_ms: 3.4525
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2202857Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2203307Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2204093Z # Subtest: quarantine prevents actual file write and queued command process
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2205221Z ok 125 - quarantine prevents actual file write and queued command process
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2206000Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2206437Z   duration_ms: 22.9782
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2206961Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2208106Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2208978Z # Subtest: fixed argv process really executes normal task; arbitrary shell does not run
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2210277Z ok 126 - fixed argv process really executes normal task; arbitrary shell does not run
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2211157Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2211632Z   duration_ms: 334.0061
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2212170Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2212615Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2213389Z # Subtest: denied network request has zero actual loopback HTTP side effects
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2214622Z ok 127 - denied network request has zero actual loopback HTTP side effects
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2215445Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2215915Z   duration_ms: 17.8728
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2216421Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2216866Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2217766Z # Subtest: host-only approval consumes once and model has no approve or reset entry point
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2219125Z ok 128 - host-only approval consumes once and model has no approve or reset entry point
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2220016Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2220532Z   duration_ms: 7.4262
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2221116Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2221603Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2222257Z # Subtest: approval expires with no actual callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2223134Z ok 129 - approval expires with no actual callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2223790Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2224247Z   duration_ms: 55.8578
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2224794Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2225279Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2226033Z # Subtest: AI benign cannot grant permission or execute callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2227013Z ok 130 - AI benign cannot grant permission or execute callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2228145Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2228638Z   duration_ms: 20.7518
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2229155Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2229624Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2230378Z # Subtest: AI timeout cannot grant permission or execute callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2231424Z ok 131 - AI timeout cannot grant permission or execute callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2232229Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2232679Z   duration_ms: 19.0658
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2233168Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2233622Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2234303Z # Subtest: AI invalid cannot grant permission or execute callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2235256Z ok 132 - AI invalid cannot grant permission or execute callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2236008Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2236491Z   duration_ms: 5.9672
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2237450Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2237971Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2238796Z # Subtest: AI suspicious only tightens a decision and guard remains authoritative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2240080Z ok 133 - AI suspicious only tightens a decision and guard remains authoritative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2240902Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2241339Z   duration_ms: 6.0287
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2241877Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2242354Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2243153Z # Subtest: pre-cancelled call and full evidence cannot change actual file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2244577Z ok 134 - pre-cancelled call and full evidence cannot change actual file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2245349Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2245799Z   duration_ms: 37.9217
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2246353Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2246863Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2248113Z # Subtest: serialized concurrent writes leave a complete value and continuous evidence chain
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2249607Z ok 135 - serialized concurrent writes leave a complete value and continuous evidence chain
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2250645Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2251170Z   duration_ms: 121.5762
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2251766Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2252271Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2253420Z # Subtest: evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2255394Z ok 136 - evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2256569Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2256994Z   duration_ms: 1.3937
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2257456Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2257898Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2258904Z # Subtest: invalid suspicious AI output stays pending instead of being accepted as a valid review
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2260554Z ok 137 - invalid suspicious AI output stays pending instead of being accepted as a valid review
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2261732Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2262779Z   duration_ms: 5.5673
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2263355Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2263849Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2264763Z # Subtest: sensitive MCP output blocks later registered network capability before its callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2266222Z ok 138 - sensitive MCP output blocks later registered network capability before its callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2267145Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2267981Z   duration_ms: 8.5896
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2271863Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2272435Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2273462Z # Subtest: deadline aborts registered callback, quarantines and refuses queued real file effect
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2274964Z ok 139 - deadline aborts registered callback, quarantines and refuses queued real file effect
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2275998Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2276489Z   duration_ms: 36.5573
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2276981Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2277405Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2278235Z # Subtest: replacing gateway for same Guard cannot erase prior sensitive tool history
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2279429Z ok 140 - replacing gateway for same Guard cannot erase prior sensitive tool history
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2280206Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2280619Z   duration_ms: 6.5293
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2281068Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2281476Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2282284Z # Subtest: five isolated decoy kinds have unique IDs and deployed is not touched
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2283552Z ok 141 - five isolated decoy kinds have unique IDs and deployed is not touched
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2284415Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2284897Z   duration_ms: 11.7005
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2285413Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2285951Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2286945Z # Subtest: database, internal API and MCP interaction is virtual and records only actual calls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2288432Z ok 142 - database, internal API and MCP interaction is virtual and records only actual calls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2289420Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2290356Z   duration_ms: 11.9843
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2292001Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2292511Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2293410Z # Subtest: adaptive metadata produces bounded selection without invented efficacy
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2294721Z ok 143 - adaptive metadata produces bounded selection without invented efficacy
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2295448Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2296105Z   duration_ms: 1.4344
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2296507Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2297140Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2298272Z # Subtest: real honeypot file read quarantines before next actual write
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2299531Z ok 144 - real honeypot file read quarantines before next actual write
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2300565Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2301201Z   duration_ms: 36.5093
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2303688Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2304843Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2306190Z # Subtest: bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2309197Z ok 145 - bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2311185Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2311861Z   duration_ms: 1.6347
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2312765Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2313227Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2313936Z # Subtest: dataflow bounded eviction, TTL and session separation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2314890Z ok 146 - dataflow bounded eviction, TTL and session separation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2315564Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2316019Z   duration_ms: 43.8738
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2316494Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2316913Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2317643Z # Subtest: repeated installs preserve each previous MCP config backup
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2318755Z ok 147 - repeated installs preserve each previous MCP config backup
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2319514Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2319952Z   duration_ms: 41.8516
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2320433Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2320861Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2321553Z # Subtest: install creates a Claude config in an isolated home
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2322452Z ok 148 - install creates a Claude config in an isolated home
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2323098Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2323532Z   duration_ms: 25.6659
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2324014Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2324447Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2325170Z # Subtest: install backs up and preserves unrelated MCP servers
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2326093Z ok 149 - install backs up and preserves unrelated MCP servers
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2326772Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2327192Z   duration_ms: 97.5255
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2327670Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2328093Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2329297Z # Subtest: uninstall removes only agent-canary and leaves other servers intact
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2330494Z ok 150 - uninstall removes only agent-canary and leaves other servers intact
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2331279Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2331713Z   duration_ms: 11.7099
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2332188Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2332639Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2333394Z # Subtest: invalid JSON returns a clear error instead of being overwritten
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2338854Z ok 151 - invalid JSON returns a clear error instead of being overwritten
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2340433Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2340919Z   duration_ms: 4.2275
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2341821Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2343241Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2344092Z # Subtest: entry commands cover Windows and Unix MCP process rules
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2345171Z ok 152 - entry commands cover Windows and Unix MCP process rules
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2345929Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2346403Z   duration_ms: 0.3689
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2346900Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:41.2347323Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0763211Z # Subtest: activate with valid gateway signature → licensed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0764614Z ok 153 - activate with valid gateway signature → licensed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0766077Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0766629Z   duration_ms: 127.0894
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0767588Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0767999Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0896039Z # Subtest: license signed by a wrong key is rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0897738Z ok 154 - license signed by a wrong key is rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0898420Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0898851Z   duration_ms: 12.0568
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0899322Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.0899730Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1037215Z # Subtest: license bound to a different machine is rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1044179Z ok 155 - license bound to a different machine is rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1044989Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1045426Z   duration_ms: 15.3974
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1045912Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1046329Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1295409Z # Subtest: expired license token is rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1383837Z ok 156 - expired license token is rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1475666Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1557010Z   duration_ms: 13.4289
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1618223Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1647746Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1665548Z # Subtest: handle without subscription is refused
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1667015Z ok 157 - handle without subscription is refused
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1792473Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1802058Z   duration_ms: 9.5964
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1844258Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1847255Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1895926Z # Subtest: tampered cache file is rejected on load
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1897021Z ok 158 - tampered cache file is rejected on load
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1897669Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1898107Z   duration_ms: 15.382
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1898576Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1898977Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1899514Z # Subtest: clock rollback makes the cache untrusted
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1900784Z ok 159 - clock rollback makes the cache untrusted
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1903076Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1904194Z   duration_ms: 26.1723
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1904762Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1905263Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1905974Z # Subtest: offline grace: unreachable gateway + valid cache still activates
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1907517Z ok 160 - offline grace: unreachable gateway + valid cache still activates
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1909326Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1910242Z   duration_ms: 24.2618
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1911174Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:42.1911632Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2253034Z # Subtest: public MCP and Glama metadata stays aligned with the free V1 release
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2254837Z ok 161 - public MCP and Glama metadata stays aligned with the free V1 release
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2255494Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2255788Z   duration_ms: 2.9213
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2256152Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2256538Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2257361Z # Subtest: decoy tool definitions disclose inert behavior and conservative MCP annotations
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2259292Z ok 162 - decoy tool definitions disclose inert behavior and conservative MCP annotations
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2260035Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2260325Z   duration_ms: 0.7126
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2260648Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2261307Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2262230Z # Subtest: server instructions disclose the containment boundary without implying real decoy actions
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2263629Z ok 163 - server instructions disclose the containment boundary without implying real decoy actions
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2264474Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2264823Z   duration_ms: 0.6272
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2265188Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2265489Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2266353Z # Subtest: stdio MCP server lists inert decoys and answers calls without writing to stdout out of protocol
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2268567Z ok 164 - stdio MCP server lists inert decoys and answers calls without writing to stdout out of protocol
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2269440Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2269754Z   duration_ms: 1030.9034
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2270132Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2270813Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2271717Z # Subtest: multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2273204Z ok 165 - multiple routers sharing a Guard serialize sensitive read and egress, including callback failure
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2274077Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2274381Z   duration_ms: 11.9625
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2274739Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2275050Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2276325Z # Subtest: OBSERVE permits public read and reviewed shell/HTTPS GET
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2277240Z ok 166 - OBSERVE permits public read and reviewed shell/HTTPS GET
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2277832Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2278151Z   duration_ms: 6.4731
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2278497Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2278788Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2279468Z # Subtest: OBSERVE treats explicit secret shell by declared mode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2280764Z ok 167 - OBSERVE treats explicit secret shell by declared mode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2291973Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2309534Z   duration_ms: 2.842
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2310652Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2312023Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2312546Z # Subtest: OBSERVE never overrides quarantined Guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2313792Z ok 168 - OBSERVE never overrides quarantined Guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2314341Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2314639Z   duration_ms: 7.2983
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2315004Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2315362Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2316249Z # Subtest: BALANCED permits public read and reviewed shell/HTTPS GET
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2317282Z ok 169 - BALANCED permits public read and reviewed shell/HTTPS GET
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2317894Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2318492Z   duration_ms: 4.7419
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2318854Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2319160Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2319694Z # Subtest: BALANCED treats explicit secret shell by declared mode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2320829Z ok 170 - BALANCED treats explicit secret shell by declared mode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2321490Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2321805Z   duration_ms: 1.4349
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2322160Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2322471Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2322950Z # Subtest: BALANCED never overrides quarantined Guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2323663Z ok 171 - BALANCED never overrides quarantined Guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2324195Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2324513Z   duration_ms: 3.4312
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2324877Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2325199Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2325809Z # Subtest: STRICT permits public read and reviewed shell/HTTPS GET
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2326707Z ok 172 - STRICT permits public read and reviewed shell/HTTPS GET
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2327301Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2327625Z   duration_ms: 4.4909
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2327977Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2328298Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2328861Z # Subtest: STRICT treats explicit secret shell by declared mode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2329714Z ok 173 - STRICT treats explicit secret shell by declared mode
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2330804Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2331137Z   duration_ms: 1.4354
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2331500Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2332086Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2332804Z # Subtest: STRICT never overrides quarantined Guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2334009Z ok 174 - STRICT never overrides quarantined Guard
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2334773Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2335324Z   duration_ms: 3.9708
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2335966Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2336283Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2337233Z # Subtest: sensitive path is parameter-based even under an innocuous tool alias
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2339020Z ok 175 - sensitive path is parameter-based even under an innocuous tool alias
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2339963Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2340498Z   duration_ms: 1.3519
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2341160Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2341493Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2342435Z # Subtest: one-shot host approval binds immutable call; model approval fields cannot grant
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2343918Z ok 176 - one-shot host approval binds immutable call; model approval fields cannot grant
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2344649Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2344930Z   duration_ms: 2.0393
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2345251Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2345524Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2346229Z # Subtest: approval expired, foreign, missing operator and quarantined requests are rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2347350Z ok 177 - approval expired, foreign, missing operator and quarantined requests are rejected
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2348816Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2349000Z   duration_ms: 21.842
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2349211Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2349390Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2349820Z # Subtest: approved secret read taints later network egress and cannot be approved through
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2350467Z ok 178 - approved secret read taints later network egress and cannot be approved through
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2350864Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2351045Z   duration_ms: 5.4565
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2351242Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2351406Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2351753Z # Subtest: pending network request is rechecked after another secret read
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2352276Z ok 179 - pending network request is rechecked after another secret read
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2352605Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2352770Z   duration_ms: 7.3088
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2352955Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2353116Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2353510Z # Subtest: replacing a policy router or mode cannot erase same-session sensitive history
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2354641Z ok 180 - replacing a policy router or mode cannot erase same-session sensitive history
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2355026Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2355184Z   duration_ms: 5.9924
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2355376Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2355542Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2355794Z # Subtest: concurrent one-shot approvals execute once
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2356178Z ok 181 - concurrent one-shot approvals execute once
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2356449Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2356658Z   duration_ms: 7.1984
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2357004Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2357297Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2357670Z # Subtest: a decoy quarantines immediately while another callback is in flight
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2358226Z ok 182 - a decoy quarantines immediately while another callback is in flight
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2358579Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2358750Z   duration_ms: 27.5939
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2358942Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2359110Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2359557Z # Subtest: malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2360279Z ok 183 - malformed paths, traversal, hidden shell substitutions and unregistered tools fail closed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2360709Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2360867Z   duration_ms: 6.1194
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2361058Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2361228Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2361574Z # Subtest: destructive and write approvals keep ordinary workflow possible
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2362095Z ok 184 - destructive and write approvals keep ordinary workflow possible
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2362433Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2362599Z   duration_ms: 7.9589
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2362784Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2362947Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2363288Z # Subtest: audit errors do not execute callbacks; audit omits raw arguments
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2363808Z ok 185 - audit errors do not execute callbacks; audit omits raw arguments
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2364136Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2364292Z   duration_ms: 3.4313
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2364481Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2364641Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2364950Z # Subtest: accessors, cycles and oversized JSON cannot control policy
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2365434Z ok 186 - accessors, cycles and oversized JSON cannot control policy
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2365775Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2366155Z   duration_ms: 0.7197
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2366344Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2366518Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2366855Z # Subtest: queue capacity is bounded while decoys retain immediate priority
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2367412Z ok 187 - queue capacity is bounded while decoys retain immediate priority
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2367746Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2367911Z   duration_ms: 94.6005
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2368102Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2368265Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2368826Z # Subtest: console approval requires separate operator capability, cannot be forged with known CSRF
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2370108Z ok 188 - console approval requires separate operator capability, cannot be forged with known CSRF
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2370719Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2370891Z   duration_ms: 183.0279
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2371086Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2371253Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2371678Z # Subtest: 3.0 console API preserves CSRF, operator identity, replay control and real quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2372355Z ok 189 - 3.0 console API preserves CSRF, operator identity, replay control and real quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2372758Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2372918Z   duration_ms: 132.5629
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2373113Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2373275Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2373576Z # Subtest: decoyToolDefs emits native schemas for both formats
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2374422Z ok 190 - decoyToolDefs emits native schemas for both formats
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2374740Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2374909Z   duration_ms: 1.9423
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2375100Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2375261Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2375604Z # Subtest: free SDK decoy and token primitives work without a paid license
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2376122Z ok 191 - free SDK decoy and token primitives work without a paid license
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2376450Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2376615Z   duration_ms: 26.6522
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2376806Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2376974Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2377274Z # Subtest: scanCanary detects planted tokens, ignores normal text
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2377737Z ok 192 - scanCanary detects planted tokens, ignores normal text
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2378049Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2378214Z   duration_ms: 38.2415
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2378414Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2378578Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2378913Z # Subtest: createTokenGuard inspect fires alerts + audit event per hit
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2379423Z ok 193 - createTokenGuard inspect fires alerts + audit event per hit
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2379748Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2379910Z   duration_ms: 32.2382
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2380096Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2380376Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2380978Z # Subtest: guard without alert flag still returns hits (silent mode)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2381813Z ok 194 - guard without alert flag still returns hits (silent mode)
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2382416Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2382742Z   duration_ms: 27.2931
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2383099Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2383409Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2384131Z # Subtest: guarded tool router sends decoys to containment and never calls the real callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2385278Z ok 195 - guarded tool router sends decoys to containment and never calls the real callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2386044Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2386344Z   duration_ms: 22.3801
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2386685Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2386967Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2387517Z # Subtest: guarded tool router respects the guard quarantine allowlist
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2388220Z ok 196 - guarded tool router respects the guard quarantine allowlist
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2388548Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2388715Z   duration_ms: 18.0586
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2388907Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2389070Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2389418Z # Subtest: guarded tool router rejects incomplete integration configuration
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2390213Z ok 197 - guarded tool router rejects incomplete integration configuration
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2390554Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2390719Z   duration_ms: 0.5552
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2390914Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:45.2391081Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.1668250Z # Subtest: pre-review benign cannot grant permission or accept model approval
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.1901741Z ok 198 - pre-review benign cannot grant permission or accept model approval
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.2146980Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.2625570Z   duration_ms: 15.8237
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.2924852Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.3143979Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.3646593Z # Subtest: pre-review suspicious tightens ambiguous action to DENY
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.4370637Z ok 199 - pre-review suspicious tightens ambiguous action to DENY
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.5132474Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.6044738Z   duration_ms: 3.4938
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.6903073Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.7991055Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.8927861Z # Subtest: clear safe and clear dangerous calls do not wait for AI
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:46.9805631Z ok 200 - clear safe and clear dangerous calls do not wait for AI
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.0580095Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.1431391Z   duration_ms: 3.2899
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.2264422Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.2838462Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.3180200Z # Subtest: review timeout remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.3591431Z ok 201 - review timeout remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.3716092Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.4017454Z   duration_ms: 14.1313
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.4220690Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.4467932Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.4768427Z # Subtest: review throw remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.4961186Z ok 202 - review throw remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5078311Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5138951Z   duration_ms: 2.1722
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5139856Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5140418Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5141030Z # Subtest: review invalid remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5141762Z ok 203 - review invalid remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5142301Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5142711Z   duration_ms: 1.9979
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5143166Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5143571Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5144170Z # Subtest: review injected-evidence remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5145084Z ok 204 - review injected-evidence remains conservative
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5145781Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5146237Z   duration_ms: 2.1027
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5146761Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5147198Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5148006Z # Subtest: decoy during async review quarantines before callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5149115Z ok 205 - decoy during async review quarantines before callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5149846Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5150322Z   duration_ms: 33.9326
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5150846Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5151323Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5152226Z # Subtest: callback deadline signals abort, quarantines, and cannot permit queued calls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5154056Z ok 206 - callback deadline signals abort, quarantines, and cannot permit queued calls
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5155018Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5155499Z   duration_ms: 27.3899
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5156063Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5156576Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5157426Z # Subtest: dataflow deduplicates, expires, evicts and never stores raw content
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5181026Z ok 207 - dataflow deduplicates, expires, evicts and never stores raw content
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5183169Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5185377Z   duration_ms: 27.1298
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5186082Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5186600Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5218790Z # Subtest: same-Guard flow survives replacement and blocks unrelated egress conservatively
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5269896Z ok 208 - same-Guard flow survives replacement and blocks unrelated egress conservatively
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5388805Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5409130Z   duration_ms: 3.3181
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5495014Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5581600Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5645756Z # Subtest: literal private network denied in balanced, observe records without blocking
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5672232Z ok 209 - literal private network denied in balanced, observe records without blocking
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5708845Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5730904Z   duration_ms: 2.6284
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5735132Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5736366Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5737280Z # Subtest: host-supported sandbox chooses only host executor
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5739236Z ok 210 - host-supported sandbox chooses only host executor
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5740223Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5740669Z   duration_ms: 2.4756
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5740985Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5741291Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5741804Z # Subtest: reject and expiration remove approval without callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5742574Z ok 211 - reject and expiration remove approval without callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5743066Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5743241Z   duration_ms: 1147.2425
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5743463Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5752975Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5753585Z # Subtest: realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5754379Z ok 212 - realpath symlink/junction escape reproduces legacy scope and v2 rejects before callbacks
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5754841Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5755039Z   duration_ms: 6.566
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5755243Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5755419Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5755825Z # Subtest: missing root fails closed and real public path allows
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5756643Z ok 213 - missing root fails closed and real public path allows
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5757014Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5757198Z   duration_ms: 4.9806
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5757403Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5757577Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5757983Z # Subtest: SIM-01 malicious README: secret read is blocked after a decoy signal
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5758574Z ok 214 - SIM-01 malicious README: secret read is blocked after a decoy signal
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5758940Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5759114Z   duration_ms: 32.394
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5759309Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5759474Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5759823Z # Subtest: SIM-02 malicious web content: internal HTTP tool call is blocked
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5760362Z ok 215 - SIM-02 malicious web content: internal HTTP tool call is blocked
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5760714Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5760879Z   duration_ms: 15.7436
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5761080Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5761245Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5761619Z # Subtest: SIM-03 injected shell instruction: synthetic shell callback is blocked
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5762349Z ok 216 - SIM-03 injected shell instruction: synthetic shell callback is blocked
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5762981Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5763264Z   duration_ms: 15.7841
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5763619Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5763863Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5764229Z # Subtest: SIM-04 virtual credential exfiltration: mail callback is blocked
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5764778Z ok 217 - SIM-04 virtual credential exfiltration: mail callback is blocked
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5765125Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5765301Z   duration_ms: 15.9371
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5765502Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5765672Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5766062Z # Subtest: SIM-05 simulated file deletion: virtual file is preserved after quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5766682Z ok 218 - SIM-05 simulated file deletion: virtual file is preserved after quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5767052Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5767222Z   duration_ms: 16.4687
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5767422Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5767590Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5767972Z # Subtest: SIM-06 canary token leak: inspection quarantines before outbound callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5768756Z ok 219 - SIM-06 canary token leak: inspection quarantines before outbound callback
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5769800Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5770114Z   duration_ms: 29.9295
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5770422Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5770709Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5771743Z # Subtest: SIM-07 a quarantined session blocks repeated dangerous retries
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5772681Z ok 220 - SIM-07 a quarantined session blocks repeated dangerous retries
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5773259Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5773808Z   duration_ms: 17.0417
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5774145Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5774438Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5775052Z # Subtest: SIM-08 a new session for the same reviewed identity inherits quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5776011Z ok 221 - SIM-08 a new session for the same reviewed identity inherits quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5776560Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5776753Z   duration_ms: 23.5544
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5776963Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5777133Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5777566Z # Subtest: SIM-09 concurrent decoy and dangerous call: callback cannot race past quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5778219Z ok 222 - SIM-09 concurrent decoy and dangerous call: callback cannot race past quarantine
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5778613Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5778778Z   duration_ms: 20.7391
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5778967Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5779132Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5779452Z # Subtest: SIM-10 webhook failure does not reopen a quarantined session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5779957Z ok 223 - SIM-10 webhook failure does not reopen a quarantined session
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5780279Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5780439Z   duration_ms: 41.4007
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5780633Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5780795Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5781088Z # Subtest: SIM-11 shared state-store outage remains fail-closed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5781531Z ok 224 - SIM-11 shared state-store outage remains fail-closed
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5781823Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5781989Z   duration_ms: 17.1415
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5782175Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5782343Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5782777Z # Subtest: SIM-12 avoiding every decoy lets a direct guarded tool call run while the session is SAFE
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5783482Z ok 225 - SIM-12 avoiding every decoy lets a direct guarded tool call run while the session is SAFE
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5784530Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5784844Z   duration_ms: 0.8524
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5785493Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5785830Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5786604Z # Subtest: SIM-13 direct callback bypass: unguarded integration can execute without detection
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5787825Z ok 226 - SIM-13 direct callback bypass: unguarded integration can execute without detection
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5788953Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5789262Z   duration_ms: 0.2952
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5790224Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5790557Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5791692Z # Subtest: SIM-14 a real callback that starts before a compromise signal is not retroactively cancelled
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5793722Z ok 227 - SIM-14 a real callback that starts before a compromise signal is not retroactively cancelled
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5794540Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5794863Z   duration_ms: 20.812
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5795214Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5795483Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5796133Z # Subtest: CTRL-01 benign safe call is allowed without a compromise signal
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5797035Z ok 228 - CTRL-01 benign safe call is allowed without a compromise signal
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5797657Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5797971Z   duration_ms: 0.478
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5798307Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5798598Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5799344Z # Subtest: self-test verifies containment without creating user config, tokens, or events
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5800539Z ok 229 - self-test verifies containment without creating user config, tokens, or events
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5801252Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5801811Z   duration_ms: 19.5928
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5802138Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:47.5802421Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8190923Z # Subtest: token format and registry roundtrip
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8192264Z ok 230 - token format and registry roundtrip
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8193039Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8193568Z   duration_ms: 19.7393
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8197965Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8198613Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8199288Z # Subtest: plantIntoFile creates honeypot and records planted refs
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8201846Z ok 231 - plantIntoFile creates honeypot and records planted refs
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8202538Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8202962Z   duration_ms: 53.0952
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8203449Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8203844Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8204574Z # Subtest: scanFile flags leaked tokens but ignores the honeypot file itself
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8205720Z ok 232 - scanFile flags leaked tokens but ignores the honeypot file itself
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8206494Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8206894Z   duration_ms: 26.1767
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8207357Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8207773Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8208662Z # Subtest: scanFile detects a binary token beyond the old size limit and across a read boundary
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8210036Z ok 233 - scanFile detects a binary token beyond the old size limit and across a read boundary
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8215266Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8215829Z   duration_ms: 23.6474
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8216491Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8217009Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8217938Z # Subtest: decoy call returns fake success with embedded trace token and logs an event
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8220079Z ok 234 - decoy call returns fake success with embedded trace token and logs an event
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8221533Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8222058Z   duration_ms: 20.7644
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8222631Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8223169Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8233275Z # Subtest: decoys leave represented real actions inert while returning a fake response
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8235336Z ok 235 - decoys leave represented real actions inert while returning a fake response
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8236646Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8237205Z   duration_ms: 22.3333
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8237770Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8238257Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8239080Z # Subtest: loadTokens skips corrupt records without losing valid tokens
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8240626Z ok 236 - loadTokens skips corrupt records without losing valid tokens
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8241548Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8248329Z   duration_ms: 1.2761
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8248973Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8249837Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8250773Z # Subtest: saveTokens writes a complete registry without leaving a temporary file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8252146Z ok 237 - saveTokens writes a complete registry without leaving a temporary file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8253070Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8253615Z   duration_ms: 15.1254
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8254583Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8259112Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8260207Z # Subtest: parallel CLI processes do not lose token registry updates
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8262315Z ok 238 - parallel CLI processes do not lose token registry updates
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8263020Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8263482Z   duration_ms: 1581.4039
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8263975Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8264393Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8265681Z # Subtest: Windows transient EPERM lock-open contention retries without losing registry records
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8268318Z ok 239 - Windows transient EPERM lock-open contention retries without losing registry records
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8269825Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8270282Z   duration_ms: 30.7826
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8270758Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8271169Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8272022Z # Subtest: Windows lock permission failures remain bounded and never overwrite token records
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8273668Z ok 240 - Windows lock permission failures remain bounded and never overwrite token records
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8274521Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8274938Z   duration_ms: 2.0248
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8275360Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8275732Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8276314Z # Subtest: token registry is owner-readable on POSIX systems
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8277190Z ok 241 - token registry is owner-readable on POSIX systems # SKIP
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8277827Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8278745Z   duration_ms: 0.136
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8279226Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8279612Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8281079Z # Subtest: CLI recursive check detects a token in a hidden .env file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8282064Z ok 242 - CLI recursive check detects a token in a hidden .env file
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8282763Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8283192Z   duration_ms: 749.2568
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8283635Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8284024Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8284798Z # Subtest: CLI recursive check fails closed for a missing path or an over-depth tree
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8286034Z ok 243 - CLI recursive check fails closed for a missing path or an over-depth tree
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8286839Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8287256Z   duration_ms: 1416.072
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8287719Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8288138Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8288948Z # Subtest: recursive walker includes hidden files but skips dependency and Git internals
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8290153Z ok 244 - recursive walker includes hidden files but skips dependency and Git internals
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8291287Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8291570Z   duration_ms: 9.7241
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8291886Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8292168Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8292876Z # Subtest: a corrupt token registry raises an error and is not overwritten by token generation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8294015Z ok 245 - a corrupt token registry raises an error and is not overwritten by token generation
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8294715Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8294975Z   duration_ms: 11.124
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8295284Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:49.8295556Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8649393Z # [agent-canary] watching C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\agent-canary-watch-test-3mgfSn\\synthetic-root — Ctrl+C to stop
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8651140Z # Subtest: watch rejects missing and non-directory roots instead of claiming to monitor them
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8654695Z ok 246 - watch rejects missing and non-directory roots instead of claiming to monitor them
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8657078Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8658135Z   duration_ms: 3.225
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8658507Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8658796Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8659629Z # Subtest: watch queues, deduplicates, and releases resources under sustained synthetic events
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8660896Z ok 247 - watch queues, deduplicates, and releases resources under sustained synthetic events
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8661671Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8661972Z   duration_ms: 4048.905
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8662317Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8662606Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8868056Z # Subtest: validateWebhookUrl trims and accepts HTTPS destinations
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8869144Z ok 248 - validateWebhookUrl trims and accepts HTTPS destinations
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8869796Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8870123Z   duration_ms: 1.654
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8870495Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8870825Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8871535Z # Subtest: validateWebhookUrl permits loopback HTTP development endpoints
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8873031Z ok 249 - validateWebhookUrl permits loopback HTTP development endpoints
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8874075Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8874386Z   duration_ms: 0.3485
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8874904Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8875177Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8876225Z # Subtest: validateWebhookUrl rejects unsafe schemes and remote HTTP
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8877554Z ok 250 - validateWebhookUrl rejects unsafe schemes and remote HTTP
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8879173Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8879670Z   duration_ms: 0.7444
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8880048Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8880542Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8881541Z # Subtest: webhook DNS validation rejects private, special, and mixed answers
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8882718Z ok 251 - webhook DNS validation rejects private, special, and mixed answers
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8883326Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8883609Z   duration_ms: 13.7613
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8884448Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8884641Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8885065Z # Subtest: webhook connects to a checked loopback address and does not follow redirects
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8885693Z ok 252 - webhook connects to a checked loopback address and does not follow redirects
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8886150Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8886465Z   duration_ms: 61.1279
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8886674Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8886842Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8887243Z # Subtest: webhook resolves once and pins the checked address for the complete request
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8887846Z ok 253 - webhook resolves once and pins the checked address for the complete request
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8888216Z   ---
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8888388Z   duration_ms: 16.0451
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8888576Z   type: 'test'
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8888742Z   ...
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8888899Z 1..253
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8889067Z # tests 253
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8889230Z # suites 0
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8889400Z # pass 248
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8889563Z # fail 1
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8889724Z # cancelled 0
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8889894Z # skipped 4
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8890048Z # todo 0
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.8890240Z # duration_ms 23325.6479
+test (windows-latest, 22)	Run npm test	2026-10-11T10:15:51.9440775Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,18 @@
+{
+  "oldOriginalsUnchanged": {
+    "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json": true,
+    "docs/competition/MAX_SCORE_MATRIX.md": true,
+    "competition-submission/roadshow-3.0/Agent_Canary_3_0_5分钟技术路演_答辩定稿.pptx": true,
+    "competition-submission/roadshow-3.0/Agent_Canary_3_0_3分钟核心展示_答辩定稿.pptx": true,
+    "competition-submission/roadshow-3.0/Agent_Canary_3_0_60秒精简版_答辩定稿.pptx": true
+  },
+  "videoSHA256": "ea4e22ff9f0a474b359ebe067cbd4f3d12eaff2f838eaa1479166f0514201a84",
+  "videoIsSavedSdkModelReplay": true,
+  "videoNotNativeHookProof": true,
+  "pptRuntimeBaseline": "99660b36",
+  "newCandidateRuntimeJS": "33 byte-identical files",
+  "newNativeResultsAreSeparateSupplement": true,
+  "oldReleaseAssetsNotModified": true,
+  "currentSdkOnlyGlobalBoundaryStillApplies": true,
+  "noNewScoreInSlides": true
+}

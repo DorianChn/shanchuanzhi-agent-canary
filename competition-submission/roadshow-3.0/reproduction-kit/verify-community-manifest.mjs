@@ -1,0 +1,4 @@
+import fs from 'node:fs/promises';import path from 'node:path';import {createHash} from 'node:crypto';
+const root=path.resolve(process.argv[2]||'.');const manifest=JSON.parse(await fs.readFile(path.join(root,'SOURCE_MANIFEST.json'),'utf8'));const mismatches=[];
+for(const [name,expected]of Object.entries(manifest)){const target=path.resolve(root,name);if(!target.startsWith(root+path.sep))throw Error('MANIFEST_PATH_OUTSIDE_ROOT');const st=await fs.lstat(target);if(st.isSymbolicLink()||!st.isFile()||st.size>32*1024*1024)throw Error('UNSAFE_MANIFEST_ENTRY');const actual=createHash('sha256').update(await fs.readFile(target)).digest('hex');if(actual!==expected)mismatches.push(name);}
+console.log(JSON.stringify({scope:'actual manifest bytes, not runtime certification or E4',files:Object.keys(manifest).length,mismatches}));if(mismatches.length)process.exitCode=1;

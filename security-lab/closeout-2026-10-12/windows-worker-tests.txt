@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: valid payload hashes actual bytes
+ok 1 - valid payload hashes actual bytes
+  ---
+  duration_ms: 8.3478
+  type: 'test'
+  ...
+# Subtest: tampered payload rejected
+ok 2 - tampered payload rejected
+  ---
+  duration_ms: 6.5138
+  type: 'test'
+  ...
+# Subtest: manifest tampering rejected against compiled anchor
+ok 3 - manifest tampering rejected against compiled anchor
+  ---
+  duration_ms: 6.197
+  type: 'test'
+  ...
+# Subtest: missing anchor rejected
+ok 4 - missing anchor rejected
+  ---
+  duration_ms: 3.7197
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected ../outside
+ok 5 - unsafe manifest path rejected ../outside
+  ---
+  duration_ms: 4.9049
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected C:/secret
+ok 6 - unsafe manifest path rejected C:/secret
+  ---
+  duration_ms: 4.284
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected /root
+ok 7 - unsafe manifest path rejected /root
+  ---
+  duration_ms: 3.8377
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected a\\b
+ok 8 - unsafe manifest path rejected a\\b
+  ---
+  duration_ms: 4.4202
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected a//b
+ok 9 - unsafe manifest path rejected a//b
+  ---
+  duration_ms: 4.974
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected ./data.txt
+ok 10 - unsafe manifest path rejected ./data.txt
+  ---
+  duration_ms: 4.7516
+  type: 'test'
+  ...
+# Subtest: unsafe manifest path rejected a/../b
+ok 11 - unsafe manifest path rejected a/../b
+  ---
+  duration_ms: 3.9066
+  type: 'test'
+  ...
+# Subtest: secret keys recursively redacted without altering SHA
+ok 12 - secret keys recursively redacted without altering SHA
+  ---
+  duration_ms: 2.1983
+  type: 'test'
+  ...
+# Subtest: Windows username and absolute paths redacted
+ok 13 - Windows username and absolute paths redacted
+  ---
+  duration_ms: 0.5955
+  type: 'test'
+  ...
+# Subtest: cloud-looking keys and bearer credentials redacted
+ok 14 - cloud-looking keys and bearer credentials redacted
+  ---
+  duration_ms: 0.1585
+  type: 'test'
+  ...
+# Subtest: known roots replaced before generic path redaction
+ok 15 - known roots replaced before generic path redaction
+  ---
+  duration_ms: 0.1268
+  type: 'test'
+  ...
+# Subtest: symbolic link payload is rejected
+ok 16 - symbolic link payload is rejected # SKIP Windows symlink privilege not assumed; junction exercised separately
+  ---
+  duration_ms: 0.0564
+  type: 'test'
+  ...
+# Subtest: receipt objects cannot masquerade as installer SHA evidence
+ok 17 - receipt objects cannot masquerade as installer SHA evidence
+  ---
+  duration_ms: 6.1372
+  type: 'test'
+  ...
+# Subtest: oversized receipt is bounded and never trusted
+ok 18 - oversized receipt is bounded and never trusted
+  ---
+  duration_ms: 5.1538
+  type: 'test'
+  ...
+# Subtest: missing receipt is explicitly unverified
+ok 19 - missing receipt is explicitly unverified
+  ---
+  duration_ms: 3.7016
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 264.7904

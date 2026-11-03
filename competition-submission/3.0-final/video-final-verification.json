@@ -1,0 +1,19 @@
+{
+  "sourceSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "actualMedia": {
+    "durationSeconds": 212.8,
+    "width": 1920,
+    "height": 1080,
+    "readyState": 4,
+    "error": null,
+    "playbackAdvanced": true
+  },
+  "captions": "visible Chinese + stream-aligned SRT",
+  "audio": "none",
+  "modelMode": "SAVED_REAL_MODEL_RESULTS_NOT_LIVE_MODEL_RUN",
+  "demoMode": "OPERATOR_TRIGGERED_REAL_TEMPORARY_IO",
+  "rawRecordingBytes": 18144690,
+  "rawRecordingSHA256": "3ce5a26fab068da69b059ed328e4b9809fc09bdf3ad8ad35cf89b52cd1ff67bc",
+  "selectedFinalFile": "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm",
+  "selectedFinalSHA256": "ea4e22ff9f0a474b359ebe067cbd4f3d12eaff2f838eaa1479166f0514201a84"
+}

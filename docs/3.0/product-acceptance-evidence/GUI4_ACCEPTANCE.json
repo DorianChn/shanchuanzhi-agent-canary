@@ -1,0 +1,30 @@
+{
+  "installerSHA256": "567b1e7e8832b6aa31fc80c86994eb915bf8d3db9caf125c1f7a08b42cf94ce6",
+  "guiInstallation": "PASS actual current-user GUI",
+  "directory": "Chinese path from actual InstallLocation; requested alternate UIAutomation path was not used",
+  "environmentButton": "PASS",
+  "securityButton": "PASS",
+  "export": "PASS actual JSON and Markdown, default save name",
+  "restart": "PASS session persisted, unrun checks not marked passed",
+  "uninstall": {
+    "guiClick": "PASS actual uninstall button",
+    "programAbsent": true,
+    "registeredEntryAbsent": true,
+    "remainingFiles": [
+      "keep-user.txt"
+    ],
+    "unknownUserFilePreserved": true
+  },
+  "sideEffects": {
+    "id": "F_CALLBACK_AND_SIDE_EFFECT",
+    "status": "VERIFIED_BOUNDED_SAME_HOST",
+    "unsafeCalls": 0,
+    "sinkRequests": 0,
+    "victimChanged": false,
+    "victimHashBefore": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257",
+    "victimHashAfter": "706a7518523f0a7ac5144d6c6d9b616e65b3c2206ea8e755cc6b0fbb9420c257"
+  },
+  "cleanVM": "BLOCKED",
+  "E4": "NOT_VERIFIED",
+  "unsigned": true
+}

@@ -2,7 +2,22 @@ import type { Command } from 'commander';
 import fs from 'node:fs';
 import { createAIProvider, PROVIDER_PRESETS, previewAnalysis, type ProviderConfig } from './provider.js';
 import { startAIConsole } from './console.js';
+import type { SecurityCenterProtectedTarget } from './console.js';
 import { runSelfTest } from '../self-test.js';
+
+function collectProtectedTarget(value:string,previous:string[]=[]):string[]{
+  return [...previous,value];
+}
+
+function parseProtectedTargets(values:unknown):SecurityCenterProtectedTarget[]{
+  if(values===undefined)return[];
+  if(!Array.isArray(values)||values.some(value=>typeof value!=='string'))throw new Error('AI_CONSOLE_TARGET_MAPPING_INVALID');
+  return values.map((value:string)=>{
+    const separator=value.indexOf('=');
+    if(separator<1||separator===value.length-1)throw new Error('AI_CONSOLE_TARGET_MAPPING_INVALID');
+    return{id:value.slice(0,separator),path:value.slice(separator+1)};
+  });
+}
 
 export function registerAICommands(program: Command) {
   const ai = program.command('ai').description('Optional advisory AI analysis; cannot change Guard state');
@@ -47,8 +62,15 @@ export function registerAICommands(program: Command) {
       console.log(JSON.stringify(result, null, 2)); if (result.status !== 'ok') process.exitCode = 1;
     });
   ai.command('console').description('Start Chinese loopback console; keys remain in the backend process')
-    .option('--port <port>', 'Loopback port', '4318').action(async opts => {
-      const consoleServer = await startAIConsole({ port: Number(opts.port), apiKey: process.env.AGENT_CANARY_AI_KEY,operatorApprovalCode:process.env.AGENT_CANARY_OPERATOR_CODE });
+    .option('--port <port>', 'Loopback port', '4318')
+    .option('--workspace-root <directory>', 'Root directory for configured protected targets', process.cwd())
+    .option('--protected-target <id=relative-path>', 'Preconfigure a held-file target; repeat for an allowlist', collectProtectedTarget, [])
+    .action(async opts => {
+      const consoleServer = await startAIConsole({
+        port:Number(opts.port),apiKey:process.env.AGENT_CANARY_AI_KEY,operatorApprovalCode:process.env.AGENT_CANARY_OPERATOR_CODE,
+        securityCenterWorkspaceRoot:opts.workspaceRoot,
+        securityCenterProtectedTargets:parseProtectedTargets(opts.protectedTarget),
+      });
       console.log('Agent Canary 中文控制台: ' + consoleServer.url);
       console.log('基础 Guard 独立运行；本控制台不提供 Reset 或真实危险工具。Ctrl+C 退出。');
     });

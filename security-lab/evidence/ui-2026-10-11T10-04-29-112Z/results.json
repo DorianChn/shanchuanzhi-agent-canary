@@ -1,0 +1,23 @@
+{
+  "scope": "Real browser controls, private temporary demo effects, no model claims",
+  "results": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "status": "VERIFIED",
+      "errors": [],
+      "overflow": false,
+      "text": "Guard：QUARANTINED · 待审批：0 · 证据链：局部校验通过 · 事件：8"
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "status": "VERIFIED",
+      "errors": [],
+      "overflow": false,
+      "text": "Guard：QUARANTINED · 待审批：0 · 证据链：局部校验通过 · 事件：8"
+    }
+  ]
+}

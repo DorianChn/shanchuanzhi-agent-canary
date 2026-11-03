@@ -1,0 +1,1 @@
+{"status":"VERIFIED_EXACT_TYPE_COMPANION","sdkMatch":true,"typeFiles":33,"mismatches":[],"scope":"type-only companion for exact Community build, not stable npm plugin ABI or security proof"}

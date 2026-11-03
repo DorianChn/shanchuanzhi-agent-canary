@@ -1,0 +1,152 @@
+{
+  "startedAt": "2026-10-11T12:38:34.121Z",
+  "baseSha": "772d3558d905e150c7b1f905b85df0d473daa3d7",
+  "environment": {
+    "platform": "win32",
+    "node": "v22.23.1",
+    "os": "Windows 11 Home China",
+    "release": "10.0.26200",
+    "arch": "x64",
+    "elevated": false,
+    "cleanOS": false
+  },
+  "steps": [
+    {
+      "id": "root-ci",
+      "command": "node npm-cli.js ci",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 9245,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/root-ci.log"
+    },
+    {
+      "id": "root-build",
+      "command": "node npm-cli.js run build",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 3839,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/root-build.log"
+    },
+    {
+      "id": "root-tests",
+      "command": "node npm-cli.js test",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 12547,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/root-tests.log",
+      "counts": {
+        "tests": 294,
+        "pass": 290,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 4,
+        "todo": 0
+      }
+    },
+    {
+      "id": "root-pack",
+      "command": "node npm-cli.js run pack:check",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 17824,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/root-pack.log"
+    },
+    {
+      "id": "root-verify",
+      "command": "node npm-cli.js run verify",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 32068,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/root-verify.log",
+      "counts": {
+        "tests": 294,
+        "pass": 290,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 4,
+        "todo": 0
+      }
+    },
+    {
+      "id": "root-audit",
+      "command": "node npm-cli.js audit --json",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 3114,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/root-audit.log",
+      "audit": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      }
+    },
+    {
+      "id": "sponsor-ci",
+      "command": "node npm-cli.js ci",
+      "cwd": "sponsor",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 3452,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/sponsor-ci.log"
+    },
+    {
+      "id": "sponsor-tests",
+      "command": "node npm-cli.js test",
+      "cwd": "sponsor",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 9152,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/sponsor-tests.log",
+      "counts": {
+        "tests": 25,
+        "pass": 24,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 1,
+        "todo": 0
+      }
+    },
+    {
+      "id": "sponsor-smoke",
+      "command": "node npm-cli.js run smoke",
+      "cwd": "sponsor",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 1537,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/sponsor-smoke.log"
+    },
+    {
+      "id": "sponsor-audit",
+      "command": "node npm-cli.js audit --json",
+      "cwd": "sponsor",
+      "exitCode": 0,
+      "status": "VERIFIED",
+      "durationMs": 3363,
+      "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/sponsor-audit.log",
+      "audit": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      }
+    }
+  ],
+  "completedAt": "2026-10-11T12:40:10.278Z",
+  "uniqueTests": {
+    "tests": 319,
+    "pass": 314,
+    "fail": 0,
+    "skipped": 5
+  }
+}

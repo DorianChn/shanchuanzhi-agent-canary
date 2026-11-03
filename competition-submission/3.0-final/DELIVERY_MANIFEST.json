@@ -1,0 +1,82 @@
+{
+  "sourceSHA": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "candidateTag": "v3.0.0-competition-candidate.1",
+  "files": {
+    "Agent_Canary_3_0_候选字幕.srt": {
+      "sha256": "115f2b62b30d86be21a5a9b5b5ce84a2b8724a2ba8890fced81bc3dc37491a60",
+      "bytes": 1312
+    },
+    "Agent_Canary_3_0_技术创新.pdf": {
+      "sha256": "c55ea9185be1de58c2e031122e2f35694f75cdfaa406ec800ef79f1661d9b88a",
+      "bytes": 147192
+    },
+    "Agent_Canary_3_0_真实模型实验报告.pdf": {
+      "sha256": "5c413bc6671657bc9ae887c9d28f17bc7c43eda95730eba89c2be6ccdae49e32",
+      "bytes": 326885
+    },
+    "Agent_Canary_3_0_项目介绍.pdf": {
+      "sha256": "7cfdc0a9fb9b219b18ef527ff3e319cab476a1c211a7a21f834895b1b76f111e",
+      "bytes": 414450
+    },
+    "PDF_BUILD_MANIFEST.json": {
+      "sha256": "c531131a81da613dae491d6d8f18d0e1aa2af4ca1f2ba147af9b84fd7c85f800",
+      "bytes": 846
+    },
+    "RELEASE_NOTES.md": {
+      "sha256": "55c3820370bec251d933ab30fc0e5a45483298d021fdae1161e1d7e71606fcc2",
+      "bytes": 1566
+    },
+    "video-final-verification.json": {
+      "sha256": "5679e6c2d4ee6bcf83403302e52ddfd469d0c2c77d1abc88ca404a0f671f0e7b",
+      "bytes": 725
+    },
+    "安全架构图.png": {
+      "sha256": "50fc2ae9de54a55d3f2bb409fa83cc1de64d6aee7d5bd55012efed6b1715d43c",
+      "bytes": 111311
+    },
+    "安装与独立复现.md": {
+      "sha256": "405b2e29af83fb7f914877be4787710a88df3f6eeef3806b1135d6132e10e312",
+      "bytes": 3866
+    },
+    "最终提交清单.md": {
+      "sha256": "4f134dd1f26fe8efe05db633a24e173e47aa92a5e5aaa0d1d7a673876aada256",
+      "bytes": 1211
+    },
+    "有限凭据拒绝证据.json": {
+      "sha256": "e52573fb68c146709d7c2ee034927e05a929340830454c65166a0954c7c697c9",
+      "bytes": 9453
+    },
+    "正式参赛邮件.txt": {
+      "sha256": "dc190a770c18ec1e402be431b9352792b9b3f11c35e316b5f1202a5f9ebc8ba5",
+      "bytes": 1796
+    },
+    "留出正常任务对照.png": {
+      "sha256": "2dbb48e6f2ba10f8efc94fe5307d02d0929d61b536d339b875867e8be4f1bbcd",
+      "bytes": 53698
+    },
+    "留出间接攻击对照.png": {
+      "sha256": "558fd44bda9bf07094cce98ec51913dce259965d79c03ce562c5554d7d2a12d3",
+      "bytes": 60281
+    },
+    "直接准入对照.png": {
+      "sha256": "8044663695a3fe31578e8bf123b8fb84fd2047dfc42f121e937df41c91e56451",
+      "bytes": 62292
+    },
+    "真实模型留出报告.md": {
+      "sha256": "2177dd99c2b953a39268975540963546086381240e5a989089319b692398041b",
+      "bytes": 3087
+    },
+    "Agent_Canary_3_0_Community_Preview_99660b36.zip": {
+      "sha256": "011e8db21bc53d813168d8400ace05116e25c89ae837c66e5e321379cad0e8ed",
+      "bytes": 348655
+    },
+    "Agent_Canary_3_0_Evidence.zip": {
+      "sha256": "94ee64c47927403eba55e2b091237746ab01b462c9f9bf4a92d3a320f0f2767c",
+      "bytes": 193986
+    },
+    "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm": {
+      "sha256": "ea4e22ff9f0a474b359ebe067cbd4f3d12eaff2f838eaa1479166f0514201a84",
+      "bytes": 7897441
+    }
+  }
+}

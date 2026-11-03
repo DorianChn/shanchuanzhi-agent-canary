@@ -1,0 +1,16 @@
+{
+  "nsis": {
+    "version": "3.13",
+    "source": "https://sourceforge.net/projects/nsis/files/NSIS%203/3.13/nsis-3.13-setup.exe/download",
+    "sha256": "db9a1038bbc0e53fef24f423fd609979bd578e942f1be1198db186d1c42652a3",
+    "publisherChecksumURL": "https://sourceforge.net/projects/nsis/best_release.json",
+    "matchingWingetManifest": true
+  },
+  "node": {
+    "version": "v22.23.1",
+    "file": "win-x64/node.exe",
+    "sha256": "f8d162c0641dcee512132f3bcf8a68169c7ecb852efd8e1a46c9fec5a0f469ed",
+    "source": "https://nodejs.org/dist/v22.23.1/SHASUMS256.txt"
+  },
+  "noGlobalInstallation": true
+}

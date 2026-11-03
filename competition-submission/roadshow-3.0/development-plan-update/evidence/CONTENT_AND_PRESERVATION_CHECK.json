@@ -1,0 +1,613 @@
+{
+  "checkedAt": "2026-10-12T01:03:18.514Z",
+  "baselineMaterialsSHA": "40d9d5fcea3a6c5260b357d64d33af8dba1fcdf2",
+  "runtimeFreeze": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "localLinks": [
+    {
+      "file": "README.md",
+      "target": "README.zh-CN.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/FINAL_3_0_ACCEPTANCE.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/FAIR_CORE_EVALUATION.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/roadshow-3.0/GitHub公开复现索引.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/competition/score-review-2026-10-12/CONTRIBUTOR_START.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/agent-canary-cover-v2.png",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/FILE_STATE_STORE.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/SECURITY_ROUTER_2.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/AGENT_INTEGRATIONS_2.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/evidence/v2-summary.json",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/competition/AGENT_CANARY_2_FINAL_REPORT.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/V2_DELIVERY_VERSION.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/Agent_Canary_Competition_2_0.zip",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/containment.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "SECURITY.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/containment.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "CONTRIBUTING.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "SECURITY.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "ROADMAP.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "competition-submission/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/AI_PROVIDERS.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/competition/AI_ENHANCEMENT_REPORT.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/RISK_POLICY.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/FINAL_REPORT.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/DEVELOPER_GUIDE.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/REAL_AGENT_EVALUATION.md",
+      "exists": true
+    },
+    {
+      "file": "README.md",
+      "target": "docs/3.0/AGENT_COVERAGE_MATRIX.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "README.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/FINAL_3_0_ACCEPTANCE.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/FAIR_CORE_EVALUATION.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/roadshow-3.0/GitHub公开复现索引.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/competition/score-review-2026-10-12/CONTRIBUTOR_START.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/agent-canary-cover-v2.png",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/FILE_STATE_STORE.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/SECURITY_ROUTER_2.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/AGENT_INTEGRATIONS_2.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/evidence/v2-summary.json",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/competition/AGENT_CANARY_2_FINAL_REPORT.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/V2_DELIVERY_VERSION.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/Agent_Canary_Competition_2_0.zip",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/containment.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "SECURITY.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/containment.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "CONTRIBUTING.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "SECURITY.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "ROADMAP.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "competition-submission/README.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/AI_PROVIDERS.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/competition/AI_ENHANCEMENT_REPORT.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/RISK_POLICY.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/FINAL_REPORT.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/DEVELOPER_GUIDE.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/REAL_AGENT_EVALUATION.md",
+      "exists": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "target": "docs/3.0/AGENT_COVERAGE_MATRIX.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../../../docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../../../docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../../../docs/competition/score-review-2026-10-12/CONTRIBUTOR_START.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../../../docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../独立复现手册.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../../../SECURITY.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+      "target": "../../../CONTRIBUTING.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_5分钟技术路演_发展路线补强版.pptx",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_5分钟技术路演_发展路线补强版.pdf",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_5分钟技术路演_发展路线补强版_讲稿.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_3分钟核心展示_发展路线补强版.pptx",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_3分钟核心展示_发展路线补强版.pdf",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_3分钟核心展示_发展路线补强版_讲稿.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_60秒精简版_发展路线补强版.pptx",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_60秒精简版_发展路线补强版.pdf",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "Agent_Canary_3_0_60秒精简版_发展路线补强版_讲稿.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "DEVELOPMENT_EVIDENCE_GATES.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "../README.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "../../../docs/competition/score-review-2026-10-12/RESCORE_AND_RESULTS.md",
+      "exists": true
+    },
+    {
+      "file": "competition-submission/roadshow-3.0/development-plan-update/README.md",
+      "target": "evidence/CONTENT_AND_PRESERVATION_CHECK.json",
+      "exists": true
+    }
+  ],
+  "allLocalLinksExist": true,
+  "originalPreservation": {
+    "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json": {
+      "before": "d9667952bf9df30979785ca0d2ec8582429d7035899ec754dbf12fc9a00fae8e",
+      "after": "d9667952bf9df30979785ca0d2ec8582429d7035899ec754dbf12fc9a00fae8e",
+      "unchanged": true
+    },
+    "docs/competition/MAX_SCORE_MATRIX.md": {
+      "before": "5cec16a6002e55c59956ef8baf07bfba552618ba143cf8ecd1ea47cf303b197d",
+      "after": "5cec16a6002e55c59956ef8baf07bfba552618ba143cf8ecd1ea47cf303b197d",
+      "unchanged": true
+    },
+    "competition-submission/roadshow-3.0/Agent_Canary_3_0_5分钟技术路演_答辩定稿.pptx": {
+      "before": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+      "after": "352f269ffd158e610a19ef78d89e73feae7971558ffe4bc543d8efd0c52ff56f",
+      "unchanged": true
+    },
+    "competition-submission/roadshow-3.0/Agent_Canary_3_0_3分钟核心展示_答辩定稿.pptx": {
+      "before": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+      "after": "2185f3d92f4f050a4e8635430a19871eaaafed5f5aefa61994d74b8baa98a396",
+      "unchanged": true
+    },
+    "competition-submission/roadshow-3.0/Agent_Canary_3_0_60秒精简版_答辩定稿.pptx": {
+      "before": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+      "after": "9f5d14db0dcaf85a944fe4131411459cf2cde04a7fb973f38f4fb3a4fcae035b",
+      "unchanged": true
+    }
+  },
+  "originalsUnchanged": true,
+  "unmodifiedSlideContent": [
+    {
+      "deck": "development-5min",
+      "slide": 1,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 2,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 3,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 4,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 5,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 6,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 7,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 8,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 9,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 11,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 12,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 13,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 14,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-5min",
+      "slide": 15,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-3min",
+      "slide": 1,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-3min",
+      "slide": 2,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-3min",
+      "slide": 3,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-3min",
+      "slide": 4,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-3min",
+      "slide": 5,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-60sec",
+      "slide": 1,
+      "contentIdentical": true
+    },
+    {
+      "deck": "development-60sec",
+      "slide": 2,
+      "contentIdentical": true
+    }
+  ],
+  "allUnmodifiedSlideContentMatches": true,
+  "timing": [
+    {
+      "deck": "Agent_Canary_3_0_5分钟技术路演_发展路线补强版",
+      "mainSlides": 10,
+      "totalSlides": 17,
+      "plannedSeconds": 300,
+      "actualRehearsal": "NOT_VERIFIED"
+    },
+    {
+      "deck": "Agent_Canary_3_0_3分钟核心展示_发展路线补强版",
+      "mainSlides": 6,
+      "totalSlides": 6,
+      "plannedSeconds": 180,
+      "actualRehearsal": "NOT_VERIFIED"
+    },
+    {
+      "deck": "Agent_Canary_3_0_60秒精简版_发展路线补强版",
+      "mainSlides": 3,
+      "totalSlides": 3,
+      "plannedSeconds": 60,
+      "actualRehearsal": "NOT_VERIFIED"
+    }
+  ],
+  "review": {
+    "changedSlidesIndividuallyInspected": [
+      [
+        "5min",
+        10
+      ],
+      [
+        "5min",
+        16
+      ],
+      [
+        "5min",
+        17
+      ],
+      [
+        "3min",
+        6
+      ],
+      [
+        "60sec",
+        3
+      ]
+    ],
+    "sourceChangedPagesCompared": true,
+    "wholeDeckMontageScanned": true,
+    "nativePowerPoint": "NOT_VERIFIED",
+    "pdfType": "raster backup, not searchable"
+  },
+  "newModelsRun": 0,
+  "scoreChanged": false,
+  "coreCodeChanged": false,
+  "externalE4": "NOT_VERIFIED",
+  "realDevCapacity": "NOT_VERIFIED",
+  "multiMonthMaintenance": "NOT_VERIFIED",
+  "formalPluginProtocol": "NOT_VERIFIED",
+  "validationHarnessNote": "First check rejected the not-yet-written self-referenced receipt link; original hashes and all unchanged slides already matched. Wrote receipt then rechecked existence."
+}

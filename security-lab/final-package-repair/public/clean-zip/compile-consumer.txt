@@ -1,0 +1,1 @@
+error TS2209: The project root is ambiguous, but is required to resolve export map entry '.' in file 'C:/Users/<LOCAL_USER>/AppData/Local/Temp/Canary ZIP 用户验收 中文 空格 41873ar4/agent-canary-community-3/package.json'. Supply the `rootDir` compiler option to disambiguate.

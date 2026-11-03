@@ -1,0 +1,418 @@
+TAP version 13
+# Subtest: OSEP identifier references resolve, including request_id
+ok 1 - OSEP identifier references resolve, including request_id
+  ---
+  duration_ms: 3.1823
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-0
+ok 2 - OSEP strict field conformance: request_id-0
+  ---
+  duration_ms: 1.5216
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-1
+ok 3 - OSEP strict field conformance: request_id-1
+  ---
+  duration_ms: 0.3011
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-2
+ok 4 - OSEP strict field conformance: request_id-2
+  ---
+  duration_ms: 0.2056
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-3
+ok 5 - OSEP strict field conformance: request_id-3
+  ---
+  duration_ms: 0.2
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-4
+ok 6 - OSEP strict field conformance: request_id-4
+  ---
+  duration_ms: 0.1465
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-5
+ok 7 - OSEP strict field conformance: request_id-5
+  ---
+  duration_ms: 0.241
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-6
+ok 8 - OSEP strict field conformance: request_id-6
+  ---
+  duration_ms: 0.1204
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_id-7
+ok 9 - OSEP strict field conformance: request_id-7
+  ---
+  duration_ms: 0.4587
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: evidence_id-array
+ok 10 - OSEP strict field conformance: evidence_id-array
+  ---
+  duration_ms: 0.5626
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: evidence_id-object
+ok 11 - OSEP strict field conformance: evidence_id-object
+  ---
+  duration_ms: 0.2834
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: evidence_id-boolean
+ok 12 - OSEP strict field conformance: evidence_id-boolean
+  ---
+  duration_ms: 0.1088
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: evidence_id-valid
+ok 13 - OSEP strict field conformance: evidence_id-valid
+  ---
+  duration_ms: 1.6096
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: evidence_id-null
+ok 14 - OSEP strict field conformance: evidence_id-null
+  ---
+  duration_ms: 0.1345
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_digest-array
+ok 15 - OSEP strict field conformance: request_digest-array
+  ---
+  duration_ms: 0.1118
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_digest-object
+ok 16 - OSEP strict field conformance: request_digest-object
+  ---
+  duration_ms: 0.0751
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_digest-boolean
+ok 17 - OSEP strict field conformance: request_digest-boolean
+  ---
+  duration_ms: 0.0702
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_digest-valid
+ok 18 - OSEP strict field conformance: request_digest-valid
+  ---
+  duration_ms: 0.0735
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: request_digest-null
+ok 19 - OSEP strict field conformance: request_digest-null
+  ---
+  duration_ms: 0.0655
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: event_digest-array
+ok 20 - OSEP strict field conformance: event_digest-array
+  ---
+  duration_ms: 0.0739
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: event_digest-object
+ok 21 - OSEP strict field conformance: event_digest-object
+  ---
+  duration_ms: 0.068
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: event_digest-boolean
+ok 22 - OSEP strict field conformance: event_digest-boolean
+  ---
+  duration_ms: 0.0695
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: event_digest-valid
+ok 23 - OSEP strict field conformance: event_digest-valid
+  ---
+  duration_ms: 0.0875
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: event_digest-null
+ok 24 - OSEP strict field conformance: event_digest-null
+  ---
+  duration_ms: 0.0712
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: approval_reference-array
+ok 25 - OSEP strict field conformance: approval_reference-array
+  ---
+  duration_ms: 0.0761
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: approval_reference-object
+ok 26 - OSEP strict field conformance: approval_reference-object
+  ---
+  duration_ms: 0.0688
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: approval_reference-boolean
+ok 27 - OSEP strict field conformance: approval_reference-boolean
+  ---
+  duration_ms: 0.0675
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: approval_reference-valid
+ok 28 - OSEP strict field conformance: approval_reference-valid
+  ---
+  duration_ms: 0.072
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: approval_reference-null
+ok 29 - OSEP strict field conformance: approval_reference-null
+  ---
+  duration_ms: 0.0672
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: previous_event_digest-array
+ok 30 - OSEP strict field conformance: previous_event_digest-array
+  ---
+  duration_ms: 0.0742
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: previous_event_digest-object
+ok 31 - OSEP strict field conformance: previous_event_digest-object
+  ---
+  duration_ms: 0.0707
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: previous_event_digest-boolean
+ok 32 - OSEP strict field conformance: previous_event_digest-boolean
+  ---
+  duration_ms: 0.0654
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: previous_event_digest-valid
+ok 33 - OSEP strict field conformance: previous_event_digest-valid
+  ---
+  duration_ms: 0.0815
+  type: 'test'
+  ...
+# Subtest: OSEP strict field conformance: previous_event_digest-null
+ok 34 - OSEP strict field conformance: previous_event_digest-null
+  ---
+  duration_ms: 0.0702
+  type: 'test'
+  ...
+# FIXTURE_SINK_REQUESTS 0
+# Subtest: sensitive provenance expiry must not silently re-authorize egress
+ok 35 - sensitive provenance expiry must not silently re-authorize egress
+  ---
+  duration_ms: 30.9231
+  type: 'test'
+  ...
+# FIXTURE_SINK_REQUESTS 0
+# Subtest: two gateways sharing one Guard must not race source collection and egress
+# FIXTURE_SINK_REQUESTS 0
+ok 36 - two gateways sharing one Guard must not race source collection and egress
+  ---
+  duration_ms: 17.0465
+  type: 'test'
+  ...
+# FIXTURE_SINK_REQUESTS 0
+# Subtest: concurrent duplicate approval executes a real callback exactly once
+# FIXTURE_SINK_REQUESTS 0
+ok 37 - concurrent duplicate approval executes a real callback exactly once
+  ---
+  duration_ms: 10.6655
+  type: 'test'
+  ...
+# Subtest: approval at the exact expiry boundary cannot execute
+ok 38 - approval at the exact expiry boundary cannot execute
+  ---
+  duration_ms: 6.7424
+  type: 'test'
+  ...
+# Subtest: resource replacement in the check/use window cannot write the replacement inode
+ok 39 - resource replacement in the check/use window cannot write the replacement inode
+  ---
+  duration_ms: 22.4727
+  type: 'test'
+  ...
+# FIXTURE_SINK_REQUESTS 0
+# Subtest: an executor ignoring cancellation may cause a late side effect, which is not verified safe
+ok 40 - an executor ignoring cancellation may cause a late side effect, which is not verified safe
+  ---
+  duration_ms: 42.1406
+  type: 'test'
+  ...
+# Subtest: gateway uses real held handles for authorized read and write and verifies bytes
+ok 41 - gateway uses real held handles for authorized read and write and verifies bytes
+  ---
+  duration_ms: 34.6744
+  type: 'test'
+  ...
+# Subtest: first unauthorized credential read rejected before real content is returned
+ok 42 - first unauthorized credential read rejected before real content is returned
+  ---
+  duration_ms: 13.3813
+  type: 'test'
+  ...
+# Subtest: path traversal and forged grant cannot write outside capability
+ok 43 - path traversal and forged grant cannot write outside capability
+  ---
+  duration_ms: 11.9793
+  type: 'test'
+  ...
+# Subtest: replacement after gateway initialization never writes replacement inode
+ok 44 - replacement after gateway initialization never writes replacement inode
+  ---
+  duration_ms: 12.6985
+  type: 'test'
+  ...
+# Subtest: symlink or Windows junction resource escape rejected at registration
+ok 45 - symlink or Windows junction resource escape rejected at registration
+  ---
+  duration_ms: 6.9596
+  type: 'test'
+  ...
+# Subtest: quarantine prevents actual file write and queued command process
+ok 46 - quarantine prevents actual file write and queued command process
+  ---
+  duration_ms: 20.0535
+  type: 'test'
+  ...
+# Subtest: fixed argv process really executes normal task; arbitrary shell does not run
+ok 47 - fixed argv process really executes normal task; arbitrary shell does not run
+  ---
+  duration_ms: 160.2716
+  type: 'test'
+  ...
+# Subtest: denied network request has zero actual loopback HTTP side effects
+ok 48 - denied network request has zero actual loopback HTTP side effects
+  ---
+  duration_ms: 19.6092
+  type: 'test'
+  ...
+# Subtest: host-only approval consumes once and model has no approve or reset entry point
+ok 49 - host-only approval consumes once and model has no approve or reset entry point
+  ---
+  duration_ms: 10.8629
+  type: 'test'
+  ...
+# Subtest: approval expires with no actual callback
+ok 50 - approval expires with no actual callback
+  ---
+  duration_ms: 27.3907
+  type: 'test'
+  ...
+# Subtest: AI benign cannot grant permission or execute callback
+ok 51 - AI benign cannot grant permission or execute callback
+  ---
+  duration_ms: 12.6663
+  type: 'test'
+  ...
+# Subtest: AI timeout cannot grant permission or execute callback
+ok 52 - AI timeout cannot grant permission or execute callback
+  ---
+  duration_ms: 17.654
+  type: 'test'
+  ...
+# Subtest: AI invalid cannot grant permission or execute callback
+ok 53 - AI invalid cannot grant permission or execute callback
+  ---
+  duration_ms: 9.6294
+  type: 'test'
+  ...
+# Subtest: AI suspicious only tightens a decision and guard remains authoritative
+ok 54 - AI suspicious only tightens a decision and guard remains authoritative
+  ---
+  duration_ms: 10.0603
+  type: 'test'
+  ...
+# Subtest: pre-cancelled call and full evidence cannot change actual file
+ok 55 - pre-cancelled call and full evidence cannot change actual file
+  ---
+  duration_ms: 11.8806
+  type: 'test'
+  ...
+# Subtest: serialized concurrent writes leave a complete value and continuous evidence chain
+ok 56 - serialized concurrent writes leave a complete value and continuous evidence chain
+  ---
+  duration_ms: 129.2975
+  type: 'test'
+  ...
+# Subtest: evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+ok 57 - evidence canonicalization rejects accessors and chain detects mutation/reordering/truncation with anchor
+  ---
+  duration_ms: 1.057
+  type: 'test'
+  ...
+# Subtest: invalid suspicious AI output stays pending instead of being accepted as a valid review
+ok 58 - invalid suspicious AI output stays pending instead of being accepted as a valid review
+  ---
+  duration_ms: 9.2668
+  type: 'test'
+  ...
+# Subtest: sensitive MCP output blocks later registered network capability before its callback
+ok 59 - sensitive MCP output blocks later registered network capability before its callback
+  ---
+  duration_ms: 11.2761
+  type: 'test'
+  ...
+# Subtest: deadline aborts registered callback, quarantines and refuses queued real file effect
+ok 60 - deadline aborts registered callback, quarantines and refuses queued real file effect
+  ---
+  duration_ms: 25.3449
+  type: 'test'
+  ...
+# Subtest: replacing gateway for same Guard cannot erase prior sensitive tool history
+ok 61 - replacing gateway for same Guard cannot erase prior sensitive tool history
+  ---
+  duration_ms: 13.2624
+  type: 'test'
+  ...
+# Subtest: five isolated decoy kinds have unique IDs and deployed is not touched
+ok 62 - five isolated decoy kinds have unique IDs and deployed is not touched
+  ---
+  duration_ms: 12.979
+  type: 'test'
+  ...
+# Subtest: database, internal API and MCP interaction is virtual and records only actual calls
+ok 63 - database, internal API and MCP interaction is virtual and records only actual calls
+  ---
+  duration_ms: 8.1666
+  type: 'test'
+  ...
+# Subtest: adaptive metadata produces bounded selection without invented efficacy
+ok 64 - adaptive metadata produces bounded selection without invented efficacy
+  ---
+  duration_ms: 1.189
+  type: 'test'
+  ...
+# Subtest: real honeypot file read quarantines before next actual write
+ok 65 - real honeypot file read quarantines before next actual write
+  ---
+  duration_ms: 31.5578
+  type: 'test'
+  ...
+# Subtest: bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+ok 66 - bounded fingerprint tracking detects full, common encoding and long split fragments without raw storage
+  ---
+  duration_ms: 1.1591
+  type: 'test'
+  ...
+# Subtest: dataflow bounded eviction, TTL and session separation
+ok 67 - dataflow bounded eviction, TTL and session separation
+  ---
+  duration_ms: 13.5393
+  type: 'test'
+  ...
+1..67
+# tests 67
+# suites 0
+# pass 67
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1826.4317

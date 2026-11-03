@@ -1,0 +1,90 @@
+{
+  "checkedAt": "2026-10-11T17:15:30.467Z",
+  "scope": "anonymous HEAD metadata, only Community ZIP fully downloaded and hash verified this turn",
+  "assets": [
+    {
+      "name": "Agent_Canary_3_0_Chinese_Subtitles.srt",
+      "status": 200,
+      "bytes": 1312,
+      "expectedBytes": 1312
+    },
+    {
+      "name": "Agent_Canary_3_0_Community_Preview_99660b36.zip",
+      "status": 200,
+      "bytes": 348655,
+      "expectedBytes": 348655
+    },
+    {
+      "name": "Agent_Canary_3_0_Competition_Demo_Final_1080p.webm",
+      "status": 200,
+      "bytes": 7897441,
+      "expectedBytes": 7897441
+    },
+    {
+      "name": "Agent_Canary_3_0_Evidence.zip",
+      "status": 200,
+      "bytes": 193986,
+      "expectedBytes": 193986
+    },
+    {
+      "name": "Agent_Canary_3_0_Project_Overview.pdf",
+      "status": 200,
+      "bytes": 414450,
+      "expectedBytes": 414450
+    },
+    {
+      "name": "Agent_Canary_3_0_Real_Model_Evaluation.pdf",
+      "status": 200,
+      "bytes": 326885,
+      "expectedBytes": 326885
+    },
+    {
+      "name": "Agent_Canary_3_0_Submission_Materials.zip",
+      "status": 200,
+      "bytes": 1053586,
+      "expectedBytes": 1053586
+    },
+    {
+      "name": "Agent_Canary_3_0_Technical_Innovation.pdf",
+      "status": 200,
+      "bytes": 147192,
+      "expectedBytes": 147192
+    },
+    {
+      "name": "DELIVERY_MANIFEST.json",
+      "status": 200,
+      "bytes": 3084,
+      "expectedBytes": 3084
+    },
+    {
+      "name": "DELIVERY_STATUS.json",
+      "status": 200,
+      "bytes": 3032,
+      "expectedBytes": 3032
+    },
+    {
+      "name": "INSTALL_AND_REPRODUCE.md",
+      "status": 200,
+      "bytes": 3866,
+      "expectedBytes": 3866
+    },
+    {
+      "name": "RELEASE_ASSET_MAP.json",
+      "status": 200,
+      "bytes": 2459,
+      "expectedBytes": 2459
+    },
+    {
+      "name": "SECURITY_ARCHITECTURE.png",
+      "status": 200,
+      "bytes": 111311,
+      "expectedBytes": 111311
+    }
+  ],
+  "repository": {
+    "defaultBranch": "main",
+    "description": "AI-agent tripwires: inert MCP decoys and canary tokens detect compromise; a fail-closed guard contains the next guarded action.",
+    "homepage": "https://dorianchn.github.io/shanchuanzhi-agent-canary/"
+  },
+  "mainReadmeHas3Candidate": false
+}

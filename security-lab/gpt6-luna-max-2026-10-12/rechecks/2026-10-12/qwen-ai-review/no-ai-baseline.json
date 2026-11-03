@@ -1,0 +1,18 @@
+{
+  "action": "normal virtual write without AI provider",
+  "status": "APPROVAL_REQUIRED",
+  "decision": {
+    "action": "APPROVAL_REQUIRED",
+    "risks": [
+      "WRITE"
+    ],
+    "reason": "workspace_write",
+    "mode": "BALANCED",
+    "requestId": "26704fd6-7d72-4947-b1b3-c7680a2e93ed"
+  },
+  "pendingApprovals": 1,
+  "callbackCount": 0,
+  "reviewCount": 0,
+  "guardState": "SAFE",
+  "virtualExecutors": true
+}

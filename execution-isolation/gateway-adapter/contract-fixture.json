@@ -1,0 +1,115 @@
+{
+  "schema": "agent-canary.m2.gateway-adapter-proposal.v1",
+  "status": "BINDER_IMPLEMENTED_BACKEND_NOT_INTEGRATED",
+  "observedAtUtc": "2026-10-14T04:26:30Z",
+  "sources": {
+    "m0ContractCommit": "19ee8ca62e4a4717733264cc0ca96ff55acf79fd",
+    "m0ContractPath": "docs/3.0/API_CONTRACTS.md",
+    "m1Branch": "feature/ac3-security-core",
+    "m1ImplementationCommit": "2276526cc70f4a13539e2172efae1fe3b4be16dd",
+    "m1GatewayPath": "src/runtime/gateway.ts",
+    "m1PullRequestNumber": 43,
+    "m1PullRequestState": "OPEN_DRAFT",
+    "m1PullRequestHead": "2276526cc70f4a13539e2172efae1fe3b4be16dd",
+    "m0PullRequestNumber": 30,
+    "m0PullRequestState": "OPEN_DRAFT",
+    "m0PullRequestHead": "19ee8ca62e4a4717733264cc0ca96ff55acf79fd"
+  },
+  "gatewaySeam": {
+    "factory": "createTrustedExecutionGateway(GatewayOptions)",
+    "agentEntry": "agent.dispatch(ToolCall, signal?)",
+    "toolCall": {
+      "name": "mcp_tool",
+      "args": {
+        "tool": "exact constructor-registered tool ID",
+        "arguments": "JSON object passed to the matching registered callback"
+      }
+    },
+    "registration": {
+      "map": "GatewayOptions.mcpTools",
+      "fixedAtGatewayConstruction": true,
+      "descriptor": {
+        "execute": "(args: Record<string, unknown>, signal: AbortSignal) => Promise<unknown>",
+        "approvalRequired": "boolean",
+        "riskValues": [
+          "READ_ONLY",
+          "WRITE",
+          "EXECUTE",
+          "NETWORK",
+          "SENSITIVE_DATA",
+          "DESTRUCTIVE"
+        ]
+      },
+      "noDynamicRegistrationObserved": true
+    },
+    "callbackInvocationOrder": [
+      "normalize_and_bound_request",
+      "initial_guard_check",
+      "queued_guard_recheck",
+      "exact_mcp_tool_lookup_and_policy",
+      "one_use_operator_approval_if_required",
+      "repeat_policy_and_final_guard_check",
+      "evidence_capacity_check_and_RUNNING_record",
+      "invoke_registered_callback_with_gateway_abort_signal"
+    ],
+    "callbackSideEffectEvidenceOnSuccess": "NOT_VERIFIED",
+    "cancellation": {
+      "callbackReceivesGatewayAbortSignal": true,
+      "directExecutionSources": [
+        "dispatch caller cancellation",
+        "gateway deadline",
+        "guard quarantine",
+        "gateway close"
+      ],
+      "approvedExecution": {
+        "operatorApproveSignature": "approve(requestId)",
+        "originalDispatchSignalRetained": false,
+        "sources": [
+          "gateway deadline",
+          "guard quarantine",
+          "gateway close"
+        ],
+        "ownerDecisionRequired": true
+      }
+    },
+    "callbackMayIgnoreSignal": true,
+    "gatewayOwnsAuthorization": true
+  },
+  "currentM2Executor": {
+    "entry": "AppContainerLauncher.Run(sid, executable, arguments, cwd, environment, timeoutMilliseconds)",
+    "synchronous": true,
+    "acceptsGatewayAbortSignal": false,
+    "workerRequestResponseProtocol": "NOT_DEFINED",
+    "fixedToolIdToExecutableResourceMap": "NOT_DEFINED"
+  },
+  "proposal": {
+    "registration": "one M2-owned callback per exact host-selected Gateway mcpTools ID",
+    "callback": "forward args and the same Gateway AbortSignal to an M2 broker only after Gateway invokes it",
+    "brokerExecutableAndResources": "fixed host-owned table; never taken from agent arguments",
+    "publicM1ApiChangeProposed": false,
+    "implementationStatus": "NOT_INTEGRATED",
+    "callbackBinder": {
+      "path": "execution-isolation/gateway-adapter/create-gateway-mcp-tools.mjs",
+      "testPath": "execution-isolation/gateway-adapter/check-gateway-mcp-tools.mjs",
+      "fixedMetadataAndBackendAreSeparateInputs": true,
+      "strictArgsIdentityForwarding": true,
+      "strictAbortSignalIdentityForwarding": true,
+      "appContainerBackendImplemented": false,
+      "m1GatewayCallTested": false
+    },
+    "callbackBinding": {
+      "toolId": "exact host-selected constructor registration ID, bound by the host adapter",
+      "arguments": "forward the Gateway-provided validated object unchanged",
+      "abortSignal": "forward the identical Gateway-provided AbortSignal object unchanged",
+      "agentMaySelectExecutable": false,
+      "agentMaySelectResources": false
+    }
+  },
+  "gatewayIntegration": "NOT_INTEGRATED",
+  "nativeCodexShell": "UNPROTECTED",
+  "fixtureIsHostOrGatewayProof": false,
+  "minimumM1OwnerQuestions": [
+    "Confirm the existing constructor-time GatewayOptions.mcpTools[exactToolId].execute(args, signal) callback is the intended M2 seam without a new public Gateway option.",
+    "Decide whether dispatch cancellation must withdraw pending approval or cancel execution after approval; otherwise confirm that the original dispatch signal is intentionally not retained by approve(requestId)."
+  ]
+}

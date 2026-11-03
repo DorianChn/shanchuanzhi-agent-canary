@@ -1,0 +1,263 @@
+{
+  "method": "same dimensions/strict principles; item-level diagnostic allocation was transparently fixed before work, not an original official formula",
+  "original77MatrixUnchanged": true,
+  "rows": [
+    {
+      "id": "T1",
+      "dimension": "技术创新",
+      "max": 8,
+      "before": 7,
+      "evidence": "可信登记Gateway、fd/argv/Guard、有限目标见证",
+      "gap": "依赖可信执行器；无OS全局控制",
+      "gate": "不能靠新增说明加分，需缩小已宣称边界的真实缺口",
+      "after": 7,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "T2",
+      "dimension": "技术创新",
+      "max": 8,
+      "before": 6,
+      "evidence": "新留出A4/24 F0/24 H08/H10配对",
+      "gap": "作者知情、12文本重复、外传/删除正对照不足",
+      "gate": "预登记更强独立留出与目标见证",
+      "after": 6,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "T3",
+      "dimension": "技术创新",
+      "max": 6,
+      "before": 4,
+      "evidence": "6项目资料比较",
+      "gap": "无同条件竞品实测，不足以证明相对优势",
+      "gate": "公平可比实验；不因更多引用加分",
+      "after": 4,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "T4",
+      "dimension": "技术创新",
+      "max": 6,
+      "before": 5,
+      "evidence": "OSEP、Schema、E0-E4、负例和局部E3",
+      "gap": "E4未完成，无独立时间/签名锚",
+      "gate": "外部真实签收或明确可信边界上的证据补强",
+      "after": 5,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "T5",
+      "dimension": "技术创新",
+      "max": 2,
+      "before": 1,
+      "evidence": "AI/Planner机制存在且边界披露",
+      "gap": "独立增益NOT MEASURED",
+      "gate": "单变量公平消融，不能按实现数量加分",
+      "after": 1,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "no AI/adaptive efficacy experiment"
+    },
+    {
+      "id": "S1",
+      "dimension": "场景落地",
+      "max": 8,
+      "before": 7,
+      "evidence": "公开包Node22中文路径真实安装",
+      "gap": "非干净VM、非新用户验收",
+      "gate": "新操作者或干净受支持环境完整安装",
+      "after": 7,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "S2",
+      "dimension": "场景落地",
+      "max": 8,
+      "before": 6,
+      "evidence": "SDK+Qwen登记工具及配置矩阵",
+      "gap": "原生宿主E2E未验",
+      "gate": "一个可信宿主入口真实模型与实际目标E2E",
+      "after": 6,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "S3",
+      "dimension": "场景落地",
+      "max": 6,
+      "before": 5,
+      "evidence": "正常8/8，有限直接DEMO",
+      "gap": "四类相关重复，正常覆盖狭窄",
+      "gate": "预登记更宽正常任务且不调策略挑样本",
+      "after": 5,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "S4",
+      "dimension": "场景落地",
+      "max": 4,
+      "before": 2,
+      "evidence": "E4套件与同机试运行",
+      "gap": "无外部真实操作者",
+      "gate": "另人独立环境签收；自测不重复加分",
+      "after": 2,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "S5",
+      "dimension": "场景落地",
+      "max": 4,
+      "before": 3,
+      "evidence": "真实视频、PPT/PDF、恢复方案",
+      "gap": "未真人计时/现场投影",
+      "gate": "真实计时/投影/故障恢复记录",
+      "after": 3,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "G1",
+      "dimension": "开源治理",
+      "max": 8,
+      "before": 6,
+      "evidence": "MIT、Community正向清单、商业边界披露",
+      "gap": "legacy普通分发P1仍OPEN",
+      "gate": "维护者授权且兼容的分发边界验证",
+      "after": 6,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "G2",
+      "dimension": "开源治理",
+      "max": 6,
+      "before": 6,
+      "evidence": "锁文件、SBOM、9job CI、负例/摘要留档",
+      "gap": "满分仅指这些基线检查，不表示全供应链认证",
+      "gate": "无新增分空间；不得重复计通过数量",
+      "after": 6,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "G3",
+      "dimension": "开源治理",
+      "max": 6,
+      "before": 5,
+      "evidence": "现有贡献/安全模板及说明",
+      "gap": "3.0贡献指引短、混旧赞助模块；新贡献者缺明确材料/测试入口",
+      "gate": "针对冻结API的贡献模板、明确审查流程和可从Community运行的检查，实际通过且完整记录，最多+1",
+      "after": 6,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [
+        "CONTRIBUTOR_START.md",
+        "evidence/TYPE_COMPANION_PACKAGED_TYPED_CHECKS.json",
+        "evidence/SDK_TEMPLATE_PACKAGED_TYPED_RESULT.json"
+      ],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "L1",
+      "dimension": "长期发展",
+      "max": 6,
+      "before": 4,
+      "evidence": "12月路线、使用者/目标/工作量",
+      "gap": "18-31人周无对应开发预算；依赖/退出门槛不够具体",
+      "gate": "资源承诺及可执行缩减路径得到实际维护者确认；计划文档不自动+分",
+      "after": 4,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "capacity scenarios improve realism, actual resources not confirmed"
+    },
+    {
+      "id": "L2",
+      "dimension": "长期发展",
+      "max": 6,
+      "before": 4,
+      "evidence": "现有SDK/Gateway类型与模块划分",
+      "gap": "AgentAdapter非版本化插件系统；缺准确接口映射、贡献者可执行扩展模板/兼容验证",
+      "gate": "不改核心，公开一个真实冻结SDK扩展起步示例、类型检查和失败/权限回归、生命周期/兼容边界，最多+1；不当成原生宿主突破",
+      "after": 5,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [
+        "EXTENSION_CONTRACT_SNAPSHOT.md",
+        "contributor-kit/TYPE_COMPANION_MANIFEST.json",
+        "evidence/packaged-type-consumer-typed-final.txt",
+        "evidence/companion-integrity-typed-final.txt",
+        "evidence/TYPED_RUNTIME_CONSUMER.json"
+      ],
+      "whyNoGain": "missing qualifying new evidence"
+    },
+    {
+      "id": "L3",
+      "dimension": "长期发展",
+      "max": 5,
+      "before": 4,
+      "evidence": "已有实际修复/CI历史、维护目标",
+      "gap": "无周期性分诊/维护时间与关闭记录",
+      "gate": "至少两个真实独立时间周期的维护执行记录；同日重复不算",
+      "after": 4,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "one actual review is not sustained cadence"
+    },
+    {
+      "id": "L4",
+      "dimension": "长期发展",
+      "max": 3,
+      "before": 2,
+      "evidence": "公开贡献入口/行为准则",
+      "gap": "无证实外部参与/接班与bus factor计划执行",
+      "gate": "真实外部贡献/复现/维护交接；不伪造用户或贡献者",
+      "after": 2,
+      "scoreJudgment": "SUBJECTIVE_DIAGNOSTIC_ASSIGNMENT",
+      "gainEvidence": [],
+      "whyNoGain": "no new external participation"
+    }
+  ],
+  "byDimension": {
+    "技术创新": {
+      "before": 23,
+      "after": 23,
+      "max": 30
+    },
+    "场景落地": {
+      "before": 23,
+      "after": 23,
+      "max": 30
+    },
+    "开源治理": {
+      "before": 17,
+      "after": 18,
+      "max": 20
+    },
+    "长期发展": {
+      "before": 14,
+      "after": 15,
+      "max": 20
+    }
+  },
+  "beforeTotal": 77,
+  "afterTotal": 79,
+  "factBoundary": "No new security effectiveness, E4, native host coverage or community adoption claimed. Raw SDK typing still fails; companion supports exact snapshot only.",
+  "sensitivity": "A stricter reviewer who does not credit a type-companion workaround may keep L2=4 and total78. This sensitivity is subjective, not a statistical confidence interval."
+}

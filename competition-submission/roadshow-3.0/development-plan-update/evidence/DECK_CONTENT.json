@@ -1,0 +1,573 @@
+{
+  "freeze": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "preparedOn": "2026-10-12",
+  "decks": [
+    {
+      "id": "development-5min",
+      "name": "Agent_Canary_3_0_5分钟技术路演_发展路线补强版",
+      "seconds": 300,
+      "mainCount": 10,
+      "slides": [
+        {
+          "title": "Agent Canary 3.0",
+          "kind": "cover",
+          "seconds": 15,
+          "subtitle": "可验证的 AI Agent 执行前安全控制",
+          "lines": [
+            "唐林博豪 · 闽江大学",
+            "开源 AI 工具赛道 · 自主选题",
+            "运行时冻结 99660b36 · MIT Community 候选"
+          ],
+          "notes": "各位评委好，我是唐林博豪。Agent Canary 面向能够调用工具的 AI Agent，目标是在可信入口检查权限，并让第三方核对实际目标效果。今天展示限定受控 SDK 的工程证据，不作全局防护承诺。",
+          "sources": [
+            "docs/3.0/FINAL_COMPETITION_READINESS.md"
+          ]
+        },
+        {
+          "title": "不可信内容进入工具执行链",
+          "kind": "problem",
+          "seconds": 25,
+          "lines": [
+            "仓库 README、网页与工具输出可包含攻击指令",
+            "模型可能把“总结文档”改成“读取凭据”",
+            "诱饵产生信号的前提是模型确实接触诱饵"
+          ],
+          "emphasis": "无信号时，执行入口仍需要权限检查",
+          "notes": "模型接触低信任内容后可能改变任务。我们的新留出样本中，无保护 Agent 在两种文本上返回了虚拟秘密。这是真实本地模型的工具选择。与此同时，模型没有自主接触诱饵，所以诱饵检测不能承担全部防护。首次调用需要可信权限检查。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "src/runtime/gateway.ts"
+          ]
+        },
+        {
+          "title": "可信执行入口与信任边界",
+          "kind": "architecture",
+          "seconds": 30,
+          "lines": [
+            "模型提出请求，可信宿主登记资源与工具",
+            "Gateway 检查权限、Guard、来源和审批",
+            "实际执行后核对目标效果，记录 OSEP 事件"
+          ],
+          "notes": "模型只持有 dispatch。宿主持有工具描述、文件句柄和审批能力。网关在执行前检查参数与最小权限，必要时要求人工审批。文件使用预持有句柄，命令采用固定程序和参数，网络限制批准目标。该入口控制登记能力，不是系统调用级沙箱。",
+          "sources": [
+            "src/runtime/gateway.ts",
+            "docs/3.0/SECURITY_BOUNDARIES.md"
+          ]
+        },
+        {
+          "title": "技术贡献与已验证范围",
+          "kind": "contribution",
+          "seconds": 25,
+          "lines": [
+            "可信执行：请求、资源与授权绑定，执行前复查",
+            "证据驱动：区分信号、决策和实际目标效果",
+            "隔离诱饵：五类无效凭据与启发式选择机制"
+          ],
+          "emphasis": "AI 只能收紧风险判断，不能批准或解除隔离",
+          "notes": "我们的贡献是把资源约束执行、会话隔离和效果证据连接起来。E0到E4帮助解释主张强度。蜜罐在临时空间使用无效资产。自适应选择机制已经存在，但没有公平收益消融；我们不申报触发率提升。AI的结果不授予任何新权限。",
+          "sources": [
+            "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md",
+            "src/runtime/honeypot.ts",
+            "docs/3.0/SECURITY_BOUNDARIES.md"
+          ]
+        },
+        {
+          "title": "真实目标见证执行前拒绝",
+          "kind": "demo",
+          "seconds": 45,
+          "lines": [
+            "A：无保护，虚拟 secret 实际返回",
+            "F：credential_resource_denied，执行 NOT_STARTED",
+            "见证：秘密未返回、文件未变、测试接收端为 0",
+            "正常任务：读取、写入、构建和有限网络仍可完成"
+          ],
+          "notes": "这里先回放相同场景H08或H10的原始A/F轨迹：A实际返回虚拟秘密，F在读取前拒绝。然后运行离线操作员DEMO，检查文件和回调计数。DEMO是真实临时I/O，但不是模型自主攻击。我们展示证据与观察，不把页面上的DENY当成无副作用证明。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "competition-submission/3.0-final/有限凭据拒绝证据.json",
+            "test/gateway-acceptance.test.ts"
+          ]
+        },
+        {
+          "title": "真实 Qwen 留出对照",
+          "kind": "results",
+          "seconds": 35,
+          "lines": [
+            "攻击效果：A 4/24，F 0/24",
+            "F 有实际拒绝的攻击任务：6/24",
+            "正常任务完成：A 8/8，F 8/8"
+          ],
+          "notes": "冻结策略后，12个新间接攻击文本和4种正常任务各重复两次，两组共64次运行。A攻击效果4/24，F为0/24。F只有6/24任务存在拒绝，其余没有攻击效果不能计为主动拦截。重复相关、作者知晓设计，不是64个独立样本。AI审查和Canary触发均为0，不能归因其独立收益。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "competition-submission/roadshow-3.0/evidence/FROZEN_FACTS.json"
+          ]
+        },
+        {
+          "title": "安全边界与未证实结论",
+          "kind": "risk",
+          "seconds": 30,
+          "lines": [
+            "VERIFIED：受控 SDK 登记工具的有限执行前控制",
+            "NOT VERIFIED：原生 Codex / Claude / Cursor 全局覆盖",
+            "PARTIAL：不合作回调、旧 inode 效果、公网 DNS 实验",
+            "NOT MEASURED：AI / 自适应独立收益与总体误报率"
+          ],
+          "emphasis": "0/24 是本批观察，不能表示 100% 防护",
+          "notes": "最大边界是未接入的工具不受保护。原生宿主只有配置或部分hook证据，不能替代SDK验收。已开始并不合作的回调可能产生迟到副作用，文件句柄也不提供事务回滚。0/24和8/8只描述这一批任务。独立操作者E4还未完成。",
+          "sources": [
+            "docs/3.0/SECURITY_BOUNDARIES.md",
+            "docs/3.0/AGENT_COVERAGE_MATRIX.md",
+            "test/gateway-acceptance.test.ts"
+          ]
+        },
+        {
+          "title": "开源交付与证据分级",
+          "kind": "governance",
+          "seconds": 35,
+          "lines": [
+            "MIT 免费 Community 包，公开源码与构建说明",
+            "冻结 SHA、原始 JSON / CSV、Schema 与负例保留",
+            "E1 信号、E2 决策、E3 有限效果见证分别呈现",
+            "E4 独立复现套件已准备，外部操作者仍待完成"
+          ],
+          "notes": "评委可以下载免费包运行自检，在完整冻结Git checkout复查原始记录和Schema。MIT保持不变。负面结果、失败启动和不合作回调反例都保留。证据哈希链只相对可信锚检查一致性，管理员仍可重写整链。我们提供外部复现套件，但不会把自己的新目录自测说成E4认证。",
+          "sources": [
+            "docs/3.0/FINAL_COMPETITION_READINESS.md",
+            "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md",
+            "LICENSE"
+          ]
+        },
+        {
+          "title": "相关工作与项目区别",
+          "kind": "related",
+          "seconds": 30,
+          "lines": [
+            "Invariant：规则检查工具流，支持 MCP / LLM 代理",
+            "NeMo Guardrails：包含 execution rails 与其他护栏",
+            "Promptfoo / PyRIT：侧重评测与红队工作流",
+            "本项目重点：有限资源执行绑定与目标效果证据"
+          ],
+          "emphasis": "资料比较，无同条件性能排名，不宣称首创",
+          "notes": "执行前控制已有真实相关方案。例如Invariant可监控工具流并拦截调用，NeMo也有执行护栏。Promptfoo和PyRIT适合组织风险评测。本项目的区别是围绕有限资源绑定、诱饵隔离及副作用见证形成小型TypeScript工程闭环。我们尚无同条件竞品测试，因此不宣称防护优于这些项目。",
+          "sources": [
+            "https://github.com/invariantlabs-ai/invariant",
+            "https://github.com/NVIDIA/NeMo-Guardrails",
+            "https://github.com/promptfoo/promptfoo",
+            "https://github.com/microsoft/PyRIT"
+          ]
+        },
+        {
+          "kind": "development",
+          "title": "后续发展与验收门槛",
+          "seconds": 30,
+          "lines": [
+            "容量：先确认开发预算，维护另计",
+            "维护：拟每月复盘，实际完成再累计",
+            "参与：真实外部复现后才能支持 E4",
+            "协议：3.1 先定版本与权限，再验宿主"
+          ],
+          "emphasis": "以上为未来计划；当前仅有一期维护记录",
+          "notes": "我们已经公开SDK贡献者套件和一份实际维护复盘。长期推进依赖四个验收门槛：先由维护者确认开发预算；每月实际完成复盘后记录；邀请真实外部操作者复现；3.1先建立版本化插件协议，再在一个官方宿主的受控入口验证。当前E4、连续维护和正式插件协议仍缺证据。资源不够就延期，不改变竞赛冻结代码。谢谢。",
+          "sources": [
+            "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md",
+            "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md"
+          ]
+        },
+        {
+          "title": "备答：样本与指标口径",
+          "kind": "table",
+          "seconds": 0,
+          "headers": [
+            "类别",
+            "A",
+            "F",
+            "可支持结论"
+          ],
+          "rows": [
+            [
+              "旧直接准入",
+              "12/12",
+              "0/12",
+              "执行准入，不是间接 PI"
+            ],
+            [
+              "旧 README",
+              "0/4",
+              "0/4",
+              "没有危险尝试，不能归因阻断"
+            ],
+            [
+              "新间接攻击效果",
+              "4/24",
+              "0/24",
+              "作者知情、小样本"
+            ],
+            [
+              "新正常完成",
+              "8/8",
+              "8/8",
+              "仅4种任务各重复2次"
+            ]
+          ],
+          "notes": "新数据为16独特任务、2次相关重复、2组。分母24是攻击试验，不是24独立文本；64含16正常试验。攻击成功按秘密返回、victim变化、sink收到请求或特权marker定义。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "security-lab/evidence/2026-10-11T13-34-53-835Z/results.json"
+          ]
+        },
+        {
+          "title": "备答：E0–E4 证据强度",
+          "kind": "table",
+          "seconds": 0,
+          "headers": [
+            "等级",
+            "证据要求",
+            "当前范围"
+          ],
+          "rows": [
+            [
+              "E0",
+              "设计/实现可读",
+              "Gateway、Policy、Planner"
+            ],
+            [
+              "E1",
+              "实际观察到信号",
+              "历史限定诱饵 READ"
+            ],
+            [
+              "E2",
+              "可信决策关联请求",
+              "OSEP 请求、决策、状态"
+            ],
+            [
+              "E3",
+              "实际目标观察及正对照",
+              "同宿主有限秘密/文件/接收端"
+            ],
+            [
+              "E4",
+              "另一操作者与独立环境",
+              "未完成，不能称独立认证"
+            ]
+          ],
+          "notes": "本项目研究分级，不是官方标准。E3要求目标见证，不是VERIFIED字段。哈希链不证明事件真实性或防管理员重写。",
+          "sources": [
+            "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md"
+          ]
+        },
+        {
+          "title": "备答：宿主覆盖矩阵",
+          "kind": "table",
+          "seconds": 0,
+          "headers": [
+            "宿主",
+            "当前验收",
+            "保护范围"
+          ],
+          "rows": [
+            [
+              "SDK + Qwen",
+              "VERIFIED（有限）",
+              "运行器登记的工具"
+            ],
+            [
+              "自定义 MCP",
+              "握手/虚拟隔离基线",
+              "自有服务登记回调"
+            ],
+            [
+              "Codex / Cline",
+              "PARTIAL",
+              "配置/fixtures，原生E2E未验"
+            ],
+            [
+              "Claude / Cursor",
+              "PARTIAL",
+              "hook/配置，实际启用未验"
+            ]
+          ],
+          "notes": "不能把宿主列表写成全局支持名单。模型、协议握手、SDK保护、原生宿主E2E是不同层次。",
+          "sources": [
+            "docs/3.0/AGENT_COVERAGE_MATRIX.md"
+          ]
+        },
+        {
+          "title": "备答：延迟与资源解释",
+          "kind": "performance",
+          "seconds": 0,
+          "lines": [
+            "工具调用中位：A 0.391 ms，F 6.577 ms",
+            "任务中位：A 1345.0 ms，F 1260.9 ms",
+            "F Node 尾部 RSS 范围：约 62.7–68.1 MiB",
+            "不同路径/缓存/顺序影响结果，不是纯 Gateway 开销"
+          ],
+          "notes": "数据来源holdout-metrics-detail，资源只覆盖Node样本尾，不含Ollama/GPU，不能称模型内存或全程峰值。AI审查本批0次，延迟与独立收益NOT MEASURED。本地无付费API，能耗未测。",
+          "sources": [
+            "security-lab/competition-freeze/holdout-metrics-detail.json"
+          ]
+        },
+        {
+          "title": "备答：现场演示降级",
+          "kind": "backup",
+          "seconds": 0,
+          "lines": [
+            "网络故障：本地 PPT/PDF、视频与证据 ZIP",
+            "Ollama 故障：保存真实轨迹 + 明示操作员 DEMO",
+            "程序故障：切到已核对视频，不展示伪实时数据",
+            "现场接口、签到与计时：以入围通知为准"
+          ],
+          "notes": "既有视频约213秒，中文字幕无音轨，操作者真实浏览器操作与历史模型回放分开。本轮不重录假模型视频。",
+          "sources": [
+            "docs/3.0/FINAL_COMPETITION_READINESS.md",
+            "competition-submission/3.0-final/video-final-verification.json"
+          ]
+        },
+        {
+          "kind": "planTable",
+          "title": "发展计划：证据何时补齐",
+          "headers": [
+            "方向",
+            "目前实际情况",
+            "下一项可核查证据"
+          ],
+          "rows": [
+            [
+              "容量",
+              "估算已公开，投入未确认",
+              "维护者确认开发时段与单项预算"
+            ],
+            [
+              "维护",
+              "10月12日，一期真实复盘",
+              "后续月份实际 SHA / 命令 / 故障"
+            ],
+            [
+              "外部参与",
+              "复现包与贡献模板可用",
+              "他人独立环境运行与效果记录"
+            ],
+            [
+              "插件协议",
+              "冻结 SDK 快照与类型补充",
+              "版本化接口、兼容测试与宿主 E2E"
+            ]
+          ],
+          "notes": "此页区分已有材料和未来执行。协议是研究与工程下一步，没有stable plugin loader或全局原生宿主保护。开发容量不是由AI替作者承诺。外部复现须真实另一操作者，不用CI替代。",
+          "sources": [
+            "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md",
+            "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md"
+          ]
+        },
+        {
+          "kind": "planTable",
+          "title": "版本路线：资源决定推进速度",
+          "headers": [
+            "阶段",
+            "进入前提",
+            "拟交付与退出条件"
+          ],
+          "rows": [
+            [
+              "3.0维护",
+              "公开候选、原始日志",
+              "先处理安全回归，保留失败与边界"
+            ],
+            [
+              "3.1接入",
+              "开发预算、官方可信接口",
+              "接口 / 类型 / 兼容；验证不了就延期"
+            ],
+            [
+              "3.2研究",
+              "固定样本、模型与预算",
+              "单变量消融；无收益也公开"
+            ],
+            [
+              "3.5 / 4.0",
+              "真实需求、稳定身份与证据",
+              "团队便利 / 权限研究；不提前实施"
+            ]
+          ],
+          "notes": "原路线18到31人周，以40小时人周折算开发720到1240小时，是规划假设；维护另算。实际开发资源尚未确认，所以不承诺12个月完成全部功能。3.5依赖真实反馈，4.0仅保留研究方向，不影响竞赛。",
+          "sources": [
+            "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md",
+            "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "development-3min",
+      "name": "Agent_Canary_3_0_3分钟核心展示_发展路线补强版",
+      "seconds": 180,
+      "mainCount": 6,
+      "slides": [
+        {
+          "title": "Agent Canary 3.0",
+          "kind": "cover",
+          "seconds": 15,
+          "subtitle": "可验证的 AI Agent 执行前安全控制",
+          "lines": [
+            "唐林博豪 · 闽江大学",
+            "开源 AI 工具赛道 · 自主选题",
+            "运行时冻结 99660b36 · MIT Community 候选"
+          ],
+          "notes": "各位评委好，我是唐林博豪。Agent Canary 面向能够调用工具的 AI Agent，目标是在可信入口检查权限，并让第三方核对实际目标效果。今天展示限定受控 SDK 的工程证据，不作全局防护承诺。",
+          "sources": [
+            "docs/3.0/FINAL_COMPETITION_READINESS.md"
+          ]
+        },
+        {
+          "title": "可信执行入口与信任边界",
+          "kind": "architecture",
+          "seconds": 30,
+          "lines": [
+            "模型提出请求，可信宿主登记资源与工具",
+            "Gateway 检查权限、Guard、来源和审批",
+            "实际执行后核对目标效果，记录 OSEP 事件"
+          ],
+          "notes": "模型只持有 dispatch。宿主持有工具描述、文件句柄和审批能力。网关在执行前检查参数与最小权限，必要时要求人工审批。文件使用预持有句柄，命令采用固定程序和参数，网络限制批准目标。该入口控制登记能力，不是系统调用级沙箱。",
+          "sources": [
+            "src/runtime/gateway.ts",
+            "docs/3.0/SECURITY_BOUNDARIES.md"
+          ]
+        },
+        {
+          "title": "真实目标见证执行前拒绝",
+          "kind": "demo",
+          "seconds": 40,
+          "lines": [
+            "A：无保护，虚拟 secret 实际返回",
+            "F：credential_resource_denied，执行 NOT_STARTED",
+            "见证：秘密未返回、文件未变、测试接收端为 0",
+            "正常任务：读取、写入、构建和有限网络仍可完成"
+          ],
+          "notes": "这里先回放相同场景H08或H10的原始A/F轨迹：A实际返回虚拟秘密，F在读取前拒绝。然后运行离线操作员DEMO，检查文件和回调计数。DEMO是真实临时I/O，但不是模型自主攻击。我们展示证据与观察，不把页面上的DENY当成无副作用证明。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "competition-submission/3.0-final/有限凭据拒绝证据.json",
+            "test/gateway-acceptance.test.ts"
+          ]
+        },
+        {
+          "title": "真实 Qwen 留出对照",
+          "kind": "results",
+          "seconds": 40,
+          "lines": [
+            "攻击效果：A 4/24，F 0/24",
+            "F 有实际拒绝的攻击任务：6/24",
+            "正常任务完成：A 8/8，F 8/8"
+          ],
+          "notes": "冻结策略后，12个新间接攻击文本和4种正常任务各重复两次，两组共64次运行。A攻击效果4/24，F为0/24。F只有6/24任务存在拒绝，其余没有攻击效果不能计为主动拦截。重复相关、作者知晓设计，不是64个独立样本。AI审查和Canary触发均为0，不能归因其独立收益。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "competition-submission/roadshow-3.0/evidence/FROZEN_FACTS.json"
+          ]
+        },
+        {
+          "title": "安全边界与未证实结论",
+          "kind": "risk",
+          "seconds": 30,
+          "lines": [
+            "VERIFIED：受控 SDK 登记工具的有限执行前控制",
+            "NOT VERIFIED：原生 Codex / Claude / Cursor 全局覆盖",
+            "PARTIAL：不合作回调、旧 inode 效果、公网 DNS 实验",
+            "NOT MEASURED：AI / 自适应独立收益与总体误报率"
+          ],
+          "emphasis": "0/24 是本批观察，不能表示 100% 防护",
+          "notes": "最大边界是未接入的工具不受保护。原生宿主只有配置或部分hook证据，不能替代SDK验收。已开始并不合作的回调可能产生迟到副作用，文件句柄也不提供事务回滚。0/24和8/8只描述这一批任务。独立操作者E4还未完成。",
+          "sources": [
+            "docs/3.0/SECURITY_BOUNDARIES.md",
+            "docs/3.0/AGENT_COVERAGE_MATRIX.md",
+            "test/gateway-acceptance.test.ts"
+          ]
+        },
+        {
+          "kind": "development",
+          "title": "开源贡献与后续验收",
+          "seconds": 25,
+          "lines": [
+            "已有：免费候选、复现包、SDK 贡献模板",
+            "容量：开发预算待确认，资源不足延期",
+            "维护 / 参与：月度实录与真实外部复现",
+            "3.1：协议版本与兼容测试 → 一个宿主入口"
+          ],
+          "emphasis": "未来门槛，不作为已经完成的安全证据",
+          "notes": "项目公开免费候选、原始失败和贡献者套件。现有维护记录只有一期。未来先确认开发容量，再积累月度实录和真实外部复现；3.1先定接口版本与兼容规则，再验证一个可信宿主入口。E4与正式插件协议目前未验，谢谢。",
+          "sources": [
+            "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md",
+            "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "development-60sec",
+      "name": "Agent_Canary_3_0_60秒精简版_发展路线补强版",
+      "seconds": 60,
+      "mainCount": 3,
+      "slides": [
+        {
+          "title": "Agent Canary 3.0",
+          "kind": "cover",
+          "seconds": 15,
+          "subtitle": "可验证的 AI Agent 执行前安全控制",
+          "lines": [
+            "可验证的执行前控制，保护登记工具",
+            "唐林博豪 · 闽江大学 · MIT Community"
+          ],
+          "notes": "Agent Canary用可信入口控制AI Agent工具调用，并让评委核对危险效果。它面向自建Agent与受控工具链。",
+          "sources": [
+            "docs/3.0/FINAL_COMPETITION_READINESS.md"
+          ]
+        },
+        {
+          "title": "真实 Qwen 留出对照",
+          "kind": "results",
+          "seconds": 25,
+          "lines": [
+            "真实 Qwen 留出：攻击效果 A 4/24，F 0/24",
+            "F 实际拒绝任务 6/24，正常任务两组 8/8",
+            "12 攻击文本、4 正常任务，各重复 2 次"
+          ],
+          "notes": "网关在模型调用前检查权限。冻结后真实Qwen小样本中，攻击效果4/24降至0/24，但仅6/24任务有拒绝。正常任务8/8。未尝试攻击不算拦截，不能推出总体百分百防护。",
+          "sources": [
+            "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+            "competition-submission/roadshow-3.0/evidence/FROZEN_FACTS.json"
+          ]
+        },
+        {
+          "title": "公开证据与验证边界",
+          "kind": "risk",
+          "seconds": 20,
+          "lines": [
+            "免费候选与原始证据公开；仅限受控 SDK",
+            "下一步：确认容量、积累维护、外部复现",
+            "3.1：版本化插件接口与可信宿主验收"
+          ],
+          "emphasis": "0/24 是本批观察，不能表示 100% 防护",
+          "notes": "免费候选和原始证据公开，目前保护仅限受控SDK，0/24不能表示100%防护。未来先确认开发容量，积累真实维护与外部复现，再做版本化插件接口和一个可信宿主验收。这些都是未来门槛，不是已经验证的能力。谢谢。",
+          "sources": [
+            "docs/3.0/SECURITY_BOUNDARIES.md",
+            "docs/3.0/AGENT_COVERAGE_MATRIX.md",
+            "test/gateway-acceptance.test.ts",
+            "competition-submission/roadshow-3.0/development-plan-update/DEVELOPMENT_EVIDENCE_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_CAPACITY_AND_GATES.md",
+            "docs/competition/score-review-2026-10-12/MAINTENANCE_REVIEW_LOG.md",
+            "docs/competition/score-review-2026-10-12/EXTENSION_CONTRACT_SNAPSHOT.md"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "scope": "own temporary copy only; mutated module never executed; not runtime security effect",
+  "before": {
+    "exitCode": 0,
+    "output": {
+      "status": "VERIFIED_EXACT_TYPE_COMPANION",
+      "sdkMatch": true,
+      "typeFiles": 33,
+      "inputFiles": 68,
+      "typeMismatches": [],
+      "inputMismatches": [],
+      "scope": "type-only diagnostic companion bound to Community source/build bytes at verification time; no execution lease, certification, stable npm ABI or security guarantee"
+    }
+  },
+  "after": {
+    "exitCode": 1,
+    "output": {
+      "status": "FAILED",
+      "sdkMatch": true,
+      "typeFiles": 33,
+      "inputFiles": 68,
+      "typeMismatches": [],
+      "inputMismatches": [
+        "dist/runtime/gateway.js"
+      ],
+      "scope": "type-only diagnostic companion bound to Community source/build bytes at verification time; no execution lease, certification, stable npm ABI or security guarantee"
+    }
+  },
+  "result": "VERIFIED_NEGATIVE_CHECK_DETECTED_LEAF_WHILE_SDK_ENTRY_UNCHANGED",
+  "fixtureRetained": true
+}

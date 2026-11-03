@@ -1,0 +1,6 @@
+{
+  "status": "FAILED_DRIVER_ONLY",
+  "message": "Python stdout used Windows codepage; decoded temporary Chinese path incorrectly. ZIP integrity and manifest succeeded, no package command ran.",
+  "reportedPath": "C:\\Users\\<LOCAL_USER>\\AppData\\Local\\Temp\\Canary ZIP �û����� ���� �ո� im3rvj0n\\agent-canary-community-3",
+  "fix": "ASCII-escaped JSON path; retain first temp directory"
+}

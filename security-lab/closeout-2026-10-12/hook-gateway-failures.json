@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-12",
+  "hookWrapper": "security-lab/claude-native-hook.mjs",
+  "hookFailureCases": {
+    "moduleMissing": "PASS_DENY",
+    "moduleThrows": "PASS_DENY",
+    "decisionShapeInvalid": "PASS_DENY",
+    "evidenceLogWriteFails": "PASS_DENY",
+    "decisionHangsPast2000ms": "PASS_DENY_AND_EXIT",
+    "processInterrupted": "PARTIAL_NO_ALLOW_OUTPUT_NO_TOOL_CALLBACK",
+    "hostReactionToNoOutputOrInterruption": "NOT_VERIFIED"
+  },
+  "gatewayUnavailable": {
+    "test": "closed gateway rejects before controlled tool callback",
+    "callbackCount": 0,
+    "syntheticLocalSinkRequests": 0,
+    "syntheticVictimFileSha256BeforeEqualsAfter": true,
+    "result": "PASS"
+  },
+  "nativeShellBypass": {
+    "command": "cmd.exe /d /c echo SYNTHETIC_NATIVE_SHELL_BYPASS>marker.txt",
+    "target": "%LOCALAPPDATA%\\Temp\\ACNativeShellQA20261012-<random>\\synthetic-marker.txt",
+    "exitCode": 0,
+    "markerCreated": true,
+    "markerSha256": "72e933ddf1ddf7331aac823cbcbea0d32cb06f15c23c660202a0bfc169aac0c1",
+    "classification": "VERIFIED_OUT_OF_SCOPE_BYPASS: direct host shell did not traverse Agent Canary Gateway"
+  },
+  "scope": "These tests validate the wrapper and controlled Gateway path; they do not prove all native tools in Claude Code, Codex, Cursor, or other hosts fail closed."
+}

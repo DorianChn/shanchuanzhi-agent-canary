@@ -1,0 +1,247 @@
+{
+  "count": 40,
+  "freeze": "99660b36db9d5b1121eea6fe06b026c5f1e36bcf",
+  "plannedDurationsNotRehearsed": true,
+  "questions": [
+    {
+      "id": 1,
+      "question": "与 Agent 自带权限系统有什么区别？",
+      "evidence": "src/runtime/gateway.ts；docs/3.0/AGENT_COVERAGE_MATRIX.md",
+      "limits": "缺少与原生宿主权限的同条件消融。"
+    },
+    {
+      "id": 2,
+      "question": "为什么不直接使用传统沙箱？",
+      "evidence": "docs/3.0/SECURITY_BOUNDARIES.md；test/gateway-acceptance.test.ts",
+      "limits": "未实现完整 OS 沙箱与子进程树强制终止。"
+    },
+    {
+      "id": 3,
+      "question": "为什么可验证证据有价值？",
+      "evidence": "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md",
+      "limits": "事件真实性依赖可信写入者，没有独立认证。"
+    },
+    {
+      "id": 4,
+      "question": "为什么 F 组 0/24 不是 100% 防护？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；competition-submission/roadshow-3.0/evidence/FROZEN_FACTS.json",
+      "limits": "总体防护率、独立同分布置信区间均无法由当前重复证明。"
+    },
+    {
+      "id": 5,
+      "question": "为什么原生宿主验证有限？",
+      "evidence": "docs/3.0/AGENT_COVERAGE_MATRIX.md",
+      "limits": "原生 Codex/Claude/Cursor/Cline 全局覆盖 NOT_VERIFIED。"
+    },
+    {
+      "id": 6,
+      "question": "为什么 E4 还没完成？",
+      "evidence": "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md；competition-submission/roadshow-3.0/独立复现手册.md",
+      "limits": "外部操作者参与 BLOCKED。"
+    },
+    {
+      "id": 7,
+      "question": "哈希链能保证日志真实吗？",
+      "evidence": "docs/3.0/EVIDENCE_ASSURANCE_MAPPING.md；docs/3.0/EVIDENCE_PROTOCOL.md",
+      "limits": "没有独立时间锚或签名。"
+    },
+    {
+      "id": 8,
+      "question": "TOCTOU 已经完全解决了吗？",
+      "evidence": "test/gateway-acceptance.test.ts；docs/3.0/SECURITY_BOUNDARIES.md",
+      "limits": "完整 TOCTOU、回滚、路径租约 PARTIAL。"
+    },
+    {
+      "id": 9,
+      "question": "超时或取消能阻止全部副作用吗？",
+      "evidence": "test/gateway-acceptance.test.ts；docs/3.0/SECURITY_BOUNDARIES.md",
+      "limits": "不合作回调强制撤销 OUT_OF_SCOPE。"
+    },
+    {
+      "id": 10,
+      "question": "蜜罐是否会增加误报？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；src/runtime/honeypot.ts",
+      "limits": "蜜罐生产误报率 NOT_MEASURED。"
+    },
+    {
+      "id": 11,
+      "question": "AI 是否真的提供独立安全收益？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；src/runtime/gateway.ts",
+      "limits": "AI 独立因果贡献 NOT_MEASURED。"
+    },
+    {
+      "id": 12,
+      "question": "相比 Invariant 有什么已经证明的优势？",
+      "evidence": "https://github.com/invariantlabs-ai/invariant；src/runtime/gateway.ts",
+      "limits": "相对防护率与效率优势 NOT_MEASURED。"
+    },
+    {
+      "id": 13,
+      "question": "与 NeMo、Promptfoo、PyRIT 有何区别？",
+      "evidence": "https://github.com/NVIDIA/NeMo-Guardrails；https://github.com/promptfoo/promptfoo；https://github.com/microsoft/PyRIT",
+      "limits": "没有竞品实测或同条件基准。"
+    },
+    {
+      "id": 14,
+      "question": "个人维护项目如何持续发展？",
+      "evidence": "competition-submission/roadshow-3.0/12个月发展规划.md；CONTRIBUTING.md",
+      "limits": "团队规模、持续投入与外部采用 NOT_VERIFIED。"
+    },
+    {
+      "id": 15,
+      "question": "为什么必须开源？",
+      "evidence": "LICENSE；competition-submission/3.0-final/community-build-99660b36.json",
+      "limits": "开源不是安全认证，普通商业分发风险仍 OPEN。"
+    },
+    {
+      "id": 16,
+      "question": "免费版与专业版如何共存？",
+      "evidence": "docs/3.0/FINAL_COMPETITION_READINESS.md；LICENSE",
+      "limits": "商业分发边界整体仍有 P1 OPEN，未做商业迁移。"
+    },
+    {
+      "id": 17,
+      "question": "最大的未解决风险是什么？",
+      "evidence": "docs/3.0/SECURITY_BOUNDARIES.md；test/gateway-acceptance.test.ts",
+      "limits": "全局保护、任意副作用阻断 OUT_OF_SCOPE。"
+    },
+    {
+      "id": 18,
+      "question": "数据集是不是为了获得漂亮数字设计的？",
+      "evidence": "security-lab/holdout-protocol.md；security-lab/holdout-v1.json；security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+      "limits": "作者知情偏差与主题复用未消除。"
+    },
+    {
+      "id": 19,
+      "question": "64 次实验是否是 64 个独立样本？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；competition-submission/roadshow-3.0/evidence/FROZEN_FACTS.json",
+      "limits": "独立样本置信推断不成立。"
+    },
+    {
+      "id": 20,
+      "question": "攻击成功如何判定？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；security-lab/run-sdk-agent.mjs",
+      "limits": "没有全 OS 连续副作用观察。"
+    },
+    {
+      "id": 21,
+      "question": "F 的 6/24 拒绝是否都是新增防护收益？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；security-lab/competition-freeze/holdout-metrics-detail.json",
+      "limits": "拒绝总数不是因果防护增益。"
+    },
+    {
+      "id": 22,
+      "question": "正常任务 8/8 就是零误报吗？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；docs/3.0/SECURITY_BOUNDARIES.md",
+      "limits": "总体 False Positive Rate NOT_MEASURED。"
+    },
+    {
+      "id": 23,
+      "question": "为什么保留失败和没有攻击的样本？",
+      "evidence": "docs/3.0/FINAL_COMPETITION_READINESS.md；test/gateway-acceptance.test.ts",
+      "limits": "重复成功不抹掉先前失败。"
+    },
+    {
+      "id": 24,
+      "question": "Canary 在新留出中触发了多少次？",
+      "evidence": "security-lab/evidence/2026-10-11T15-04-14-292Z/results.json；src/runtime/honeypot.ts",
+      "limits": "自主诱饵收益和最优部署策略 NOT_MEASURED。"
+    },
+    {
+      "id": 25,
+      "question": "五类蜜罐是否是真实服务？",
+      "evidence": "src/runtime/honeypot.ts；docs/3.0/SECURITY_BOUNDARIES.md",
+      "limits": "真实生产 DB/HTTP 欺骗部署 OUT_OF_SCOPE。"
+    },
+    {
+      "id": 26,
+      "question": "自适应到底适应了什么？",
+      "evidence": "src/runtime/honeypot.ts；security-lab/evidence/2026-10-11T15-04-14-292Z/results.json",
+      "limits": "Adaptive efficacy NOT_MEASURED。"
+    },
+    {
+      "id": 27,
+      "question": "人工审批能被模型伪造吗？",
+      "evidence": "test/gateway-acceptance.test.ts；src/runtime/gateway.ts",
+      "limits": "可信宿主误暴露能力、远程身份认证仍依赖部署。"
+    },
+    {
+      "id": 28,
+      "question": "Guard 如何处理并发与跨会话？",
+      "evidence": "test/gateway-acceptance.test.ts；docs/3.0/FINAL_3_0_ACCEPTANCE.md",
+      "limits": "跨进程权限连续性与委托协议 PARTIAL。"
+    },
+    {
+      "id": 29,
+      "question": "数据流追踪能覆盖编码和拆分吗？",
+      "evidence": "src/runtime/dataflow.ts；docs/3.0/SECURITY_BOUNDARIES.md；test/gateway-acceptance.test.ts",
+      "limits": "完整变换追踪、模型内部数据流 OUT_OF_SCOPE。"
+    },
+    {
+      "id": 30,
+      "question": "HTTPS 与 DNS 重绑定是否已全验证？",
+      "evidence": "docs/3.0/SECURITY_BOUNDARIES.md；test/gateway-acceptance.test.ts",
+      "limits": "恶意公网基础设施 E2E NOT_VERIFIED。"
+    },
+    {
+      "id": 31,
+      "question": "可信 descriptor 会不会说谎？",
+      "evidence": "src/runtime/gateway.ts；docs/3.0/SECURITY_BOUNDARIES.md",
+      "limits": "任意回调语义自动验证 OUT_OF_SCOPE。"
+    },
+    {
+      "id": 32,
+      "question": "审计写入失败时会怎样？",
+      "evidence": "docs/3.0/SECURITY_BOUNDARIES.md；src/runtime/evidence.ts",
+      "limits": "崩溃/断电事务性与无限运行保证未建立。"
+    },
+    {
+      "id": 33,
+      "question": "资源与性能数字是否公平？",
+      "evidence": "security-lab/competition-freeze/holdout-metrics-detail.json",
+      "limits": "纯 Gateway、全机资源、能耗 NOT_MEASURED。"
+    },
+    {
+      "id": 34,
+      "question": "为什么没有做 100 攻击和 50 正常任务？",
+      "evidence": "competition-submission/roadshow-3.0/evidence/FROZEN_FACTS.json；security-lab/holdout-protocol.md",
+      "limits": "宽泛安全与正常任务泛化尚缺。"
+    },
+    {
+      "id": 35,
+      "question": "离线现场还能演示什么？",
+      "evidence": "competition-submission/roadshow-3.0/演示与现场预案.md",
+      "limits": "离线DEMO不提供新的真实模型效果证据。"
+    },
+    {
+      "id": 36,
+      "question": "公开安装包与源码为什么不完全同一文件集？",
+      "evidence": "docs/3.0/FINAL_COMPETITION_READINESS.md；competition-submission/3.0-final/community-build-99660b36.json",
+      "limits": "策展派生字节不全存在于运行时提交。"
+    },
+    {
+      "id": 37,
+      "question": "八项安全不变量已经被证明了吗？",
+      "evidence": "docs/3.0/FINAL_3_0_ACCEPTANCE.md；docs/3.0/final-review-inputs/CURRENT_3_0_MAPPING.md",
+      "limits": "完整形式化证明与多主机授权理论实现尚缺。"
+    },
+    {
+      "id": 38,
+      "question": "Schema 修复为何只是 P2？",
+      "evidence": "test/evidence-conformance.test.ts；security-lab/test-acceptance-verifier.py；docs/3.0/FINAL_3_0_ACCEPTANCE.md",
+      "limits": "Schema 正确不等于事件真实或完整安全证明。"
+    },
+    {
+      "id": 39,
+      "question": "目前参赛资格和组委会确认是什么状态？",
+      "evidence": "competition-submission/roadshow-3.0/邮件与资格核验.md",
+      "limits": "ORGANIZER_ACKNOWLEDGED / ENTRY_ACCEPTED NOT_VERIFIED。"
+    },
+    {
+      "id": 40,
+      "question": "你们如何评价创新与得分？",
+      "evidence": "docs/competition/MAX_SCORE_MATRIX.md；docs/competition/FINAL_MAX_SCORE_READINESS.md",
+      "limits": "官方评分、排名、奖项不可预测。"
+    }
+  ]
+}

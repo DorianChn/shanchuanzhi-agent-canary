@@ -1,0 +1,13 @@
+{
+  "status": "VERIFIED",
+  "package": "@dorianchn/agent-canary",
+  "version": "3.0.0-competition-candidate.2",
+  "checks": [
+    "conditional SDK import",
+    "transitive declarations",
+    "READ_ONLY descriptor",
+    "Agent cannot approve",
+    "Agent cannot reset"
+  ],
+  "scope": "compile-time contract; not runtime security proof"
+}

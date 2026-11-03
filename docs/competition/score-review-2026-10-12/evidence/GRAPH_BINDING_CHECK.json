@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "output": {
+    "status": "VERIFIED_EXACT_TYPE_COMPANION",
+    "sdkMatch": true,
+    "typeFiles": 33,
+    "inputFiles": 68,
+    "typeMismatches": [],
+    "inputMismatches": [],
+    "scope": "type-only diagnostic companion bound to Community source/build bytes at verification time; no execution lease, certification, stable npm ABI or security guarantee"
+  },
+  "scope": "same public install, diagnostic bytes only"
+}

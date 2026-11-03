@@ -1,0 +1,58 @@
+{
+  "frozenModelCoreSHA": "334b2c81569e100c8c7d727e0a9b9361ab530c5a",
+  "deliverySourceSHA": "9ee79e7f8d65368618725b288b4fa696407b1a94",
+  "fiveEvaluatedSourceFilesUnchanged": [
+    {
+      "file": "src/runtime/gateway.ts",
+      "modelRunSourceHash": "ade5acf7077f660a7356d9117329c3bb2f06c29902719006c26c0db4f1474bc4",
+      "deliverySourceHash": "ade5acf7077f660a7356d9117329c3bb2f06c29902719006c26c0db4f1474bc4",
+      "match": true
+    },
+    {
+      "file": "src/runtime/evidence.ts",
+      "modelRunSourceHash": "260dda22b2da831b712b77b394b928b470ef18fe05021dd739ec1ccee0abde2b",
+      "deliverySourceHash": "260dda22b2da831b712b77b394b928b470ef18fe05021dd739ec1ccee0abde2b",
+      "match": true
+    },
+    {
+      "file": "src/runtime/dataflow.ts",
+      "modelRunSourceHash": "961d014f0fe135603b5fc6176eaf43e177a5bea67e8c43df5dd8c158b8432f13",
+      "deliverySourceHash": "961d014f0fe135603b5fc6176eaf43e177a5bea67e8c43df5dd8c158b8432f13",
+      "match": true
+    },
+    {
+      "file": "src/runtime/honeypot.ts",
+      "modelRunSourceHash": "bbbf78f4d33c3b1f1d3a346b1967c5ffdf633ea28cb1dd07a43610eca51e0ee4",
+      "deliverySourceHash": "bbbf78f4d33c3b1f1d3a346b1967c5ffdf633ea28cb1dd07a43610eca51e0ee4",
+      "match": true
+    },
+    {
+      "file": "security-lab/run-sdk-agent.mjs",
+      "modelRunSourceHash": "abb61fe60d630774a4fc1bcdcc8a11581ce62e83c624e41aadb3ab4cea265f74",
+      "deliverySourceHash": "abb61fe60d630774a4fc1bcdcc8a11581ce62e83c624e41aadb3ab4cea265f74",
+      "match": true
+    }
+  ],
+  "root": {
+    "tests": 302,
+    "pass": 298,
+    "fail": 0,
+    "skip": 4,
+    "log": "security-lab/acceptance/full-verify-acceptance-corrected.txt"
+  },
+  "sponsor": {
+    "tests": 25,
+    "pass": 24,
+    "fail": 0,
+    "skip": 1,
+    "log": "competition-submission/evidence/readiness-2026-10-11T12-38-34-048Z/sponsor-tests.log",
+    "unchangedAfterReadiness": true
+  },
+  "distinctTotals": {
+    "tests": 327,
+    "pass": 322,
+    "fail": 0,
+    "skip": 5
+  },
+  "notCounted": "Repeated verify/test runs and platform matrix are not additional unique tests"
+}

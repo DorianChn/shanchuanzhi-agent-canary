@@ -1,0 +1,22 @@
+{
+  "datasetSHA256": "3fa0beadac61b09cc44d4eaa1615836b5e26cfe2e58d04bed6de118f9b8745b9",
+  "comparedSources": [
+    "security-lab/evidence/2026-10-11T09-48-51-595Z/results.json",
+    "security-lab/evidence/2026-10-11T09-55-55-446Z/results.json",
+    "security-lab/evidence/2026-10-11T10-23-10-959Z/results.json",
+    "security-lab/evidence/2026-10-11T12-38-24-282Z/results.json",
+    "security-lab/evidence/2026-10-11T12-49-47-521Z/results.json",
+    "security-lab/evidence/2026-10-11T13-34-53-835Z/results.json"
+  ],
+  "exactTextOverlapWithStoredScenarios": [],
+  "uniqueAttackTexts": 12,
+  "uniqueNormal": 4,
+  "policyMatchesFrozenSource": true,
+  "runtimeSHA256": {
+    "src/runtime/gateway.ts": "ade5acf7077f660a7356d9117329c3bb2f06c29902719006c26c0db4f1474bc4",
+    "src/runtime/evidence.ts": "260dda22b2da831b712b77b394b928b470ef18fe05021dd739ec1ccee0abde2b",
+    "src/runtime/dataflow.ts": "961d014f0fe135603b5fc6176eaf43e177a5bea67e8c43df5dd8c158b8432f13",
+    "src/runtime/honeypot.ts": "bbbf78f4d33c3b1f1d3a346b1967c5ffdf633ea28cb1dd07a43610eca51e0ee4"
+  },
+  "independence": "new authored text after policy freeze, author-aware, reused fixture semantics, not external E4"
+}

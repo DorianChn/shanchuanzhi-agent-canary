@@ -1,4 +1,4 @@
-import { test, mock } from "node:test";
+import { after, test, mock } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
@@ -6,13 +6,27 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 
-// Point the whole module tree at a throwaway home before importing.
-process.env.AGENT_CANARY_HOME = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-test-"));
+// Point this test process and all token module imports at a throwaway home.
+const previousAgentCanaryHome = process.env.AGENT_CANARY_HOME;
+const testHome = fs.mkdtempSync(path.join(os.tmpdir(), "agent-canary-test-"));
+process.env.AGENT_CANARY_HOME = testHome;
+after(() => {
+  if (previousAgentCanaryHome === undefined) delete process.env.AGENT_CANARY_HOME;
+  else process.env.AGENT_CANARY_HOME = previousAgentCanaryHome;
+  fs.rmSync(testHome, { recursive: true, force: true });
+  assert.equal(fs.existsSync(testHome), false);
+});
 
 const { generateTokens, loadTokens, saveTokens, plantIntoFile, findTokensInText, scanFile } = await import("../src/tokens.js");
 const { handleDecoyCall, DECOY_TOOLS } = await import("../src/decoys.js");
 const { readEvents } = await import("../src/alerts.js");
 const { walkFiles } = await import("../src/file-walk.js");
+
+test("token tests use only their disposable state root", () => {
+  assert.equal(process.env.AGENT_CANARY_HOME, testHome);
+  const relative = path.relative(os.tmpdir(), testHome);
+  assert.equal(relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative)), true);
+});
 
 test("token format and registry roundtrip", () => {
   const created = generateTokens("test-label", 3);

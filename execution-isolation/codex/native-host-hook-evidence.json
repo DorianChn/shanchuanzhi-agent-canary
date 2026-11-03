@@ -1,0 +1,279 @@
+{
+  "schema": "agent-canary.m2.native-host-hook-evidence.v1",
+  "observedAtUtc": "2026-10-14T04:03:20Z",
+  "workspaceCommit": "a1c239d3734a9acb355db97ea5eb10758eceedd1",
+  "host": {
+    "taskShellEnvironment": "WSL2 Bash",
+    "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+    "codexCliVersion": "0.162.0-alpha.17.2",
+    "desktopAppVersion": "26.1007.2314.0 (OpenAI.Codex Windows AppX)",
+    "currentTaskNativeHookInvocationTelemetry": "UNAVAILABLE"
+  },
+  "candidateHook": {
+    "path": "execution-isolation/codex/codex-hooks.fragment.json",
+    "handlerPath": "execution-isolation/codex/pre-tool-use.mjs",
+    "installedAtRepositoryRoot": false,
+    "activeInCurrentDesktopHost": "UNKNOWN",
+    "standaloneCliTrustCheck": {
+      "result": "FOLDER_TRUST_PROMPT_SHOWN",
+      "scope": "This standalone CLI launch for the M2 worktree only",
+      "actionTaken": "Exited with Escape without accepting",
+      "persistentTrustChange": false
+    },
+    "currentDesktopAppTrustState": "UNKNOWN"
+  },
+  "officialHookContract": {
+    "documentation": "https://learn.chatgpt.com/docs/hooks",
+    "checkedAtUtc": "2026-10-14T04:03:20Z",
+    "preToolUseCanMatchBashAndUnifiedExec": true,
+    "explicitPermissionDecisionDenySupported": true,
+    "nonManagedHookRequiresReviewAndTrustForExactDefinition": true,
+    "preToolUseHandlerFailureGuaranteedToBlock": false,
+    "failureNote": "The official guide says callback errors, timeouts, or malformed responses can fail the hook without blocking the tool call; some specialized tool paths can opt out of the default hook path."
+  },
+  "nativeShellSentinelAttempt": {
+    "hostWriteAttempted": false,
+    "sentinelCreated": false,
+    "hookCallbackInvoked": false,
+    "hostDecision": "NOT_OBSERVED",
+    "beforeSha256": null,
+    "afterSha256": null,
+    "status": "BLOCKED_NOT_VERIFIED",
+    "reason": "The candidate is only a repository fragment, no trusted hook is evidenced in the current desktop host, and the standalone Codex CLI stopped at its folder-trust prompt. Accepting trust would persist a trust decision and was not done. No hash pair is reported because no native-host sentinel attempt ran."
+  },
+  "reassessment": {
+    "checkedAtUtc": "2026-10-14T04:55:30Z",
+    "currentExecutionEnvironment": {
+      "shell": "Git Bash launcher in WSL2",
+      "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+      "nodeVersion": "v22.23.1",
+      "codexExecutableOnPath": false,
+      "windowsCodexCliByAbsolutePath": "0.162.0-alpha.17.2; invoked for the separate CLI sandbox probe below",
+      "nativeDesktopHookTelemetry": "UNAVAILABLE"
+    },
+    "hookContractConclusion": {
+      "supportedExplicitPreToolUseDeny": true,
+      "trustedProjectHookCanBeInstalled": true,
+      "trustedHookFailureGuaranteedToBlock": false,
+      "qualifiesAsFailClosedEnforcement": false,
+      "basis": "Official Hooks documentation says non-managed hooks require review/trust for the exact current definition, but callback errors, timeouts, or malformed responses may fail the hook without blocking the tool; some specialized tool paths can opt out of the default hook path. Managed hooks are trusted by policy but the documented callback failure behavior still applies."
+    },
+    "windowsCliSandboxProbe": {
+      "checkedAtUtc": "2026-10-14T05:01:54Z",
+      "cliVersion": "0.162.0-alpha.17.2",
+      "configState": "host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN",
+      "command": "codex.exe sandbox -P :workspace --include-managed-config -- powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand <synthetic sentinel write and readback>",
+      "workingDirectory": "M2 worktree root",
+      "testDirectory": "%TEMP%\\agent-canary-m2-native-cli-probe-zIe5UB",
+      "target": "synthetic-sentinel.txt",
+      "directoryResolvedWithinTemp": true,
+      "sentinelBeforeSha256": "be9351741a8155d01fd028d158546f1005e73ceeb0bb2d093335feac4144e450",
+      "sentinelAfterSha256": "94c3f1415d2061d05e4cce4d33e43e26a5ad7ebcf6e89acace6e8b84240a629c",
+      "sentinelChanged": true,
+      "cliExitCode": 0,
+      "completionMarkerObserved": true,
+      "stderrLength": 0,
+      "cleanup": "Unique directory was removed after checking its resolved path was inside %TEMP%; post-cleanup existence check was false.",
+      "interpretation": "The Windows Codex CLI sandbox subcommand launched PowerShell and allowed the synthetic write under %TEMP%. This is expected for the :workspace profile, which allows system temporary directories; it does not prove enforcement of a denied write, does not exercise a Desktop native Shell invocation, and does not observe a PreToolUse callback decision. A prior malformed PowerShell preflight had no completion marker and no hash change and was discarded, not counted as a sandbox denial."
+    },
+    "desktopNativeShellAcceptance": {
+      "nativeCodexShellSentinelWriteAttempted": false,
+      "nativeHostDecision": "NOT_OBSERVED",
+      "classification": "UNPROTECTED",
+      "acceptance": "BLOCKED_NOT_VERIFIED",
+      "reason": "The Windows CLI sandbox probe is a distinct codex.exe subprocess path; it does not exercise the Desktop's native Shell tool or expose its hook telemetry. The project hook fragment remains uninstalled and the Desktop loading/trust state remains unknown."
+    },
+    "liveDesktopPolicyInspection": {
+      "checkedAtUtc": "2026-10-14T06:49:42Z",
+      "inspectionMethod": "Read-only native Windows PowerShell inspection of running process metadata and narrowly filtered configuration keys; no config was changed",
+      "desktopAppPackageVersion": "26.1007.2314.0",
+      "desktopAppProcessObserved": true,
+      "windowsCodexCliVersion": "0.162.0-alpha.17.2",
+      "m2TaskShell": "WSL2 Bash; Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+      "nativeDesktopShellInvocationByM2": false,
+      "userConfigPath": "%USERPROFILE%\\.codex\\config.toml",
+      "localHookSources": {
+        "userHooksJson": "ABSENT",
+        "userRequirementsToml": "ABSENT",
+        "programDataRequirementsToml": "ABSENT",
+        "programDataLegacyManagedConfigToml": "ABSENT",
+        "m2ProjectCodexDirectory": "ABSENT",
+        "m2CandidateFragmentInstalled": false
+      },
+      "activeSessionEffectivePermissions": "NOT_OBSERVED",
+      "cloudManagedOrPluginHookSources": "NOT_ENUMERATED",
+      "hookTrustState": "NOT_OBSERVED_IN_DESKTOP",
+      "nativeShellDecision": "NOT_OBSERVED",
+      "classification": "UNPROTECTED",
+      "acceptance": "BLOCKED_NOT_VERIFIED",
+      "interpretation": "host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN. The M2 agent itself runs in WSL2 and cannot invoke the Windows Desktop Shell tool or observe its callback. Inspected user, local system, and M2 project hook files contain no M2 hook installation. Effective per-session mode and cloud/plugin hook sources remain unknown.",
+      "hostPolicySummary": "host-specific policy values omitted; active fail-closed state not demonstrated; effective session policy UNKNOWN"
+    },
+    "issue45FollowUp": {
+      "verifiedAtUtc": "2026-10-14T06:52:54Z",
+      "issueState": "OPEN",
+      "commentId": 6162686672,
+      "commentUrl": "https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45#issuecomment-6162686672",
+      "githubConnectorPost": "403_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+      "fallback": "Posted through authenticated Chrome issue page; comment body verified by GitHub comments API; browser tab closed",
+      "decision": "Keep native Shell UNPROTECTED / BLOCKED_NOT_VERIFIED; require enabled OS-level permission profile and real Desktop Shell sentinel test"
+    },
+    "hostAcceptance": {
+      "nativeCodexShellSentinelWriteAttempted": false,
+      "nativeHostDecision": "NOT_OBSERVED",
+      "classification": "UNPROTECTED",
+      "acceptance": "BLOCKED_NOT_VERIFIED",
+      "scope": "Desktop native Shell only",
+      "reason": "The M2 agent shell runs in WSL2 and has no Codex executable on PATH. Although a Windows CLI sandbox subcommand was invoked by absolute path and is recorded separately, this does not expose the actual Desktop native Shell hook lifecycle. The repo fragment remains uninstalled and Desktop trust/loading remains unknown. No unrestricted shell write was used as a substitute test."
+    },
+    "m2BoundaryGuard": {
+      "checkedAtUtc": "2026-10-14T06:30:40Z",
+      "gatewayBinderRequiresExecutionSurface": true,
+      "gatewayBinderRejectsMarkedNativeShell": true,
+      "gatewayBinderAllowsBashIdWhenM2Isolated": true,
+      "rejectionCode": "M2_NATIVE_SHELL_UNPROTECTED",
+      "rejectionTiming": "CONSTRUCTION_BEFORE_CALLBACK_OR_BACKEND_INVOCATION",
+      "testStatus": "PASS",
+      "testEvidence": "execution-isolation/gateway-adapter/check-gateway-mcp-tools.mjs; protected M2 surface under ID Bash forwards to backend; native surface under the same ID rejects during construction and backend call count remains unchanged",
+      "candidateHookReportsClassification": "UNPROTECTED",
+      "candidateHookReportsAcceptance": "BLOCKED_NOT_VERIFIED",
+      "limitations": "The executionSurface value must come from a trusted host registrar; the binder cannot infer actual surface from an ID or independently prove the injected backend is isolated. The guard applies only to registrations routed through this M2 binder. It cannot intercept Desktop direct Shell or observe whether the candidate hook is loaded/trusted; host fail-closed behavior remains unverified."
+    },
+    "issue45CapabilityAssessment": {
+      "checkedAtUtc": "2026-10-14T10:17:42Z",
+      "workspaceCommit": "b38b1ab1286ab82027d7cdeb8144aa77dab0759c",
+      "issue": {
+        "url": "https://github.com/DorianChn/shanchuanzhi-agent-canary/issues/45",
+        "state": "OPEN",
+        "acceptance": "A verified fail-closed native Shell policy, or reproducible capability-limit evidence with native Shell kept UNPROTECTED / BLOCKED_NOT_VERIFIED"
+      },
+      "assessmentEnvironment": {
+        "shell": "WSL2 Bash",
+        "kernel": "Linux localhost 6.18.33.2-microsoft-standard-WSL2 x86_64",
+        "codexOnCurrentShellPath": false,
+        "desktopNativeShellCallableFromThisTask": false,
+        "desktopHookTelemetryAvailable": false,
+        "interpretation": "This task can inspect repository evidence and public Codex contracts, but cannot invoke or observe the Windows Desktop native Shell tool."
+      },
+      "officialHookContract": {
+        "documentation": "https://learn.chatgpt.com/docs/hooks",
+        "recheckedAtUtc": "2026-10-15T08:00:07Z",
+        "localPreToolUseHookApiSupported": true,
+        "preToolUseCanMatchBashAndUnifiedExec": true,
+        "explicitPermissionDecisionDenySupported": true,
+        "nonManagedHooksRequireReviewAndTrustOfCurrentDefinition": true,
+        "projectLocalHooksRequireTrustedProjectCodexLayer": true,
+        "handlerErrorTimeoutOrMalformedResponseMayContinueToolCall": true,
+        "mcpHookErrorMissingServerOrUnavailableToolBlocksOperation": false,
+        "someSpecializedToolPathsCanOptOutOfDefaultHookPath": true,
+        "classification": "DEFENSE_IN_DEPTH_ONLY",
+        "whyNotFailClosed": "A returned deny proves behavior only when the configured callback runs. The official contract permits callback failure without blocking the tool, so a repo Hook fragment or protocol fixture cannot prove a fail-closed native Shell boundary."
+      },
+      "officialNativePolicyOptions": {
+        "windowsSandboxDocumentation": "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+        "permissionsDocumentation": "https://learn.chatgpt.com/docs/permissions",
+        "codexHasSupportedNativeWindowsSandbox": true,
+        "codexHasScopedFilesystemDenyRules": true,
+        "nativeWindowsAbsolutePathsAreSupported": true,
+        "documentedWindowsImplementations": [
+          "MXC",
+          "elevated",
+          "unelevated"
+        ],
+        "desktopAutomaticallyPrefersMxcForConsumerAccountsWhenDeviceSupportsIt": true,
+        "mxcCapabilityNeedsHostSupportAndMayBeBlockedByPolicy": true,
+        "unelevatedLimitations": [
+          "weaker network isolation than elevated",
+          "does not support denied read paths"
+        ],
+        "currentDesktopEffectiveProfile": "UNKNOWN",
+        "currentDesktopSandboxImplementation": "UNKNOWN",
+        "currentDesktopPolicyEnforcement": "NOT_VERIFIED",
+        "interpretation": "Codex exposes a supported OS-level enforcement route, so it would be inaccurate to claim that native enforcement is unavailable in general. This M2 task has no authority or interface to provision the host policy, confirm its effective state, or test the Desktop native Shell path."
+      },
+      "reproducibleNextEvidence": [
+        "On the target Windows host, record the effective Codex permission profile and actual sandbox implementation without exposing unrelated settings.",
+        "For a protected path, confirm the active profile contains a specific enforced deny; do not treat a Hook matcher or CLI child-process fixture as this proof.",
+        "In the actual Windows Desktop native Shell, attempt one unique synthetic sentinel write and capture product version, active profile/sandbox, Hook invocation and decision, command result, and before/after SHA-256.",
+        "Require an observed OS-level denial and unchanged sentinel hash. If the sentinel changes or the active policy/callback cannot be observed, retain UNPROTECTED / BLOCKED_NOT_VERIFIED."
+      ],
+      "decision": {
+        "repositoryOnlyFailClosedHookIntegrationAvailable": false,
+        "nativePolicyAvailableInCodexPlatform": true,
+        "nativePolicyIntegratedAndVerifiedByM2": false,
+        "classification": "UNPROTECTED",
+        "acceptance": "BLOCKED_NOT_VERIFIED",
+        "reason": "Official Hooks do not guarantee fail-closed callback failure, while the actual native Windows permission/sandbox policy is host-managed and its effective state and Desktop Shell behavior cannot be inspected or changed from this WSL task. No native Shell write was attempted."
+      }
+    },
+    "issue32IntegrationGate": {
+      "checkedAtUtc": "2026-10-14T06:26:46Z",
+      "issueState": "OPEN",
+      "pr37": {
+        "state": "OPEN_DRAFT",
+        "head": "08c93bcac9906c27fac6d14c029d2134553a575b",
+        "latestWorkflowRun": 38515077665,
+        "mergeHead": "543c6eab69e9aec58d168603c9da3eabe8ae21f8",
+        "mergeBase": "62496d4020bd90ba2eede49b2e80a2bbebb036b4",
+        "windowsNode20Job": 115691940178,
+        "windowsNode20Conclusion": "FAILURE",
+        "failingTest": "test/agent-hook.test.ts:54:53; native lab wrapper interruption emits no allow decision and invokes no tool callback",
+        "assertion": "false !== true",
+        "resultCounts": "321 passed, 1 failed, 4 skipped; package-smoke skipped",
+        "ownership": "M1 security-core test file; no M2 file modified"
+      },
+      "pr43M1FixBaseline": {
+        "state": "OPEN_DRAFT",
+        "head": "2276526cc70f4a13539e2172efae1fe3b4be16dd",
+        "containsCommit": "46af1f1",
+        "verifiedChange": "test/agent-hook.test.ts replaces timing-sensitive spawnSync timeout fixture with child spawn, an entry marker, explicit external interruption, and output/log assertions; the test remains present.",
+        "focusedWindowsEvidence": "PR body reports Windows Node 20 and 22 focused Hook/Gateway suites 73/73 each; not a combined PR37 CI result."
+      },
+      "m1LocalHead": {
+        "commit": "f59ba37c2fd9d1b5e181e067f80981f8920ef16a",
+        "verifiedDiff": "Changes only test/security-router.test.ts relative to PR43 head 2276526; it is not itself the interruption-test fix."
+      },
+      "m9Gate": "Combine M2 with an M1 revision containing PR43 head 2276526 / commit 46af1f1 (and the selected newer M1 commits such as f59ba37 if included); rerun Windows Node 20 and 22 full npm test plus package-smoke on the combined candidate. Keep #32 open until combined CI demonstrates the retained interruption regression and package smoke pass."
+    },
+    "officialSources": [
+      "https://learn.chatgpt.com/docs/hooks",
+      "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+      "https://learn.chatgpt.com/docs/permissions",
+      "https://learn.chatgpt.com/docs/app/windows"
+    ]
+  },
+  "currentHostProbe": {
+    "observedAtUtc": "2026-10-23T01:32:40Z",
+    "host": {
+      "os": "Windows 11 Home",
+      "windowsBuild": "26200.9168",
+      "desktopAppVersion": "26.1016.6573.0",
+      "codexCliVersion": "0.163.0-alpha.11",
+      "shell": "Windows PowerShell 7.6.5"
+    },
+    "officialWindowsMxcProbe": {
+      "documentation": "https://learn.chatgpt.com/docs/windows/windows-sandbox",
+      "minimumDocumentedBuilds": ["26100.9278", "26200.9278"],
+      "invocation": "codex -c windows.sandbox=mxc sandbox --include-managed-config --permission-profile :workspace -- cmd.exe /d /c echo MXC_OK",
+      "perInvocationConfigOnly": true,
+      "exitCode": 1,
+      "result": "native MXC is unavailable on this executor",
+      "childLaunched": false,
+      "interpretation": "The observed Windows build is below the documented MXC minimum and the official CLI probe reports MXC unavailable. The probe does not distinguish build compatibility from additional device or policy limitations."
+    },
+    "hostPolicy": {
+      "legacyElevatedAvailability": "NOT_PROBED",
+      "legacyUnelevatedAvailability": "NOT_PROBED",
+      "desktopEffectiveSandbox": "UNKNOWN",
+      "desktopHookInvocationTelemetry": "UNAVAILABLE",
+      "desktopProtectedPathSentinelAttempted": false,
+      "beforeSha256": null,
+      "afterSha256": null
+    },
+    "classification": "UNPROTECTED",
+    "acceptance": "BLOCKED_NOT_VERIFIED",
+    "issue45": "OPEN",
+    "decision": "Retain UNPROTECTED until an actual Desktop native-Shell protected-path denial is observed with effective enforcement state and unchanged sentinel hashes."
+  },
+  "classification": "UNPROTECTED"
+}

@@ -80,3 +80,12 @@
 - Strict schema/evidence-ID validation, pinned DNS, redirect refusal, cancellation/deadlines and bounded retries; no changes to Guard authority.
 - Real local Qwen analysis and repeated A/B/C tool-selection pilot, including failed references and label disagreement.
 - Additional AI security regression tests and reproducible PDF/material generation. Not an npm release; cloud account verification and V1/V2 distribution boundary remain open.
+
+## Community competition-candidate.4 repair candidate
+
+- Explicit free CLI version/build identity and truthful doctor scope.
+- Recheck held file identity immediately before I/O; observed replacement regression now prevents effects. External TOCTOU remains a limit.
+- Catch Hook module loading failures; supported host failure handling still required.
+- Bound and validate desktop installation receipts; improve real-result Chinese labels.
+- Explicit Ubuntu installer and uninstall, no sudo or silent runtime download.
+- Preserve prior candidates and original negative/real-model evidence.
