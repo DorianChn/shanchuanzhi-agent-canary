@@ -56,44 +56,44 @@ test('disabled file writes cannot reach RUNNING or a path-swap callback',async()
   const denied=runtime.evidence().at(-1)!;assert.equal(denied.decision,'DENY');assert.equal(denied.execution_status,'NOT_STARTED');
  }finally{await runtime.close();await s.close();}
 });
-test('parent junction swapped at the actual read syscall cannot redirect or disclose an outside file',async()=>{
- const s=await sinkFixture(),workspace=path.join(s.root,'workspace'),notes=path.join(workspace,'notes'),heldNotes=path.join(workspace,'notes.held'),outside=path.join(s.root,'outside');
+test('path replaced after the final name check cannot redirect the held-handle read or disclose outside data',async()=>{
+ const s=await sinkFixture(),workspace=path.join(s.root,'workspace'),notes=path.join(workspace,'notes'),outside=path.join(s.root,'outside');
  fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outside);
  const heldFile=path.join(notes,'public.txt'),outsideFile=path.join(outside,'public.txt');
  fs.writeFileSync(heldFile,'PUBLIC_HELD_FILE_FIXTURE');fs.writeFileSync(outsideFile,'OUTSIDE_ALIAS_SENTINEL');
- const runtime=createTrustedExecutionGateway({agentId:'junction-read-race',guard:s.guard,workspaceRoot:workspace,files:[{path:'notes/public.txt'}],evidence:new EvidenceRecorder()});
- const originalReadSync=fs.readSync;let readAttempted=false,aliasInstalled=false,aliasBlocked=false;
- (fs as any).readSync=(...args:any[])=>{
-  if(!readAttempted){
-   readAttempted=true;let directoryMoved=false;
-   try{fs.renameSync(notes,heldNotes);directoryMoved=true;fs.symlinkSync(outside,notes,process.platform==='win32'?'junction':'dir');aliasInstalled=true;}
-   catch(error){
-    if(directoryMoved&&!fs.existsSync(notes))fs.renameSync(heldNotes,notes);
-    const code=(error as NodeJS.ErrnoException).code;
-    if(!['EPERM','EACCES','EBUSY'].includes(String(code)))throw error;
-    aliasBlocked=true;
-   }
+ const canonicalHeldFile=fs.realpathSync.native(heldFile);
+ const heldAlias=heldFile+'.held',recorder=new EvidenceRecorder(),record=recorder.record.bind(recorder);
+ const runtime=createTrustedExecutionGateway({agentId:'held-handle-read-race',guard:s.guard,workspaceRoot:workspace,files:[{path:'notes/public.txt'}],evidence:recorder});
+ const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync;let running=false,aliasInstalled=false,pathOpenAttempts=0;
+ recorder.record=(event:any)=>{if(event.execution_status==='RUNNING')running=true;return record(event);};
+ (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+  const result=(originalLstatSync as any)(candidate,...args);
+  if(running&&!aliasInstalled&&path.resolve(String(candidate))===path.resolve(canonicalHeldFile)){
+   fs.renameSync(heldFile,heldAlias);fs.linkSync(outsideFile,heldFile);aliasInstalled=true;
   }
-  return (originalReadSync as any)(...args);
+  return result;
+ };
+ (fs as any).openSync=(candidate:any,...args:any[])=>{
+  if(path.resolve(String(candidate))===path.resolve(heldFile))pathOpenAttempts++;
+  return(originalOpenSync as any)(candidate,...args);
  };
  try{
   const outcome=await Promise.allSettled([runtime.agent.dispatch({name:'read_file',args:{path:'notes/public.txt'}})]);
-  (fs as any).readSync=originalReadSync;
-  assert.equal(readAttempted,true,'the replacement attempt runs immediately before the actual descriptor read');
-  assert.equal(aliasInstalled||aliasBlocked,true);
-  if(aliasInstalled){
-   assert.equal(outcome[0]?.status,'rejected');
-   assert.match(String((outcome[0] as PromiseRejectedResult).reason),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
-   assert.equal(runtime.evidence().at(-1)?.execution_status,'FAILED');
-   assert.equal(runtime.evidence().some(event=>event.execution_status==='SUCCEEDED'),false);
-  }else{
-   assert.equal(aliasBlocked,true);
-   assert.deepEqual(outcome[0],{status:'fulfilled',value:{content:'PUBLIC_HELD_FILE_FIXTURE'}});
-   assert.equal(runtime.evidence().at(-1)?.execution_status,'SUCCEEDED');
-  }
-  assert.equal(fs.readFileSync(path.join(aliasInstalled?heldNotes:notes,'public.txt'),'utf8'),'PUBLIC_HELD_FILE_FIXTURE');
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;
+  assert.equal(aliasInstalled,true,'the outside hard-link alias is installed after the final pre-read name check');
+  assert.equal(pathOpenAttempts,0,'the protected read never reopens the mutable absolute pathname');
+  assert.equal(outcome[0]?.status,'rejected','a replaced registration path must fail closed');
+  assert.match(String((outcome[0] as PromiseRejectedResult).reason),/GATEWAY_EXECUTION_FAILED_EFFECTS_NOT_ROLLED_BACK/);
+  assert.equal(JSON.stringify(outcome).includes('OUTSIDE_ALIAS_SENTINEL'),false);
+  assert.equal(runtime.evidence().at(-1)?.execution_status,'FAILED');
+  assert.equal(runtime.evidence().some(event=>event.execution_status==='SUCCEEDED'),false);
+  assert.equal(fs.readFileSync(heldAlias,'utf8'),'PUBLIC_HELD_FILE_FIXTURE');
   assert.equal(fs.readFileSync(outsideFile,'utf8'),'OUTSIDE_ALIAS_SENTINEL');
- }finally{(fs as any).readSync=originalReadSync;await runtime.close();await s.close();}
+ }finally{
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;
+  if(aliasInstalled){try{fs.unlinkSync(heldFile);}catch{}try{if(fs.existsSync(heldAlias)&&!fs.existsSync(heldFile))fs.renameSync(heldAlias,heldFile);}catch{}}
+  await runtime.close();await s.close();
+ }
 });
 test('an executor ignoring cancellation may cause a late side effect, which is not verified safe',async()=>{
  const s=await sinkFixture();let finished!:()=>void;const done=new Promise<void>(r=>finished=r);

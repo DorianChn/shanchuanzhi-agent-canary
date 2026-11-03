@@ -18,7 +18,7 @@ test('fixed-target MCP child process returns only registered file content and de
     cwd:process.cwd(),stderr:'pipe',
   });
   const client=new Client({name:'agent-canary-protected-mcp-test',version:'1.0.0'});
-  let stderr='',parentMoved=false;transport.stderr?.on('data',(chunk:Buffer)=>{stderr+=chunk.toString('utf8');});
+  let stderr='',parentMoved=false,targetMoved=false,hardLinkAlias=false;transport.stderr?.on('data',(chunk:Buffer)=>{stderr+=chunk.toString('utf8');});
   try{
     await client.connect(transport);
     const listed=await client.listTools(),reader=listed.tools.find(tool=>tool.name==='read_file');
@@ -43,6 +43,9 @@ test('fixed-target MCP child process returns only registered file content and de
       const code=(error as NodeJS.ErrnoException).code;
       assert.equal(process.platform,'win32','only the Windows host may prevent replacement through its live file handle');
       assert.ok(code==='EPERM'||code==='EACCES'||code==='EBUSY',`unexpected parent replacement error: ${code}; ${stderr.slice(-1000)}`);
+      fs.renameSync(target,`${target}.held`);targetMoved=true;
+      try{fs.linkSync(outsideTarget,target);hardLinkAlias=true;}
+      catch(linkError){fs.renameSync(`${target}.held`,target);targetMoved=false;throw linkError;}
     }
     let replacementOutcome:string;
     if(parentMoved){
@@ -52,11 +55,11 @@ test('fixed-target MCP child process returns only registered file content and de
       assert.equal(JSON.stringify(alias).includes(outsideContent),false);
       replacementOutcome='filesystem replacement succeeded; the live MCP route denied it without returning the outside canary';
     }else{
-      const stillBound=await client.callTool({name:'read_file',arguments:{path:'notes/brief.txt'}});
-      assert.equal(stillBound.isError,undefined,'when Windows prevents the directory rename, the held target remains readable');
-      assert.ok(JSON.stringify(stillBound).includes(safeContent));
-      assert.equal(JSON.stringify(stillBound).includes(outsideContent),false);
-      replacementOutcome='Windows denied parent rename while the target handle was live; the MCP route still returned only the registered file';
+      assert.equal(hardLinkAlias,true,'if the OS blocks a parent rename, the test must replace the leaf with an outside hard-link alias');
+      const alias=await client.callTool({name:'read_file',arguments:{path:'notes/brief.txt'}});
+      assert.equal(alias.isError,true,'the live MCP route must deny a registered target replaced by an outside hard-link alias');
+      assert.equal(JSON.stringify(alias).includes(outsideContent),false);
+      replacementOutcome='Windows denied parent rename; the live MCP route denied a leaf hard-link replacement without returning the outside canary';
     }
     t.diagnostic(replacementOutcome);
   }finally{
@@ -65,6 +68,8 @@ test('fixed-target MCP child process returns only registered file content and de
       try{if(fs.lstatSync(notes).isSymbolicLink())fs.unlinkSync(notes);}catch{}
       try{if(fs.existsSync(notesHeld)&&!fs.existsSync(notes))fs.renameSync(notesHeld,notes);}catch{}
     }
+    if(hardLinkAlias)try{fs.unlinkSync(target);}catch{}
+    if(targetMoved)try{if(fs.existsSync(`${target}.held`)&&!fs.existsSync(target))fs.renameSync(`${target}.held`,target);}catch{}
     fs.rmSync(workspace,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});
   }
 });
