@@ -67,3 +67,54 @@ test('gateway rejects a parent junction installed between path validation and fi
   assert.equal(workspaceAfter,'AUTHORIZED_WORKSPACE_FIXTURE');
   assert.equal(outsideAfter,'SYNTHETIC_OUTSIDE_SENTINEL');
 });
+
+test('gateway never reopens a held target through its mutable absolute pathname',async()=>{
+ const parent=fs.mkdtempSync(path.join(home,'gateway-held-read-alias-race-'));
+ const root=path.join(parent,'workspace'),outside=path.join(parent,'outside');
+ const target=path.join(root,'public.txt'),heldTarget=path.join(root,'public-held.txt'),outsideTarget=path.join(outside,'public.txt');
+ fs.mkdirSync(root,{recursive:true});fs.mkdirSync(outside,{recursive:true});
+ fs.writeFileSync(target,'AUTHORIZED_WORKSPACE_FIXTURE');fs.writeFileSync(outsideTarget,'SYNTHETIC_OUTSIDE_SENTINEL');
+ const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
+ const targetKey=path.resolve(target).toLowerCase();
+ let targetLstatCalls=0,pathOpenAttempts=0,readBytes=0,aliasInstalled=false,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,rejection:unknown,workspaceAfter='',outsideAfter='';
+ const sameTargetPath=(candidate:unknown)=>typeof candidate==='string'&&(process.platform==='win32'?path.resolve(candidate).toLowerCase()===targetKey:path.resolve(candidate)===path.resolve(target));
+ const installAlias=()=>{fs.renameSync(target,heldTarget);fs.linkSync(outsideTarget,target);aliasInstalled=true;};
+ try{
+  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
+   if(sameTargetPath(candidate)){
+    targetLstatCalls++;
+    // If M1 has already acquired its handle, switch the name before its next check.
+    if(targetLstatCalls===2&&!aliasInstalled)installAlias();
+   }
+   return(originalLstatSync as any)(candidate,...args);
+  };
+  (fs as any).openSync=(candidate:any,...args:any[])=>{
+   if(sameTargetPath(candidate)){
+    pathOpenAttempts++;
+    // Reproduce the vulnerable boundary: replace the target just before a
+    // normal path-based open follows its name to the outside hard-link alias.
+    if(!aliasInstalled)installAlias();
+   }
+   return(originalOpenSync as any)(candidate,...args);
+  };
+  (fs as any).readSync=(fd:number,...args:any[])=>{
+   const count=(originalReadSync as any)(fd,...args);
+   if(count>0)readBytes+=count;
+   return count;
+  };
+  try{
+   runtime=createTrustedExecutionGateway({agentId:'held-read-alias-race',guard:createAgentGuard({alert:false}),workspaceRoot:root,files:[{path:'public.txt'}],evidence:new EvidenceRecorder()});
+  }catch(error){rejection=error;}
+ }finally{
+  (fs as any).lstatSync=originalLstatSync;(fs as any).openSync=originalOpenSync;(fs as any).readSync=originalReadSync;
+  if(aliasInstalled){try{fs.unlinkSync(target);}catch{}try{if(fs.existsSync(heldTarget)&&!fs.existsSync(target))fs.renameSync(heldTarget,target);}catch{}}
+  await runtime?.close();
+  workspaceAfter=fs.readFileSync(target,'utf8');outsideAfter=fs.readFileSync(outsideTarget,'utf8');fs.rmSync(parent,{recursive:true,force:true});
+ }
+ assert.ok(aliasInstalled,`the test must replace the target after the held handle is acquired (lstat=${targetLstatCalls}, pathOpens=${pathOpenAttempts}, rejection=${String(rejection)})`);
+ assert.ok(rejection,'Gateway must reject a target whose registered name changed');
+ assert.equal(pathOpenAttempts,0,'M1 must not reopen the resource by its mutable absolute path');
+ assert.equal(readBytes,0,'registration must not read bytes through the replaced name');
+ assert.equal(workspaceAfter,'AUTHORIZED_WORKSPACE_FIXTURE');
+ assert.equal(outsideAfter,'SYNTHETIC_OUTSIDE_SENTINEL');
+});
