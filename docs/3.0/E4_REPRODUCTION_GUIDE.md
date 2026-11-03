@@ -11,6 +11,19 @@ This guide prepares an independent, auditable reproduction. Running the script y
 
 The automation's `--artifact` option hashes the supplied file only. It does not execute or install it. The operator installs the package manually inside the isolated VM and records the observed installed version in the VM receipt.
 
+### Cross-platform Linux source check (separate from product E4)
+
+For the project's Linux regression, use a separate Ubuntu 24.04 environment and the same frozen source commit. Record the OS/kernel and Node/npm versions, the exact commit/tree, exit codes, failures and skips:
+
+```bash
+git checkout --detach <FROZEN_COMMIT_SHA>
+npm ci
+npm run verify
+node examples/sdk/quick-start.mjs
+```
+
+Keep this result separate from the Windows installed-product matrix. A Linux source pass does not establish Windows installer acceptance or independent product E4.
+
 ## 2. Prepare an independent Windows environment
 
 - Use a newly provisioned Windows 11 VM from known installation media or a clean provider image. Record the image/media SHA-256, Windows edition/build, VM provider, clean snapshot identifier, and install time.

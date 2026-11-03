@@ -60,7 +60,7 @@ export class GatewayDeniedError extends Error {
 }
 type FileSnapshot={dev:bigint;ino:bigint;birthtimeNs:bigint;ctimeNs:bigint;mtimeNs:bigint;size:bigint};
 type ResourceMetadata={descriptor:Readonly<GatewayFile>;protectedPath:boolean;syntheticDecoy:boolean;syntheticDecoyContent:string|null};
-type Resource=ResourceMetadata&({fd:null;absolute:null;secureHandle:null;relative:null;contentTag:null}|(FileSnapshot&{fd:number;absolute:string;secureHandle:SecureFileHandle;relative:string;contentTag:string|null}));
+type Resource=ResourceMetadata&({absolute:null;secureHandle:null;relative:null;contentTag:null}|(FileSnapshot&{absolute:string;secureHandle:SecureFileHandle;relative:string;contentTag:string|null}));
 type FileReadCapabilityRecord={owner:symbol;toolName:string;pathArg:string;relativePath:string;resource:Resource};
 const fileReadCapabilityRecords=new WeakMap<object,FileReadCapabilityRecord>();
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
@@ -161,13 +161,13 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       // The proof already carries synthetic content in memory. Never resolve,
       // stat, open, or retain the protected-looking decoy pathname.
       if(syntheticDecoyProof){
-        resources.set(relative,{descriptor:Object.freeze({...f}),fd:null,absolute:null,secureHandle:null,relative:null,contentTag:null,protectedPath:true,syntheticDecoy:true,syntheticDecoyContent:syntheticDecoyProof.content});
+        resources.set(relative,{descriptor:Object.freeze({...f}),absolute:null,secureHandle:null,relative:null,contentTag:null,protectedPath:true,syntheticDecoy:true,syntheticDecoyContent:syntheticDecoyProof.content});
         continue;
       }
       // Keep real protected targets as deny-only entries. Do not resolve, stat,
       // open, or retain their files.
       if(protectedPath){
-        resources.set(relative,{descriptor:Object.freeze({...f}),fd:null,absolute:null,secureHandle:null,relative:null,contentTag:null,protectedPath:true,syntheticDecoy:false,syntheticDecoyContent:null});
+        resources.set(relative,{descriptor:Object.freeze({...f}),absolute:null,secureHandle:null,relative:null,contentTag:null,protectedPath:true,syntheticDecoy:false,syntheticDecoyContent:null});
         continue;
       }
       const absolute=path.join(root,relative),real=fs.realpathSync.native(absolute),rel=path.relative(root,real);
@@ -179,20 +179,13 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       // Gateway construction. Reject a replacement at this boundary before
       // opening or hashing the replacement bytes.
       if(expectedIdentity&&!sameFileAtOpen(expectedIdentity,before))throw Error('GATEWAY_RESOURCE_CHANGED');
-      // This OS-relative open is authoritative for workspace containment. The
-      // ordinary Node fd below is accepted only if fstat proves it is the same
-      // file object as this no-follow handle; no bytes are read before that check.
-      const secureHandle=secureWorkspace.openFile(relative);let secureRetained=false,fd:number|undefined;
+      // The OS-relative no-follow handle is the only handle used for identity
+      // checks and reads; do not reopen the target through its absolute path.
+      const secureHandle=secureWorkspace.openFile(relative);let secureRetained=false;
       try{
         const securelyOpened=secureHandle.stat();
         if(securelyOpened.kind!=='file'||securelyOpened.nlink!==1n||securelyOpened.size>65_536n||!sameFileAtOpen(before,securelyOpened)||expectedIdentity&&!sameFileAtOpen(expectedIdentity,securelyOpened))throw Error('GATEWAY_RESOURCE_CHANGED');
-        // O_NONBLOCK prevents a regular-file-to-FIFO swap between identity
-        // verification and the Node fd open from hanging the constructor.
-        const nonBlocking=process.platform==='win32'?0:fs.constants.O_NONBLOCK;
-        if(!Number.isInteger(nonBlocking))throw Error('GATEWAY_NONBLOCK_OPEN_UNAVAILABLE');
-        const openedFd=fs.openSync(absolute,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW??0)|nonBlocking);fd=openedFd;
-        const after=fs.fstatSync(openedFd,{bigint:true});
-        if(!after.isFile()||after.nlink!==1n||after.size>65_536n||!sameFileAtOpen(securelyOpened,after)||expectedIdentity&&!sameFileAtOpen(expectedIdentity,after))throw Error('GATEWAY_RESOURCE_CHANGED');
+        const after=securelyOpened;
         // Re-resolve the pathname after open as well: its parent may have become
         // a symlink/junction after the initial canonicalization but before lstat.
         const bound=fs.lstatSync(absolute,{bigint:true});
@@ -206,18 +199,17 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
           const content=Buffer.alloc(Number(after.size));
           try{
             let offset=0;
-            while(offset<content.length){const n=fs.readSync(openedFd,content,offset,content.length-offset,offset);if(!n)throw Error('GATEWAY_RESOURCE_CHANGED');offset+=n;}
+            while(offset<content.length){const chunk=secureHandle.readAt(offset,content.length-offset);try{if(!chunk.length)throw Error('GATEWAY_RESOURCE_CHANGED');chunk.copy(content,offset);offset+=chunk.length;}finally{chunk.fill(0);}}
             integrityTag=contentTag(content);
           }finally{content.fill(0);}
-          const afterFingerprint=fs.fstatSync(openedFd,{bigint:true}),secureAfterFingerprint=secureHandle.stat(),boundAfterFingerprint=fs.lstatSync(absolute,{bigint:true});
-          if(!sameFileAtOpen(after,afterFingerprint)||!sameFileAtOpen(after,secureAfterFingerprint)||!boundAfterFingerprint.isFile()||boundAfterFingerprint.isSymbolicLink()||boundAfterFingerprint.nlink!==1n||!sameFileAtOpen(afterFingerprint,boundAfterFingerprint)||fs.realpathSync.native(absolute)!==absolute)throw Error('GATEWAY_RESOURCE_CHANGED');
+          const afterFingerprint=secureHandle.stat(),boundAfterFingerprint=fs.lstatSync(absolute,{bigint:true});
+          if(!sameFileAtOpen(after,afterFingerprint)||!boundAfterFingerprint.isFile()||boundAfterFingerprint.isSymbolicLink()||boundAfterFingerprint.nlink!==1n||!sameFileAtOpen(afterFingerprint,boundAfterFingerprint)||fs.realpathSync.native(absolute)!==absolute)throw Error('GATEWAY_RESOURCE_CHANGED');
         }
         if(!workspaceStillBound())throw Error('GATEWAY_WORKSPACE_CHANGED');
-        resources.set(relative,{descriptor:Object.freeze({...f}),fd:openedFd,secureHandle,relative,dev:after.dev,ino:after.ino,birthtimeNs:after.birthtimeNs,ctimeNs:after.ctimeNs,mtimeNs:after.mtimeNs,size:after.size,absolute,contentTag:integrityTag,protectedPath:false,syntheticDecoy:false,syntheticDecoyContent:null});
-        secureRetained=true;fd=undefined;
+        resources.set(relative,{descriptor:Object.freeze({...f}),secureHandle,relative,dev:after.dev,ino:after.ino,birthtimeNs:after.birthtimeNs,ctimeNs:after.ctimeNs,mtimeNs:after.mtimeNs,size:after.size,absolute,contentTag:integrityTag,protectedPath:false,syntheticDecoy:false,syntheticDecoyContent:null});
+        secureRetained=true;
       }finally{
-        // Until registration succeeds, this scope owns both handles and closes them on failure.
-        if(!secureRetained){if(fd!==undefined)try{fs.closeSync(fd);}catch{}secureHandle.close();}
+        if(!secureRetained)secureHandle.close();
       }
     }
     for(const [name,c]of Object.entries(options.commands??{})){
@@ -225,7 +217,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       commands.set(name,Object.freeze({...c,args:Object.freeze([...c.args])}));
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
-  }catch(error){for(const r of resources.values())if(r.fd!==null){try{fs.closeSync(r.fd);}catch{}try{r.secureHandle.close();}catch{}}try{secureWorkspace.close();}catch{}throw error;}
+  }catch(error){for(const r of resources.values())if(r.secureHandle!==null){try{r.secureHandle.close();}catch{}}try{secureWorkspace.close();}catch{}throw error;}
   let closed=false,closePromise:Promise<void>|undefined,unsubscribeQuarantine=()=>{};
   const capabilityOwner=Symbol('gateway-file-read-owner'),issuedCapabilities=new Set<object>();
   const activeControllers=new Set<AbortController>();
@@ -257,12 +249,12 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   function stillBound(r:Resource):boolean{
     try{
       if(!workspaceStillBound())return false;
-      if(r.syntheticDecoy)return r.fd===null&&r.absolute===null&&r.secureHandle===null&&r.relative===null&&r.syntheticDecoyContent!==null;
-      if(r.fd===null||r.absolute===null||r.secureHandle===null||r.relative===null)return false;
+      if(r.syntheticDecoy)return r.absolute===null&&r.secureHandle===null&&r.relative===null&&r.syntheticDecoyContent!==null;
+      if(r.absolute===null||r.secureHandle===null||r.relative===null)return false;
       const named=secureWorkspace.openFile(r.relative);
       try{
-        const securelyNamed=named.stat(),heldSecure=r.secureHandle.stat(),heldNode=fs.fstatSync(r.fd,{bigint:true});
-        return securelyNamed.kind==='file'&&securelyNamed.nlink===1n&&heldNode.isFile()&&heldNode.nlink===1n&&sameFileAtOpen(r,securelyNamed)&&sameFileAtOpen(r,heldSecure)&&sameFileAtOpen(r,heldNode);
+        const securelyNamed=named.stat(),heldSecure=r.secureHandle.stat();
+        return securelyNamed.kind==='file'&&securelyNamed.nlink===1n&&heldSecure.kind==='file'&&heldSecure.nlink===1n&&sameFileAtOpen(r,securelyNamed)&&sameFileAtOpen(r,heldSecure);
       }finally{named.close();}
     }catch{return false;}
   }
@@ -365,13 +357,13 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     let timer:ReturnType<typeof setTimeout>|undefined,abortListener:(()=>void)|undefined,decoyReadId:string|undefined;
     try{
       const cancelled=new Promise<never>((_,reject)=>{abortListener=()=>reject(Error('GATEWAY_REQUEST_ABORTED'));abort.signal.addEventListener('abort',abortListener,{once:true});if(abort.signal.aborted)abortListener();});
-      // File effects are synchronous fd operations: quarantine cannot interleave in this JS turn.
+      // File effects are synchronous handle operations: quarantine cannot interleave in this JS turn.
       const perform=()=>{
         if(closed)throw Error('GATEWAY_CLOSED_OR_QUEUE_FULL');
         if(abort.signal.aborted)throw Error('GATEWAY_REQUEST_ABORTED');
         const finalGuard=options.guard.beforeToolCall(gatewayCall(r));
         if(!finalGuard.allowed){abortSession();throw Error('GATEWAY_GUARD_CHANGED_BEFORE_EFFECT');}
-        // Audit callbacks may yield a changed path. Reject the observed change before fd I/O.
+        // Audit callbacks may yield a changed path. Reject the observed change before handle I/O.
         // This narrows the window; it is not an atomic OS-wide path/operation transaction.
         if(r.name==='read_file'){
           const f=resource(r);if(!f||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_EFFECT');
@@ -384,14 +376,15 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
             // the corresponding sensitive-looking pathname is never read for content.
             text=f.syntheticDecoyContent;
           }else{
-            if(f.fd===null)throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');
-            const stat=fs.fstatSync(f.fd,{bigint:true});if(!stat.isFile()||stat.nlink!==1n||!sameFileAtOpen(f,stat))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');if(stat.size>65_536n)throw Error('GATEWAY_READ_LIMIT');
+            if(f.secureHandle===null)throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');
+            const stat=f.secureHandle.stat();if(stat.kind!=='file'||stat.nlink!==1n||!sameFileAtOpen(f,stat))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');if(stat.size>65_536n)throw Error('GATEWAY_READ_LIMIT');
             const buffer=Buffer.alloc(Number(stat.size));let offset=0;
             try{
-              while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
-              // Reads use only the already-held descriptor, so a path swap cannot redirect I/O.
+              while(offset<buffer.length){const chunk=f.secureHandle.readAt(offset,buffer.length-offset);try{if(!chunk.length)break;chunk.copy(buffer,offset);offset+=chunk.length;}finally{chunk.fill(0);}}
+              if(offset!==buffer.length)throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
+              // Reads use only the already-held secure handle, so a path swap cannot redirect I/O.
               // Recheck the frozen file version as well; changed bytes are never returned.
-              const afterRead=fs.fstatSync(f.fd,{bigint:true});
+              const afterRead=f.secureHandle.stat();
               if(!sameFileAtOpen(f,afterRead)||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
               if(f.contentTag!==null&&!timingSafeEqual(Buffer.from(contentTag(buffer.subarray(0,offset)),'hex'),Buffer.from(f.contentTag,'hex')))throw Error('GATEWAY_RESOURCE_CONTENT_CHANGED');
               text=buffer.subarray(0,offset).toString('utf8');
@@ -473,7 +466,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     const record=matchingFileReadCapability(capability,call,operation);
     if(!record)return Promise.reject(Error('GATEWAY_FILE_CAPABILITY_INVALID'));
     // Dispatch through the ordinary M1 boundary using the path bound at registration;
-    // policy, Guard, queue, and held-fd identity checks still run before the read.
+    // policy, Guard, queue, and held-handle identity checks still run before the read.
     return agent.dispatch({name:'read_file',args:{path:record.relativePath}},signal);
   }
   /** This object is a host capability; identity comes from possession, not model parameters. */
@@ -495,11 +488,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     const unsubscribe=unsubscribeQuarantine;unsubscribeQuarantine=()=>{};try{unsubscribe();}catch{}
     void history.tail.then(()=>{
       let failed=false;
-      for(const f of resources.values())if(f.fd!==null&&f.fd>=0){
-        const fd=f.fd;f.fd=-1;
-        try{fs.closeSync(fd);}catch{failed=true;}
-        try{f.secureHandle.close();}catch{failed=true;}
-      }
+      for(const f of resources.values())if(f.secureHandle!==null)try{f.secureHandle.close();}catch{failed=true;}
       try{secureWorkspace.close();}catch{failed=true;}
       if(failed)rejectClose(new Error('GATEWAY_RESOURCE_CLOSE_FAILED'));
       else resolveClose();
@@ -511,7 +500,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     if(typeof unsubscribe!=='function')throw Error('GUARD_QUARANTINE_DISPOSER_INVALID');
     unsubscribeQuarantine=unsubscribe;
   }catch{
-    for(const f of resources.values())if(f.fd!==null&&f.fd>=0){try{fs.closeSync(f.fd);}catch{}try{f.secureHandle.close();}catch{}f.fd=-1;}
+    for(const f of resources.values())if(f.secureHandle!==null)try{f.secureHandle.close();}catch{}
     try{secureWorkspace.close();}catch{}
     throw Error('GATEWAY_QUARANTINE_SUBSCRIPTION_FAILED');
   }

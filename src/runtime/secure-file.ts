@@ -8,6 +8,7 @@ export type SecureFileStat={
 };
 export interface SecureFileHandle {
   stat():SecureFileStat;
+  readAt(offset:number,length:number):Buffer;
   close():void;
 }
 export interface SecureDirectoryHandle {
@@ -48,6 +49,8 @@ const windows=(()=>{
   const CloseHandle=kernel32.func('__stdcall','CloseHandle','bool',['void *']);
   const GetLastError=kernel32.func('__stdcall','GetLastError','uint32',[]);
   const NtOpenFile=ntdll.func(`int32 __stdcall NtOpenFile(_Out_ void **FileHandle,uint32 DesiredAccess,${objectAttributesName} *ObjectAttributes,_Out_ ${ioStatusBlockName} *IoStatusBlock,uint32 ShareAccess,uint32 OpenOptions)`);
+  const SetFilePointerEx=kernel32.func('__stdcall','SetFilePointerEx','bool',['void *','int64','void *','uint32']);
+  const ReadFile=kernel32.func('bool __stdcall ReadFile(void *handle,_Out_ uint8_t *buffer,uint32 requested,_Out_ uint32_t *read,void *overlapped)');
 
   const status=(message:string)=>Error(`${message}:win32=${GetLastError()}`);
   const close=(handle:bigint)=>{if(!CloseHandle(handle))throw status('SECURE_FILE_CLOSE_FAILED');};
@@ -84,7 +87,20 @@ const windows=(()=>{
     if(result<0||isInvalidHandle(handle))throw Error(`SECURE_RELATIVE_OPEN_FAILED:ntstatus=0x${(result>>>0).toString(16)}`);
     return handle!;
   };
-  return{stat,close,openRoot,openRelative};
+  const readAt=(handle:bigint,offset:number,length:number)=>{
+    if(!Number.isSafeInteger(offset)||offset<0||!Number.isSafeInteger(length)||length<0||length>65_536||offset+length>65_536)throw Error('SECURE_FILE_READ_RANGE_INVALID');
+    const buffer=Buffer.alloc(length);
+    if(length===0)return buffer;
+    try{
+      if(!SetFilePointerEx(handle,BigInt(offset),null,0))throw status('SECURE_FILE_SEEK_FAILED');
+      const bytesRead=[null];
+      if(!ReadFile(handle,buffer,length,bytesRead,null))throw status('SECURE_FILE_READ_FAILED');
+      const count=Number(bytesRead[0]);
+      if(!Number.isInteger(count)||count<0||count>length)throw Error('SECURE_FILE_READ_COUNT_INVALID');
+      return buffer.subarray(0,count);
+    }catch(error){buffer.fill(0);throw error;}
+  };
+  return{stat,close,openRoot,openRelative,readAt};
 })();
 
 const posix=(()=>{
@@ -146,6 +162,7 @@ export function openSecureWorkspace(rootPath:string):SecureDirectoryHandle{
           let fileClosed=false;
           return{
             stat(){if(fileClosed)throw Error('SECURE_FILE_CLOSED');return api.stat(opened);},
+            readAt(offset,length){if(fileClosed)throw Error('SECURE_FILE_CLOSED');return api.readAt(opened,offset,length);},
             close(){if(fileClosed)return;fileClosed=true;api.close(opened);},
           };
         }finally{
@@ -183,6 +200,13 @@ export function openSecureWorkspace(rootPath:string):SecureDirectoryHandle{
         fileFd=undefined;let fileClosed=false;
         return{
           stat(){if(fileClosed)throw Error('SECURE_FILE_CLOSED');return api.stat(opened);},
+          readAt(offset,length){
+            if(fileClosed)throw Error('SECURE_FILE_CLOSED');
+            if(!Number.isSafeInteger(offset)||offset<0||!Number.isSafeInteger(length)||length<0||length>65_536||offset+length>65_536)throw Error('SECURE_FILE_READ_RANGE_INVALID');
+            const buffer=Buffer.alloc(length);if(length===0)return buffer;
+            try{const count=fs.readSync(opened,buffer,0,length,offset);return buffer.subarray(0,count);}
+            catch(error){buffer.fill(0);throw error;}
+          },
           close(){if(fileClosed)return;fileClosed=true;fs.closeSync(opened);},
         };
       }finally{
