@@ -61,13 +61,14 @@ test('path replaced after the final name check cannot redirect the held-handle r
  fs.mkdirSync(notes,{recursive:true});fs.mkdirSync(outside);
  const heldFile=path.join(notes,'public.txt'),outsideFile=path.join(outside,'public.txt');
  fs.writeFileSync(heldFile,'PUBLIC_HELD_FILE_FIXTURE');fs.writeFileSync(outsideFile,'OUTSIDE_ALIAS_SENTINEL');
+ const canonicalHeldFile=fs.realpathSync.native(heldFile);
  const heldAlias=heldFile+'.held',recorder=new EvidenceRecorder(),record=recorder.record.bind(recorder);
  const runtime=createTrustedExecutionGateway({agentId:'held-handle-read-race',guard:s.guard,workspaceRoot:workspace,files:[{path:'notes/public.txt'}],evidence:recorder});
  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync;let running=false,aliasInstalled=false,pathOpenAttempts=0;
  recorder.record=(event:any)=>{if(event.execution_status==='RUNNING')running=true;return record(event);};
  (fs as any).lstatSync=(candidate:any,...args:any[])=>{
   const result=(originalLstatSync as any)(candidate,...args);
-  if(running&&!aliasInstalled&&path.resolve(String(candidate))===path.resolve(heldFile)){
+  if(running&&!aliasInstalled&&path.resolve(String(candidate))===path.resolve(canonicalHeldFile)){
    fs.renameSync(heldFile,heldAlias);fs.linkSync(outsideFile,heldFile);aliasInstalled=true;
   }
   return result;

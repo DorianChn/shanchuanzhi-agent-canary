@@ -75,9 +75,9 @@ test('gateway never reopens a held target through its mutable absolute pathname'
  fs.mkdirSync(root,{recursive:true});fs.mkdirSync(outside,{recursive:true});
  fs.writeFileSync(target,'AUTHORIZED_WORKSPACE_FIXTURE');fs.writeFileSync(outsideTarget,'SYNTHETIC_OUTSIDE_SENTINEL');
  const originalLstatSync=fs.lstatSync,originalOpenSync=fs.openSync,originalReadSync=fs.readSync;
- const targetKey=path.resolve(target).toLowerCase();
+ const targetKey=path.resolve(fs.realpathSync.native(target)).toLowerCase();
  let targetLstatCalls=0,pathOpenAttempts=0,readBytes=0,aliasInstalled=false,runtime:ReturnType<typeof createTrustedExecutionGateway>|undefined,rejection:unknown,workspaceAfter='',outsideAfter='';
- const sameTargetPath=(candidate:unknown)=>typeof candidate==='string'&&(process.platform==='win32'?path.resolve(candidate).toLowerCase()===targetKey:path.resolve(candidate)===path.resolve(target));
+ const sameTargetPath=(candidate:unknown)=>typeof candidate==='string'&&(process.platform==='win32'?path.resolve(candidate).toLowerCase()===targetKey:path.resolve(candidate)===path.resolve(fs.realpathSync.native(target)));
  const installAlias=()=>{fs.renameSync(target,heldTarget);fs.linkSync(outsideTarget,target);aliasInstalled=true;};
  try{
   (fs as any).lstatSync=(candidate:any,...args:any[])=>{
