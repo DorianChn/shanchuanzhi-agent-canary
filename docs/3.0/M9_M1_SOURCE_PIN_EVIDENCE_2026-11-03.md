@@ -11,6 +11,7 @@ Verification for the exact M1 PR head:
 - CI run [41555470832](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41555470832) passed the Windows, Ubuntu, and macOS Node 20/22 matrix, Docker build, sponsor smoke, and package smoke.
 - Windows wrapper and Community package evidence run [41555470677](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41555470677) passed its Ubuntu/Windows wrapper regressions and Windows Community package build/evidence upload.
 - Windows local `npm run verify` passed: build, 565 passing tests, 19 platform skips, and package smoke for 111 files.
+- M9 exact-source composition run [41556895068](https://github.com/DorianChn/shanchuanzhi-agent-canary/actions/runs/41556895068) passed on Ubuntu and Windows for M9 source head `c2aa22016cb920a3df6a37259c44191a3de8938f` with the exact M1 PR #170 pin above.
 
 ## Previous M9 source pin
 
@@ -22,4 +23,4 @@ At prior M9 source commit `58320b795568b387850bae8b1c19e9a6e86c8887`, the manife
 
 ## Evidence limits
 
-The M1 checks establish cross-platform M1 CI and the recorded Windows package build. M9's new manifest pin still requires its own exact-source composition checks. These checks do not establish independent product E4, clean-VM installer acceptance, protection for native Shell or arbitrary callbacks, or an atomic operating-system path-resolution guarantee. Issue #52 remains open for the remaining host and TOCTOU acceptance requirements.
+The recorded M1 and M9 checks establish cross-platform source-level CI, exact-source composition, and the Windows package build. They do not establish independent product E4, clean-VM installer acceptance, protection for native Shell or arbitrary callbacks, or an atomic operating-system path-resolution guarantee. Issue #52 remains open for the remaining host and TOCTOU acceptance requirements.
