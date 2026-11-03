@@ -2,6 +2,7 @@
 /** Agent Canary 3.0 command-line entry for the open-source mainline. */
 import {Command} from 'commander';
 import {serve} from './server.js';
+import {serveProtectedFileMCP} from './protected-mcp.js';
 import {runSelfTest} from './self-test.js';
 import {registerAICommands} from './ai/cli.js';
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';
@@ -18,6 +19,7 @@ program.version(productVersion);
 program.command('build-info').description('Product/build identity; installed CLI does not imply global protection').action(()=>console.log(JSON.stringify(identity,null,2)));
 program.command('doctor').description('Offline health check; does not activate third-party native protection').action(async()=>{const selfTest=await runSelfTest();console.log(JSON.stringify({identity,selfTest,installation:'CLI_STARTED',configuration:'NOT_VERIFIED',nativeProtection:'NOT_VERIFIED',scope:'SDK/Gateway callbacks must be explicitly registered by a trusted host'},null,2));if(!selfTest.passed)process.exitCode=1;});
 program.command('serve').option('--stdio','MCP stdio transport').action(serve);
+program.command('serve-protected').description('Run an opt-in MCP host with fixed, Gateway-protected file reads').requiredOption('--workspace-root <path>','Trusted workspace root').requiredOption('--path <relative-path>','Host-registered relative file path; repeat up to 32 times',(value:string,previous:string[]=[])=>previous.concat(value)).action(async options=>{await serveProtectedFileMCP({workspaceRoot:options.workspaceRoot,paths:options.path});});
 program.command('self-test').option('--json').action(async opts=>{const r=await runSelfTest();console.log(opts.json?JSON.stringify(r):JSON.stringify(r,null,2));if(!r.passed)process.exitCode=1;});
 program.command('integrate').description('Preview/install one MCP entry; native client tools remain OUT_OF_SCOPE').option('--detect','Only inspect client directory metadata').option('--agent <id>','claude, cursor, cline CLI, codex, custom','custom').option('--project <path>','Explicit trusted project directory').option('--apply','Apply after preview, preserving a private backup').option('--protected-demo','Register virtual guarded MCP callbacks instead of only decoys').option('--restore <receipt>','Restore unchanged config using local install receipt').action(opts=>{
  if(opts.detect){console.log(JSON.stringify(detectAgents(),null,2));return;}

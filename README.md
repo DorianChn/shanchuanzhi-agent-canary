@@ -6,6 +6,7 @@ Agent Canary 3.0 is an open-source MCP and SDK security toolkit for AI agents. I
 
 - [GitHub release](https://github.com/DorianChn/shanchuanzhi-agent-canary/releases/tag/v3.0.0)
 - [Project website and test results](https://dorianchn.github.io/shanchuanzhi-agent-canary/)
+- [Getting started from a pinned source snapshot](GETTING_STARTED.md)
 - [Chinese documentation](README.zh-CN.md)
 - [Architecture and acceptance report](docs/3.0/FINAL_3_0_ACCEPTANCE.md)
 - [Source and issues](https://github.com/DorianChn/shanchuanzhi-agent-canary)
@@ -21,6 +22,14 @@ npm install --global @dorianchn/agent-canary@3.0.0
 agent-canary --help
 ```
 
+If authentication fails, check the status before changing credentials:
+
+- `401`: confirm the token is a personal access token (classic) with `read:packages`; enter your GitHub username and token when `npm login` prompts. npm 9 and newer require `--auth-type=legacy` for this prompt-based login.
+- `403`: confirm your account can access the package and authorize the token for SSO if the organization requires it.
+- `404` or a missing version: check the package name and version, then run `npm config get @dorianchn:registry` and confirm it prints `https://npm.pkg.github.com`.
+
+GitHub Packages requires authentication for public packages too. Never commit a token to the repository or paste it into logs or chat; see [GitHub's npm registry authentication guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry). To build from a pinned source snapshot without logging in to the package registry, follow [Getting started](GETTING_STARTED.md).
+
 The Docker image is published to GitHub Container Registry:
 
 ```sh
@@ -28,13 +37,28 @@ docker pull ghcr.io/dorianchn/shanchuanzhi-agent-canary:3.0.0
 docker run --rm ghcr.io/dorianchn/shanchuanzhi-agent-canary:3.0.0 --help
 ```
 
-To run the MCP server over stdio, use agent-canary serve --stdio or run the container with -i and the same arguments.
+To run the MCP server over stdio, use `agent-canary serve --stdio` or run the container with `-i` and the same arguments. A minimal MCP client entry after global installation is:
+
+```json
+{
+  "mcpServers": {
+    "agent-canary": {
+      "command": "agent-canary",
+      "args": ["serve", "--stdio"]
+    }
+  }
+}
+```
+
+The client-specific config file location varies. Agent Canary protects only callbacks routed through this server; it does not intercept the client's native tools.
 
 ## Use the SDK
 
 ```ts
 import { createTrustedExecutionGateway } from "@dorianchn/agent-canary/sdk";
 ```
+
+For a runnable example that exercises an allowed read and a denied write, see the [SDK example in the Chinese README](README.zh-CN.md#sdk). The repository's automated test executes that example against the local Gateway.
 
 The host must register the callbacks it wants the gateway to protect. Agent Canary does not automatically control unrelated tools, processes, or native host capabilities.
 

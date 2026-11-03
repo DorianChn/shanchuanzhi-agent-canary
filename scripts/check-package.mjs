@@ -63,7 +63,7 @@ try {
   const packageFile = path.join(temp, pack.filename);
   const installDir = path.join(temp, "install");
   fs.mkdirSync(installDir);
-  runNpm(["install", "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
+  runNpm(["install", "--prefix", installDir, "--ignore-scripts", "--no-audit", "--no-fund", packageFile], installDir);
 
   const cli = path.join(installDir, "node_modules", "@dorianchn", "agent-canary", "dist", "competition.js");
   if (!fs.existsSync(cli)) fail("installed CLI entrypoint was not found");

@@ -9,8 +9,16 @@ import {SessionDataFlow} from '../dataflow.js';
 import {DataFlowTracker} from './dataflow.js';
 import {executePinnedJSONTool} from '../network-tool.js';
 import {canonicalJSON,EvidenceRecorder,type EvidenceDecision,type ExecutionStatus,type SideEffectVerification} from './evidence.js';
+import {openSecureWorkspace,type SecureFileHandle,type SecureFileStat} from './secure-file.js';
 
-export interface GatewayFile {path:string; writable?:boolean; approvalRequired?:boolean; sensitive?:boolean; decoyId?:string}
+export interface GatewayFile {
+  path:string;
+  /** @deprecated File writes are denied until a path-safe write primitive exists. */
+  writable?:boolean;
+  approvalRequired?:boolean;
+  sensitive?:boolean;
+  decoyId?:string;
+}
 export interface GatewayCommand {executable:string; args:readonly string[]; approvalRequired?:boolean}
 export interface GatewayOptions {
   agentId:string; guard:AgentGuard; workspaceRoot:string; files:readonly GatewayFile[];
@@ -24,20 +32,26 @@ export interface GatewayOptions {
 export class GatewayDeniedError extends Error {
   constructor(readonly reason:string,readonly requestId:string,readonly decision:EvidenceDecision='DENY'){super('GATEWAY_'+decision+':'+reason);}
 }
-type Resource={descriptor:Readonly<GatewayFile>;fd:number;dev:number;ino:number;absolute:string};
+type FileSnapshot=Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'|'ctimeNs'|'mtimeNs'|'size'>;
+type Resource={descriptor:Readonly<GatewayFile>}&FileSnapshot&{absolute:string;relative:string;secureHandle:SecureFileHandle};
 type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
-const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|id_rsa|id_ed25519|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
+const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
 const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
-const sameFile=(a:{dev:number;ino:number},b:{dev:number;ino:number})=>a.dev===b.dev&&a.ino===b.ino;
+const sameFileAtOpen=(a:FileSnapshot,b:FileSnapshot)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs&&a.ctimeNs===b.ctimeNs&&a.mtimeNs===b.mtimeNs&&a.size===b.size;
+const sameWorkspaceIdentity=(a:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>,b:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs;
+const trustedGatewayInstances=new WeakSet<object>();
+declare const trustedExecutionGatewayBrand:unique symbol;
+export interface TrustedExecutionGatewayReadHost {readonly [trustedExecutionGatewayBrand]:true;readonly agent:Readonly<{dispatch:(call:ToolCall,signal?:AbortSignal)=>Promise<unknown>}>}
+export function isTrustedExecutionGateway(value:unknown):value is TrustedExecutionGatewayReadHost{return typeof value==='object'&&value!==null&&trustedGatewayInstances.has(value as object);}
 // Host reconfiguration cannot reset provenance while retaining the same Guard identity.
 const sessionFlows=new WeakMap<AgentGuard,{flow:SessionDataFlow;provenance:DataFlowTracker;sensitiveObserved:boolean;queued:number;tail:Promise<unknown>}>();
 
 /** Capability-bound host runtime. No model-facing reset, approval or resource registration. */
 export function createTrustedExecutionGateway(options:GatewayOptions){
   if(!idPattern.test(options.agentId)||!idPattern.test(options.guard.sessionId)||!path.isAbsolute(options.workspaceRoot))throw Error('GATEWAY_ID_OR_ROOT_INVALID');
-  const root=fs.realpathSync(options.workspaceRoot),resources=new Map<string,Resource>();
+  const root=fs.realpathSync.native(options.workspaceRoot),resources=new Map<string,Resource>();
   const key=randomBytes(32),history=sessionFlows.get(options.guard)??{flow:new SessionDataFlow(),provenance:new DataFlowTracker(),sensitiveObserved:false,queued:0,tail:Promise.resolve()};
   sessionFlows.set(options.guard,history);const {flow,provenance}=history;
   const commands=new Map<string,Readonly<GatewayCommand>>();
@@ -45,26 +59,43 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   const origins=new Set((options.readOrigins??[]).map(o=>{const u=new URL(o);if(u.protocol!=='https:'||o!==u.origin||u.username||u.password)throw Error('GATEWAY_ORIGIN_INVALID');return o;}));
   const deadline=options.timeoutMs??10_000,reviewMs=options.reviewTimeoutMs??10_000,ttl=options.approvalTtlMs??60_000;
   for(const n of [deadline,reviewMs,ttl])if(!Number.isInteger(n)||n<1||n>180_000)throw Error('GATEWAY_TIMEOUT_INVALID');
+  const secureWorkspace=openSecureWorkspace(root);
+  let rootIdentity:SecureFileStat;
+  try{
+    rootIdentity=secureWorkspace.stat();const namedRoot=fs.lstatSync(root,{bigint:true});
+    if(rootIdentity.kind!=='directory'||!namedRoot.isDirectory()||namedRoot.isSymbolicLink()||!sameWorkspaceIdentity(rootIdentity,namedRoot)||fs.realpathSync.native(root)!==root)throw Error('GATEWAY_WORKSPACE_CHANGED');
+  }catch(error){try{secureWorkspace.close();}catch{}throw error;}
+  function workspaceStillBound():boolean{
+    try{const named=fs.lstatSync(root,{bigint:true}),held=secureWorkspace.stat();return named.isDirectory()&&!named.isSymbolicLink()&&sameWorkspaceIdentity(rootIdentity,named)&&sameWorkspaceIdentity(rootIdentity,held)&&fs.realpathSync.native(root)===root;}catch{return false;}
+  }
   try{
     for(const f of options.files){
       const relative=filePath(f.path);
       if(!relative||relative.includes('\0')||relative.includes(':')||path.isAbsolute(relative)||relative!==path.posix.normalize(relative)||relative.split('/').includes('..')||resources.has(relative))throw Error('GATEWAY_RESOURCE_INVALID');
-      const absolute=path.join(root,relative),real=fs.realpathSync(absolute),rel=path.relative(root,real);
+      if(!workspaceStillBound())throw Error('GATEWAY_WORKSPACE_CHANGED');
+      const absolute=path.join(root,relative),real=fs.realpathSync.native(absolute),rel=path.relative(root,real);
       if(rel==='..'||rel.startsWith('..'+path.sep)||path.isAbsolute(rel)||real!==absolute)throw Error('GATEWAY_RESOURCE_LINK_REJECTED');
-      const before=fs.lstatSync(absolute);
-      if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1||before.size>65_536)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
-      // Identity compared before any content access. Operations use the held fd afterwards.
-      const fd=fs.openSync(absolute,(f.writable?fs.constants.O_RDWR:fs.constants.O_RDONLY)|(fs.constants.O_NOFOLLOW??0));
-      const after=fs.fstatSync(fd);
-      if(!sameFile(before,after)){fs.closeSync(fd);throw Error('GATEWAY_RESOURCE_CHANGED');}
-      resources.set(relative,{descriptor:Object.freeze({...f}),fd,dev:after.dev,ino:after.ino,absolute});
+      const before=fs.lstatSync(absolute,{bigint:true});
+      if(!before.isFile()||before.isSymbolicLink()||before.nlink!==1n||before.size>65_536n)throw Error('GATEWAY_RESOURCE_TYPE_OR_SIZE');
+      const secureHandle=secureWorkspace.openFile(relative);let secureRetained=false;
+      try{
+        const securelyOpened=secureHandle.stat();
+        if(securelyOpened.kind!=='file'||securelyOpened.nlink!==1n||securelyOpened.size>65_536n||!sameFileAtOpen(before,securelyOpened))throw Error('GATEWAY_RESOURCE_CHANGED');
+        // Bind bytes to the no-follow handle; do not reopen this name through the mutable absolute path.
+        const bound=fs.lstatSync(absolute,{bigint:true});
+        if(!bound.isFile()||bound.isSymbolicLink()||bound.nlink!==1n||!sameFileAtOpen(securelyOpened,bound)||fs.realpathSync.native(absolute)!==absolute||!workspaceStillBound())throw Error('GATEWAY_RESOURCE_CHANGED');
+        resources.set(relative,{descriptor:Object.freeze({...f}),dev:securelyOpened.dev,ino:securelyOpened.ino,birthtimeNs:securelyOpened.birthtimeNs,ctimeNs:securelyOpened.ctimeNs,mtimeNs:securelyOpened.mtimeNs,size:securelyOpened.size,absolute,relative,secureHandle});
+        secureRetained=true;
+      }finally{
+        if(!secureRetained)try{secureHandle.close();}catch{}
+      }
     }
     for(const [name,c]of Object.entries(options.commands??{})){
       if(!idPattern.test(name)||!path.isAbsolute(c.executable)||!Array.isArray(c.args)||c.args.length>32||c.args.some(a=>typeof a!=='string'||a.length>4096||a.includes('\0')))throw Error('GATEWAY_COMMAND_INVALID');
       commands.set(name,Object.freeze({...c,args:Object.freeze([...c.args])}));
     }
     for(const [name,t]of mcp)if(!idPattern.test(name)||typeof t.execute!=='function'||typeof t.approvalRequired!=='boolean'||t.risk!==undefined&&!['READ_ONLY','WRITE','EXECUTE','NETWORK','SENSITIVE_DATA','DESTRUCTIVE'].includes(t.risk))throw Error('GATEWAY_MCP_INVALID');
-  }catch(error){for(const r of resources.values())fs.closeSync(r.fd);throw error;}
+  }catch(error){for(const r of resources.values())try{r.secureHandle.close();}catch{}try{secureWorkspace.close();}catch{}throw error;}
   let closed=false;
   const pending=new Map<string,{request:Request;expires:number}>();
   function serialize<T>(fn:()=>Promise<T>):Promise<T>{if(closed||history.queued>=64)return Promise.reject(Error('GATEWAY_CLOSED_OR_QUEUE_FULL'));history.queued++;const task=history.tail.then(fn).finally(()=>{history.queued--;});history.tail=task.catch(()=>{});return task;}
@@ -79,15 +110,24 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   function blocked(r:Request,reason:string,decision:EvidenceDecision='DENY'):never {audit(r,decision,reason,'NOT_STARTED','NOT_STARTED');throw new GatewayDeniedError(reason,r.id,decision);}
   function resource(r:Request):Resource|undefined{return typeof r.args.path==='string'?resources.get(filePath(r.args.path)):undefined;}
-  function stillBound(r:Resource):boolean{try{const named=fs.lstatSync(r.absolute),held=fs.fstatSync(r.fd);return named.isFile()&&!named.isSymbolicLink()&&named.nlink===1&&sameFile(r,named)&&sameFile(r,held)&&fs.realpathSync(r.absolute)===r.absolute;}catch{return false;}}
+  function stillBound(r:Resource):boolean{
+    try{
+      if(!workspaceStillBound())return false;
+      const named=secureWorkspace.openFile(r.relative);
+      try{
+        const securelyNamed=named.stat(),heldSecure=r.secureHandle.stat(),bound=fs.lstatSync(r.absolute,{bigint:true});
+        return securelyNamed.kind==='file'&&securelyNamed.nlink===1n&&heldSecure.kind==='file'&&heldSecure.nlink===1n&&bound.isFile()&&!bound.isSymbolicLink()&&bound.nlink===1n&&sameFileAtOpen(r,securelyNamed)&&sameFileAtOpen(r,heldSecure)&&sameFileAtOpen(r,bound)&&fs.realpathSync.native(r.absolute)===r.absolute;
+      }finally{named.close();}
+    }catch{return false;}
+  }
   function policy(r:Request):{decision:EvidenceDecision;reason:string}{
     const schemas:Record<string,string[]>={read_file:['path'],write_file:['path','content'],run_command:['command'],http_request:['url'],mcp_tool:['tool','arguments']};
     if(!schemas[r.name]||Object.keys(r.args).some(k=>!schemas[r.name].includes(k)))return{decision:'DENY',reason:'unregistered_tool_or_parameter'};
-    if(r.name==='read_file'||r.name==='write_file'){
+    if(r.name==='write_file')return{decision:'DENY',reason:'write_capability_disabled_pending_path_safe_primitive'};
+    if(r.name==='read_file'){
       const target=resource(r);
       if(!target||!stillBound(target))return{decision:'DENY',reason:'resource_not_bound'};
       if((target.descriptor.sensitive||dangerousPath.test(target.descriptor.path))&&!target.descriptor.decoyId)return{decision:'DENY',reason:'credential_resource_denied'};
-      if(r.name==='write_file'&&(!target.descriptor.writable||typeof r.args.content!=='string'||Buffer.byteLength(r.args.content)>65_536))return{decision:'DENY',reason:'write_capability_or_size_denied'};
       return{decision:target.descriptor.approvalRequired?'REQUIRE_APPROVAL':'ALLOW',reason:'host_scoped_file_capability'};
     }
     if(r.name==='run_command'){
@@ -120,6 +160,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
   }
   async function execute(r:Request,approval:string|null,signal?:AbortSignal):Promise<unknown>{
     if(signal?.aborted)return blocked(r,'cancelled_before_execution');
+    if(r.name==='write_file')return blocked(r,'write_capability_disabled_pending_path_safe_primitive');
     const decision=policy(r);
     if(decision.decision==='DENY')return blocked(r,decision.reason);
     // Recheck after review/approval/queue, directly before a trusted executor starts.
@@ -133,24 +174,24 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       const perform=()=>{
         // Audit callbacks may yield a changed path. Reject the observed change before fd I/O.
         // This narrows the window; it is not an atomic OS-wide path/operation transaction.
-        if(r.name==='read_file'||r.name==='write_file'){
+        if(r.name==='read_file'){
           const f=resource(r);if(!f||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_EFFECT');
         }
         if(r.name==='read_file'){
-          const f=resource(r)!;const stat=fs.fstatSync(f.fd);if(stat.size>65_536)throw Error('GATEWAY_READ_LIMIT');
-          const buffer=Buffer.alloc(stat.size);let offset=0;while(offset<buffer.length){const n=fs.readSync(f.fd,buffer,offset,buffer.length-offset,offset);if(!n)break;offset+=n;}
-          const text=buffer.subarray(0,offset).toString('utf8');
+          const f=resource(r)!;const stat=f.secureHandle.stat();if(stat.kind!=='file'||stat.nlink!==1n||!sameFileAtOpen(f,stat))throw Error('GATEWAY_RESOURCE_CHANGED_BEFORE_READ');if(stat.size>65_536n)throw Error('GATEWAY_READ_LIMIT');
+          const buffer=Buffer.alloc(Number(stat.size));let offset=0,text='';
+          try{
+            while(offset<buffer.length){
+              const chunk=f.secureHandle.readAt(offset,buffer.length-offset);
+              try{if(!chunk.length)break;chunk.copy(buffer,offset);offset+=chunk.length;}
+              finally{chunk.fill(0);}
+            }
+            const afterRead=f.secureHandle.stat();if(offset!==buffer.length||!sameFileAtOpen(f,afterRead)||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
+            text=buffer.subarray(0,offset).toString('utf8');
+          }finally{buffer.fill(0);}
           if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}
           return {content:text};
-        }
-        if(r.name==='write_file'){
-          const f=resource(r)!,buffer=Buffer.from(String(r.args.content));let offset=0;
-          while(offset<buffer.length){const n=fs.writeSync(f.fd,buffer,offset,buffer.length-offset,offset);if(n<=0)throw Error('GATEWAY_WRITE_SHORT');offset+=n;}
-          fs.ftruncateSync(f.fd,buffer.length);fs.fsyncSync(f.fd);
-          const check=Buffer.alloc(buffer.length);let pos=0;while(pos<check.length){const n=fs.readSync(f.fd,check,pos,check.length-pos,pos);if(!n)break;pos+=n;}
-          if(pos!==buffer.length||!check.equals(buffer)||!stillBound(f))throw Error('GATEWAY_WRITE_VERIFICATION_FAILED');
-          return {writtenBytes:buffer.length};
         }
         if(r.name==='http_request')return executePinnedJSONTool({name:r.name,args:{url:r.args.url,method:'GET'}},{signal:abort.signal});
         if(r.name==='mcp_tool')return mcp.get(String(r.args.tool))!.execute(r.args.arguments as Record<string,unknown>,abort.signal);
@@ -168,7 +209,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       const result=await Promise.race([Promise.resolve(perform()),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
       const output=typeof result==='string'?result:JSON.stringify(result)??'';
       if(secretPattern.test(output)){history.sensitiveObserved=true;flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
-      audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'||r.name==='write_file'?'VERIFIED':'NOT_VERIFIED',approval);
+      audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'?'VERIFIED':'NOT_VERIFIED',approval);
       return result;
     }catch(error){
       options.guard.trip({reason:'gateway_execution_failed'});
@@ -203,7 +244,9 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     approve(requestId:string){return serialize(async()=>{sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return execute(p.request,createHmac('sha256',key).update(requestId).digest('hex'));});},
     reject(requestId:string){sweep();const p=pending.get(requestId);if(!p)throw Error('GATEWAY_APPROVAL_EXPIRED_OR_CONSUMED');pending.delete(requestId);return blocked(p.request,'operator_rejected');},
   });
-  return Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
-    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values())fs.closeSync(f.fd);}
+  const gateway=Object.freeze({agent,operator,evidence:()=>options.evidence.snapshot(),dataflow:()=>flow.snapshot(),provenance:()=>provenance.snapshot(),
+    async close(){closed=true;await history.tail;pending.clear();for(const f of resources.values())f.secureHandle.close();secureWorkspace.close();}
   });
+  trustedGatewayInstances.add(gateway);
+  return gateway as unknown as typeof gateway&TrustedExecutionGatewayReadHost;
 }

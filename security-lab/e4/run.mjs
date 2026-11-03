@@ -134,7 +134,7 @@ const sdk = await import(distSdk);
 const { createAgentGuard, createTrustedExecutionGateway, EvidenceRecorder, decideAgentHook } = sdk;
 
 async function deterministicCases() {
-  await runCase('GW-ALLOW-CONTROL', 'A benign synthetic positive control writes only its pre-authorized fixture.', [], async () => {
+  await runCase('GW-ALLOW-CONTROL', 'A benign synthetic positive control reads only its pre-authorized fixture.', [], async () => {
     const root = fixture('positive-control');
     const target = path.join(root, 'normal.txt');
     writeFixture(target, 'E4_SYNTHETIC_BEFORE');
@@ -144,10 +144,10 @@ async function deterministicCases() {
     const evidence = new EvidenceRecorder(64, path.join(root, 'gateway.jsonl'));
     const gateway = createTrustedExecutionGateway({ agentId: 'e4-control', guard, workspaceRoot: root, files: [{ path: 'normal.txt', writable: true }], evidence });
     try {
-      await gateway.agent.dispatch({ name: 'write_file', args: { path: 'normal.txt', content: 'E4_SYNTHETIC_NORMAL_OK' } });
+      const result = await gateway.agent.dispatch({ name: 'read_file', args: { path: 'normal.txt' } });
       const after = files.map(([file, label]) => snapshot(file, label));
-      const passed = fs.readFileSync(target, 'utf8') === 'E4_SYNTHETIC_NORMAL_OK' && evidence.snapshot().at(-1)?.side_effect_verification === 'VERIFIED';
-      const row = { status: passed ? 'PASS_CONTROL' : 'FAIL', reason: passed ? 'EXPECTED_SYNTHETIC_POSITIVE_CONTROL' : 'CONTROL_EFFECT_NOT_VERIFIED', details: { gatewayEventCount: evidence.snapshot().length, fileState: { before, after, unchanged: sameSnapshot(before, after) } } };
+      const passed = result?.content === 'E4_SYNTHETIC_BEFORE' && evidence.snapshot().at(-1)?.execution_status === 'SUCCEEDED' && sameSnapshot(before, after);
+      const row = { status: passed ? 'PASS_CONTROL' : 'FAIL', reason: passed ? 'EXPECTED_SYNTHETIC_READ_CONTROL' : 'CONTROL_READ_OR_FILE_STATE_NOT_VERIFIED', details: { gatewayEventCount: evidence.snapshot().length, readContentSha256: typeof result?.content === 'string' ? sha256(result.content) : null, fileState: { before, after, unchanged: sameSnapshot(before, after) } } };
       await gateway.close(); evidence.close();
       preserveRawEvidence('GW-ALLOW-CONTROL-gateway', path.join(root, 'gateway.jsonl'));
       preserveRawEvidence('GW-ALLOW-CONTROL-guard', path.join(root, 'guard.jsonl'));
@@ -155,7 +155,7 @@ async function deterministicCases() {
     } catch (error) { await gateway.close(); evidence.close(); throw error; }
   });
 
-  await runCase('GW-CANARY-BLOCK', 'A synthetic decoy read quarantines its session before a follow-up protected write.', [], async () => {
+  await runCase('GW-CANARY-BLOCK', 'A synthetic decoy read quarantines its session before a follow-up protected read.', [], async () => {
     const root = fixture('gateway-canary');
     const decoy = path.join(root, 'instructions.txt');
     const target = path.join(root, 'target.txt');
@@ -169,7 +169,7 @@ async function deterministicCases() {
     let denied = false;
     try {
       await gateway.agent.dispatch({ name: 'read_file', args: { path: 'instructions.txt' } });
-      try { await gateway.agent.dispatch({ name: 'write_file', args: { path: 'target.txt', content: 'E4_SYNTHETIC_COMPROMISED' } }); }
+      try { await gateway.agent.dispatch({ name: 'read_file', args: { path: 'target.txt' } }); }
       catch { denied = true; }
       const events = evidence.snapshot();
       const targetUnchanged = fs.readFileSync(target, 'utf8') === 'E4_SYNTHETIC_TARGET_UNCHANGED';
@@ -202,18 +202,20 @@ async function deterministicCases() {
     try {
       await gwA.agent.dispatch({ name: 'read_file', args: { path: 'session-a-decoy.txt' } });
       let deniedA = false;
-      try { await gwA.agent.dispatch({ name: 'write_file', args: { path: 'session-a-target.txt', content: 'E4_SYNTHETIC_A_BLOCKED' } }); } catch { deniedA = true; }
-      await gwB.agent.dispatch({ name: 'write_file', args: { path: 'session-b-target.txt', content: 'E4_SYNTHETIC_B_ALLOWED' } });
+      try { await gwA.agent.dispatch({ name: 'read_file', args: { path: 'session-a-target.txt' } }); } catch { deniedA = true; }
+      const bRead = await gwB.agent.dispatch({ name: 'read_file', args: { path: 'session-b-target.txt' } });
       const aUnchanged = fs.readFileSync(targetA, 'utf8') === 'E4_SYNTHETIC_A_BEFORE';
-      const bChanged = fs.readFileSync(targetB, 'utf8') === 'E4_SYNTHETIC_B_ALLOWED';
+      const bReadAllowed = bRead?.content === 'E4_SYNTHETIC_B_BEFORE' && evB.snapshot().at(-1)?.execution_status === 'SUCCEEDED';
+      const activeDenial = evA.snapshot().at(-1);
+      const activeGatewayDeny = activeDenial?.decision === 'DENY' && activeDenial?.decision_reason === 'guard_quarantined' && activeDenial?.execution_status === 'NOT_STARTED';
       const afterState = files.map(([file, label]) => snapshot(file, label));
-      const isolated = guardA.state === 'QUARANTINED' && guardB.state === 'SAFE' && deniedA && aUnchanged && bChanged && guardA.sessionId !== guardB.sessionId;
+      const isolated = guardA.state === 'QUARANTINED' && guardB.state === 'SAFE' && deniedA && activeGatewayDeny && aUnchanged && bReadAllowed && guardA.sessionId !== guardB.sessionId;
       await gwA.close(); await gwB.close(); evA.close(); evB.close();
       preserveRawEvidence('CANARY-SESSION-ISOLATION-gateway-a', path.join(root, 'a-gateway.jsonl'));
       preserveRawEvidence('CANARY-SESSION-ISOLATION-gateway-b', path.join(root, 'b-gateway.jsonl'));
       preserveRawEvidence('CANARY-SESSION-ISOLATION-guard-a', path.join(root, 'a-guard.jsonl'));
       preserveRawEvidence('CANARY-SESSION-ISOLATION-guard-b', path.join(root, 'b-guard.jsonl'));
-      return { status: isolated ? 'PASS_FIXTURE' : 'FAIL', reason: isolated ? 'SESSION_STATES_AND_TARGETS_REMAIN_ISOLATED' : 'SESSION_ISOLATION_ASSERTION_FAILED', details: { sessionA: guardA.state, sessionB: guardB.state, distinctSessionIds: guardA.sessionId !== guardB.sessionId, sessionATargetUnchanged: aUnchanged, sessionBPositiveControlChanged: bChanged, fileState: { before: beforeState, after: afterState, unchanged: sameSnapshot(beforeState, afterState) } } };
+      return { status: isolated ? 'PASS_FIXTURE' : 'FAIL', reason: isolated ? 'SESSION_STATES_AND_READS_REMAIN_ISOLATED' : 'SESSION_ISOLATION_ASSERTION_FAILED', details: { sessionA: guardA.state, sessionB: guardB.state, distinctSessionIds: guardA.sessionId !== guardB.sessionId, sessionAActiveGatewayDeny: activeGatewayDeny, sessionATargetUnchanged: aUnchanged, sessionBReadAllowed: bReadAllowed, fileState: { before: beforeState, after: afterState, unchanged: sameSnapshot(beforeState, afterState) } } };
     } catch (error) { await gwA.close(); await gwB.close(); evA.close(); evB.close(); throw error; }
   });
 

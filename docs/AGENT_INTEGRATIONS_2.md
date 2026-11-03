@@ -18,7 +18,7 @@ SDK 提供 detectAgents / previewAgentIntegration / installAgentIntegration / re
 
 ## 官方 Hook 适配器
 
-src/agent-hook.ts 和 lab/agent-hook.mjs 提供 Claude PreToolUse 与 Cursor 权限 hook JSON 格式。适配器不执行工具，以可信启动参数绑定工作区和私有状态目录。会话标识来自宿主 hook 元数据，隔离主体固定为客户端与可信工作区真实路径，因此同一工作区新聊天不能绕过标记。诱饵意图和已注册 Token 参数触发 Guard；不提供 reset。状态目录有 1024 条保守容量，独占写锁；写入竞争或失败保留 fail-closed 标记，需可信操作者审查，不自动清理或放权。正常已审核命令 allow，模糊命令 ask，危险参数 deny。
+src/agent-hook.ts 和 lab/agent-hook.mjs 提供 Claude PreToolUse 与 Cursor 权限 hook JSON 格式。适配器不执行工具，以可信启动参数绑定工作区和私有状态目录。会话标识来自宿主 hook 元数据，隔离主体固定为客户端与可信工作区真实路径，因此同一工作区新聊天不能绕过标记。诱饵意图和已注册 Token 参数触发 Guard；不提供 reset。状态目录有 1024 条保守容量，独占写锁；写入竞争或失败保留 fail-closed 标记，需可信操作者审查，不自动清理或放权。正常已审核命令可 allow，模糊命令 ask，危险参数 deny。原生 Read/Write/Edit/Delete 不经 Gateway 持有文件身份，Hook 只回传决定、无法绑定宿主后续 I/O，因此统一 deny；安全文件读取需由受信宿主注册并通过 Gateway callback 执行。
 
 输入/输出协议与隔离 fixture 已测试；没有安装或运行实际 Claude/Cursor 客户端，本轮标记 IMPLEMENTED_NOT_VERIFIED，不宣称覆盖已验证。人工在对应官方 hooks 配置中将 PreToolUse（Cursor 可选 preToolUse/beforeShellExecution）指向 node + lab/agent-hook.mjs + 客户端名 + 可信工作区 + 私有状态目录。必须先核对所用客户端版本的 hook 名称、工作目录、matcher 与超时行为，再在无危险副作用的项目内激活。不能给模型配置编辑/删除这些文件的权限。客户端对插件启动失败可能 fail-open，不能把该适配器当作 OS 沙箱。
 
