@@ -1,0 +1,27 @@
+{
+  "name": "@dorianchn/agent-canary-filesystem-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Fail-closed Agent Canary MCP proxy for the upstream Filesystem MCP Server",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    "./server": "./src/server.mjs",
+    "./client": "./src/client.mjs",
+    "./bin/agent-canary-filesystem-mcp.mjs": "./bin/agent-canary-filesystem-mcp.mjs"
+  },
+  "bin": {
+    "agent-canary-filesystem-mcp": "bin/agent-canary-filesystem-mcp.mjs"
+  },
+  "scripts": {
+    "test:e2e": "node --test test/e2e.test.mjs"
+  },
+  "dependencies": {
+    "@dorianchn/agent-canary": "file:../..",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@modelcontextprotocol/server-filesystem": "2.2.0"
+  }
+}

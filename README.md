@@ -62,6 +62,14 @@ For a runnable example that exercises an allowed read and a denied write, see th
 
 The host must register the callbacks it wants the gateway to protect. Agent Canary does not automatically control unrelated tools, processes, or native host capabilities.
 
+## Cline + Filesystem MCP integration (R45)
+
+The R45 integration adds a Cline SDK Plugin and a fail-closed adapter for the upstream Filesystem MCP server. In the tested Cline Agent Runtime path, Cline registers only the protected Agent Canary tools; its `beforeTool` hook skips other native or direct MCP tools before their executors run. File content reads use the existing Gateway-held file capability. Directory listing and metadata requests are checked by the Gateway before the adapter calls the upstream server in read-only mode. Writes are denied.
+
+The recorded end-to-end run passed one real stdio Filesystem MCP proxy test and one Cline Agent Runtime test. The run used synthetic files and a deterministic in-process tool-calling model; it did not call an external model API. Raw events, Gateway decisions, pinned upstream revisions, coverage limits, and setup instructions are in the [R45 integration report](R45-Integration-Report.md) and [`integrations/`](integrations/).
+
+This verification covers the pinned Cline SDK Plugin and Agent Runtime route only. The Cline CLI executable and IDE applications were not run. The integration is application-level routing, not OS confinement; do not expose direct Filesystem MCP or native tools outside the plugin boundary and assume they are protected. E4 and the broader model matrix were not run.
+
 ## Validation results
 
 The published acceptance record for the frozen 3.0 source reports:

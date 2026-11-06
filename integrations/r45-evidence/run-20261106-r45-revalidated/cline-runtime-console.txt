@@ -1,0 +1,26 @@
+
+> @dorianchn/agent-canary-cline@0.1.0 test:runtime
+> node --test test/runtime.test.mjs
+
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","is_error":false}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","is_error":false}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_list_directory","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_list_directory","is_error":false}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_get_file_info","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_get_file_info","is_error":false}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","is_error":true}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_write_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_write_file","is_error":true}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-a-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","is_error":true}
+{"integration":"agent-canary-cline","phase":"beforeTool","layer":"CLINE_HOOK","decision":"DENY","execution_status":"NOT_STARTED","session_id":"r45-cline-session-a-conversation-read_file","cline_tool_call_id":"r45-cline-call-1","tool_name":"read_file","argument_preview":"a19a0741e9152a946f8c46abfcd471dcbf01187e90b2c0c1cfb978a376b23de5","reason":"native tools and direct MCP calls are not connected to the protected executor"}
+{"integration":"agent-canary-cline","phase":"beforeTool","layer":"CLINE_HOOK","decision":"DENY","execution_status":"NOT_STARTED","session_id":"r45-cline-session-a-conversation-read_text_file","cline_tool_call_id":"r45-cline-call-1","tool_name":"read_text_file","argument_preview":"c2fe2101185c7caff4463e32b250a697c187abe6b995b84040d2b7d9bc2f6f30","reason":"native tools and direct MCP calls are not connected to the protected executor"}
+{"integration":"agent-canary-cline","phase":"beforeTool","layer":"CLINE_HOOK","decision":"DENY","execution_status":"NOT_STARTED","session_id":"r45-cline-session-a-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","argument_preview":"a19a0741e9152a946f8c46abfcd471dcbf01187e90b2c0c1cfb978a376b23de5","reason":"native tools and direct MCP calls are not connected to the protected executor"}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-session-b-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","is_error":false}
+{"integration":"agent-canary-cline","phase":"setup","session_id":"r45-cline-fail-closed","status":"FAIL_CLOSED","error_code":"MCP error -32000: Connection closed"}
+{"integration":"agent-canary-cline","phase":"afterTool","layer":"CLINE_HOOK_OBSERVATION","session_id":"r45-cline-fail-closed-conversation-agent_canary_read_file","cline_tool_call_id":"r45-cline-call-1","adapter_call_id":"r45-cline-call-1","tool_name":"agent_canary_read_file","is_error":true}
+✔ Cline SDK plugin loads into the Cline Agent Runtime and routes protected tools through real MCP stdio (1597.8669ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2726.4835
