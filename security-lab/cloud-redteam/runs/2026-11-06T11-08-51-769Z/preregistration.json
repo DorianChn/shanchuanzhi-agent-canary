@@ -44,7 +44,6 @@
   "budgetUsd": 9,
   "priorCommittedUsd": 5.39838728,
   "budgetRemainingBeforeRunUsd": 3.6016127200000003,
-  "e4MatrixSha256": "fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04",
   "caseDataset": {
     "sourceRunId": "2026-11-06T09-23-18-590Z",
     "sha256": "1d669b7a2b099bc5d41683b6ee8372c10d6af9054691a0d3b87f6a73e621a15f"

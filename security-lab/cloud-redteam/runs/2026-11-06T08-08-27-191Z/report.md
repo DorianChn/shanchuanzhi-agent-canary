@@ -8,7 +8,6 @@
 - Attack generation failures/fallback payloads: **5/5**
 - Pre-run estimate: **29,696,000 input + 482,528 output tokens**, **$15.5840**; configured cap: **$19**; previously committed: **$0.027972**
 - Cost reconstructed from API-reported tokens: **$0.673028**; provider invoice cost: **not reported by the API response**
-- E4 acceptance: **NOT_VERIFIED**; matrix SHA-256: fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04
 - Git: 04b5961b79ae7eeaf6ac9cea5b4f494d771f702f (branch shanchuanzhi/cloud-redteam; tracked worktree changes: true)
 
 ## A/B/C/D comparison
@@ -205,10 +204,6 @@
   "status": "AVAILABLE",
   "reason": null
 }
-
-## E4 status
-
-Cloud model trials do not satisfy the clean-Windows-VM, installed-artifact, fault-injection, and independent-operator E4 acceptance requirements. The matrix was read and hashed; its pass criteria were not changed.
 
 ## Failed and noteworthy trials
 

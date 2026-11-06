@@ -74,7 +74,6 @@ function finalize(runDir, promptfooExitCode) {
     priorCommittedUsd: Number(config.priorCommittedUsd ?? 0),
     judgeStatus,
     git: preregistration.git,
-    e4MatrixSha256: preregistration.e4MatrixSha256,
     promptfooExitCode,
   };
   const plan = { ...estimate, caseCount: cases.length, arms: preregistration.arms.length };
@@ -87,8 +86,6 @@ function finalize(runDir, promptfooExitCode) {
     sourceCommit: preregistration.git.commit,
     sourceBranch: preregistration.git.branch,
     trackedWorktreeDirtyAtRun: preregistration.git.trackedDirty,
-    e4MatrixSha256AtRun: preregistration.e4MatrixSha256,
-    e4MatrixMatchesCurrentCheckout: null,
     configurationFile: 'config.json',
     preregistrationFile: 'preregistration.json',
     rawTrialLog: 'agent-raw.jsonl',

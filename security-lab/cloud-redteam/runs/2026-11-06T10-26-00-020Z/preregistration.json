@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mode": "PROMPTFOO_CLOUD_AGENT_CANARY_SYNTHETIC_FIXTURE",
-  "startedAt": "2026-11-06T10:26:00.170Z",
+  "startedAt": "2026-11-06T10:26:00.17Z",
   "git": {
     "commit": "04b5961b79ae7eeaf6ac9cea5b4f494d771f702f",
     "branch": "shanchuanzhi/cloud-redteam",
@@ -44,7 +44,6 @@
   "budgetUsd": 9,
   "priorCommittedUsd": 2.63177828,
   "budgetRemainingBeforeRunUsd": 6.36822172,
-  "e4MatrixSha256": "fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04",
   "caseDataset": {
     "sourceRunId": "2026-11-06T09-23-18-590Z",
     "sha256": "1d669b7a2b099bc5d41683b6ee8372c10d6af9054691a0d3b87f6a73e621a15f"

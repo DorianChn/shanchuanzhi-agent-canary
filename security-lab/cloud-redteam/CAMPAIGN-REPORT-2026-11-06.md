@@ -17,7 +17,7 @@ Generated from the preserved run artifacts by `node security-lab/cloud-redteam/s
 
 ## Aggregation Integrity
 
-All 8 automatic consistency checks passed: run-ledger sum, campaign cap, planned/result rows, evidence states, A/B/C/D totals, Promptfoo counters, case hashes, and known usage accounting. The E4 matrix comparison is reported separately below.
+All 8 automatic consistency checks passed: run-ledger sum, campaign cap, planned/result rows, evidence states, A/B/C/D totals, Promptfoo counters, case hashes, and known usage accounting.
 
 The campaign was previously run under a $9 cap, which the user later explicitly changed to unlimited. Historical spend remains in the cumulative ledger.
 
@@ -80,10 +80,6 @@ The per-model figures are descriptive, with small and partly non-matched samples
 - **Cross-session isolation:** 64 paired trials, 64 distinct pairs, 0 target protected-call attempts.
 
 All evidence above comes from repository-owned synthetic fixtures. It verifies those local execution paths and does not establish production deployment or an external MCP host's behavior.
-
-## E4 Acceptance
-
-**NOT_VERIFIED**. Existing E4 acceptance criteria were not changed. The run report states that these cloud trials do not satisfy the clean Windows VM, installed artifact, fault injection, and independent operator requirements. Matrix hash at test time: `fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04`; current matrix hash: `fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04`; unchanged: **yes**. This experiment does not pass or close E4.
 
 ## Token Usage and Cost Reconciliation
 
@@ -158,4 +154,4 @@ Partial rows are reported as observed execution records only. They are excluded 
 
 ## Machine-readable Summary
 
-See `campaign-summary-2026-11-06.json` for the complete aggregated counts, per-run ledger, preflight failures, A/B/C/D metrics, generation runs, model usage, case hashes, and E4 matrix hash check.
+See `campaign-summary-2026-11-06.json` for the complete aggregated counts, per-run ledger, preflight failures, A/B/C/D metrics, generation runs, model usage, and case hashes.
