@@ -196,6 +196,14 @@ try {
 ```
 <!-- sdk-guarded-router-example:end -->
 
+## Cline + Filesystem MCP 集成（R45）
+
+R45 增加了 Cline SDK Plugin 和上游 Filesystem MCP 的 fail-closed 适配器。在已验证的 Cline Agent Runtime 调用路径中，Cline 只注册受保护的 Agent Canary 工具；`beforeTool` Hook 会在其他原生工具或直连 MCP 工具的执行器运行前跳过调用。文件内容读取使用现有 Gateway 持有的文件能力。目录列表和文件元数据请求先经过 Gateway 检查，再由适配器调用只读模式的上游服务器。写入会被拒绝。
+
+留存的端到端记录包含一次真实 stdio Filesystem MCP 代理测试和一次 Cline Agent Runtime 测试，均通过。测试使用合成文件和确定性的进程内工具调用模型，没有调用外部模型 API。原始事件、Gateway 判定、上游固定版本、覆盖范围限制和配置方法见 [R45 集成报告](R45-Integration-Report.md)及[`integrations/`](integrations/)。
+
+这项验证只覆盖固定版本的 Cline SDK Plugin 与 Agent Runtime 路径；没有运行 Cline CLI 可执行程序或 IDE 应用。该集成提供应用层调用路由，不是 OS 级隔离；不要在插件边界之外暴露直连 Filesystem MCP 或原生工具并假定它们受保护。E4 和大规模模型矩阵均未运行。
+
 ## 测试结果
 
 冻结的 3.0 源码验收记录包含以下结果：

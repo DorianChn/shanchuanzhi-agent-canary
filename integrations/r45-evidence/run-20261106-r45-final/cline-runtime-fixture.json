@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "runtime": "@cline/agents@0.2.0 AgentRuntime with @cline/core@0.2.0 loadAgentPluginFromPath and ContributionRegistry",
+  "model": "local deterministic scripted AgentModel; no provider API or external model request",
+  "synthetic_files": [
+    "public.txt",
+    "business.txt",
+    ".env"
+  ],
+  "cases": [
+    "authorized public read",
+    "authorized business read",
+    "directory listing through Gateway and real upstream MCP",
+    "file metadata through Gateway and real upstream MCP",
+    "synthetic .env denied",
+    "write denied before side effect",
+    "adapter connection loss fails closed",
+    "native read_file hook skipped",
+    "direct Filesystem MCP tool skipped",
+    "spoofed protected tool name skipped",
+    "separate Cline session starts a separate MCP/Gateway process",
+    "adapter startup failure is fail-closed"
+  ]
+}

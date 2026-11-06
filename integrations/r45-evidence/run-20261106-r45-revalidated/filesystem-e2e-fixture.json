@@ -1,0 +1,22 @@
+{
+  "test": "real stdio proxy enforces Gateway reads, upstream listing, write denial and audit correlation",
+  "node": "v24.22.1",
+  "upstream": "@modelcontextprotocol/server-filesystem@2.2.0",
+  "synthetic_files": [
+    "public.txt",
+    "business.txt",
+    ".env"
+  ],
+  "performed_operations": [
+    "initialize",
+    "tools/list",
+    "read public",
+    "read business",
+    "deny synthetic .env read",
+    "list directory",
+    "get file info",
+    "deny write",
+    "deny direct upstream tool",
+    "deny traversal"
+  ]
+}

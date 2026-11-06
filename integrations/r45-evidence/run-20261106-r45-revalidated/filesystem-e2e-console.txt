@@ -1,0 +1,13 @@
+
+> @dorianchn/agent-canary-filesystem-mcp@0.1.0 test:e2e
+> node --test test/e2e.test.mjs
+
+✔ real stdio proxy enforces Gateway reads, upstream listing, write denial and audit correlation (703.9196ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 924.7639

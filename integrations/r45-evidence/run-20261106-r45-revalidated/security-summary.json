@@ -1,0 +1,77 @@
+{
+  "run_id": "R45-2026-11-06-revalidated-on-main-16c48c5",
+  "scope": "Local synthetic files only; no model-provider API calls; no E4 or large model matrix.",
+  "baseline_commit": "16c48c5738c3ca4b02a2e4797b6a655c4b98da1a",
+  "runtime": {
+    "node": "v24.22.1",
+    "cline_core": "@cline/core@0.2.0",
+    "cline_agent_runtime": "@cline/agents@0.2.0",
+    "mcp_sdk": "@modelcontextprotocol/sdk@1.32.1",
+    "filesystem_mcp": "@modelcontextprotocol/server-filesystem@2.2.0",
+    "model_driver": "In-process deterministic scripted AgentModel used only to issue tool calls to the real Cline Agent Runtime."
+  },
+  "test_commands": {
+    "filesystem_mcp": "npm run --prefix integrations/filesystem-mcp test:e2e",
+    "cline_runtime": "npm run --prefix integrations/cline test:runtime",
+    "result": "Both Node test suites passed on this baseline: 1 test each, 0 failures."
+  },
+  "filesystem_mcp_stdio_e2e": {
+    "upstream_initialize_and_tools_list": "passed",
+    "upstream_tools_observed": [
+      "read_file",
+      "read_text_file",
+      "read_media_file",
+      "read_multiple_files",
+      "list_directory",
+      "list_directory_with_sizes",
+      "directory_tree",
+      "search_files",
+      "get_file_info",
+      "list_allowed_directories"
+    ],
+    "upstream_read_only": true,
+    "adapter_results": {
+      "succeeded": 4,
+      "denied_before_execution": 4
+    },
+    "denials": {
+      "synthetic_env_read": "credential_resource_denied",
+      "write": "write_capability_disabled_pending_path_safe_primitive",
+      "direct_upstream_tool": "mcp_capability_denied",
+      "path_traversal": "mcp_capability_denied"
+    },
+    "successful_operations": [
+      "allowlisted public file read via Gateway-held file descriptor",
+      "allowlisted business file read via Gateway-held file descriptor",
+      "allowlisted directory listing via Gateway and upstream Filesystem MCP",
+      "allowlisted file metadata via Gateway and upstream Filesystem MCP"
+    ],
+    "write_side_effect": "none; synthetic target content unchanged"
+  },
+  "cline_runtime_e2e": {
+    "official_plugin_loader_and_contribution_registry": "passed",
+    "adapter_results": {
+      "succeeded": 5,
+      "denied_before_execution": 2
+    },
+    "sessions": [
+      "r45-cline-session-a",
+      "r45-cline-session-b"
+    ],
+    "session_processes_and_evidence": "separate adapter and Gateway evidence per session",
+    "plugin_registered_unprotected_mcp_server": false,
+    "hook_denials_before_callback": [
+      "native read_file",
+      "direct upstream read_text_file",
+      "untrusted tool reusing agent_canary_read_file name"
+    ],
+    "connection_loss": "real stdio child closed; next protected read errored Not connected and returned no protected file content",
+    "adapter_startup_failure": "invalid adapter entry caused setup failure; protected tool failed closed and returned no file content"
+  },
+  "limitations": [
+    "Cline CLI executable, VS Code, JetBrains, and Desktop host surfaces were not run; their plugin loading/runtime paths remain unverified.",
+    "Cline @cline/agents is marked experimental by its pinned upstream README.",
+    "Shell/process execution and provider-executed/model tools were not exercised as real host capabilities; treat them as OUT_OF_SCOPE.",
+    "Writes remain denied because Agent Canary Gateway has no safe write primitive."
+  ]
+}

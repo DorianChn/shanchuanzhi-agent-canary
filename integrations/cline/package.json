@@ -1,0 +1,22 @@
+{
+  "name": "@dorianchn/agent-canary-cline",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Cline Plugin that routes supported file and MCP operations through Agent Canary",
+  "type": "module",
+  "exports": {
+    ".": "./src/plugin.js"
+  },
+  "scripts": {
+    "test:runtime": "node --test test/runtime.test.mjs"
+  },
+  "dependencies": {
+    "@cline/core": "0.2.0",
+    "@dorianchn/agent-canary-filesystem-mcp": "file:../filesystem-mcp",
+    "@modelcontextprotocol/sdk": "1.32.1"
+  },
+  "devDependencies": {
+    "@cline/agents": "0.2.0"
+  }
+}
