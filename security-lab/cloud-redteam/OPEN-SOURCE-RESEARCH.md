@@ -5,7 +5,7 @@ Reviewed 2026-11-07. This is an integration-fit review, not a claim that the lis
 ## Current project boundaries
 
 - [Promptfoo](https://github.com/promptfoo/promptfoo) remains the batch runner for cloud model generation and execution.
-- [AgentDojo](https://github.com/ethz-spylab/agentdojo) is already an optional, separately reported simulated-agent benchmark. Its model-only results do not exercise Agent Canary's Gateway, Policy, or HoneypotRuntime and do not count as A/B/C/D or E4 evidence.
+- [AgentDojo](https://github.com/ethz-spylab/agentdojo) is already an optional, separately reported simulated-agent benchmark. Its model-only results do not exercise Agent Canary's Gateway, Policy, or HoneypotRuntime and do not count as A/B/C/D harness results.
 - [Microsoft PyRIT](https://github.com/microsoft/PyRIT) is now an optional adaptive multi-turn attacker pinned to 1.1.0; each request is routed into the synthetic Agent Canary harness through the shared cloud ledger.
 - Agent Canary's own synthetic harness remains the source of tool-call, policy, canary, isolation, and side-effect evidence. Do not replace those checks with an LLM judge score.
 
@@ -39,7 +39,7 @@ The adapter pins the v1.1.0 release and follows its [versioned multi-turn attack
 ## Integration order
 
 1. Validate the optional PyRIT adapter in an explicitly authorized synthetic run before making runtime-effectiveness claims.
-2. Use OWASP's taxonomy to review category coverage without changing the repository's E4 acceptance criteria.
+2. Use OWASP's taxonomy to review category coverage while preserving the repository's existing acceptance definitions.
 3. Consider AGT's static scanner as a separate tool-metadata preflight after verifying a published release and dependency footprint.
 4. Treat InjecAgent as a separately licensed/provenance-tracked dataset adapter; leave ASB and Invariant MCP-Scan out of the default runner for the reasons above.
 

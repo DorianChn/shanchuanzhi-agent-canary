@@ -251,7 +251,6 @@ function summarize(trials, gen, usageEvents, plan, meta, preflight, preflightFai
     preflight,
     failedTrials,
     git: meta.git,
-    e4: { status: 'NOT_VERIFIED', standard: 'Agent Canary E4 research level; unchanged', matrixSha256: meta.e4MatrixSha256, reason: 'Cloud model trials do not satisfy the clean-Windows-VM, installed-artifact, fault-injection, and independent-operator E4 acceptance requirements.' },
     limitations: ['The attack suite is synthetic and repository-owned; holdout-v1 is not an external blind benchmark.', 'A/B/C/D preserve the existing security-lab/run-sdk-agent.mjs definitions.', 'The judge is advisory only; attack success and prevention use recorded fixture side effects.', 'Actual provider billing must be reconciled with the Yicode usage ledger.'],
   };
 }
@@ -269,7 +268,6 @@ function reportMarkdown(summary, config) {
     `- Attack generation failures/fallback payloads: **${summary.attackGeneration.failures}/${summary.attackGeneration.fallbackPayloads}**\n` +
     `- Pre-run estimate: **${summary.apiCost.estimatedInputTokensBeforeRun.toLocaleString()} input + ${summary.apiCost.estimatedOutputTokensBeforeRun.toLocaleString()} output tokens**, **$${summary.apiCost.estimatedUpperBoundUsdBeforeRun.toFixed(4)}**; configured cap: **${summary.budget.capUsd === 'unlimited' ? 'unlimited' : '$' + summary.budget.capUsd}**; previously committed: **$${summary.budget.priorCommittedUsd.toFixed(6)}**\n` +
     `- Cost reconstructed from API-reported tokens: **$${summary.apiCost.estimatedFromReportedTokensUsd.toFixed(6)}**; provider invoice cost: **not reported by the API response**\n` +
-    `- E4 acceptance: **${summary.e4.status}**; matrix SHA-256: ${summary.e4.matrixSha256}\n` +
     `- Git: ${summary.git.commit} (branch ${summary.git.branch || 'detached'}; tracked worktree changes: ${summary.git.trackedDirty})\n\n` +
     `## A/B/C/D comparison\n\n| Model | Arm | Trials | Attacks | Attack success | Defense success | Active denials | Normal success | Defender refusals |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|\n${rows || '| none | - | 0 | 0 | - | - | - | - | - |'}\n\n` +
     `| Arm | Trials | Attacks | Tool attempts | Successful attack effects | No-effect defenses | Active denials | Normal success |\n|---|---:|---:|---:|---:|---:|---:|---:|\n${armRows}\n\n` +
@@ -279,7 +277,6 @@ function reportMarkdown(summary, config) {
     `## Attack generator comparison\n\n${JSON.stringify(summary.attackGeneration.generatedByModel, null, 2)}\n\n` +
     `## Model preflight failures\n\n${JSON.stringify(summary.preflightFailures, null, 2)}\n\n` +
     `## LLM judge status\n\n${JSON.stringify(summary.judge, null, 2)}\n\n` +
-    `## E4 status\n\n${summary.e4.reason} The matrix was read and hashed; its pass criteria were not changed.\n\n` +
     `## Failed and noteworthy trials\n\n${JSON.stringify(summary.failedTrials.slice(0, 100), null, 2)}\n\n` +
     `## Reproduction configuration\n\n${JSON.stringify(config, null, 2)}\n\n` +
     'Raw files: agent-raw.jsonl, model-usage.jsonl, model-usage-parent.jsonl, generation-failures.jsonl, promptfoo-results.json, promptfoo.stdout.log, preregistration.json, cases.json, and evidence/*.jsonl. The Markdown report omits raw model responses and synthetic secret values.\n';
@@ -328,8 +325,7 @@ async function main() {
   fs.mkdirSync(runDir, { recursive: true });
   fs.mkdirSync(path.join(runDir, 'evidence'), { recursive: true });
   const git = gitMetadata();
-  const matrixFile = path.join(root, 'security-lab/e4/matrix.json');
-  const meta = { git, defenderModels, budgetUsd: config.maxTestBudgetUsd, priorCommittedUsd, budgetRemainingBeforeRunUsd: Number.isFinite(budgetRemainingBeforeRunUsd) ? budgetRemainingBeforeRunUsd : 'unlimited', e4MatrixSha256: sha256(matrixFile), reusedCasesFrom: reuseCasesDir ? path.basename(reuseCasesDir) : null };
+  const meta = { git, defenderModels, budgetUsd: config.maxTestBudgetUsd, priorCommittedUsd, budgetRemainingBeforeRunUsd: Number.isFinite(budgetRemainingBeforeRunUsd) ? budgetRemainingBeforeRunUsd : 'unlimited', reusedCasesFrom: reuseCasesDir ? path.basename(reuseCasesDir) : null };
   const safeConfig = { ...sanitizedConfig(config, defenderModels, generationModels), budgetRemainingBeforeRunUsd: Number.isFinite(budgetRemainingBeforeRunUsd) ? budgetRemainingBeforeRunUsd : 'unlimited', priorCommittedUsd, reusedCasesFrom: meta.reusedCasesFrom };
   writeJson(path.join(runDir, 'config.json'), safeConfig);
   writeJson(path.join(runDir, 'estimate.json'), plan);
@@ -339,7 +335,7 @@ async function main() {
     arms, definitionsSource: 'security-lab/run-sdk-agent.mjs; A=no Canary, B=static .env read signal, C=static .env read signal plus Guard quarantine, D=Gateway deterministic capabilities without honeypot or AI.',
     sampleSizePerDefender: size, uniqueScenarios: seeds.length, totalPlannedTrials: size * defenderModels.length,
     scenarioCategories: Object.fromEntries([...new Set(seeds.map(x => x.category))].map(category => [category, seeds.filter(x => x.category === category).length])),
-    costEstimateUsd: plan.estimatedUsd, budgetUsd: safeConfig.budgetUsd, priorCommittedUsd, budgetRemainingBeforeRunUsd: safeConfig.budgetRemainingBeforeRunUsd, e4MatrixSha256: meta.e4MatrixSha256,
+    costEstimateUsd: plan.estimatedUsd, budgetUsd: safeConfig.budgetUsd, priorCommittedUsd, budgetRemainingBeforeRunUsd: safeConfig.budgetRemainingBeforeRunUsd,
     caseDataset: { sourceRunId: meta.reusedCasesFrom, sha256: createHash('sha256').update(JSON.stringify(seeds)).digest('hex') },
     scope: 'Repository-owned temporary fixtures with synthetic-only values; fixed loopback sink; no external tool destinations.',
   });
@@ -496,7 +492,7 @@ async function main() {
   if (promptfooExitCode !== 0 && !assertionFailureOnly) throw new Error(`PROMPTFOO_EXIT_${promptfooExitCode}_INCOMPLETE_EVIDENCE_${trialCount}_${promptfooResultCount}_${expectedTrials}`);
   const trials = jsonl(path.join(runDir, 'agent-raw.jsonl'));
   const usageEvents = [...jsonl(parentUsageFile), ...jsonl(path.join(runDir, 'model-usage.jsonl'))];
-  const summary = summarize(trials, generation, usageEvents, { ...plan, caseCount: uniqueCases, arms: arms.length }, { defenderModels, budgetUsd: config.maxTestBudgetUsd, budgetRemainingBeforeRunUsd: Number.isFinite(budgetRemainingBeforeRunUsd) ? budgetRemainingBeforeRunUsd : 'unlimited', priorCommittedUsd, judgeStatus, git, e4MatrixSha256: meta.e4MatrixSha256, promptfooExitCode }, preflight, preflightFailures, runDir);
+  const summary = summarize(trials, generation, usageEvents, { ...plan, caseCount: uniqueCases, arms: arms.length }, { defenderModels, budgetUsd: config.maxTestBudgetUsd, budgetRemainingBeforeRunUsd: Number.isFinite(budgetRemainingBeforeRunUsd) ? budgetRemainingBeforeRunUsd : 'unlimited', priorCommittedUsd, judgeStatus, git, promptfooExitCode }, preflight, preflightFailures, runDir);
   summary.reproducibility = { caseDatasetSha256: sha256(path.join(runDir, 'cases.json')), caseDatasetReusedFrom: meta.reusedCasesFrom };
   const parentCommittedUsd = cloud.budgetSnapshot().committedUsd;
   const childBudget = readJson(path.join(runDir, 'budget-final.json'));

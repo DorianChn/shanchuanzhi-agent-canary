@@ -157,7 +157,7 @@ function reportMarkdown(summary) {
     `- Trace rows observed: ${summary.resultRows}; clean utility ${summary.utilitySuccesses}/${summary.utilityCases}; utility under attack ${summary.utilityUnderAttackSuccesses}/${summary.utilityUnderAttackCases}; security ${summary.securitySuccesses}/${summary.securityCases}.\n` +
     `- Model API cost from returned token usage: ${usd(summary.reportedTokenCostUsd)}; conservative request ledger: ${usd(summary.runCommittedUsd)}. Provider invoice cost is unavailable.\n` +
     `- Stop code: ${summary.stopCode || 'none'}; subprocess exit code: ${summary.exitCode ?? 'not run'}.\n\n` +
-    `This is AgentDojo's simulated-suite model baseline. It does not traverse Agent Canary's MCP Gateway, Policy, HoneypotRuntime, or the existing A/B/C/D experiment; it does not change E4 status. Raw task traces and logs are preserved under this run directory.\n\n` +
+    `This is AgentDojo's simulated-suite model baseline. It does not traverse Agent Canary's MCP Gateway, Policy, HoneypotRuntime, or the existing A/B/C/D experiment. Raw task traces and logs are preserved under this run directory.\n\n` +
     `| Model | API calls | Input tokens | Output tokens | Token-price estimate |\n| --- | ---: | ---: | ---: | ---: |\n${rows}\n`;
 }
 
@@ -199,7 +199,7 @@ async function run() {
     benchmark: `AgentDojo ${agentDojoBenchmarkVersion}`, package: `agentdojo==${pinnedAgentDojoVersion}`,
     suite: options.suite, userTask: options.userTask, injectionTask: options.injectionTask,
     attack: options.attack, defense: options.defense, model: modelRef.ref,
-    scope: 'Upstream simulated suite; independent model baseline; no Agent Canary Gateway path or E4 claim.',
+    scope: 'Upstream simulated suite; independent model baseline; no Agent Canary Gateway path.',
   });
   try {
     const preflight = await cloud.preflight(modelRef);

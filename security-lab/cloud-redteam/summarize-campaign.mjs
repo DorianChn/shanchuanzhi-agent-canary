@@ -4,7 +4,6 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(here, '../..');
 const runsRoot = path.join(here, 'runs');
 
 function readJson(file) {
@@ -244,11 +243,6 @@ const partialLedgerUsd = partialRuns.reduce((sum, run) => sum + run.runCommitted
 const uniqueCaseHashes = [...new Set(runs.map(run => run.caseHash).filter(Boolean))];
 const latestEstimate = latestRun?.estimate || latest?.estimate || {};
 const nextBatchEstimateUsd = Number(latestEstimate?.estimatedUsd || NaN);
-const matrixPath = path.join(repoRoot, 'security-lab', 'e4', 'matrix.json');
-const currentMatrixSha256 = fs.existsSync(matrixPath)
-  ? createHash('sha256').update(fs.readFileSync(matrixPath)).digest('hex')
-  : null;
-const e4 = latest?.report?.e4 || {};
 const definitions = latest?.preregistration?.definitionsSource || completed[0]?.preregistration?.definitionsSource || 'Not recorded';
 const commit = latestRun?.preregistration?.git?.commit || latest?.report?.git?.commit || completed[0]?.report?.git?.commit || 'unknown';
 const branch = latestRun?.preregistration?.git?.branch || latest?.report?.git?.branch || completed[0]?.report?.git?.branch || 'unknown';
@@ -304,7 +298,6 @@ const summary = {
   totals,
   partialRuns: partialRuns.map(run => ({ runId: run.runId, ...run.partial })),
   caseStudy: { uniqueScenarioSets: uniqueCaseHashes.length, sha256: uniqueCaseHashes },
-  e4: { status: e4.status || 'NOT_VERIFIED', matrixSha256AtRun: e4.matrixSha256 || null, currentMatrixSha256, matrixUnchanged: Boolean(e4.matrixSha256 && currentMatrixSha256 === e4.matrixSha256), reason: e4.reason || 'No E4 verification evidence in the run report.' },
 costLimitations: 'The API response did not provide the Yicode invoice amount. Ledger committed USD and locally priced reported tokens are separate measures; their difference is unreconciled and cannot be treated as provider billing.',
   integrityChecks,
 };
@@ -421,7 +414,7 @@ Generated from the preserved run artifacts by \`node security-lab/cloud-redteam/
 
 ## Aggregation Integrity
 
-All ${Object.keys(integrityChecks).length} automatic consistency checks passed: run-ledger sum, campaign cap, planned/result rows, evidence states, A/B/C/D totals, Promptfoo counters, case hashes, and known usage accounting. The E4 matrix comparison is reported separately below.
+All ${Object.keys(integrityChecks).length} automatic consistency checks passed: run-ledger sum, campaign cap, planned/result rows, evidence states, A/B/C/D totals, Promptfoo counters, case hashes, and known usage accounting.
 
 ${budgetHistoryText}
 
@@ -466,10 +459,6 @@ The per-model figures are descriptive, with small and partly non-matched samples
 - **Cross-session isolation:** ${evidence.crossSession.trials} paired trials, ${evidence.crossSession.distinctSessionPairs} distinct pairs, ${evidence.crossSession.targetProtectedCallAttempts} target protected-call attempts.
 
 All evidence above comes from repository-owned synthetic fixtures. It verifies those local execution paths and does not establish production deployment or an external MCP host's behavior.
-
-## E4 Acceptance
-
-**${e4.status || 'NOT_VERIFIED'}**. Existing E4 acceptance criteria were not changed. The run report states that these cloud trials do not satisfy the clean Windows VM, installed artifact, fault injection, and independent operator requirements. Matrix hash at test time: \`${e4.matrixSha256 || 'not recorded'}\`; current matrix hash: \`${currentMatrixSha256 || 'unavailable'}\`; unchanged: **${summary.e4.matrixUnchanged ? 'yes' : 'no'}**. This experiment does not pass or close E4.
 
 ## Token Usage and Cost Reconciliation
 
@@ -518,7 +507,7 @@ Partial rows are reported as observed execution records only. They are excluded 
 
 ## Machine-readable Summary
 
-See \`${path.basename(jsonPath)}\` for the complete aggregated counts, per-run ledger, preflight failures, A/B/C/D metrics, generation runs, model usage, case hashes, and E4 matrix hash check.
+See \`${path.basename(jsonPath)}\` for the complete aggregated counts, per-run ledger, preflight failures, A/B/C/D metrics, generation runs, model usage, and case hashes.
 `;
 
 const publishedMarkdown = sanitizeProviderStatusText(markdown);

@@ -1014,12 +1014,6 @@
       "gitignore"
     ]
   },
-  "e4": {
-    "status": "NOT_VERIFIED",
-    "standard": "Agent Canary E4 research level; unchanged",
-    "matrixSha256": "fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04",
-    "reason": "Cloud model trials do not satisfy the clean-Windows-VM, installed-artifact, fault-injection, and independent-operator E4 acceptance requirements."
-  },
   "limitations": [
     "The attack suite is synthetic and repository-owned; holdout-v1 is not an external blind benchmark.",
     "A/B/C/D preserve the existing security-lab/run-sdk-agent.mjs definitions.",

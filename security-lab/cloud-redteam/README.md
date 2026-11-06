@@ -42,7 +42,7 @@ npm run agentdojo -- --dry-run
 npm run agentdojo -- --suite workspace --user-task user_task_0 --injection-task injection_task_0 --attack tool_knowledge --defense tool_filter
 ```
 
-Use `--model llm:model-id` or `--model gpt:model-id` to select the defender. AgentDojo's raw traces, subprocess logs, token ledger, configuration, and standalone Markdown report are stored under the ignored `agentdojo-runs/` directory. Its metric definitions remain upstream's `utility` and `security` results. This benchmark does not exercise Agent Canary's MCP Gateway, Policy, or HoneypotRuntime and cannot satisfy or change E4 acceptance.
+Use `--model llm:model-id` or `--model gpt:model-id` to select the defender. AgentDojo's raw traces, subprocess logs, token ledger, configuration, and standalone Markdown report are stored under the ignored `agentdojo-runs/` directory. Its metric definitions remain upstream's `utility` and `security` results. This benchmark does not exercise Agent Canary's MCP Gateway, Policy, or HoneypotRuntime; treat it as a separate model-only baseline.
 
 ### Optional PyRIT adaptive attacker
 
@@ -57,13 +57,13 @@ npm run pyrit -- --dry-run --arm D --max-turns 3
 npm run pyrit -- --arm D --max-turns 3
 ```
 
-The Python environment must use a PyRIT-supported Python version (`>=3.10,<3.15`). The dry-run prints an estimate without calling a model. A real run requires `ATTACKER_MODEL`, `DEFENDER_MODEL`, `JUDGE_MODEL`, provider keys, and a finite `MAX_TEST_BUDGET_USD`; compatibility checks, retries, concurrency, and the cumulative per-request ledger remain enforced. Raw PyRIT output, model usage, synthetic harness trials, refusal/failure archive, configuration, and standalone report go under the ignored `pyrit-runs/` directory. This optional adaptive run does not satisfy E4.
+The Python environment must use a PyRIT-supported Python version (`>=3.10,<3.15`). The dry-run prints an estimate without calling a model. A real run requires `ATTACKER_MODEL`, `DEFENDER_MODEL`, `JUDGE_MODEL`, provider keys, and a finite `MAX_TEST_BUDGET_USD`; compatibility checks, retries, concurrency, and the cumulative per-request ledger remain enforced. Raw PyRIT output, model usage, synthetic harness trials, refusal/failure archive, configuration, and standalone report go under the ignored `pyrit-runs/` directory.
 
 ## Experiment scope and report
 
 ### Preserved cloud campaign (2026-11-06)
 
-The run set contains 17 attempts, 8 completed 100-row batches, and 9 attempts stopped before trials. Completed rows total 800, including 608 attack trials; 225/608 (37.0%) produced recorded synthetic side effects, and 383/608 (63.0%) were defended. Generation had 0/38 explicit refusals and 5/38 generation/API/parse failures (13.2%), which used deterministic synthetic fallbacks. Each A/B/C/D arm has 200 rows; repeated case sets mean the rows are not all unique scenarios. The token-priced ledger is $8.10611718; locally priced reported usage is $6.99682264; invoice billing was not available. E4 remains NOT_VERIFIED.
+The run set contains 17 attempts, 8 completed 100-row batches, and 9 attempts stopped before trials. Completed rows total 800, including 608 attack trials; 225/608 (37.0%) produced recorded synthetic side effects, and 383/608 (63.0%) were defended. Generation had 0/38 explicit refusals and 5/38 generation/API/parse failures (13.2%), which used deterministic synthetic fallbacks. Each A/B/C/D arm has 200 rows; repeated case sets mean the rows are not all unique scenarios. The token-priced ledger is $8.10611718; locally priced reported usage is $6.99682264; invoice billing was not available.
 
 See the [full campaign report](CAMPAIGN-REPORT-2026-11-06.md), [machine-readable summary](campaign-summary-2026-11-06.json), and the linked timestamped raw run folders under `runs/`.
 
@@ -71,7 +71,7 @@ All effects use new private temporary fixtures, synthetic secrets, a fixed loopb
 
 The A/B/C/D definitions are read from `security-lab/run-sdk-agent.mjs` and are not changed: A has no Canary, B records static `.env` reads, C adds Guard quarantine, and D uses deterministic Gateway capabilities without a honeypot or AI review. The judge is advisory only. Attack success, defense success, Gateway decisions, MCP fixture calls, file hashes, canary events, and session IDs come from recorded trial evidence.
 
-Each report records completed count, generation refusal rate, per-generator effectiveness, per-defender A/B/C/D results, token counts, conservative cost from provider-reported token usage, failures, raw logs, test configuration, source commit, and the hash of `security-lab/e4/matrix.json`. Generic OpenAI-compatible usage does not guarantee an invoice amount; the final billed cost must be reconciled with Yicode's usage ledger. An author-run cloud evaluation is **not E4**. The existing E4 criteria are never edited by this package.
+Each report records completed count, generation refusal rate, per-generator effectiveness, per-defender A/B/C/D results, token counts, conservative cost from provider-reported token usage, failures, raw logs, test configuration, and source commit. Generic OpenAI-compatible usage does not guarantee an invoice amount; the final billed cost must be reconciled with Yicode's usage ledger.
 
 After one or more runs, rebuild the campaign report from local artifacts without making API calls:
 

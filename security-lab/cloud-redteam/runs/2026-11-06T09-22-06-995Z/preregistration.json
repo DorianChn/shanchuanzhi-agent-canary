@@ -51,6 +51,5 @@
   "budgetUsd": 9,
   "priorCommittedUsd": 1.6104919199999999,
   "budgetRemainingBeforeRunUsd": 7.389508080000001,
-  "e4MatrixSha256": "fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04",
   "scope": "Repository-owned temporary fixtures with synthetic-only values; fixed loopback sink; no external tool destinations."
 }
