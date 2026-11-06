@@ -1,6 +1,6 @@
 # Agent Canary Cloud Red Team
 
-This optional security-lab workspace (v0.1.0) uses Promptfoo for cloud-backed generation and batch execution over the Agent Canary SDK Gateway/Guard/HoneypotRuntime evidence path. It also includes a separately reported [AgentDojo](https://github.com/ethz-spylab/agentdojo) baseline pinned to `0.1.35` and benchmark data `v1.2.2`. A follow-up integration will add adaptive multi-turn techniques publicly released by major technology-company security teams, including Microsoft AI Red Team's open-source PyRIT, to bring reproducible, enterprise-grade red-team evaluation to personal agents. These are public open-source tools, not proprietary enterprise-only systems.
+This optional security-lab workspace (v0.1.0) uses Promptfoo for cloud-backed generation and batch execution over the Agent Canary SDK Gateway/Guard/HoneypotRuntime evidence path. It also includes a separately reported [AgentDojo](https://github.com/ethz-spylab/agentdojo) baseline pinned to `0.1.35` and benchmark data `v1.2.2`, plus an optional adapter for [Microsoft AI Red Team's open-source PyRIT](https://github.com/microsoft/PyRIT) pinned to `1.1.0`. This applies publicly released large-company red-team methods to reproducible security evaluation for personal agents. PyRIT is open source, not proprietary enterprise-only technology. The PyRIT adapter has not yet been run in this checkout. See [open-source research and integration fit](OPEN-SOURCE-RESEARCH.md) for source provenance and integration fit.
 
 ## Credentials and endpoint
 
@@ -27,7 +27,7 @@ node run.mjs --size 100
 node run.mjs --size 100 --defender-models gpt:gpt-6.1-sol,llm:glm-5.3
 ```
 
-`100`, `1000`, and `10000` are per defender-model trial counts across A/B/C/D. Every run gets a new timestamped directory under `runs/`. `MAX_TEST_BUDGET_USD` is enforced cumulatively across Promptfoo and AgentDojo run directories; changing the cap does not reset earlier committed usage. Local credentials, virtual environments, and run directories are Git-ignored. Campaign summaries are generated outside those directories and should be reviewed before committing.
+`100`, `1000`, and `10000` are per defender-model trial counts across A/B/C/D. Every run gets a new timestamped directory under `runs/`. `MAX_TEST_BUDGET_USD` is enforced cumulatively across Promptfoo, AgentDojo, and PyRIT run directories; changing the cap does not reset earlier committed usage. Local credentials, virtual environments, and run directories are Git-ignored. Campaign summaries are generated outside those directories and should be reviewed before committing.
 
 ### Optional AgentDojo baseline
 
@@ -43,6 +43,21 @@ npm run agentdojo -- --suite workspace --user-task user_task_0 --injection-task 
 ```
 
 Use `--model llm:model-id` or `--model gpt:model-id` to select the defender. AgentDojo's raw traces, subprocess logs, token ledger, configuration, and standalone Markdown report are stored under the ignored `agentdojo-runs/` directory. Its metric definitions remain upstream's `utility` and `security` results. This benchmark does not exercise Agent Canary's MCP Gateway, Policy, or HoneypotRuntime and cannot satisfy or change E4 acceptance.
+
+### Optional PyRIT adaptive attacker
+
+PyRIT's `RedTeamingAttack` generates adaptive turns with the configured attacker model, sends each accumulated user-message prefix through a fresh synthetic harness trial, and scores the returned harness evidence. A separate configured judge model supplies an auxiliary LLM score only; it cannot determine the recorded attack-success result. Refusal and generation failures are archived, and the existing deterministic synthetic corpus supplies fallback cases without asking a model to bypass its provider's safety rules. Replay rows share prefixes and are correlated, so they are not independent benchmark cases.
+
+Install the pinned optional dependency in its own Python environment, then preview the estimated token and cost budget or start a run:
+
+```sh
+python -m venv .venv-pyrit
+.\.venv-pyrit\Scripts\python.exe -m pip install -r requirements-pyrit.txt
+npm run pyrit -- --dry-run --arm D --max-turns 3
+npm run pyrit -- --arm D --max-turns 3
+```
+
+The Python environment must use a PyRIT-supported Python version (`>=3.10,<3.15`). The dry-run prints an estimate without calling a model. A real run requires `ATTACKER_MODEL`, `DEFENDER_MODEL`, `JUDGE_MODEL`, provider keys, and a finite `MAX_TEST_BUDGET_USD`; compatibility checks, retries, concurrency, and the cumulative per-request ledger remain enforced. Raw PyRIT output, model usage, synthetic harness trials, refusal/failure archive, configuration, and standalone report go under the ignored `pyrit-runs/` directory. This optional adaptive run does not satisfy E4.
 
 ## Experiment scope and report
 

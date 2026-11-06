@@ -45,7 +45,7 @@ function readJson(file) { try { return JSON.parse(fs.readFileSync(file, 'utf8'))
 
 function priorRunSpendUsd() {
   let total = 0;
-  for (const runsRoot of [path.join(here, 'runs'), path.join(here, 'agentdojo-runs')]) {
+  for (const runsRoot of [path.join(here, 'runs'), path.join(here, 'agentdojo-runs'), path.join(here, 'pyrit-runs')]) {
     if (!fs.existsSync(runsRoot)) continue;
     for (const entry of fs.readdirSync(runsRoot, { withFileTypes: true }).filter(item => item.isDirectory())) {
       const dir = path.join(runsRoot, entry.name);

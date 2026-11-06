@@ -8,6 +8,7 @@
     "test": "node --test test/*.test.mjs",
     "run": "node run.mjs",
     "agentdojo": "node agentdojo-run.mjs",
+    "pyrit": "node pyrit-run.mjs",
     "finalize": "node finalize-run.mjs",
     "report": "node summarize-campaign.mjs",
     "input": "node input-server.mjs"

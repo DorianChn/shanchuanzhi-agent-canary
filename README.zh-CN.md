@@ -228,7 +228,7 @@ R45 增加了 Cline SDK Plugin 和上游 Filesystem MCP 的 fail-closed 适配�
 
 ## 本地开发
 
-仓库还包含独立的可选云端红队实验室（`security-lab/cloud-redteam`，v0.1.0），集成 Promptfoo 批量评估和单独报告的 AgentDojo 基准。后续集成将采用大型科技企业安全团队公开发布的红队技术，包括微软 AI Red Team 的开源 PyRIT，为个人 Agent 提供可复现的企业级安全评测体验。这些是公开开源工具，并非企业内部专有系统。配置和边界见[实验室说明](security-lab/cloud-redteam/README.md)。
+仓库的可选云端红队实验室（`security-lab/cloud-redteam`，v0.1.0）现包含 Promptfoo 批量评估、单独报告的 AgentDojo 基准，以及微软 AI Red Team 开源 PyRIT 1.1.0 的适配器。它把大型科技企业公开发布的红队方法用于个人 Agent 的可复现安全评估。PyRIT 是公开开源项目，不是企业内部专有技术；该适配器尚未在本次工作区执行。配置和边界见[实验室说明](security-lab/cloud-redteam/README.md)及[集成研究](security-lab/cloud-redteam/OPEN-SOURCE-RESEARCH.md)。
 
 ```sh
 git clone https://github.com/DorianChn/shanchuanzhi-agent-canary.git

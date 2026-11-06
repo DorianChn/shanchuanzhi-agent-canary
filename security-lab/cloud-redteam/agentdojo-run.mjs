@@ -13,6 +13,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '../..');
 const runsRoot = path.join(here, 'runs');
 const agentDojoRunsRoot = path.join(here, 'agentdojo-runs');
+const pyritRunsRoot = path.join(here, 'pyrit-runs');
 const pinnedAgentDojoVersion = '0.1.35';
 const agentDojoBenchmarkVersion = 'v1.2.2';
 
@@ -53,7 +54,7 @@ function safeError(error) { return String(error?.code ?? error?.message ?? 'AGEN
 
 function priorRunSpendUsd() {
   let total = 0;
-  for (const base of [runsRoot, agentDojoRunsRoot]) {
+  for (const base of [runsRoot, agentDojoRunsRoot, pyritRunsRoot]) {
     if (!fs.existsSync(base)) continue;
     for (const name of fs.readdirSync(base)) {
       const dir = path.join(base, name);

@@ -94,7 +94,7 @@ The cumulative token-priced ledger is **$8.10611718**; reported-token pricing to
 
 ## Local development
 
-The repository also includes an optional cloud red-team lab (`security-lab/cloud-redteam`, v0.1.0) with Promptfoo batch evaluation and a separately reported AgentDojo baseline. The next integration adds publicly released red-team techniques from major technology-company security teams, including Microsoft AI Red Team's open-source PyRIT, to give personal agents reproducible, enterprise-grade security evaluation. These are public open-source tools, not proprietary enterprise-only systems. See the [lab setup and scope](security-lab/cloud-redteam/README.md).
+The optional cloud red-team lab (`security-lab/cloud-redteam`, v0.1.0) combines Promptfoo batch evaluation, a separately reported AgentDojo baseline, and an adapter for Microsoft AI Red Team's open-source PyRIT 1.1.0. It applies publicly released large-company red-team methods to reproducible security evaluation for personal agents. PyRIT is open source, not proprietary enterprise-only technology. The adapter has not yet been run in this checkout; see the [lab setup and scope](security-lab/cloud-redteam/README.md) and [integration research](security-lab/cloud-redteam/OPEN-SOURCE-RESEARCH.md).
 
 ```sh
 npm ci
