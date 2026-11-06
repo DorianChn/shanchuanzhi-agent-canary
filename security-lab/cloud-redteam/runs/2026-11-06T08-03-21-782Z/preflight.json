@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-11-06T08:03:44.706Z",
+  "records": [],
+  "failures": [
+    {
+      "at": "2026-11-06T08:03:34.865Z",
+      "model": "llm:deepseek-v4.1-flash",
+      "code": "API_HTTP_502",
+      "retryable": true
+    },
+    {
+      "at": "2026-11-06T08:03:44.705Z",
+      "model": "llm:glm-5.3",
+      "code": "API_HTTP_502",
+      "retryable": true
+    }
+  ]
+}

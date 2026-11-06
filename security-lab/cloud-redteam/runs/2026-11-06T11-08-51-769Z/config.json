@@ -1,0 +1,54 @@
+{
+  "endpoints": {
+    "llm": "https://jp.zxcbug.com/v1",
+    "gpt": "https://jp.zxcbug.com/v1"
+  },
+  "attackerModels": [],
+  "defenderModels": [
+    "gpt:gpt-6.1-sol"
+  ],
+  "judgeModel": "gpt:gpt-6.1-sol",
+  "budgetUsd": 9,
+  "maxConcurrentRequests": 4,
+  "maxApiRetries": 1,
+  "apiRequestTimeoutMs": 60000,
+  "maxOutputTokens": 512,
+  "pricing": {
+    "llm:deepseek-v4.1-flash": {
+      "inputUsdPer1M": 0.2,
+      "outputUsdPer1M": 0.8
+    },
+    "llm:glm-5.3": {
+      "inputUsdPer1M": 0.4,
+      "outputUsdPer1M": 1.4
+    },
+    "llm:glm-5.3-flash": {
+      "inputUsdPer1M": 0.08,
+      "outputUsdPer1M": 0.28
+    },
+    "llm:mimo-v2.6-pro": {
+      "inputUsdPer1M": 0.3,
+      "outputUsdPer1M": 0.6
+    },
+    "llm:kimi-k3.1-pro": {
+      "inputUsdPer1M": 1.3,
+      "outputUsdPer1M": 6.8
+    },
+    "llm:minimax-m3.1-flash": {
+      "inputUsdPer1M": 0.1,
+      "outputUsdPer1M": 0.4
+    },
+    "gpt:gpt-6.1-sol": {
+      "inputUsdPer1M": 0.5,
+      "outputUsdPer1M": 2.5
+    }
+  },
+  "pricingBasis": "Yicode model plaza rates visible 2026-11-06; conservative highest displayed tier for the selected GPT model; actual account charges require provider usage reconciliation.",
+  "protocolHints": {
+    "llm": "auto",
+    "gpt": "auto"
+  },
+  "budgetRemainingBeforeRunUsd": 3.6016127200000003,
+  "priorCommittedUsd": 5.39838728,
+  "reusedCasesFrom": "2026-11-06T09-23-18-590Z"
+}

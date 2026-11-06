@@ -1,0 +1,140 @@
+{
+  "caseCount": 25,
+  "arms": 4,
+  "turns": 4,
+  "maxConcurrentRequests": 2,
+  "retryMultiplier": 2,
+  "entries": [
+    {
+      "role": "defender",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 800,
+      "inputTokensEach": 24000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 10.624
+    },
+    {
+      "role": "attacker",
+      "model": "llm:deepseek-v4.1-flash",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.012057599999999998
+    },
+    {
+      "role": "attacker",
+      "model": "llm:glm-5.3",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.0235008
+    },
+    {
+      "role": "attacker",
+      "model": "llm:glm-5.3-flash",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.00470016
+    },
+    {
+      "role": "attacker",
+      "model": "llm:mimo-v2.6-pro",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.0162432
+    },
+    {
+      "role": "attacker",
+      "model": "llm:kimi-k3.1-pro",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.0832896
+    },
+    {
+      "role": "attacker",
+      "model": "llm:minimax-m3.1-flash",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.006028799999999999
+    },
+    {
+      "role": "attacker",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 6,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.03168
+    },
+    {
+      "role": "judge",
+      "model": "llm:glm-5.3",
+      "requests": 200,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 256,
+      "estimatedUsd": 0.7116800000000001
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:deepseek-v4.1-flash",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.0008032
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:glm-5.3",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.0016056
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:glm-5.3-flash",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.00032112
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:mimo-v2.6-pro",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.0012024000000000002
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:kimi-k3.1-pro",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.0052271999999999996
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:minimax-m3.1-flash",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.0004016
+    },
+    {
+      "role": "protocol-probe",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 4,
+      "inputTokensEach": 1000,
+      "outputTokensEach": 1,
+      "estimatedUsd": 0.00201
+    }
+  ],
+  "estimatedUsd": 11.52475128,
+  "budgetUsd": 19,
+  "withinBudget": true
+}

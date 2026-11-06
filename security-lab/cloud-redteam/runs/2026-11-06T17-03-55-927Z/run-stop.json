@@ -1,0 +1,10 @@
+{
+  "status": "STOPPED_REQUIRED_MODEL_PREFLIGHT",
+  "budget": {
+    "budgetUsd": "unlimited",
+    "settledUsd": 0,
+    "committedUsd": 0,
+    "stopped": false
+  },
+  "trialsStarted": 0
+}

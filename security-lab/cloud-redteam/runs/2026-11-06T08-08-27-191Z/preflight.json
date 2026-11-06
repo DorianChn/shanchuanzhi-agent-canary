@@ -1,0 +1,115 @@
+{
+  "checkedAt": "2026-11-06T08:09:14.051Z",
+  "records": [
+    {
+      "model": "llm:glm-5.3",
+      "catalogId": "glm-5.3",
+      "completionId": "6fcb7fe2d5d62b06e9927de3f3c828e5",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 48,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "llm:glm-5.3-flash",
+      "catalogId": "glm-5.3-flash",
+      "completionId": "2683f6d2a6aaa785369647988cd93a5b",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 48,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "llm:mimo-v2.6-pro",
+      "catalogId": "mimo-v2.6-pro",
+      "completionId": "b6a4b896dc5f12cace316e9a598633d8",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 48,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "llm:kimi-k3.1-pro",
+      "catalogId": "kimi-k3.1-pro",
+      "completionId": "d222148196ba32a989707b5154d6e7ad",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 130,
+        "outputTokens": 4
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "llm:minimax-m3.1-flash",
+      "catalogId": "minimax-m3.1-flash",
+      "completionId": "9828c7f01e78bd768c07d6edef9b571b",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 229,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "gpt:gpt-6.1-sol",
+      "catalogId": "gpt-6.1-sol",
+      "completionId": "resp_0e2f82bcba62a034016aed8b1e5e9087d28296fe9d40398be8",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 4396,
+        "outputTokens": 5
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-11-06T08:08:38.284Z",
+      "model": "llm:deepseek-v4.1-flash",
+      "code": "API_HTTP_502",
+      "retryable": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "finalized": true,
+  "totalCapUsd": 9,
+  "priorCommittedUsd": 1.63552488,
+  "budgetRemainingBeforeRunUsd": 7.36447512,
+  "parentCommittedUsd": 0.0611435,
+  "childCommittedUsd": 0.887869,
+  "runCommittedUsd": 0.9490125,
+  "cumulativeCommittedUsd": 2.58453738,
+  "remainingUsd": 6.41546262
+}

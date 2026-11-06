@@ -1,0 +1,6 @@
+{
+  "model": "llm:glm-5.3",
+  "available": true,
+  "status": "AVAILABLE",
+  "reason": null
+}

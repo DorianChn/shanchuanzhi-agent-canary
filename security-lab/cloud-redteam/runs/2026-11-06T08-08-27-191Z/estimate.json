@@ -1,0 +1,140 @@
+{
+  "caseCount": 25,
+  "arms": 4,
+  "turns": 4,
+  "maxConcurrentRequests": 2,
+  "retryMultiplier": 2,
+  "entries": [
+    {
+      "role": "defender",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 800,
+      "inputTokensEach": 32000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 13.824
+    },
+    {
+      "role": "attacker",
+      "model": "llm:deepseek-v4.1-flash",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.0216576
+    },
+    {
+      "role": "attacker",
+      "model": "llm:glm-5.3",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.042700800000000004
+    },
+    {
+      "role": "attacker",
+      "model": "llm:glm-5.3-flash",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.00854016
+    },
+    {
+      "role": "attacker",
+      "model": "llm:mimo-v2.6-pro",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.030643200000000002
+    },
+    {
+      "role": "attacker",
+      "model": "llm:kimi-k3.1-pro",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.14568959999999997
+    },
+    {
+      "role": "attacker",
+      "model": "llm:minimax-m3.1-flash",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.0108288
+    },
+    {
+      "role": "attacker",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 6,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 512,
+      "estimatedUsd": 0.05568
+    },
+    {
+      "role": "judge",
+      "model": "llm:glm-5.3",
+      "requests": 200,
+      "inputTokensEach": 16000,
+      "outputTokensEach": 256,
+      "estimatedUsd": 1.35168
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:deepseek-v4.1-flash",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.0064256
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:glm-5.3",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.0128448
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:glm-5.3-flash",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.00256896
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:mimo-v2.6-pro",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.009619200000000001
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:kimi-k3.1-pro",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.041817599999999996
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:minimax-m3.1-flash",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.0032128
+    },
+    {
+      "role": "protocol-probe",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 4,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedUsd": 0.01608
+    }
+  ],
+  "estimatedUsd": 15.58398912,
+  "budgetUsd": 18.9720282,
+  "withinBudget": true
+}

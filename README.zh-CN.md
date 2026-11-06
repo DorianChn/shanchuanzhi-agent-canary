@@ -217,7 +217,18 @@ R45 增加了 Cline SDK Plugin 和上游 Filesystem MCP 的 fail-closed 适配�
 
 这些结果只适用于所列源码、测试和环境，不能证明全局防护、零误报或完全消除 TOCTOU。未配合取消的回调仍可能产生延迟副作用。详见[安全限制](docs/3.0/SECURITY_LIMITATIONS.md)与[完整验收报告](docs/3.0/FINAL_3_0_ACCEPTANCE.md)。
 
+## 云端红队实验（2026-11-06）
+
+合成环境云端实验共保留 17 次运行记录：8 批完成、9 次在试验前停止。完成批次共有 800 条结果，其中 608 条攻击试验；225/608（37.0%）产生了记录到的副作用，防御成功 383/608（63.0%）。攻击生成 38 个样本中没有明确拒绝；5 次生成/API/解析失败（13.2%）使用了确定性合成备用载荷。A/B/C/D 每组各 200 条。大多数批次重复使用同一套 25 个案例，因此是重复测量，不是 800 个独立案例。
+
+累计 Token 计价账本为 **$8.10611718**，按已报告 Token 计算的费用为 **$6.99682264**。差额尚未对账，供应商发票金额无法从通用 API 响应确认。这是作者在合成隔离环境进行的实验，**不满足 E4**。原始测试提交为 `04b5961b79ae7eeaf6ac9cea5b4f494d771f702f`；下文提到的 PyRIT 集成是在这些测量之后添加的，不属于本次结果。
+
+- [完整实验报告：A/B/C/D、模型用量、E4 对照与原始运行日志](security-lab/cloud-redteam/CAMPAIGN-REPORT-2026-11-06.md)
+- [机器可读实验汇总](security-lab/cloud-redteam/campaign-summary-2026-11-06.json)
+
 ## 本地开发
+
+仓库还包含独立的可选云端红队实验室（`security-lab/cloud-redteam`，v0.1.0），集成 Promptfoo 批量评估和单独报告的 AgentDojo 基准。后续集成将采用大型科技企业安全团队公开发布的红队技术，包括微软 AI Red Team 的开源 PyRIT，为个人 Agent 提供可复现的企业级安全评测体验。这些是公开开源工具，并非企业内部专有系统。配置和边界见[实验室说明](security-lab/cloud-redteam/README.md)。
 
 ```sh
 git clone https://github.com/DorianChn/shanchuanzhi-agent-canary.git

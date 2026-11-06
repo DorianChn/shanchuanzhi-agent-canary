@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add the optional cloud red-team lab (v0.1.0) with Promptfoo batch runs and
+  AgentDojo's isolated benchmark adapter. The lab uses a synthetic Agent Canary
+  harness and does not alter or satisfy E4.
 - Harden registered file reads with held workspace-directory handles,
   no-follow relative path resolution, file-identity checks, and a regression
   for a parent junction inserted during registration. This narrows path-race

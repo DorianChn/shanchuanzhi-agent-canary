@@ -1,0 +1,13 @@
+{
+  "status": "STOPPED_PRETRIAL_FALSE_BUDGET_GUARD",
+  "stage": "attack_generation_budget_reservation",
+  "model": "llm:glm-5.3",
+  "trialsStarted": 0,
+  "apiRequestsForGeneration": 0,
+  "errorCode": "BUDGET_LIMIT_REACHED",
+  "cause": "An actual probe charge exceeded its reservation, and the prior ledger incorrectly treated any over-reservation as exhaustion of the total budget. Corrected to stop only when the cumulative cap is reached.",
+  "reportedTokenCostUsd": 0.0022694,
+  "conservativeCommittedUsd": 0.0082998,
+  "unreportedFailedRequestReserveUsd": 0.0060304,
+  "providerInvoiceCostUsd": null
+}

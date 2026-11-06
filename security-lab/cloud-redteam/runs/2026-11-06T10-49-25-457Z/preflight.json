@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-11-06T10:49:28.904Z",
+  "records": [
+    {
+      "model": "gpt:gpt-6.1-sol",
+      "catalogId": "gpt-6.1-sol",
+      "completionId": "resp_08c39032f485b708016aedb0b6c69887d093b0e20599cac780",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 4232,
+        "outputTokens": 5
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

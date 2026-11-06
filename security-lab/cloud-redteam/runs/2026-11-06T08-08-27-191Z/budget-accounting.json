@@ -1,0 +1,12 @@
+{
+  "finalized": true,
+  "basis": "Provider-reported usage priced using the run configuration plus conservative reservations for failed requests; this is not the provider invoice.",
+  "totalCapUsd": 19,
+  "priorCommittedUsd": 0.027971799999999998,
+  "budgetRemainingBeforeRunUsd": 18.9720282,
+  "parentCommittedUsd": 0.04604156,
+  "childCommittedUsd": 1.5210648,
+  "runCommittedUsd": 1.56710636,
+  "cumulativeCommittedUsd": 1.59507816,
+  "remainingUsd": 17.40492184
+}

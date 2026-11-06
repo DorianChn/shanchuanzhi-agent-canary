@@ -1,0 +1,11 @@
+{
+  "finalized": true,
+  "totalCapUsd": 19,
+  "priorCommittedUsd": 0,
+  "parentCommittedUsd": 0.0004016,
+  "childCommittedUsd": null,
+  "runCommittedUsd": 0.0004016,
+  "cumulativeCommittedUsd": 0.0004016,
+  "remainingUsd": 18.9995984,
+  "accountingStatus": "CONSERVATIVE_RESERVATION_NOT_INVOICE"
+}

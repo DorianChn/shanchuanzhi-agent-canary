@@ -1,0 +1,14 @@
+{
+  "attempted": 19,
+  "refused": 0,
+  "failures": 5,
+  "sourceModels": [
+    "llm:deepseek-v4.1-flash",
+    "llm:glm-5.3",
+    "llm:glm-5.3-flash",
+    "llm:mimo-v2.6-pro",
+    "llm:kimi-k3.1-pro",
+    "llm:minimax-m3.1-flash",
+    "gpt:gpt-6.1-sol"
+  ]
+}

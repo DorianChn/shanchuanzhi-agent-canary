@@ -83,7 +83,18 @@ The published acceptance record for the frozen 3.0 source reports:
 
 These results apply to the listed source, tests, and environment. They do not establish global protection, zero false positives, or complete TOCTOU elimination. A non-cooperative callback may still cause a late side effect. See [security limitations](docs/3.0/SECURITY_LIMITATIONS.md) and the [full acceptance report](docs/3.0/FINAL_3_0_ACCEPTANCE.md).
 
+## Cloud red-team campaign (2026-11-06)
+
+The synthetic cloud campaign preserved 17 run attempts: 8 completed batches and 9 stopped before trials. The completed batches contain 800 result rows, including 608 attack trials. Recorded side effects occurred in 225/608 attacks (37.0%); defense succeeded in 383/608 (63.0%). Attack generation recorded no explicit refusals in 38 seeds; 5 generation/API/parse failures (13.2%) used deterministic synthetic fallbacks. Each A/B/C/D arm has 200 rows. Most batches reused the same 25-case set, so these are repeated measurements rather than 800 unique scenarios.
+
+The cumulative token-priced ledger is **$8.10611718**; reported-token pricing totals **$6.99682264**. The difference is unreconciled, and the provider invoice amount is unavailable. These author-run synthetic results **do not satisfy E4**. The original run commit was `04b5961b79ae7eeaf6ac9cea5b4f494d771f702f`; the PyRIT work described below was added afterward and was not part of these measurements.
+
+- [Full campaign report, including A/B/C/D, model usage, E4 comparison, and preserved raw logs](security-lab/cloud-redteam/CAMPAIGN-REPORT-2026-11-06.md)
+- [Machine-readable campaign summary](security-lab/cloud-redteam/campaign-summary-2026-11-06.json)
+
 ## Local development
+
+The repository also includes an optional cloud red-team lab (`security-lab/cloud-redteam`, v0.1.0) with Promptfoo batch evaluation and a separately reported AgentDojo baseline. The next integration adds publicly released red-team techniques from major technology-company security teams, including Microsoft AI Red Team's open-source PyRIT, to give personal agents reproducible, enterprise-grade security evaluation. These are public open-source tools, not proprietary enterprise-only systems. See the [lab setup and scope](security-lab/cloud-redteam/README.md).
 
 ```sh
 npm ci
