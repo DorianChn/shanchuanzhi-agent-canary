@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-11-06T10:21:14.926Z",
+  "records": [
+    {
+      "model": "gpt:gpt-6.1-sol",
+      "catalogId": "gpt-6.1-sol",
+      "completionId": "resp_075c5530a82f19fc016aedaa07dd3c87d0953cb72000e2ef8b",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://jp.zxcbug.com/v1",
+      "usage": {
+        "inputTokens": 4396,
+        "outputTokens": 5
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-11-06T10:21:14.925Z",
+      "model": "llm:minimax-m3.1-flash",
+      "code": "API_HTTP_502",
+      "retryable": true
+    }
+  ]
+}

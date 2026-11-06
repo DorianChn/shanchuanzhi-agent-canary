@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-11-06T09:21:32.569Z",
+  "records": [],
+  "failures": [
+    {
+      "at": "2026-11-06T09:21:22.553Z",
+      "model": "llm:glm-5.3",
+      "code": "API_HTTP_502",
+      "retryable": true
+    },
+    {
+      "at": "2026-11-06T09:21:32.568Z",
+      "model": "llm:glm-5.3-flash",
+      "code": "API_HTTP_502",
+      "retryable": true
+    }
+  ]
+}

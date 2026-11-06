@@ -1,0 +1,10 @@
+{
+  "status": "STOPPED_RETRYABLE_PREFLIGHT_ERROR",
+  "stage": "protocol-compatibility-probe",
+  "model": "llm:deepseek-v4.1-flash",
+  "modelIdentification": "First model in configured preflight order",
+  "errorCode": "API_HTTP_502",
+  "trialsStarted": 0,
+  "providerUsage": null,
+  "conservativeReservedUsd": 0.0004016
+}

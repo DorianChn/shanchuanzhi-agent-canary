@@ -1,0 +1,9 @@
+{
+  "exitCode": 100,
+  "classification": "COMPLETED_WITH_ASSERTION_FAILURES",
+  "expectedTrials": 100,
+  "promptfooResultCount": 100,
+  "rawTrialCount": 100,
+  "passed": 77,
+  "failed": 23
+}

@@ -1,0 +1,168 @@
+{
+  "caseCount": 250,
+  "arms": 4,
+  "defenderModels": [
+    "gpt:gpt-6.1-sol"
+  ],
+  "maxConcurrentRequests": 4,
+  "retryPolicy": {
+    "configuredRetries": 1,
+    "perRequestBudgetReservationEnforced": true
+  },
+  "baselineTokensPerTrial": {
+    "inputTokens": 12835,
+    "outputTokens": 128,
+    "sourceRunId": "2026-11-06T10-58-25-553Z",
+    "sourceModel": "gpt:gpt-6.1-sol",
+    "sourceCompletedTrials": 100
+  },
+  "safetyFactor": 1.5,
+  "entries": [
+    {
+      "role": "defender-empirical",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 1000,
+      "inputTokensEach": 12835,
+      "outputTokensEach": 128,
+      "estimatedInputTokens": 19252500,
+      "estimatedOutputTokens": 192000,
+      "estimatedUsd": 10.10625
+    },
+    {
+      "role": "judge-advisory",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 1000,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 256,
+      "estimatedInputTokens": 12000000,
+      "estimatedOutputTokens": 384000,
+      "estimatedUsd": 6.96
+    },
+    {
+      "role": "attack-generation",
+      "model": "llm:glm-5.3",
+      "requests": 32,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedInputTokens": 384000,
+      "estimatedOutputTokens": 24576,
+      "estimatedUsd": 0.1880064
+    },
+    {
+      "role": "attack-generation",
+      "model": "llm:glm-5.3-flash",
+      "requests": 32,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedInputTokens": 384000,
+      "estimatedOutputTokens": 24576,
+      "estimatedUsd": 0.03760128
+    },
+    {
+      "role": "attack-generation",
+      "model": "llm:mimo-v2.6-pro",
+      "requests": 31,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedInputTokens": 372000,
+      "estimatedOutputTokens": 23808,
+      "estimatedUsd": 0.1258848
+    },
+    {
+      "role": "attack-generation",
+      "model": "llm:kimi-k3.1-pro",
+      "requests": 31,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedInputTokens": 372000,
+      "estimatedOutputTokens": 23808,
+      "estimatedUsd": 0.6454944
+    },
+    {
+      "role": "attack-generation",
+      "model": "llm:minimax-m3.1-flash",
+      "requests": 31,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedInputTokens": 372000,
+      "estimatedOutputTokens": 23808,
+      "estimatedUsd": 0.0467232
+    },
+    {
+      "role": "attack-generation",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 31,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 512,
+      "estimatedInputTokens": 372000,
+      "estimatedOutputTokens": 23808,
+      "estimatedUsd": 0.24552
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:glm-5.3",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 12000,
+      "estimatedOutputTokens": 12,
+      "estimatedUsd": 0.0048168
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:glm-5.3-flash",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 12000,
+      "estimatedOutputTokens": 12,
+      "estimatedUsd": 0.00096336
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:mimo-v2.6-pro",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 12000,
+      "estimatedOutputTokens": 12,
+      "estimatedUsd": 0.0036072
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:kimi-k3.1-pro",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 12000,
+      "estimatedOutputTokens": 12,
+      "estimatedUsd": 0.0156816
+    },
+    {
+      "role": "protocol-probe",
+      "model": "llm:minimax-m3.1-flash",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 12000,
+      "estimatedOutputTokens": 12,
+      "estimatedUsd": 0.0012048
+    },
+    {
+      "role": "protocol-probe",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 12000,
+      "estimatedOutputTokens": 12,
+      "estimatedUsd": 0.00603
+    }
+  ],
+  "estimatedInputTokens": 33580500,
+  "estimatedOutputTokens": 720456,
+  "estimatedUsd": 18.38778384,
+  "budgetUsd": "unlimited",
+  "withinBudget": true,
+  "estimateBasis": "Empirical completed-run token usage per defender trial, scaled by the safety factor; judge, generator, and compatibility probes use explicit token allowances. The per-request ledger is the hard cumulative cap."
+}

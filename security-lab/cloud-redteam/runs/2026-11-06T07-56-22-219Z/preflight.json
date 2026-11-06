@@ -1,0 +1,93 @@
+{
+  "checkedAt": "2026-11-06T07:57:08.369Z",
+  "records": [
+    {
+      "model": "llm:glm-5.3",
+      "catalogId": "glm-5.3",
+      "completionId": "4c2b8fe5d1ef980b7fe8bd14284b1e20",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://api.yicode.ai/v1",
+      "usage": {
+        "inputTokens": 48,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "llm:mimo-v2.6-pro",
+      "catalogId": "mimo-v2.6-pro",
+      "completionId": "2fa8e97d8b8a34c3ed10f6126689f941",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://api.yicode.ai/v1",
+      "usage": {
+        "inputTokens": 48,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "llm:minimax-m3.1-flash",
+      "catalogId": "minimax-m3.1-flash",
+      "completionId": "4267e5616c031dc703a80613153f5d60",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://api.yicode.ai/v1",
+      "usage": {
+        "inputTokens": 229,
+        "outputTokens": 1
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    },
+    {
+      "model": "gpt:gpt-6.1-sol",
+      "catalogId": "gpt-6.1-sol",
+      "completionId": "resp_02cf57fd17200cbb016aed884a4ef487d2b2f90e1c5c2b0f1a",
+      "protocol": "chat-completions",
+      "endpointBaseUrl": "https://api.yicode.ai/v1",
+      "usage": {
+        "inputTokens": 4396,
+        "outputTokens": 5
+      },
+      "attempts": [
+        {
+          "protocol": "chat-completions",
+          "result": "supported"
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-11-06T07:56:33.749Z",
+      "model": "llm:deepseek-v4.1-flash",
+      "code": "API_HTTP_502",
+      "retryable": true
+    },
+    {
+      "at": "2026-11-06T07:56:42.644Z",
+      "model": "llm:glm-5.3-flash",
+      "code": "API_MODELS_NETWORK_ERROR",
+      "retryable": false
+    },
+    {
+      "at": "2026-11-06T07:56:53.105Z",
+      "model": "llm:kimi-k3.1-pro",
+      "code": "API_HTTP_502",
+      "retryable": true
+    }
+  ]
+}

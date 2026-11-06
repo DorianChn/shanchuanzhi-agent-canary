@@ -1,0 +1,58 @@
+{
+  "caseCount": 25,
+  "arms": 4,
+  "defenderModels": [
+    "gpt:gpt-6.1-sol"
+  ],
+  "maxConcurrentRequests": 4,
+  "retryPolicy": {
+    "configuredRetries": 1,
+    "perRequestBudgetReservationEnforced": true
+  },
+  "baselineTokensPerTrial": {
+    "inputTokens": 12651,
+    "outputTokens": 126,
+    "sourceRunId": "2026-11-06T10-49-25-457Z",
+    "sourceModel": "gpt:gpt-6.1-sol",
+    "sourceCompletedTrials": 100
+  },
+  "safetyFactor": 1.1,
+  "entries": [
+    {
+      "role": "defender-empirical",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 100,
+      "inputTokensEach": 12651,
+      "outputTokensEach": 126,
+      "estimatedInputTokens": 1391610,
+      "estimatedOutputTokens": 13861,
+      "estimatedUsd": 0.7304575
+    },
+    {
+      "role": "judge-advisory",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 100,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 256,
+      "estimatedInputTokens": 880001,
+      "estimatedOutputTokens": 28161,
+      "estimatedUsd": 0.510403
+    },
+    {
+      "role": "protocol-probe",
+      "model": "gpt:gpt-6.1-sol",
+      "requests": 1,
+      "inputTokensEach": 8000,
+      "outputTokensEach": 8,
+      "estimatedInputTokens": 8800,
+      "estimatedOutputTokens": 9,
+      "estimatedUsd": 0.0044225
+    }
+  ],
+  "estimatedInputTokens": 2280411,
+  "estimatedOutputTokens": 42031,
+  "estimatedUsd": 1.245283,
+  "budgetUsd": 4.51410572,
+  "withinBudget": true,
+  "estimateBasis": "Empirical completed-run token usage per defender trial, scaled by the safety factor; judge, generator, and compatibility probes use explicit token allowances. The per-request ledger is the hard cumulative cap."
+}

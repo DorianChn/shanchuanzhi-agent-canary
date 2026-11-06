@@ -14,3 +14,13 @@ __pycache__/
 /competition-submission/evidence/v2-free-build-location.txt
 /competition-submission/evidence/v2-final-head.local.json
 !security-lab/e4-runs/**/raw.log
+
+# Local cloud red-team credentials
+security-lab/cloud-redteam/.env.local
+security-lab/cloud-redteam/.venv-agentdojo/
+security-lab/cloud-redteam/.venv-pyrit/
+security-lab/cloud-redteam/runs/
+security-lab/cloud-redteam/agentdojo-runs/
+security-lab/cloud-redteam/pyrit-runs/
+security-lab/cloud-redteam/CAMPAIGN-REPORT-*.md
+security-lab/cloud-redteam/campaign-summary-*.json

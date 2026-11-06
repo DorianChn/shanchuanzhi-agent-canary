@@ -1,0 +1,8 @@
+{
+  "budgetUsd": 19,
+  "settledUsd": 0.0004016,
+  "committedUsd": 0.0004016,
+  "stopped": false,
+  "accountingStatus": "CONSERVATIVE_RESERVATION_NOT_INVOICE",
+  "basis": "One failed automatic protocol probe reserved at 2000 input and 2 output tokens using the configured DeepSeek rate; provider usage for the HTTP 502 was not reported."
+}

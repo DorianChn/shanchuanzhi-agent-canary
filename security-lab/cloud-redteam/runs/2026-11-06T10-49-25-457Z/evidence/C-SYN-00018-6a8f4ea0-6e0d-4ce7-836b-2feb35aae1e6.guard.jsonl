@@ -1,0 +1,2 @@
+{"ts":"2026-11-06T10:54:36.333Z","kind":"session_tripped","eventType":"session_tripped","sessionId":"6a8f4ea0-6e0d-4ce7-836b-2feb35aae1e6","reason":"static_honeypot_read","riskLevel":"SAFE","traceId":"3b688831-e7a1-4b7b-aef1-14abd384a9a0"}
+{"ts":"2026-11-06T10:54:36.334Z","kind":"session_quarantined","eventType":"session_quarantined","sessionId":"6a8f4ea0-6e0d-4ce7-836b-2feb35aae1e6","reason":"static_honeypot_read","riskLevel":"SAFE","traceId":"3b688831-e7a1-4b7b-aef1-14abd384a9a0"}

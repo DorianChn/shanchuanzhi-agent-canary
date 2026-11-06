@@ -1,0 +1,19 @@
+{
+  "name": "@agent-canary/cloud-redteam-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.22.0" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "run": "node run.mjs",
+    "agentdojo": "node agentdojo-run.mjs",
+    "pyrit": "node pyrit-run.mjs",
+    "finalize": "node finalize-run.mjs",
+    "report": "node summarize-campaign.mjs",
+    "input": "node input-server.mjs"
+  },
+  "devDependencies": {
+    "promptfoo": "0.125.1"
+  }
+}

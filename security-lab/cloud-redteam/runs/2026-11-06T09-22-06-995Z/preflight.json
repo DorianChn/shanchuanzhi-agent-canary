@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-06T09:22:40.117Z",
+  "records": [],
+  "failures": [
+    {
+      "at": "2026-11-06T09:22:19.170Z",
+      "model": "llm:glm-5.3",
+      "code": "API_HTTP_502",
+      "retryable": true
+    },
+    {
+      "at": "2026-11-06T09:22:28.746Z",
+      "model": "llm:glm-5.3-flash",
+      "code": "API_HTTP_502",
+      "retryable": true
+    },
+    {
+      "at": "2026-11-06T09:22:40.116Z",
+      "model": "llm:mimo-v2.6-pro",
+      "code": "API_HTTP_502",
+      "retryable": true
+    }
+  ]
+}

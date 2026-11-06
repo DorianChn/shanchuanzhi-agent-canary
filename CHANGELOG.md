@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add the optional cloud red-team lab (v0.1.0) with Promptfoo batch runs,
+  AgentDojo's isolated benchmark adapter, and a PyRIT 1.1.0 adaptive
+  multi-turn attacker routed through the shared cloud budget ledger and the
+  synthetic Agent Canary harness. PyRIT's model judge remains advisory; actual
+  success is determined from recorded harness side effects, and this work does
+  not alter or satisfy E4.
 - Harden registered file reads with held workspace-directory handles,
   no-follow relative path resolution, file-identity checks, and a regression
   for a parent junction inserted during registration. This narrows path-race

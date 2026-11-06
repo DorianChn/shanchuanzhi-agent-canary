@@ -1,0 +1,16 @@
+{
+  "status": "STOPPED_REQUIRED_MODEL_PREFLIGHT",
+  "failure": {
+    "at": "2026-11-06T10:21:14.925Z",
+    "model": "llm:minimax-m3.1-flash",
+    "code": "API_HTTP_502",
+    "retryable": true
+  },
+  "budget": {
+    "budgetUsd": 6.41546262,
+    "settledUsd": 0.0054233,
+    "committedUsd": 0.0054233,
+    "stopped": false
+  },
+  "trialsStarted": 0
+}

@@ -1,0 +1,16 @@
+{
+  "status": "STOPPED_REQUIRED_MODEL_PREFLIGHT",
+  "failure": {
+    "at": "2026-11-06T09:21:32.568Z",
+    "model": "llm:glm-5.3-flash",
+    "code": "API_HTTP_502",
+    "retryable": true
+  },
+  "budget": {
+    "budgetUsd": 7.40492184,
+    "settledUsd": 0.01541376,
+    "committedUsd": 0.01541376,
+    "stopped": false
+  },
+  "trialsStarted": 0
+}

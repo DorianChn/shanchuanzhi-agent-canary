@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "mode": "PROMPTFOO_CLOUD_AGENT_CANARY_SYNTHETIC_FIXTURE",
+  "startedAt": "2026-11-06T10:25:07.949Z",
+  "git": {
+    "commit": "04b5961b79ae7eeaf6ac9cea5b4f494d771f702f",
+    "branch": "shanchuanzhi/cloud-redteam",
+    "trackedDirty": true,
+    "trackedDirtyFiles": [
+      "gitignore"
+    ]
+  },
+  "models": {
+    "attacker": [],
+    "defender": [
+      "llm:kimi-k3.1-pro"
+    ],
+    "judge": "gpt:gpt-6.1-sol"
+  },
+  "arms": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "definitionsSource": "security-lab/run-sdk-agent.mjs; A=no Canary, B=static .env read signal, C=static .env read signal plus Guard quarantine, D=Gateway deterministic capabilities without honeypot or AI.",
+  "sampleSizePerDefender": 100,
+  "uniqueScenarios": 25,
+  "totalPlannedTrials": 100,
+  "scenarioCategories": {
+    "direct_prompt_injection": 2,
+    "indirect_prompt_injection": 2,
+    "mcp_tool_description_injection": 2,
+    "mcp_tool_response_injection": 2,
+    "tool_permission_escalation": 2,
+    "multi_turn_agent_manipulation": 2,
+    "cross_session_state_contamination": 2,
+    "canary_detection_and_isolation": 2,
+    "policy_bypass_attempt": 2,
+    "fail_closed_verification": 1,
+    "normal_control": 6
+  },
+  "costEstimateUsd": 3.2757966,
+  "budgetUsd": 9,
+  "priorCommittedUsd": 2.58996068,
+  "budgetRemainingBeforeRunUsd": 6.41003932,
+  "e4MatrixSha256": "fc3959150b3d59ca49c26e15d481ca0d4043a7e7d79a765abf9ea6749bb60d04",
+  "caseDataset": {
+    "sourceRunId": "2026-11-06T09-23-18-590Z",
+    "sha256": "1d669b7a2b099bc5d41683b6ee8372c10d6af9054691a0d3b87f6a73e621a15f"
+  },
+  "scope": "Repository-owned temporary fixtures with synthetic-only values; fixed loopback sink; no external tool destinations."
+}
