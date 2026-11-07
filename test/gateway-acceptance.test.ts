@@ -13,11 +13,11 @@ async function sinkFixture(){
  const guard=createAgentGuard({alert:false,eventsFile:path.join(root,'guard.jsonl')});
  return{root,guard,url,received:()=>received,close:()=>new Promise<void>(r=>server.close(()=>{console.log('FIXTURE_SINK_REQUESTS',received);r();})),send:async(args:any)=>{await fetch(url,{method:'POST',body:args.data,signal:AbortSignal.timeout(3000)});return{sent:true};}};
 }
-test('sensitive provenance expiry must not silently re-authorize egress',async()=>{
+test('sensitive output stays quarantined after provenance expiry and cannot authorize egress',async()=>{
  const s=await sinkFixture(),evidence=new EvidenceRecorder();
  const runtime=createTrustedExecutionGateway({agentId:'fixture',guard:s.guard,workspaceRoot:s.root,files:[],evidence,readOrigins:['https://127.0.0.1'],mcpTools:{source:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>fake},sink:{risk:'NETWORK',approvalRequired:false,execute:s.send}}});
  const now=Date.now;
- try{await runtime.agent.dispatch({name:'mcp_tool',args:{tool:'source',arguments:{}}});const future=now()+300001;Date.now=()=>future;
+ try{assert.deepEqual(await runtime.agent.dispatch({name:'mcp_tool',args:{tool:'source',arguments:{}}}),{error:'GATEWAY_SENSITIVE_OUTPUT_REDACTED'});assert.equal(s.guard.state,'QUARANTINED');s.guard.reset({acknowledgedBy:'acceptance-test'});const future=now()+300001;Date.now=()=>future;
   await assert.rejects(runtime.agent.dispatch({name:'mcp_tool',args:{tool:'sink',arguments:{data:Buffer.from(fake).toString('base64')}}}),/sensitive_session_egress_denied/);
   await assert.rejects(runtime.agent.dispatch({name:'http_request',args:{url:'https://127.0.0.1/path'}}),/sensitive_session_egress_denied/);
   assert.equal(s.received(),0);
@@ -29,8 +29,8 @@ test('two gateways sharing one Guard must not race source collection and egress'
  const a=createTrustedExecutionGateway({agentId:'a',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),mcpTools:{source:{risk:'READ_ONLY',approvalRequired:false,execute:async()=>{started();await hold;return fake;}}}});
  const b=createTrustedExecutionGateway({agentId:'b',guard:s.guard,workspaceRoot:s.root,files:[],evidence:new EvidenceRecorder(),mcpTools:{sink:{risk:'NETWORK',approvalRequired:false,execute:s.send}}});
  try{const source=a.agent.dispatch({name:'mcp_tool',args:{tool:'source',arguments:{}}});await start;
-  const sent=b.agent.dispatch({name:'mcp_tool',args:{tool:'sink',arguments:{data:Buffer.from(fake).toString('base64')}}});const checked=assert.rejects(sent,/sensitive_session_egress_denied/);
-  await new Promise<void>(r=>setImmediate(r));release();await source;await checked;assert.equal(s.received(),0);
+  const sent=b.agent.dispatch({name:'mcp_tool',args:{tool:'sink',arguments:{data:Buffer.from(fake).toString('base64')}}});const checked=assert.rejects(sent,/guard_quarantined/);
+  await new Promise<void>(r=>setImmediate(r));release();await source;await checked;assert.equal(s.guard.state,'QUARANTINED');assert.equal(s.received(),0);
  }finally{release();await a.close();await b.close();await s.close();}
 });
 test('concurrent duplicate approval executes a real callback exactly once',async()=>{

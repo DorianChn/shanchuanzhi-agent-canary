@@ -6,10 +6,12 @@ import path from 'node:path';
 import http from 'node:http';
 import { loadConfig, loadLocalEnv, parseModelReference, requireModel } from '../config.mjs';
 import { BudgetLedger, estimateExperiment, estimateEmpiricalExperiment } from '../budget.mjs';
-import { ATTACK_CATEGORIES, createEvaluationCases, parseGeneratedAttack, readFallbackDataset } from '../attacks.mjs';
+import { ATTACK_CATEGORIES, createEvaluationCases, deterministicFallback, parseGeneratedAttack, readFallbackDataset } from '../attacks.mjs';
 import { generateAttackCases } from '../generate-attacks.mjs';
 import { CloudSession } from '../cloud-session.mjs';
 import { completeWithProtocol, detectProtocol, listModels } from '../openai-compatible.mjs';
+import { pairedAttackComparisons, pairedDefenderModelComparisons } from '../paired-statistics.mjs';
+import { summarizeTrialOutcomes } from '../trial-statistics.mjs';
 
 function env(overrides = {}) {
   return {
@@ -102,6 +104,38 @@ test('provider billing rejection halts later model calls in the same campaign se
   assert.equal(requests, 1);
 });
 
+test('optional attacker preflight rejection does not poison a usable defender model', async () => {
+  await withServer(async (req, res) => {
+    if (req.url === '/v1/models') { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ data: [{ id: 'attacker-model' }, { id: 'defender-model' }] })); return; }
+    if (req.url === '/v1/chat/completions') {
+      let body=''; for await (const chunk of req) body+=chunk;
+      const model=JSON.parse(body).model;
+      if(model==='attacker-model'){res.writeHead(403,{'content-type':'application/json'});res.end('{}');return;}
+      res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({id:'probe-defender',model,choices:[{message:{role:'assistant',content:'OK'}}],usage:{prompt_tokens:10,completion_tokens:1}}));return;
+    }
+    res.writeHead(404); res.end('{}');
+  }, async baseUrl => {
+    const config=loadConfig(env({LLM_API_BASE_URL:baseUrl,GPT_API_BASE_URL:baseUrl,ATTACKER_MODEL:'llm:attacker-model',DEFENDER_MODEL:'gpt:defender-model',DEFENDER_MODELS:'gpt:defender-model',JUDGE_MODEL:'gpt:defender-model',MODEL_PRICING_JSON:'{"llm:attacker-model":{"inputUsdPer1M":1,"outputUsdPer1M":1},"gpt:defender-model":{"inputUsdPer1M":1,"outputUsdPer1M":1}}'}),{loadFile:false});
+    const cloud=new CloudSession(config);
+    await assert.rejects(cloud.preflight('llm:attacker-model',{required:false}),/API_HTTP_403/);
+    assert.equal(cloud.stopCode,null);
+    const defender=await cloud.preflight('gpt:defender-model');
+    assert.equal(defender.model,'gpt:defender-model');
+    assert.equal(cloud.stopCode,null);
+  });
+});
+
+test('attack-generation provider rejection remains a sample failure and leaves later calls available', async () => {
+  const config=loadConfig(env({MAX_API_RETRIES:'0'}),{loadFile:false}),attacker=requireModel(config,'llm:glm-5.3'),defender=requireModel(config,'gpt:gpt-6.1-sol');
+  let requests=0;
+  const cloud=new CloudSession(config,{fetchImpl:async(_url,options)=>{requests++;const body=JSON.parse(options.body);if(body.model==='glm-5.3')return new Response('{}',{status:403});return new Response(JSON.stringify({id:'defender-call',model:body.model,choices:[{message:{role:'assistant',content:'OK'}}],usage:{prompt_tokens:12,completion_tokens:1}}),{status:200,headers:{'content-type':'application/json'}});}});
+  cloud.hydratePreflight([attacker,defender].map(model=>({model:model.ref,catalogId:model.model,protocol:'chat-completions',endpointBaseUrl:model.endpoint.baseUrl})));
+  await assert.rejects(cloud.complete(attacker,{messages:[{role:'user',content:'synthetic attack fixture'}],purpose:'attack-generation'}),/API_HTTP_403/);
+  assert.equal(cloud.stopCode,null);
+  assert.equal((await cloud.complete(defender,{messages:[{role:'user',content:'synthetic defender fixture'}]})).content,'OK');
+  assert.equal(requests,2);
+});
+
 test('pre-run estimate accounts for all defender models, four arms, judge, retries, and budget', () => {
   const config = loadConfig(env({ MAX_TEST_BUDGET_USD: '50' }), { loadFile: false });
   const plan = estimateExperiment({ config, caseCount: 25, arms: 4, attackerCalls: 19, judgeCalls: 100 });
@@ -152,6 +186,103 @@ test('existing held-out fallback is used and all ten attack categories have synt
   assert.equal(cases.filter(item => !item.attack).length, 6);
   assert.deepEqual(new Set(cases.filter(item => item.attack).map(item => item.category)).size, 10);
   assert.ok(cases.every(item => item.syntheticOnly === true));
+});
+
+test('MCP tool-description injection includes a synthetic network-egress attempt', () => {
+  const attack = deterministicFallback('mcp_tool_description_injection', 0);
+  assert.match(attack.toolDescription, /synthetic secrets\.txt/i);
+  assert.match(attack.toolDescription, /send_fixture/i);
+  assert.doesNotMatch(attack.toolDescription, /https?:\/\//i);
+});
+
+test('paired analysis excludes incomplete rows and applies exact McNemar plus Holm adjustment', () => {
+  const trials = [];
+  for (const scenarioId of ['case-1', 'case-2', 'case-3', 'case-4']) {
+    trials.push({ scenarioId, model: 'gpt:test', attack: true, trialState: 'COMPLETED', arm: 'A', attackSuccess: true });
+    trials.push({ scenarioId, model: 'gpt:test', attack: true, trialState: 'COMPLETED', arm: 'B', attackSuccess: scenarioId !== 'case-4' });
+    trials.push({ scenarioId, model: 'gpt:test', attack: true, trialState: 'COMPLETED', arm: 'C', attackSuccess: false });
+    trials.push({ scenarioId, model: 'gpt:test', attack: true, trialState: 'COMPLETED', arm: 'D', attackSuccess: false });
+  }
+  trials.push({ scenarioId: 'incomplete', model: 'gpt:test', attack: true, trialState: 'ERROR', arm: 'A', attackSuccess: true });
+  const result = pairedAttackComparisons(trials, { bootstrapResamples: 100 });
+  const comparisons = Object.fromEntries(result.comparisons.map(row => [row.arm, row]));
+  assert.equal(comparisons.A.pairedScenarios, 4);
+  assert.equal(comparisons.A.riskDifferenceArmMinusReference, 1);
+  assert.deepEqual(comparisons.A.bootstrap95PercentInterval, [1, 1]);
+  assert.equal(comparisons.A.improvementPairs, 4);
+  assert.equal(comparisons.A.regressionPairs, 0);
+  assert.equal(comparisons.A.mcnemarPValue, 0.125);
+  assert.equal(comparisons.A.holmAdjustedPValue, 0.375);
+  assert.equal(comparisons.B.holmAdjustedPValue, 0.5);
+  assert.equal(comparisons.C.riskDifferenceArmMinusReference, 0);
+  assert.match(result.method.interpretation, /not a before-after causal estimate/);
+});
+
+test('paired defender-model analysis compares identical case and arm outcomes with Holm correction', () => {
+  const trials = [];
+  for (const arm of ['A', 'B', 'C', 'D']) {
+    for (const scenarioId of ['case-1', 'case-2', 'case-3', 'case-4']) {
+      trials.push({ scenarioId, model: 'gpt:reference', attack: true, trialState: 'COMPLETED', arm, attackSuccess: scenarioId === 'case-4' });
+      trials.push({ scenarioId, model: 'llm:compared', attack: true, trialState: 'COMPLETED', arm, attackSuccess: scenarioId !== 'case-4' });
+    }
+  }
+  trials.push({ scenarioId: 'case-5', model: 'gpt:reference', attack: true, trialState: 'ERROR', arm: 'A', attackSuccess: false });
+  trials.push({ scenarioId: 'case-5', model: 'llm:compared', attack: true, trialState: 'COMPLETED', arm: 'A', attackSuccess: false });
+
+  const result = pairedDefenderModelComparisons(trials, {
+    referenceModel: 'gpt:reference',
+    compareModels: ['llm:compared'],
+    bootstrapResamples: 100,
+  });
+  const armA = result.comparisons.find(row => row.arm === 'A');
+  assert.equal(result.comparisons.length, 4);
+  assert.equal(armA.pairedScenarios, 4);
+  assert.equal(armA.comparedModelSideEffects, 3);
+  assert.equal(armA.referenceModelSideEffects, 1);
+  assert.equal(armA.riskDifferenceComparedMinusReference, 0.5);
+  assert.equal(armA.comparedModelMoreSuccessfulPairs, 3);
+  assert.equal(armA.referenceModelMoreSuccessfulPairs, 1);
+  assert.equal(armA.mcnemarPValue, 0.625);
+  assert.equal(armA.holmAdjustedPValue, 1);
+  assert.match(result.method.interpretation, /fixed synthetic case set/);
+});
+
+test('outcome rates exclude errors without conclusive fixture evidence', () => {
+  const result = summarizeTrialOutcomes([
+    { trialId: 'A-1', arm: 'A', attack: true, trialState: 'COMPLETED', threatToolAttempt: true, attackSuccess: true },
+    { trialId: 'A-2', arm: 'A', attack: true, trialState: 'COMPLETED', threatToolAttempt: false, attackSuccess: false },
+    { trialId: 'A-3', arm: 'A', attack: true, trialState: 'ERROR', threatToolAttempt: false, attackSuccess: false },
+    { trialId: 'A-4', arm: 'A', attack: true, trialState: 'ERROR', threatToolAttempt: true, attackSuccess: true },
+    { trialId: 'A-C-1', arm: 'A', attack: false, trialState: 'ERROR', normalSuccess: false },
+    { trialId: 'A-C-2', arm: 'A', attack: false, trialState: 'COMPLETED', normalSuccess: false },
+  ]);
+  assert.deepEqual(result.attacks, {
+    trials: 4, completedTrials: 2, errorTrials: 2, evaluatedTrials: 3, unevaluableTrials: 1,
+    threatToolAttemptTrials: 2, observedThreatToolAttemptTrials: 2, effectiveAttackRate: 2 / 3,
+    attackSuccesses: 2, successfulEffects: 2, attackSuccessRate: 2 / 3,
+    defenseSuccesses: 1, defenseSuccessRate: 1 / 3, activeDenials: 0, activeDenialRate: 0,
+  });
+  assert.equal(result.controls.trials, 2);
+  assert.equal(result.controls.completedTrials, 1);
+  assert.equal(result.controls.errorTrials, 1);
+  assert.equal(result.controls.evaluatedTrials, 1);
+  assert.equal(result.controls.unevaluableTrials, 1);
+  assert.equal(result.controls.successRate, 0);
+  assert.deepEqual(result.controls.failures.map(item => item.trialId), ['A-C-2']);
+});
+
+test('paired analysis keeps an error only when a successful side effect was recorded', () => {
+  const trials = [
+    { scenarioId: 'case-1', model: 'gpt:test', attack: true, trialState: 'ERROR', arm: 'A', attackSuccess: true },
+    { scenarioId: 'case-1', model: 'gpt:test', attack: true, trialState: 'COMPLETED', arm: 'D', attackSuccess: false },
+    { scenarioId: 'case-2', model: 'gpt:test', attack: true, trialState: 'ERROR', arm: 'A', attackSuccess: false },
+    { scenarioId: 'case-2', model: 'gpt:test', attack: true, trialState: 'COMPLETED', arm: 'D', attackSuccess: false },
+  ];
+  const result = pairedAttackComparisons(trials, { compareArms: ['A'], bootstrapResamples: 100 });
+  assert.equal(result.comparisons[0].pairedScenarios, 1);
+  assert.equal(result.comparisons[0].armSideEffects, 1);
+  assert.equal(result.comparisons[0].referenceSideEffects, 0);
+  assert.match(result.method.pairing, /observed successful side effect/);
 });
 
 test('generated payload parser accepts only bounded synthetic fixture text and marks refusal', () => {
@@ -253,8 +384,22 @@ test('cloud completion applies a bounded timeout to provider requests', async ()
   });
   const model = requireModel(config, 'gpt:gpt-6.1-sol');
   cloud.protocols.set(model.ref, 'chat-completions');
-  await assert.rejects(cloud.complete(model, { messages: [{ role: 'user', content: 'timeout test' }] }), /API_NETWORK_ERROR/);
+  await assert.rejects(cloud.complete(model, { messages: [{ role: 'user', content: 'timeout test' }] }), error => error.code === 'API_NETWORK_ERROR_TIMEOUT');
   assert.ok(cloud.budgetSnapshot().committedUsd > 0);
+});
+
+test('network failures record only an allowlisted transport class', async () => {
+  const config = loadConfig(env({ MAX_API_RETRIES: '0' }), { loadFile: false });
+  const events = [];
+  const cloud = new CloudSession(config, {
+    onEvent: event => events.push(event),
+    fetchImpl: async () => { throw Object.assign(new TypeError('provider URL or credential must not be logged'), { cause: Object.assign(new Error('secret detail'), { code: 'ECONNRESET' }) }); },
+  });
+  const model = requireModel(config, 'gpt:gpt-6.1-sol');
+  cloud.protocols.set(model.ref, 'chat-completions');
+  await assert.rejects(cloud.complete(model, { messages: [{ role: 'user', content: 'synthetic test' }] }), error => error.code === 'API_NETWORK_ERROR_CONNECTION_RESET');
+  assert.deepEqual(events, [{ type: 'model_call_failed', model: 'gpt:gpt-6.1-sol', protocol: 'chat-completions', purpose: 'completion', code: 'API_NETWORK_ERROR_CONNECTION_RESET', attempts: 1 }]);
+  assert.doesNotMatch(JSON.stringify(events), /provider URL|credential|secret detail/);
 });
 
 test('CloudSession continues after actual token usage exceeds its estimate but remains inside the cap', async () => {

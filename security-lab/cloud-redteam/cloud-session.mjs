@@ -3,7 +3,7 @@ import { requireModel } from './config.mjs';
 import { ApiRequestError, completeWithProtocol, detectProtocol, listModels } from './openai-compatible.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-const isRetryable = error => error instanceof ApiRequestError && ([429, 500, 502, 503, 504].includes(error.status) || ['API_NETWORK_ERROR', 'API_MODELS_NETWORK_ERROR'].includes(error.code));
+const isRetryable = error => error instanceof ApiRequestError && ([429, 500, 502, 503, 504].includes(error.status) || error.code.startsWith('API_NETWORK_ERROR_') || error.code.startsWith('API_MODELS_NETWORK_ERROR_'));
 const isProviderRejection = error => error instanceof ApiRequestError && [401, 402, 403].includes(error.status);
 const retryDelay = attempt => Math.min(500 * (2 ** attempt), 4000);
 const PROBE_INPUT_TOKENS_BOUND = 8_000;
@@ -45,7 +45,7 @@ export class CloudSession {
     }
   }
 
-  async preflight(modelRef) {
+  async preflight(modelRef, { required = true } = {}) {
     if (this.stopCode) throw new ApiRequestError(`CAMPAIGN_STOPPED_${this.stopCode}`);
     return this.semaphore.run(async () => {
       const resolved = requireModel(this.config, modelRef);
@@ -58,8 +58,10 @@ export class CloudSession {
             break;
           }
           if (isProviderRejection(error)) {
-            this.stopCode = error.code;
-            this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose: 'model-catalog-preflight' });
+            if (required) {
+              this.stopCode = error.code;
+              this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose: 'model-catalog-preflight' });
+            }
             throw error;
           }
           if (!isRetryable(error) || attempt >= this.config.maxApiRetries) throw error;
@@ -87,8 +89,10 @@ export class CloudSession {
         } catch (error) {
           this.ledger.abandon(protocolReserve);
           if (isProviderRejection(error)) {
-            this.stopCode = error.code;
-            this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose: 'protocol-compatibility-probe' });
+            if (required) {
+              this.stopCode = error.code;
+              this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose: 'protocol-compatibility-probe' });
+            }
             throw error;
           }
           if (!isRetryable(error) || attempt >= this.config.maxApiRetries) throw error;
@@ -112,8 +116,9 @@ export class CloudSession {
     const visibleInputTokensBound = estimateUpperBoundTokens({ messages, tools }, 2);
     if (visibleInputTokensBound > 24_000) throw new Error('REQUEST_INPUT_BOUND_EXCEEDED');
     const inputTokensBound = visibleInputTokensBound + PROVIDER_SYSTEM_OVERHEAD_TOKENS;
-    let lastError;
+    let lastError; let attempts = 0;
     for (let attempt = 0; attempt <= this.config.maxApiRetries; attempt++) {
+      attempts++;
       const reservation = this.ledger.reserve(resolved, inputTokensBound, maxOutputTokens, purpose);
       try {
         const requestSignal = signal ?? AbortSignal.timeout(this.config.apiRequestTimeoutMs ?? 60_000);
@@ -126,15 +131,20 @@ export class CloudSession {
         if (this.ledger.snapshot().committedUsd < this.config.maxTestBudgetUsd) this.ledger.abandon(reservation);
         lastError = error;
         if (isProviderRejection(error)) {
-          this.stopCode = error.code;
-          this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose });
+          if (purpose !== 'attack-generation') {
+            this.stopCode = error.code;
+            this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose });
+          }
           break;
         }
         if (!isRetryable(error) || attempt >= this.config.maxApiRetries) break;
-        await sleep(retryDelay(attempt));
+        const nextDelayMs = retryDelay(attempt);
+        this.onEvent({ type: 'model_call_retry', model: resolved.ref, protocol, purpose, code: error?.code ?? 'API_RETRYABLE_FAILURE', attempt: attempt + 1, nextDelayMs });
+        await sleep(nextDelayMs);
       }
     }
-    if (lastError instanceof ApiRequestError && lastError.status === 429) {
+    this.onEvent({ type: 'model_call_failed', model: resolved.ref, protocol, purpose, code: lastError?.code ?? 'API_CALL_FAILED', attempts });
+    if (purpose !== 'attack-generation' && lastError instanceof ApiRequestError && lastError.status === 429) {
       this.stopCode = lastError.code;
       this.onEvent({ type: 'campaign_stopped_provider_rejection', model: resolved.ref, code: this.stopCode, purpose });
     }

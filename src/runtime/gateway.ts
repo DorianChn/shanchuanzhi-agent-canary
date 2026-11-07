@@ -10,6 +10,7 @@ import {DataFlowTracker} from './dataflow.js';
 import {executePinnedJSONTool} from '../network-tool.js';
 import {canonicalJSON,EvidenceRecorder,type EvidenceDecision,type ExecutionStatus,type SideEffectVerification} from './evidence.js';
 import {openSecureWorkspace,type SecureFileHandle,type SecureFileStat} from './secure-file.js';
+import {hasCredentialMarker,inspectToolOutput} from './sensitive-output.js';
 
 export interface GatewayFile {
   path:string;
@@ -38,7 +39,6 @@ type Request={name:string;args:Record<string,unknown>;id:string;digest:string};
 const idPattern=/^[A-Za-z0-9_.:-]{1,100}$/;
 const filePath=(v:string)=>v.replaceAll('\\','/');
 const dangerousPath=/(^|\/)(\.env(?:\.[^/]*)?|\.ssh|\.gnupg|\.aws|\.azure|\.kube|\.docker|\.netrc|\.npmrc|\.pypirc|\.git-credentials|id_(?:rsa|ed25519|ecdsa|dsa)(?:_sk)?|private-keys-v1\.d|application_default_credentials\.json|service[-_]account[-_]credentials(?:\.[^/]*)?|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)(\/|$)/i;
-const secretPattern=/NOT_A_REAL_CREDENTIAL|cnry_[\w-]+|(?:api[_-]?key|password|authorization|secret)\s*[:=]\s*\S+/i;
 const sameFileAtOpen=(a:FileSnapshot,b:FileSnapshot)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs&&a.ctimeNs===b.ctimeNs&&a.mtimeNs===b.mtimeNs&&a.size===b.size;
 const sameWorkspaceIdentity=(a:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>,b:Pick<SecureFileStat,'dev'|'ino'|'birthtimeNs'>)=>a.dev===b.dev&&a.ino===b.ino&&a.birthtimeNs===b.birthtimeNs;
 const trustedGatewayInstances=new WeakSet<object>();
@@ -142,9 +142,11 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
     }
     const t=typeof r.args.tool==='string'?mcp.get(r.args.tool):undefined;
     if(!t||!r.args.arguments||typeof r.args.arguments!=='object'||Array.isArray(r.args.arguments))return{decision:'DENY',reason:'mcp_capability_denied'};
-    if(t.risk==='NETWORK'&&(history.sensitiveObserved||secretPattern.test(canonicalJSON(r.args.arguments))||provenance.inspect(canonicalJSON(r.args.arguments)).length>0))return{decision:'DENY',reason:'sensitive_session_egress_denied'};
+    if(t.risk==='NETWORK'&&(history.sensitiveObserved||hasCredentialMarker(canonicalJSON(r.args.arguments))||provenance.inspect(canonicalJSON(r.args.arguments)).length>0))return{decision:'DENY',reason:'sensitive_session_egress_denied'};
     if(t.risk==='SENSITIVE_DATA'||t.risk==='DESTRUCTIVE')return{decision:'DENY',reason:'mcp_high_risk_denied'};
-    return{decision:t.approvalRequired||t.risk===undefined?'REQUIRE_APPROVAL':'ALLOW',reason:'host_mcp_capability'};
+    const highRiskAction=t.risk==='WRITE'||t.risk==='EXECUTE'||t.risk==='NETWORK';
+    const operatorRequired=t.approvalRequired||t.risk===undefined||highRiskAction;
+    return{decision:operatorRequired?'REQUIRE_APPROVAL':'ALLOW',reason:highRiskAction?'high_risk_mcp_requires_operator':'host_mcp_capability'};
   }
   async function aiDenies(r:Request,signal?:AbortSignal):Promise<boolean>{
     if(!options.provider)return false;
@@ -189,7 +191,7 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
             const afterRead=f.secureHandle.stat();if(offset!==buffer.length||!sameFileAtOpen(f,afterRead)||!stillBound(f))throw Error('GATEWAY_RESOURCE_CHANGED_DURING_READ');
             text=buffer.subarray(0,offset).toString('utf8');
           }finally{buffer.fill(0);}
-          if(secretPattern.test(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
+          if(hasCredentialMarker(text)||f.descriptor.decoyId){history.sensitiveObserved=true;flow.record('sensitive-source',text);if(text.length<=4096)provenance.register(f.descriptor.decoyId??'sensitive-file',text);}
           if(f.descriptor.decoyId){options.guard.trip({reason:'honeypot_read',toolName:r.name});options.onDecoyRead?.(f.descriptor.decoyId);}
           return {content:text};
         }
@@ -208,7 +210,17 @@ export function createTrustedExecutionGateway(options:GatewayOptions){
       };
       const result=await Promise.race([Promise.resolve(perform()),new Promise<never>((_,reject)=>{timer=setTimeout(()=>{abort.abort();options.guard.trip({reason:'gateway_timeout'});reject(Error('GATEWAY_EXECUTION_TIMEOUT'));},deadline);})]);
       const output=typeof result==='string'?result:JSON.stringify(result)??'';
-      if(secretPattern.test(output)){history.sensitiveObserved=true;flow.record('sensitive-source',output);if(output.length<=4096)provenance.register('tool-output',output);}
+      const outputInspection=inspectToolOutput(output,candidate=>options.guard.inspect(candidate,'gateway-tool-output').length>0);
+      if(outputInspection.sensitive){
+        history.sensitiveObserved=true;
+        flow.record('sensitive-source',output);
+        if(output.length<=4096)provenance.register('tool-output',output);
+        if(!outputInspection.canaryDetected)options.guard.trip({reason:outputInspection.inspectionLimit?'tool_output_inspection_limit':'sensitive_tool_output',toolName:r.name,riskLevel:'SECRET'});
+        // The host callback already ran, so preserve its successful execution
+        // evidence while withholding the sensitive result from the model.
+        audit(r,'ALLOW','sensitive_tool_output_redacted','SUCCEEDED',r.name==='read_file'?'VERIFIED':'NOT_VERIFIED',approval);
+        return {error:'GATEWAY_SENSITIVE_OUTPUT_REDACTED'};
+      }
       audit(r,'ALLOW',decision.reason,'SUCCEEDED',r.name==='read_file'?'VERIFIED':'NOT_VERIFIED',approval);
       return result;
     }catch(error){

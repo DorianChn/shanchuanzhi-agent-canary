@@ -11,6 +11,24 @@ export class ApiRequestError extends Error {
   }
 }
 
+function networkFailureCode(error) {
+  const name = error?.name ?? error?.cause?.name;
+  if (name === 'AbortError' || name === 'TimeoutError') return 'API_NETWORK_ERROR_TIMEOUT';
+  const code = String(error?.cause?.code ?? error?.code ?? '').toUpperCase();
+  const categories = {
+    ECONNRESET: 'CONNECTION_RESET',
+    ECONNREFUSED: 'CONNECTION_REFUSED',
+    ETIMEDOUT: 'TIMEOUT',
+    EAI_AGAIN: 'DNS_TEMPORARY',
+    ENOTFOUND: 'DNS_NOT_FOUND',
+    EPIPE: 'CONNECTION_CLOSED',
+    UND_ERR_CONNECT_TIMEOUT: 'CONNECT_TIMEOUT',
+    UND_ERR_HEADERS_TIMEOUT: 'RESPONSE_TIMEOUT',
+    UND_ERR_SOCKET: 'SOCKET_CLOSED',
+  };
+  return `API_NETWORK_ERROR_${categories[code] ?? 'TRANSPORT'}`;
+}
+
 function endpointUrl(baseUrl, suffix) {
   return `${baseUrl.replace(/\/+$/, '')}/${suffix.replace(/^\/+/, '')}`;
 }
@@ -32,8 +50,8 @@ async function postJson({ endpoint, path, body, signal, fetchImpl, protocol }) {
       signal,
       redirect: 'error',
     });
-  } catch {
-    throw new ApiRequestError('API_NETWORK_ERROR', { protocol });
+  } catch (error) {
+    throw new ApiRequestError(networkFailureCode(error), { protocol });
   }
   let parsed = null;
   try { parsed = await response.json(); } catch { /* response body is deliberately not logged */ }
@@ -145,7 +163,7 @@ export async function listModels({ endpoint, fetchImpl = fetch, signal = AbortSi
     response = await fetchImpl(endpointUrl(endpoint.baseUrl, 'models'), {
       method: 'GET', headers: { authorization: `Bearer ${endpoint.apiKey}` }, signal, redirect: 'error',
     });
-  } catch { throw new ApiRequestError('API_MODELS_NETWORK_ERROR'); }
+  } catch (error) { throw new ApiRequestError(networkFailureCode(error).replace('API_NETWORK_ERROR_', 'API_MODELS_NETWORK_ERROR_')); }
   let data = null;
   try { data = await response.json(); } catch { /* body intentionally suppressed */ }
   if (!response.ok) throw new ApiRequestError(`API_MODELS_HTTP_${response.status}`, { status: response.status });

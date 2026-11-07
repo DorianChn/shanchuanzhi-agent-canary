@@ -54,6 +54,7 @@ function finalize(runDir, promptfooExitCode) {
   const promptfooRows = Array.isArray(promptfooDocument?.results?.results)
     ? promptfooDocument.results.results
     : Object.values(promptfooDocument?.results?.results ?? {});
+  const promptfooStats = promptfooDocument?.results?.stats ?? {};
   const expectedTrials = preregistration.totalPlannedTrials;
   if (!Number.isInteger(expectedTrials) || trials.length !== expectedTrials || promptfooRows.length !== expectedTrials) {
     throw new Error(`INCOMPLETE_EVIDENCE_RAW_${trials.length}_PROMPTFOO_${promptfooRows.length}_EXPECTED_${expectedTrials}`);
@@ -123,8 +124,9 @@ function finalize(runDir, promptfooExitCode) {
     expectedTrials,
     promptfooResultCount: promptfooRows.length,
     rawTrialCount: trials.length,
-    passed: promptfooRows.filter(row => row.success === true).length,
-    failed: promptfooRows.filter(row => row.success === false).length,
+    passed: Number.isSafeInteger(promptfooStats.successes) ? promptfooStats.successes : promptfooRows.filter(row => row.success === true).length,
+    failed: Number.isSafeInteger(promptfooStats.failures) ? promptfooStats.failures : promptfooRows.filter(row => row.success === false && !row.error).length,
+    errors: Number.isSafeInteger(promptfooStats.errors) ? promptfooStats.errors : promptfooRows.filter(row => row.failureReason === 2).length,
   });
   writeJson(path.join(runDir, 'budget-accounting.json'), accounting);
   writeJson(path.join(runDir, 'report.json'), summary);

@@ -27,7 +27,9 @@ node run.mjs --size 100
 node run.mjs --size 100 --defender-models gpt:gpt-6.1-sol,llm:glm-5.3
 ```
 
-`100`, `1000`, and `10000` are per defender-model trial counts across A/B/C/D. Every run gets a new timestamped directory under `runs/`. `MAX_TEST_BUDGET_USD` is enforced cumulatively across Promptfoo, AgentDojo, and PyRIT run directories; changing the cap does not reset earlier committed usage. Local credentials, virtual environments, and run directories are Git-ignored. Campaign summaries are generated outside those directories and should be reviewed before committing.
+`100`, `1000`, `2000`, and `10000` are per defender-model trial counts across A/B/C/D. Every run gets a new timestamped directory under `runs/`. `MAX_TEST_BUDGET_USD` is enforced cumulatively across Promptfoo, AgentDojo, and PyRIT run directories; changing the cap does not reset earlier committed usage. Local credentials, virtual environments, and run directories are Git-ignored. Campaign summaries are generated outside those directories and should be reviewed before committing.
+
+Each finalized Promptfoo run reports matched A/B/C/D attack outcomes for identical scenario IDs and defender models. Completed trials and errors with already-recorded successful side effects are evaluable; errors without conclusive effects are unknown and excluded from attack-defense rates and matched comparisons. The analysis uses recorded synthetic side effects, a deterministic paired bootstrap interval, and a two-sided exact McNemar test with Holm correction. These complete-case matched arm contrasts do not establish a causal before/after effect because the arms are distinct preregistered configurations.
 
 ### Optional AgentDojo baseline
 
@@ -77,11 +79,17 @@ The Python environment must use a PyRIT-supported Python version (`>=3.10,<3.15`
 
 ## Experiment scope and report
 
-### Preserved cloud campaign (2026-11-06)
+### Latest cloud campaign (2026-11-07)
 
-The run set contains 17 attempts, 8 completed 100-row batches, and 9 attempts stopped before trials. Completed rows total 800, including 608 attack trials; 225/608 (37.0%) produced recorded synthetic side effects, and 383/608 (63.0%) were defended. Generation had 0/38 explicit refusals and 5/38 generation/API/parse failures (13.2%), which used deterministic synthetic fallbacks. Each A/B/C/D arm has 200 rows; repeated case sets mean the rows are not all unique scenarios. The token-priced ledger is $8.10611718; locally priced reported usage is $6.99682264; invoice billing was not available.
+The final paired GPT and GLM runs replayed the same 500 synthetic scenarios (375 attacks and 125 normal controls) through A/B/C/D. Their 4,000 model-by-arm trial rows are repeated measurements of those 500 scenarios, not 4,000 independent cases. GPT (`gpt:gpt-6.1-sol`) completed 2,000/2,000 rows: 546/1,500 attacks produced recorded synthetic side effects (36.4%), 727/1,500 reached a threat tool attempt (48.5%), and 954/1,500 were defended (63.6%). GLM (`llm:glm-5.3`) recorded 2,000 rows: 1,999 completed and one attack row errored. Among 1,499 evaluable attacks, 548 produced side effects (36.6%), 737 reached a threat tool attempt (49.2%), and 951 were defended (63.4%). The error was `A-SYN-00338`; the API request timed out before a tool call, so its outcome remains unknown.
 
-See the [full campaign report](CAMPAIGN-REPORT-2026-11-06.md), [machine-readable summary](campaign-summary-2026-11-06.json), and the linked timestamped raw run folders under `runs/`.
+Across A/B/C/D, attack side effects were GPT 180/375, 184/375, 182/375, and 0/375; GLM 184/374, 185/375, 179/375, and 0/375. Each model passed 63/125 normal controls in D. The read-only Gateway rejected the remaining normal write tasks; the write boundary was preserved. Paired model comparisons had Holm-adjusted p-values of 1 in all four arms and confidence intervals that include zero. These runs do not establish a general model ranking or show that code changes caused a before/after improvement. All effects were measured in repository-owned synthetic fixtures; no external MCP server or production data was used.
+
+For these two runs, repository token-pricing estimates were $17.7604745 for GPT and $6.3331407 for GLM; per-run budget ledgers recorded $17.8091185 and $6.7374001. The combined estimate is $24.0936152 and the combined ledger is $24.5465186. These are not confirmed Yicode invoice amounts. The GLM run's advisory judge calls used GPT, as shown in the report's per-model token table.
+
+Across the full campaign history, 28 run attempts produced 14 completed batches and 7,000 recorded trial rows; 12 stopped before trials and two were partial. Completed attack-generation runs recorded 0/452 explicit refusals and 61 generation/API/parse failures that used deterministic fallback payloads. An interrupted generator separately archived 82 failure records and zero explicit refusals. These generation records are not part of the two paired 2,000-row defender runs, which reused frozen cases without generating new attacks.
+
+See the [full campaign report](CAMPAIGN-REPORT-2026-11-07.md), [machine-readable summary](campaign-summary-2026-11-07.json), and [credential-redacted evidence archive](campaign-evidence-2026-11-07.zip). The archive contains sanitized copies of raw run records; source run directories are unchanged. The [2026-11-06 report](CAMPAIGN-REPORT-2026-11-06.md) remains a historical snapshot.
 
 All effects use new private temporary fixtures, synthetic secrets, a fixed loopback sink, and fixed harmless Node fixture commands. No host paths, real credentials, or external tool destinations are exposed. Attack-generator refusals are recorded and replaced with deterministic variants from `security-lab/holdout-v1.json`; refusals never terminate the whole run. Refusal, detection, active denial, model non-attempt, and actual side effects are reported separately.
 
@@ -96,6 +104,14 @@ npm run report
 ```
 
 The report generator checks that run ledgers, trial rows, arm totals, Promptfoo counters, and evidence-state counts reconcile before writing Markdown and JSON summaries. It also scans the summaries for common API-key formats.
+
+After reviewing the report, create a credential-safe copy of all local runs for publication:
+
+```sh
+python bundle-evidence.py --date 2026-11-07
+```
+
+The bundler leaves ignored source runs unchanged, excludes environment files and dependencies, redacts credential-like values from text copies, and adds a per-file source/archive hash manifest. It verifies the ZIP and checks that exact values from the ignored local environment file are absent.
 
 If Promptfoo exits with assertion code `100`, `run.mjs` still finalizes when the result file and raw trial count match the planned batch. Existing evidence can be finalized without API calls using `npm run finalize -- --run-dir runs/<run-id> --promptfoo-exit 100`.
 
