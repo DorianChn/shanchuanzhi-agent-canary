@@ -103,13 +103,36 @@ def read_document(source: str) -> tuple[bytes, list[dict[str, Any]]]:
         except UnicodeEncodeError:
             raise InputError(f"Tool {name!r} contains invalid Unicode") from None
 
-        item: dict[str, Any] = {"name": name, "description": description}
-        if schema is not None:
-            item["inputSchema"] = schema
+        item: dict[str, Any] = dict(tool)
+        item["name"] = name
+        item["description"] = description
+        if schema is None:
+            item.pop("inputSchema", None)
         normalized.append(item)
         seen_names.add(name)
 
     return raw, normalized
+
+
+def _tool_metadata_signature(tool: dict[str, Any]) -> str:
+    metadata = {key: value for key, value in tool.items() if key != "name"}
+    return json.dumps(metadata, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def compare_tool_catalogs(
+    baseline_tools: list[dict[str, Any]], current_tools: list[dict[str, Any]]
+) -> dict[str, list[str]]:
+    baseline = {tool["name"]: _tool_metadata_signature(tool) for tool in baseline_tools}
+    current = {tool["name"]: _tool_metadata_signature(tool) for tool in current_tools}
+    baseline_names = set(baseline)
+    current_names = set(current)
+    return {
+        "newTools": sorted(current_names - baseline_names),
+        "removedTools": sorted(baseline_names - current_names),
+        "changedTools": sorted(
+            name for name in baseline_names & current_names if baseline[name] != current[name]
+        ),
+    }
 
 
 def threat_to_json(threat: Any) -> dict[str, str]:
@@ -172,13 +195,18 @@ def main() -> int:
             scanner.register_tool(
                 tool["name"], tool["description"], tool.get("inputSchema"), args.server_name
             )
-        result = scanner.scan_server(args.server_name, current_tools)
+        scanner_tools = [
+            {
+                "name": tool["name"],
+                "description": tool["description"],
+                **({"inputSchema": tool["inputSchema"]} if "inputSchema" in tool else {}),
+            }
+            for tool in current_tools
+        ]
+        result = scanner.scan_server(args.server_name, scanner_tools)
         findings = [threat_to_json(item) for item in result.threats]
-        baseline_names = {item["name"] for item in baseline_tools}
-        current_names = {item["name"] for item in current_tools}
-        new_tools = sorted(current_names - baseline_names) if args.baseline else None
-        removed_tools = sorted(baseline_names - current_names) if args.baseline else None
-        catalog_drift = bool(args.baseline and (new_tools or removed_tools))
+        catalog_changes = compare_tool_catalogs(baseline_tools, current_tools) if args.baseline else None
+        catalog_drift = bool(args.baseline and any(catalog_changes.values()))
         report = {
             "schemaVersion": 1,
             "scanner": {
@@ -201,13 +229,14 @@ def main() -> int:
             },
             "assessment": "review_required" if not result.safe or catalog_drift else "no_findings",
             "catalogChanges": (
-                {
-                    "baselineCompared": True,
-                    "newTools": new_tools,
-                    "removedTools": removed_tools,
-                    "reviewRequired": catalog_drift,
+                {"baselineCompared": True, **catalog_changes, "reviewRequired": catalog_drift}
+                if args.baseline else {
+                    "baselineCompared": False,
+                    "newTools": None,
+                    "removedTools": None,
+                    "changedTools": None,
+                    "reviewRequired": None,
                 }
-                if args.baseline else {"baselineCompared": False, "newTools": None, "removedTools": None, "reviewRequired": None}
             ),
             "execution": {
                 "mode": "saved-json-only",
