@@ -43,6 +43,8 @@ The uninstaller removes only the two exact package names created by this integra
 
 For a host built on Cline Core SDK, keep the sibling `filesystem-mcp` package available so the relative `file:` dependency resolves. The exact load, registration, and tool execution path is exercised by the integration runtime test using Cline's official plugin loader, contribution registry, and Agent Runtime. This package has not been verified with the Cline CLI executable or an IDE extension.
 
+During installation, `postinstall` applies a guarded one-import compatibility patch to the installed `@cline/core@0.2.0` bundle. It adapts Core's default import to the named export in the security-fixed `simple-git@4.0.2`. The script checks the Core version and import count and fails if either changes. It does not vendor or commit Cline's bundle.
+
 ## Fixed upstream versions
 
 See [`UPSTREAM-PINS.md`](../UPSTREAM-PINS.md) for commit hashes, package versions, and license notes.

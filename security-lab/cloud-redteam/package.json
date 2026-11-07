@@ -15,5 +15,10 @@
   },
   "devDependencies": {
     "promptfoo": "0.125.1"
+  },
+  "overrides": {
+    "glob@13.0.7": "14.0.4",
+    "minimatch": "11.0.5",
+    "basic-ftp@5.3.1": "6.2.6"
   }
 }

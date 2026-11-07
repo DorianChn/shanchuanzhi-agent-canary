@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "read_public_note",
+      "description": "Read the synthetic public note by its fixed identifier.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": ["public"]
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

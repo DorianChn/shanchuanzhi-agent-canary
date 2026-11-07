@@ -4,3 +4,5 @@ Agent Canary project code retains MIT. `koffi` 3.3.6 is an MIT-licensed runtime 
 
 Koffi upstream: https://github.com/Koromix/koffi
 Upstream: https://github.com/squirrelchat/smol-toml
+
+The optional cloud red-team lab may use `agent-governance-toolkit-core==5.0.0` from Microsoft Agent Governance Toolkit for offline MCP metadata preflight. It is MIT-licensed and installed only into the lab's separate Python environment; it is not bundled into the Agent Canary npm package or loaded by the core runtime. Its upstream source and license are available at https://github.com/microsoft/agent-governance-toolkit.

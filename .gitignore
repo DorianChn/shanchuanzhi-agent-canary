@@ -19,6 +19,7 @@ __pycache__/
 security-lab/cloud-redteam/.env.local
 security-lab/cloud-redteam/.venv-agentdojo/
 security-lab/cloud-redteam/.venv-pyrit/
+security-lab/cloud-redteam/.venv-agt/
 security-lab/cloud-redteam/runs/
 security-lab/cloud-redteam/agentdojo-runs/
 security-lab/cloud-redteam/pyrit-runs/
