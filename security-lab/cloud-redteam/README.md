@@ -44,6 +44,20 @@ npm run agentdojo -- --suite workspace --user-task user_task_0 --injection-task 
 
 Use `--model llm:model-id` or `--model gpt:model-id` to select the defender. AgentDojo's raw traces, subprocess logs, token ledger, configuration, and standalone Markdown report are stored under the ignored `agentdojo-runs/` directory. Its metric definitions remain upstream's `utility` and `security` results. This benchmark does not exercise Agent Canary's MCP Gateway, Policy, or HoneypotRuntime; treat it as a separate model-only baseline.
 
+### Optional Microsoft Agent Governance Toolkit MCP metadata preflight
+
+This offline preflight integrates Microsoft's `MCPSecurityScanner` over a saved MCP `tools/list` JSON response. It checks tool descriptions and schemas for suspicious instructions and compares them with an operator-reviewed baseline for metadata drift. It accepts JSON only: it does not start an MCP process, connect to an endpoint, call a tool, call an LLM, or require API credentials. Its output is an advisory metadata report and does not change the Gateway's runtime decisions or A/B/C/D campaign results.
+
+The adapter pins the MIT-licensed `agent-governance-toolkit-core==5.0.0` package in a separate Python environment. The published package requires Python 3.11 or newer and is marked Public Preview. The upstream built-in rules are sample rules; a clean scan is not proof that a server is safe. Review and provenance-check the baseline before trusting it.
+
+```sh
+python -m venv .venv-agt
+.\.venv-agt\Scripts\python.exe -m pip install -r requirements-agt.txt
+.\.venv-agt\Scripts\python.exe agt-mcp-scan.py --input examples/mcp-tools-current.json --baseline examples/mcp-tools-baseline.json --server-name synthetic-mcp
+```
+
+On macOS or Linux, replace the interpreter path with `.venv-agt/bin/python`. Input may be a bare tools array, `{"tools": [...]}`, or a JSON-RPC response containing `result.tools`. Reports contain file SHA-256 values, tool names involved in findings, classifications, and catalog additions/removals when a baseline is supplied; descriptions and schemas are not copied into the report. Use `--output <new-file>` to write a report without overwriting an existing file. The default exit code is `2` for critical findings; use `--fail-on warning` to make warnings fail too. This static scanner is separate from `run.mjs`, the campaign budget ledger, model usage, and trial counts.
+
 ### Optional PyRIT adaptive attacker
 
 PyRIT's `RedTeamingAttack` generates adaptive turns with the configured attacker model, sends each accumulated user-message prefix through a fresh synthetic harness trial, and scores the returned harness evidence. A separate configured judge model supplies an auxiliary LLM score only; it cannot determine the recorded attack-success result. Refusal and generation failures are archived, and the existing deterministic synthetic corpus supplies fallback cases without asking a model to bypass its provider's safety rules. Replay rows share prefixes and are correlated, so they are not independent benchmark cases.
