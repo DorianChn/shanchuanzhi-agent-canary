@@ -37,13 +37,41 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
   const integrationProject=fs.mkdtempSync(path.join(os.tmpdir(),'canary-console-integration-'));
   const integrationRecords=new Map<string,ReturnType<typeof installAgentIntegration>>();
   const integrationEntry={command:process.execPath,args:[path.join(root,'dist/competition.js'),'serve']};
+  const workbenchAssets: Record<string,{file:string;contentType:string}>={
+    '/workbench/':{file:'index.html',contentType:'text/html; charset=utf-8'},
+    '/workbench/index.html':{file:'index.html',contentType:'text/html; charset=utf-8'},
+    '/workbench/workbench.css':{file:'workbench.css',contentType:'text/css; charset=utf-8'},
+    '/workbench/workbench.js':{file:'workbench.js',contentType:'text/javascript; charset=utf-8'},
+  };
   const server = http.createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
     const reply = (value: unknown, status = 200) => { res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(value)); };
     try {
-      if (req.headers.host !== new URL(url).host || req.headers.origin && req.headers.origin !== url || req.headers['sec-fetch-site'] === 'cross-site') { reply({ error: 'AI_CONSOLE_ORIGIN_REJECTED' }, 403); return; }
+      const workbenchDocumentNavigation=req.method==='GET'&&(req.url==='/workbench/'||req.url==='/workbench/index.html')&&req.headers['sec-fetch-mode']==='navigate'&&req.headers['sec-fetch-dest']==='document';
+      const originMismatch=Boolean(req.headers.origin&&req.headers.origin!==url);
+      const crossSite= req.headers['sec-fetch-site']==='cross-site';
+      if (req.headers.host !== new URL(url).host || (originMismatch&&!workbenchDocumentNavigation) || (crossSite&&!workbenchDocumentNavigation)) { reply({ error: 'AI_CONSOLE_ORIGIN_REJECTED' }, 403); return; }
+      const workbenchAsset=req.method==='GET'&&req.url?workbenchAssets[req.url]:undefined;
+      if(workbenchAsset){
+        const bundledWorkbench=path.join(root,'dist','ai','workbench');
+        const assetRoot=fs.existsSync(path.join(bundledWorkbench,'index.html'))?bundledWorkbench:path.join(root,'docs');
+        const file=path.join(assetRoot,workbenchAsset.file);
+        if(!fs.existsSync(file)||!fs.statSync(file).isFile()){reply({error:'WORKBENCH_ASSET_UNAVAILABLE'},404);return;}
+        let content=fs.readFileSync(file);
+        if(workbenchAsset.file==='index.html'){
+          const html=content.toString('utf8');
+          const csrfMarker='<meta name="agent-canary-csrf" content="">';
+          if(!html.includes(csrfMarker)){reply({error:'WORKBENCH_CSRF_MARKER_MISSING'},500);return;}
+          content=Buffer.from(html.replace(csrfMarker,'<meta name="agent-canary-csrf" content="'+csrf+'">'),'utf8');
+          res.setHeader('Content-Security-Policy',"default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
+          res.setHeader('X-Frame-Options','DENY');
+        }
+        res.setHeader('Cross-Origin-Resource-Policy','same-origin');
+        res.writeHead(200,{'content-type':workbenchAsset.contentType});
+        res.end(content);return;
+      }
       if (req.method === 'GET' && req.url === '/') {
         res.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'nonce-" + csrf + "'; style-src 'nonce-" + csrf + "'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });

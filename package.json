@@ -47,7 +47,7 @@
     "THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-workbench.mjs",
     "test": "node --import tsx --test test/auto-e4.test.mjs test/community-manifest.test.mjs test/readme-sdk-example.test.mjs test/agent-hook.test.ts test/gateway.test.ts test/gateway-adapter.test.ts test/honeypot-runtime.test.ts test/runtime-console.test.ts test/security-router-observe.test.ts test/security-center-protected-read.test.ts test/security-center-live-process.test.ts test/protected-mcp-process.test.ts test/file-state-store.test.ts test/evidence-conformance.test.ts test/gateway-acceptance.test.ts test/product-identity.test.ts test/server.test.ts",
     "ai:console": "node dist/competition.js ai console",
     "lab:agent": "node competition-submission/lab/run-agent-eval.mjs --profile=neutral_agent --v2",
