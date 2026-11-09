@@ -6,6 +6,8 @@ COPY package.json package-lock.json tsconfig.json ./
 RUN npm ci
 
 COPY src ./src
+COPY scripts/copy-workbench.mjs ./scripts/
+COPY docs/index.html docs/workbench.css docs/verification.css docs/evidence-snapshot.js docs/evidence-verifier.js docs/workbench.js docs/verification.js ./docs/
 COPY FREE_BUILD_VERSION.json ./
 RUN npm run build
 
