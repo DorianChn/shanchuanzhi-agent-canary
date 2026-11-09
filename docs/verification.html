@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e8">
+  <meta name="description" content="Agent Canary 暖白验证工作台：查看已保存攻防实验、未知样本、正常任务失败和可离线校验的证据；支持本机受控演示。">
+  <meta name="agent-canary-csrf" content="">
+  <link rel="canonical" href="https://dorianchn.github.io/shanchuanzhi-agent-canary/">
+  <link rel="stylesheet" href="workbench.css">
+  <link rel="stylesheet" href="verification.css">
+  <title>Agent Canary 安全验证台</title>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">跳到主要内容</a>
+  <div class="app-shell">
+    <div class="nav-scrim" id="nav-scrim" hidden></div>
+    <aside class="sidebar" id="sidebar" aria-label="工作台导航">
+      <a class="brand-mark" href="#overview" aria-label="Agent Canary 工作台首页">
+        <span class="brand-mark__icon" aria-hidden="true">A<span>C</span></span>
+        <span class="brand-mark__word">AGENT<br>CANARY</span>
+      </a>
+      <nav class="side-nav" aria-label="工作台视图">
+        <button class="side-nav__item is-active" type="button" data-view="overview" aria-current="page">
+          <span class="side-nav__number">01</span><span class="side-nav__label">概览<br><small>OVERVIEW</small></span>
+        </button>
+        <button class="side-nav__item" type="button" data-view="assets">
+          <span class="side-nav__number">02</span><span class="side-nav__label">资产<br><small>ASSETS</small></span>
+        </button>
+        <button class="side-nav__item" type="button" data-view="policies">
+          <span class="side-nav__number">03</span><span class="side-nav__label">策略<br><small>POLICIES</small></span>
+        </button>
+        <button class="side-nav__item" type="button" data-view="audit">
+          <span class="side-nav__number">04</span><span class="side-nav__label">审计<br><small>AUDIT</small></span>
+        </button>
+        <button class="side-nav__item" type="button" data-view="redaction">
+          <span class="side-nav__number">05</span><span class="side-nav__label">脱敏<br><small>REDACTION</small></span>
+        </button>
+      </nav>
+      <div class="sidebar__foot">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>RECORDED<br>EVIDENCE</span>
+      </div>
+    </aside>
+
+    <div class="workspace" id="workspace">
+      <header class="topbar">
+        <div class="topbar__left">
+          <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar" aria-label="打开导航">
+            <span></span><span></span><span></span>
+          </button>
+          <span class="topbar__section" id="current-section">01 / OVERVIEW</span>
+        </div>
+        <a class="topbar__title" href="#overview">Agent Canary 安全治理工作台</a>
+        <div class="topbar__right">
+          <span class="topbar__version">VERSION 3.0.0</span>
+          <span class="demo-badge" id="runtime-badge"><span class="demo-badge__dot"></span><span id="runtime-badge-label">已保存记录 · 静态模式</span></span>
+          <a class="topbar__repo" href="https://github.com/DorianChn/shanchuanzhi-agent-canary" target="_blank" rel="noreferrer">GitHub ↗</a>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="demo-notice" role="note">
+          <span class="demo-notice__mark">EVIDENCE</span>
+          <p><strong id="demo-notice-title">已保存实验与当前演示分开显示。</strong><span id="demo-notice-copy">概览和审计读取随包实验快照；资产台账、策略开关与脱敏页仍为明确标注的概念交互。静态模式不会访问本机 API。</span></p>
+          <span class="demo-notice__scope">NO LIVE TELEMETRY</span>
+        </div>
+        <section class="connection-strip" id="backend-connection" data-state="static" aria-label="后端连接状态" aria-live="polite">
+          <span class="connection-strip__indicator" id="backend-indicator" aria-hidden="true"></span>
+          <div class="connection-strip__copy"><strong id="backend-status-title">已载入实验快照 · 无需后端</strong><span id="backend-status-copy">可直接浏览实验和校验证据。实际临时文件操作需要在同一电脑启动本机服务。</span></div>
+          <span class="connection-strip__mode" id="backend-mode">PUBLIC PAGES / STATIC</span>
+          <a class="connection-strip__link" id="backend-link" href="http://127.0.0.1:4318/workbench/" target="_blank" rel="noreferrer">打开本机验证台 ↗</a>
+        </section>
+        <section class="backend-metrics" id="backend-metrics" aria-label="本机后端实时读取状态" hidden>
+          <div><span>运行时</span><strong id="backend-runtime-state">—</strong></div>
+          <div><span>Guard</span><strong id="backend-guard-state">—</strong></div>
+          <div><span>本次演示证据</span><strong id="backend-evidence-count">—</strong></div>
+          <div><span>最近事件 / 上限 100</span><strong id="backend-event-count">—</strong></div>
+          <p id="backend-metrics-scope">同源只读 API · 仅限本机隔离演示，不代表生产 Agent 遥测。</p>
+        </section>
+
+        <section class="view is-visible" id="view-overview" data-view-panel="overview" aria-labelledby="overview-title">
+          <div class="page-heading page-heading--overview">
+            <div><p class="eyebrow">AGENT CANARY / CONTROL PLANE PREVIEW</p><h1 id="overview-title">数据安全治理与监测工作台</h1></div>
+            <p class="page-heading__note">仅覆盖宿主登记的 Gateway / Guard 调用。整体 PARTIAL；普通写入失败、未知样本与未覆盖范围均保留。</p>
+          </div>
+
+          <div class="overview-grid">
+            <div class="overview-main">
+              <section class="posture-panel panel" aria-labelledby="posture-title">
+                <div class="panel-kicker"><span>RECORDED EXPERIMENT / D_COMPLETE</span><span class="mono">LATEST RETEST · 2026-11-09</span></div>
+                <div class="posture-panel__headline"><h2 id="posture-title">Attack Goal<br>Observed</h2><div class="posture-value"><span>0<em>/200</em></span><small>1 UNKNOWN<br>完整防护组</small></div></div>
+                <div class="posture-panel__foot"><span>正常任务完成 <strong>35/50</strong> · 普通写入仍失败</span><strong class="partial-label">工程整体验收 PARTIAL</strong></div>
+              </section>
+              <section class="timeline-panel panel" id="experiments" aria-labelledby="timeline-title">
+                <div class="section-bar"><h2 id="timeline-title">已保存实验对比</h2><span class="section-bar__meta">50 任务 × 5 重复 × 4 组</span></div>
+                <div class="experiment-controls"><label for="dataset">实验批次<select id="dataset"><option value="reviewerRetest" selected>Reviewer 修复后 · 1000 次</option><option value="local">本地确定性工具链 · 48 条</option><option value="llm">云模型预试验 · 24 次</option><option value="llm1000">首批云模型 · 1000 次</option></select></label><div class="metric-tabs" role="group" aria-label="图表指标"><button type="button" data-metric="attackSuccessRate" aria-pressed="true">攻击目标效果</button><button type="button" data-metric="benignTaskCompletionRate" aria-pressed="false">正常任务完成</button></div></div>
+                <figure class="recorded-chart"><div id="comparison-chart" role="group" aria-label="逐组实验对比"></div><figcaption id="chart-caption">每组攻击 200 次；正常任务 50 次。未知值不算作成功拦截。</figcaption></figure>
+                <div class="chart-legend"><span><i class="observed"></i><span id="observed-label">观察到目标效果</span></span><span><i class="unknown"></i>未知</span><span><i class="remainder"></i><span id="remainder-label">未观察到目标效果</span></span></div>
+                <p class="snapshot-source" id="run-id">Run ID llm1000-4608edc4-cb2b-4815-8165-1b3a53f4bb8e</p><p class="snapshot-scope" id="scope">1000 次 Trial 不是 1000 种独立攻击。没有尝试目标动作不直接等于防护拦截。</p>
+              </section>
+              <section class="flow-panel panel" aria-labelledby="flow-title">
+                <div class="section-bar"><h2 id="flow-title">受守卫调用路径</h2><span class="section-bar__meta">CONCEPTUAL FLOW</span></div>
+                <div class="flow-strip">
+                  <div class="flow-node"><span class="flow-node__index">01</span><strong>Agent 请求</strong><small>HOST INPUT</small></div><span class="flow-arrow" aria-hidden="true">→</span>
+                  <div class="flow-node"><span class="flow-node__index">02</span><strong>Gateway / Guard</strong><small>REGISTERED PATH</small></div><span class="flow-arrow" aria-hidden="true">→</span>
+                  <div class="flow-node"><span class="flow-node__index">03</span><strong>宿主回调</strong><small>HOST CONTROLLED</small></div>
+                </div>
+                <p class="flow-note">图示说明集成边界：只有宿主明确登记并路由到保护回调的调用，才进入该控制路径。</p>
+                <div class="backend-demo-controls" id="backend-demo-controls" hidden>
+                  <div><strong>本机隔离 Gateway 演示</strong><span>只读临时样例文件；不触发外网、真实凭据或宿主工具。</span></div>
+                  <button class="button button--dark" id="run-local-demo" type="button">执行一次只读调用</button>
+                </div>
+                <pre class="backend-demo-result" id="backend-demo-result" aria-live="polite" hidden></pre>
+              </section>
+            </div>
+
+            <aside class="priority-panel panel" aria-labelledby="priority-title">
+              <div class="priority-panel__header"><div><p class="eyebrow">01.3 / PRIORITY ACTION STREAM</p><h2 id="priority-title">存档链路记录</h2></div><span class="priority-count">06</span></div>
+              <p class="priority-panel__note" id="overview-event-source">本地确定性工具链的实际存档，无模型参与；点击查看逐步记录。</p>
+              <ol class="event-list" id="overview-events"><li class="event-row">正在加载已保存链路…</li></ol>
+              <div class="priority-panel__footer"><span class="status-dot status-dot--rust"></span><span>已保存记录 · 非当前页面实时事件</span></div>
+            </aside>
+          </div>
+          <section class="panel experiment-table-panel" aria-labelledby="metrics-title"><div class="section-bar"><h2 id="metrics-title">完整指标与原始分母</h2><span class="section-bar__meta">未知与失败保留</span></div><div class="table-scroll" tabindex="0" role="region" aria-label="实验结果表，可横向滚动"><table class="data-table"><thead><tr><th>实验组</th><th>攻击成功</th><th>未授权效果</th><th>策略拒绝</th><th>Canary 检测</th><th>正常完成</th><th>正常误拦截</th></tr></thead><tbody id="results"></tbody></table></div><p class="table-footnote">模型名称按第三方接口自报值。Reviewer 合法返回不等于识别准确；有限任务的零观察值不代表普遍零漏报。</p></section>
+          <details class="coverage-summary panel"><summary>查看已验证与未覆盖范围</summary><div class="coverage-columns"><div><h3>本机已完成</h3><p>141 项核心回归、Filesystem MCP / Cline SDK 确定性集成、7 组本机补测、新 48 条试验及证据包、空白配置桌面启动。补测与历史云试验分开记录。</p></div><div><h3>仍未完成</h3><p>普通安全写入仍失败，Router 未全部统一。真实模型 Cline 流程、CLI / IDE、跨主机鉴权、OS 强隔离、干净 VM、生产部署、可信签名和独立 E4 未验证。</p></div></div></details>
+        </section>
+
+        <section class="view" id="view-assets" data-view-panel="assets" aria-labelledby="assets-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">02 / ASSET LEDGER & INSPECTOR</p><h1 id="assets-title">资产台账与检查器</h1></div><p class="page-heading__note">样例行均为合成记录；不是你的真实 MCP 清单或运行环境资产。</p></div>
+          <div class="asset-layout">
+            <section class="table-panel panel" aria-labelledby="asset-table-title">
+              <div class="table-panel__head"><div><h2 id="asset-table-title">演示资产台账</h2><p>所有 ID 使用 DEMO 标识；选择行查看合成档案。</p></div><label class="search-box"><span class="sr-only">搜索演示资产</span><input type="search" id="asset-search" placeholder="搜索资产 / 类型" autocomplete="off"><span aria-hidden="true">⌕</span></label></div>
+              <div class="filter-row" role="group" aria-label="筛选演示资产">
+                <button class="filter-chip is-selected" type="button" data-asset-filter="all" aria-pressed="true">ALL SAMPLES</button>
+                <button class="filter-chip" type="button" data-asset-filter="tool" aria-pressed="false">MCP TOOLS</button>
+                <button class="filter-chip" type="button" data-asset-filter="signal" aria-pressed="false">CANARY SIGNALS</button>
+                <span class="filter-chip filter-chip--rust">合成数据 · 06</span>
+              </div>
+              <div class="table-scroll"><table class="data-table" id="asset-table"><thead><tr><th>DEMO ID</th><th>名称 / 概念</th><th>类型</th><th>保护边界</th><th>状态</th></tr></thead><tbody>
+                <tr tabindex="0" data-asset-row data-category="tool" data-id="AC-DEMO-001" data-name="decoy.search" data-type="MCP decoy tool" data-boundary="合成诱饵工具；演示选择，不会访问外部数据。" data-state="SAMPLE ONLY"><td><code>AC-DEMO-001</code></td><td><strong>decoy.search</strong><small>Inert decoy tool</small></td><td>MCP tool</td><td>静态示例</td><td><span class="tag tag--muted">DEMO</span></td></tr>
+                <tr tabindex="0" data-asset-row data-category="tool" data-id="AC-DEMO-002" data-name="workspace.read" data-type="Registered callback concept" data-boundary="仅在宿主明确登记并经受守卫网关路由时，才属于保护范围。" data-state="HOST OWNED / DEMO"><td><code>AC-DEMO-002</code></td><td><strong>workspace.read</strong><small>Callback boundary</small></td><td>Gateway route</td><td>宿主登记边界</td><td><span class="tag tag--olive">SAMPLE</span></td></tr>
+                <tr tabindex="0" data-asset-row data-category="signal" data-id="AC-DEMO-003" data-name="CANARY-DEMO-ALPHA" data-type="Synthetic canary signal" data-boundary="示意标记；本页面不会触发真实 CanaryRuntime。" data-state="NO LIVE SIGNAL"><td><code>AC-DEMO-003</code></td><td><strong>CANARY-DEMO-ALPHA</strong><small>Canary signal fixture</small></td><td>Signal</td><td>浏览器本地样例</td><td><span class="tag tag--rust">SYNTHETIC</span></td></tr>
+                <tr tabindex="0" data-asset-row data-category="tool" data-id="AC-DEMO-004" data-name="gateway.preview" data-type="Gateway decision preview" data-boundary="前端本地状态，仅用于解释 allow / deny / approval 路径。" data-state="NOT EXECUTED"><td><code>AC-DEMO-004</code></td><td><strong>gateway.preview</strong><small>Decision path</small></td><td>Policy route</td><td>无真实工具调用</td><td><span class="tag tag--muted">PREVIEW</span></td></tr>
+                <tr tabindex="0" data-asset-row data-category="signal" data-id="AC-DEMO-005" data-name="honeypot.fixture" data-type="Synthetic honeypot record" data-boundary="合成档案；没有创建或检查真实隔离资源。" data-state="ISOLATION NOT RUN"><td><code>AC-DEMO-005</code></td><td><strong>honeypot.fixture</strong><small>Isolation concept</small></td><td>Decoy record</td><td>不代表真实隔离</td><td><span class="tag tag--rust">DEMO</span></td></tr>
+                <tr tabindex="0" data-asset-row data-category="tool" data-id="AC-DEMO-006" data-name="text.redaction" data-type="Best-effort preview" data-boundary="敏感文本最小化为尽力而为的处理；不是加密或匿名化保证。" data-state="LOCAL PREVIEW"><td><code>AC-DEMO-006</code></td><td><strong>text.redaction</strong><small>Data minimization</small></td><td>Text preview</td><td>浏览器本地样例</td><td><span class="tag tag--olive">SAMPLE</span></td></tr>
+              </tbody></table></div>
+              <p class="table-footnote"><span class="mono">SOURCE</span> 页面内置样例 · 未连接资产发现或 MCP 服务</p>
+            </section>
+            <aside class="inspector panel" aria-labelledby="asset-inspector-title" aria-live="polite">
+              <div class="inspector__top"><p class="eyebrow">INSPECTION DOSSIER</p><span class="inspector__id" id="asset-dossier-id">#AC-DEMO-001</span></div>
+              <h2 id="asset-inspector-title">合成档案</h2>
+              <span class="tag tag--rust">DEMO RECORD</span>
+              <dl class="dossier-list">
+                <div><dt>名称</dt><dd id="asset-dossier-name">decoy.search</dd></div>
+                <div><dt>类型</dt><dd id="asset-dossier-type">MCP decoy tool</dd></div>
+                <div><dt>保护边界</dt><dd id="asset-dossier-boundary">合成诱饵工具；演示选择，不会访问外部数据。</dd></div>
+                <div><dt>状态</dt><dd id="asset-dossier-state">SAMPLE ONLY</dd></div>
+                <div><dt>运行时来源</dt><dd>未连接 · 无实时记录</dd></div>
+              </dl>
+              <div class="hash-note"><span>TRACE / NOT A LEDGER HASH</span><code>DEMO-ONLY-0000</code></div>
+              <p class="inspector__disclaimer">该检查器展示静态样例字段，不生成取证证明或隔离结论。</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-policies" data-view-panel="policies" aria-labelledby="policies-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">03 / POLICY STUDIO & RISK TRIAGE</p><h1 id="policies-title">策略预览与风险研判</h1></div><p class="page-heading__note">开关仅改变本页 JSON 预览，不修改后端配置、权限或运行时策略。</p></div>
+          <div class="policy-layout">
+            <nav class="policy-index panel" aria-label="示例策略列表">
+              <button class="policy-index__item is-selected" type="button" data-policy-select="registration"><span>03.1</span>宿主登记边界</button>
+              <button class="policy-index__item" type="button" data-policy-select="approval"><span>03.2</span>高风险审批路径</button>
+              <button class="policy-index__item" type="button" data-policy-select="signal"><span>03.3</span>Canary 信号处置</button>
+              <div class="policy-index__foot"><span class="status-dot"></span><span>PREVIEW ONLY<br><small>LOCAL BROWSER STATE</small></span></div>
+            </nav>
+            <div class="policy-editor panel">
+              <div class="panel-kicker"><span>POLICY CONFIGURATION</span><span class="mono">SAMPLE / V1</span></div>
+              <h2 id="policy-detail-title">宿主登记边界</h2>
+              <p id="policy-detail-copy" class="policy-copy">Agent Canary 的保护范围由宿主注册并经 Gateway / Guard 路由的回调决定。</p>
+              <p class="policy-backend-state" id="policy-backend-current" hidden>本机策略沙箱：<strong id="policy-backend-mode">—</strong></p>
+              <div class="toggle-list">
+                <label class="toggle-row"><span><strong>仅示意已登记的回调</strong><small>HOST CALLBACK BOUNDARY</small></span><input type="checkbox" data-policy-toggle="registeredCallbacks" checked><span class="toggle-ui" aria-hidden="true"></span></label>
+                <label class="toggle-row"><span><strong>高风险操作需要审批</strong><small>APPROVAL FLOW EXAMPLE</small></span><input type="checkbox" data-policy-toggle="approvalRequired" checked><span class="toggle-ui" aria-hidden="true"></span></label>
+                <label class="toggle-row"><span><strong>Canary 信号进入隔离路径</strong><small>CONCEPTUAL RESPONSE</small></span><input type="checkbox" data-policy-toggle="quarantineOnSignal" checked><span class="toggle-ui" aria-hidden="true"></span></label>
+              </div>
+              <div class="threshold-table"><div class="threshold-table__head"><span>PARAMETER</span><span>EXAMPLE</span><span>SCOPE</span></div><div><span>Gateway dispatch</span><code>registered only</code><small>host controlled</small></div><div><span>Decision source</span><code>policy + guard</code><small>deterministic path</small></div><div><span>Frontend effect</span><code>preview state</code><small>no API call</small></div></div>
+              <div class="code-card"><div class="code-card__head"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>policy.preview.json</span></div><pre><code id="policy-json">{
+  "mode": "static-preview",
+  "registeredCallbacksOnly": true,
+  "approvalRequiredForHighRisk": true,
+  "quarantineOnCanarySignal": true,
+  "runtimeConnected": false
+}</code></pre></div>
+              <p class="local-state" id="policy-state" aria-live="polite"><span class="status-dot"></span>本地预览状态 · 未发送网络请求</p>
+            </div>
+            <div class="policy-diagrams">
+              <section class="diagram-card panel"><div class="section-bar"><h2>请求路径</h2><span class="section-bar__meta">CONCEPTUAL</span></div><div class="diagram-flow"><span>Agent</span><b>→</b><span>Gateway</span><b>→</b><span>Registered<br>callback</span></div><p>实际保护取决于宿主是否将调用路由进该路径。</p></section>
+              <section class="diagram-card diagram-card--secondary panel"><div class="section-bar"><h2>信号处置概念</h2><span class="section-bar__meta">NO LIVE ACTION</span></div><div class="diagram-flow diagram-flow--vertical"><span>Decoy interaction</span><b>↓</b><span>Canary signal</span><b>↓</b><span class="diagram-flow__outcome">Guard / isolation path</span></div><p>此图说明概念流程，不证明本次发生了诱饵触发或真实隔离。</p></section>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-audit" data-view-panel="audit" aria-labelledby="audit-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">04 / FORENSIC INVESTIGATION</p><h1 id="audit-title">审计轨迹与事件检查</h1></div><p class="page-heading__note">存档记录与本机当前调用分别展示。浏览器重新计算文件哈希与事件链；它不证明作者身份或普遍防护效果。</p></div>
+          <section class="evidence-selector panel" aria-label="证据包选择与验证"><label for="trial">选择确定性试验包<select id="trial"><option value="">加载存档…</option></select></label><div class="evidence-buttons"><button class="button button--dark" id="package-view" type="button">查看并验证试验包</button><button class="button button--outline" id="package-export" type="button" disabled>导出已验证试验包 JSON</button></div><p id="package-status" role="status">尚未校验。</p><p id="package-origin">静态模式包含去除本机路径后重新封装的公开衍生包；原始事件未改。原始云试验包见完整竞赛 ZIP。</p></section>
+          <section class="incident-banner panel"><div class="incident-banner__id"><span class="tag tag--rust" id="incident-source-tag">RECORDED</span><strong id="incident-record-id">#DEMO-TRACE-0004</strong><small id="incident-record-scope">DEMO TRACE / NOT AN INCIDENT</small></div><div class="incident-banner__title"><h2 id="incident-heading">Gateway decision trace preview</h2><p id="incident-subheading">合成调用路径示意 · 当前没有真实事件进入此页面</p></div><div class="incident-banner__state"><span class="status-dot status-dot--rust"></span><span id="incident-state-label">静态记录<br><small>NOT LIVE</small></span></div></section>
+          <div class="audit-layout">
+            <section class="audit-stream panel" aria-labelledby="audit-stream-title">
+              <div class="section-bar"><h2 id="audit-stream-title">存档事件时间线</h2><label class="select-wrap"><span class="sr-only">筛选审计记录</span><select id="audit-filter"><option value="all">全部记录</option><option value="signal">Canary / decoy</option><option value="policy">策略决策</option><option value="boundary">边界 / 审批</option></select></label></div>
+              <p class="audit-source-note" id="audit-source-note">下表来自已保存的确定性工具链试验；无模型参与。</p>
+              <div class="audit-table-wrap"><table class="data-table audit-table"><thead><tr><th>记录时间 / UTC</th><th>事件</th><th>路径</th><th>实际记录</th><th>事件 ID / 行序</th></tr></thead><tbody id="audit-rows"></tbody></table></div>
+              <div class="audit-actions"><button class="button button--dark" type="button" id="export-audit">导出当前存档事件 JSON</button><span id="audit-export-status" aria-live="polite">导出标注 RECORDING 与确定性模型来源</span></div>
+            </section>
+            <aside class="audit-dossier panel" aria-labelledby="audit-dossier-title" aria-live="polite">
+              <div class="panel-kicker"><span>TRACE INSPECTOR</span><span class="mono">SAMPLE</span></div>
+              <h2 id="audit-dossier-title">记录详情</h2>
+              <dl class="dossier-list"><div><dt>事件 ID / 行序</dt><dd id="audit-record-id">EVT-D01</dd></div><div><dt>事件类别</dt><dd id="audit-record-type">Decoy tool interaction</dd></div><div><dt>工具名称字段</dt><dd id="audit-record-call">未执行 · 静态说明</dd></div><div><dt>Policy 决策</dt><dd id="audit-record-policy">没有真实决策记录</dd></div><div><dt>Canary 触发</dt><dd id="audit-record-signal">合成样例，不代表已触发</dd></div><div><dt>隔离结果</dt><dd id="audit-record-isolation">未运行隔离操作</dd></div><div><dt>记录状态</dt><dd id="audit-ack-state">未确认 · 本地演示</dd></div></dl>
+              <button class="button button--outline button--full" id="ack-audit" type="button">在本页标记已查看</button>
+              <p class="audit-dossier__note">标记只保存在当前页面状态，不会写入服务端。</p>
+            </aside>
+          </div>
+          <section class="local-actions-panel panel" id="events" aria-labelledby="local-actions-title"><div class="section-bar"><h2 id="local-actions-title">本机受控演示</h2><span id="local-state-label" class="tag tag--muted">STATIC / 未运行</span></div><p id="action-scope">静态模式不会调用 API。实际临时文件操作仅在本机服务连接后启用，无 Agent 模型参与。</p><div class="evidence-buttons"><button class="button button--dark" data-action="read" disabled>正常读取</button><button class="button button--outline" data-action="credential" disabled>尝试受限读取</button><button class="button button--outline" data-action="honeypot" disabled>读取诱饵并隔离</button><button class="button button--outline" id="refresh" hidden>刷新本机状态</button></div><p id="action-result" role="status"></p><ol id="event-list"><li>当前页面尚未执行本机操作。</li></ol><button class="button button--outline" id="verify" disabled>验证当前演示哈希链</button><p id="verify-result" role="status"></p></section>
+          <details class="panel evidence-raw"><summary>查看选中证据包清单</summary><pre id="evidence-preview">尚未选择证据。</pre></details>
+        </section>
+
+        <section class="view" id="view-redaction" data-view-panel="redaction" aria-labelledby="redaction-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">05 / TEXT MINIMIZATION & REVIEW</p><h1 id="redaction-title">敏感文本最小化预览</h1></div><p class="page-heading__note">Agent Canary 的文本脱敏属于尽力而为的处理，不是加密、匿名化或合规认证。</p></div>
+          <div class="redaction-toolbar"><span>PREVIEW: LOCAL TEXT ONLY / SYNTHETIC INPUT</span><span class="redaction-toolbar__status"><i></i>NO SERVER CONNECTION</span></div>
+          <div class="redaction-layout">
+            <section class="redaction-workspace panel" aria-labelledby="redaction-work-title">
+              <div class="section-bar"><h2 id="redaction-work-title">合成文本处理台</h2><span class="section-bar__meta">LOCAL BROWSER PREVIEW</span></div>
+              <div class="algorithm-line"><span>规则样例</span><code>EMAIL MASK + DEMO TOKEN FILTER</code><span>BEST EFFORT</span></div>
+              <label class="editor-label" for="redaction-input">输入样例 <small>请只使用合成文本</small></label>
+              <textarea id="redaction-input" rows="5" spellcheck="false">Review ticket DEMO-041 for user USER-DEMO-0007. Contact: analyst@example.invalid. Canary: CANARY-DEMO-ALPHA.</textarea>
+              <div class="redaction-buttons"><button class="button button--dark" type="button" id="run-redaction">运行本地预览</button><button class="button button--outline" type="button" id="reset-redaction">恢复合成样例</button></div>
+              <div class="diff-heading"><span>原始合成输入</span><span>本地处理预览</span></div>
+              <div class="diff-output"><pre id="redaction-source">Review ticket DEMO-041 for user USER-DEMO-0007. Contact: analyst@example.invalid. Canary: CANARY-DEMO-ALPHA.</pre><pre id="redaction-output" aria-live="polite">Review ticket DEMO-041 for user USER-DEMO-0007. Contact: analyst@example.invalid. Canary: CANARY-DEMO-ALPHA.</pre></div>
+              <p class="redaction-note"><strong>边界：</strong>示例只在当前浏览器页面处理，没有请求网络；此简单预览不能证明真实数据已被安全脱敏。</p>
+            </section>
+            <aside class="certificate-preview panel" aria-labelledby="certificate-title">
+              <div class="certificate-preview__head"><span>PREVIEW DOCUMENT / NO ATTESTATION</span><span>05</span></div>
+              <article class="certificate-paper">
+                <p class="eyebrow">AGENT CANARY / LOCAL SAMPLE</p>
+                <h2 id="certificate-title">Redaction<br>Preview Record</h2>
+                <p class="certificate-paper__sub">文本最小化演示记录</p>
+                <div class="certificate-rule"></div>
+                <ul class="rule-results"><li><span class="check-mark">✓</span><span>示例邮箱模式替换</span><code>LOCAL</code></li><li><span class="check-mark">✓</span><span>合成 Canary 字符串替换</span><code>LOCAL</code></li><li><span class="check-mark check-mark--muted">—</span><span>重新识别风险评估</span><code>NOT RUN</code></li><li><span class="check-mark check-mark--muted">—</span><span>隐私预算 / 认证结论</span><code>NOT CLAIMED</code></li></ul>
+                <div class="certificate-seal"><span>DEMO</span><small>NOT CERTIFIED<br>NOT A SECURITY RESULT</small></div>
+                <div class="certificate-foot"><span>来源：页面合成文本</span><span>无真实输入</span></div>
+              </article>
+              <p class="certificate-disclaimer">此卡片是界面预览，不是证书或审计结论。</p>
+            </aside>
+          </div>
+        </section>
+
+        <footer class="page-footer"><span>AGENT CANARY <strong>3.0.0</strong> · 记录快照 / 本机验证台</span><span>只保护宿主明确接入的路径 · <a href="https://github.com/DorianChn/shanchuanzhi-agent-canary" target="_blank" rel="noreferrer">查看源码与文档 ↗</a></span></footer>
+      </main>
+    </div>
+  </div>
+  <noscript><p class="noscript-note">交互与证据校验需要 JavaScript。此静态页不需要后端；项目整体 PARTIAL，普通写入失败等限制保留。</p></noscript>
+  <script src="evidence-snapshot.js" defer></script>
+  <script src="evidence-verifier.js" defer></script>
+  <script src="workbench.js" defer></script>
+  <script src="verification.js" defer></script>
+</body>
+</html>

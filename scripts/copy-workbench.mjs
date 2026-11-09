@@ -5,7 +5,15 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = path.join(root, 'docs');
 const outputRoot = path.join(root, 'dist', 'ai', 'workbench');
-const files = ['index.html', 'workbench.css', 'workbench.js'];
+const files = [
+  'index.html',
+  'workbench.css',
+  'verification.css',
+  'evidence-snapshot.js',
+  'evidence-verifier.js',
+  'workbench.js',
+  'verification.js',
+];
 
 fs.mkdirSync(outputRoot, { recursive: true });
 for (const name of files) {

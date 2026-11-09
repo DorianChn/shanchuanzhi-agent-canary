@@ -41,7 +41,11 @@ export async function startAIConsole(options: { port?: number; apiKey?: string; 
     '/workbench/':{file:'index.html',contentType:'text/html; charset=utf-8'},
     '/workbench/index.html':{file:'index.html',contentType:'text/html; charset=utf-8'},
     '/workbench/workbench.css':{file:'workbench.css',contentType:'text/css; charset=utf-8'},
+    '/workbench/verification.css':{file:'verification.css',contentType:'text/css; charset=utf-8'},
+    '/workbench/evidence-snapshot.js':{file:'evidence-snapshot.js',contentType:'text/javascript; charset=utf-8'},
+    '/workbench/evidence-verifier.js':{file:'evidence-verifier.js',contentType:'text/javascript; charset=utf-8'},
     '/workbench/workbench.js':{file:'workbench.js',contentType:'text/javascript; charset=utf-8'},
+    '/workbench/verification.js':{file:'verification.js',contentType:'text/javascript; charset=utf-8'},
   };
   const server = http.createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');

@@ -1,0 +1,25 @@
+{
+  "revision": "20261109-frontend-sync",
+  "generatedAt": "2026-11-09T10:34:18.891Z",
+  "sha256OfSnapshotJSON": "bdf844aba34b15f32d59f001c202c0fe326f1af1ee233b0606e4909e4faddda0",
+  "sources": [
+    {
+      "file": "security-lab/v2-final/reviewer-retest-summary.json",
+      "sha256": "bedca9aace1b46ce3408505cc462d013f66b292d132ca9e2336e5a71a8df4f1b"
+    },
+    {
+      "file": "security-lab/v2-final/local-summary.json",
+      "sha256": "85c1bcaa3243871bcd8adc3a6758dec2c635a2e2b29e5c86e5d092a176b6e2a1"
+    },
+    {
+      "file": "security-lab/v2-final/llm-summary.json",
+      "sha256": "12dbf0c2dedd62f08b5fe3478cbca8f19ff91531f69a916f4dc7fb334bcc50dc"
+    },
+    {
+      "file": "security-lab/v2-final/llm1000-summary.json",
+      "sha256": "2379c90ae426456e85633c45da66c5602ffc347726defdbe1cfc152534aa39de"
+    }
+  ],
+  "publicPackageCount": 48,
+  "scope": "Public derivatives of synthetic local fixtures, 48 packages. Cloud-model results are recorded summaries; original 1000 per-trial packages are in the competition ZIP. No private machine paths, API keys or live telemetry."
+}

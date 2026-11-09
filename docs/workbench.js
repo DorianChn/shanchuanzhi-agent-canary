@@ -400,6 +400,7 @@
   });
 
   function isLocalWorkbenchBackend() {
+    if (window.AGENT_CANARY_SNAPSHOT) return false; // Evidence dashboard owns live state, no dual hydration.
     const localHost = ["localhost", "127.0.0.1", "[::1]", "::1"].includes(window.location.hostname);
     return localHost && window.location.pathname.startsWith("/workbench/") && csrfToken.length >= 32;
   }
